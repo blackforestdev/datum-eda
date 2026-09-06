@@ -1,0 +1,11 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=32.5 GiB target_free=168.1 GiB tmp_free=10.0 GiB
+warning: Cargo target exceeds soft limit: 32.5 GiB used; soft limit 20.0 GiB
+   Compiling eda-engine v0.1.0 (/home/bfadmin/Documents/datum-wdq-source-oy3bxeo8/crates/engine)
+   Compiling datum-verb-registry v0.1.0 (/home/bfadmin/Documents/datum-wdq-source-oy3bxeo8/crates/verb-registry)
+   Compiling datum-terminal-core v0.1.0 (/home/bfadmin/Documents/datum-wdq-source-oy3bxeo8/crates/terminal-core)
+   Compiling datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-wdq-source-oy3bxeo8/crates/gui-protocol)
+   Compiling datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-wdq-source-oy3bxeo8/crates/gui-viewport)
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-wdq-source-oy3bxeo8/crates/gui-render)
+   Compiling datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-wdq-source-oy3bxeo8/crates/gui-app)
+   Compiling datum-eda-cli v0.1.0 (/home/bfadmin/Documents/datum-wdq-source-oy3bxeo8/crates/cli)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1m 28s

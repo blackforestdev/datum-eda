@@ -141,13 +141,20 @@ class Capture:
         self.bus = re.search(r"'([^']+)'", address).group(1)
         if not self.bus.startswith("unix:path=" + self.env["XDG_RUNTIME_DIR"] + "/"):
             raise RuntimeError("accessibility bus escaped this run's private runtime directory")
-        self.start(["gdbus", "monitor", "--address", self.bus], "accessibility-events.log")
+        # Monitor the owned bus, including reconnects on normal close/reopen.
+        # gdbus monitor requires a destination; without one it exits immediately
+        # and produces an error log instead of native accessibility events.
+        self.monitor = self.start(["dbus-monitor", "--address", self.bus, "type='signal'"],
+                                  "accessibility-events.log")
+        time.sleep(0.1)
+        if self.monitor.poll() is not None:
+            raise RuntimeError("native accessibility event monitor exited during setup")
         save(self.out / "run-identity.json", {
             "gui_sha256": digest(self.args.gui.resolve()), "cli_sha256": digest(self.args.cli.resolve()),
             "fixture_sha256": digest(FIXTURE), "scratch": str(self.scratch),
             "display": self.env["DISPLAY"], "bus": self.bus,
             "source_commit": self.run("git", "-C", ROOT, "rev-parse", "HEAD"),
-            "window_size": [1280, 768], "scale": 1,
+            "window_size": [int(part) for part in self.args.window_size.split("x")], "scale": 1,
         })
         self.launch()
         save(self.out / "preferences-before.json", files(Path(self.env["XDG_CONFIG_HOME"])))
@@ -209,6 +216,8 @@ class Capture:
         return nodes
 
     def step(self, action):
+        if self.monitor.poll() is not None:
+            raise RuntimeError("native accessibility event monitor stopped during capture")
         kind = action[0]
         if kind == "click":
             self.run("xdotool", "mousemove", "--window", self.window, *action[1:3], "click", "1")

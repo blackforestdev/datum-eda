@@ -1,0 +1,39 @@
+Date: 2026-09-06 PDT
+[14:15:00.147] weston 14.0.2
+               https://wayland.freedesktop.org
+               Bug reports to: https://gitlab.freedesktop.org/wayland/weston/issues/
+               Build: 14.0.2
+[14:15:00.147] Command line: weston --backend=headless --renderer=pixman --no-config --socket=wayland-wdq-pilot --width=1600 --height=1000 --idle-time=0
+[14:15:00.147] OS: Linux, 6.12.101+deb13-amd64, #1 SMP PREEMPT_DYNAMIC Debian 6.12.101-1 (2026-08-05), x86_64
+[14:15:00.147] Flight recorder: enabled
+[14:15:00.147] Starting with no config file.
+[14:15:00.148] Output repaint window is 7 ms maximum.
+[14:15:00.148] Loading module '/usr/lib/x86_64-linux-gnu/libweston-14/headless-backend.so'
+[14:15:00.154] Using Pixman renderer
+[14:15:00.154] Registered plugin API 'weston_windowed_output_api_headless_v2' of size 16
+[14:15:00.154] Color manager: no-op
+                 protocol support: no
+[14:15:00.154] Output 'headless' attempts EOTF mode SDR and colorimetry mode default.
+[14:15:00.154] Output 'headless' using color profile: stock sRGB color profile
+[14:15:00.154] Output 'headless' enabled with head(s) headless
+[14:15:00.154] Compositor capabilities:
+               arbitrary surface rotation: yes
+               screen capture uses y-flip: no
+               cursor planes: no
+               arbitrary resolutions: no
+               view mask clipping: yes
+               explicit sync: no
+               color operations: no
+               presentation clock: CLOCK_MONOTONIC_RAW, id 4
+               presentation clock resolution: 0.000000001 s
+[14:15:00.154] Loading module '/usr/lib/x86_64-linux-gnu/weston/desktop-shell.so'
+[14:15:00.154] launching '/usr/libexec/weston-keyboard'
+[14:15:00.155] launching '/usr/libexec/weston-desktop-shell'
+could not load cursor 'dnd-move'
+could not load cursor 'dnd-copy'
+could not load cursor 'dnd-none'
+could not load cursor 'dnd-move'
+could not load cursor 'dnd-copy'
+could not load cursor 'dnd-none'
+[14:15:56.271] caught signal 15
+[14:15:56.272] BUG: finalizing a layer with views still on it.

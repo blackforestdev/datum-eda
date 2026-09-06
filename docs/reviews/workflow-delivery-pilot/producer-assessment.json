@@ -1,0 +1,56 @@
+{
+  "PILOT-S01": {
+    "actual_visible": "Producer inspected the identified native captures: zoom enlarges Board geometry; pointer Fit, editor F and menu-row Enter each restore the same fitted outline and selected pad. No unrelated dialog appears. Hover/crosshair decoration follows pointer position, not a changed selected subject.",
+    "actual_state": "All three actual entry surfaces invoke the registry's Runtime::fit_camera. Camera returns to zoom 1 and the recorded scene center. Selected pad, layout and other-pane camera are preserved; archived source/journal and preferences hashes are unchanged.",
+    "assertions": [
+      {"dimension": "normal", "expected": "All three supported native Fit doorways restore a deliberately zoomed Board through one handler.", "observed": "Pointer, shortcut and keyboard zoomed/fitted captures and dispatch records agree; each fitted camera matches the selected baseline.", "outcome": "pass"},
+      {"dimension": "scope", "expected": "Fit changes only the eligible focused view, retaining selection and source authority.", "observed": "Selected stable pad identity, layout and other-pane camera compare equal; every archived source/journal byte and preferences file hash is preserved.", "outcome": "pass"}
+    ],
+    "defects": []
+  },
+  "PILOT-S02": {
+    "actual_visible": "Producer inspected disabled About, Documents and Layer Visibility rows and native refusals. Full explanations are legible without overlapping rows in refusal-history.png and refusal-history-earlier.png. The compact strip intentionally truncates under PM033; opened history supplies full text. Existing layer toggles and pane navigation remain usable. This does not accept arbitrary long-record recovery or scrolling beyond the oldest record; those separate limitations remain tracked.",
+    "actual_state": "Six actual pointer/keyboard attempts have disabled eligibility, null handlers and no invocation. Existing layer visibility changes and returns; pane navigation changes focus and returns. Source, journal and settings hashes are unchanged. Remaining Console range/oversized-record findings do not change these finite pilot results and remain for independent triage.",
+    "assertions": [
+      {"dimension": "normal", "expected": "Missing consumers stay visibly unavailable and explain refusal without fabricated panels or success.", "observed": "All three disabled rows remain inspectable; latest and earlier opened-history captures expose their complete unavailable-in-this-build reasons.", "outcome": "pass"},
+      {"dimension": "invalid", "expected": "Pointer and keyboard-row activation cannot invoke a missing handler.", "observed": "Six dispatch observations are disabled and not invoked; no absent-feature panel or project-missing pretext appears.", "outcome": "pass"},
+      {"dimension": "scope", "expected": "No source/settings mutation or collateral disabling of existing layer/pane controls.", "observed": "Layer toggle and pane-navigation recovery are recorded; archived file hashes and preferences hashes remain identical.", "outcome": "pass"}
+    ],
+    "defects": ["dat-console-history-wrap-overlap-lkp", "dat-console-oversized-history-9uz", "dat-console-scroll-range-4y3"]
+  },
+  "PILOT-S03": {
+    "actual_visible": "Producer inspected resolved Board versus unresolved schematic menus, content-switch recovery and disabled pointer regression. Fit is dimmed in the unresolved context and enabled again on Board. Escape dismisses menus. Clicking disabled Fit retains the schematic focus frame and the zoomed Board; a genuine canvas click still focuses Board.",
+    "actual_state": "Keyboard and pointer Fit refusals do not invoke or refit another pane. Pointer regression keeps pane 1 and Board zoom 1.5735193490982056 with its original center. Escape returns Editor ownership; supported F restores zoom 1. Explicit pane/content transitions update the same readiness resolver. Archived source/journal/preferences hashes remain unchanged.",
+    "assertions": [
+      {"dimension": "normal", "expected": "Readiness follows actual resolved focused content and recovers on return to Board.", "observed": "Native live states show unavailable Fit in schematic and available Fit in Board after the existing content controls.", "outcome": "pass"},
+      {"dimension": "invalid", "expected": "Unresolved Fit never invokes or silently refits a different pane.", "observed": "Both keyboard and additional pointer attempts refuse; pointer preserves pane 1 and the exact previously zoomed Board camera.", "outcome": "pass"},
+      {"dimension": "cancel", "expected": "Escape dismisses menu navigation and restores usable editor keys.", "observed": "Escape/editor-F and restored-Board captures show Editor ownership and fitted camera without trapped overlay focus.", "outcome": "pass"},
+      {"dimension": "scope", "expected": "Only explicitly requested view/context changes occur; design authority is preserved.", "observed": "Pointer regression retains its original context until a real canvas click; all archived source/journal bytes and settings hashes are unchanged.", "outcome": "pass"},
+      {"dimension": "failure_recovery", "expected": "Supported viewing remains usable after refusal and context changes.", "observed": "Board F works again after the unresolved refusal and content transitions; missing consumers remain unavailable.", "outcome": "pass"}
+    ],
+    "defects": ["dat-menu-pointer-pane-authority-sjn"]
+  },
+  "PILOT-S04": {
+    "actual_visible": "Producer inspected the recovered fitted Board and the same Project after normal close/reopen. Unsupported actions refuse rather than creating panels; Board viewing and Fit remain usable. No crash or authored-change recovery is claimed.",
+    "actual_state": "Two normal WM_DELETE_WINDOW closes exit zero, with one reopen of the same scratch Project and identified binaries. Every archived source/journal byte is unchanged; new paths are explicitly enumerated Terminal context/session/runtime sidecars. Preferences hashes are unchanged.",
+    "assertions": [
+      {"dimension": "normal", "expected": "Viewing remains usable before and after clean reopen.", "observed": "Recovered-fit and reopened-fit captures show the fitted Board; actual camera zoom is 1 with Editor ownership.", "outcome": "pass"},
+      {"dimension": "invalid", "expected": "Unsupported production keys refuse without crash or private write.", "observed": "All three real unsupported keys refuse without invocation; raw records and before/after hashes establish no design mutation.", "outcome": "pass"},
+      {"dimension": "save_reopen", "expected": "Normal close/reopen preserves archived Project/journal bytes; no Save or crash-recovery acceptance.", "observed": "Two exit-zero normal closes and one reopen are recorded, all archive hashes match, and new paths are enumerated permitted runtime sidecars only.", "outcome": "pass"},
+      {"dimension": "failure_recovery", "expected": "Refusal does not prevent subsequent supported Fit or clean lifecycle.", "observed": "Fit invokes successfully after refusal and after reopen; application closes normally both times.", "outcome": "pass"}
+    ],
+    "defects": []
+  },
+  "PILOT-S05": {
+    "actual_visible": "Producer inspected native menu focus outlines, dimmed unavailable rows, resolved/unresolved Fit states, the separate Global Preferences window and restored View menu after its dismissal. Full reasons are available through live native descriptions and refusal history. This proves pointer-opened keyboard-row operation, not a fully keyboard-only application or Preferences acceptance.",
+    "actual_state": "Live AT-SPI nodes retain stable menu identities and labels; focused/enabled/sensitive bits and descriptions agree with production readiness. Raw private-bus menu StateChanged and ChildrenChanged events are recorded. Dismissed menus leave no phantom nodes; existing Terminal and Preferences objects are retained. Escape restores Editor F, and no source/journal/settings write occurs.",
+    "assertions": [
+      {"dimension": "normal", "expected": "Native row navigation, paint and exposed readiness agree.", "observed": "Fit, Layer Visibility, About and Documents focus captures agree with actual live AT-SPI states and production snapshots.", "outcome": "pass"},
+      {"dimension": "invalid", "expected": "Unavailable rows remain inspectable without executable success.", "observed": "Native descriptions explain each missing consumer; Enter refuses and the actual dispatch stream records no invocation.", "outcome": "pass"},
+      {"dimension": "cancel", "expected": "Escape dismisses the menu and restores supported editor input.", "observed": "Menu nodes disappear on dismissal and editor F refits Board; native Preferences Escape restores View-menu operability separately.", "outcome": "pass"},
+      {"dimension": "scope", "expected": "Menu publication must not replace existing accessibility consumers or mutate Project/settings.", "observed": "Terminal and Global Preferences nodes coexist; the real Preferences window closes without any settings-file changes; archived source/journal hashes match.", "outcome": "pass"},
+      {"dimension": "accessibility", "expected": "Actual native identity, focus, enabled/sensitive state and reason correlate with keyboard behavior and visible controls.", "observed": "Live queries plus real private-bus menu-state/child signals cover focus movement, context-dependent Fit availability and dismissal; screenshots were inspected alongside them.", "outcome": "pass"}
+    ],
+    "defects": []
+  }
+}

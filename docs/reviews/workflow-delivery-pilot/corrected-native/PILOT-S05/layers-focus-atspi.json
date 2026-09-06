@@ -1,0 +1,177 @@
+[
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/root",
+    "properties": "({'Name': <'Datum EDA'>, 'Description': <'Datum EDA application'>, 'Parent': <(':1.2', objectpath '/org/a11y/atspi/accessible/root')>, 'ChildCount': <2>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'datum-eda'>, 'HelpText': <''>},)",
+    "states": "([uint32 1124073728, 0],)",
+    "children": "([(':1.1', objectpath '/org/a11y/atspi/accessible/terminal'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/terminal",
+    "properties": "({'Name': <'Terminal'>, 'Description': <'Native terminal session'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/root')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'terminal-3796045-1788729282922376159'>, 'HelpText': <''>},)",
+    "states": "([uint32 1124206976, 64],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a56696577",
+    "properties": "({'Name': <'View'>, 'Description': <'Menu navigation'>, 'HelpText': <'Menu navigation'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/root')>, 'ChildCount': <22>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "([(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e666974'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e7a6f6f6d5f696e'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e7a6f6f6d5f6f7574'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e70616e655f7a6f6f6d'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e66756c6c73637265656e5f7374616765'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e6c6179657273'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e70616e656c73'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e7265736574'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e73706c69745f766572746963616c'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e73706c69745f686f72697a6f6e74616c'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e636c6f73655f70616e65'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e6d6178696d697a655f70616e65'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e666f6375735f6e657874'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e666f6375735f70726576'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e66696c6c5f626f617264'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e66696c6c5f736368656d61746963'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e7072657365745f73696e676c65'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e7072657365745f626f6172645f736368656d61746963'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e637572736f722e66756c6c'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e637572736f722e736d616c6c'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e637572736f722e6e6f6e65'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e636f6e736f6c655f686973746f7279')],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e666974",
+    "properties": "({'Name': <'Fit to Board'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.fit'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e7a6f6f6d5f696e",
+    "properties": "({'Name': <'Zoom In'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.zoom_in'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e7a6f6f6d5f6f7574",
+    "properties": "({'Name': <'Zoom Out'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.zoom_out'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e70616e655f7a6f6f6d",
+    "properties": "({'Name': <'Zoom Pane'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.pane_zoom'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e66756c6c73637265656e5f7374616765",
+    "properties": "({'Name': <'Full-Screen Stage'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.fullscreen_stage'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e6c6179657273",
+    "properties": "({'Name': <'Layer Visibility'>, 'Description': <'Layer Visibility menu action is unavailable in this build.'>, 'HelpText': <'Layer Visibility menu action is unavailable in this build.'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.layers'>},)",
+    "states": "([uint32 1107302400, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e70616e656c73",
+    "properties": "({'Name': <'Panels'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.panels'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e7265736574",
+    "properties": "({'Name': <'Reset Workspace'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.reset'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e73706c69745f766572746963616c",
+    "properties": "({'Name': <'Split Vertical'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.split_vertical'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e73706c69745f686f72697a6f6e74616c",
+    "properties": "({'Name': <'Split Horizontal'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.split_horizontal'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e636c6f73655f70616e65",
+    "properties": "({'Name': <'Close Pane'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.close_pane'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e6d6178696d697a655f70616e65",
+    "properties": "({'Name': <'Maximize Pane'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.maximize_pane'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e666f6375735f6e657874",
+    "properties": "({'Name': <'Focus Next Pane'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.focus_next'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e666f6375735f70726576",
+    "properties": "({'Name': <'Focus Previous Pane'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.focus_prev'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e66696c6c5f626f617264",
+    "properties": "({'Name': <'Fill Pane: Board'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.fill_board'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e66696c6c5f736368656d61746963",
+    "properties": "({'Name': <'Fill Pane: Schematic'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.fill_schematic'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e7072657365745f73696e676c65",
+    "properties": "({'Name': <'Layout: Single'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.preset_single'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e7072657365745f626f6172645f736368656d61746963",
+    "properties": "({'Name': <'Layout: Board + Schematic'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.preset_board_schematic'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e637572736f722e66756c6c",
+    "properties": "({'Name': <'Crosshair: Full Viewport'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.cursor.full'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e637572736f722e736d616c6c",
+    "properties": "({'Name': <'Crosshair: Small Cross'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.cursor.small'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e637572736f722e6e6f6e65",
+    "properties": "({'Name': <'Crosshair: None'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.cursor.none'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e636f6e736f6c655f686973746f7279",
+    "properties": "({'Name': <'Console History'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.console_history'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  }
+]

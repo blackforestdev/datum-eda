@@ -1,0 +1,1125 @@
+[
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788729230697767857,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729231022179999,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729231345475341,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729231662720412,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729231987125631,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729232311989840,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729232632095945,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729232955312898,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729233275230669,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729233593633519,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729233911217081,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729234232675809,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729234549936083,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729234866139012,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729235182949211,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729235501334135,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729235819337448,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729236137310418,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Return"
+    ],
+    "time_ns": 1788729236455130780,
+    "launch": 1
+  },
+  {
+    "action": [
+      "move",
+      450,
+      400
+    ],
+    "time_ns": 1788729236758858049,
+    "launch": 1
+  },
+  {
+    "action": [
+      "wheel",
+      2
+    ],
+    "time_ns": 1788729237304280156,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788729237714010537,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Escape"
+    ],
+    "time_ns": 1788729238035060575,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "f"
+    ],
+    "time_ns": 1788729238357051508,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "escape-editor-fit"
+    ],
+    "time_ns": 1788729240232874741,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Tab"
+    ],
+    "time_ns": 1788729240557279248,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788729240966949862,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "schematic-fit-disabled"
+    ],
+    "time_ns": 1788729243694731885,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Return"
+    ],
+    "time_ns": 1788729244018868548,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Escape"
+    ],
+    "time_ns": 1788729244343145923,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "schematic-refused"
+    ],
+    "time_ns": 1788729246162063023,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "shift+Tab"
+    ],
+    "time_ns": 1788729246498211738,
+    "launch": 1
+  },
+  {
+    "action": [
+      "move",
+      450,
+      400
+    ],
+    "time_ns": 1788729246808637452,
+    "launch": 1
+  },
+  {
+    "action": [
+      "wheel",
+      2
+    ],
+    "time_ns": 1788729247358899875,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "f"
+    ],
+    "time_ns": 1788729247675812630,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "board-fit-restored"
+    ],
+    "time_ns": 1788729249488516577,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      595,
+      16
+    ],
+    "time_ns": 1788729249896834274,
+    "launch": 1
+  },
+  {
+    "action": [
+      "move",
+      625,
+      53
+    ],
+    "time_ns": 1788729250205777898,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "about-disabled"
+    ],
+    "time_ns": 1788729252187404188,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      625,
+      53
+    ],
+    "time_ns": 1788729252597767406,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "about-pointer-refused"
+    ],
+    "time_ns": 1788729254374531661,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      543,
+      16
+    ],
+    "time_ns": 1788729254785095920,
+    "launch": 1
+  },
+  {
+    "action": [
+      "move",
+      573,
+      53
+    ],
+    "time_ns": 1788729255093655489,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "documents-disabled"
+    ],
+    "time_ns": 1788729257051463022,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      573,
+      53
+    ],
+    "time_ns": 1788729257461352943,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "documents-pointer-refused"
+    ],
+    "time_ns": 1788729259256565435,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788729259660920032,
+    "launch": 1
+  },
+  {
+    "action": [
+      "move",
+      219,
+      213
+    ],
+    "time_ns": 1788729259971149867,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "layers-disabled"
+    ],
+    "time_ns": 1788729262685270055,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      219,
+      213
+    ],
+    "time_ns": 1788729263094983733,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "layers-pointer-refused"
+    ],
+    "time_ns": 1788729264894725589,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788729265305338779,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729265623363462,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729265941311904,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729266262718111,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729266586890045,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729266913077091,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729267238193841,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729267555236443,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729267872417547,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729268188614064,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729268505386589,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729268822886195,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729269140325497,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729269457778242,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729269775181089,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729270093553527,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729270410969589,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729270729490918,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729271046505290,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729271363691983,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729271680566245,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729271997322730,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Return"
+    ],
+    "time_ns": 1788729272313769141,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "refusal-history"
+    ],
+    "time_ns": 1788729274119269504,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788729274523556724,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729274846338658,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729275163136956,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729275480547224,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729275797706559,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729276114190204,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729276431195286,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729276748334607,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729277065981027,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729277382216690,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729277699578762,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729278017661020,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729278335425517,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729278652434687,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729278969120492,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729279286953987,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729279604014398,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729279921686309,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729280238604330,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729280557251070,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729280874714434,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729281191275170,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Return"
+    ],
+    "time_ns": 1788729281508229735,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788729281912585607,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729282230626026,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729282549955514,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729282867726175,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729283185558805,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729283501973119,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729283819675980,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729284143254110,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729284467583032,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729284792585606,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729285116547908,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729285440715867,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729285760949695,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729286085340278,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729286409724354,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729286736465657,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Return"
+    ],
+    "time_ns": 1788729287056005766,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788729287461195048,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "filled-schematic-disabled"
+    ],
+    "time_ns": 1788729290147877068,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Escape"
+    ],
+    "time_ns": 1788729290465485529,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788729290869780743,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729291186681582,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729291511499242,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729291834194595,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729292157858627,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729292483995727,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729292807982147,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729293126433448,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729293443810449,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729293768147130,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729294086002165,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729294403458719,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729294726462564,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729295049927229,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788729295375370245,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Return"
+    ],
+    "time_ns": 1788729295699272866,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788729296108084316,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "filled-board-enabled"
+    ],
+    "time_ns": 1788729298833036701,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Escape"
+    ],
+    "time_ns": 1788729299155127632,
+    "launch": 1
+  },
+  {
+    "action": [
+      "close"
+    ],
+    "time_ns": 1788729299674402653,
+    "launch": 1
+  }
+]

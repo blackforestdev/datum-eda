@@ -1,0 +1,79 @@
+[
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/root",
+    "properties": "({'Name': <'Datum EDA'>, 'Description': <'Datum EDA application'>, 'Parent': <(':1.2', objectpath '/org/a11y/atspi/accessible/root')>, 'ChildCount': <2>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'datum-eda'>, 'HelpText': <''>},)",
+    "states": "([uint32 1124073728, 0],)",
+    "children": "([(':1.1', objectpath '/org/a11y/atspi/accessible/terminal'), (':1.1', '/org/a11y/atspi/accessible/preferences/0')],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/terminal",
+    "properties": "({'Name': <'Terminal'>, 'Description': <'Native terminal session'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/root')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'terminal-3796045-1788729282922376159'>, 'HelpText': <''>},)",
+    "states": "([uint32 1124206976, 64],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/preferences/0",
+    "properties": "({'Name': <'Global Preferences'>, 'Description': <'Global \u00b7 this device. Changes save immediately.. Current value: Global \u00b7 this device'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/root')>, 'ChildCount': <8>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'appearance-dialog'>, 'HelpText': <'Global \u00b7 this device. Changes save immediately.. Current value: Global \u00b7 this device'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "([(':1.1', objectpath '/org/a11y/atspi/accessible/preferences/1'), (':1.1', '/org/a11y/atspi/accessible/preferences/2'), (':1.1', '/org/a11y/atspi/accessible/preferences/3'), (':1.1', '/org/a11y/atspi/accessible/preferences/4'), (':1.1', '/org/a11y/atspi/accessible/preferences/5'), (':1.1', '/org/a11y/atspi/accessible/preferences/6'), (':1.1', '/org/a11y/atspi/accessible/preferences/7'), (':1.1', '/org/a11y/atspi/accessible/preferences/8')],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/preferences/1",
+    "properties": "({'Name': <'Appearance'>, 'Description': <'Global Preferences \u2014 Datum section navigation.. Current value: No current value'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/preferences/0')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'appearance-navigation'>, 'HelpText': <'Global Preferences \u2014 Datum section navigation.. Current value: No current value'>},)",
+    "states": "([uint32 1124079872, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/preferences/2",
+    "properties": "({'Name': <'Search Appearance settings'>, 'Description': <'Searches labels, descriptions, stable keys, and registered aliases. Escape clears a nonempty search before a second Escape closes the window.. Current value: '>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/preferences/0')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'appearance-search'>, 'HelpText': <'Searches labels, descriptions, stable keys, and registered aliases. Escape clears a nonempty search before a second Escape closes the window.. Current value: '>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/preferences/3",
+    "properties": "({'Name': <'Console feedback duration'>, 'Description': <'How long Console feedback stays visible before auto-hiding.. Factory default \u00b7 Global \u00b7 this device. Opens resolver explanation.. Current value: No current value'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/preferences/0')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'datum.console.feedback_duration-name'>, 'HelpText': <'How long Console feedback stays visible before auto-hiding.. Factory default \u00b7 Global \u00b7 this device. Opens resolver explanation.. Current value: No current value'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/preferences/4",
+    "properties": "({'Name': <'Console feedback duration'>, 'Description': <'Global \u00b7 this device. Factory default \u00b7 Global \u00b7 this device.. Current value: 6 s'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/preferences/0')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'datum.console.feedback_duration-control'>, 'HelpText': <'Global \u00b7 this device. Factory default \u00b7 Global \u00b7 this device.. Current value: 6 s'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/preferences/5",
+    "properties": "({'Name': <'Reduced motion'>, 'Description': <'Disables non-essential interface animation while preserving non-color state cues.. Factory default \u00b7 Global \u00b7 this device. Opens resolver explanation.. Current value: No current value'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/preferences/0')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'datum.accessibility.reduced_motion-name'>, 'HelpText': <'Disables non-essential interface animation while preserving non-color state cues.. Factory default \u00b7 Global \u00b7 this device. Opens resolver explanation.. Current value: No current value'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/preferences/6",
+    "properties": "({'Name': <'Reduced motion'>, 'Description': <'Global \u00b7 this device. Factory default \u00b7 Global \u00b7 this device.. Current value: Off'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/preferences/0')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'datum.accessibility.reduced_motion-control'>, 'HelpText': <'Global \u00b7 this device. Factory default \u00b7 Global \u00b7 this device.. Current value: Off'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/preferences/7",
+    "properties": "({'Name': <'High contrast and non-color cues'>, 'Description': <'Uses high-contrast rendering with non-color state cues across GUI and terminal.. Factory default \u00b7 Global \u00b7 this device. Opens resolver explanation.. Current value: No current value'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/preferences/0')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'datum.accessibility.high_contrast_noncolor-name'>, 'HelpText': <'Uses high-contrast rendering with non-color state cues across GUI and terminal.. Factory default \u00b7 Global \u00b7 this device. Opens resolver explanation.. Current value: No current value'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/preferences/8",
+    "properties": "({'Name': <'High contrast and non-color cues'>, 'Description': <'Global \u00b7 this device. Factory default \u00b7 Global \u00b7 this device.. Current value: Off'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/preferences/0')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'datum.accessibility.high_contrast_noncolor-control'>, 'HelpText': <'Global \u00b7 this device. Factory default \u00b7 Global \u00b7 this device.. Current value: Off'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  }
+]

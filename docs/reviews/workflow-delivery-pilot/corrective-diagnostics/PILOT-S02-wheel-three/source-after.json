@@ -1,0 +1,19 @@
+{
+  ".datum/check_runs/4640f779-74c3-5f03-97d4-4950bc874297.json": "a2a3bd127b52f08b2f64c169daff906ba47be2548cc39dc066dec188004372eb",
+  ".datum/gui-terminal-context.json": "74e2314c6f6a8d48985b4f51e508fa822d2d57abc5823a5fddf2cb2843c3fc7e",
+  ".datum/import_map/kicad-board-9ae74e93-b9cd-587d-a1c7-1da712121bed.json": "5017f5e77d297fcb05183d2b2662ec6a6c87f04ac509c8228d37e30944f8d0d2",
+  ".datum/journal/cursor.json": "d8a489ab5a21131647a90995619e0622b1b61cef200318282ecf6ac53030b119",
+  ".datum/journal/transactions.jsonl": "ad2f99f9c2e830b74fc13d5a343abb807d46cb813fec1bb46896f6b014440858",
+  ".datum/terminal-contexts/context-3759647-1788728695318800218.pinned.json": "926eac7af9b79943d2f424c1af917f55f75dd9dfe2543b5dc782ec9338216726",
+  ".datum/terminal-contexts/terminal-3759647-1788728695318800218.agent-authority.json": "f58439c827703c3e902603ea48b3421fda6b2591362945237fe7d70f11931fd4",
+  ".datum/terminal-contexts/terminal-3759647-1788728695318800218.discovery.json": "576049946b64a373edce05821eb493ce85820605d368f2f113c28db571a6775c",
+  ".datum/terminal-contexts/terminal-3759647-1788728695318800218.json": "8a404de31755181417ff0388d5caf506c22105495dfe2c2d69aa90db0a7406e1",
+  ".datum/tool-sessions/terminal-3759647-1788728695318800218.events.jsonl": "a902b8950098c44825fc4d5753a052fe81efd40abc8cd6089c3b96da6ddd3474",
+  ".datum/tool-sessions/terminal-3759647-1788728695318800218.events.jsonl.io.0.jsonl": "70d382e5cc50da2f40a25350f3e3f691781535f36c2195ab9228ad83900caf36",
+  ".datum/tool-sessions/terminal-3759647-1788728695318800218.json": "222148e5d73159c34cd6c01ddd705b1477012b94d29300fe29f7be56f7d1e877",
+  ".datum/tool-sessions/terminal-3759647-1788728695318800218.terminal-runtime/terminfo/d/datum-256color": "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1",
+  "board/board.json": "cbe341184ce5f34fd8db597e32dc984f52c6cca69313b7086a92e7c40ace1916",
+  "project.json": "456f2d00f51b06c7df858d30ccc8ed1642455c930cc842792cf10b705b428fc3",
+  "rules/rules.json": "f893768f0a1f24968f9afa09fb54b93ad22d445cd804c56d21f2f1975553d5e4",
+  "schematic/schematic.json": "a5c86ad42aad7579642c3bef421bdeafaafa866cb8f512b46d0bd7ecff9e0cda"
+}
