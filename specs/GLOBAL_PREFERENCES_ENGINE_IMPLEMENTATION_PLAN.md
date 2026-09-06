@@ -1056,6 +1056,16 @@ the shared AI/CLI/MCP contract, governance/parity records, and the synchronized
 Frontier all point to the same inventories and exclusions. Runtime registries
 remain implementation evidence and are not changed during this planning step.
 
+GP-CM02R completed in commit `f54a6262`. The reconciled contract fixes all nine
+findings, the exact active/reserved and seed boundaries, stable cross-surface
+schemas, process and human/agent authority, non-self-referential receipt and
+crash/retry behavior, and the mandatory proof matrix. Evidence, source-health,
+governance, parity, progress, project-state, dependency, Cargo-resource, MCP
+taxonomy, daemon-write, resolver raw-load, semantic-inventory, and diff gates
+passed. No runtime or prototype file changed.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM02R-COMPLETE -->
+
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM02V -->
 <!-- OWNER:GLOBAL-PREFERENCES-COMPLETION:GP-CM02V:GP-CM02V -->
 ### GP-CM02V — fresh owner authorization after reconciliation
