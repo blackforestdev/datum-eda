@@ -7249,27 +7249,16 @@
       "title": "Establish workflow delivery readiness and acceptance governance",
       "issue_id": "dat-workflow-delivery-quality-xgj",
       "governing_docs": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md"],
-      "state": "in_progress",
-      "authorization": "planning",
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": false,
       "parallel": true,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-workflow-delivery-audit-20260905",
-        "claimed_at": "2026-09-05T21:24:02Z",
-        "heartbeat_at": "2026-09-05T23:37:00Z",
-        "expires_at": "2026-09-06T07:37:00Z",
-        "scope": ["WORKFLOW-DELIVERY-QUALITY owner-authorized planning C01-C04; research/process-quality/WORKFLOW_DELIVERY* and owned evidence; own plan/decision proposal and governance entries only; no Preferences/prototype/runtime edits"],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "ad7b08461fa45aa80fca3543116639fa8682933e"
-      },
       "summary": "Audit manual workflow capability, research missing CAD foundations, and prepare a concrete readiness/acceptance gate adoption packet; preserve active Preferences ownership and select this planning work only through an explicit coordinated handoff.",
       "dependencies": [],
       "unblocks": ["dat-manual-foundation-contracts-fsw", "dat-workflow-gate-pilot-b3s"],
       "completion": {
         "outcome": "A reproducible capability baseline, bounded research dispositions and an owner-reviewed gate/pilot adoption packet are ready for separate numbered ratification and implementation authorization.",
-        "canonical_next_step_id": "WDQ-C04",
+        "canonical_next_step_id": "WDQ-C05",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -7305,11 +7294,11 @@
             "completion_evidence": [{"kind": "document", "path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C03-COMPLETE"}]
           },
           {
-            "id": "WDQ-C04", "kind": "planning", "status": "in_progress",
+            "id": "WDQ-C04", "kind": "planning", "status": "complete",
             "action": "Prepare a bounded native pilot, migration scope, gate implementation completion contract, numbered decision draft and coordinated activation/resume transaction.",
             "depends_on": ["WDQ-C03"],
             "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-C04"}],
-            "completion_evidence": []
+            "completion_evidence": [{"kind": "document", "path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C04-COMPLETE"}]
           },
           {
             "id": "WDQ-C05", "kind": "owner_decision", "status": "pending",
