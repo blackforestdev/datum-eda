@@ -54,13 +54,13 @@ are built once. Sharing a schema and service does not merge ownership.
 
 At New Project, the resolver supplies one immutable Global-default snapshot.
 The canonical Project mutation transaction copies it into
-`ProjectDisplayUnits` and writes an itemized `ProjectSeedReceipt`. An eligible
-explicit `datum.projects.unit_policy_seed` aggregate may replace the composed
-eight-descriptor snapshot under the existing seed precedence law. The aggregate
-identity is reserved for typed interchange, migration, or a later separately
-justified profile mechanism; it is not an ordinary Global Preferences control
-and cannot silently outrank the eight visible controls. After creation,
-there is no live link back to Global Preferences.
+`ProjectDisplayUnits` and writes an itemized `ProjectSeedReceipt`. GP-CM03 uses
+only the composed eight-descriptor snapshot. The aggregate identity
+`datum.projects.unit_policy_seed` is reserved for typed interchange, migration,
+or a later separately justified profile mechanism; it is inactive, is not an
+ordinary Global Preferences control, and cannot enter or override GP-CM03
+Project genesis. After creation, there is no live link back to Global
+Preferences.
 
 A Project Working Units change is a journaled Project settings mutation. It may
 change display and the meaning of later bare numeric entry, but it never rescales,
@@ -102,6 +102,14 @@ remain outside the ordinary GUI pending separate justification. This does not
 remove the reserved aggregate identity or change copy-once Project ownership.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:PM-040-EIGHT-DESCRIPTOR-CORRECTION-OWNER-APPROVED -->
+
+The owner's GP-CM02R direction further keeps that aggregate and the other five
+non-active seed-class identities outside GP-CM03 requests and Project genesis.
+This narrows implementation authority to the eight active Units descriptors; a
+future aggregate mechanism still requires separate justification and
+ratification.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:PM-040-GP-CM02R-SEED-BOUNDARY -->
 
 ## Non-decisions
 

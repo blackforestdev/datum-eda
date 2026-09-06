@@ -5989,10 +5989,15 @@
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md",
         "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md",
+        "docs/decisions/PRODUCT_MECHANICS_040_PROJECT_WORKING_UNITS_AUTHORITY.md",
+        "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md",
         "specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md",
         "research/preferences-system/GP_C04_STORAGE_MIGRATION_EXCHANGE_RECOVERY_CONTRACT.md",
         "research/preferences-system/GP_C05_INTERACTION_AND_VISUAL_CONTRACT.md",
         "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+        "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md",
+        "specs/MCP_API_SPEC.md",
+        "docs/contracts/AI_CLI_MCP_TOOL_SURFACE.md",
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
@@ -6054,18 +6059,27 @@
           {
             "id": "GP-CM02R", "kind": "planning", "status": "in_progress",
             "action": "Reconcile all nine owner-required GP-CM03 build-readiness gaps across exact typed operations, CLI/MCP contracts, proposal security, active seed scope, Project-creation modes, genesis atomicity, typed failures, PM-037 search authority, and the cross-surface acceptance matrix without implementation.",
-            "depends_on": ["GP-CM02"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02R"}], "completion_evidence": []
+            "depends_on": ["GP-CM02"], "requirement_refs": [
+              {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02R"},
+              {"path": "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md", "marker": "GP-CM02R"}
+            ], "completion_evidence": []
           },
           {
             "id": "GP-CM02V", "kind": "owner_decision", "status": "pending",
             "action": "Review the committed GP-CM02R contract and evidence before authorizing GP-CM03 implementation.",
-            "depends_on": ["GP-CM02R"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02V"}], "completion_evidence": [],
+            "depends_on": ["GP-CM02R"], "requirement_refs": [
+              {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02V"},
+              {"path": "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md", "marker": "GP-CM02V"}
+            ], "completion_evidence": [],
             "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM03` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific API, parity, seed, receipt, concurrency, security, or proof correction>`.", "requests": [{"id": "GP-CM02V", "question": "Does the reconciled GP-CM03 contract fully specify an enterprise-worthy engine, CLI, MCP, daemon, and Project-genesis implementation without leaving product or authority decisions to the implementer?", "recommended_response": "Approve only when all nine findings have exact typed inventories, ownership, failure, concurrency, security, and clause-by-clause proof with the 11-active/45-reserved and eight-seed boundaries intact.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02V"}}]}
           },
           {
             "id": "GP-CM03", "kind": "execution", "status": "pending",
             "action": "Implement engine, CLI, MCP operation/query/refusal/proposal parity and the existing copy-once ProjectPolicySeed snapshot/receipt seam.",
-            "depends_on": ["GP-CM02V"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM03"}], "completion_evidence": []
+            "depends_on": ["GP-CM02V"], "requirement_refs": [
+              {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM03"},
+              {"path": "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md", "marker": "GP-CM03"}
+            ], "completion_evidence": []
           },
           {
             "id": "GP-CM04", "kind": "owner_decision", "status": "pending",

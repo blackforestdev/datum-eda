@@ -3,7 +3,8 @@
 Status: ratified doctrine; Revision visibility/default clauses superseded in
 part by Product Mechanics 038; delivery sequence amended by Product Mechanics
 039 and Units authority amended by Product Mechanics 040; descriptor activation
-amended by the owner GP-CM01 correction of 2026-09-05
+amended by the owner GP-CM01 correction and product-surface boundary amended by
+the owner GP-CM02R direction of 2026-09-05
 
 ## Context
 
@@ -40,10 +41,13 @@ policy or design data and never block Design authoring.
 The Preferences window uses the GP-C05 refined Option A interaction at Claude
 commit `a061fca`: two columns, search pinned over the settings pane, complete
 rows, search-first discovery, and one resolver-owned explanation shared
-semantically by GUI, CLI, and MCP. Search covers current labels/descriptions,
-stable keys, retired or alternate names, planned rows, and read-only Project-
-policy rows. Stable and retired names are searchable vocabulary, not merely
-migration machinery.
+semantically by GUI, CLI, and MCP. Product search indexes production-active
+entries only, matching each active label, description, stable key, and
+registered retired alias. A key- or alias-only result discloses why it matched.
+Reserved/planned identities and Project-owned policy rows are absent from the
+Global product search rather than appearing as unavailable results. This
+paragraph supersedes the earlier planned/read-only search clause recorded in
+the original decision.
 
 Product Mechanics 039 controls delivery and entry. Global Preferences is
 reached through `Edit > Preferences > Global Preferences…`; Project Preferences
@@ -74,14 +78,32 @@ zero active V1 descriptors; their visible queries or planned rows do not imply
 registrations.
 
 The eight typed `datum.units.*` seed descriptors compose
-`ProjectDisplayUnits` when `datum.projects.unit_policy_seed` is absent. An
-eligible explicit aggregate contribution to `datum.projects.unit_policy_seed`
-wins the seed transaction; its absence cannot shadow the typed contributions.
-The aggregate identity remains reserved for interchange, migration, or a later
-separately justified profile mechanism and is not an ordinary GUI control. The
-receipt records which path supplied every copied value. The shared Units engine
+`ProjectDisplayUnits`. The aggregate identity
+`datum.projects.unit_policy_seed` remains reserved for interchange, migration,
+or a later separately justified profile mechanism; it is inactive, is not an
+ordinary GUI control, and cannot override the eight typed values in GP-CM03.
+The receipt records which path supplied every copied value. The shared Units engine
 continues to store authored lengths as checked signed integer nanometers;
 display and parser preferences never rescale stored design truth.
+
+GP-CM03, if separately authorized, is bounded by
+`specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md`: one engine-owned product
+service; exact versioned query, Set/Reset, explanation, refusal, proposal, CLI,
+and MCP schemas; trusted human GUI/CLI direct mutation; MCP proposal-only
+mutation with a short-lived server-side human-acceptance handle; one
+configuration root and daemon/writer lease; and explicit expected-generation
+and idempotency behavior. Semantic CLI/MCP schema parity does not grant MCP the
+human CLI's direct-write authority.
+
+Project genesis may copy only the eight production-active Units descriptors.
+The other six seed-class identities, including the reserved Units aggregate,
+are inactive. GUI and CLI default visibly to the Global snapshot; MCP must state
+Global or factory explicitly. Unreadable or migration-required Global state
+refuses rather than silently falling back. Genesis pins one snapshot, stages
+and resolver-validates one complete Project, publishes it atomically, and owns
+an immutable non-self-referential receipt. Concurrent writers, crashes, retry,
+replay, and existing destinations follow the typed outcomes in that contract.
+No later Global edit reaches the Project.
 
 Product Mechanics 040 narrows their Global role: these eight values are defaults
 for future Projects, not live display/parser authority for an open Project.
@@ -163,6 +185,14 @@ Start-page reconciliation. This amendment changes activation and delivery
 status only; it preserves every typed authority and repository law above.
 
 <!-- EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:PM-037-CONSUMER-READY-ACTIVATION-OWNER-APPROVED -->
+
+On 2026-09-05 the owner directed the nine-point GP-CM02R reconciliation before
+GP-CM03, including explicit supersession of the stale planned/read-only search
+clause and exact cross-surface, security, process-ownership, seed, atomicity,
+failure, and proof contracts. The product-surface contract records that bounded
+direction without authorizing implementation or a dependency.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:PM-037-GP-CM02R-OWNER-DIRECTED -->
 
 ## Dependency and licensing impact
 

@@ -128,9 +128,24 @@ metadata (`x_compatibility_visibility`, `x_retirement_status`, and
 `x_retirement_criteria`) so hidden aliases cannot expand without an explicit
 migration/removal condition.
 
-CLI and MCP are isomorphic: `datum-eda <group> <verb>` (CLI) ==
-`datum.<group>.<verb>` (MCP). Every CLI verb has `--json` returning the
-exact MCP schema.
+CLI and MCP are semantically isomorphic for capabilities granted to both:
+`datum-eda <group> <verb>` (CLI) == `datum.<group>.<verb>` (MCP), and each
+matching CLI verb has `--json` returning the exact MCP schema. A governing
+authority contract may omit a human-only command from MCP; that omission must
+be explicit and cannot be replaced by a private alias.
+
+Global machine preferences are a scoped exception in authority, not in schema.
+They are outside `DesignModel` and its journal, but still use one engine-owned
+typed service and the standard query/proposal/envelope laws. Human GUI and CLI
+may perform the exact direct Set/Reset requests; MCP has no direct Set/Reset and
+must carry those same payloads through the preference proposal lifecycle. An
+MCP apply requires a short-lived single-use server-side handle minted by an
+explicit local human acceptance. Thus matching CLI/MCP operations retain schema,
+explanation, refusal, and result parity without treating an agent as a human
+authority. The exact bounded inventory and daemon/repository ownership are in
+`specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md` and the MCP specialization
+is in `specs/MCP_API_SPEC.md`. No adapter may parse or write the preference
+store or Project genesis privately.
 
 CLI naming policy: `datum-eda` is the canonical CLI executable and the only
 command form used in this contract and all five domain contracts; the command

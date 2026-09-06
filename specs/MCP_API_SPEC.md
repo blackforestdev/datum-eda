@@ -27,13 +27,65 @@ become an alternate state store and must not write project files directly.
 
 ## Target Surface
 
-CLI and MCP are isomorphic:
+CLI and MCP are semantically isomorphic for capabilities available to both:
 
 - CLI: `datum-eda <group> <verb> ...`
 - MCP: `datum.<group>.<verb>`
 
-Every CLI command with `--json` returns the same schema as the matching MCP
-tool. Human-readable CLI output is presentation only.
+Every CLI command with `--json` that has a matching MCP tool returns the same
+schema. A governing authority contract may omit a more privileged CLI command
+from MCP; omission does not permit a private MCP alias. Human-readable CLI
+output is presentation only.
+
+### Global Preferences specialization (GP-CM03 target)
+
+This subsection is a planning contract; GP-CM03 remains unauthorized until its
+owner gate. `specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md` owns the
+complete V1 schemas, inventories, refusal details, and acceptance proof.
+
+Global machine preferences are not `DesignModel` operations. Their canonical
+MCP query tools are exactly:
+
+- `datum.preferences.describe`
+- `datum.preferences.list`
+- `datum.preferences.get`
+- `datum.preferences.search`
+- `datum.preferences.explain`
+- `datum.preferences.preview_project_units_seed`
+
+Their proposal tools are exactly
+`datum.preferences.proposal.prepare`, `.validate`, `.accept_apply`, and
+`.reject`. MCP exposes no direct preference Set or Reset. It carries the same
+typed Set/Reset payload inside a proposal, and `accept_apply` requires the
+short-lived, single-use, server-side human-acceptance handle defined by the
+product-surface contract. The daemon session broker attaches it as hidden
+transport context; it is not a public tool argument or model-visible result.
+MCP cannot mint, refresh, transfer, or persist that handle. This is an
+authority-filtered specialization of CLI/MCP isomorphism:
+matching commands/tools share semantic request, result, explanation, and error
+schemas, but schema parity never grants an agent the human CLI's direct-mutation
+authority.
+
+These tools use the standard envelope with `PreferenceContextV1` in `context`;
+Project context fields are null because Global Preferences is scoped to this
+device. Typed failures use the product contract's exact symbolic codes and
+detail fields. The Python bridge translates framing only: it owns no descriptor
+default, resolver, repository parser/writer, error default, factory Units
+profile, or Project-genesis logic.
+
+Canonical Project creation is `datum.project.new`. It requires the caller to
+state `units_source` as `global` (optionally with a full expected Global
+generation) or `factory` (with profile `datum.units.factory.v1`). It shares the
+one engine genesis service and `ProjectGenesisResultV1` with the GUI and
+`datum-eda project new`; it has no silent factory fallback. Only the eight
+production-active Units descriptors may cross that seam. The other six
+seed-class candidates, including the Units aggregate, remain reserved and
+invalid.
+
+`datum.project.new` is the already-ratified engine-owned genesis t=0 boundary,
+not an eighth shared tool class and not a journal bypass for an existing
+Project. Once publication occurs, every later Project change returns to the
+ordinary operation/proposal/commit authority.
 
 The target public surface has exactly seven shared contract classes. Public MCP
 methods may use granular canonical `datum.<family>.*` prefixes such as

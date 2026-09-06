@@ -396,9 +396,10 @@ locale-sensitive decimal parsing, or create a second suffix table.
 The eight descriptors are Global defaults and eligible `ProjectPolicySeed`
 inputs; they are not live display/parser preferences for existing Projects.
 At New Project, the Preferences resolver produces one immutable, validated
-`UnitsProfile` seed snapshot. An eligible explicit
-`datum.projects.unit_policy_seed` aggregate wins; otherwise the eight resolved
-typed descriptors compose the snapshot. The Project mutation authority—not the
+`UnitsProfile` seed snapshot from exactly the eight resolved typed descriptors.
+The reserved `datum.projects.unit_policy_seed` aggregate is inactive and cannot
+enter or override GP-CM03 genesis; any later aggregate mechanism requires a
+separate owner-ratified contract. The Project mutation authority—not the
 Preferences repository and not the Units service—atomically writes
 `ProjectDisplayUnits` and the durable itemized `ProjectSeedReceipt`. Existing
 Projects never follow later Global changes.
@@ -411,7 +412,7 @@ must remain byte-identical. Publish/document units remain separately owned by
 `AdoptedDraftingStandard` and Publish/document authority; neither direction
 silently follows the other.
 
-UNIT-I03A owns the typed Units snapshot schema, aggregate validation/composition,
+UNIT-I03A owns the typed Units snapshot schema, eight-descriptor composition,
 and the Units side of a real New-Project integration proof. It may call the one
 canonical Project mutation transaction; it may not write Project files itself.
 The later GP-CM03 step retains ownership of the general seed pipeline and all

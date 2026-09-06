@@ -98,7 +98,8 @@
     },
     "specs/MCP_API_SPEC.md": {
       "class": "governed",
-      "progress_anchor": "MCP_API_SPEC"
+      "progress_anchor": "MCP_API_SPEC",
+      "notes": "Shared MCP target plus the GP-CM02R Global Preferences specialization: exact read/proposal tools, no direct MCP preference mutation, server-side human-acceptance handle, translation-only Python bridge, and explicit datum.project.new Units-source modes. GP-CM03 remains unauthorized."
     },
     "specs/ENGINE_SPEC.md": {
       "class": "governed",
@@ -155,7 +156,12 @@
     "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md": {
       "class": "governed",
       "progress_anchor": "GLOBAL-PREFERENCES-ENGINE",
-      "notes": "PM-039-reconciled four-boundary plan: exact Units core, Global Preferences foundation plus a production-grade three-row Appearance wgpu slice, Units parity through that surface, then full Global completion. The owner authorized GP-F05 after the typed presentation, menu/window, repository lifecycle, accessibility, recovery, zero-Project-mutation, and corrected protected-target contract was reviewed. Authorization is limited to GP-F05; later slices and every new dependency retain their own gates."
+      "notes": "Serial Global Preferences plan through completed GP-F05, production-accepted Units, and completed GP-CM01. GP-CM02R now reconciles the exact GP-CM03 engine/API, CLI, MCP, daemon, Project-genesis, security, concurrency, failure, and proof contract; GP-CM03 remains blocked on fresh GP-CM02V owner authorization."
+    },
+    "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md": {
+      "class": "governed",
+      "progress_anchor": "GLOBAL-PREFERENCES-COMPLETION",
+      "notes": "GP-CM02R planning-only exact build contract for the 11-active/45-reserved product service, six queries, two direct mutations, four proposal actions, stable failures, CLI/MCP authority, one configuration/writer path, eight-key Project Units genesis, atomic publication, immutable receipts, and cross-surface proof. It authorizes no implementation or dependency."
     },
     "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md": {
       "class": "governed",
@@ -245,7 +251,7 @@
     "specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md": {
       "class": "governed",
       "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-      "notes": "Owner-ratified GP-C06 catalog amended by reopened UNIT-I02R: 60 active V1 descriptors, 14 active ProjectPolicySeed rows plus one deferred seed-bearing schema, eight quantity-safe Global Units defaults, explicit unit-seed precedence, and honest exclusion of clay and unreviewed agent-authority rows. Fresh UNIT-I02V review is required; no implementation or dependency is authorized."
+      "notes": "Owner-ratified catalog with exactly 56 reserved identities, eleven production-active settings, and fourteen seed-class identities. GP-CM02R limits product requests to the eleven active keys and Project genesis to the eight active Units keys; the other six seed candidates, including the aggregate, remain reserved and inactive."
     },
     "research/preferences-system/GP_DRAFT_SETTINGS_CATALOG_SEED.md": {
       "class": "governed",
@@ -255,7 +261,7 @@
     "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md": {
       "class": "governed",
       "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-      "notes": "Controlling owner-directed shared Units service requirement over exact signed-integer nanometer authority, eight-field quantity-specific display policy, lossless edit behavior, exact decimal/scientific parsing, decimal-degree V1 input/display, deterministic legacy and pre-feature-Project migration, preference-independent interchange, and PM-040's Global-default to Project Working Units copy-once model with separate Publish/document authority. UNIT-I02R remains open for protected Global/Project target correction and UNIT-I02V review; no implementation, production acceptance, or dependency authorization."
+      "notes": "Controlling owner-directed shared Units service requirement over exact signed-integer nanometer authority, eight-field quantity-specific display policy, lossless editing, decimal/scientific parsing, decimal-degree V1 behavior, deterministic migration, preference-independent interchange, and PM-040 copy-once Project Working Units. UNIT-I03C is production-accepted; GP-CM02R limits new Project genesis to the eight active descriptors and keeps the aggregate inactive."
     },
     "research/process-quality/VISUAL_TRUTH_FILE_LANE_ENFORCEMENT_PACKET.md": {
       "class": "governed",
@@ -306,7 +312,8 @@
     },
     "docs/contracts/AI_CLI_MCP_TOOL_SURFACE.md": {
       "class": "governed",
-      "progress_anchor": "AI_CLI_MCP_TOOL_SURFACE"
+      "progress_anchor": "AI_CLI_MCP_TOOL_SURFACE",
+      "notes": "Shared seven-class tool contract with a GP-CM02R authority specialization: Global Preferences remains one typed engine service outside DesignModel; direct Set/Reset is human GUI/interactive CLI only, while MCP uses proposal plus a bounded human-acceptance handle and no adapter writes privately."
     },
     "docs/contracts/UI_LAYOUT_SYSTEM_CONTRACT.md": {
       "class": "governed",
@@ -859,7 +866,7 @@
       "class": "doctrine",
       "controlling": true,
       "progress_anchor": "GLOBAL-PREFERENCES-SPEC",
-      "notes": "Owner-ratified GP-C06 mechanism for typed Global Preferences authority, ProjectPolicySeed, resolution, persistence, search-first interaction, exact units, accessibility, and PM-034/035/036 preservation, with the Units live-role ambiguity superseded by PM-040. It authorizes no implementation, dependency, provider, service, execution, or prototype edit."
+      "notes": "Owner-ratified typed Global Preferences doctrine amended by GP-CM01 consumer-ready activation and the owner-directed GP-CM02R product boundary. Search is active-only; GP-CM03 is bounded to one typed service, human direct writes/MCP proposals, eight active Units seeds, atomic Project genesis, and no live following. No implementation or dependency is authorized."
     },
     "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md": {
       "class": "doctrine",
@@ -877,7 +884,7 @@
       "class": "doctrine",
       "controlling": true,
       "progress_anchor": "SHARED-UNITS-SURFACE-PARITY",
-      "notes": "Owner-ratified Units ownership: Global Preferences supplies future-Project defaults; ProjectDisplayUnits is the Project-owned Working Units authority for editor display and contextual bare input; Publish/document units remain separate; explicit suffix and interchange independence are preserved. No runtime, protected-prototype, Project Preferences, Publish, dependency, or production authorization."
+      "notes": "Owner-ratified Units ownership: Global supplies future-Project defaults; ProjectDisplayUnits owns working display/input; Publish units remain separate. GP-CM02R limits Project genesis to the eight active Units descriptors and keeps the aggregate plus five other seed candidates inactive. No GP-CM03 implementation or dependency is authorized."
     },
     "docs/gui/DATUM_NATIVE_TERMINAL_SPEC.md": {
       "class": "governed",
