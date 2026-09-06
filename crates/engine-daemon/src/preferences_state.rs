@@ -5,6 +5,7 @@ use eda_engine::preferences::{
     GlobalPreferencesProductService, InstalledPreferenceLocationProvider,
     PreferenceAcceptanceBroker, PreferenceActorKindV1, PreferenceActorV1,
     PreferenceLocationProvider, PreferenceProductRequestV1, PreferenceProductResponseV1,
+    ProjectGenesisRequestV1, ProjectGenesisResponseV1, ProjectUnitsSourceV1,
 };
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -13,6 +14,13 @@ use uuid::Uuid;
 #[serde(deny_unknown_fields)]
 pub(super) struct McpPreferenceProductParams {
     pub request: PreferenceProductRequestV1,
+    pub actor: PreferenceActorV1,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(super) struct McpProjectGenesisParams {
+    pub request: ProjectGenesisRequestV1,
     pub actor: PreferenceActorV1,
 }
 
@@ -48,6 +56,29 @@ impl PreferencesDaemonState {
             return Err("preferences MCP actor kind must be mcp_agent".to_owned());
         }
         Ok(self.service.execute(request, &actor))
+    }
+
+    pub fn execute_project_genesis(
+        &self,
+        request: ProjectGenesisRequestV1,
+        actor: PreferenceActorV1,
+    ) -> Result<ProjectGenesisResponseV1, String> {
+        if actor.kind != PreferenceActorKindV1::McpAgent {
+            return Err("Project-genesis MCP actor kind must be mcp_agent".to_owned());
+        }
+        match &request.units_source {
+            ProjectUnitsSourceV1::Global { .. } => {
+                Ok(self.service.execute_project_genesis(request, &actor))
+            }
+            ProjectUnitsSourceV1::Factory { .. } => {
+                let service = GlobalPreferencesProductService::factory_only(format!(
+                    "daemon-factory:{}",
+                    actor.invocation_id
+                ))
+                .map_err(|error| format!("factory genesis startup refused: {error:?}"))?;
+                Ok(service.execute_project_genesis(request, &actor))
+            }
+        }
     }
 }
 
@@ -167,5 +198,53 @@ mod tests {
         assert_eq!(result["schema"]["name"], "datum.preferences.describe");
         assert_eq!(result["context"]["active_descriptor_count"], 11);
         assert!(!base.exists());
+    }
+
+    #[test]
+    fn json_rpc_project_genesis_uses_the_same_typed_factory_envelope() {
+        let (base, mut preferences) = state("project-genesis");
+        std::fs::create_dir(&base).unwrap();
+        let destination = base.join("MCP Project");
+        let request_id = Uuid::new_v4();
+        let mut engine = eda_engine::api::Engine::new().unwrap();
+        let response = crate::dispatch::dispatch_request_with_preferences(
+            &mut engine,
+            &mut preferences,
+            crate::JsonRpcRequest {
+                jsonrpc: "2.0".to_owned(),
+                id: json!(41),
+                method: "project.genesis".to_owned(),
+                params: serde_json::to_value(McpProjectGenesisParams {
+                    request: ProjectGenesisRequestV1 {
+                        request_id,
+                        destination: destination.clone(),
+                        project_name: "MCP Project".to_owned(),
+                        project_id: Some(Uuid::new_v4()),
+                        units_source: ProjectUnitsSourceV1::Factory {
+                            profile_id: "datum.units.factory.v1".to_owned(),
+                        },
+                    },
+                    actor: actor(PreferenceActorKindV1::McpAgent),
+                })
+                .unwrap(),
+            },
+        );
+        assert!(response.error.is_none());
+        let envelope = response.result.unwrap();
+        assert_eq!(envelope["ok"], true);
+        assert_eq!(envelope["schema"]["name"], "datum.project.new");
+        assert_eq!(envelope["result"]["request_id"], request_id.to_string());
+        assert_eq!(
+            envelope["result"]["units_receipt"]["items"]
+                .as_array()
+                .unwrap()
+                .len(),
+            8
+        );
+        assert!(!base.join("preferences").exists());
+        eda_engine::substrate::ProjectResolver::new(destination)
+            .resolve()
+            .unwrap();
+        let _ = std::fs::remove_dir_all(base);
     }
 }

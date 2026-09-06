@@ -275,6 +275,16 @@ pub struct ProjectGenesisResultV1 {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ProjectGenesisResponseV1 {
+    pub ok: bool,
+    pub schema: PreferenceSchemaRefV1,
+    pub context: PreferenceContextV1,
+    pub result: Option<ProjectGenesisResultV1>,
+    pub error: Option<PreferenceErrorV1>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", content = "generation", rename_all = "snake_case")]
 pub enum HeadExpectationV1 {
     Missing,

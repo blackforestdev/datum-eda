@@ -34,7 +34,7 @@ EXPECTED_PUBLIC_PREFIX_COUNTS = {
     "datum.pcb": 46,
     "datum.pool": 3,
     "datum.preferences": 10,
-    "datum.project": 4,
+    "datum.project": 5,
     "datum.proposal": 48,
     "datum.query": 48,
     "datum.replacement": 5,
@@ -45,7 +45,7 @@ EXPECTED_PUBLIC_PREFIX_COUNTS = {
 }
 
 EXPECTED_PUBLIC_COUNT = sum(EXPECTED_PUBLIC_PREFIX_COUNTS.values())
-EXPECTED_REGISTERED_COUNT = 537
+EXPECTED_REGISTERED_COUNT = 538
 EXPECTED_HIDDEN_COMPATIBILITY_COUNT = 187
 ALLOWED_HIDDEN_RETIREMENT_STATUSES = {
     "retained_until_migration_plan",

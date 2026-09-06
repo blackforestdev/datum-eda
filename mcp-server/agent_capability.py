@@ -19,6 +19,8 @@ UNATTENDED = "unattended"
 _CAPABILITY_ORDER = (INSPECT, PROPOSE, APPLY_APPROVED, UNATTENDED)
 _CAPABILITY_LEVEL = {name: index for index, name in enumerate(_CAPABILITY_ORDER)}
 _WRITE_CLASS_CAPABILITY = {
+    "preference_proposal_apply": APPLY_APPROVED,
+    "project_genesis": UNATTENDED,
     "proposal_metadata_write": PROPOSE,
     "proposal_review_state_write": UNATTENDED,
     "journaled_project_settings": UNATTENDED,

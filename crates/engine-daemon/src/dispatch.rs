@@ -6,7 +6,9 @@ use super::check_run_view::{
     daemon_drc_check_run_view, daemon_erc_check_run_view, explain_drc_finding_by_fingerprint,
     explain_erc_finding_by_fingerprint,
 };
-use super::preferences_state::{McpPreferenceProductParams, PreferencesDaemonState};
+use super::preferences_state::{
+    McpPreferenceProductParams, McpProjectGenesisParams, PreferencesDaemonState,
+};
 use super::*;
 
 pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> JsonRpcResponse {
@@ -36,6 +38,19 @@ fn dispatch_request_inner(
         };
         return match serde_json::from_value::<McpPreferenceProductParams>(request.params) {
             Ok(params) => match preferences.execute_mcp(params.request, params.actor) {
+                Ok(response) => serialized_success_response(request.id, response),
+                Err(message) => error_response(request.id, -32602, &message),
+            },
+            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+        };
+    }
+
+    if request.method == "project.genesis" {
+        let Some(preferences) = preferences else {
+            return error_response(request.id, -32601, "Project genesis service is unavailable");
+        };
+        return match serde_json::from_value::<McpProjectGenesisParams>(request.params) {
+            Ok(params) => match preferences.execute_project_genesis(params.request, params.actor) {
                 Ok(response) => serialized_success_response(request.id, response),
                 Err(message) => error_response(request.id, -32602, &message),
             },

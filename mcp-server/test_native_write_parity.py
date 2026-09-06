@@ -17,8 +17,6 @@ from server_runtime import EngineDaemonClient, StdioToolHost
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-
-
 def datum_cli_prefix() -> list[str]:
     configured = os.environ.get("DATUM_CLI_BIN")
     if configured:
@@ -28,8 +26,10 @@ def datum_cli_prefix() -> list[str]:
         return [str(binary)]
     return ["cargo", "run", "-q", "-p", "datum-eda-cli", "--"]
 
-
 def run_cli_json(root: Path, *args: str):
+    # Genesis atomically publishes to the absent TemporaryDirectory path.
+    if args[:2] == ("project", "new") and Path(args[2]) == root:
+        root.rmdir()
     completed = subprocess.run(
         [*datum_cli_prefix(), "--format", "json", *args],
         cwd=REPO_ROOT,
@@ -41,7 +41,6 @@ def run_cli_json(root: Path, *args: str):
         detail = completed.stderr.strip() or completed.stdout.strip()
         raise AssertionError(f"datum-eda CLI failed: {detail}")
     return json.loads(completed.stdout)
-
 def call_tool(host: StdioToolHost, name: str, arguments: dict):
     arguments = guarded_journal_arguments(host, name, arguments)
     response = host.handle_message(

@@ -191,21 +191,29 @@ fn project_new_json_output_reports_created_ids() {
     let output = execute(cli).expect("project new should succeed");
     let report: serde_json::Value =
         serde_json::from_str(&output).expect("project new JSON should parse");
-    assert_eq!(report["project_root_identity"], root.display().to_string());
-    assert!(report["project_id"].as_str().is_some());
-    assert!(report["request_id"].as_str().is_some());
+    assert_eq!(report["ok"], true);
+    assert_eq!(report["schema"]["name"], "datum.project.new");
+    assert_eq!(
+        report["result"]["project_root_identity"],
+        root.display().to_string()
+    );
+    assert!(report["result"]["project_id"].as_str().is_some());
+    assert!(report["result"]["request_id"].as_str().is_some());
     assert!(
-        report["genesis_request_digest"]
+        report["result"]["genesis_request_digest"]
             .as_str()
             .unwrap()
             .starts_with("sha256:")
     );
     assert_eq!(
-        report["units_receipt"]["items"].as_array().unwrap().len(),
+        report["result"]["units_receipt"]["items"]
+            .as_array()
+            .unwrap()
+            .len(),
         8
     );
     assert_eq!(
-        report["published_manifest_digests"]
+        report["result"]["published_manifest_digests"]
             .as_object()
             .unwrap()
             .len(),
@@ -265,7 +273,7 @@ fn project_new_exact_request_replays_and_conflicting_retry_exits_two() {
     .unwrap();
     assert_eq!(code, 2);
     assert_eq!(
-        serde_json::from_str::<serde_json::Value>(&refusal).unwrap()["code"],
+        serde_json::from_str::<serde_json::Value>(&refusal).unwrap()["error"]["code"],
         "idempotency_conflict"
     );
     let _ = std::fs::remove_dir_all(root);
@@ -291,7 +299,7 @@ fn project_new_refuses_global_expectation_in_factory_mode_without_publication() 
     .unwrap();
     assert_eq!(code, 2);
     assert_eq!(
-        serde_json::from_str::<serde_json::Value>(&refusal).unwrap()["code"],
+        serde_json::from_str::<serde_json::Value>(&refusal).unwrap()["error"]["code"],
         "invalid_request"
     );
     assert!(!root.exists());

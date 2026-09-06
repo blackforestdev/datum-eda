@@ -258,7 +258,9 @@ class StdioToolHost:
             fenced_arguments = validate_context_fence(
                 self._discovery, name, arguments, TOOL_BY_NAME
             )
-            if isinstance(name, str) and name.startswith("datum.preferences."):
+            if isinstance(name, str) and (
+                name.startswith("datum.preferences.") or name == "datum.project.new"
+            ):
                 fenced_arguments = dict(fenced_arguments)
                 fenced_arguments["_transport_actor"] = {
                     "kind": "mcp_agent",
