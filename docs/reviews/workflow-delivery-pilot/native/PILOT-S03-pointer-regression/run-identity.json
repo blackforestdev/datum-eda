@@ -1,0 +1,14 @@
+{
+  "gui_sha256": "608f46e6ed8c37a2f584a148873a13ee119eafff4364069e242ea8d3ead2331b",
+  "cli_sha256": "ecb6760e3d15c999f2410ca3cf4f87aca64316514a5f2bf219c66b275b7b0488",
+  "fixture_sha256": "91198c1cca854debd9780510e4c4ce00048d1e8fc379402aaa8d6ce240087828",
+  "scratch": "/tmp/datum-wdq-native-1_966ssn",
+  "display": ":3",
+  "bus": "unix:path=/tmp/datum-wdq-native-1_966ssn/runtime/at-spi/bus_3,guid=facf424592e79480ebaa94736a9dceca",
+  "source_commit": "bd84f3f4e85307d51c7e42ed6768519589a00b1c",
+  "window_size": [
+    1280,
+    768
+  ],
+  "scale": 1
+}

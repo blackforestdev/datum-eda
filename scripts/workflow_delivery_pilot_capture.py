@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Capture actual native pilot inputs on a private headless X11/accessibility bus.
 
-Run under dbus-run-session. Requires existing system weston, Xwayland, xdotool,
+Creates its own private session bus. Requires existing system weston, Xwayland, xdotool,
 gdbus and ImageMagick import tools. No installs, product mutation API, seeded GUI
 state, acceptance verdict or synthetic dispatch/accessible objects. The caller
 supplies explicit input steps; raw observations remain separate from evaluation.
@@ -85,6 +85,25 @@ class Capture:
         return process
 
     def setup(self):
+        # Never mutate an inherited bus's activation environment, even when the
+        # caller accidentally launches this tool from their desktop terminal.
+        read_bus, write_bus = os.pipe()
+        try:
+            self.start(["dbus-daemon", "--session", "--nofork", f"--print-address={write_bus}",
+                        "--address=unix:path=" + str(self.scratch / "session-bus")],
+                       "session-bus.log", pass_fds=(write_bus,))
+            os.close(write_bus)
+            write_bus = None
+            if not select.select([read_bus], [], [], 20)[0]:
+                raise RuntimeError("private session bus did not start")
+            address = os.read(read_bus, 1024).decode().strip()
+            if not address.startswith("unix:path=" + str(self.scratch / "session-bus")):
+                raise RuntimeError("unexpected private session bus address")
+            self.env["DBUS_SESSION_BUS_ADDRESS"] = address
+        finally:
+            os.close(read_bus)
+            if write_bus is not None:
+                os.close(write_bus)
         self.env["WAYLAND_DISPLAY"] = "wayland-wdq-pilot"
         self.start(["weston", "--backend=headless", "--renderer=pixman", "--no-config",
                     "--socket=wayland-wdq-pilot", "--width=1600", "--height=1000",
@@ -109,9 +128,19 @@ class Capture:
             if write_fd is not None:
                 os.close(write_fd)
         # Keep WAYLAND_DISPLAY for the server, but force the GUI onto X11 below.
+        # Explicitly update THIS session bus activation environment;
+        # otherwise at-spi-bus-launcher inherits the desktop runtime socket path.
+        activation = {key: self.env[key] for key in (
+            "XDG_RUNTIME_DIR", "XDG_CONFIG_HOME", "XDG_CACHE_HOME", "XDG_DATA_HOME",
+            "DISPLAY", "WAYLAND_DISPLAY")}
+        self.run("gdbus", "call", "--session", "--dest", "org.freedesktop.DBus",
+                 "--object-path", "/org/freedesktop/DBus", "--method",
+                 "org.freedesktop.DBus.UpdateActivationEnvironment", repr(activation))
         address = self.run("gdbus", "call", "--session", "--dest", "org.a11y.Bus",
                            "--object-path", "/org/a11y/bus", "--method", "org.a11y.Bus.GetAddress")
         self.bus = re.search(r"'([^']+)'", address).group(1)
+        if not self.bus.startswith("unix:path=" + self.env["XDG_RUNTIME_DIR"] + "/"):
+            raise RuntimeError("accessibility bus escaped this run's private runtime directory")
         self.start(["gdbus", "monitor", "--address", self.bus], "accessibility-events.log")
         save(self.out / "run-identity.json", {
             "gui_sha256": digest(self.args.gui.resolve()), "cli_sha256": digest(self.args.cli.resolve()),
@@ -121,6 +150,7 @@ class Capture:
             "window_size": [1280, 768], "scale": 1,
         })
         self.launch()
+        save(self.out / "preferences-before.json", files(Path(self.env["XDG_CONFIG_HOME"])))
 
     def until(self, predicate, description):
         deadline = time.monotonic() + 30
@@ -186,21 +216,49 @@ class Capture:
             self.run("xdotool", "mousemove", "--window", self.window, *action[1:3])
         elif kind == "key":
             self.run("xdotool", "key", "--clearmodifiers", *action[1:])
+        elif kind == "focus-window":
+            windows = self.run("xdotool", "search", "--onlyvisible", "--pid", self.gui.pid).splitlines()
+            matches = [window for window in windows
+                       if self.run("xdotool", "getwindowname", window) == action[1]]
+            if len(matches) != 1:
+                raise RuntimeError("exactly one owned native window must match the focus request")
+            self.run("xdotool", "windowfocus", "--sync", matches[0])
         elif kind == "wheel":
             self.run("xdotool", "click", "--repeat", action[1], "--delay", "120", "4")
         elif kind == "capture":
             name = action[1]
             if not re.fullmatch(r"[a-zA-Z0-9_-]+", name):
                 raise ValueError("safe capture name required")
+            # Asynchronous dialogs may publish after the preceding input returns.
+            # Query live semantics first, let its frame present, then capture it;
+            # do not pair an old screenshot with a later accessibility tree.
+            time.sleep(1)
+            nodes = self.accessible_tree()
+            time.sleep(0.25)
             self.run("import", "-window", self.window, self.out / (name + ".png"))
-            save(self.out / (name + "-atspi.json"), self.accessible_tree())
+            windows = self.run("xdotool", "search", "--onlyvisible", "--pid", self.gui.pid).splitlines()
+            window_records = []
+            for index, window in enumerate(windows):
+                title = self.run("xdotool", "getwindowname", window)
+                filename = name + ".png" if window == self.window else f"{name}-window-{index}.png"
+                if window != self.window:
+                    self.run("import", "-window", window, self.out / filename)
+                window_records.append({"window": window, "title": title, "capture": filename})
+            save(self.out / (name + "-windows.json"), window_records)
+            after_nodes = self.accessible_tree()
+            if nodes != after_nodes:
+                raise RuntimeError("accessibility state changed across native capture; rerun")
+            save(self.out / (name + "-atspi.json"), nodes)
             records = []
             for line in (self.out / f"gui-{self.launch_count}.log").read_text().splitlines():
                 if line.startswith("DATUM_ACTION_EVIDENCE "):
                     records.append(json.loads(line.removeprefix("DATUM_ACTION_EVIDENCE ")))
             if not records:
                 raise RuntimeError("production evidence stream absent")
-            save(self.out / (name + "-state.json"), records)
+            # The append-only GUI log retains the complete production stream.
+            # Each screenshot needs its latest state, not another cumulative copy.
+            save(self.out / (name + "-state.json"),
+                 [row for row in records if row["event"] == "state"][-1:])
         elif kind == "close":
             close_window(self.env["DISPLAY"], self.window)
             code = self.gui.wait(timeout=20)
@@ -223,6 +281,7 @@ class Capture:
             "changed_or_removed": [p for p, sha in self.before.items() if after.get(p) != sha],
             "new_paths": {p: sha for p, sha in after.items() if p not in self.before},
         })
+        save(self.out / "preferences-after.json", files(Path(self.env["XDG_CONFIG_HOME"])))
         for process in reversed(self.processes):
             if process.poll() is None:
                 process.terminate()
@@ -244,8 +303,6 @@ def main():
     group.add_argument("--actions-json")
     group.add_argument("--scenario", choices=[f"PILOT-S0{i}" for i in range(1, 6)])
     args = parser.parse_args()
-    if not os.environ.get("DBUS_SESSION_BUS_ADDRESS"):
-        parser.error("run inside a private dbus-run-session")
     capture = Capture(args)
     try:
         capture.setup()

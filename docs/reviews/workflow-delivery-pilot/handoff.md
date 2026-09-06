@@ -4,6 +4,112 @@ Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
 Status: G01–G03 complete; G04 in progress under a bounded nonoverlapping claim;
 activation remains off.
 
+## G04 native evidence: blocking defects, not completion
+
+### EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G04-NATIVE-BLOCKERS
+
+The production-observation implementation landed in `bd84f3f4`. Native evidence
+is under `native/PILOT-S01` through `native/PILOT-S05`, with an additional
+`native/PILOT-S03-pointer-regression` reproducer. These are real XTest inputs,
+native window captures, live AT-SPI responses/events, actual production dispatch
+records, normal-close records and before/after file hashes—not seeded previews.
+Per-capture state files retain the latest observed snapshot; complete production
+streams remain in the raw GUI logs, avoiding duplicated cumulative traces.
+No passing `proof.json`, G04 completion marker, independent replay verdict or
+owner acceptance is issued: the required pilot is **not passing**.
+
+Identified build receipts and the complete committed input manifest are in
+`native-build-verified/`. Source input closure:
+`bd84f3f4e85307d51c7e42ed6768519589a00b1c`.
+GUI SHA-256: `608f46e6ed8c37a2f584a148873a13ee119eafff4364069e242ea8d3ead2331b`.
+CLI SHA-256: `ecb6760e3d15c999f2410ca3cf4f87aca64316514a5f2bf219c66b275b7b0488`.
+The CLI was pinned through `EDA_CLI_BIN`; no implicit Cargo fallback was used.
+The source archive is retained at
+`/home/bfadmin/Documents/datum-wdq-source-hsci_eyy`. The shared worktree contains
+pre-existing ignored runtime/golden artifacts under `crates/`; they were neither
+deleted nor committed. Therefore source-clean evidence uses the verified Git
+archive, not a misleading claim that `git status` covers every build-root file.
+
+Observed outcomes:
+
+- S01: all three actual Fit entry points reached the same handler, restored the
+  scene-bounds fit/zoom 1.0 and preserved the selected pad, layout and other-pane
+  camera state. The selected pad was chosen by native pointer input.
+- S02: all six missing-action pointer/keyboard attempts refused with zero handler
+  invocation. Existing layer toggles and pane navigation remained functional.
+  **Visual refusal readability fails**: the transient strip clips the reason,
+  and opening Console History reveals overlapping wrapped messages.
+- S03: keyboard refusal in the unresolved pane works. The additional native
+  pointer test **fails**: clicking visibly disabled Fit changes focus from pane 1
+  to pane 0 and invokes Fit against Board. Board zoom changes from
+  `1.5735193490982056` to `1.0`, and the camera is recentered despite the displayed
+  unavailable context. This is not an acceptable availability/dispatch match.
+- S04: normal close/reopen and source/journal preservation were observed. New
+  paths are enumerated Terminal context/session/runtime sidecars, not new design
+  partitions or journal transactions. No Save/undo/crash-recovery claim is made.
+- S05: live native identities, focus, availability, descriptions and dismissal
+  were captured, including the existing Terminal and the separate native Global
+  Preferences window. This does not accept the Preferences implementation or
+  excuse the S02/S03 failures.
+
+`native-observations.json` records machine-check findings, explicitly not visual
+quality or acceptance. The pointer regression must remain red until corrected.
+Producer visual inspection of `native/PILOT-S02/refusal-history.png` is the
+readability failure evidence; a machine-check pass cannot override it.
+
+### Bounded corrective handoff requested, not yet authorized
+
+Two newly implicated shared production files are outside the current declared
+WDQ file scope. Before edits, obtain the owner/consumer handoff, review each full
+owning evidence route and synchronize the Frontier/beads lease. No change to the
+pilot's expected behavior, source-health policy, authority digests or prototypes
+is requested.
+
+| Finding | Exact correction boundary | Preserved behavior and required proof |
+| --- | --- | --- |
+| `dat-menu-pointer-pane-authority-sjn` | `crates/gui-app/src/runtime_primary_pointer.rs`, `handle_primary_click` pane-focus work before overlay dispatch; focused regression tests | A menu hit must not acquire the underlying pane before action admission. Preserve genuine canvas click-to-focus, Terminal/Preferences input ownership and the single camera resolver. Repeat disabled pointer Fit with pane 1 retained, no invocation and unchanged Board camera; rerun all three supported Fit paths. |
+| `dat-console-history-wrap-overlap-lkp` | `crates/gui-render/src/datum_console.rs`, history row measurement/advance and clipping; focused rendering tests | Make full refusal explanations readable at the reviewed split-pane size without overlapping adjacent rows. Preserve Console/Terminal separation, existing settings, manual history controls and Claude-owned visual authority. Prove native readability plus narrow-layout, scrolling and existing-consumer regressions. |
+
+The Preferences session need not resume general development to investigate these
+two fixes. Its GP-CM04/GP-CM05 owner boundary remains separate. Either grant this
+lane the exact corrective scope or hand the findings to an owning lane and return
+verified commits. G04 stays in progress; G05/G06 remain pending and enforcement
+stays off. Shared accessibility work is already committed in `4174fa24`; the
+observation hooks are committed in `bd84f3f4`. No uncommitted shared Rust changes
+are part of this evidence handoff.
+
+### Capture-tool corrections and retained diagnostics
+
+The source-archive wrapper initially supplied Cargo's target override after the
+guard boundary, so the guard measured another target. The caller now gives
+`--target-dir` to the guard itself and the final verified receipt comes from the
+correctly configured rerun. `dat-cargo-target-preflight-olt` captures the broader
+guard hardening follow-on; no resource policy was relaxed.
+
+The harness initially inherited an accessibility activation runtime directory,
+allowing concurrent private-session runs to collide on an AT-SPI socket. It now
+creates its own session bus, updates only that bus's activation environment, and
+rejects accessibility addresses outside its private runtime directory. The final
+records identify run-specific private sockets. Earlier collided runs are not
+used as final evidence. Capture also checks stable live semantics across the
+image and records all native windows: Preferences is a separate window, so an
+unchanged main-window capture alone is insufficient evidence of its appearance.
+Native dialog focus is explicit before sending its Escape key.
+
+Earlier diagnostic runs/receipts were moved intact to
+`/tmp/datum-wdq-g04-observation-oznPmN/`; nothing there was deleted or promoted to
+passing proof. The capture/build/observation tooling does not issue acceptance.
+
+Checkpoint verification: 90 workflow delivery/tooling tests and 50 selector/claim
+tests passed. Source health (1792 files), evidence traceability (20 routes/114
+artifacts), specification governance (203 specs), dependency authority, Cargo
+resource policy, Frontier validation/render and whitespace checks passed. The
+native observation evaluator deliberately exits 1 for the reproduced pointer
+scope failure; Console readability remains a separate producer visual failure.
+Native Preferences dismissal was targeted to its real window; subsequent View
+menu use and retained Terminal accessibility were observed without settings-file
+changes. These results do not claim a passing full drift suite or G04 acceptance.
+
 ## G04 shared accessibility handoff authorized
 
 Recorded 2026-09-06 19:42 UTC at clean HEAD

@@ -35,7 +35,7 @@ def missing(keyboard=True):
         if keyboard:
             steps += menu(x) + row_keys(index) + capture(name + "-keyboard-focused")
             steps += [["key", "Return"]] + capture(name + "-keyboard-refused")
-    return steps
+    return steps + view_action(21) + capture("refusal-history") + view_action(21)
 
 
 def actions(scenario):
@@ -80,6 +80,7 @@ def actions(scenario):
         steps += [["key", "Escape"]] + view_action(14) + menu(VIEW) + capture("board-live")
         steps += [["key", "Escape"]] + capture("menus-absent-terminal-retained")
         steps += menu(EDIT) + row_keys(6) + [["key", "Right"], ["key", "Return"]]
-        steps += capture("preferences-terminal-retained") + [["key", "Escape"]]
+        steps += capture("preferences-terminal-retained") + [["focus-window", "Global Preferences — Datum"],
+                    ["key", "Escape"], ["focus-window", "Datum EDA"]]
         return steps + menu(VIEW) + capture("menu-after-preferences") + [["key", "Escape"]]
     raise ValueError("unreviewed scenario: " + scenario)

@@ -1,0 +1,724 @@
+[
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788727176559747118,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "view-live"
+    ],
+    "time_ns": 1788727179096658406,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727179419483969,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "down-focus"
+    ],
+    "time_ns": 1788727181934599783,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Up"
+    ],
+    "time_ns": 1788727182250845870,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "fit-focus"
+    ],
+    "time_ns": 1788727184813456232,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727185136517528,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727185463702233,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727185786734039,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727186108970212,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727186432198807,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "layers-focus"
+    ],
+    "time_ns": 1788727188919669978,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Return"
+    ],
+    "time_ns": 1788727189241851623,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "layers-dismissed"
+    ],
+    "time_ns": 1788727190997306516,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      595,
+      16
+    ],
+    "time_ns": 1788727191404111763,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727191727240946,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Up"
+    ],
+    "time_ns": 1788727192049642291,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "about-focus"
+    ],
+    "time_ns": 1788727193993702747,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Return"
+    ],
+    "time_ns": 1788727194316746658,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "about-dismissed"
+    ],
+    "time_ns": 1788727196102827373,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      543,
+      16
+    ],
+    "time_ns": 1788727196511653781,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727196833641005,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Up"
+    ],
+    "time_ns": 1788727197155562064,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "documents-focus"
+    ],
+    "time_ns": 1788727199087066966,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Return"
+    ],
+    "time_ns": 1788727199410020271,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "documents-dismissed"
+    ],
+    "time_ns": 1788727201163171048,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788727201570451356,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Escape"
+    ],
+    "time_ns": 1788727201887498770,
+    "launch": 1
+  },
+  {
+    "action": [
+      "move",
+      450,
+      400
+    ],
+    "time_ns": 1788727202196331656,
+    "launch": 1
+  },
+  {
+    "action": [
+      "wheel",
+      2
+    ],
+    "time_ns": 1788727202745779942,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "f"
+    ],
+    "time_ns": 1788727203062672131,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "escape-fit"
+    ],
+    "time_ns": 1788727204812246110,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788727205219857969,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727205539724288,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727205861484730,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727206183353495,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727206505732224,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727206828459307,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727207151731524,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727207472850752,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727207796085730,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727208118615651,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727208440659329,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727208758426907,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727209079687569,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727209402310027,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727209725632060,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727210046712282,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Return"
+    ],
+    "time_ns": 1788727210369197949,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788727210777275421,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "schematic-live"
+    ],
+    "time_ns": 1788727213278514715,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Escape"
+    ],
+    "time_ns": 1788727213601860895,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788727214006327222,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727214329074190,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727214651870485,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727214976379779,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727215302049808,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727215619678197,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727215936281977,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727216253268143,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727216570118661,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727216887216137,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727217203664764,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727217520418121,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727217837334565,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727218153922812,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727218471236399,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Return"
+    ],
+    "time_ns": 1788727218788518734,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788727219192586496,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "board-live"
+    ],
+    "time_ns": 1788727221905732057,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Escape"
+    ],
+    "time_ns": 1788727222223524245,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "menus-absent-terminal-retained"
+    ],
+    "time_ns": 1788727224038122672,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      148,
+      16
+    ],
+    "time_ns": 1788727224443145099,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727224759765605,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727225077001778,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727225393523431,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727225710963234,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727226028794305,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Down"
+    ],
+    "time_ns": 1788727226346061943,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Right"
+    ],
+    "time_ns": 1788727226662907029,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Return"
+    ],
+    "time_ns": 1788727226985118643,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "preferences-terminal-retained"
+    ],
+    "time_ns": 1788727229212931137,
+    "launch": 1
+  },
+  {
+    "action": [
+      "focus-window",
+      "Global Preferences \u2014 Datum"
+    ],
+    "time_ns": 1788727229528286370,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Escape"
+    ],
+    "time_ns": 1788727229851859084,
+    "launch": 1
+  },
+  {
+    "action": [
+      "focus-window",
+      "Datum EDA"
+    ],
+    "time_ns": 1788727230179098026,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788727230588986284,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "menu-after-preferences"
+    ],
+    "time_ns": 1788727233407951626,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Escape"
+    ],
+    "time_ns": 1788727233731924230,
+    "launch": 1
+  },
+  {
+    "action": [
+      "close"
+    ],
+    "time_ns": 1788727234253555260,
+    "launch": 1
+  }
+]
