@@ -10,10 +10,25 @@ from unittest.mock import patch
 from workflow_delivery_pilot_capture import Capture, OBJECT, files
 from workflow_delivery_pilot_scenarios import actions
 from workflow_delivery_pilot_build import build_command, snapshot_inputs
-from workflow_delivery_pilot_observations import flag, records
+from workflow_delivery_pilot_observations import flag, records, native_menu_events_present
 
 
 class CaptureTests(unittest.TestCase):
+    def test_monitor_error_or_startup_alone_is_not_native_menu_event_evidence(self):
+        for raw in ["Error: Destination is not specified", "member=NameAcquired",
+                    "interface=org.a11y.atspi.Event.Object; member=ChildrenChanged"]:
+            self.assertFalse(native_menu_events_present(raw))
+        self.assertTrue(native_menu_events_present(
+            "interface=org.a11y.atspi.Event.Object; member=ChildrenChanged\n"
+            "path=/org/a11y/atspi/accessible/menus/n123; "
+            "interface=org.a11y.atspi.Event.Object; member=StateChanged"))
+
+    def test_dead_event_monitor_blocks_input_instead_of_producing_silent_evidence(self):
+        capture = Capture.__new__(Capture)
+        capture.monitor = SimpleNamespace(poll=lambda: 1)
+        with self.assertRaisesRegex(RuntimeError, "event monitor stopped"):
+            capture.step(["click", 1, 1])
+
     def test_accessible_states_parse_word_bits_not_the_uint32_type_name(self):
         node = {"states": "([uint32 4096, 0],)"}
         self.assertTrue(flag(node, 12))

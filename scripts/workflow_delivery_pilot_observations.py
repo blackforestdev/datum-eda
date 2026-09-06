@@ -39,6 +39,13 @@ def flag(node, bit):
     return bool(int(words[0]) & (1 << bit))
 
 
+def native_menu_events_present(event_log):
+    return ("interface=org.a11y.atspi.Event.Object" in event_log
+            and "member=ChildrenChanged" in event_log
+            and any("path=/org/a11y/atspi/accessible/menus/" in line
+                    and "member=StateChanged" in line for line in event_log.splitlines()))
+
+
 def evaluate(root, receipts):
     sid = root.name
     findings = []
@@ -49,6 +56,10 @@ def evaluate(root, receipts):
     identity = read(root / "run-identity.json")
     check("identified GUI and CLI", all(identity[k + "_sha256"] == receipts[k]["binary_sha256"]
           for k in ("gui", "cli")), {k: identity[k + "_sha256"] for k in ("gui", "cli")})
+    event_log = (root / "accessibility-events.log").read_text()
+    check("live native accessibility events recorded",
+          native_menu_events_present(event_log),
+          "Owned-bus menu-state and child signals required; monitor startup/errors are not event evidence")
     diff = read(root / "source-diff.json")
     check("archived source and journal unchanged", not diff["changed_or_removed"], diff)
     permitted = (".datum/terminal-contexts/", ".datum/tool-sessions/")

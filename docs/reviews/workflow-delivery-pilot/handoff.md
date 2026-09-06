@@ -4,6 +4,67 @@ Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
 Status: G01–G03 complete; G04 in progress under a bounded nonoverlapping claim;
 activation remains off.
 
+## G04 identified producer proof validated
+
+### EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G04-NATIVE-PROOF
+
+The corrected native pilot passes producer verification on source input closure
+`dde90c754e0a76366a927a0addda60103bd50534`. The clean source archive is retained at
+`/home/bfadmin/Documents/datum-wdq-source-oy3bxeo8`.
+GUI SHA-256: `2bd1daa4d1a3e8eb393130cd0d543c7f610cfcf3478364827e4e3b807c18f560`.
+CLI SHA-256: `80f8a2b1dc741a60b21bab6e397ff82adc57fcef22672e00d662b5608fdbed4b`.
+`corrected-build/` records the actual guarded build, complete input manifest and
+both executable receipts. All final native runs use these exact binaries and
+the archived real-project-derived fixture, on private headless displays/buses.
+
+`proof.json`, `proof-artifacts/`, `producer-assessment.json` and
+`corrected-native/PILOT-S01` through `PILOT-S05` bind the five native scenarios,
+19 explicit required-dimension assertions, production registry/context exports,
+actual dispatches and 392 result-artifact references. The extra
+`PILOT-S03-pointer-regression` is bound into S03. All machine checks pass;
+producer inspection confirms fitted geometry, retained selection, unavailable
+rows, readable complete refusals in opened history, visible menu focus,
+context-dependent Fit, normal reopen, and retained native Preferences/Terminal
+objects. This is bounded producer proof, not independent review or acceptance.
+
+The standard proof, environment and native-correlation validators passed against
+the exact staged Git tree. They checked source-commit/input closure, successful
+build receipt, artifact hashes, explicit environment, all five scenarios, all
+nine reviewed entry surfaces, and actual production mappings. No trust policy,
+enrollment, owner receipt, review verdict or enforcement activation was created.
+The owner boundary for GP-CM04/GP-CM05 remains separate.
+
+Remaining findings, deliberately not hidden by this pilot:
+
+- `dat-console-oversized-history-9uz`: one arbitrarily long record taller than
+  the panel is still clipped; record-based scrolling cannot reveal its tail.
+- `dat-console-scroll-range-4y3`: scrolling past actual history can show an
+  empty panel. `corrective-diagnostics/PILOT-S02-wheel-three/` and
+  `corrective-diagnostics/before-event-monitor-fix/native/console-narrow/`
+  retain that native evidence. The 900-pixel single-pane diagnostic shows full
+  refusal readability, but not acceptable overscroll behavior. These findings
+  are outside the finite action-readiness assertions and remain open for G05
+  independent triage and future owning-lane work, not producer-blessed defects.
+- The initial capture monitor used `gdbus monitor` without its required
+  destination. Its one-line error was discovered by inspecting the raw log,
+  not accepted as an event stream. Those runs are retained under
+  `corrective-diagnostics/before-event-monitor-fix/`, outside final proof. The
+  corrected owned-bus monitor stays alive across inputs/reopen; all five final
+  runs contain real menu StateChanged and ChildrenChanged signals. Tooling
+  regressions reject an exited monitor and an error/startup-only log.
+
+Verification: 96 workflow-delivery/tooling tests and 50 selector/claim tests
+passed. The earlier three-crate Rust tests and strict Clippy remain on unchanged
+production bytes. Source health (1795 files), evidence traceability (20 routes /
+114 artifacts), specification governance (203 specs), parity (16 inventories),
+menu model, Console boundary, dependency authority, Cargo resource policy and
+Frontier/render checks pass. Source/document/JSON whitespace is clean; raw
+accessibility logs intentionally retain significant Terminal-cell spaces, which
+an unrestricted `git diff --check` reports as trailing whitespace. No log bytes
+were trimmed or authority/golden updated to hide a failure. No full drift-suite,
+full Console, Preferences, keyboard-only application or EDA-authoring acceptance
+is asserted.
+
 ## G04 corrective implementation checkpoint
 
 The owner-authorized menu-pointer correction resolves open-menu hits before

@@ -56,7 +56,7 @@ def actions(scenario):
         return steps + [["key", "Return"]] + capture("keyboard-fitted")
     if scenario == "PILOT-S02":
         steps = missing()
-        steps += view_action(21) + [["move", 350, 630], ["wheel", 3]]
+        steps += view_action(21) + [["move", 350, 630], ["wheel", 1]]
         steps += capture("refusal-history-earlier") + view_action(21)
         # Existing F.Cu layer visibility swatch toggled twice, no missing handler.
         steps += [["click", 18, 531]] + capture("existing-layer-toggle-off")

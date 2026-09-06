@@ -1,0 +1,26 @@
+{
+  "binary_sha256": "2bd1daa4d1a3e8eb393130cd0d543c7f610cfcf3478364827e4e3b807c18f560",
+  "build_command": [
+    "python3",
+    "/home/bfadmin/Documents/datum-wdq-source-oy3bxeo8/scripts/run_cargo_guarded.py",
+    "--target-dir",
+    "/home/bfadmin/Documents/datum-eda/target",
+    "--workload",
+    "proof",
+    "--",
+    "cargo",
+    "build",
+    "--offline",
+    "--locked",
+    "--manifest-path",
+    "/home/bfadmin/Documents/datum-wdq-source-oy3bxeo8/Cargo.toml",
+    "-p",
+    "datum-gui-app",
+    "-p",
+    "datum-eda-cli",
+    "--bins"
+  ],
+  "toolchain": "rustc 1.93.1 (01f6ddf75 2026-02-11)\nbinary: rustc\ncommit-hash: 01f6ddf7588f42ae2d7eb0a2f21d44e8e96674cf\ncommit-date: 2026-02-11\nhost: x86_64-unknown-linux-gnu\nrelease: 1.93.1\nLLVM version: 21.1.8",
+  "input_manifest_sha256": "54578f6ada63c3f1c65ac8accaef8f5a7e92d93cffc3d202dbbbf75ea565290d",
+  "exit_code": 0
+}
