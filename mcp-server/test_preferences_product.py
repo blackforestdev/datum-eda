@@ -86,6 +86,40 @@ class TestPreferencesProductMcp(unittest.TestCase):
         self.assertEqual(payload["request"]["mutation"], mutation)
         self.assertNotIn("actor", payload["request"])
 
+    def test_project_new_requires_explicit_units_source_and_injects_actor(self) -> None:
+        schema = TOOL_BY_NAME["datum.project.new"]["inputSchema"]
+        self.assertIn("units_source", schema["required"])
+        self.assertNotIn("actor", schema["properties"])
+        daemon = FakeDaemonClient()
+        host = StdioToolHost(daemon)
+        request_id = "00000000-0000-4000-8000-000000000041"
+        response = host.handle_message(
+            {
+                "jsonrpc": "2.0",
+                "id": 41,
+                "method": "tools/call",
+                "params": {
+                    "name": "datum.project.new",
+                    "arguments": {
+                        "request_id": request_id,
+                        "destination": "/tmp/mcp-project",
+                        "project_name": "MCP Project",
+                        "units_source": {
+                            "kind": "factory",
+                            "profile_id": "datum.units.factory.v1",
+                        },
+                    },
+                },
+            }
+        )
+        envelope = response["result"]["content"][0]["json"]
+        self.assertTrue(envelope["ok"])
+        self.assertEqual(envelope["schema"]["name"], "datum.project.new")
+        method, params = daemon.calls[-1]
+        self.assertEqual(method, "project.genesis")
+        self.assertEqual(params["actor"]["kind"], "mcp_agent")
+        self.assertEqual(params["request"]["units_source"]["kind"], "factory")
+
 
 if __name__ == "__main__":
     unittest.main()

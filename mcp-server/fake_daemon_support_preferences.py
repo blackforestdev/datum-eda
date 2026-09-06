@@ -6,7 +6,36 @@ from typing import Any
 
 from server_runtime import JsonRpcResponse
 class FakeDaemonClientPreferencesMixin:
-    pass
+    def project_new(
+        self: Any,
+        request_id: str,
+        destination: str,
+        project_name: str,
+        project_id: str | None,
+        units_source: dict[str, Any],
+        transport_actor: dict[str, Any],
+    ) -> JsonRpcResponse:
+        request = {
+            "request_id": request_id,
+            "destination": destination,
+            "project_name": project_name,
+            "project_id": project_id,
+            "units_source": units_source,
+        }
+        params = {"request": request, "actor": transport_actor}
+        self.calls.append(("project.genesis", params))
+        return JsonRpcResponse(
+            "2.0",
+            902,
+            {
+                "ok": True,
+                "schema": {"name": "datum.project.new", "version": 1},
+                "context": {"scope": "global_this_device"},
+                "result": {"request_id": request_id},
+                "error": None,
+            },
+            None,
+        )
 
 
 def _install_fake(name: str, payload_class: str, payload_kind: str, fields: list[str]) -> None:

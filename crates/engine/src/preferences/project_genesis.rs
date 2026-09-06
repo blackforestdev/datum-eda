@@ -10,8 +10,9 @@ use sha2::{Digest, Sha256};
 
 use super::{
     GlobalPreferencesProductService, PreferenceActorV1, PreferenceErrorCodeV1, PreferenceErrorV1,
-    ProjectGenesisRequestV1, ProjectGenesisResultV1, ProjectUnitsReceiptSourceV2,
-    ProjectUnitsSeedItemV2, ProjectUnitsSeedReceiptV2, ProjectUnitsSourceV1,
+    PreferenceSchemaRefV1, ProjectGenesisRequestV1, ProjectGenesisResponseV1,
+    ProjectGenesisResultV1, ProjectUnitsReceiptSourceV2, ProjectUnitsSeedItemV2,
+    ProjectUnitsSeedReceiptV2, ProjectUnitsSourceV1,
 };
 use crate::api::native_write::genesis::{
     GenesisSpec, bootstrap_native_project_with_units_receipt_value,
@@ -62,6 +63,35 @@ pub(super) enum GenesisCheckpoint {
 }
 
 impl GlobalPreferencesProductService {
+    pub fn execute_project_genesis(
+        &self,
+        request: ProjectGenesisRequestV1,
+        actor: &PreferenceActorV1,
+    ) -> ProjectGenesisResponseV1 {
+        match self.create_project(request, actor) {
+            Ok(result) => ProjectGenesisResponseV1 {
+                ok: true,
+                schema: PreferenceSchemaRefV1 {
+                    name: "datum.project.new".to_owned(),
+                    version: 1,
+                },
+                context: self.context(),
+                result: Some(result),
+                error: None,
+            },
+            Err(error) => ProjectGenesisResponseV1 {
+                ok: false,
+                schema: PreferenceSchemaRefV1 {
+                    name: "datum.project.new".to_owned(),
+                    version: 1,
+                },
+                context: error.current_context.clone(),
+                result: None,
+                error: Some(error),
+            },
+        }
+    }
+
     pub fn create_project(
         &self,
         request: ProjectGenesisRequestV1,

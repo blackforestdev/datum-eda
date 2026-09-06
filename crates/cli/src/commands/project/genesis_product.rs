@@ -4,8 +4,8 @@ use super::*;
 use eda_engine::preferences::repository::GenerationRef;
 use eda_engine::preferences::{
     GlobalPreferencesProductService, InstalledPreferenceLocationProvider, PreferenceActorKindV1,
-    PreferenceActorV1, PreferenceErrorCodeV1, PreferenceErrorV1, ProjectGenesisRequestV1,
-    ProjectGenesisResultV1, ProjectUnitsSourceV1,
+    PreferenceActorV1, PreferenceErrorCodeV1, PreferenceErrorV1, PreferenceSchemaRefV1,
+    ProjectGenesisRequestV1, ProjectGenesisResponseV1, ProjectUnitsSourceV1,
 };
 
 impl ProjectNewArgs {
@@ -15,14 +15,13 @@ impl ProjectNewArgs {
         } else {
             format.clone()
         };
-        match execute(self) {
-            Ok(result) => Ok((render_success(&effective_format, &result), 0)),
-            Err(error) => Ok((render_refusal(&effective_format, &error), 2)),
-        }
+        let response = execute(self);
+        let code = if response.ok { 0 } else { 2 };
+        Ok((render_response(&effective_format, &response), code))
     }
 }
 
-fn execute(args: ProjectNewArgs) -> Result<ProjectGenesisResultV1, PreferenceErrorV1> {
+fn execute(args: ProjectNewArgs) -> ProjectGenesisResponseV1 {
     let name = args.name.unwrap_or_else(|| {
         args.path
             .file_name()
@@ -33,18 +32,34 @@ fn execute(args: ProjectNewArgs) -> Result<ProjectGenesisResultV1, PreferenceErr
     let writer = format!("datum-cli-{}", std::process::id());
     let service = match args.units_source {
         ProjectUnitsSourceArg::Global => {
-            GlobalPreferencesProductService::open(&InstalledPreferenceLocationProvider, &writer)?
+            match GlobalPreferencesProductService::open(
+                &InstalledPreferenceLocationProvider,
+                &writer,
+            ) {
+                Ok(service) => service,
+                Err(error) => return failure_response(error),
+            }
         }
-        ProjectUnitsSourceArg::Factory => GlobalPreferencesProductService::factory_only(&writer)?,
+        ProjectUnitsSourceArg::Factory => {
+            match GlobalPreferencesProductService::factory_only(&writer) {
+                Ok(service) => service,
+                Err(error) => return failure_response(error),
+            }
+        }
     };
     let units_source = match args.units_source {
         ProjectUnitsSourceArg::Global => ProjectUnitsSourceV1::Global {
-            expected_generation: args
+            expected_generation: match args
                 .expected_preferences
                 .as_deref()
                 .map(serde_json::from_str::<GenerationRef>)
                 .transpose()
-                .map_err(|error| invalid_request(&service, error.to_string()))?,
+            {
+                Ok(value) => value,
+                Err(error) => {
+                    return failure_response(invalid_request(&service, error.to_string()));
+                }
+            },
         },
         ProjectUnitsSourceArg::Factory if args.expected_preferences.is_none() => {
             ProjectUnitsSourceV1::Factory {
@@ -52,7 +67,7 @@ fn execute(args: ProjectNewArgs) -> Result<ProjectGenesisResultV1, PreferenceErr
             }
         }
         ProjectUnitsSourceArg::Factory => {
-            return Err(invalid_request(
+            return failure_response(invalid_request(
                 &service,
                 "--expected-preferences is valid only with --units-source global".to_owned(),
             ));
@@ -64,7 +79,7 @@ fn execute(args: ProjectNewArgs) -> Result<ProjectGenesisResultV1, PreferenceErr
         local_actor_id: std::env::var("USER").unwrap_or_else(|_| "unavailable".to_owned()),
         invocation_id: Uuid::new_v4(),
     };
-    service.create_project(
+    service.execute_project_genesis(
         ProjectGenesisRequestV1 {
             request_id: args.request_id.unwrap_or_else(Uuid::new_v4),
             destination: args.path,
@@ -74,6 +89,19 @@ fn execute(args: ProjectNewArgs) -> Result<ProjectGenesisResultV1, PreferenceErr
         },
         &actor,
     )
+}
+
+fn failure_response(error: PreferenceErrorV1) -> ProjectGenesisResponseV1 {
+    ProjectGenesisResponseV1 {
+        ok: false,
+        schema: PreferenceSchemaRefV1 {
+            name: "datum.project.new".to_owned(),
+            version: 1,
+        },
+        context: error.current_context.clone(),
+        result: None,
+        error: Some(error),
+    }
 }
 
 fn invalid_request(service: &GlobalPreferencesProductService, reason: String) -> PreferenceErrorV1 {
@@ -87,24 +115,27 @@ fn invalid_request(service: &GlobalPreferencesProductService, reason: String) ->
     }
 }
 
-fn render_success(format: &OutputFormat, result: &ProjectGenesisResultV1) -> String {
+fn render_response(format: &OutputFormat, response: &ProjectGenesisResponseV1) -> String {
     match format {
-        OutputFormat::Json => render_output(format, result),
-        OutputFormat::Text => [
-            format!("project_root: {}", result.project_root_identity),
-            format!("project_id: {}", result.project_id),
-            format!("request_id: {}", result.request_id),
-            format!("genesis_request_digest: {}", result.genesis_request_digest),
-            format!("units_source: {:?}", result.units_receipt.source),
-            format!("units_seed_items: {}", result.units_receipt.items.len()),
-        ]
-        .join("\n"),
-    }
-}
-
-fn render_refusal(format: &OutputFormat, error: &PreferenceErrorV1) -> String {
-    match format {
-        OutputFormat::Json => render_output(format, error),
-        OutputFormat::Text => format!("error: {:?}: {}", error.code, error.message),
+        OutputFormat::Json => render_output(format, response),
+        OutputFormat::Text => match (&response.result, &response.error) {
+            (Some(result), None) => [
+                format!("project_root: {}", result.project_root_identity),
+                format!("project_id: {}", result.project_id),
+                format!("request_id: {}", result.request_id),
+                format!("genesis_request_digest: {}", result.genesis_request_digest),
+                format!("units_source: {:?}", result.units_receipt.source),
+                format!("units_seed_items: {}", result.units_receipt.items.len()),
+            ]
+            .join("\n"),
+            (None, Some(error)) => {
+                let code = serde_json::to_value(&error.code)
+                    .ok()
+                    .and_then(|value| value.as_str().map(str::to_owned))
+                    .unwrap_or_else(|| "invalid_request".to_owned());
+                format!("{code}: {}", error.message)
+            }
+            _ => "invalid_project_genesis_envelope".to_owned(),
+        },
     }
 }
