@@ -335,3 +335,133 @@ fn mutation_idempotency_survives_restart_and_replays_the_original_generation() {
         1
     );
 }
+
+#[test]
+fn mcp_acceptance_broker_binds_human_session_repository_and_invocation() {
+    let (_locations, service) = service("acceptance-broker");
+    let mcp_actor = actor(PreferenceActorKindV1::McpAgent);
+    let prepared = service
+        .prepare_proposal(
+            PreferenceMutationRequestV1::SetUser {
+                key: "datum.accessibility.reduced_motion".to_owned(),
+                value: json!(true),
+                expected: HeadExpectationV1::Missing,
+                request_id: Uuid::new_v4(),
+                reason: "reduce animation".to_owned(),
+            },
+            "request local human review".to_owned(),
+            &mcp_actor,
+        )
+        .unwrap();
+    let repository_identity = "missing:test-repository";
+    let daemon_id = Uuid::new_v4();
+    let mut broker = PreferenceAcceptanceBroker::new(daemon_id);
+    broker
+        .register_prepared(&prepared.proposal, repository_identity)
+        .unwrap();
+    let request = AuthorizeMcpPreferenceApplyV1 {
+        proposal_id: prepared.proposal.proposal_id,
+        proposal_digest: prepared.proposal.proposal_digest.clone(),
+        originating_mcp_session: mcp_actor.session_id.clone(),
+    };
+    let apply_invocation = Uuid::new_v4();
+    let human = actor(PreferenceActorKindV1::HumanGui);
+    let public = broker
+        .authorize_mcp_apply(
+            &request,
+            &human,
+            repository_identity,
+            apply_invocation,
+            1_000,
+        )
+        .unwrap();
+    assert!(public.authorized);
+    assert_eq!(public.expires_at_unix_ms, 301_000);
+    let encoded = serde_json::to_value(&public).unwrap();
+    assert!(encoded.get("handle").is_none());
+    assert!(encoded.get("acceptance_id").is_none());
+
+    assert_eq!(
+        broker.authorization_for_apply(
+            &prepared.proposal,
+            &mcp_actor.session_id,
+            repository_identity,
+            Uuid::new_v4(),
+            2_000,
+        ),
+        Err(PreferenceAcceptanceRefusal::InvocationMismatch)
+    );
+    let handle = broker
+        .authorization_for_apply(
+            &prepared.proposal,
+            &mcp_actor.session_id,
+            repository_identity,
+            apply_invocation,
+            2_000,
+        )
+        .unwrap();
+    assert_ne!(handle.acceptance_id(), Uuid::nil());
+    assert_eq!(handle.accepting_actor(), &human);
+    broker.consume(&handle).unwrap();
+    assert_eq!(
+        broker.consume(&handle),
+        Err(PreferenceAcceptanceRefusal::Consumed)
+    );
+}
+
+#[test]
+fn mcp_acceptance_broker_expires_and_closes_without_portable_authority() {
+    let (_locations, service) = service("acceptance-expiry");
+    let mcp_actor = actor(PreferenceActorKindV1::McpAgent);
+    let prepared = service
+        .prepare_proposal(
+            PreferenceMutationRequestV1::ResetUser {
+                key: "datum.accessibility.reduced_motion".to_owned(),
+                expected: HeadExpectationV1::Missing,
+                request_id: Uuid::new_v4(),
+                reason: "reset animation".to_owned(),
+            },
+            "request local human review".to_owned(),
+            &mcp_actor,
+        )
+        .unwrap();
+    let mut broker = PreferenceAcceptanceBroker::new(Uuid::new_v4());
+    broker
+        .register_prepared(&prepared.proposal, "missing:test-repository")
+        .unwrap();
+    let invocation = Uuid::new_v4();
+    broker
+        .authorize_mcp_apply(
+            &AuthorizeMcpPreferenceApplyV1 {
+                proposal_id: prepared.proposal.proposal_id,
+                proposal_digest: prepared.proposal.proposal_digest.clone(),
+                originating_mcp_session: mcp_actor.session_id.clone(),
+            },
+            &actor(PreferenceActorKindV1::HumanCli),
+            "missing:test-repository",
+            invocation,
+            10,
+        )
+        .unwrap();
+    assert_eq!(
+        broker.authorization_for_apply(
+            &prepared.proposal,
+            &mcp_actor.session_id,
+            "missing:test-repository",
+            invocation,
+            300_011,
+        ),
+        Err(PreferenceAcceptanceRefusal::Expired)
+    );
+    broker.close_session(&mcp_actor.session_id);
+    assert_eq!(
+        broker.authorization_for_apply(
+            &prepared.proposal,
+            &mcp_actor.session_id,
+            "missing:test-repository",
+            invocation,
+            20,
+        ),
+        Err(PreferenceAcceptanceRefusal::Expired)
+    );
+}
