@@ -43,6 +43,42 @@ impl GlobalPreferencesService {
         )
     }
 
+    pub(super) fn set_user_with_metadata(
+        &mut self,
+        key: PreferenceKey,
+        value: Value,
+        expected: Option<&GenerationRef>,
+        metadata: super::repository::MutationMetadata,
+    ) -> Result<Vec<GlobalPreferenceRow>, PreferenceServiceRefusal> {
+        self.commit_user_mutation_with_metadata(
+            PreferenceMutation::Set {
+                partition: PreferencePartition::User,
+                key,
+                value: value.clone(),
+            },
+            expected,
+            Some(value),
+            metadata,
+        )
+    }
+
+    pub(super) fn reset_user_with_metadata(
+        &mut self,
+        key: PreferenceKey,
+        expected: Option<&GenerationRef>,
+        metadata: super::repository::MutationMetadata,
+    ) -> Result<Vec<GlobalPreferenceRow>, PreferenceServiceRefusal> {
+        self.commit_user_mutation_with_metadata(
+            PreferenceMutation::Remove {
+                partition: PreferencePartition::User,
+                key,
+            },
+            expected,
+            None,
+            metadata,
+        )
+    }
+
     fn commit_user_mutation(
         &mut self,
         mutation: PreferenceMutation,
@@ -50,11 +86,21 @@ impl GlobalPreferencesService {
         draft: Option<Value>,
         reason: &str,
     ) -> Result<Vec<GlobalPreferenceRow>, PreferenceServiceRefusal> {
+        let metadata = self.metadata(reason);
+        self.commit_user_mutation_with_metadata(mutation, expected, draft, metadata)
+    }
+
+    fn commit_user_mutation_with_metadata(
+        &mut self,
+        mutation: PreferenceMutation,
+        expected: Option<&GenerationRef>,
+        draft: Option<Value>,
+        metadata: super::repository::MutationMetadata,
+    ) -> Result<Vec<GlobalPreferenceRow>, PreferenceServiceRefusal> {
         if !self.status.writable() {
             return Err(self.refusal_for_status(draft));
         }
         let key = self.validate_product_mutation(&mutation, draft.clone())?;
-        let metadata = self.metadata(reason);
         let actual_expected = match (&self.status, expected) {
             (PreferenceServiceStatus::DefaultsOnly, None) => {
                 if matches!(mutation, PreferenceMutation::Remove { .. }) {
