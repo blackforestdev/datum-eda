@@ -95,6 +95,7 @@ def completion_proposal(manifest, base):
         if predecessor["key"] == "WORKFLOW-DELIVERY-QUALITY":
             unblocks = predecessor["completion"]["post_completion"]["unblocks_issue_ids"]
             unblocks.remove(ISSUE)
+            predecessor["unblocks"].remove(ISSUE)
     return manifest
 
 
