@@ -10,6 +10,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use serde_json::Value;
 
 mod catalog;
+mod product_acceptance;
 mod product_idempotency;
 mod product_model;
 mod product_proposal;
@@ -28,6 +29,9 @@ mod surface_full;
 mod units_seed;
 
 pub use catalog::{active_v1_registry, reserved_v1_registry};
+pub use product_acceptance::{
+    PreferenceAcceptanceBroker, PreferenceAcceptanceHandleV1, PreferenceAcceptanceRefusal,
+};
 pub use product_model::*;
 pub use product_service::{
     FixedPreferenceLocationProvider, GlobalPreferencesProductService,

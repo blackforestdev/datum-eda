@@ -325,6 +325,22 @@ pub struct RejectedProposalResultV1 {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct AuthorizeMcpPreferenceApplyV1 {
+    pub proposal_id: Uuid,
+    pub proposal_digest: String,
+    pub originating_mcp_session: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct McpPreferenceAuthorizationResultV1 {
+    pub proposal_id: Uuid,
+    pub authorized: bool,
+    pub expires_at_unix_ms: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", content = "result", rename_all = "snake_case")]
 pub enum PreferenceProposalResultV1 {
     Prepared(PreparedProposalResultV1),
