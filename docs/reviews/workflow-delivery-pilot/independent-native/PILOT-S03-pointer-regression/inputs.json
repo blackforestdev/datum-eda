@@ -1,0 +1,93 @@
+[
+  {
+    "action": [
+      "move",
+      450,
+      400
+    ],
+    "time_ns": 1788730517041730886,
+    "launch": 1
+  },
+  {
+    "action": [
+      "wheel",
+      2
+    ],
+    "time_ns": 1788730517586226183,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "board-zoomed"
+    ],
+    "time_ns": 1788730519441026238,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Tab"
+    ],
+    "time_ns": 1788730519759121363,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788730520168047574,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "schematic-fit-disabled"
+    ],
+    "time_ns": 1788730522908656483,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      230,
+      53
+    ],
+    "time_ns": 1788730523313543620,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "after-disabled-pointer-attempt"
+    ],
+    "time_ns": 1788730525170023558,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      369,
+      351
+    ],
+    "time_ns": 1788730525576071840,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "canvas-focus-restored"
+    ],
+    "time_ns": 1788730527428495922,
+    "launch": 1
+  },
+  {
+    "action": [
+      "close"
+    ],
+    "time_ns": 1788730527944310611,
+    "launch": 1
+  }
+]

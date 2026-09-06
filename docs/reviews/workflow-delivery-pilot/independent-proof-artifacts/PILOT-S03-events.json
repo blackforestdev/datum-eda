@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "scenario_id": "PILOT-S03",
+  "producer_session": "wdq-independent-review-20260906",
+  "method": "native_input",
+  "binary_sha256": "2bd1daa4d1a3e8eb393130cd0d543c7f610cfcf3478364827e4e3b807c18f560",
+  "authority_sha256": "b598304e6cb13770cf024015eb4963584b0bc948c8280130d5104d812f15f562",
+  "inputs": [
+    "Zoom Board with two wheel-up events, then open View and press Escape; press F after dismissal.",
+    "Use Tab to focus the schematic placeholder; open View and inspect Fit; attempt Enter on Fit, then dismiss with Escape.",
+    "Return to Board with Shift+Tab; zoom and invoke F; check each missing-consumer row remains unavailable after these focus changes.",
+    "Use the existing View / Fill Pane: Schematic and Fill Pane: Board entries to change the focused pane content; repeat readiness inspection and Escape dismissal without touching Project source."
+  ],
+  "dispatches": [
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "view.fit",
+      "eligible": true,
+      "enabled": true,
+      "entry_surface": "view-fit-shortcut",
+      "handler_ref": {
+        "path": "crates/gui-app/src/runtime_camera_pane.rs",
+        "symbol": "datum_gui::Runtime::fit_camera"
+      },
+      "invoked": true,
+      "unavailable_reason": "Available",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-1-unresolved",
+      "dispatch_key": "view.fit",
+      "eligible": false,
+      "enabled": false,
+      "entry_surface": "view-fit-menu-keyboard",
+      "handler_ref": {
+        "path": "crates/gui-app/src/runtime_camera_pane.rs",
+        "symbol": "datum_gui::Runtime::fit_camera"
+      },
+      "invoked": false,
+      "unavailable_reason": "Fit is unavailable because the focused pane has no resolved camera view.",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "view.fit",
+      "eligible": true,
+      "enabled": true,
+      "entry_surface": "view-fit-shortcut",
+      "handler_ref": {
+        "path": "crates/gui-app/src/runtime_camera_pane.rs",
+        "symbol": "datum_gui::Runtime::fit_camera"
+      },
+      "invoked": true,
+      "unavailable_reason": "Available",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "help.about",
+      "eligible": false,
+      "enabled": false,
+      "entry_surface": "help-about-menu-pointer",
+      "handler_ref": null,
+      "invoked": false,
+      "unavailable_reason": "About Datum is unavailable in this build.",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "window.documents",
+      "eligible": false,
+      "enabled": false,
+      "entry_surface": "window-documents-menu-pointer",
+      "handler_ref": null,
+      "invoked": false,
+      "unavailable_reason": "Documents menu action is unavailable in this build.",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-0-resolved",
+      "dispatch_key": "view.layers",
+      "eligible": false,
+      "enabled": false,
+      "entry_surface": "view-layers-menu-pointer",
+      "handler_ref": null,
+      "invoked": false,
+      "unavailable_reason": "Layer Visibility menu action is unavailable in this build.",
+      "mutation_count": 0
+    },
+    {
+      "context": "pane-1-unresolved",
+      "dispatch_key": "view.fit",
+      "eligible": false,
+      "enabled": false,
+      "entry_surface": "view-fit-menu-pointer",
+      "handler_ref": {
+        "path": "crates/gui-app/src/runtime_camera_pane.rs",
+        "symbol": "datum_gui::Runtime::fit_camera"
+      },
+      "invoked": false,
+      "unavailable_reason": "Fit is unavailable because the focused pane has no resolved camera view.",
+      "mutation_count": 0
+    }
+  ],
+  "actual_visible": "I inspected all thirteen S03 images and four separate pointer-regression images. Fit is gray on the unresolved schematic, enabled again on Board, and Escape permits editor F. Missing consumers remain gray and their finite reasons are readable. Filling the active pane with Schematic removes its Board scene and disables Fit; filling Board restores both. The disabled pointer regression leaves the enlarged Board untouched and the schematic focused; a subsequent canvas click really acquires Board.",
+  "actual_state": "Actual live nodes toggle Fit enabled/sensitive with pane content. Refused Fit never invokes or changes the other camera. The additional same-binary pointer run preserves focused pane and Board camera on the disabled attempt, then acquires editor pane zero on real canvas input. Explicit view changes are the only changes; archived source/journal and preferences hashes remain identical."
+}

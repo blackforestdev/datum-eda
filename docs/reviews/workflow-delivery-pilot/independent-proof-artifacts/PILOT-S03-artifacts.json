@@ -1,0 +1,414 @@
+{
+  "kind": "datum.workflow-delivery.artifacts/v1",
+  "scenario_id": "PILOT-S03",
+  "events": [
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-proof-artifacts/PILOT-S03-events.json",
+      "sha256": "86a03b67ab79ecd5793e548ef57e1c5c2f46e0d18899e7012d482c7da6a8a794"
+    }
+  ],
+  "captures": [
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/about-disabled.png",
+      "sha256": "c29724a6fb4bf8ecd6863ea7c79173a1af5cc4da12bbd6d645e76740da938a4c"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/about-pointer-refused.png",
+      "sha256": "3567e81c3a2af5dd205fe155f878a6c1281738c2d82926992f313feaefd45490"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/board-fit-restored.png",
+      "sha256": "8ff4da4b8547f1d82c19fe91cc199fb3184631d44941a85b033017ee6ee1bcfc"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/documents-disabled.png",
+      "sha256": "0cef4be0fa9eecc5e7967dd5ad25ec8f5f2d959241fcb16dcdb100ba845db506"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/documents-pointer-refused.png",
+      "sha256": "53c5472af4490333516163bfff1ce529ae12c6118ea7f126558860de50f8cd65"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/escape-editor-fit.png",
+      "sha256": "6dc24207b1075d89b4c5c30784b121a54b44042cfba1ce403c25416e0f387b95"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/filled-board-enabled.png",
+      "sha256": "187cb011bf9c11dfaf7f45aa718b39d23dc2883ac6e5144af9d3ddf81ef4fb2a"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/filled-schematic-disabled.png",
+      "sha256": "555ed569489a36ee2281b4ae2853b964b43461a96eff66e2d30090587ef804c0"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/layers-disabled.png",
+      "sha256": "6fe80c8b4cdc3e30638634fdaf35bffdc7bd389c3915997ed22509791afd3e92"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/layers-pointer-refused.png",
+      "sha256": "5bbbfddfff0f75a8403b3825c89e0cc982493c9d496a44285aadefea0e07571d"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/refusal-history.png",
+      "sha256": "030944b4bce8348fd6662ad5ddc82c75d6442fe477c4196aa9a3cf0ec6bc5577"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/schematic-fit-disabled.png",
+      "sha256": "97703b2c2badee1fdaeb28db8bef3cb213e5b25fe6f16dc09e4ea643b23e9ffd"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/schematic-refused.png",
+      "sha256": "b2af17c9523155255dfcd9ae2cee4be1b416ff1de1293f12101781331cef5a1e"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/after-disabled-pointer-attempt.png",
+      "sha256": "672c0eeb43680b40a2b60d0fbbdedb5405ba6360573145c82c39b5a764e43882"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/board-zoomed.png",
+      "sha256": "c6af30c6cf2b967ed14d113334bf65c5bf1778fdc0d123cbb64a12e041787dd6"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/canvas-focus-restored.png",
+      "sha256": "851a80cff89781bba36dbc7955e42e27e4f0ed47d074dd948f8add6611f936eb"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/schematic-fit-disabled.png",
+      "sha256": "b37c6a571824655d2b24d0e80755d6c97f0639be07ec7c4cb11bc1b2af660259"
+    }
+  ],
+  "state": [
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/about-disabled-atspi.json",
+      "sha256": "f5e8cd5f5fa071e1f5e0dc9f5addd91b87bfaae59815f8a6640e12fb127af966"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/about-disabled-state.json",
+      "sha256": "96e0f171d9553013ff278c2e6a5caf6851c374a013d4285983f3ce9d2ac97d40"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/about-disabled-windows.json",
+      "sha256": "e9fe917e5327a7880a4f019eccd9dcdf201b024b0f1a5415e11d9226731cd339"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/about-pointer-refused-atspi.json",
+      "sha256": "7d79a750886a4033192bd155c7cb3b4dca7c7713ca0a235b0e2a8ae9e3c63aa0"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/about-pointer-refused-state.json",
+      "sha256": "aa087ee1d34f00d6afb874c9f005c2a46f115e7abed8850263f3642994f34dc5"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/about-pointer-refused-windows.json",
+      "sha256": "8d3a34c629e24197bb4b84d501f96ab25a1d46912080db657c6a870d0dd7f05d"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/accessibility-events.log",
+      "sha256": "a9d110a71669ccbb9f79dc6a46492905e43e34b2908a3317e2630b53e3be341c"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/board-fit-restored-atspi.json",
+      "sha256": "7d79a750886a4033192bd155c7cb3b4dca7c7713ca0a235b0e2a8ae9e3c63aa0"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/board-fit-restored-state.json",
+      "sha256": "2a3279a05785d44257bc70226c785823cdebf6a1cb1158646cc11fb68a450a8e"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/board-fit-restored-windows.json",
+      "sha256": "732f1b8da537268643194a9aff930bdfc11318e6ca6943e8078eb7e08c70f87a"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/documents-disabled-atspi.json",
+      "sha256": "6841ef03d81f8a5829da06f39ef71b04f2c9aef9c69918e933d7953d55d145d2"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/documents-disabled-state.json",
+      "sha256": "a4f500bf7b5dae9d400dcfc5955f445521c089c4f063dcb02335358b957cfa38"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/documents-disabled-windows.json",
+      "sha256": "d57489915ee0548e7f4e679567c8e0fc15c1517616305a250005d7755e7af333"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/documents-pointer-refused-atspi.json",
+      "sha256": "7d79a750886a4033192bd155c7cb3b4dca7c7713ca0a235b0e2a8ae9e3c63aa0"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/documents-pointer-refused-state.json",
+      "sha256": "8ec396395e83e3489aadc12aba3893d8260ed0dc8a078fd7fbb7bcdb64f61297"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/documents-pointer-refused-windows.json",
+      "sha256": "f0f1215df3683c9c62de0a787b02af29dec60d56197ee3af9c1e65c5a4fa381c"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/escape-editor-fit-atspi.json",
+      "sha256": "7d79a750886a4033192bd155c7cb3b4dca7c7713ca0a235b0e2a8ae9e3c63aa0"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/escape-editor-fit-state.json",
+      "sha256": "dd9227b100031d1a4dce6c6b03f0556808f35bdb6391cfc58a7f161deda59ce7"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/escape-editor-fit-windows.json",
+      "sha256": "98a15bb4bbc377eb6d73a728dbd17a93650bdd6887234872b5cef8ca31fb039c"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/filled-board-enabled-atspi.json",
+      "sha256": "42dd22b704b4b9c00a2765c339696c2db2b08618e5c3f04dc295acc88e635e01"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/filled-board-enabled-state.json",
+      "sha256": "b8320790830860ed706bc9d672c3b89e6b74cea5cd15ceb616ec485d532d099b"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/filled-board-enabled-windows.json",
+      "sha256": "dc0478aa8cf92e8c76a764da6a4b759a43fa70cab0278e35a878f38f265239e9"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/filled-schematic-disabled-atspi.json",
+      "sha256": "6ce1d2874c6378e3dc3d9d100383e15d0c24be7a55a858d13ff9518e6fd9307e"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/filled-schematic-disabled-state.json",
+      "sha256": "4766993a32164957b49af692f8af6e31946868fbbbf2fce2e4a1634406571f69"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/filled-schematic-disabled-windows.json",
+      "sha256": "cc4d5586669470fb724af90de6d9dc387042b30ca051b645d0269d58bd33bd39"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/gui-1.log",
+      "sha256": "bd4f929fb8c07275d050c710a003719d5d8a014c35d45cc1b3ea3092d9e25c13"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/inputs.json",
+      "sha256": "4bfaabb88c51c99de960cb5538bff0c306248a71e7d1bdfa2ccb82f41d73a6d2"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/layers-disabled-atspi.json",
+      "sha256": "ed7e5776d1d061637b99fae264fd21de21e3566205892a682987763181cc03b2"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/layers-disabled-state.json",
+      "sha256": "810582a731fa1009bd3576a1380c0eb7d2006dc98813b692d4a35e8874b54235"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/layers-disabled-windows.json",
+      "sha256": "8fdc01ae5d883a571529cb9fa6de793fb3c805f6b10a4e3315c9a652cabd63a9"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/layers-pointer-refused-atspi.json",
+      "sha256": "7d79a750886a4033192bd155c7cb3b4dca7c7713ca0a235b0e2a8ae9e3c63aa0"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/layers-pointer-refused-state.json",
+      "sha256": "a3379cbd65478892d0d35377d51995ea763e9a0c56493fda1509668d11aefe78"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/layers-pointer-refused-windows.json",
+      "sha256": "e843436565f7cbe5368568c6b3f576f94bb106dd20206f5e9f741a4300036502"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/preferences-after.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/preferences-before.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/refusal-history-atspi.json",
+      "sha256": "7d79a750886a4033192bd155c7cb3b4dca7c7713ca0a235b0e2a8ae9e3c63aa0"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/refusal-history-state.json",
+      "sha256": "1007378454d3cc595aeb65bb7714b8df5ee2559abb6d578ce10b3b78cefa90e3"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/refusal-history-windows.json",
+      "sha256": "6134e9b1cb2c0bc4bbee00c810fe240393510f0e4667561d8656271084fb54b7"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/requested-inputs.json",
+      "sha256": "359b08b8d7f76eba61094321ec5b6c9d6b9f38dee26b2f817f38498d40aeb9a1"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/run-identity.json",
+      "sha256": "752330408bf7e684b921fd21abe2251ab9b3a0d871a17d0241b706d37dd6f265"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/schematic-fit-disabled-atspi.json",
+      "sha256": "6ce1d2874c6378e3dc3d9d100383e15d0c24be7a55a858d13ff9518e6fd9307e"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/schematic-fit-disabled-state.json",
+      "sha256": "e9802ba3588f27fe221140ba3930c96cccd11190f0c8f8d92be3044730b844af"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/schematic-fit-disabled-windows.json",
+      "sha256": "b2b6c22ff9e51adcb14e04fc179285165a5efb7d2a4e37ad895b96554bbf1cc4"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/schematic-refused-atspi.json",
+      "sha256": "7d79a750886a4033192bd155c7cb3b4dca7c7713ca0a235b0e2a8ae9e3c63aa0"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/schematic-refused-state.json",
+      "sha256": "b108b936f70987c00f44e9a8fab9c8de63ee384ba5e91638652514a649309ab9"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/schematic-refused-windows.json",
+      "sha256": "b25992bfa073635e33f35224d2e4abba56d8f300926618d91686c32c963f71ba"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/session-bus.log",
+      "sha256": "a0f5436201875465a24e575bb2cf3184f18400ff47ad2fc831018a6edb72afe4"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/source-after.json",
+      "sha256": "9aad63fc2b631ba3ec0e7eab8a84f3063bca71be3173b506ffdcebe0e400a6ed"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/source-before.json",
+      "sha256": "4b22f5039c08998e2492634048b65a372bf18b15f9c810bb7e6c606e2d0d0340"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/source-diff.json",
+      "sha256": "aec3321903913adf51a813ad3526704e7d43e7dac29a839017fd35d1c47dc822"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/weston.log",
+      "sha256": "59980dac2e990c8af64f797ecfb36705e7d7b32ccdf4078cdd5bd14c316a68ec"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03/xwayland.log",
+      "sha256": "18b994563c61904f959cb44346126933ebd488bf232ed5ab5e7f9fab0cd38b2c"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/accessibility-events.log",
+      "sha256": "21d599e34cf34d1b7cf83b15a0b75080e326f8c3ca5a3ca4ceca23066fab1421"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/after-disabled-pointer-attempt-atspi.json",
+      "sha256": "66c3ee6fd2127c91b16b21b1664483cf9796893dc571319ea550311d01706680"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/after-disabled-pointer-attempt-state.json",
+      "sha256": "89d9d43fac8113a5db3d0a2cc87c1c70330027af67fcc078e4b97f03ddf6dcef"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/after-disabled-pointer-attempt-windows.json",
+      "sha256": "cfd1573a3a12d37039cec26616613f481a8e64ebd6a308444abb026be9551855"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/board-zoomed-atspi.json",
+      "sha256": "66c3ee6fd2127c91b16b21b1664483cf9796893dc571319ea550311d01706680"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/board-zoomed-state.json",
+      "sha256": "67ccd8d3d91cdd92d5ac608cc9ea2f901a84f81d588bb2e8fd98a4698f6a70d7"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/board-zoomed-windows.json",
+      "sha256": "2c331ce78a80484f381c33ea5a0c580c725b3802860329113dc67fee134d6699"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/canvas-focus-restored-atspi.json",
+      "sha256": "66c3ee6fd2127c91b16b21b1664483cf9796893dc571319ea550311d01706680"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/canvas-focus-restored-state.json",
+      "sha256": "7f4962478cb226dff00d0045be58f23ffb26822eb2e23d4ab3c5ed14be74340d"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/canvas-focus-restored-windows.json",
+      "sha256": "5fc81e7d01047e06aad1177a399f84c54012363d01090f177c1c26d6dc0a887d"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/gui-1.log",
+      "sha256": "6b7459d2b138b1b606f4e2d58b8598cce4d2b325a289a6a9f963fa4205e45fd2"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/inputs.json",
+      "sha256": "31c285b457e5cac0652a79b7dd4ef96190714ea19cfc7d2c2289d28f7e454705"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/preferences-after.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/preferences-before.json",
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/requested-inputs.json",
+      "sha256": "570f0ec2a282e0db9f0553cfad3343895fd16b22ba80d53f560fb64e8f658622"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/run-identity.json",
+      "sha256": "25c6a2423608566d2b67cba9fc7324451f1699b15eff665862a8209d2154a8f7"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/schematic-fit-disabled-atspi.json",
+      "sha256": "c8ab910e72d84b503029226dec19ebd6e71594cfa98e93d025487932ea72c7ca"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/schematic-fit-disabled-state.json",
+      "sha256": "0f2688177d80007786385699937c2dc302d03427169e2e0c8f536b0135ef683a"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/schematic-fit-disabled-windows.json",
+      "sha256": "b2b6c22ff9e51adcb14e04fc179285165a5efb7d2a4e37ad895b96554bbf1cc4"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/session-bus.log",
+      "sha256": "dc243cf405a7f6fa11e02ba61965876854b817e69de53c3189114db33641bdee"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/source-after.json",
+      "sha256": "ab4d302c8007fb57b19d1ed142518ba9d38ac953a500d3c6787857308c742099"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/source-before.json",
+      "sha256": "4b22f5039c08998e2492634048b65a372bf18b15f9c810bb7e6c606e2d0d0340"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/source-diff.json",
+      "sha256": "ea7351d109304b69e52e89428cbdc91c2c610453d5d4b1916c27c028b108c5fb"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/weston.log",
+      "sha256": "f88cd61b2b0ac64058edca99cfe9b13b3be5ee9e57b60c897e7cea4057c4a7c4"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-native/PILOT-S03-pointer-regression/xwayland.log",
+      "sha256": "f1060da3c2d13264c32833224fc0b7616170a758056dd848c0a54c8edaafca54"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-assessment.json",
+      "sha256": "1dfcf7b9aabc0ee2558544607c9e67d2cec634af72d1df8c17371181533e242c"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/independent-proof-artifacts/machine-observations.json",
+      "sha256": "af93a6ebae85b99741962278bb54ca3a56d63ccde91faa15b7f17df339150142"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/corrected-build/cli-receipt.json",
+      "sha256": "8331eba2bcb637ba89ade52f8f3b84a7c04a82c8fe167b08e4934bca93a2cfd5"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/corrected-build/source.json",
+      "sha256": "0e2adaa3a016c3f0111c33da098a8dc25b2c7efd8a4f7d647788a4e65a5f1ca3"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-pilot/corrected-build/build.log",
+      "sha256": "e6a0ecbccd8da0a43a717d89b02c691791acdb5778c5e159887708474053bf65"
+    }
+  ],
+  "registry": {
+    "path": "docs/reviews/workflow-delivery-pilot/independent-proof-artifacts/PILOT-S03-registry.json",
+    "sha256": "15ad967d83d9b7aa97e87298f82eccbdf34afe2cc2b8b8a1aa641270f0b80a38"
+  }
+}

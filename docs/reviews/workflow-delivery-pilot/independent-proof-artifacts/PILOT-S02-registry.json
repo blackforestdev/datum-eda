@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "binary_sha256": "2bd1daa4d1a3e8eb393130cd0d543c7f610cfcf3478364827e4e3b807c18f560",
+  "entries": [
+    {
+      "contexts": {
+        "pane-0-resolved": {
+          "enabled": false,
+          "reason": "About Datum is unavailable in this build."
+        },
+        "pane-1-unresolved": {
+          "enabled": false,
+          "reason": "About Datum is unavailable in this build."
+        }
+      },
+      "dispatch_key": "help.about",
+      "entry_surfaces": [
+        "help-about-menu-keyboard",
+        "help-about-menu-pointer"
+      ],
+      "handler_ref": null
+    },
+    {
+      "contexts": {
+        "pane-0-resolved": {
+          "enabled": true,
+          "reason": "Available"
+        },
+        "pane-1-unresolved": {
+          "enabled": false,
+          "reason": "Fit is unavailable because the focused pane has no resolved camera view."
+        }
+      },
+      "dispatch_key": "view.fit",
+      "entry_surfaces": [
+        "view-fit-menu-keyboard",
+        "view-fit-menu-pointer",
+        "view-fit-shortcut"
+      ],
+      "handler_ref": {
+        "path": "crates/gui-app/src/runtime_camera_pane.rs",
+        "symbol": "datum_gui::Runtime::fit_camera"
+      }
+    },
+    {
+      "contexts": {
+        "pane-0-resolved": {
+          "enabled": false,
+          "reason": "Layer Visibility menu action is unavailable in this build."
+        },
+        "pane-1-unresolved": {
+          "enabled": false,
+          "reason": "Layer Visibility menu action is unavailable in this build."
+        }
+      },
+      "dispatch_key": "view.layers",
+      "entry_surfaces": [
+        "view-layers-menu-keyboard",
+        "view-layers-menu-pointer"
+      ],
+      "handler_ref": null
+    },
+    {
+      "contexts": {
+        "pane-0-resolved": {
+          "enabled": false,
+          "reason": "Documents menu action is unavailable in this build."
+        },
+        "pane-1-unresolved": {
+          "enabled": false,
+          "reason": "Documents menu action is unavailable in this build."
+        }
+      },
+      "dispatch_key": "window.documents",
+      "entry_surfaces": [
+        "window-documents-menu-keyboard",
+        "window-documents-menu-pointer"
+      ],
+      "handler_ref": null
+    }
+  ]
+}

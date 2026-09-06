@@ -1,0 +1,7 @@
+dbus-daemon[3830617]: [session uid=1000 pid=3830617 pidfd=5] Activating service name='org.a11y.Bus' requested by ':1.1' (uid=1000 pid=3830712 comm="gdbus call --session --dest org.a11y.Bus --object-")
+dbus-daemon[3830617]: [session uid=1000 pid=3830617 pidfd=5] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[3830729]: Connection :1.0 (uid=1000 pid=3830733 comm="dbus-monitor --address unix:path=/tmp/datum-wdq-na") became a monitor.
+dbus-daemon[3830729]: Activating service name='org.a11y.atspi.Registry' requested by ':1.1' (uid=1000 pid=3831807 comm="/home/bfadmin/Documents/datum-eda/target/debug/dat")
+dbus-daemon[3830729]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+dbus-daemon[3830729]: Monitoring connection :1.0 closed.

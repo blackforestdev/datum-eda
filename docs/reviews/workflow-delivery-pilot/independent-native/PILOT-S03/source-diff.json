@@ -1,0 +1,14 @@
+{
+  "changed_or_removed": [],
+  "new_paths": {
+    ".datum/gui-terminal-context.json": "4f97eb2b75a20c3206e39b48264d9065e4941c1fe82a552472480b73625e6ede",
+    ".datum/terminal-contexts/context-3842418-1788730482762661620.pinned.json": "6f4d32da7e40aca20b8c1f8d7b7b2df346678bef7119e2d6da0104b0edf3845a",
+    ".datum/terminal-contexts/terminal-3842418-1788730482762661620.agent-authority.json": "0079bc9e03ee89505a12a9286513315baa45dfe362e1b8a7fcf9ed29f8431b34",
+    ".datum/terminal-contexts/terminal-3842418-1788730482762661620.discovery.json": "2cf78e2eef39b2bc589a2eae8e8b17b6c1c4100adef5fe64895daf8891b6ca4e",
+    ".datum/terminal-contexts/terminal-3842418-1788730482762661620.json": "87a3f399d439d5040f6f84a562da01ed4a13380cd9f1347641a40409cb8db356",
+    ".datum/tool-sessions/terminal-3842418-1788730482762661620.events.jsonl": "f1cdf7d5f4c936c1e02d60463de235ee79b354d7f13e5ffba55a1fc184527807",
+    ".datum/tool-sessions/terminal-3842418-1788730482762661620.events.jsonl.io.0.jsonl": "8dd790835c79ba968314f1ae427ef500b0bce2f5cc5879d55bbd3874168942aa",
+    ".datum/tool-sessions/terminal-3842418-1788730482762661620.json": "6110f02c003be2ce61115277d1d66a36b6dd0ef400c686fe59b648f75c03286a",
+    ".datum/tool-sessions/terminal-3842418-1788730482762661620.terminal-runtime/terminfo/d/datum-256color": "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1"
+  }
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/root",
+    "properties": "({'Name': <'Datum EDA'>, 'Description': <'Datum EDA application'>, 'Parent': <(':1.2', objectpath '/org/a11y/atspi/accessible/root')>, 'ChildCount': <2>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'datum-eda'>, 'HelpText': <''>},)",
+    "states": "([uint32 1124073728, 0],)",
+    "children": "([(':1.1', objectpath '/org/a11y/atspi/accessible/terminal'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a57696e646f77')],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/terminal",
+    "properties": "({'Name': <'Terminal'>, 'Description': <'Native terminal session'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/root')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'terminal-3845799-1788730513299760224'>, 'HelpText': <''>},)",
+    "states": "([uint32 1124206976, 64],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a57696e646f77",
+    "properties": "({'Name': <'Window'>, 'Description': <'Menu navigation'>, 'HelpText': <'Menu navigation'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/root')>, 'ChildCount': <3>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:Window'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "([(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a57696e646f772f77696e646f772e646f63756d656e7473'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a57696e646f772f77696e646f772e7465726d696e616c'), (':1.1', '/org/a11y/atspi/accessible/menus/n6d656e753a57696e646f772f77696e646f772e6c61796f7574')],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a57696e646f772f77696e646f772e646f63756d656e7473",
+    "properties": "({'Name': <'Documents'>, 'Description': <'Documents menu action is unavailable in this build.'>, 'HelpText': <'Documents menu action is unavailable in this build.'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a57696e646f77')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:Window/window.documents'>},)",
+    "states": "([uint32 1107302400, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a57696e646f772f77696e646f772e7465726d696e616c",
+    "properties": "({'Name': <'Terminal Sessions'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a57696e646f77')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:Window/window.terminal'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/menus/n6d656e753a57696e646f772f77696e646f772e6c61796f7574",
+    "properties": "({'Name': <'Workspace Layout'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a57696e646f77')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:Window/window.layout'>},)",
+    "states": "([uint32 1124075776, 0],)",
+    "children": "(@a(so) [],)"
+  }
+]
