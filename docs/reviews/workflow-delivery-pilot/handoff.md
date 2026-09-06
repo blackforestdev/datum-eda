@@ -1,8 +1,33 @@
 # Workflow delivery pilot operational handoff
 
 Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
-Status: G01–G03 complete; G04 in progress under a bounded nonoverlapping claim;
-activation remains off.
+Status: G01–G04 complete; G05 independent replay is selected and pending;
+activation remains off. G04 producer proof landed in `8d96e3a1` after the
+production corrections in `dde90c75`.
+
+## G05 handoff boundary
+
+G04 closes only the bounded implementation/original-proof step. The separate
+reviewer must replay all five mandatory scenarios on fresh identified bytes,
+review all N/A dispositions and the complete input closure, triage the two
+remaining Console findings, and prove the required acceptance-invalidation and
+scoped activation mechanics before presenting G06 to the owner. Existing
+read-only code-review work is not a substitute for that native replay.
+
+The reserved independent reviewer session is `wdq-independent-review-20260906`;
+the original producer remains `codex-wdq-g01-planning-20260906`. Do not copy
+producer event artifacts into an independent replay. The current producer
+assessment and typed packet are linked above/below, not an independent verdict.
+Use the recorded commands in `proof-artifacts/environment.json` and the build
+wrapper with new output directories; inspect the exact native captures and
+source differences, not only the machine summary. Validate against a Git
+revision/index: pre-existing ignored build-root artifacts remain deliberately
+visible to the worktree freshness checker and were not deleted or filtered out.
+
+Shared production files are committed and clean; this lane schedules no new
+production edit in the handoff. Coordinate any future corrective edit explicitly
+and repeat affected proof. Preferences remains paused at its own approval
+boundary; this handoff grants neither GP-CM05 execution nor G06 activation.
 
 ## G04 identified producer proof validated
 
