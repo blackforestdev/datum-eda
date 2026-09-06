@@ -1,5 +1,4 @@
-// Single exhaustive ProjectCommands router; no `_ =>` arm.
-// The command_exec_* forwarding layer is dissolved — arms either run their
+// Exhaustive ProjectCommands router; dissolved forwarding arms either run their
 // family's `args.run(format)` inherent method (impls live in the owning
 // commands/<family>/ files) or inline the short destructure-and-render body directly.
 
@@ -1515,6 +1514,7 @@ pub(crate) fn execute_with_exit_code(cli: Cli) -> Result<(String, i32)> {
         Commands::Context { action } => execute_context_command(format, action),
         Commands::Revision { action } => execute_revision_command(format, action),
         Commands::Units { action } => execute_units_command(format, action),
+        Commands::Preferences { action } => execute_preferences_command(format, action),
         Commands::Import { path } => {
             let report = import_path(&path)?;
             let view = ImportReportView::from(report);

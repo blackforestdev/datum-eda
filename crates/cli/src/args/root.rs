@@ -41,6 +41,11 @@ pub(crate) enum Commands {
         #[command(subcommand)]
         action: UnitsCommands,
     },
+    /// Inspect machine-local Global Preferences
+    Preferences {
+        #[command(subcommand)]
+        action: PreferencesCommands,
+    },
     /// Import a KiCad or Eagle design
     Import {
         /// Path to design file (.kicad_pcb, .brd, .lbr)

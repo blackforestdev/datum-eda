@@ -45,6 +45,7 @@ mod mcp;
 mod native_types;
 mod output_jobs;
 mod pool;
+mod preferences;
 mod prelude;
 mod project;
 mod project_core;
@@ -76,6 +77,7 @@ pub(crate) use self::native_types::{
 };
 pub(crate) use self::output_jobs::*;
 pub(crate) use self::pool::*;
+pub(crate) use self::preferences::*;
 pub(crate) use self::prelude::*;
 pub(crate) use self::project::*;
 pub(crate) use self::project_core::*;
