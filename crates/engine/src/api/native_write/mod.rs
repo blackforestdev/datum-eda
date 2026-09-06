@@ -45,6 +45,8 @@ pub mod schematic_symbols;
 pub mod waivers;
 
 #[cfg(test)]
+mod project_units_receipt_tests;
+#[cfg(test)]
 mod test_support;
 
 pub use context::{BatchComposer, PreparedWrite, WriteProvenance, build_batch, commit_prepared};

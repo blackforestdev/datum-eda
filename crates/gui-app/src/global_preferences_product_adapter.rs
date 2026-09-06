@@ -1,7 +1,5 @@
 //! Trusted GUI transport facts for the engine-owned Preferences product service.
 
-use std::path::PathBuf;
-
 use eda_engine::preferences::{
     HeadExpectationV1, PreferenceActorKindV1, PreferenceActorV1, PreferenceServiceStatus,
     new_product_id,
@@ -21,11 +19,4 @@ pub(super) fn head_expectation(status: &PreferenceServiceStatus) -> HeadExpectat
         .generation()
         .cloned()
         .map_or(HeadExpectationV1::Missing, HeadExpectationV1::Generation)
-}
-
-pub(super) fn platform_config_root() -> Option<PathBuf> {
-    std::env::var_os("XDG_CONFIG_HOME")
-        .map(PathBuf::from)
-        .or_else(|| std::env::var_os("HOME").map(|home| PathBuf::from(home).join(".config")))
-        .map(|base| base.join("datum"))
 }

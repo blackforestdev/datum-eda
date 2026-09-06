@@ -32,6 +32,7 @@ python3 scripts/check_evidence_traceability.py
 python3 scripts/test_dependency_authority.py
 python3 scripts/check_dependency_authority.py
 python3 scripts/check_resolver_raw_loads.py
+python3 scripts/check_global_preferences_boundary.py
 python3 scripts/test_gui_agent_terminal_convergence.py
 python3 scripts/check_gui_agent_terminal_convergence.py
 python3 scripts/test_terminal_shell_metadata_boundary.py

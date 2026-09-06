@@ -3,9 +3,8 @@
 mod product_adapter;
 
 use std::collections::BTreeMap;
-use std::path::PathBuf;
 
-use anyhow::{Context, Result};
+use anyhow::Result;
 use datum_gui_protocol::{
     ApplicationFocus, GlobalPreferenceControlUi, GlobalPreferenceRowUi,
     GlobalPreferencesDialogState, GlobalPreferencesDismissal, GlobalPreferencesFocus,
@@ -13,9 +12,8 @@ use datum_gui_protocol::{
 };
 use eda_engine::ir::units::{ACTIVE_UNITS_KEYS, profile_from_descriptor_values};
 use eda_engine::preferences::{
-    FixedPreferenceLocationProvider, GlobalPreferencesProductService, PreferenceErrorV1,
-    PreferenceKey, PreferenceLiveConsumer, PreferenceLocations, PreferenceMutationRequestV1,
-    new_product_id,
+    GlobalPreferencesProductService, InstalledPreferenceLocationProvider, PreferenceErrorV1,
+    PreferenceKey, PreferenceLiveConsumer, PreferenceMutationRequestV1, new_product_id,
 };
 use serde_json::Value;
 
@@ -25,7 +23,7 @@ use crate::global_preferences_projection::{
     apply_live_consumers, bool_consumer_value, control_projection, explanation_lines,
     provenance_label, repository_notice,
 };
-use product_adapter::{head_expectation, human_gui_actor, platform_config_root};
+use product_adapter::{head_expectation, human_gui_actor};
 use winit::event::{ElementState, KeyEvent};
 use winit::keyboard::{Key, NamedKey};
 
@@ -38,20 +36,12 @@ pub(super) struct GlobalPreferencesCoordinator {
 
 impl GlobalPreferencesCoordinator {
     pub(super) fn from_platform() -> Result<Self> {
-        let config_root =
-            platform_config_root().context("user configuration directory is unavailable")?;
-        let repository_root = config_root.join("preferences");
-        let legacy_path = std::env::var_os("DATUM_GUI_PREFERENCES_PATH")
-            .map(PathBuf::from)
-            .unwrap_or_else(|| config_root.join("gui-preferences.json"));
         let writer_instance = format!("datum-gui-{}", std::process::id());
-        let provider = FixedPreferenceLocationProvider(PreferenceLocations {
-            configuration_base: config_root,
-            repository_root,
-            legacy_console_path: legacy_path,
-        });
-        let service = GlobalPreferencesProductService::open(&provider, &writer_instance)
-            .map_err(|error| anyhow::anyhow!("open Global Preferences service: {error:?}"))?;
+        let service = GlobalPreferencesProductService::open(
+            &InstalledPreferenceLocationProvider,
+            &writer_instance,
+        )
+        .map_err(|error| anyhow::anyhow!("open Global Preferences service: {error:?}"))?;
         Ok(Self {
             service,
             return_focus: ApplicationFocus::default(),
