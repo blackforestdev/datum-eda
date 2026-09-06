@@ -82,6 +82,18 @@ pub struct MutationReceipt {
     pub invocation_id: Option<Uuid>,
     #[serde(default)]
     pub expected_generation_ref: Option<GenerationRef>,
+    #[serde(default)]
+    pub proposal_id: Option<Uuid>,
+    #[serde(default)]
+    pub proposal_digest: Option<String>,
+    #[serde(default)]
+    pub acceptance_id: Option<Uuid>,
+    #[serde(default)]
+    pub requesting_actor: Option<String>,
+    #[serde(default)]
+    pub accepting_actor: Option<String>,
+    #[serde(default)]
+    pub originating_mcp_session: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -205,6 +217,12 @@ pub struct MutationAuditMetadata {
     pub actor_session_id: String,
     pub invocation_id: Uuid,
     pub expected_generation_ref: Option<GenerationRef>,
+    pub proposal_id: Option<Uuid>,
+    pub proposal_digest: Option<String>,
+    pub acceptance_id: Option<Uuid>,
+    pub requesting_actor: Option<String>,
+    pub accepting_actor: Option<String>,
+    pub originating_mcp_session: Option<String>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

@@ -9,9 +9,11 @@ use uuid::Uuid;
 
 use super::repository::GenerationRef;
 use super::{
-    GlobalPreferencesProductService, HeadExpectationV1, PreferenceActorV1, PreferenceErrorCodeV1,
-    PreferenceErrorV1, PreferenceMutationRequestV1, PreferenceProposalV1, PreferenceSchemaRefV1,
-    PreparedProposalResultV1, ProposalValidationResultV1, RejectedProposalResultV1,
+    AcceptedProposalResultV1, GlobalPreferencesProductService, HeadExpectationV1,
+    PreferenceAcceptanceHandleV1, PreferenceAcceptanceRefusal, PreferenceActorV1,
+    PreferenceErrorCodeV1, PreferenceErrorV1, PreferenceMutationRequestV1, PreferenceProposalV1,
+    PreferenceSchemaRefV1, PreparedProposalResultV1, ProposalValidationResultV1,
+    RejectedProposalResultV1,
 };
 
 const PROPOSAL_SCHEMA: &str = "datum.preferences.proposal";
@@ -37,7 +39,7 @@ impl GlobalPreferencesProductService {
         rationale: String,
         requesting_actor: &PreferenceActorV1,
     ) -> Result<PreparedProposalResultV1, PreferenceErrorV1> {
-        super::product_service::validate_actor(requesting_actor, &self.context())?;
+        super::product_actor::validate_actor(requesting_actor, &self.context())?;
         if rationale.trim().is_empty() {
             return Err(self.error(
                 PreferenceErrorCodeV1::InvalidRequest,
@@ -118,6 +120,28 @@ impl GlobalPreferencesProductService {
         Ok(RejectedProposalResultV1 {
             proposal_id: proposal.proposal_id,
             rejected: true,
+        })
+    }
+
+    pub fn accept_proposal_with_handle(
+        &mut self,
+        proposal: PreferenceProposalV1,
+        handle: &PreferenceAcceptanceHandleV1,
+        apply_invocation_id: Uuid,
+    ) -> Result<AcceptedProposalResultV1, PreferenceErrorV1> {
+        self.validate_proposal(proposal.clone())?;
+        let audit = handle
+            .accepted_audit(&proposal, &self.repository_identity(), apply_invocation_id)
+            .map_err(|refusal| self.acceptance_error(refusal, &proposal))?;
+        let mutation_result = self.commit_mutation(
+            proposal.mutation.clone(),
+            handle.accepting_actor(),
+            Some(&audit),
+        )?;
+        Ok(AcceptedProposalResultV1 {
+            proposal_id: proposal.proposal_id,
+            mutation_result,
+            acceptance_id: handle.acceptance_id(),
         })
     }
 
@@ -219,6 +243,46 @@ impl GlobalPreferencesProductService {
                     "current_generation".to_owned(),
                     serde_json::to_value(self.context().generation).unwrap_or(Value::Null),
                 ),
+            ]),
+            mutation_draft(&proposal.mutation),
+        );
+        error.preserved_proposal = serde_json::to_value(proposal).ok();
+        error
+    }
+
+    fn acceptance_error(
+        &self,
+        refusal: PreferenceAcceptanceRefusal,
+        proposal: &PreferenceProposalV1,
+    ) -> PreferenceErrorV1 {
+        let (code, state) = match refusal {
+            PreferenceAcceptanceRefusal::UnauthorizedActor => (
+                PreferenceErrorCodeV1::UnauthorizedActor,
+                "unauthorized_actor",
+            ),
+            PreferenceAcceptanceRefusal::ProposalNotPrepared => {
+                (PreferenceErrorCodeV1::MissingAcceptance, "not_prepared")
+            }
+            PreferenceAcceptanceRefusal::ProposalMismatch
+            | PreferenceAcceptanceRefusal::RepositoryMismatch
+            | PreferenceAcceptanceRefusal::InvocationMismatch
+            | PreferenceAcceptanceRefusal::SessionMismatch => (
+                PreferenceErrorCodeV1::AcceptanceMismatch,
+                "binding_mismatch",
+            ),
+            PreferenceAcceptanceRefusal::Expired => {
+                (PreferenceErrorCodeV1::AcceptanceExpired, "expired")
+            }
+            PreferenceAcceptanceRefusal::Consumed => {
+                (PreferenceErrorCodeV1::AcceptanceConsumed, "consumed")
+            }
+        };
+        let mut error = self.error(
+            code,
+            "Preference proposal acceptance was refused",
+            BTreeMap::from([
+                ("proposal_id".to_owned(), json!(proposal.proposal_id)),
+                ("state".to_owned(), json!(state)),
             ]),
             mutation_draft(&proposal.mutation),
         );
