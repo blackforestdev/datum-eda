@@ -34,9 +34,10 @@ other entries, check fresh state, regenerate the projection, and stage only owne
 changes. If another session changes the same hunk or staged file, coordinate a
 handoff rather than overwrite or sweep it into a commit.
 
-Recommended adoption checkpoint: the GP-CM01 handoff, before authorizing further
-expansion. Alternative: the Global Preferences production-acceptance handoff.
-These are proposals, not rival next-task instructions. Activation requires an
+The initial proposed checkpoint was the GP-CM01 handoff. That is historical,
+not a current resume instruction. The concrete adoption packet now requires a
+fresh owner-selected bounded handoff in WDQ-G02, verified against current task
+and claim state; no Preferences step is assumed still active. Activation requires an
 explicit selector/authorization transaction with the current task owner. The
 parent Preferences issue need not be falsely closed to arrange a bounded pause.
 Keep its remaining steps and evidence intact and record how work resumes.
@@ -196,6 +197,17 @@ task until an explicit handoff changes it. Planning closure never automatically
 selects or authorizes its successor.
 
 ## Present delivery status
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C04-COMPLETE -->
+
+WDQ-C04 is complete as the concrete adoption packet committed in `6ba8ea37`.
+`specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md` contains the bounded About/Fit
+consumer-readiness pilot, exact G01–G06 contract, file ownership and budgets,
+legacy boundary, independent proof, owner-controlled activation and fresh
+existing-work handoff/resume transaction. Proposed PM041 and the exact gate
+contract were committed with it. The runtime pilot and new N/P suite have not
+been implemented or executed. WDQ-C05 now awaits owner disposition of this
+specific packet; the planning claim is released and no successor is authorized.
 
 <!-- EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C03-COMPLETE -->
 

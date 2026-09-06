@@ -161,7 +161,7 @@
    Apply the owner-approved manual-first product baseline, supersede permanent unmanaged Revision presentation, quarantine unvalidated implementation breadth, remove fictional runtime records, and require a small comprehensible owner review before any wider Revision execution resumes. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md`, `docs/decisions/PRODUCT_MECHANICS_039_PREFERENCES_FIRST_SETTINGS_ENTRY.md`, `docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md`, `docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md`, `specs/PRODUCT_REVISION_ENGINE_SPEC.md`, `specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md`, `research/documentation-system/REVISION_RECOVERY_IMPLEMENTATION_INVENTORY.md`, `research/preferences-system/PREFERENCES_FIRST_REENTRY_AUDIT.md`, `specs/PROJECT_PREFERENCES_SPEC.md`, `docs/PROJECT_STATE_POLICY.md`.
 - **Establish workflow delivery readiness and acceptance governance** (`WORKFLOW-DELIVERY-QUALITY`; `dat-workflow-delivery-quality-xgj`).
-   Audit manual workflow capability, research missing CAD foundations, and prepare a concrete readiness/acceptance gate adoption packet; preserve active Preferences ownership and select this planning work only through an explicit coordinated handoff. *state `in_progress`; authorization `planning`; parallel lane.*
+   Audit manual workflow capability, research missing CAD foundations, and prepare a concrete readiness/acceptance gate adoption packet; preserve active Preferences ownership and select this planning work only through an explicit coordinated handoff. *state `specified`; authorization `owner_decision`; parallel lane.*
    *Dependencies:* none. *Unblocks:* dat-manual-foundation-contracts-fsw, dat-workflow-gate-pilot-b3s. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`.
 - **Specify the first manual workflow foundation contracts** (`FOUNDATION-WORKFLOW-SPEC`; `dat-manual-foundation-contracts-fsw`).
    Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection. *state `blocked`; authorization `planning`.*
@@ -175,7 +175,7 @@
 
 | Governed document | Current evidence | Target | Tracking |
 | --- | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`, proposed PM041, `specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md` | WDQ-C01 native baseline, C02 research and C03 exact gate proposal complete; C04 bounded pilot packet prepared. Test matrix is a future oracle, not an executed gate suite | Owner-reviewed adoption; separately authorized gate implementation and foundation specifications | `dat-workflow-delivery-quality-xgj`; selection and authorization only through the structured Frontier |
+| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`, proposed PM041, `specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md` | WDQ-C01–C04 complete as audit/research/proposal work; concrete packet committed in `6ba8ea37`. No new gate suite or native pilot has run | WDQ-C05 explicit owner disposition; implementation and foundation research remain separately scheduled, unauthorized successors | `dat-workflow-delivery-quality-xgj`; planning claim released, no product acceptance inferred |
 
 ## FOUNDATION-WORKFLOW-SPEC — bounded pre-implementation foundation contract
 
