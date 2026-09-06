@@ -1,7 +1,8 @@
 # Global Preferences Product-Surface and Project-Genesis Contract
 
-Status: GP-CM02R owner-review candidate; planning only. GP-CM03 implementation,
-new dependencies, and production acceptance remain unauthorized.
+Status: Owner-approved GP-CM03 implementation contract. GP-CM03 execution is
+authorized through the synchronized Frontier; new dependencies, GP-CM04,
+GP-CM05, and production acceptance remain unauthorized.
 
 Tracker: `dat-global-preferences-completion-f84`
 Frontier: `GLOBAL-PREFERENCES-COMPLETION / GP-CM02R`

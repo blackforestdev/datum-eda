@@ -1,8 +1,9 @@
 # Datum Global Preferences Engine Implementation and Production-Acceptance Plan
 
 > **Status:** Governed serial implementation contract. Execution authority is
-> determined only by the synchronized Active Frontier; GP-CM02R is currently
-> the bounded planning step and GP-CM03 remains unauthorized.
+> determined only by the synchronized Active Frontier; GP-CM02V is complete
+> and GP-CM03 is the bounded implementation step. GP-CM04 and production
+> acceptance remain unauthorized.
 >
 > **Trackers:** `dat-shared-units-engine-build-915`,
 > `dat-global-preferences-engine-build-vge`,
@@ -1075,6 +1076,15 @@ The owner review must confirm all nine findings, the non-self-referential V2
 receipt, missing-repository Set/Reset behavior, short-lived MCP acceptance
 handle, exact six reserved seed identities, explicit Global/factory modes,
 atomic staged publication, retry/crash outcomes, and clause-by-clause proof.
+
+On 2026-09-05, after reviewing the committed GP-CM02R contract and evidence,
+the owner replied exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM03`.
+This completes GP-CM02V and authorizes only the exact GP-CM03 implementation
+below. It does not authorize GP-CM04, GP-CM05, production acceptance, a new
+dependency, a prototype change, Manage Preferences, broader Project
+Preferences, Publish, Revision, or activation of any reserved descriptor.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM02V-OWNER-APPROVED-20260905 -->
 
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM03 -->
 ### GP-CM03 — engine, CLI, MCP, and Project seed parity
