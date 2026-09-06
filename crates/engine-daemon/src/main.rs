@@ -26,7 +26,9 @@ use serde_json::{Value, json};
 
 mod check_run_view;
 mod dispatch;
-use dispatch::dispatch_request;
+mod preferences_state;
+use dispatch::{dispatch_request, dispatch_request_with_preferences};
+use preferences_state::PreferencesDaemonState;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 struct JsonRpcRequest {
@@ -246,10 +248,11 @@ fn serve_socket(path: &Path) -> Result<()> {
     }
     let listener = UnixListener::bind(path)?;
     let mut engine = Engine::new()?;
+    let mut preferences = PreferencesDaemonState::open_installed()?;
 
     for stream in listener.incoming() {
         match stream {
-            Ok(stream) => handle_client(&mut engine, stream)?,
+            Ok(stream) => handle_client_with_preferences(&mut engine, &mut preferences, stream)?,
             Err(err) => return Err(err.into()),
         }
     }
@@ -257,7 +260,23 @@ fn serve_socket(path: &Path) -> Result<()> {
     Ok(())
 }
 
-fn handle_client(engine: &mut Engine, mut stream: UnixStream) -> Result<()> {
+fn handle_client(engine: &mut Engine, stream: UnixStream) -> Result<()> {
+    handle_client_inner(engine, None, stream)
+}
+
+fn handle_client_with_preferences(
+    engine: &mut Engine,
+    preferences: &mut PreferencesDaemonState,
+    stream: UnixStream,
+) -> Result<()> {
+    handle_client_inner(engine, Some(preferences), stream)
+}
+
+fn handle_client_inner(
+    engine: &mut Engine,
+    mut preferences: Option<&mut PreferencesDaemonState>,
+    mut stream: UnixStream,
+) -> Result<()> {
     let reader_stream = stream.try_clone()?;
     let mut reader = BufReader::new(reader_stream);
     let mut line = String::new();
@@ -275,7 +294,12 @@ fn handle_client(engine: &mut Engine, mut stream: UnixStream) -> Result<()> {
         }
 
         let response = match serde_json::from_str::<JsonRpcRequest>(trimmed) {
-            Ok(request) => dispatch_request(engine, request),
+            Ok(request) => match preferences.as_deref_mut() {
+                Some(preferences) => {
+                    dispatch_request_with_preferences(engine, preferences, request)
+                }
+                None => dispatch_request(engine, request),
+            },
             Err(err) => error_response(json!(null), -32700, &format!("parse error: {err}")),
         };
         let encoded = serde_json::to_string(&response)?;
