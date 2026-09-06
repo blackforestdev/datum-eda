@@ -1,4 +1,7 @@
 use super::*;
+use std::path::PathBuf;
+
+use eda_engine::preferences::{FixedPreferenceLocationProvider, PreferenceLocations};
 
 fn product_service(
     repository_root: PathBuf,

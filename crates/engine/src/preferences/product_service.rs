@@ -53,10 +53,13 @@ impl PreferenceLocationProvider for InstalledPreferenceLocationProvider {
             }
         };
         let datum = base.join("datum");
+        let legacy_console_path = std::env::var_os("DATUM_GUI_PREFERENCES_PATH")
+            .map(PathBuf::from)
+            .unwrap_or_else(|| datum.join("gui-preferences.json"));
         Ok(PreferenceLocations {
             configuration_base: base,
             repository_root: datum.join("preferences"),
-            legacy_console_path: datum.join("gui-preferences.json"),
+            legacy_console_path,
         })
     }
 }
