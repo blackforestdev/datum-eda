@@ -156,12 +156,12 @@
     "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md": {
       "class": "governed",
       "progress_anchor": "GLOBAL-PREFERENCES-ENGINE",
-      "notes": "Serial Global Preferences plan through completed GP-F05, production-accepted Units, and completed GP-CM01. GP-CM02R now reconciles the exact GP-CM03 engine/API, CLI, MCP, daemon, Project-genesis, security, concurrency, failure, and proof contract; GP-CM03 remains blocked on fresh GP-CM02V owner authorization."
+      "notes": "Serial Global Preferences plan through completed GP-F05, production-accepted Units, completed GP-CM01, and completed GP-CM02R exact-build reconciliation. GP-CM02V is the unclaimed owner boundary; GP-CM03 remains unauthorized."
     },
     "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md": {
       "class": "governed",
       "progress_anchor": "GLOBAL-PREFERENCES-COMPLETION",
-      "notes": "GP-CM02R planning-only exact build contract for the 11-active/45-reserved product service, six queries, two direct mutations, four proposal actions, stable failures, CLI/MCP authority, one configuration/writer path, eight-key Project Units genesis, atomic publication, immutable receipts, and cross-surface proof. It authorizes no implementation or dependency."
+      "notes": "Completed GP-CM02R exact build contract for the 11-active/45-reserved product service, six queries, two direct mutations, four proposal actions, stable failures, CLI/MCP authority, one configuration/writer path, eight-key Project Units genesis, atomic publication, immutable receipts, and cross-surface proof. It remains planning authority only until GP-CM02V."
     },
     "research/documentation-system/PRODUCT_REVISION_ENGINE_RESEARCH.md": {
       "class": "governed",
