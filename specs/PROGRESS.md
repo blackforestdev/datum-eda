@@ -195,6 +195,7 @@ authoring acceptance or canonical successor selection is implied by scheduling.
 | Governed document | Current evidence | Completion boundary | Tracking |
 | --- | --- | --- | --- |
 | `specs/workflow_delivery/pilot.contract.json` | WDQ-G01 candidate: four action keys, five native scenarios, reviewed shell authority and source-level menu accessibility gap; review in `research/process-quality/WORKFLOW_DELIVERY_PILOT_REVIEW.md` | Exact ownership/session/trusted-runner handoff remains; no native proof, executable validation or G01 closure | `dat-workflow-gate-pilot-b3s`, planning in progress; G02/G06 owner boundaries unchanged |
+| `docs/reviews/workflow-delivery-pilot/handoff.md` | Current/proposed file lanes, complete hook-route review and ratified report-only bootstrap fallback recorded | Independent reviewer assignment and current-owner handoff unconfirmed; no execution lease or trust configuration installed | WDQ-G01 remains in progress; no issue closure |
 
 Every specification that steers development is classified in
 `specs/spec_governance_manifest.json` and enforced by
