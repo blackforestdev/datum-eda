@@ -1,0 +1,117 @@
+[
+  {
+    "event": "state",
+    "kind": "datum.action-evidence/v1",
+    "sequence": 19,
+    "value": {
+      "active_review_target_id": "no-proposal-action",
+      "board_camera": {
+        "center_x_nm": 138970000.0,
+        "center_y_nm": 88530000.0,
+        "zoom": 1.0
+      },
+      "console_latest": "Window / Documents: Documents menu action is unavailable in this build.",
+      "context": "pane-0-resolved",
+      "dock": "None",
+      "focus": "Overlay",
+      "focused_content": "Some(Board)",
+      "focused_pane": 0,
+      "layer_filters": "WorkspaceFilterState { show_authored: true, show_proposed: true, show_unrouted: true, dim_unrelated: false, active_layer_id: Some(\"L0\"), layer_visibility: {\"L0\": true, \"L1\": false, \"L11\": false, \"L13\": false, \"L15\": false, \"L17\": false, \"L19\": false, \"L2\": true, \"L21\": false, \"L23\": false, \"L25\": true, \"L27\": false, \"L29\": false, \"L3\": false, \"L31\": false, \"L33\": false, \"L35\": false, \"L39\": false, \"L41\": false, \"L43\": false, \"L45\": false, \"L5\": true, \"L7\": false, \"L9\": false}, layer_scroll_offset: 0 }",
+      "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Board }, second: Leaf { id: PaneId(1), content: Schematic } }, focused: PaneId(0), zoomed: None, next_id: 2 }",
+      "menu": "View",
+      "menu_focus_index": 5,
+      "pane_cameras": [
+        {
+          "camera": {
+            "center_x_nm": 138970000.0,
+            "center_y_nm": 88530000.0,
+            "zoom": 1.0
+          },
+          "content": "Board",
+          "pane": 0
+        },
+        {
+          "camera": null,
+          "content": "Schematic",
+          "pane": 1
+        }
+      ],
+      "preferences_open": false,
+      "registry": [
+        {
+          "contexts": {
+            "pane-0-resolved": {
+              "enabled": true,
+              "reason": "Available"
+            }
+          },
+          "dispatch_key": "view.fit",
+          "entry_surfaces": [
+            "view-fit-menu-keyboard",
+            "view-fit-menu-pointer",
+            "view-fit-shortcut"
+          ],
+          "handler_ref": {
+            "path": "crates/gui-app/src/runtime_camera_pane.rs",
+            "symbol": "datum_gui::Runtime::fit_camera"
+          }
+        },
+        {
+          "contexts": {
+            "pane-0-resolved": {
+              "enabled": false,
+              "reason": "Layer Visibility menu action is unavailable in this build."
+            }
+          },
+          "dispatch_key": "view.layers",
+          "entry_surfaces": [
+            "view-layers-menu-keyboard",
+            "view-layers-menu-pointer"
+          ],
+          "handler_ref": null
+        },
+        {
+          "contexts": {
+            "pane-0-resolved": {
+              "enabled": false,
+              "reason": "Documents menu action is unavailable in this build."
+            }
+          },
+          "dispatch_key": "window.documents",
+          "entry_surfaces": [
+            "window-documents-menu-keyboard",
+            "window-documents-menu-pointer"
+          ],
+          "handler_ref": null
+        },
+        {
+          "contexts": {
+            "pane-0-resolved": {
+              "enabled": false,
+              "reason": "About Datum is unavailable in this build."
+            }
+          },
+          "dispatch_key": "help.about",
+          "entry_surfaces": [
+            "help-about-menu-keyboard",
+            "help-about-menu-pointer"
+          ],
+          "handler_ref": null
+        }
+      ],
+      "scale": 1.0,
+      "scene_bounds": {
+        "max_x": 152940000,
+        "max_y": 102500000,
+        "min_x": 125000000,
+        "min_y": 74560000
+      },
+      "selection": "None",
+      "submenu": null,
+      "window_size": [
+        1280,
+        768
+      ]
+    }
+  }
+]

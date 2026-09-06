@@ -1,0 +1,76 @@
+[
+  {
+    "action": [
+      "move",
+      450,
+      400
+    ],
+    "time_ns": 1788726996141577374,
+    "launch": 1
+  },
+  {
+    "action": [
+      "wheel",
+      2
+    ],
+    "time_ns": 1788726996691060562,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "board-zoomed"
+    ],
+    "time_ns": 1788726998459927299,
+    "launch": 1
+  },
+  {
+    "action": [
+      "key",
+      "Tab"
+    ],
+    "time_ns": 1788726998782930669,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      189,
+      16
+    ],
+    "time_ns": 1788726999191206032,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "schematic-fit-disabled"
+    ],
+    "time_ns": 1788727001920612957,
+    "launch": 1
+  },
+  {
+    "action": [
+      "click",
+      230,
+      53
+    ],
+    "time_ns": 1788727002325481454,
+    "launch": 1
+  },
+  {
+    "action": [
+      "capture",
+      "after-disabled-pointer-attempt"
+    ],
+    "time_ns": 1788727004165749626,
+    "launch": 1
+  },
+  {
+    "action": [
+      "close"
+    ],
+    "time_ns": 1788727004682278166,
+    "launch": 1
+  }
+]

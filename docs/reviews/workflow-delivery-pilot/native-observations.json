@@ -1,0 +1,1276 @@
+[
+  {
+    "scenario_id": "PILOT-S01",
+    "machine_checks_pass": true,
+    "findings": [
+      {
+        "check": "identified GUI and CLI",
+        "pass": true,
+        "observed": {
+          "gui": "608f46e6ed8c37a2f584a148873a13ee119eafff4364069e242ea8d3ead2331b",
+          "cli": "ecb6760e3d15c999f2410ca3cf4f87aca64316514a5f2bf219c66b275b7b0488"
+        }
+      },
+      {
+        "check": "archived source and journal unchanged",
+        "pass": true,
+        "observed": {
+          "changed_or_removed": [],
+          "new_paths": {
+            ".datum/gui-terminal-context.json": "b4a4bf3f20ff070543604394cad000c20ff6e2cf9c18bb6bf60399711c04e9c1",
+            ".datum/terminal-contexts/context-3710410-1788726796202395220.pinned.json": "a090462df468016531c9b2c5b06723ac7663d68d2486f3f2f75cae311765aebe",
+            ".datum/terminal-contexts/terminal-3710410-1788726796202395220.agent-authority.json": "5143ea8fddaa197c67f06cb38fc6e44811a96dafcdb0d19dff2127aae7591a1f",
+            ".datum/terminal-contexts/terminal-3710410-1788726796202395220.discovery.json": "6a026a42fae4a2be737ca8f91ece2e3fe8479093c89c82deee5a9e96bd9e6172",
+            ".datum/terminal-contexts/terminal-3710410-1788726796202395220.json": "aa4ef127f70a8f3e247759abe7fa9ae6d2c15ebe7b80ff053e532ec8c702847a",
+            ".datum/tool-sessions/terminal-3710410-1788726796202395220.events.jsonl": "578307e153a8b024bf799eb42222ede187c1517a8bc9f6e68c41ad471239c9a2",
+            ".datum/tool-sessions/terminal-3710410-1788726796202395220.events.jsonl.io.0.jsonl": "38f4fe202cee63e958ad963798d88b742f7a5da2a736cca81220d33c5aace6ab",
+            ".datum/tool-sessions/terminal-3710410-1788726796202395220.json": "621ca3cbe143735718deeef6462f7f47bec12182f9ff61036a8f2da2db24b66f",
+            ".datum/tool-sessions/terminal-3710410-1788726796202395220.terminal-runtime/terminfo/d/datum-256color": "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1"
+          }
+        }
+      },
+      {
+        "check": "new paths are enumerated runtime sidecars only",
+        "pass": true,
+        "observed": [
+          ".datum/gui-terminal-context.json",
+          ".datum/terminal-contexts/context-3710410-1788726796202395220.pinned.json",
+          ".datum/terminal-contexts/terminal-3710410-1788726796202395220.agent-authority.json",
+          ".datum/terminal-contexts/terminal-3710410-1788726796202395220.discovery.json",
+          ".datum/terminal-contexts/terminal-3710410-1788726796202395220.json",
+          ".datum/tool-sessions/terminal-3710410-1788726796202395220.events.jsonl",
+          ".datum/tool-sessions/terminal-3710410-1788726796202395220.events.jsonl.io.0.jsonl",
+          ".datum/tool-sessions/terminal-3710410-1788726796202395220.json",
+          ".datum/tool-sessions/terminal-3710410-1788726796202395220.terminal-runtime/terminfo/d/datum-256color"
+        ]
+      },
+      {
+        "check": "no preferences-file changes",
+        "pass": true,
+        "observed": {
+          "before": {},
+          "after": {}
+        }
+      },
+      {
+        "check": "actual scale and dimensions",
+        "pass": true,
+        "observed": "1280x768 / scale 1.0"
+      },
+      {
+        "check": "no unavailable invocation",
+        "pass": true,
+        "observed": [
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.fit",
+            "eligible": true,
+            "enabled": true,
+            "entry_surface": "view-fit-menu-pointer",
+            "handler_ref": {
+              "path": "crates/gui-app/src/runtime_camera_pane.rs",
+              "symbol": "datum_gui::Runtime::fit_camera"
+            },
+            "invoked": true,
+            "unavailable_reason": "Available"
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.fit",
+            "eligible": true,
+            "enabled": true,
+            "entry_surface": "view-fit-shortcut",
+            "handler_ref": {
+              "path": "crates/gui-app/src/runtime_camera_pane.rs",
+              "symbol": "datum_gui::Runtime::fit_camera"
+            },
+            "invoked": true,
+            "unavailable_reason": "Available"
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.fit",
+            "eligible": true,
+            "enabled": true,
+            "entry_surface": "view-fit-menu-keyboard",
+            "handler_ref": {
+              "path": "crates/gui-app/src/runtime_camera_pane.rs",
+              "symbol": "datum_gui::Runtime::fit_camera"
+            },
+            "invoked": true,
+            "unavailable_reason": "Available"
+          }
+        ]
+      },
+      {
+        "check": "normal close recorded",
+        "pass": true,
+        "observed": [
+          {
+            "action": [
+              "close"
+            ],
+            "time_ns": 1788726820153867734,
+            "launch": 1
+          }
+        ]
+      },
+      {
+        "check": "native pad selection",
+        "pass": true,
+        "observed": "AuthoredObject(\"pad:2bf9f7fc-cec7-5815-9fc4-f183d769d0b5\")"
+      },
+      {
+        "check": "pointer non-fitted prerequisite",
+        "pass": true,
+        "observed": {
+          "center_x_nm": 140032320.0,
+          "center_y_nm": 88984240.0,
+          "zoom": 1.5735193490982056
+        }
+      },
+      {
+        "check": "pointer exact fitted camera",
+        "pass": true,
+        "observed": {
+          "center_x_nm": 138970000.0,
+          "center_y_nm": 88530000.0,
+          "zoom": 1.0
+        }
+      },
+      {
+        "check": "pointer preserved selection/layout/other camera",
+        "pass": true,
+        "observed": "AuthoredObject(\"pad:2bf9f7fc-cec7-5815-9fc4-f183d769d0b5\")"
+      },
+      {
+        "check": "shortcut non-fitted prerequisite",
+        "pass": true,
+        "observed": {
+          "center_x_nm": 140032320.0,
+          "center_y_nm": 88984240.0,
+          "zoom": 1.5735193490982056
+        }
+      },
+      {
+        "check": "shortcut exact fitted camera",
+        "pass": true,
+        "observed": {
+          "center_x_nm": 138970000.0,
+          "center_y_nm": 88530000.0,
+          "zoom": 1.0
+        }
+      },
+      {
+        "check": "shortcut preserved selection/layout/other camera",
+        "pass": true,
+        "observed": "AuthoredObject(\"pad:2bf9f7fc-cec7-5815-9fc4-f183d769d0b5\")"
+      },
+      {
+        "check": "keyboard non-fitted prerequisite",
+        "pass": true,
+        "observed": {
+          "center_x_nm": 140032320.0,
+          "center_y_nm": 88984240.0,
+          "zoom": 1.5735193490982056
+        }
+      },
+      {
+        "check": "keyboard exact fitted camera",
+        "pass": true,
+        "observed": {
+          "center_x_nm": 138970000.0,
+          "center_y_nm": 88530000.0,
+          "zoom": 1.0
+        }
+      },
+      {
+        "check": "keyboard preserved selection/layout/other camera",
+        "pass": true,
+        "observed": "AuthoredObject(\"pad:2bf9f7fc-cec7-5815-9fc4-f183d769d0b5\")"
+      },
+      {
+        "check": "fit center agrees with actual scene bounds",
+        "pass": true,
+        "observed": {
+          "bounds": {
+            "max_x": 152940000,
+            "max_y": 102500000,
+            "min_x": 125000000,
+            "min_y": 74560000
+          },
+          "camera": {
+            "center_x_nm": 138970000.0,
+            "center_y_nm": 88530000.0,
+            "zoom": 1.0
+          }
+        }
+      },
+      {
+        "check": "all three actual Fit entry surfaces",
+        "pass": true,
+        "observed": [
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.fit",
+            "eligible": true,
+            "enabled": true,
+            "entry_surface": "view-fit-menu-pointer",
+            "handler_ref": {
+              "path": "crates/gui-app/src/runtime_camera_pane.rs",
+              "symbol": "datum_gui::Runtime::fit_camera"
+            },
+            "invoked": true,
+            "unavailable_reason": "Available"
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.fit",
+            "eligible": true,
+            "enabled": true,
+            "entry_surface": "view-fit-shortcut",
+            "handler_ref": {
+              "path": "crates/gui-app/src/runtime_camera_pane.rs",
+              "symbol": "datum_gui::Runtime::fit_camera"
+            },
+            "invoked": true,
+            "unavailable_reason": "Available"
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.fit",
+            "eligible": true,
+            "enabled": true,
+            "entry_surface": "view-fit-menu-keyboard",
+            "handler_ref": {
+              "path": "crates/gui-app/src/runtime_camera_pane.rs",
+              "symbol": "datum_gui::Runtime::fit_camera"
+            },
+            "invoked": true,
+            "unavailable_reason": "Available"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": "PILOT-S02",
+    "machine_checks_pass": true,
+    "findings": [
+      {
+        "check": "identified GUI and CLI",
+        "pass": true,
+        "observed": {
+          "gui": "608f46e6ed8c37a2f584a148873a13ee119eafff4364069e242ea8d3ead2331b",
+          "cli": "ecb6760e3d15c999f2410ca3cf4f87aca64316514a5f2bf219c66b275b7b0488"
+        }
+      },
+      {
+        "check": "archived source and journal unchanged",
+        "pass": true,
+        "observed": {
+          "changed_or_removed": [],
+          "new_paths": {
+            ".datum/gui-terminal-context.json": "6a7d28f336aac89949ad218a05db52c2dd6b89aa96c9e97a6fbbb3fc8bfccc21",
+            ".datum/terminal-contexts/context-3711925-1788726827335314241.pinned.json": "6fe10d681265f70c6ef30206c54af5cba4e54e59cca44bf3b61eb61c5c8b46f9",
+            ".datum/terminal-contexts/terminal-3711925-1788726827335314241.agent-authority.json": "1572c47e0056ea19088891f5fa3f607de7d91088736f2174f809ea45759f930c",
+            ".datum/terminal-contexts/terminal-3711925-1788726827335314241.discovery.json": "c3d970b00ccffa22e2e66ee31d52aac1815f3988db8e3486c75a4c0865ec9d56",
+            ".datum/terminal-contexts/terminal-3711925-1788726827335314241.json": "856d68d24e7ee8d81d24672fe11fac2ad98b3599ebf1d9a4ed9ba8be3a824f76",
+            ".datum/tool-sessions/terminal-3711925-1788726827335314241.events.jsonl": "4fcfa23448616fc34a9a6ed6fa37dd2a422fc2dd7c598233645e25f6b38fc0ea",
+            ".datum/tool-sessions/terminal-3711925-1788726827335314241.events.jsonl.io.0.jsonl": "14b527feb61d8fbd13975dda7c9f18edbca0f58e0cfbf63c33a8bff7d3b94f75",
+            ".datum/tool-sessions/terminal-3711925-1788726827335314241.json": "0ad72228afb7d885b99bcab2e2a66020cc8623b53d35bc5178adb3d8ca0f9f38",
+            ".datum/tool-sessions/terminal-3711925-1788726827335314241.terminal-runtime/terminfo/d/datum-256color": "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1"
+          }
+        }
+      },
+      {
+        "check": "new paths are enumerated runtime sidecars only",
+        "pass": true,
+        "observed": [
+          ".datum/gui-terminal-context.json",
+          ".datum/terminal-contexts/context-3711925-1788726827335314241.pinned.json",
+          ".datum/terminal-contexts/terminal-3711925-1788726827335314241.agent-authority.json",
+          ".datum/terminal-contexts/terminal-3711925-1788726827335314241.discovery.json",
+          ".datum/terminal-contexts/terminal-3711925-1788726827335314241.json",
+          ".datum/tool-sessions/terminal-3711925-1788726827335314241.events.jsonl",
+          ".datum/tool-sessions/terminal-3711925-1788726827335314241.events.jsonl.io.0.jsonl",
+          ".datum/tool-sessions/terminal-3711925-1788726827335314241.json",
+          ".datum/tool-sessions/terminal-3711925-1788726827335314241.terminal-runtime/terminfo/d/datum-256color"
+        ]
+      },
+      {
+        "check": "no preferences-file changes",
+        "pass": true,
+        "observed": {
+          "before": {},
+          "after": {}
+        }
+      },
+      {
+        "check": "actual scale and dimensions",
+        "pass": true,
+        "observed": "1280x768 / scale 1.0"
+      },
+      {
+        "check": "no unavailable invocation",
+        "pass": true,
+        "observed": [
+          {
+            "context": "pane-1-unresolved",
+            "dispatch_key": "help.about",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "help-about-menu-pointer",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "About Datum is unavailable in this build."
+          },
+          {
+            "context": "pane-1-unresolved",
+            "dispatch_key": "help.about",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "help-about-menu-keyboard",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "About Datum is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "window.documents",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "window-documents-menu-pointer",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "Documents menu action is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "window.documents",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "window-documents-menu-keyboard",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "Documents menu action is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.layers",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "view-layers-menu-pointer",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "Layer Visibility menu action is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.layers",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "view-layers-menu-keyboard",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "Layer Visibility menu action is unavailable in this build."
+          }
+        ]
+      },
+      {
+        "check": "normal close recorded",
+        "pass": true,
+        "observed": [
+          {
+            "action": [
+              "close"
+            ],
+            "time_ns": 1788726887544093050,
+            "launch": 1
+          }
+        ]
+      },
+      {
+        "check": "six pointer/keyboard refusals",
+        "pass": true,
+        "observed": [
+          {
+            "context": "pane-1-unresolved",
+            "dispatch_key": "help.about",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "help-about-menu-pointer",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "About Datum is unavailable in this build."
+          },
+          {
+            "context": "pane-1-unresolved",
+            "dispatch_key": "help.about",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "help-about-menu-keyboard",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "About Datum is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "window.documents",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "window-documents-menu-pointer",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "Documents menu action is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "window.documents",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "window-documents-menu-keyboard",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "Documents menu action is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.layers",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "view-layers-menu-pointer",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "Layer Visibility menu action is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.layers",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "view-layers-menu-keyboard",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "Layer Visibility menu action is unavailable in this build."
+          }
+        ]
+      },
+      {
+        "check": "existing layer toggle remains functional",
+        "pass": true,
+        "observed": {
+          "off": "WorkspaceFilterState { show_authored: true, show_proposed: true, show_unrouted: true, dim_unrelated: false, active_layer_id: Some(\"L0\"), layer_visibility: {\"L0\": false, \"L1\": false, \"L11\": false, \"L13\": false, \"L15\": false, \"L17\": false, \"L19\": false, \"L2\": true, \"L21\": false, \"L23\": false, \"L25\": true, \"L27\": false, \"L29\": false, \"L3\": false, \"L31\": false, \"L33\": false, \"L35\": false, \"L39\": false, \"L41\": false, \"L43\": false, \"L45\": false, \"L5\": true, \"L7\": false, \"L9\": false}, layer_scroll_offset: 0 }",
+          "restored": "WorkspaceFilterState { show_authored: true, show_proposed: true, show_unrouted: true, dim_unrelated: false, active_layer_id: Some(\"L0\"), layer_visibility: {\"L0\": true, \"L1\": false, \"L11\": false, \"L13\": false, \"L15\": false, \"L17\": false, \"L19\": false, \"L2\": true, \"L21\": false, \"L23\": false, \"L25\": true, \"L27\": false, \"L29\": false, \"L3\": false, \"L31\": false, \"L33\": false, \"L35\": false, \"L39\": false, \"L41\": false, \"L43\": false, \"L45\": false, \"L5\": true, \"L7\": false, \"L9\": false}, layer_scroll_offset: 0 }"
+        }
+      },
+      {
+        "check": "existing pane navigation remains functional",
+        "pass": true,
+        "observed": {
+          "next": 1,
+          "restored": 0
+        }
+      }
+    ]
+  },
+  {
+    "scenario_id": "PILOT-S03",
+    "machine_checks_pass": false,
+    "findings": [
+      {
+        "check": "identified GUI and CLI",
+        "pass": true,
+        "observed": {
+          "gui": "608f46e6ed8c37a2f584a148873a13ee119eafff4364069e242ea8d3ead2331b",
+          "cli": "ecb6760e3d15c999f2410ca3cf4f87aca64316514a5f2bf219c66b275b7b0488"
+        }
+      },
+      {
+        "check": "archived source and journal unchanged",
+        "pass": true,
+        "observed": {
+          "changed_or_removed": [],
+          "new_paths": {
+            ".datum/gui-terminal-context.json": "78b9d8802f89750dba8d10f2c8296e30fb7269325223779ffd87b7ad4a0f811e",
+            ".datum/terminal-contexts/context-3715111-1788726894603494199.pinned.json": "27f8d13e2f29a9d8c370829e3a7f44d240d82e73ba8ab81e2b52030793cb42c8",
+            ".datum/terminal-contexts/terminal-3715111-1788726894603494199.agent-authority.json": "60e7f235ed2421db4c590f9dafc64a30304875de0193353d12ab8c1706ca0099",
+            ".datum/terminal-contexts/terminal-3715111-1788726894603494199.discovery.json": "85cd5e21ec76fa1f7f58fa496325ca1ac4b4eaa8fcd24497a464d7a4ed3d13c2",
+            ".datum/terminal-contexts/terminal-3715111-1788726894603494199.json": "0583f2003cc1b0d4e087104c522b82e395c7d4a19277089544dd7e6f2230c93c",
+            ".datum/tool-sessions/terminal-3715111-1788726894603494199.events.jsonl": "29a16cdf41ed95b1231411b1e4550a69320419b903033c2847c4f1b498d8a994",
+            ".datum/tool-sessions/terminal-3715111-1788726894603494199.events.jsonl.io.0.jsonl": "a1ea90ecebc5d485e73b24979a3e94d1d017479e453b08f8ac3b801f8efa8efb",
+            ".datum/tool-sessions/terminal-3715111-1788726894603494199.json": "38be73e393861ba0b753462d1851b0f5b26b736428ed93455c237cadedb1020e",
+            ".datum/tool-sessions/terminal-3715111-1788726894603494199.terminal-runtime/terminfo/d/datum-256color": "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1"
+          }
+        }
+      },
+      {
+        "check": "new paths are enumerated runtime sidecars only",
+        "pass": true,
+        "observed": [
+          ".datum/gui-terminal-context.json",
+          ".datum/terminal-contexts/context-3715111-1788726894603494199.pinned.json",
+          ".datum/terminal-contexts/terminal-3715111-1788726894603494199.agent-authority.json",
+          ".datum/terminal-contexts/terminal-3715111-1788726894603494199.discovery.json",
+          ".datum/terminal-contexts/terminal-3715111-1788726894603494199.json",
+          ".datum/tool-sessions/terminal-3715111-1788726894603494199.events.jsonl",
+          ".datum/tool-sessions/terminal-3715111-1788726894603494199.events.jsonl.io.0.jsonl",
+          ".datum/tool-sessions/terminal-3715111-1788726894603494199.json",
+          ".datum/tool-sessions/terminal-3715111-1788726894603494199.terminal-runtime/terminfo/d/datum-256color"
+        ]
+      },
+      {
+        "check": "no preferences-file changes",
+        "pass": true,
+        "observed": {
+          "before": {},
+          "after": {}
+        }
+      },
+      {
+        "check": "actual scale and dimensions",
+        "pass": true,
+        "observed": "1280x768 / scale 1.0"
+      },
+      {
+        "check": "no unavailable invocation",
+        "pass": true,
+        "observed": [
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.fit",
+            "eligible": true,
+            "enabled": true,
+            "entry_surface": "view-fit-shortcut",
+            "handler_ref": {
+              "path": "crates/gui-app/src/runtime_camera_pane.rs",
+              "symbol": "datum_gui::Runtime::fit_camera"
+            },
+            "invoked": true,
+            "unavailable_reason": "Available"
+          },
+          {
+            "context": "pane-1-unresolved",
+            "dispatch_key": "view.fit",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "view-fit-menu-keyboard",
+            "handler_ref": {
+              "path": "crates/gui-app/src/runtime_camera_pane.rs",
+              "symbol": "datum_gui::Runtime::fit_camera"
+            },
+            "invoked": false,
+            "unavailable_reason": "Fit is unavailable because the focused pane has no resolved camera view."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.fit",
+            "eligible": true,
+            "enabled": true,
+            "entry_surface": "view-fit-shortcut",
+            "handler_ref": {
+              "path": "crates/gui-app/src/runtime_camera_pane.rs",
+              "symbol": "datum_gui::Runtime::fit_camera"
+            },
+            "invoked": true,
+            "unavailable_reason": "Available"
+          },
+          {
+            "context": "pane-1-unresolved",
+            "dispatch_key": "help.about",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "help-about-menu-pointer",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "About Datum is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "window.documents",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "window-documents-menu-pointer",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "Documents menu action is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.layers",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "view-layers-menu-pointer",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "Layer Visibility menu action is unavailable in this build."
+          }
+        ]
+      },
+      {
+        "check": "normal close recorded",
+        "pass": true,
+        "observed": [
+          {
+            "action": [
+              "close"
+            ],
+            "time_ns": 1788726966860747038,
+            "launch": 1
+          }
+        ]
+      },
+      {
+        "check": "unresolved Fit does not refit other pane",
+        "pass": true,
+        "observed": {
+          "active_review_target_id": "no-proposal-action",
+          "board_camera": {
+            "center_x_nm": 138970000.0,
+            "center_y_nm": 88530000.0,
+            "zoom": 1.0
+          },
+          "console_latest": "View / Fit to Board: Fit is unavailable because the focused pane has no resolved camera view.",
+          "context": "pane-1-unresolved",
+          "dock": "None",
+          "focus": "Editor(PaneId(1))",
+          "focused_content": "Some(Schematic)",
+          "focused_pane": 1,
+          "layer_filters": "WorkspaceFilterState { show_authored: true, show_proposed: true, show_unrouted: true, dim_unrelated: false, active_layer_id: Some(\"L0\"), layer_visibility: {\"L0\": true, \"L1\": false, \"L11\": false, \"L13\": false, \"L15\": false, \"L17\": false, \"L19\": false, \"L2\": true, \"L21\": false, \"L23\": false, \"L25\": true, \"L27\": false, \"L29\": false, \"L3\": false, \"L31\": false, \"L33\": false, \"L35\": false, \"L39\": false, \"L41\": false, \"L43\": false, \"L45\": false, \"L5\": true, \"L7\": false, \"L9\": false}, layer_scroll_offset: 0 }",
+          "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Board }, second: Leaf { id: PaneId(1), content: Schematic } }, focused: PaneId(1), zoomed: None, next_id: 2 }",
+          "menu": null,
+          "menu_focus_index": 0,
+          "pane_cameras": [
+            {
+              "camera": {
+                "center_x_nm": 138970000.0,
+                "center_y_nm": 88530000.0,
+                "zoom": 1.0
+              },
+              "content": "Board",
+              "pane": 0
+            },
+            {
+              "camera": null,
+              "content": "Schematic",
+              "pane": 1
+            }
+          ],
+          "preferences_open": false,
+          "registry": [
+            {
+              "contexts": {
+                "pane-1-unresolved": {
+                  "enabled": false,
+                  "reason": "Fit is unavailable because the focused pane has no resolved camera view."
+                }
+              },
+              "dispatch_key": "view.fit",
+              "entry_surfaces": [
+                "view-fit-menu-keyboard",
+                "view-fit-menu-pointer",
+                "view-fit-shortcut"
+              ],
+              "handler_ref": {
+                "path": "crates/gui-app/src/runtime_camera_pane.rs",
+                "symbol": "datum_gui::Runtime::fit_camera"
+              }
+            },
+            {
+              "contexts": {
+                "pane-1-unresolved": {
+                  "enabled": false,
+                  "reason": "Layer Visibility menu action is unavailable in this build."
+                }
+              },
+              "dispatch_key": "view.layers",
+              "entry_surfaces": [
+                "view-layers-menu-keyboard",
+                "view-layers-menu-pointer"
+              ],
+              "handler_ref": null
+            },
+            {
+              "contexts": {
+                "pane-1-unresolved": {
+                  "enabled": false,
+                  "reason": "Documents menu action is unavailable in this build."
+                }
+              },
+              "dispatch_key": "window.documents",
+              "entry_surfaces": [
+                "window-documents-menu-keyboard",
+                "window-documents-menu-pointer"
+              ],
+              "handler_ref": null
+            },
+            {
+              "contexts": {
+                "pane-1-unresolved": {
+                  "enabled": false,
+                  "reason": "About Datum is unavailable in this build."
+                }
+              },
+              "dispatch_key": "help.about",
+              "entry_surfaces": [
+                "help-about-menu-keyboard",
+                "help-about-menu-pointer"
+              ],
+              "handler_ref": null
+            }
+          ],
+          "scale": 1.0,
+          "scene_bounds": {
+            "max_x": 152940000,
+            "max_y": 102500000,
+            "min_x": 125000000,
+            "min_y": 74560000
+          },
+          "selection": "None",
+          "submenu": null,
+          "window_size": [
+            1280,
+            768
+          ]
+        }
+      },
+      {
+        "check": "schematic-fit-disabled availability",
+        "pass": true,
+        "observed": {
+          "bus": ":1.1",
+          "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e666974",
+          "properties": "({'Name': <'Fit to Board'>, 'Description': <'Fit is unavailable because the focused pane has no resolved camera view.'>, 'HelpText': <'Fit is unavailable because the focused pane has no resolved camera view.'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.fit'>},)",
+          "states": "([uint32 1107302400, 0],)",
+          "children": "(@a(so) [],)"
+        }
+      },
+      {
+        "check": "filled-schematic-disabled availability",
+        "pass": true,
+        "observed": {
+          "bus": ":1.1",
+          "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e666974",
+          "properties": "({'Name': <'Fit to Board'>, 'Description': <'Fit is unavailable because the focused pane has no resolved camera view.'>, 'HelpText': <'Fit is unavailable because the focused pane has no resolved camera view.'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.fit'>},)",
+          "states": "([uint32 1107302400, 0],)",
+          "children": "(@a(so) [],)"
+        }
+      },
+      {
+        "check": "filled-board-enabled availability",
+        "pass": true,
+        "observed": {
+          "bus": ":1.1",
+          "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e666974",
+          "properties": "({'Name': <'Fit to Board'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.fit'>},)",
+          "states": "([uint32 1124079872, 0],)",
+          "children": "(@a(so) [],)"
+        }
+      },
+      {
+        "check": "escape-editor-fit editor camera restored",
+        "pass": true,
+        "observed": {
+          "center_x_nm": 138970000.0,
+          "center_y_nm": 88530000.0,
+          "zoom": 1.0
+        }
+      },
+      {
+        "check": "board-fit-restored editor camera restored",
+        "pass": true,
+        "observed": {
+          "center_x_nm": 138970000.0,
+          "center_y_nm": 88530000.0,
+          "zoom": 1.0
+        }
+      },
+      {
+        "check": "disabled pointer Fit preserves context and does not invoke",
+        "pass": false,
+        "observed": {
+          "before_pane": 1,
+          "after_pane": 0,
+          "before_camera": {
+            "center_x_nm": 140032320.0,
+            "center_y_nm": 88984240.0,
+            "zoom": 1.5735193490982056
+          },
+          "after_camera": {
+            "center_x_nm": 138970000.0,
+            "center_y_nm": 88530000.0,
+            "zoom": 1.0
+          },
+          "dispatches": [
+            {
+              "context": "pane-0-resolved",
+              "dispatch_key": "view.fit",
+              "eligible": true,
+              "enabled": true,
+              "entry_surface": "view-fit-menu-pointer",
+              "handler_ref": {
+                "path": "crates/gui-app/src/runtime_camera_pane.rs",
+                "symbol": "datum_gui::Runtime::fit_camera"
+              },
+              "invoked": true,
+              "unavailable_reason": "Available"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "scenario_id": "PILOT-S04",
+    "machine_checks_pass": true,
+    "findings": [
+      {
+        "check": "identified GUI and CLI",
+        "pass": true,
+        "observed": {
+          "gui": "608f46e6ed8c37a2f584a148873a13ee119eafff4364069e242ea8d3ead2331b",
+          "cli": "ecb6760e3d15c999f2410ca3cf4f87aca64316514a5f2bf219c66b275b7b0488"
+        }
+      },
+      {
+        "check": "archived source and journal unchanged",
+        "pass": true,
+        "observed": {
+          "changed_or_removed": [],
+          "new_paths": {
+            ".datum/gui-terminal-context.json": "251c485f785a41bb21dec390e5e8d50cb3ccc4501c10c6e385f66fb584e7ec6d",
+            ".datum/terminal-contexts/context-3722069-1788726973566570823.pinned.json": "f7bd310cb803f6dd6491a077c8d053db9d377c6fc3386b821d3c40381e041198",
+            ".datum/terminal-contexts/context-3724620-1788727015281387234.pinned.json": "79279db8c7c3762c07d92cc235332e38875e671173ca1c50807de6fcabb27dc9",
+            ".datum/terminal-contexts/terminal-3722069-1788726973566570823.agent-authority.json": "95b917ea5d776639c866712d3dbb38c306be59a5c134a9e15d909dd850254eb0",
+            ".datum/terminal-contexts/terminal-3722069-1788726973566570823.discovery.json": "93ed0da4ad05fc51e9d78a418b791370d7a1307231c654c1090e08ecba708db4",
+            ".datum/terminal-contexts/terminal-3722069-1788726973566570823.json": "54f542b3847deda0627ac1adbf229ca254fb1774797ce076ba013e5103a731a6",
+            ".datum/terminal-contexts/terminal-3724620-1788727015281387234.agent-authority.json": "c8aa7292c267123a42e5c664d2b7d91f97d146fc2204c415abdba1d6d0210d77",
+            ".datum/terminal-contexts/terminal-3724620-1788727015281387234.discovery.json": "950d7d1a320e58ee3de66b6365381be0182ba60efdd0ff9ce08e3cf1a53f54d1",
+            ".datum/terminal-contexts/terminal-3724620-1788727015281387234.json": "8eda9fef6bdb29afef41444763635814f50ca28229be5f7e40c2d09fa700f897",
+            ".datum/tool-sessions/terminal-3722069-1788726973566570823.events.jsonl": "33b16c8ca76f07e0be9571209599ef12985b42d74ad8ac11463a6ef8144b5733",
+            ".datum/tool-sessions/terminal-3722069-1788726973566570823.events.jsonl.io.0.jsonl": "29def27175fd6eaaf8c7d1f4c9ac7c4c2507e5c2c1ba92dda3cd5bc92b406235",
+            ".datum/tool-sessions/terminal-3722069-1788726973566570823.json": "200669e1c9948db1192ee4e92262c1cdf123df6776185af011fb98c8c6f08576",
+            ".datum/tool-sessions/terminal-3722069-1788726973566570823.terminal-runtime/terminfo/d/datum-256color": "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1",
+            ".datum/tool-sessions/terminal-3724620-1788727015281387234.events.jsonl": "3464b734ab83f6f7f46106f8ae2054c844704d148060ed737d935f07c6185a34",
+            ".datum/tool-sessions/terminal-3724620-1788727015281387234.events.jsonl.io.0.jsonl": "31eaf347e17ca9572afa9b0c67fc80e5017a5c2c1f1d2a3f50625d8a0a6e9f01",
+            ".datum/tool-sessions/terminal-3724620-1788727015281387234.json": "5fab693a652c12b4ca00b15b13a1150c2b9f8b4f6effca4ae6fbcfeb7bf5275e",
+            ".datum/tool-sessions/terminal-3724620-1788727015281387234.terminal-runtime/terminfo/d/datum-256color": "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1"
+          }
+        }
+      },
+      {
+        "check": "new paths are enumerated runtime sidecars only",
+        "pass": true,
+        "observed": [
+          ".datum/gui-terminal-context.json",
+          ".datum/terminal-contexts/context-3722069-1788726973566570823.pinned.json",
+          ".datum/terminal-contexts/context-3724620-1788727015281387234.pinned.json",
+          ".datum/terminal-contexts/terminal-3722069-1788726973566570823.agent-authority.json",
+          ".datum/terminal-contexts/terminal-3722069-1788726973566570823.discovery.json",
+          ".datum/terminal-contexts/terminal-3722069-1788726973566570823.json",
+          ".datum/terminal-contexts/terminal-3724620-1788727015281387234.agent-authority.json",
+          ".datum/terminal-contexts/terminal-3724620-1788727015281387234.discovery.json",
+          ".datum/terminal-contexts/terminal-3724620-1788727015281387234.json",
+          ".datum/tool-sessions/terminal-3722069-1788726973566570823.events.jsonl",
+          ".datum/tool-sessions/terminal-3722069-1788726973566570823.events.jsonl.io.0.jsonl",
+          ".datum/tool-sessions/terminal-3722069-1788726973566570823.json",
+          ".datum/tool-sessions/terminal-3722069-1788726973566570823.terminal-runtime/terminfo/d/datum-256color",
+          ".datum/tool-sessions/terminal-3724620-1788727015281387234.events.jsonl",
+          ".datum/tool-sessions/terminal-3724620-1788727015281387234.events.jsonl.io.0.jsonl",
+          ".datum/tool-sessions/terminal-3724620-1788727015281387234.json",
+          ".datum/tool-sessions/terminal-3724620-1788727015281387234.terminal-runtime/terminfo/d/datum-256color"
+        ]
+      },
+      {
+        "check": "no preferences-file changes",
+        "pass": true,
+        "observed": {
+          "before": {},
+          "after": {}
+        }
+      },
+      {
+        "check": "actual scale and dimensions",
+        "pass": true,
+        "observed": "1280x768 / scale 1.0"
+      },
+      {
+        "check": "no unavailable invocation",
+        "pass": true,
+        "observed": [
+          {
+            "context": "pane-1-unresolved",
+            "dispatch_key": "help.about",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "help-about-menu-pointer",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "About Datum is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "window.documents",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "window-documents-menu-pointer",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "Documents menu action is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.layers",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "view-layers-menu-pointer",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "Layer Visibility menu action is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.fit",
+            "eligible": true,
+            "enabled": true,
+            "entry_surface": "view-fit-shortcut",
+            "handler_ref": {
+              "path": "crates/gui-app/src/runtime_camera_pane.rs",
+              "symbol": "datum_gui::Runtime::fit_camera"
+            },
+            "invoked": true,
+            "unavailable_reason": "Available"
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.fit",
+            "eligible": true,
+            "enabled": true,
+            "entry_surface": "view-fit-shortcut",
+            "handler_ref": {
+              "path": "crates/gui-app/src/runtime_camera_pane.rs",
+              "symbol": "datum_gui::Runtime::fit_camera"
+            },
+            "invoked": true,
+            "unavailable_reason": "Available"
+          }
+        ]
+      },
+      {
+        "check": "normal close recorded",
+        "pass": true,
+        "observed": [
+          {
+            "action": [
+              "close"
+            ],
+            "time_ns": 1788727012226290766,
+            "launch": 1
+          },
+          {
+            "action": [
+              "reopen"
+            ],
+            "time_ns": 1788727017760618871,
+            "launch": 2
+          },
+          {
+            "action": [
+              "close"
+            ],
+            "time_ns": 1788727022220319954,
+            "launch": 2
+          }
+        ]
+      },
+      {
+        "check": "two normal closes and one reopen",
+        "pass": true,
+        "observed": "two launches, two exit-zero closes"
+      },
+      {
+        "check": "recovered-fit",
+        "pass": true,
+        "observed": {
+          "center_x_nm": 138970000.0,
+          "center_y_nm": 88530000.0,
+          "zoom": 1.0
+        }
+      },
+      {
+        "check": "reopened-fit",
+        "pass": true,
+        "observed": {
+          "center_x_nm": 138970000.0,
+          "center_y_nm": 88530000.0,
+          "zoom": 1.0
+        }
+      }
+    ]
+  },
+  {
+    "scenario_id": "PILOT-S05",
+    "machine_checks_pass": true,
+    "findings": [
+      {
+        "check": "identified GUI and CLI",
+        "pass": true,
+        "observed": {
+          "gui": "608f46e6ed8c37a2f584a148873a13ee119eafff4364069e242ea8d3ead2331b",
+          "cli": "ecb6760e3d15c999f2410ca3cf4f87aca64316514a5f2bf219c66b275b7b0488"
+        }
+      },
+      {
+        "check": "archived source and journal unchanged",
+        "pass": true,
+        "observed": {
+          "changed_or_removed": [],
+          "new_paths": {
+            ".datum/gui-terminal-context.json": "8151d68dd3670c55e38660fc4402b206b8f41599e8f254d1fa1dd4856b5e6b4f",
+            ".datum/terminal-contexts/context-3730677-1788727173948825533.pinned.json": "927e9b59cc97fbd2825eeaac4bd76b3d67819caf37ee9cf78926fa78be7228b2",
+            ".datum/terminal-contexts/terminal-3730677-1788727173948825533.agent-authority.json": "d44f99f2f94474d978d42c97e4291b9a87be00ceb9b4f45ffa6317370646fc73",
+            ".datum/terminal-contexts/terminal-3730677-1788727173948825533.discovery.json": "a4e7b9c7c54d66b0b6a24a7758676f68a9f863ebe82a60c1f46600953d9b9bf2",
+            ".datum/terminal-contexts/terminal-3730677-1788727173948825533.json": "0cb7f538755186375feaefde0228e5e5f09e0126fb8dde56c2c96c7309afdc7e",
+            ".datum/tool-sessions/terminal-3730677-1788727173948825533.events.jsonl": "f845d75c06e01f20d0a7510c667770029406445e5135447dc94d92a003b7fde8",
+            ".datum/tool-sessions/terminal-3730677-1788727173948825533.events.jsonl.io.0.jsonl": "4248161fd0b2eeaa1f5bd0b4503b9995a4f5b6a903750aba131112fe55666a85",
+            ".datum/tool-sessions/terminal-3730677-1788727173948825533.json": "34c518e671bccfdd1eaeaf906d2031f09f6993e49baf958009356d4cd3b3a12d",
+            ".datum/tool-sessions/terminal-3730677-1788727173948825533.terminal-runtime/terminfo/d/datum-256color": "5d0b36dea1d7cbcd2bd332ebc0dbdddd24d9e1cbedb0e05d9ba0bf42b1b402f1"
+          }
+        }
+      },
+      {
+        "check": "new paths are enumerated runtime sidecars only",
+        "pass": true,
+        "observed": [
+          ".datum/gui-terminal-context.json",
+          ".datum/terminal-contexts/context-3730677-1788727173948825533.pinned.json",
+          ".datum/terminal-contexts/terminal-3730677-1788727173948825533.agent-authority.json",
+          ".datum/terminal-contexts/terminal-3730677-1788727173948825533.discovery.json",
+          ".datum/terminal-contexts/terminal-3730677-1788727173948825533.json",
+          ".datum/tool-sessions/terminal-3730677-1788727173948825533.events.jsonl",
+          ".datum/tool-sessions/terminal-3730677-1788727173948825533.events.jsonl.io.0.jsonl",
+          ".datum/tool-sessions/terminal-3730677-1788727173948825533.json",
+          ".datum/tool-sessions/terminal-3730677-1788727173948825533.terminal-runtime/terminfo/d/datum-256color"
+        ]
+      },
+      {
+        "check": "no preferences-file changes",
+        "pass": true,
+        "observed": {
+          "before": {},
+          "after": {}
+        }
+      },
+      {
+        "check": "actual scale and dimensions",
+        "pass": true,
+        "observed": "1280x768 / scale 1.0"
+      },
+      {
+        "check": "no unavailable invocation",
+        "pass": true,
+        "observed": [
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.layers",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "view-layers-menu-keyboard",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "Layer Visibility menu action is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "help.about",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "help-about-menu-keyboard",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "About Datum is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "window.documents",
+            "eligible": false,
+            "enabled": false,
+            "entry_surface": "window-documents-menu-keyboard",
+            "handler_ref": null,
+            "invoked": false,
+            "unavailable_reason": "Documents menu action is unavailable in this build."
+          },
+          {
+            "context": "pane-0-resolved",
+            "dispatch_key": "view.fit",
+            "eligible": true,
+            "enabled": true,
+            "entry_surface": "view-fit-shortcut",
+            "handler_ref": {
+              "path": "crates/gui-app/src/runtime_camera_pane.rs",
+              "symbol": "datum_gui::Runtime::fit_camera"
+            },
+            "invoked": true,
+            "unavailable_reason": "Available"
+          }
+        ]
+      },
+      {
+        "check": "normal close recorded",
+        "pass": true,
+        "observed": [
+          {
+            "action": [
+              "close"
+            ],
+            "time_ns": 1788727234253555260,
+            "launch": 1
+          }
+        ]
+      },
+      {
+        "check": "fit-focus live focus/availability",
+        "pass": true,
+        "observed": {
+          "bus": ":1.1",
+          "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e666974",
+          "properties": "({'Name': <'Fit to Board'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.fit'>},)",
+          "states": "([uint32 1124079872, 0],)",
+          "children": "(@a(so) [],)"
+        }
+      },
+      {
+        "check": "layers-focus live focus/availability",
+        "pass": true,
+        "observed": {
+          "bus": ":1.1",
+          "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e6c6179657273",
+          "properties": "({'Name': <'Layer Visibility'>, 'Description': <'Layer Visibility menu action is unavailable in this build.'>, 'HelpText': <'Layer Visibility menu action is unavailable in this build.'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.layers'>},)",
+          "states": "([uint32 1107302400, 0],)",
+          "children": "(@a(so) [],)"
+        }
+      },
+      {
+        "check": "layers-focus live reason",
+        "pass": true,
+        "observed": "({'Name': <'Layer Visibility'>, 'Description': <'Layer Visibility menu action is unavailable in this build.'>, 'HelpText': <'Layer Visibility menu action is unavailable in this build.'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.layers'>},)"
+      },
+      {
+        "check": "about-focus live focus/availability",
+        "pass": true,
+        "observed": {
+          "bus": ":1.1",
+          "path": "/org/a11y/atspi/accessible/menus/n6d656e753a48656c702f68656c702e61626f7574",
+          "properties": "({'Name': <'About Datum'>, 'Description': <'About Datum is unavailable in this build.'>, 'HelpText': <'About Datum is unavailable in this build.'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a48656c70')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:Help/help.about'>},)",
+          "states": "([uint32 1107302400, 0],)",
+          "children": "(@a(so) [],)"
+        }
+      },
+      {
+        "check": "about-focus live reason",
+        "pass": true,
+        "observed": "({'Name': <'About Datum'>, 'Description': <'About Datum is unavailable in this build.'>, 'HelpText': <'About Datum is unavailable in this build.'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a48656c70')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:Help/help.about'>},)"
+      },
+      {
+        "check": "documents-focus live focus/availability",
+        "pass": true,
+        "observed": {
+          "bus": ":1.1",
+          "path": "/org/a11y/atspi/accessible/menus/n6d656e753a57696e646f772f77696e646f772e646f63756d656e7473",
+          "properties": "({'Name': <'Documents'>, 'Description': <'Documents menu action is unavailable in this build.'>, 'HelpText': <'Documents menu action is unavailable in this build.'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a57696e646f77')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:Window/window.documents'>},)",
+          "states": "([uint32 1107302400, 0],)",
+          "children": "(@a(so) [],)"
+        }
+      },
+      {
+        "check": "documents-focus live reason",
+        "pass": true,
+        "observed": "({'Name': <'Documents'>, 'Description': <'Documents menu action is unavailable in this build.'>, 'HelpText': <'Documents menu action is unavailable in this build.'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a57696e646f77')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:Window/window.documents'>},)"
+      },
+      {
+        "check": "schematic-live",
+        "pass": true,
+        "observed": {
+          "bus": ":1.1",
+          "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e666974",
+          "properties": "({'Name': <'Fit to Board'>, 'Description': <'Fit is unavailable because the focused pane has no resolved camera view.'>, 'HelpText': <'Fit is unavailable because the focused pane has no resolved camera view.'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.fit'>},)",
+          "states": "([uint32 1107302400, 0],)",
+          "children": "(@a(so) [],)"
+        }
+      },
+      {
+        "check": "board-live",
+        "pass": true,
+        "observed": {
+          "bus": ":1.1",
+          "path": "/org/a11y/atspi/accessible/menus/n6d656e753a566965772f766965772e666974",
+          "properties": "({'Name': <'Fit to Board'>, 'Description': <'Available'>, 'HelpText': <'Available'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/menus/n6d656e753a56696577')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'menu:View/view.fit'>},)",
+          "states": "([uint32 1124079872, 0],)",
+          "children": "(@a(so) [],)"
+        }
+      },
+      {
+        "check": "layers-dismissed",
+        "pass": true,
+        "observed": [
+          "/org/a11y/atspi/accessible/root",
+          "/org/a11y/atspi/accessible/terminal"
+        ]
+      },
+      {
+        "check": "about-dismissed",
+        "pass": true,
+        "observed": [
+          "/org/a11y/atspi/accessible/root",
+          "/org/a11y/atspi/accessible/terminal"
+        ]
+      },
+      {
+        "check": "documents-dismissed",
+        "pass": true,
+        "observed": [
+          "/org/a11y/atspi/accessible/root",
+          "/org/a11y/atspi/accessible/terminal"
+        ]
+      },
+      {
+        "check": "menus-absent-terminal-retained",
+        "pass": true,
+        "observed": [
+          "/org/a11y/atspi/accessible/root",
+          "/org/a11y/atspi/accessible/terminal"
+        ]
+      },
+      {
+        "check": "Preferences and Terminal retained",
+        "pass": true,
+        "observed": [
+          "/org/a11y/atspi/accessible/root",
+          "/org/a11y/atspi/accessible/terminal",
+          "/org/a11y/atspi/accessible/preferences/0",
+          "/org/a11y/atspi/accessible/preferences/1",
+          "/org/a11y/atspi/accessible/preferences/2",
+          "/org/a11y/atspi/accessible/preferences/3",
+          "/org/a11y/atspi/accessible/preferences/4",
+          "/org/a11y/atspi/accessible/preferences/5",
+          "/org/a11y/atspi/accessible/preferences/6",
+          "/org/a11y/atspi/accessible/preferences/7",
+          "/org/a11y/atspi/accessible/preferences/8"
+        ]
+      },
+      {
+        "check": "native Preferences dismissal returns menu operability",
+        "pass": true,
+        "observed": {
+          "preferences_open": false,
+          "menu": "View"
+        }
+      },
+      {
+        "check": "Escape restores editor F",
+        "pass": true,
+        "observed": "Editor(PaneId(0))"
+      }
+    ]
+  }
+]

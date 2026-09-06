@@ -9,9 +9,40 @@ from unittest.mock import patch
 
 from workflow_delivery_pilot_capture import Capture, OBJECT, files
 from workflow_delivery_pilot_scenarios import actions
+from workflow_delivery_pilot_build import build_command, snapshot_inputs
+from workflow_delivery_pilot_observations import flag, records
 
 
 class CaptureTests(unittest.TestCase):
+    def test_accessible_states_parse_word_bits_not_the_uint32_type_name(self):
+        node = {"states": "([uint32 4096, 0],)"}
+        self.assertTrue(flag(node, 12))
+        self.assertFalse(flag(node, 8))
+        self.assertFalse(flag(node, 24))
+
+    def test_trace_reader_preserves_noninvocation_and_does_not_infer_success(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            event = {"event": "dispatch", "value": {"enabled": True, "invoked": False}}
+            (root / "gui-1.log").write_text("other log\nDATUM_ACTION_EVIDENCE " + json.dumps(event) + "\n")
+            self.assertEqual(records(root), [event])
+
+    def test_target_is_owned_by_guard_not_a_later_cargo_override(self):
+        command = build_command(Path("/owned/source"), Path("/owned/target"))
+        boundary = command.index("--")
+        self.assertLess(command.index("--target-dir"), boundary)
+        self.assertNotIn("--target-dir", command[boundary + 1:])
+        self.assertEqual(command[command.index("--target-dir") + 1], "/owned/target")
+
+    def test_snapshot_manifest_includes_untracked_input_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "crates").mkdir()
+            (root / "crates/extra.rs").write_text("uncommitted")
+            (root / "Cargo.toml").write_text("manifest")
+            manifest = snapshot_inputs(root, ["crates", "Cargo.toml"])
+            self.assertEqual([item["path"] for item in manifest], ["Cargo.toml", "crates/extra.rs"])
+
     def test_gvariant_child_references_keep_unannotated_siblings(self):
         raw = "([(':1.1', objectpath '/root'), (':1.1', '/menu')],)"
         self.assertEqual(OBJECT.findall(raw), [(":1.1", "/root"), (":1.1", "/menu")])
@@ -47,7 +78,7 @@ class CaptureTests(unittest.TestCase):
             self.assertIn("unexpected.json", result["new_paths"])
 
     def test_scripts_have_native_inputs_and_unique_observation_names(self):
-        allowed = {"click", "move", "key", "wheel", "capture", "close", "reopen"}
+        allowed = {"click", "move", "key", "wheel", "capture", "close", "reopen", "focus-window"}
         for number in range(1, 6):
             steps = actions(f"PILOT-S0{number}")
             self.assertTrue(all(step[0] in allowed for step in steps))

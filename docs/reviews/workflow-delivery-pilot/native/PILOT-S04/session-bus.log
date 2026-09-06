@@ -1,0 +1,5 @@
+dbus-daemon[3722036]: [session uid=1000 pid=3722036 pidfd=5] Activating service name='org.a11y.Bus' requested by ':1.1' (uid=1000 pid=3722047 comm="gdbus call --session --dest org.a11y.Bus --object-")
+dbus-daemon[3722036]: [session uid=1000 pid=3722036 pidfd=5] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[3722059]: Activating service name='org.a11y.atspi.Registry' requested by ':1.1' (uid=1000 pid=3722069 comm="/home/bfadmin/Documents/datum-eda/target/debug/dat")
+dbus-daemon[3722059]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
