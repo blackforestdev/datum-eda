@@ -3,6 +3,7 @@ use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
+use uuid::Uuid;
 
 use crate::preferences::PreferenceKey;
 
@@ -67,6 +68,20 @@ pub struct MutationReceipt {
     pub before_digests: BTreeMap<String, String>,
     pub after_digests: BTreeMap<String, String>,
     pub redacted_keys: Vec<String>,
+    #[serde(default)]
+    pub request_id: Option<Uuid>,
+    #[serde(default)]
+    pub canonical_request_digest: Option<String>,
+    #[serde(default)]
+    pub actor_kind: Option<String>,
+    #[serde(default)]
+    pub local_actor_id: Option<String>,
+    #[serde(default)]
+    pub actor_session_id: Option<String>,
+    #[serde(default)]
+    pub invocation_id: Option<Uuid>,
+    #[serde(default)]
+    pub expected_generation_ref: Option<GenerationRef>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -178,6 +193,18 @@ pub struct MutationMetadata {
     pub actor: String,
     pub reason: String,
     pub writer_instance: String,
+    pub audit: Option<MutationAuditMetadata>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct MutationAuditMetadata {
+    pub request_id: Uuid,
+    pub canonical_request_digest: String,
+    pub actor_kind: String,
+    pub local_actor_id: String,
+    pub actor_session_id: String,
+    pub invocation_id: Uuid,
+    pub expected_generation_ref: Option<GenerationRef>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]

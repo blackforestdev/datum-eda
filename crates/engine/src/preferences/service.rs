@@ -157,6 +157,24 @@ impl GlobalPreferencesService {
             .and_then(|snapshot| snapshot.receipts.last())
     }
 
+    pub(super) fn receipt_for_request(&self, request_id: uuid::Uuid) -> Option<&MutationReceipt> {
+        self.snapshot.as_ref().and_then(|snapshot| {
+            snapshot
+                .receipts
+                .iter()
+                .find(|receipt| receipt.request_id == Some(request_id))
+        })
+    }
+
+    pub(super) fn at_generation(&self, generation_number: u64) -> Result<Self, RepositoryError> {
+        let snapshot = self.repository.snapshot_at_generation(generation_number)?;
+        let generation = snapshot.generation.clone();
+        let mut historical = self.clone();
+        historical.snapshot = Some(snapshot);
+        historical.status = PreferenceServiceStatus::Ready { generation };
+        Ok(historical)
+    }
+
     pub(super) fn refresh(&mut self) {
         match self.repository.inspect() {
             RepositoryStatus::Missing => {
@@ -325,6 +343,7 @@ impl GlobalPreferencesService {
             actor: "local-user".to_owned(),
             reason: reason.to_owned(),
             writer_instance: self.writer_instance.clone(),
+            audit: None,
         }
     }
 

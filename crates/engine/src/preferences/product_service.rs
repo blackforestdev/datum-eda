@@ -7,7 +7,8 @@ use serde::Serialize;
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
 
-use super::repository::{GenerationRef, MutationMetadata};
+use super::product_idempotency::{canonical_mutation_request_digest, mutation_request_id};
+use super::repository::{GenerationRef, MutationAuditMetadata, MutationMetadata};
 use super::{
     ApplyBehavior, GlobalPreferenceRow, GlobalPreferencesService, HeadExpectationV1,
     PreferenceActorKindV1, PreferenceActorV1, PreferenceConsideredFactV1, PreferenceContextV1,
@@ -164,6 +165,41 @@ impl GlobalPreferencesProductService {
             ));
         }
         let key = self.active_key(key_text, draft.clone())?;
+        if let Some(value) = draft.as_ref() {
+            let descriptor = self.service.registry().get(&key).expect("active key");
+            if !descriptor.validates(value) {
+                return Err(self.error(
+                    PreferenceErrorCodeV1::InvalidPreferenceValue,
+                    "Preference value is invalid",
+                    BTreeMap::from([
+                        ("key".to_owned(), json!(key.as_str())),
+                        ("reason".to_owned(), json!("descriptor_validation")),
+                    ]),
+                    draft,
+                ));
+            }
+        }
+        let request_id = mutation_request_id(&request);
+        let request_digest = canonical_mutation_request_digest(&request, actor)
+            .map_err(|message| bootstrap_error(message))?;
+        if let Some(receipt) = self.service.receipt_for_request(request_id).cloned() {
+            if receipt.canonical_request_digest.as_deref() != Some(&request_digest) {
+                return Err(self.error(
+                    PreferenceErrorCodeV1::IdempotencyConflict,
+                    "Request id was already committed with different canonical content",
+                    BTreeMap::from([
+                        ("request_id".to_owned(), json!(request_id)),
+                        (
+                            "original_request_digest".to_owned(),
+                            json!(receipt.canonical_request_digest),
+                        ),
+                        ("submitted_request_digest".to_owned(), json!(request_digest)),
+                    ]),
+                    draft,
+                ));
+            }
+            return self.replay_mutation(&key, receipt);
+        }
         let before = self.service.status().generation().cloned();
         let expected_ref = self.validate_expectation(expected, draft.clone())?;
         let metadata = MutationMetadata {
@@ -176,6 +212,15 @@ impl GlobalPreferencesProductService {
             ),
             reason: reason.to_owned(),
             writer_instance: actor.session_id.clone(),
+            audit: Some(MutationAuditMetadata {
+                request_id,
+                canonical_request_digest: request_digest,
+                actor_kind: actor_kind(actor).to_owned(),
+                local_actor_id: actor.local_actor_id.clone(),
+                actor_session_id: actor.session_id.clone(),
+                invocation_id: actor.invocation_id,
+                expected_generation_ref: expected_ref.clone(),
+            }),
         };
         let rows = if reset {
             self.service

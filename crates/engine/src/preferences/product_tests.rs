@@ -256,3 +256,82 @@ fn proposal_digest_tampering_and_stale_authority_are_typed_refusals() {
     assert_eq!(refusal.code, PreferenceErrorCodeV1::ProposalStale);
     assert!(refusal.preserved_proposal.is_some());
 }
+
+#[test]
+fn mutation_idempotency_survives_restart_and_replays_the_original_generation() {
+    let locations = TestLocations::new("durable-idempotency");
+    let mut service = GlobalPreferencesProductService::open(&locations.provider(), "writer-one")
+        .expect("test product service opens");
+    let request_id = Uuid::new_v4();
+    let trusted_actor = actor(PreferenceActorKindV1::HumanGui);
+    let request = PreferenceMutationRequestV1::SetUser {
+        key: "datum.accessibility.reduced_motion".to_owned(),
+        value: json!(true),
+        expected: HeadExpectationV1::Missing,
+        request_id,
+        reason: "reduce animation".to_owned(),
+    };
+    let original = service
+        .mutate(request.clone(), &trusted_actor)
+        .expect("first request commits");
+    let original_receipt = original.receipt.as_ref().expect("changed receipt");
+    assert_eq!(original_receipt.request_id, Some(request_id));
+    assert_eq!(original_receipt.actor_kind.as_deref(), Some("human_gui"));
+    assert_eq!(
+        original_receipt.actor_session_id.as_deref(),
+        Some("test-session")
+    );
+    assert_eq!(
+        original_receipt.invocation_id,
+        Some(trusted_actor.invocation_id)
+    );
+
+    service
+        .mutate(
+            PreferenceMutationRequestV1::SetUser {
+                key: "datum.accessibility.high_contrast_noncolor".to_owned(),
+                value: json!(true),
+                expected: HeadExpectationV1::Generation(
+                    original.generation.clone().expect("generation zero"),
+                ),
+                request_id: Uuid::new_v4(),
+                reason: "contrast choice".to_owned(),
+            },
+            &actor(PreferenceActorKindV1::HumanGui),
+        )
+        .expect("later request commits");
+    assert_eq!(service.context().generation.as_ref().unwrap().generation, 1);
+    drop(service);
+
+    let mut reopened = GlobalPreferencesProductService::open(&locations.provider(), "writer-two")
+        .expect("repository reopens");
+    let replay = reopened
+        .mutate(request.clone(), &trusted_actor)
+        .expect("identical retry replays");
+    assert!(replay.changed);
+    assert_eq!(replay.generation.as_ref().unwrap().generation, 0);
+    assert_eq!(replay.value.user_value, Some(json!(true)));
+    assert_eq!(replay.receipt, original.receipt);
+    assert_eq!(
+        reopened.context().generation.as_ref().unwrap().generation,
+        1
+    );
+
+    let conflict = reopened
+        .mutate(
+            PreferenceMutationRequestV1::SetUser {
+                key: "datum.accessibility.reduced_motion".to_owned(),
+                value: json!(false),
+                expected: HeadExpectationV1::Missing,
+                request_id,
+                reason: "reduce animation".to_owned(),
+            },
+            &trusted_actor,
+        )
+        .unwrap_err();
+    assert_eq!(conflict.code, PreferenceErrorCodeV1::IdempotencyConflict);
+    assert_eq!(
+        reopened.context().generation.as_ref().unwrap().generation,
+        1
+    );
+}
