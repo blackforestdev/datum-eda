@@ -64,9 +64,10 @@ equal-authority controls therefore remain Q4 unresolved conflicts rather than
 being combined field-by-field or by arrival order.
 
 `ProjectPolicySeed` is a registered descriptor class, not an eligibility flag
-on another class. Exactly fourteen reserved rows whose Apply column says
-`seed:<authority>` below are `PS`; the eight `datum.units.*` rows are initially
-production-active. Three formerly active Revision seed rows were
+on another class. Exactly fourteen rows are classified `PS`: the eight
+`datum.units.*` rows have active `seed:ProjectDisplayUnits` application, while
+the other six remain reserved candidates without application authority. Three
+formerly active Revision seed rows were
 withdrawn by Product Mechanics 038, and the deferred AdoptedDraftingStandard
 seed remains classified `PS` while its schema is unavailable. Presentation,
 Capability, WorkflowDefault, and other non-`PS` keys cannot cross Q5 into
@@ -140,14 +141,23 @@ decimal-degree values. Unsupported draft angle notations remain preserved
 evidence and cannot silently become a different V1 preference.
 
 The eight typed `datum.units.*` seed descriptors compose the default
-`ProjectDisplayUnits` snapshot. `datum.projects.unit_policy_seed` is the
-explicit aggregate override: an eligible non-absent contribution to it wins for
-the seed transaction; when it has no contribution, the snapshot is composed
-from the eight typed unit-seed descriptors. Absence never masquerades as a
-contribution, so the aggregate factory/no-value does not shadow more specific
-chosen unit seeds. The receipt records either the aggregate source or every
-composed source and effective value. The aggregate is not an ordinary GUI row;
-the eight typed controls are the complete user-facing Global Units surface.
+`ProjectDisplayUnits` snapshot. `datum.projects.unit_policy_seed` is a reserved
+internal aggregate candidate only: GP-CM03 must not resolve, expose, accept, or
+seed from it. A later separately ratified profile mechanism may define aggregate
+precedence; the current catalog does not. Absence never masquerades as a
+contribution, and no reserved factory/no-value shadows production-active unit
+descriptors. The receipt records every composed source and effective value. The
+eight typed controls are the complete user-facing Global Units surface.
+
+The GP-CM03 product request boundary is exact. Queries, writes, Reset,
+explanation, and proposals accept only the eleven production-active identities.
+Project genesis accepts only the eight active Units seeds. The six remaining
+seed-class candidates—`datum.publish.title_block_template_seed`,
+`datum.publish.sheet_format_seed`, `datum.publish.scale_fraction_style_seed`,
+`datum.projects.seed_profile`, `datum.projects.template_set`, and
+`datum.projects.unit_policy_seed`—remain reserved and are refused, not rendered
+as unavailable controls. The stable public schemas and proof obligations are in
+`GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md`.
 
 The eight rows have one Global role: define defaults for future Projects. At New
 Project they are eligible inputs to one immutable `ProjectDisplayUnits`
@@ -158,7 +168,7 @@ Global change. Publish/document units remain separate Project/document
 authority. CLI/MCP bare expressions require explicit context or a Project and
 field; interchange never reads these preferences. Exact resolution, token
 mapping, decimal-degree angle limits, lossless editing, scalar-expression
-grammar, aggregate composition, and cross-surface proof are
+grammar, exact eight-descriptor composition, and cross-surface proof are
 governed by Product Mechanics 040 and the industrial execution contract in
 `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md`.
 
@@ -213,7 +223,7 @@ portable exchange omits executable, environment, credentials, and expanded cwd.
 | `datum.files.autosave` | document persistence | struct `{interval:off-or-5m-or-10m-or-30m,retained_versions,backup_age,recovery,reminder}`; `10m` plus bounded engine defaults | W; U+S+C; R,C,Pn,L | live schedule; document persistence | P0 excluding recovery payloads; no legacy; I | `preferences-window.html:243`; `GP_C01_INTERNAL_AUTHORITY_AUDIT.md:282-296` |
 | `datum.projects.seed_profile` | Project genesis | resolvable profile identity; Datum factory | PS; U; R,C,Pn,L | seed:`ProjectSeedSnapshot`; New Project only | P0, missing identity refuses selection; no legacy; I | `preferences-window.html:245`; `GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:132-169` |
 | `datum.projects.template_set` | Project genesis | resolvable template identity or none; Datum starter | PS; U; R,C,Pn,L | seed:`ProjectTemplateCopy`; New Project only | P0; draft name `datum.projects.template_seed` remains searchable only; I | `preferences-window.html:247` |
-| `datum.projects.unit_policy_seed` | Project genesis/units | optional aggregate `UnitsProfile` with system, three quantity-specific unit/precision pairs, and decimal-degree precision; absent | PS; U; R,C,Pn,L | seed:`ProjectDisplayUnits`; explicit aggregate wins, otherwise compose typed unit seeds | P0; migrate only through the controlling Units contract; I | `preferences-window.html:249`; `GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:132-169`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#typed-profile-and-resolution` |
+| `datum.projects.unit_policy_seed` | Project genesis/units | reserved optional aggregate `UnitsProfile`; absent | PS candidate; no active source | reserved: no GP-CM03 resolution, control, or seed application | P0; future mechanism requires separate ratification; I | `preferences-window.html:249`; `GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md:132-169`; `GP_SHARED_UNITS_ENGINE_REQUIREMENT.md#typed-profile-and-resolution` |
 | `datum.output.job_prefill` | output orchestration | enum `{ask,last_used}`; `ask` | W; U+S+C; R,C,Pn,L | live pre-fill; Generate; operation still asks | P0; output job stays Project fact; I | `preferences-window.html:258` |
 | `datum.output.destination_prefill` | output orchestration | enum `{ask,project_outputs}`; `ask` | W; U+S+C; R,C,Pn,L | live pre-fill; export; operation still asks | P0; no legacy; I | `preferences-window.html:260` |
 ## 3. Negative classifications

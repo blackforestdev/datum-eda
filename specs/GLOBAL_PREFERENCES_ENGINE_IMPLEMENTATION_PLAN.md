@@ -1,8 +1,8 @@
 # Datum Global Preferences Engine Implementation and Production-Acceptance Plan
 
 > **Status:** Governed serial implementation contract. Execution authority is
-> determined only by the synchronized Active Frontier; GP-CM01 is currently the
-> bounded authorized step.
+> determined only by the synchronized Active Frontier; GP-CM02R is currently
+> the bounded planning step and GP-CM03 remains unauthorized.
 >
 > **Trackers:** `dat-shared-units-engine-build-915`,
 > `dat-global-preferences-engine-build-vge`,
@@ -11,7 +11,8 @@
 >
 > **Authority:** Product Mechanics 037, the ratified V1 descriptor catalog,
 > GP-C04 storage/recovery contract, GP-C05 interaction contract, Product
-> Mechanics 039, and the shared Units requirement. This plan decomposes those
+> Mechanics 039, the shared Units requirement, and
+> `GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md`. This plan decomposes those
 > contracts; it cannot change them.
 
 ## 1. Authorization law
@@ -147,9 +148,11 @@ displaced values, refuses arrival-order conflict resolution, and returns the
 same complete side-effect-free explanation used by every future surface. It
 owns no storage, GUI, Project mutation, provider transport, or Revision path.
 The `ProjectPolicySeed` count discrepancy tracked as `dat-vuh` is resolved as a
-count-only doctrine/catalog defect: the active post-PM-038 catalog contains
-twelve seed rows. The implementation preserves every ratified row's explicit
-class and does not restore a withdrawn Revision descriptor.
+count-only doctrine/catalog defect in that historical snapshot, which contained
+twelve seed rows. Later Units reconciliation brought the reserved class
+inventory to fourteen; only eight Units rows are production-active now. The
+implementation preserves every ratified row's explicit class and does not
+restore a withdrawn Revision descriptor.
 
 On 2026-08-31 the owner rejected advancement to GP-F03 and directed a bounded
 GP-F01 correction before storage work. The correction replaces inferred
@@ -1046,19 +1049,43 @@ the controlling doctrine, engine/API boundary, CLI, MCP, daemon, Project
 genesis, security, concurrency, failure, and acceptance contracts. Preserve the
 11-active/45-reserved boundary and make no implementation change.
 
+The exact build contract is
+`specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md`. GP-CM02R completes only
+when PM-037 search authority, the descriptor catalog, this plan, the MCP spec,
+the shared AI/CLI/MCP contract, governance/parity records, and the synchronized
+Frontier all point to the same inventories and exclusions. Runtime registries
+remain implementation evidence and are not changed during this planning step.
+
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM02V -->
 <!-- OWNER:GLOBAL-PREFERENCES-COMPLETION:GP-CM02V:GP-CM02V -->
 ### GP-CM02V — fresh owner authorization after reconciliation
 
 Review the committed GP-CM02R contract and evidence before authorizing GP-CM03.
+The owner review must confirm all nine findings, the non-self-referential V2
+receipt, missing-repository Set/Reset behavior, short-lived MCP acceptance
+handle, exact six reserved seed identities, explicit Global/factory modes,
+atomic staged publication, retry/crash outcomes, and clause-by-clause proof.
 
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM03 -->
 ### GP-CM03 — engine, CLI, MCP, and Project seed parity
 
-Expose one typed operation/query/refusal/proposal family through engine, CLI,
-and MCP with identical explanation semantics and no private writer. Implement
-the existing ratified ProjectPolicySeed snapshot/receipt seam with no live
-following; excluded or undefined seed schemas remain absent.
+Implement the complete V1 product service in
+`GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md`, without widening it. This is
+exactly six queries, two trusted-human direct mutations, four proposal actions,
+the stable refusal inventory, one engine-owned repository and resolver path,
+the stated daemon/writer lease model, and the exact CLI/MCP mappings. MCP has no
+direct Set or Reset tool; it uses proposal semantics and the bounded
+human-acceptance handle.
+
+Implement Project creation through the same engine genesis service for GUI,
+CLI, and MCP. Only the eight active Units descriptors may seed; the other six
+`ProjectPolicySeed` candidates, including the aggregate, stay reserved and
+absent. Global and explicit factory modes, pinned snapshot, staged atomic
+publication, immutable V2 receipt, migration compatibility, idempotent retry,
+crash recovery, and every typed refusal must match the contract. No live
+following, private parser/writer, dependency, prototype change, Manage
+Preferences, Publish, Revision, or broader Project Preferences work is in this
+step.
 
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM04 -->
 <!-- OWNER:GLOBAL-PREFERENCES-COMPLETION:GP-CM04:GP-CM04 -->
