@@ -46,6 +46,7 @@ mod native_types;
 mod output_jobs;
 mod pool;
 mod preferences;
+mod preferences_daemon;
 mod prelude;
 mod project;
 mod project_core;

@@ -1,3 +1,4 @@
+use super::preferences_daemon::authorize_mcp_through_daemon;
 use super::*;
 
 use std::fs::OpenOptions;
@@ -6,16 +7,27 @@ use std::os::fd::AsRawFd;
 
 use eda_engine::preferences::repository::GenerationRef;
 use eda_engine::preferences::{
-    GlobalPreferencesProductService, HeadExpectationV1, InstalledPreferenceLocationProvider,
-    PreferenceActorKindV1, PreferenceActorV1, PreferenceMutationRequestV1,
-    PreferenceProductPayloadV1, PreferenceProductRequestV1, PreferenceProductResponseV1,
-    PreferenceProposalActionV1, PreferenceQueryV1, PreferenceSchemaRefV1, ProjectUnitsSourceV1,
+    AuthorizeMcpPreferenceApplyV1, GlobalPreferencesProductService, HeadExpectationV1,
+    InstalledPreferenceLocationProvider, PreferenceActorKindV1, PreferenceActorV1,
+    PreferenceMutationRequestV1, PreferenceProductPayloadV1, PreferenceProductRequestV1,
+    PreferenceProductResponseV1, PreferenceProposalActionV1, PreferenceProposalV1,
+    PreferenceQueryV1, PreferenceSchemaRefV1, ProjectUnitsSourceV1,
 };
 
 pub(crate) fn execute_preferences_command(
     format: &OutputFormat,
     action: PreferencesCommands,
 ) -> Result<(String, i32)> {
+    let action = match action {
+        PreferencesCommands::Proposal {
+            action:
+                PreferencesProposalCommands::AuthorizeMcp {
+                    proposal_json,
+                    mcp_session,
+                },
+        } => return execute_mcp_authorization(format, &proposal_json, mcp_session),
+        action => action,
+    };
     let mut service = GlobalPreferencesProductService::open(
         &InstalledPreferenceLocationProvider,
         format!("datum-cli-{}", std::process::id()),
@@ -227,6 +239,9 @@ fn execute_proposal(
             },
             false,
         ),
+        PreferencesProposalCommands::AuthorizeMcp { .. } => {
+            unreachable!("authorize-mcp is routed to the owning daemon")
+        }
     };
     let actor = if human_confirmation {
         let proposal = match &proposal_action {
@@ -258,6 +273,34 @@ fn execute_proposal(
         ),
         &actor,
     ))
+}
+
+fn execute_mcp_authorization(
+    format: &OutputFormat,
+    proposal_path: &Path,
+    mcp_session: String,
+) -> Result<(String, i32)> {
+    let proposal: PreferenceProposalV1 = read_json(proposal_path)?;
+    let summary = format!(
+        "Global · this device\nAuthorize MCP session: {}\nProposal: {}\nMutation: {}\nRationale: {}",
+        mcp_session,
+        proposal.proposal_id,
+        serde_json::to_string(&proposal.mutation)?,
+        proposal.rationale,
+    );
+    if !confirm_on_foreground_tty(&summary) {
+        anyhow::bail!("foreground /dev/tty confirmation is required");
+    }
+    let actor = human_actor(&format!("cli:{}:{}", std::process::id(), Uuid::new_v4()));
+    let result = authorize_mcp_through_daemon(
+        AuthorizeMcpPreferenceApplyV1 {
+            proposal_id: proposal.proposal_id,
+            proposal_digest: proposal.proposal_digest,
+            originating_mcp_session: mcp_session,
+        },
+        actor,
+    )?;
+    Ok((render_output(format, &result), 0))
 }
 
 fn product_request(

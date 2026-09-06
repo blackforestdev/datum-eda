@@ -33,6 +33,49 @@ struct ProposalDigestMaterial<'a> {
 }
 
 impl GlobalPreferencesProductService {
+    /// Return a previously committed MCP acceptance before consulting any
+    /// daemon-local capability. This is the crash/restart replay boundary: the
+    /// immutable receipt is authority once publication succeeded.
+    pub fn replay_accepted_proposal(
+        &self,
+        proposal: &PreferenceProposalV1,
+    ) -> Result<Option<AcceptedProposalResultV1>, PreferenceErrorV1> {
+        self.validate_proposal_identity(proposal)?;
+        let request_id = super::product_idempotency::mutation_request_id(&proposal.mutation);
+        let Some(receipt) = self.service.receipt_for_request(request_id).cloned() else {
+            return Ok(None);
+        };
+        if receipt.proposal_id != Some(proposal.proposal_id)
+            || receipt.proposal_digest.as_deref() != Some(proposal.proposal_digest.as_str())
+            || receipt.originating_mcp_session.as_deref()
+                != Some(proposal.requesting_actor.session_id.as_str())
+        {
+            return Err(self.proposal_error(
+                PreferenceErrorCodeV1::IdempotencyConflict,
+                "Request id was already committed for different proposal content",
+                proposal,
+            ));
+        }
+        let acceptance_id = receipt.acceptance_id.ok_or_else(|| {
+            self.proposal_error(
+                PreferenceErrorCodeV1::RepositoryIo,
+                "Committed proposal receipt lacks its acceptance identity",
+                proposal,
+            )
+        })?;
+        let key = match &proposal.mutation {
+            PreferenceMutationRequestV1::SetUser { key, value, .. } => {
+                self.active_key(key, Some(value.clone()))?
+            }
+            PreferenceMutationRequestV1::ResetUser { key, .. } => self.active_key(key, None)?,
+        };
+        Ok(Some(AcceptedProposalResultV1 {
+            proposal_id: proposal.proposal_id,
+            mutation_result: self.replay_mutation(&key, receipt)?,
+            acceptance_id,
+        }))
+    }
+
     pub fn prepare_proposal(
         &self,
         mutation: PreferenceMutationRequestV1,
@@ -275,7 +318,7 @@ impl GlobalPreferencesProductService {
         error
     }
 
-    fn acceptance_error(
+    pub fn acceptance_error(
         &self,
         refusal: PreferenceAcceptanceRefusal,
         proposal: &PreferenceProposalV1,

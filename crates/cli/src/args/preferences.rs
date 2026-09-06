@@ -78,6 +78,14 @@ pub(crate) enum PreferencesProposalCommands {
         #[arg(long)]
         proposal_json: PathBuf,
     },
+    /// Authorize the named MCP session's next matching apply after TTY review
+    #[command(name = "authorize-mcp")]
+    AuthorizeMcp {
+        #[arg(long)]
+        proposal_json: PathBuf,
+        #[arg(long)]
+        mcp_session: String,
+    },
     /// Reject one proposal without persistent state
     Reject {
         #[arg(long)]

@@ -7,7 +7,8 @@ use super::check_run_view::{
     explain_erc_finding_by_fingerprint,
 };
 use super::preferences_state::{
-    McpPreferenceProductParams, McpProjectGenesisParams, PreferencesDaemonState,
+    HostPreferenceAuthorizationParams, McpPreferenceProductParams, McpProjectGenesisParams,
+    PreferencesDaemonState,
 };
 use super::*;
 
@@ -51,6 +52,19 @@ fn dispatch_request_inner(
         };
         return match serde_json::from_value::<McpProjectGenesisParams>(request.params) {
             Ok(params) => match preferences.execute_project_genesis(params.request, params.actor) {
+                Ok(response) => serialized_success_response(request.id, response),
+                Err(message) => error_response(request.id, -32602, &message),
+            },
+            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+        };
+    }
+
+    if request.method == "preferences.authorize_mcp" {
+        let Some(preferences) = preferences else {
+            return error_response(request.id, -32601, "Preferences service is unavailable");
+        };
+        return match serde_json::from_value::<HostPreferenceAuthorizationParams>(request.params) {
+            Ok(params) => match preferences.authorize_mcp_apply(params.request, params.actor) {
                 Ok(response) => serialized_success_response(request.id, response),
                 Err(message) => error_response(request.id, -32602, &message),
             },
