@@ -6,11 +6,41 @@ use super::check_run_view::{
     daemon_drc_check_run_view, daemon_erc_check_run_view, explain_drc_finding_by_fingerprint,
     explain_erc_finding_by_fingerprint,
 };
+use super::preferences_state::{McpPreferenceProductParams, PreferencesDaemonState};
 use super::*;
 
 pub(super) fn dispatch_request(engine: &mut Engine, request: JsonRpcRequest) -> JsonRpcResponse {
+    dispatch_request_inner(engine, None, request)
+}
+
+pub(super) fn dispatch_request_with_preferences(
+    engine: &mut Engine,
+    preferences: &mut PreferencesDaemonState,
+    request: JsonRpcRequest,
+) -> JsonRpcResponse {
+    dispatch_request_inner(engine, Some(preferences), request)
+}
+
+fn dispatch_request_inner(
+    engine: &mut Engine,
+    preferences: Option<&mut PreferencesDaemonState>,
+    request: JsonRpcRequest,
+) -> JsonRpcResponse {
     if request.jsonrpc != "2.0" {
         return error_response(request.id, -32600, "invalid jsonrpc version");
+    }
+
+    if request.method == "preferences.mcp_product" {
+        let Some(preferences) = preferences else {
+            return error_response(request.id, -32601, "preferences service is unavailable");
+        };
+        return match serde_json::from_value::<McpPreferenceProductParams>(request.params) {
+            Ok(params) => match preferences.execute_mcp(params.request, params.actor) {
+                Ok(response) => serialized_success_response(request.id, response),
+                Err(message) => error_response(request.id, -32602, &message),
+            },
+            Err(err) => error_response(request.id, -32602, &format!("invalid params: {err}")),
+        };
     }
 
     match request.method.as_str() {
