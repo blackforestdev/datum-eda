@@ -5,8 +5,8 @@ use std::path::{Path, PathBuf};
 use serde_json::Value;
 
 use super::repository::{
-    GenerationRef, MutationMetadata, PreferenceMutation, PreferencePartition, PreferenceRepository,
-    RepositoryError, RepositorySnapshot, RepositoryStatus, UnknownEnvelope,
+    GenerationRef, MutationMetadata, MutationReceipt, PreferenceMutation, PreferencePartition,
+    PreferenceRepository, RepositoryError, RepositorySnapshot, RepositoryStatus, UnknownEnvelope,
 };
 use super::{
     Contribution, DescriptorRegistry, FactProvenance, PreferenceExplanation, PreferenceKey,
@@ -149,6 +149,12 @@ impl GlobalPreferencesService {
             .iter()
             .map(|entry| self.resolve_row(&entry.key))
             .collect()
+    }
+
+    pub(super) fn latest_receipt(&self) -> Option<&MutationReceipt> {
+        self.snapshot
+            .as_ref()
+            .and_then(|snapshot| snapshot.receipts.last())
     }
 
     pub(super) fn refresh(&mut self) {
