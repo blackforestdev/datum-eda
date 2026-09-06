@@ -9,6 +9,9 @@ use crate::terminal_accessibility::{TerminalAccessibilityBounds, TerminalAccessi
 use crate::terminal_accessibility_platform::PlatformBridge;
 use datum_gui_protocol::ApplicationFocus;
 use datum_gui_protocol::GlobalPreferencesAccessibleNode;
+use datum_gui_protocol::gui_menu_model::accessibility::{
+    MenuAccessibleNode, menu_accessibility_nodes,
+};
 use std::collections::VecDeque;
 
 const ANNOUNCEMENT_LOG_CAPACITY: usize = 64;
@@ -27,6 +30,7 @@ pub(crate) enum TerminalAccessibilityEvent {
 pub(crate) struct LinuxTerminalAccessibilityBridge {
     current: Option<TerminalAccessibilitySnapshot>,
     preferences: Vec<GlobalPreferencesAccessibleNode>,
+    menus: Vec<MenuAccessibleNode>,
     platform: Option<PlatformBridge>,
     publish_platform: bool,
     announcement_log: VecDeque<AccessibilityAnnouncement>,
@@ -37,6 +41,7 @@ impl Default for LinuxTerminalAccessibilityBridge {
         Self {
             current: None,
             preferences: Vec::new(),
+            menus: Vec::new(),
             platform: None,
             publish_platform: true,
             announcement_log: VecDeque::new(),
@@ -45,6 +50,20 @@ impl Default for LinuxTerminalAccessibilityBridge {
 }
 
 impl LinuxTerminalAccessibilityBridge {
+    pub(crate) fn update_menus(&mut self, nodes: Vec<MenuAccessibleNode>) {
+        if self.menus == nodes {
+            return;
+        }
+        self.menus = nodes.clone();
+        if !self.publish_platform {
+            return;
+        }
+        match &mut self.platform {
+            Some(platform) => platform.publish_menus(nodes),
+            None => self.platform = PlatformBridge::start_menus(nodes).ok(),
+        }
+    }
+
     pub(crate) fn announce_console(&mut self, announcement: AccessibilityAnnouncement) {
         if self.announcement_log.len() == ANNOUNCEMENT_LOG_CAPACITY {
             self.announcement_log.pop_front();
@@ -134,6 +153,7 @@ impl LinuxTerminalAccessibilityBridge {
         Self {
             current: None,
             preferences: Vec::new(),
+            menus: Vec::new(),
             platform: None,
             publish_platform: false,
             announcement_log: VecDeque::new(),
@@ -142,6 +162,13 @@ impl LinuxTerminalAccessibilityBridge {
 }
 
 impl Runtime {
+    pub(super) fn refresh_menu_accessibility(&mut self) {
+        let nodes = datum_gui_protocol::load_default_gui_menu_model()
+            .map(|model| menu_accessibility_nodes(&model, self.workspace()))
+            .unwrap_or_default();
+        self.terminal_accessibility.update_menus(nodes);
+    }
+
     pub(super) fn refresh_global_preferences_accessibility(&mut self) {
         let nodes = if self.workspace().ui.new_project.open {
             self.workspace().ui.new_project.accessibility_nodes()

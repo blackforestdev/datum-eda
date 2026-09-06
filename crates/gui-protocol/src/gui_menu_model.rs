@@ -2,6 +2,7 @@ use anyhow::{Context, Result};
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
+pub mod accessibility;
 pub mod action_registry;
 
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]

@@ -7375,8 +7375,8 @@
       "claim": {
         "agent": "codex", "harness": "codex-cli",
         "session": "codex-wdq-g01-planning-20260906",
-        "claimed_at": "2026-09-06T15:32:03Z", "heartbeat_at": "2026-09-06T15:32:03Z",
-        "expires_at": "2026-09-06T23:32:03Z",
+        "claimed_at": "2026-09-06T15:32:03Z", "heartbeat_at": "2026-09-06T19:42:35Z",
+        "expires_at": "2026-09-07T03:42:35Z",
         "worktree": "/home/bfadmin/Documents/datum-eda",
         "head": "6755474e057329588313f06ba6276251cd0fa933",
         "scope": [
@@ -7384,7 +7384,8 @@
           "Shared camera-scene resolution in crates/gui-protocol/src/workspace_interaction.rs and workspace_interaction/camera.rs; actual camera routing and menu readiness consume the same resolver",
           "crates/gui-app/src/runtime_menu_actions.rs, runtime_view_actions.rs, workspace_keyboard.rs and runtime_camera_pane.rs; preserve Preferences dispatch and all other action families",
           "crates/gui-render/src/menu_chrome.rs and focused menu_chrome tests; no prototype or golden changes",
-          "Owned WDQ Frontier/beads/projection and docs/reviews/workflow-delivery-pilot/handoff.md records only; shared accessibility files remain held pending explicit consumer-owner handoff",
+          "Owned WDQ Frontier/beads/projection and docs/reviews/workflow-delivery-pilot/handoff.md records only; owner released bounded shared accessibility scope after the clean 3f377a7a Preferences pause",
+          "Additive native menu accessibility: crates/gui-protocol/src/gui_menu_model/accessibility.rs; crates/gui-app/src/terminal_accessibility_bridge.rs, interaction_refresh.rs and terminal_accessibility_platform/worker.rs, atspi.rs, events.rs, atspi/properties.rs, atspi/introspection.rs and new focused menu modules/tests; preserve Terminal and Preferences behavior",
           "Diagnostic native-render captures docs/reviews/workflow-delivery-pilot/g04-help-preview.png and g04-schematic-preview.png; not native-input proof or acceptance"
         ]
       },
