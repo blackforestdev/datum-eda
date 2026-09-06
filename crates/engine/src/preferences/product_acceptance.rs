@@ -55,7 +55,7 @@ pub struct PreferenceAcceptanceHandleV1 {
     prepared_against: HeadExpectationV1,
     accepting_actor: PreferenceActorV1,
     originating_mcp_session: String,
-    invocation_id: Uuid,
+    invocation_id: Option<Uuid>,
     expires_at_unix_ms: u64,
 }
 
@@ -86,7 +86,7 @@ impl PreferenceAcceptanceHandleV1 {
         if self.originating_mcp_session != proposal.requesting_actor.session_id {
             return Err(PreferenceAcceptanceRefusal::SessionMismatch);
         }
-        if self.invocation_id != apply_invocation_id {
+        if self.invocation_id != Some(apply_invocation_id) {
             return Err(PreferenceAcceptanceRefusal::InvocationMismatch);
         }
         Ok(AcceptedMutationAudit {
@@ -152,7 +152,6 @@ impl PreferenceAcceptanceBroker {
         request: &AuthorizeMcpPreferenceApplyV1,
         accepting_actor: &PreferenceActorV1,
         repository_identity: &str,
-        apply_invocation_id: Uuid,
         now_unix_ms: u64,
     ) -> Result<McpPreferenceAuthorizationResultV1, PreferenceAcceptanceRefusal> {
         if !matches!(
@@ -185,7 +184,7 @@ impl PreferenceAcceptanceBroker {
             prepared_against: prepared.prepared_against.clone(),
             accepting_actor: accepting_actor.clone(),
             originating_mcp_session: request.originating_mcp_session.clone(),
-            invocation_id: apply_invocation_id,
+            invocation_id: None,
             expires_at_unix_ms,
         };
         self.slots
@@ -198,17 +197,26 @@ impl PreferenceAcceptanceBroker {
     }
 
     pub fn authorization_for_apply(
-        &self,
+        &mut self,
         proposal: &PreferenceProposalV1,
         originating_mcp_session: &str,
         repository_identity: &str,
         apply_invocation_id: Uuid,
         now_unix_ms: u64,
     ) -> Result<PreferenceAcceptanceHandleV1, PreferenceAcceptanceRefusal> {
-        let handle = self
-            .slots
-            .get(originating_mcp_session)
-            .ok_or(PreferenceAcceptanceRefusal::Expired)?;
+        let handle = match self.slots.get(originating_mcp_session) {
+            Some(handle) => handle,
+            None if self
+                .prepared
+                .get(&proposal.proposal_id)
+                .is_some_and(|binding| {
+                    binding.originating_mcp_session == originating_mcp_session
+                }) =>
+            {
+                return Err(PreferenceAcceptanceRefusal::ProposalNotPrepared);
+            }
+            None => return Err(PreferenceAcceptanceRefusal::Expired),
+        };
         if self.consumed.contains(&handle.acceptance_id) {
             return Err(PreferenceAcceptanceRefusal::Consumed);
         }
@@ -229,10 +237,17 @@ impl PreferenceAcceptanceBroker {
         {
             return Err(PreferenceAcceptanceRefusal::ProposalMismatch);
         }
-        if handle.invocation_id != apply_invocation_id {
+        if handle
+            .invocation_id
+            .is_some_and(|bound| bound != apply_invocation_id)
+        {
             return Err(PreferenceAcceptanceRefusal::InvocationMismatch);
         }
-        Ok(handle.clone())
+        let mut bound = handle.clone();
+        bound.invocation_id = Some(apply_invocation_id);
+        self.slots
+            .insert(originating_mcp_session.to_owned(), bound.clone());
+        Ok(bound)
     }
 
     pub fn consume(
@@ -250,7 +265,6 @@ impl PreferenceAcceptanceBroker {
             return Err(PreferenceAcceptanceRefusal::ProposalMismatch);
         }
         self.consumed.insert(handle.acceptance_id);
-        self.slots.remove(&handle.originating_mcp_session);
         Ok(())
     }
 

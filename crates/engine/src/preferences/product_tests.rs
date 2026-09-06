@@ -483,13 +483,7 @@ fn mcp_acceptance_broker_binds_human_session_repository_and_invocation() {
     let apply_invocation = Uuid::new_v4();
     let human = actor(PreferenceActorKindV1::HumanGui);
     let public = broker
-        .authorize_mcp_apply(
-            &request,
-            &human,
-            repository_identity,
-            apply_invocation,
-            1_000,
-        )
+        .authorize_mcp_apply(&request, &human, repository_identity, 1_000)
         .unwrap();
     assert!(public.authorized);
     assert_eq!(public.expires_at_unix_ms, 301_000);
@@ -497,6 +491,15 @@ fn mcp_acceptance_broker_binds_human_session_repository_and_invocation() {
     assert!(encoded.get("handle").is_none());
     assert!(encoded.get("acceptance_id").is_none());
 
+    let handle = broker
+        .authorization_for_apply(
+            &prepared.proposal,
+            &mcp_actor.session_id,
+            repository_identity,
+            apply_invocation,
+            2_000,
+        )
+        .unwrap();
     assert_eq!(
         broker.authorization_for_apply(
             &prepared.proposal,
@@ -507,15 +510,6 @@ fn mcp_acceptance_broker_binds_human_session_repository_and_invocation() {
         ),
         Err(PreferenceAcceptanceRefusal::InvocationMismatch)
     );
-    let handle = broker
-        .authorization_for_apply(
-            &prepared.proposal,
-            &mcp_actor.session_id,
-            repository_identity,
-            apply_invocation,
-            2_000,
-        )
-        .unwrap();
     assert_ne!(handle.acceptance_id(), Uuid::nil());
     assert_eq!(handle.accepting_actor(), &human);
     broker.consume(&handle).unwrap();
@@ -555,7 +549,6 @@ fn mcp_acceptance_broker_expires_and_closes_without_portable_authority() {
             },
             &actor(PreferenceActorKindV1::HumanCli),
             "missing:test-repository",
-            invocation,
             10,
         )
         .unwrap();
@@ -615,7 +608,6 @@ fn accepted_mcp_proposal_commits_one_dual_actor_audit_receipt() {
             },
             &human,
             &repository_identity,
-            apply_invocation,
             1_000,
         )
         .unwrap();

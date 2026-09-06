@@ -156,6 +156,7 @@ mod main_tests_plan_apply_legacy_manifest_text;
 mod main_tests_plan_apply_text;
 mod main_tests_plan_apply_validate;
 mod main_tests_plan_apply_validate_artifact;
+mod main_tests_preferences;
 mod main_tests_project_board_check;
 mod main_tests_project_board_component;
 mod main_tests_project_board_component_mechanical;
