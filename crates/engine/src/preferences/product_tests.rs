@@ -187,6 +187,82 @@ fn wire_schemas_refuse_unknown_fields_and_round_trip_symbolic_errors() {
 }
 
 #[test]
+fn product_envelope_dispatches_queries_and_refuses_schema_smuggling() {
+    let (_locations, mut service) = service("product-envelope");
+    let actor = actor(PreferenceActorKindV1::McpAgent);
+    let describe = service.execute(
+        PreferenceProductRequestV1 {
+            schema: PreferenceSchemaRefV1 {
+                name: "datum.preferences.describe".to_owned(),
+                version: 1,
+            },
+            payload: PreferenceProductPayloadV1::Query(PreferenceQueryV1::Describe),
+        },
+        &actor,
+    );
+    assert!(describe.ok);
+    assert!(matches!(
+        describe.result,
+        Some(PreferenceProductResultV1::Query(
+            PreferenceQueryResultV1::Describe(_)
+        ))
+    ));
+
+    let mismatched = service.execute(
+        PreferenceProductRequestV1 {
+            schema: PreferenceSchemaRefV1 {
+                name: "datum.preferences.search".to_owned(),
+                version: 1,
+            },
+            payload: PreferenceProductPayloadV1::Query(PreferenceQueryV1::Describe),
+        },
+        &actor,
+    );
+    assert!(!mismatched.ok);
+    let error = mismatched.error.expect("typed schema refusal");
+    assert_eq!(error.code, PreferenceErrorCodeV1::UnsupportedSchemaVersion);
+    assert_eq!(error.details["schema_name"], "datum.preferences.search");
+}
+
+#[test]
+fn generic_product_envelope_does_not_bypass_mcp_acceptance() {
+    let (_locations, mut service) = service("product-envelope-acceptance");
+    let actor = actor(PreferenceActorKindV1::McpAgent);
+    let prepared = service
+        .prepare_proposal(
+            PreferenceMutationRequestV1::SetUser {
+                key: "datum.accessibility.reduced_motion".to_owned(),
+                value: json!(true),
+                expected: HeadExpectationV1::Missing,
+                request_id: Uuid::new_v4(),
+                reason: "reduce animation".to_owned(),
+            },
+            "agent proposes a preference".to_owned(),
+            &actor,
+        )
+        .unwrap();
+    let response = service.execute(
+        PreferenceProductRequestV1 {
+            schema: PreferenceSchemaRefV1 {
+                name: "datum.preferences.proposal.accept_apply".to_owned(),
+                version: 1,
+            },
+            payload: PreferenceProductPayloadV1::Proposal(
+                PreferenceProposalActionV1::AcceptAndApply {
+                    proposal: prepared.proposal,
+                },
+            ),
+        },
+        &actor,
+    );
+    assert!(!response.ok);
+    assert_eq!(
+        response.error.expect("acceptance refusal").code,
+        PreferenceErrorCodeV1::MissingAcceptance
+    );
+}
+
+#[test]
 fn proposal_prepare_validate_and_reject_are_portable_and_side_effect_free() {
     let (locations, service) = service("proposal-pure");
     let prepared = service
