@@ -16,6 +16,7 @@ from workflow_delivery_contract import load_contract
 from workflow_delivery_evidence_shapes import review_sha256, review_shape
 from workflow_delivery_frontier import validate_frontier
 from workflow_delivery_proof import packet_sha256, validate_proof
+from workflow_delivery_prepare_handoff import promotion_markdown
 from workflow_delivery_review import receipt_section
 from workflow_delivery_tree import Tree
 
@@ -203,6 +204,7 @@ def prepare(root, output):
               "hooks": str(hooks), "environment": ENVIRONMENT, "packet_sha256": review["packet_sha256"],
               "review_sha256": review_sha256(review), "promotion_performed": False}
     save(output, "preparation.json", result)
+    (output / "promotion.md").write_text(promotion_markdown(root, result), encoding="utf-8")
     return result
 
 

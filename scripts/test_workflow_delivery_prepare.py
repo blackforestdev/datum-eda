@@ -5,14 +5,28 @@ from copy import deepcopy
 import json
 from pathlib import Path
 import subprocess
+import shutil
 import tempfile
 import unittest
 
 from workflow_delivery_prepare import KEY, completion_proposal, prepare, replace_item, live_state, require_unchanged
 from workflow_delivery_test_support import Fixture
+from workflow_delivery_prepare_handoff import promotion_markdown
 
 
 class ProposalTests(unittest.TestCase):
+    def test_owner_commands_are_syntax_valid_and_pin_exact_ids(self):
+        result = {"candidate": "a" * 40, "base": "b" * 40,
+                  "runner": "/external with spaces/scripts/check_workflow_delivery.py",
+                  "hooks": "/external with spaces/hooks", "environment": "evidence/environment.json",
+                  "packet_sha256": "c" * 64, "review_sha256": "d" * 64}
+        text = promotion_markdown(Path("/repo with spaces"), result)
+        commands = text.split("```bash\n")[2].split("```")[0]
+        self.assertEqual(subprocess.run(["bash", "-n"], input=commands.encode(), capture_output=True).returncode, 0)
+        self.assertLess(commands.index("--candidate-ref"), commands.index("git merge --ff-only"))
+        self.assertIn("--authority-ref " + result["candidate"], commands)
+        self.assertNotIn("--no-verify", commands)
+
     def manifest(self):
         return {"frontier": [{"key": "UNRELATED", "claim": {"agent": "other"}},
             {"key": KEY, "authorization": "owner_decision", "state": "planned",
@@ -165,6 +179,36 @@ class OwnerHookTests(unittest.TestCase):
         self.runner.write_bytes(self.recorder("enforce", 2))
         self.assertEqual(self.run_hook().returncode, 2)
         self.assertEqual((self.f.root / "calls.log").read_text().splitlines()[-3:], ["lane", "format", "enforce"])
+
+    def test_real_external_validator_refuses_candidate_and_runner_drift(self):
+        from workflow_delivery_native_test_support import environment
+        from workflow_delivery_trust_test_support import accepted_fixture
+        _, _, _, authority = accepted_fixture(self.f)
+        self.f.save("requested-environment.json", environment())
+        scripts = Path(self.external.name) / "scripts"
+        scripts.mkdir()
+        for source in Path(__file__).resolve().parent.glob("*.py"):
+            shutil.copyfile(source, scripts / source.name)
+        self.runner = scripts / "check_workflow_delivery.py"
+        self.configure()
+        for key in ("AuthorityRef", "BaseRef"):
+            self.f.git("config", "--local", "datum.workflowDelivery" + key, authority)
+        self.f.git("config", "--local", "datum.workflowDeliveryEnvironmentPath", "requested-environment.json")
+        self.f.git("add", "requested-environment.json")
+        result = self.run_hook()
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        original = (self.f.root / "src/read.py").read_bytes()
+        self.f.write("src/read.py", b"untested candidate")
+        self.f.git("add", "src/read.py")
+        result = self.run_hook()
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn(b"WDQ-INDEX", result.stdout)
+        self.f.write("src/read.py", original)
+        self.f.git("add", "src/read.py")
+        self.runner.write_bytes(self.runner.read_bytes() + b"\n# unpromoted runner drift\n")
+        result = self.run_hook()
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertIn(b"WDQ-TRUST", result.stdout)
 
 
 if __name__ == "__main__":
