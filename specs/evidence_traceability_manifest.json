@@ -7,11 +7,12 @@
       "sources": [
         "research/process-quality/WORKFLOW_DELIVERY_OWNER_BRIEF.md",
         "research/process-quality/WORKFLOW_DELIVERY_CAPABILITY_BASELINE.md",
-        "research/process-quality/WORKFLOW_DELIVERY_FOUNDATION_RESEARCH.md"
+        "research/process-quality/WORKFLOW_DELIVERY_FOUNDATION_RESEARCH.md",
+        "research/process-quality/WORKFLOW_DELIVERY_REFUSAL_CASES.md"
       ],
-      "consumers": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md"],
-      "reviewed_digest": "67c8d2bfb73dc3d31079ddd808a790169a30379370f53eebbaee4441f64caec5",
-      "review_note": "All three sources and the complete planning consumer reviewed for WDQ-C02. Primary-source process research supports distinct implementation, native verification and owner acceptance; F1-F8 remain explicit domain questions assigned to existing owners through the bounded FOUNDATION-WORKFLOW-SPEC follow-on. Other routes are routing metadata only, not semantic re-review or approval. C01 limitations, current Preferences authority, prototype ownership and canonical selection remain unchanged; no blocking mechanism is ratified or implemented."
+      "consumers": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md", "specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md", "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md"],
+      "reviewed_digest": "c9f58bf1b0ffc5517914671f84bb4d682e4828c2ac975f15468ac6ce10604978",
+      "review_note": "All four sources and four complete consumers reviewed for C03 and the prepared C04 adoption packet. The numbered proposal and exact contract preserve existing selection, claims, manual-first mutation, prototype lanes and dependency boundaries; evidence and owner receipts avoid self-approval/hash cycles and state their trust limits. N01-N20/P01-P07 are mandatory future test oracles, not executed proof. The native About/Fit pilot is bounded availability/gate evidence, not EDA authoring; F1-F8 remain scheduled domain work. Existing unrelated route changes are not approved here. No ratification, blocking activation or product acceptance is claimed."
     },
     {
       "id": "research-governance-index",
