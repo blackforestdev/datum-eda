@@ -46,11 +46,11 @@
   "entries": {
     "docs/reviews/workflow-delivery-pilot/handoff.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
-      "notes": "Completed WDQ-G01 operational planning handoff under PM041, outside the pilot authority route to avoid receipt cycles. Records explicit owner coordination approval, actual reserved independent lane, held shared accessibility files and report-only bootstrap. G02 execution and G06 activation remain unapproved."
+      "notes": "Completed WDQ-G01/G02 operational handoff under PM041, outside the pilot authority route to avoid receipt cycles. Records explicit owner bounded implementation authorization, actual reserved independent lane, held shared accessibility files and report-only bootstrap. G03 is in progress; G06 activation remains unapproved."
     },
     "specs/workflow_delivery/pilot.contract.json": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
-      "notes": "WDQ-G01 candidate instance of the PM041 Contract shape: four production action keys and PILOT-S01-S05. Planning handoff completed separately; not executable validation, enrollment, independent replay or product acceptance. G02 authorization remains required."
+      "notes": "WDQ-G01 candidate instance of the PM041 Contract shape: four production action keys and PILOT-S01-S05. G02 authorization recorded in the separate operational handoff; G03 implementation in progress. Not complete executable validation, enrollment, independent replay or product acceptance."
     },
     "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
