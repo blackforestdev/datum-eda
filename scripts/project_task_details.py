@@ -66,7 +66,7 @@ def validate_completion(
     issue = issues.get(item.get("issue_id"), {})
     completion = item.get("completion")
     if not _closed_shape(
-        completion, COMPLETION_KEYS, COMPLETION_KEYS, f"{key}: completion", failures
+        completion, COMPLETION_KEYS | {"delivery"}, COMPLETION_KEYS, f"{key}: completion", failures
     ):
         return failures
     assert isinstance(completion, dict)

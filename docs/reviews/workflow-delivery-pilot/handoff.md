@@ -179,3 +179,94 @@ validation, independent-review/owner-receipt validation, trusted revision and Gi
 index handling, report-only CLI, selector integration and the full refusal/positive
 matrix remain outstanding. No hook, policy enrollment, Frontier schema, GUI
 behavior or acceptance authority changed in this unit.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G03-VALIDATED -->
+## Report-only delivery implementation and hermetic validation
+
+Recorded 2026-09-06 UTC. This supersedes the first-unit outstanding-work list
+above. The validator and integration are implemented; no production registry,
+native PILOT-S01–S05 run, G05 replay or G06 activation is asserted here.
+
+The dependency-free implementation separates closed contract/evidence shapes,
+authority resolution, Git candidate views, input/build freshness, typed evidence
+correlation, independent replay/owner receipts and Frontier integration. New
+modules remain below the 350-line target; existing selector modules remain below
+700 lines, with no legacy source debt or dependency addition.
+
+Working-tree, staged-index and explicit-commit views are separate. Required
+artifacts must be present in the candidate Git view; untracked production inputs
+are included in worktree input manifests. Index reads never consult unstaged
+files. Full PM025 validation/projection is reused in an isolated temporary
+metadata view for enforcement; candidate files, index, configuration and authority
+records are not written. Temporary metadata is removed on exit.
+
+### Implemented evidence transport
+
+These are the validator/runner serialization interfaces implementing PM041, not
+additional product decisions or evidence that the native producer exists:
+
+- A hashed result artifact with `kind: datum.workflow-delivery.artifacts/v1`
+  binds every sibling artifact to explicit events/captures/state/registry roles.
+  Event roles—not filenames or identical screenshots—control replay independence.
+- Event records bind scenario, producer, input method/actions, binary and current
+  authority hashes to production dispatch observations and visible/state results.
+  Registry records bind tested binary, actual keys/handlers, entry surfaces and
+  contextual eligibility. G04 must emit these from production, not maintain an
+  independent contract-shaped registry or substitute CLI edits for native input.
+- The requested environment is supplied explicitly by `--environment-path` and
+  compared exactly with the proof environment: OS, backend, toolchain, scale,
+  input method, window size and reproduction commands. No equivalence is inferred.
+- Owner receipts are extracted only from the uniquely marked governed section,
+  containing the exact ACCEPT line plus `Source:` and `Date:`. Trusted defect
+  dispositions explicitly name `RESOLVED <issue>` or `DEFER <issue>`; a blocking
+  resolution also binds `REPLAY <replay-blob-sha256>` and requires passing replay.
+- Enforcement requires full owner-selected authority/base commit IDs and the
+  trusted revision's gate bytes. Candidate policy/gate/contract weakening,
+  disappearing enrollment and regressed completed obligations refuse. Changes
+  to reviewed build inputs cannot evade proof by leaving activation pending.
+
+Local hook order remains lane gate, staged rustfmt, then staged **report-only**
+delivery diagnostics. Existing blocking behavior is preserved. Drift runs add the
+hermetic suite and report-only diagnostics; CI adds no owner trust value or
+enforcement switch. G06 must establish the external trusted runner/promotion.
+The optional owner-controlled clone configuration keys consumed by ordinary
+selector checks are `datum.workflowDeliveryAuthorityRef`,
+`datum.workflowDeliveryBaseRef` and `datum.workflowDeliveryEnvironmentPath`;
+none has been installed by this lane.
+
+### Verification and limits
+
+`python3 -m unittest discover -s scripts -p 'test_workflow_delivery_*.py'`
+passes 82 tests. The N/P matrix is exercised with tiny hermetic records; native
+production-path demonstration remains G04, and independent native replay remains
+G05. Tests do not certify that prose N/A dispositions or screenshots are truthful.
+
+| Refusal/positive cases | Focused test ownership |
+| --- | --- |
+| N01–N04; P01 | Input, contract, authority and CLI tests |
+| N05–N08; P02–P04 | Typed production-consumer/correlation protocol tests; synthetic, not native runs |
+| N09–N12, N19; P05 | Artifact/input/build freshness, index/worktree and authority-change tests |
+| N13–N15; P06 | Distinct replay, same fixture/binary, copied-event refusal, exact trusted receipt and defect disposition tests |
+| N16–N18; P07 | Full Frontier/claim/selection, retained enrollment/completion, candidate tampering and explicit trust tests |
+| N20 | Explicit requested-environment mismatch tests; no implicit equivalence |
+
+Additionally: 45 existing project-status tests, five claim-state tests and 13
+source-health governance tests pass. Evidence traceability (20 routes / 114
+artifacts), spec governance, progress coverage, project status (50 items), Cargo
+resource policy and whitespace checks pass. Source-health passed at 1,763 files
+after the other lane corrected its transient oversized Preferences module.
+Schema-5/6 legacy next/details output is tested byte-for-byte unchanged.
+
+The full drift battery was attempted: delivery tests and Cargo-resource checks
+passed, then it stopped at Preferences-owned rustfmt failures in
+`crates/engine/src/preferences/mod.rs` and `project_genesis.rs`. A separate parity
+check still reports the concurrent engine API inventory at 203 versus its
+documented 201. This is **not** a green full-repository or native-GUI verdict.
+Those files and their parity authority remain with the Preferences owner; this
+lane has not formatted them, changed their inventory or absorbed their failure.
+
+The reserved independent review lane performed read-only code inspection. Its
+findings about completion regression, disappearing enrollment, fixture/binary
+identity, defect disposition and full Frontier validation were corrected with
+regressions. Its bounded final recheck found no remaining blocker in those fixes;
+it did not run tests, produce original proof or perform G05 replay/acceptance.

@@ -9,4 +9,7 @@
 set -euo pipefail
 cd "$(git rev-parse --show-toplevel)"
 python3 scripts/check_file_lane_ownership.py --staged
-exec python3 scripts/check_rustfmt.py --staged
+python3 scripts/check_rustfmt.py --staged
+# PM041 bootstrap diagnostics only. G06 owner promotion is still required before
+# enforcement; all referenced candidate artifacts are read from the index.
+exec python3 scripts/check_workflow_delivery.py --report-only --staged

@@ -43,7 +43,8 @@
         "scripts/check_file_lane_ownership.py",
         "scripts/test_file_lane_ownership.py"
       ],
-      "reviewed_digest": "83178dae95c68fbe991b71b56ade930fb0265f3173ebb19681f318acc1d53b5c",
+      "reviewed_digest": "5bb948b33a48b3ea08815fe7af7524fb7e903bca4b033aad2d8a6650d5d640e7",
+      "review_note_addendum": "WDQ-G03 reviewed the complete source and all four consumers before appending index-only report diagnostics after both existing blocking checks. Lane-before-rustfmt order, exact protected-lane marker semantics and both failures are preserved. No prototype, marker, lane checker or lane test changed; only the authorized hook addition changes this route digest. WDQ enforcement remains off pending G06.",
       "review_note": "The owner-directed Claude-only visual-truth lane is codified in AGENTS.md and enforced before rustfmt by the dependency-free staged-index checker. LANE-C02 owner approval governs the exact marker contract; tests cover refusal and exact-marker acceptance for adds/copies/modifications/mode changes/deletions and renames both directions, plus malformed markers and records, unusual filenames, hook ordering, fail-closed Git errors, and non-mutation. Codex remains forbidden from setting or forwarding the marker, and LANE-I01 changes no prototype file."
     },
     {
