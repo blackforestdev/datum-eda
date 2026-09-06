@@ -180,6 +180,14 @@ proof requirements and exact activation checkpoint. Record approval, requested
 corrections or deferral durably. Broad agreement with process improvement is not
 evidence that an unbuilt pilot passed or that the schema is already ratified.
 
+Concrete packet: `specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md`, with the full
+baseline, F1–F8 research map, proposed PM041, exact gate contract and N01–N20 /
+P01–P07 test oracle linked there. The implementation successor is bounded to
+honest action availability and gate proof; it is not native EDA authoring.
+Approve packet preparation/ratification only. WORKFLOW-DELIVERY-GATE-PILOT has
+its own execution and activation owner boundaries, and FOUNDATION-WORKFLOW-SPEC
+retains unresolved CAD questions and consuming-owner handoffs.
+
 After approval, ratify the mechanism in the next available numbered decision and
 register every affected source/consumer and inventory in the same governance
 transaction. Schedule and authorize its bounded implementation separately;
@@ -188,6 +196,16 @@ task until an explicit handoff changes it. Planning closure never automatically
 selects or authorizes its successor.
 
 ## Present delivery status
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C03-COMPLETE -->
+
+WDQ-C03 is complete as a mechanism proposal: proposed PM041 and
+`specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md` define exact closed data shapes,
+checkpoint integration with the existing selector, relevant-input freshness,
+production consumer checks, independent replay and owner-controlled receipts.
+`research/process-quality/WORKFLOW_DELIVERY_REFUSAL_CASES.md` specifies N01–N20
+and P01–P07 with explicit automated-versus-human limits. These are future test
+oracles, not executable tests claimed to have passed. No schema or gate is active.
 
 <!-- EVIDENCE:WORKFLOW-DELIVERY-QUALITY:WDQ-C02-COMPLETE -->
 
@@ -211,11 +229,11 @@ The associated captures and input logs are committed under
 workflow. Selection, zoom, Fit, dismissal and argument-based reopen are observed;
 native authoring and manufacturing completion remain unavailable/unverified.
 
-The owner has authorized completion of this entire planning item. Dependent
-research, mechanism ratification, gate implementation and native pilot acceptance
-remain outstanding. No new
-runtime inventory or executable gate schema is introduced; parity registration
-belongs to the mechanism transaction once that inventory is specified.
+The owner has authorized completion of this entire planning item. Foundation
+domain research, mechanism ratification, gate implementation and native pilot
+acceptance remain outstanding. Proposed data shapes are now explicit; no runtime
+inventory or executable gate is introduced. Parity registration and enforcement
+belong to the separately authorized implementation transaction.
 
 ## Bounded foundational specification follow-on
 
