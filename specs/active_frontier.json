@@ -6001,11 +6001,23 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "planned",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
-      "claim": null,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-gp-cm03-execution-20260905",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "3d173ade7672",
+        "claimed_at": "2026-09-06T01:23:51Z",
+        "heartbeat_at": "2026-09-06T01:23:51Z",
+        "expires_at": "2026-09-06T09:23:51Z",
+        "scope": [
+          "Implement and prove only GP-CM03's exact Global Preferences product service, trusted-human and proposal authority, CLI/MCP/daemon parity, writer model, and eight-key atomic Project Units genesis without production acceptance or scope expansion"
+        ]
+      },
       "summary": "Complete Global Preferences by activating only consumer-ready descriptors, preserving incomplete identities as reserved candidates, and proving truthful controls, timing, accessibility, recovery, and exclusions before later parity and production-acceptance gates.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge",
@@ -6016,7 +6028,7 @@
       ],
       "completion": {
         "outcome": "Global Preferences is a production-accepted manual-first product surface with complete typed authority, durability, parity, accessibility, and real-Project evidence and no active Revision descriptors.",
-        "canonical_next_step_id": "GP-CM02V",
+        "canonical_next_step_id": "GP-CM03",
         "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
         "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
         "steps": [
@@ -6056,16 +6068,18 @@
             ]
           },
           {
-            "id": "GP-CM02V", "kind": "owner_decision", "status": "pending",
+            "id": "GP-CM02V", "kind": "owner_decision", "status": "complete",
             "action": "Review the committed GP-CM02R contract and evidence before authorizing GP-CM03 implementation.",
             "depends_on": ["GP-CM02R"], "requirement_refs": [
               {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02V"},
               {"path": "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md", "marker": "GP-CM02V"}
-            ], "completion_evidence": [],
+            ], "completion_evidence": [
+              {"kind": "review", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM02V-OWNER-APPROVED-20260905"}
+            ],
             "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM03` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific API, parity, seed, receipt, concurrency, security, or proof correction>`.", "requests": [{"id": "GP-CM02V", "question": "Does the reconciled GP-CM03 contract fully specify an enterprise-worthy engine, CLI, MCP, daemon, and Project-genesis implementation without leaving product or authority decisions to the implementer?", "recommended_response": "Approve only when all nine findings have exact typed inventories, ownership, failure, concurrency, security, and clause-by-clause proof with the 11-active/45-reserved and eight-seed boundaries intact.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02V"}}]}
           },
           {
-            "id": "GP-CM03", "kind": "execution", "status": "pending",
+            "id": "GP-CM03", "kind": "execution", "status": "in_progress",
             "action": "Implement the exact Global Preferences product service, human/agent authority, CLI/MCP parity, daemon/writer model, and eight-key atomic Project Units genesis contract.",
             "depends_on": ["GP-CM02V"], "requirement_refs": [
               {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM03"},
