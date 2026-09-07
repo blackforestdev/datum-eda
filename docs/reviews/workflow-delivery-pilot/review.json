@@ -10,6 +10,22 @@
   },
   "findings": [
     {
+      "issue_id": "dat-console-history-wrap-overlap-lkp",
+      "severity": "blocking",
+      "disposition_ref": {
+        "path": "docs/reviews/workflow-delivery-pilot/independent-review.md",
+        "marker": "<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G05-RESOLVED-HISTORY-OVERLAP -->"
+      }
+    },
+    {
+      "issue_id": "dat-menu-pointer-pane-authority-sjn",
+      "severity": "blocking",
+      "disposition_ref": {
+        "path": "docs/reviews/workflow-delivery-pilot/independent-review.md",
+        "marker": "<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G05-RESOLVED-POINTER-AUTHORITY -->"
+      }
+    },
+    {
       "issue_id": "dat-console-oversized-history-9uz",
       "severity": "nonblocking",
       "disposition_ref": {
@@ -26,8 +42,5 @@
       }
     }
   ],
-  "owner_receipt": {
-    "path": "docs/reviews/workflow-delivery-pilot/handoff.md",
-    "marker": "<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06-OWNER-ACCEPTED -->"
-  }
+  "owner_receipt": null
 }

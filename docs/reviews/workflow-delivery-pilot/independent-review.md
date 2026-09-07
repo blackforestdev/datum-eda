@@ -5,6 +5,12 @@ Reviewer: `wdq-independent-review-20260906`, actual task
 Independent of implementation/original producer
 `codex-wdq-g01-planning-20260906`.
 
+Reconciliation recorded 2026-09-07 UTC by the same independent reviewer, under
+the owner's bounded G06P correction authorization. The original review narrative
+below is retained as historical provenance; the reconciliation and exact
+resolution sections at the end supersede its incomplete findings accounting.
+No native proof, replay, assessment, capture or event bytes have changed.
+
 ## Disposition and limits
 
 **Approve the finite pilot's independent replay**, not owner acceptance or live
@@ -207,7 +213,7 @@ this separate replay artifact, not the original implementation producer.
 The independent assessment is hand-authored from these observations. No golden,
 authority digest or original event was replaced to make a check pass.
 
-## Staged validation result
+## Historical original staged validation result
 
 After staging only this lane's explicit evidence paths, read-only validation
 passed for both original and independent Proof records, all five original plus
@@ -219,7 +225,105 @@ blob hash all passed. This uses `Tree(staged=True)`, `validate_proof`,
 `validate_correlations`, `validate_environment`, `review_shape`, `read_blob` and
 `packet_sha256`; it does not install a trust anchor or simulate an owner response.
 
-Canonical review SHA-256 (owner_receipt excluded):
+Original review SHA-256 (historical; owner_receipt excluded):
 `b4c214907e43eb4ae7328a005c33e7558f215791928a77cc469edb167b7d1fba`.
 Full accepted-review validation is not claimed: owner receipt is null and the
 prospective disposition references are not authentic owner dispositions yet.
+
+## G06P correction of omitted blocking findings
+
+The owner's actual enforcement attempt against candidate
+`9564368735dccada966388e76f7adcc2380b83b8` refused with WDQ-DEFECT:
+`every proof defect requires review disposition`, before publication or trust
+configuration. My original review omitted two closed blocking defects that the
+producer proof correctly retained: `dat-console-history-wrap-overlap-lkp` in S02
+and `dat-menu-pointer-pane-authority-sjn` in S03. Describing the corrected behavior
+in prose and approving the scenario did not satisfy the exact findings contract.
+That was an omission in my independent review, not justification to delete
+producer defects or weaken the gate.
+
+I re-read the governing PM041 review/receipt contract and its current validator,
+my retained report and replay, the producer defect lists, and both canonical bead
+closures. Both beads are closed and cite correction `dde90c75` with producer
+verification `8d96e3a1`. Closure text alone was not my resolution evidence: I
+reopened and inspected my own retained S02 history images and three pointer
+regression images, and read the corresponding native state, input and dispatch
+records. The exact independently produced replay below already contains these
+observations. No new capture, build or native run was executed for this correction.
+
+The revised `review.json` explicitly lists both as blocking findings resolved
+by the two sections below. The two existing nonblocking Console findings and
+their handoff references remain unchanged; the owner's two recorded deferrals
+are preserved, not authored or expanded by this reviewer. The old owner ACCEPT
+is historical evidence for review hash
+`b4c214907e43eb4ae7328a005c33e7558f215791928a77cc469edb167b7d1fba`, not acceptance
+of this changed findings list. I cleared `owner_receipt`; acceptance of the
+revised review and external promotion remain owner-only. My finite native-review
+disposition remains approve, with no broader Console or Preferences acceptance.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G05-RESOLVED-HISTORY-OVERLAP -->
+## Independent resolution: finite refusal history overlap
+
+RESOLVED dat-console-history-wrap-overlap-lkp
+REPLAY b75b15e40e5f9188814ebaaa4b10b19c6b700c5d9b2cd2b3517fc2624a4c9c1b
+
+Source: independent reviewer `wdq-independent-review-20260906`, retained native
+replay from 2026-09-06, reinspected 2026-09-07 UTC; not an owner resolution grant.
+
+I independently inspected `independent-native/PILOT-S02/refusal-history.png`
+and `refusal-history-earlier.png` again. The first shows complete Documents and
+both Layer Visibility reasons; the earlier-record capture shows both About
+Datum and both Documents reasons. Together they expose all six finite native
+refusals, wrapped on separate readable rows without the former adjacent-row
+overlap. The permanent history doorway and actual wheel input are recorded in
+that run's `inputs.json`; my original assessment also checked working layer and
+pane controls. The same replay includes S03/S04 finite-history and recovery
+evidence. This resolves the pilot's finite-message overlap defect on the
+identified build, not arbitrary oversized records or overscroll behavior: those
+remain the two separate nonblocking findings with preserved owner deferrals.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G05-RESOLVED-POINTER-AUTHORITY -->
+## Independent resolution: disabled menu pointer pane authority
+
+RESOLVED dat-menu-pointer-pane-authority-sjn
+REPLAY b75b15e40e5f9188814ebaaa4b10b19c6b700c5d9b2cd2b3517fc2624a4c9c1b
+
+Source: independent reviewer `wdq-independent-review-20260906`, retained native
+replay from 2026-09-06, reinspected 2026-09-07 UTC; not an owner resolution grant.
+
+I independently inspected `independent-native/PILOT-S03-pointer-regression/`
+captures `schematic-fit-disabled.png`, `after-disabled-pointer-attempt.png`, and
+`canvas-focus-restored.png` again, together with their state snapshots, GUI
+dispatch log and `inputs.json`. A physical click at (230,53) on disabled Fit
+retains focused pane 1 and Board camera center (140032320,88984240) nm with zoom
+1.5735193490982056. The actual production `view.fit` pointer dispatch is disabled,
+ineligible and not invoked; focus returns from Overlay to Editor(PaneId(1)).
+Only the subsequent real canvas click at (369,351) acquires Editor(PaneId(0)).
+The enlarged Board remains visually unchanged across the refused menu attempt.
+The same exact replay's S01 verifies all three supported Fit paths and retained
+selection, while S03/S05 cover keyboard dismissal and accessibility consumers.
+This resolves the menu hit stealing underlying pane authority without treating
+menu dispatch as a canvas click or claiming a new production/native proof run.
+
+## Reconciliation checks and revised identity
+
+Read-only checks against the retained evidence passed: both original and replay
+Proof validation; five original and five replay correlations with disjoint event
+identities; exact environment and unchanged packet; complete coverage of all
+four producer/replay defect IDs; both blocking beads closed; each unique governed
+resolution section containing its exact RESOLVED and REPLAY lines; and both
+existing DEFER sections retained. Reevaluating the saved native observations
+passed all 83 checks without executing the application. All 748 distinct
+original/replay proof and indexed artifact paths were byte-compared to retained
+HEAD and are unchanged. The report's new operational classification is handled
+by the coordinating lane outside the bound authority routes.
+
+Revised review SHA-256 (owner_receipt excluded):
+`9a90b1703fa2041c8ccd0d4584c8b856c1d64e120318da8d754716a998ba7443`.
+Original packet remains
+`ab71468a0acd0e845f5e7cd5e2b21aae5121a85dfd5c2d72fa2f5f372c5745a0`;
+the replay blob remains
+`b75b15e40e5f9188814ebaaa4b10b19c6b700c5d9b2cd2b3517fc2624a4c9c1b`.
+These are local evidence-consistency checks, not external trusted promotion or
+accepted-review validation. The null owner receipt intentionally prevents
+claiming the old approval covers this revised hash.
