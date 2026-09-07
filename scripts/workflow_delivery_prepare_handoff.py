@@ -41,12 +41,16 @@ runner. Do not modify that runner or move/delete it after installation.
 ```bash
 (
 set -euo pipefail
+trap 'echo "WDQ activation stopped at line $LINENO (exit $?). No later commands ran; report this output." >&2' ERR
 cd {quote(str(root))}
+echo 'WDQ: checking the pinned base and clean worktree; a mismatch means this block is obsolete.'
 test "$(git rev-parse HEAD)" = {base}
 test -z "$(git status --porcelain)"
+echo 'WDQ: validating the exact candidate before publication.'
 {check} --candidate-ref {candidate}
 test "$(git rev-parse HEAD)" = {base}
 test -z "$(git status --porcelain)"
+echo 'WDQ: publishing the verified candidate and installing owner-selected local trust.'
 git merge --ff-only {candidate}
 git config --local datum.workflowDeliveryAuthorityRef {candidate}
 git config --local datum.workflowDeliveryBaseRef {base}
@@ -56,6 +60,7 @@ git config --local core.hooksPath {hooks}
 {check} --staged
 {hooks}/pre-commit
 python3 scripts/project_status.py check
+echo 'WDQ: owner activation and blocking verification completed successfully.'
 )
 ```
 
