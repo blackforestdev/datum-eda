@@ -1,10 +1,52 @@
 # Workflow delivery pilot operational handoff
 
 Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
-Status: corrected review accepted; G06P reopened for the owner-requested runnable script.
+Status: corrected review accepted; runnable-script preparation validated, G06 promotion pending.
 The previous G06 acceptance is historical for its exact review hash, not approval
 of a corrected review. Activation remains off. G04 producer proof landed in `8d96e3a1` after the
 production corrections in `dde90c75`; independent replay landed in `fd117641`.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06P-SCRIPT-PREPARED -->
+## Runnable owner script prepared and tested
+
+Implementation: `206466d0b77e42efa90fd185fce617354d641406`. Actual preparation
+from that clean commit succeeded with isolated candidate
+`7a4a0166a3fa0eed0945967fd6cfc72e4209b297` and external `activate.py`, runner,
+hook and Markdown under `/home/bfadmin/Documents/datum-wdq-script-preparation-20260907`.
+The generated script's `--help` invocation prints usage without activation.
+The real generation preserved live HEAD/index/worktree/tracker/config and all
+accepted identities, verified all four defect dispositions and exact receipt,
+and checked the six-file proposed transaction and structural Frontier.
+
+The script embeds the same guarded shell commands as the reviewed Markdown.
+It requires --activate, streams combined stdout/stderr to the terminal and a
+new private mode-600 log, records pinned candidate/base IDs and returns the
+underlying failure status. Logs remain beside the script. Nothing automatically
+chooses a new authority or retries a failed transaction. A log is diagnostics,
+not acceptance; interrupted or failed activation must be inspected before retry.
+
+All 125 workflow tests passed, including the three runnable-script tests:
+default/help/invalid arguments perform no activation or logging; obsolete-base
+failure is visible and logged with unchanged repository; and the script and
+Markdown contain identical commands. All 50 selector tests passed. Source health
+(1,804), traceability (20 routes/114 artifacts), governance (204), parity (16),
+progress coverage, Cargo resource policy, project-state and whitespace checks
+passed. No real --activate invocation, promotion or live trust change occurred.
+
+G06P completes and its claim is released. Generate the final script from this
+fresh committed handoff into a new directory:
+
+```bash
+python3 scripts/workflow_delivery_prepare.py --output /home/bfadmin/Documents/datum-wdq-owner-activation-20260907
+```
+
+After successful generation, the owner reviews the adjacent promotion.md and
+runs the single command `python3 /home/bfadmin/Documents/datum-wdq-owner-activation-20260907/activate.py --activate`.
+All earlier blocks and intermediate script candidates are superseded. The owner
+returns the visible result or the saved activation-*.log; only successful actual
+promotion, configuration and blocking checks complete G06. No renewed acceptance
+is needed for unchanged hashes. Preferences GP-CM04, both deferrals and all
+production/prototype/proof/authority/dependency boundaries remain unchanged.
 
 <!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06P-SCRIPT-AUTHORIZED -->
 ## Owner-requested runnable activation handoff
