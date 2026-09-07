@@ -35,6 +35,7 @@
     "docs/gui/menu_model.json",
     "docs/gui/icon_set.json",
     "specs/source_module_size_manifest.json",
+    "specs/global_preferences_production_acceptance_matrix.json",
     "specs/evidence_traceability_manifest.json",
     "specs/active_frontier.json",
     "docs/PROJECT_STATE_POLICY.md"
@@ -173,7 +174,12 @@
     "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md": {
       "class": "governed",
       "progress_anchor": "GLOBAL-PREFERENCES-ENGINE",
-      "notes": "Serial Global Preferences plan through completed GP-F05, production-accepted Units, completed GP-CM01, and completed GP-CM02R exact-build reconciliation. GP-CM02V is the unclaimed owner boundary; GP-CM03 remains unauthorized."
+      "notes": "Serial Global Preferences plan through completed GP-F05, production-accepted Units, completed GP-CM01/GP-CM02R/GP-CM03, and the claimed GP-CM05 production-candidate proof. GP-CM05V preserves explicit owner disposition of the exact corpus and budgets before final production acceptance."
+    },
+    "specs/global_preferences_production_acceptance_matrix.json": {
+      "class": "governed",
+      "progress_anchor": "GLOBAL-PREFERENCES-COMPLETION",
+      "notes": "Exact GP-CM05 15-case durable corpus, 11-active/45-reserved and eight-seed product boundary, exclusions, and eight candidate numeric resource budgets. Evidence assembly is authorized; owner budget and production acceptance remain GP-CM05V."
     },
     "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md": {
       "class": "governed",

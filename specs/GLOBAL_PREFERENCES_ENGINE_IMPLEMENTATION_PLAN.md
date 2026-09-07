@@ -1131,6 +1131,91 @@ backup/restore, Project genesis, existing-Project stability, managed/offline,
 surface-parity, accessibility, performance/resource, negative, and independent
 PM-037/PM-039 proofs on durable real native Projects.
 
+#### Exact acceptance inventory
+
+The machine-readable controlling inventory for this step is
+`specs/global_preferences_production_acceptance_matrix.json`. It fixes fifteen
+durable corpus cases, the 11-active/45-reserved Global boundary, the exact
+eight-key Global/factory Project genesis boundary, all exclusions, and eight
+numeric performance/resource families. The checker
+`scripts/check_global_preferences_production_matrix.py` fails if a named test,
+boundary, or numeric limit disappears. The optimized-product measurement path
+is `scripts/measure_global_preferences_release.py`; it uses the real CLI,
+foreground-TTY confirmation for durable mutations, resolver validation of each
+created native Project, per-process `wait4` resource accounting, and disposable
+configuration and Project roots.
+
+The corpus is complete only when it proves all of these as one revision:
+
+1. clean install resolves factory defaults without creating a repository;
+2. upgrade migration is pure, explicit, backed up, and atomically committed;
+3. downgrade readers preserve unknown future bytes through mutation and both
+   restore directions;
+4. corrupt, incomplete, missing-head, unpublished-generation, and collision
+   states preserve last-known truth and refuse silent repair;
+5. backup and restore preserve exact unknown bytes and generation authority;
+6. Global and explicit-factory genesis create resolver-valid, four-file native
+   Projects carrying exactly eight itemized Units seed entries;
+7. every prepublication fault leaves the destination absent, a
+   postpublication fault recovers the complete Project, and concurrent or
+   repeated identical requests replay one immutable receipt;
+8. changing Global defaults never changes an existing Project;
+9. inactive/managed/offline provider state is disclosed without participating
+   in resolution or activating management UI;
+10. GUI, CLI, daemon, and MCP use the same product service, schema, authority,
+    refusal, and active-only search boundary;
+11. keyboard, focus, search clearing, native close, scope, effect timing,
+    provenance, disabled-state, narrow, high-contrast, and non-color semantics
+    remain complete;
+12. PM-037 and PM-039 independently prove no reserved activation, private
+    writer, live Project following, Navigator settings, direct MCP Set/Reset,
+    or nonstandard settings doorway.
+
+#### Candidate production budgets
+
+The exact numeric limits are the eight `candidate_resource_budgets` entries in
+the matrix. In summary: release query and Project validation are bounded at 50
+ms p95/100 ms maximum; a confirmed durable mutation is bounded at 100 ms
+p95/250 ms maximum; Global or factory Project genesis is bounded at 100 ms
+p95/250 ms maximum; each of those processes is bounded to 32 MiB RSS. An empty
+native Project is bounded to 16 KiB and each immutable preference generation to
+32 KiB. GUI state feedback is bounded at 50 ms p95/100 ms maximum, the owned
+native window reaches first interaction within 500 ms p95/1 s maximum, and 100
+warm open/close cycles permit no orphan window or writer lease and no more than
+4 MiB RSS growth.
+
+These are intentionally headroom budgets, not measurements rounded upward.
+The first optimized Linux/x86_64/ext4 run on 2026-09-07 measured 36.012 ms query
+p95, 50.473 ms confirmed durable-mutation p95, 41.163 ms factory-genesis p95,
+20.552 ms missing-file Global-genesis p95, and 38.741 ms validation p95. Peak
+RSS stayed below 19 MiB; native Projects stayed below 4.5 KiB; twenty immutable
+generations occupied 295,283 bytes; and read/factory paths created no preference
+repository. The checked-in candidate evidence retains the exact p50/p95/max,
+sample counts, host, storage, and command.
+
+#### Corrected owner boundary
+
+The GP-CM04 approval authorized Datum to run this bounded acceptance work after
+GP-CM03, but the exact corpus and numeric table above were not yet present in
+the material shown to the owner. That response therefore cannot truthfully be
+used as approval of unseen numbers. GP-CM05 may assemble and run all evidence,
+but it cannot record production acceptance until the completed same-revision
+report and these exact limits receive the explicit GP-CM05V disposition below.
+
+<!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM05V -->
+<!-- OWNER:GLOBAL-PREFERENCES-COMPLETION:GP-CM05V:GP-CM05V -->
+### GP-CM05V — owner production-acceptance disposition
+
+Review the checked-in GP-CM05 evidence, exact corpus, all eight numeric budgets,
+running native Preferences and New Project behavior, and every deliberate
+exclusion. Approve only if the entire matrix passes on one revision with no
+waiver or unexplained delta.
+
+Response format: reply exactly
+`GLOBAL-PREFERENCES-COMPLETION: accept GP-CM05` or
+`GLOBAL-PREFERENCES-COMPLETION: revise GP-CM05 — <specific corpus, budget,
+behavior, accessibility, parity, or exclusion correction>`.
+
 ## 7. Ratification exclusions remain blocked
 
 These are not implementation backlog hidden inside a slice:

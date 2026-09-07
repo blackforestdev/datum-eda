@@ -1,0 +1,97 @@
+{
+  "schema": "datum-global-preferences-production-evidence-v1",
+  "frontier_task": "GLOBAL-PREFERENCES-COMPLETION",
+  "step": "GP-CM05",
+  "candidate_revision": "4cb615c360f1fad76141eeb754cbca418a3bab8b",
+  "recorded_on": "2026-09-07",
+  "status": "candidate_complete_gui_owner_observation_pending",
+  "release_build": {
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --release -p datum-eda-cli",
+    "result": "passed",
+    "profile": "optimized"
+  },
+  "measurement": {
+    "command": "python3 scripts/measure_global_preferences_release.py --samples 20",
+    "host": {
+      "kernel": "6.12.101+deb13-amd64",
+      "architecture": "x86_64",
+      "cpu": "Intel(R) Xeon(R) CPU E3-1505M v6 @ 3.00GHz",
+      "filesystem": "ext4",
+      "storage_scope": "local durable project filesystem"
+    },
+    "release_query": {
+      "samples": 20,
+      "p50_ms": 23.03,
+      "p95_ms": 36.012,
+      "max_ms": 40.594,
+      "max_rss_kib": 16240
+    },
+    "project_genesis_factory": {
+      "samples": 10,
+      "p50_ms": 24.31,
+      "p95_ms": 41.163,
+      "max_ms": 42.842,
+      "max_rss_kib": 18740
+    },
+    "project_genesis_global_no_file": {
+      "samples": 10,
+      "p50_ms": 20.072,
+      "p95_ms": 20.552,
+      "max_ms": 20.725,
+      "max_rss_kib": 18852
+    },
+    "project_validation": {
+      "samples": 20,
+      "p50_ms": 17.063,
+      "p95_ms": 38.741,
+      "max_ms": 48.413,
+      "max_rss_kib": 17872
+    },
+    "durable_mutation": {
+      "samples": 20,
+      "p50_ms": 25.902,
+      "p95_ms": 50.473,
+      "max_ms": 53.216,
+      "max_rss_kib": 17888,
+      "confirmation": "each mutation used the real foreground-TTY APPLY path"
+    },
+    "native_project": {
+      "files": 4,
+      "minimum_bytes": 4399,
+      "maximum_bytes": 4447,
+      "validated_after_creation": true
+    },
+    "preference_repository": {
+      "created_by_read_or_factory_paths": false,
+      "files_after_20_mutations": 22,
+      "bytes_after_20_mutations": 295283,
+      "immutable_generations": 20
+    }
+  },
+  "budget_comparison": {
+    "release_query": "pass",
+    "durable_mutation": "pass",
+    "project_genesis": "pass",
+    "project_validation": "pass",
+    "storage_growth": "pass",
+    "gui_feedback": "pending",
+    "native_window_open": "pending",
+    "window_lifecycle": "pending"
+  },
+  "correctness_proof": {
+    "command": "python3 scripts/run_global_preferences_proof.py",
+    "status": "passed_outside_managed_sandbox",
+    "result": "79 engine preference tests, 2 CLI preference tests, 8 CLI Project-new tests, 5 daemon preference tests, 14 GUI preference/New-Project/accessibility tests, and 4 MCP preference tests passed",
+    "sandbox_observation": "The first managed-sandbox run refused Unix IPC creation with EPERM after all 79 engine tests passed. The exact IPC test and then the complete proof passed outside that sandbox. This is environmental evidence, not a product waiver."
+  },
+  "workspace_proof": {
+    "test_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --workspace --all-targets --locked --offline",
+    "test_status": "passed",
+    "clippy_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --workspace --all-targets --locked --offline -- -D warnings",
+    "clippy_status": "passed"
+  },
+  "acceptance": {
+    "production_accepted": false,
+    "reason": "GUI timing/lifecycle evidence and explicit owner disposition of the candidate resource budgets remain outstanding."
+  }
+}
