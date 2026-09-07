@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "decision_ref": {
+    "path": "docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md",
+    "marker": "## Trust and owner boundary"
+  },
+  "enrolled": [
+    {
+      "frontier_key": "WORKFLOW-DELIVERY-GATE-PILOT",
+      "implementation_sessions": [
+        "codex-wdq-g01-planning-20260906"
+      ],
+      "activation_ref": {
+        "path": "docs/reviews/workflow-delivery-pilot/handoff.md",
+        "marker": "<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06-ACTIVATED -->"
+      }
+    }
+  ],
+  "legacy_baseline": "200ea14227c269ee170d1116a9cff80377130e87"
+}
