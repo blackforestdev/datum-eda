@@ -1,10 +1,32 @@
 # Workflow delivery pilot operational handoff
 
 Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
-Status: review reconciliation committed; renewed review acceptance required before G06P regeneration.
+Status: corrected review accepted; G06P regeneration in progress, activation off.
 The previous G06 acceptance is historical for its exact review hash, not approval
 of a corrected review. Activation remains off. G04 producer proof landed in `8d96e3a1` after the
 production corrections in `dde90c75`; independent replay landed in `fd117641`.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06-REVISED-OWNER-ACCEPTED -->
+## Exact owner acceptance of the corrected review
+
+Source: the project owner's exact response in this conversation after the
+corrected independent review and obsolete-command explanation.
+Date: 2026-09-07 06:58:48 UTC (recording time).
+
+ACCEPT WORKFLOW-DELIVERY-GATE-PILOT/WDQ-G06 ab71468a0acd0e845f5e7cd5e2b21aae5121a85dfd5c2d72fa2f5f372c5745a0 9a90b1703fa2041c8ccd0d4584c8b856c1d64e120318da8d754716a998ba7443
+
+Both supplied identities match the corrected Review. This is a new exact owner
+receipt; the old receipt remains historical and unchanged. The two existing
+DEFER dispositions remain retained. Only the owner-receipt pointer is updated
+in review.json; its findings, verdict, provenance and canonical review hash are
+unchanged. G06R completes and G06P resumes for fresh candidate preparation.
+G06 remains incomplete until separate owner-controlled promotion and successful
+blocking verification. No trust configuration, hook installation, Preferences
+resumption or successor selection follows from recording this receipt.
+
+All earlier activation command blocks and candidates are superseded. The fresh
+handoff must identify its new base/candidate and visibly report a failed guard
+instead of exiting silently. Never substitute hashes into an old block.
 
 <!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06P-RECONCILED -->
 ## Corrected review and preparation diagnostics

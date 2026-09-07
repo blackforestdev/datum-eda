@@ -42,5 +42,8 @@
       }
     }
   ],
-  "owner_receipt": null
+  "owner_receipt": {
+    "path": "docs/reviews/workflow-delivery-pilot/handoff.md",
+    "marker": "<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06-REVISED-OWNER-ACCEPTED -->"
+  }
 }

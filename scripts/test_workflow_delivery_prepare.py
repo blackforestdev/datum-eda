@@ -15,6 +15,22 @@ from workflow_delivery_prepare_handoff import promotion_markdown
 
 
 class ProposalTests(unittest.TestCase):
+    def test_owner_block_reports_obsolete_base_without_mutation(self):
+        fixture = Fixture()
+        self.addCleanup(fixture.close)
+        result = {"candidate": "a" * 40, "base": "b" * 40,
+                  "runner": "/nonexistent/scripts/check_workflow_delivery.py",
+                  "hooks": "/nonexistent/hooks", "environment": "evidence/environment.json",
+                  "packet_sha256": "c" * 64, "review_sha256": "d" * 64}
+        commands = promotion_markdown(fixture.root, result).split("```bash\n")[2].split("```")[0]
+        before = live_state(fixture.root), fixture.snapshot()
+        response = subprocess.run(["bash"], input=commands.encode(), cwd=fixture.root, capture_output=True)
+        self.assertEqual(response.returncode, 1)
+        self.assertIn(b"block is obsolete", response.stdout)
+        self.assertIn(b"WDQ activation stopped", response.stderr)
+        self.assertNotIn(b"validating the exact candidate", response.stdout)
+        self.assertEqual(before, (live_state(fixture.root), fixture.snapshot()))
+
     def test_owner_commands_are_syntax_valid_and_pin_exact_ids(self):
         result = {"candidate": "a" * 40, "base": "b" * 40,
                   "runner": "/external with spaces/scripts/check_workflow_delivery.py",
