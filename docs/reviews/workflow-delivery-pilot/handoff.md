@@ -1,10 +1,54 @@
 # Workflow delivery pilot operational handoff
 
 Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
-Status: corrected review accepted; G06P regeneration in progress, activation off.
+Status: corrected review accepted; G06P validated, G06 external promotion pending.
 The previous G06 acceptance is historical for its exact review hash, not approval
 of a corrected review. Activation remains off. G04 producer proof landed in `8d96e3a1` after the
 production corrections in `dde90c75`; independent replay landed in `fd117641`.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06P-REGENERATED -->
+## Fresh preparation against the corrected accepted review
+
+Receipt and diagnostic commit: `26d4268ad0cfdc447c29907cf6a655f57dd92e01`.
+Actual preparation from that clean base succeeded, producing isolated candidate
+`32b1e68ae40f578f4ff6cd039459157111e3e207` and the external runner/hook/commands
+under `/home/bfadmin/Documents/datum-wdq-revised-preparation-20260907`.
+This candidate is preparation evidence only; committing this handoff changes
+the live base and therefore requires the final regeneration below before use.
+
+The actual run checked all four producer/replay defect dispositions, both Proofs,
+recorded environments/correlations, unchanged packet/review hashes, the exact
+new owner receipt, all 1,778 live inputs, source Frontier authorization, exactly
+six candidate paths and full candidate structural validity. Governance and
+traceability passed in the detached proposal. Live HEAD, index/worktree, tracker,
+local Git configuration and input closure remained unchanged. Only a detached
+proposal and an explicitly non-authoritative local retention ref were created;
+no external promotion, enforcement invocation or live hook installation occurred.
+
+All 122 workflow tests and 50 selector tests passed, including an actual obsolete
+base command fixture that now reports the failed guard and exits before mutation.
+Source health (1,802), traceability (20 routes/114 artifacts), governance (204),
+parity (16 inventories), progress coverage, Cargo resource policy and projection
+checks passed. The owner-command template now prints stage messages and an error
+location; these diagnostics do not weaken its clean-tree, exact-base or validator
+checks. No complete trusted activation or full drift-suite pass is claimed.
+
+G06P is now complete and its claim released; G06 alone remains selected for
+owner-controlled external promotion and blocking verification. From the fresh
+clean completion commit, generate the final owner handoff with:
+
+```bash
+python3 scripts/workflow_delivery_prepare.py --output /home/bfadmin/Documents/datum-wdq-activation-revised-20260907
+```
+
+Use only that new directory's `promotion.md` block after successful generation.
+Its `preparation.json` records the final full candidate/base IDs and runner.
+The old `datum-wdq-activation-final` block and every intermediate block remain
+superseded; never edit their hashes by hand. No repeated ACCEPT or DEFER is
+needed for the now-recorded, unchanged corrected review. Preferences remains
+paused at GP-CM04; both fixed issues stay closed and both deferred issues stay
+open. No production, native evidence, prototype, authority-route, dependency or
+licensing change was made.
 
 <!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06-REVISED-OWNER-ACCEPTED -->
 ## Exact owner acceptance of the corrected review
