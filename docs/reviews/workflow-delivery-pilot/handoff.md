@@ -1307,3 +1307,16 @@ is not a build identity. `tar --compare` confirmed all archived source/journal
 bytes unchanged after both captures; this is not a complete new-path or native
 reopen audit. Concurrent Preferences inputs were not frozen into a full proof
 manifest; these previews must never substitute for fresh PILOT-S01–S05 evidence.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06-ACTIVATED -->
+## Conditional activation proposal
+
+This detached candidate proposes final enrollment and completion. It is NOT live
+Preparation completion here is conditional on successful artifact generation;
+live G06P remains unchanged until that success is separately recorded on main.
+while retained outside main. The owner must select this exact commit externally,
+run its trusted validator successfully, and only then publish it to main and
+install the owner-local blocking hook. The already recorded ACCEPT and both
+DEFER responses remain unchanged. Preferences stays at GP-CM04, unclaimed;
+no GP-CM05 approval, successor selection or additional enrollment is granted.
+Preparation comparison base: 76152fc7dab4ba0431da991f58d6a5ebc1838763. No agent-selected promotion occurred.
