@@ -6001,10 +6001,23 @@
         "docs/gui/prototypes/preferences-window.html",
         "docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md"
       ],
-      "state": "planned",
-      "authorization": "owner_decision",
+      "state": "in_progress",
+      "authorization": "execution",
       "canonical_next": true,
       "parallel": false,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-gp-cm05-production-acceptance-20260907",
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "22c47ea8cfb4",
+        "claimed_at": "2026-09-07T16:42:59Z",
+        "heartbeat_at": "2026-09-07T16:42:59Z",
+        "expires_at": "2026-09-08T00:42:59Z",
+        "scope": [
+          "Run only GP-CM05 real-project, migration, recovery, managed/offline, visual, accessibility, performance/resource, negative, and independent PM-037/PM-039 production-acceptance proof without expanding the product surface"
+        ]
+      },
       "summary": "Complete Global Preferences by activating only consumer-ready descriptors, preserving incomplete identities as reserved candidates, and proving truthful controls, timing, accessibility, recovery, and exclusions before later parity and production-acceptance gates.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge",
@@ -6015,7 +6028,7 @@
       ],
       "completion": {
         "outcome": "Global Preferences is a production-accepted manual-first product surface with complete typed authority, durability, parity, accessibility, and real-Project evidence and no active Revision descriptors.",
-        "canonical_next_step_id": "GP-CM04",
+        "canonical_next_step_id": "GP-CM05",
         "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
         "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
         "steps": [
@@ -6076,13 +6089,15 @@
             ]
           },
           {
-            "id": "GP-CM04", "kind": "owner_decision", "status": "pending",
+            "id": "GP-CM04", "kind": "owner_decision", "status": "complete",
             "action": "Review all committed evidence and approve the durable real-Project corpus and resource budgets before GP-CM05 only.",
-            "depends_on": ["GP-CM03"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM04"}], "completion_evidence": [],
+            "depends_on": ["GP-CM03"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM04"}], "completion_evidence": [
+              {"kind": "review", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM04-OWNER-APPROVED-20260907"}
+            ],
             "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM05` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific migration, fixture, performance, accessibility, exclusion, or proof correction>`.", "requests": [{"id": "GP-CM04", "question": "May Datum run the bounded Global Preferences production-acceptance slice GP-CM05 only?", "recommended_response": "Approve only when all earlier evidence is committed, the corpus is durable, and PM-037/PM-039 exclusions remain absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM04"}}]}
           },
           {
-            "id": "GP-CM05", "kind": "execution", "status": "pending",
+            "id": "GP-CM05", "kind": "execution", "status": "in_progress",
             "action": "Complete real-project, migration, recovery, managed/offline, visual, accessibility, performance, resource, and negative production acceptance.",
             "depends_on": ["GP-CM04"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM05"}], "completion_evidence": []
           }

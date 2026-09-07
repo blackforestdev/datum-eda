@@ -1114,6 +1114,15 @@ step.
 Approve the exact durable real-Project corpus and resource budgets before
 authorizing GP-CM05.
 
+On 2026-09-07, after GP-CM03 landed in `f3038a97` with the bounded product,
+genesis, cross-surface, strict-Clippy, and full-workspace proof green, the owner
+replied exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM05`. This completes
+GP-CM04 and authorizes only the GP-CM05 production-acceptance work below. It
+does not itself assert production acceptance or authorize a dependency,
+reserved descriptor, broader Project Preferences, Publish, or Revision work.
+
+<!-- EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM04-OWNER-APPROVED-20260907 -->
+
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM05 -->
 ### GP-CM05 — Global Preferences production acceptance
 
