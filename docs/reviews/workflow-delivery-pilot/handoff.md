@@ -1,10 +1,83 @@
 # Workflow delivery pilot operational handoff
 
 Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
-Status: G01–G05 native evidence retained; G06P reopened for review reconciliation.
+Status: review reconciliation committed; renewed review acceptance required before G06P regeneration.
 The previous G06 acceptance is historical for its exact review hash, not approval
 of a corrected review. Activation remains off. G04 producer proof landed in `8d96e3a1` after the
 production corrections in `dde90c75`; independent replay landed in `fd117641`.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06P-RECONCILED -->
+## Corrected review and preparation diagnostics
+
+Root preparation correction: `fbb04e52`. Independent-review correction:
+`0aadec0192cf5e9742c3441f12e48c0742cc0af8`. The reviewer reinspected its retained
+history and pointer-regression evidence, explicitly accounted for both closed
+blocking defects with exact RESOLVED/REPLAY records, retained both nonblocking
+deferrals, and cleared the owner-receipt pointer. Its original native replay,
+producer proof and all 748 indexed proof/artifact paths remain byte-identical.
+This was a correction to defect accounting, not a new native run or production fix.
+
+The read-only committed-input command
+`python3 scripts/workflow_delivery_prepare.py --check-review-only` first
+reproduced both omitted IDs from the old Review and now passes for the corrected
+Review, accounting for all four defects. It validates both Proofs, recorded
+environments/correlations, the packet and exact defect references as preparation
+diagnostics only. Its output explicitly reports owner_acceptance_checked=false,
+trust_checked=false and promotion_performed=false. It is not a complete trusted
+acceptance or independent-replay verdict. The actual enforcement validator and
+its trust/receipt rules remain unchanged.
+
+A real output-generation attempt from the clean corrected commit was also
+refused with `record the exact owner acceptance before preparation`. The named
+output directory was not created; no candidate, retention ref, hook or trust
+configuration was produced. This intentionally verifies the remaining receipt
+boundary instead of manufacturing a publishable candidate before acceptance.
+
+All 121 workflow tests and 50 selector tests pass, including nine new checks for
+omitted closed/replay defects, exact section-bound resolutions and replay hashes,
+open blockers, unclassified references, deferrals, refusal before candidate-output
+creation and no acceptance claims. Source health (1,802 files), traceability
+(20 routes/114 artifacts), governance (204 classifications), project status
+(50 items) and whitespace checks pass. The reserved reviewer independently
+inspected this preflight and found no mismatch in the defect-accounting rules,
+while explicitly retaining its limited preparation-only scope.
+
+The coordinating claim is released at the renewed-review owner boundary below.
+G06P is pending, not falsely completed: the old activation candidate is superseded
+and a new publishable candidate cannot be generated until the corrected review
+has an exact owner receipt. After that receipt, resume only G06P to regenerate
+against a fresh clean committed base, then return to G06 for external promotion.
+This ordering preserves one selected step and does not ask for promotion of an
+unprepared candidate. Both closed fixes stay closed and both deferred Console
+defects stay open. Preferences remains at GP-CM04; no GP-CM05 authorization.
+
+<!-- REQ:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06R -->
+<!-- OWNER:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06R:WDQ-G06R-REVIEW-PACKET -->
+## Renewed acceptance of the corrected independent review
+
+The exact revised findings are in `independent-review.md` and `review.json`.
+The two additions are the already-fixed history-overlap and menu-pointer defects,
+now explicitly resolved against the unchanged independent replay. The two prior
+DEFER dispositions remain unchanged; no repeat deferral or new Console acceptance
+is requested. The old ACCEPT remains immutable historical evidence, but its old
+review hash does not approve this corrected record.
+
+Packet: `ab71468a0acd0e845f5e7cd5e2b21aae5121a85dfd5c2d72fa2f5f372c5745a0`
+Revised review: `9a90b1703fa2041c8ccd0d4584c8b856c1d64e120318da8d754716a998ba7443`
+
+Required owner response (a request, not a recorded receipt):
+
+```text
+ACCEPT WORKFLOW-DELIVERY-GATE-PILOT/WDQ-G06 ab71468a0acd0e845f5e7cd5e2b21aae5121a85dfd5c2d72fa2f5f372c5745a0 9a90b1703fa2041c8ccd0d4584c8b856c1d64e120318da8d754716a998ba7443
+```
+
+WDQ-G06R sequences this required new-hash acceptance before regeneration; it does
+not replace the ratified G06 acceptance identity or authorize live enforcement.
+On the exact response, record a new uniquely referenced receipt without rewriting
+the old one, complete only G06R, restore the G06P execution claim and regenerate
+the candidate. G06 still owns actual owner-controlled promotion and verification.
+No agent may substitute a new hash into the old owner response or activate the
+gate on the strength of preparation diagnostics.
 
 <!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06P-RECONCILIATION-AUTHORIZED -->
 ## Owner-authorized correction after the activation refusal
