@@ -1,0 +1,170 @@
+{
+  "schema": "datum-global-preferences-production-acceptance-matrix-v1",
+  "frontier_task": "GLOBAL-PREFERENCES-COMPLETION",
+  "execution_step": "GP-CM05",
+  "owner_acceptance_step": "GP-CM05V",
+  "requirement_markers": [
+    "<!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM05 -->",
+    "<!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM05V -->"
+  ],
+  "status": "candidate_evidence_pending_owner_budget_acceptance",
+  "platform": {
+    "os": "Linux",
+    "architecture": "x86_64",
+    "storage": "local durable filesystem with atomic rename and fsync support",
+    "gui": "Wayland primary; X11 fallback",
+    "network": "not required"
+  },
+  "product_boundary": {
+    "active_global_descriptors": 11,
+    "active_sections": ["appearance", "units"],
+    "reserved_descriptors": 45,
+    "project_seed_keys": 8,
+    "project_seed_modes": ["global", "factory"],
+    "live_project_following": false,
+    "mcp_direct_set_or_reset": false,
+    "excluded": [
+      "reserved descriptor activation",
+      "aggregate Project Units seed activation",
+      "Manage Preferences",
+      "broader Project Preferences",
+      "Publish",
+      "Revision"
+    ]
+  },
+  "durable_corpus": [
+    {
+      "id": "clean-install",
+      "source": "crates/engine/src/preferences/service.rs",
+      "test": "clean_open_uses_defaults_without_creating_repository",
+      "authority": "defaults resolve without creating machine state"
+    },
+    {
+      "id": "upgrade",
+      "source": "crates/engine/src/preferences/repository/tests.rs",
+      "test": "migration_plan_is_pure_moves_one_alias_and_writes_a_pre_migration_backup",
+      "authority": "migration is explicit, backed up, and atomic"
+    },
+    {
+      "id": "downgrade-preservation",
+      "source": "crates/engine/src/preferences/repository/tests.rs",
+      "test": "unknown_bytes_survive_mutation_backup_restore_and_reverse_restore",
+      "authority": "unknown future bytes survive old-reader mutation and round trip"
+    },
+    {
+      "id": "corrupt-store",
+      "source": "crates/engine/src/preferences/repository/tests.rs",
+      "test": "unreadable_generation_is_not_repaired_and_recovery_is_explicit",
+      "authority": "unreadable authority is preserved and never silently repaired"
+    },
+    {
+      "id": "portable-collision",
+      "source": "crates/engine/src/preferences/repository/tests.rs",
+      "test": "alias_collision_is_retained_and_refused_without_migration_side_effects",
+      "authority": "ambiguous portable identity is retained and refused without writes"
+    },
+    {
+      "id": "backup-restore",
+      "source": "crates/engine/src/preferences/repository/tests.rs",
+      "test": "unknown_bytes_survive_mutation_backup_restore_and_reverse_restore",
+      "authority": "backup, restore, and reverse restore preserve exact bytes"
+    },
+    {
+      "id": "project-genesis-crash",
+      "source": "crates/engine/src/preferences/project_genesis_lifecycle_tests.rs",
+      "test": "every_prepublication_checkpoint_leaves_destination_absent_and_owned_stage_clean",
+      "authority": "no prepublication failure exposes a partial Project"
+    },
+    {
+      "id": "project-genesis-replay",
+      "source": "crates/engine/src/preferences/project_genesis_lifecycle_tests.rs",
+      "test": "concurrent_identical_creators_publish_once_and_replay_one_result",
+      "authority": "concurrent identical requests publish once and replay one receipt"
+    },
+    {
+      "id": "existing-project-stability",
+      "source": "crates/engine/src/preferences/project_genesis_lifecycle_tests.rs",
+      "test": "global_seed_is_pinned_once_and_never_follows_later_edits",
+      "authority": "existing Projects never follow later Global changes"
+    },
+    {
+      "id": "managed-offline",
+      "source": "crates/engine/src/preferences/resolver_tests.rs",
+      "test": "inactive_provider_states_are_visible_and_never_participate",
+      "authority": "inactive and offline provider state is disclosed but never gains authority"
+    },
+    {
+      "id": "surface-parity-negative",
+      "source": "crates/engine/src/preferences/product_tests.rs",
+      "test": "product_catalog_and_active_only_search_have_exact_inventory",
+      "authority": "all surfaces share the 11-active/45-reserved boundary"
+    },
+    {
+      "id": "human-agent-authority",
+      "source": "crates/engine/src/preferences/product_tests.rs",
+      "test": "generic_product_envelope_does_not_bypass_mcp_acceptance",
+      "authority": "portable agents cannot acquire direct mutation authority"
+    },
+    {
+      "id": "accessibility-interaction",
+      "source": "crates/gui-app/src/global_preferences_runtime_tests.rs",
+      "test": "explanation_accessibility_is_complete_and_in_reading_order",
+      "authority": "native semantics expose scope, timing, search, state, and controls"
+    },
+    {
+      "id": "responsive-render",
+      "source": "crates/gui-render/src/global_preferences_dialog_tests.rs",
+      "test": "narrow_dialog_keeps_every_preference_hit_inside_the_window",
+      "authority": "narrow rendering preserves usable controls inside the native window"
+    },
+    {
+      "id": "noncolor-render",
+      "source": "crates/gui-render/src/global_preferences_dialog_tests.rs",
+      "test": "high_contrast_mode_keeps_word_and_shape_state_cues",
+      "authority": "non-color rendering preserves word and shape state cues"
+    }
+  ],
+  "candidate_resource_budgets": [
+    {
+      "id": "release-query",
+      "metric": "preferences describe release-process wall time",
+      "limit": {"p95_ms": 50, "max_ms": 100, "max_rss_mib": 32}
+    },
+    {
+      "id": "durable-mutation",
+      "metric": "confirmed single-key durable Set or Reset wall time",
+      "limit": {"p95_ms": 100, "max_ms": 250, "max_rss_mib": 32}
+    },
+    {
+      "id": "project-genesis",
+      "metric": "release-process Global or factory native-Project creation on local durable storage",
+      "limit": {"p95_ms": 100, "max_ms": 250, "max_rss_mib": 32}
+    },
+    {
+      "id": "project-validation",
+      "metric": "release-process validation of the created native Project",
+      "limit": {"p95_ms": 50, "max_ms": 100, "max_rss_mib": 32}
+    },
+    {
+      "id": "storage-growth",
+      "metric": "canonical storage growth",
+      "limit": {"empty_project_kib": 16, "per_preference_generation_kib": 32}
+    },
+    {
+      "id": "gui-feedback",
+      "metric": "search, focus, and non-durable control feedback from input dispatch to prepared state",
+      "limit": {"p95_ms": 50, "max_ms": 100}
+    },
+    {
+      "id": "native-window-open",
+      "metric": "Edit > Preferences > Global Preferences to first interactive owned child window",
+      "limit": {"p95_ms": 500, "max_ms": 1000}
+    },
+    {
+      "id": "window-lifecycle",
+      "metric": "100 open/close cycles after warm-up",
+      "limit": {"max_rss_growth_mib": 4, "orphan_windows": 0, "orphan_writer_leases": 0}
+    }
+  ],
+  "acceptance_rule": "Every corpus row, standing gate, release measurement, independent PM-037/PM-039 exclusion check, and owner-dispositioned resource budget must pass on one revision. No known failure may be waived inside GP-CM05."
+}
