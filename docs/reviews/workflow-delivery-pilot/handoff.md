@@ -1,10 +1,22 @@
 # Workflow delivery pilot operational handoff
 
 Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
-Status: corrected review accepted; G06P validated, G06 external promotion pending.
+Status: corrected review accepted; G06P reopened for the owner-requested runnable script.
 The previous G06 acceptance is historical for its exact review hash, not approval
 of a corrected review. Activation remains off. G04 producer proof landed in `8d96e3a1` after the
 production corrections in `dde90c75`; independent replay landed in `fd117641`.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06P-SCRIPT-AUTHORIZED -->
+## Owner-requested runnable activation handoff
+
+Source: the owner reported that the pasted block returns nothing in their terminal
+and asked whether it would be better as a script, 2026-09-07 UTC. This authorizes
+packaging the same bounded owner commands as a runnable external script, with
+explicit opt-in, visible progress, captured output and propagated failure status.
+It does not authorize the preparing agent to run activation, configure trust,
+weaken checks or change the accepted review. Reopen only G06P for this packaging,
+tests and fresh-base regeneration; G06 remains the owner's promotion boundary.
+All existing acceptance and deferral records remain unchanged.
 
 <!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06P-REGENERATED -->
 ## Fresh preparation against the corrected accepted review

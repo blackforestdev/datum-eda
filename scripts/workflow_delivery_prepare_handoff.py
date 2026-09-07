@@ -1,12 +1,14 @@
 """Render exact owner instructions; preparation never executes these commands."""
 
 from shlex import quote
+from pathlib import Path
 
 
 def promotion_markdown(root, result):
     candidate, base = result["candidate"], result["base"]
     runner, hooks = quote(result["runner"]), quote(result["hooks"])
     environment = quote(result["environment"])
+    script = quote(str(Path(result["runner"]).parents[2] / "activate.py"))
     check = (f"python3 {runner} --root {quote(str(root))} --enforce "
              f"--authority-ref {candidate} --base-ref {base} "
              f"--environment-path {environment}")
@@ -15,6 +17,11 @@ def promotion_markdown(root, result):
 Preparation succeeded; promotion has NOT been performed. This local candidate
 reference retains an object, not authority. Your existing ACCEPT and two DEFER
 responses remain valid. This transaction does not authorize Preferences GP-CM05.
+
+Runnable version: after review, run `python3 {script} --activate` in your terminal.
+It executes exactly the activation block below and saves combined output to a
+private activation-*.log beside the script. Without --activate it prints help
+and changes nothing. Do not paste the Markdown into a terminal.
 
 Candidate: `{candidate}`
 Comparison base: `{base}`
