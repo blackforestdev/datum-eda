@@ -18,6 +18,7 @@ from workflow_delivery_frontier import validate_frontier
 from workflow_delivery_proof import packet_sha256, validate_proof
 from workflow_delivery_prepare_handoff import promotion_markdown
 from workflow_delivery_prepare_review import check_review
+from workflow_delivery_prepare_script import activation_script
 from workflow_delivery_review import receipt_section
 from workflow_delivery_tree import Tree
 
@@ -207,6 +208,8 @@ def prepare(root, output):
               "review_sha256": review_sha256(review), "promotion_performed": False}
     save(output, "preparation.json", result)
     (output / "promotion.md").write_text(promotion_markdown(root, result), encoding="utf-8")
+    (output / "activate.py").write_text(activation_script(root, result), encoding="utf-8")
+    (output / "activate.py").chmod(0o700)
     return result
 
 
