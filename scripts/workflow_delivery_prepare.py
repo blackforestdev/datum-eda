@@ -17,6 +17,7 @@ from workflow_delivery_evidence_shapes import review_sha256, review_shape
 from workflow_delivery_frontier import validate_frontier
 from workflow_delivery_proof import packet_sha256, validate_proof
 from workflow_delivery_prepare_handoff import promotion_markdown
+from workflow_delivery_prepare_review import check_review
 from workflow_delivery_review import receipt_section
 from workflow_delivery_tree import Tree
 
@@ -111,6 +112,7 @@ def prepare(root, output):
     tree = Tree(root, revision=base)
     # Validate the actual source lease and authorization before any output writes.
     validate_frontier(tree)
+    check_review(tree, "specs/workflow_delivery/pilot.contract.json", ENVIRONMENT)
     contract = load_contract(tree, "specs/workflow_delivery/pilot.contract.json")
     proof = validate_proof(tree, contract)
     review = review_shape(tree.json(contract["review_path"]), contract["review_path"])
@@ -211,10 +213,18 @@ def prepare(root, output):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[1])
-    parser.add_argument("--output", type=Path, required=True)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--output", type=Path)
+    mode.add_argument("--check-review-only", action="store_true",
+                      help="read committed review accounting without requiring or promoting owner trust")
     args = parser.parse_args()
     try:
-        print(json.dumps(prepare(args.root, args.output), indent=2))
+        if args.check_review_only:
+            tree = Tree(args.root, revision=run(args.root, "git", "rev-parse", "HEAD"))
+            result = check_review(tree, "specs/workflow_delivery/pilot.contract.json", ENVIRONMENT)
+        else:
+            result = prepare(args.root, args.output)
+        print(json.dumps(result, indent=2))
     except (ValueError, subprocess.CalledProcessError) as error:
         detail = (error.stderr or error.stdout or "") if isinstance(error, subprocess.CalledProcessError) else ""
         parser.exit(1, str(error) + "\n" + detail +

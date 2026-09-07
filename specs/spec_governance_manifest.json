@@ -8,6 +8,7 @@
   ],
   "tracked_docs": [
     "docs/reviews/workflow-delivery-pilot/handoff.md",
+    "docs/reviews/workflow-delivery-pilot/independent-review.md",
     "specs/workflow_delivery/pilot.contract.json",
     "docs/DATUM_SHARED_TOOLING_TAXONOMY.md",
     "docs/IPC_FOOTPRINT_SYSTEM.md",
@@ -44,6 +45,10 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-pilot/independent-review.md": {
+      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
+      "notes": "Independent native review and replay-bound defect-resolution evidence, reconciled in WDQ-G06P after the owner's WDQ-DEFECT refusal. Operational evidence outside its own contract authority closure; no new product requirement, owner acceptance or trust promotion."
+    },
     "docs/reviews/workflow-delivery-pilot/handoff.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
       "notes": "Completed WDQ-G01-G05 operational evidence under PM041, outside the pilot authority route to avoid receipt cycles. Records identified native producer proof, independent replay, 98 delivery tests, recoverable archival, the exact G06 owner ACCEPT response and two explicit nonblocking deferrals. G06 remains incomplete pending activation preparation, external promotion and passing scoped enforcement; no live enrollment, trusted promotion or Preferences approval."

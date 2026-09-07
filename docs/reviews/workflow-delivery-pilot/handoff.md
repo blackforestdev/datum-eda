@@ -1,10 +1,42 @@
 # Workflow delivery pilot operational handoff
 
 Recorded: 2026-09-06 UTC. Tracking: dat-workflow-gate-pilot-b3s.
-Status: G01–G05 complete; G06 owner acceptance and both deferrals are recorded.
-G06 remains incomplete pending the prepared transaction's external promotion
-and passing scoped enforcement. Activation remains off. G04 producer proof landed in `8d96e3a1` after the
+Status: G01–G05 native evidence retained; G06P reopened for review reconciliation.
+The previous G06 acceptance is historical for its exact review hash, not approval
+of a corrected review. Activation remains off. G04 producer proof landed in `8d96e3a1` after the
 production corrections in `dde90c75`; independent replay landed in `fd117641`.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06P-RECONCILIATION-AUTHORIZED -->
+## Owner-authorized correction after the activation refusal
+
+Source: the owner supplied the exact promotion command and its WDQ-DEFECT
+failure in this conversation, then replied `ok... proceed.` to the proposed
+independent-review reconciliation. Recorded: 2026-09-07 UTC.
+
+Candidate `9564368735dccada966388e76f7adcc2380b83b8` failed before publication:
+`every proof defect requires review disposition`. Live HEAD remains
+`c386a801dfc70577f232719a360a15c11f48ea8e`, the tree is clean, trust settings
+are unset and the existing report-only hook remains installed. Do not rerun
+that candidate's promotion block. Earlier preparation-success statements below
+describe structural preparation only; they did not establish acceptance readiness.
+
+The producer proof retains four defect IDs but the independent Review accounts
+for only the two nonblocking deferrals. Its owning independent-review session
+must assess and explicitly bind the already fixed Console history overlap and
+menu pointer-authority defects to its existing replay. Do not delete defects
+from the producer proof, weaken the validator, fabricate reviewer conclusions,
+or carry the old ACCEPT forward to a changed review hash.
+
+Reopen WDQ-G06P for this bounded correction and preparation regression checks.
+The coordinating lane owns only preparation tooling/tests and operational
+handoff/Frontier/projection/beads records. The reserved independent reviewer
+owns review.json and independent-review.md; it may add exact replay-bound
+resolution evidence there after checking its own retained evidence. No production,
+prototype, authority-route, proof/replay bytes, dependency or Preferences edits.
+The existing replay may be reused only if it actually proves both fixes and
+all bound identities remain unchanged. G06 remains pending; corrected review
+acceptance and external promotion still belong to the owner. A new publishable
+candidate must wait for the corrected review's exact owner receipt.
 
 <!-- EVIDENCE:WORKFLOW-DELIVERY-GATE-PILOT:WDQ-G06P-PREPARED -->
 ## G06P preparation validated; owner promotion remains separate
