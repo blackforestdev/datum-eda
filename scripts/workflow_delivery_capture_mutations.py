@@ -2,6 +2,7 @@
 
 from workflow_delivery_io import canonical_json, parse_json
 from workflow_delivery_capture_history import HISTORY_CASES
+from workflow_delivery_capture_snapshots import SNAPSHOT_CASES
 from workflow_delivery_environment_cases import FIXTURE_VARIANTS, HEADLESS_VARIANTS, MIXED_VARIANT, SWAPPED_VARIANT
 
 POLICY = "specs/workflow_delivery_policy.json"
@@ -18,6 +19,7 @@ CASES = {
 }
 CASES.update({key: ("requested-environment.json", "WDQ-ENVIRONMENT") for key in FIXTURE_VARIANTS})
 CASES.update(HISTORY_CASES)
+CASES.update(SNAPSHOT_CASES)
 CASES[MIXED_VARIANT] = (None, None)
 # This prepared-input case names the diagnostic environment context, not a
 # candidate file to mutate. The exact selected bytes live in its retained bundle.

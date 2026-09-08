@@ -11,6 +11,7 @@ from workflow_delivery_capture_command import capture_command, save
 from workflow_delivery_capture_fixture import restore_fixture
 from workflow_delivery_capture_mutations import CASES, changed_bytes, expected_detail
 from workflow_delivery_capture_history import HISTORY_CASES
+from workflow_delivery_capture_snapshots import SNAPSHOT_CASES, prepare_snapshots, snapshot_expectation
 from workflow_delivery_capture_state import git
 from workflow_delivery_io import parse_json, sha256
 from workflow_delivery_shapes import require
@@ -39,6 +40,10 @@ def evaluate_hook(output, *, case_id, hook):
                 and row["source"]["sha256"] == sha256(runner.read_bytes()) for row in events),
             "hook", "actual pinned validator entrypoint was not observed")
     target, code = CASES[case_id]
+    if case_id in SNAPSHOT_CASES:
+        target, code, detail = snapshot_expectation(case_id, "H")
+    else:
+        detail = expected_detail(case_id)
     require(result["returncode"] == (0 if code is None else 1), "hook", "unexpected hook status")
     lines = (output / "stdout.bin").read_bytes().splitlines()
     require(len(lines) == 3 and lines[0].startswith(b"visual-truth file-lane gate passed")
@@ -52,7 +57,7 @@ def evaluate_hook(output, *, case_id, hook):
     require([row["code"] for row in findings] == ([] if code is None else [code]),
             "hook", "precise refusal required")
     if code is not None:
-        require(findings[0]["path"] == target and expected_detail(case_id) in findings[0]["detail"],
+        require(findings[0]["path"] == target and detail in findings[0]["detail"],
                 "hook", "wrong diagnostic input or cause")
     return {"case_id": case_id, "surface": "H", "invocation_id": result["invocation_id"],
             "observation_matches_expected": True, "result_sha256": sha256((output / "result.json").read_bytes()),
@@ -64,6 +69,8 @@ def evaluate_hook(output, *, case_id, hook):
 def run_hook_case(packet, destination, environment, *, case_id):
     if case_id not in CASES or case_id in HISTORY_CASES:
         raise ValueError("explicit implemented hook case required")
+    if case_id in SNAPSHOT_CASES:
+        snapshot_expectation(case_id, "H")
     destination = Path(destination).resolve()
     destination.mkdir(exist_ok=False)
     root, output = destination / "fixture", destination / "capture"
@@ -79,7 +86,9 @@ def run_hook_case(packet, destination, environment, *, case_id):
     target, _ = CASES[case_id]
     mutation = {"case_id": case_id, "path": target, "before_sha256": None, "after_hex": None,
                 "prepared_fixture_variant": recipe.get("fixture_variant")}
-    if target and not prepared_input:
+    if case_id in SNAPSHOT_CASES:
+        mutation = prepare_snapshots(root, case_id)
+    elif target and not prepared_input:
         path = root / target
         raw = path.read_bytes() if path.exists() else None
         mutation["before_sha256"] = sha256(raw) if raw is not None else None

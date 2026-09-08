@@ -8,6 +8,7 @@ from workflow_delivery_capture_command import capture_command, save
 from workflow_delivery_capture_fixture import restore_fixture
 from workflow_delivery_capture_state import git
 from workflow_delivery_capture_history import HISTORY_CASES, prepare_history
+from workflow_delivery_capture_snapshots import SNAPSHOT_CASES, prepare_snapshots, snapshot_expectation
 from workflow_delivery_capture_mutations import CASES, changed_bytes, expected_detail
 from workflow_delivery_io import sha256
 from workflow_delivery_environment_cases import case_uses_prepared_input
@@ -18,15 +19,21 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
         raise ValueError("only explicitly implemented case/surface combinations may run")
     if case_id in HISTORY_CASES and surface != "R":
         raise ValueError("history certification requires exact-candidate surface R")
+    if case_id in SNAPSHOT_CASES:
+        snapshot_expectation(case_id, surface)
     destination, runtime_root = Path(destination).resolve(), Path(runtime_root).resolve(strict=True)
     destination.mkdir(exist_ok=False)
     root, output = destination / "fixture", destination / "capture"
     recipe = restore_fixture(packet, root)
     prepared_input = case_uses_prepared_input(case_id, recipe)
     target, expected = CASES[case_id]
+    detail = None if case_id in SNAPSHOT_CASES else expected_detail(case_id)
     mutation = {"case_id": case_id, "path": target, "before_sha256": None, "after_hex": None,
                 "prepared_fixture_variant": recipe.get("fixture_variant")}
-    if case_id in HISTORY_CASES:
+    if case_id in SNAPSHOT_CASES:
+        mutation = prepare_snapshots(root, case_id)
+        target, expected, detail = snapshot_expectation(case_id, surface)
+    elif case_id in HISTORY_CASES:
         mutation = prepare_history(root, case_id, recipe["head"], destination / "history.bundle")
     elif target and not prepared_input:
         path = root / target
@@ -65,7 +72,7 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
     try:
         assessment = evaluate_capture(output, case_id=case_id, surface="S" if selector else surface,
                                       expected_code=expected, script=script, expected_path=target,
-                                      expected_detail=expected_detail(case_id))
+                                      expected_detail=detail)
     except Exception as error:
         save(destination / "assessment-error.json", {"type": type(error).__name__, "detail": str(error),
                                                    "acceptance_asserted": False})
