@@ -53,6 +53,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md": {
+      "class": "governed",
+      "progress_anchor": "GUI-P2-CROSSPROBE",
+      "notes": "WDQ-I02 repairs missing pending P2.3/P2.4 completion contracts under existing read-only authority. Cross-probe and full inspector retain their original dependencies and planning authorization; native contract authorship, execution approval, proof, independent review and owner acceptance remain separate."
+    },
     "docs/reviews/workflow-delivery-rollout/category-preflight.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
