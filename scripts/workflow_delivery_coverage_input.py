@@ -6,6 +6,8 @@ from datetime import datetime, timedelta, timezone
 from workflow_delivery_io import canonical_json, parse_json, sha256
 
 BOUNDARY_CASES = {
+    "INFRA-S02-02.reopen": ("TASK", "WDQ-COVERAGE", "historical reopening requires reclassification"),
+    "INFRA-S02-02.add-execution": ("TASK", "WDQ-COVERAGE", "historical completion/landing evidence changed"),
     "INFRA-S02-04.retained-history": (None, None, None),
     "INFRA-S02-04.reactivate": ("COLD", "WDQ-COVERAGE", "deferred work requires reclassification"),
     "INFRA-S02-04.rewrite-history": ("COLD", "WDQ-COVERAGE", "deferred work requires reclassification"),
@@ -110,6 +112,26 @@ def mutate_external_boundary(root, case_id):
             "external/owned_elsewhere/input.py" if case_id.endswith(".prefix-lookalike") else
             "external/owned/input.py")
     changes[path] = b"# Actual candidate change in an isolated synthetic lane.\n"
+    if case_id.startswith("INFRA-S02-02."):
+        manifest = parse_json((root / "specs/active_frontier.json").read_bytes(), "Frontier")
+        historical = next(item for item in manifest["frontier"] if item["key"] == "TASK")
+        issues = [parse_json(line, "beads") for line in (root / ".beads/issues.jsonl").read_bytes().splitlines()]
+        issue = next(issue for issue in issues if issue["id"] == "dat-test")
+        if case_id.endswith(".reopen"):
+            historical["state"] = "ready"
+            del historical["landing_commit"]
+            issue["status"] = "open"
+        else:
+            extra = deepcopy(next(step for step in historical["completion"]["steps"] if step["id"] == "V"))
+            extra.update(id="EXTRA", action="Candidate-only additional historical execution",
+                         depends_on=["A"], requirement_refs=[{"path": historical["governing_docs"][0], "marker": "EXTRA"}])
+            historical["completion"]["steps"].append(extra)
+            doc = historical["governing_docs"][0]
+            changes[doc] = (root / doc).read_bytes() + b"\n<!-- REQ:TASK:EXTRA -->\n"
+            issue["acceptance_criteria"] += "\nEXTRA: Additional historical execution"
+        changes[".beads/issues.jsonl"] = b"".join(canonical_json(issue) for issue in issues)
+        changes["specs/active_frontier.json"] = canonical_json(manifest)
+        changes["specs/PROGRESS.md"] = render_block(manifest).encode()
     if case_id.startswith("INFRA-S02-04.") and not case_id.endswith(".retained-history"):
         manifest = parse_json((root / "specs/active_frontier.json").read_bytes(), "Frontier")
         cold = next(item for item in manifest["frontier"] if item["key"] == "COLD")
