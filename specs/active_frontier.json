@@ -7733,9 +7733,7 @@
       "parallel": false,
       "summary": "Audit manual workflow capability, research missing CAD foundations, and prepare a concrete readiness/acceptance gate adoption packet; preserve active Preferences ownership and select this planning work only through an explicit coordinated handoff.",
       "dependencies": [],
-      "unblocks": [
-        "dat-manual-foundation-contracts-fsw"
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "A reproducible capability baseline, bounded research dispositions and an owner-reviewed gate/pilot adoption packet are ready for separate numbered ratification and implementation authorization.",
         "canonical_next_step_id": null,
@@ -7880,9 +7878,7 @@
             "Record owner disposition and ratify approved mechanism through the numbered decision process with complete governance/evidence registration.",
             "Promote bounded gate implementation and scoped research follow-ons through explicit Frontier transactions; preserve existing work and its resume disposition."
           ],
-          "unblocks_issue_ids": [
-            "dat-manual-foundation-contracts-fsw"
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -7895,8 +7891,9 @@
       "title": "Specify the first manual workflow foundation contracts",
       "issue_id": "dat-manual-foundation-contracts-fsw",
       "governing_docs": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "docs/reviews/workflow-foundation/authority-review.md", "docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md", "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md", "docs/reviews/workflow-foundation/handoff.md"],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "landed",
+      "authorization": "none",
+      "landing_commit": "b5a05a70edeb119c30bac414563a12c7c07d8a26",
       "canonical_next": false,
       "parallel": true,
       "summary": "Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection.",
@@ -8262,6 +8259,121 @@
         }
       },
       "landing_commit": "76152fc7dab4ba0431da991f58d6a5ebc1838763"
+    },
+    {
+      "key": "WORKFLOW-DELIVERY-ROLLOUT",
+      "order": 50,
+      "title": "Prepare broader workflow delivery enforcement and adoption rollout",
+      "issue_id": "dat-wdq-broader-rollout-tqh",
+      "governing_docs": [
+        "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
+        "docs/reviews/workflow-foundation/handoff.md"
+      ],
+      "state": "in_progress",
+      "authorization": "planning",
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-wdq-broader-rollout-20260908",
+        "claimed_at": "2026-09-08T06:04:10Z",
+        "heartbeat_at": "2026-09-08T06:04:10Z",
+        "expires_at": "2026-09-08T14:04:10Z",
+        "scope": ["Owner-approved separate workflow-quality lane, WDQ-R01/R02 planning only: schedule foundation specification follow-ups and prepare broader enforcement, exact promotion and three-slice adoption proposals. Preserve Preferences GP-CM05V and other product owners; no product implementation, prototype edits, gate/enrollment/trust mutation or acceptance."],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "b5a05a70edeb119c30bac414563a12c7c07d8a26"
+      },
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Owner-approved separate workflow-quality planning: schedule foundation specification follow-ups and prepare exact broader enforcement, promotion and three-slice adoption proposals without taking over product implementation.",
+      "dependencies": [],
+      "unblocks": [],
+      "completion": {
+        "outcome": "An owner-reviewed bounded implementation/promotion packet covers real roadmap consumers, scheduled specification gaps, enforceable delivery transitions and three separately enrolled adoption slices beyond the pilot, with explicit ownership and remaining acceptance boundaries.",
+        "canonical_next_step_id": "WDQ-R01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "WDQ-R01",
+            "kind": "planning",
+            "status": "in_progress",
+            "action": "Bind approved foundation specification follow-ups and real rollout scope to existing owners and explicit outputs.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
+                "marker": "WDQ-R01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "WDQ-R02",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Prepare exact executable-contract, promotion and three-slice adoption proposals with negative verification and ownership boundaries.",
+            "depends_on": [
+              "WDQ-R01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
+                "marker": "WDQ-R02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "WDQ-R03",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain owner disposition of the bounded implementation and promotion plan without accepting product delivery or self-promoting trust.",
+            "depends_on": [
+              "WDQ-R02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
+                "marker": "WDQ-R03"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `WORKFLOW-DELIVERY-ROLLOUT: authorize bounded implementation — <reviewed packet>`, `WORKFLOW-DELIVERY-ROLLOUT: revise — <correction>`, or `WORKFLOW-DELIVERY-ROLLOUT: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "ROLLOUT-IMPLEMENTATION",
+                  "question": "Do you authorize the reviewed bounded implementation plan, leaving exact owner-controlled promotion and product acceptance boundaries intact?",
+                  "recommended_response": "Authorize only complete scoped work with real consumer owners and adoption evidence requirements; do not approve candidate trust implicitly.",
+                  "source_ref": {
+                    "path": "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
+                    "marker": "ROLLOUT-IMPLEMENTATION"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Record owner disposition and explicitly register the implementation/adoption successor; broader reform remains incomplete until enforcement and measured adoption are verified."
+          ],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     }
   ]
 }
