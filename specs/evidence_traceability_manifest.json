@@ -36,9 +36,9 @@
       "id": "workflow-delivery-rollout",
       "status": "in_progress",
       "sources": ["research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md"],
-      "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md"],
-      "reviewed_digest": "915992e61f2da50fe1846525c5d6dd507746151cba653c97f15cd0c25e6cd3f5",
-      "review_note": "Complete review of this new owner-authorized planning source and consumer. WDQ-F03 permits scheduling research/specification and preparing broader gate/enrollment/adoption proposals only. R01-R03 retain actual product owners, explicit implementation/promotion boundaries and the full unfinished three-slice outcome. No existing pilot/product route, execution authority, gate implementation, local trust or acceptance is changed."
+      "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md"],
+      "reviewed_digest": "c09e0ae63e1ce405906c1f8b6e2a77a86af8b491620baf5b3ddcf0ea71533dc3",
+      "review_note": "WDQ-R01 complete review of the planning source, rollout plan and four new scheduled follow-up completion contracts. Code inspection distinguishes pilot-only enforced delivery from three unenrolled prose plans; exact follow-up outputs preserve owner ratification, doorway define-and-deliver scope and product ownership. Only the approved scheduling and proposal preparation are performed. No existing pilot/product route, hard dependency edge, execution authority, gate implementation, local trust or acceptance is changed."
     },
     {
       "id": "research-governance-index",

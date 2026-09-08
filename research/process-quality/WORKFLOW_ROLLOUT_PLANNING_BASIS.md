@@ -37,3 +37,48 @@ a decision this lane can accept. Missing product proof must be supplied by its
 responsible lane; the rollout checks the enforced transition and records honest
 adoption evidence. No source-code dependency, prototype edit or local trust
 change is authorized by this planning baseline.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-ROLLOUT:WDQ-R01-SCOPE -->
+## WDQ-R01 — inspected enforcement and scheduled scope
+
+Read-only inspection at baseline `9f432202` (2026-09-08 UTC) establishes the
+following. These are code/policy observations, not new native proof or a
+claim to have exercised every negative case.
+
+| Current mechanism | Actual coverage | Remaining rollout obligation |
+| --- | --- | --- |
+| `specs/workflow_delivery_policy.json` | Only WORKFLOW-DELIVERY-GATE-PILOT is enrolled | Propose explicit relevant production enrollment; no broader coverage is implied |
+| `workflow_delivery_selector.selector_failures` | Only items with `completion.delivery` enter delivery validation; unenrolled declarations use structure phase | S5A, GUI-WRITE-PATH and NATIVE-AUTHORING currently have no delivery declaration; their six-step prose does not enforce native artifacts |
+| `check_workflow_delivery.run` | Enforce mode iterates trusted enrollment, refuses an ad-hoc contract; report-only never asserts readiness/acceptance | An unenrolled product task is outside this check; coverage must itself be governed, not inferred from passing pilot output |
+| `workflow_delivery_checkpoints.required_phase` | Completed mapped steps choose ready/activate/verify/accept; execution authorization forces at least ready | Map real task steps explicitly; prove selected/in-progress enabling transitions cannot leave a proof loophole |
+| `_validate_delivery` | For trusted structure/ready, changed reviewed input roots force activate (product) or verify (infrastructure) proof | Review exact input roots and demonstrate a real enabling edit trips the gate even while labels remain pending; roots omitted from a contract are not protected |
+| `validate_transition` | Enforces completed dependencies, owner authorization/no claim, preserved completed checkpoints and a verified baseline before acceptance | Dependency shape alone cannot prove the behavior, and the separate independent-review completion step is not a fifth mapped phase |
+| `_validate_delivery` acceptance branch | Proof, environment and correlations are checked for activate/verify/accept; `validate_review` is called at accept | Explicitly decide how to enforce the independent-review step before it is marked complete, without representing a pending owner receipt as acceptance |
+| Existing owner-pinned runner and hooks | Owner-selected authority/base and exact gate/contract checks protect enrolled obligations | Gate code, trusted policy and contract changes require exact promotion; planning may not update local trust or install its own candidate |
+
+Concrete refusal cases for R02 must include removing delivery enrollment,
+changing a trusted root or runner, completing proof with no real consumer,
+editing enrolled build inputs while keeping steps pending, stale authority or
+environment, copied independent replay, a defect without disposition and a
+candidate inventing owner acceptance. A passing unmodified pilot is not proof
+that these cases protect the three currently unenrolled product lanes.
+
+The staged expansion candidates are UVT-S5A-BUILD, GUI-WRITE-PATH and
+NATIVE-AUTHORING: all are real scheduled product work with repaired completion
+plans, not disposable examples. None has a product claim from this scheduling
+lane. Their prerequisites and availability are retained; their future names
+are not three completed adoption measurements. GP-CM05V is explicitly excluded
+from this lane's edits and acceptance. R02 must address both measured slices
+and a coverage policy for other relevant roadmap items, so three examples
+cannot become a permanent opt-out for the rest of development.
+
+`specs/FOUNDATION_FOLLOWUP_PLANS.md` supplies exact pending completion contracts
+for writer ownership, connectivity/gesture, ordinary native doorway delivery
+and fixture/performance-budget authorship. The first three reuse their existing
+issues; searches for performance budget, latency budget and fixture found no
+existing budget-authorship issue, so `dat-native-workflow-budgets-0h4` is new.
+They are appended at Frontier orders 51–54 without changing canonical selection,
+claiming a product lane, adding hard dependency edges or granting execution.
+Doorway retains its original define-and-deliver outcome with implementation,
+native proof, independent replay and owner acceptance still pending; the other
+three require explicit mechanism/budget ratification, not implementation claims.

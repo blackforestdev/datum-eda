@@ -8289,7 +8289,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "An owner-reviewed bounded implementation/promotion packet covers real roadmap consumers, scheduled specification gaps, enforceable delivery transitions and three separately enrolled adoption slices beyond the pilot, with explicit ownership and remaining acceptance boundaries.",
-        "canonical_next_step_id": "WDQ-R01",
+        "canonical_next_step_id": "WDQ-R02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -8306,7 +8306,7 @@
           {
             "id": "WDQ-R01",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Bind approved foundation specification follow-ups and real rollout scope to existing owners and explicit outputs.",
             "depends_on": [],
             "requirement_refs": [
@@ -8315,12 +8315,18 @@
                 "marker": "WDQ-R01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
+                "marker": "<!-- EVIDENCE:WORKFLOW-DELIVERY-ROLLOUT:WDQ-R01-COMPLETE -->"
+              }
+            ]
           },
           {
             "id": "WDQ-R02",
             "kind": "planning",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Prepare exact executable-contract, promotion and three-slice adoption proposals with negative verification and ownership boundaries.",
             "depends_on": [
               "WDQ-R01"
@@ -8367,6 +8373,488 @@
         "post_completion": {
           "effects": [
             "Record owner disposition and explicitly register the implementation/adoption successor; broader reform remains incomplete until enforcement and measured adoption are verified."
+          ],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
+    },
+    {
+      "key": "PROJECT-WRITER-OWNERSHIP",
+      "order": 51,
+      "title": "Ratify project writer ownership and recovery serialization",
+      "issue_id": "dat-project-write-ownership-lock-0ne",
+      "governing_docs": [
+        "specs/FOUNDATION_FOLLOWUP_PLANS.md"
+      ],
+      "state": "planned",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "A ratified numbered writer-ownership decision resolves serialization, durability and recovery for all project writers; implementation obligations remain explicitly scheduled, not falsely delivered.",
+      "dependencies": [],
+      "unblocks": [
+        "dat-multi-agent-proposals-first-f49",
+        "dat-gui-write-path-qiu"
+      ],
+      "completion": {
+        "outcome": "A ratified numbered writer-ownership decision resolves serialization, durability and recovery for all project writers; implementation obligations remain explicitly scheduled, not falsely delivered.",
+        "canonical_next_step_id": "PWO-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "PWO-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Establish actual writer entry points and concurrent failure boundaries.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "PWO-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "PWO-C02",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Draft the complete numbered writer-ownership decision and consumer reconciliation.",
+            "depends_on": [
+              "PWO-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "PWO-C02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "PWO-C03",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain owner ratification of the writer protocol and explicitly schedule implementation obligations.",
+            "depends_on": [
+              "PWO-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "PWO-C03"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `PROJECT-WRITER-OWNERSHIP: approve WRITER-RATIFICATION — <reviewed packet>`, `PROJECT-WRITER-OWNERSHIP: revise — <correction>`, or `PROJECT-WRITER-OWNERSHIP: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "WRITER-RATIFICATION",
+                  "question": "Obtain owner ratification of the writer protocol and explicitly schedule implementation obligations.",
+                  "recommended_response": "Approve only the exact reviewed scope and evidence; retain separately stated implementation, promotion and acceptance boundaries.",
+                  "source_ref": {
+                    "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                    "marker": "WRITER-RATIFICATION"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Record exact specification ratification and explicitly schedule unresolved implementation obligations; specification closure does not prove product delivery."
+          ],
+          "unblocks_issue_ids": [
+            "dat-multi-agent-proposals-first-f49",
+            "dat-gui-write-path-qiu"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
+    },
+    {
+      "key": "NATIVE-CONNECTIVITY-CONTRACT",
+      "order": 52,
+      "title": "Reconcile native connectivity identity, formation and gesture authority",
+      "issue_id": "dat-grid-connectivity-authority-5s6",
+      "governing_docs": [
+        "specs/FOUNDATION_FOLLOWUP_PLANS.md"
+      ],
+      "state": "planned",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority.",
+      "dependencies": [],
+      "unblocks": [],
+      "completion": {
+        "outcome": "Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority.",
+        "canonical_next_step_id": "NCC-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "NCC-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Review competing connectivity, native-authoring, selection and grid authority clauses.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "NCC-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "NCC-C02",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Draft exact connection formation, attached movement, quantization and gesture behavior with Claude-owned reconciliation.",
+            "depends_on": [
+              "NCC-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "NCC-C02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "NCC-C03",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain owner ratification and reconcile all actual route consumers before specification closure.",
+            "depends_on": [
+              "NCC-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "NCC-C03"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `NATIVE-CONNECTIVITY-CONTRACT: approve CONNECTIVITY-RATIFICATION — <reviewed packet>`, `NATIVE-CONNECTIVITY-CONTRACT: revise — <correction>`, or `NATIVE-CONNECTIVITY-CONTRACT: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "CONNECTIVITY-RATIFICATION",
+                  "question": "Obtain owner ratification and reconcile all actual route consumers before specification closure.",
+                  "recommended_response": "Approve only the exact reviewed scope and evidence; retain separately stated implementation, promotion and acceptance boundaries.",
+                  "source_ref": {
+                    "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                    "marker": "CONNECTIVITY-RATIFICATION"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Record exact specification ratification and explicitly schedule unresolved implementation obligations; specification closure does not prove product delivery."
+          ],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
+    },
+    {
+      "key": "NATIVE-PROJECT-DOORWAY",
+      "order": 53,
+      "title": "Define and deliver the ordinary native GUI project startup doorway",
+      "issue_id": "dat-native-project-startup-vrf",
+      "governing_docs": [
+        "specs/FOUNDATION_FOLLOWUP_PLANS.md"
+      ],
+      "state": "planned",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Ordinary native startup supports the approved create/open/reopen doorway and failure/recovery states, proven in the production GUI, independently replayed and explicitly accepted by the owner; specification authorship alone cannot close this task.",
+      "dependencies": [
+        "dat-manual-foundation-contracts-fsw"
+      ],
+      "unblocks": [],
+      "completion": {
+        "outcome": "Ordinary native startup supports the approved create/open/reopen doorway and failure/recovery states, proven in the production GUI, independently replayed and explicitly accepted by the owner; specification authorship alone cannot close this task.",
+        "canonical_next_step_id": "NPD-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "NPD-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Prepare the startup behavior, visual, accessibility, fixture and production-consumer contract.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "NPD-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "NPD-C02",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain owner authorization of bounded native doorway implementation.",
+            "depends_on": [
+              "NPD-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "NPD-C02"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `NATIVE-PROJECT-DOORWAY: approve DOORWAY-IMPLEMENTATION — <reviewed packet>`, `NATIVE-PROJECT-DOORWAY: revise — <correction>`, or `NATIVE-PROJECT-DOORWAY: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "DOORWAY-IMPLEMENTATION",
+                  "question": "Obtain owner authorization of bounded native doorway implementation.",
+                  "recommended_response": "Approve only the exact reviewed scope and evidence; retain separately stated implementation, promotion and acceptance boundaries.",
+                  "source_ref": {
+                    "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                    "marker": "DOORWAY-IMPLEMENTATION"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "NPD-C03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement the authorized ordinary native create/open/reopen doorway.",
+            "depends_on": [
+              "NPD-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "NPD-C03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "NPD-C04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Capture production-native proof for the complete doorway and refusal/recovery scenarios.",
+            "depends_on": [
+              "NPD-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "NPD-C04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "NPD-C05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Complete independent native replay and disposition findings.",
+            "depends_on": [
+              "NPD-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "NPD-C05"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "NPD-C06",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain exact owner acceptance of actual native doorway delivery.",
+            "depends_on": [
+              "NPD-C05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "NPD-C06"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `NATIVE-PROJECT-DOORWAY: approve DOORWAY-ACCEPTANCE — <reviewed packet>`, `NATIVE-PROJECT-DOORWAY: revise — <correction>`, or `NATIVE-PROJECT-DOORWAY: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "DOORWAY-ACCEPTANCE",
+                  "question": "Obtain exact owner acceptance of actual native doorway delivery.",
+                  "recommended_response": "Approve only the exact reviewed scope and evidence; retain separately stated implementation, promotion and acceptance boundaries.",
+                  "source_ref": {
+                    "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                    "marker": "DOORWAY-ACCEPTANCE"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Close only after actual native delivery, independent replay and owner acceptance."
+          ],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
+    },
+    {
+      "key": "NATIVE-WORKFLOW-BUDGETS",
+      "order": 54,
+      "title": "Define native workflow fixtures and ratify performance measurement budgets",
+      "issue_id": "dat-native-workflow-budgets-0h4",
+      "governing_docs": [
+        "specs/FOUNDATION_FOLLOWUP_PLANS.md"
+      ],
+      "state": "planned",
+      "authorization": "planning",
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Owner-ratified native fixtures and performance measurement budgets specify exact populations, timing boundaries, environment and failure policy; no product performance or harness implementation is claimed.",
+      "dependencies": [],
+      "unblocks": [],
+      "completion": {
+        "outcome": "Owner-ratified native fixtures and performance measurement budgets specify exact populations, timing boundaries, environment and failure policy; no product performance or harness implementation is claimed.",
+        "canonical_next_step_id": "NWB-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "NWB-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Define reproducible native correctness and scale fixtures with measurement boundaries.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "NWB-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "NWB-C02",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Draft explicit performance budgets, sampling, provenance and failure policy without ratifying thresholds.",
+            "depends_on": [
+              "NWB-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "NWB-C02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "NWB-C03",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain owner ratification of the fixture and measurement budget contract.",
+            "depends_on": [
+              "NWB-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "NWB-C03"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `NATIVE-WORKFLOW-BUDGETS: approve BUDGET-RATIFICATION — <reviewed packet>`, `NATIVE-WORKFLOW-BUDGETS: revise — <correction>`, or `NATIVE-WORKFLOW-BUDGETS: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "BUDGET-RATIFICATION",
+                  "question": "Obtain owner ratification of the fixture and measurement budget contract.",
+                  "recommended_response": "Approve only the exact reviewed scope and evidence; retain separately stated implementation, promotion and acceptance boundaries.",
+                  "source_ref": {
+                    "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                    "marker": "BUDGET-RATIFICATION"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Record exact specification ratification and explicitly schedule unresolved implementation obligations; specification closure does not prove product delivery."
           ],
           "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
