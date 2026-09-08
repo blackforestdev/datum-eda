@@ -7,14 +7,8 @@ from workflow_delivery_capture_assertions import evaluate_capture
 from workflow_delivery_capture_command import capture_command, save
 from workflow_delivery_capture_fixture import restore_fixture
 from workflow_delivery_capture_state import git
-from workflow_delivery_io import canonical_json, parse_json, sha256
-
-CASES = {
-    "INFRA-S01-01": (None, None),
-    "INFRA-S02-09.outside-scope": ("src/unscoped.py", "WDQ-COVERAGE"),
-    "INFRA-S06-11.selection": ("requested-environment.json", "WDQ-ENVIRONMENT"),
-    "INFRA-S06-11.blob": ("selected-environment.json", "WDQ-ENVIRONMENT"),
-}
+from workflow_delivery_capture_mutations import CASES, changed_bytes, expected_detail
+from workflow_delivery_io import sha256
 
 
 def run_case(packet, destination, runtime_root, environment, *, case_id, surface):
@@ -30,15 +24,7 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
         path = root / target
         raw = path.read_bytes() if path.exists() else None
         mutation["before_sha256"] = sha256(raw) if raw is not None else None
-        if target == "src/unscoped.py":
-            changed = b"# Synthetic unpermitted implementation input.\n"
-        else:
-            value = parse_json(raw, target)
-            if target == "requested-environment.json":
-                value["environments"] = []
-            else:
-                value["toolchain"] = "synthetic candidate-only toolchain"
-            changed = canonical_json(value)
+        changed = changed_bytes(case_id, raw)
         path.write_bytes(changed)
         mutation["after_hex"] = changed.hex()
         git(root, "add", "--", target)
@@ -70,7 +56,8 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
                     untracked_roots=recipe["untracked_roots"], timeout=30)
     try:
         assessment = evaluate_capture(output, case_id=case_id, surface="S" if selector else surface,
-                                      expected_code=expected, script=script)
+                                      expected_code=expected, script=script, expected_path=target,
+                                      expected_detail=expected_detail(case_id))
     except Exception as error:
         save(destination / "assessment-error.json", {"type": type(error).__name__, "detail": str(error),
                                                    "acceptance_asserted": False})

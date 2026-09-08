@@ -40,13 +40,19 @@ class CaptureCasesTest(unittest.TestCase):
                                 evaluate_capture(output / "capture", case_id=case_id,
                                     surface="S" if surface.startswith("S-") else surface,
                                     expected_code="WDQ-WRONG-FAILURE", script=script)
+                            for extra, message in (({"expected_path": "wrong-input.json"}, "input path"),
+                                                   ({"expected_detail": "wrong cause"}, "diagnostic cause")):
+                                with self.assertRaisesRegex(ValueError, message):
+                                    evaluate_capture(output / "capture", case_id=case_id,
+                                        surface="S" if surface.startswith("S-") else surface,
+                                        expected_code=CASES[case_id][1], script=script, **extra)
                         if CASES[case_id][1] is not None:
                             recovery = run_case(packet, store / (output.name + "-recovery"), runtime,
                                 environment, case_id="INFRA-S01-01", surface=surface)
                             self.assertTrue(recovery["observation_matches_expected"])
                             self.assertNotIn(recovery["invocation_id"], invocations)
                             invocations.add(recovery["invocation_id"])
-            self.assertEqual(28, len(invocations))
+            self.assertEqual(4 + 8 * (len(CASES) - 1), len(invocations))
 
     def test_capture_tampering_and_false_unchanged_summary_are_rejected(self):
         with tempfile.TemporaryDirectory() as temporary:

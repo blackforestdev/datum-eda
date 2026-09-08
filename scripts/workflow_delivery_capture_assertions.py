@@ -6,7 +6,8 @@ from workflow_delivery_io import parse_json, sha256
 from workflow_delivery_shapes import require
 
 
-def evaluate_capture(output, *, case_id, surface, expected_code, script):
+def evaluate_capture(output, *, case_id, surface, expected_code, script,
+                     expected_path=None, expected_detail=None):
     output, script = Path(output), Path(script).resolve(strict=True)
     def read(name):
         return parse_json((output / name).read_bytes(), name)
@@ -55,12 +56,21 @@ def evaluate_capture(output, *, case_id, surface, expected_code, script):
         require(report["acceptance_asserted"] is False and report["readiness_asserted"] is False,
                 "report", "diagnostic cannot assert readiness/acceptance")
         codes = [finding["code"] for finding in report["findings"]]
+        diagnostics = [(finding["path"], finding["detail"]) for finding in report["findings"]]
     else:
         require(report["ok"] is (expected_code is None), "report", "unexpected selector result")
         codes = [failure.split(":", 1)[0] for failure in report.get("failures", [])]
+        diagnostics = [tuple(failure.split(": ", 2)[1:]) for failure in report.get("failures", [])]
     require(codes == ([] if expected_code is None else [expected_code]),
             "report", "expected precise diagnostic, not an unrelated failure")
+    if expected_path is not None:
+        require(len(diagnostics) == 1 and len(diagnostics[0]) == 2
+                and diagnostics[0][0] == expected_path, "report", "wrong diagnostic input path")
+    if expected_detail is not None:
+        require(len(diagnostics) == 1 and expected_detail in diagnostics[0][-1],
+                "report", "wrong diagnostic cause")
     return {"case_id": case_id, "surface": surface, "observation_matches_expected": True,
             "expected_code": expected_code, "invocation_id": result["invocation_id"],
+            "expected_path": expected_path, "expected_detail": expected_detail,
             "result_sha256": sha256((output / "result.json").read_bytes()),
             "acceptance_asserted": False}
