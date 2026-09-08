@@ -162,6 +162,36 @@ class DeferredBoundaryTest(unittest.TestCase):
         code, report = self.e.h.cli()
         self.assertEqual(0, code, report)
 
+    def promote_completed_history(self):
+        step = self.cold["completion"]["steps"][0]
+        step.update(status="complete", completion_evidence=[{"kind": "document", **self.e.f.ref}])
+        self.cold["completion"]["canonical_next_step_id"] = None
+        self.e.promote()
+
+    def test_deferred_hold_preserves_prior_completed_execution(self):
+        self.promote_completed_history()
+        code, report = self.e.h.cli()
+        self.assertEqual(0, code, report)
+        self.assertEqual([], selector_failures(self.e.f.root, self.e.m))
+
+    def test_deferred_hold_cannot_complete_pending_work(self):
+        step = self.cold["completion"]["steps"][0]
+        step.update(status="complete", completion_evidence=[{"kind": "document", **self.e.f.ref}])
+        self.cold["completion"]["canonical_next_step_id"] = None
+        self.e.save()
+        self.e.refuse("deferred work requires reclassification")
+
+    def test_deferred_completed_requirement_cannot_change(self):
+        self.promote_completed_history()
+        self.cold["completion"]["steps"][0]["action"] = "Expanded historical scope"
+        self.e.save()
+        self.e.refuse("deferred work requires reclassification")
+
+    def test_deferred_pending_requirement_cannot_change(self):
+        self.cold["completion"]["steps"][0]["action"] = "Expanded pending scope"
+        self.e.save()
+        self.e.refuse("deferred work requires reclassification")
+
     def test_deferred_classification_preserves_planned_none_placeholder(self):
         self.cold["state"] = "planned"
         self.issue.update(status="open", labels=["roadmap:frontier"])

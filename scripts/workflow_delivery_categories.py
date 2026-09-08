@@ -17,9 +17,16 @@ def validate_categories(items, coverage, enrolled, authority):
             s.get("kind") == "execution" and s.get("status") in ("in_progress", "complete")
             for s in steps)
         if category == "deferred":
+            prior = promoted.get(key, {})
+            # Dormancy can retain completed work from before the owner hold.
+            # Preserve that exact record; do not mistake it for new execution
+            # or allow candidate-only completion/requirement changes under it.
+            live_execution = any(s.get("kind") == "execution" and
+                                 s.get("status") == "in_progress" for s in steps)
             require(item.get("state") == promoted.get(key, {}).get("state") and
                     item.get("authorization") == "none" and not item.get("claim")
-                    and not executing, key, "deferred work requires reclassification before execution",
+                    and not live_execution and completion == prior.get("completion", {}),
+                    key, "deferred work requires reclassification before execution or completion changes",
                     "WDQ-COVERAGE")
             continue
         require(bool(steps), key, "classified active work requires a completion plan", "WDQ-COVERAGE")
