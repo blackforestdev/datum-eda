@@ -368,3 +368,43 @@ Final verification passes 203 WDQ tests, 50 project-status tests, seven foundati
 completion tests and five proposal tests; source health passes 1827 files and
 staged whitespace passes. WDQ-I02 remains selected and the full rollout remains
 unfinished. No dormant product record or installed gate was changed.
+
+### WDQ-I02 — separate review checkpoint candidate increment
+
+Candidate: `cd773629d38e4467622675eda1b689eae5bd30e4`, parent
+`da3b5eeba9223eb8d18843420307c30422730f3a`, retained under
+`refs/datum/workflow-delivery-candidates/cd773629d38e4467622675eda1b689eae5bd30e4`.
+Exact zero-context increment: `docs/reviews/workflow-delivery-rollout/i02-review.patch`;
+apply/check with `--unidiff-zero` against those pinned inputs. The same existing
+repository-local candidate store continues the chain; no new Documents bundle
+or installed trust location is created.
+
+Explicit schema-2 delivery mappings now require five ordered, distinct
+checkpoints: ready, activate, verify, review and accept. Review maps to execution
+and is mandatory for both product and infrastructure; infrastructure retains
+null activate/accept. Fieldless legacy mappings retain their exact four-phase
+shape and behavior. Boolean, unknown and implicit mapping versions refuse.
+
+Completing review runs the actual independent replay validator: approved review,
+implementation-session exclusion, matching proof packet, fixture, inputs,
+executable/build identity and environment, fresh event identities, correlations,
+and accounting for all producer/replay defects against known tracker issues.
+Findings may explicitly await owner disposition. Review neither demands an
+ACCEPT receipt nor declares owner or product acceptance. The existing public
+acceptance wrapper retains trusted defect resolution/deferral and exact owner
+receipt checks, and a schema-2 acceptance transition cannot skip a completed
+review in its trusted/promoted baseline.
+
+Verification passes 218 workflow-delivery tests and 50 project-status tests;
+source health passes 1830 files and staged whitespace passes. Fifteen added
+tests exercise review/acceptance separation, pending and unknown findings,
+unaccounted defects, self/copied replay, index isolation, versioned shape and
+nullability, actual product/infrastructure CLI/selector review, and attempted
+review-plus-acceptance from an unreviewed base. These are hermetic protocol tests,
+not native adoption evidence or an independent review of this implementation.
+
+WDQ-I02 remains in progress for remaining phase-transition audit, exact
+contract/coverage/enrollment candidates, the rollout infrastructure contract and
+the numbered mechanism amendment. No product C01 is completed or claimed by
+these fixtures. I03 independent review and I04 exact owner activation remain
+future boundaries; installed policy, runner, hooks and Preferences are unchanged.
