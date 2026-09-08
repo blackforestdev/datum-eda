@@ -7,6 +7,7 @@
     "docs/gui/*.md"
   ],
   "tracked_docs": [
+    "docs/reviews/workflow-foundation/authority-review.md",
     "specs/workflow_delivery_policy.json",
     "docs/reviews/workflow-delivery-pilot/handoff.md",
     "docs/reviews/workflow-delivery-pilot/independent-review.md",
@@ -47,6 +48,10 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-foundation/authority-review.md": {
+      "class": "governed", "progress_anchor": "FOUNDATION-WORKFLOW-SPEC",
+      "notes": "WDQ-F01 partial operational review evidence, not amended CAD authority or completion. Records explicit baseline clauses and remaining complete-route review; separate from accepted pilot authority closure."
+    },
     "specs/workflow_delivery_policy.json": {"class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING", "notes": "Exact owner-local activation proposal; active only after external promotion."},
     "docs/reviews/workflow-delivery-pilot/independent-review.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",

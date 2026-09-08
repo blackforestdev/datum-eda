@@ -7445,7 +7445,7 @@
       "order": 48,
       "title": "Specify the first manual workflow foundation contracts",
       "issue_id": "dat-manual-foundation-contracts-fsw",
-      "governing_docs": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md"],
+      "governing_docs": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "docs/reviews/workflow-foundation/authority-review.md"],
       "state": "in_progress",
       "authorization": "planning",
       "canonical_next": false,
