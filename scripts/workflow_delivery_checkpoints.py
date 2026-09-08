@@ -162,7 +162,7 @@ def _validate_delivery(tree, item, *, phase=None, trust=None, environment=None):
         required_normal_consumers(contract)
     if phase in ("activate", "verify", "review", "accept"):
         proof = validate_proof(tree, contract)
-        validate_environment(tree, proof, environment)
+        validate_environment(tree, proof, environment, contract=contract)
         validate_correlations(tree, contract, proof)
         if "review" in phases:
             validate_required_activation(tree, contract, proof)

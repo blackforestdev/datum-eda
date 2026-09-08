@@ -61,7 +61,7 @@ def validate_independent_review(tree, contract, proof, authority_digest, trust, 
             and proof["build"]["command"] == replay["build"]["command"]
             and proof["build"]["toolchain"] == replay["build"]["toolchain"], path,
             "independent replay must exercise the reviewed executable/build identity", "WDQ-REVIEW")
-    validate_environment(tree, replay, environment)
+    validate_environment(tree, replay, environment, contract=contract)
     original_events = validate_correlations(tree, contract, proof)
     replay_events = event_identities(tree, replay)
     require(not original_events & replay_events, path, "copied event artifact is not independent replay",

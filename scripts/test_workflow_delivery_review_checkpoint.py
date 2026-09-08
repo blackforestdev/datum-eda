@@ -139,12 +139,25 @@ class ReviewCheckpointTest(unittest.TestCase):
             delivery_shape(item, contract)
 
     def test_infrastructure_review_runs_actual_replay_without_acceptance_receipt(self):
+        self.infrastructure_replay()
+
+    def test_headless_infrastructure_review_checks_producer_and_reviewer_environment(self):
+        from test_workflow_delivery_headless import environment as headless_environment
+        self.infrastructure_replay(headless_environment())
+
+    def infrastructure_replay(self, requested=None):
         self.f.contract["category"] = "infrastructure"
         self.f.contract["scenarios"][0]["method"] = "infrastructure"
         self.f.save("contract.json", self.f.contract)
         self.item["completion"]["delivery"]["checkpoints"].update(activate=None, accept=None)
         self.proof, _, _, _ = typed_proof(self.f)
         replay, _, _, _ = typed_proof(self.f, "reviewer")
+        if requested is not None:
+            self.f.save("requested-environment.json", requested)
+            self.proof["environment"] = self.f.blob(
+                "evidence/headless-producer.json", canonical_json(requested))
+            replay["environment"] = self.f.blob(
+                "evidence/headless-reviewer.json", canonical_json(requested))
         self.review["replay"] = self.f.blob("docs/reviews/replay.json", canonical_json(replay))
         self.f.save(self.f.contract["proof_path"], self.proof)
         self.review["packet_sha256"] = packet_sha256(self.f.contract, self.proof,
