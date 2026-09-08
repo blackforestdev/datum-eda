@@ -9,6 +9,7 @@ import sys
 from workflow_delivery_authority import authority_sha256
 from workflow_delivery_checkpoints import validate_delivery
 from workflow_delivery_contract import load_contract, validate_handler_files
+from workflow_delivery_coverage_runtime import validate_coverage
 from workflow_delivery_frontier import validate_frontier
 from workflow_delivery_io import DeliveryInputError
 from workflow_delivery_shapes import require
@@ -32,6 +33,7 @@ def run(args):
     manifest = validate_frontier(tree) if args.enforce else tree.json(FRONTIER_PATH)
     if trust:
         enrolled = trust.enrolled
+        validate_coverage(tree, manifest, trust, environment=environment)
     elif POLICY_PATH in tree.entries:
         enrolled = {r["frontier_key"]: r for r in policy_shape(tree.json(POLICY_PATH))["enrolled"]}
     else:
