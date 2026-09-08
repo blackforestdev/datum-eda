@@ -105,6 +105,29 @@ class PreflightCliTest(unittest.TestCase):
         self.assertIn(b"required together", result.stdout)
         self.assertFalse(self.output.exists())
 
+    def test_promotion_inspection_requires_separate_response_and_exact_mode(self):
+        result = self.run_cli(mode="--inspect-promotion")
+        self.assertEqual(2, result.returncode, result.stdout + result.stderr)
+        self.assertIn(b"separately selected exact owner response", result.stdout)
+        _, arguments = self.owner_response()
+        result = self.run_cli(mode="--inspect-promotion", extra=arguments)
+        self.assertEqual(2, result.returncode, result.stdout + result.stderr)
+        self.assertIn(b"closed preflight request", result.stdout)
+        self.assertFalse(self.output.exists())
+
+    def test_promotion_inspection_cannot_use_a_different_authority_candidate(self):
+        self.request["kind"] = "datum.workflow-delivery.promotion-inspection-request"
+        self.path.write_bytes(canonical_json(self.request))
+        _, arguments = self.owner_response()
+        before = protected_state(self.f.root, ["src"])
+        result = self.run_cli(mode="--inspect-promotion", extra=arguments)
+        self.assertEqual(2, result.returncode, result.stdout + result.stderr)
+        self.assertIn(b"authority must be the exact complete candidate", result.stdout)
+        payload = json.loads(self.output.read_bytes())
+        self.assertFalse(payload["ok"])
+        self.assertFalse(payload["publication_authorized"])
+        self.assertEqual(before, protected_state(self.f.root, ["src"]))
+
     def test_success_retains_exact_log_and_leaves_protected_state_unchanged(self):
         before = protected_state(self.f.root, ["src"])
         result = self.run_cli()

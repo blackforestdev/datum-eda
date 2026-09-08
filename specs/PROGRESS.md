@@ -3170,6 +3170,13 @@ excluded. Candidate policy and proposal agree, but I04 publication authorization
 and controlled activation remain unfinished. No live trust or other agent lane
 changes; WDQ-TOOLS remains selected.
 
+The candidate's separate promotion inspection now checks claim-free pending I04
+in both exact base and candidate, completed preceding checkpoints, unchanged
+other Frontier lanes, full-history scope and actual enrolled delivery/review
+evidence. Ordinary transactions retain live execution-claim checks. The new
+inspection is non-operative; successful full-packet proof and actual controlled
+activation remain incomplete, and PM042 remains a proposal awaiting I04.
+
 | Item | Status | Notes |
 |------|--------|-------|
 | Rust workspace (8 crates) | [x] | engine, cli, engine-daemon, test-harness, gui-protocol, gui-render, gui-app, verb-registry (locked via `specs/SPEC_PARITY.md` → `workspace_crates`) |

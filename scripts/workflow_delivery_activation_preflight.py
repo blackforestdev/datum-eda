@@ -16,6 +16,84 @@ REDIRECTS = ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE", "GI
              "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_CONFIG",
              "GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS")
 
+ROLLOUT = "WORKFLOW-DELIVERY-IMPLEMENTATION"
+
+
+def promotion_boundary(manifest, baseline, coverage, changed_paths):
+    """Check bounded rollout publication, not an ordinary execution permission."""
+    from workflow_delivery_coverage import index_items
+    from workflow_delivery_coverage_shapes import coverage_shape
+    from workflow_delivery_source_scopes import contains
+
+    coverage_shape(coverage)
+    current, old = index_items(manifest), index_items(baseline)
+    require(set(current) == set(old), "promotion cannot add or remove Frontier identities")
+    require(ROLLOUT in current, "promotion requires the actual rollout owner boundary")
+    for key in current:
+        if key != ROLLOUT:
+            require(current[key] == old[key], "promotion changes another Frontier lane: " + key)
+    for item in (old[ROLLOUT], current[ROLLOUT]):
+        completion = item.get("completion", {})
+        steps = {s["id"]: s for s in completion.get("steps", [])}
+        require(item.get("issue_id") == "dat-wdq-rollout-implementation-ffy"
+                and item.get("authorization") == "owner_decision" and not item.get("claim")
+                and completion.get("canonical_next_step_id") == "WDQ-I04",
+                "publication base and candidate must select claim-free WDQ-I04")
+        owner = steps.get("WDQ-I04", {})
+        require(owner.get("kind") == "owner_decision" and owner.get("status") == "pending",
+                "WDQ-I04 must await exact owner activation, not claim prior completion")
+        for sid in ("WDQ-TOOLS", "WDQ-READY", "WDQ-I03", "WDQ-REVIEW"):
+            require(steps.get(sid, {}).get("status") == "complete",
+                    "publication requires completed " + sid)
+    scopes = coverage["source_scopes"]
+    require(len(scopes) == 1 and scopes[0]["frontier_key"] == ROLLOUT
+            and scopes[0]["step_ids"] == ["WDQ-I03", "WDQ-REVIEW"],
+            "initial rollout publication requires its sole bounded infrastructure scope")
+    checked = []
+    for path in changed_paths:
+        require(not path.startswith("docs/gui/prototypes/"), "publication touches the protected prototype lane")
+        if contains(coverage["production_roots"], path):
+            require(path in scopes[0]["paths"], "publication production path lacks exact reviewed scope: " + path)
+            checked.append(path)
+    return sorted(set(checked))
+
+
+def inspect_promotion_candidate(root, *, base, candidate, authority, environment_path, publication_review):
+    """Inspect full delivery evidence without installing trust or granting approval.
+
+    The caller separately checks its exact owner response and clean live state.
+    This path never supplies a synthetic execution claim or an empty delta to
+    the ordinary source gate. Only the bounded rollout publication is supported.
+    """
+    from workflow_delivery_checkpoints import validate_delivery
+    from workflow_delivery_coverage_runtime import validate_coverage_state
+    from workflow_delivery_environments import load_environments
+    from workflow_delivery_frontier import validate_frontier
+    from workflow_delivery_trust import Trust, FRONTIER_PATH
+    from workflow_delivery_tree import Tree
+
+    require(authority == candidate, "initial promotion authority must be the exact complete candidate")
+    delta = publication_delta(root, base=base, candidate=candidate)
+    verify_publication_review(delta, publication_review)
+    tree = Tree(root, revision=candidate)
+    manifest = validate_frontier(tree)
+    trust = Trust(tree, authority, base)
+    require(trust.policy["schema_version"] == 2, "broad promotion requires schema-2 coverage")
+    paths = promotion_boundary(manifest, trust.base.json(FRONTIER_PATH),
+                               trust.policy["coverage"], delta["touched_paths"])
+    require(ROLLOUT in trust.enrolled, "rollout must be enrolled before publication")
+    environments = load_environments(tree, environment_path, trust.policy, authority=trust.authority)
+    items = validate_coverage_state(tree, manifest, trust, environments=environments)
+    checked = []
+    for key in trust.enrolled:
+        require(key in items, "enrolled publication item missing: " + key)
+        phase = validate_delivery(tree, items[key], trust=trust,
+            phase="review" if key == ROLLOUT else None, environment=environments.get(key))
+        checked.append(f"{key}: {phase}")
+    return {"checks": checked, "production_paths": paths,
+            "publication_authorized": False, "activation_asserted": False,
+            "scope": "read-only exact candidate inspection; owner approval and coordinated activation remain separate"}
+
 
 def require(condition, message):
     if not condition:

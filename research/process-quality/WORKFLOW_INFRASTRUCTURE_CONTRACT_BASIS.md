@@ -197,6 +197,24 @@ ratification, current execution authorization or permission for future history.
 The I04 owner-decision/current-execution-claim mismatch remains a separate
 controlled-promotion obligation; no claim exemption or live trust is introduced.
 
+### Initial owner-publication inspection boundary
+
+Inspection of the actual source gate confirms that pending owner decisions
+cannot hold ordinary execution permission. The proposed PM042 reconciliation
+therefore separates read-only publication inspection from current transactions:
+both base and candidate await claim-free I04, every prior tooling/readiness/
+producer/reviewer checkpoint is complete, other Frontier items are unchanged,
+and the complete history fits the one exact workflow scope. Shared coverage
+state validation retains ordinary source-claim enforcement in its original
+caller. Publication inspection additionally demands actual rollout review
+evidence rather than relying on completed labels or a path-list comparison.
+
+The explicit stronger inspection mode still cannot activate anything. A separately
+selected response digest establishes exact-byte consistency, not owner identity.
+Successful complete-packet observation, actual coordinated publication, recovery
+and installed verification remain due; development boundary fixtures do not
+satisfy these requirements or close dat-wdq-promotion-delta-mb9.
+
 The subsequent shell/data review at `e16f3f0fea546a13922d72313f2ffc779fc5c392`
 adds four concrete inputs beyond that Python inventory: the authenticated owner
 hook shell source, explicit selection document, and both environment Blobs named

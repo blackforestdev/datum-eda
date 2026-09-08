@@ -224,6 +224,27 @@ ambiguous mode or incomplete evidence must fail visibly before publication.
 Partial activation must be reported as partial; repair is explicit and forward,
 not an automatic destructive reset or silent hook bypass.
 
+Initial rollout promotion has a separate owner boundary, not an ordinary source
+transaction with an invented execution claim. Both exact publication base and
+candidate must select pending, claim-free WDQ-I04 after completed TOOLS, READY,
+I03 and REVIEW. Preserve every other Frontier item exactly. Require the complete
+candidate as prospective authority, schema-2 coverage and rollout enrollment;
+check every production path on every intervening parent edge against the sole
+explicit rollout scope for I03/REVIEW, including reverted and merge-side changes.
+No prototype path or additional product-lane scope is permitted by this initial
+rollout protocol. Subsequent unrelated promotions need their own reviewed scope.
+
+Promotion inspection reuses full Frontier, classification, specification,
+readiness, environment and enrolled delivery checks, explicitly demanding the
+rollout's independent-review phase. Sharing state checks must not remove source
+claim enforcement from ordinary CLI, selector or hook transactions. Exact owner
+response bytes are selected separately from candidate content and bound to the
+request digest. A matching response string is not authentication of its author.
+Inspection must remain read-only and report no publication authority; final
+owner invocation, coordinated mutation, partial-state recovery and installed
+verification remain required. Neither an empty source transaction nor equal
+base/candidate pins can substitute for the complete publication-history check.
+
 Use the resolved Git-common `.git/datum-wdq` support store for proposals,
 immutable trusted runners and logs. Keep any currently referenced external
 support until its replacement is installed and verified. Remove only positively

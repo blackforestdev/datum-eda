@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Inspect exact publication preconditions and retain a Git-common JSON log.
 
-Requires -I -S -B and --inspect or --inspect-state. No activation command exists.
+Requires -I -S -B and an explicit inspection mode. No activation command exists.
 A caller-pinned request digest identifies input bytes; it is not owner approval.
 """
 
@@ -18,6 +18,7 @@ def main(argv=None):
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--inspect", action="store_true")
     mode.add_argument("--inspect-state", action="store_true")
+    mode.add_argument("--inspect-promotion", action="store_true")
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--request", type=Path, required=True)
     parser.add_argument("--request-sha256", required=True)
@@ -34,7 +35,7 @@ def main(argv=None):
         # Import only this explicitly executed preparation source, not cwd or
         # PYTHONPATH. This command never promotes its own runtime as authority.
         sys.path.insert(0, str(Path(__file__).resolve().parent))
-        from workflow_delivery_activation_preflight import preflight
+        from workflow_delivery_activation_preflight import preflight, inspect_promotion_candidate
         from workflow_delivery_activation_state import inspect_activation_state
         from workflow_delivery_io import canonical_json, parse_json, sha256
         from workflow_delivery_shapes import closed
@@ -49,6 +50,8 @@ def main(argv=None):
             raise ValueError("owner response path and externally selected digest are required together")
         if args.inspect_state and args.owner_response:
             raise ValueError("state observation does not inspect owner responses")
+        if args.inspect_promotion and not args.owner_response:
+            raise ValueError("promotion inspection requires separately selected exact owner response")
 
         raw = args.request.read_bytes()
         if not re.fullmatch(r"[0-9a-f]{64}", args.request_sha256) or sha256(raw) != args.request_sha256:
@@ -61,6 +64,8 @@ def main(argv=None):
             expected_kind = "datum.workflow-delivery.activation-state-request"
         else:
             fields += " publication_review proposed_local_trust environment_path"
+            if args.inspect_promotion:
+                expected_kind = "datum.workflow-delivery.promotion-inspection-request"
         closed(request, fields, "preflight request")
         if (type(request["schema_version"]) is not int or request["schema_version"] != 1
                 or request["kind"] != expected_kind):
@@ -115,6 +120,16 @@ def main(argv=None):
                         candidate=request["candidate"], input_roots=request["input_roots"],
                         expected_local_trust=request["prior_local_trust"],
                         publication_review=request["publication_review"])
+                    if args.inspect_promotion:
+                        payload["promotion_inspection"] = inspect_promotion_candidate(args.root,
+                            base=request["base"], candidate=request["candidate"], authority=request["authority"],
+                            environment_path=environment_path, publication_review=request["publication_review"])
+                        repeated = preflight(args.root, base=request["base"],
+                            candidate=request["candidate"], input_roots=request["input_roots"],
+                            expected_local_trust=request["prior_local_trust"],
+                            publication_review=request["publication_review"])
+                        if canonical_json(repeated) != canonical_json(payload["preflight"]):
+                            raise ValueError("publication state changed during delivery evidence inspection")
                     if verify_bundle(args.root, request["authority"]) != support:
                         raise ValueError("proposed support changed during inspection")
                     payload["support_bundle"] = support

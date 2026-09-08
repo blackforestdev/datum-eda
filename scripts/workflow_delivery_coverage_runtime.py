@@ -13,6 +13,19 @@ from workflow_delivery_shapes import require
 
 
 def validate_coverage(tree, manifest, trust, *, environments=None):
+    validate_coverage_state(tree, manifest, trust, environments=environments)
+    if trust.policy["schema_version"] == 1:
+        return []
+    coverage = trust.policy["coverage"]
+    # Ordinary transactions always require current execution claims. Promotion
+    # inspection separately validates its complete history and owner boundary.
+    base = trust.base.revision if tree.revision else tree.resolve("HEAD")
+    changed = changed_production_paths(tree, coverage["production_roots"], base_ref=base)
+    return authorize_source_paths(changed, coverage, manifest, _issues(tree), trust.enrolled)
+
+
+def validate_coverage_state(tree, manifest, trust, *, environments=None):
+    """Shared classification/readiness checks; never source authorization."""
     if trust.policy["schema_version"] == 1:
         return []
     coverage = trust.policy["coverage"]
@@ -42,9 +55,4 @@ def validate_coverage(tree, manifest, trust, *, environments=None):
         validate_delivery(tree, items[key], phase="ready",
                           trust=trust if key in trust.enrolled else None,
                           environment=(environments or {}).get(key))
-    # For an ordinary staged/worktree check HEAD is the transaction's parent,
-    # not a substitute trust anchor. Candidate-ref review uses the explicit
-    # owner-selected base and therefore covers the entire proposed source delta.
-    base = trust.base.revision if tree.revision else tree.resolve("HEAD")
-    changed = changed_production_paths(tree, coverage["production_roots"], base_ref=base)
-    return authorize_source_paths(changed, coverage, manifest, _issues(tree), trust.enrolled)
+    return items

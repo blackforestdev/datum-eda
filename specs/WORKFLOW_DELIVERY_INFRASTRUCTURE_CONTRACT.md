@@ -361,3 +361,15 @@ the complete coverage/enrollment and external-lane packet, not only these core
 validator scenarios. I04 owner ratification/activation, installed-main validation,
 three full native adoption cohorts and I06 acceptance remain separate obligations.
 No product ownership, GUI prototype, licensing or dependency boundary changes.
+
+The prepared `--inspect-promotion` mode additionally requires a separately
+selected response matching the exact `promotion-inspection-request` bytes.
+It checks the PM042 initial-publication boundary and all enrolled delivery
+evidence, including rollout independent replay, between repeated clean-state
+inspections. Ordinary `--inspect` remains a preparation diagnostic; its success
+cannot stand for this stronger check. Neither mode mutates main or local trust,
+authenticates an owner, or completes controlled activation. Prove refusal for
+unfinished predecessors, claim-bearing owner steps, changed external records,
+out-of-scope full-history paths, missing/stale proof and a distinct authority
+candidate. The successful full-candidate path also needs actual producer and
+independent observations before this tooling can be declared ready.
