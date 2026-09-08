@@ -5,6 +5,7 @@ from workflow_delivery_categories import validate_categories
 from workflow_delivery_checkpoints import validate_delivery
 from workflow_delivery_proof import _issues
 from workflow_delivery_source_scopes import authorize_source_paths
+from workflow_delivery_specification import validate_specification_outputs
 from workflow_delivery_transaction import changed_production_paths
 
 
@@ -14,6 +15,7 @@ def validate_coverage(tree, manifest, trust, *, environment=None):
     coverage = trust.policy["coverage"]
     items = validate_classifications(tree, coverage, manifest, authority=trust.authority)
     readiness = validate_categories(items, coverage, trust.enrolled, trust.authority)
+    validate_specification_outputs(tree, items, coverage)
     for key in readiness:
         # Unenrolled declarations normally receive structure-only diagnostics.
         # Completing a covered preflight must also resolve its actual authority
