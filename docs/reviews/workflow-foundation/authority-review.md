@@ -874,6 +874,77 @@ and regulated-policy refusal illustrate different contexts. Foundation proof
 must identify the actual context instead of copying one of those behaviors
 universally, especially into an unmanaged Project.
 
+## Final Preferences visual-source review
+
+At `5dd0109f`, `preferences-ux-study.html` and `preferences-window.html`
+were read through EOF, including CSS, descriptor metadata and comparative-demo
+JavaScript. Opaque embedded font payloads were elided; no new render or native
+accessibility result is claimed. This completes reading all 79 members of the
+`workspace-documentation-and-revision` route, not reconciliation of its tracked
+contradictions or acceptance of another lane's implementation.
+
+The UX study's PX-V1 tiled-pane candidate is not the later native owned-window
+contract. PX-V6 precedence is explicitly illustrative; PX-V7's copy-once receipt
+law survives, but its Revision/template seed examples do not activate excluded
+descriptors. PX-V9 preserves refused input and reports degradation; PX-V10 keeps
+unknown data inactive instead of guessing its meaning. PX-V11's shared resolver
+answer remains applicable, not its withdrawn Revision-visibility example.
+PX-V12's managed teaching visibility is superseded by PM038. The bounded Claude
+reconciliation target is PX-V3/PX-V4/PX-V6/PX-V11/PX-V12: identify historical
+Revision examples as superseded, preserving dated dispositions, technical
+history and non-gating release guidance. No new default Revision chrome,
+descriptor or approval is requested. This extends the same historical-visual
+problem recorded in `dat-revision-visual-supersession-3c1`.
+
+The window distinguishes completed GP-F05 foundation evidence, accepted U-A–U-H
+Units evidence, the C-A–C-H consumer-ready target and the historical comparative
+catalog. Those regions are not interchangeable acceptance packets. C-F explicitly
+separates immediate persistence from effect: three Appearance consumers apply
+live; eight Units descriptors seed future Projects only. Existing Project bytes
+must remain unchanged by a Global edit. This is not proof of field entry,
+board movement, Project-policy editing or durable edit undo.
+
+The I/J window contract is owner-relative input modality, never desktop-wide
+always-on-top. Closing discards search, explanation, choice, notice and internal
+focus, but preserves committed values. Reopening starts at Appearance with
+navigation focused. Search activation targets the setting-name action, not an
+accidental value change; choice/explanation dismissal precedes search clearing
+and window close. C-G preserves both sections and usable controls when narrow.
+C-H's announced saved state follows the write, not optimistic interaction.
+Role/name inventories and static non-color examples still require native proof.
+
+The comparative JavaScript deliberately searches historical/reserved rows,
+computes illustrative explanations from DOM text, and blurs search on Escape.
+It is not a reusable resolver, active catalog, keyboard contract or production
+implementation template. C-E and the product contract instead require active-only
+search and preserved search focus after clearing. Likewise the older U-A angle
+label `0°` is not zero resolution: the current C-B label is `1°` for `decimal_0`.
+No prototype edit, current Preferences disposition or authority digest refresh
+was made by this review.
+
+## Consuming-owner selector verification
+
+Fresh named `project_status.py details` invocations at this review baseline
+established the following operational evidence. These are read-only handoff
+checks, not claims or a replacement for the canonical task selector.
+
+| Consumer | Observed result | Handoff consequence |
+| --- | --- | --- |
+| GLOBAL-PREFERENCES-COMPLETION | Success; GP-CM05V owner decision, no live claim | Preserve that separate acceptance boundary; no action or approval in this lane |
+| PROJECT-PREFERENCES-SPEC | Success; blocked, planning, PPS-C01, no live claim | Contract consumer exists; no execution or prerequisite change implied |
+| GUI-SURFACE-SPECS | Success; planned, planning, SURFACE-S01, no live claim | Surface-contract consumer exists; no claim or schedule change implied |
+| UVT-S5A-BUILD | Exit 1: `has no completion plan` | Owner/selected-step verification incomplete; do not reconstruct an answer |
+| GUI-WRITE-PATH | Exit 1: `has no completion plan` | Owner/selected-step verification incomplete; do not reconstruct an answer |
+| NATIVE-AUTHORING | Exit 1: `has no completion plan` | Owner/selected-step verification incomplete; do not reconstruct an answer |
+
+`dat-foundation-consumer-plans-9at` records the three failed consumer contracts
+as specification intake related to this lane. Their remediation needs exact
+governed completion outcomes, requirements/evidence, owner boundaries and passing
+named selectors; tests must reject missing contracts instead of inventing steps.
+No hard dependency was added and no consuming-owner acceptance is asserted.
+This is an actual rollout gap, independent of GP-CM05V. F01 cannot claim complete
+consumer verification while these selectors fail.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
@@ -888,12 +959,12 @@ members plus the GUI contract, Revision visual brief and prototype inventory,
 and the six agent/clay/carry-forward studies, both grid studies and the Project
 Working Units category study, four Revision entry/evidence members and the
 completed shell image comparison, and five Revision identity/authority/UX
-studies above have been read completely (77 files). Only
-`preferences-ux-study.html` and `preferences-window.html` remain in this route.
-No complete settings route reconciliation is claimed. The remaining sources and consumers must be
-reviewed before final F1–F8 adjudication or specification edits. Later storage,
-mutation, identity and authoring
-authority must also be checked where it resolves the historical questions above.
+studies above, and the two Preferences studies just reviewed have been read
+completely (79 files). No complete settings route reconciliation is claimed:
+tracked clause conflicts still need their owning-lane disposition. Later storage,
+mutation, identity and authoring authority must also be checked where it resolves
+the historical questions above. The three failed consuming-owner selectors need
+governed completion contracts before F01 can close.
 
 WDQ-F02 still owes concrete values, boundary cases, transaction timelines and
 consumer bindings. WDQ-F03 still owes the reviewed contract and exact proposed
