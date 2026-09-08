@@ -8,6 +8,7 @@ import unittest
 from check_workflow_delivery import main
 from project_status import render_block
 from workflow_delivery_selector import selector_failures
+from workflow_delivery_io import canonical_json
 from workflow_delivery_native_test_support import environment
 from workflow_delivery_test_support import Fixture
 from workflow_delivery_tree import Tree
@@ -36,7 +37,11 @@ class CoverageEntrypointsTest(unittest.TestCase):
                      for i in self.manifest["frontier"]]})
         inventory(self.f, next_item, policy)
         self.f.save("specs/workflow_delivery_policy.json", policy)
-        self.f.save("requested-environment.json", environment())
+        selected = self.f.blob("selected-environment.json", canonical_json(environment()))
+        self.f.save("requested-environment.json", {
+            "schema_version": 2, "kind": "datum.workflow-delivery.environments",
+            "environments": [{"frontier_key": row["frontier_key"], "environment": selected}
+                             for row in policy["enrolled"]]})
         self.f.stage()
         self.f.git("commit", "-qm", "test(coverage): pin synthetic schema-2 authority\n\nTest fixture only, not Datum promotion.")
         self.authority = self.f.git("rev-parse", "HEAD").decode().strip()
@@ -59,6 +64,28 @@ class CoverageEntrypointsTest(unittest.TestCase):
         code, report = self.cli()
         self.assertEqual(0, code, report)
         self.assertEqual([], selector_failures(self.f.root, self.manifest))
+
+    def test_candidate_environment_selection_change_refuses_cli_and_selector(self):
+        selection = Tree(self.f.root).json("requested-environment.json")
+        selection["environments"] = []
+        self.f.save("requested-environment.json", selection)
+        self.f.stage()
+        code, report = self.cli()
+        self.assertEqual(1, code, report)
+        self.assertEqual("WDQ-ENVIRONMENT", report["findings"][0]["code"])
+        self.assertTrue(any("environment selection change" in e
+                            for e in selector_failures(self.f.root, self.manifest)))
+
+    def test_changed_environment_blob_refuses_cli_and_selector(self):
+        changed = environment()
+        changed["toolchain"] = "candidate invented toolchain"
+        self.f.save("selected-environment.json", changed)
+        self.f.stage()
+        code, report = self.cli()
+        self.assertEqual(1, code, report)
+        self.assertEqual("WDQ-ENVIRONMENT", report["findings"][0]["code"])
+        self.assertTrue(any("artifact hash mismatch" in e
+                            for e in selector_failures(self.f.root, self.manifest)))
 
     def test_staged_unscoped_source_refuses_before_native_proof(self):
         self.f.write("src/unknown.py", b"unapproved new implementation\n")

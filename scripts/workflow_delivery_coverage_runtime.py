@@ -12,7 +12,7 @@ from workflow_delivery_transaction import changed_production_paths
 from workflow_delivery_shapes import require
 
 
-def validate_coverage(tree, manifest, trust, *, environment=None):
+def validate_coverage(tree, manifest, trust, *, environments=None):
     if trust.policy["schema_version"] == 1:
         return []
     coverage = trust.policy["coverage"]
@@ -41,7 +41,7 @@ def validate_coverage(tree, manifest, trust, *, environment=None):
         # and mandatory decisions, without demanding future activation proof.
         validate_delivery(tree, items[key], phase="ready",
                           trust=trust if key in trust.enrolled else None,
-                          environment=environment)
+                          environment=(environments or {}).get(key))
     # For an ordinary staged/worktree check HEAD is the transaction's parent,
     # not a substitute trust anchor. Candidate-ref review uses the explicit
     # owner-selected base and therefore covers the entire proposed source delta.
