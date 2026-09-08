@@ -22,6 +22,7 @@ from workflow_delivery_trust_test_support import accepted_fixture
 from workflow_delivery_readiness_input import READINESS_CASES, prepare_readiness
 from workflow_delivery_review_input import REVIEW_INPUT_CASES, prepare_review_input
 from workflow_delivery_coverage_input import COVERAGE_INPUT_CASES, prepare_coverage_input
+from workflow_delivery_specification_input import SPECIFICATION_INPUT_CASES, prepare_specification_input
 
 
 def prepare_fixture(root, packet, *, fixture_variant=None):
@@ -62,6 +63,8 @@ def prepare_fixture(root, packet, *, fixture_variant=None):
         prepare_review_input(f, fixture_variant)
     if fixture_variant in COVERAGE_INPUT_CASES:
         prepare_coverage_input(policy, fixture_variant)
+    if fixture_variant in SPECIFICATION_INPUT_CASES:
+        prepare_specification_input(f, manifest, policy, fixture_variant)
     f.save("specs/workflow_delivery_policy.json", policy)
     # Synthetic INPUT for the actual earlier formatting gate. The real-roadmap
     # fixture must retain its actual exemption manifest and referenced files.
@@ -97,6 +100,7 @@ def prepare_fixture(root, packet, *, fixture_variant=None):
     save(packet / "prepared-state.json", state)
     recipe = {"schema_version": 1, "kind": "synthetic-validator-input",
               "fixture_family": ("accepted-history-and-readiness" if fixture_variant in READINESS_CASES
+                                 else "synthetic-specification-output" if fixture_variant in SPECIFICATION_INPUT_CASES
                                  else "malformed-coverage-input" if fixture_variant in COVERAGE_INPUT_CASES
                                  else "accepted-history-and-review" if fixture_variant in REVIEW_INPUT_CASES
                                  else "accepted-history-and-pending-specification"),
@@ -125,6 +129,7 @@ def restore_fixture(packet, root):
     variant = recipe.get("fixture_variant")
     require(variant is None or type(variant) is str, "recipe", "string fixture variant required")
     family = ("accepted-history-and-readiness" if variant in READINESS_CASES
+              else "synthetic-specification-output" if variant in SPECIFICATION_INPUT_CASES
               else "malformed-coverage-input" if variant in COVERAGE_INPUT_CASES
               else "accepted-history-and-review" if variant in REVIEW_INPUT_CASES
               else "accepted-history-and-pending-specification")
