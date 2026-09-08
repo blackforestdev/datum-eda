@@ -531,6 +531,47 @@ formal Release program on the first manual workflow or to relabel diagnostic
 equivalence as byte reproduction. Missing evidence and unavailable producers
 must stay explicit rather than becoming successful empty checks.
 
+## Workspace and Publish consumer separation
+
+At `36d9e5ba`, the complete workspace-architecture research, Publish Space
+specification, PM020 and Publish visual-study brief were read. PM020 explicitly
+labels its original edit-through and Sheet-local-release rationale as historical;
+the 2026-08-23 reconciliation and governed Publish contract control instead.
+This read does not complete the separate Publish prototype route or establish
+new visual conformance.
+
+The following boundaries are inputs to the F1–F8 consumer map:
+
+- A Project is not constrained to one board or an imposed product hierarchy.
+  One bounded board-edit fixture is a proof scope, not a new Project schema.
+- Pane layout, opening, focus and specialist-editor entry are workspace state.
+  Opening a Footprint or Symbol beside its invoking editor does not decide
+  whether the asset is shared or Project-local, nor authorize changing it.
+  F7 must bind that separate library authority explicitly.
+- Navigator selection is distinct from opening: single-click selects;
+  double-click/Enter opens beside. Scrolling the Navigator must not pan an
+  editor. These are native behavior observations, not facts proved by a static
+  fixture-driven tree or a screenshot of two panes.
+- Continuous schematic Design has no physical publication page. Legacy
+  schematic `Sheet*` identities and addressing require an explicit migration
+  contract; a label rename or alias is not that migration. The bounded board
+  workflow cannot claim to have completed this separate schematic work.
+- Design driving and reference dimensions differ. A driving constraint that
+  over-constrains the model refuses and offers an explicit reference alternative;
+  it must not silently change intent. Publish dimensions never drive geometry.
+  This is not authority to implement a dimension solver in the foundation slice.
+- Publish's signed-nanometer Sheet coordinates and reduced rational scales
+  belong to physical composition. They neither redefine board coordinates nor
+  make Publish media, title blocks or production acceptance prerequisites for
+  ordinary native board creation/edit/reopen.
+
+The brief's adjacent-versus-retarget candidate is closed by PM020's later
+OR-3 carry-forward; it is not a new owner question. PM020 OR-7 also expressly
+withholds ratification of illustrative responsive-collapse priorities. A later
+implementation must use the controlling responsive-shell contract, not promote
+every visual example to approved behavior. None of these observations changes
+the Preferences-owned window contract or authorizes prototype edits.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
@@ -540,10 +581,9 @@ baseline files, the six typed-authority/history files, and the complete
 seed/context packet, three product-surface/acceptance files and seven supporting
 visual studies, plus the seven Revision/geometry/traceability members listed
 above, the four execution packets and four identity/title-block/audit members
-and the detailed authority/offline/impact contracts have been read completely
-(51 files); the other 28 files remain to review.
-No complete settings
-route reconciliation is claimed. The remaining sources and consumers must be
+plus the detailed authority/offline/impact contracts and four workspace/Publish
+members have been read completely (55 files); the other 24 files remain to
+review. No complete settings route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
 mutation, identity and authoring
 authority must also be checked where it resolves the historical questions above.
