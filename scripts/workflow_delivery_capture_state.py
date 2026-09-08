@@ -13,8 +13,10 @@ TRUST_KEYS = ("core.hooksPath", "datum.workflowDeliveryAuthorityRef",
 
 
 def git(root, *args, allowed=(0,)):
+    environment = {"PATH": os.environ.get("PATH", os.defpath), "LC_ALL": "C",
+                   "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull}
     result = subprocess.run(["git", "--no-optional-locks", *args], cwd=root,
-                            capture_output=True, check=False)
+                            env=environment, capture_output=True, check=False)
     if result.returncode not in allowed:
         raise RuntimeError(f"state capture git {args[0]} failed: {result.returncode}")
     return result.stdout

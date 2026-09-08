@@ -2,6 +2,7 @@
 
 import os
 import unittest
+from unittest.mock import patch
 
 from workflow_delivery_capture_state import protected_state
 from workflow_delivery_test_support import Fixture
@@ -50,6 +51,12 @@ class CaptureStateTest(unittest.TestCase):
     def test_unrelated_configuration_values_are_not_disclosed(self):
         self.f.git("config", "credential.helper", "fixture secret sentinel")
         self.assertNotIn("fixture secret sentinel", str(self.capture()))
+
+    def test_inherited_git_repository_overrides_are_not_used(self):
+        before = self.capture()
+        with patch.dict(os.environ, {"GIT_DIR": "/nonexistent-foreign-repository",
+                                     "GIT_INDEX_FILE": "/nonexistent-foreign-index"}):
+            self.assertEqual(before, self.capture())
 
     def test_symlinks_record_targets_without_reading_target_contents(self):
         (self.f.root / "src/link").symlink_to("/outside-fixture-missing")
