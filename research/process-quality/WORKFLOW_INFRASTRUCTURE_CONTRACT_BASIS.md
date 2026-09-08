@@ -114,7 +114,7 @@ The contract now binds those 76 inputs conservatively. The Rust paths are checke
 for existence and can be examined as staged formatting inputs; including their
 bytes avoids an understated proof boundary. No Rust source was changed.
 
-The permission proposal stays at its original 69 paths. A test previously
+At that readiness snapshot the permission proposal stayed at 69 paths. A test previously
 required equality between read inputs and write scope; it now checks the proper
 subset relationship, and a negative scope test prevents these seven dependencies
 from becoming workflow write permissions. Separate input coverage tests derive
@@ -172,12 +172,30 @@ tests: 145 explicit paths. A recursive local Python import check guards this
 bounded inventory against recurrence; static imports cannot establish dynamic
 loads, shell children, external runtime libraries or complete observed closure.
 
-The source-permission proposal is deliberately unchanged. Reading/hashing these
+That input-only increment deliberately left source permission unchanged. Reading/hashing these
 inputs does not authorize publishing them under a stale scope or an owner-decision
 step. The separate publication-delta obligation remains open. Existing scenario,
 foundation, consumer, independent-review and owner-activation requirements are
 unchanged; PM042 is not ratified by this input reconciliation. Older snapshots
 and failed captures retain their old identities rather than being refreshed.
+
+## WDQ-TOOLS — separate source-permission reconciliation
+
+Review of the complete parent-edge history from main `7a77e40a850172b50e2251132d171d55a8adfb37`
+to candidate `701c3b82363973857c47d16f46a8baa0a597c008` identifies implemented
+workflow files omitted from the old scope. The reviewed proposal now retains
+the original 69 permissions and adds 68 final-diff script paths, the historical
+rollout mapping test change and the coverage test: 139 exact files, not roots.
+The coverage test is also an explicit read input, bringing that inventory to 150.
+The original seven hook/formatting read-only dependencies remain outside scope.
+Environment data and unrelated product/prototype files receive no permission.
+
+The candidate policy and proposal must agree. A fixed-history regression checks
+all production paths from every parent edge, including the mapping-test change
+absent from the net diff. This records preparation consistency, not owner
+ratification, current execution authorization or permission for future history.
+The I04 owner-decision/current-execution-claim mismatch remains a separate
+controlled-promotion obligation; no claim exemption or live trust is introduced.
 
 The subsequent shell/data review at `e16f3f0fea546a13922d72313f2ffc779fc5c392`
 adds four concrete inputs beyond that Python inventory: the authenticated owner

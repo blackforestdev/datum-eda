@@ -3159,12 +3159,16 @@ Status: [x] Closed for scoped M4 slice
 
 ## Infrastructure
 
-WDQ-TOOLS candidate preparation: the rollout contract now includes 149 explicit
+WDQ-TOOLS candidate preparation: the rollout contract now includes 150 explicit
 repository inputs, reconciling 66 implemented Python capture/environment/promotion
 files, three rollout tests, the prepared hook shell source, and the explicit
 environment selection with both referenced Blobs missing from its prior baseline. This is
-input coverage, not expanded write permission, complete runtime closure, readiness
-or installed enforcement. The selected step and other agents' lanes are unchanged.
+input coverage, not complete runtime closure, readiness or installed enforcement.
+Separate full-history scope reconciliation proposes 139 exact workflow paths,
+including the coverage regression itself; read-only hook/Rust dependencies remain
+excluded. Candidate policy and proposal agree, but I04 publication authorization
+and controlled activation remain unfinished. No live trust or other agent lane
+changes; WDQ-TOOLS remains selected.
 
 | Item | Status | Notes |
 |------|--------|-------|

@@ -318,13 +318,14 @@ inapplicability per entry point with a concrete reason: for example, a selector
 cannot certify intermediate candidate history, but the candidate CLI must test
 it. Do not mark whole scenario groups inapplicable to avoid missing coverage.
 
-The 149-file input proposal retains the previous 76 paths and adds the 66
+The 150-file input proposal retains the previous 76 paths and adds the 66
 implemented workflow/capture/promotion Python modules and tests omitted from that
 baseline, plus three rollout contract/mapping/proposal tests. The prepared owner
 hook shell source, explicit environment-selection document and its two selected
-environment Blobs are also included. Their local Python import graph is included.
-These are read dependencies only; the 69-path
-source-permission proposal is unchanged and still requires separate reconciliation.
+environment Blobs and the coverage reconciliation test are also included. Their
+local Python import graph is included. These are read dependencies only. The
+separately reviewed coverage proposal names 139 explicit permission paths;
+read-input membership does not grant write or owner-publication authority.
 This is not complete dynamic or external-tool closure. Final closure must include
 any subsequent capture/fixture modules and imports, shell subprocess inputs and
 changed environment selections or hook implementation. Hook proof also consumes

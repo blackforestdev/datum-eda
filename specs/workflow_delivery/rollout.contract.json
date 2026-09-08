@@ -121,6 +121,7 @@
     "scripts/project_task_details.py",
     "scripts/run_drift_gates.sh",
     "scripts/test_project_status.py",
+    "scripts/test_workflow_coverage_proposal.py",
     "scripts/test_workflow_delivery_activation_preflight.py",
     "scripts/test_workflow_delivery_activation_state.py",
     "scripts/test_workflow_delivery_capture_cases.py",
