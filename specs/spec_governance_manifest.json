@@ -48,6 +48,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md": {
+      "class": "governed",
+      "progress_anchor": "FOUNDATION-WORKFLOW-SPEC",
+      "notes": "WDQ-F02 concrete F1-F8 draft with exact values, refusal cases, transaction/reopen timelines and explicit unresolved writer/doorway/gesture choices. No new inventory shape or product ratification; visual-owner and prerequisite handoff packet remains unfinished."
+    },
     "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md": {
       "class": "governed",
       "progress_anchor": "FOUNDATION-CONSUMER-COMPLETION",
