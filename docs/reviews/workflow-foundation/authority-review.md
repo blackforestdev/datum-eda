@@ -54,14 +54,59 @@ No member or digest was changed. Important preserved limits:
 - PM041 enrollment expansion and trust promotion require exact owner review;
   the instruction to finish the rollout is not a fabricated acceptance receipt.
 
+## Selection route review and concrete discrepancy
+
+At `89a6da10`, the complete five-file `gui-selection` route was read: both
+research reports, both derived guidance documents and all 2,627 lines of the
+Universal Viewport Tooling specification. PM023 and PM026 were also read in
+full. The unchanged route digest is
+`5fe8bbe378e16a050e3dcba2d6b16de20010377752d2feea70f50930bf69c629`.
+This establishes source review, not fresh runtime or visual conformance.
+
+The following F3/F4/F5 inputs are already specified and must not be reopened
+as arbitrary implementation choices:
+
+- UVT §2.2.4: pad clicks select the parent footprint in the board workspace;
+  child pad editing belongs to the Footprint Editor. Region qualification is
+  based on authored anchors, not glow, bounding-box appearance or zoom.
+- UVT §2.2.18 and PM026: identity-preserving edits preserve selection;
+  deleted identities are dropped and reported, never replaced by fuzzy matches;
+  undo does not resurrect dropped consumer selection. Pane focus changes do not
+  change the shared selected subject.
+- UVT §2.2.14 and PM026: S5A is read-only. Later locked/stale/incompatible/
+  constrained/invalid batch members refuse the complete operation without a
+  journal effect or silent member removal.
+- UVT §2.2.12: later movement shares one translation rule and one command
+  across invocation surfaces. Its reference is invocation-specific; a selected
+  focus member is not an implicit pivot or extra mutation authority.
+- UVT §3 and PM023: object snapping overrides grid within the eligible radius;
+  exact target coordinates are nanometers, while radius is screen-space.
+  Gesture snapping is consumer state; committed coordinates enter typed
+  operations. Quantize is an align parameter, not an additional private verb.
+
+**Tracked specification discrepancy: `dat-selection-envelope-run-flr`.**
+UVT §2.2.19's closed context `subject_kind` list omits Run, while §2.2.20
+explicitly includes Run and requires a one-to-one envelope vocabulary. PM026
+ratifies Run as a distinct derived identity. The Proposal/Review versus
+`review_action` representation also needs explicit reconciliation. This is a
+document-level contradiction; no runtime failure is claimed. Intake is related
+to this foundation review and the existing S5A owner, without amending their
+hard dependencies or accepting a replacement schema.
+
+The correction must preserve PM026, complete the other owning route
+(`prototype-selection`) before editing the shared UVT specification, and name
+exact vocabulary/serialization parity proof. Read-only S5A cannot be made an
+editing feature to bypass the discrepancy. The historical matrix's code-status
+columns remain historical observations, not a current implementation audit.
+
 ## Remaining review coverage
 
-WDQ-F01 remains in progress. The routed-domain inventory currently includes
-`gui-selection` (five files), `prototype-selection` (three files, with a shared
-viewport-spec consumer), and `workspace-documentation-and-revision` (79 files).
-These counts are inventory, not claims of completed semantic review. Their
-complete sources and consumers must be reviewed before adjudicating F1–F8 or
-editing their specifications. Later storage, mutation, identity and authoring
+WDQ-F01 remains in progress. Remaining routed-domain review includes
+`prototype-selection` (three files, with the viewport-spec consumer now read),
+and `workspace-documentation-and-revision` (79 files; PM037, PM039 and PM040
+have been read, not the complete route). These counts are inventory, not claims
+of completed semantic review. Their complete sources and consumers must be
+reviewed before final F1–F8 adjudication or specification edits. Later storage, mutation, identity and authoring
 authority must also be checked where it resolves the historical questions above.
 
 WDQ-F02 still owes concrete values, boundary cases, transaction timelines and
