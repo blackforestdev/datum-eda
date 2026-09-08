@@ -8952,12 +8952,28 @@
             "completion_evidence": []
           },
           {
+            "id": "WDQ-READY",
+            "kind": "governance",
+            "status": "pending",
+            "action": "Establish actual rollout infrastructure readiness from the exact prepared contract and assembled candidate.",
+            "depends_on": [
+              "WDQ-I02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "WDQ-READY"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
             "id": "WDQ-I03",
             "kind": "execution",
             "status": "pending",
-            "action": "Prepare controlled promotion tooling and obtain independent gate verification of the exact packet.",
+            "action": "Prepare controlled promotion tooling and produce exact candidate verification for independent replay.",
             "depends_on": [
-              "WDQ-I02"
+              "WDQ-READY"
             ],
             "requirement_refs": [
               {
@@ -8968,12 +8984,28 @@
             "completion_evidence": []
           },
           {
+            "id": "WDQ-REVIEW",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Obtain independent replay and review of the exact candidate, promotion packet and every finding.",
+            "depends_on": [
+              "WDQ-I03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "WDQ-REVIEW"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
             "id": "WDQ-I04",
             "kind": "owner_decision",
             "status": "pending",
             "action": "Obtain owner mechanism ratification and exact activation; verify installed main and safely retire unreferenced support.",
             "depends_on": [
-              "WDQ-I03"
+              "WDQ-REVIEW"
             ],
             "requirement_refs": [
               {

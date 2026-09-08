@@ -7,6 +7,7 @@
     "docs/gui/*.md"
   ],
   "tracked_docs": [
+    "docs/reviews/workflow-delivery-rollout/rollout-mapping.json",
     "docs/reviews/workflow-delivery-rollout/proposal.json",
     "docs/reviews/workflow-foundation/handoff.md",
     "docs/reviews/workflow-foundation/authority-review.md",
@@ -50,13 +51,17 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/rollout-mapping.json": {
+      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-I02 exact infrastructure checkpoint proposal against actual pending readiness/review steps. Not a contract, installed policy, enrollment, readiness result or owner acceptance."
+    },
     "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
-      "notes": "WDQ-I02 proposed numbered amendment for broader coverage, clause accounting, separate review and exact promotion. Not ratified or controlling; I04 owner disposition and I03 independent review remain required."
+      "notes": "WDQ-I02 proposed numbered amendment for broader coverage, clause accounting, separate review and exact promotion. Not ratified or controlling; I03 producer verification, WDQ-REVIEW independent replay and I04 owner disposition remain required."
     },
     "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
-      "notes": "WDQ-R03 owner-authorized I01-I06 implementation/adoption successor. Exact ratification/promotion and final acceptance remain owner steps; installation alone cannot close the full goal."
+      "notes": "WDQ-R03 owner-authorized I01-I06 implementation/adoption stages, with explicit pending WDQ-READY and WDQ-REVIEW checkpoints refining readiness and I3 independent review. Exact ratification/promotion and final acceptance remain owner steps; installation alone cannot close the full goal."
     },
     "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
