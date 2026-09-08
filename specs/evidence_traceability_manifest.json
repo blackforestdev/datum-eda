@@ -36,9 +36,9 @@
       "id": "workflow-delivery-rollout",
       "status": "in_progress",
       "sources": ["research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md"],
-      "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md", "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md", "docs/reviews/workflow-delivery-rollout/proposal.json"],
-      "reviewed_digest": "0f217cedc81801ab3afff702f030e18ec353f1633244710d64791220ffe101cc",
-      "review_note": "WDQ-R02 complete review of the research source and all four consumers: rollout requirements/results, scheduled foundation follow-ups, exact bounded implementation proposal and non-operative baseline JSON. Inspect current gate limitations; propose full roadmap/source coverage, separate replay phase, scoped promotion/storage and three real adoption cohorts without fabricating readiness, claims, candidate or evidence. R03 remains an explicit owner implementation boundary; no existing pilot/product route, hard edge, gate code, trust, enrollment, runtime, prototype or acceptance changes."
+      "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md", "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md", "docs/reviews/workflow-delivery-rollout/proposal.json", "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md"],
+      "reviewed_digest": "82358e3215258409bdc339b6f5d11fb2cf75eaa847260e6bb98c2cb27f263b52",
+      "review_note": "WDQ-R03 complete route review records the owner's approved /goal resume response against unchanged exact R02 packet hashes. Add the I01-I06 execution/adoption successor with implementation authorization, independent review, exact owner ratification/promotion and final measured acceptance boundaries. Review source and all five consumers together. No pilot/product route, hard dependency, gate code, installed trust, enrollment, product implementation, prototype or acceptance changes in this approval transaction."
     },
     {
       "id": "research-governance-index",

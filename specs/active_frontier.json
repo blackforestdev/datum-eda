@@ -8269,8 +8269,8 @@
         "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
         "docs/reviews/workflow-foundation/handoff.md"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
+      "state": "ready",
+      "authorization": "none",
       "canonical_next": false,
       "parallel": true,
       "summary": "Owner-approved separate workflow-quality planning: schedule foundation specification follow-ups and prepare exact broader enforcement, promotion and three-slice adoption proposals without taking over product implementation.",
@@ -8278,7 +8278,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "An owner-reviewed bounded implementation/promotion packet covers real roadmap consumers, scheduled specification gaps, enforceable delivery transitions and three separately enrolled adoption slices beyond the pilot, with explicit ownership and remaining acceptance boundaries.",
-        "canonical_next_step_id": "WDQ-R03",
+        "canonical_next_step_id": null,
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -8337,7 +8337,7 @@
           {
             "id": "WDQ-R03",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Obtain owner disposition of the bounded implementation and promotion plan without accepting product delivery or self-promoting trust.",
             "depends_on": [
               "WDQ-R02"
@@ -8348,7 +8348,13 @@
                 "marker": "WDQ-R03"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
+                "marker": "<!-- EVIDENCE:WORKFLOW-DELIVERY-ROLLOUT:WDQ-R03-APPROVED -->"
+              }
+            ],
             "owner_input": {
               "response_format": "Reply `WORKFLOW-DELIVERY-ROLLOUT: authorize bounded implementation — 5f0b71f67adb3f48394e764de6d8dc3b924832dc5c6997a2ed7c5de326568265 2efee64b7205d173bdcc5e0b5e86cd98a772056a65f1a2be0f3dd23d5b3b604d`, `WORKFLOW-DELIVERY-ROLLOUT: revise — <correction>`, or `WORKFLOW-DELIVERY-ROLLOUT: defer — <reason>`.",
               "requests": [
@@ -8850,6 +8856,186 @@
         "post_completion": {
           "effects": [
             "Record exact specification ratification and explicitly schedule unresolved implementation obligations; specification closure does not prove product delivery."
+          ],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
+    },
+    {
+      "key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "order": 55,
+      "title": "Implement broader workflow delivery enforcement and measured adoption",
+      "issue_id": "dat-wdq-rollout-implementation-ffy",
+      "governing_docs": [
+        "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+        "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md",
+        "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md"
+      ],
+      "state": "in_progress",
+      "authorization": "execution",
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-wdq-rollout-implementation-20260908",
+        "claimed_at": "2026-09-08T06:39:04Z",
+        "heartbeat_at": "2026-09-08T06:39:04Z",
+        "expires_at": "2026-09-08T14:39:04Z",
+        "scope": [
+          "WDQ-R03 approved workflow implementation only: coverage, independent-review transitions, candidate preparation and tests in the repository-local isolated candidate workflow. Preserve installed trust until exact promotion; no product implementation, GP-CM05V takeover, prototype edit, dependency or product acceptance."
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "abd3871fe705875d661b758fd5371c7df223fdd3"
+      },
+      "canonical_next": false,
+      "parallel": true,
+      "summary": "Owner-authorized full workflow rollout: implement and activate real-roadmap tripwires, then verify three genuine adoption cohorts without taking over product owners or treating installation as completion.",
+      "dependencies": [],
+      "unblocks": [],
+      "completion": {
+        "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
+        "canonical_next_step_id": "WDQ-I01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "WDQ-I01",
+            "kind": "execution",
+            "status": "in_progress",
+            "action": "Implement approved roadmap/source coverage and transition refusals with real candidate/index tests.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "WDQ-I01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "WDQ-I02",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement separate independent-review enforcement and prepare exact enrollment/contract candidates.",
+            "depends_on": [
+              "WDQ-I01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "WDQ-I02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "WDQ-I03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prepare controlled promotion tooling and obtain independent gate verification of the exact packet.",
+            "depends_on": [
+              "WDQ-I02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "WDQ-I03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "WDQ-I04",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain owner mechanism ratification and exact activation; verify installed main and safely retire unreferenced support.",
+            "depends_on": [
+              "WDQ-I03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "WDQ-I04"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `WORKFLOW-DELIVERY-IMPLEMENTATION: approve ACTIVATE — <exact reviewed packet>`, `WORKFLOW-DELIVERY-IMPLEMENTATION: revise — <correction>`, or `WORKFLOW-DELIVERY-IMPLEMENTATION: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "ACTIVATE",
+                  "question": "Obtain owner mechanism ratification and exact activation; verify installed main and safely retire unreferenced support.",
+                  "recommended_response": "Approve only the exact completed evidence and reviewed scope; preserve all product ownership, trust and independent-review boundaries.",
+                  "source_ref": {
+                    "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                    "marker": "ACTIVATE"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "WDQ-I05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Verify three actual product adoption cohorts with evidence-linked measurements and independent review.",
+            "depends_on": [
+              "WDQ-I04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "WDQ-I05"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "WDQ-I06",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain owner acceptance of the complete installed and measured workflow reform.",
+            "depends_on": [
+              "WDQ-I05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "WDQ-I06"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `WORKFLOW-DELIVERY-IMPLEMENTATION: approve ROLLOUT-ACCEPTANCE — <exact reviewed packet>`, `WORKFLOW-DELIVERY-IMPLEMENTATION: revise — <correction>`, or `WORKFLOW-DELIVERY-IMPLEMENTATION: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "ROLLOUT-ACCEPTANCE",
+                  "question": "Obtain owner acceptance of the complete installed and measured workflow reform.",
+                  "recommended_response": "Approve only the exact completed evidence and reviewed scope; preserve all product ownership, trust and independent-review boundaries.",
+                  "source_ref": {
+                    "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                    "marker": "ROLLOUT-ACCEPTANCE"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Close only after owner acceptance of the complete installed and measured reform; no implicit product or successor acceptance."
           ],
           "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",

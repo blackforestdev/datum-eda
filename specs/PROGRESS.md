@@ -170,7 +170,7 @@
    Prepare a fresh authorized handoff, build the scoped delivery gate and actual action-consumer pilot, and obtain independent replay plus owner activation; no blanket rollout or EDA authoring acceptance. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md`, `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md`, `docs/reviews/workflow-delivery-pilot/handoff.md`.
 - **Prepare broader workflow delivery enforcement and adoption rollout** (`WORKFLOW-DELIVERY-ROLLOUT`; `dat-wdq-broader-rollout-tqh`).
-   Owner-approved separate workflow-quality planning: schedule foundation specification follow-ups and prepare exact broader enforcement, promotion and three-slice adoption proposals without taking over product implementation. *state `specified`; authorization `owner_decision`; parallel lane.*
+   Owner-approved separate workflow-quality planning: schedule foundation specification follow-ups and prepare exact broader enforcement, promotion and three-slice adoption proposals without taking over product implementation. *state `ready`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md`, `docs/reviews/workflow-foundation/handoff.md`.
 - **Ratify project writer ownership and recovery serialization** (`PROJECT-WRITER-OWNERSHIP`; `dat-project-write-ownership-lock-0ne`).
    A ratified numbered writer-ownership decision resolves serialization, durability and recovery for all project writers; implementation obligations remain explicitly scheduled, not falsely delivered. *state `planned`; authorization `planning`; parallel lane.*
@@ -184,6 +184,9 @@
 - **Define native workflow fixtures and ratify performance measurement budgets** (`NATIVE-WORKFLOW-BUDGETS`; `dat-native-workflow-budgets-0h4`).
    Owner-ratified native fixtures and performance measurement budgets specify exact populations, timing boundaries, environment and failure policy; no product performance or harness implementation is claimed. *state `planned`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
+- **Implement broader workflow delivery enforcement and measured adoption** (`WORKFLOW-DELIVERY-IMPLEMENTATION`; `dat-wdq-rollout-implementation-ffy`).
+   Owner-authorized full workflow rollout: implement and activate real-roadmap tripwires, then verify three genuine adoption cohorts without taking over product owners or treating installation as completion. *state `in_progress`; authorization `execution`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md`, `specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md`, `specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ## WORKFLOW-DELIVERY-QUALITY — workflow evidence and readiness adoption
