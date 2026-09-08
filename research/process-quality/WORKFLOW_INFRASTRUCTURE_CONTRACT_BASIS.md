@@ -160,3 +160,21 @@ The existing 62-row matrix, exact input reconciliation, independent replay and
 owner activation remain required. The 76-file inventory remains a preparation
 baseline, not the final capture-source closure. No installed hook is changed by
 this reconciliation, and no readiness or delivery result is asserted.
+
+## WDQ-TOOLS — implemented Python input reconciliation
+
+Inspection at candidate `e96b0985c6fef52d133a3b6f6f037942f5b07e99`
+found 66 implemented workflow Python modules/tests missing from the 76-path
+input baseline. They cover capture, environment selection, authenticated startup,
+support storage, snapshot history and promotion diagnostics. The machine input
+list now includes them and the three existing rollout contract/mapping/proposal
+tests: 145 explicit paths. A recursive local Python import check guards this
+bounded inventory against recurrence; static imports cannot establish dynamic
+loads, shell children, external runtime libraries or complete observed closure.
+
+The source-permission proposal is deliberately unchanged. Reading/hashing these
+inputs does not authorize publishing them under a stale scope or an owner-decision
+step. The separate publication-delta obligation remains open. Existing scenario,
+foundation, consumer, independent-review and owner-activation requirements are
+unchanged; PM042 is not ratified by this input reconciliation. Older snapshots
+and failed captures retain their old identities rather than being refreshed.

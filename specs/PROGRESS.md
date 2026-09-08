@@ -3159,6 +3159,12 @@ Status: [x] Closed for scoped M4 slice
 
 ## Infrastructure
 
+WDQ-TOOLS candidate preparation: the rollout contract now includes 145 explicit
+repository inputs, reconciling 66 implemented Python capture/environment/promotion
+files and three rollout tests missing from its prior 76-path baseline. This is
+input coverage, not expanded write permission, complete runtime closure, readiness
+or installed enforcement. The selected step and other agents' lanes are unchanged.
+
 | Item | Status | Notes |
 |------|--------|-------|
 | Rust workspace (8 crates) | [x] | engine, cli, engine-daemon, test-harness, gui-protocol, gui-render, gui-app, verb-registry (locked via `specs/SPEC_PARITY.md` → `workspace_crates`) |

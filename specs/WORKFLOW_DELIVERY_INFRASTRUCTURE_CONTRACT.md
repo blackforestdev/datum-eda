@@ -318,12 +318,13 @@ inapplicability per entry point with a concrete reason: for example, a selector
 cannot certify intermediate candidate history, but the candidate CLI must test
 it. Do not mark whole scenario groups inapplicable to avoid missing coverage.
 
-The 76-file input proposal includes the original 69 paths plus the two hook
-checks, exemption manifest and four referenced Rust files. Those seven additions
-are read dependencies only; the 69-path source-permission proposal is unchanged.
-This covers the inspected local imports and concrete repository hook inputs,
-not the complete future capture toolchain. Final closure must add actual capture/fixture
-modules and their imports, shell subprocess inputs, environment selection files,
+The 145-file input proposal retains the previous 76 paths and adds the 66
+implemented workflow/capture/promotion Python modules and tests omitted from that
+baseline, plus three rollout contract/mapping/proposal tests. Their local Python
+import graph is included. These are read dependencies only; the 69-path
+source-permission proposal is unchanged and still requires separate reconciliation.
+This is not complete dynamic or external-tool closure. Final closure must include
+any subsequent capture/fixture modules and imports, shell subprocess inputs, environment selection files,
 and the owner's hook implementation. Hook proof also consumes
 `scripts/check_file_lane_ownership.py`, `scripts/check_rustfmt.py`,
 `specs/rustfmt_exemption_manifest.json`, and staged-file inputs those checks read.
