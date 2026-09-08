@@ -8,6 +8,7 @@ from workflow_delivery_evidence_shapes import review_sha256, review_shape
 from workflow_delivery_native import event_identities, validate_correlations, validate_environment
 from workflow_delivery_proof import _issues, packet_sha256, read_blob, validate_proof
 from workflow_delivery_shapes import require
+from workflow_delivery_enabled import validate_required_activation
 
 
 def receipt_section(raw, marker, path):
@@ -66,6 +67,9 @@ def validate_independent_review(tree, contract, proof, authority_digest, trust, 
     require(not original_events & replay_events, path, "copied event artifact is not independent replay",
             "WDQ-REVIEW")
     validate_correlations(tree, contract, replay)
+    if item["completion"]["delivery"].get("schema_version") == 2:
+        validate_required_activation(tree, contract, proof)
+        validate_required_activation(tree, contract, replay)
     findings = {f["issue_id"]: f for f in review["findings"]}
     defects = {d for p in (proof, replay) for r in p["results"] for d in r["defects"]}
     require(defects <= set(findings), path, "every proof defect requires review disposition", "WDQ-DEFECT")

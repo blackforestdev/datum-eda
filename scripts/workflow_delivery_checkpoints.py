@@ -7,6 +7,7 @@ from workflow_delivery_native import validate_correlations, validate_environment
 from workflow_delivery_proof import _issues, validate_proof
 from workflow_delivery_review import validate_independent_review, validate_review
 from workflow_delivery_mapping import LEGACY_PHASES, mapping_phases
+from workflow_delivery_enabled import required_normal_consumers, validate_required_activation
 from workflow_delivery_shapes import closed, require
 
 
@@ -157,10 +158,14 @@ def _validate_delivery(tree, item, *, phase=None, trust=None, environment=None):
         if current_inputs != previous_inputs:
             phase = "activate" if contract["category"] == "product" else "verify"
     authority = authority_sha256(tree, contract, ready=phase != "structure")
+    if "review" in phases and phase != "structure":
+        required_normal_consumers(contract)
     if phase in ("activate", "verify", "review", "accept"):
         proof = validate_proof(tree, contract)
         validate_environment(tree, proof, environment)
         validate_correlations(tree, contract, proof)
+        if "review" in phases:
+            validate_required_activation(tree, contract, proof)
         if phase == "review":
             require(trust is not None, item["key"], "review needs promoted enrollment", "WDQ-TRUST")
             validate_independent_review(tree, contract, proof, authority, trust, item, environment)
