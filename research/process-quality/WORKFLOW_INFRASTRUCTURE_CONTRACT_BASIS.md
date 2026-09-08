@@ -96,3 +96,11 @@ No fixture archive, capture instrumentation, producer event or independent repla
 was created during this planning review. The procedure is the implementation
 contract for those outputs, not evidence that they exist. Full subcase inventory
 and source/toolchain closure remain necessary before readiness can be asserted.
+
+The subsequent case review expands the six normative scenario groups into 62
+stable case rows. Each listed variant and entry surface needs its own observed
+record; the count is not a number of passing tests. The matrix distinguishes
+real candidate history from staged/worktree views and preserves early hook
+diagnostics. Two consistency tests check identity, scenario/surface coverage and
+snapshot applicability only. They do not certify semantic completeness or an
+unexecuted refusal. The full fixture capture and final input closure remain due.
