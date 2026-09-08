@@ -306,7 +306,7 @@ product proof or acceptance. Live trust and the Preferences lane remain unchange
 <!-- EVIDENCE:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I01-COMPLETE -->
 ### WDQ-I01 — candidate implementation completion evidence
 
-Completed candidate: `79d6c7b606a2b3ac17232828d55bc2ff14b7418c`;
+Initial audited candidate: `79d6c7b606a2b3ac17232828d55bc2ff14b7418c`;
 parent `77172c7e7aff1a4c88044134c66eeff45f161066`.
 Retained under `refs/datum/workflow-delivery-candidates/79d6c7b606a2b3ac17232828d55bc2ff14b7418c`.
 Final exact zero-context increment: `docs/reviews/workflow-delivery-rollout/i01-categories.patch`;
@@ -344,3 +344,27 @@ promotion and I05/I06 actual adoption/acceptance remain incomplete. No product
 owner, Preferences state, prototype, dependency, live policy, runner or hook is
 changed by this milestone. Semantic clause fidelity remains a review obligation,
 not a conclusion inferred from structural tests.
+
+#### Final packet reconciliation: preserve dormant lifecycle
+
+The final reread identified an overconstraint in that initial candidate:
+R03 explicitly preserves MCAD-INTEROP-PLACEHOLDER as planned/none, although its
+delivery classification is deferred. Requiring lifecycle `deferred` would
+contradict that approved distinction. This correction supersedes the initial
+completion candidate pin, not the R03 scope or product lifecycle.
+
+Final WDQ-I01 candidate: `da3b5eeba9223eb8d18843420307c30422730f3a`,
+parent `79d6c7b606a2b3ac17232828d55bc2ff14b7418c`, retained under
+`refs/datum/workflow-delivery-candidates/da3b5eeba9223eb8d18843420307c30422730f3a`.
+Exact zero-context correction:
+`docs/reviews/workflow-delivery-rollout/i01-dormant-state.patch`.
+Use `--unidiff-zero` against the pinned inputs as for the earlier increments.
+
+Dormant classification now requires the existing promoted lifecycle state,
+no authorization and no claim. It permits the approved planned/none placeholder
+while still refusing reactivation or execution under the old classification.
+The added real CLI/selector regression proves that exact exception.
+Final verification passes 203 WDQ tests, 50 project-status tests, seven foundation
+completion tests and five proposal tests; source health passes 1827 files and
+staged whitespace passes. WDQ-I02 remains selected and the full rollout remains
+unfinished. No dormant product record or installed gate was changed.

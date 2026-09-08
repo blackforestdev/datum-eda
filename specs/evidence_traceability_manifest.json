@@ -37,8 +37,8 @@
       "status": "in_progress",
       "sources": ["research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md"],
       "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md", "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md", "docs/reviews/workflow-delivery-rollout/proposal.json", "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md"],
-      "reviewed_digest": "11ce91a04372960cfd1ebeccedb51a5b69a1945c5e536ddf1938471bc3e392cc",
-      "review_note": "WDQ-I01 completion review reconciles the source and all five consumers with candidate 79d6c7b and the requirement-to-test audit. Coverage, clause accounting, readiness, category/source/claim and external/deferred refusals are implemented in the isolated candidate; 202 WDQ, 50 project-status, seven foundation and five proposal tests pass. Select WDQ-I02 under existing execution authority; the issue and full rollout remain incomplete. Preserve exact R02 approval artifacts, product routes/owners, installed gate/trust/policy and pilot evidence. I02 amendment/enrollment preparation, independent review, exact owner promotion and actual adoption remain outstanding; this milestone is not activation or acceptance."
+      "reviewed_digest": "ea38c86aab7b0c73dfde114644440c54d2d10609f7e0eeff63361450cc0902a8",
+      "review_note": "WDQ-I01 final packet reconciliation reviews the source and all five consumers with corrected candidate da3b5eeb. Preserve the R03 distinction between deferred delivery classification and the MCAD planned/none lifecycle; the initial candidate overconstraint is corrected and covered by actual CLI/selector regression. 203 WDQ, 50 project-status, seven foundation and five proposal tests pass. WDQ-I02 remains selected under existing execution authority; no installed enforcement, product state, owner lane or acceptance changes. Exact R02 artifacts and I02-I06 obligations remain unchanged."
     },
     {
       "id": "research-governance-index",
