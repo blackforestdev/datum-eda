@@ -793,3 +793,34 @@ declaration. This completes inventory preparation, not specification authorship,
 full enrollment, workflow readiness, owner activation or actual product adoption.
 WDQ-I02 remains selected for exact enrollment/contract preparation and the
 remaining transition audit. No dependency, licensing or prototype change occurs.
+
+### WDQ-I02 — explicitly not-ready native cohort contract drafts
+
+The three proposed contract destinations now contain structure-valid preparation
+drafts for S5A-S01..S06, GWP-S01..S06 and NA-S01..S08. The separate
+`cohort-mappings.json` packet binds their exact existing C01/C03/C04/C05/C06
+checkpoints while preserving C02 owner execution authorization. Nothing is
+attached to the live Frontier or enrolled in installed trust.
+
+These drafts are deliberately not buildable/readiness-complete contracts.
+Production handlers remain null and dispatch identities explicitly pending;
+native fixture, input closure, exact expected state, full per-domain subcases,
+foundation/dimension dispositions, product routes, mandatory mechanisms and
+independent-review provision remain unresolved C01 obligations. Required
+foundation/dimension entries reserve review obligations rather than inventing
+answers or permitting copied pilot N/A waivers. Each real product owner must
+replace this preparation with its reviewed complete matrix before readiness.
+
+The new preparation source and three contracts have a separate reviewed route.
+Future proof/review, mapping proposals and progress do not enter their own
+authority closure. The initial broad build roots are explicitly incomplete
+without real fixture/producer inputs; relevant Preferences source cannot be
+excluded to preserve stale proof. No product task was claimed or implemented.
+
+Six draft-contract/mapping tests pass. Actual candidate `2a85005c` validates the three
+real pending items with proposed mappings in memory: structure passes, readiness
+refuses each unresolved mandatory question, and required normal behavior
+separately refuses every null production handler. No native events, environment,
+build identity, reviewer or owner receipt were fabricated. Full enrollment and
+actual infrastructure readiness remain pending; these refusals are preparation
+evidence, not delivered EDA behavior or completion of the three adoption cohorts.

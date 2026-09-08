@@ -6,7 +6,7 @@
       "kind": "file_glob",
       "glob": "specs/workflow_delivery/*.contract.json",
       "owner_spec": "specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md",
-      "notes": "PM041 contract instance filenames: pilot plus WDQ-I02 prepared infrastructure contract governed by WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md. This file-glob gate tracks names only, not closed shapes, behavior, readiness, enrollment or acceptance; those remain delivery-validator and owner obligations.",
+      "notes": "PM041 contract instance filenames: pilot, prepared WDQ-I02 infrastructure contract, and three explicitly not-ready native cohort drafts governed by WORKFLOW_COHORT_CONTRACT_PREPARATION.md. This file-glob gate tracks names only, not closed shapes, behavior, readiness, enrollment or acceptance; those remain delivery-validator and owner obligations.",
       "planned_shapes": ["completion.delivery", "Ref", "Blob", "Answer", "Contract", "Consumer", "Scenario", "Proof", "build", "results", "assertions", "Review", "workflow_delivery_policy"]
     },
     {

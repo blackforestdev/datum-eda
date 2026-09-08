@@ -1,0 +1,324 @@
+{
+  "schema_version": 1,
+  "id": "datum-native-authoring-delivery",
+  "frontier_key": "NATIVE-AUTHORING",
+  "issue_id": "dat-native-authoring-depth-sf9",
+  "category": "product",
+  "consuming_workflow": "Complete native manual schematic and PCB domain contracts including library, connectivity, ComponentInstance/PinPadMap, exact input/snap, transactions, checks/output, accessibility and performance.",
+  "intent": "Deliver the complete authorized native cohort with actual input/state proof, independent replay and exact owner acceptance.",
+  "scope": "Complete native manual schematic and PCB domain contracts including library, connectivity, ComponentInstance/PinPadMap, exact input/snap, transactions, checks/output, accessibility and performance. Draft preparation only; complete consumer/fixture expansion remains C01 work.",
+  "exclusions": "No scope reduction, runtime execution authorization, native proof, owner acceptance, Global Preferences takeover or prototype edit. No disabled-only substitute for required enabled behavior.",
+  "authority_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}],
+  "route_ids": ["foundation-consumer-completion","workflow-delivery-cohort-preparation"],
+  "foundation_answers": {
+    "units_precision": {"disposition":"required","reason":"C01 must resolve units_precision applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]},
+    "numeric_entry": {"disposition":"required","reason":"C01 must resolve numeric_entry applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]},
+    "selection_identity": {"disposition":"required","reason":"C01 must resolve selection_identity applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]},
+    "grid_snap": {"disposition":"required","reason":"C01 must resolve grid_snap applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]},
+    "undo_cancel": {"disposition":"required","reason":"C01 must resolve undo_cancel applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]},
+    "persistence_recovery": {"disposition":"required","reason":"C01 must resolve persistence_recovery applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]},
+    "library_connectivity": {"disposition":"required","reason":"C01 must resolve library_connectivity applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]},
+    "settings_scope": {"disposition":"required","reason":"C01 must resolve settings_scope applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]}
+  },
+  "open_decisions": [
+    {
+      "id": "NA.complete-scope-and-product-routes",
+      "question": "The actual NA-C01 owner must resolve and record exact reviewed complete-scope-and-product-routes before readiness; no result is supplied by this draft.",
+      "required_for_scenarios": ["NA-S01","NA-S02","NA-S03","NA-S04","NA-S05","NA-S06","NA-S07","NA-S08"],
+      "disposition_ref": null
+    },
+    {
+      "id": "NA.production-consumers-and-dispatch",
+      "question": "The actual NA-C01 owner must resolve and record exact reviewed production-consumers-and-dispatch before readiness; no result is supplied by this draft.",
+      "required_for_scenarios": ["NA-S01","NA-S02","NA-S03","NA-S04","NA-S05","NA-S06","NA-S07","NA-S08"],
+      "disposition_ref": null
+    },
+    {
+      "id": "NA.native-fixture-and-input-closure",
+      "question": "The actual NA-C01 owner must resolve and record exact reviewed native-fixture-and-input-closure before readiness; no result is supplied by this draft.",
+      "required_for_scenarios": ["NA-S01","NA-S02","NA-S03","NA-S04","NA-S05","NA-S06","NA-S07","NA-S08"],
+      "disposition_ref": null
+    },
+    {
+      "id": "NA.foundation-and-dimension-dispositions",
+      "question": "The actual NA-C01 owner must resolve and record exact reviewed foundation-and-dimension-dispositions before readiness; no result is supplied by this draft.",
+      "required_for_scenarios": ["NA-S01","NA-S02","NA-S03","NA-S04","NA-S05","NA-S06","NA-S07","NA-S08"],
+      "disposition_ref": null
+    },
+    {
+      "id": "NA.mechanism-and-prerequisite-authority",
+      "question": "The actual NA-C01 owner must resolve and record exact reviewed mechanism-and-prerequisite-authority before readiness; no result is supplied by this draft.",
+      "required_for_scenarios": ["NA-S01","NA-S02","NA-S03","NA-S04","NA-S05","NA-S06","NA-S07","NA-S08"],
+      "disposition_ref": null
+    },
+    {
+      "id": "NA.independent-review-provision",
+      "question": "The actual NA-C01 owner must resolve and record exact reviewed independent-review-provision before readiness; no result is supplied by this draft.",
+      "required_for_scenarios": ["NA-S01","NA-S02","NA-S03","NA-S04","NA-S05","NA-S06","NA-S07","NA-S08"],
+      "disposition_ref": null
+    }
+  ],
+  "input_roots": [".cargo","Cargo.toml","Cargo.lock","crates","docs/gui/icon_set.json","docs/gui/menu_model.csv","docs/gui/menu_model.json","scripts/cargo_resource_policy.json","scripts/run_cargo_guarded.py"],
+  "consumers": [
+    {
+      "id": "NA-S01.consumer",
+      "entry_surfaces": ["native-pointer","native-keyboard"],
+      "dispatch_key": "pending.NA-S01",
+      "handler_ref": null,
+      "scope": "Complete native manual schematic and PCB domain contracts including library, connectivity, ComponentInstance/PinPadMap, exact input/snap, transactions, checks/output, accessibility and performance.",
+      "timing": "Unresolved C01 production timing and exact native input/event correlation; no runtime behavior claimed.",
+      "persistence": "C01 must bind exact before/after identities and journal/persistence expectations, including no authored mutation for read-only actions.",
+      "unavailable_reason": "Not ready: actual C01 production handler, dispatch and full entry-surface matrix are not yet reviewed. This is not accepted unavailable behavior.",
+      "scenario_ids": ["NA-S01"]
+    },
+    {
+      "id": "NA-S02.consumer",
+      "entry_surfaces": ["native-pointer","native-keyboard"],
+      "dispatch_key": "pending.NA-S02",
+      "handler_ref": null,
+      "scope": "Complete native manual schematic and PCB domain contracts including library, connectivity, ComponentInstance/PinPadMap, exact input/snap, transactions, checks/output, accessibility and performance.",
+      "timing": "Unresolved C01 production timing and exact native input/event correlation; no runtime behavior claimed.",
+      "persistence": "C01 must bind exact before/after identities and journal/persistence expectations, including no authored mutation for read-only actions.",
+      "unavailable_reason": "Not ready: actual C01 production handler, dispatch and full entry-surface matrix are not yet reviewed. This is not accepted unavailable behavior.",
+      "scenario_ids": ["NA-S02"]
+    },
+    {
+      "id": "NA-S03.consumer",
+      "entry_surfaces": ["native-pointer","native-keyboard"],
+      "dispatch_key": "pending.NA-S03",
+      "handler_ref": null,
+      "scope": "Complete native manual schematic and PCB domain contracts including library, connectivity, ComponentInstance/PinPadMap, exact input/snap, transactions, checks/output, accessibility and performance.",
+      "timing": "Unresolved C01 production timing and exact native input/event correlation; no runtime behavior claimed.",
+      "persistence": "C01 must bind exact before/after identities and journal/persistence expectations, including no authored mutation for read-only actions.",
+      "unavailable_reason": "Not ready: actual C01 production handler, dispatch and full entry-surface matrix are not yet reviewed. This is not accepted unavailable behavior.",
+      "scenario_ids": ["NA-S03"]
+    },
+    {
+      "id": "NA-S04.consumer",
+      "entry_surfaces": ["native-pointer","native-keyboard"],
+      "dispatch_key": "pending.NA-S04",
+      "handler_ref": null,
+      "scope": "Complete native manual schematic and PCB domain contracts including library, connectivity, ComponentInstance/PinPadMap, exact input/snap, transactions, checks/output, accessibility and performance.",
+      "timing": "Unresolved C01 production timing and exact native input/event correlation; no runtime behavior claimed.",
+      "persistence": "C01 must bind exact before/after identities and journal/persistence expectations, including no authored mutation for read-only actions.",
+      "unavailable_reason": "Not ready: actual C01 production handler, dispatch and full entry-surface matrix are not yet reviewed. This is not accepted unavailable behavior.",
+      "scenario_ids": ["NA-S04"]
+    },
+    {
+      "id": "NA-S05.consumer",
+      "entry_surfaces": ["native-pointer","native-keyboard"],
+      "dispatch_key": "pending.NA-S05",
+      "handler_ref": null,
+      "scope": "Complete native manual schematic and PCB domain contracts including library, connectivity, ComponentInstance/PinPadMap, exact input/snap, transactions, checks/output, accessibility and performance.",
+      "timing": "Unresolved C01 production timing and exact native input/event correlation; no runtime behavior claimed.",
+      "persistence": "C01 must bind exact before/after identities and journal/persistence expectations, including no authored mutation for read-only actions.",
+      "unavailable_reason": "Not ready: actual C01 production handler, dispatch and full entry-surface matrix are not yet reviewed. This is not accepted unavailable behavior.",
+      "scenario_ids": ["NA-S05"]
+    },
+    {
+      "id": "NA-S06.consumer",
+      "entry_surfaces": ["native-pointer","native-keyboard"],
+      "dispatch_key": "pending.NA-S06",
+      "handler_ref": null,
+      "scope": "Complete native manual schematic and PCB domain contracts including library, connectivity, ComponentInstance/PinPadMap, exact input/snap, transactions, checks/output, accessibility and performance.",
+      "timing": "Unresolved C01 production timing and exact native input/event correlation; no runtime behavior claimed.",
+      "persistence": "C01 must bind exact before/after identities and journal/persistence expectations, including no authored mutation for read-only actions.",
+      "unavailable_reason": "Not ready: actual C01 production handler, dispatch and full entry-surface matrix are not yet reviewed. This is not accepted unavailable behavior.",
+      "scenario_ids": ["NA-S06"]
+    },
+    {
+      "id": "NA-S07.consumer",
+      "entry_surfaces": ["native-pointer","native-keyboard"],
+      "dispatch_key": "pending.NA-S07",
+      "handler_ref": null,
+      "scope": "Complete native manual schematic and PCB domain contracts including library, connectivity, ComponentInstance/PinPadMap, exact input/snap, transactions, checks/output, accessibility and performance.",
+      "timing": "Unresolved C01 production timing and exact native input/event correlation; no runtime behavior claimed.",
+      "persistence": "C01 must bind exact before/after identities and journal/persistence expectations, including no authored mutation for read-only actions.",
+      "unavailable_reason": "Not ready: actual C01 production handler, dispatch and full entry-surface matrix are not yet reviewed. This is not accepted unavailable behavior.",
+      "scenario_ids": ["NA-S07"]
+    },
+    {
+      "id": "NA-S08.consumer",
+      "entry_surfaces": ["native-pointer","native-keyboard"],
+      "dispatch_key": "pending.NA-S08",
+      "handler_ref": null,
+      "scope": "Complete native manual schematic and PCB domain contracts including library, connectivity, ComponentInstance/PinPadMap, exact input/snap, transactions, checks/output, accessibility and performance.",
+      "timing": "Unresolved C01 production timing and exact native input/event correlation; no runtime behavior claimed.",
+      "persistence": "C01 must bind exact before/after identities and journal/persistence expectations, including no authored mutation for read-only actions.",
+      "unavailable_reason": "Not ready: actual C01 production handler, dispatch and full entry-surface matrix are not yet reviewed. This is not accepted unavailable behavior.",
+      "scenario_ids": ["NA-S08"]
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "NA-S01",
+      "consumer_ids": ["NA-S01.consumer"],
+      "requirement_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"}],
+      "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Ordinary native fixture and doorway. This draft is not ready.",
+      "inputs": ["Launch normally and create/open/reopen the exact native fixture without imported-format CLI shortcuts."],
+      "expected_visible": "Native project identity, ordinary manual entry and persisted baseline are reproducible.",
+      "expected_state": "Exact expected identities, topology, values and journal deltas must be bound by C01 before readiness; retain all original scope. Native project identity, ordinary manual entry and persisted baseline are reproducible.",
+      "dimensions": {
+        "normal": {"disposition":"required","reason":"Reserve normal coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "invalid": {"disposition":"required","reason":"Reserve invalid coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "cancel": {"disposition":"required","reason":"Reserve cancel coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "scope": {"disposition":"required","reason":"Reserve scope coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "precision": {"disposition":"required","reason":"Reserve precision coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "undo_redo": {"disposition":"required","reason":"Reserve undo_redo coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "save_reopen": {"disposition":"required","reason":"Reserve save_reopen coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "accessibility": {"disposition":"required","reason":"Reserve accessibility coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "failure_recovery": {"disposition":"required","reason":"Reserve failure_recovery coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]}
+      },
+      "method": "native_input"
+    },
+    {
+      "id": "NA-S02",
+      "consumer_ids": ["NA-S02.consumer"],
+      "requirement_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"}],
+      "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Library-backed symbol and pin identity. This draft is not ready.",
+      "inputs": ["Place and inspect native library-backed symbols with pinned library/unit/pin identity."],
+      "expected_visible": "Authored symbols and pins resolve exact reviewed library identity and provenance.",
+      "expected_state": "Exact expected identities, topology, values and journal deltas must be bound by C01 before readiness; retain all original scope. Authored symbols and pins resolve exact reviewed library identity and provenance.",
+      "dimensions": {
+        "normal": {"disposition":"required","reason":"Reserve normal coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "invalid": {"disposition":"required","reason":"Reserve invalid coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "cancel": {"disposition":"required","reason":"Reserve cancel coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "scope": {"disposition":"required","reason":"Reserve scope coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "precision": {"disposition":"required","reason":"Reserve precision coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "undo_redo": {"disposition":"required","reason":"Reserve undo_redo coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "save_reopen": {"disposition":"required","reason":"Reserve save_reopen coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "accessibility": {"disposition":"required","reason":"Reserve accessibility coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "failure_recovery": {"disposition":"required","reason":"Reserve failure_recovery coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]}
+      },
+      "method": "native_input"
+    },
+    {
+      "id": "NA-S03",
+      "consumer_ids": ["NA-S03.consumer"],
+      "requirement_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"}],
+      "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Connection formation and attached movement. This draft is not ready.",
+      "inputs": ["Exercise the complete ratified join/crossing/T-junction and connected move/quantize matrix."],
+      "expected_visible": "Electrical topology, geometric attachment and stable identity match the exact approved contract.",
+      "expected_state": "Exact expected identities, topology, values and journal deltas must be bound by C01 before readiness; retain all original scope. Electrical topology, geometric attachment and stable identity match the exact approved contract.",
+      "dimensions": {
+        "normal": {"disposition":"required","reason":"Reserve normal coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "invalid": {"disposition":"required","reason":"Reserve invalid coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "cancel": {"disposition":"required","reason":"Reserve cancel coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "scope": {"disposition":"required","reason":"Reserve scope coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "precision": {"disposition":"required","reason":"Reserve precision coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "undo_redo": {"disposition":"required","reason":"Reserve undo_redo coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "save_reopen": {"disposition":"required","reason":"Reserve save_reopen coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "accessibility": {"disposition":"required","reason":"Reserve accessibility coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "failure_recovery": {"disposition":"required","reason":"Reserve failure_recovery coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]}
+      },
+      "method": "native_input"
+    },
+    {
+      "id": "NA-S04",
+      "consumer_ids": ["NA-S04.consumer"],
+      "requirement_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"}],
+      "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Electrical-to-physical realization. This draft is not ready.",
+      "inputs": ["Realize the reviewed schematic ComponentInstance/PinPadMap relationships in the board."],
+      "expected_visible": "Electrical and physical identities join exactly; missing/stale bindings fail explicitly.",
+      "expected_state": "Exact expected identities, topology, values and journal deltas must be bound by C01 before readiness; retain all original scope. Electrical and physical identities join exactly; missing/stale bindings fail explicitly.",
+      "dimensions": {
+        "normal": {"disposition":"required","reason":"Reserve normal coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "invalid": {"disposition":"required","reason":"Reserve invalid coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "cancel": {"disposition":"required","reason":"Reserve cancel coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "scope": {"disposition":"required","reason":"Reserve scope coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "precision": {"disposition":"required","reason":"Reserve precision coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "undo_redo": {"disposition":"required","reason":"Reserve undo_redo coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "save_reopen": {"disposition":"required","reason":"Reserve save_reopen coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "accessibility": {"disposition":"required","reason":"Reserve accessibility coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "failure_recovery": {"disposition":"required","reason":"Reserve failure_recovery coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]}
+      },
+      "method": "native_input"
+    },
+    {
+      "id": "NA-S05",
+      "consumer_ids": ["NA-S05.consumer"],
+      "requirement_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"}],
+      "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Exact placement, movement and numeric entry. This draft is not ready.",
+      "inputs": ["Exercise all approved native placement/movement and valid/partial/invalid numeric states."],
+      "expected_visible": "Exact nanometer arguments and authored geometry remain independent of display precision; invalid/partial input cannot commit.",
+      "expected_state": "Exact expected identities, topology, values and journal deltas must be bound by C01 before readiness; retain all original scope. Exact nanometer arguments and authored geometry remain independent of display precision; invalid/partial input cannot commit.",
+      "dimensions": {
+        "normal": {"disposition":"required","reason":"Reserve normal coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "invalid": {"disposition":"required","reason":"Reserve invalid coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "cancel": {"disposition":"required","reason":"Reserve cancel coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "scope": {"disposition":"required","reason":"Reserve scope coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "precision": {"disposition":"required","reason":"Reserve precision coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "undo_redo": {"disposition":"required","reason":"Reserve undo_redo coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "save_reopen": {"disposition":"required","reason":"Reserve save_reopen coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "accessibility": {"disposition":"required","reason":"Reserve accessibility coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "failure_recovery": {"disposition":"required","reason":"Reserve failure_recovery coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]}
+      },
+      "method": "native_input"
+    },
+    {
+      "id": "NA-S06",
+      "consumer_ids": ["NA-S06.consumer"],
+      "requirement_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"}],
+      "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Shared snap, selection and batch refusal. This draft is not ready.",
+      "inputs": ["Exercise required tools through shared snap/selection, preview, cancellation and whole-batch refusal."],
+      "expected_visible": "Shared backbone semantics hold and preview/cancel/refusal cannot produce partial authored writes.",
+      "expected_state": "Exact expected identities, topology, values and journal deltas must be bound by C01 before readiness; retain all original scope. Shared backbone semantics hold and preview/cancel/refusal cannot produce partial authored writes.",
+      "dimensions": {
+        "normal": {"disposition":"required","reason":"Reserve normal coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "invalid": {"disposition":"required","reason":"Reserve invalid coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "cancel": {"disposition":"required","reason":"Reserve cancel coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "scope": {"disposition":"required","reason":"Reserve scope coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "precision": {"disposition":"required","reason":"Reserve precision coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "undo_redo": {"disposition":"required","reason":"Reserve undo_redo coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "save_reopen": {"disposition":"required","reason":"Reserve save_reopen coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "accessibility": {"disposition":"required","reason":"Reserve accessibility coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "failure_recovery": {"disposition":"required","reason":"Reserve failure_recovery coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]}
+      },
+      "method": "native_input"
+    },
+    {
+      "id": "NA-S07",
+      "consumer_ids": ["NA-S07.consumer"],
+      "requirement_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"}],
+      "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Journal, proposal, undo and recovery. This draft is not ready.",
+      "inputs": ["Exercise direct/proposal policy, journaled edits, compensating undo/redo, reopen, second-writer and crash cases."],
+      "expected_visible": "Canonical history, exact persisted identities and recovery agree; no private writer or GUI-only undo authority.",
+      "expected_state": "Exact expected identities, topology, values and journal deltas must be bound by C01 before readiness; retain all original scope. Canonical history, exact persisted identities and recovery agree; no private writer or GUI-only undo authority.",
+      "dimensions": {
+        "normal": {"disposition":"required","reason":"Reserve normal coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "invalid": {"disposition":"required","reason":"Reserve invalid coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "cancel": {"disposition":"required","reason":"Reserve cancel coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "scope": {"disposition":"required","reason":"Reserve scope coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "precision": {"disposition":"required","reason":"Reserve precision coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "undo_redo": {"disposition":"required","reason":"Reserve undo_redo coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "save_reopen": {"disposition":"required","reason":"Reserve save_reopen coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "accessibility": {"disposition":"required","reason":"Reserve accessibility coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "failure_recovery": {"disposition":"required","reason":"Reserve failure_recovery coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]}
+      },
+      "method": "native_input"
+    },
+    {
+      "id": "NA-S08",
+      "consumer_ids": ["NA-S08.consumer"],
+      "requirement_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"}],
+      "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Complete domain tools, checks, output and usability. This draft is not ready.",
+      "inputs": ["Replay every required schematic and PCB tool/check/output case plus keyboard/focus/non-color/accessibility and realistic performance cases."],
+      "expected_visible": "The full approved matrix is delivered with honest unsupported/failure reporting and owner-ratified performance evidence.",
+      "expected_state": "Exact expected identities, topology, values and journal deltas must be bound by C01 before readiness; retain all original scope. The full approved matrix is delivered with honest unsupported/failure reporting and owner-ratified performance evidence.",
+      "dimensions": {
+        "normal": {"disposition":"required","reason":"Reserve normal coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "invalid": {"disposition":"required","reason":"Reserve invalid coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "cancel": {"disposition":"required","reason":"Reserve cancel coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "scope": {"disposition":"required","reason":"Reserve scope coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "precision": {"disposition":"required","reason":"Reserve precision coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "undo_redo": {"disposition":"required","reason":"Reserve undo_redo coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "save_reopen": {"disposition":"required","reason":"Reserve save_reopen coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "accessibility": {"disposition":"required","reason":"Reserve accessibility coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
+        "failure_recovery": {"disposition":"required","reason":"Reserve failure_recovery coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:NATIVE-AUTHORING:NA-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]}
+      },
+      "method": "native_input"
+    }
+  ],
+  "proof_path": "docs/reviews/workflow-delivery-rollout/native-authoring/proof.json",
+  "review_path": "docs/reviews/workflow-delivery-rollout/native-authoring/review.json"
+}
