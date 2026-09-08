@@ -37,7 +37,7 @@ def prepare_fixture(root, packet, *, fixture_variant=None):
     f = Fixture(root)
     _, _, _, baseline = accepted_fixture(f)
     if fixture_variant in MIXED_VARIANTS:
-        baseline = add_infrastructure(f)
+        baseline = add_infrastructure(f, fixture_variant)
     manifest = Tree(f.root).json("specs/active_frontier.json")
     next_item = manifest["frontier"][1]
     next_item.update(state="specified", authorization="planning")
@@ -58,7 +58,7 @@ def prepare_fixture(root, packet, *, fixture_variant=None):
     # fixture must retain its actual exemption manifest and referenced files.
     f.save("specs/rustfmt_exemption_manifest.json", {"schema_version": 1, "exemptions": {}})
     selected = f.blob("selected-environment.json", canonical_json(environment()))
-    infra_selected = (f.blob("selected-headless.json", canonical_json(headless_environment()))
+    infra_selected = (f.blob("selected-headless.json", canonical_json(headless_environment(fixture_variant)))
                       if fixture_variant in MIXED_VARIANTS else None)
     selection = {
         "schema_version": 2, "kind": "datum.workflow-delivery.environments",

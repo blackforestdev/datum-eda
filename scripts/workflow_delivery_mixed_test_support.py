@@ -9,13 +9,22 @@ from workflow_delivery_test_support import Fixture
 from workflow_delivery_tree import Tree
 
 
-def headless_environment():
-    return {"schema_version": 2, "kind": "headless", "os": "fixture-linux",
+def headless_environment(variant=None):
+    value = {"schema_version": 2, "kind": "headless", "os": "fixture-linux",
             "toolchain": "fixture-python", "transport": "pipes", "terminal_size": None,
             "input_method": "synthetic fixture pipes", "reproduction_commands": ["synthetic fixture run"],
             "tools": [{"name": name, "path": "/nonexistent/fixture-" + name,
                        "sha256": sha256(b"fixture interpreter"), "version": "synthetic fixture version"}
                       for name in ("interpreter", "git")]}
+    if variant == "INFRA-S06-13.toolchain":
+        value["toolchain"] = "synthetic mismatched toolchain"
+    elif variant == "INFRA-S06-13.interpreter":
+        value["tools"][0]["sha256"] = sha256(b"different synthetic interpreter")
+    elif variant == "INFRA-S06-14.pipes-dimensions":
+        value["terminal_size"] = [80, 24]
+    elif variant == "INFRA-S06-14.pty-dimensions":
+        value["transport"] = "pty"
+    return value
 
 
 class InfrastructureView:
@@ -39,11 +48,11 @@ class InfrastructureView:
         self.fixture.stage()
 
 
-def add_infrastructure(f):
+def add_infrastructure(f, variant=None):
     view = InfrastructureView(f)
     f.save("infra-contract.json", view.contract)
     proof, _, _, _ = typed_proof(view, "infra-producer")
-    proof["environment"] = view.blob("headless.json", canonical_json(headless_environment()))
+    proof["environment"] = view.blob("headless.json", canonical_json(headless_environment(variant)))
     f.save(view.contract["proof_path"], proof)
     manifest = Tree(f.root).json("specs/active_frontier.json")
     item = deepcopy(manifest["frontier"][0])

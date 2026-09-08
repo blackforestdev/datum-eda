@@ -12,7 +12,13 @@ FIXTURE_VARIANTS = {
 }
 MIXED_VARIANT = "INFRA-S06-08.mixed"
 SWAPPED_VARIANT = "INFRA-S06-10.swapped"
-MIXED_VARIANTS = {MIXED_VARIANT, SWAPPED_VARIANT}
+HEADLESS_VARIANTS = {
+    "INFRA-S06-13.toolchain": ("environment.toolchain", "environment/build toolchain mismatch"),
+    "INFRA-S06-13.interpreter": ("environment.tools.interpreter", "observed interpreter differs from build receipt binary"),
+    "INFRA-S06-14.pipes-dimensions": ("environment.terminal_size", "pipes have no terminal dimensions"),
+    "INFRA-S06-14.pty-dimensions": ("environment.terminal_size", "PTY requires observed positive columns/rows"),
+}
+MIXED_VARIANTS = {MIXED_VARIANT, SWAPPED_VARIANT} | set(HEADLESS_VARIANTS)
 PREPARED_VARIANTS = set(FIXTURE_VARIANTS) | MIXED_VARIANTS
 
 
