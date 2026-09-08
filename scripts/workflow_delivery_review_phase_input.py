@@ -11,9 +11,18 @@ from workflow_delivery_proof import packet_sha256
 from workflow_delivery_tree import Tree
 
 REVIEW_PHASE_CASES = {
+    "INFRA-S04-01.skipped-review": ("TASK", "WDQ-TRANSITION", "checkpoints must follow dependency order"),
+    "INFRA-S04-01.missing-record": ("docs/reviews/review.json", "WDQ-ARTIFACT", "required artifact is not in candidate Git tree"),
     "INFRA-S04-07.owner-pending": (None, None, None),
     "INFRA-S04-12.infrastructure-review": (None, None, None),
 }
+
+
+def review_phase_expectation(variant, surface):
+    path, code, detail = REVIEW_PHASE_CASES[variant]
+    if variant.endswith(".missing-record") and surface in ("C", "H"):
+        code = "WDQ-INDEX"
+    return path, code, detail
 
 
 def prepare_review_phase(f, manifest, policy, variant):
@@ -54,7 +63,15 @@ def prepare_review_phase(f, manifest, policy, variant):
         review["packet_sha256"] = packet_sha256(f.contract, proof, authority_sha256(tree, f.contract))
     else:
         review["findings"] = [{"issue_id": "dat-next", "severity": "blocking", "disposition_ref": None}]
+    if variant.endswith(".skipped-review"):
+        review_step.update(status="pending", completion_evidence=[])
+        completion["steps"][-1]["depends_on"] = ["V"]
     next(row for row in policy["coverage"]["rows"] if row["frontier_key"] == "TASK")["category"] = category
     f.save(f.contract["review_path"], review)
+    if variant.endswith(".missing-record"):
+        # Omit only this just-created synthetic input. Its older fixture history
+        # remains retained, but cannot substitute for the selected tree's record.
+        (f.root / f.contract["review_path"]).unlink()
+        f.git("add", "--", f.contract["review_path"])
     f.save("specs/active_frontier.json", manifest)
     f.write("specs/PROGRESS.md", render_block(manifest).encode())

@@ -15,6 +15,7 @@ from workflow_delivery_interruption_case import INTERRUPTION_CASE, evaluate_inte
 from workflow_delivery_environment_cases import case_uses_prepared_input
 from workflow_delivery_coverage_input import BOUNDARY_CASES, COVERAGE_INPUT_CASES, coverage_expectation, mutate_external_boundary
 from workflow_delivery_review_input import PROOF_INPUT_CASES, proof_expectation
+from workflow_delivery_review_phase_input import REVIEW_PHASE_CASES, review_phase_expectation
 
 
 def run_case(packet, destination, runtime_root, environment, *, case_id, surface):
@@ -35,6 +36,8 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
         target, expected, detail = coverage_expectation(case_id, surface)
     if case_id in PROOF_INPUT_CASES:
         target, expected, detail = proof_expectation(case_id, surface)
+    if case_id in REVIEW_PHASE_CASES:
+        target, expected, detail = review_phase_expectation(case_id, surface)
     mutation = {"case_id": case_id, "path": target, "before_sha256": None, "after_hex": None,
                 "prepared_fixture_variant": recipe.get("fixture_variant")}
     if case_id in BOUNDARY_CASES:
