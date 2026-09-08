@@ -8,6 +8,7 @@ from workflow_delivery_capture_command import capture_command, save
 from workflow_delivery_capture_fixture import restore_fixture
 from workflow_delivery_capture_state import git
 from workflow_delivery_capture_history import BASE_CASES, HISTORY_CASES, prepare_base_input, prepare_history
+from workflow_delivery_capture_history import CURRENT_HISTORY_CASE, prepare_current_history
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES, prepare_snapshots, snapshot_expectation
 from workflow_delivery_capture_mutations import CASES, changed_bytes, expected_detail
 from workflow_delivery_io import sha256
@@ -23,6 +24,8 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
         raise ValueError("only explicitly implemented case/surface combinations may run")
     if case_id in (HISTORY_CASES | BASE_CASES) and surface != "R":
         raise ValueError("history certification requires exact-candidate surface R")
+    if case_id == CURRENT_HISTORY_CASE and surface == "R":
+        raise ValueError("current transaction success is not history certification")
     if case_id in SNAPSHOT_CASES:
         snapshot_expectation(case_id, surface)
     destination, runtime_root = Path(destination).resolve(), Path(runtime_root).resolve(strict=True)
@@ -48,6 +51,8 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
     elif case_id in SNAPSHOT_CASES:
         mutation = prepare_snapshots(root, case_id)
         target, expected, detail = snapshot_expectation(case_id, surface)
+    elif case_id == CURRENT_HISTORY_CASE:
+        mutation = prepare_current_history(root, recipe["head"], destination / "history.bundle")
     elif case_id in BASE_CASES:
         mutation = prepare_base_input(root, case_id, recipe["head"], destination / "history.bundle")
     elif case_id in HISTORY_CASES:

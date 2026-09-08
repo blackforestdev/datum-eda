@@ -11,6 +11,7 @@ from workflow_delivery_capture_command import capture_command, save
 from workflow_delivery_capture_fixture import restore_fixture
 from workflow_delivery_capture_mutations import CASES, changed_bytes, expected_detail
 from workflow_delivery_capture_history import BASE_CASES, HISTORY_CASES
+from workflow_delivery_capture_history import CURRENT_HISTORY_CASE, prepare_current_history
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES, prepare_snapshots, snapshot_expectation
 from workflow_delivery_capture_state import git
 from workflow_delivery_io import parse_json, sha256
@@ -99,6 +100,8 @@ def run_hook_case(packet, destination, environment, *, case_id):
         mutation = mutate_external_boundary(root, case_id)
     elif case_id in SNAPSHOT_CASES:
         mutation = prepare_snapshots(root, case_id)
+    elif case_id == CURRENT_HISTORY_CASE:
+        mutation = prepare_current_history(root, authority, destination / "history.bundle")
     elif target and not prepared_input:
         path = root / target
         raw = path.read_bytes() if path.exists() else None

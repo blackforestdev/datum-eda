@@ -14,6 +14,13 @@ BASE_CASES = {
     "INFRA-S05-04.missing-base": ("git", "WDQ-TRUST", "Needed a single revision"),
     "INFRA-S05-04.nonancestor-base": ("transaction", "WDQ-COVERAGE", "candidate must descend from the explicit transaction base"),
 }
+CURRENT_HISTORY_CASE = "INFRA-S05-09.empty-current-transaction"
+
+
+def prepare_current_history(root, base, archive):
+    result = prepare_history(root, "INFRA-S05-07.add-delete", base, archive)
+    result.update(case_id=CURRENT_HISTORY_CASE, history_certified=False)
+    return result
 
 
 def prepare_base_input(root, case_id, base, archive):
