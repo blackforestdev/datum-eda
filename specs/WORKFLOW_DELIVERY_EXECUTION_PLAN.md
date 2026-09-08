@@ -621,3 +621,36 @@ category-only preflight, not full policy/contract or native verification.
 selected; installed PM041 trust, Preferences and every unrelated Frontier item
 are untouched. Adding complete pending requirements does not complete a product
 or satisfy the later native adoption cohorts.
+
+### WDQ-I02 — collaboration research/ratification plan and clause inventory
+
+The actual DISTRIBUTED-COLLAB-SPEC record now has five pending steps: primary-
+source research and constraints, complete architecture/decision authorship,
+independent specification review, exact numbered owner ratification, and governed
+handoff. `specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md` preserves the
+original offline/air-gap/high-latency and semantic collaboration obligations from
+the bead and PM007/PM001. It does not choose a revision system, concurrency or
+synchronization mechanism, security architecture or central service. Existing
+single-writer safety and canonical mutation authority remain unchanged.
+
+`docs/reviews/workflow-delivery-rollout/clauses/distributed-collaboration.json`
+prepares 15 distinct research, authority, atomicity, mechanism, review and handoff
+clauses in the existing candidate format. Durable, live, conflict/writer,
+security/exchange and release mechanism clauses require owner disposition;
+the ratification clause requires the exact numbered decision. No output matrix
+or ratification evidence is invented. The inventory is not installed policy.
+
+Five new completion/inventory tests and all 50 project-status tests pass. Actual
+candidate `2a85005c` validates the 15-clause inventory and pending specification
+without future output artifacts. Its 56-item category preflight now leaves only
+marking-menu and adopted-drafting-standard missing plans, plus the workflow's
+still-uninstalled delivery declaration. These are structural preparation checks,
+not completed research, full policy readiness or native collaboration proof.
+
+The collaboration bead's acceptance IDs match the new plan; its original
+planned/planning state, closed documentation prerequisite, owner and sequence
+remain unchanged. Descriptive successor prose is preserved in the handoff while
+the machine unblocks list reflects that no open implementation successor exists.
+`dat-wdq-missing-plans-b8y` remains open for the two remaining plans. WDQ-I02,
+Preferences, installed trust and all future execution/acceptance boundaries
+remain unchanged.

@@ -7,6 +7,7 @@
     "docs/gui/*.md"
   ],
   "tracked_docs": [
+    "docs/reviews/workflow-delivery-rollout/clauses/distributed-collaboration.json",
     "docs/reviews/workflow-delivery-rollout/category-preflight.json",
     "specs/workflow_delivery/rollout.contract.json",
     "docs/reviews/workflow-delivery-rollout/rollout-mapping.json",
@@ -53,6 +54,16 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md": {
+      "class": "governed",
+      "progress_anchor": "DISTRIBUTED-COLLAB-SPEC",
+      "notes": "WDQ-I02 repairs the missing pending research/specification plan without choosing a collaboration mechanism or authorizing implementation. Independent specification review and exact numbered owner ratification precede governance handoff."
+    },
+    "docs/reviews/workflow-delivery-rollout/clauses/distributed-collaboration.json": {
+      "class": "governed",
+      "progress_anchor": "DISTRIBUTED-COLLAB-SPEC",
+      "notes": "Prepared 15-clause PM042 inventory for the complete pending collaboration plan. Mechanism choices require owner disposition; no completed output matrix, ratification or installed policy is asserted."
+    },
     "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md": {
       "class": "governed",
       "progress_anchor": "GUI-P2-CROSSPROBE",
