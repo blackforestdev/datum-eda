@@ -9655,8 +9655,8 @@
         "harness": "codex-cli",
         "session": "codex-wdq-rollout-implementation-20260908",
         "claimed_at": "2026-09-08T06:39:04Z",
-        "heartbeat_at": "2026-09-08T06:39:04Z",
-        "expires_at": "2026-09-08T14:39:04Z",
+        "heartbeat_at": "2026-09-08T14:53:13Z",
+        "expires_at": "2026-09-08T22:53:13Z",
         "scope": [
           "WDQ-R03 approved workflow implementation only: coverage, independent-review transitions, candidate preparation and tests in the repository-local isolated candidate workflow. Preserve installed trust until exact promotion; no product implementation, GP-CM05V takeover, prototype edit, dependency or product acceptance."
         ],
@@ -9671,6 +9671,17 @@
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
         "canonical_next_step_id": "WDQ-I02",
+        "delivery": {
+          "schema_version": 2,
+          "contract_path": "specs/workflow_delivery/rollout.contract.json",
+          "checkpoints": {
+            "ready": "WDQ-READY",
+            "activate": null,
+            "verify": "WDQ-I03",
+            "review": "WDQ-REVIEW",
+            "accept": null
+          }
+        },
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
