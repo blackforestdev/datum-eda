@@ -117,3 +117,21 @@ source-scope authorization against synchronized live claims, production changed-
 path enforcement and selector/staged-CLI integration still require implementation
 and negative verification. The candidate modules are not yet called by those
 production entry points; their passing helper tests cannot establish enforcement.
+
+### WDQ-I01 source-scope candidate increment
+
+Candidate: `d7f7c972f6c0ae4e6f718f81673ec6523dd95dca`, parent `f91b939ec43df72277a022e5af9b4afed56255da`.
+Retained under `refs/datum/workflow-delivery-candidates/d7f7c972f6c0ae4e6f718f81673ec6523dd95dca`.
+Exact increment: `docs/reviews/workflow-delivery-rollout/i01-source-scopes.patch`.
+The candidate adds explicit transaction-path authorization against promoted
+scope, selected execution step, synchronized tracker/Frontier claim and required
+enrollment. It reuses PM025 claim validation; prefix lookalikes and external-lane
+path escapes do not inherit permission. Seven new tests cover these refusals.
+All 142 WDQ tests pass; the focused seven tests pass again after path-sequence
+shape hardening; candidate source health passes 1815 files.
+
+Still incomplete: trusted transaction-diff capture, category-specific readiness/
+specification checks and production selector/CLI wiring. The helper expects
+promoted permissions and full candidate validation from its caller; it does not
+establish their trust or assert native proof. WDQ-I01 stays in progress, and
+main's installed gate/policy/trust and product ownership remain unchanged.

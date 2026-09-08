@@ -1,0 +1,173 @@
+diff --git a/scripts/test_workflow_delivery_source_scopes.py b/scripts/test_workflow_delivery_source_scopes.py
+new file mode 100644
+index 00000000..ee41bd8f
+--- /dev/null
++++ b/scripts/test_workflow_delivery_source_scopes.py
+@@ -0,0 +1,88 @@
++"""Permission tests; transaction diff capture and entry-point wiring are separate."""
++
++from datetime import datetime, timezone
++import unittest
++
++from workflow_delivery_io import DeliveryInputError
++from workflow_delivery_source_scopes import authorize_source_paths
++
++
++class SourceScopesTest(unittest.TestCase):
++    def setUp(self):
++        ref = {"path": "docs/authority.md", "marker": "scope"}
++        self.coverage = {"baseline_ref": "a" * 40, "production_roots": ["src"],
++                         "new_item_rule": "classification_required",
++                         "rows": [{"frontier_key": "TASK", "issue_id": "dat-task",
++                                   "category": "product", "boundary_ref": ref,
++                                   "external_handoff_ref": None}],
++                         "source_scopes": [{"frontier_key": "TASK", "step_ids": ["I01"],
++                                            "paths": ["src/owned"], "boundary_ref": ref}]}
++        self.item = {"key": "TASK", "issue_id": "dat-task", "state": "in_progress",
++                     "authorization": "execution", "claim": {
++                         "agent": "codex", "harness": "codex-cli", "session": "test",
++                         "worktree": "fixture", "head": "a" * 40, "scope": ["src/owned"],
++                         "claimed_at": "2026-09-08T01:00:00Z",
++                         "heartbeat_at": "2026-09-08T01:00:00Z",
++                         "expires_at": "2026-09-08T09:00:00Z"},
++                     "completion": {"canonical_next_step_id": "I01", "delivery": {},
++                                    "steps": [{"id": "I01", "kind": "execution",
++                                               "status": "in_progress"}]}}
++        self.manifest = {"frontier": [self.item], "claim_ttl_hours": 8}
++        self.issues = {"dat-task": {"status": "in_progress", "assignee": "codex"}}
++        self.enrolled = {"TASK": {}}
++        self.now = datetime(2026, 9, 8, 2, tzinfo=timezone.utc)
++
++    def check(self, paths=("src/owned/a.py",)):
++        return authorize_source_paths(paths, self.coverage, self.manifest,
++                                      self.issues, self.enrolled, now=self.now)
++
++    def test_exact_active_scope_allows_and_unrelated_docs_need_no_permission(self):
++        self.assertEqual([{"path": "src/owned/a.py", "authorized_lanes": ["TASK"]}], self.check())
++        self.assertEqual([], self.check(["docs/note.md"]))
++
++    def test_prefix_lookalike_is_not_owned(self):
++        with self.assertRaises(DeliveryInputError):
++            self.check(["src/owned_elsewhere/a.py"])
++
++    def test_missing_or_expired_claim_refuses(self):
++        self.item["claim"]["expires_at"] = "2026-09-08T01:30:00Z"
++        with self.assertRaises(DeliveryInputError):
++            self.check()
++        del self.item["claim"]
++        with self.assertRaises(DeliveryInputError):
++            self.check()
++
++    def test_tracker_mismatch_refuses(self):
++        self.issues["dat-task"]["assignee"] = "different-session"
++        with self.assertRaises(DeliveryInputError):
++            self.check()
++
++    def test_pending_label_and_planning_authorization_refuse(self):
++        self.item["completion"]["steps"][0]["status"] = "pending"
++        with self.assertRaises(DeliveryInputError):
++            self.check()
++        self.item["completion"]["steps"][0]["status"] = "in_progress"
++        self.item["authorization"] = "planning"
++        with self.assertRaises(DeliveryInputError):
++            self.check()
++
++    def test_unenrolled_product_or_missing_declaration_refuses(self):
++        self.enrolled.clear()
++        with self.assertRaises(DeliveryInputError):
++            self.check()
++        self.enrolled["TASK"] = {}
++        del self.item["completion"]["delivery"]
++        with self.assertRaises(DeliveryInputError):
++            self.check()
++
++    def test_external_handoff_does_not_grant_paths_outside_scope(self):
++        row = self.coverage["rows"][0]
++        row.update(category="external_lane", external_handoff_ref=row["boundary_ref"])
++        self.enrolled.clear()
++        self.check()
++        with self.assertRaises(DeliveryInputError):
++            self.check(["src/somebody_else.py"])
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/scripts/workflow_delivery_source_scopes.py b/scripts/workflow_delivery_source_scopes.py
+new file mode 100644
+index 00000000..c901c6b3
+--- /dev/null
++++ b/scripts/workflow_delivery_source_scopes.py
+@@ -0,0 +1,73 @@
++"""Authorize transaction paths against promoted scopes and PM025 claims.
++
++The production caller supplies the exact transaction diff, promoted coverage
++and enrollment, and the same candidate manifest/tracker view. This helper never
++infers changed paths from candidate labels or treats a scope as product proof.
++"""
++
++from datetime import datetime, timezone
++
++from workflow_delivery_coverage import index_items
++from workflow_delivery_coverage_shapes import coverage_shape
++from workflow_delivery_io import normalized_path
++from workflow_delivery_shapes import require
++
++
++def contains(roots, path):
++    return any(path == root or path.startswith(root + "/") for root in roots)
++
++
++def authorize_source_paths(changed_paths, coverage, manifest, issues, enrolled, *, now=None):
++    # Reuse the controlling claim validator; do not create a second lease model.
++    from project_status import validate_claim
++
++    require(type(changed_paths) in (list, tuple), "changed_paths",
++            "explicit transaction path sequence required", "WDQ-COVERAGE")
++    for path in changed_paths:
++        normalized_path(path)
++    coverage_shape(coverage)
++    items = index_items(manifest)
++    rows = {r["frontier_key"]: r for r in coverage["rows"]}
++    require(set(rows) == set(items), "coverage", "classification mismatch", "WDQ-COVERAGE")
++    moment = now or datetime.now(timezone.utc)
++    ttl = manifest.get("claim_ttl_hours")
++    require(type(ttl) is int and ttl > 0, "claim_ttl_hours",
++            "positive PM025 claim TTL required", "WDQ-COVERAGE")
++    granted = []
++    for scope in coverage["source_scopes"]:
++        key = scope["frontier_key"]
++        item = items[key]
++        row = rows[key]
++        issue = issues.get(item.get("issue_id"), {})
++        selected = item.get("completion", {}).get("canonical_next_step_id")
++        steps = item.get("completion", {}).get("steps", [])
++        step = next((s for s in steps if s.get("id") == selected), {})
++        if not (row["issue_id"] == item.get("issue_id") and
++                row["category"] in ("product", "infrastructure", "external_lane") and
++                item.get("state") == "in_progress" and
++                item.get("authorization") == "execution" and
++                issue.get("status") == "in_progress" and
++                selected in scope["step_ids"] and step.get("kind") == "execution" and
++                step.get("status") == "in_progress"):
++            continue
++        failures = []
++        validate_claim(item, issue, ttl, moment, failures)
++        if failures:
++            continue
++        if row["category"] != "external_lane":
++            if key not in enrolled or "delivery" not in item.get("completion", {}):
++                continue
++        # External permission is bounded by its promoted scope/reference, not
++        # an exemption for any code written by a named session.
++        granted.append(scope)
++    checked = []
++    for path in sorted(set(changed_paths)):
++        normalized_path(path)
++        if not contains(coverage["production_roots"], path):
++            continue
++        permitted = [s["frontier_key"] for s in granted if contains(s["paths"], path)]
++        require(bool(permitted), path,
++                "production change has no promoted scope with synchronized live "
++                "execution claim and required enrollment", "WDQ-COVERAGE")
++        checked.append({"path": path, "authorized_lanes": sorted(set(permitted))})
++    return checked
