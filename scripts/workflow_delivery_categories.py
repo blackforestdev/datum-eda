@@ -17,7 +17,7 @@ def validate_categories(items, coverage, enrolled, authority):
             s.get("kind") == "execution" and s.get("status") in ("in_progress", "complete")
             for s in steps)
         if category == "deferred":
-            require(item.get("state") == "deferred" and
+            require(item.get("state") == promoted.get(key, {}).get("state") and
                     item.get("authorization") == "none" and not item.get("claim")
                     and not executing, key, "deferred work requires reclassification before execution",
                     "WDQ-COVERAGE")

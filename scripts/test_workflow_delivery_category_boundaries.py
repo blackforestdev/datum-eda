@@ -162,6 +162,14 @@ class DeferredBoundaryTest(unittest.TestCase):
         code, report = self.e.h.cli()
         self.assertEqual(0, code, report)
 
+    def test_deferred_classification_preserves_planned_none_placeholder(self):
+        self.cold["state"] = "planned"
+        self.issue.update(status="open", labels=["roadmap:frontier"])
+        self.e.promote()
+        code, report = self.e.h.cli()
+        self.assertEqual(0, code, report)
+        self.assertEqual([], selector_failures(self.e.f.root, self.e.m))
+
     def test_dormant_item_cannot_reactivate_under_old_classification(self):
         self.cold.update(state="ready", authorization="execution")
         self.issue["status"] = "open"
