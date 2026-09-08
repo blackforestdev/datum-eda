@@ -654,3 +654,37 @@ the machine unblocks list reflects that no open implementation successor exists.
 `dat-wdq-missing-plans-b8y` remains open for the two remaining plans. WDQ-I02,
 Preferences, installed trust and all future execution/acceptance boundaries
 remain unchanged.
+
+### WDQ-I02 — inert marking-menu plan and status-authority correction
+
+`specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md` adds the missing six
+pending GUI-MARKING-MENU checkpoints: complete shell readiness, owner execution
+authorization, inert implementation, native proof, independent replay and exact
+owner acceptance. The actual Frontier and bead now carry those IDs. The original
+specified/planning state and task order are unchanged; unblocks is normalized to
+the existing GUI-WRITE-PATH dependent ID without authorizing that successor.
+
+Complete context-menu research and both historical HTML studies, content/design
+specifications and parametric tooling were reviewed. The plan explicitly refuses
+to treat retired studies as current construction approval and sends unresolved
+hierarchy/cardinal/interaction choices to the owning review. Actual normal shell
+navigation must work, but no operation is invoked and intentionally disabled
+EDA leaves are not claimed as delivered capabilities. No prototype was edited.
+
+This review also found an error in the recently authored Phase 2 plan: its older
+P2.4 global status-bar wording did not explicitly preserve the current design's
+deferred owner boundary. The workflow-owned correction retains complete Sheet/
+Grid/ERC information but requires the approved field/owner/location map, forbids
+unratified material bar changes and exposes STATUS_AUTHORITY before AUTHORIZE in
+the inspector owner packet. `dat-wdq-status-authority-kld` tracks this correction;
+the actual deferred `dat-application-status-bar-decision-qcz` stays untouched.
+This is not a decision to retain/remove the bar or to drop required feedback.
+
+Five marking-menu tests, eight Phase 2 tests and all 50 project-status tests pass.
+Actual candidate `2a85005c` category preflight over the 56 current records now
+leaves only the adopted-drafting-standard missing plan and this workflow's
+uninstalled delivery declaration. These are preparation checks, not actual native
+shell proof, full enrollment readiness, operation capability or owner acceptance.
+`dat-wdq-missing-plans-b8y` remains open for the final missing plan. WDQ-I02 and
+all product execution/acceptance boundaries, especially Preferences, remain open
+and unchanged.

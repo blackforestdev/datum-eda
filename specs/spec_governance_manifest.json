@@ -54,6 +54,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md": {
+      "class": "governed",
+      "progress_anchor": "GUI-MARKING-MENU",
+      "notes": "WDQ-I02 pending inert-shell readiness, owner authorization, implementation, native proof, independent review and acceptance plan. Historical HTML studies are not current construction approval; no operation invocation or completed EDA menu capability is authorized."
+    },
     "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md": {
       "class": "governed",
       "progress_anchor": "DISTRIBUTED-COLLAB-SPEC",
