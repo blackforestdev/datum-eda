@@ -2,6 +2,18 @@
   "description": "Machine-checked routes from every tracked research report and GUI prototype to the governed specifications and decisions that consume it. reviewed_digest covers both sources and consumers so modifying either side requires an explicit cross-review.",
   "routes": [
     {
+      "id": "workflow-delivery-infrastructure",
+      "status": "in_progress",
+      "sources": ["research/process-quality/WORKFLOW_INFRASTRUCTURE_CONTRACT_BASIS.md"],
+      "consumers": [
+        "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+        "specs/workflow_delivery/rollout.contract.json",
+        "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md"
+      ],
+      "reviewed_digest": "d7cc56cc7fe8a2892f1ca6925d601e8fd8d84cf5b65ba34d82a753151c06a824",
+      "review_note": "WDQ-I02 owning-lane review binds the complete local source, real validator consumers, six success/refusal scenario groups, explicit candidate input inventory and activation-conditional PM042 text. Progress and future proof/review/owner receipts are deliberately outside their own authority closure. Actual assembled-candidate readiness, producer evidence, independent replay, hook/promotion verification, owner activation and native adoption remain due. No synthetic fixture events or passing consistency tests establish those outcomes."
+    },
+    {
       "id": "workflow-delivery-quality",
       "status": "integrated",
       "sources": [
@@ -37,8 +49,8 @@
       "status": "in_progress",
       "sources": ["research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md"],
       "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md", "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md", "docs/reviews/workflow-delivery-rollout/proposal.json", "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md", "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md", "docs/reviews/workflow-delivery-rollout/rollout-mapping.json"],
-      "reviewed_digest": "e15fefb5c13a99bdb14876ecf4765f850d7192a9ee7da026f6b07234b7ee2584",
-      "review_note": "WDQ-I02 review reconciles the source and all seven consumers with the explicit pending WDQ-READY/WDQ-REVIEW refinement and exact non-operative rollout mapping. All original I3 obligations still precede I04; I01/I02 remain preparation and no evidence is fabricated. Six mapping tests and the actual candidate shape check pass; all 55 other Frontier items are unchanged. PM042 is still unratified. Actual contracts/readiness, coverage/enrollment, producer and independent proof, owner promotion and adoption remain outstanding. Preserve exact R02 artifacts, PM041, product owners and installed trust."
+    "reviewed_digest": "dd2929e5f2069b1f205d002747fe03af4a49a9fa1e54bf2228996cb890191c88",
+    "review_note": "WDQ-I02 review reconciles the complete source and seven consumers with the prepared infrastructure contract and its separate stable technical route. PM042 is activation-conditional and still unratified: future owner receipts remain outside their own proof authority. All original I3 obligations precede I04; the READY/REVIEW mapping remains non-operative and I02 stays selected. Actual assembled-candidate readiness, product contracts, coverage/enrollment, producer and independent proof, owner promotion and adoption remain outstanding. Preserve exact R02 artifacts, PM041, all product owners and installed trust."
     },
     {
       "id": "research-governance-index",

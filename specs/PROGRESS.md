@@ -186,7 +186,7 @@
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
 - **Implement broader workflow delivery enforcement and measured adoption** (`WORKFLOW-DELIVERY-IMPLEMENTATION`; `dat-wdq-rollout-implementation-ffy`).
    Owner-authorized full workflow rollout: implement and activate real-roadmap tripwires, then verify three genuine adoption cohorts without taking over product owners or treating installation as completion. *state `in_progress`; authorization `execution`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md`, `specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md`, `specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md`.
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md`, `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json`, `specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md`, `specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ## WORKFLOW-DELIVERY-QUALITY — workflow evidence and readiness adoption

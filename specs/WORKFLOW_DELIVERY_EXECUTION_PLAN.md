@@ -504,3 +504,42 @@ Actual contract preparation, product coverage/enrollment candidates and the
 remaining transition audit still belong to I02. READY, producer verification,
 independent review, owner activation and three genuine adoption outcomes remain
 unfulfilled; adding the steps does not satisfy their requirements.
+
+### WDQ-I02 — prepared infrastructure consumer contract
+
+The mapping destination now exists as
+`specs/workflow_delivery/rollout.contract.json`, governed by
+`specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`. It binds actual staged CLI,
+exact-candidate CLI and project-status selector functions to six complete
+success/refusal scenario groups. CAD foundations are not answered by renaming
+infrastructure IDs or tests; the bounded nonmutation, recovery and trust-scope
+requirements are explicit. The candidate-source inventory must be reconciled
+against the assembled candidate and actual fixture/producer inputs at WDQ-READY.
+
+The new `workflow-delivery-infrastructure` route binds its local evidence review,
+technical specification, machine contract and PM042. Operational progress and
+future proof/review/owner receipts are outside that authority closure, preventing
+the result from rewriting its own requirements. PM042 now states its conditional
+authority without embedding a future acceptance receipt. It remains unratified;
+normative changes still invalidate both owning routes and any dependent proof.
+
+This is contract preparation only. The live policy, runner, hook, local trust,
+Preferences item and product owners are unchanged. The new contract is not
+attached as operative enrollment. I02 still owes the complete product/coverage/
+enrollment candidates and transition audit; READY and all subsequent checkpoints
+remain incomplete. Real hook/promotion proof and three native adoption cohorts
+are not reduced to these read-only validator scenarios.
+
+Verification: all 21 rollout tests (including ten new contract/authority tests)
+and all 50 project-status tests pass. Candidate `a5f3d219` validates the prepared
+contract, real handler files, reviewed authority and exact mapping shape; all 69
+listed candidate input files exist. This is not complete input-closure review
+or a readiness/proof run. Evidence traceability passes 24 routes/118 artifacts,
+spec governance passes 219 classified documents, source health passes 1812 files,
+and project state/projection pass with 56 items. All 55 other Frontier items and
+this task's claim, lifecycle and completion steps are unchanged.
+
+The existing parity gate initially refused the added contract because its
+filename inventory still contained only the pilot. The owning-lane change
+updates only that inventory's count/digest and explanatory notes; all 16 parity
+inventories then pass. No accepted pilot authority or proof digest was refreshed.

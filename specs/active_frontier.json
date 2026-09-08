@@ -8872,6 +8872,8 @@
       "issue_id": "dat-wdq-rollout-implementation-ffy",
       "governing_docs": [
         "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+        "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+        "specs/workflow_delivery/rollout.contract.json",
         "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md",
         "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md"
       ],

@@ -1,13 +1,16 @@
 # Product Mechanics 042: broader workflow delivery enforcement
 
-Status: **proposed amendment; not ratified and not installed**.
+Status: **activation-conditional amendment text; this file is not an approval**.
 Prepared under WORKFLOW-DELIVERY-IMPLEMENTATION / WDQ-I02.
 Issue: `dat-wdq-rollout-implementation-ffy`.
-Owning evidence route: `workflow-delivery-rollout`.
+Evidence routes: `workflow-delivery-rollout` and `workflow-delivery-infrastructure`.
 Owner boundary: WDQ-I04, after independent review of the exact complete packet.
 
 WDQ-R03 authorized implementation and preparation, not adoption of this unseen
-amendment. PM041 and its currently owner-selected runner remain controlling.
+amendment. Until exact WDQ-I04 ratification and activation, PM041 and its
+owner-selected runner remain controlling. Whether that act has occurred must
+be established from the external owner-selected authority and its disposition,
+not inferred from this document's existence or wording.
 This document supplies no product acceptance, dependency permission, or authority
 to change the active Preferences task. It does not alter the portable workflow
 inventory at `datum://workflows`.
@@ -181,8 +184,13 @@ adoption cohorts with evidence-linked gap, refusal, rework, handoff, owner
 correction and unresolved-defect measurements. Do not invent a baseline or count
 future task names, hermetic fixtures or this amendment as completed adoption.
 
-## Ratification record
+## Ratification evidence boundary
 
-None. WDQ-I04 must review the final complete amendment and exact activation
-packet after WDQ-I03 producer proof and WDQ-REVIEW independent verification. The planned decision number is
-not an approval, and this document is not controlling doctrine before that act.
+WDQ-I04 must review the final complete amendment and exact activation packet
+after WDQ-I03 producer proof and WDQ-REVIEW independent verification. Record
+the owner disposition in the operational activation packet, outside the
+infrastructure contract's own authority closure. Pin this exact normative text
+in that packet; do not rewrite it to embed its own proof or acceptance receipt.
+The planned decision number is not approval and this text is not controlling
+doctrine before that act. A later normative amendment requires fresh review
+and proof; separating receipts does not excuse changed requirements.

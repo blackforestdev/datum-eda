@@ -1,0 +1,909 @@
+{
+  "schema_version": 1,
+  "id": "datum-workflow-validator-rollout",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "category": "infrastructure",
+  "consuming_workflow": "Contributors validate staged work, exact proposed candidates and current roadmap delivery status through the real read-only CLI and project-status selector.",
+  "intent": "Reject unauthorized or unsupported delivery transitions with usable diagnostics, exact snapshot identity and no automatic repair or acceptance.",
+  "scope": "Read-only validator entry points and their complete success/refusal matrix in isolated infrastructure fixtures. Prepared candidate contract; actual readiness, enrollment, independent proof and activation remain separate.",
+  "exclusions": "No native EDA acceptance, Preferences takeover, prototype change or dependency. Real owner-hook and promotion-tooling verification remain additional I03/WDQ-REVIEW obligations; installed activation and three native adoption cohorts are not satisfied by this contract.",
+  "authority_refs": [
+    {
+      "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+      "marker": "<!-- WDQ-INFRA-SCOPE -->"
+    },
+    {
+      "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+      "marker": "<!-- WDQ-INFRA-LIMITS -->"
+    }
+  ],
+  "route_ids": [
+    "workflow-delivery-infrastructure"
+  ],
+  "foundation_answers": {
+    "units_precision": {
+      "disposition": "not_applicable",
+      "reason": "No CAD geometry or unit conversion; control IDs and hashes are not CAD precision.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    "numeric_entry": {
+      "disposition": "not_applicable",
+      "reason": "No CAD numeric entry; malformed control values are separately tested as validation inputs.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    "selection_identity": {
+      "disposition": "not_applicable",
+      "reason": "No CAD selection or stable design subject; Frontier identity is control authority, not product selection.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    "grid_snap": {
+      "disposition": "not_applicable",
+      "reason": "No authored or snapped coordinate, grid setting or editor consumer.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    "undo_cancel": {
+      "disposition": "required",
+      "reason": "Refusal and interruption preserve state; no design undo capability is claimed.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    "persistence_recovery": {
+      "disposition": "required",
+      "reason": "Protected source/index/refs/trust survive refusal and interruption; a fresh invocation succeeds. No native Save claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    "library_connectivity": {
+      "disposition": "not_applicable",
+      "reason": "No authored library binding, net or connectivity model.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    "settings_scope": {
+      "disposition": "required",
+      "reason": "Read only explicitly selected repository-local trust and requested snapshot; no Global Preferences acceptance.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    }
+  },
+  "open_decisions": [],
+  "input_roots": [
+    ".github/workflows/alignment.yml",
+    "scripts/check_evidence_traceability.py",
+    "scripts/check_workflow_delivery.py",
+    "scripts/git-hooks/pre-commit",
+    "scripts/project_status.py",
+    "scripts/project_task_details.py",
+    "scripts/run_drift_gates.sh",
+    "scripts/test_project_status.py",
+    "scripts/test_workflow_delivery_category_boundaries.py",
+    "scripts/test_workflow_delivery_cli.py",
+    "scripts/test_workflow_delivery_contract.py",
+    "scripts/test_workflow_delivery_coverage.py",
+    "scripts/test_workflow_delivery_coverage_entrypoints.py",
+    "scripts/test_workflow_delivery_enabled.py",
+    "scripts/test_workflow_delivery_hook.py",
+    "scripts/test_workflow_delivery_independent_review.py",
+    "scripts/test_workflow_delivery_io.py",
+    "scripts/test_workflow_delivery_native.py",
+    "scripts/test_workflow_delivery_pilot_capture.py",
+    "scripts/test_workflow_delivery_pilot_package.py",
+    "scripts/test_workflow_delivery_prepare.py",
+    "scripts/test_workflow_delivery_prepare_review.py",
+    "scripts/test_workflow_delivery_prepare_script.py",
+    "scripts/test_workflow_delivery_proof.py",
+    "scripts/test_workflow_delivery_readiness_boundary.py",
+    "scripts/test_workflow_delivery_rehearsal.py",
+    "scripts/test_workflow_delivery_review_checkpoint.py",
+    "scripts/test_workflow_delivery_source_scopes.py",
+    "scripts/test_workflow_delivery_specification.py",
+    "scripts/test_workflow_delivery_transaction.py",
+    "scripts/test_workflow_delivery_trust.py",
+    "scripts/workflow_delivery_authority.py",
+    "scripts/workflow_delivery_categories.py",
+    "scripts/workflow_delivery_checkpoints.py",
+    "scripts/workflow_delivery_clause_dispositions.py",
+    "scripts/workflow_delivery_clause_inventory.py",
+    "scripts/workflow_delivery_clause_test_support.py",
+    "scripts/workflow_delivery_contract.py",
+    "scripts/workflow_delivery_coverage.py",
+    "scripts/workflow_delivery_coverage_runtime.py",
+    "scripts/workflow_delivery_coverage_shapes.py",
+    "scripts/workflow_delivery_enabled.py",
+    "scripts/workflow_delivery_evidence_shapes.py",
+    "scripts/workflow_delivery_frontier.py",
+    "scripts/workflow_delivery_io.py",
+    "scripts/workflow_delivery_mapping.py",
+    "scripts/workflow_delivery_native.py",
+    "scripts/workflow_delivery_native_test_support.py",
+    "scripts/workflow_delivery_pilot_build.py",
+    "scripts/workflow_delivery_pilot_capture.py",
+    "scripts/workflow_delivery_pilot_observations.py",
+    "scripts/workflow_delivery_pilot_package.py",
+    "scripts/workflow_delivery_pilot_scenarios.py",
+    "scripts/workflow_delivery_pilot_x11.py",
+    "scripts/workflow_delivery_prepare.py",
+    "scripts/workflow_delivery_prepare_handoff.py",
+    "scripts/workflow_delivery_prepare_review.py",
+    "scripts/workflow_delivery_prepare_script.py",
+    "scripts/workflow_delivery_proof.py",
+    "scripts/workflow_delivery_review.py",
+    "scripts/workflow_delivery_selector.py",
+    "scripts/workflow_delivery_shapes.py",
+    "scripts/workflow_delivery_source_scopes.py",
+    "scripts/workflow_delivery_specification.py",
+    "scripts/workflow_delivery_test_support.py",
+    "scripts/workflow_delivery_transaction.py",
+    "scripts/workflow_delivery_tree.py",
+    "scripts/workflow_delivery_trust.py",
+    "scripts/workflow_delivery_trust_test_support.py"
+  ],
+  "consumers": [
+    {
+      "id": "validator",
+      "entry_surfaces": [
+        "staged_cli",
+        "candidate_cli"
+      ],
+      "dispatch_key": "check_workflow_delivery.main",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "scope": "Explicit isolated repository, externally selected trust and requested snapshot only.",
+      "timing": "Validate before reporting a permitted transition; return actual findings without repairing inputs.",
+      "persistence": "Read-only protected repository state; owned diagnostic logs and derived caches recorded separately.",
+      "unavailable_reason": "Missing or inconsistent authority, inputs or evidence produces a structured refusal; never a fabricated success.",
+      "scenario_ids": [
+        "INFRA-S01",
+        "INFRA-S02",
+        "INFRA-S03",
+        "INFRA-S04",
+        "INFRA-S05",
+        "INFRA-S06"
+      ]
+    },
+    {
+      "id": "selector",
+      "entry_surfaces": [
+        "project_status"
+      ],
+      "dispatch_key": "workflow_delivery_selector.selector_failures",
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "scope": "Explicit isolated repository, externally selected trust and requested snapshot only.",
+      "timing": "Validate before reporting a permitted transition; return actual findings without repairing inputs.",
+      "persistence": "Read-only protected repository state; owned diagnostic logs and derived caches recorded separately.",
+      "unavailable_reason": "Missing or inconsistent authority, inputs or evidence produces a structured refusal; never a fabricated success.",
+      "scenario_ids": [
+        "INFRA-S01",
+        "INFRA-S02",
+        "INFRA-S03",
+        "INFRA-S04",
+        "INFRA-S05",
+        "INFRA-S06"
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "INFRA-S01",
+      "consumer_ids": [
+        "validator",
+        "selector"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S01 -->"
+        }
+      ],
+      "preconditions": "Complete valid isolated enrolled fixture plus malformed invocation; exact assembled candidate and externally selected fixture trust.",
+      "inputs": [
+        "Invoke the real staged CLI, exact-candidate CLI and project-status selector on valid inputs; retain arguments, stdout/stderr and status.",
+        "Repeat with an invalid invocation, and distinguish diagnostic report-only from enforcing mode."
+      ],
+      "expected_visible": "Valid inputs succeed with no findings and preserve the selected step; invalid input gives a readable reason and nonzero enforcement status. No color or GUI is required.",
+      "expected_state": "Readiness and acceptance flags remain false; snapshot, selection authority and protected repository state are unchanged.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S01 -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S01 -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S01 -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "No CAD numeric/geometry precision claim; exact control types and hashes are validation requirements.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "Read-only validator has no design edit to undo or redo; protected-state preservation is required.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S01 -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S01 -->"
+            }
+          ]
+        }
+      },
+      "method": "infrastructure"
+    },
+    {
+      "id": "INFRA-S02",
+      "consumer_ids": [
+        "validator",
+        "selector"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S02 -->"
+        }
+      ],
+      "preconditions": "Isolated fixture variants for each coverage, category, enrollment, scope and claim case in the normative scenario.",
+      "inputs": [
+        "Execute each missing/duplicate/new classification, historical/specification/deferred/external boundary and enrollment refusal.",
+        "Execute absent/expired/mismatched claim and uncovered/prefix-lookalike path cases through each applicable real entry point; restore valid inputs and repeat."
+      ],
+      "expected_visible": "Each prohibited transaction is refused with its owning path/lane context; the restored authorized fixture succeeds.",
+      "expected_state": "No automatic reclassification, task claim, source write or Preferences change occurs.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S02 -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S02 -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S02 -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "No CAD numeric/geometry precision claim; exact control types and hashes are validation requirements.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "Read-only validator has no design edit to undo or redo; protected-state preservation is required.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S01 separately requires text-only usable diagnostics; no GUI accessibility claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S01 -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S02 -->"
+            }
+          ]
+        }
+      },
+      "method": "infrastructure"
+    },
+    {
+      "id": "INFRA-S03",
+      "consumer_ids": [
+        "validator",
+        "selector"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S03 -->"
+        }
+      ],
+      "preconditions": "Isolated contract and specification variants covering every normative readiness/clause case.",
+      "inputs": [
+        "Run completed preflight without contract, stale route, unresolved question, missing normal handler and all-normal-N/A variants.",
+        "Run missing inventory, missing/duplicate clause, unratified mechanism and invalid pending-owner variants; verify valid pending authorship without future output."
+      ],
+      "expected_visible": "Invalid readiness and authorship are refused; genuinely pending authorship remains distinct from completed implementation.",
+      "expected_state": "No invented decision, future evidence, handler or readiness assertion; protected state is unchanged.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S03 -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S03 -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S03 -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "No CAD numeric/geometry precision claim; exact control types and hashes are validation requirements.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "Read-only validator has no design edit to undo or redo; protected-state preservation is required.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S01 separately requires text-only usable diagnostics; no GUI accessibility claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S01 -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S03 -->"
+            }
+          ]
+        }
+      },
+      "method": "infrastructure"
+    },
+    {
+      "id": "INFRA-S04",
+      "consumer_ids": [
+        "validator",
+        "selector"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S04 -->"
+        }
+      ],
+      "preconditions": "Separate producer/reviewer fixture identities with explicit valid and hostile review/acceptance records.",
+      "inputs": [
+        "Run skipped/self/copied-event review, changed replay, unaccounted defect and unavailable-only normal product cases.",
+        "Exercise valid independent review without receipt, then missing/wrong acceptance receipts, unresolved blockers and authorized nonblocking deferral; replay legacy and infrastructure boundaries."
+      ],
+      "expected_visible": "Invalid review is refused. Valid review can complete without owner acceptance; acceptance still requires its separate trusted evidence.",
+      "expected_state": "No producer becomes its own reviewer, copied events become replay, or review becomes owner acceptance.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S04 -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S04 -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S04 -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "No CAD numeric/geometry precision claim; exact control types and hashes are validation requirements.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "Read-only validator has no design edit to undo or redo; protected-state preservation is required.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S01 separately requires text-only usable diagnostics; no GUI accessibility claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S01 -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S04 -->"
+            }
+          ]
+        }
+      },
+      "method": "infrastructure"
+    },
+    {
+      "id": "INFRA-S05",
+      "consumer_ids": [
+        "validator",
+        "selector"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S05 -->"
+        }
+      ],
+      "preconditions": "Real isolated Git index, worktree and descendant/nonancestor candidate histories; recorded base and captured index identities.",
+      "inputs": [
+        "Stage a bad record and repair only the worktree; reverse the setup and compare requested snapshot behavior.",
+        "Exercise missing/nonancestor base, ignored input, deletion/rename, intervening add/delete/revert and merge-parent changes; compare current selector diagnostics separately."
+      ],
+      "expected_visible": "Staged validation uses staged bytes; exact candidate validation accounts for every intervening protected path. Worktree diagnostics do not certify prior commits.",
+      "expected_state": "No index repair, silent base fallback, history laundering or live shared-repository mutation.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S05 -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S05 -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S05 -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "No CAD numeric/geometry precision claim; exact control types and hashes are validation requirements.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "Read-only validator has no design edit to undo or redo; protected-state preservation is required.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S01 separately requires text-only usable diagnostics; no GUI accessibility claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S01 -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S05 -->"
+            }
+          ]
+        }
+      },
+      "method": "infrastructure"
+    },
+    {
+      "id": "INFRA-S06",
+      "consumer_ids": [
+        "validator",
+        "selector"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S06 -->"
+        }
+      ],
+      "preconditions": "Isolated trusted valid fixture and each normative trust/correlation mismatch; termination target belongs to this run only.",
+      "inputs": [
+        "Run missing/changed external runner or trust and stale authority/source/fixture/build/environment/registry/correlation cases.",
+        "Interrupt a running isolated invocation, retain termination and before/after hashes, then execute a fresh valid invocation. Repeat recovery after a refusal."
+      ],
+      "expected_visible": "Trust and correlation failures are explicit; interrupted checks do not claim success. A fresh valid invocation remains usable.",
+      "expected_state": "No claim, authority refresh, receipt, ref/index/config mutation or destructive rollback; all protected state survives refusal and interruption.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "No CAD numeric/geometry precision claim; exact control types and hashes are validation requirements.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "Read-only validator has no design edit to undo or redo; protected-state preservation is required.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "not_applicable",
+          "reason": "INFRA-S01 separately requires text-only usable diagnostics; no GUI accessibility claim.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S01 -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+              "marker": "<!-- WDQ-INFRA-S06 -->"
+            }
+          ]
+        }
+      },
+      "method": "infrastructure"
+    }
+  ],
+  "proof_path": "docs/reviews/workflow-delivery-rollout/infrastructure/proof.json",
+  "review_path": "docs/reviews/workflow-delivery-rollout/infrastructure/review.json"
+}
