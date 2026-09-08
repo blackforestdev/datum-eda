@@ -1,6 +1,7 @@
 # Foundation authority review — working evidence
 
-Status: WDQ-F01 in progress; no foundation contract or product acceptance.
+Status: WDQ-F01 review complete; WDQ-F02 contract authorship remains unfinished.
+No foundation contract or product acceptance is asserted.
 Tracking: `FOUNDATION-WORKFLOW-SPEC` / `dat-manual-foundation-contracts-fsw`.
 Review baseline: `82623dde` (2026-09-08 UTC).
 
@@ -1017,9 +1018,61 @@ No inventory shape was added, so no parity registration changes are required.
 Earlier entries above describe the pre-clarification baseline; their statement
 that this particular header mismatch is pending is superseded by this section.
 
-## Remaining review coverage
+## Library/identity boundary and consumer-plan repair
 
-WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
+PM008, PM008A and Canonical IR were read completely after the storage review.
+For F7, preserve project-local pinned library bindings, distinct Package versus
+Footprint/Padstack geometry, explicit gate-aware PinPadMap and ComponentInstance
+joins. A same-named pin/pad is not an accepted binding; a changed library record
+cannot silently replace a placed object's pinned revision. PM008A's proposed
+alternate-function and hidden-power behavior is not ratified merely by its
+historical “professional-grade” assessment. Native library fixture presence
+does not establish that a user can place it through the GUI.
+
+Canonical IR's early source-sidecar, fixed-angle-resolution and bottom-left
+origin summaries must be read against later identity, Units and viewport
+decisions. They do not authorize reviving source-hash identity, quantizing exact
+input to displayed angle precision or relocating authored geometry when the
+view changes. Its stated i64-nanometer range is also arithmetically understated:
+the signed bound is approximately 9.22e12 mm, not 9.2e9 mm. F02 must use exact
+i64 endpoint examples and checked conversion rather than copying that estimate.
+No runtime or product-source correction is claimed by these observations.
+
+The missing consumer completion plans are repaired in
+`specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`, linked through a dedicated
+`foundation-consumer-completion` route. Fresh named selectors now pass:
+
+| Consumer | Selected planning step | Ownership / lifecycle preserved |
+| --- | --- | --- |
+| UVT-S5A-BUILD | S5A-C01 | Unassigned, no live claim; specified, planning |
+| GUI-WRITE-PATH | GWP-C01 | Unassigned, no live claim; blocked, planning |
+| NATIVE-AUTHORING | NA-C01 | Unassigned, no live claim; blocked, planning |
+
+These are consumer-routing results, not acceptance by an absent implementation
+owner. Future owners must claim their own lane and receive its reviewed packet.
+The repair preserves all existing hard edges; human-readable successor effects
+now resolve to the existing tracker IDs. Seven dedicated contract regressions
+and all 50 project-state tests pass, including fail-closed missing-plan,
+acceptance-ID, marker, execution-authorization and successor checks. The initial
+pilot-authority staleness failure and its resolution without changing any
+pilot authority member or receipt are recorded in the repair's evidence source.
+Earlier failed-selector observations above are historical, not current blockers.
+
+<!-- EVIDENCE:FOUNDATION-WORKFLOW-SPEC:WDQ-F01-COMPLETE -->
+## WDQ-F01 completion and remaining contract work
+
+The required process, settings, selection and editor-shell routes have been read
+completely, alongside the applicable mutation, storage, identity and library
+decisions. The clause tables classify settled requirements, contradictions and
+unanswered decisions for F1–F8; explicit unresolved choices are not ratified.
+PM012's status/classification reconciliation landed in `4e519e0c`. All named
+foundation consumers now have selector-backed ownership and completion context.
+This satisfies the review/mapping step, not the specification, implementation
+or acceptance of the resulting manual workflow.
+
+## Historical coverage inventory and outstanding boundary
+
+The `workspace-documentation-and-revision` route
 contains 79 files. PM035 through PM040, `PROJECT_PREFERENCES_SPEC.md`, the shared
 Units requirement, GP-C04, GP-C05, the V1 descriptor catalog, the five historical
 baseline files, the six typed-authority/history files, and the complete
@@ -1033,10 +1086,11 @@ Working Units category study, four Revision entry/evidence members and the
 completed shell image comparison, and five Revision identity/authority/UX
 studies above, and the two Preferences studies just reviewed have been read
 completely (79 files). No complete settings route reconciliation is claimed:
-tracked clause conflicts still need their owning-lane disposition. Later storage,
-mutation, identity and authoring authority must also be checked where it resolves
-the historical questions above. The three failed consuming-owner selectors need
-governed completion contracts before F01 can close.
+tracked clause conflicts still need their owning-lane disposition. The later
+storage, mutation, identity and authoring review and consumer selector repairs
+are recorded above. Remaining product conflicts belong in WDQ-F02's concrete
+contract and WDQ-F03's explicit unresolved-decision/owner handoff, not another
+unbounded source-reading pass.
 
 WDQ-F02 still owes concrete values, boundary cases, transaction timelines and
 consumer bindings. WDQ-F03 still owes the reviewed contract and exact proposed

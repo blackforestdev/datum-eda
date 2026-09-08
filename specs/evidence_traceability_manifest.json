@@ -17,6 +17,14 @@
       "review_note": "WDQ-G01: five sources and five complete consumers reviewed, including the new pilot source review and candidate JSON instance. The complete prototype-editor-shell-and-panes route was also read without editing it. PM041 and PILOT-S01-S05 remain controlling; candidate requirements expose native menu accessibility absence and the real F bypass, correct the inactive FitBoard path, cover verified GUI/CLI input closure and explicitly limit keyboard claims. Mechanical instance checks are not an implemented delivery gate or native proof. G01 ownership/session/trusted-runner handoff, G02 authorization and G06 activation remain outstanding. No unrelated route digest, prototype, runtime, hook, CI, dependency or canonical selection was changed."
     },
     {
+      "id": "foundation-consumer-completion",
+      "status": "integrated",
+      "sources": ["research/process-quality/FOUNDATION_CONSUMER_COMPLETION_REPAIR.md"],
+      "consumers": ["specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md"],
+      "reviewed_digest": "c7703d015020306d6949bc50fc798410302f042ed4fd623ac3d8825e89c9e1fd",
+      "review_note": "WDQ-F01 complete source/consumer review for the bounded repair of three missing consumer plans. Preserve complete product scope, ownership, prerequisites and planning authorization; explicit execution and acceptance boundaries remain pending. This new route does not change or remove any accepted pilot authority member, receipt or enforcement requirement. No prototype, runtime, product ratification, delivery enrollment or trust promotion."
+    },
+    {
       "id": "research-governance-index",
       "status": "active",
       "sources": [
