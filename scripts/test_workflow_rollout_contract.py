@@ -59,9 +59,10 @@ class RolloutContractTest(unittest.TestCase):
             self.assertEqual(Path(handler["path"]).stem + "." + handler["symbol"],
                              consumer["dispatch_key"])
 
-    def test_both_cli_snapshots_and_real_selector_are_covered(self):
+    def test_cli_snapshots_owner_hook_and_real_selector_are_covered(self):
         consumers = {c["id"]: c for c in self.contract["consumers"]}
-        self.assertEqual({"staged_cli", "candidate_cli"}, set(consumers["validator"]["entry_surfaces"]))
+        self.assertEqual({"staged_cli", "candidate_cli", "owner_hook"},
+                         set(consumers["validator"]["entry_surfaces"]))
         self.assertEqual(["project_status"], consumers["selector"]["entry_surfaces"])
         self.assertEqual({f"INFRA-S0{i}" for i in range(1, 7)},
                          {s["id"] for s in self.contract["scenarios"]})
@@ -149,6 +150,18 @@ class RolloutContractTest(unittest.TestCase):
             self.assertEqual("R", rows[identity][3])
         for identity in ("INFRA-S05-01", "INFRA-S05-02", "INFRA-S05-05"):
             self.assertEqual({"C", "S", "H"}, set(rows[identity][3].split()))
+
+    def test_every_matrix_surface_is_declared_by_its_scenario_consumers(self):
+        surfaces = {"C": "staged_cli", "R": "candidate_cli",
+                    "S": "project_status", "H": "owner_hook"}
+        consumers = {c["id"]: set(c["entry_surfaces"])
+                     for c in self.contract["consumers"]}
+        scenarios = {s["id"]: set().union(*(consumers[c] for c in s["consumer_ids"]))
+                     for s in self.contract["scenarios"]}
+        for identity, _, _, required in self.case_rows():
+            with self.subTest(case=identity):
+                declared = scenarios[identity.rsplit("-", 1)[0]]
+                self.assertTrue({surfaces[s] for s in required.split()} <= declared)
 
 
 if __name__ == "__main__":
