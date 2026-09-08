@@ -6,9 +6,9 @@ from workflow_delivery_io import parse_json, sha256
 from workflow_delivery_shapes import require
 
 
-def evaluate_capture(output, *, case_id, surface, expected_code, script,
-                     expected_path=None, expected_detail=None):
-    output, script = Path(output), Path(script).resolve(strict=True)
+def capture_envelope(output, case_id, surface):
+    """Validate retained process/state artifacts independently of handler tracing."""
+    output = Path(output)
     def read(name):
         return parse_json((output / name).read_bytes(), name)
     result, invocation = read("result.json"), read("invocation.json")
@@ -27,6 +27,16 @@ def evaluate_capture(output, *, case_id, surface, expected_code, script,
     require(read("before.json") == read("after.json"), "state", "observed protected state changed")
     require(result.get("changed_state_fields") == [] and "after_capture_error" not in result,
             "state", "state capture incomplete or inconsistent")
+    started = read("started.json")
+    require(started["pid"] == result["pid"] and started["invocation_id"] == result["invocation_id"],
+            "capture", "observed process start differs")
+    return result, invocation
+
+
+def evaluate_capture(output, *, case_id, surface, expected_code, script,
+                     expected_path=None, expected_detail=None):
+    output, script = Path(output), Path(script).resolve(strict=True)
+    result, invocation = capture_envelope(output, case_id, surface)
     events = [parse_json(line, "calls.jsonl") for line in (output / "calls.jsonl").read_bytes().splitlines()]
     require(bool(events) and events[0]["event"] == "start" and events[-1]["event"] == "finish",
             "calls", "complete observer invocation required")
@@ -50,7 +60,7 @@ def evaluate_capture(output, *, case_id, surface, expected_code, script,
             "calls", "actual entrypoint main invocation missing")
     expected_status = 0 if expected_code is None else 1
     require(result["returncode"] == expected_status, "status", "unexpected exit status")
-    report = read("stdout.bin")
+    report = parse_json((output / "stdout.bin").read_bytes(), "stdout.bin")
     if surface in ("C", "R"):
         require(report["mode"] == "enforce", "report", "report-only is not enforcement")
         require(report["acceptance_asserted"] is False and report["readiness_asserted"] is False,
