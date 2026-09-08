@@ -612,6 +612,71 @@ fresh rendering finding. The comparison images still require visual inspection;
 this file is deliberately not counted as fully reviewed below. No comparison,
 prototype disposition, golden or authority digest was blessed or modified.
 
+## Excluded agent authority, refusal feedback and retired teaching
+
+Six more route members were read completely, including CSS, all body regions
+and trailing dispositions: `agent-authority-study.html`,
+`agent-authority-scenarios.html`, `agent-authority-threat-model.html`,
+`agent-blocked-action-alerts.html`, `clay-rows-decision.html` and
+`revision-carryforward-study.html`. Only opaque embedded WOFF2 payloads were
+elided from the read output. This is source review, not native visual or
+accessibility proof. No Claude-owned file was changed.
+
+The four agent studies distinguish read/propose, applying an already-approved
+proposal, and specifically scoped unattended actions. Their August 28 owner
+dispositions require tool/subject/rate/expiry scope, no inherited unattended
+grant on a new launch, organization restrictions that cannot enlarge authority,
+and deliberate human grant management in Preferences. The studies explicitly
+do not protect design confidentiality against the launched harness's filesystem
+or network access. A delivery gate must not describe mutation authorization as
+an IP-exfiltration sandbox, nor infer agent readiness from a read-only query.
+
+These are excluded future surfaces, not active Preferences capabilities:
+PM037 and the descriptor catalog still require dedicated mechanism/security
+review and separate activation. The route's addendum 23 also states this
+explicitly. Visual approval does not ratify grant schemas or authorize their
+implementation in the current Preferences lane.
+
+There is a concrete supersession hazard, captured as intake
+`dat-agent-authority-visual-supersession-rh3`. The authority study's sections 1
+and 3 still say release capability is structurally impossible at every level,
+while its disposition permits deliberate future opt-in from a closed default.
+Section 4 still calls the decisions open; threat-model T3/T4 and its closing
+summary still call the identity-binding and restriction-only rules undecided.
+The scenario D1-B also depicts an agent signing an attestation: granting release
+capability must not silently authorize that separate capability. The bounded
+Claude handoff is to label/reconcile these exact historical regions while
+preserving dated dispositions, PM034/PM037, attestation restrictions, issued
+immutability and Project-policy boundaries. Proof must distinguish current
+authority from comparative alternatives across all four studies and leave the
+excluded catalog unchanged. No handoff completion or source digest refresh is
+claimed here.
+
+The blocked-action study supplies useful refusal observables: name the tool,
+reason, what did not happen and where the person can act; do not steal focus or
+grant from the output-only Console or a notification. Its future persistent
+record counts repeats, rate-limits notifications and makes Clear affect only
+the record. Expiry's return to propose is not successful execution of the
+original request. Its illustrated automatic proposal queue is not authority to
+invent a proposal endpoint or silently retry a failed manual operation. F5/F8
+consumer proof must distinguish refusal, proposal creation and committed Design
+change; a status message alone proves none of their durable effects.
+
+The clay-row study marks only grid-preset vocabulary decided; crosshair and
+opening-layer alternatives remain open. Even the grid visual disposition does
+not activate a descriptor excluded by PM037. Preference vocabulary must not
+replace PM023's shared grid/tier ownership, and transient view changes must not
+be silently promoted into durable defaults or Project policy. Exact grid-basis
+authority still needs the remaining units/grid studies before F4 adjudication.
+
+The carry-forward study explicitly retires managed Revision visibility and
+mandatory teaching replay under PM038. Old approved/open language lower in
+that file is retained comparison, not permission to restore organization-forced
+Revision chrome in an unmanaged Project. Its separate guidance example stays
+beside the release confirmation, preserves focus and never gates issuance.
+Neither that formal-release ceremony nor its onboarding state is a prerequisite
+for the ordinary manual edit/reopen foundation workflow.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
@@ -622,8 +687,9 @@ seed/context packet, three product-surface/acceptance files and seven supporting
 visual studies, plus the seven Revision/geometry/traceability members listed
 above, the four execution packets and four identity/title-block/audit members
 plus the detailed authority/offline/impact contracts and four workspace/Publish
-members plus the GUI contract, Revision visual brief and prototype inventory
-have been read completely (58 files); the other 21 files remain to
+members plus the GUI contract, Revision visual brief and prototype inventory,
+and the six agent/clay/carry-forward studies above
+have been read completely (64 files); the other 15 files remain to
 review. No complete settings route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
 mutation, identity and authoring
