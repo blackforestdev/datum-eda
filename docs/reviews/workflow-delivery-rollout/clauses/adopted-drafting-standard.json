@@ -1,0 +1,247 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-CLAUSES.ADOPTED-DRAFTING-STANDARD-SPEC",
+  "frontier_key": "ADOPTED-DRAFTING-STANDARD-SPEC",
+  "clauses": [
+    {
+      "id": "AUTHORITY",
+      "step_id": "ADS-C01",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:AUTHORITY -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "RESEARCH",
+      "step_id": "ADS-C01",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:RESEARCH -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "CONFLICTS",
+      "step_id": "ADS-C01",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:CONFLICTS -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "OBJECT",
+      "step_id": "ADS-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:OBJECT -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "STANDARDS-BASIS",
+      "step_id": "ADS-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:STANDARDS-BASIS -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "TYPED-AUTHORITY",
+      "step_id": "ADS-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:TYPED-AUTHORITY -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "UNITS-AND-CONVENTIONS",
+      "step_id": "ADS-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:UNITS-AND-CONVENTIONS -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "TEMPLATE-ANNOTATION",
+      "step_id": "ADS-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:TEMPLATE-ANNOTATION -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "REVISION-SEAM",
+      "step_id": "ADS-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:REVISION-SEAM -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "SEED-RECEIPT",
+      "step_id": "ADS-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:SEED-RECEIPT -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "MIGRATION",
+      "step_id": "ADS-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:MIGRATION -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "UNSETTLED-CHOICES",
+      "step_id": "ADS-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:UNSETTLED-CHOICES -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "CONFORMANCE",
+      "step_id": "ADS-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:CONFORMANCE -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "INDEPENDENT-REVIEW",
+      "step_id": "ADS-C03",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:INDEPENDENT-REVIEW -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "OWNER-RATIFICATION",
+      "step_id": "ADS-C04",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C04"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:OWNER-RATIFICATION -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GOVERNANCE-HANDOFF",
+      "step_id": "ADS-C05",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+        "marker": "ADS-C05"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:ADS:GOVERNANCE-HANDOFF -->"
+        }
+      ],
+      "requires_owner_decision": false
+    }
+  ]
+}
