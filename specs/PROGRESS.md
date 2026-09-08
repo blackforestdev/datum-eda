@@ -172,6 +172,18 @@
 - **Prepare broader workflow delivery enforcement and adoption rollout** (`WORKFLOW-DELIVERY-ROLLOUT`; `dat-wdq-broader-rollout-tqh`).
    Owner-approved separate workflow-quality planning: schedule foundation specification follow-ups and prepare exact broader enforcement, promotion and three-slice adoption proposals without taking over product implementation. *state `in_progress`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md`, `docs/reviews/workflow-foundation/handoff.md`.
+- **Ratify project writer ownership and recovery serialization** (`PROJECT-WRITER-OWNERSHIP`; `dat-project-write-ownership-lock-0ne`).
+   A ratified numbered writer-ownership decision resolves serialization, durability and recovery for all project writers; implementation obligations remain explicitly scheduled, not falsely delivered. *state `planned`; authorization `planning`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* dat-multi-agent-proposals-first-f49, dat-gui-write-path-qiu. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
+- **Reconcile native connectivity identity, formation and gesture authority** (`NATIVE-CONNECTIVITY-CONTRACT`; `dat-grid-connectivity-authority-5s6`).
+   Owner-ratified connectivity and gesture clauses consistently distinguish electrical identity, geometric formation and attached movement; complete owning-lane reconciliation preserves shared tooling and journal authority. *state `planned`; authorization `planning`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
+- **Define and deliver the ordinary native GUI project startup doorway** (`NATIVE-PROJECT-DOORWAY`; `dat-native-project-startup-vrf`).
+   Ordinary native startup supports the approved create/open/reopen doorway and failure/recovery states, proven in the production GUI, independently replayed and explicitly accepted by the owner; specification authorship alone cannot close this task. *state `planned`; authorization `planning`; parallel lane.*
+   *Dependencies:* `dat-manual-foundation-contracts-fsw`. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
+- **Define native workflow fixtures and ratify performance measurement budgets** (`NATIVE-WORKFLOW-BUDGETS`; `dat-native-workflow-budgets-0h4`).
+   Owner-ratified native fixtures and performance measurement budgets specify exact populations, timing boundaries, environment and failure policy; no product performance or harness implementation is claimed. *state `planned`; authorization `planning`; parallel lane.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/FOUNDATION_FOLLOWUP_PLANS.md`.
 <!-- ACTIVE FRONTIER:END -->
 
 ## WORKFLOW-DELIVERY-QUALITY — workflow evidence and readiness adoption

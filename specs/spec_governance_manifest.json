@@ -49,6 +49,10 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "specs/FOUNDATION_FOLLOWUP_PLANS.md": {
+      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
+      "notes": "WDQ-R01 schedules four owner-approved foundation follow-ups with explicit planning, ratification and doorway delivery boundaries. No product claim, hard-edge amendment, mechanism ratification or execution authorization."
+    },
     "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
       "notes": "WDQ-F03 owner-authorized R01-R03 planning successor for scheduled specification gaps, broader executable enrollment/trust proposals and three-slice adoption. Product implementation and exact PM041 promotion remain separate owner boundaries."

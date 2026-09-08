@@ -39,6 +39,24 @@ development roadmap, not only another disposable pilot or a documentation-only
 test that cannot exercise the production transition. Preserve all unaffected
 Frontier items and canonical Preferences selection.
 
+<!-- EVIDENCE:WORKFLOW-DELIVERY-ROLLOUT:WDQ-R01-COMPLETE -->
+### R01 result
+
+The four approved follow-ups are scheduled at orders 51–54 with pending
+completion plans in `specs/FOUNDATION_FOLLOWUP_PLANS.md`, mirrored tracker
+acceptance IDs and explicit owner ratification boundaries. Writer, connectivity
+and doorway reuse existing issues; budget authorship is
+`dat-native-workflow-budgets-0h4`. No hard edge, product claim, canonical
+selection, implementation authorization or trusted enrollment changed.
+Doorway retains actual implementation, native proof, independent replay and
+owner acceptance as required outcomes.
+
+`research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md` records inspected
+code/policy coverage and concrete refusal obligations. Only the pilot is
+enrolled; S5A, GUI-WRITE-PATH and NATIVE-AUTHORING remain unenrolled despite
+their repaired prose plans. R02 must propose actual coverage, independent
+review enforcement and exact promotion, not count this scheduling as delivery.
+
 <!-- REQ:WORKFLOW-DELIVERY-ROLLOUT:WDQ-R02 -->
 ## WDQ-R02 — prepare executable-contract, promotion and adoption proposals
 
