@@ -8269,19 +8269,8 @@
         "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
         "docs/reviews/workflow-foundation/handoff.md"
       ],
-      "state": "in_progress",
-      "authorization": "planning",
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-wdq-broader-rollout-20260908",
-        "claimed_at": "2026-09-08T06:04:10Z",
-        "heartbeat_at": "2026-09-08T06:04:10Z",
-        "expires_at": "2026-09-08T14:04:10Z",
-        "scope": ["Owner-approved separate workflow-quality lane, WDQ-R01/R02 planning only: schedule foundation specification follow-ups and prepare broader enforcement, exact promotion and three-slice adoption proposals. Preserve Preferences GP-CM05V and other product owners; no product implementation, prototype edits, gate/enrollment/trust mutation or acceptance."],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "b5a05a70edeb119c30bac414563a12c7c07d8a26"
-      },
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": false,
       "parallel": true,
       "summary": "Owner-approved separate workflow-quality planning: schedule foundation specification follow-ups and prepare exact broader enforcement, promotion and three-slice adoption proposals without taking over product implementation.",
@@ -8289,7 +8278,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "An owner-reviewed bounded implementation/promotion packet covers real roadmap consumers, scheduled specification gaps, enforceable delivery transitions and three separately enrolled adoption slices beyond the pilot, with explicit ownership and remaining acceptance boundaries.",
-        "canonical_next_step_id": "WDQ-R02",
+        "canonical_next_step_id": "WDQ-R03",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -8326,7 +8315,7 @@
           {
             "id": "WDQ-R02",
             "kind": "planning",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Prepare exact executable-contract, promotion and three-slice adoption proposals with negative verification and ownership boundaries.",
             "depends_on": [
               "WDQ-R01"
@@ -8337,7 +8326,13 @@
                 "marker": "WDQ-R02"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
+                "marker": "<!-- EVIDENCE:WORKFLOW-DELIVERY-ROLLOUT:WDQ-R02-COMPLETE -->"
+              }
+            ]
           },
           {
             "id": "WDQ-R03",
@@ -8355,12 +8350,12 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `WORKFLOW-DELIVERY-ROLLOUT: authorize bounded implementation — <reviewed packet>`, `WORKFLOW-DELIVERY-ROLLOUT: revise — <correction>`, or `WORKFLOW-DELIVERY-ROLLOUT: defer — <reason>`.",
+              "response_format": "Reply `WORKFLOW-DELIVERY-ROLLOUT: authorize bounded implementation — 5f0b71f67adb3f48394e764de6d8dc3b924832dc5c6997a2ed7c5de326568265 2efee64b7205d173bdcc5e0b5e86cd98a772056a65f1a2be0f3dd23d5b3b604d`, `WORKFLOW-DELIVERY-ROLLOUT: revise — <correction>`, or `WORKFLOW-DELIVERY-ROLLOUT: defer — <reason>`.",
               "requests": [
                 {
                   "id": "ROLLOUT-IMPLEMENTATION",
-                  "question": "Do you authorize the reviewed bounded implementation plan, leaving exact owner-controlled promotion and product acceptance boundaries intact?",
-                  "recommended_response": "Authorize only complete scoped work with real consumer owners and adoption evidence requirements; do not approve candidate trust implicitly.",
+                  "question": "Do you authorize the exact WDQ-R02 implementation packet: roadmap/source coverage, separate independent-review enforcement, contract/enrollment preparation, owner-controlled promotion tooling, repository-local support storage and three measured adoption cohorts?",
+                  "recommended_response": "Authorize the reviewed workflow implementation and successor only. Preserve GP-CM05V ownership and all product prerequisites; require separate exact mechanism ratification/promotion, independent review and product acceptance. No product code, prototype or dependency authority is granted.",
                   "source_ref": {
                     "path": "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
                     "marker": "ROLLOUT-IMPLEMENTATION"

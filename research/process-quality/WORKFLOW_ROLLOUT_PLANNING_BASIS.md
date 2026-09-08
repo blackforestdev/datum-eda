@@ -82,3 +82,37 @@ claiming a product lane, adding hard dependency edges or granting execution.
 Doorway retains its original define-and-deliver outcome with implementation,
 native proof, independent replay and owner acceptance still pending; the other
 three require explicit mechanism/budget ratification, not implementation claims.
+
+## WDQ-R02 — proposal rationale and verification boundary
+
+Further direct reads of the contract, checkpoint, trust, review, shapes and
+preparation modules confirm two implementation needs beyond enrollment alone:
+the current four-phase mapping invokes independent review only at acceptance,
+and the preparation helper is pilot-specific and rejects repository-local
+output. The proposal separates replay checking from the final trusted receipt,
+retains legacy acceptance compatibility, and scopes an owned Git-common support
+store instead of removing a live Documents trust bundle.
+
+Coverage must check all Frontier classifications and changed production paths:
+checking only items that volunteer a delivery declaration cannot detect omitted
+contracts. Owner-promoted source scopes tied to existing PM025 claims/steps are
+proposed to cover that omission without treating every future blocked feature
+as an active implementation. This is a permission/evidence check within the
+existing cooperative trust model, not authentication of an agent's intent.
+
+The inspected `327b71d1` baseline has 55 Frontier entries. The implementation
+proposal and its non-operative JSON inventory classify every identity, map all
+five proposed checkpoints for three real consumer cohorts, and reserve explicit
+scenario groups. Null candidate/producer/reviewer identities and empty adoption
+events intentionally record work not yet performed. Exact contracts, native
+fixtures and handler/root closure remain the product C01 owners' obligations;
+their absence is a readiness refusal, not a reason to invent placeholders as
+valid proof. No new runtime or gate implementation has been executed in R02.
+
+The existing review tests cover self/copy replay, defect dispositions, stale
+identity and candidate-only acceptance; new coverage/review-transition tests
+must additionally exercise real staged CLI/selector/hook paths. The proposal's
+negative matrix is a required future verification plan, not a claim that the
+new behavior already passes. Planning validation checks the proposal inventory
+against its exact baseline and actual completion-step identities, while the
+existing suites continue to guard unchanged installed behavior.

@@ -36,9 +36,9 @@
       "id": "workflow-delivery-rollout",
       "status": "in_progress",
       "sources": ["research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md"],
-      "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md"],
-      "reviewed_digest": "c09e0ae63e1ce405906c1f8b6e2a77a86af8b491620baf5b3ddcf0ea71533dc3",
-      "review_note": "WDQ-R01 complete review of the planning source, rollout plan and four new scheduled follow-up completion contracts. Code inspection distinguishes pilot-only enforced delivery from three unenrolled prose plans; exact follow-up outputs preserve owner ratification, doorway define-and-deliver scope and product ownership. Only the approved scheduling and proposal preparation are performed. No existing pilot/product route, hard dependency edge, execution authority, gate implementation, local trust or acceptance is changed."
+      "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md", "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md", "docs/reviews/workflow-delivery-rollout/proposal.json"],
+      "reviewed_digest": "0f217cedc81801ab3afff702f030e18ec353f1633244710d64791220ffe101cc",
+      "review_note": "WDQ-R02 complete review of the research source and all four consumers: rollout requirements/results, scheduled foundation follow-ups, exact bounded implementation proposal and non-operative baseline JSON. Inspect current gate limitations; propose full roadmap/source coverage, separate replay phase, scoped promotion/storage and three real adoption cohorts without fabricating readiness, claims, candidate or evidence. R03 remains an explicit owner implementation boundary; no existing pilot/product route, hard edge, gate code, trust, enrollment, runtime, prototype or acceptance changes."
     },
     {
       "id": "research-governance-index",
