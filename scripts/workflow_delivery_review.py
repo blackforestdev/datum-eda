@@ -32,7 +32,12 @@ def receipt_section(raw, marker, path):
     return "\n".join(selected)
 
 
-def validate_review(tree, contract, proof, authority_digest, trust, item, environment):
+def validate_independent_review(tree, contract, proof, authority_digest, trust, item, environment):
+    """Validate replay and defect accounting, without asserting owner disposition.
+
+    The caller supplies validated producer proof and owner-selected enrollment.
+    Findings may await owner disposition; acceptance must use validate_review.
+    """
     path = contract["review_path"]
     review = review_shape(tree.json(path, committed=True), path)
     packet = packet_sha256(contract, proof, authority_digest)
@@ -65,8 +70,20 @@ def validate_review(tree, contract, proof, authority_digest, trust, item, enviro
     defects = {d for p in (proof, replay) for r in p["results"] for d in r["defects"]}
     require(defects <= set(findings), path, "every proof defect requires review disposition", "WDQ-DEFECT")
     issues = _issues(tree)
-    for issue_id, finding in findings.items():
+    for issue_id in findings:
         require(issue_id in issues, path, f"unknown defect {issue_id}", "WDQ-DEFECT")
+    return review
+
+
+def validate_review(tree, contract, proof, authority_digest, trust, item, environment):
+    """Legacy acceptance wrapper: independent replay plus exact owner authority."""
+    review = validate_independent_review(
+        tree, contract, proof, authority_digest, trust, item, environment)
+    path = contract["review_path"]
+    packet = packet_sha256(contract, proof, authority_digest)
+    findings = {f["issue_id"]: f for f in review["findings"]}
+    issues = _issues(tree)
+    for issue_id, finding in findings.items():
         reference = finding["disposition_ref"]
         require(reference is not None, path, f"undisposed defect {issue_id}", "WDQ-DEFECT")
         approved = resolve_ref(trust.authority, reference)
