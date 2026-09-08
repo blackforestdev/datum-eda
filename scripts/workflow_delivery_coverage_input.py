@@ -1,6 +1,18 @@
 """Malformed synthetic coverage INPUT, never real roadmap reclassification."""
 
 from copy import deepcopy
+from datetime import datetime, timedelta, timezone
+
+from workflow_delivery_io import canonical_json, parse_json, sha256
+
+BOUNDARY_CASES = {
+    "INFRA-S02-06.authorized": (None, None, None),
+    "INFRA-S02-06.unpermitted": ("external/unpermitted/input.py", "WDQ-COVERAGE", "production change has no promoted scope"),
+    "INFRA-S02-09.prefix-lookalike": ("external/owned_elsewhere/input.py", "WDQ-COVERAGE", "production change has no promoted scope"),
+    "INFRA-S02-08.absent": ("specs/active_frontier.json", "WDQ-TRANSITION", "in_progress item requires a claim object"),
+    "INFRA-S02-08.expired": ("specs/active_frontier.json", "WDQ-TRANSITION", "claim expired at"),
+    "INFRA-S02-08.mismatched": ("specs/active_frontier.json", "WDQ-TRANSITION", "does not match claim agent"),
+}
 
 COVERAGE_INPUT_CASES = {
     "INFRA-S02-01.missing-classification": (
@@ -8,19 +20,85 @@ COVERAGE_INPUT_CASES = {
     "INFRA-S02-01.duplicate-classification": (
         "specs/workflow_delivery_policy.json", "WDQ-TRUST", "selected authority has no valid promoted policy"),
 }
+COVERAGE_INPUT_CASES.update(BOUNDARY_CASES)
 
 
 def coverage_expectation(variant, surface):
+    if variant.startswith("INFRA-S02-08.") and surface.startswith("S-"):
+        return None, "NEXT", BOUNDARY_CASES[variant][2]
     if variant == "INFRA-S02-01.duplicate-classification" and surface.startswith("S-"):
         return "coverage.rows", "WDQ-POLICY", "duplicate identity"
     return COVERAGE_INPUT_CASES[variant]
 
 
-def prepare_coverage_input(policy, variant):
+def prepare_coverage_input(policy, variant, *, fixture=None, manifest=None):
     if variant not in COVERAGE_INPUT_CASES:
         raise ValueError("explicit implemented coverage-input variant required")
+    if variant in BOUNDARY_CASES:
+        prepare_external_boundary(fixture, manifest, policy)
+        return
     rows = policy["coverage"]["rows"]
     if variant.endswith(".missing-classification"):
         policy["coverage"]["rows"] = [row for row in rows if row["frontier_key"] != "NEXT"]
     else:
         rows.append(deepcopy(rows[0]))
+
+
+def prepare_external_boundary(f, manifest, policy):
+    """Freeze a synchronized synthetic external lane, not real Preferences."""
+    from project_status import render_block
+    item = manifest["frontier"][1]
+    item["completion"]["steps"][0].update(kind="execution", status="in_progress")
+    now = datetime.now(timezone.utc).replace(microsecond=0) - timedelta(seconds=1)
+    stamp = lambda value: value.isoformat().replace("+00:00", "Z")
+    item.update(state="in_progress", authorization="execution", claim={
+        "agent": "codex", "harness": "codex-cli", "session": "external-capture-fixture",
+        "worktree": str(f.root), "head": f.git("rev-parse", "HEAD").decode().strip(),
+        "scope": ["external/owned"], "claimed_at": stamp(now), "heartbeat_at": stamp(now),
+        "expires_at": stamp(now + timedelta(hours=1))})
+    issues = [parse_json(line, ".beads/issues.jsonl") for line in
+              (f.root / ".beads/issues.jsonl").read_bytes().splitlines() if line.strip()]
+    next(issue for issue in issues if issue["id"] == "dat-next").update(status="in_progress", assignee="codex")
+    f.write(".beads/issues.jsonl", b"".join(canonical_json(issue) for issue in issues))
+    policy["coverage"]["rows"][1].update(category="external_lane", boundary_ref=f.ref, external_handoff_ref=f.ref)
+    policy["coverage"]["production_roots"].append("external")
+    policy["coverage"]["source_scopes"] = [{"frontier_key": "NEXT", "step_ids": ["NEXT-C01"],
+        "paths": ["external/owned"], "boundary_ref": f.ref}]
+    f.write("external/owned/input.py", b"# Synthetic external baseline.\n")
+    f.save("specs/active_frontier.json", manifest)
+    f.write("specs/PROGRESS.md", render_block(manifest).encode())
+
+
+def mutate_external_boundary(root, case_id):
+    """Make explicit candidate changes after the exact synthetic authority pin."""
+    from project_status import render_block
+    from workflow_delivery_capture_state import git
+    changes = {}
+    path = ("external/unpermitted/input.py" if case_id.endswith(".unpermitted") else
+            "external/owned_elsewhere/input.py" if case_id.endswith(".prefix-lookalike") else
+            "external/owned/input.py")
+    changes[path] = b"# Actual candidate change in an isolated synthetic lane.\n"
+    if case_id.startswith("INFRA-S02-08."):
+        manifest = parse_json((root / "specs/active_frontier.json").read_bytes(), "Frontier")
+        item = manifest["frontier"][1]
+        if case_id.endswith(".absent"):
+            del item["claim"]
+        elif case_id.endswith(".expired"):
+            for field in ("claimed_at", "heartbeat_at", "expires_at"):
+                value = datetime.fromisoformat(item["claim"][field].replace("Z", "+00:00"))
+                item["claim"][field] = (value - timedelta(hours=2)).isoformat().replace("+00:00", "Z")
+        else:
+            issues = [parse_json(line, "beads") for line in (root / ".beads/issues.jsonl").read_bytes().splitlines()]
+            next(issue for issue in issues if issue["id"] == "dat-next")["assignee"] = "different-owner"
+            changes[".beads/issues.jsonl"] = b"".join(canonical_json(issue) for issue in issues)
+        changes["specs/active_frontier.json"] = canonical_json(manifest)
+        changes["specs/PROGRESS.md"] = render_block(manifest).encode()
+    records = []
+    for name, raw in sorted(changes.items()):
+        target = root / name
+        records.append({"path": name, "before_sha256": sha256(target.read_bytes()) if target.exists() else None,
+                        "after_hex": raw.hex()})
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(raw)
+    git(root, "add", "--", *sorted(changes))
+    return {"case_id": case_id, "changes": records, "synthetic_input_only": True}

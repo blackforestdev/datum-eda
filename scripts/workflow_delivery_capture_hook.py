@@ -20,6 +20,7 @@ from workflow_delivery_support_bundle import prepare_bundle, verify_bundle
 from workflow_delivery_support_store import support_locations
 from workflow_delivery_interruption_case import INTERRUPTION_CASE, evaluate_interruption
 from workflow_delivery_review_input import PROOF_INPUT_CASES, proof_expectation
+from workflow_delivery_coverage_input import BOUNDARY_CASES, mutate_external_boundary
 
 
 def evaluate_hook(output, *, case_id, hook):
@@ -91,7 +92,9 @@ def run_hook_case(packet, destination, environment, *, case_id):
     target, _ = CASES[case_id]
     mutation = {"case_id": case_id, "path": target, "before_sha256": None, "after_hex": None,
                 "prepared_fixture_variant": recipe.get("fixture_variant")}
-    if case_id in SNAPSHOT_CASES:
+    if case_id in BOUNDARY_CASES:
+        mutation = mutate_external_boundary(root, case_id)
+    elif case_id in SNAPSHOT_CASES:
         mutation = prepare_snapshots(root, case_id)
     elif target and not prepared_input:
         path = root / target

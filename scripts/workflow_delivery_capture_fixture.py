@@ -21,7 +21,7 @@ from workflow_delivery_tree import Tree
 from workflow_delivery_trust_test_support import accepted_fixture
 from workflow_delivery_readiness_input import READINESS_CASES, prepare_readiness
 from workflow_delivery_review_input import REVIEW_INPUT_CASES, prepare_review_input
-from workflow_delivery_coverage_input import COVERAGE_INPUT_CASES, prepare_coverage_input
+from workflow_delivery_coverage_input import BOUNDARY_CASES, COVERAGE_INPUT_CASES, prepare_coverage_input
 from workflow_delivery_specification_input import SPECIFICATION_INPUT_CASES, prepare_specification_input
 from workflow_delivery_review_phase_input import REVIEW_PHASE_CASES, prepare_review_phase
 
@@ -63,7 +63,7 @@ def prepare_fixture(root, packet, *, fixture_variant=None):
     if fixture_variant in REVIEW_INPUT_CASES:
         prepare_review_input(f, fixture_variant)
     if fixture_variant in COVERAGE_INPUT_CASES:
-        prepare_coverage_input(policy, fixture_variant)
+        prepare_coverage_input(policy, fixture_variant, fixture=f, manifest=manifest)
     if fixture_variant in SPECIFICATION_INPUT_CASES:
         prepare_specification_input(f, manifest, policy, fixture_variant)
     if fixture_variant in REVIEW_PHASE_CASES:
@@ -99,10 +99,12 @@ def prepare_fixture(root, packet, *, fixture_variant=None):
     bundle = packet / "fixture.bundle"
     f.git("bundle", "create", str(bundle), "--all")
     f.git("bundle", "verify", str(bundle))
-    state = protected_state(f.root, ["src"])
+    input_roots = ["src", "external"] if fixture_variant in BOUNDARY_CASES else ["src"]
+    state = protected_state(f.root, input_roots)
     save(packet / "prepared-state.json", state)
     recipe = {"schema_version": 1, "kind": "synthetic-validator-input",
-              "fixture_family": ("accepted-history-and-readiness" if fixture_variant in READINESS_CASES
+              "fixture_family": ("external-boundary" if fixture_variant in BOUNDARY_CASES
+                                 else "accepted-history-and-readiness" if fixture_variant in READINESS_CASES
                                  else "synthetic-review-only" if fixture_variant in REVIEW_PHASE_CASES
                                  else "synthetic-specification-output" if fixture_variant in SPECIFICATION_INPUT_CASES
                                  else "malformed-coverage-input" if fixture_variant in COVERAGE_INPUT_CASES
@@ -113,7 +115,7 @@ def prepare_fixture(root, packet, *, fixture_variant=None):
               "bundle": {"path": bundle.name, "sha256": sha256(bundle.read_bytes())},
               "prepared_state": {"path": "prepared-state.json",
                                  "sha256": sha256((packet / "prepared-state.json").read_bytes())},
-              "untracked_roots": ["src"], "acceptance_asserted": False,
+              "untracked_roots": input_roots, "acceptance_asserted": False,
               "warning": "All embedded native/owner records are synthetic hostile-test INPUT, not proof."}
     if fixture_variant is not None:
         recipe.update(schema_version=2, fixture_variant=fixture_variant)
@@ -132,7 +134,8 @@ def restore_fixture(packet, root):
            "local_configuration bundle prepared_state untracked_roots acceptance_asserted warning" + variant_fields, "recipe")
     variant = recipe.get("fixture_variant")
     require(variant is None or type(variant) is str, "recipe", "string fixture variant required")
-    family = ("accepted-history-and-readiness" if variant in READINESS_CASES
+    family = ("external-boundary" if variant in BOUNDARY_CASES
+              else "accepted-history-and-readiness" if variant in READINESS_CASES
               else "synthetic-review-only" if variant in REVIEW_PHASE_CASES
               else "synthetic-specification-output" if variant in SPECIFICATION_INPUT_CASES
               else "malformed-coverage-input" if variant in COVERAGE_INPUT_CASES

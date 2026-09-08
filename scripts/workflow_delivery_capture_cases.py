@@ -13,7 +13,7 @@ from workflow_delivery_capture_mutations import CASES, changed_bytes, expected_d
 from workflow_delivery_io import sha256
 from workflow_delivery_interruption_case import INTERRUPTION_CASE, evaluate_interruption
 from workflow_delivery_environment_cases import case_uses_prepared_input
-from workflow_delivery_coverage_input import COVERAGE_INPUT_CASES, coverage_expectation
+from workflow_delivery_coverage_input import BOUNDARY_CASES, COVERAGE_INPUT_CASES, coverage_expectation, mutate_external_boundary
 from workflow_delivery_review_input import PROOF_INPUT_CASES, proof_expectation
 
 
@@ -37,7 +37,12 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
         target, expected, detail = proof_expectation(case_id, surface)
     mutation = {"case_id": case_id, "path": target, "before_sha256": None, "after_hex": None,
                 "prepared_fixture_variant": recipe.get("fixture_variant")}
-    if case_id in SNAPSHOT_CASES:
+    if case_id in BOUNDARY_CASES:
+        mutation = mutate_external_boundary(root, case_id)
+        if surface == "R":
+            git(root, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+                "commit", "-m", "test(workflow): retain synthetic external transaction\n\n" + case_id)
+    elif case_id in SNAPSHOT_CASES:
         mutation = prepare_snapshots(root, case_id)
         target, expected, detail = snapshot_expectation(case_id, surface)
     elif case_id in HISTORY_CASES:
@@ -84,9 +89,14 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
             assessment = evaluate_interruption(output, case_id=case_id,
                                                surface="S" if selector else surface, trigger=trigger)
         else:
+            diagnostics = None
+            if selector and case_id.startswith("INFRA-S02-08."):
+                diagnostics = [{"code": "NEXT", "path": None, "detail": detail},
+                    {"code": "WDQ-COVERAGE", "path": "external/owned/input.py",
+                     "detail": "production change has no promoted scope"}]
             assessment = evaluate_capture(output, case_id=case_id, surface="S" if selector else surface,
                                       expected_code=expected, script=script, expected_path=target,
-                                      expected_detail=detail)
+                                      expected_detail=detail, expected_diagnostics=diagnostics)
     except Exception as error:
         save(destination / "assessment-error.json", {"type": type(error).__name__, "detail": str(error),
                                                    "acceptance_asserted": False})

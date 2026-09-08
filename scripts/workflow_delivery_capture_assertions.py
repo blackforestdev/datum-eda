@@ -66,7 +66,7 @@ def observer_calls(output, result, invocation, script, arguments):
 
 
 def evaluate_capture(output, *, case_id, surface, expected_code, script,
-                     expected_path=None, expected_detail=None):
+                     expected_path=None, expected_detail=None, expected_diagnostics=None):
     output, script = Path(output), Path(script).resolve(strict=True)
     result, invocation = capture_envelope(output, case_id, surface)
     command = invocation["argv"]
@@ -87,16 +87,23 @@ def evaluate_capture(output, *, case_id, surface, expected_code, script,
         require(report["ok"] is (expected_code is None), "report", "unexpected selector result")
         codes = [failure.split(":", 1)[0] for failure in report.get("failures", [])]
         diagnostics = [tuple(failure.split(": ", 2)[1:]) for failure in report.get("failures", [])]
-    require(codes == ([] if expected_code is None else [expected_code]),
+    expected = ([] if expected_code is None else
+                [{"code": expected_code, "path": expected_path, "detail": expected_detail}])
+    if expected_diagnostics is not None:
+        require(surface == "S" and type(expected_diagnostics) is list and bool(expected_diagnostics)
+                and all(type(row) is dict and set(row) == {"code", "path", "detail"}
+                        for row in expected_diagnostics), "report", "explicit ordered selector diagnostics required")
+        expected = expected_diagnostics
+    require(codes == [row["code"] for row in expected],
             "report", "expected precise diagnostic, not an unrelated failure")
-    if expected_path is not None:
-        require(len(diagnostics) == 1 and len(diagnostics[0]) == 2
-                and diagnostics[0][0] == expected_path, "report", "wrong diagnostic input path")
-    if expected_detail is not None:
-        require(len(diagnostics) == 1 and expected_detail in diagnostics[0][-1],
-                "report", "wrong diagnostic cause")
+    for actual, row in zip(diagnostics, expected):
+        if row["path"] is not None:
+            require(len(actual) == 2 and actual[0] == row["path"], "report", "wrong diagnostic input path")
+        if row["detail"] is not None:
+            require(bool(actual) and row["detail"] in actual[-1], "report", "wrong diagnostic cause")
     return {"case_id": case_id, "surface": surface, "observation_matches_expected": True,
             "expected_code": expected_code, "invocation_id": result["invocation_id"],
             "expected_path": expected_path, "expected_detail": expected_detail,
+            "expected_diagnostics": expected,
             "result_sha256": sha256((output / "result.json").read_bytes()),
             "acceptance_asserted": False}

@@ -9,7 +9,7 @@ import unittest
 from workflow_delivery_capture_cases import run_case
 from workflow_delivery_capture_fixture import prepare_fixture
 from workflow_delivery_capture_hook import run_hook_case
-from workflow_delivery_coverage_input import COVERAGE_INPUT_CASES
+from workflow_delivery_coverage_input import BOUNDARY_CASES, COVERAGE_INPUT_CASES
 from workflow_delivery_coverage_shapes import coverage_shape
 from workflow_delivery_io import DeliveryInputError
 
@@ -20,6 +20,8 @@ class CoverageCaptureTest(unittest.TestCase):
             store = Path(temporary)
             baseline = store / "baseline-packet"
             prepare_fixture(store / "baseline", baseline)
+            external_baseline = store / "external-baseline-packet"
+            prepare_fixture(store / "external-baseline", external_baseline, fixture_variant="INFRA-S02-06.authorized")
             runtime = Path(__file__).resolve().parents[1]
             environment = {"PATH": os.defpath, "HOME": str(store), "XDG_CONFIG_HOME": str(store),
                            "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "LANG": "C"}
@@ -27,7 +29,7 @@ class CoverageCaptureTest(unittest.TestCase):
             for variant in COVERAGE_INPUT_CASES:
                 packet = store / (variant + "-packet")
                 recipe = prepare_fixture(store / (variant + "-source"), packet, fixture_variant=variant)
-                self.assertEqual("malformed-coverage-input", recipe["fixture_family"])
+                self.assertEqual("external-boundary" if variant in BOUNDARY_CASES else "malformed-coverage-input", recipe["fixture_family"])
                 if variant.endswith(".duplicate-classification"):
                     # Establish the precise malformed input separately. Actual
                     # entrypoints reject invalid authority before coverage runs.
@@ -39,7 +41,9 @@ class CoverageCaptureTest(unittest.TestCase):
                     self.assertIn("coverage.rows: duplicate identity", str(error.exception))
                 for surface in ("C", "R", "S-check", "S-details", "H"):
                     with self.subTest(case=variant, surface=surface):
-                        for phase, source, case in (("refusal", packet, variant), ("recovery", baseline, "INFRA-S01-01")):
+                        recovery = ((external_baseline, "INFRA-S02-06.authorized") if variant in BOUNDARY_CASES
+                                    else (baseline, "INFRA-S01-01"))
+                        for phase, source, case in (("case", packet, variant), ("recovery", *recovery)):
                             destination = store / (variant + surface + phase)
                             if surface == "H":
                                 result = run_hook_case(source, destination, environment, case_id=case)
@@ -50,7 +54,7 @@ class CoverageCaptureTest(unittest.TestCase):
                             self.assertFalse(result["acceptance_asserted"])
                             self.assertNotIn(result["invocation_id"], identities)
                             identities.add(result["invocation_id"])
-            self.assertEqual(20, len(identities))
+            self.assertEqual(80, len(identities))
 
 
 if __name__ == "__main__":
