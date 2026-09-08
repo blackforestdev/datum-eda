@@ -52,12 +52,12 @@
     "docs/reviews/workflow-foundation/handoff.md": {
       "class": "governed",
       "progress_anchor": "FOUNDATION-WORKFLOW-SPEC",
-      "notes": "WDQ-F02 completed authorship and WDQ-F03 ordered owner packet: concrete F1-F8 consumer/Claude handoffs, exact proposed prerequisite additions and explicit unresolved choices. No mechanism ratification, consumer claim, execution, enrollment or acceptance."
+      "notes": "WDQ-F03 records approval of the bounded contract, specification scheduling, three prerequisite edges and rollout-packet preparation. Unresolved mechanism, numerical budgets, consumer claims/execution, enrollment and product acceptance remain unapproved."
     },
     "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md": {
       "class": "governed",
       "progress_anchor": "FOUNDATION-WORKFLOW-SPEC",
-      "notes": "WDQ-F02 authored F1-F8 contract with exact values, refusals, transaction/reopen timelines and explicit unresolved writer/doorway/gesture choices; bounded visual/prerequisite handoff is registered separately. Pending individual WDQ-F03 owner dispositions, not execution or product ratification. No new inventory shape."
+      "notes": "WDQ-F03 adopted bounded F1-F8 requirements and handoffs with exact values/refusals and transaction/reopen timelines. Explicit unresolved writer/doorway/gesture choices remain unratified; no execution or new inventory shape."
     },
     "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md": {
       "class": "governed",

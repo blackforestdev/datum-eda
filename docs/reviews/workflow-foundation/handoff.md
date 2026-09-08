@@ -1,6 +1,6 @@
 # Foundation contract: owner and consuming-lane handoff
 
-Status: WDQ-F02 handoff packet for WDQ-F03 review; not implementation approval.
+Status: WDQ-F03 owner disposition recorded; contract/handoff adopted, not implementation approval.
 Tracking: FOUNDATION-WORKFLOW-SPEC / `dat-manual-foundation-contracts-fsw`.
 Owning route: `foundation-manual-workflow`.
 Contract: `specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md`.
@@ -8,6 +8,33 @@ Research: `research/process-quality/FOUNDATION_MANUAL_WORKFLOW_RESEARCH.md`.
 Authority review: `docs/reviews/workflow-foundation/authority-review.md`.
 
 ## What this packet does and does not accept
+
+<!-- EVIDENCE:FOUNDATION-WORKFLOW-SPEC:WDQ-F03-APPROVED -->
+### Recorded owner disposition
+
+The owner replied **“approved /goal resume”** to the four-request WDQ-F03
+packet. This records approval of CONTRACT, OPEN-CHOICES, PREREQUISITES and
+ROLLOUT with precisely the limits printed in that packet. The reviewed baseline
+is `b429820e`; before this disposition, the handoff SHA-256 was
+`afdc7514c718e7daa6397ffbd8082f67dd25dbacfd0dea5e67aa500c6582dd6a`
+and the concrete contract SHA-256 was
+`6b5cfd07a13066cbcaa6495b1e7d07f42d784609fb610491b97fc0a35a0c5fa5`.
+These identify the presented files; they are not a fabricated PM041 receipt.
+
+- CONTRACT: adopted bounded inherited requirements and concrete handoffs;
+  unresolved product choices remain unapproved.
+- OPEN-CHOICES: authorized scheduling and research/specification follow-ups,
+  not the writer/gesture mechanisms, fixture budgets or their implementation.
+- PREREQUISITES: authorized exactly the three foundation edges in the table
+  below. This governance transaction records them; all previous edges remain.
+- ROLLOUT: authorized preparation of the broader enrollment, tripwire and
+  three-slice adoption packet, not trusted gate promotion or product execution.
+
+The original proposed/decision-request text below is retained as the reviewed
+packet. Its references to pending owner disposition are superseded only by
+these four bounded approvals. Broader rollout, owning-lane product reconciliation
+and every unresolved mechanism remain unfinished. Preferences ownership and
+GP-CM05V, pilot authority and local trust are untouched.
 
 The packet connects a normal native launch/create/open doorway to exact board
 editing and durable reopen, with a local-library/electrical-to-physical handoff.

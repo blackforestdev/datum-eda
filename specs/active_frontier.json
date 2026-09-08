@@ -4039,7 +4039,7 @@
       "canonical_next": false,
       "parallel": true,
       "summary": "Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap.",
-      "dependencies": [],
+      "dependencies": ["dat-manual-foundation-contracts-fsw"],
       "unblocks": [
         "dat-native-authoring-depth-sf9",
         "dat-sheet-interaction-reentry-9ee"
@@ -4418,7 +4418,8 @@
       "summary": "Execute the P0-W3 direct typed-operation path after its actual write-authority prerequisites land and the owner authorizes execution; no passive feedback viewer is an implicit blocker.",
       "dependencies": [
         "dat-marking-menu-shell-g0w",
-        "dat-project-write-ownership-lock-0ne"
+        "dat-project-write-ownership-lock-0ne",
+        "dat-manual-foundation-contracts-fsw"
       ],
       "unblocks": ["dat-native-authoring-depth-sf9"],
       "completion": {
@@ -4591,7 +4592,8 @@
       "dependencies": [
         "dat-gui-p2-cross-probe-27z",
         "dat-gui-surface-specs-usb",
-        "dat-gui-write-path-qiu"
+        "dat-gui-write-path-qiu",
+        "dat-manual-foundation-contracts-fsw"
       ],
       "unblocks": [],
       "completion": {
@@ -7899,10 +7901,10 @@
       "parallel": true,
       "summary": "Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection.",
       "dependencies": ["dat-workflow-delivery-quality-xgj"],
-      "unblocks": ["dat-native-project-startup-vrf"],
+      "unblocks": ["dat-native-project-startup-vrf", "dat-gui-surface-specs-usb", "dat-gui-write-path-qiu", "dat-native-authoring-depth-sf9"],
       "completion": {
         "outcome": "A reviewed clause-level foundation contract covers one ordinary native project doorway and exact board-edit/reopen workflow, with explicit consuming-owner handoffs and unresolved decisions left blocking.",
-        "canonical_next_step_id": "WDQ-F03",
+        "canonical_next_step_id": null,
         "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
         "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
         "steps": [
@@ -7911,7 +7913,7 @@
           {
             "id": "WDQ-F03",
             "kind": "owner_decision",
-            "status": "pending",
+            "status": "complete",
             "action": "Obtain owner disposition of F1-F8 resolutions, consuming-owner handoff and exact proposed prerequisite changes before execution authorization.",
             "depends_on": [
               "WDQ-F02"
@@ -7922,7 +7924,7 @@
                 "marker": "WDQ-F03"
               }
             ],
-            "completion_evidence": [],
+            "completion_evidence": [{"kind": "review", "path": "docs/reviews/workflow-foundation/handoff.md", "marker": "<!-- EVIDENCE:FOUNDATION-WORKFLOW-SPEC:WDQ-F03-APPROVED -->"}],
             "owner_input": {
               "response_format": "Reply `FOUNDATION-WORKFLOW-SPEC/WDQ-F03: CONTRACT=<approve|revise|defer>; OPEN-CHOICES=<approve|revise|defer>; PREREQUISITES=<approve|revise|defer>; ROLLOUT=<approve|revise|defer>`. Include the correction or reason for each revise/defer. OPEN-CHOICES approves scheduling specification work only, not its unresolved mechanisms; ROLLOUT approves packet preparation only, not enrollment or trusted execution.",
               "requests": [
@@ -7966,7 +7968,7 @@
             }
           }
         ],
-        "post_completion": {"effects": ["Record owner disposition and reconcile approved clauses in their owning evidence routes.", "Propose explicit native-doorway and existing-authoring handoffs without automatically authorizing or selecting implementation."], "unblocks_issue_ids": ["dat-native-project-startup-vrf"], "selection": "explicit_frontier_update", "authorizes_successor": false, "selects_successor": false}
+        "post_completion": {"effects": ["Owner approved the bounded contract, specification follow-ups, three exact prerequisite additions and broader rollout packet preparation; unresolved mechanisms and product implementation remain unauthorized.", "Record the separate rollout planning successor without changing Preferences canonical selection or implicitly authorizing a product consumer."], "unblocks_issue_ids": ["dat-native-project-startup-vrf", "dat-gui-surface-specs-usb", "dat-gui-write-path-qiu", "dat-native-authoring-depth-sf9"], "selection": "explicit_frontier_update", "authorizes_successor": false, "selects_successor": false}
       }
     },
     {

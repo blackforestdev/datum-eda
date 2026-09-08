@@ -80,7 +80,7 @@
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`.
 - **Complete schematic and library GUI surface specifications** (`GUI-SURFACE-SPECS`; `dat-gui-surface-specs-usb`).
    Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap. *state `planned`; authorization `planning`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* dat-native-authoring-depth-sf9, dat-sheet-interaction-reentry-9ee. *Governing:* `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`.
+   *Dependencies:* `dat-manual-foundation-contracts-fsw`. *Unblocks:* dat-native-authoring-depth-sf9, dat-sheet-interaction-reentry-9ee. *Governing:* `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`.
 - **Build UVT S5A selection and compound inspection** (`UVT-S5A-BUILD`; `dat-uvt-s5a-build-1wv`).
    Implement selection, marquee, lifecycle, projection, compound subjects, and read-only inspection only after the S5 contract and identity decision are complete and execution is authorized. *state `specified`; authorization `planning`.*
    *Dependencies:* `dat-s5-selection-visual-contract-zid`. *Unblocks:* dat-gui-p2-cross-probe-27z. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`.
@@ -95,10 +95,10 @@
    *Dependencies:* none. *Unblocks:* GUI write-path menu wiring. *Governing:* `docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`, `docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md`.
 - **Enable the GUI journaled write path** (`GUI-WRITE-PATH`; `dat-gui-write-path-qiu`).
    Execute the P0-W3 direct typed-operation path after its actual write-authority prerequisites land and the owner authorizes execution; no passive feedback viewer is an implicit blocker. *state `blocked`; authorization `planning`.*
-   *Dependencies:* `dat-marking-menu-shell-g0w`, `dat-project-write-ownership-lock-0ne`. *Unblocks:* dat-native-authoring-depth-sf9. *Governing:* `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`.
+   *Dependencies:* `dat-marking-menu-shell-g0w`, `dat-project-write-ownership-lock-0ne`, `dat-manual-foundation-contracts-fsw`. *Unblocks:* dat-native-authoring-depth-sf9. *Governing:* `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`.
 - **Build native schematic and PCB authoring depth** (`NATIVE-AUTHORING`; `dat-native-authoring-depth-sf9`).
    Build manual-first native editors over the shared tooling and canonical GUI commit path after their prerequisites land. *state `blocked`; authorization `planning`.*
-   *Dependencies:* `dat-gui-p2-cross-probe-27z`, `dat-gui-surface-specs-usb`, `dat-gui-write-path-qiu`. *Unblocks:* none. *Governing:* `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`, `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`.
+   *Dependencies:* `dat-gui-p2-cross-probe-27z`, `dat-gui-surface-specs-usb`, `dat-gui-write-path-qiu`, `dat-manual-foundation-contracts-fsw`. *Unblocks:* none. *Governing:* `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`, `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`.
 - **Specify the documentation-system object model** (`DOC-SYSTEM-SPEC`; `dat-documentation-system-spec-y8z`).
    Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* dat-dimension-selection-reentry-kxk, dat-distributed-collaboration-architecture-lt1. *Governing:* `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`, `specs/PUBLISH_SPACE_SPEC.md`.
@@ -165,7 +165,7 @@
    *Dependencies:* none. *Unblocks:* dat-manual-foundation-contracts-fsw. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`.
 - **Specify the first manual workflow foundation contracts** (`FOUNDATION-WORKFLOW-SPEC`; `dat-manual-foundation-contracts-fsw`).
    Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection. *state `specified`; authorization `owner_decision`; parallel lane.*
-   *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* dat-native-project-startup-vrf. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, `docs/reviews/workflow-foundation/authority-review.md`, `docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md`, `specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md`, `docs/reviews/workflow-foundation/handoff.md`.
+   *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* dat-native-project-startup-vrf, dat-gui-surface-specs-usb, dat-gui-write-path-qiu, dat-native-authoring-depth-sf9. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, `docs/reviews/workflow-foundation/authority-review.md`, `docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md`, `specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md`, `docs/reviews/workflow-foundation/handoff.md`.
 - **Implement and validate the bounded workflow delivery gate pilot** (`WORKFLOW-DELIVERY-GATE-PILOT`; `dat-workflow-gate-pilot-b3s`).
    Prepare a fresh authorized handoff, build the scoped delivery gate and actual action-consumer pilot, and obtain independent replay plus owner activation; no blanket rollout or EDA authoring acceptance. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md`, `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md`, `docs/reviews/workflow-delivery-pilot/handoff.md`.
@@ -181,7 +181,7 @@
 
 | Governed document | Current evidence | Completion boundary | Tracking |
 | --- | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, WDQ-F01–F03; `docs/reviews/workflow-foundation/authority-review.md`; `docs/reviews/workflow-foundation/handoff.md` | WDQ-F01 review and WDQ-F02 concrete contract/handoff authorship complete; WDQ-F03 awaits individual owner dispositions | Explicit owner-approved contract and handoffs; unresolved product choices remain blocking, no runtime work | `dat-manual-foundation-contracts-fsw`; owner-decision boundary, no live claim; Preferences selection unchanged |
+| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, WDQ-F01–F03; `docs/reviews/workflow-foundation/authority-review.md`; `docs/reviews/workflow-foundation/handoff.md` | WDQ-F01/F02 complete; WDQ-F03 records owner approval of all four bounded requests and applies the three authorized foundation prerequisite edges | Adopted contract/handoffs; unresolved mechanisms and actual product execution remain unapproved; broader rollout preparation authorized separately | `dat-manual-foundation-contracts-fsw`; completion disposition recorded pending commit-linked closure; no live claim; Preferences selection unchanged |
 | `docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md` | WDQ-F01 reconciles the blanket draft header with doctrine classification: inherited ratifications and the workspace correction are preserved; unresolved budgets, fixtures and owner questions remain explicit | Apply clause-specific quality requirements and reviewed fixture budgets to each consuming workflow; no implementation, gate execution or product acceptance inferred from classification | `dat-manual-foundation-contracts-fsw`, WDQ-F01; no mechanism ratification or successor authorization |
 
 The WDQ-F02 contract `specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md` connects F1–F8
@@ -190,7 +190,9 @@ library fixture proposals, persistence failures and two-Project settings scope.
 Its dedicated research route includes primary Linux locking/durability evidence.
 The visual-owner reconciliation list, exact prerequisite proposals and four-part
 owner packet are authored in `docs/reviews/workflow-foundation/handoff.md`.
-Current boundary: owner disposition; no execution or product acceptance.
+Owner disposition is recorded: adopted contract, bounded specification follow-ups,
+three exact prerequisite additions and broader rollout packet preparation only.
+No product execution, native acceptance or trusted gate promotion is implied.
 Tracking remains FOUNDATION-WORKFLOW-SPEC / `dat-manual-foundation-contracts-fsw`.
 
 ## FOUNDATION-CONSUMER-COMPLETION — existing lane delivery contracts
