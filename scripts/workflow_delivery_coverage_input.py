@@ -6,6 +6,10 @@ from datetime import datetime, timedelta, timezone
 from workflow_delivery_io import canonical_json, parse_json, sha256
 
 BOUNDARY_CASES = {
+    "INFRA-S02-05.authorization": ("NEXT", "WDQ-COVERAGE", "external-lane authorization changed"),
+    "INFRA-S02-05.selected-step": ("NEXT", "WDQ-COVERAGE", "external-lane completion boundary changed"),
+    "INFRA-S02-05.requirement": ("NEXT", "WDQ-COVERAGE", "external-lane selected requirement/authority changed"),
+    "INFRA-S02-05.future-requirement": ("NEXT", "WDQ-COVERAGE", "external-lane work crossed the promoted boundary"),
     "INFRA-S02-06.authorized": (None, None, None),
     "INFRA-S02-06.unpermitted": ("external/unpermitted/input.py", "WDQ-COVERAGE", "production change has no promoted scope"),
     "INFRA-S02-09.prefix-lookalike": ("external/owned_elsewhere/input.py", "WDQ-COVERAGE", "production change has no promoted scope"),
@@ -49,6 +53,12 @@ def prepare_external_boundary(f, manifest, policy):
     from project_status import render_block
     item = manifest["frontier"][1]
     item["completion"]["steps"][0].update(kind="execution", status="in_progress")
+    second = deepcopy(item["completion"]["steps"][0])
+    second.update(id="NEXT-C02", status="pending", depends_on=["NEXT-C01"])
+    doc = item["governing_docs"][0]
+    second["requirement_refs"] = [{"path": doc, "marker": "NEXT-C02"}]
+    item["completion"]["steps"].append(second)
+    f.write(doc, (f.root / doc).read_bytes() + b"\n<!-- REQ:NEXT:NEXT-C02 -->\n")
     now = datetime.now(timezone.utc).replace(microsecond=0) - timedelta(seconds=1)
     stamp = lambda value: value.isoformat().replace("+00:00", "Z")
     item.update(state="in_progress", authorization="execution", claim={
@@ -58,7 +68,8 @@ def prepare_external_boundary(f, manifest, policy):
         "expires_at": stamp(now + timedelta(hours=1))})
     issues = [parse_json(line, ".beads/issues.jsonl") for line in
               (f.root / ".beads/issues.jsonl").read_bytes().splitlines() if line.strip()]
-    next(issue for issue in issues if issue["id"] == "dat-next").update(status="in_progress", assignee="codex")
+    next(issue for issue in issues if issue["id"] == "dat-next").update(status="in_progress", assignee="codex",
+        acceptance_criteria="NEXT-C01: Current bounded work\nNEXT-C02: Later separately authorized work")
     f.write(".beads/issues.jsonl", b"".join(canonical_json(issue) for issue in issues))
     policy["coverage"]["rows"][1].update(category="external_lane", boundary_ref=f.ref, external_handoff_ref=f.ref)
     policy["coverage"]["production_roots"].append("external")
@@ -78,10 +89,29 @@ def mutate_external_boundary(root, case_id):
             "external/owned_elsewhere/input.py" if case_id.endswith(".prefix-lookalike") else
             "external/owned/input.py")
     changes[path] = b"# Actual candidate change in an isolated synthetic lane.\n"
-    if case_id.startswith("INFRA-S02-08."):
+    if case_id.startswith(("INFRA-S02-08.", "INFRA-S02-05.")):
         manifest = parse_json((root / "specs/active_frontier.json").read_bytes(), "Frontier")
         item = manifest["frontier"][1]
-        if case_id.endswith(".absent"):
+        first, second = item["completion"]["steps"]
+        if case_id.endswith(".authorization"):
+            # Keep the scoped step an execution step so source-scope shape
+            # remains valid. A coherent planning successor must still fail
+            # the earlier exact external-authorization boundary.
+            item["authorization"] = "planning"
+            first.update(status="complete", completion_evidence=[{"kind": "document",
+                "path": "docs/authority.md", "marker": "<!-- RULE -->"}])
+            second.update(kind="planning", status="in_progress")
+            item["completion"]["canonical_next_step_id"] = "NEXT-C02"
+        elif case_id.endswith(".selected-step"):
+            first.update(status="complete", completion_evidence=[{"kind": "document",
+                "path": "docs/authority.md", "marker": "<!-- RULE -->"}])
+            second["status"] = "in_progress"
+            item["completion"]["canonical_next_step_id"] = "NEXT-C02"
+        elif case_id.endswith(".requirement"):
+            first["action"] = "Expanded unauthorized current action"
+        elif case_id.endswith(".future-requirement"):
+            second["action"] = "Expanded unauthorized future action"
+        elif case_id.endswith(".absent"):
             del item["claim"]
         elif case_id.endswith(".expired"):
             for field in ("claimed_at", "heartbeat_at", "expires_at"):
