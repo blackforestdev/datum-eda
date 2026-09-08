@@ -86,10 +86,10 @@
    *Dependencies:* `dat-s5-selection-visual-contract-zid`. *Unblocks:* dat-gui-p2-cross-probe-27z. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`.
 - **Build GUI Phase 2 P2.3 cross-probe** (`GUI-P2-CROSSPROBE`; `dat-gui-p2-cross-probe-27z`).
    Project one selection identity into Board and Schematic panes after S5A lands; execution remains separately authorized. *state `blocked`; authorization `planning`.*
-   *Dependencies:* `dat-uvt-s5a-build-1wv`. *Unblocks:* full dual-pane component inspector, native authoring depth. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`.
+   *Dependencies:* `dat-uvt-s5a-build-1wv`. *Unblocks:* dat-gui-p2-full-inspector-0ye, dat-native-authoring-depth-sf9. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`.
 - **Build GUI Phase 2 P2.4 full inspector** (`GUI-P2-INSPECTOR`; `dat-gui-p2-full-inspector-0ye`).
    Complete Identity, Placement, and Checks inspector sections after the shared cross-probe substrate lands. *state `blocked`; authorization `planning`.*
-   *Dependencies:* `dat-gui-p2-cross-probe-27z`. *Unblocks:* complete read-only Phase 2 inspection surface. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`.
+   *Dependencies:* `dat-gui-p2-cross-probe-27z`. *Unblocks:* none. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`.
 - **Build the inert marking-menu shell** (`GUI-MARKING-MENU`; `dat-marking-menu-shell-g0w`).
    Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go. *state `specified`; authorization `planning`; parallel lane.*
    *Dependencies:* none. *Unblocks:* GUI write-path menu wiring. *Governing:* `docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`, `docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md`.

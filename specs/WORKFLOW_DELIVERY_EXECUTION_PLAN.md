@@ -588,3 +588,36 @@ installed enrollment. This diagnostic is deliberately not full policy, scope,
 clause, readiness or proof validation. The five plan repairs, exact product/
 coverage/enrollment preparation and remaining I02 work continue; Preferences,
 all product states, installed trust and future owner checkpoints are unchanged.
+
+### WDQ-I02 — pending Phase 2 completion-plan repair
+
+`specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md` supplies the missing
+GUI-P2-CROSSPROBE and GUI-P2-INSPECTOR completion requirements. Both actual
+Frontier records now carry six pending steps: contract/readiness authorship,
+owner execution authorization, implementation, native proof, distinct independent
+replay, and exact owner acceptance. Their beads acceptance IDs are synchronized.
+State remains blocked/planning; no claim, execution, evidence or approval is
+assigned. Existing prerequisites, roadmap order and canonical selection are
+unchanged. Descriptive unblocks are normalized to their existing actual tracker
+dependent IDs, as PM025 requires for structured post-completion contracts; no
+new dependency or successor authority is introduced.
+
+The requirements preserve the governing P2.3 selected-identity versus related-
+context distinction and the full P2.4 component/net/Sheets/status scope. This
+repairs the old tracker summaries without redesigning those surfaces. Actual
+native contracts, complete product-route/prototype review and all unresolved
+prerequisites remain C01 work owned by those future lanes; workflow preparation
+does not supply imaginary handlers, fixtures, product proof or acceptance.
+
+Seven new completion tests and all 50 project-status tests pass. The actual
+category validator from retained candidate `2a85005c`, using `faa34046` authority
+and the current prepared Frontier, now accepts both pending plans without
+asserting product readiness. The remaining category refusals are exactly three
+missing plans (marking-menu, distributed collaboration, adopted drafting
+standard) and this workflow's uninstalled delivery declaration. This remains a
+category-only preflight, not full policy/contract or native verification.
+
+`dat-wdq-missing-plans-b8y` stays open for the remaining three plans. I02 remains
+selected; installed PM041 trust, Preferences and every unrelated Frontier item
+are untouched. Adding complete pending requirements does not complete a product
+or satisfy the later native adoption cohorts.

@@ -4346,7 +4346,8 @@
       "issue_id": "dat-gui-p2-cross-probe-27z",
       "governing_docs": [
         "docs/gui/DATUM_GUI_PHASE_2_SPEC.md",
-        "docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md"
+        "docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md",
+        "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md"
       ],
       "state": "blocked",
       "authorization": "planning",
@@ -4357,9 +4358,161 @@
         "dat-uvt-s5a-build-1wv"
       ],
       "unblocks": [
-        "full dual-pane component inspector",
-        "native authoring depth"
-      ]
+        "dat-gui-p2-full-inspector-0ye",
+        "dat-native-authoring-depth-sf9"
+      ],
+      "completion": {
+        "outcome": "Complete read-only P2.3 schematic selection and cross-pane semantic projection, preserving distinct related context, with native proof, independent replay and owner acceptance.",
+        "canonical_next_step_id": "XP-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "XP-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Reconcile complete read-only P2.3 identity, related-context and native delivery readiness.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                "marker": "XP-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "XP-C02",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain owner authorization of the exact cross-probe execution and proof packet.",
+            "depends_on": [
+              "XP-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                "marker": "XP-C02"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `GUI-P2-CROSSPROBE: authorize execution — <exact reviewed candidate and evidence>`, `GUI-P2-CROSSPROBE: revise — <correction>`, or `GUI-P2-CROSSPROBE: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "AUTHORIZE",
+                  "question": "Do you authorize the complete exact read-only execution and native-proof packet after required readiness and prerequisites?",
+                  "recommended_response": "Approve only the complete reviewed packet; keep unresolved mandatory requirements blocking.",
+                  "source_ref": {
+                    "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                    "marker": "AUTHORIZE"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "XP-C03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement the shared schematic selection and cross-pane identity projection contract.",
+            "depends_on": [
+              "XP-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                "marker": "XP-C03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "XP-C04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove full native cross-probe, refusal, nonmutation, visual and accessibility behavior.",
+            "depends_on": [
+              "XP-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                "marker": "XP-C04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "XP-C05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Obtain independent replay of the exact complete P2.3 candidate and every finding.",
+            "depends_on": [
+              "XP-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                "marker": "XP-C05"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "XP-C06",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain exact owner acceptance and hand off without selecting successors.",
+            "depends_on": [
+              "XP-C05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                "marker": "XP-C06"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `GUI-P2-CROSSPROBE: accept delivery — <exact reviewed candidate and evidence>`, `GUI-P2-CROSSPROBE: revise — <correction>`, or `GUI-P2-CROSSPROBE: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "ACCEPT",
+                  "question": "Do you accept the complete exact native delivery after independent replay and disposition of every finding?",
+                  "recommended_response": "Approve only the complete reviewed packet; keep unresolved mandatory requirements blocking.",
+                  "source_ref": {
+                    "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                    "marker": "ACCEPT"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Record exact complete P2.3 acceptance and evidence handoff; preserve separate inspector/native-authoring selection and authorization."
+          ],
+          "unblocks_issue_ids": [
+            "dat-gui-p2-full-inspector-0ye",
+            "dat-native-authoring-depth-sf9"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "GUI-P2-INSPECTOR",
@@ -4367,7 +4520,8 @@
       "title": "Build GUI Phase 2 P2.4 full inspector",
       "issue_id": "dat-gui-p2-full-inspector-0ye",
       "governing_docs": [
-        "docs/gui/DATUM_GUI_PHASE_2_SPEC.md"
+        "docs/gui/DATUM_GUI_PHASE_2_SPEC.md",
+        "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md"
       ],
       "state": "blocked",
       "authorization": "planning",
@@ -4377,9 +4531,156 @@
       "dependencies": [
         "dat-gui-p2-cross-probe-27z"
       ],
-      "unblocks": [
-        "complete read-only Phase 2 inspection surface"
-      ]
+      "unblocks": [],
+      "completion": {
+        "outcome": "Complete read-only P2.4 component and net inspection, multi-sheet hierarchy and schematic status context, with native proof, independent replay and owner acceptance.",
+        "canonical_next_step_id": "INSP-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "INSP-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Reconcile full component, net, Sheets and status-bar native delivery readiness.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                "marker": "INSP-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "INSP-C02",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain owner authorization of the complete read-only P2.4 execution packet.",
+            "depends_on": [
+              "INSP-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                "marker": "INSP-C02"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `GUI-P2-INSPECTOR: authorize execution — <exact reviewed candidate and evidence>`, `GUI-P2-INSPECTOR: revise — <correction>`, or `GUI-P2-INSPECTOR: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "AUTHORIZE",
+                  "question": "Do you authorize the complete exact read-only execution and native-proof packet after required readiness and prerequisites?",
+                  "recommended_response": "Approve only the complete reviewed packet; keep unresolved mandatory requirements blocking.",
+                  "source_ref": {
+                    "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                    "marker": "AUTHORIZE"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "INSP-C03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement all reviewed P2.4 context consumers through the shared inspector backbone.",
+            "depends_on": [
+              "INSP-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                "marker": "INSP-C03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "INSP-C04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove complete native inspector, hierarchy, status, context and nonmutation behavior.",
+            "depends_on": [
+              "INSP-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                "marker": "INSP-C04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "INSP-C05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Obtain independent replay of all P2.4 surfaces and account for every finding.",
+            "depends_on": [
+              "INSP-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                "marker": "INSP-C05"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "INSP-C06",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain exact owner acceptance of full P2.4 without claiming authoring completion.",
+            "depends_on": [
+              "INSP-C05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                "marker": "INSP-C06"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `GUI-P2-INSPECTOR: accept delivery — <exact reviewed candidate and evidence>`, `GUI-P2-INSPECTOR: revise — <correction>`, or `GUI-P2-INSPECTOR: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "ACCEPT",
+                  "question": "Do you accept the complete exact native delivery after independent replay and disposition of every finding?",
+                  "recommended_response": "Approve only the complete reviewed packet; keep unresolved mandatory requirements blocking.",
+                  "source_ref": {
+                    "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                    "marker": "ACCEPT"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Record complete P2.4 acceptance and honest read-only product status; do not claim native authoring or select a successor."
+          ],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "GUI-MARKING-MENU",
