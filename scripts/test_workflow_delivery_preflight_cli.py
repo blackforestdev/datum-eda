@@ -38,9 +38,9 @@ class PreflightCliTest(unittest.TestCase):
         self.env = {"PATH": os.defpath, "HOME": str(self.store), "XDG_CONFIG_HOME": str(self.store),
                     "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull}
 
-    def run_cli(self, *, output=None, digest=None, isolated=True, extra=()):
+    def run_cli(self, *, output=None, digest=None, isolated=True, extra=(), mode="--inspect"):
         return subprocess.run([sys.executable, *(["-I", "-S", "-B"] if isolated else []),
-            str(self.script), "--inspect", "--root", str(self.f.root), "--request", str(self.path),
+            str(self.script), mode, "--root", str(self.f.root), "--request", str(self.path),
             "--request-sha256", digest or sha256(self.path.read_bytes()),
             "--output", str(output or self.output), *extra], cwd=self.store,
             env=self.env, capture_output=True, timeout=30)
@@ -56,6 +56,25 @@ class PreflightCliTest(unittest.TestCase):
         self.assertEqual(self.request, payload["request"])
         self.assertFalse(payload["publication_authorized"])
         self.assertEqual(self.f.head, payload["support_bundle"]["authority"])
+        self.assertEqual(before, protected_state(self.f.root, ["src"]))
+
+    def test_partial_activation_state_is_visible_and_retained_without_repair(self):
+        from copy import deepcopy
+        self.request["kind"] = "datum.workflow-delivery.activation-state-request"
+        proposed = deepcopy(self.request["prior_local_trust"])
+        proposed["datum.workflowDeliveryAuthorityRef"] = [self.request["candidate"]]
+        self.request["proposed_local_trust"] = proposed
+        self.path.write_bytes(canonical_json(self.request))
+        self.f.git("merge", "--ff-only", self.request["candidate"])
+        before = protected_state(self.f.root, ["src"])
+        result = self.run_cli(mode="--inspect-state")
+        self.assertEqual(2, result.returncode, result.stdout + result.stderr)
+        report = json.loads(result.stdout)
+        self.assertEqual("partial", report["state"])
+        self.assertTrue(report["observation_completed"])
+        self.assertFalse(report["activation_asserted"])
+        payload = json.loads(self.output.read_bytes())
+        self.assertEqual("partial", payload["activation_state"]["state"])
         self.assertEqual(before, protected_state(self.f.root, ["src"]))
 
     def test_dirty_failure_is_visible_and_retained_without_repair(self):
