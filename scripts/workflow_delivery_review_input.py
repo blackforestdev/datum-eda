@@ -8,6 +8,9 @@ from workflow_delivery_tree import Tree
 
 REVIEW_PATH = "docs/reviews/review.json"
 EVENT_PATH = "evidence/original-events.json"
+REPORT_ONLY_CASE = "INFRA-S01-03.report-only"
+REPORT_CASES = {REPORT_ONLY_CASE, "INFRA-S01-03.enforce"}
+REPORT_FIXTURE = "INFRA-S06-05.visible"
 PROOF_INPUT_CASES = {
     "INFRA-S06-03.authority": (EVENT_PATH, "WDQ-STALE", "governing authority changed since observed run"),
     "INFRA-S06-03.source": ("evidence/inputs.json", "WDQ-INDEX", "changed relevant inputs"),

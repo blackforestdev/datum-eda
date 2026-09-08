@@ -84,19 +84,23 @@ def evaluate_invocation_error(output, *, case_id, surface, script, expected_erro
 
 
 def evaluate_capture(output, *, case_id, surface, expected_code, script,
-                     expected_path=None, expected_detail=None, expected_diagnostics=None):
+                     expected_path=None, expected_detail=None, expected_diagnostics=None, expected_mode="enforce"):
     output, script = Path(output), Path(script).resolve(strict=True)
     result, invocation = capture_envelope(output, case_id, surface)
     command = invocation["argv"]
     require(command[command.index("--script") + 1] == str(script), "calls", "observer script differs")
     observer_calls(output, result, invocation, script, command[command.index("--") + 1:])
+    require(expected_mode in ("enforce", "report-only") and
+            (expected_mode == "enforce" or surface in ("C", "R")), "mode", "explicit CLI diagnostic mode required")
     expected_status = 0 if expected_code is None else 1
+    if expected_mode == "report-only":
+        expected_status = 0
     if expected_code == "WDQ-TRUST" and surface in ("C", "R"):
         expected_status = 2
     require(result["returncode"] == expected_status, "status", "unexpected exit status")
     report = parse_json((output / "stdout.bin").read_bytes(), "stdout.bin")
     if surface in ("C", "R"):
-        require(report["mode"] == "enforce", "report", "report-only is not enforcement")
+        require(report["mode"] == expected_mode, "report", "report-only is not enforcement")
         require(report["acceptance_asserted"] is False and report["readiness_asserted"] is False,
                 "report", "diagnostic cannot assert readiness/acceptance")
         codes = [finding["code"] for finding in report["findings"]]
@@ -123,5 +127,6 @@ def evaluate_capture(output, *, case_id, surface, expected_code, script,
             "expected_code": expected_code, "invocation_id": result["invocation_id"],
             "expected_path": expected_path, "expected_detail": expected_detail,
             "expected_diagnostics": expected,
+            "report_only": expected_mode == "report-only",
             "result_sha256": sha256((output / "result.json").read_bytes()),
             "acceptance_asserted": False}

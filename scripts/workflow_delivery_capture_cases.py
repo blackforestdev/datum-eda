@@ -15,7 +15,7 @@ from workflow_delivery_io import sha256
 from workflow_delivery_interruption_case import INTERRUPTION_CASE, evaluate_interruption
 from workflow_delivery_environment_cases import case_uses_prepared_input
 from workflow_delivery_coverage_input import BOUNDARY_CASES, COVERAGE_INPUT_CASES, coverage_expectation, mutate_external_boundary
-from workflow_delivery_review_input import PROOF_INPUT_CASES, proof_expectation
+from workflow_delivery_review_input import PROOF_INPUT_CASES, REPORT_CASES, REPORT_ONLY_CASE, proof_expectation
 from workflow_delivery_review_phase_input import REVIEW_PHASE_CASES, review_phase_expectation
 
 
@@ -28,6 +28,8 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
         raise ValueError("current transaction success is not history certification")
     if case_id in CLI_ERROR_CASES and surface not in ("C", "R"):
         raise ValueError("invocation-error captures require CLI surface C or R")
+    if case_id in REPORT_CASES and surface not in ("C", "R"):
+        raise ValueError("report-mode captures require CLI surface C or R")
     if case_id in SNAPSHOT_CASES:
         snapshot_expectation(case_id, surface)
     destination, runtime_root = Path(destination).resolve(), Path(runtime_root).resolve(strict=True)
@@ -82,7 +84,8 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
         if surface == "S-details":
             arguments += ["NEXT"]
     else:
-        arguments += ["--enforce", "--authority-ref", recipe["head"], "--base-ref", mutation.get("base_ref", recipe["head"]),
+        arguments += ["--report-only" if case_id == REPORT_ONLY_CASE else "--enforce",
+                      "--authority-ref", recipe["head"], "--base-ref", mutation.get("base_ref", recipe["head"]),
                       "--environment-path", "requested-environment.json"]
         arguments += ["--candidate-ref", candidate] if surface == "R" else ["--staged"]
     invocation_error = None
@@ -119,7 +122,8 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
                      "detail": "production change has no promoted scope"}]
             assessment = evaluate_capture(output, case_id=case_id, surface="S" if selector else surface,
                                       expected_code=expected, script=script, expected_path=target,
-                                      expected_detail=detail, expected_diagnostics=diagnostics)
+                                      expected_detail=detail, expected_diagnostics=diagnostics,
+                                      expected_mode="report-only" if case_id == REPORT_ONLY_CASE else "enforce")
     except Exception as error:
         save(destination / "assessment-error.json", {"type": type(error).__name__, "detail": str(error),
                                                    "acceptance_asserted": False})

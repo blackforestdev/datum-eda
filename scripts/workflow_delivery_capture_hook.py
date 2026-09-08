@@ -20,7 +20,7 @@ from workflow_delivery_environment_cases import case_uses_prepared_input
 from workflow_delivery_support_bundle import prepare_bundle, verify_bundle
 from workflow_delivery_support_store import support_locations
 from workflow_delivery_interruption_case import INTERRUPTION_CASE, evaluate_interruption
-from workflow_delivery_review_input import PROOF_INPUT_CASES, proof_expectation
+from workflow_delivery_review_input import PROOF_INPUT_CASES, REPORT_CASES, proof_expectation
 from workflow_delivery_review_phase_input import REVIEW_PHASE_CASES, review_phase_expectation
 from workflow_delivery_coverage_input import BOUNDARY_CASES, mutate_external_boundary
 
@@ -77,7 +77,7 @@ def evaluate_hook(output, *, case_id, hook):
 
 
 def run_hook_case(packet, destination, environment, *, case_id):
-    if case_id not in CASES or case_id in (HISTORY_CASES | BASE_CASES) or case_id in CLI_ERROR_CASES:
+    if case_id not in CASES or case_id in (HISTORY_CASES | BASE_CASES) or case_id in (CLI_ERROR_CASES | REPORT_CASES):
         raise ValueError("explicit implemented hook case required")
     if case_id in SNAPSHOT_CASES:
         snapshot_expectation(case_id, "H")

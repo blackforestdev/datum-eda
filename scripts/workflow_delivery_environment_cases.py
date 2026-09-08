@@ -2,7 +2,7 @@
 
 from copy import deepcopy
 from workflow_delivery_readiness_input import READINESS_CASES
-from workflow_delivery_review_input import REVIEW_INPUT_CASES
+from workflow_delivery_review_input import REPORT_CASES, REPORT_FIXTURE, REVIEW_INPUT_CASES
 from workflow_delivery_coverage_input import COVERAGE_INPUT_CASES
 from workflow_delivery_specification_input import SPECIFICATION_INPUT_CASES
 from workflow_delivery_review_phase_input import REVIEW_PHASE_CASES
@@ -54,7 +54,7 @@ def malformed_selection(selection, variant):
 
 def case_uses_prepared_input(case_id, recipe):
     variant = recipe.get("fixture_variant")
-    expected = case_id if case_id in PREPARED_VARIANTS else None
+    expected = REPORT_FIXTURE if case_id in REPORT_CASES else case_id if case_id in PREPARED_VARIANTS else None
     if variant != expected:
         raise ValueError("case does not match retained fixture variant")
     return expected is not None

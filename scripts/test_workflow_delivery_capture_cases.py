@@ -14,6 +14,7 @@ from workflow_delivery_environment_cases import PREPARED_VARIANTS
 from workflow_delivery_capture_history import BASE_CASES, CURRENT_HISTORY_CASE, HISTORY_CASES
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES
 from workflow_delivery_interruption_case import INTERRUPTION_CASE
+from workflow_delivery_review_input import REPORT_CASES, REPORT_FIXTURE, REPORT_ONLY_CASE
 
 
 class CaptureCasesTest(unittest.TestCase):
@@ -28,7 +29,7 @@ class CaptureCasesTest(unittest.TestCase):
             runtime = Path(__file__).resolve().parents[1]
             invocations = set()
             ordinary_cases = {key: value for key, value in CASES.items()
-                              if key not in PREPARED_VARIANTS | HISTORY_CASES.keys() | BASE_CASES.keys() | SNAPSHOT_CASES.keys() | CLI_ERROR_CASES | {INTERRUPTION_CASE, CURRENT_HISTORY_CASE}}
+                              if key not in PREPARED_VARIANTS | HISTORY_CASES.keys() | BASE_CASES.keys() | SNAPSHOT_CASES.keys() | CLI_ERROR_CASES | REPORT_CASES | {INTERRUPTION_CASE, CURRENT_HISTORY_CASE}}
             for case_id in ordinary_cases:
                 for surface in ("C", "R", "S-check", "S-details"):
                     with self.subTest(case_id=case_id, surface=surface):
@@ -87,6 +88,49 @@ class CaptureCasesTest(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, "CLI surface"):
                         run_case(None, None, None, {}, case_id=case, surface=surface)
             self.assertEqual(8, len(identities))
+
+    def test_same_input_report_only_is_not_enforcement(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            store = Path(temporary)
+            packet, baseline = store / "packet", store / "baseline-packet"
+            recipe = prepare_fixture(store / "source", packet, fixture_variant=REPORT_FIXTURE)
+            prepare_fixture(store / "baseline", baseline)
+            environment = {"PATH": os.defpath, "HOME": str(store), "XDG_CONFIG_HOME": str(store),
+                           "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "LANG": "C"}
+            runtime = Path(__file__).resolve().parents[1]
+            identities, diagnostics = set(), {}
+            for case in sorted(REPORT_CASES):
+                for surface in ("C", "R"):
+                    destination = store / (case + surface)
+                    result = run_case(packet, destination, runtime, environment, case_id=case, surface=surface)
+                    self.assertEqual(case == REPORT_ONLY_CASE, result["report_only"])
+                    before = json.loads((destination / "capture/before.json").read_bytes())
+                    self.assertEqual(recipe["head"], before["head"])
+                    report = json.loads((destination / "capture/stdout.bin").read_bytes())
+                    self.assertEqual([], report["checks"])
+                    finding = report["findings"][0]
+                    diagnostics.setdefault(case, []).append((finding["code"], finding["path"], finding["detail"]))
+                    if case == REPORT_ONLY_CASE:
+                        with self.assertRaises(ValueError):
+                            evaluate_capture(destination / "capture", case_id=case, surface=surface,
+                                expected_code="WDQ-ENVIRONMENT", script=runtime / "scripts/check_workflow_delivery.py")
+                    recovery = run_case(baseline, store / (case + surface + "recovery"), runtime,
+                                        environment, case_id="INFRA-S01-01", surface=surface)
+                    for observed in (result, recovery):
+                        self.assertTrue(observed["observation_matches_expected"])
+                        self.assertFalse(observed["complete_matrix"])
+                        self.assertFalse(observed["acceptance_asserted"])
+                        self.assertNotIn(observed["invocation_id"], identities)
+                        identities.add(observed["invocation_id"])
+            self.assertEqual(8, len(identities))
+            # Identical retained input, deliberately different trust semantics:
+            # report-only stops before schema-2 environment authority resolution;
+            # enforcement reaches the invalid observed result. Neither grants permission.
+            for case, observed in diagnostics.items():
+                expected = ("WDQ-ENVIRONMENT", "requested-environment.json",
+                            "owner-selected environment authority required") if case == REPORT_ONLY_CASE else (
+                            "WDQ-RESULT", "evidence/original-events.json", "event and observed result disagree")
+                self.assertEqual([expected, expected], observed)
 
     def test_capture_tampering_and_false_unchanged_summary_are_rejected(self):
         with tempfile.TemporaryDirectory() as temporary:
