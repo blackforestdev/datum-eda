@@ -302,3 +302,45 @@ promoted doctrine and candidate-only ratification/owner completion refusal.
 WDQ-I01 remains in progress for remaining category/refusal coverage. These are
 hermetic mechanism checks, not installed enforcement, independent semantic review,
 product proof or acceptance. Live trust and the Preferences lane remain unchanged.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I01-COMPLETE -->
+### WDQ-I01 — candidate implementation completion evidence
+
+Completed candidate: `79d6c7b606a2b3ac17232828d55bc2ff14b7418c`;
+parent `77172c7e7aff1a4c88044134c66eeff45f161066`.
+Retained under `refs/datum/workflow-delivery-candidates/79d6c7b606a2b3ac17232828d55bc2ff14b7418c`.
+Final exact zero-context increment: `docs/reviews/workflow-delivery-rollout/i01-categories.patch`;
+apply/check with `--unidiff-zero` only against the pinned inputs. Earlier retained
+increments above form the complete candidate chain from `419859c7`.
+
+The final increment keeps deferred work dormant until reviewed reclassification,
+preserves external authorization, prerequisites, governing documents and complete
+completion scope, and binds contract category to promoted product/infrastructure
+classification. Diagnostic loading failures retain their task/step identity.
+
+The WDQ-I01 completion audit maps its requirements to actual candidate evidence:
+
+| Required behavior | Verification evidence in candidate scripts |
+| --- | --- |
+| Closed coverage, every key, stable identity and historical baseline | `test_workflow_delivery_coverage.py`: real Git/index cases for missing/new/duplicate classifications, changed identities and reopened/rewritten history |
+| Scoped implementation with synchronized live claims | `test_workflow_delivery_source_scopes.py` plus `test_workflow_delivery_category_boundaries.py`: scope escape, pending authorization, missing/expired claims, tracker mismatch and real external-path permission/refusal |
+| Actual transaction capture and entry-point integration | `test_workflow_delivery_transaction.py` and `test_workflow_delivery_coverage_entrypoints.py`: captured index, candidate ancestry, intermediate/reverted/merge mutations, untracked inputs, policy self-grants and actual CLI/selector refusals |
+| Mandatory readiness and classification | `test_workflow_delivery_readiness_boundary.py`: omitted declarations, unresolved decisions, missing units answers, stale routes, unpromoted execution and mismatched product/infrastructure contracts; pending planning remains possible |
+| Specification-only authorship with complete accounting | `test_workflow_delivery_specification.py`: pinned inventories, exact clause matrices, route-reviewed outputs, explicit pending owner steps and promoted controlling doctrine; no candidate-only owner completion |
+| Bounded external lane and deferred state | `test_workflow_delivery_category_boundaries.py`: no scope/outcome/prerequisite/step expansion, no deferred reactivation, and no waiver of already-enrolled proof when external inputs overlap |
+| Existing behavior and source budgets | All prior schema-1 workflow tests remain in the full suite; project-state, foundation completion and unchanged proposal consistency suites pass; source health passes |
+
+Final candidate verification: 202 workflow-delivery tests, 50 project-status
+tests, seven foundation-consumer completion tests and five rollout-proposal tests
+pass. Source health passes 1827 files; staged whitespace passes. These tests run
+real hermetic Git/index/CLI/selector paths, not native EDA adoption sessions.
+
+WDQ-I01 is complete as candidate implementation, not installation or independent
+acceptance. Select WDQ-I02 under the existing execution authorization and live
+workflow claim; the issue remains in progress. I02 still owes separate review
+mapping enforcement, exact contract/coverage/enrollment preparation and the
+numbered mechanism amendment. I03 independent review, I04 owner-controlled
+promotion and I05/I06 actual adoption/acceptance remain incomplete. No product
+owner, Preferences state, prototype, dependency, live policy, runner or hook is
+changed by this milestone. Semantic clause fidelity remains a review obligation,
+not a conclusion inferred from structural tests.

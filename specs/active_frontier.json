@@ -8897,7 +8897,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
-        "canonical_next_step_id": "WDQ-I01",
+        "canonical_next_step_id": "WDQ-I02",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -8914,7 +8914,7 @@
           {
             "id": "WDQ-I01",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Implement approved roadmap/source coverage and transition refusals with real candidate/index tests.",
             "depends_on": [],
             "requirement_refs": [
@@ -8923,12 +8923,22 @@
                 "marker": "WDQ-I01"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "<!-- EVIDENCE:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I01-COMPLETE -->"
+              },
+              {
+                "kind": "commit",
+                "revision": "79d6c7b606a2b3ac17232828d55bc2ff14b7418c"
+              }
+            ]
           },
           {
             "id": "WDQ-I02",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Implement separate independent-review enforcement and prepare exact enrollment/contract candidates.",
             "depends_on": [
               "WDQ-I01"
