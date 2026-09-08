@@ -65,6 +65,24 @@ def observer_calls(output, result, invocation, script, arguments):
     return events
 
 
+def evaluate_invocation_error(output, *, case_id, surface, script, expected_error):
+    output, script = Path(output), Path(script).resolve(strict=True)
+    result, invocation = capture_envelope(output, case_id, surface)
+    command = invocation["argv"]
+    require(surface in ("C", "R") and command[command.index("--script") + 1] == str(script),
+            "calls", "explicit CLI invocation-error surface required")
+    observer_calls(output, result, invocation, script, command[command.index("--") + 1:])
+    require(result["returncode"] == 2, "status", "invocation error requires exit 2")
+    require((output / "stdout.bin").read_bytes() == b"", "report", "invocation error cannot claim successful checks")
+    stderr = (output / "stderr.bin").read_text()
+    require(stderr.startswith("usage: ") and stderr.splitlines()[-1] ==
+            script.name + ": error: " + expected_error, "report", "wrong invocation-error cause")
+    return {"case_id": case_id, "surface": surface, "kind": "invocation_error",
+            "observation_matches_expected": True, "expected_error": expected_error,
+            "invocation_id": result["invocation_id"], "acceptance_asserted": False,
+            "result_sha256": sha256((output / "result.json").read_bytes())}
+
+
 def evaluate_capture(output, *, case_id, surface, expected_code, script,
                      expected_path=None, expected_detail=None, expected_diagnostics=None):
     output, script = Path(output), Path(script).resolve(strict=True)

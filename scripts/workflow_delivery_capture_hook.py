@@ -9,7 +9,7 @@ from pathlib import Path
 from workflow_delivery_capture_assertions import capture_envelope, observer_calls
 from workflow_delivery_capture_command import capture_command, save
 from workflow_delivery_capture_fixture import restore_fixture
-from workflow_delivery_capture_mutations import CASES, changed_bytes, expected_detail
+from workflow_delivery_capture_mutations import CASES, CLI_ERROR_CASES, changed_bytes, expected_detail
 from workflow_delivery_capture_history import BASE_CASES, HISTORY_CASES
 from workflow_delivery_capture_history import CURRENT_HISTORY_CASE, prepare_current_history
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES, prepare_snapshots, snapshot_expectation
@@ -77,7 +77,7 @@ def evaluate_hook(output, *, case_id, hook):
 
 
 def run_hook_case(packet, destination, environment, *, case_id):
-    if case_id not in CASES or case_id in (HISTORY_CASES | BASE_CASES):
+    if case_id not in CASES or case_id in (HISTORY_CASES | BASE_CASES) or case_id in CLI_ERROR_CASES:
         raise ValueError("explicit implemented hook case required")
     if case_id in SNAPSHOT_CASES:
         snapshot_expectation(case_id, "H")

@@ -6,7 +6,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from workflow_delivery_capture_cases import CASES, run_case
+from workflow_delivery_capture_cases import CASES, CLI_ERROR_CASES, run_case
 from workflow_delivery_capture_assertions import evaluate_capture
 from workflow_delivery_capture_fixture import prepare_fixture
 from workflow_delivery_io import canonical_json, sha256
@@ -28,7 +28,7 @@ class CaptureCasesTest(unittest.TestCase):
             runtime = Path(__file__).resolve().parents[1]
             invocations = set()
             ordinary_cases = {key: value for key, value in CASES.items()
-                              if key not in PREPARED_VARIANTS | HISTORY_CASES.keys() | BASE_CASES.keys() | SNAPSHOT_CASES.keys() | {INTERRUPTION_CASE, CURRENT_HISTORY_CASE}}
+                              if key not in PREPARED_VARIANTS | HISTORY_CASES.keys() | BASE_CASES.keys() | SNAPSHOT_CASES.keys() | CLI_ERROR_CASES | {INTERRUPTION_CASE, CURRENT_HISTORY_CASE}}
             for case_id in ordinary_cases:
                 for surface in ("C", "R", "S-check", "S-details"):
                     with self.subTest(case_id=case_id, surface=surface):
@@ -59,6 +59,34 @@ class CaptureCasesTest(unittest.TestCase):
                             self.assertNotIn(recovery["invocation_id"], invocations)
                             invocations.add(recovery["invocation_id"])
             self.assertEqual(4 + 8 * (len(ordinary_cases) - 1), len(invocations))
+
+    def test_invocation_errors_have_no_success_report_and_recover(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            store = Path(temporary)
+            packet = store / "packet"
+            prepare_fixture(store / "baseline", packet)
+            environment = {"PATH": os.defpath, "HOME": str(store), "XDG_CONFIG_HOME": str(store),
+                           "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "LANG": "C"}
+            runtime = Path(__file__).resolve().parents[1]
+            identities = set()
+            for case in sorted(CLI_ERROR_CASES):
+                for surface in ("C", "R"):
+                    destination = store / (case + surface)
+                    result = run_case(packet, destination, runtime, environment, case_id=case, surface=surface)
+                    self.assertEqual("invocation_error", result["kind"])
+                    self.assertEqual(b"", (destination / "capture/stdout.bin").read_bytes())
+                    recovery = run_case(packet, store / (case + surface + "recovery"), runtime,
+                                        environment, case_id="INFRA-S01-01", surface=surface)
+                    for observed in (result, recovery):
+                        self.assertTrue(observed["observation_matches_expected"])
+                        self.assertFalse(observed["complete_matrix"])
+                        self.assertFalse(observed["acceptance_asserted"])
+                        self.assertNotIn(observed["invocation_id"], identities)
+                        identities.add(observed["invocation_id"])
+                for surface in ("S-check", "S-details"):
+                    with self.assertRaisesRegex(ValueError, "CLI surface"):
+                        run_case(None, None, None, {}, case_id=case, surface=surface)
+            self.assertEqual(8, len(identities))
 
     def test_capture_tampering_and_false_unchanged_summary_are_rejected(self):
         with tempfile.TemporaryDirectory() as temporary:

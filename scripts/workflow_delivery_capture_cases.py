@@ -3,14 +3,14 @@
 from pathlib import Path
 import sys
 
-from workflow_delivery_capture_assertions import evaluate_capture
+from workflow_delivery_capture_assertions import evaluate_capture, evaluate_invocation_error
 from workflow_delivery_capture_command import capture_command, save
 from workflow_delivery_capture_fixture import restore_fixture
 from workflow_delivery_capture_state import git
 from workflow_delivery_capture_history import BASE_CASES, HISTORY_CASES, prepare_base_input, prepare_history
 from workflow_delivery_capture_history import CURRENT_HISTORY_CASE, prepare_current_history
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES, prepare_snapshots, snapshot_expectation
-from workflow_delivery_capture_mutations import CASES, changed_bytes, expected_detail
+from workflow_delivery_capture_mutations import CASES, CLI_ERROR_CASES, changed_bytes, expected_detail
 from workflow_delivery_io import sha256
 from workflow_delivery_interruption_case import INTERRUPTION_CASE, evaluate_interruption
 from workflow_delivery_environment_cases import case_uses_prepared_input
@@ -26,6 +26,8 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
         raise ValueError("history certification requires exact-candidate surface R")
     if case_id == CURRENT_HISTORY_CASE and surface == "R":
         raise ValueError("current transaction success is not history certification")
+    if case_id in CLI_ERROR_CASES and surface not in ("C", "R"):
+        raise ValueError("invocation-error captures require CLI surface C or R")
     if case_id in SNAPSHOT_CASES:
         snapshot_expectation(case_id, surface)
     destination, runtime_root = Path(destination).resolve(), Path(runtime_root).resolve(strict=True)
@@ -83,6 +85,14 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
         arguments += ["--enforce", "--authority-ref", recipe["head"], "--base-ref", mutation.get("base_ref", recipe["head"]),
                       "--environment-path", "requested-environment.json"]
         arguments += ["--candidate-ref", candidate] if surface == "R" else ["--staged"]
+    invocation_error = None
+    if case_id == "INFRA-S01-02.invalid-argument":
+        arguments += ["--synthetic-invalid-option"]
+        invocation_error = "unrecognized arguments: --synthetic-invalid-option"
+    elif case_id == "INFRA-S01-02.conflicting-views":
+        arguments += ["--candidate-ref", candidate] if surface == "C" else ["--staged"]
+        invocation_error = ("argument --candidate-ref: not allowed with argument --staged" if surface == "C"
+                            else "argument --staged: not allowed with argument --candidate-ref")
     command = [sys.executable, "-I", "-S", "-B",
         str(runtime_root / "scripts/workflow_delivery_observe_python.py"),
         "--script", str(script), "--source-root", str(runtime_root),
@@ -95,7 +105,10 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
                     case_id=case_id, surface="S" if selector else surface,
                     untracked_roots=recipe["untracked_roots"], timeout=30, interrupt_on_call=trigger)
     try:
-        if trigger is not None:
+        if invocation_error is not None:
+            assessment = evaluate_invocation_error(output, case_id=case_id, surface=surface,
+                                                  script=script, expected_error=invocation_error)
+        elif trigger is not None:
             assessment = evaluate_interruption(output, case_id=case_id,
                                                surface="S" if selector else surface, trigger=trigger)
         else:

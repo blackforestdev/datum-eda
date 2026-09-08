@@ -12,6 +12,7 @@ from workflow_delivery_review_phase_input import REVIEW_PHASE_CASES
 from workflow_delivery_environment_cases import FIXTURE_VARIANTS, HEADLESS_VARIANTS, MIXED_VARIANT, SWAPPED_VARIANT
 
 POLICY = "specs/workflow_delivery_policy.json"
+CLI_ERROR_CASES = {"INFRA-S01-02.invalid-argument", "INFRA-S01-02.conflicting-views"}
 CASES = {
     "INFRA-S01-01": (None, None),
     "INFRA-S02-09.outside-scope": ("src/unscoped.py", "WDQ-COVERAGE"),
@@ -23,6 +24,7 @@ CASES = {
     "INFRA-S06-11.selection": ("requested-environment.json", "WDQ-ENVIRONMENT"),
     "INFRA-S06-11.blob": ("selected-environment.json", "WDQ-ENVIRONMENT"),
 }
+CASES.update({key: (None, "INVOCATION-ERROR") for key in sorted(CLI_ERROR_CASES)})
 CASES.update({key: ("requested-environment.json", "WDQ-ENVIRONMENT") for key in FIXTURE_VARIANTS})
 CASES.update(HISTORY_CASES)
 CASES[CURRENT_HISTORY_CASE] = (None, None)
@@ -42,6 +44,8 @@ CASES.update({key: (path, "WDQ-ENVIRONMENT") for key, (path, _) in HEADLESS_VARI
 
 
 def expected_detail(case_id):
+    if case_id in CLI_ERROR_CASES:
+        return None
     if case_id == CURRENT_HISTORY_CASE:
         return None
     if case_id in BASE_CASES:
