@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "record_type": "assembled_source_verification",
+  "marker": "WDQ-I02-ASSEMBLED-SOURCE-CHECK",
+  "baseline_ref": "5da7ff0c3946e972144762d190d33de59692123e",
+  "implementation_source_ref": "2a85005ce7648322424391281a02c092bff15414",
+  "implementation_source_base": "419859c74181f3e33685cc69b1e3826d3ab6685f",
+  "candidate_ref": "49ecf406f18e89cb8ad7bbd058ac6490e54f0a5e",
+  "retained_ref": "refs/datum/workflow-delivery-candidates/49ecf406f18e89cb8ad7bbd058ac6490e54f0a5e",
+  "worktree": ".git/datum-wdq/proposals/wdq-i02-assembled-20260908/candidate",
+  "copied_source_paths": [
+    "scripts/check_workflow_delivery.py",
+    "scripts/test_workflow_delivery_category_boundaries.py",
+    "scripts/test_workflow_delivery_coverage.py",
+    "scripts/test_workflow_delivery_coverage_entrypoints.py",
+    "scripts/test_workflow_delivery_enabled.py",
+    "scripts/test_workflow_delivery_independent_review.py",
+    "scripts/test_workflow_delivery_readiness_boundary.py",
+    "scripts/test_workflow_delivery_review_checkpoint.py",
+    "scripts/test_workflow_delivery_source_scopes.py",
+    "scripts/test_workflow_delivery_specification.py",
+    "scripts/test_workflow_delivery_transaction.py",
+    "scripts/workflow_delivery_authority.py",
+    "scripts/workflow_delivery_categories.py",
+    "scripts/workflow_delivery_checkpoints.py",
+    "scripts/workflow_delivery_clause_dispositions.py",
+    "scripts/workflow_delivery_clause_inventory.py",
+    "scripts/workflow_delivery_clause_test_support.py",
+    "scripts/workflow_delivery_coverage.py",
+    "scripts/workflow_delivery_coverage_runtime.py",
+    "scripts/workflow_delivery_coverage_shapes.py",
+    "scripts/workflow_delivery_enabled.py",
+    "scripts/workflow_delivery_mapping.py",
+    "scripts/workflow_delivery_review.py",
+    "scripts/workflow_delivery_selector.py",
+    "scripts/workflow_delivery_source_scopes.py",
+    "scripts/workflow_delivery_specification.py",
+    "scripts/workflow_delivery_transaction.py",
+    "scripts/workflow_delivery_trust.py"
+  ],
+  "source_identity_result": "All 28 resulting Git blob IDs exactly match the retained implementation source; baseline main has no overlapping delta in these paths.",
+  "tests": [
+    {
+      "command": "python3 -m unittest discover -s scripts -p 'test_workflow_delivery*.py'",
+      "count": 227,
+      "outcome": "pass"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts -p 'test_project_status*.py'",
+      "count": 50,
+      "outcome": "pass"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts -p 'test_workflow_rollout*.py'",
+      "count": 21,
+      "outcome": "pass"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts -p 'test_cohort_contract_preparation.py'",
+      "count": 6,
+      "outcome": "pass"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts -p 'test_workflow_coverage_proposal.py'",
+      "count": 6,
+      "outcome": "pass"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts -p 'test_phase2_completion.py'",
+      "count": 8,
+      "outcome": "pass"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts -p 'test_marking_menu_completion.py'",
+      "count": 5,
+      "outcome": "pass"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts -p 'test_collaboration_completion.py'",
+      "count": 5,
+      "outcome": "pass"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts -p 'test_drafting_standard_completion.py'",
+      "count": 6,
+      "outcome": "pass"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts -p 'test_foundation_consumer_completion.py'",
+      "count": 7,
+      "outcome": "pass"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts -p 'test_foundation_specification_clauses.py'",
+      "count": 6,
+      "outcome": "pass"
+    },
+    {
+      "command": "python3 -m unittest discover -s scripts -p 'test_surface_specification_clauses.py'",
+      "count": 5,
+      "outcome": "pass"
+    }
+  ],
+  "test_total": 352,
+  "governance_checks": [
+    {
+      "command": "python3 scripts/check_evidence_traceability.py",
+      "outcome": "pass"
+    },
+    {
+      "command": "python3 scripts/check_spec_governance.py",
+      "outcome": "pass"
+    },
+    {
+      "command": "python3 scripts/check_spec_parity.py",
+      "outcome": "pass"
+    },
+    {
+      "command": "python3 scripts/check_source_health.py",
+      "outcome": "pass"
+    },
+    {
+      "command": "git diff --check",
+      "outcome": "pass"
+    }
+  ],
+  "cli_checks": [
+    {
+      "name": "prospective legacy-policy compatibility",
+      "authority_ref": "49ecf406f18e89cb8ad7bbd058ac6490e54f0a5e",
+      "base_ref": "49ecf406f18e89cb8ad7bbd058ac6490e54f0a5e",
+      "candidate_ref": "49ecf406f18e89cb8ad7bbd058ac6490e54f0a5e",
+      "environment_path": "docs/reviews/workflow-delivery-pilot/proof-artifacts/environment.json",
+      "exit_code": 0,
+      "checks": [
+        "WORKFLOW-DELIVERY-GATE-PILOT: accept"
+      ],
+      "findings": [],
+      "scope": "Read-only exact-candidate diagnostic with explicit prospective pins and unchanged schema-1 policy; not installed trust or broad-policy proof."
+    },
+    {
+      "name": "installed-pin refusal",
+      "authority_ref": "4ccac933e9ca2b049ea68daf50de16fafe375fd8",
+      "base_ref": "76152fc7dab4ba0431da991f58d6a5ebc1838763",
+      "candidate_ref": "49ecf406f18e89cb8ad7bbd058ac6490e54f0a5e",
+      "environment_path": "docs/reviews/workflow-delivery-pilot/proof-artifacts/environment.json",
+      "exit_code": 1,
+      "finding_code": "WDQ-POLICY",
+      "finding_detail": "gate implementation set changed without promotion",
+      "scope": "Expected refusal: isolated candidate is not authorized by installed pins."
+    }
+  ],
+  "limitations": [
+    "Source integration only; broad schema-2 policy/enrollment is not installed or completely assembled.",
+    "Exact implementation-session identities and activation evidence remain owner-controlled enrollment inputs; none invented for product lanes.",
+    "Current 69-file infrastructure closure and final I03 tooling/source permissions still require assembled-candidate reconciliation.",
+    "No actual infrastructure delivery proof, independent reviewer, native cohort outcome or owner acceptance is supplied.",
+    "Existing installed support remains referenced and must not be removed."
+  ],
+  "readiness_asserted": false,
+  "promotion_asserted": false,
+  "acceptance_asserted": false
+}
