@@ -9149,12 +9149,28 @@
             "completion_evidence": []
           },
           {
+            "id": "PWO-REVIEW",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Obtain independent specification review of the complete clause matrix, proposed contract and all findings.",
+            "depends_on": [
+              "PWO-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "PWO-REVIEW"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
             "id": "PWO-C03",
             "kind": "owner_decision",
             "status": "pending",
             "action": "Obtain owner ratification of the writer protocol and explicitly schedule implementation obligations.",
             "depends_on": [
-              "PWO-C02"
+              "PWO-REVIEW"
             ],
             "requirement_refs": [
               {
@@ -9255,12 +9271,28 @@
             "completion_evidence": []
           },
           {
+            "id": "NCC-REVIEW",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Obtain independent specification review of the complete clause matrix, proposed contract and all findings.",
+            "depends_on": [
+              "NCC-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "NCC-REVIEW"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
             "id": "NCC-C03",
             "kind": "owner_decision",
             "status": "pending",
             "action": "Obtain owner ratification and reconcile all actual route consumers before specification closure.",
             "depends_on": [
-              "NCC-C02"
+              "NCC-REVIEW"
             ],
             "requirement_refs": [
               {
@@ -9525,12 +9557,28 @@
             "completion_evidence": []
           },
           {
+            "id": "NWB-REVIEW",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Obtain independent specification review of the complete clause matrix, proposed contract and all findings.",
+            "depends_on": [
+              "NWB-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+                "marker": "NWB-REVIEW"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
             "id": "NWB-C03",
             "kind": "owner_decision",
             "status": "pending",
             "action": "Obtain owner ratification of the fixture and measurement budget contract.",
             "depends_on": [
-              "NWB-C02"
+              "NWB-REVIEW"
             ],
             "requirement_refs": [
               {

@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-CLAUSES.NATIVE-CONNECTIVITY-CONTRACT",
+  "frontier_key": "NATIVE-CONNECTIVITY-CONTRACT",
+  "clauses": [
+    {
+      "id": "AUTHORITY-CLAUSES",
+      "step_id": "NCC-C01",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NCC-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "distinguishing stable electrical identity from geometric connection formation,"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "HISTORICAL-FAILURES",
+      "step_id": "NCC-C01",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NCC-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "atomic-refusal and compensating-journal contradictions recorded in the"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "TOPOLOGY-AND-MOVEMENT",
+      "step_id": "NCC-C02",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NCC-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Specify T-junction, crossing, explicit join, off-lattice pin attachment, connected"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GESTURE-AND-REOPEN",
+      "step_id": "NCC-C02",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NCC-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "move/quantize, rename/identity, wire-chain Finish/Escape, undo/redo and reopen."
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "SHARED-SNAP-ATOMICITY",
+      "step_id": "NCC-C02",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NCC-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Preserve PM023 shared snap, exact integer committed arguments, reference:grid,"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "VISUAL-OWNERSHIP",
+      "step_id": "NCC-C02",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NCC-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "file/region/outcome/preserved-decisions/proof list to Claude for"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "TOPOLOGY-JOURNAL-PROOF",
+      "step_id": "NCC-C02",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NCC-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Draft future proof scenarios with expected topology and journal deltas."
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "INDEPENDENT-REVIEW",
+      "step_id": "NCC-REVIEW",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NCC-REVIEW"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "A distinct reviewer checks all identity/formation/movement clauses, normal and"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "OWNER-RATIFICATION",
+      "step_id": "NCC-C03",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NCC-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Present the chosen-versus-open clauses and Claude-owned visual reconciliation"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "COMPLETE-RECONCILIATION",
+      "step_id": "NCC-C03",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NCC-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Complete only when decisions and all actual route"
+        }
+      ],
+      "requires_owner_decision": false
+    }
+  ]
+}

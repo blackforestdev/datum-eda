@@ -26,6 +26,16 @@ work. Connectivity retains its related foundation link. Scheduling adds no
 hard dependency edges, changes no existing product owner, and does not turn
 doorway proof into a dependency on completion of all native authoring.
 
+WDQ-I02 prepares clause inventories for the three specification-only tasks in
+`docs/reviews/workflow-delivery-rollout/clauses/project-writer-ownership.json`,
+`native-connectivity.json` and `native-workflow-budgets.json` in that directory.
+They are candidate enforcement inputs, not installed policy or authored product
+specifications. Each completed step must account for its clauses using exact
+reviewed output and dispositions. The independent specification-review steps
+below precede owner ratification; they do not execute the proposed product or
+replace the owner's decision. All existing checkpoint IDs and authorizations
+remain unchanged, and no output or approval evidence is invented.
+
 ## Project writer ownership
 
 <!-- REQ:PROJECT-WRITER-OWNERSHIP:PWO-C01 -->
@@ -48,6 +58,16 @@ and refusal diagnostics. State how the existing journal-tip check remains
 necessary. Supply conformance scenarios for two processes, stale intent and
 crash boundaries; identify every affected consumer and planned implementation
 successor. No dependency, locking library or production protocol is ratified.
+
+<!-- REQ:PROJECT-WRITER-OWNERSHIP:PWO-REVIEW -->
+### PWO-REVIEW — independent specification review
+
+A distinct reviewer checks every writer entry point, the failure timeline,
+proposed protocol and alternatives, durability/recovery/platform cases,
+conformance obligations, complete clause/disposition matrix and consumer
+reconciliation. Account for every finding before the exact owner packet is
+presented. No self-review, copied result or passing structural test substitutes
+for this review; it cannot ratify a locking mechanism or authorize its build.
 
 <!-- REQ:PROJECT-WRITER-OWNERSHIP:PWO-C03 -->
 <!-- OWNER:PROJECT-WRITER-OWNERSHIP:PWO-C03:WRITER-RATIFICATION -->
@@ -84,6 +104,16 @@ whole-batch refusal and no implicit re-snap on display change. Return an exact
 file/region/outcome/preserved-decisions/proof list to Claude for
 `docs/gui/prototypes/units-and-grid-model.html`; do not edit or bless it from
 this lane. Draft future proof scenarios with expected topology and journal deltas.
+
+<!-- REQ:NATIVE-CONNECTIVITY-CONTRACT:NCC-REVIEW -->
+### NCC-REVIEW — independent specification review
+
+A distinct reviewer checks all identity/formation/movement clauses, normal and
+refusal scenarios, topology and journal expectations, shared snap and exact
+coordinates, the complete clause/disposition matrix, and Claude-owned visual
+reconciliation. Account for every finding and preserve unresolved authority
+conflicts for explicit owner disposition. This is planning review, not a new
+native proof, topology rewrite, prototype edit or mechanism ratification.
 
 <!-- REQ:NATIVE-CONNECTIVITY-CONTRACT:NCC-C03 -->
 <!-- OWNER:NATIVE-CONNECTIVITY-CONTRACT:NCC-C03:CONNECTIVITY-RATIFICATION -->
@@ -176,6 +206,16 @@ proposed targets from observations: the foundation handoff's one-60-Hz-frame
 preview and 100 ms commit proposals are not ratified thresholds. Specify proof
 artifact fields, fixture provenance, regression comparison and refusal behavior;
 do not introduce a benchmark library or run a new product implementation.
+
+<!-- REQ:NATIVE-WORKFLOW-BUDGETS:NWB-REVIEW -->
+### NWB-REVIEW — independent specification review
+
+A distinct reviewer checks fixture provenance and realistic populations, exact
+timing and I/O boundaries, environment, sampling/statistics, resource ceilings,
+failure/exclusion policy, proof schema and the complete clause/disposition
+matrix. Check that proposed targets are not reported as measurements or accepted
+thresholds. Account for every finding before owner ratification; no benchmark
+execution, new harness or dependency is authorized by this planning review.
 
 <!-- REQ:NATIVE-WORKFLOW-BUDGETS:NWB-C03 -->
 <!-- OWNER:NATIVE-WORKFLOW-BUDGETS:NWB-C03:BUDGET-RATIFICATION -->
