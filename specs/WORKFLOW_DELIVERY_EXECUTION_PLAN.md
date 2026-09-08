@@ -135,3 +135,28 @@ specification checks and production selector/CLI wiring. The helper expects
 promoted permissions and full candidate validation from its caller; it does not
 establish their trust or assert native proof. WDQ-I01 stays in progress, and
 main's installed gate/policy/trust and product ownership remain unchanged.
+
+### WDQ-I01 transaction and entry-point candidate increment
+
+Candidate: `ea7ccf2a75950a4cb86e4470e29062d8ddc8460f`, parent `d7f7c972f6c0ae4e6f718f81673ec6523dd95dca`.
+Retained under `refs/datum/workflow-delivery-candidates/ea7ccf2a75950a4cb86e4470e29062d8ddc8460f`.
+Exact increment: `docs/reviews/workflow-delivery-rollout/i01-integration.patch`.
+Explicit-baseline transaction capture handles staged/revision snapshots, literal
+path roots, ignored worktree inputs, deleted/renamed paths and executable modes.
+Schema-2 coverage is now called by the candidate enforce-mode CLI and trusted
+selector, with schema-1 compatibility retained. Category checks refuse basic
+specification execution, missing delivery/enrollment at execution/readiness,
+deferred activation and changes outside a promoted external-lane step boundary.
+
+All 155 WDQ tests pass in this exact candidate, including eight new real Git
+transaction tests and five new real CLI/selector tests. The latter demonstrate
+valid schema-2 inspection, unscoped staged source refusal, candidate self-granted
+scope refusal, staged/worktree separation and specification-to-execution refusal.
+Candidate source health passes 1820 files; staged whitespace checks pass.
+These are hermetic infrastructure tests, not product/native adoption evidence.
+
+WDQ-I01 remains in progress. Mandatory readiness/owning-route and specification
+clause-disposition verification, complete category/refusal regression coverage
+and historical/multi-commit transaction-baseline audit remain unfinished.
+The entry points are wired in the retained candidate only; no live main gate,
+policy, trust, product owner or prototype changed and no promotion is asserted.

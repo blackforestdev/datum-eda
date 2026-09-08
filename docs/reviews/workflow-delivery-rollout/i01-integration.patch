@@ -1,0 +1,383 @@
+diff --git a/scripts/check_workflow_delivery.py b/scripts/check_workflow_delivery.py
+index 4b9e4b05..04e6724a 100644
+--- a/scripts/check_workflow_delivery.py
++++ b/scripts/check_workflow_delivery.py
+@@ -9,6 +9,7 @@ import sys
+ from workflow_delivery_authority import authority_sha256
+ from workflow_delivery_checkpoints import validate_delivery
+ from workflow_delivery_contract import load_contract, validate_handler_files
++from workflow_delivery_coverage_runtime import validate_coverage
+ from workflow_delivery_frontier import validate_frontier
+ from workflow_delivery_io import DeliveryInputError
+ from workflow_delivery_shapes import require
+@@ -32,6 +33,7 @@ def run(args):
+     manifest = validate_frontier(tree) if args.enforce else tree.json(FRONTIER_PATH)
+     if trust:
+         enrolled = trust.enrolled
++        validate_coverage(tree, manifest, trust)
+     elif POLICY_PATH in tree.entries:
+         enrolled = {r["frontier_key"]: r for r in policy_shape(tree.json(POLICY_PATH))["enrolled"]}
+     else:
+diff --git a/scripts/test_workflow_delivery_coverage_entrypoints.py b/scripts/test_workflow_delivery_coverage_entrypoints.py
+new file mode 100644
+index 00000000..3a08e4b8
+--- /dev/null
++++ b/scripts/test_workflow_delivery_coverage_entrypoints.py
+@@ -0,0 +1,101 @@
++"""Schema-2 checks through the real staged CLI and selector on hermetic Git."""
++
++from contextlib import redirect_stdout
++import io
++import json
++import unittest
++
++from check_workflow_delivery import main
++from project_status import render_block
++from workflow_delivery_selector import selector_failures
++from workflow_delivery_native_test_support import environment
++from workflow_delivery_test_support import Fixture
++from workflow_delivery_tree import Tree
++from workflow_delivery_trust_test_support import accepted_fixture
++
++
++class CoverageEntrypointsTest(unittest.TestCase):
++    def setUp(self):
++        self.f = Fixture()
++        self.addCleanup(self.f.close)
++        _, _, _, baseline = accepted_fixture(self.f)
++        self.manifest = Tree(self.f.root).json("specs/active_frontier.json")
++        next_item = self.manifest["frontier"][1]
++        next_item.update(state="specified", authorization="planning")
++        next_item["completion"]["steps"][0]["kind"] = "planning"
++        self.f.save("specs/active_frontier.json", self.manifest)
++        self.f.write("specs/PROGRESS.md", render_block(self.manifest).encode())
++        policy = Tree(self.f.root).json("specs/workflow_delivery_policy.json")
++        policy.update(schema_version=2, coverage={
++            "baseline_ref": baseline, "new_item_rule": "classification_required",
++            "production_roots": ["src"], "source_scopes": [],
++            "rows": [{"frontier_key": i["key"], "issue_id": i["issue_id"],
++                      "category": "historical" if i["state"] == "landed" else "specification",
++                      "boundary_ref": self.f.ref, "external_handoff_ref": None}
++                     for i in self.manifest["frontier"]]})
++        self.f.save("specs/workflow_delivery_policy.json", policy)
++        self.f.save("requested-environment.json", environment())
++        self.f.stage()
++        self.f.git("commit", "-qm", "test(coverage): pin synthetic schema-2 authority\n\nTest fixture only, not Datum promotion.")
++        self.authority = self.f.git("rev-parse", "HEAD").decode().strip()
++        self.f.git("config", "datum.workflowDeliveryAuthorityRef", self.authority)
++        self.f.git("config", "datum.workflowDeliveryBaseRef", self.authority)
++        self.f.git("config", "datum.workflowDeliveryEnvironmentPath", "requested-environment.json")
++
++    def cli(self):
++        before = self.f.snapshot()
++        output = io.StringIO()
++        with redirect_stdout(output):
++            result = main(["--root", str(self.f.root), "--enforce", "--staged",
++                           "--authority-ref", self.authority, "--base-ref", self.authority,
++                           "--environment-path", "requested-environment.json"])
++        self.assertEqual(before, self.f.snapshot())
++        return result, json.loads(output.getvalue())
++
++    def test_valid_schema2_passes_both_actual_entrypoints(self):
++        code, report = self.cli()
++        self.assertEqual(0, code, report)
++        self.assertEqual([], selector_failures(self.f.root, self.manifest))
++
++    def test_staged_unscoped_source_refuses_before_native_proof(self):
++        self.f.write("src/unknown.py", b"unapproved new implementation\n")
++        self.f.stage()
++        code, report = self.cli()
++        self.assertEqual(1, code, report)
++        self.assertEqual("WDQ-COVERAGE", report["findings"][0]["code"])
++        self.assertEqual("src/unknown.py", report["findings"][0]["path"])
++        self.assertTrue(any("no promoted scope" in e
++                            for e in selector_failures(self.f.root, self.manifest)))
++
++    def test_candidate_cannot_delete_coverage_or_self_grant_scope(self):
++        policy = Tree(self.f.root).json("specs/workflow_delivery_policy.json")
++        policy["coverage"]["source_scopes"] = [{"frontier_key": "NEXT", "step_ids": ["NEXT-C01"],
++            "paths": ["src"], "boundary_ref": self.f.ref}]
++        self.f.save("specs/workflow_delivery_policy.json", policy)
++        self.f.stage()
++        code, report = self.cli()
++        self.assertNotEqual(0, code)
++        self.assertEqual("WDQ-POLICY", report["findings"][0]["code"])
++
++    def test_untracked_worktree_source_does_not_leak_into_staged_cli(self):
++        self.f.write("src/untracked.py", b"uncommitted input\n")
++        code, report = self.cli()
++        self.assertEqual(0, code, report)
++        self.assertTrue(any("no promoted scope" in e
++                            for e in selector_failures(self.f.root, self.manifest)))
++
++    def test_specification_cannot_turn_itself_into_execution(self):
++        item = self.manifest["frontier"][1]
++        item.update(state="ready", authorization="execution")
++        item["completion"]["steps"][0]["kind"] = "execution"
++        self.f.save("specs/active_frontier.json", self.manifest)
++        self.f.write("specs/PROGRESS.md", render_block(self.manifest).encode())
++        self.f.stage()
++        code, report = self.cli()
++        self.assertEqual(1, code, report)
++        self.assertEqual("WDQ-COVERAGE", report["findings"][0]["code"])
++        self.assertIn("cannot authorize implementation", report["findings"][0]["detail"])
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/scripts/test_workflow_delivery_transaction.py b/scripts/test_workflow_delivery_transaction.py
+new file mode 100644
+index 00000000..68c96229
+--- /dev/null
++++ b/scripts/test_workflow_delivery_transaction.py
+@@ -0,0 +1,73 @@
++"""Real index/revision/worktree diff capture, never product proof."""
++
++import unittest
++
++from workflow_delivery_io import DeliveryInputError
++from workflow_delivery_test_support import Fixture
++from workflow_delivery_transaction import changed_production_paths
++from workflow_delivery_tree import Tree
++
++
++class TransactionPathsTest(unittest.TestCase):
++    def setUp(self):
++        self.f = Fixture()
++        self.addCleanup(self.f.close)
++
++    def changed(self, tree=None, roots=("src",)):
++        return changed_production_paths(tree or Tree(self.f.root), list(roots),
++                                        base_ref=self.f.head)
++
++    def test_clean_and_unrelated_documents_do_not_change_production_paths(self):
++        self.assertEqual([], self.changed())
++        self.f.write("docs/unrelated.md", b"note\n")
++        self.assertEqual([], self.changed())
++
++    def test_worktree_includes_tracked_new_and_ignored_inputs(self):
++        self.f.write("src/read.py", b"changed\n")
++        self.f.write("src/new.py", b"new\n")
++        self.f.write(".gitignore", b"src/generated.py\n")
++        self.f.write("src/generated.py", b"generated\n")
++        self.assertEqual(["src/generated.py", "src/new.py", "src/read.py"], self.changed())
++
++    def test_index_ignores_unstaged_repair_and_untracked_inputs(self):
++        self.f.write("src/read.py", b"staged change\n")
++        self.f.stage()
++        tree = Tree(self.f.root, staged=True)
++        self.f.write("src/read.py", b"def read(path):\n    return path.read_bytes()\n")
++        self.f.write("src/untracked.py", b"not staged\n")
++        self.assertEqual(["src/read.py"], self.changed(tree))
++        self.f.git("add", "src/read.py")
++        self.assertEqual(["src/read.py"], self.changed(tree))
++        self.assertEqual([], self.changed(Tree(self.f.root, staged=True)))
++
++    def test_deleted_root_and_renamed_source_are_both_observed(self):
++        self.f.git("mv", "src/read.py", "read.py")
++        self.assertEqual(["src/read.py"], self.changed(Tree(self.f.root, staged=True)))
++        self.assertEqual(["src/read.py"], self.changed())
++
++    def test_file_mode_changes_are_not_hidden_by_identical_bytes(self):
++        self.f.git("update-index", "--chmod=+x", "src/read.py")
++        self.assertEqual(["src/read.py"], self.changed(Tree(self.f.root, staged=True)))
++
++    def test_revision_view_never_reads_later_worktree(self):
++        self.f.write("src/new.py", b"new\n")
++        self.f.stage()
++        self.f.git("commit", "-qm", "test(transaction): add fixture input\n\nExercise exact revision paths.")
++        revision = self.f.git("rev-parse", "HEAD").decode().strip()
++        tree = Tree(self.f.root, revision=revision)
++        self.f.write("src/read.py", b"later dirty change\n")
++        self.assertEqual(["src/new.py"], self.changed(tree))
++
++    def test_missing_baseline_does_not_fall_back_to_head(self):
++        with self.assertRaises(DeliveryInputError):
++            changed_production_paths(Tree(self.f.root), ["src"], base_ref=None)
++
++    def test_root_names_are_literal_not_glob_patterns(self):
++        self.f.write("src/literal[1]/input.py", b"owned\n")
++        self.f.write("src/literal1/input.py", b"not owned\n")
++        self.assertEqual(["src/literal[1]/input.py"],
++                         self.changed(roots=("src/literal[1]",)))
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/scripts/workflow_delivery_categories.py b/scripts/workflow_delivery_categories.py
+new file mode 100644
+index 00000000..12f01c33
+--- /dev/null
++++ b/scripts/workflow_delivery_categories.py
+@@ -0,0 +1,52 @@
++"""Category transition requirements supplement, never replace, PM025 validation."""
++
++from workflow_delivery_shapes import require
++
++
++def validate_categories(items, coverage, enrolled, authority):
++    promoted = {i["key"]: i for i in authority.json("specs/active_frontier.json")["frontier"]}
++    for row in coverage["rows"]:
++        key, category = row["frontier_key"], row["category"]
++        item = items[key]
++        if category == "historical":
++            continue  # Baseline/evidence immutability checked by classifications.
++        completion = item.get("completion", {})
++        steps = completion.get("steps", [])
++        executing = item.get("authorization") == "execution" or any(
++            s.get("kind") == "execution" and s.get("status") in ("in_progress", "complete")
++            for s in steps)
++        if category == "deferred":
++            require(item.get("authorization") == "none" and not item.get("claim")
++                    and not executing, key, "deferred work requires reclassification before execution",
++                    "WDQ-COVERAGE")
++            continue
++        require(bool(steps), key, "classified active work requires a completion plan", "WDQ-COVERAGE")
++        if category == "specification":
++            require(not executing and all(s.get("kind") != "execution" for s in steps), key,
++                    "specification classification cannot authorize implementation", "WDQ-COVERAGE")
++        elif category in ("product", "infrastructure"):
++            # Without a declaration there is no trusted ready mapping. Refuse
++            # completion of preflight rather than allowing that omission to
++            # postpone readiness indefinitely behind an owner-step label.
++            preflight_done = any(s.get("kind") in ("planning", "governance") and
++                                 s.get("status") == "complete" for s in steps)
++            require(not (executing or preflight_done) or "delivery" in completion,
++                    key, "readiness/execution requires a delivery declaration", "WDQ-COVERAGE")
++            require(not executing or key in enrolled, key,
++                    "execution requires owner-promoted enrollment", "WDQ-COVERAGE")
++        elif category == "external_lane":
++            old = promoted.get(key, {}).get("completion", {})
++            selected = completion.get("canonical_next_step_id")
++            require(selected == old.get("canonical_next_step_id"), key,
++                    "external-lane selected boundary changed; coordinated promotion required",
++                    "WDQ-COVERAGE")
++            before = {s["id"]: s for s in old.get("steps", []) if s["id"] != selected}
++            after = {s["id"]: s for s in steps if s["id"] != selected}
++            require(before == after, key, "external-lane work crossed the promoted boundary",
++                    "WDQ-COVERAGE")
++            old_step = next((s for s in old.get("steps", []) if s["id"] == selected), {})
++            new_step = next((s for s in steps if s["id"] == selected), {})
++            mutable = {"status", "completion_evidence"}
++            require({k: v for k, v in old_step.items() if k not in mutable} ==
++                    {k: v for k, v in new_step.items() if k not in mutable}, key,
++                    "external-lane selected requirement/authority changed", "WDQ-COVERAGE")
+diff --git a/scripts/workflow_delivery_coverage_runtime.py b/scripts/workflow_delivery_coverage_runtime.py
+new file mode 100644
+index 00000000..05c736be
+--- /dev/null
++++ b/scripts/workflow_delivery_coverage_runtime.py
+@@ -0,0 +1,21 @@
++"""Apply owner-pinned schema-2 coverage in the actual delivery entry points."""
++
++from workflow_delivery_coverage import validate_classifications
++from workflow_delivery_categories import validate_categories
++from workflow_delivery_proof import _issues
++from workflow_delivery_source_scopes import authorize_source_paths
++from workflow_delivery_transaction import changed_production_paths
++
++
++def validate_coverage(tree, manifest, trust):
++    if trust.policy["schema_version"] == 1:
++        return []
++    coverage = trust.policy["coverage"]
++    items = validate_classifications(tree, coverage, manifest, authority=trust.authority)
++    validate_categories(items, coverage, trust.enrolled, trust.authority)
++    # For an ordinary staged/worktree check HEAD is the transaction's parent,
++    # not a substitute trust anchor. Candidate-ref review uses the explicit
++    # owner-selected base and therefore covers the entire proposed source delta.
++    base = trust.base.revision if tree.revision else tree.resolve("HEAD")
++    changed = changed_production_paths(tree, coverage["production_roots"], base_ref=base)
++    return authorize_source_paths(changed, coverage, manifest, _issues(tree), trust.enrolled)
+diff --git a/scripts/workflow_delivery_selector.py b/scripts/workflow_delivery_selector.py
+index 52c1fdc9..2ad48f2d 100644
+--- a/scripts/workflow_delivery_selector.py
++++ b/scripts/workflow_delivery_selector.py
+@@ -4,6 +4,7 @@ from pathlib import Path
+ import subprocess
+ 
+ from workflow_delivery_checkpoints import validate_delivery
++from workflow_delivery_coverage_runtime import validate_coverage
+ from workflow_delivery_io import DeliveryInputError
+ from workflow_delivery_shapes import require
+ from workflow_delivery_tree import Tree
+@@ -41,6 +42,8 @@ def selector_failures(root, manifest):
+                     "trusted enrollment cannot disappear from candidate", "WDQ-POLICY")
+             enrolled = trust.enrolled
+         environment = tree.json(env_path) if env_path else None
++        if trust:
++            validate_coverage(tree, manifest, trust)
+         for item in declared:
+             validate_delivery(tree, item, phase=None if item["key"] in enrolled else "structure",
+                               trust=trust if item["key"] in enrolled else None,
+diff --git a/scripts/workflow_delivery_transaction.py b/scripts/workflow_delivery_transaction.py
+new file mode 100644
+index 00000000..f77a3200
+--- /dev/null
++++ b/scripts/workflow_delivery_transaction.py
+@@ -0,0 +1,32 @@
++"""Capture changed production paths from an explicit transaction baseline.
++
++The caller owns baseline selection and trust. This module never substitutes
++HEAD for a missing baseline, chooses a task, or grants mutation permission.
++"""
++
++from workflow_delivery_coverage_shapes import paths
++from workflow_delivery_shapes import require
++from workflow_delivery_source_scopes import contains
++from workflow_delivery_tree import Tree
++
++
++def changed_production_paths(tree, roots, *, base_ref):
++    paths(roots, "production_roots")
++    tree.has_commit(base_ref)
++    base = Tree(tree.root, revision=base_ref)
++    if tree.staged or tree.revision:
++        # Use captured index entries, not a fresh live-index diff. Repaired
++        # worktree bytes or a later index change cannot replace this snapshot.
++        names = set(base.entries) | set(tree.entries)
++        return sorted(path for path in names if contains(roots, path)
++                      and base.entries.get(path) != tree.entries.get(path))
++    changed = tree.git("--literal-pathspecs", "diff", "--no-ext-diff",
++                       "--no-textconv", "--no-renames", "--name-only", "-z",
++                       base_ref, "--", *roots)
++    # Ignored generated files can still be real build inputs. Deliberately do
++    # not use --exclude-standard; the reviewed roots bound this enumeration.
++    new = tree.git("--literal-pathspecs", "ls-files", "--others", "-z", "--", *roots)
++    names = {raw.decode("utf-8") for raw in (changed + new).split(b"\0") if raw}
++    require(all(contains(roots, path) for path in names), "transaction",
++            "Git returned a path outside literal production roots", "WDQ-COVERAGE")
++    return sorted(names)
+diff --git a/scripts/workflow_delivery_trust.py b/scripts/workflow_delivery_trust.py
+index e7908fba..df6182e6 100644
+--- a/scripts/workflow_delivery_trust.py
++++ b/scripts/workflow_delivery_trust.py
+@@ -4,9 +4,10 @@ from pathlib import Path
+ 
+ from workflow_delivery_authority import resolve_ref
+ from workflow_delivery_contract import canonical_contract, validate_contract
++from workflow_delivery_coverage_shapes import coverage_shape
+ from workflow_delivery_io import DeliveryInputError, canonical_json
+ from workflow_delivery_shapes import (
+-    array, closed, commit_id, ids, identifier, ref, require, unique, version,
++    array, closed, commit_id, ids, identifier, ref, require, unique,
+ )
+ from workflow_delivery_tree import Tree
+ 
+@@ -23,8 +24,14 @@ def policy_shape(value):
+ 
+ 
+ def _policy_shape(value):
+-    closed(value, "schema_version decision_ref enrolled legacy_baseline", POLICY_PATH, "WDQ-POLICY")
+-    version(value["schema_version"], POLICY_PATH)
++    require(type(value) is dict, POLICY_PATH, "policy object required", "WDQ-POLICY")
++    schema = value.get("schema_version")
++    require(type(schema) is int and schema in (1, 2), POLICY_PATH,
++            "integer policy schema 1 or 2 required", "WDQ-POLICY")
++    fields = "schema_version decision_ref enrolled legacy_baseline"
++    closed(value, fields + (" coverage" if schema == 2 else ""), POLICY_PATH, "WDQ-POLICY")
++    if schema == 2:
++        coverage_shape(value["coverage"])
+     ref(value["decision_ref"], POLICY_PATH)
+     commit_id(value["legacy_baseline"], POLICY_PATH)
+     array(value["enrolled"], POLICY_PATH)
