@@ -16,7 +16,13 @@ def headless_environment(variant=None):
             "tools": [{"name": name, "path": "/nonexistent/fixture-" + name,
                        "sha256": sha256(b"fixture interpreter"), "version": "synthetic fixture version"}
                       for name in ("interpreter", "git")]}
-    if variant == "INFRA-S06-13.toolchain":
+    if variant == "INFRA-S06-12.environment-version":
+        value["schema_version"] = True
+    elif variant == "INFRA-S06-12.environment-kind":
+        value["kind"] = "synthetic-invalid-kind"
+    elif variant == "INFRA-S06-12.environment-fields":
+        value["unexpected"] = "synthetic extra environment field"
+    elif variant == "INFRA-S06-13.toolchain":
         value["toolchain"] = "synthetic mismatched toolchain"
     elif variant == "INFRA-S06-13.interpreter":
         value["tools"][0]["sha256"] = sha256(b"different synthetic interpreter")

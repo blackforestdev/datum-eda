@@ -13,6 +13,9 @@ FIXTURE_VARIANTS = {
 MIXED_VARIANT = "INFRA-S06-08.mixed"
 SWAPPED_VARIANT = "INFRA-S06-10.swapped"
 HEADLESS_VARIANTS = {
+    "INFRA-S06-12.environment-version": ("environment", "integer headless environment version 2 required"),
+    "INFRA-S06-12.environment-kind": ("environment.kind", "expected one of"),
+    "INFRA-S06-12.environment-fields": ("environment", "closed fields required"),
     "INFRA-S06-13.toolchain": ("environment.toolchain", "environment/build toolchain mismatch"),
     "INFRA-S06-13.interpreter": ("environment.tools.interpreter", "observed interpreter differs from build receipt binary"),
     "INFRA-S06-14.pipes-dimensions": ("environment.terminal_size", "pipes have no terminal dimensions"),

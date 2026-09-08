@@ -1,4 +1,4 @@
-"""Exercise headless identity/dimension refusals through actual entry points."""
+"""Exercise headless shape/identity/dimension refusals through actual entry points."""
 
 import os
 from pathlib import Path
@@ -12,7 +12,7 @@ from workflow_delivery_environment_cases import HEADLESS_VARIANTS, MIXED_VARIANT
 
 
 class HeadlessCaptureTest(unittest.TestCase):
-    def test_build_and_terminal_inconsistencies_refuse_and_fresh_mixed_input_recovers(self):
+    def test_malformed_environments_refuse_and_fresh_mixed_input_recovers(self):
         with tempfile.TemporaryDirectory() as temporary:
             store = Path(temporary)
             baseline = store / "baseline-packet"
@@ -39,7 +39,7 @@ class HeadlessCaptureTest(unittest.TestCase):
                             self.assertFalse(result["acceptance_asserted"])
                             self.assertNotIn(result["invocation_id"], identities)
                             identities.add(result["invocation_id"])
-            self.assertEqual(40, len(identities))
+            self.assertEqual(70, len(identities))
 
 
 if __name__ == "__main__":
