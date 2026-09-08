@@ -13,6 +13,10 @@ REVIEW_INPUT_CASES = {
     "INFRA-S04-05.replay-defect": (REVIEW_PATH, "WDQ-DEFECT", "every proof defect requires review disposition"),
     "INFRA-S04-08.absent-receipt": (REVIEW_PATH, "WDQ-RECEIPT", "exact owner receipt required"),
     "INFRA-S04-09.pending-disposition": (REVIEW_PATH, "WDQ-DEFECT", "undisposed defect dat-next"),
+    "INFRA-S04-03.copied-events": (REVIEW_PATH, "WDQ-REVIEW", "copied event artifact is not independent replay"),
+    "INFRA-S04-04.fixture": (REVIEW_PATH, "WDQ-REVIEW", "independent replay session/input identity mismatch"),
+    "INFRA-S04-04.inputs": (REVIEW_PATH, "WDQ-REVIEW", "independent replay session/input identity mismatch"),
+    "INFRA-S04-04.executable": (REVIEW_PATH, "WDQ-REVIEW", "independent replay must exercise the reviewed executable/build identity"),
 }
 
 
@@ -40,4 +44,33 @@ def prepare_review_input(f, variant):
     elif variant.endswith(".pending-disposition"):
         review["findings"] = [{"issue_id": "dat-next", "severity": "blocking",
                                "disposition_ref": None}]
+    else:
+        replay = tree.json(review["replay"]["path"])
+        change_replay(f, tree, replay, variant)
+        review["replay"] = f.blob(review["replay"]["path"], canonical_json(replay))
     f.save(contract["review_path"], review)
+
+
+def change_replay(f, tree, replay, variant):
+    if variant.endswith(".copied-events"):
+        roles = tree.json("evidence/reviewer-roles.json")
+        roles["events"] = tree.json("evidence/original-roles.json")["events"]
+        index = f.blob("evidence/reviewer-roles.json", canonical_json(roles))
+        replay["results"][0]["artifacts"] = (roles["events"] + roles["captures"]
+            + roles["state"] + [roles["registry"], index])
+    elif variant.endswith(".fixture"):
+        replay["fixture"] = f.blob("evidence/replay-fixture.txt", b"different synthetic fixture\n")
+    elif variant.endswith(".inputs"):
+        # Keep a valid manifest list but change its exact serialized identity.
+        # Bind a separate replay build receipt; never alter producer inputs.
+        raw = tree.read(replay["input_manifest"]["path"])
+        replay["input_manifest"] = f.blob("evidence/replay-inputs.json", raw + b"\n")
+        receipt = tree.json(replay["build"]["receipt"]["path"])
+        receipt["input_manifest_sha256"] = replay["input_manifest"]["sha256"]
+        replay["build"]["receipt"] = f.blob("evidence/replay-build.json", canonical_json(receipt))
+    elif variant.endswith(".executable"):
+        receipt = tree.json(replay["build"]["receipt"]["path"])
+        receipt["binary_sha256"] = "0" * 64
+        replay["build"]["receipt"] = f.blob("evidence/replay-build.json", canonical_json(receipt))
+    else:
+        raise ValueError("explicit implemented replay mutation required")
