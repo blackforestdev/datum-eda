@@ -1,0 +1,20 @@
+diff --git a/scripts/test_workflow_delivery_category_boundaries.py b/scripts/test_workflow_delivery_category_boundaries.py
+index 351055a3..7b2af04d 100644
+--- a/scripts/test_workflow_delivery_category_boundaries.py
++++ b/scripts/test_workflow_delivery_category_boundaries.py
+@@ -164,0 +165,8 @@ class DeferredBoundaryTest(unittest.TestCase):
++    def test_deferred_classification_preserves_planned_none_placeholder(self):
++        self.cold["state"] = "planned"
++        self.issue.update(status="open", labels=["roadmap:frontier"])
++        self.e.promote()
++        code, report = self.e.h.cli()
++        self.assertEqual(0, code, report)
++        self.assertEqual([], selector_failures(self.e.f.root, self.e.m))
++
+diff --git a/scripts/workflow_delivery_categories.py b/scripts/workflow_delivery_categories.py
+index 907bc1a7..eb4f87fc 100644
+--- a/scripts/workflow_delivery_categories.py
++++ b/scripts/workflow_delivery_categories.py
+@@ -20 +20 @@ def validate_categories(items, coverage, enrolled, authority):
+-            require(item.get("state") == "deferred" and
++            require(item.get("state") == promoted.get(key, {}).get("state") and
