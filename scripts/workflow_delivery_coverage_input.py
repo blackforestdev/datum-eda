@@ -6,6 +6,9 @@ from datetime import datetime, timedelta, timezone
 from workflow_delivery_io import canonical_json, parse_json, sha256
 
 BOUNDARY_CASES = {
+    "INFRA-S02-04.retained-history": (None, None, None),
+    "INFRA-S02-04.reactivate": ("COLD", "WDQ-COVERAGE", "deferred work requires reclassification"),
+    "INFRA-S02-04.rewrite-history": ("COLD", "WDQ-COVERAGE", "deferred work requires reclassification"),
     "INFRA-S02-05.authorization": ("NEXT", "WDQ-COVERAGE", "external-lane authorization changed"),
     "INFRA-S02-05.selected-step": ("NEXT", "WDQ-COVERAGE", "external-lane completion boundary changed"),
     "INFRA-S02-05.requirement": ("NEXT", "WDQ-COVERAGE", "external-lane selected requirement/authority changed"),
@@ -70,6 +73,24 @@ def prepare_external_boundary(f, manifest, policy):
               (f.root / ".beads/issues.jsonl").read_bytes().splitlines() if line.strip()]
     next(issue for issue in issues if issue["id"] == "dat-next").update(status="in_progress", assignee="codex",
         acceptance_criteria="NEXT-C01: Current bounded work\nNEXT-C02: Later separately authorized work")
+    cold = deepcopy(item)
+    cold.update(key="COLD", issue_id="dat-cold", order=2, state="deferred",
+                authorization="none", canonical_next=False)
+    del cold["claim"]
+    previous, future = cold["completion"]["steps"]
+    previous.update(id="COLD-C01", status="complete",
+                    completion_evidence=[{"kind": "document", **f.ref}],
+                    requirement_refs=[{"path": doc, "marker": "COLD-C01"}])
+    future.update(id="COLD-C02", status="pending", depends_on=["COLD-C01"],
+                  requirement_refs=[{"path": doc, "marker": "COLD-C02"}])
+    cold["completion"]["canonical_next_step_id"] = "COLD-C02"
+    manifest["frontier"].append(cold)
+    f.write(doc, (f.root / doc).read_bytes() +
+            b"\n<!-- REQ:COLD:COLD-C01 -->\n<!-- REQ:COLD:COLD-C02 -->\n")
+    issues.append({"id": "dat-cold", "status": "deferred", "labels": ["roadmap:deferred"],
+                   "acceptance_criteria": "COLD-C01: Retained history\nCOLD-C02: Deferred future work"})
+    policy["coverage"]["rows"].append({"frontier_key": "COLD", "issue_id": "dat-cold",
+        "category": "deferred", "boundary_ref": f.ref, "external_handoff_ref": None})
     f.write(".beads/issues.jsonl", b"".join(canonical_json(issue) for issue in issues))
     policy["coverage"]["rows"][1].update(category="external_lane", boundary_ref=f.ref, external_handoff_ref=f.ref)
     policy["coverage"]["production_roots"].append("external")
@@ -89,6 +110,19 @@ def mutate_external_boundary(root, case_id):
             "external/owned_elsewhere/input.py" if case_id.endswith(".prefix-lookalike") else
             "external/owned/input.py")
     changes[path] = b"# Actual candidate change in an isolated synthetic lane.\n"
+    if case_id.startswith("INFRA-S02-04.") and not case_id.endswith(".retained-history"):
+        manifest = parse_json((root / "specs/active_frontier.json").read_bytes(), "Frontier")
+        cold = next(item for item in manifest["frontier"] if item["key"] == "COLD")
+        if case_id.endswith(".reactivate"):
+            cold.update(state="ready", authorization="execution")
+            issues = [parse_json(line, "beads") for line in (root / ".beads/issues.jsonl").read_bytes().splitlines()]
+            next(issue for issue in issues if issue["id"] == "dat-cold").update(
+                status="open", labels=["roadmap:frontier"])
+            changes[".beads/issues.jsonl"] = b"".join(canonical_json(issue) for issue in issues)
+        else:
+            cold["completion"]["steps"][0]["action"] = "Rewritten completed historical obligation"
+        changes["specs/active_frontier.json"] = canonical_json(manifest)
+        changes["specs/PROGRESS.md"] = render_block(manifest).encode()
     if case_id.startswith(("INFRA-S02-08.", "INFRA-S02-05.")):
         manifest = parse_json((root / "specs/active_frontier.json").read_bytes(), "Frontier")
         item = manifest["frontier"][1]
