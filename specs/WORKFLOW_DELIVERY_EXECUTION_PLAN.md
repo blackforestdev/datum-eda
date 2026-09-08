@@ -408,3 +408,40 @@ contract/coverage/enrollment candidates, the rollout infrastructure contract and
 the numbered mechanism amendment. No product C01 is completed or claimed by
 these fixtures. I03 independent review and I04 exact owner activation remain
 future boundaries; installed policy, runner, hooks and Preferences are unchanged.
+
+### WDQ-I02 — enabled outcomes and proposed mechanism amendment
+
+Candidate: `a5f3d219f8a4f43e3509cc1d89d38033313226ab`, parent
+`cd773629d38e4467622675eda1b689eae5bd30e4`, retained under
+`refs/datum/workflow-delivery-candidates/a5f3d219f8a4f43e3509cc1d89d38033313226ab`.
+Exact zero-context increment: `docs/reviews/workflow-delivery-rollout/i02-enabled.patch`;
+apply/check with `--unidiff-zero` against the pinned inputs.
+
+The transition audit found that typed dispatch correlation alone permitted
+unavailable-only observations despite required normal product behavior. Version-2
+product mappings now require at least one normal-required scenario, real handler
+references for its consumers at readiness, and observed eligible/enabled invocation
+on every reviewed entry surface in both producer and independent replay. Explicit
+normal-not-applicable refusal/future-control scenarios remain possible; they cannot
+replace the required enabled scenarios. Infrastructure and legacy mappings retain
+their prior boundaries.
+
+Verification passes 223 workflow-delivery tests and 50 project-status tests;
+source health passes 1832 files and staged whitespace passes. Five new tests
+cover actual review refusal for unavailable-only normal observations, readiness
+refusal for missing handlers or all-normal-N/A, and explicit future-control/
+infrastructure limits. These are hermetic mechanism tests, not native delivery.
+
+The numbered proposal is
+`docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md`.
+It records the exact coverage, clause, review, enabled-behavior and promotion
+boundaries as a governed draft, not controlling doctrine. PM041 and installed
+trust are unchanged. Ratification still belongs to I04 after I03 independent review.
+
+Self-enrollment mapping remains explicitly unresolved: the actual I01-I06 plan
+contains no planning/governance readiness step. Prepare a transparent reviewed
+plan adjustment with genuine readiness evidence rather than relabeling I01 or
+calling R03 implementation approval a completed delivery contract. Exact product
+contract/coverage/enrollment candidates, the rollout infrastructure contract and
+complete transition proof are still outstanding; no product C01 or Preferences
+boundary is advanced by this increment.
