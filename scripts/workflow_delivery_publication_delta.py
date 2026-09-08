@@ -5,8 +5,8 @@ authorization, independent review, an owner receipt, or an activation command.
 """
 
 from workflow_delivery_bootstrap import git, pinned_commit
-from workflow_delivery_io import canonical_json, normalized_path, sha256
-from workflow_delivery_shapes import closed, digest
+from workflow_delivery_io import canonical_json, normalized_path, parse_json, sha256
+from workflow_delivery_shapes import closed, digest, require
 
 
 def tree_entries(root, revision):
@@ -88,3 +88,30 @@ def verify_publication_review(delta, review):
     if review["delta_sha256"] != sha256(canonical_json(delta)):
         raise ValueError("publication review digest differs from exact pinned Git history")
     return {"delta_sha256": review["delta_sha256"], "paths": list(paths)}
+
+
+def inspect_activation_response(raw, *, response_sha256, request_sha256):
+    """Compare separately selected response bytes; never authenticate their author.
+
+    Uses WDQ-I04's recorded response vocabulary with the exact request digest as
+    packet identity. Candidate content cannot select this external response hash.
+    Real owner selection, independent evidence and activation remain separate.
+    """
+    digest(response_sha256, "owner response digest")
+    digest(request_sha256, "activation request digest")
+    require(type(raw) is bytes and sha256(raw) == response_sha256, "owner response",
+            "response bytes differ from externally selected digest", "WDQ-RECEIPT")
+    value = parse_json(raw, "owner response")
+    closed(value, "schema_version kind response source recorded_at", "owner response", "WDQ-RECEIPT")
+    require(type(value["schema_version"]) is int and value["schema_version"] == 1
+            and value["kind"] == "datum.workflow-delivery.activation-response", "owner response",
+            "activation response version 1 required", "WDQ-RECEIPT")
+    expected = "WORKFLOW-DELIVERY-IMPLEMENTATION: approve ACTIVATE — " + request_sha256
+    require(value["response"] == expected, "owner response",
+            "response does not approve this exact activation request", "WDQ-RECEIPT")
+    require(all(type(value[key]) is str and value[key].strip() for key in ("source", "recorded_at")),
+            "owner response", "response source and recorded date required", "WDQ-RECEIPT")
+    return {"response_sha256": response_sha256, "request_sha256": request_sha256,
+            "response_matches_request": True, "owner_identity_verified": False,
+            "publication_authorized": False, "activation_asserted": False,
+            "scope": "Exact separately selected response bytes only; not independent proof or activation authority."}

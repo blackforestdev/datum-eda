@@ -3,7 +3,7 @@
 from copy import deepcopy
 import unittest
 
-from workflow_delivery_publication_delta import publication_delta, verify_publication_delta, verify_publication_review
+from workflow_delivery_publication_delta import publication_delta, verify_publication_delta, verify_publication_review, inspect_activation_response
 from workflow_delivery_io import canonical_json, sha256
 from workflow_delivery_test_support import Fixture
 
@@ -80,6 +80,27 @@ class PublicationDeltaTest(unittest.TestCase):
                        {"paths": ["src/z.py", "src/read.py"]}, {"owner_approved": True}):
             with self.subTest(change=change), self.assertRaises(ValueError):
                 verify_publication_review(result, dict(review, **change))
+
+    def test_external_response_matches_only_one_packet_without_claiming_authorship(self):
+        request = "a" * 64
+        value = {"schema_version": 1, "kind": "datum.workflow-delivery.activation-response",
+                 "response": "WORKFLOW-DELIVERY-IMPLEMENTATION: approve ACTIVATE — " + request,
+                 "source": "Synthetic input; not an actual owner response", "recorded_at": "2026-09-08"}
+        raw = canonical_json(value)
+        result = inspect_activation_response(raw, response_sha256=sha256(raw), request_sha256=request)
+        self.assertTrue(result["response_matches_request"])
+        for field in ("publication_authorized", "activation_asserted", "owner_identity_verified"):
+            self.assertFalse(result[field])
+        for change in ({"schema_version": True}, {"response": "approved"},
+                       {"response": "WORKFLOW-DELIVERY-IMPLEMENTATION: defer — later"},
+                       {"source": ""}, {"recorded_at": None}, {"owner_approved": True}):
+            altered = canonical_json(dict(value, **change))
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                inspect_activation_response(altered, response_sha256=sha256(altered), request_sha256=request)
+        with self.assertRaisesRegex(ValueError, "exact activation request"):
+            inspect_activation_response(raw, response_sha256=sha256(raw), request_sha256="b" * 64)
+        with self.assertRaisesRegex(ValueError, "externally selected digest"):
+            inspect_activation_response(raw + b"\n", response_sha256=sha256(raw), request_sha256=request)
 
     def test_merge_retains_each_parent_edge(self):
         self.f.write("src/read.py", b"side branch source\n")

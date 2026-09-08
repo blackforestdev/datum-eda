@@ -52,6 +52,59 @@ class PreflightCliTest(unittest.TestCase):
             "--output", str(output or self.output), *extra], cwd=self.store,
             env=self.env, capture_output=True, timeout=30)
 
+    def owner_response(self):
+        response = self.f.root / ".git/datum-wdq/owner-responses/fixture.json"
+        response.parent.mkdir(parents=True)
+        raw = canonical_json({"schema_version": 1, "kind": "datum.workflow-delivery.activation-response",
+            "response": "WORKFLOW-DELIVERY-IMPLEMENTATION: approve ACTIVATE — " + sha256(self.path.read_bytes()),
+            "source": "Synthetic test input, not owner approval", "recorded_at": "2026-09-08"})
+        response.write_bytes(raw)
+        return response, ["--owner-response", str(response), "--owner-response-sha256", sha256(raw)]
+
+    def test_separate_response_is_compared_without_claiming_owner_identity(self):
+        response, arguments = self.owner_response()
+        raw = response.read_bytes()
+        before = protected_state(self.f.root, ["src"])
+        result = self.run_cli(extra=arguments)
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        payload = json.loads(self.output.read_bytes())
+        self.assertTrue(payload["owner_response"]["response_matches_request"])
+        self.assertFalse(payload["owner_response"]["owner_identity_verified"])
+        self.assertFalse(payload["publication_authorized"])
+        self.assertEqual(raw, response.read_bytes())
+        self.assertEqual(before, protected_state(self.f.root, ["src"]))
+
+    def test_response_for_another_request_refuses_without_publication(self):
+        _, arguments = self.owner_response()
+        # JSON whitespace changes are still distinct externally hashed request bytes.
+        self.path.write_bytes(self.path.read_bytes() + b"\n")
+        before = protected_state(self.f.root, ["src"])
+        result = self.run_cli(extra=arguments)
+        self.assertEqual(2, result.returncode, result.stdout + result.stderr)
+        self.assertIn(b"exact activation request", result.stdout)
+        self.assertFalse(json.loads(self.output.read_bytes())["publication_authorized"])
+        self.assertEqual(before, protected_state(self.f.root, ["src"]))
+
+    def test_response_cannot_be_taken_from_candidate_or_redirected_storage(self):
+        response, arguments = self.owner_response()
+        candidate_file = self.f.root / "candidate-response.json"
+        candidate_file.write_bytes(response.read_bytes())
+        redirected = response.with_name("redirected.json")
+        redirected.symlink_to(response)
+        for index, path in enumerate((candidate_file, redirected)):
+            with self.subTest(path=path):
+                result = self.run_cli(extra=[arguments[0], str(path), *arguments[2:]],
+                                      output=self.output.with_name(f"response-path-{index}.json"))
+                self.assertEqual(2, result.returncode, result.stdout + result.stderr)
+                self.assertIn(b"separate nonredirected JSON", result.stdout)
+
+    def test_response_path_without_external_digest_is_an_invocation_failure(self):
+        response, _ = self.owner_response()
+        result = self.run_cli(extra=["--owner-response", str(response)])
+        self.assertEqual(2, result.returncode, result.stdout + result.stderr)
+        self.assertIn(b"required together", result.stdout)
+        self.assertFalse(self.output.exists())
+
     def test_success_retains_exact_log_and_leaves_protected_state_unchanged(self):
         before = protected_state(self.f.root, ["src"])
         result = self.run_cli()

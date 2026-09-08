@@ -22,6 +22,8 @@ def main(argv=None):
     parser.add_argument("--request", type=Path, required=True)
     parser.add_argument("--request-sha256", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--owner-response", type=Path)
+    parser.add_argument("--owner-response-sha256")
     args = parser.parse_args(argv)
     report = {"kind": "datum.workflow-delivery.preflight-diagnostic", "ok": False,
               "activation_asserted": False, "publication_authorized": False, "findings": []}
@@ -41,6 +43,12 @@ def main(argv=None):
         from workflow_delivery_environments import load_environments
         from workflow_delivery_tree import Tree
         from workflow_delivery_trust import POLICY_PATH, policy_shape
+        from workflow_delivery_publication_delta import inspect_activation_response
+
+        if bool(args.owner_response) != bool(args.owner_response_sha256):
+            raise ValueError("owner response path and externally selected digest are required together")
+        if args.inspect_state and args.owner_response:
+            raise ValueError("state observation does not inspect owner responses")
 
         raw = args.request.read_bytes()
         if not re.fullmatch(r"[0-9a-f]{64}", args.request_sha256) or sha256(raw) != args.request_sha256:
@@ -79,6 +87,15 @@ def main(argv=None):
                         base=request["base"], candidate=request["candidate"], input_roots=request["input_roots"],
                         prior_trust=request["prior_local_trust"], proposed_trust=request["proposed_local_trust"])
                 else:
+                    if args.owner_response:
+                        response = args.owner_response
+                        response_directory = locations["store"] / "owner-responses"
+                        if (not response.is_absolute() or response.parent != response_directory
+                                or response.resolve() != response or not response.is_file()
+                                or response.is_symlink() or response.suffix != ".json"):
+                            raise ValueError("owner response must be a separate nonredirected JSON file in Git-common owner-responses")
+                        payload["owner_response"] = inspect_activation_response(response.read_bytes(),
+                            response_sha256=args.owner_response_sha256, request_sha256=args.request_sha256)
                     proposed = proposed_local_trust(args.root, authority=request["authority"],
                         base=request["base"], environment_path=request["environment_path"])
                     if canonical_json(request["proposed_local_trust"]) != canonical_json(proposed):
