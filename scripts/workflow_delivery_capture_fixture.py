@@ -19,6 +19,7 @@ from workflow_delivery_native_test_support import environment
 from workflow_delivery_test_support import Fixture
 from workflow_delivery_tree import Tree
 from workflow_delivery_trust_test_support import accepted_fixture
+from workflow_delivery_readiness_input import READINESS_CASES, prepare_readiness
 
 
 def prepare_fixture(root, packet, *, fixture_variant=None):
@@ -53,6 +54,8 @@ def prepare_fixture(root, packet, *, fixture_variant=None):
                   "boundary_ref": f.ref, "external_handoff_ref": None}
                  for item in manifest["frontier"]]})
     inventory(f, next_item, policy)
+    if fixture_variant in READINESS_CASES:
+        prepare_readiness(f, manifest, policy, fixture_variant)
     f.save("specs/workflow_delivery_policy.json", policy)
     # Synthetic INPUT for the actual earlier formatting gate. The real-roadmap
     # fixture must retain its actual exemption manifest and referenced files.
@@ -87,7 +90,8 @@ def prepare_fixture(root, packet, *, fixture_variant=None):
     state = protected_state(f.root, ["src"])
     save(packet / "prepared-state.json", state)
     recipe = {"schema_version": 1, "kind": "synthetic-validator-input",
-              "fixture_family": "accepted-history-and-pending-specification",
+              "fixture_family": ("accepted-history-and-readiness" if fixture_variant in READINESS_CASES
+                                 else "accepted-history-and-pending-specification"),
               "head": authority, "symbolic_head": state["symbolic_head"],
               "fixture_nonce": nonce, "local_configuration": configuration,
               "bundle": {"path": bundle.name, "sha256": sha256(bundle.read_bytes())},
@@ -110,9 +114,13 @@ def restore_fixture(packet, root):
     variant_fields = " fixture_variant" if recipe.get("schema_version") == 2 else ""
     closed(recipe, "schema_version kind fixture_family head symbolic_head fixture_nonce "
            "local_configuration bundle prepared_state untracked_roots acceptance_asserted warning" + variant_fields, "recipe")
+    variant = recipe.get("fixture_variant")
+    require(variant is None or type(variant) is str, "recipe", "string fixture variant required")
+    family = ("accepted-history-and-readiness" if variant in READINESS_CASES
+              else "accepted-history-and-pending-specification")
     require(type(recipe["schema_version"]) is int and recipe["schema_version"] in (1, 2)
             and recipe["kind"] == "synthetic-validator-input"
-            and recipe["fixture_family"] == "accepted-history-and-pending-specification"
+            and recipe["fixture_family"] == family
             and recipe["acceptance_asserted"] is False, "recipe", "synthetic baseline recipe required")
     if recipe["schema_version"] == 2:
         require(recipe["fixture_variant"] in PREPARED_VARIANTS, "recipe", "known prepared-input variant required")

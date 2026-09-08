@@ -1,6 +1,7 @@
 """Malformed authority INPUT recipes; never owner promotion or proof repair."""
 
 from copy import deepcopy
+from workflow_delivery_readiness_input import READINESS_CASES
 
 FIXTURE_VARIANTS = {
     "INFRA-S06-09.missing-key": "nonempty array required",
@@ -22,7 +23,7 @@ HEADLESS_VARIANTS = {
     "INFRA-S06-14.pty-dimensions": ("environment.terminal_size", "PTY requires observed positive columns/rows"),
 }
 MIXED_VARIANTS = {MIXED_VARIANT, SWAPPED_VARIANT} | set(HEADLESS_VARIANTS)
-PREPARED_VARIANTS = set(FIXTURE_VARIANTS) | MIXED_VARIANTS
+PREPARED_VARIANTS = set(FIXTURE_VARIANTS) | MIXED_VARIANTS | set(READINESS_CASES)
 
 
 def malformed_selection(selection, variant):
