@@ -141,6 +141,97 @@ toolchain and authority refusal listed in that section. Pipes have no terminal
 dimensions; an actual PTY records character columns/rows, not fictitious pixels.
 Headless infrastructure must not weaken product native evidence requirements.
 
+<!-- WDQ-INFRA-CASE-MATRIX -->
+## Required case inventory
+
+This inventory defines future observations, not completed tests. Case IDs remain
+stable in the producer and independent-replay records. `C` means staged CLI,
+`R` exact-candidate CLI, `S` both project-status check and named task details,
+and `H` the prepared owner hook. Execute every named surface separately; one
+function-call test does not stand for them. For each refusal, preserve state and
+repeat a restored valid case. Keep all other prerequisites valid enough to reach
+the intended check: an unrelated earlier error does not prove that check works.
+
+`PASS` means zero status and the expected unchanged selection/false assertion
+flags; `REFUSE` means nonzero enforcement status and a diagnostic identifying
+the intended failure. Record exact actual codes, not merely nonzero exit.
+Invocation/termination cases retain their real process status separately.
+Where a row lists several variants, each variant requires its own case record
+with the row ID plus a stable variant suffix; none may be sampled away.
+
+| Case ID | Input or observation | Required result | Surfaces |
+| --- | --- | --- | --- |
+| INFRA-S01-01 | Complete valid enrolled fixture | PASS | C R S H |
+| INFRA-S01-02 | Invalid CLI argument and conflicting snapshot modes, separately | Invocation error; no successful check claim | C R |
+| INFRA-S01-03 | Same invalid delivery input in report-only and enforce modes | Report-only diagnostic is not permission; enforcement REFUSE | C R |
+| INFRA-S01-04 | Valid and refused cases with no color, GUI or pointer input | Text identifies result, path and responsible context; state unchanged | C R S H |
+| INFRA-S02-01 | Missing, duplicate and newly unclassified Frontier rows, separately | REFUSE each classification defect | C R S H |
+| INFRA-S02-02 | Reopen a historical item or add execution to its completion, separately | REFUSE without reclassification | C R S H |
+| INFRA-S02-03 | Give a specification execution authorization or an execution step, separately | REFUSE both forms | C R S H |
+| INFRA-S02-04 | Reactivate deferred work; change its retained completed history, separately | REFUSE; unchanged dormant history still PASS | C R S H |
+| INFRA-S02-05 | Cross external-lane authorization, selected-step or requirement boundary, separately | REFUSE without reassignment | C R S H |
+| INFRA-S02-06 | Modify production source in an unpermitted external-lane path | REFUSE; no session-name exemption | C R S H |
+| INFRA-S02-07 | Authorize product or infrastructure execution without enrollment, separately | REFUSE both categories | C R S H |
+| INFRA-S02-08 | Authorized source path with absent, expired or mismatched claim, separately | REFUSE each ownership defect | C R S H |
+| INFRA-S02-09 | Source outside any scope; prefix-lookalike path, separately | REFUSE both escapes | C R S H |
+| INFRA-S02-10 | Candidate changes policy category, scope or enrollment, separately | REFUSE candidate self-permission | C R S H |
+| INFRA-S02-11 | New Rust, MCP and workflow source outside permissions, separately | REFUSE every production root | C R S H |
+| INFRA-S03-01 | Complete preflight with no delivery declaration | REFUSE before execution | C R S H |
+| INFRA-S03-02 | Stale route digest; missing authority marker, separately | REFUSE stale or absent authority | C R S H |
+| INFRA-S03-03 | Unresolved mandatory owner question; missing foundation answer, separately | REFUSE incomplete readiness | C R S H |
+| INFRA-S03-04 | Required normal consumer has no real handler | REFUSE readiness | C R S H |
+| INFRA-S03-05 | Product contract makes every normal dimension not applicable | REFUSE scope evasion | C R S H |
+| INFRA-S03-06 | Specification lacks clause inventory | REFUSE | C R S H |
+| INFRA-S03-07 | Completed authorship omits or duplicates a clause disposition, separately | REFUSE incomplete accounting | C R S H |
+| INFRA-S03-08 | Candidate claims an unratified mechanism is ratified | REFUSE candidate-only authority | C R S H |
+| INFRA-S03-09 | Pending-owner disposition names absent, completed or non-dependent decision, separately | REFUSE each invalid link | C R S H |
+| INFRA-S03-10 | Valid pending authorship with no future output | PASS without invented completion | C R S H |
+| INFRA-S03-11 | Unassigned, unenrolled product remains pending planning | PASS planning; separate execution attempt REFUSE | C R S H |
+| INFRA-S04-01 | Skip review or complete review without its record, separately | REFUSE | C R S H |
+| INFRA-S04-02 | Reviewer equals an implementation session or original producer, separately | REFUSE self-review | C R S H |
+| INFRA-S04-03 | Copy producer events into purported replay | REFUSE reused observations | C R S H |
+| INFRA-S04-04 | Replay changes fixture, source/input or executable identity, separately | REFUSE changed replay | C R S H |
+| INFRA-S04-05 | Omit a producer or replay defect from review findings, separately | REFUSE missing accounting | C R S H |
+| INFRA-S04-06 | Required normal product observations are unavailable-only | REFUSE producer and replay variants | C R S H |
+| INFRA-S04-07 | Valid independent review with owner disposition still pending | PASS review only; acceptance REFUSE | C R S H |
+| INFRA-S04-08 | Acceptance receipt absent, wrong or candidate-only, separately | REFUSE acceptance | C R S H |
+| INFRA-S04-09 | Unresolved blocking defect at acceptance | REFUSE | C R S H |
+| INFRA-S04-10 | Exact authorized nonblocking deferral with otherwise valid acceptance | PASS without deleting the finding | C R S H |
+| INFRA-S04-11 | Legacy accepted pilot mapping and evidence unchanged | PASS; no retroactive new mapping obligation | C R S H |
+| INFRA-S04-12 | Valid infrastructure review with null activate/accept mapping | PASS review, never product acceptance | C R S H |
+| INFRA-S05-01 | Bad staged record repaired only in worktree | C/H REFUSE; S judges its actual worktree | C S H |
+| INFRA-S05-02 | Valid staged record with bad unstaged worktree version | C/H PASS; S REFUSE the worktree defect | C S H |
+| INFRA-S05-03 | Explicit candidate differs from both index and worktree | R judges only requested commit and required history | R |
+| INFRA-S05-04 | Missing or nonancestor candidate base, separately | REFUSE ambiguous history | R |
+| INFRA-S05-05 | Ignored/untracked production input | S REFUSE uncovered worktree input; C/H exclude unstaged input | C S H |
+| INFRA-S05-06 | Delete or rename an input across allowed/unallowed boundaries, separately | REFUSE escape and retain deletion/rename identity | C R S H |
+| INFRA-S05-07 | Intermediate unscoped add/delete or change/revert, separately | REFUSE history even if final bytes match | R |
+| INFRA-S05-08 | Unpermitted source change reachable through a merge parent | REFUSE hidden parent history | R |
+| INFRA-S05-09 | Empty new transaction after historical change | PASS only the new transaction; no historical certification | C S H |
+| INFRA-S06-01 | Missing or moving authority/base references, separately | REFUSE missing/ambiguous trust | C R S H |
+| INFRA-S06-02 | Changed gate/runner bytes or missing selected runner, separately | REFUSE; no candidate fallback | C R S H |
+| INFRA-S06-03 | Changed governing authority or relevant source input, separately | REFUSE stale proof | C R S H |
+| INFRA-S06-04 | Wrong fixture, binary, build receipt or registry identity, separately | REFUSE each stale identity | C R S H |
+| INFRA-S06-05 | Event input, dispatch, visible/state or artifact correlation differs, separately | REFUSE each mismatch | C R S H |
+| INFRA-S06-06 | Interrupt this run's observed live child; then invoke a fresh valid case | Termination recorded, no success claim; state preserved; fresh PASS | C R S H |
+| INFRA-S06-07 | Fresh valid invocation after an ordinary refusal | PASS; no automatic repair or authority refresh | C R S H |
+| INFRA-S06-08 | Legacy pilot plus distinct headless infrastructure environments | PASS exact per-enrollment selection | C R S H |
+| INFRA-S06-09 | Environment selection missing/duplicate/unknown enrolled key, separately | REFUSE every selection defect | C R S H |
+| INFRA-S06-10 | Swap environments between two enrolled identities | REFUSE; no inferred equivalence | C R S H |
+| INFRA-S06-11 | Change selected document, selected Blob or authority membership, separately | REFUSE candidate-selected request | C R S H |
+| INFRA-S06-12 | Malformed selection/environment version, kind or fields, separately | REFUSE closed-shape violation | C R S H |
+| INFRA-S06-13 | Changed recorded toolchain or interpreter digest, separately | REFUSE mismatch with selected environment/build | C R S H |
+| INFRA-S06-14 | Invent terminal dimensions for pipes; omit actual PTY dimensions, separately | REFUSE headless record inconsistency | C R S H |
+| INFRA-S06-15 | Product tries to use headless environment shape | REFUSE; native GUI evidence still required | C R S H |
+
+History-specific R cases do not impose history certification on the worktree
+selector or an empty new staged transaction. Conversely, omission of R from
+worktree/index divergence cases does not waive exact candidate isolation: case
+INFRA-S05-03 covers it. Hook launch/config failures may precede a WDQ JSON report;
+retain and assess their actual visible nonzero diagnostic rather than inventing
+a downstream code. Do not bypass the earlier file-lane or formatting checks to
+reach WDQ: construct valid non-prototype fixture paths for those cases.
+
 <!-- WDQ-INFRA-FIXTURE -->
 ## Fixture recipe and observation procedure
 

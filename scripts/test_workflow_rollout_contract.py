@@ -3,6 +3,7 @@
 import ast
 from copy import deepcopy
 from pathlib import Path
+import re
 import unittest
 
 from workflow_delivery_authority import authority_manifest
@@ -112,6 +113,34 @@ class RolloutContractTest(unittest.TestCase):
             self.assertEqual("not_applicable", self.contract["foundation_answers"][key]["disposition"])
         for key in ("undo_cancel", "persistence_recovery", "settings_scope"):
             self.assertEqual("required", self.contract["foundation_answers"][key]["disposition"])
+
+    def case_rows(self):
+        source = self.tree.read(SPEC).decode()
+        return [tuple(part.strip() for part in line.strip("|").split("|"))
+                for line in source.splitlines() if line.startswith("| INFRA-S")]
+
+    def test_case_inventory_has_unique_ids_and_known_scenarios_and_surfaces(self):
+        rows = self.case_rows()
+        self.assertTrue(rows)
+        self.assertTrue(all(len(row) == 4 for row in rows))
+        self.assertEqual(len(rows), len({row[0] for row in rows}))
+        scenarios = {s["id"] for s in self.contract["scenarios"]}
+        self.assertEqual(scenarios, {row[0].rsplit("-", 1)[0] for row in rows})
+        for identity, condition, outcome, surfaces in rows:
+            self.assertRegex(identity, r"^INFRA-S0[1-6]-[0-9]{2}$")
+            self.assertTrue(condition and outcome)
+            names = surfaces.split()
+            self.assertTrue(names and set(names) <= {"C", "R", "S", "H"})
+            self.assertEqual(len(names), len(set(names)))
+        declared = re.findall(r"^\| (INFRA-S\S+) \|", self.tree.read(SPEC).decode(), re.M)
+        self.assertEqual(declared, [row[0] for row in rows])
+
+    def test_case_inventory_distinguishes_history_from_worktree_snapshots(self):
+        rows = {row[0]: row for row in self.case_rows()}
+        for identity in ("INFRA-S05-03", "INFRA-S05-04", "INFRA-S05-07", "INFRA-S05-08"):
+            self.assertEqual("R", rows[identity][3])
+        for identity in ("INFRA-S05-01", "INFRA-S05-02", "INFRA-S05-05"):
+            self.assertEqual({"C", "S", "H"}, set(rows[identity][3].split()))
 
 
 if __name__ == "__main__":

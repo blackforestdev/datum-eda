@@ -961,3 +961,14 @@ full per-entry-point subcase inventory and final input/toolchain closure remain
 to be bound to the assembled candidate; no new proof, enrollment, native outcome
 or owner acceptance is asserted. I03 must implement the reviewed procedure and
 record real observations. Preferences and installed trust remain untouched.
+
+### WDQ-READY — explicit infrastructure case inventory
+
+The infrastructure contract contains 62 stable case rows spanning all six
+scenario groups and the mixed-environment amendment. Each enumerated variant
+and named process surface needs a separate observation, followed by state
+preservation and restored-valid checks where required. Candidate-history cases
+are not misrepresented as selector or empty-index certification. Two preparation
+tests cover case identity/scenario/surface consistency and snapshot applicability;
+they are not 62 executed delivery tests. Final source/toolchain closure, actual
+capture tooling, full producer/reviewer observations and readiness remain due.
