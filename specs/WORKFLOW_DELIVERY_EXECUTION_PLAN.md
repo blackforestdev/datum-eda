@@ -190,3 +190,25 @@ These are hermetic infrastructure results, not native product proof. WDQ-I01
 remains in progress for specification-authoring validation, remaining category
 negative coverage and historical/multi-commit transaction-baseline audit.
 The candidate is not installed; live gate/trust/policy and GP-CM05V remain unchanged.
+
+### WDQ-I01 specification-output candidate increment
+
+Candidate: `3088985c0dac3ea5e73ab2b4177deae0da224dbb`, parent `1131c5a53da0c5f5ba4fc2c2f131f103cfd36c2b`.
+Retained under `refs/datum/workflow-delivery-candidates/3088985c0dac3ea5e73ab2b4177deae0da224dbb`.
+Exact zero-context increment: `docs/reviews/workflow-delivery-rollout/i01-specification.patch`;
+apply/check with `--unidiff-zero` only against the recorded pinned inputs.
+
+Completed specification steps now require governed document, review or decision
+references with existing owning routes, and every member of every owning route
+must match its reviewed digest. Commit-only completion evidence is insufficient.
+Pending authorship does not require future outputs. The implementation reuses
+the delivery authority route-digest algorithm and reads the same captured tree
+as the actual CLI/selector transaction; unstaged repairs cannot bless the index.
+
+All 165 WDQ tests pass, including five new actual-entry-point specification
+tests. Candidate source health passes 1823 files and staged whitespace passes.
+These checks establish reference presence and route freshness, not semantic
+clause completeness or authenticated owner approval. WDQ-I01 remains in progress
+for clause/disposition validation, remaining category negative coverage and the
+historical/multi-commit transaction-baseline audit. This candidate is not
+installed and changes no live trust, product ownership, dependency or acceptance.
