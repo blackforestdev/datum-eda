@@ -609,7 +609,8 @@ automatic confirmation rule for ordinary reversible board edits.
 `shell-parity-comparison.html` was inspected in textual form with its embedded
 PNG bytes elided. Its historical percentage and suggested explanation are not a
 fresh rendering finding. The comparison images still require visual inspection;
-this file is deliberately not counted as fully reviewed below. No comparison,
+this file was not yet counted at that review checkpoint. The subsequent
+embedded-image inspection is recorded below. No comparison,
 prototype disposition, golden or authority digest was blessed or modified.
 
 ## Excluded agent authority, refusal feedback and retired teaching
@@ -759,6 +760,62 @@ rule changes the rail/row layout; HTML labels and inventory tables are not proof
 that the native accessibility tree or narrow layout meets those requirements.
 No open visual target was accepted, edited or promoted into GP-CM05V scope.
 
+## Revision entry, evidence presentation and historical shell images
+
+Four more textual sources were read completely: `revision-ux-study-index.html`,
+`project-preferences-revision-gate.html`, `revision-contextual-entry.html` and
+`revision-ux-evidence-study.html`. CSS and trailing status statements were
+included; only opaque font bytes were elided. The ten embedded PNGs in
+`shell-parity-comparison.html` were also extracted read-only and visually
+inspected, completing that member's previously textual-only review. No files
+were generated for extraction and no prototype was modified.
+
+The contextual-entry study explicitly separates technical history from formal
+Revision adoption. A new unmanaged Project retains journal, transaction tips
+and undo without creating EngineeringChanges, baselines, releases or controlled
+documents. Subject-local actions preserve the Design pane and explain unavailable
+baseline-dependent actions; requesting a result does not add permanent Navigator
+groups. Where controlled records are eventually browsed remains a stated owner
+decision, not permission to invent an entry point for foundation delivery.
+The Project Revision gate itself remains clay and does not activate its policy
+dropdown or Global Revision seeds.
+
+`dat-revision-visual-supersession-3c1` captures three exact owning-lane
+reconciliation targets: the index's Q10 row still presents withdrawn managed
+visibility/teaching replay as approved; the Project gate says unmanaged means
+"nothing recorded" and retains a question about an already-withdrawn nag;
+and evidence UX-V12 still describes final-issuance modal focus despite the
+ratified in-pane arm/confirm boundary. Preserve dated dispositions and technical
+history, label historical alternatives and reconcile those regions through
+Claude. This intake neither edits HTML nor changes PM034/PM038 authority.
+
+UX-V10's selected Q6-A-amended design makes Sources, Producer, Invocation,
+Environment, Outputs and Attempts permanent counted categories even when clean.
+Missing, unavailable, mismatched or failed evidence stays expanded. Full
+immutable detail opens beside the summary; it does not replace it. Reproduction
+and authenticity are separate verdicts; CanonicalEquivalent is diagnostic,
+not satisfaction of byte-identical specified outputs. A failed later attempt
+does not mutate the issued record. This is an important limit on broad rollout
+claims: an empty findings list cannot substitute for accounted-for evidence,
+and verified bytes alone cannot assert owner acceptance or signer authority.
+
+UX-V11 keeps absent Git an ordinary capability state, mirror failure separate
+from local authority and external changes behind semantic review. UX-V12
+explicitly requires later native AT-SPI proof; static keyboard/state examples
+are behavioral references only. Recoverable truncation, contextual keyboard
+entry, return focus, non-color state labels and bounded announcements remain
+consumer obligations, not functionality proved by reading the prototype.
+
+In the shell image pairs, schematic junctions, symbol interiors and strokes
+visibly differ; board-crop stroke edges differ; the terminal tab gains a filled
+active state and accent rule; and the revision text changes. The full frames
+also show different grid patterns and schematic presentation. These are
+historical embedded captures, not fresh runtime observations. Pixel crops do
+not establish electrical correctness, geometry identity, stable-input revision
+determinism or which change the owner wants. The page's final suggested blanket
+bless is therefore not acceptance authority. No current defect, visual golden,
+route digest or pilot acceptance was inferred from the historical percentage.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
@@ -771,8 +828,9 @@ above, the four execution packets and four identity/title-block/audit members
 plus the detailed authority/offline/impact contracts and four workspace/Publish
 members plus the GUI contract, Revision visual brief and prototype inventory,
 and the six agent/clay/carry-forward studies, both grid studies and the Project
-Working Units category study above
-have been read completely (67 files); the other 12 files remain to
+Working Units category study, four Revision entry/evidence members and the
+completed shell image comparison above
+have been read completely (72 files); the other seven files remain to
 review. No complete settings route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
 mutation, identity and authoring
