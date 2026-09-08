@@ -12,6 +12,10 @@ SPEC_VALID = "INFRA-S03-07.complete-matrix"
 SPEC_PENDING = "INFRA-S03-10.pending-authorship"
 PROPOSAL = "docs/decisions/PRODUCT_MECHANICS_999_FIXTURE.md"
 SPECIFICATION_INPUT_CASES = {
+    "INFRA-S02-03.execution-authorized": ("NEXT", "WDQ-COVERAGE",
+                                          "specification classification cannot authorize implementation"),
+    "INFRA-S02-03.execution-step-without-authorization": ("NEXT", "WDQ-COVERAGE",
+                                                         "specification classification cannot authorize implementation"),
     SPEC_VALID: (None, None, None),
     SPEC_PENDING: (None, None, None),
     "INFRA-S03-08.unratified-proposal": (PROPOSAL, "WDQ-AUTHORITY",
@@ -39,6 +43,16 @@ def prepare_specification_input(f, manifest, policy, variant):
     if variant == SPEC_PENDING:
         # Keep the original pending inventory; create no authored output,
         # completed step, future proof or owner decision.
+        return
+    if variant.startswith("INFRA-S02-03."):
+        item = manifest["frontier"][1]
+        # PM025 requires execution authorization to select an execution step.
+        # Keep that prerequisite coherent; separately demonstrate that even a
+        # pending execution step with no authorization violates this category.
+        item.update(state="ready", authorization=("execution" if variant.endswith(".execution-authorized") else "none"))
+        item["completion"]["steps"][0]["kind"] = "execution"
+        f.save("specs/active_frontier.json", manifest)
+        f.write("specs/PROGRESS.md", render_block(manifest).encode())
         return
     prepare_readiness(f, manifest, policy, READY_VALID)
     item = manifest["frontier"][1]

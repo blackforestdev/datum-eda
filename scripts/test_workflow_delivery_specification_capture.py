@@ -39,6 +39,8 @@ class SpecificationCaptureTest(unittest.TestCase):
                         runs = [("case", packet, variant)]
                         if SPECIFICATION_INPUT_CASES[variant][1] is not None:
                             valid = "INFRA-S03-09.pending-owner-valid" if variant.startswith(("INFRA-S03-09.", "INFRA-S03-08.")) else SPEC_VALID
+                            if variant.startswith("INFRA-S02-03."):
+                                valid = SPEC_PENDING
                             runs.append(("recovery", packets[valid], valid))
                         for phase, source, case in runs:
                             destination = store / (variant + surface + phase)
@@ -51,7 +53,7 @@ class SpecificationCaptureTest(unittest.TestCase):
                             self.assertFalse(result["acceptance_asserted"])
                             self.assertNotIn(result["invocation_id"], identities)
                             identities.add(result["invocation_id"])
-            self.assertEqual(95, len(identities))
+            self.assertEqual(115, len(identities))
 
 
 if __name__ == "__main__":
