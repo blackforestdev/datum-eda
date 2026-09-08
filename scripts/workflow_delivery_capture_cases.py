@@ -9,6 +9,7 @@ from workflow_delivery_capture_fixture import restore_fixture
 from workflow_delivery_capture_state import git
 from workflow_delivery_capture_mutations import CASES, changed_bytes, expected_detail
 from workflow_delivery_io import sha256
+from workflow_delivery_environment_cases import case_uses_prepared_input
 
 
 def run_case(packet, destination, runtime_root, environment, *, case_id, surface):
@@ -18,9 +19,11 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
     destination.mkdir(exist_ok=False)
     root, output = destination / "fixture", destination / "capture"
     recipe = restore_fixture(packet, root)
+    prepared_input = case_uses_prepared_input(case_id, recipe)
     target, expected = CASES[case_id]
-    mutation = {"case_id": case_id, "path": target, "before_sha256": None, "after_hex": None}
-    if target:
+    mutation = {"case_id": case_id, "path": target, "before_sha256": None, "after_hex": None,
+                "prepared_fixture_variant": recipe.get("fixture_variant")}
+    if target and not prepared_input:
         path = root / target
         raw = path.read_bytes() if path.exists() else None
         mutation["before_sha256"] = sha256(raw) if raw is not None else None

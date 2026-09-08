@@ -1,6 +1,7 @@
 """Explicit synthetic refusal inputs, with the exact diagnostic each must reach."""
 
 from workflow_delivery_io import canonical_json, parse_json
+from workflow_delivery_environment_cases import FIXTURE_VARIANTS
 
 POLICY = "specs/workflow_delivery_policy.json"
 CASES = {
@@ -14,9 +15,12 @@ CASES = {
     "INFRA-S06-11.selection": ("requested-environment.json", "WDQ-ENVIRONMENT"),
     "INFRA-S06-11.blob": ("selected-environment.json", "WDQ-ENVIRONMENT"),
 }
+CASES.update({key: ("requested-environment.json", "WDQ-ENVIRONMENT") for key in FIXTURE_VARIANTS})
 
 
 def expected_detail(case_id):
+    if case_id in FIXTURE_VARIANTS:
+        return FIXTURE_VARIANTS[case_id]
     if case_id.startswith("INFRA-S02-10."):
         return "policy change requires owner-controlled promotion"
     if case_id.startswith("INFRA-S06-02."):

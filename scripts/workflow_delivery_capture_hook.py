@@ -13,6 +13,7 @@ from workflow_delivery_capture_mutations import CASES, changed_bytes, expected_d
 from workflow_delivery_capture_state import git
 from workflow_delivery_io import parse_json, sha256
 from workflow_delivery_shapes import require
+from workflow_delivery_environment_cases import case_uses_prepared_input
 from workflow_delivery_support_bundle import prepare_bundle, verify_bundle
 from workflow_delivery_support_store import support_locations
 
@@ -50,6 +51,7 @@ def run_hook_case(packet, destination, environment, *, case_id):
     destination.mkdir(exist_ok=False)
     root, output = destination / "fixture", destination / "capture"
     recipe = restore_fixture(packet, root)
+    prepared_input = case_uses_prepared_input(case_id, recipe)
     authority = recipe["head"]
     bundle = prepare_bundle(root, authority)
     locations = support_locations(root, authority)
@@ -58,8 +60,9 @@ def run_hook_case(packet, destination, environment, *, case_id):
     git(root, "config", "--local", "datum.workflowDeliveryRunnerPath", str(locations["runner"]))
     save(destination / "support-before.json", bundle)
     target, _ = CASES[case_id]
-    mutation = {"case_id": case_id, "path": target, "before_sha256": None, "after_hex": None}
-    if target:
+    mutation = {"case_id": case_id, "path": target, "before_sha256": None, "after_hex": None,
+                "prepared_fixture_variant": recipe.get("fixture_variant")}
+    if target and not prepared_input:
         path = root / target
         raw = path.read_bytes() if path.exists() else None
         mutation["before_sha256"] = sha256(raw) if raw is not None else None

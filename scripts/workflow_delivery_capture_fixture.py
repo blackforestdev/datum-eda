@@ -8,6 +8,7 @@ import uuid
 from project_status import render_block
 from workflow_delivery_capture_command import save
 from workflow_delivery_capture_state import git, protected_state
+from workflow_delivery_environment_cases import FIXTURE_VARIANTS, malformed_selection
 from workflow_delivery_clause_test_support import inventory
 from workflow_delivery_io import canonical_json, normalized_path, parse_json, sha256
 from workflow_delivery_shapes import closed, commit_id, require
@@ -17,7 +18,7 @@ from workflow_delivery_tree import Tree
 from workflow_delivery_trust_test_support import accepted_fixture
 
 
-def prepare_fixture(root, packet):
+def prepare_fixture(root, packet, *, fixture_variant=None):
     """Caller supplies fresh sibling locations in its owned proposal store.
 
     Keep the complete bundle and exact local parameters for later reconstruction.
@@ -25,6 +26,8 @@ def prepare_fixture(root, packet):
     real-roadmap snapshot or the complete hostile-case matrix.
     """
     root, packet = Path(root).resolve(), Path(packet).resolve()
+    if fixture_variant is not None and fixture_variant not in FIXTURE_VARIANTS:
+        raise ValueError("unknown fixture variant")
     if root.exists() or packet.exists() or root.is_relative_to(packet) or packet.is_relative_to(root):
         raise ValueError("fresh separate fixture and packet locations required")
     packet.mkdir(parents=False, exist_ok=False)
@@ -50,10 +53,13 @@ def prepare_fixture(root, packet):
     # fixture must retain its actual exemption manifest and referenced files.
     f.save("specs/rustfmt_exemption_manifest.json", {"schema_version": 1, "exemptions": {}})
     selected = f.blob("selected-environment.json", canonical_json(environment()))
-    f.save("requested-environment.json", {
+    selection = {
         "schema_version": 2, "kind": "datum.workflow-delivery.environments",
         "environments": [{"frontier_key": row["frontier_key"], "environment": selected}
-                         for row in policy["enrolled"]]})
+                         for row in policy["enrolled"]]}
+    if fixture_variant is not None:
+        selection = malformed_selection(selection, fixture_variant)
+    f.save("requested-environment.json", selection)
     f.stage()
     f.git("commit", "-qm", "test(workflow): freeze synthetic capture input\n\nNo actual native proof or owner approval.")
     authority = f.git("rev-parse", "HEAD").decode().strip()
@@ -78,6 +84,8 @@ def prepare_fixture(root, packet):
                                  "sha256": sha256((packet / "prepared-state.json").read_bytes())},
               "untracked_roots": ["src"], "acceptance_asserted": False,
               "warning": "All embedded native/owner records are synthetic hostile-test INPUT, not proof."}
+    if fixture_variant is not None:
+        recipe.update(schema_version=2, fixture_variant=fixture_variant)
     save(packet / "recipe.json", recipe)
     return recipe
 
@@ -88,12 +96,15 @@ def restore_fixture(packet, root):
     if root.exists() or root.is_relative_to(packet) or packet.is_relative_to(root):
         raise ValueError("fresh separate restoration location required")
     recipe = parse_json((packet / "recipe.json").read_bytes(), "recipe.json")
+    variant_fields = " fixture_variant" if recipe.get("schema_version") == 2 else ""
     closed(recipe, "schema_version kind fixture_family head symbolic_head fixture_nonce "
-           "local_configuration bundle prepared_state untracked_roots acceptance_asserted warning", "recipe")
-    require(type(recipe["schema_version"]) is int and recipe["schema_version"] == 1
+           "local_configuration bundle prepared_state untracked_roots acceptance_asserted warning" + variant_fields, "recipe")
+    require(type(recipe["schema_version"]) is int and recipe["schema_version"] in (1, 2)
             and recipe["kind"] == "synthetic-validator-input"
             and recipe["fixture_family"] == "accepted-history-and-pending-specification"
             and recipe["acceptance_asserted"] is False, "recipe", "synthetic baseline recipe required")
+    if recipe["schema_version"] == 2:
+        require(recipe["fixture_variant"] in FIXTURE_VARIANTS, "recipe", "known malformed-input variant required")
     commit_id(recipe["head"], "recipe.head")
     uuid.UUID(recipe["fixture_nonce"])
     config = recipe["local_configuration"]
