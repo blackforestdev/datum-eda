@@ -8,6 +8,7 @@ from workflow_delivery_readiness_input import READINESS_CASES
 from workflow_delivery_review_input import REVIEW_INPUT_CASES
 from workflow_delivery_coverage_input import COVERAGE_INPUT_CASES
 from workflow_delivery_specification_input import SPECIFICATION_INPUT_CASES
+from workflow_delivery_review_phase_input import REVIEW_PHASE_CASES
 from workflow_delivery_environment_cases import FIXTURE_VARIANTS, HEADLESS_VARIANTS, MIXED_VARIANT, SWAPPED_VARIANT
 
 POLICY = "specs/workflow_delivery_policy.json"
@@ -24,6 +25,7 @@ CASES = {
 }
 CASES.update({key: ("requested-environment.json", "WDQ-ENVIRONMENT") for key in FIXTURE_VARIANTS})
 CASES.update(HISTORY_CASES)
+CASES.update({key: (path, code) for key, (path, code, _) in REVIEW_PHASE_CASES.items()})
 CASES.update({key: (path, code) for key, (path, code, _) in SPECIFICATION_INPUT_CASES.items()})
 CASES.update({key: (path, code) for key, (path, code, _) in COVERAGE_INPUT_CASES.items()})
 CASES.update({key: (path, code) for key, (path, code, _) in READINESS_CASES.items()})
@@ -38,6 +40,8 @@ CASES.update({key: (path, "WDQ-ENVIRONMENT") for key, (path, _) in HEADLESS_VARI
 
 
 def expected_detail(case_id):
+    if case_id in REVIEW_PHASE_CASES:
+        return REVIEW_PHASE_CASES[case_id][2]
     if case_id in SPECIFICATION_INPUT_CASES:
         return SPECIFICATION_INPUT_CASES[case_id][2]
     if case_id in COVERAGE_INPUT_CASES:

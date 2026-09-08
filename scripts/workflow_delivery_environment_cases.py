@@ -5,6 +5,7 @@ from workflow_delivery_readiness_input import READINESS_CASES
 from workflow_delivery_review_input import REVIEW_INPUT_CASES
 from workflow_delivery_coverage_input import COVERAGE_INPUT_CASES
 from workflow_delivery_specification_input import SPECIFICATION_INPUT_CASES
+from workflow_delivery_review_phase_input import REVIEW_PHASE_CASES
 
 FIXTURE_VARIANTS = {
     "INFRA-S06-09.missing-key": "nonempty array required",
@@ -29,6 +30,7 @@ MIXED_VARIANTS = {MIXED_VARIANT, SWAPPED_VARIANT} | set(HEADLESS_VARIANTS)
 PREPARED_VARIANTS = set(FIXTURE_VARIANTS) | MIXED_VARIANTS | set(READINESS_CASES) | set(REVIEW_INPUT_CASES)
 PREPARED_VARIANTS.update(COVERAGE_INPUT_CASES)
 PREPARED_VARIANTS.update(SPECIFICATION_INPUT_CASES)
+PREPARED_VARIANTS.update(REVIEW_PHASE_CASES)
 
 
 def malformed_selection(selection, variant):
