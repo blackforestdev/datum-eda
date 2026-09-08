@@ -725,3 +725,39 @@ tracked by `dat-wdq-missing-plans-b8y` have been repaired; further specification
 inventories, exact enrollment, readiness, activation and real adoption evidence
 remain WDQ-I02 and later workflow obligations. Structural plan coverage is not
 full policy validation, completed specification authorship or native EDA proof.
+
+### WDQ-I02 — foundation specification inventories and independent review
+
+The actual PROJECT-WRITER-OWNERSHIP, NATIVE-CONNECTIVITY-CONTRACT and
+NATIVE-WORKFLOW-BUDGETS records now have explicit pending PWO-REVIEW, NCC-REVIEW
+and NWB-REVIEW planning checkpoints between authorship and their existing C03
+owner decisions. The original C01/C02/C03 IDs, selected C01 steps, planned/
+planning states, owners, claims, order and dependency edges are unchanged.
+No owner decision is completed and no implementation is authorized.
+
+Three prepared inventories in `docs/reviews/workflow-delivery-rollout/clauses/`
+provide ten clauses each. Writer coverage includes actual entry points and
+concurrent failures, serialization/lock choice, durability/recovery/platform
+limits, journal-tip and conformance obligations, consumer handoff, review and
+ratification. Connectivity covers identity/formation, historical atomicity
+conflicts, topology/movement, gestures/reopen, shared exact snap, Claude visual
+ownership, topology/journal proof, review and complete owner reconciliation.
+Fixture/budget coverage includes identities, realistic scale, environment, timing
+through durable I/O, sampling/failure policy, unratified numeric targets, proof
+provenance, independent review, ratification and actual producer handoff.
+
+The inventories cite exact unique clauses in the existing workflow-owned
+foundation plans; they do not author the future product contracts or assert
+fresh native observations. Complete product-route review remains required by
+each task before its specification is authored. Explicit independent review
+cannot be replaced by the producer, copied results or a structural checker.
+No prototype, product authority, numerical threshold or installed trust changed.
+
+Six new tests pass across all three contracts, including refusal to select owner
+ratification while independent review remains pending. The existing 21 rollout
+and 50 selector tests also pass. Actual candidate `2a85005c` validates all thirty
+clauses and the three pending specifications without future output artifacts.
+Five of the seven active specification inventories are now prepared; GUI surface
+and Project Preferences inventories remain. WDQ-I02 still requires complete
+enrollment preparation and transition audit; readiness, activation and actual
+adoption are not established by these clause inventories.

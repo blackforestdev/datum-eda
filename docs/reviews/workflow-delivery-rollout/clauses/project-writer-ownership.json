@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-CLAUSES.PROJECT-WRITER-OWNERSHIP",
+  "frontier_key": "PROJECT-WRITER-OWNERSHIP",
+  "clauses": [
+    {
+      "id": "WRITER-ENTRY-POINTS",
+      "step_id": "PWO-C01",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "PWO-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Review journal/staging/recovery authority and current writer entry points,"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "FAILURE-TIMELINE",
+      "step_id": "PWO-C01",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "PWO-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "simultaneous writers, stale intent, process exit and crash recovery."
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "SERIALIZATION-MECHANISM",
+      "step_id": "PWO-C02",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "PWO-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Compare daemon-only and engine-owned per-project serialization without silently"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "LOCK-AND-RECOVERY",
+      "step_id": "PWO-C02",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "PWO-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Specify lock identity and scope, all writer acquisition paths,"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "DURABILITY-PLATFORM",
+      "step_id": "PWO-C02",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "PWO-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "conflict behavior, file/directory durability, recovery ownership, platform limits"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "TIP-AND-CONFORMANCE",
+      "step_id": "PWO-C02",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "PWO-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "State how the existing journal-tip check remains"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "CONSUMER-HANDOFF",
+      "step_id": "PWO-C02",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "PWO-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "crash boundaries; identify every affected consumer and planned implementation"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "INDEPENDENT-REVIEW",
+      "step_id": "PWO-REVIEW",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "PWO-REVIEW"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "A distinct reviewer checks every writer entry point, the failure timeline,"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "OWNER-RATIFICATION",
+      "step_id": "PWO-C03",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "PWO-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Present the numbered decision proposal, alternatives, unresolved platform cases"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "IMPLEMENTATION-OBLIGATION",
+      "step_id": "PWO-C03",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "PWO-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Explicitly schedule any implementation prerequisite"
+        }
+      ],
+      "requires_owner_decision": false
+    }
+  ]
+}

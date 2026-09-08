@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-CLAUSES.NATIVE-WORKFLOW-BUDGETS",
+  "frontier_key": "NATIVE-WORKFLOW-BUDGETS",
+  "clauses": [
+    {
+      "id": "FIXTURE-IDENTITY",
+      "step_id": "NWB-C01",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NWB-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "native identities, object counts and topology, coordinates, project/settings"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "REALISTIC-POPULATIONS",
+      "step_id": "NWB-C01",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NWB-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "minimal correctness fixtures from realistic scale/performance populations."
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "ENVIRONMENT",
+      "step_id": "NWB-C01",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NWB-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Inventory build, hardware, display, filesystem and environment variables that"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "TIMING-AND-DURABILITY",
+      "step_id": "NWB-C02",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NWB-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Draft explicit timing boundaries for input-to-preview and commit-to-durable"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "SAMPLING-FAILURE",
+      "step_id": "NWB-C02",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NWB-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "completion, including actual I/O. State cold/warm runs, samples, percentile"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "UNRATIFIED-TARGETS",
+      "step_id": "NWB-C02",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NWB-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "preview and 100 ms commit proposals are not ratified thresholds."
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "PROOF-PROVENANCE",
+      "step_id": "NWB-C02",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NWB-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Specify proof\nartifact fields, fixture provenance, regression comparison and refusal behavior;"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "INDEPENDENT-REVIEW",
+      "step_id": "NWB-REVIEW",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NWB-REVIEW"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "A distinct reviewer checks fixture provenance and realistic populations, exact"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "OWNER-RATIFICATION",
+      "step_id": "NWB-C03",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NWB-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Present fixture coverage, proposed numeric budgets and measurement method with"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "PRODUCER-HANDOFF",
+      "step_id": "NWB-C03",
+      "requirement_ref": {
+        "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+        "marker": "NWB-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_FOLLOWUP_PLANS.md",
+          "marker": "Hand ratified requirements to actual proof producers;"
+        }
+      ],
+      "requires_owner_decision": false
+    }
+  ]
+}

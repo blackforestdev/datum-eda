@@ -59,6 +59,21 @@
       "progress_anchor": "GUI-MARKING-MENU",
       "notes": "WDQ-I02 pending inert-shell readiness, owner authorization, implementation, native proof, independent review and acceptance plan. Historical HTML studies are not current construction approval; no operation invocation or completed EDA menu capability is authorized."
     },
+    "docs/reviews/workflow-delivery-rollout/clauses/project-writer-ownership.json": {
+      "class": "governed",
+      "progress_anchor": "PROJECT-WRITER-OWNERSHIP",
+      "notes": "WDQ-I02 prepared ten-clause specification inventory, including independent review and exact owner ratification; not installed policy or completed product evidence."
+    },
+    "docs/reviews/workflow-delivery-rollout/clauses/native-connectivity.json": {
+      "class": "governed",
+      "progress_anchor": "NATIVE-CONNECTIVITY-CONTRACT",
+      "notes": "WDQ-I02 prepared ten-clause specification inventory, including independent review and exact owner ratification; not installed policy or completed product evidence."
+    },
+    "docs/reviews/workflow-delivery-rollout/clauses/native-workflow-budgets.json": {
+      "class": "governed",
+      "progress_anchor": "NATIVE-WORKFLOW-BUDGETS",
+      "notes": "WDQ-I02 prepared ten-clause specification inventory, including independent review and exact owner ratification; not installed policy or completed product evidence."
+    },
     "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md": {
       "class": "governed",
       "progress_anchor": "ADOPTED-DRAFTING-STANDARD-SPEC",
