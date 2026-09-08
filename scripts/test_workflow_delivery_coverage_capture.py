@@ -66,7 +66,15 @@ class CoverageCaptureTest(unittest.TestCase):
                             self.assertFalse(result["acceptance_asserted"])
                             self.assertNotIn(result["invocation_id"], identities)
                             identities.add(result["invocation_id"])
-            self.assertEqual(200, len(identities))
+                            if phase == "case" and variant.startswith("INFRA-S05-06."):
+                                mutation = json.loads((destination / "mutation.json").read_bytes())
+                                names = mutation["staged_name_status"].splitlines()
+                                expected = ("D\texternal/unpermitted/deletable.py" if variant.endswith(".delete-unpermitted")
+                                            else "R100\texternal/owned/input.py\texternal/unpermitted/renamed.py")
+                                self.assertIn(expected, names)
+                                self.assertTrue(any(row["after_hex"] is None and row["before_sha256"]
+                                                    for row in mutation["changes"]))
+            self.assertEqual(220, len(identities))
 
 
 if __name__ == "__main__":

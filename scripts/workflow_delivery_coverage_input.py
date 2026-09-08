@@ -6,6 +6,8 @@ from datetime import datetime, timedelta, timezone
 from workflow_delivery_io import canonical_json, parse_json, sha256
 
 BOUNDARY_CASES = {
+    "INFRA-S05-06.delete-unpermitted": ("external/unpermitted/deletable.py", "WDQ-COVERAGE", "production change has no promoted scope"),
+    "INFRA-S05-06.rename-escape": ("external/unpermitted/renamed.py", "WDQ-COVERAGE", "production change has no promoted scope"),
     "INFRA-S02-11.rust": ("crates/synthetic/src/new.rs", "WDQ-COVERAGE", "production change has no promoted scope"),
     "INFRA-S02-11.mcp": ("mcp-server/synthetic_new.py", "WDQ-COVERAGE", "production change has no promoted scope"),
     "INFRA-S02-11.workflow": ("scripts/synthetic_workflow.py", "WDQ-COVERAGE", "production change has no promoted scope"),
@@ -102,6 +104,7 @@ def prepare_external_boundary(f, manifest, policy):
     policy["coverage"]["source_scopes"] = [{"frontier_key": "NEXT", "step_ids": ["NEXT-C01"],
         "paths": ["external/owned"], "boundary_ref": f.ref}]
     f.write("external/owned/input.py", b"# Synthetic external baseline.\n")
+    f.write("external/unpermitted/deletable.py", b"# Retained unowned synthetic input.\n")
     f.save("specs/active_frontier.json", manifest)
     f.write("specs/PROGRESS.md", render_block(manifest).encode())
 
@@ -117,6 +120,11 @@ def mutate_external_boundary(root, case_id):
             "external/owned/input.py")
     changes[path] = (b"// Actual synthetic Rust source, never compiled.\npub fn fixture() {}\n"
                      if path.endswith(".rs") else b"# Actual candidate change in an isolated synthetic lane.\n")
+    if case_id.endswith(".delete-unpermitted"):
+        changes["external/unpermitted/deletable.py"] = None
+    elif case_id.endswith(".rename-escape"):
+        changes["external/unpermitted/renamed.py"] = (root / "external/owned/input.py").read_bytes()
+        changes["external/owned/input.py"] = None
     if case_id.startswith("INFRA-S02-02."):
         manifest = parse_json((root / "specs/active_frontier.json").read_bytes(), "Frontier")
         historical = next(item for item in manifest["frontier"] if item["key"] == "TASK")
@@ -188,8 +196,12 @@ def mutate_external_boundary(root, case_id):
     for name, raw in sorted(changes.items()):
         target = root / name
         records.append({"path": name, "before_sha256": sha256(target.read_bytes()) if target.exists() else None,
-                        "after_hex": raw.hex()})
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(raw)
+                        "after_hex": raw.hex() if raw is not None else None})
+        if raw is None:
+            target.unlink()  # Exact fixture-owned source deletion, retained in its bundle.
+        else:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(raw)
     git(root, "add", "--", *sorted(changes))
-    return {"case_id": case_id, "changes": records, "synthetic_input_only": True}
+    return {"case_id": case_id, "changes": records, "synthetic_input_only": True,
+            "staged_name_status": git(root, "diff", "--cached", "--name-status", "--find-renames=100%", "--").decode()}
