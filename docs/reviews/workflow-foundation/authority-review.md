@@ -162,12 +162,55 @@ distinctions prevent a future authoring handoff from treating reserved identitie
 or historical planning status as usable capability. No request to reopen or
 accept GP-CM05V is implied.
 
+## Historical baseline versus amended Preferences authority
+
+At `23d33510`, five further settings-route members were read completely:
+`PREFERENCES_FIRST_REENTRY_AUDIT.md`,
+`GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md`,
+`GP_C01_INTERNAL_AUTHORITY_AUDIT.md`,
+`GLOBAL_PREFERENCES_ENGINE_RESEARCH.md`, and
+`GP_DRAFT_SETTINGS_CATALOG_SEED.md`. PM037 was checked again against the packet.
+
+**Tracked discrepancy: `dat-preferences-packet-supersession-rnw`.** The GP-C06
+packet header says its activation and Units counts incorporate the 2026-09-05
+amendment, while its body retains these conflicting assertions:
+
+| Packet assertion | Controlling later disposition already present in PM037 and the catalog |
+| --- | --- |
+| Finding 2 and consolidated clause 5: an eligible aggregate Units contribution wins | The aggregate is inactive and cannot override the eight typed Units seeds in GP-CM03 |
+| Finding 6 and consolidated clause 19: 58 active descriptors | 56 reserved identities, of which eleven are production-active and 45 remain reserved |
+| Consolidated clause 10: search includes planned and read-only Project-policy rows | Product Global search includes production-active identities only; reserved and Project-owned rows are absent |
+
+The issue requests explicit supersession boundaries, not a new product choice
+or rewriting the historical owner acceptance. Its links to the foundation and
+Preferences specification issues are related intake only; they neither claim
+Preferences work nor change its hard blockers. The entire owning route remains
+to be reviewed before source reconciliation or a digest update. This record
+does not bless contradictory sources merely because their route hash passes.
+
+The re-entry audit explains a concrete sequencing failure relevant to the wider
+rollout: requiring complete Units GUI parity before the real Preferences window
+existed created a practical cycle and pressure for a temporary surface. Its
+corrective distinction is exact core prerequisite versus parity through the
+real native consumer, later governed by PM039. The foundation handoff must
+likewise avoid making proof through an authoring doorway a prerequisite to
+building that doorway. This does not waive that proof at delivery acceptance.
+
+GP-C01's no-Preferences/no-seed findings are explicitly a `417d16c` historical
+baseline. The draft seed's 119 candidates are explicitly intake, not registry
+or activation counts. Neither is a current runtime audit. The research plan's
+Revision carry-forwards and old implementation ordering must be read under
+PM038/039/040 and later activation amendments, not used to revive withdrawn
+Revision UI or a rival roadmap. These observations establish how to interpret
+the reviewed evidence; they do not claim every later consumer is reconciled.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
 contains 79 files. PM035 through PM040, `PROJECT_PREFERENCES_SPEC.md`, the shared
-Units requirement, GP-C04, GP-C05 and the V1 descriptor catalog have been read
-completely (11 files); the other 68 files remain to review. No complete settings
+Units requirement, GP-C04, GP-C05, the V1 descriptor catalog and the five files
+listed immediately above have been read completely (16 files); the other 63
+files remain to review. No complete settings
 route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
 mutation, identity and authoring
