@@ -7,6 +7,7 @@
     "docs/gui/*.md"
   ],
   "tracked_docs": [
+    "docs/reviews/workflow-foundation/handoff.md",
     "docs/reviews/workflow-foundation/authority-review.md",
     "specs/workflow_delivery_policy.json",
     "docs/reviews/workflow-delivery-pilot/handoff.md",
@@ -48,10 +49,15 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-foundation/handoff.md": {
+      "class": "governed",
+      "progress_anchor": "FOUNDATION-WORKFLOW-SPEC",
+      "notes": "WDQ-F02 completed authorship and WDQ-F03 ordered owner packet: concrete F1-F8 consumer/Claude handoffs, exact proposed prerequisite additions and explicit unresolved choices. No mechanism ratification, consumer claim, execution, enrollment or acceptance."
+    },
     "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md": {
       "class": "governed",
       "progress_anchor": "FOUNDATION-WORKFLOW-SPEC",
-      "notes": "WDQ-F02 concrete F1-F8 draft with exact values, refusal cases, transaction/reopen timelines and explicit unresolved writer/doorway/gesture choices. No new inventory shape or product ratification; visual-owner and prerequisite handoff packet remains unfinished."
+      "notes": "WDQ-F02 authored F1-F8 contract with exact values, refusals, transaction/reopen timelines and explicit unresolved writer/doorway/gesture choices; bounded visual/prerequisite handoff is registered separately. Pending individual WDQ-F03 owner dispositions, not execution or product ratification. No new inventory shape."
     },
     "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md": {
       "class": "governed",
