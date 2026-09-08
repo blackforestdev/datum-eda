@@ -945,3 +945,19 @@ Implementation, malformed/mixed-enrollment tests, real CLI/selector/hook proof
 and independent replay remain outstanding. The issue stays open. WDQ-READY
 still needs the full fixture recipe, input closure and scenario review before
 its completion; this proposed mechanism is subject to exact I04 ratification.
+
+### WDQ-READY — fixture and capture procedure reviewed
+
+The infrastructure contract now specifies retained real-roadmap and hostile
+fixture families, exact Git/index/history and clock parameters, actual subprocess
+and handler observations, complete protected-state comparison, honest interruption
+recovery and distinct replay. Existing synthetic test factories remain INPUT
+recipes, never actual delivery evidence. Read-only inspection also identified
+the file-lane/rustfmt scripts, exemption manifest and shell/tool identities that
+the real owner-hook proof must include beyond the earlier Python import inventory.
+
+This is procedure authorship, not fixture capture or completed readiness. The
+full per-entry-point subcase inventory and final input/toolchain closure remain
+to be bound to the assembled candidate; no new proof, enrollment, native outcome
+or owner acceptance is asserted. I03 must implement the reviewed procedure and
+record real observations. Preferences and installed trust remain untouched.

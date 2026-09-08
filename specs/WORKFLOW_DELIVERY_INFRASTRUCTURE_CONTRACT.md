@@ -141,6 +141,89 @@ toolchain and authority refusal listed in that section. Pipes have no terminal
 dimensions; an actual PTY records character columns/rows, not fictitious pixels.
 Headless infrastructure must not weaken product native evidence requirements.
 
+<!-- WDQ-INFRA-FIXTURE -->
+## Fixture recipe and observation procedure
+
+The implementation unit in I03 must turn this reviewed procedure into retained,
+replayable inputs and capture tooling. This section is a procedure, not a claim
+that those inputs, tools or observations already exist.
+
+1. Freeze the exact assembled source commit, authority/base IDs, policy,
+   contracts, input manifest and explicit environment selection. Preserve the
+   full 56-row real-roadmap coverage case, accepted pilot evidence and bounded
+   Preferences observation. Refresh the source baseline before preparation;
+   never rewrite a prior failed attempt to point at newer source.
+2. Prepare two clearly separated fixture families: a complete real-roadmap
+   snapshot for integration/unchanged-pilot checks, and small hostile repositories
+   for individual refusal conditions. Existing Fixture, accepted_fixture and
+   clause-inventory factories describe synthetic INPUT recipes only. Their fake
+   binary, native events, reviewer and owner receipts must never be emitted as
+   actual infrastructure OUTPUT evidence or presented as real product approval.
+3. Make each mutation case a fresh owned repository under the resolved Git-common
+   proposal store. Record initialization commands, exact changed paths, byte
+   content, Git object/index identities and selected configuration. Case setup may
+   create intentionally invalid data; the observed validator may not repair it.
+   No case edits the shared worktree, another lane's files or a live trust bundle.
+4. Record every clock/lease parameter. A frozen live-claim fixture can be replayed
+   only while its recorded lease is genuinely valid. Do not monkeypatch the
+   production clock or silently renew a fixture and claim identical inputs. If
+   the replay window expires, prepare a new identified fixture and rerun producer
+   and independent observations; retain the earlier attempt and reason.
+5. Retain a sanitized fixture archive or deterministic recipe plus exact parameter
+   manifest. Include source/index objects, requested snapshots and required Git
+   history, not merely final tracked files: history/revert/merge cases depend on
+   intermediate states. Exclude credentials, host-global config and unrelated
+   repositories. Verify restoration and hashes before calling it replayable.
+6. Run real subprocess entry points: staged and candidate CLI, project-status
+   check/details, and the exact prepared owner hook where applicable. Helper
+   functions called inside unittest are regression evidence, not substitutes for
+   these process invocations. Preserve real argv, cwd, exit/termination status,
+   raw stdout/stderr and requested snapshot identity. No fixture success string
+   can substitute for a child process's actual output.
+7. Observe actual dispatch into the contract's named Python functions. I03 capture
+   instrumentation must bind source file/function identity, interpreter binary,
+   entry surface and invocation to real calls and retained raw outputs. Merely
+   constructing a registry from the contract is not a production registry export;
+   observing a subprocess start alone does not prove its handler ran. Normal
+   enabled cases require actual handler invocation. Early refusal may record an
+   uninvoked handler honestly, never reuse a normal-case event as its evidence.
+8. For every case capture before/after source bytes and modes, tracked and relevant
+   untracked inputs, exact index tree, refs, selected trust configuration, tracker
+   and Frontier. Enumerate each permitted derived log/cache separately. Retain
+   only sanitized configuration evidence; never publish credentials. A summary
+   saying "unchanged" without the state comparison is insufficient.
+9. Bind each result assertion to its exact case, command and raw observation.
+   Every required normal success is followed by each distinct normative refusal
+   and a restored valid run. A group passes only if all its subcases and required
+   dimensions have evidence. Keep expected refusal separate from unexpected
+   harness failure, timeout or missing executable; those cannot count as a pass.
+10. Interrupt only a PID/process group created and observed live by this run.
+    Retain the termination result and protected-state comparison, then run a
+    fresh valid invocation. Do not kill by name, assume a timeout means exit,
+    reset history or delete artifacts to manufacture recovery.
+11. Independent replay restores the reviewed fixture and runs the same complete
+    case matrix with a distinct eligible session and fresh invocation/event IDs.
+    Copied producer logs, fabricated timestamps or a replay on changed toolchain,
+    fixture or source cannot establish independence or equivalence.
+
+The matrix is the complete INFRA-S01..S06 prose, including every enumerated
+mutation and the proposed PM042 environment refusals, not just tests that already
+exist. I03 must inventory subcase IDs and expected codes before capture. Record
+inapplicability per entry point with a concrete reason: for example, a selector
+cannot certify intermediate candidate history, but the candidate CLI must test
+it. Do not mark whole scenario groups inapplicable to avoid missing coverage.
+
+The 69-file input proposal covers the inspected local Python imports, not the
+complete hook/capture toolchain. Final closure must add actual capture/fixture
+modules and their imports, shell subprocess inputs, environment selection files,
+and the owner's hook implementation. Hook proof also consumes
+`scripts/check_file_lane_ownership.py`, `scripts/check_rustfmt.py`,
+`specs/rustfmt_exemption_manifest.json`, and staged-file inputs those checks read.
+Record external interpreter, Git, shell, realpath and any invoked rustfmt identity.
+Do not introduce Cargo compilation merely to exercise the read-only hook; if
+compilation becomes necessary, the guarded resource policy remains mandatory.
+No broad permission for scripts, crates or prototype edits follows from this list.
+
 <!-- WDQ-INFRA-LIMITS -->
 ## Remaining obligations and proof storage
 
