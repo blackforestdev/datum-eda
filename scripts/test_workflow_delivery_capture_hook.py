@@ -8,7 +8,7 @@ import unittest
 from workflow_delivery_capture_fixture import prepare_fixture
 from workflow_delivery_capture_hook import evaluate_hook, run_hook_case
 from workflow_delivery_capture_mutations import CASES
-from workflow_delivery_environment_cases import FIXTURE_VARIANTS
+from workflow_delivery_environment_cases import PREPARED_VARIANTS
 
 
 class HookCaptureTest(unittest.TestCase):
@@ -20,7 +20,7 @@ class HookCaptureTest(unittest.TestCase):
             environment = {"PATH": os.defpath, "HOME": str(store), "XDG_CONFIG_HOME": str(store),
                 "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "LANG": "C"}
             identities = set()
-            ordinary_cases = {key: value for key, value in CASES.items() if key not in FIXTURE_VARIANTS}
+            ordinary_cases = {key: value for key, value in CASES.items() if key not in PREPARED_VARIANTS}
             for case_id, (_, code) in ordinary_cases.items():
                 with self.subTest(case_id=case_id):
                     output = store / case_id

@@ -10,6 +10,10 @@ FIXTURE_VARIANTS = {
     "INFRA-S06-12.selection-kind": "environment selection kind required",
     "INFRA-S06-12.selection-fields": "closed fields required",
 }
+MIXED_VARIANT = "INFRA-S06-08.mixed"
+SWAPPED_VARIANT = "INFRA-S06-10.swapped"
+MIXED_VARIANTS = {MIXED_VARIANT, SWAPPED_VARIANT}
+PREPARED_VARIANTS = set(FIXTURE_VARIANTS) | MIXED_VARIANTS
 
 
 def malformed_selection(selection, variant):
@@ -33,7 +37,7 @@ def malformed_selection(selection, variant):
 
 def case_uses_prepared_input(case_id, recipe):
     variant = recipe.get("fixture_variant")
-    expected = case_id if case_id in FIXTURE_VARIANTS else None
+    expected = case_id if case_id in PREPARED_VARIANTS else None
     if variant != expected:
         raise ValueError("case does not match retained fixture variant")
     return expected is not None

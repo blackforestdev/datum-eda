@@ -8,7 +8,10 @@ import uuid
 from project_status import render_block
 from workflow_delivery_capture_command import save
 from workflow_delivery_capture_state import git, protected_state
-from workflow_delivery_environment_cases import FIXTURE_VARIANTS, malformed_selection
+from workflow_delivery_environment_cases import (
+    FIXTURE_VARIANTS, MIXED_VARIANTS, PREPARED_VARIANTS, SWAPPED_VARIANT, malformed_selection,
+)
+from workflow_delivery_mixed_test_support import add_infrastructure, headless_environment
 from workflow_delivery_clause_test_support import inventory
 from workflow_delivery_io import canonical_json, normalized_path, parse_json, sha256
 from workflow_delivery_shapes import closed, commit_id, require
@@ -26,13 +29,15 @@ def prepare_fixture(root, packet, *, fixture_variant=None):
     real-roadmap snapshot or the complete hostile-case matrix.
     """
     root, packet = Path(root).resolve(), Path(packet).resolve()
-    if fixture_variant is not None and fixture_variant not in FIXTURE_VARIANTS:
+    if fixture_variant is not None and fixture_variant not in PREPARED_VARIANTS:
         raise ValueError("unknown fixture variant")
     if root.exists() or packet.exists() or root.is_relative_to(packet) or packet.is_relative_to(root):
         raise ValueError("fresh separate fixture and packet locations required")
     packet.mkdir(parents=False, exist_ok=False)
     f = Fixture(root)
     _, _, _, baseline = accepted_fixture(f)
+    if fixture_variant in MIXED_VARIANTS:
+        baseline = add_infrastructure(f)
     manifest = Tree(f.root).json("specs/active_frontier.json")
     next_item = manifest["frontier"][1]
     next_item.update(state="specified", authorization="planning")
@@ -53,12 +58,18 @@ def prepare_fixture(root, packet, *, fixture_variant=None):
     # fixture must retain its actual exemption manifest and referenced files.
     f.save("specs/rustfmt_exemption_manifest.json", {"schema_version": 1, "exemptions": {}})
     selected = f.blob("selected-environment.json", canonical_json(environment()))
+    infra_selected = (f.blob("selected-headless.json", canonical_json(headless_environment()))
+                      if fixture_variant in MIXED_VARIANTS else None)
     selection = {
         "schema_version": 2, "kind": "datum.workflow-delivery.environments",
-        "environments": [{"frontier_key": row["frontier_key"], "environment": selected}
+        "environments": [{"frontier_key": row["frontier_key"],
+                          "environment": infra_selected if row["frontier_key"] == "INFRA" else selected}
                          for row in policy["enrolled"]]}
-    if fixture_variant is not None:
+    if fixture_variant in FIXTURE_VARIANTS:
         selection = malformed_selection(selection, fixture_variant)
+    if fixture_variant == SWAPPED_VARIANT:
+        rows = selection["environments"]
+        rows[0]["environment"], rows[1]["environment"] = rows[1]["environment"], rows[0]["environment"]
     f.save("requested-environment.json", selection)
     f.stage()
     f.git("commit", "-qm", "test(workflow): freeze synthetic capture input\n\nNo actual native proof or owner approval.")
@@ -104,7 +115,7 @@ def restore_fixture(packet, root):
             and recipe["fixture_family"] == "accepted-history-and-pending-specification"
             and recipe["acceptance_asserted"] is False, "recipe", "synthetic baseline recipe required")
     if recipe["schema_version"] == 2:
-        require(recipe["fixture_variant"] in FIXTURE_VARIANTS, "recipe", "known malformed-input variant required")
+        require(recipe["fixture_variant"] in PREPARED_VARIANTS, "recipe", "known prepared-input variant required")
     commit_id(recipe["head"], "recipe.head")
     uuid.UUID(recipe["fixture_nonce"])
     config = recipe["local_configuration"]
