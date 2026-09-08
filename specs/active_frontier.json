@@ -4175,7 +4175,8 @@
       "issue_id": "dat-uvt-s5a-build-1wv",
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md",
-        "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md"
+        "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+        "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md"
       ],
       "state": "specified",
       "authorization": "planning",
@@ -4185,9 +4186,158 @@
       "dependencies": [
         "dat-s5-selection-visual-contract-zid"
       ],
-      "unblocks": [
-        "GUI Phase 2 P2.3 cross-probe"
-      ]
+      "unblocks": ["dat-gui-p2-cross-probe-27z"],
+      "completion": {
+        "outcome": "Ratified read-only S5A selection, marquee, lifecycle, compound subjects and inspection work natively across board and schematic, with complete proof, independent replay and exact owner acceptance.",
+        "canonical_next_step_id": "S5A-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "S5A-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Reconcile the complete S5A implementation and native-proof contract without adding mutation.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "S5A-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "S5A-C02",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain owner authorization of the exact S5A execution packet and review arrangements.",
+            "depends_on": [
+              "S5A-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "S5A-C02"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `UVT-S5A-BUILD: authorize execution — <exact reviewed candidate and evidence>`, `UVT-S5A-BUILD: revise — <correction>`, or `UVT-S5A-BUILD: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "AUTHORIZE",
+                  "question": "Do you authorize the exact reviewed implementation and proof packet after its required prerequisites and decisions?",
+                  "recommended_response": "Approve only the complete reviewed packet; leave unresolved mandatory behavior blocking.",
+                  "source_ref": {
+                    "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                    "marker": "AUTHORIZE"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "S5A-C03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement the shared read-only S5A selection and compound-inspection backbone.",
+            "depends_on": [
+              "S5A-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "S5A-C03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "S5A-C04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove native selection, identity, inspection, non-mutation, visual and performance behavior.",
+            "depends_on": [
+              "S5A-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "S5A-C04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "S5A-C05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Complete independent replay and disposition every finding.",
+            "depends_on": [
+              "S5A-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "S5A-C05"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "S5A-C06",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain exact owner acceptance and record the cross-probe handoff without selecting it.",
+            "depends_on": [
+              "S5A-C05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "S5A-C06"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `UVT-S5A-BUILD: accept delivery — <exact reviewed candidate and evidence>`, `UVT-S5A-BUILD: revise — <correction>`, or `UVT-S5A-BUILD: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "ACCEPT",
+                  "question": "Do you accept the exact delivered scope, candidate and evidence after independent review and defect disposition?",
+                  "recommended_response": "Approve only the complete reviewed packet; leave unresolved mandatory behavior blocking.",
+                  "source_ref": {
+                    "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                    "marker": "ACCEPT"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Record exact owner acceptance, complete-scope evidence and consumer handoff; preserve explicit successor selection and execution authority."
+          ],
+          "unblocks_issue_ids": [
+            "dat-gui-p2-cross-probe-27z"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "GUI-P2-CROSSPROBE",
@@ -4258,7 +4408,8 @@
       "governing_docs": [
         "docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md",
         "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
-        "docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md"
+        "docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md",
+        "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md"
       ],
       "state": "blocked",
       "authorization": "planning",
@@ -4269,10 +4420,158 @@
         "dat-marking-menu-shell-g0w",
         "dat-project-write-ownership-lock-0ne"
       ],
-      "unblocks": [
-        "journaled GUI authoring",
-        "marking-menu operation wiring"
-      ]
+      "unblocks": ["dat-native-authoring-depth-sf9"],
+      "completion": {
+        "outcome": "The governed P0/W1/W2/W3 GUI typed-dispatch path is complete with journal, provenance, diff, durable undo and failure proof, independent replay and owner acceptance; full editor delivery is not implied.",
+        "canonical_next_step_id": "GWP-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "GWP-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Reconcile P0/W1/W2/W3 against landed substrate and the actual writer-ownership prerequisite.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "GWP-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "GWP-C02",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain owner authorization after the existing write-authority prerequisites are resolved.",
+            "depends_on": [
+              "GWP-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "GWP-C02"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `GUI-WRITE-PATH: authorize execution — <exact reviewed candidate and evidence>`, `GUI-WRITE-PATH: revise — <correction>`, or `GUI-WRITE-PATH: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "AUTHORIZE",
+                  "question": "Do you authorize the exact reviewed implementation and proof packet after its required prerequisites and decisions?",
+                  "recommended_response": "Approve only the complete reviewed packet; leave unresolved mandatory behavior blocking.",
+                  "source_ref": {
+                    "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                    "marker": "AUTHORIZE"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "GWP-C03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove the native P0 transaction and complete remaining W1/W2/W3 dispatch requirements in order.",
+            "depends_on": [
+              "GWP-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "GWP-C03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "GWP-C04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove native dispatch, parity, refusal, isolation, compensating undo and crash/reopen behavior.",
+            "depends_on": [
+              "GWP-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "GWP-C04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "GWP-C05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Complete independent replay and disposition every finding.",
+            "depends_on": [
+              "GWP-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "GWP-C05"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "GWP-C06",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain exact owner acceptance of the write path and record the native-authoring handoff.",
+            "depends_on": [
+              "GWP-C05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "GWP-C06"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `GUI-WRITE-PATH: accept delivery — <exact reviewed candidate and evidence>`, `GUI-WRITE-PATH: revise — <correction>`, or `GUI-WRITE-PATH: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "ACCEPT",
+                  "question": "Do you accept the exact delivered scope, candidate and evidence after independent review and defect disposition?",
+                  "recommended_response": "Approve only the complete reviewed packet; leave unresolved mandatory behavior blocking.",
+                  "source_ref": {
+                    "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                    "marker": "ACCEPT"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Record exact owner acceptance, complete-scope evidence and consumer handoff; preserve explicit successor selection and execution authority."
+          ],
+          "unblocks_issue_ids": [
+            "dat-native-authoring-depth-sf9"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "NATIVE-AUTHORING",
@@ -4281,7 +4580,8 @@
       "issue_id": "dat-native-authoring-depth-sf9",
       "governing_docs": [
         "docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md",
-        "docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md"
+        "docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md",
+        "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md"
       ],
       "state": "blocked",
       "authorization": "planning",
@@ -4293,9 +4593,156 @@
         "dat-gui-surface-specs-usb",
         "dat-gui-write-path-qiu"
       ],
-      "unblocks": [
-        "full manual native schematic-to-PCB workflow"
-      ]
+      "unblocks": [],
+      "completion": {
+        "outcome": "The complete owner-reviewed schematic and PCB authoring contract coverage is manually operable through shared tooling and typed journaled operations, with connected native proof, independent replay and exact owner acceptance.",
+        "canonical_next_step_id": "NA-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "NA-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Resolve the full schematic/PCB behavior and proof coverage matrix, including foundation and clause conflicts.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "NA-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "NA-C02",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain owner authorization of the complete coverage matrix and bounded implementation units.",
+            "depends_on": [
+              "NA-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "NA-C02"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `NATIVE-AUTHORING: authorize execution — <exact reviewed candidate and evidence>`, `NATIVE-AUTHORING: revise — <correction>`, or `NATIVE-AUTHORING: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "AUTHORIZE",
+                  "question": "Do you authorize the exact reviewed implementation and proof packet after its required prerequisites and decisions?",
+                  "recommended_response": "Approve only the complete reviewed packet; leave unresolved mandatory behavior blocking.",
+                  "source_ref": {
+                    "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                    "marker": "AUTHORIZE"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "NA-C03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement the authorized ordered native editor units over shared tooling and the canonical write path.",
+            "depends_on": [
+              "NA-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "NA-C03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "NA-C04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove the complete connected native workflow matrix, exact persistence, failures and conformance.",
+            "depends_on": [
+              "NA-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "NA-C04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "NA-C05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Complete independent coverage audit and replay; disposition every finding.",
+            "depends_on": [
+              "NA-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "NA-C05"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "NA-C06",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain exact owner acceptance of the delivered scope without closing broad work from a partial slice.",
+            "depends_on": [
+              "NA-C05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                "marker": "NA-C06"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `NATIVE-AUTHORING: accept delivery — <exact reviewed candidate and evidence>`, `NATIVE-AUTHORING: revise — <correction>`, or `NATIVE-AUTHORING: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "ACCEPT",
+                  "question": "Do you accept the exact delivered scope, candidate and evidence after independent review and defect disposition?",
+                  "recommended_response": "Approve only the complete reviewed packet; leave unresolved mandatory behavior blocking.",
+                  "source_ref": {
+                    "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+                    "marker": "ACCEPT"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Record exact owner acceptance, complete-scope evidence and consumer handoff; preserve explicit successor selection and execution authority."
+          ],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "DOC-SYSTEM-SPEC",
@@ -7457,7 +7904,7 @@
         "claimed_at": "2026-09-08T02:12:14Z",
         "heartbeat_at": "2026-09-08T02:12:14Z",
         "expires_at": "2026-09-08T10:12:14Z",
-        "scope": ["Owner-directed workflow-quality lane: WDQ-F01 complete-route foundation authority review and consumer mapping only. Preserve GLOBAL-PREFERENCES-COMPLETION selection, ownership, evidence and GP-CM05V acceptance. No runtime or prototype edits, prerequisite amendment, gate enrollment or trust promotion."],
+        "scope": ["Owner-directed workflow-quality lane: close WDQ-F01 authority review and bounded consumer completion-plan repair under dat-foundation-consumer-plans-9at, then author the WDQ-F02 concrete F1-F8 manual-workflow contract and owning-lane handoffs. Preserve consumers' ownership, lifecycle, authorization, prerequisites and complete product scope. Preserve GLOBAL-PREFERENCES-COMPLETION selection, ownership, evidence and GP-CM05V acceptance. No runtime or prototype edits, prerequisite amendment, gate enrollment or trust promotion."],
         "worktree": "/home/bfadmin/Documents/datum-eda",
         "head": "5384de3c8dbced048f360cd43008c5d59fc63630"
       },
@@ -7466,12 +7913,12 @@
       "unblocks": ["dat-native-project-startup-vrf"],
       "completion": {
         "outcome": "A reviewed clause-level foundation contract covers one ordinary native project doorway and exact board-edit/reopen workflow, with explicit consuming-owner handoffs and unresolved decisions left blocking.",
-        "canonical_next_step_id": "WDQ-F01",
+        "canonical_next_step_id": "WDQ-F02",
         "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
         "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
         "steps": [
-          {"id": "WDQ-F01", "kind": "planning", "status": "in_progress", "action": "Review complete foundation evidence routes, reconcile clause authority and confirm F1-F8 consumers with their existing owners.", "depends_on": [], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F01"}], "completion_evidence": []},
-          {"id": "WDQ-F02", "kind": "planning", "status": "pending", "action": "Specify concrete foundation behavior and failure examples for the bounded manual workflow; return visual changes to Claude and leave implementation unauthorized.", "depends_on": ["WDQ-F01"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F02"}], "completion_evidence": []},
+          {"id": "WDQ-F01", "kind": "planning", "status": "complete", "action": "Review complete foundation evidence routes, reconcile clause authority and confirm F1-F8 consumers with their existing owners.", "depends_on": [], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F01"}], "completion_evidence": [{"kind": "document", "path": "docs/reviews/workflow-foundation/authority-review.md", "marker": "<!-- EVIDENCE:FOUNDATION-WORKFLOW-SPEC:WDQ-F01-COMPLETE -->"}]},
+          {"id": "WDQ-F02", "kind": "planning", "status": "in_progress", "action": "Specify concrete foundation behavior and failure examples for the bounded manual workflow; return visual changes to Claude and leave implementation unauthorized.", "depends_on": ["WDQ-F01"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F02"}], "completion_evidence": []},
           {"id": "WDQ-F03", "kind": "owner_decision", "status": "pending", "action": "Obtain owner disposition of F1-F8 resolutions, consuming-owner handoff and exact proposed prerequisite changes before execution authorization.", "depends_on": ["WDQ-F02"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F03"}], "completion_evidence": [], "owner_input": {"response_format": "Reply `FOUNDATION-WORKFLOW-SPEC: approve contract`, `FOUNDATION-WORKFLOW-SPEC: revise — <specific correction>`, or `FOUNDATION-WORKFLOW-SPEC: defer — <reason>`.", "requests": [{"id": "FOUNDATION-ADOPTION", "question": "Do the concrete F1-F8 contract and consuming-owner handoff resolve the requirements needed for the bounded manual workflow?", "recommended_response": "Approve only the reviewed contract and explicit prerequisite changes; separately authorize product implementation.", "source_ref": {"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F03"}}]}}
         ],
         "post_completion": {"effects": ["Record owner disposition and reconcile approved clauses in their owning evidence routes.", "Propose explicit native-doorway and existing-authoring handoffs without automatically authorizing or selecting implementation."], "unblocks_issue_ids": ["dat-native-project-startup-vrf"], "selection": "explicit_frontier_update", "authorizes_successor": false, "selects_successor": false}

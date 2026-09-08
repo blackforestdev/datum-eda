@@ -48,6 +48,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md": {
+      "class": "governed",
+      "progress_anchor": "FOUNDATION-CONSUMER-COMPLETION",
+      "notes": "WDQ-F01 consumer contract repair: pending preflight, owner authorization, implementation, native proof, independent replay and owner acceptance for existing selection, GUI write-path and native-authoring lanes. No product scope reduction, prerequisite amendment, execution authorization or delivery enrollment."
+    },
     "docs/reviews/workflow-foundation/authority-review.md": {
       "class": "governed", "progress_anchor": "FOUNDATION-WORKFLOW-SPEC",
       "notes": "WDQ-F01 partial operational review evidence, not amended CAD authority or completion. Records explicit baseline clauses and remaining complete-route review; separate from accepted pilot authority closure."

@@ -83,7 +83,7 @@
    *Dependencies:* none. *Unblocks:* dat-native-authoring-depth-sf9, dat-sheet-interaction-reentry-9ee. *Governing:* `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/gui/DATUM_GUI_PRODUCT_SPEC.md`.
 - **Build UVT S5A selection and compound inspection** (`UVT-S5A-BUILD`; `dat-uvt-s5a-build-1wv`).
    Implement selection, marquee, lifecycle, projection, compound subjects, and read-only inspection only after the S5 contract and identity decision are complete and execution is authorized. *state `specified`; authorization `planning`.*
-   *Dependencies:* `dat-s5-selection-visual-contract-zid`. *Unblocks:* GUI Phase 2 P2.3 cross-probe. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`.
+   *Dependencies:* `dat-s5-selection-visual-contract-zid`. *Unblocks:* dat-gui-p2-cross-probe-27z. *Governing:* `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`.
 - **Build GUI Phase 2 P2.3 cross-probe** (`GUI-P2-CROSSPROBE`; `dat-gui-p2-cross-probe-27z`).
    Project one selection identity into Board and Schematic panes after S5A lands; execution remains separately authorized. *state `blocked`; authorization `planning`.*
    *Dependencies:* `dat-uvt-s5a-build-1wv`. *Unblocks:* full dual-pane component inspector, native authoring depth. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`.
@@ -95,10 +95,10 @@
    *Dependencies:* none. *Unblocks:* GUI write-path menu wiring. *Governing:* `docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`, `docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md`.
 - **Enable the GUI journaled write path** (`GUI-WRITE-PATH`; `dat-gui-write-path-qiu`).
    Execute the P0-W3 direct typed-operation path after its actual write-authority prerequisites land and the owner authorizes execution; no passive feedback viewer is an implicit blocker. *state `blocked`; authorization `planning`.*
-   *Dependencies:* `dat-marking-menu-shell-g0w`, `dat-project-write-ownership-lock-0ne`. *Unblocks:* journaled GUI authoring, marking-menu operation wiring. *Governing:* `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md`.
+   *Dependencies:* `dat-marking-menu-shell-g0w`, `dat-project-write-ownership-lock-0ne`. *Unblocks:* dat-native-authoring-depth-sf9. *Governing:* `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`.
 - **Build native schematic and PCB authoring depth** (`NATIVE-AUTHORING`; `dat-native-authoring-depth-sf9`).
    Build manual-first native editors over the shared tooling and canonical GUI commit path after their prerequisites land. *state `blocked`; authorization `planning`.*
-   *Dependencies:* `dat-gui-p2-cross-probe-27z`, `dat-gui-surface-specs-usb`, `dat-gui-write-path-qiu`. *Unblocks:* full manual native schematic-to-PCB workflow. *Governing:* `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`, `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`.
+   *Dependencies:* `dat-gui-p2-cross-probe-27z`, `dat-gui-surface-specs-usb`, `dat-gui-write-path-qiu`. *Unblocks:* none. *Governing:* `docs/contracts/SCHEMATIC_AUTHORING_TOOL_CONTRACT.md`, `docs/contracts/PCB_LAYOUT_TOOL_CONTRACT.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`.
 - **Specify the documentation-system object model** (`DOC-SYSTEM-SPEC`; `dat-documentation-system-spec-y8z`).
    Specify Sheet, Viewport, annotation, SheetSet, and the v1 paper-space scope without authorizing implementation. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* dat-dimension-selection-reentry-kxk, dat-distributed-collaboration-architecture-lt1. *Governing:* `docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md`, `specs/PUBLISH_SPACE_SPEC.md`.
@@ -181,8 +181,14 @@
 
 | Governed document | Current evidence | Completion boundary | Tracking |
 | --- | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, WDQ-F01–F03; `docs/reviews/workflow-foundation/authority-review.md` | WDQ-F01 has read the process, settings, selection and editor-shell routes; clause reconciliation and consumer completion-plan repairs remain unfinished | Concrete doorway/edit/reopen contract and explicit owner-approved handoffs; no runtime work | `dat-manual-foundation-contracts-fsw`; owner-directed parallel planning claim, Preferences selection unchanged |
+| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, WDQ-F01–F03; `docs/reviews/workflow-foundation/authority-review.md` | WDQ-F01 complete: full required route review, clause-level authority classification, PM012 status reconciliation and repaired selector-backed consumer plans; WDQ-F02 contract authorship in progress | Concrete doorway/edit/reopen contract and explicit owner-approved handoffs; unresolved product choices remain blocking, no runtime work | `dat-manual-foundation-contracts-fsw`; owner-directed parallel planning claim, Preferences selection unchanged |
 | `docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md` | WDQ-F01 reconciles the blanket draft header with doctrine classification: inherited ratifications and the workspace correction are preserved; unresolved budgets, fixtures and owner questions remain explicit | Apply clause-specific quality requirements and reviewed fixture budgets to each consuming workflow; no implementation, gate execution or product acceptance inferred from classification | `dat-manual-foundation-contracts-fsw`, WDQ-F01; no mechanism ratification or successor authorization |
+
+## FOUNDATION-CONSUMER-COMPLETION — existing lane delivery contracts
+
+| Governed document | Current evidence | Completion boundary | Tracking |
+| --- | --- | --- | --- |
+| `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md` | Structured pending completion plans added for UVT-S5A-BUILD, GUI-WRITE-PATH and NATIVE-AUTHORING; acceptance IDs and tracker-backed successor IDs reconciled | Each consumer retains preflight, explicit execution authorization, implementation, native proof, independent replay and exact owner acceptance; no readiness or product delivery asserted | `dat-foundation-consumer-plans-9at`, WDQ-F01; consumer ownership, existing dependencies and global selection unchanged |
 
 ## Spec Governance Coverage
 
