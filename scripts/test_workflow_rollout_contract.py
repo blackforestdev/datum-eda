@@ -105,9 +105,10 @@ class RolloutContractTest(unittest.TestCase):
         self.assertEqual("WDQ-AUTHORITY", raised.exception.code)
 
     def test_input_inventory_is_explicit_and_foundations_do_not_fake_cad_proof(self):
-        self.assertTrue(all(p.endswith((".py", ".sh", ".yml", "/pre-commit"))
+        self.assertTrue(all(p.endswith((".py", ".sh", ".yml", ".json", ".rs", "/pre-commit"))
                             for p in self.contract["input_roots"]))
         self.assertNotIn("scripts", self.contract["input_roots"])
+        self.assertNotIn("crates", self.contract["input_roots"])
         for key in ("units_precision", "numeric_entry", "selection_identity",
                     "grid_snap", "library_connectivity"):
             self.assertEqual("not_applicable", self.contract["foundation_answers"][key]["disposition"])
@@ -118,6 +119,13 @@ class RolloutContractTest(unittest.TestCase):
         source = self.tree.read(SPEC).decode()
         return [tuple(part.strip() for part in line.strip("|").split("|"))
                 for line in source.splitlines() if line.startswith("| INFRA-S")]
+
+    def test_hook_read_dependencies_are_in_the_input_inventory(self):
+        exemptions = self.tree.json("specs/rustfmt_exemption_manifest.json")["exemptions"]
+        required = set(exemptions) | {"scripts/check_file_lane_ownership.py",
+            "scripts/check_rustfmt.py", "specs/rustfmt_exemption_manifest.json"}
+        self.assertTrue(required <= set(self.contract["input_roots"]))
+        self.assertTrue(all((ROOT / path).is_file() for path in required))
 
     def test_case_inventory_has_unique_ids_and_known_scenarios_and_surfaces(self):
         rows = self.case_rows()

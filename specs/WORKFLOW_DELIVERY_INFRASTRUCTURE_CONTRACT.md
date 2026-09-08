@@ -304,8 +304,11 @@ inapplicability per entry point with a concrete reason: for example, a selector
 cannot certify intermediate candidate history, but the candidate CLI must test
 it. Do not mark whole scenario groups inapplicable to avoid missing coverage.
 
-The 69-file input proposal covers the inspected local Python imports, not the
-complete hook/capture toolchain. Final closure must add actual capture/fixture
+The 76-file input proposal includes the original 69 paths plus the two hook
+checks, exemption manifest and four referenced Rust files. Those seven additions
+are read dependencies only; the 69-path source-permission proposal is unchanged.
+This covers the inspected local imports and concrete repository hook inputs,
+not the complete future capture toolchain. Final closure must add actual capture/fixture
 modules and their imports, shell subprocess inputs, environment selection files,
 and the owner's hook implementation. Hook proof also consumes
 `scripts/check_file_lane_ownership.py`, `scripts/check_rustfmt.py`,
@@ -314,6 +317,16 @@ Record external interpreter, Git, shell, realpath and any invoked rustfmt identi
 Do not introduce Cargo compilation merely to exercise the read-only hook; if
 compilation becomes necessary, the guarded resource policy remains mandatory.
 No broad permission for scripts, crates or prototype edits follows from this list.
+
+For the external toolchain, record interpreter/Git/shell/realpath and any invoked
+rustfmt executable identity separately from repository input hashes. Python
+capture must also inventory actual loaded standard-library/extension modules
+and shared-library inputs; hashing only the interpreter is insufficient. Disable
+unreviewed Python startup/user-site injection in the controlled capture process
+and record the exact flags/environment. Do not fetch a dependency to perform this
+audit. A supplemental full drift/CI run has its own much wider build/input scope;
+the presence of its wiring in this contract is not evidence that all its Rust
+and GUI gates ran in the bounded infrastructure capture.
 
 <!-- WDQ-INFRA-LIMITS -->
 ## Remaining obligations and proof storage
