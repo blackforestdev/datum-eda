@@ -458,6 +458,40 @@ These packets do not reactivate Revision seed descriptors, enterprise workflows
 or suspended GUI work. Their test-only signature providers are not production
 cryptography, and their closed inventories do not authorize new dependencies.
 
+## Identity decisions and corrected historical claims
+
+At `25e20aad`, the complete Revision identity decision packet, title-block
+research, REV-C07 ratification packet and REV-C01 internal authority audit were
+read. The identity packet's initial “not ratified” banner is followed by dated
+dispositions; it must not reopen the already-settled scheme and namespace
+decisions. Those decisions still do not activate reserved Revision seeds or
+override PM038's later unmanaged baseline.
+
+The title-block research contains concrete examples of the original process
+failure: it describes an existing six-state PLM machine and
+`EngineeringChangeOrder`, and derives automatic revision-table rows from journal
+commits. REV-C01 identifies those claims as unsupported at its `264b1a2`
+baseline (REV-GAP-05/11); REV-C07 explicitly requires their reconciliation.
+Future foundation consumers must cite the actual typed authority and later
+dispositions, not implement these historical claims as requirements. The older
+PLM-wrapper framing also cannot override the ratified no-external-master rule.
+
+For F1/F2/F8, title-block formula proposals belong to the separate Publish
+binding system. They do not authorize a formula parser in ordinary exact
+geometry fields, a live clock influencing deterministic output, or a
+sheet/document override of Project Working Units. For F5/F6, the audit's
+distinction between authored model identity and generated evidence explains why
+the accepted transaction tip must be observed separately in proof: a matching
+model fingerprint alone cannot establish that no evidence transaction occurred.
+The audit's test counts and missing-capability lists remain historical; later
+integrity completion already reviewed must be considered before describing a
+current gap.
+
+No additional owner choice is manufactured from these dated question lists.
+The remaining route review must still reconcile present consumers; this record
+does not correct the original research, refresh its digest or accept a runtime
+implementation merely because the contradiction was previously documented.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
@@ -466,8 +500,8 @@ Units requirement, GP-C04, GP-C05, the V1 descriptor catalog, the five historica
 baseline files, the six typed-authority/history files, and the complete
 seed/context packet, three product-surface/acceptance files and seven supporting
 visual studies, plus the seven Revision/geometry/traceability members listed
-above and the four execution packets have been read completely (44 files);
-the other 35 files remain to review.
+above, the four execution packets and four identity/title-block/audit members
+have been read completely (48 files); the other 31 files remain to review.
 No complete settings
 route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
