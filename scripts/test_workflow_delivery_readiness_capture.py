@@ -8,7 +8,7 @@ import unittest
 from workflow_delivery_capture_cases import run_case
 from workflow_delivery_capture_fixture import prepare_fixture
 from workflow_delivery_capture_hook import run_hook_case
-from workflow_delivery_readiness_input import READINESS_CASES, READY_VALID
+from workflow_delivery_readiness_input import READINESS_CASES, READY_VALID, PENDING_CATEGORIES, ENROLLMENT_BASELINES
 from workflow_delivery_product_readiness_input import PRODUCT_READINESS_CASES, PRODUCT_READY
 
 
@@ -17,7 +17,7 @@ class ReadinessCaptureTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             store = Path(temporary)
             baselines = {}
-            for normal in (READY_VALID, PRODUCT_READY):
+            for normal in (READY_VALID, PRODUCT_READY, *PENDING_CATEGORIES):
                 baselines[normal] = store / (normal + "-packet")
                 recipe = prepare_fixture(store / (normal + "-source"), baselines[normal], fixture_variant=normal)
                 self.assertEqual("accepted-history-and-readiness", recipe["fixture_family"])
@@ -27,6 +27,10 @@ class ReadinessCaptureTest(unittest.TestCase):
             identities = set()
             for variant in READINESS_CASES:
                 normal = PRODUCT_READY if variant in PRODUCT_READINESS_CASES else READY_VALID
+                if variant in PENDING_CATEGORIES:
+                    normal = variant
+                elif variant in ENROLLMENT_BASELINES:
+                    normal = ENROLLMENT_BASELINES[variant]
                 baseline = baselines[normal]
                 packet = baseline
                 if variant != normal:
@@ -50,7 +54,7 @@ class ReadinessCaptureTest(unittest.TestCase):
                             identities.add(result["invocation_id"])
                             self.assertFalse((destination / "fixture/missing-future-proof.json").exists())
                             self.assertFalse((destination / "fixture/missing-future-review.json").exists())
-            self.assertEqual(70, len(identities))
+            self.assertEqual(100, len(identities))
 
 
 if __name__ == "__main__":
