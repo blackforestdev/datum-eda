@@ -572,6 +572,46 @@ implementation must use the controlling responsive-shell contract, not promote
 every visual example to approved behavior. None of these observations changes
 the Preferences-owned window contract or authorizes prototype edits.
 
+## GUI action ownership and historical visual inventories
+
+At `97dcdd5d`, the complete GUI Design specification, REV-C06 visual brief and
+`prototype-disposition-sheet.html` textual source were read. The disposition
+sheet is explicitly a derived reference regenerated on 2026-08-29. Its
+“safe for any slice to build against” and “nothing here gates development”
+language cannot authorize execution or override later PM038/039/040 decisions.
+In particular, historical approved markers for Start/Guided Setup and Revision
+studies do not establish present activation or acceptance. Conversely, a
+historical marker on a shell study does not cancel its specifically retained
+visual rules in the controlling GUI contract.
+
+The GUI specification contains broad summaries that require the more specific
+authorities already reviewed: “selection is engine-level” cannot turn selection
+into journaled Design state or collapse same-identity and related-context
+projections; “every [menu] item emits a typed Operation” cannot turn its own
+explicit `gui_local` navigation/view actions into mutations. F3/F5 examples must
+identify the action class and expected journal effect separately. Tool starts,
+previews, navigation, cancellation and committed edits are not interchangeable
+success events.
+
+The Console sections require output-only, non-focusing feedback, with committed
+operation history projected from the journal. They record prior closure claims
+withdrawn when source-health and acceptance evidence failed. A Console success
+echo therefore cannot prove an edit committed, and its old closure/test counts
+cannot replace a current native workflow witness. Refusal text, typed identity,
+focus preservation and durable journal outcome are separate observations.
+
+The Revision brief likewise says native AT-SPI behavior needs its own proof;
+HTML accessibility prose is not native conformance. Its early modal-confirmation
+permission is narrowed by the later Q5-B-amended in-pane arm/disarm disposition,
+and the entire suspended Revision UI remains under PM038. Neither pattern is an
+automatic confirmation rule for ordinary reversible board edits.
+
+`shell-parity-comparison.html` was inspected in textual form with its embedded
+PNG bytes elided. Its historical percentage and suggested explanation are not a
+fresh rendering finding. The comparison images still require visual inspection;
+this file is deliberately not counted as fully reviewed below. No comparison,
+prototype disposition, golden or authority digest was blessed or modified.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
@@ -582,7 +622,8 @@ seed/context packet, three product-surface/acceptance files and seven supporting
 visual studies, plus the seven Revision/geometry/traceability members listed
 above, the four execution packets and four identity/title-block/audit members
 plus the detailed authority/offline/impact contracts and four workspace/Publish
-members have been read completely (55 files); the other 24 files remain to
+members plus the GUI contract, Revision visual brief and prototype inventory
+have been read completely (58 files); the other 21 files remain to
 review. No complete settings route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
 mutation, identity and authoring
