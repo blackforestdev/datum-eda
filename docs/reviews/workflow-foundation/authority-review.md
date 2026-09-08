@@ -417,6 +417,47 @@ These findings constrain future F02 examples and handoffs. They do not amend
 ratified sources, refresh route digests, reopen withdrawn Revision UI or claim
 runtime, licensing, visual or production acceptance.
 
+## Integrity evidence and the single policy-check boundary
+
+At `965b9601`, all four execution packets `REV_I00`, `REV_I02`, `REV_I03`
+and `REV_I04_EXECUTION_AUTHORIZATION_PACKET.md` were read completely. Their
+dated owner dispositions and completion sections are historical evidence, not
+fresh execution authorization or a current runtime audit.
+
+REV-I00 §7 records technical integrity implementation at `b329b9e`/`cf16a2f`,
+including five interruption points, writer exclusion, last-complete/read-only
+recovery, backup tamper refusal, restore equivalence and ordinary journaled
+mutation on three named native Projects. Thus these mechanisms must not be
+described as wholly unbuilt merely because an earlier packet listed gaps.
+Conversely, historical passing tests do not establish today's native doorway,
+numeric-edit, cancellation or reopen behavior. F6 needs current consumer proof
+and reconciliation with the separately tracked writer-ownership decision, not
+a second store or automatic closure of that decision from this history.
+
+The packets establish the progression from inert records to policy evaluation
+to one canonical Design integration. REV-I02's unconfigured witness and
+REV-I03's no-adopted-policy witness protect absence from becoming synthetic
+policy. REV-I04 then permits exactly one pre-staging coordinator preflight with
+three outcomes: `UnmanagedPassThrough`, `NoEarlierControlCollect` and
+`AuthorizedChangeValidated`. Normal commits, accepted proposals, Undo and Redo
+must share it; GUI fields, operation validators, Project open and resolvers must
+not independently introduce a policy gate.
+
+For later F5 examples, distinguish an unmanaged Project from an explicitly
+adopted policy with an actual released predecessor. The former creates no
+Revision authority. The latter may quietly collect a Change and transaction
+link, without reserving a label or issuing a human revision. REV-I04 Finding 3
+and its final owner disposition explicitly qualify the earlier broad
+no-authority-event wording: permitted collection events are not reservation or
+issuance. Neither path authorizes prompts or refusal for missing earlier-control
+authority; only deliberately adopted `AuthorizedChangeRequired` may select that
+refusal branch, before staging and without partial Design/authority writes.
+
+The later PM038 unmanaged-baseline correction still governs product exposure.
+These packets do not reactivate Revision seed descriptors, enterprise workflows
+or suspended GUI work. Their test-only signature providers are not production
+cryptography, and their closed inventories do not authorize new dependencies.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
@@ -425,7 +466,8 @@ Units requirement, GP-C04, GP-C05, the V1 descriptor catalog, the five historica
 baseline files, the six typed-authority/history files, and the complete
 seed/context packet, three product-surface/acceptance files and seven supporting
 visual studies, plus the seven Revision/geometry/traceability members listed
-above have been read completely (40 files); the other 39 files remain to review.
+above and the four execution packets have been read completely (44 files);
+the other 35 files remain to review.
 No complete settings
 route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
