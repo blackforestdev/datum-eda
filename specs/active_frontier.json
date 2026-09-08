@@ -9649,7 +9649,7 @@
         "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md"
       ],
       "state": "in_progress",
-      "authorization": "execution",
+      "authorization": "planning",
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
@@ -9670,7 +9670,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
-        "canonical_next_step_id": "WDQ-I02",
+        "canonical_next_step_id": "WDQ-READY",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -9711,7 +9711,7 @@
           {
             "id": "WDQ-I02",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Implement separate independent-review enforcement and prepare exact enrollment/contract candidates.",
             "depends_on": [
               "WDQ-I01"
@@ -9722,12 +9722,22 @@
                 "marker": "WDQ-I02"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "<!-- EVIDENCE:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I02-COMPLETE -->"
+              },
+              {
+                "kind": "commit",
+                "revision": "beddc2efc917e1e44ec2c0c6389a209540c0b1fb"
+              }
+            ]
           },
           {
             "id": "WDQ-READY",
             "kind": "governance",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Establish actual rollout infrastructure readiness from the exact prepared contract and assembled candidate.",
             "depends_on": [
               "WDQ-I02"
