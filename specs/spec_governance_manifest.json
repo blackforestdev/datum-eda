@@ -7,6 +7,7 @@
     "docs/gui/*.md"
   ],
   "tracked_docs": [
+    "specs/workflow_delivery/rollout.contract.json",
     "docs/reviews/workflow-delivery-rollout/rollout-mapping.json",
     "docs/reviews/workflow-delivery-rollout/proposal.json",
     "docs/reviews/workflow-foundation/handoff.md",
@@ -51,6 +52,16 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-I02 read-only infrastructure consumer/scenario authority. Actual WDQ-READY, proof, independent replay and owner activation are separate; no product acceptance."
+    },
+    "specs/workflow_delivery/rollout.contract.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "Prepared schema-1 infrastructure contract for the proposed version-2 rollout mapping, not operative enrollment or proof. Exact source closure must be reconciled against the assembled candidate at WDQ-READY."
+    },
     "docs/reviews/workflow-delivery-rollout/rollout-mapping.json": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
       "notes": "WDQ-I02 exact infrastructure checkpoint proposal against actual pending readiness/review steps. Not a contract, installed policy, enrollment, readiness result or owner acceptance."

@@ -21,7 +21,7 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 
 | Inventory | Owner Spec | Count | SHA256 |
 |-----------|------------|-------|--------|
-| `workflow_delivery_contract_instances` | `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md` | 1 | `3ba33320de1c33923eff7a226a533ce1d7aa0c9cf35d4c36cffef3015a01ac17` |
+| `workflow_delivery_contract_instances` | `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md` | 2 | `30bcbe9b75e73d7606108a2822796ed2998964b2a925913de94d11f96d4f7b1d` |
 | `mcp_runtime_methods` | `specs/MCP_API_SPEC.md` | 190 | `f9cd8102aff153cd4c9f3a86ecc501fc99aac66d41010eb8d33309740e5b48f5` |
 | `cli_project_commands` | `specs/PROGRAM_SPEC.md` | 289 | `e6113b1c79f114e70e745ec2fd3bc73afc3cb4302d429ad67dfb2fff76ddbce1` |
 | `engine_text_modules` | `docs/gui/DATUM_TEXT_ENGINE_PHASE_2_IMPLEMENTATION_PLAN.md` | 11 | `1233903bce862aa7ef22879e67e8cbef3bae2bf5e823bff9e53f39b4735c8059` |
@@ -38,7 +38,9 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 93 | `000670202f0563006293482338368dd1ab9a39e691cce8ced12ca42a1a458c3e` |
 | `global_preferences_product_surface` | `specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md` | 227 | `92f922ba4dce0e737bd7b702ba2899cfccd4a8a707e620605706469ac06ef30e` |
 
-The PM041 delivery inventory tracks one candidate pilot contract-instance filename.
-Its registered planned shapes are not validated by this file-glob inventory;
-closed-shape and behavioral refusal proof belong to WDQ-G03. This inventory
-does not mean delivery checks are installed, passing or activated.
+The PM041 delivery inventory tracks the pilot and prepared rollout infrastructure
+contract-instance filenames. Its registered shapes are not validated by this
+file-glob inventory; closed-shape and behavioral refusal proof belong to the
+delivery validator. The infrastructure instance is specified in
+`specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md` under WDQ-I02.
+These names and counts do not establish readiness, enrollment, proof or activation.
