@@ -20,6 +20,7 @@ class PreflightCliTest(unittest.TestCase):
     def setUp(self):
         self.f = Fixture()
         self.addCleanup(self.f.close)
+        self.f.git("branch", "-M", "main")
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.store = Path(self.temp.name)
@@ -64,6 +65,18 @@ class PreflightCliTest(unittest.TestCase):
         self.assertEqual(2, result.returncode)
         self.assertIn(b"dirty", result.stdout)
         self.assertFalse(json.loads(self.output.read_bytes())["ok"])
+        self.assertEqual(before, protected_state(self.f.root, ["src"]))
+
+    def test_detached_checkout_refusal_is_visible_retained_and_nonmutating(self):
+        self.f.git("checkout", "--detach", "-q", self.f.head)
+        before = protected_state(self.f.root, ["src"])
+        result = self.run_cli()
+        self.assertEqual(2, result.returncode, result.stdout + result.stderr)
+        self.assertIn(b"attached main checkout", result.stdout)
+        payload = json.loads(self.output.read_bytes())
+        self.assertFalse(payload["ok"])
+        self.assertFalse(payload["publication_authorized"])
+        self.assertFalse(payload["activation_asserted"])
         self.assertEqual(before, protected_state(self.f.root, ["src"]))
 
     def test_existing_log_is_never_overwritten(self):

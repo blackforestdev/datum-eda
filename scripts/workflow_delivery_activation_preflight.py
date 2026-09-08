@@ -51,6 +51,8 @@ def preflight(root, *, base, candidate, input_roots, expected_local_trust):
                     for values in expected_local_trust.values()), "exact named prior local trust required")
     root = Path(root).resolve(strict=True)
     before = protected_state(root, input_roots)
+    require(before["symbolic_head"] == "refs/heads/main",
+            "publication requires an attached main checkout; no branch switch performed")
     require(before["head"] == base, "live HEAD differs from pinned publication base")
     require(before["local_trust"] == expected_local_trust, "local trust differs from reviewed prior state")
     require(git(root, "status", "--porcelain=v1", "--untracked-files=all") == b"",

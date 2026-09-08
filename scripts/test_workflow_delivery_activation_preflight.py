@@ -14,6 +14,7 @@ class ActivationPreflightTest(unittest.TestCase):
     def setUp(self):
         self.f = Fixture()
         self.addCleanup(self.f.close)
+        self.f.git("branch", "-M", "main")
         self.base = self.f.head
         tree = self.f.git("rev-parse", "HEAD^{tree}").decode().strip()
         self.candidate = self.f.git("commit-tree", tree, "-p", self.base,
@@ -39,6 +40,20 @@ class ActivationPreflightTest(unittest.TestCase):
         self.f.git("config", "--local", "datum.workflowDeliveryAuthorityRef", self.base)
         with self.assertRaisesRegex(ValueError, "local trust differs"):
             self.run_preflight()
+
+    def test_detached_checkout_refuses_without_switching_branch(self):
+        self.f.git("checkout", "--detach", "-q", self.base)
+        before = protected_state(self.f.root, ["src"])
+        with self.assertRaisesRegex(ValueError, "attached main checkout"):
+            self.run_preflight()
+        self.assertEqual(before, protected_state(self.f.root, ["src"]))
+
+    def test_other_branch_refuses_even_with_exact_base_and_clean_files(self):
+        self.f.git("branch", "-m", "fixture-other")
+        before = protected_state(self.f.root, ["src"])
+        with self.assertRaisesRegex(ValueError, "attached main checkout"):
+            self.run_preflight()
+        self.assertEqual(before, protected_state(self.f.root, ["src"]))
 
     def test_dirty_tracked_index_and_worktree_refuse(self):
         self.f.write("src/read.py", b"uncommitted\n")
