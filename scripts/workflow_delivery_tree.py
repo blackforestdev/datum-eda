@@ -20,8 +20,11 @@ class Tree:
         self.entries = self._entries()
 
     def git(self, *args):
-        result = subprocess.run(["git", "--no-optional-locks", *args], cwd=self.root,
-                                capture_output=True, check=False)
+        environment = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+        environment.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull,
+                           GIT_GRAFT_FILE=os.devnull)
+        result = subprocess.run(["git", "--no-replace-objects", "--no-optional-locks", *args],
+                                cwd=self.root, env=environment, capture_output=True, check=False)
         require(result.returncode == 0, "git", result.stderr.decode("utf-8", "replace").strip(),
                 "WDQ-TRUST")
         return result.stdout
