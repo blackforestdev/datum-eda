@@ -204,13 +204,63 @@ PM038/039/040 and later activation amendments, not used to revive withdrawn
 Revision UI or a rival roadmap. These observations establish how to interpret
 the reviewed evidence; they do not claim every later consumer is reconciled.
 
+## Typed input authority and retained technical history
+
+At `700ec2a4`, six more settings-route members were read completely: the
+GP-C03 typed-authority packet, GP-C02 external/standards research, GP-C02B peer
+research, drafting-standard ownership packet, PM034, and Revision recovery
+implementation inventory. External citations were reviewed as existing local
+research; no fresh vendor verification or standards-conformance claim was made.
+
+Q1/Q2/Q3/Q4 establish distinct obligations for foundation consumers:
+
+- A remembered workflow default does not replace an explicit operation input.
+  Capturing the last invocation as a persistent default requires its own
+  registered descriptor; field editing cannot silently create one.
+- Source family and value precedence do not confer mutation authority.
+  Resolution admits eligible sources, applies eligible controls, then ranks
+  ordinary values. A Project-owned rule is not overridden by a more specific
+  machine or Session preference.
+- Inspection is not write permission. A refused or managed value remains
+  explainable, with retained contributions and typed reasons; the GUI must not
+  derive authorization merely from which value appears effective.
+- Q3's user-held organization grant is a deliberate Datum decision, not an
+  alleged consensus of the surveyed tools. Revoking that machine grant does
+  not revoke independently adopted Project law. Later PM038 exclusions still
+  prevent these historical examples from activating Revision presentation.
+
+For F2/F5/F8, the later contract therefore needs to bind each submitted value to
+its field/quantity, explicit input or resolved context, owning mutation family,
+and refusal outcome. This is a handoff requirement derived from existing
+authority, not a new preference layer or generic override mechanism.
+
+The drafting-standard packet ratifies ownership only. It does not choose ISO
+versus ANSI, a standard edition, a usable seed schema, or the prototype's
+options. `dat-adopted-drafting-standard-object-er9` remains the named schema
+follow-up; exact board editing must not manufacture that object to make a
+creation workflow appear complete.
+
+PM034 separates technical journal history from human EngineeringRevision
+identity. The recovery inventory at its stated `7734d87` baseline goes further:
+it quarantines mandatory formal Revision coupling on normal commit/open while
+retaining useful integrity primitives. It explicitly says that removing
+fictional GUI rows does not establish engine decoupling. For F5/F6, later review
+must locate the current authorized technical-history seam and its actual
+commit/open/undo proof; it cannot count quarantined Revision tests as delivery
+evidence or disable durable undo merely to avoid formal Revision behavior.
+
+This is not a claim that the historical coupling still exists unchanged in
+current code. The inventory's old Frontier table and runtime observations are
+dated evidence, not task selection or a fresh implementation audit. PM038
+remains controlling, and no Revision or Preferences task is claimed here.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
 contains 79 files. PM035 through PM040, `PROJECT_PREFERENCES_SPEC.md`, the shared
-Units requirement, GP-C04, GP-C05, the V1 descriptor catalog and the five files
-listed immediately above have been read completely (16 files); the other 63
-files remain to review. No complete settings
+Units requirement, GP-C04, GP-C05, the V1 descriptor catalog, the five historical
+baseline files and the six typed-authority/history files listed above have been
+read completely (22 files); the other 57 files remain to review. No complete settings
 route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
 mutation, identity and authoring
