@@ -50,6 +50,10 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md": {
+      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-R03 owner-authorized I01-I06 implementation/adoption successor. Exact ratification/promotion and final acceptance remain owner steps; installation alone cannot close the full goal."
+    },
     "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
       "notes": "WDQ-R02 bounded implementation proposal, not installed policy: roadmap/source coverage, separate review phase, exact promotion, local support storage and three real adoption cohorts. R03 owner authorization and later exact promotion remain required."

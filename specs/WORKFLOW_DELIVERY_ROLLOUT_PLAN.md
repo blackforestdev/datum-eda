@@ -1,6 +1,6 @@
 # Broader workflow delivery rollout planning
 
-Status: owner-authorized preparation; gate execution/promotion not authorized.
+Status: R01–R03 complete; bounded implementation authorized, promotion pending.
 Frontier: WORKFLOW-DELIVERY-ROLLOUT; issue `dat-wdq-broader-rollout-tqh`.
 Owning evidence route: `workflow-delivery-rollout`.
 Owner authority: WDQ-F03 recorded disposition in
@@ -121,3 +121,23 @@ No proposal may promote its own trust or accept a product lane on the owner's
 behalf. After disposition, register the actual implementation/adoption successor
 with the full outcome and explicit owner boundaries; do not mark the original
 reform goal complete from approval of this plan.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-ROLLOUT:WDQ-R03-APPROVED -->
+## Recorded implementation authorization
+
+Source: project owner response in this conversation, “approved /goal resume”.
+Date: 2026-09-08 UTC.
+Reviewed handoff commit: `abd3871fe705875d661b758fd5371c7df223fdd3`.
+Implementation packet SHA-256:
+`5f0b71f67adb3f48394e764de6d8dc3b924832dc5c6997a2ed7c5de326568265`.
+Proposal inventory SHA-256:
+`2efee64b7205d173bdcc5e0b5e86cd98a772056a65f1a2be0f3dd23d5b3b604d`.
+Both reviewed artifacts remain unchanged as the exact approval baseline.
+
+The response approves ROLLOUT-IMPLEMENTATION with its printed limits: workflow
+implementation and its explicit successor, not product code, Claude prototypes,
+dependency selection, unseen mechanism ratification, candidate promotion or
+product acceptance. Register WORKFLOW-DELIVERY-IMPLEMENTATION /
+`dat-wdq-rollout-implementation-ffy` and select WDQ-I01 with execution authority.
+GP-CM05V remains the other session's boundary. The full reform goal stays
+unfinished through actual installation, independent review and measured adoption.
