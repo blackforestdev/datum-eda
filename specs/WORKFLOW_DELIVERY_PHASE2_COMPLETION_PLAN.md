@@ -103,11 +103,21 @@ unavailable-only behavior, screenshot alone or planning approval closes this tas
 
 After the existing cross-probe prerequisite, author the complete P2.4 contract:
 component Identity/Placement/Checks sections; schematic Net/Members/Checks (ERC)
-inspection; Sheets hierarchy including multi-sheet selection; and schematic
-Application Status Bar context (Sheet n/m, Grid, ERC count). The old tracker
+inspection; Sheets hierarchy including multi-sheet selection; and complete
+schematic status context (Sheet n/m, Grid, ERC count). The old tracker
 summary naming only three component sections does not narrow the governing spec.
 Reuse the existing inspector and focused-pane/context/selection authorities;
 editable fields and authored operations remain outside this read-only phase.
+
+The older Phase 2 global status-bar placement is not ratification. The design
+spec explicitly defers Application Status Bar retention/replacement under
+`dat-application-status-bar-decision-qcz`. Reconcile a field/owner/location map
+against current approved authority. Do not remove, replace or materially change
+that bar before the deferred owner decision is resolved; required consequential
+feedback remains pane/canvas-local and accessible. If complete delivery needs
+an unresolved placement or replacement decision, it blocks execution until
+ratified. Neither drop Sheet/Grid/ERC information nor invent its placement to
+make this task appear ready.
 
 Reconcile component, net, sheet and focused-document identities, field provenance,
 units/formatting, empty/mixed/unavailable and stale results, context changes and
@@ -167,6 +177,16 @@ Obtain exact owner acceptance of the full reviewed P2.4 result, prototype
 comparison and defect dispositions. Record honest remaining product status;
 do not claim authoring or full EDA completion. Closure neither selects nor
 authorizes another roadmap item.
+
+<!-- OWNER:GUI-P2-INSPECTOR:INSP-C02:STATUS_AUTHORITY -->
+## Deferred status-placement boundary
+
+Before authorizing inspector execution, verify the exact field/owner/location
+map against current authority and the deferred Application Status Bar decision.
+Do not interpret the old P2.4 placement text or this workflow plan as approval
+to retain, remove, replace or materially change the bar. Required unresolved
+changes need the owning decision first; full status information and accessible
+pane/canvas-local feedback cannot be omitted to avoid it.
 
 <!-- OWNER:GUI-P2-CROSSPROBE:XP-C02:AUTHORIZE -->
 <!-- OWNER:GUI-P2-INSPECTOR:INSP-C02:AUTHORIZE -->

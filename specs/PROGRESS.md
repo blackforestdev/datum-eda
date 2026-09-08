@@ -89,10 +89,10 @@
    *Dependencies:* `dat-uvt-s5a-build-1wv`. *Unblocks:* dat-gui-p2-full-inspector-0ye, dat-native-authoring-depth-sf9. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `docs/decisions/PRODUCT_MECHANICS_023_UNIVERSAL_VIEWPORT_TOOLING.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`.
 - **Build GUI Phase 2 P2.4 full inspector** (`GUI-P2-INSPECTOR`; `dat-gui-p2-full-inspector-0ye`).
    Complete Identity, Placement, and Checks inspector sections after the shared cross-probe substrate lands. *state `blocked`; authorization `planning`.*
-   *Dependencies:* `dat-gui-p2-cross-probe-27z`. *Unblocks:* none. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`.
+   *Dependencies:* `dat-gui-p2-cross-probe-27z`. *Unblocks:* none. *Governing:* `docs/gui/DATUM_GUI_PHASE_2_SPEC.md`, `specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`.
 - **Build the inert marking-menu shell** (`GUI-MARKING-MENU`; `dat-marking-menu-shell-g0w`).
    Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go. *state `specified`; authorization `planning`; parallel lane.*
-   *Dependencies:* none. *Unblocks:* GUI write-path menu wiring. *Governing:* `docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`, `docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md`.
+   *Dependencies:* none. *Unblocks:* dat-gui-write-path-qiu. *Governing:* `docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md`, `docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md`, `specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md`.
 - **Enable the GUI journaled write path** (`GUI-WRITE-PATH`; `dat-gui-write-path-qiu`).
    Execute the P0-W3 direct typed-operation path after its actual write-authority prerequisites land and the owner authorizes execution; no passive feedback viewer is an implicit blocker. *state `blocked`; authorization `planning`.*
    *Dependencies:* `dat-marking-menu-shell-g0w`, `dat-project-write-ownership-lock-0ne`, `dat-manual-foundation-contracts-fsw`. *Unblocks:* dat-native-authoring-depth-sf9. *Governing:* `docs/gui/DATUM_GUI_WRITE_PATH_PLAN.md`, `docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md`, `docs/decisions/PRODUCT_MECHANICS_017_VERB_REGISTRY.md`, `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md`.

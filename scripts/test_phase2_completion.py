@@ -63,6 +63,13 @@ class Phase2CompletionTest(unittest.TestCase):
             del item["completion"]["steps"][1]["owner_input"]
             self.assertTrue(any("owner_input" in e for e in self.validate(item)))
 
+    def test_inspector_exposes_status_authority_before_execution_approval(self):
+        item = next(i for i in self.items if i["key"] == "GUI-P2-INSPECTOR")
+        requests = item["completion"]["steps"][1]["owner_input"]["requests"]
+        self.assertEqual(["STATUS_AUTHORITY", "AUTHORIZE"], [r["id"] for r in requests])
+        self.assertEqual("STATUS_AUTHORITY", requests[0]["source_ref"]["marker"])
+        self.assertIn("docs/gui/DATUM_GUI_DESIGN_SPEC.md", item["governing_docs"])
+
     def test_requirement_marker_cannot_be_a_fabricated_reference(self):
         for original in self.items:
             item = deepcopy(original)

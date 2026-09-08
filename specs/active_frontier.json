@@ -4521,7 +4521,8 @@
       "issue_id": "dat-gui-p2-full-inspector-0ye",
       "governing_docs": [
         "docs/gui/DATUM_GUI_PHASE_2_SPEC.md",
-        "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md"
+        "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+        "docs/gui/DATUM_GUI_DESIGN_SPEC.md"
       ],
       "state": "blocked",
       "authorization": "planning",
@@ -4552,7 +4553,7 @@
             "id": "INSP-C01",
             "kind": "planning",
             "status": "pending",
-            "action": "Reconcile full component, net, Sheets and status-bar native delivery readiness.",
+            "action": "Reconcile full component, net, Sheets and status-context native delivery readiness.",
             "depends_on": [],
             "requirement_refs": [
               {
@@ -4580,6 +4581,15 @@
             "owner_input": {
               "response_format": "Reply `GUI-P2-INSPECTOR: authorize execution — <exact reviewed candidate and evidence>`, `GUI-P2-INSPECTOR: revise — <correction>`, or `GUI-P2-INSPECTOR: defer — <reason>`.",
               "requests": [
+                {
+                  "id": "STATUS_AUTHORITY",
+                  "question": "Does the exact field/owner/location map preserve the deferred Application Status Bar boundary, with any required material change ratified before execution?",
+                  "recommended_response": "Do not authorize unratified status-bar changes or omit required status information; require the owning decision wherever the reviewed delivery needs it.",
+                  "source_ref": {
+                    "path": "specs/WORKFLOW_DELIVERY_PHASE2_COMPLETION_PLAN.md",
+                    "marker": "STATUS_AUTHORITY"
+                  }
+                },
                 {
                   "id": "AUTHORIZE",
                   "question": "Do you authorize the complete exact read-only execution and native-proof packet after required readiness and prerequisites?",
@@ -4689,7 +4699,8 @@
       "issue_id": "dat-marking-menu-shell-g0w",
       "governing_docs": [
         "docs/gui/DATUM_GUI_CONTEXT_MENU_CONTENT.md",
-        "docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md"
+        "docs/gui/DATUM_GUI_PARAMETRIC_TOOLING.md",
+        "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md"
       ],
       "state": "specified",
       "authorization": "planning",
@@ -4698,8 +4709,159 @@
       "summary": "Render the menu_model-driven radial shell with disabled mutation entries; execution requires an explicit go.",
       "dependencies": [],
       "unblocks": [
-        "GUI write-path menu wiring"
-      ]
+        "dat-gui-write-path-qiu"
+      ],
+      "completion": {
+        "outcome": "Complete the exact authorized inert menu-model-driven native shell with usable contextual navigation, truthful disabled leaves, nonmutation proof, independent replay and owner acceptance; actual EDA operation invocation remains separate.",
+        "canonical_next_step_id": "MM-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "MM-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Reconcile the exact inert-shell readiness, live visual authority and full native scenario matrix.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md",
+                "marker": "MM-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "MM-C02",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain owner authorization of the exact inert-shell implementation and proof packet.",
+            "depends_on": [
+              "MM-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md",
+                "marker": "MM-C02"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `GUI-MARKING-MENU: authorize execution — <exact reviewed candidate and evidence>`, `GUI-MARKING-MENU: revise — <correction>`, or `GUI-MARKING-MENU: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "AUTHORIZE",
+                  "question": "Do you authorize the exact inert-shell packet after live visual, interaction and content authority is settled?",
+                  "recommended_response": "Approve only complete reviewed shell behavior and evidence; preserve disabled leaves, no operation invocation and separate write-path authority.",
+                  "source_ref": {
+                    "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md",
+                    "marker": "AUTHORIZE"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "MM-C03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement the authorized shared menu-model-driven inert shell without operation invocation.",
+            "depends_on": [
+              "MM-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md",
+                "marker": "MM-C03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "MM-C04",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Prove usable native shell navigation, context, accessibility, refusal and nonmutation.",
+            "depends_on": [
+              "MM-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md",
+                "marker": "MM-C04"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "MM-C05",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Obtain independent replay of the complete exact shell and account for every finding.",
+            "depends_on": [
+              "MM-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md",
+                "marker": "MM-C05"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "MM-C06",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain exact owner acceptance of the inert shell and an unselected write-path handoff.",
+            "depends_on": [
+              "MM-C05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md",
+                "marker": "MM-C06"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `GUI-MARKING-MENU: accept delivery — <exact reviewed candidate and evidence>`, `GUI-MARKING-MENU: revise — <correction>`, or `GUI-MARKING-MENU: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "ACCEPT",
+                  "question": "Do you accept the complete exact inert-shell result after native proof and independent replay, without claiming disabled EDA operations work?",
+                  "recommended_response": "Approve only complete reviewed shell behavior and evidence; preserve disabled leaves, no operation invocation and separate write-path authority.",
+                  "source_ref": {
+                    "path": "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md",
+                    "marker": "ACCEPT"
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Record exact inert-shell acceptance and disabled-action inventory; hand evidence to GUI-WRITE-PATH without selecting or authorizing it."
+          ],
+          "unblocks_issue_ids": [
+            "dat-gui-write-path-qiu"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "GUI-WRITE-PATH",
