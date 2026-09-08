@@ -13,6 +13,7 @@ from workflow_delivery_io import canonical_json, sha256
 from workflow_delivery_environment_cases import PREPARED_VARIANTS
 from workflow_delivery_capture_history import HISTORY_CASES
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES
+from workflow_delivery_interruption_case import INTERRUPTION_CASE
 
 
 class CaptureCasesTest(unittest.TestCase):
@@ -27,7 +28,7 @@ class CaptureCasesTest(unittest.TestCase):
             runtime = Path(__file__).resolve().parents[1]
             invocations = set()
             ordinary_cases = {key: value for key, value in CASES.items()
-                              if key not in PREPARED_VARIANTS | HISTORY_CASES.keys() | SNAPSHOT_CASES.keys()}
+                              if key not in PREPARED_VARIANTS | HISTORY_CASES.keys() | SNAPSHOT_CASES.keys() | {INTERRUPTION_CASE}}
             for case_id in ordinary_cases:
                 for surface in ("C", "R", "S-check", "S-details"):
                     with self.subTest(case_id=case_id, surface=surface):

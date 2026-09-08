@@ -18,6 +18,7 @@ from workflow_delivery_shapes import require
 from workflow_delivery_environment_cases import case_uses_prepared_input
 from workflow_delivery_support_bundle import prepare_bundle, verify_bundle
 from workflow_delivery_support_store import support_locations
+from workflow_delivery_interruption_case import INTERRUPTION_CASE, evaluate_interruption
 
 
 def evaluate_hook(output, *, case_id, hook):
@@ -98,13 +99,16 @@ def run_hook_case(packet, destination, environment, *, case_id):
         git(root, "add", "--", target)
     save(destination / "mutation.json", mutation)
     observed_environment = dict(environment, DATUM_WDQ_OBSERVE_PATH=str(output / "calls.jsonl"))
+    trigger = ({"trace": "calls.jsonl", "source": str(locations["runner"]), "function": "main"}
+               if case_id == INTERRUPTION_CASE else None)
     capture_command(root, output, [str(locations["hook"])], observed_environment,
                     fixture_nonce=recipe["fixture_nonce"], case_id=case_id, surface="H",
-                    untracked_roots=recipe["untracked_roots"], timeout=30)
+                    untracked_roots=recipe["untracked_roots"], timeout=30, interrupt_on_call=trigger)
     after = verify_bundle(root, authority)
     save(destination / "support-after.json", after)
     require(bundle == after, "support", "hook support changed during capture")
-    assessment = evaluate_hook(output, case_id=case_id, hook=locations["hook"])
+    assessment = (evaluate_interruption(output, case_id=case_id, surface="H", trigger=trigger)
+                  if trigger is not None else evaluate_hook(output, case_id=case_id, hook=locations["hook"]))
     assessment["support_manifest_sha256"] = sha256((destination / "support-before.json").read_bytes())
     save(destination / "assessment.json", assessment)
     return assessment

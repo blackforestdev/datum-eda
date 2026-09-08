@@ -11,6 +11,7 @@ from workflow_delivery_capture_history import HISTORY_CASES, prepare_history
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES, prepare_snapshots, snapshot_expectation
 from workflow_delivery_capture_mutations import CASES, changed_bytes, expected_detail
 from workflow_delivery_io import sha256
+from workflow_delivery_interruption_case import INTERRUPTION_CASE, evaluate_interruption
 from workflow_delivery_environment_cases import case_uses_prepared_input
 
 
@@ -66,11 +67,18 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
         "--script", str(script), "--source-root", str(runtime_root),
         "--output", str(output / "calls.jsonl"), "--function", "main",
         "--function", "selector_failures", "--", *arguments]
+    trigger = ({"trace": "calls.jsonl", "source": str(runtime_root / "scripts/workflow_delivery_selector.py")
+                if selector else str(script), "function": "selector_failures" if selector else "main"}
+               if case_id == INTERRUPTION_CASE else None)
     capture_command(root, output, command, environment, fixture_nonce=recipe["fixture_nonce"],
                     case_id=case_id, surface="S" if selector else surface,
-                    untracked_roots=recipe["untracked_roots"], timeout=30)
+                    untracked_roots=recipe["untracked_roots"], timeout=30, interrupt_on_call=trigger)
     try:
-        assessment = evaluate_capture(output, case_id=case_id, surface="S" if selector else surface,
+        if trigger is not None:
+            assessment = evaluate_interruption(output, case_id=case_id,
+                                               surface="S" if selector else surface, trigger=trigger)
+        else:
+            assessment = evaluate_capture(output, case_id=case_id, surface="S" if selector else surface,
                                       expected_code=expected, script=script, expected_path=target,
                                       expected_detail=detail)
     except Exception as error:

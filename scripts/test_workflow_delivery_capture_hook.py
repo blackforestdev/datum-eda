@@ -11,6 +11,7 @@ from workflow_delivery_capture_mutations import CASES
 from workflow_delivery_environment_cases import PREPARED_VARIANTS
 from workflow_delivery_capture_history import HISTORY_CASES
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES
+from workflow_delivery_interruption_case import INTERRUPTION_CASE
 
 
 class HookCaptureTest(unittest.TestCase):
@@ -23,7 +24,7 @@ class HookCaptureTest(unittest.TestCase):
                 "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "LANG": "C"}
             identities = set()
             ordinary_cases = {key: value for key, value in CASES.items()
-                              if key not in PREPARED_VARIANTS | HISTORY_CASES.keys() | SNAPSHOT_CASES.keys()}
+                              if key not in PREPARED_VARIANTS | HISTORY_CASES.keys() | SNAPSHOT_CASES.keys() | {INTERRUPTION_CASE}}
             for case_id, (_, code) in ordinary_cases.items():
                 with self.subTest(case_id=case_id):
                     output = store / case_id

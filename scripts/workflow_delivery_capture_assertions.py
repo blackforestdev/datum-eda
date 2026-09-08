@@ -6,13 +6,14 @@ from workflow_delivery_io import parse_json, sha256
 from workflow_delivery_shapes import require
 
 
-def capture_envelope(output, case_id, surface):
+def capture_envelope(output, case_id, surface, *, expected_kind="exited"):
     """Validate retained process/state artifacts independently of handler tracing."""
     output = Path(output)
     def read(name):
         return parse_json((output / name).read_bytes(), name)
     result, invocation = read("result.json"), read("invocation.json")
-    require(result["kind"] == "exited", "capture", "timeout/launch/harness failure is not a refusal")
+    require(expected_kind in ("exited", "interrupted") and result["kind"] == expected_kind,
+            "capture", "timeout/launch/harness failure is not a refusal or observed interruption")
     require(invocation["case_id"] == case_id and invocation["surface"] == surface,
             "capture", "wrong case or surface")
     require(result["invocation_id"] == invocation["invocation_id"], "capture", "invocation mismatch")
