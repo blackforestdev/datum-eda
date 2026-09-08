@@ -10,6 +10,32 @@ HISTORY_CASES = {
     "INFRA-S05-07.change-revert": ("src/read.py", "WDQ-COVERAGE"),
     "INFRA-S05-08.merge-parent": ("src/unscoped.py", "WDQ-COVERAGE"),
 }
+BASE_CASES = {
+    "INFRA-S05-04.missing-base": ("git", "WDQ-TRUST", "Needed a single revision"),
+    "INFRA-S05-04.nonancestor-base": ("transaction", "WDQ-COVERAGE", "candidate must descend from the explicit transaction base"),
+}
+
+
+def prepare_base_input(root, case_id, base, archive):
+    """Retain an explicit invalid base without changing the candidate checkout."""
+    if case_id not in BASE_CASES or not (root / ".git/datum-wdq-capture-owner").is_file():
+        raise ValueError("explicit owned base-input fixture required")
+    if archive.exists() or archive.is_symlink() or archive.resolve().is_relative_to(root.resolve()):
+        raise ValueError("fresh history archive outside fixture required")
+    if git(root, "rev-parse", "HEAD").decode().strip() != base or git(root, "status", "--porcelain"):
+        raise ValueError("base input requires clean exact fixture head")
+    selected = "0" * len(base)
+    if case_id.endswith(".nonancestor-base"):
+        tree = git(root, "rev-parse", "HEAD^{tree}").decode().strip()
+        selected = git(root, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
+            "commit-tree", tree, "-p", base, "-m", "test(workflow): retain invalid future base\n\n"
+            "Synthetic nonancestor INPUT; candidate remains its parent.").decode().strip()
+        git(root, "update-ref", "refs/datum-capture/nonancestor-base", selected)
+    git(root, "bundle", "create", str(archive), "--all")
+    git(root, "bundle", "verify", str(archive))
+    return {"case_id": case_id, "base_ref": selected, "candidate_ref": base,
+            "history_bundle": {"path": archive.name, "sha256": sha256(archive.read_bytes())},
+            "synthetic_input_only": True, "acceptance_asserted": False}
 
 
 def prepare_history(root, case_id, base, archive):

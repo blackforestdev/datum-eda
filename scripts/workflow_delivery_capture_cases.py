@@ -7,7 +7,7 @@ from workflow_delivery_capture_assertions import evaluate_capture
 from workflow_delivery_capture_command import capture_command, save
 from workflow_delivery_capture_fixture import restore_fixture
 from workflow_delivery_capture_state import git
-from workflow_delivery_capture_history import HISTORY_CASES, prepare_history
+from workflow_delivery_capture_history import BASE_CASES, HISTORY_CASES, prepare_base_input, prepare_history
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES, prepare_snapshots, snapshot_expectation
 from workflow_delivery_capture_mutations import CASES, changed_bytes, expected_detail
 from workflow_delivery_io import sha256
@@ -21,7 +21,7 @@ from workflow_delivery_review_phase_input import REVIEW_PHASE_CASES, review_phas
 def run_case(packet, destination, runtime_root, environment, *, case_id, surface):
     if case_id not in CASES or surface not in ("C", "R", "S-check", "S-details"):
         raise ValueError("only explicitly implemented case/surface combinations may run")
-    if case_id in HISTORY_CASES and surface != "R":
+    if case_id in (HISTORY_CASES | BASE_CASES) and surface != "R":
         raise ValueError("history certification requires exact-candidate surface R")
     if case_id in SNAPSHOT_CASES:
         snapshot_expectation(case_id, surface)
@@ -48,6 +48,8 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
     elif case_id in SNAPSHOT_CASES:
         mutation = prepare_snapshots(root, case_id)
         target, expected, detail = snapshot_expectation(case_id, surface)
+    elif case_id in BASE_CASES:
+        mutation = prepare_base_input(root, case_id, recipe["head"], destination / "history.bundle")
     elif case_id in HISTORY_CASES:
         mutation = prepare_history(root, case_id, recipe["head"], destination / "history.bundle")
     elif target and not prepared_input:
@@ -73,7 +75,7 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
         if surface == "S-details":
             arguments += ["NEXT"]
     else:
-        arguments += ["--enforce", "--authority-ref", recipe["head"], "--base-ref", recipe["head"],
+        arguments += ["--enforce", "--authority-ref", recipe["head"], "--base-ref", mutation.get("base_ref", recipe["head"]),
                       "--environment-path", "requested-environment.json"]
         arguments += ["--candidate-ref", candidate] if surface == "R" else ["--staged"]
     command = [sys.executable, "-I", "-S", "-B",

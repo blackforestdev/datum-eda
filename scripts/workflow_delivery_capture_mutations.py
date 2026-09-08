@@ -1,7 +1,7 @@
 """Explicit synthetic refusal inputs, with the exact diagnostic each must reach."""
 
 from workflow_delivery_io import canonical_json, parse_json
-from workflow_delivery_capture_history import HISTORY_CASES
+from workflow_delivery_capture_history import BASE_CASES, HISTORY_CASES
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES
 from workflow_delivery_interruption_case import INTERRUPTION_CASE
 from workflow_delivery_readiness_input import READINESS_CASES
@@ -25,6 +25,7 @@ CASES = {
 }
 CASES.update({key: ("requested-environment.json", "WDQ-ENVIRONMENT") for key in FIXTURE_VARIANTS})
 CASES.update(HISTORY_CASES)
+CASES.update({key: (path, code) for key, (path, code, _) in BASE_CASES.items()})
 CASES.update({key: (path, code) for key, (path, code, _) in REVIEW_PHASE_CASES.items()})
 CASES.update({key: (path, code) for key, (path, code, _) in SPECIFICATION_INPUT_CASES.items()})
 CASES.update({key: (path, code) for key, (path, code, _) in COVERAGE_INPUT_CASES.items()})
@@ -40,6 +41,8 @@ CASES.update({key: (path, "WDQ-ENVIRONMENT") for key, (path, _) in HEADLESS_VARI
 
 
 def expected_detail(case_id):
+    if case_id in BASE_CASES:
+        return BASE_CASES[case_id][2]
     if case_id in REVIEW_PHASE_CASES:
         return REVIEW_PHASE_CASES[case_id][2]
     if case_id in SPECIFICATION_INPUT_CASES:

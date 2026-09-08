@@ -8,7 +8,7 @@ import unittest
 
 from workflow_delivery_capture_cases import run_case
 from workflow_delivery_capture_fixture import prepare_fixture
-from workflow_delivery_capture_history import HISTORY_CASES
+from workflow_delivery_capture_history import BASE_CASES, HISTORY_CASES
 from workflow_delivery_capture_hook import run_hook_case
 from workflow_delivery_capture_state import git
 from workflow_delivery_publication_delta import verify_publication_delta
@@ -56,12 +56,42 @@ class HistoryCaptureTest(unittest.TestCase):
             self.assertEqual(6, len(identities))
 
     def test_history_cases_cannot_be_relabelled_as_current_snapshot_proof(self):
-        for case_id in HISTORY_CASES:
+        for case_id in HISTORY_CASES | BASE_CASES:
             for surface in ("C", "S-check", "S-details"):
                 with self.assertRaisesRegex(ValueError, "surface R"):
                     run_case(None, None, None, {}, case_id=case_id, surface=surface)
             with self.assertRaisesRegex(ValueError, "explicit implemented hook"):
                 run_hook_case(None, None, {}, case_id=case_id)
+
+    def test_missing_and_nonancestor_bases_refuse_and_recover(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            store = Path(temporary)
+            packet = store / "packet"
+            recipe = prepare_fixture(store / "baseline", packet)
+            environment = {"PATH": os.defpath, "HOME": str(store), "XDG_CONFIG_HOME": str(store),
+                           "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "LANG": "C"}
+            identities = set()
+            for case in BASE_CASES:
+                destination = store / case
+                result = run_case(packet, destination, Path(__file__).resolve().parents[1],
+                                  environment, case_id=case, surface="R")
+                mutation = json.loads((destination / "mutation.json").read_bytes())
+                self.assertEqual(recipe["head"], mutation["candidate_ref"])
+                self.assertNotEqual(recipe["head"], mutation["base_ref"])
+                archive = destination / mutation["history_bundle"]["path"]
+                self.assertEqual(sha256(archive.read_bytes()), mutation["history_bundle"]["sha256"])
+                if case.endswith(".nonancestor-base"):
+                    root = destination / "fixture"
+                    self.assertEqual(recipe["head"], git(root, "merge-base", mutation["base_ref"], recipe["head"]).decode().strip())
+                recovery = run_case(packet, store / (case + "-recovery"), Path(__file__).resolve().parents[1],
+                                    environment, case_id="INFRA-S01-01", surface="R")
+                for observed in (result, recovery):
+                    self.assertTrue(observed["observation_matches_expected"])
+                    self.assertFalse(observed["complete_matrix"])
+                    self.assertFalse(observed["acceptance_asserted"])
+                    self.assertNotIn(observed["invocation_id"], identities)
+                    identities.add(observed["invocation_id"])
+            self.assertEqual(4, len(identities))
 
 
 if __name__ == "__main__":
