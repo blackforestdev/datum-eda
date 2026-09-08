@@ -15,12 +15,23 @@ read-only entry points. The machine contract uses category `infrastructure`;
 passing it is not native EDA delivery, owner acceptance, enrollment or activation.
 PM042 is activation-conditional; preparation alone does not ratify it.
 
-The CLI consumer is `check_workflow_delivery.main`, with `staged_cli` and
-`candidate_cli` entry surfaces. The selector consumer is
+The validator consumer is `check_workflow_delivery.main`, with `staged_cli`,
+`candidate_cli` and `owner_hook` entry surfaces. The prepared owner hook reaches
+that same function through its authenticated bootstrap after the file-lane and
+formatting prerequisites; it does not introduce another validator handler.
+The selector consumer is
 `workflow_delivery_selector.selector_failures`, with `project_status` surface.
 These are actual Python functions, not invented product dispatch verbs. Capture
 real invocations and raw results; any correlation adapter must identify the
 actual function and mode, not emit synthetic success in lieu of invoking it.
+
+For normal hook cases, observe the actual pinned validator function as well as
+the shell/bootstrap invocation. Optional tracing must preserve the ordinary
+enforcement path and authenticate its observer before execution. Early trust or
+prerequisite refusal can legitimately precede the validator: retain that actual
+diagnostic and record the handler as uninvoked, not as a successful dispatch.
+Neither an observer event nor the declared surface proves complete child-tool
+input closure, installed activation or promotion authorization.
 
 Readiness binds the assembled candidate's exact source inventory, fixture recipe,
 authority closure and environment. Proof records source commit, input hashes,

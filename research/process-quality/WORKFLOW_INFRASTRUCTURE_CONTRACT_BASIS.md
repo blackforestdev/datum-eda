@@ -142,3 +142,21 @@ This is an internal sequence correction, not a product-lane takeover, scope
 reduction, independent-review waiver or owner ratification. Preparation remains
 in the repository-local isolated candidate until exact owner promotion. The
 delivery mapping is unchanged; TOOLS is not a substitute mapped checkpoint.
+
+## WDQ-TOOLS — owner-hook consumer reconciliation
+
+The normative case matrix already requires H, but the machine validator consumer
+declared only staged_cli and candidate_cli. Review of the prepared hook at
+`d56e113deea8b39600509285e392cdce1a3ddda4` confirms that its authenticated
+bootstrap reaches the existing check_workflow_delivery.main handler. The machine
+contract now declares owner_hook on that consumer; no new dispatch verb or
+product behavior is inferred from runtime code.
+
+Normal hook observations must bind the real validator call. Early shell trust
+and prerequisite refusals retain their actual diagnostic without inventing a
+downstream call or JSON result. The optional authenticated observer does not
+replace enforcement, complete subprocess/toolchain closure or authorize promotion.
+The existing 62-row matrix, exact input reconciliation, independent replay and
+owner activation remain required. The 76-file inventory remains a preparation
+baseline, not the final capture-source closure. No installed hook is changed by
+this reconciliation, and no readiness or delivery result is asserted.

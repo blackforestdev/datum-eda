@@ -167,12 +167,12 @@
     "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
-      "notes": "WDQ-I02 read-only infrastructure consumer/scenario authority. Actual WDQ-READY, proof, independent replay and owner activation are separate; no product acceptance."
+      "notes": "Read-only infrastructure consumer/scenario authority; WDQ-TOOLS reconciles the existing matrix's owner-hook surface and honest early-refusal observations. Actual WDQ-READY, proof, independent replay and owner activation are separate; no product acceptance."
     },
     "specs/workflow_delivery/rollout.contract.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
-      "notes": "Prepared schema-1 infrastructure contract for the proposed version-2 rollout mapping, not operative enrollment or proof. Exact source closure must be reconciled against the assembled candidate at WDQ-READY."
+      "notes": "Prepared schema-1 infrastructure contract with staged_cli, candidate_cli and owner_hook validator surfaces plus the selector, for the proposed version-2 rollout mapping; not operative enrollment or proof. Exact source closure must be reconciled against the assembled candidate at WDQ-READY."
     },
     "docs/reviews/workflow-delivery-rollout/rollout-mapping.json": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
