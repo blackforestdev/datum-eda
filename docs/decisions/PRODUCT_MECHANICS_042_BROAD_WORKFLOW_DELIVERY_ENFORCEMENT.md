@@ -64,7 +64,10 @@ Categories:
   enrollment, not a candidate-only declaration.
 - `deferred`: preserve the promoted lifecycle, no authorization and no claim.
   This includes the approved MCAD planned/none placeholder; classification does
-  not force a lifecycle rewrite. Reactivation requires reviewed reclassification.
+  not force a lifecycle rewrite. Preserve the exact promoted completion record,
+  including execution completed before an owner hold; retained history is not
+  current execution. In-progress execution, new completions or changed completion
+  requirements still refuse. Reactivation requires reviewed reclassification.
 - `external_lane`: a non-null coordinated handoff reference and exact preserved
   authorization, governing documents, prerequisites, completion scope and selected
   step boundary. This is not a session-name exemption. Other steps and selected

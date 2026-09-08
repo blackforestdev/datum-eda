@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "record_type": "coverage_category_preflight_comparison",
+  "baseline_ref": "91e4b113866494414f37bc4f53a50947c11d8a48",
+  "approved_proposal_path": "docs/reviews/workflow-delivery-rollout/proposal.json",
+  "validator_entry": "workflow_delivery_categories.validate_categories",
+  "classification_adjustments": [
+    {
+      "frontier_key": "WORKFLOW-DELIVERY-ROLLOUT",
+      "category": "historical",
+      "reason": "Recorded R03 planning task is landed at this exact baseline."
+    },
+    {
+      "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "category": "infrastructure",
+      "reason": "Approved rollout successor now exists; it receives no process exemption."
+    }
+  ],
+  "category_counts": {
+    "deferred": 2,
+    "external_lane": 1,
+    "historical": 37,
+    "infrastructure": 1,
+    "product": 8,
+    "specification": 7
+  },
+  "checked_items": 56,
+  "before": {
+    "validator_ref": "a5f3d219f8a4f43e3509cc1d89d38033313226ab",
+    "findings": [
+      {
+        "frontier_key": "GUI-P2-CROSSPROBE",
+        "issue_id": "dat-gui-p2-cross-probe-27z",
+        "category": "product",
+        "code": "WDQ-COVERAGE",
+        "path": "GUI-P2-CROSSPROBE",
+        "detail": "classified active work requires a completion plan"
+      },
+      {
+        "frontier_key": "GUI-P2-INSPECTOR",
+        "issue_id": "dat-gui-p2-full-inspector-0ye",
+        "category": "product",
+        "code": "WDQ-COVERAGE",
+        "path": "GUI-P2-INSPECTOR",
+        "detail": "classified active work requires a completion plan"
+      },
+      {
+        "frontier_key": "GUI-MARKING-MENU",
+        "issue_id": "dat-marking-menu-shell-g0w",
+        "category": "product",
+        "code": "WDQ-COVERAGE",
+        "path": "GUI-MARKING-MENU",
+        "detail": "classified active work requires a completion plan"
+      },
+      {
+        "frontier_key": "DISTRIBUTED-COLLAB-SPEC",
+        "issue_id": "dat-distributed-collaboration-architecture-lt1",
+        "category": "specification",
+        "code": "WDQ-COVERAGE",
+        "path": "DISTRIBUTED-COLLAB-SPEC",
+        "detail": "classified active work requires a completion plan"
+      },
+      {
+        "frontier_key": "PRODUCT-REVISION-ENGINE",
+        "issue_id": "dat-product-revision-engine-build-18f",
+        "category": "deferred",
+        "code": "WDQ-COVERAGE",
+        "path": "PRODUCT-REVISION-ENGINE",
+        "detail": "deferred work requires reclassification before execution"
+      },
+      {
+        "frontier_key": "ADOPTED-DRAFTING-STANDARD-SPEC",
+        "issue_id": "dat-adopted-drafting-standard-object-er9",
+        "category": "specification",
+        "code": "WDQ-COVERAGE",
+        "path": "ADOPTED-DRAFTING-STANDARD-SPEC",
+        "detail": "classified active work requires a completion plan"
+      },
+      {
+        "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+        "issue_id": "dat-wdq-rollout-implementation-ffy",
+        "category": "infrastructure",
+        "code": "WDQ-COVERAGE",
+        "path": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+        "detail": "readiness/execution requires a delivery declaration"
+      }
+    ]
+  },
+  "after": {
+    "validator_ref": "2a85005ce7648322424391281a02c092bff15414",
+    "findings": [
+      {
+        "frontier_key": "GUI-P2-CROSSPROBE",
+        "issue_id": "dat-gui-p2-cross-probe-27z",
+        "category": "product",
+        "code": "WDQ-COVERAGE",
+        "path": "GUI-P2-CROSSPROBE",
+        "detail": "classified active work requires a completion plan"
+      },
+      {
+        "frontier_key": "GUI-P2-INSPECTOR",
+        "issue_id": "dat-gui-p2-full-inspector-0ye",
+        "category": "product",
+        "code": "WDQ-COVERAGE",
+        "path": "GUI-P2-INSPECTOR",
+        "detail": "classified active work requires a completion plan"
+      },
+      {
+        "frontier_key": "GUI-MARKING-MENU",
+        "issue_id": "dat-marking-menu-shell-g0w",
+        "category": "product",
+        "code": "WDQ-COVERAGE",
+        "path": "GUI-MARKING-MENU",
+        "detail": "classified active work requires a completion plan"
+      },
+      {
+        "frontier_key": "DISTRIBUTED-COLLAB-SPEC",
+        "issue_id": "dat-distributed-collaboration-architecture-lt1",
+        "category": "specification",
+        "code": "WDQ-COVERAGE",
+        "path": "DISTRIBUTED-COLLAB-SPEC",
+        "detail": "classified active work requires a completion plan"
+      },
+      {
+        "frontier_key": "ADOPTED-DRAFTING-STANDARD-SPEC",
+        "issue_id": "dat-adopted-drafting-standard-object-er9",
+        "category": "specification",
+        "code": "WDQ-COVERAGE",
+        "path": "ADOPTED-DRAFTING-STANDARD-SPEC",
+        "detail": "classified active work requires a completion plan"
+      },
+      {
+        "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+        "issue_id": "dat-wdq-rollout-implementation-ffy",
+        "category": "infrastructure",
+        "code": "WDQ-COVERAGE",
+        "path": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+        "detail": "readiness/execution requires a delivery declaration"
+      }
+    ]
+  },
+  "corrected_defect_issue_id": "dat-wdq-deferred-history-1qi",
+  "missing_plans_issue_id": "dat-wdq-missing-plans-b8y",
+  "promotion_asserted": false,
+  "readiness_asserted": false,
+  "acceptance_asserted": false,
+  "limits": "Per-item category preflight only, not full coverage, clause, scope, readiness, trust, native proof, independent review or activation validation. Proposed classifications are not installed permissions."
+}

@@ -10,7 +10,7 @@
         "specs/workflow_delivery/rollout.contract.json",
         "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md"
       ],
-      "reviewed_digest": "d7cc56cc7fe8a2892f1ca6925d601e8fd8d84cf5b65ba34d82a753151c06a824",
+      "reviewed_digest": "fe404297c8dfd9ca8d2f918ce4d771a35fbc7ab63427e836721372e5c20f332e",
       "review_note": "WDQ-I02 owning-lane review binds the complete local source, real validator consumers, six success/refusal scenario groups, explicit candidate input inventory and activation-conditional PM042 text. Progress and future proof/review/owner receipts are deliberately outside their own authority closure. Actual assembled-candidate readiness, producer evidence, independent replay, hook/promotion verification, owner activation and native adoption remain due. No synthetic fixture events or passing consistency tests establish those outcomes."
     },
     {
@@ -48,9 +48,9 @@
       "id": "workflow-delivery-rollout",
       "status": "in_progress",
       "sources": ["research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md"],
-      "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md", "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md", "docs/reviews/workflow-delivery-rollout/proposal.json", "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md", "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md", "docs/reviews/workflow-delivery-rollout/rollout-mapping.json"],
-    "reviewed_digest": "dd2929e5f2069b1f205d002747fe03af4a49a9fa1e54bf2228996cb890191c88",
-    "review_note": "WDQ-I02 review reconciles the complete source and seven consumers with the prepared infrastructure contract and its separate stable technical route. PM042 is activation-conditional and still unratified: future owner receipts remain outside their own proof authority. All original I3 obligations precede I04; the READY/REVIEW mapping remains non-operative and I02 stays selected. Actual assembled-candidate readiness, product contracts, coverage/enrollment, producer and independent proof, owner promotion and adoption remain outstanding. Preserve exact R02 artifacts, PM041, all product owners and installed trust."
+      "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md", "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md", "docs/reviews/workflow-delivery-rollout/proposal.json", "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md", "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md", "docs/reviews/workflow-delivery-rollout/rollout-mapping.json", "docs/reviews/workflow-delivery-rollout/category-preflight.json"],
+    "reviewed_digest": "c3d6e3eef5d02a999edb52ca4c40d0eedaf554841a949d9d8fee1348376d7dc7",
+    "review_note": "WDQ-I02 owning-lane review reconciles the complete source and eight consumers with actual 56-item category preflight and the deferred-history correction. PM042 remains activation-conditional and unratified; prior completed execution under an unchanged owner hold is not new execution. Four CLI/selector regressions and exact-baseline replay preserve that boundary without rewriting Revision Engine state. Five missing plans are captured under WDQ-I02, not exempted. Full contract/coverage/enrollment preparation, readiness, independent proof, owner activation and native adoption remain due; PM041, Preferences and all product ownership are unchanged."
     },
     {
       "id": "research-governance-index",

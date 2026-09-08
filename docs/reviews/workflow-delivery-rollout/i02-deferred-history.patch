@@ -1,0 +1,50 @@
+diff --git a/scripts/test_workflow_delivery_category_boundaries.py b/scripts/test_workflow_delivery_category_boundaries.py
+index 7b2af04d..4812702f 100644
+--- a/scripts/test_workflow_delivery_category_boundaries.py
++++ b/scripts/test_workflow_delivery_category_boundaries.py
+@@ -164,0 +165,30 @@ class DeferredBoundaryTest(unittest.TestCase):
++    def promote_completed_history(self):
++        step = self.cold["completion"]["steps"][0]
++        step.update(status="complete", completion_evidence=[{"kind": "document", **self.e.f.ref}])
++        self.cold["completion"]["canonical_next_step_id"] = None
++        self.e.promote()
++
++    def test_deferred_hold_preserves_prior_completed_execution(self):
++        self.promote_completed_history()
++        code, report = self.e.h.cli()
++        self.assertEqual(0, code, report)
++        self.assertEqual([], selector_failures(self.e.f.root, self.e.m))
++
++    def test_deferred_hold_cannot_complete_pending_work(self):
++        step = self.cold["completion"]["steps"][0]
++        step.update(status="complete", completion_evidence=[{"kind": "document", **self.e.f.ref}])
++        self.cold["completion"]["canonical_next_step_id"] = None
++        self.e.save()
++        self.e.refuse("deferred work requires reclassification")
++
++    def test_deferred_completed_requirement_cannot_change(self):
++        self.promote_completed_history()
++        self.cold["completion"]["steps"][0]["action"] = "Expanded historical scope"
++        self.e.save()
++        self.e.refuse("deferred work requires reclassification")
++
++    def test_deferred_pending_requirement_cannot_change(self):
++        self.cold["completion"]["steps"][0]["action"] = "Expanded pending scope"
++        self.e.save()
++        self.e.refuse("deferred work requires reclassification")
++
+diff --git a/scripts/workflow_delivery_categories.py b/scripts/workflow_delivery_categories.py
+index eb4f87fc..7035104a 100644
+--- a/scripts/workflow_delivery_categories.py
++++ b/scripts/workflow_delivery_categories.py
+@@ -19,0 +20,6 @@ def validate_categories(items, coverage, enrolled, authority):
++            prior = promoted.get(key, {})
++            # Dormancy can retain completed work from before the owner hold.
++            # Preserve that exact record; do not mistake it for new execution
++            # or allow candidate-only completion/requirement changes under it.
++            live_execution = any(s.get("kind") == "execution" and
++                                 s.get("status") == "in_progress" for s in steps)
+@@ -22 +28,2 @@ def validate_categories(items, coverage, enrolled, authority):
+-                    and not executing, key, "deferred work requires reclassification before execution",
++                    and not live_execution and completion == prior.get("completion", {}),
++                    key, "deferred work requires reclassification before execution or completion changes",
