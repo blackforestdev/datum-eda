@@ -160,3 +160,12 @@ clause-disposition verification, complete category/refusal regression coverage
 and historical/multi-commit transaction-baseline audit remain unfinished.
 The entry points are wired in the retained candidate only; no live main gate,
 policy, trust, product owner or prototype changed and no promotion is asserted.
+
+Patch-format correction: the `7ee746e7` main commit's whitespace-pass statement
+was incorrect. Unified-diff blank context lines in the review artifact triggered
+five whitespace warnings; candidate source and its passing tests were unchanged.
+The integration artifact now uses exact `git diff --binary --unified=0` output
+for the recorded parent/candidate. Apply/check it only against those pinned
+inputs with `git apply --unidiff-zero`; reverse-check against the candidate also
+verifies its hunk contents without modifying any source. This formatting repair
+does not change or replace the retained candidate commit.
