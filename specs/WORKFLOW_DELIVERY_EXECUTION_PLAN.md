@@ -38,17 +38,47 @@ missing handlers, fixtures or mechanisms remain explicit refusals. Do not fill
 missing native proof or independent sessions with invented values. Prepare the
 numbered mechanism amendment for owner ratification before promotion.
 
+<!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-READY -->
+## WDQ-READY — establish actual infrastructure readiness
+
+After I02 prepares the exact contract and mapping, review the real infrastructure
+consumers, handler paths, input closure, foundation dispositions, scenarios,
+environment and refusal expectations against the assembled candidate. Run actual
+readiness validation with its governed source/consumer routes reconciled. Record
+the exact input evidence and unresolved limits; mandatory readiness questions
+must be resolved before completing this checkpoint. This is a new pending
+governance checkpoint, not retrospective relabeling of I01/I02 or R03 approval.
+It does not authorize promotion, product implementation or independent acceptance.
+
 <!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I03 -->
-## WDQ-I03 — prepare and independently verify controlled promotion
+## WDQ-I03 — prepare controlled promotion and producer verification
 
 Implement general candidate preparation and visible activation diagnostics in
 the resolved Git-common support store. Prove exact pins, clean-state refusal,
 no live mutation during preparation, interrupted/partial activation handling
 and retained trusted evidence. Exercise all approved negative cases through
 real CLI/index/selector/hook paths; replay existing suites and governance gates.
-Obtain independent gate review from a distinct session/person; self-review
-cannot complete this step. Include the exact mechanism amendment, coverage,
-scope, external-lane migration, contract and environment packet for I04.
+Include the exact mechanism amendment, coverage, scope, external-lane migration,
+contract and environment packet for the following independent review. Producer
+verification is not independent review and cannot authorize I04 on its own.
+
+<!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-REVIEW -->
+## WDQ-REVIEW — independently verify the exact promotion packet
+
+A distinct session/person must replay the exact I03 candidate through the real
+staged CLI, selector and owner-hook paths, including required success and refusal
+cases. Validate the separate schema-2 review checkpoint with independent event,
+fixture, executable and environment evidence and complete defect accounting.
+Review the amendment, source permissions, contract/coverage/enrollment packet,
+Preferences migration boundary, storage, recovery and observed limitations.
+Self-review, copied producer logs or an unexecuted reviewer assignment cannot
+complete this step. No owner acceptance is claimed while dispositions await I04.
+
+These explicit checkpoints refine the original R03 I3 stage, preserving all
+of its tooling, verification and independent-review obligations before I04.
+I01/I02 remain candidate preparation, not retrospectively enrolled execution.
+READY and REVIEW start pending; no evidence or owner disposition is manufactured.
+The existing I04/I06 owner decisions and all product lane boundaries are unchanged.
 
 <!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I04 -->
 <!-- OWNER:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I04:ACTIVATE -->
@@ -445,3 +475,32 @@ calling R03 implementation approval a completed delivery contract. Exact product
 contract/coverage/enrollment candidates, the rollout infrastructure contract and
 complete transition proof are still outstanding; no product C01 or Preferences
 boundary is advanced by this increment.
+
+### WDQ-I02 — explicit self-enrollment checkpoint refinement
+
+The missing mapping shape is resolved by scheduling two pending checkpoints:
+WDQ-READY after I02 and WDQ-REVIEW after I03. READY records actual infrastructure
+contract readiness; I03 produces the controlled-promotion implementation and
+verification; REVIEW independently replays that exact packet. I04 depends on
+REVIEW, so every original I3-stage obligation remains ahead of owner activation.
+I01/I02 are unchanged preparation steps. No completion evidence was assigned
+to either added checkpoint, and I02 remains the only in-progress step.
+
+`docs/reviews/workflow-delivery-rollout/rollout-mapping.json` records the exact
+version-2 infrastructure mapping, the before-refinement baseline, unchanged owner
+boundaries and explicit false readiness/enrollment/acceptance flags. It is not
+the live policy or a delivery contract and is not attached as active enrollment.
+The contract destination remains `specs/workflow_delivery/rollout.contract.json`.
+
+Six new mapping-consistency tests pass. The candidate gate at `a5f3d219`
+accepts the exact mapping's shape against the actual revised Frontier step
+kinds and dependency order; this check does not run contract readiness or native
+proof. A before/after comparison against `90d58f34` confirms that all 55 other
+Frontier items, the I01/I02 records and the workflow claim are unchanged, with both
+added checkpoints pending. Tracker acceptance criteria are synchronized in the
+same transaction. PM042 remains a governed proposal, not ratified doctrine.
+
+Actual contract preparation, product coverage/enrollment candidates and the
+remaining transition audit still belong to I02. READY, producer verification,
+independent review, owner activation and three genuine adoption outcomes remain
+unfulfilled; adding the steps does not satisfy their requirements.

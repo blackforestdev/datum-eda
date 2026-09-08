@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "record_type": "delivery_mapping_proposal",
+  "basis_ref": "90d58f34db9e0ff74790457487993e93454925e2",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "category": "infrastructure",
+  "delivery": {
+    "schema_version": 2,
+    "contract_path": "specs/workflow_delivery/rollout.contract.json",
+    "checkpoints": {
+      "ready": "WDQ-READY",
+      "activate": null,
+      "verify": "WDQ-I03",
+      "review": "WDQ-REVIEW",
+      "accept": null
+    }
+  },
+  "prior_preparation_steps": ["WDQ-I01", "WDQ-I02"],
+  "owner_boundaries": ["WDQ-I04", "WDQ-I06"],
+  "readiness_asserted": false,
+  "enrollment_asserted": false,
+  "acceptance_asserted": false
+}

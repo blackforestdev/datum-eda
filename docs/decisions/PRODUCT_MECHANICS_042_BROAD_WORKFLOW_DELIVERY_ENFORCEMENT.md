@@ -161,13 +161,14 @@ immutable trusted runners and logs. Keep any currently referenced external
 support until its replacement is installed and verified. Remove only positively
 unreferenced owned artifacts; no broad sweep of Documents or shared build output.
 
-The exact packet must also reconcile self-enrollment against actual completion
-step kinds. The current I01-I06 plan has no planning/governance readiness step;
-its names alone are not a valid mapping. Prepare and review an explicit
-completion-plan adjustment with genuine readiness evidence. Do not relabel a
-completed execution step or substitute R03 implementation authorization for a
-delivery contract. This unresolved mapping prevents a claim that the rollout
-infrastructure contract is ready or enrolled.
+Self-enrollment maps actual completion kinds: WDQ-READY (governance) is readiness,
+WDQ-I03 (execution) is producer verification, and WDQ-REVIEW (execution) is
+independent replay. Infrastructure activate/accept are null. The added READY and
+REVIEW checkpoints refine the original I3 stage without removing any obligation
+before I04. They start pending with no invented evidence. I01/I02 remain prior
+candidate preparation; neither they nor R03 approval are relabeled readiness.
+The exact mapping proposal is recorded separately and is not installed enrollment.
+Actual contract readiness, independent replay and I04 owner approval remain due.
 
 Product C01 owners retain actual handler, fixture, domain scope and prerequisite
 review. Cohort mappings and scenario identities from the approved R03 packet are
@@ -183,5 +184,5 @@ future task names, hermetic fixtures or this amendment as completed adoption.
 ## Ratification record
 
 None. WDQ-I04 must review the final complete amendment and exact activation
-packet after WDQ-I03 independent verification. The planned decision number is
+packet after WDQ-I03 producer proof and WDQ-REVIEW independent verification. The planned decision number is
 not an approval, and this document is not controlling doctrine before that act.
