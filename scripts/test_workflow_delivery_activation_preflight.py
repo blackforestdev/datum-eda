@@ -7,6 +7,7 @@ from unittest.mock import patch
 from workflow_delivery_activation_preflight import preflight
 from workflow_delivery_capture_state import protected_state
 from workflow_delivery_publication_delta import publication_delta
+from workflow_delivery_io import canonical_json, sha256
 from workflow_delivery_test_support import Fixture
 
 
@@ -20,10 +21,12 @@ class ActivationPreflightTest(unittest.TestCase):
         self.candidate = self.f.git("commit-tree", tree, "-p", self.base,
                                    "-m", "synthetic candidate").decode().strip()
         self.trust = protected_state(self.f.root, ["src"])["local_trust"]
+        delta = publication_delta(self.f.root, base=self.base, candidate=self.candidate)
+        self.review = {"delta_sha256": sha256(canonical_json(delta)), "paths": delta["touched_paths"]}
 
     def run_preflight(self, **overrides):
         options = dict(base=self.base, candidate=self.candidate, input_roots=["src"],
-                       expected_local_trust=self.trust)
+                       expected_local_trust=self.trust, publication_review=self.review)
         options.update(overrides)
         return preflight(self.f.root, **options)
 
@@ -40,6 +43,15 @@ class ActivationPreflightTest(unittest.TestCase):
         self.f.git("config", "--local", "datum.workflowDeliveryAuthorityRef", self.base)
         with self.assertRaisesRegex(ValueError, "local trust differs"):
             self.run_preflight()
+
+    def test_unreviewed_candidate_history_refuses_without_publication(self):
+        tree = self.f.git("rev-parse", "HEAD^{tree}").decode().strip()
+        later = self.f.git("commit-tree", tree, "-p", self.candidate,
+                          "-m", "additional unreviewed history").decode().strip()
+        before = protected_state(self.f.root, ["src"])
+        with self.assertRaisesRegex(ValueError, "review digest differs"):
+            self.run_preflight(candidate=later)
+        self.assertEqual(before, protected_state(self.f.root, ["src"]))
 
     def test_detached_checkout_refuses_without_switching_branch(self):
         self.f.git("checkout", "--detach", "-q", self.base)

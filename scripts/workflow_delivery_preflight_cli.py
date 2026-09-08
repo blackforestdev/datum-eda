@@ -48,6 +48,8 @@ def main(argv=None):
         if args.inspect_state:
             fields += " proposed_local_trust"
             expected_kind = "datum.workflow-delivery.activation-state-request"
+        else:
+            fields += " publication_review"
         closed(request, fields, "preflight request")
         if (type(request["schema_version"]) is not int or request["schema_version"] != 1
                 or request["kind"] != expected_kind):
@@ -77,7 +79,8 @@ def main(argv=None):
                     support = verify_bundle(args.root, request["authority"])
                     payload["preflight"] = preflight(args.root, base=request["base"],
                         candidate=request["candidate"], input_roots=request["input_roots"],
-                        expected_local_trust=request["prior_local_trust"])
+                        expected_local_trust=request["prior_local_trust"],
+                        publication_review=request["publication_review"])
                     if verify_bundle(args.root, request["authority"]) != support:
                         raise ValueError("proposed support changed during inspection")
                     payload["support_bundle"] = support

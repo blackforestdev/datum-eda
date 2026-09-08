@@ -10,7 +10,7 @@ from pathlib import Path
 from workflow_delivery_bootstrap import git
 from workflow_delivery_capture_state import TRUST_KEYS, protected_state
 from workflow_delivery_io import canonical_json, sha256
-from workflow_delivery_publication_delta import publication_delta, tree_entries
+from workflow_delivery_publication_delta import publication_delta, tree_entries, verify_publication_review
 
 REDIRECTS = ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE", "GIT_NAMESPACE",
              "GIT_OBJECT_DIRECTORY", "GIT_ALTERNATE_OBJECT_DIRECTORIES", "GIT_CONFIG",
@@ -42,7 +42,7 @@ def clean_inputs(root, snapshot, base):
                 "untracked, ignored or missing reviewed input: " + path)
 
 
-def preflight(root, *, base, candidate, input_roots, expected_local_trust):
+def preflight(root, *, base, candidate, input_roots, expected_local_trust, publication_review):
     require(not any(name in os.environ for name in REDIRECTS), "repository/index/config overrides are not activation inputs")
     require(type(input_roots) is list and bool(input_roots) and len(set(input_roots)) == len(input_roots),
             "explicit unique reviewed input roots required")
@@ -61,6 +61,7 @@ def preflight(root, *, base, candidate, input_roots, expected_local_trust):
     require(staged == b"", "index differs from pinned publication base")
     clean_inputs(root, before, base)
     delta = publication_delta(root, base=base, candidate=candidate)
+    reviewed = verify_publication_review(delta, publication_review)
     after = protected_state(root, input_roots)
     require(canonical_json(before) == canonical_json(after), "protected state changed during preflight")
     require(git(root, "status", "--porcelain=v1", "--untracked-files=all") == b"",
@@ -68,4 +69,5 @@ def preflight(root, *, base, candidate, input_roots, expected_local_trust):
     return {"schema_version": 1, "kind": "datum.workflow-delivery.activation-preflight",
             "base": base, "candidate": candidate, "protected_state": before,
             "publication_delta": delta, "publication_authorized": False, "activation_asserted": False,
+            "publication_review": reviewed,
             "scope": "read-only preconditions; owner receipt, independent evidence and activation coordination still required"}

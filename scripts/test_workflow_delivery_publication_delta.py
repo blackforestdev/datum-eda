@@ -3,7 +3,8 @@
 from copy import deepcopy
 import unittest
 
-from workflow_delivery_publication_delta import publication_delta, verify_publication_delta
+from workflow_delivery_publication_delta import publication_delta, verify_publication_delta, verify_publication_review
+from workflow_delivery_io import canonical_json, sha256
 from workflow_delivery_test_support import Fixture
 
 
@@ -36,6 +37,11 @@ class PublicationDeltaTest(unittest.TestCase):
         self.assertEqual(b"intermediate source\n", self.f.git("cat-file", "blob", change["after"]["oid"]))
         self.assertFalse(result["publication_authorized"])
         self.assertEqual(result, verify_publication_delta(self.f.root, result, base=self.base, candidate=candidate))
+        review = {"delta_sha256": sha256(canonical_json(result)), "paths": result["touched_paths"]}
+        self.assertEqual(review, verify_publication_review(result, review))
+        for paths in ([], ["src"], ["src/read.py", "src/extra.py"], ["src/read.py", "src/read.py"]):
+            with self.subTest(paths=paths), self.assertRaises(ValueError):
+                verify_publication_review(result, dict(review, paths=paths))
         altered = deepcopy(result)
         altered["commits"][0]["edges"][0]["changes"] = []
         with self.assertRaisesRegex(ValueError, "differs"):
@@ -51,6 +57,30 @@ class PublicationDeltaTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "full pinned"):
             self.delta("HEAD")
 
+    def test_review_cannot_bind_different_history_with_the_same_final_tree(self):
+        self.f.write("src/read.py", b"candidate\n")
+        candidate = self.commit()
+        first = self.delta(candidate)
+        tree = self.f.git("rev-parse", candidate + "^{tree}").decode().strip()
+        later = self.f.git("commit-tree", tree, "-p", candidate,
+                           "-m", "different exact history").decode().strip()
+        second = self.delta(later)
+        self.assertEqual(first["net_changes"], second["net_changes"])
+        self.assertEqual(first["touched_paths"], second["touched_paths"])
+        review = {"delta_sha256": sha256(canonical_json(first)), "paths": first["touched_paths"]}
+        with self.assertRaisesRegex(ValueError, "digest differs"):
+            verify_publication_review(second, review)
+
+    def test_review_is_closed_and_paths_are_literal_sorted_file_names(self):
+        self.f.write("src/read.py", b"candidate\n")
+        result = self.delta(self.commit())
+        review = {"delta_sha256": sha256(canonical_json(result)), "paths": result["touched_paths"]}
+        for change in ({"delta_sha256": True}, {"delta_sha256": "bad"}, {"paths": "src/read.py"},
+                       {"paths": [False]}, {"paths": ["../src/read.py"]}, {"paths": ["/src/read.py"]},
+                       {"paths": ["src/z.py", "src/read.py"]}, {"owner_approved": True}):
+            with self.subTest(change=change), self.assertRaises(ValueError):
+                verify_publication_review(result, dict(review, **change))
+
     def test_merge_retains_each_parent_edge(self):
         self.f.write("src/read.py", b"side branch source\n")
         side = self.commit()
@@ -62,6 +92,8 @@ class PublicationDeltaTest(unittest.TestCase):
         self.assertEqual([self.base, side], result["commits"][-1]["parents"])
         self.assertEqual([], result["commits"][-1]["edges"][0]["changes"])
         self.assertEqual("src/read.py", result["commits"][-1]["edges"][1]["changes"][0]["path"])
+        with self.assertRaisesRegex(ValueError, "every touched file"):
+            verify_publication_review(result, {"delta_sha256": sha256(canonical_json(result)), "paths": []})
 
     def test_nonancestor_and_artifact_selected_pins_refuse(self):
         self.f.write("src/read.py", b"candidate\n")

@@ -5,7 +5,8 @@ authorization, independent review, an owner receipt, or an activation command.
 """
 
 from workflow_delivery_bootstrap import git, pinned_commit
-from workflow_delivery_io import canonical_json, sha256
+from workflow_delivery_io import canonical_json, normalized_path, sha256
+from workflow_delivery_shapes import closed, digest
 
 
 def tree_entries(root, revision):
@@ -64,3 +65,26 @@ def verify_publication_delta(root, value, *, base, candidate):
     if canonical_json(value) != canonical_json(expected):
         raise ValueError("publication delta differs from exact pinned Git history")
     return expected
+
+
+def verify_publication_review(delta, review):
+    """Bind a caller-pinned review inventory, not an owner receipt or permission.
+
+    The caller must supply a delta rebuilt from its explicit Git pins. Exact
+    file names cover every parent edge, not only net changes or directory roots.
+    This does not waive ordinary execution claims or prove independent review.
+    """
+    closed(review, "delta_sha256 paths", "publication review")
+    digest(review["delta_sha256"], "publication review")
+    paths = review["paths"]
+    if type(paths) is not list or any(type(path) is not str for path in paths):
+        raise ValueError("publication review requires an explicit file-path list")
+    for path in paths:
+        normalized_path(path)
+    if paths != sorted(set(paths)):
+        raise ValueError("publication review paths must be sorted and unique")
+    if paths != delta["touched_paths"]:
+        raise ValueError("publication review must enumerate every touched file exactly; no prefix grants")
+    if review["delta_sha256"] != sha256(canonical_json(delta)):
+        raise ValueError("publication review digest differs from exact pinned Git history")
+    return {"delta_sha256": review["delta_sha256"], "paths": list(paths)}

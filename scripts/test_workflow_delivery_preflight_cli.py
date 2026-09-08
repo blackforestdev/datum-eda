@@ -14,6 +14,7 @@ from workflow_delivery_test_support import Fixture
 from workflow_delivery_trust_test_support import accepted_fixture
 from workflow_delivery_support_bundle import prepare_bundle
 from workflow_delivery_support_store import support_locations
+from workflow_delivery_publication_delta import publication_delta
 
 
 class PreflightCliTest(unittest.TestCase):
@@ -31,6 +32,9 @@ class PreflightCliTest(unittest.TestCase):
         self.request = {"schema_version": 1, "kind": "datum.workflow-delivery.preflight-request",
                         "base": self.f.head, "candidate": candidate, "authority": self.f.head, "input_roots": ["src"],
                         "prior_local_trust": protected_state(self.f.root, ["src"])["local_trust"]}
+        delta = publication_delta(self.f.root, base=self.f.head, candidate=candidate)
+        self.request["publication_review"] = {"delta_sha256": sha256(canonical_json(delta)),
+                                              "paths": delta["touched_paths"]}
         self.path = self.store / "request.json"
         self.path.write_bytes(canonical_json(self.request))
         self.output = self.f.root / ".git/datum-wdq/logs/preflight.json"
@@ -61,6 +65,7 @@ class PreflightCliTest(unittest.TestCase):
     def test_partial_activation_state_is_visible_and_retained_without_repair(self):
         from copy import deepcopy
         self.request["kind"] = "datum.workflow-delivery.activation-state-request"
+        del self.request["publication_review"]
         proposed = deepcopy(self.request["prior_local_trust"])
         proposed["datum.workflowDeliveryAuthorityRef"] = [self.request["candidate"]]
         self.request["proposed_local_trust"] = proposed
@@ -84,6 +89,18 @@ class PreflightCliTest(unittest.TestCase):
         self.assertEqual(2, result.returncode)
         self.assertIn(b"dirty", result.stdout)
         self.assertFalse(json.loads(self.output.read_bytes())["ok"])
+        self.assertEqual(before, protected_state(self.f.root, ["src"]))
+
+    def test_unreviewed_history_is_logged_and_never_published(self):
+        self.request["publication_review"]["delta_sha256"] = "0" * 64
+        self.path.write_bytes(canonical_json(self.request))
+        before = protected_state(self.f.root, ["src"])
+        result = self.run_cli()
+        self.assertEqual(2, result.returncode, result.stdout + result.stderr)
+        self.assertIn(b"review digest differs", result.stdout)
+        payload = json.loads(self.output.read_bytes())
+        self.assertFalse(payload["ok"])
+        self.assertFalse(payload["publication_authorized"])
         self.assertEqual(before, protected_state(self.f.root, ["src"]))
 
     def test_detached_checkout_refusal_is_visible_retained_and_nonmutating(self):
