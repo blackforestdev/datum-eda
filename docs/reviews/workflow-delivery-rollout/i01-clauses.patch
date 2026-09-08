@@ -1,0 +1,397 @@
+diff --git a/scripts/test_workflow_delivery_coverage_entrypoints.py b/scripts/test_workflow_delivery_coverage_entrypoints.py
+index b4630ac2..061c672a 100644
+--- a/scripts/test_workflow_delivery_coverage_entrypoints.py
++++ b/scripts/test_workflow_delivery_coverage_entrypoints.py
+@@ -14,0 +15 @@ from workflow_delivery_trust_test_support import accepted_fixture
++from workflow_delivery_clause_test_support import inventory
+@@ -35,0 +37 @@ class CoverageEntrypointsTest(unittest.TestCase):
++        inventory(self.f, next_item, policy)
+diff --git a/scripts/test_workflow_delivery_specification.py b/scripts/test_workflow_delivery_specification.py
+index 07c0c37c..a2d8910b 100644
+--- a/scripts/test_workflow_delivery_specification.py
++++ b/scripts/test_workflow_delivery_specification.py
+@@ -2,0 +3 @@
++import hashlib
+@@ -7,0 +9 @@ from workflow_delivery_tree import Tree
++from workflow_delivery_clause_test_support import inventory, matrix, refresh
+@@ -20,0 +23 @@ class SpecificationBoundaryTest(unittest.TestCase):
++        self.inventory = inventory(self.f, item, policy)
+@@ -31,2 +34,2 @@ class SpecificationBoundaryTest(unittest.TestCase):
+-        self.step.update(status="complete", completion_evidence=[
+-            {"kind": "document", **self.f.ref}])
++        self.matrix, self.matrix_ref = matrix(self.f, item, self.step, self.inventory["clauses"])
++        self.step.update(status="complete", completion_evidence=[self.matrix_ref])
+@@ -72,0 +76,123 @@ class SpecificationBoundaryTest(unittest.TestCase):
++    def save_matrix(self):
++        self.f.save(self.matrix_ref["path"], self.matrix)
++        refresh(self.f)
++        self.r.save()
++
++    def assert_refusal(self, detail):
++        code, report = self.h.cli()
++        self.assertEqual(1, code, report)
++        self.assertIn(detail, report["findings"][0]["detail"])
++
++    def promote_inventory(self):
++        # Synthetic owner-selected inventory change, never a candidate bypass.
++        self.f.save("docs/specification-inventory.json", self.inventory)
++        refresh(self.f)
++        self.r.save()
++        self.f.git("commit", "-qm", "fixture reviewed inventory update")
++        self.h.authority = self.f.git("rev-parse", "HEAD").decode().strip()
++        for key in ("AuthorityRef", "BaseRef"):
++            self.f.git("config", "datum.workflowDelivery" + key, self.h.authority)
++
++    def test_ordinary_document_cannot_substitute_for_matrix(self):
++        self.step["completion_evidence"] = [{"kind": "document", **self.f.ref}]
++        self.r.save()
++        self.assert_refusal("exactly one clause/disposition matrix")
++
++    def test_candidate_cannot_shrink_promoted_inventory(self):
++        self.inventory["clauses"].pop()
++        self.f.save("docs/specification-inventory.json", self.inventory)
++        refresh(self.f)
++        self.r.save()
++        self.assert_refusal("changed after owner promotion")
++
++    def test_omitted_clause_refuses_even_with_fresh_review_digest(self):
++        second = dict(self.inventory["clauses"][0], id="SECOND")
++        self.inventory["clauses"].append(second)
++        self.promote_inventory()
++        self.assert_refusal("dispose every clause")
++
++    def test_duplicate_disposition_refuses(self):
++        self.matrix["dispositions"].append(dict(self.matrix["dispositions"][0]))
++        self.save_matrix()
++        self.assert_refusal("duplicate identity")
++
++    def test_unknown_clause_refuses(self):
++        self.matrix["dispositions"][0]["clause_id"] = "UNKNOWN"
++        self.save_matrix()
++        self.assert_refusal("unknown clause")
++
++    def test_wrong_step_identity_refuses(self):
++        self.matrix["step_id"] = "NEXT-C03"
++        self.save_matrix()
++        self.assert_refusal("identity mismatch")
++
++    def test_mechanism_cannot_be_only_documented(self):
++        self.inventory["clauses"][0]["requires_owner_decision"] = True
++        self.promote_inventory()
++        self.assert_refusal("explicit owner ratification")
++
++    def test_pending_mechanism_has_an_explicit_downstream_owner_boundary(self):
++        self.inventory["clauses"][0]["requires_owner_decision"] = True
++        self.promote_inventory()
++        self.matrix["dispositions"][0].update(disposition="pending_owner", owner_step_id="NEXT-C02")
++        self.save_matrix()
++        code, report = self.h.cli()
++        self.assertEqual(0, code, report)
++        self.assertEqual([], selector_failures(self.f.root, self.r.m))
++
++    def test_pending_mechanism_cannot_point_to_a_planning_step(self):
++        self.matrix["dispositions"][0].update(disposition="pending_owner", owner_step_id="NEXT-C03")
++        self.save_matrix()
++        self.assert_refusal("pending explicit owner-decision")
++
++    def test_ordinary_document_cannot_ratify_a_mechanism(self):
++        self.matrix["dispositions"][0]["disposition"] = "ratified"
++        self.save_matrix()
++        self.assert_refusal("numbered decision evidence")
++
++    def test_missing_disposition_output_marker_refuses(self):
++        self.matrix["dispositions"][0]["evidence_refs"][0]["marker"] = "ABSENT"
++        self.save_matrix()
++        self.assert_refusal("marker must occur exactly once")
++
++    def test_promoted_inventory_must_cover_all_planned_requirements(self):
++        self.inventory["clauses"].pop()
++        self.promote_inventory()
++        self.assert_refusal("cover every completion-step requirement")
++
++    def add_decision(self):
++        path = "docs/decisions/PRODUCT_MECHANICS_999_CLAUSE_FIXTURE.md"
++        raw = b"<!-- RATIFIED-FIXTURE -->\nSynthetic controlling decision.\n"
++        self.f.write(path, raw)
++        governed = Tree(self.f.root).json("specs/spec_governance_manifest.json")
++        governed["entries"][path] = {"class": "doctrine", "controlling": True}
++        self.f.save("specs/spec_governance_manifest.json", governed)
++        routes = Tree(self.f.root).json("specs/evidence_traceability_manifest.json")
++        routes["routes"].append({"id": "ratification-fixture", "sources": [],
++            "consumers": [path], "reviewed_digest": hashlib.sha256(
++                path.encode() + b"\0" + raw + b"\0").hexdigest()})
++        self.f.save("specs/evidence_traceability_manifest.json", routes)
++        self.matrix["dispositions"][0].update(disposition="ratified", evidence_refs=[
++            {"path": path, "marker": "RATIFIED-FIXTURE"}])
++        self.save_matrix()
++
++    def test_candidate_cannot_self_ratify_with_new_numbered_doctrine(self):
++        self.add_decision()
++        self.assert_refusal("owner-promoted controlling doctrine")
++
++    def test_existing_promoted_controlling_doctrine_can_resolve_clause(self):
++        self.inventory["clauses"][0]["requires_owner_decision"] = True
++        self.add_decision()
++        self.promote_inventory()
++        code, report = self.h.cli()
++        self.assertEqual(0, code, report)
++        self.assertEqual([], selector_failures(self.f.root, self.r.m))
++
++    def test_candidate_cannot_complete_the_owner_boundary(self):
++        owner = self.r.item["completion"]["steps"][1]
++        owner.update(status="complete", completion_evidence=[{"kind": "review", **self.f.ref}])
++        self.r.item.update(authorization="planning")
++        self.r.item["completion"]["canonical_next_step_id"] = "NEXT-C03"
++        self.r.save()
++        self.assert_refusal("owner decision requires exact owner promotion")
++
+diff --git a/scripts/workflow_delivery_clause_dispositions.py b/scripts/workflow_delivery_clause_dispositions.py
+new file mode 100644
+index 00000000..2090abb2
+--- /dev/null
++++ b/scripts/workflow_delivery_clause_dispositions.py
+@@ -0,0 +1,70 @@
++"""Exact clause accounting; no document can promote its own ratification."""
++
++from workflow_delivery_authority import resolve_ref
++from workflow_delivery_shapes import array, closed, enum, identifier, refs, require, unique, version
++
++
++def validate_clause_dispositions(tree, authority, item, step, clauses, evidence, check_ref):
++    marker = f"WDQ-CLAUSE-MATRIX.{item['key']}.{step['id']}"
++    matrices = [r for r in evidence if r["marker"] == marker]
++    require(len(matrices) == 1, item["key"],
++            f"{step['id']}: exactly one clause/disposition matrix reference required",
++            "WDQ-COVERAGE")
++    path = matrices[0]["path"]
++    value = tree.json(path)
++    closed(value, "schema_version marker frontier_key step_id dispositions", path)
++    version(value["schema_version"], path)
++    require(value["marker"] == marker and value["frontier_key"] == item["key"] and
++            value["step_id"] == step["id"], path, "clause matrix identity mismatch",
++            "WDQ-COVERAGE")
++    array(value["dispositions"], path)
++    selected = {c["id"]: c for c in clauses if c["step_id"] == step["id"]}
++    ids = []
++    steps = {s["id"]: s for s in item["completion"]["steps"]}
++    for row in value["dispositions"]:
++        closed(row, "clause_id disposition evidence_refs owner_step_id", path)
++        identifier(row["clause_id"], path)
++        ids.append(row["clause_id"])
++        require(row["clause_id"] in selected, path, "unknown clause disposition", "WDQ-COVERAGE")
++        clause = selected[row["clause_id"]]
++        enum(row["disposition"], ("documented", "pending_owner", "ratified"), path)
++        refs(row["evidence_refs"], path)
++        for reference in clause["authority_refs"] + row["evidence_refs"]:
++            check_ref(reference)
++        if row["disposition"] == "pending_owner":
++            target = steps.get(row["owner_step_id"]) if isinstance(row["owner_step_id"], str) else None
++            require(target is not None and target["kind"] == "owner_decision" and
++                    target["status"] == "pending" and item["state"] != "landed", path,
++                    "open clause requires a pending explicit owner-decision step", "WDQ-COVERAGE")
++            # PM025 already validates acyclic dependencies. Walk them to ensure
++            # this owner decision actually follows the output, not another lane.
++            ancestors, pending = set(), list(target["depends_on"])
++            while pending:
++                current = pending.pop()
++                if current not in ancestors:
++                    ancestors.add(current)
++                    pending.extend(steps[current]["depends_on"])
++            require(step["id"] in ancestors, path,
++                    "owner decision must depend on the authored step", "WDQ-COVERAGE")
++        else:
++            require(row["owner_step_id"] is None, path,
++                    "resolved clauses cannot retain an open owner step", "WDQ-COVERAGE")
++            require(not clause["requires_owner_decision"] or row["disposition"] == "ratified",
++                    path, "mechanism clause requires explicit owner ratification", "WDQ-COVERAGE")
++        if row["disposition"] == "ratified":
++            decisions = [r for r in row["evidence_refs"]
++                         if r["path"].startswith("docs/decisions/PRODUCT_MECHANICS_")]
++            require(bool(decisions), path, "ratified clause requires numbered decision evidence",
++                    "WDQ-COVERAGE")
++            for reference in decisions:
++                entry = authority.json("specs/spec_governance_manifest.json")["entries"].get(
++                    reference["path"], {})
++                require(entry.get("class") == "doctrine" and entry.get("controlling") is True,
++                        reference["path"], "ratification requires owner-promoted controlling doctrine",
++                        "WDQ-AUTHORITY")
++                require(resolve_ref(tree, reference) == resolve_ref(authority, reference),
++                        reference["path"], "ratification must exist in owner-promoted authority",
++                        "WDQ-AUTHORITY")
++    unique(ids, path, "WDQ-COVERAGE")
++    require(set(ids) == set(selected), path,
++            "matrix must dispose every clause for the completed step", "WDQ-COVERAGE")
+diff --git a/scripts/workflow_delivery_clause_inventory.py b/scripts/workflow_delivery_clause_inventory.py
+new file mode 100644
+index 00000000..37d02815
+--- /dev/null
++++ b/scripts/workflow_delivery_clause_inventory.py
+@@ -0,0 +1,36 @@
++"""Owner-pinned clause inventory carried by a specification boundary reference."""
++
++from workflow_delivery_shapes import (
++    array, closed, identifier, ref, refs, require, unique, version,
++)
++
++
++def clause_inventory(tree, item, boundary):
++    path = boundary["path"]
++    value = tree.json(path)
++    closed(value, "schema_version marker frontier_key clauses", path)
++    version(value["schema_version"], path)
++    require(value["marker"] == boundary["marker"] and value["frontier_key"] == item["key"],
++            path, "clause inventory marker/Frontier identity mismatch", "WDQ-COVERAGE")
++    array(value["clauses"], path)
++    steps = {s["id"]: s for s in item["completion"]["steps"]}
++    expected = {(s["id"], r["path"], r["marker"])
++                for s in steps.values() for r in s["requirement_refs"]}
++    covered = set()
++    for clause in value["clauses"]:
++        closed(clause, "id step_id requirement_ref authority_refs requires_owner_decision", path)
++        identifier(clause["id"], path)
++        identifier(clause["step_id"], path)
++        ref(clause["requirement_ref"], path)
++        refs(clause["authority_refs"], path)
++        require(type(clause["requires_owner_decision"]) is bool, path,
++                "requires_owner_decision must be boolean", "WDQ-COVERAGE")
++        r = clause["requirement_ref"]
++        identity = (clause["step_id"], r["path"], r["marker"])
++        require(identity in expected, path,
++                "clause must map an existing completion-step requirement", "WDQ-COVERAGE")
++        covered.add(identity)
++    unique([c["id"] for c in value["clauses"]], path, "WDQ-COVERAGE")
++    require(covered == expected, path,
++            "clause inventory must cover every completion-step requirement", "WDQ-COVERAGE")
++    return value["clauses"]
+diff --git a/scripts/workflow_delivery_clause_test_support.py b/scripts/workflow_delivery_clause_test_support.py
+new file mode 100644
+index 00000000..09a7313e
+--- /dev/null
++++ b/scripts/workflow_delivery_clause_test_support.py
+@@ -0,0 +1,53 @@
++"""Hermetic clause inventories and matrices; never native or owner evidence."""
++
++import hashlib
++
++from workflow_delivery_tree import Tree
++
++
++def govern(f, path):
++    manifest = Tree(f.root).json("specs/spec_governance_manifest.json")
++    manifest["entries"][path] = {"class": "governed"}
++    f.save("specs/spec_governance_manifest.json", manifest)
++
++
++def inventory(f, item, policy):
++    path = "docs/specification-inventory.json"
++    marker = "WDQ-CLAUSE-INVENTORY." + item["key"]
++    value = {"schema_version": 1, "marker": marker, "frontier_key": item["key"],
++        "clauses": [{"id": s["id"] + "." + str(n), "step_id": s["id"],
++                    "requirement_ref": r, "authority_refs": [f.ref],
++                    "requires_owner_decision": False}
++                   for s in item["completion"]["steps"]
++                   for n, r in enumerate(s["requirement_refs"])]}
++    f.save(path, value)
++    govern(f, path)
++    next(r for r in policy["coverage"]["rows"] if r["frontier_key"] == item["key"])[
++        "boundary_ref"] = {"path": path, "marker": marker}
++    return value
++
++
++def matrix(f, item, step, clauses):
++    path = "docs/specification-matrix.json"
++    marker = f"WDQ-CLAUSE-MATRIX.{item['key']}.{step['id']}"
++    value = {"schema_version": 1, "marker": marker, "frontier_key": item["key"],
++             "step_id": step["id"], "dispositions": [
++                 {"clause_id": c["id"], "disposition": "documented",
++                  "evidence_refs": [f.ref], "owner_step_id": None}
++                 for c in clauses if c["step_id"] == step["id"]]}
++    f.save(path, value)
++    govern(f, path)
++    refresh(f)
++    return value, {"kind": "document", "path": path, "marker": marker}
++
++
++def refresh(f):
++    manifest = Tree(f.root).json("specs/evidence_traceability_manifest.json")
++    manifest["routes"] = [r for r in manifest["routes"] if r["id"] != "specification-output"]
++    members = ["docs/specification-inventory.json", "docs/specification-matrix.json"]
++    digest = hashlib.sha256()
++    for path in sorted(members):
++        digest.update(path.encode() + b"\0" + f.root.joinpath(path).read_bytes() + b"\0")
++    manifest["routes"].append({"id": "specification-output", "sources": members[:1],
++                              "consumers": members[1:], "reviewed_digest": digest.hexdigest()})
++    f.save("specs/evidence_traceability_manifest.json", manifest)
+diff --git a/scripts/workflow_delivery_coverage_runtime.py b/scripts/workflow_delivery_coverage_runtime.py
+index a63fdeff..6ff1e482 100644
+--- a/scripts/workflow_delivery_coverage_runtime.py
++++ b/scripts/workflow_delivery_coverage_runtime.py
+@@ -18 +18 @@ def validate_coverage(tree, manifest, trust, *, environment=None):
+-    validate_specification_outputs(tree, items, coverage)
++    validate_specification_outputs(tree, items, coverage, trust.authority)
+diff --git a/scripts/workflow_delivery_specification.py b/scripts/workflow_delivery_specification.py
+index 922e431e..e0a8007a 100644
+--- a/scripts/workflow_delivery_specification.py
++++ b/scripts/workflow_delivery_specification.py
+@@ -3,0 +4,2 @@ from workflow_delivery_authority import evidence_routes, resolve_ref, reviewed_r
++from workflow_delivery_clause_inventory import clause_inventory
++from workflow_delivery_clause_dispositions import validate_clause_dispositions
+@@ -7,7 +9,9 @@ from workflow_delivery_shapes import require
+-def validate_specification_outputs(tree, items, coverage):
+-    completed = [
+-        (row["frontier_key"], step)
+-        for row in coverage["rows"] if row["category"] == "specification"
+-        for step in items[row["frontier_key"]]["completion"]["steps"]
+-        if step["status"] == "complete"
+-    ]
++def validate_specification_outputs(tree, items, coverage, authority):
++    completed = []
++    for row in coverage["rows"]:
++        if row["category"] != "specification":
++            continue
++        item = items[row["frontier_key"]]
++        clauses = clause_inventory(tree, item, row["boundary_ref"])
++        completed.extend((item, step, clauses) for step in item["completion"]["steps"]
++                         if step["status"] == "complete")
+@@ -18 +22,28 @@ def validate_specification_outputs(tree, items, coverage):
+-    for key, step in completed:
++    def check_ref(reference):
++        resolve_ref(tree, reference)
++        owners = {name for name, route in routes.items()
++                  if reference["path"] in route["sources"] + route["consumers"]}
++        require(bool(owners), reference["path"],
++                "completed specification output requires an owning evidence route",
++                "WDQ-AUTHORITY")
++        for name in sorted(owners - checked):
++            reviewed_route_members(tree, name, routes[name])
++            checked.add(name)
++
++    for item, step, clauses in completed:
++        key = item["key"]
++        if step["kind"] == "owner_decision":
++            promoted = next((i for i in authority.json("specs/active_frontier.json")["frontier"]
++                             if i["key"] == key), {})
++            approved = next((s for s in promoted.get("completion", {}).get("steps", [])
++                             if s["id"] == step["id"]), {})
++            require(approved == step, key,
++                    "completed specification owner decision requires exact owner promotion",
++                    "WDQ-AUTHORITY")
++            for proof in step["completion_evidence"]:
++                if proof["kind"] in ("document", "review", "decision"):
++                    require(resolve_ref(tree, proof) == resolve_ref(authority, proof),
++                            proof["path"], "owner decision evidence changed after promotion",
++                            "WDQ-AUTHORITY")
++        boundary = next(r["boundary_ref"] for r in coverage["rows"] if r["frontier_key"] == key)
++        check_ref(boundary)
+@@ -25,9 +56,2 @@ def validate_specification_outputs(tree, items, coverage):
+-            resolve_ref(tree, reference)
+-            owners = {name for name, route in routes.items()
+-                      if reference["path"] in route["sources"] + route["consumers"]}
+-            require(bool(owners), reference["path"],
+-                    "completed specification output requires an owning evidence route",
+-                    "WDQ-AUTHORITY")
+-            for name in sorted(owners - checked):
+-                reviewed_route_members(tree, name, routes[name])
+-                checked.add(name)
++            check_ref(reference)
++        validate_clause_dispositions(tree, authority, item, step, clauses, refs, check_ref)
