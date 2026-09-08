@@ -366,6 +366,57 @@ replace a requested creation source. Migration suggestions likewise are not
 automatic value substitutions, and illustrated reserved controls/counts do not
 become production descriptors.
 
+## Revision history, standards claims and geometry proof limits
+
+At `b1c3657b`, seven further settings-route members were read completely:
+`docs/RESEARCH_TRACEABILITY.md`,
+`docs/gui/DATUM_RENDER_FIDELITY_AND_DFM_GEOMETRY.md`,
+`REVISION_SEQUENCING_AND_ORIGIN_RESEARCH.md`,
+`PRODUCT_REVISION_ENGINE_STANDARDS_MATRIX.md`,
+`PRODUCT_REVISION_ENGINE_RESEARCH.md`, `specs/PRODUCT_REVISION_ENGINE_SPEC.md`
+and `specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md`.
+
+The Revision specification's §12 and implementation plan's REV-I10/I17 explicitly
+mark permanent/default Revision presentation as superseded by PM038. Their
+remaining historical lists, the research's earlier permanent-Navigator approval
+and the human traceability matrix's old task-status summaries do not select work
+or restore execution authority. The structured Frontier remains the scheduling
+authority; the foundation contract must preserve the unmanaged baseline, not
+require release records before an ordinary edit/reopen test.
+
+For F5/F6/F7, the reviewed specification distinguishes technical revision/tip,
+human revision, baseline and release identities. A newer library definition is
+an uptake candidate, not authority to silently rebind a placed instance. A
+missing impact edge is Unknown, not evidence of no impact. Historical evidence
+remains tied to its frozen baseline. The foundation handoff must preserve these
+identity and provenance distinctions without claiming that the suspended broad
+Revision, dependency-graph or enterprise program is delivered.
+
+The implementation plan makes writer ownership a separately required decision
+if unresolved, and requires real-Project crash/recovery and unchanged mutation
+semantics. This supports retaining the existing write-ownership handoff; it does
+not establish that a writer decision or runtime proof already exists. Its
+source-health and single-service requirements also exclude using a private
+foundation editor or monolithic implementation as a shortcut.
+
+Two evidence-strength limits matter for the later contract:
+
+- The standards matrix distinguishes normative text, guidance, publisher scope
+  and Datum policy. The sequencing research's historic ASME examples cannot
+  supply missing licensed clauses or establish a current conformance profile.
+  No fresh external verification was performed here, and no edition or
+  certification claim is adopted from these local research summaries.
+- Render Fidelity Law 1 separates canonical manufacturable geometry from
+  presentation overlays. Selection glow/grid equality is not a CAM test.
+  Byte-identical release reproduction, canonical geometric equivalence and
+  visual equality are different proof predicates. The future DFM solver's
+  illustrative ratios and operating envelopes are not numerical acceptance
+  thresholds for the first exact edit, nor evidence that the solver exists.
+
+These findings constrain future F02 examples and handoffs. They do not amend
+ratified sources, refresh route digests, reopen withdrawn Revision UI or claim
+runtime, licensing, visual or production acceptance.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
@@ -373,8 +424,9 @@ contains 79 files. PM035 through PM040, `PROJECT_PREFERENCES_SPEC.md`, the share
 Units requirement, GP-C04, GP-C05, the V1 descriptor catalog, the five historical
 baseline files, the six typed-authority/history files, and the complete
 seed/context packet, three product-surface/acceptance files and seven supporting
-visual studies listed above have been read completely (33 files); the other
-46 files remain to review. No complete settings
+visual studies, plus the seven Revision/geometry/traceability members listed
+above have been read completely (40 files); the other 39 files remain to review.
+No complete settings
 route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
 mutation, identity and authoring
