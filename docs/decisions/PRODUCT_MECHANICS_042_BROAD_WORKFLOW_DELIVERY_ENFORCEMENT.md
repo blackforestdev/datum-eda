@@ -238,6 +238,14 @@ candidate preparation; neither they nor R03 approval are relabeled readiness.
 The exact mapping proposal is recorded separately and is not installed enrollment.
 Actual contract readiness, independent replay and I04 owner approval remain due.
 
+WDQ-TOOLS separates the already-authorized preparatory implementation portion of
+original I3 from producer verification: I02 -> TOOLS -> READY -> I03 -> REVIEW
+-> I04. Final readiness must inspect actual tooling inputs, so their construction
+cannot depend on that review already being complete. TOOLS is unmapped candidate
+preparation, not an alternative readiness, verification or activation checkpoint.
+Its development tests do not replace I03 proof or distinct replay. No product
+implementation, promotion, dependency or acceptance authority is added.
+
 Product C01 owners retain actual handler, fixture, domain scope and prerequisite
 review. Cohort mappings and scenario identities from the approved R03 packet are
 not native evidence. Preferences remains with its existing session until an exact

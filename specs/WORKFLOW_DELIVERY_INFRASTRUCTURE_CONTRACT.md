@@ -1,6 +1,7 @@
 # Workflow validator delivery contract
 
-Frontier: WORKFLOW-DELIVERY-IMPLEMENTATION / WDQ-I02, then WDQ-READY.
+Frontier: WORKFLOW-DELIVERY-IMPLEMENTATION / I02 preparation, WDQ-TOOLS,
+WDQ-READY, then I03 producer verification.
 Issue: `dat-wdq-rollout-implementation-ffy`.
 Route: `workflow-delivery-infrastructure`.
 Machine contract: `specs/workflow_delivery/rollout.contract.json`.
@@ -235,8 +236,9 @@ reach WDQ: construct valid non-prototype fixture paths for those cases.
 <!-- WDQ-INFRA-FIXTURE -->
 ## Fixture recipe and observation procedure
 
-The implementation unit in I03 must turn this reviewed procedure into retained,
-replayable inputs and capture tooling. This section is a procedure, not a claim
+WDQ-TOOLS must turn this reviewed procedure into retained, replayable inputs and
+capture tooling before final WDQ-READY review; I03 then produces the required
+verification evidence. This section is a procedure, not a claim
 that those inputs, tools or observations already exist.
 
 1. Freeze the exact assembled source commit, authority/base IDs, policy,
@@ -271,7 +273,7 @@ that those inputs, tools or observations already exist.
    these process invocations. Preserve real argv, cwd, exit/termination status,
    raw stdout/stderr and requested snapshot identity. No fixture success string
    can substitute for a child process's actual output.
-7. Observe actual dispatch into the contract's named Python functions. I03 capture
+7. Observe actual dispatch into the contract's named Python functions. The capture
    instrumentation must bind source file/function identity, interpreter binary,
    entry surface and invocation to real calls and retained raw outputs. Merely
    constructing a registry from the contract is not a production registry export;
@@ -299,7 +301,8 @@ that those inputs, tools or observations already exist.
 
 The matrix is the complete INFRA-S01..S06 prose, including every enumerated
 mutation and the proposed PM042 environment refusals, not just tests that already
-exist. I03 must inventory subcase IDs and expected codes before capture. Record
+exist. WDQ-TOOLS must bind subcase IDs and expected codes in the prepared runner
+before readiness review and I03 capture. Record
 inapplicability per entry point with a concrete reason: for example, a selector
 cannot certify intermediate candidate history, but the candidate CLI must test
 it. Do not mark whole scenario groups inapplicable to avoid missing coverage.

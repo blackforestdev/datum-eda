@@ -126,3 +126,19 @@ actual loaded Python/shared-library inputs require separate observed toolchain
 accounting. Future capture/fixture modules and environment files must be added
 when implemented before proof; this 76-file baseline does not certify those
 not-yet-existing files, completed readiness or full installation.
+
+## Construction/readiness sequencing correction
+
+The added readiness checkpoint exposed a workflow-plan loop: it demanded final
+capture/runtime inputs whose construction was scheduled only afterward in I03.
+The original R03 authorization already includes those workflow validators,
+fixture/capture support and promotion tools. WDQ-TOOLS now names that bounded
+preparatory implementation before final readiness. I03 retains actual producer
+verification after readiness; distinct replay and I04 activation remain later.
+The prior readiness review work is retained, but readiness stays pending rather
+than being marked complete from procedure prose or an observer inventory.
+
+This is an internal sequence correction, not a product-lane takeover, scope
+reduction, independent-review waiver or owner ratification. Preparation remains
+in the repository-local isolated candidate until exact owner promotion. The
+delivery mapping is unchanged; TOOLS is not a substitute mapped checkpoint.
