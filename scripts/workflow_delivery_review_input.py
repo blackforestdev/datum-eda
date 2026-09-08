@@ -1,6 +1,7 @@
 """Hostile synthetic proof/review INPUT; never actual replay or acceptance."""
 
 from workflow_delivery_authority import authority_sha256
+from workflow_delivery_evidence_shapes import review_sha256
 from workflow_delivery_io import canonical_json
 from workflow_delivery_proof import packet_sha256
 from workflow_delivery_tree import Tree
@@ -21,6 +22,7 @@ PROOF_INPUT_CASES = {
     "INFRA-S06-05.artifact": ("evidence/original-roles.json", "WDQ-RESULT", "roles must bind every sibling artifact exactly"),
 }
 REVIEW_INPUT_CASES = {
+    "INFRA-S04-10.authorized-nonblocking-deferral": (None, None, None),
     "INFRA-S04-02.implementation-session": (REVIEW_PATH, "WDQ-REVIEW", "reviewer not independent of implementation/original proof"),
     "INFRA-S04-02.producer-session": (REVIEW_PATH, "WDQ-REVIEW", "reviewer not independent of implementation/original proof"),
     "INFRA-S04-05.producer-defect": (REVIEW_PATH, "WDQ-DEFECT", "every proof defect requires review disposition"),
@@ -52,7 +54,23 @@ def prepare_review_input(f, variant):
     if variant in PROOF_INPUT_CASES:
         prepare_proof_input(f, tree, proof, variant)
         return
-    if variant.endswith(".implementation-session"):
+    if variant.endswith(".authorized-nonblocking-deferral"):
+        # Exact synthetic owner input before its fixture pin. Keep the defect
+        # in both proof and findings; no actual owner response is manufactured.
+        old_accept = f"ACCEPT TASK/A {review['packet_sha256']} {review_sha256(review)}"
+        proof["results"][0]["defects"] = ["dat-next"]
+        f.save(contract["proof_path"], proof)
+        review["packet_sha256"] = packet_sha256(contract, proof, authority_sha256(tree, contract))
+        receipt = review["owner_receipt"]["path"]
+        review["findings"] = [{"issue_id": "dat-next", "severity": "nonblocking",
+            "disposition_ref": {"path": receipt, "marker": "<!-- DEFERRAL -->"}}]
+        new_accept = f"ACCEPT TASK/A {review['packet_sha256']} {review_sha256(review)}"
+        raw = tree.read(receipt).decode()
+        if raw.splitlines().count(old_accept) != 1:
+            raise ValueError("exact original synthetic acceptance required")
+        f.write(receipt, (raw.replace(old_accept, new_accept) +
+            "\n<!-- DEFERRAL -->\n## Synthetic nonblocking disposition\nDEFER dat-next\n").encode())
+    elif variant.endswith(".implementation-session"):
         review["reviewer_session"] = "writer"
     elif variant.endswith(".producer-session"):
         review["reviewer_session"] = proof["producer_session"]

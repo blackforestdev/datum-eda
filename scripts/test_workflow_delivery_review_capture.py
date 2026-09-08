@@ -1,6 +1,7 @@
 """Review and acceptance-boundary refusals, not independent review proof."""
 
 import os
+import json
 from pathlib import Path
 import tempfile
 import unittest
@@ -25,6 +26,14 @@ class ReviewCaptureTest(unittest.TestCase):
                 packet = store / (variant + "-packet")
                 recipe = prepare_fixture(store / (variant + "-source"), packet, fixture_variant=variant)
                 self.assertEqual("accepted-history-and-review", recipe["fixture_family"])
+                if variant.endswith(".authorized-nonblocking-deferral"):
+                    source = store / (variant + "-source")
+                    review = json.loads((source / "docs/reviews/review.json").read_bytes())
+                    self.assertEqual(["dat-next"], [row["issue_id"] for row in review["findings"]])
+                    self.assertEqual("nonblocking", review["findings"][0]["severity"])
+                    contract = json.loads((source / "contract.json").read_bytes())
+                    proof = json.loads((source / contract["proof_path"]).read_bytes())
+                    self.assertEqual(["dat-next"], proof["results"][0]["defects"])
                 for surface in ("C", "R", "S-check", "S-details", "H"):
                     with self.subTest(case=variant, surface=surface):
                         for phase, source, case in (("refusal", packet, variant), ("recovery", baseline, "INFRA-S01-01")):
@@ -38,7 +47,10 @@ class ReviewCaptureTest(unittest.TestCase):
                             self.assertFalse(result["acceptance_asserted"])
                             self.assertNotIn(result["invocation_id"], identities)
                             identities.add(result["invocation_id"])
-            self.assertEqual(210, len(identities))
+                            if phase == "refusal" and variant.endswith(".authorized-nonblocking-deferral"):
+                                retained = json.loads((destination / "fixture/docs/reviews/review.json").read_bytes())
+                                self.assertEqual(review["findings"], retained["findings"])
+            self.assertEqual(220, len(identities))
 
 
 if __name__ == "__main__":
