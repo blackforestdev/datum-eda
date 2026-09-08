@@ -62,6 +62,45 @@ class TransactionPathsTest(unittest.TestCase):
         with self.assertRaises(DeliveryInputError):
             changed_production_paths(Tree(self.f.root), ["src"], base_ref=None)
 
+    def test_revision_range_keeps_reverted_and_deleted_intermediate_inputs(self):
+        original = self.f.root.joinpath("src/read.py").read_bytes()
+        self.f.write("src/read.py", b"intermediate change\n")
+        self.f.write("src/transient.py", b"temporary implementation\n")
+        self.f.stage()
+        self.f.git("commit", "-qm", "fixture intermediate inputs")
+        self.f.write("src/read.py", original)
+        self.f.git("rm", "src/transient.py")
+        self.f.stage()
+        self.f.git("commit", "-qm", "fixture net-zero source delta")
+        revision = self.f.git("rev-parse", "HEAD").decode().strip()
+        self.assertEqual(["src/read.py", "src/transient.py"],
+                         self.changed(Tree(self.f.root, revision=revision)))
+        # The ordinary next staged transaction is genuinely empty. It is not
+        # a retroactive certificate for the preceding commit sequence.
+        self.assertEqual([], changed_production_paths(
+            Tree(self.f.root, staged=True), ["src"], base_ref=revision))
+
+    def test_revision_range_refuses_nonancestor_base(self):
+        tree_id = self.f.git("rev-parse", "HEAD^{tree}").decode().strip()
+        sibling = self.f.git("commit-tree", tree_id, "-p", self.f.head,
+                             "-m", "fixture sibling").decode().strip()
+        other = self.f.git("commit-tree", tree_id, "-p", self.f.head,
+                           "-m", "fixture other sibling").decode().strip()
+        with self.assertRaisesRegex(DeliveryInputError, "must descend"):
+            changed_production_paths(Tree(self.f.root, revision=sibling), ["src"],
+                                     base_ref=other)
+
+    def test_merge_range_keeps_side_parent_source_edits(self):
+        self.f.write("src/read.py", b"side-parent edit\n")
+        self.f.stage()
+        side_tree = self.f.git("write-tree").decode().strip()
+        side = self.f.git("commit-tree", side_tree, "-p", self.f.head,
+                          "-m", "fixture side parent").decode().strip()
+        original_tree = self.f.git("rev-parse", self.f.head + "^{tree}").decode().strip()
+        merge = self.f.git("commit-tree", original_tree, "-p", self.f.head, "-p", side,
+                           "-m", "fixture merge retaining original tree").decode().strip()
+        self.assertEqual(["src/read.py"], self.changed(Tree(self.f.root, revision=merge)))
+
     def test_root_names_are_literal_not_glob_patterns(self):
         self.f.write("src/literal[1]/input.py", b"owned\n")
         self.f.write("src/literal1/input.py", b"not owned\n")

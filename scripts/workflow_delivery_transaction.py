@@ -10,6 +10,24 @@ from workflow_delivery_source_scopes import contains
 from workflow_delivery_tree import Tree
 
 
+def committed_production_paths(tree, roots, base_ref):
+    # Promotion inspects a commit sequence, not only its final net tree diff:
+    # add-then-delete and edit-then-revert still represent proposed mutations.
+    common = tree.git("merge-base", base_ref, tree.revision).decode().strip()
+    require(common == base_ref, "transaction",
+            "candidate must descend from the explicit transaction base", "WDQ-COVERAGE")
+    revisions = tree.git("rev-list", base_ref + ".." + tree.revision).decode().splitlines()
+    names = set()
+    for revision in revisions:
+        changed = tree.git("--literal-pathspecs", "diff-tree", "--root", "-m", "-r",
+                           "--no-commit-id", "--no-renames", "--name-only", "-z",
+                           revision, "--", *roots)
+        names.update(raw.decode("utf-8") for raw in changed.split(b"\0") if raw)
+    require(all(contains(roots, path) for path in names), "transaction",
+            "Git returned a path outside literal production roots", "WDQ-COVERAGE")
+    return names
+
+
 def changed_production_paths(tree, roots, *, base_ref):
     paths(roots, "production_roots")
     tree.has_commit(base_ref)
@@ -18,8 +36,11 @@ def changed_production_paths(tree, roots, *, base_ref):
         # Use captured index entries, not a fresh live-index diff. Repaired
         # worktree bytes or a later index change cannot replace this snapshot.
         names = set(base.entries) | set(tree.entries)
-        return sorted(path for path in names if contains(roots, path)
-                      and base.entries.get(path) != tree.entries.get(path))
+        changed = {path for path in names if contains(roots, path)
+                   and base.entries.get(path) != tree.entries.get(path)}
+        if tree.revision:
+            changed.update(committed_production_paths(tree, roots, base_ref))
+        return sorted(changed)
     changed = tree.git("--literal-pathspecs", "diff", "--no-ext-diff",
                        "--no-textconv", "--no-renames", "--name-only", "-z",
                        base_ref, "--", *roots)

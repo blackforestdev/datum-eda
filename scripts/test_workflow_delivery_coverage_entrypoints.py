@@ -42,11 +42,12 @@ class CoverageEntrypointsTest(unittest.TestCase):
         self.f.git("config", "datum.workflowDeliveryBaseRef", self.authority)
         self.f.git("config", "datum.workflowDeliveryEnvironmentPath", "requested-environment.json")
 
-    def cli(self):
+    def cli(self, candidate_ref=None):
         before = self.f.snapshot()
         output = io.StringIO()
         with redirect_stdout(output):
-            result = main(["--root", str(self.f.root), "--enforce", "--staged",
+            view = ["--candidate-ref", candidate_ref] if candidate_ref else ["--staged"]
+            result = main(["--root", str(self.f.root), "--enforce", *view,
                            "--authority-ref", self.authority, "--base-ref", self.authority,
                            "--environment-path", "requested-environment.json"])
         self.assertEqual(before, self.f.snapshot())
@@ -66,6 +67,23 @@ class CoverageEntrypointsTest(unittest.TestCase):
         self.assertEqual("src/unknown.py", report["findings"][0]["path"])
         self.assertTrue(any("no promoted scope" in e
                             for e in selector_failures(self.f.root, self.manifest)))
+
+    def test_candidate_sequence_cannot_hide_reverted_unscoped_source(self):
+        original = self.f.root.joinpath("src/read.py").read_bytes()
+        self.f.write("src/read.py", b"Unscoped intermediate implementation.\n")
+        self.f.stage()
+        self.f.git("commit", "-qm", "fixture unscoped intermediate source")
+        self.f.write("src/read.py", original)
+        self.f.stage()
+        self.f.git("commit", "-qm", "fixture restore final source")
+        candidate = self.f.git("rev-parse", "HEAD").decode().strip()
+        code, report = self.cli(candidate_ref=candidate)
+        self.assertEqual(1, code, report)
+        self.assertEqual("WDQ-COVERAGE", report["findings"][0]["code"])
+        self.assertEqual("src/read.py", report["findings"][0]["path"])
+        self.assertIn("no promoted scope", report["findings"][0]["detail"])
+        code, report = self.cli()
+        self.assertEqual(0, code, report)  # Empty new transaction, not history approval.
 
     def test_candidate_cannot_delete_coverage_or_self_grant_scope(self):
         policy = Tree(self.f.root).json("specs/workflow_delivery_policy.json")
