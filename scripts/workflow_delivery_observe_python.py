@@ -66,6 +66,8 @@ def main(argv=None):
     parser.add_argument("--source-root", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--function", action="append", required=True)
+    parser.add_argument("--no-script-path", action="store_true",
+                        help="target bootstrap verifies its modules before adding their directory")
     parser.add_argument("arguments", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
     if not (sys.flags.isolated and sys.flags.no_site and sys.flags.dont_write_bytecode):
@@ -107,7 +109,8 @@ def main(argv=None):
         outcome = {"kind": "returned", "exit_code": 0}
         try:
             sys.argv = [str(script), *arguments]
-            sys.path.insert(0, str(script.parent))
+            if not args.no_script_path:
+                sys.path.insert(0, str(script.parent))
             sys.setprofile(profile)
             runpy.run_path(str(script), run_name="__main__")
         except SystemExit as error:

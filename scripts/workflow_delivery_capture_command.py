@@ -16,7 +16,7 @@ from workflow_delivery_capture_state import protected_state
 from workflow_delivery_io import canonical_json, sha256
 
 ENV_KEYS = {"PATH", "HOME", "XDG_CONFIG_HOME", "LANG", "LC_ALL", "TZ",
-            "GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_GLOBAL", "PYTHONDONTWRITEBYTECODE"}
+            "GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_GLOBAL", "PYTHONDONTWRITEBYTECODE", "DATUM_WDQ_OBSERVE_PATH"}
 
 
 def save(path, value):

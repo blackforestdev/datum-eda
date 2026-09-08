@@ -94,6 +94,47 @@ class OwnerHookTest(unittest.TestCase):
         self.assertEqual(2, result.returncode)
         self.assertIn(b"Git directory differs", result.stderr)
 
+    def test_observed_hook_preserves_enforcement_and_records_actual_calls(self):
+        trace = self.store / "calls.jsonl"
+        result = self.hook(dict(self.environment, DATUM_WDQ_OBSERVE_PATH=str(trace)))
+        self.assertEqual(0, result.returncode, result.stdout + result.stderr)
+        events = [json.loads(line) for line in trace.read_bytes().splitlines()]
+        self.assertEqual("finish", events[-1]["event"])
+        self.assertTrue(events[-1]["profiler_still_installed"])
+        self.assertTrue(any(row["event"] == "call" and row["function"] == "main"
+            and row["source"]["path"] == str(self.locations["runner"]) for row in events))
+        original = trace.read_bytes()
+        self.assertEqual(2, self.hook(dict(self.environment, DATUM_WDQ_OBSERVE_PATH=str(trace))).returncode)
+        self.assertEqual(original, trace.read_bytes())
+
+    def test_observation_cannot_write_source_or_unrelated_git_metadata(self):
+        for trace in (self.root / "src/trace.jsonl", self.root / ".git/trace.jsonl"):
+            with self.subTest(trace=trace):
+                result = self.hook(dict(self.environment, DATUM_WDQ_OBSERVE_PATH=str(trace)))
+                self.assertEqual(2, result.returncode)
+                self.assertFalse(trace.exists())
+
+    def test_unpinned_bundle_module_is_not_imported_before_verification(self):
+        injected = self.locations["scripts"] / "pkgutil.py"
+        injected.write_text('print("UNPINNED MODULE EXECUTED")\n')
+        trace = self.store / "calls.jsonl"
+        result = self.hook(dict(self.environment, DATUM_WDQ_OBSERVE_PATH=str(trace)))
+        self.assertEqual(2, result.returncode)
+        self.assertIn(b"runtime module set differs", result.stderr)
+        self.assertNotIn(b"UNPINNED MODULE EXECUTED", result.stdout + result.stderr)
+
+    def test_altered_observer_is_rejected_before_execution(self):
+        observer = self.locations["scripts"] / "workflow_delivery_observe_python.py"
+        observer.chmod(0o644)
+        observer.write_text('print("ALTERED OBSERVER EXECUTED")\n')
+        observer.chmod(0o444)
+        trace = self.store / "calls.jsonl"
+        result = self.hook(dict(self.environment, DATUM_WDQ_OBSERVE_PATH=str(trace)))
+        self.assertEqual(2, result.returncode)
+        self.assertIn(b"changed pinned scripts/workflow_delivery_observe_python.py", result.stderr)
+        self.assertNotIn(b"ALTERED OBSERVER EXECUTED", result.stdout + result.stderr)
+        self.assertFalse(trace.exists())
+
 
 if __name__ == "__main__":
     unittest.main()

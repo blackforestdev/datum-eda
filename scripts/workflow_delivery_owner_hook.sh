@@ -35,5 +35,19 @@ wdq_verify() {
 wdq_verify scripts/workflow_delivery_owner_hook.sh "$wdq_hook"
 wdq_bootstrap="$wdq_store/scripts/workflow_delivery_bootstrap.py"
 wdq_verify scripts/workflow_delivery_bootstrap.py "$wdq_bootstrap"
-exec python3 -I -S -B "$wdq_bootstrap" --root "$wdq_repo" --authority-ref "$wdq_authority" \
-  --base-ref "$wdq_base" --environment-path "$wdq_environment" --runner "$wdq_runner"
+wdq_arguments=(--root "$wdq_repo" --authority-ref "$wdq_authority" --base-ref "$wdq_base" --environment-path "$wdq_environment" --runner "$wdq_runner")
+if [[ ${DATUM_WDQ_OBSERVE_PATH+x} ]]; then
+    wdq_trace=$DATUM_WDQ_OBSERVE_PATH
+    [[ $wdq_trace = /* && $(realpath -- "$wdq_trace") = "$wdq_trace" ]] || wdq_fail 'explicit canonical observation path required'
+    [[ ! -e $wdq_trace && ! -L $wdq_trace ]] || wdq_fail 'observation output already exists'
+    [[ $wdq_trace != "$wdq_repo/"* || $wdq_trace = "$wdq_common/datum-wdq/logs/"* ]] || wdq_fail 'observation cannot write worktree inputs'
+    [[ $wdq_trace != "$wdq_common/"* || $wdq_trace = "$wdq_common/datum-wdq/logs/"* ]] || wdq_fail 'observation cannot write Git metadata outside WDQ logs'
+    wdq_observer="$wdq_store/scripts/workflow_delivery_observe_python.py"
+    wdq_verify scripts/workflow_delivery_observe_python.py "$wdq_observer"
+    # No bundle directory enters sys.path until the authenticated bootstrap has
+    # verified the complete bundle. Observation does not disable enforcement.
+    exec python3 -I -S -B "$wdq_observer" --script "$wdq_bootstrap" --source-root "$wdq_store" \
+      --output "$wdq_trace" --function main --function _validate_delivery --function load_environments \
+      --no-script-path -- "${wdq_arguments[@]}"
+fi
+exec python3 -I -S -B "$wdq_bootstrap" "${wdq_arguments[@]}"

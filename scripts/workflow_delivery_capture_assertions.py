@@ -33,10 +33,8 @@ def capture_envelope(output, case_id, surface):
     return result, invocation
 
 
-def evaluate_capture(output, *, case_id, surface, expected_code, script,
-                     expected_path=None, expected_detail=None):
+def observer_calls(output, result, invocation, script, arguments):
     output, script = Path(output), Path(script).resolve(strict=True)
-    result, invocation = capture_envelope(output, case_id, surface)
     events = [parse_json(line, "calls.jsonl") for line in (output / "calls.jsonl").read_bytes().splitlines()]
     require(bool(events) and events[0]["event"] == "start" and events[-1]["event"] == "finish",
             "calls", "complete observer invocation required")
@@ -44,9 +42,14 @@ def evaluate_capture(output, *, case_id, surface, expected_code, script,
                 for row in events), "calls", "events do not belong to observed child")
     require(len({row["event_id"] for row in events}) == len(events), "calls", "reused event identity")
     require(events[-1]["profiler_still_installed"] is True, "calls", "observer was removed")
-    command = invocation["argv"]
-    require(command[command.index("--script") + 1] == str(script)
-            and events[0]["argv"] == [str(script), *command[command.index("--") + 1:]]
+    require(events[0]["flags"] == {key: 1 for key in
+            ("isolated", "no_site", "ignore_environment", "dont_write_bytecode")},
+            "calls", "isolated interpreter observation required")
+    observer = script.parent / "workflow_delivery_observe_python.py"
+    require(events[0]["observer"]["path"] == str(observer)
+            and events[0]["observer"]["sha256"] == sha256(observer.read_bytes()),
+            "calls", "observer source identity differs")
+    require(events[0]["argv"] == [str(script), *arguments]
             and events[0]["cwd"] == invocation["cwd"], "calls", "observer invocation differs")
     require(events[-1]["script_after"] == events[0]["script"], "calls", "runtime script changed")
     require(events[-1]["acceptance_asserted"] is False, "calls", "observer cannot assert acceptance")
@@ -58,6 +61,16 @@ def evaluate_capture(output, *, case_id, surface, expected_code, script,
     require(any(row["event"] == "call" and row["function"] == "main"
                 and row["source"] == events[0]["script"] for row in events),
             "calls", "actual entrypoint main invocation missing")
+    return events
+
+
+def evaluate_capture(output, *, case_id, surface, expected_code, script,
+                     expected_path=None, expected_detail=None):
+    output, script = Path(output), Path(script).resolve(strict=True)
+    result, invocation = capture_envelope(output, case_id, surface)
+    command = invocation["argv"]
+    require(command[command.index("--script") + 1] == str(script), "calls", "observer script differs")
+    observer_calls(output, result, invocation, script, command[command.index("--") + 1:])
     expected_status = 0 if expected_code is None else 1
     require(result["returncode"] == expected_status, "status", "unexpected exit status")
     report = parse_json((output / "stdout.bin").read_bytes(), "stdout.bin")

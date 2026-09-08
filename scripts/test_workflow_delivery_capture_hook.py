@@ -26,6 +26,7 @@ class HookCaptureTest(unittest.TestCase):
                     output = store / case_id
                     result = run_hook_case(packet, output, environment, case_id=case_id)
                     self.assertTrue(result["observation_matches_expected"])
+                    self.assertTrue(result["validator_entrypoint_observed"])
                     for key in ("handler_trace_complete", "child_tool_closure_complete",
                                 "complete_matrix", "acceptance_asserted"):
                         self.assertFalse(result[key])

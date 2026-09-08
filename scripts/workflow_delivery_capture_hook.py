@@ -1,12 +1,12 @@
 """Retain real owner-hook process observations on restored synthetic fixtures.
 
-This exercises the unmodified hook, not a replacement Python entry point. It
-does not yet supply handler traces or complete child/tool closure for I03 proof.
+This exercises the hook's pinned observer path. Complete contract-handler
+accounting and child/tool closure still remain separate I03 obligations.
 """
 
 from pathlib import Path
 
-from workflow_delivery_capture_assertions import capture_envelope
+from workflow_delivery_capture_assertions import capture_envelope, observer_calls
 from workflow_delivery_capture_command import capture_command, save
 from workflow_delivery_capture_fixture import restore_fixture
 from workflow_delivery_capture_mutations import CASES, changed_bytes, expected_detail
@@ -22,6 +22,21 @@ def evaluate_hook(output, *, case_id, hook):
     output = Path(output)
     result, invocation = capture_envelope(output, case_id, "H")
     require(invocation["argv"] == [str(hook)], "hook", "actual owner-hook entry required")
+    root = invocation["cwd"]
+    trust = parse_json((output / "before.json").read_bytes(), "before.json")["local_trust"]
+    scripts = Path(hook).parent.parent / "scripts"
+    arguments = ["--root", root, "--authority-ref", trust["datum.workflowDeliveryAuthorityRef"][0],
+                 "--base-ref", trust["datum.workflowDeliveryBaseRef"][0],
+                 "--environment-path", trust["datum.workflowDeliveryEnvironmentPath"][0],
+                 "--runner", trust["datum.workflowDeliveryRunnerPath"][0]]
+    require(invocation["environment"].get("DATUM_WDQ_OBSERVE_PATH") == str(output / "calls.jsonl"),
+            "hook", "exact observation output required")
+    events = observer_calls(output, result, invocation, scripts / "workflow_delivery_bootstrap.py", arguments)
+    runner = scripts / "check_workflow_delivery.py"
+    require(any(row["event"] == "call" and row["function"] == "main"
+                and row["source"]["path"] == str(runner)
+                and row["source"]["sha256"] == sha256(runner.read_bytes()) for row in events),
+            "hook", "actual pinned validator entrypoint was not observed")
     target, code = CASES[case_id]
     require(result["returncode"] == (0 if code is None else 1), "hook", "unexpected hook status")
     lines = (output / "stdout.bin").read_bytes().splitlines()
@@ -41,6 +56,7 @@ def evaluate_hook(output, *, case_id, hook):
     return {"case_id": case_id, "surface": "H", "invocation_id": result["invocation_id"],
             "observation_matches_expected": True, "result_sha256": sha256((output / "result.json").read_bytes()),
             "handler_trace_complete": False, "child_tool_closure_complete": False,
+            "validator_entrypoint_observed": True,
             "complete_matrix": False, "acceptance_asserted": False}
 
 
@@ -71,7 +87,8 @@ def run_hook_case(packet, destination, environment, *, case_id):
         mutation["after_hex"] = changed.hex()
         git(root, "add", "--", target)
     save(destination / "mutation.json", mutation)
-    capture_command(root, output, [str(locations["hook"])], environment,
+    observed_environment = dict(environment, DATUM_WDQ_OBSERVE_PATH=str(output / "calls.jsonl"))
+    capture_command(root, output, [str(locations["hook"])], observed_environment,
                     fixture_nonce=recipe["fixture_nonce"], case_id=case_id, surface="H",
                     untracked_roots=recipe["untracked_roots"], timeout=30)
     after = verify_bundle(root, authority)
