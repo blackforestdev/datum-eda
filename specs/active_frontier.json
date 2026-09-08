@@ -7892,7 +7892,7 @@
       "order": 48,
       "title": "Specify the first manual workflow foundation contracts",
       "issue_id": "dat-manual-foundation-contracts-fsw",
-      "governing_docs": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "docs/reviews/workflow-foundation/authority-review.md", "docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md"],
+      "governing_docs": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "docs/reviews/workflow-foundation/authority-review.md", "docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md", "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md"],
       "state": "in_progress",
       "authorization": "planning",
       "canonical_next": false,

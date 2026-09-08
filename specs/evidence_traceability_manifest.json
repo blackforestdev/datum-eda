@@ -25,6 +25,14 @@
       "review_note": "WDQ-F01 complete source/consumer review for the bounded repair of three missing consumer plans. Preserve complete product scope, ownership, prerequisites and planning authorization; explicit execution and acceptance boundaries remain pending. This new route does not change or remove any accepted pilot authority member, receipt or enforcement requirement. No prototype, runtime, product ratification, delivery enrollment or trust promotion."
     },
     {
+      "id": "foundation-manual-workflow",
+      "status": "in_progress",
+      "sources": ["research/process-quality/FOUNDATION_MANUAL_WORKFLOW_RESEARCH.md"],
+      "consumers": ["specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md"],
+      "reviewed_digest": "addbb41e61fab3130971619dd8edd8d443951b85192648ed63212061c5163ad7",
+      "review_note": "WDQ-F02 complete review of the new bounded research source and concrete draft contract, using the completed WDQ-F01 authority review. Inherited Units, selection, mutation and persistence rules are distinguished from proposed doorway/fixture/writer/gesture choices. Primary Linux interface research informs unresolved Project writer ownership, not a new mechanism or dependency approval. Visual-owner handoffs, exact prerequisite proposals and owner dispositions remain unfinished; no runtime, product acceptance, delivery enrollment, existing route or pilot authority change."
+    },
+    {
       "id": "research-governance-index",
       "status": "active",
       "sources": [
