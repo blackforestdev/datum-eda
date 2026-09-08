@@ -322,14 +322,59 @@ not supply a broad geometry numeric editor. Its accepted Units history cannot
 close F2 native authoring by implication. F01 must connect that shared exact
 service to the still-required field, mutation and ordinary-entry workflow.
 
+## Supporting visual studies and creation timing
+
+At `59ad6a28`, seven more settings-route prototypes were read in full textual
+source: `first-run-study.html`, `guided-setup-study.html`,
+`start-page-study.html`, `search-placement-study.html`,
+`preferences-store-placement-study.html`, `preferences-accessibility-study.html`
+and `preference-store-states-study.html`. The review included DOM, CSS and
+amendments after the original closing HTML. Opaque embedded WOFF2 payloads were
+elided from text output; font declarations were retained. This is not a new
+render, keyboard interaction test or native accessibility result.
+
+The first-run wizard and search-placement alternatives are superseded comparison
+material, not permission to reintroduce a wizard, reserved search results or a
+full-width search bar. The four-checkpoint guided setup and Start page remain
+deferred. Crucially, the Start-page file also contains a separately bounded
+`GP-CM03 NEW PROJECT UNITS GENESIS` form: the ordinary File → New Project
+doorway must not inherit a dependency on delivering the deferred Start page.
+
+Its G-A through G-H regions refine the seed timing obligations already reviewed:
+
+| Event boundary | Required distinction for the foundation consumer |
+| --- | --- |
+| Idle Start-page preview, before a creation request | A displayed preview is not itself a frozen creation snapshot |
+| Creation form submits a displayed generation as its expectation, but Global has changed | Refuse stale before genesis; retain name, location and focus; offer reread or an explicit factory choice, never silently substitute a newer seed |
+| Engine has acquired the accepted seed snapshot, then Global changes | Complete against the captured eight-key seed; later Global changes cannot alter the new Project's immutable receipt |
+
+The form describes keyboard traversal, radio-arrow selection, source/eight-value
+summary, assertive refusal without focus theft and non-color disabled/selected
+cues. The accessibility study supplies comparative narrow, reduced-motion,
+keyboard and announcement states, but static outlines and text are not evidence
+that the native accessibility tree or focus behavior works. These are separate
+future native-proof observations, not a screenshot-only acceptance criterion.
+
+The store-placement alternatives do not activate Manage Preferences. The
+store-states study illustrates corruption, import collisions, migration and
+restore under GP-C04; later activation boundaries still control availability.
+Its corruption panel distinguishes continuing authoring with preserved damaged
+machine data from a request to create using unreadable Global seeds. The latter
+must still refuse under the product creation contract unless the user explicitly
+chooses factory mode. “Authoring is unaffected” is not permission to silently
+replace a requested creation source. Migration suggestions likewise are not
+automatic value substitutions, and illustrated reserved controls/counts do not
+become production descriptors.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
 contains 79 files. PM035 through PM040, `PROJECT_PREFERENCES_SPEC.md`, the shared
 Units requirement, GP-C04, GP-C05, the V1 descriptor catalog, the five historical
 baseline files, the six typed-authority/history files, and the complete
-seed/context packet and three product-surface/acceptance files listed above have
-been read completely (26 files); the other 53 files remain to review. No complete settings
+seed/context packet, three product-surface/acceptance files and seven supporting
+visual studies listed above have been read completely (33 files); the other
+46 files remain to review. No complete settings
 route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
 mutation, identity and authoring
