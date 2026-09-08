@@ -8,7 +8,7 @@ import unittest
 from workflow_delivery_capture_cases import run_case
 from workflow_delivery_capture_fixture import prepare_fixture
 from workflow_delivery_capture_hook import run_hook_case
-from workflow_delivery_specification_input import SPECIFICATION_INPUT_CASES, SPEC_VALID
+from workflow_delivery_specification_input import SPECIFICATION_INPUT_CASES, SPEC_VALID, SPEC_PENDING
 
 
 class SpecificationCaptureTest(unittest.TestCase):
@@ -21,6 +21,13 @@ class SpecificationCaptureTest(unittest.TestCase):
                 recipe = prepare_fixture(store / (variant + "-source"), packet, fixture_variant=variant)
                 self.assertEqual("synthetic-specification-output", recipe["fixture_family"])
                 self.assertFalse((store / (variant + "-source") / "missing-future-proof.json").exists())
+                if variant == SPEC_PENDING:
+                    import json
+                    source = store / (variant + "-source")
+                    self.assertFalse((source / "docs/specification-matrix.json").exists())
+                    manifest = json.loads((source / "specs/active_frontier.json").read_bytes())
+                    self.assertTrue(all(step["status"] == "pending" for step in
+                                        manifest["frontier"][1]["completion"]["steps"]))
                 packets[variant] = packet
             runtime = Path(__file__).resolve().parents[1]
             environment = {"PATH": os.defpath, "HOME": str(store), "XDG_CONFIG_HOME": str(store),
@@ -31,7 +38,7 @@ class SpecificationCaptureTest(unittest.TestCase):
                     with self.subTest(case=variant, surface=surface):
                         runs = [("case", packet, variant)]
                         if SPECIFICATION_INPUT_CASES[variant][1] is not None:
-                            valid = "INFRA-S03-09.pending-owner-valid" if variant.startswith("INFRA-S03-09.") else SPEC_VALID
+                            valid = "INFRA-S03-09.pending-owner-valid" if variant.startswith(("INFRA-S03-09.", "INFRA-S03-08.")) else SPEC_VALID
                             runs.append(("recovery", packets[valid], valid))
                         for phase, source, case in runs:
                             destination = store / (variant + surface + phase)
@@ -44,7 +51,7 @@ class SpecificationCaptureTest(unittest.TestCase):
                             self.assertFalse(result["acceptance_asserted"])
                             self.assertNotIn(result["invocation_id"], identities)
                             identities.add(result["invocation_id"])
-            self.assertEqual(60, len(identities))
+            self.assertEqual(95, len(identities))
 
 
 if __name__ == "__main__":

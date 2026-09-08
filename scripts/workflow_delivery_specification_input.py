@@ -3,12 +3,19 @@
 from copy import deepcopy
 
 from project_status import render_block
-from workflow_delivery_clause_test_support import inventory, matrix, refresh
+from workflow_delivery_clause_test_support import govern, inventory, matrix, refresh
 from workflow_delivery_readiness_input import READY_VALID, prepare_readiness
+from workflow_delivery_tree import Tree
+from workflow_delivery_io import sha256
 
 SPEC_VALID = "INFRA-S03-07.complete-matrix"
+SPEC_PENDING = "INFRA-S03-10.pending-authorship"
+PROPOSAL = "docs/decisions/PRODUCT_MECHANICS_999_FIXTURE.md"
 SPECIFICATION_INPUT_CASES = {
     SPEC_VALID: (None, None, None),
+    SPEC_PENDING: (None, None, None),
+    "INFRA-S03-08.unratified-proposal": (PROPOSAL, "WDQ-AUTHORITY",
+                                        "ratification requires owner-promoted controlling doctrine"),
     "INFRA-S03-07.omitted-clause": ("docs/specification-matrix.json", "WDQ-COVERAGE",
                                     "matrix must dispose every clause for the completed step"),
     "INFRA-S03-07.duplicate-disposition": ("docs/specification-matrix.json", "WDQ-COVERAGE",
@@ -19,12 +26,20 @@ SPECIFICATION_INPUT_CASES = {
                                   "open clause requires a pending explicit owner-decision step"),
     "INFRA-S03-09.planning-owner": ("docs/specification-matrix.json", "WDQ-COVERAGE",
                                     "open clause requires a pending explicit owner-decision step"),
+    "INFRA-S03-09.completed-owner": ("docs/specification-matrix.json", "WDQ-COVERAGE",
+                                     "open clause requires a pending explicit owner-decision step"),
+    "INFRA-S03-09.non-dependent-owner": ("docs/specification-matrix.json", "WDQ-COVERAGE",
+                                         "owner decision must depend on the authored step"),
 }
 
 
 def prepare_specification_input(f, manifest, policy, variant):
     if variant not in SPECIFICATION_INPUT_CASES:
         raise ValueError("explicit implemented specification-input variant required")
+    if variant == SPEC_PENDING:
+        # Keep the original pending inventory; create no authored output,
+        # completed step, future proof or owner decision.
+        return
     prepare_readiness(f, manifest, policy, READY_VALID)
     item = manifest["frontier"][1]
     del item["completion"]["delivery"]
@@ -46,8 +61,29 @@ def prepare_specification_input(f, manifest, policy, variant):
         f.save("docs/specification-inventory.json", clauses)
         target = {"INFRA-S03-09.pending-owner-valid": "NEXT-C02",
                   "INFRA-S03-09.absent-owner": "ABSENT",
-                  "INFRA-S03-09.planning-owner": "NEXT-C03"}[variant]
+                  "INFRA-S03-09.planning-owner": "NEXT-C03",
+                  "INFRA-S03-09.completed-owner": "NEXT-C02",
+                  "INFRA-S03-09.non-dependent-owner": "NEXT-C02"}[variant]
         dispositions["dispositions"][0].update(disposition="pending_owner", owner_step_id=target)
+        owner = item["completion"]["steps"][1]
+        if variant.endswith(".completed-owner"):
+            owner.update(status="complete", completion_evidence=[{"kind": "review", **f.ref}])
+            item["completion"]["canonical_next_step_id"] = "NEXT-C03"
+            item["authorization"] = "planning"
+        elif variant.endswith(".non-dependent-owner"):
+            owner["depends_on"] = []
+    elif variant.endswith(".unratified-proposal"):
+        clauses["clauses"][0]["requires_owner_decision"] = True
+        f.save("docs/specification-inventory.json", clauses)
+        raw = b"<!-- PROPOSED -->\nSynthetic proposal only; no controlling ratification.\n"
+        f.write(PROPOSAL, raw)
+        govern(f, PROPOSAL)
+        routes = Tree(f.root).json("specs/evidence_traceability_manifest.json")
+        routes["routes"].append({"id": "unratified-proposal", "sources": [PROPOSAL], "consumers": [],
+            "reviewed_digest": sha256(PROPOSAL.encode() + b"\0" + raw + b"\0")})
+        f.save("specs/evidence_traceability_manifest.json", routes)
+        dispositions["dispositions"][0].update(disposition="ratified", owner_step_id=None,
+            evidence_refs=[{"path": PROPOSAL, "marker": "<!-- PROPOSED -->"}])
     elif variant.endswith(".non-inventory-boundary"):
         # A general authority document is not a declared clause inventory.
         # Leave unused fixture artifacts intact; this tests the boundary reference.
