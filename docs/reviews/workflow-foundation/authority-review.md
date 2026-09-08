@@ -730,6 +730,35 @@ CAM scaling failure or authority for the proposed one-line fix. Both require
 owning-lane work and independently grounded proof. No runtime files, manufacturing
 contract, protected HTML, source digest or Preferences acceptance were changed.
 
+## Project Working Units visual target boundary
+
+`project-preferences-category-study.html` was read completely, including its
+two long minified P-A–P-J lines, CSS/responsive rules and original category
+comparison. The target explicitly remains open for owner review; the historical
+category inventory below its divider is clay. A schema's existence or a count
+of code references does not authorize a populated category, and its historical
+Global read-only mirror claim does not override PM039's separate doorway.
+
+The target draws one Project Preferences terminal command, disabled with a reason
+without an open Project; Units belongs inside its owned input-modal window,
+never the Navigator or another submenu. Its eight independently exposed controls
+retain per-quantity Automatic resolution and cross-system disclosure. Reset
+reads immutable seed/migration provenance, submits a journaled undoable Project
+change, and never reads current Global defaults or changes the receipt. Missing
+receipt data makes Reset unavailable rather than guessed.
+
+P-G makes stale generation an explicit refusal followed by re-read, not a retry
+of the rejected edit. P-E/P-F mark all eight unreadable controls independently
+with text, glyph and dashed outlines. P-E illustrates session use of recorded
+seed values while preserving the damaged profile; the full failure contract
+must also cover an unreadable receipt, not infer an unconditional fallback from
+this single case. The design-authoring-preserved claim still needs native proof.
+P-I/P-J specify rail/search/control order, contextual Reset placement, scoped
+Escape handling and per-selector accessible states. The 980-pixel responsive
+rule changes the rail/row layout; HTML labels and inventory tables are not proof
+that the native accessibility tree or narrow layout meets those requirements.
+No open visual target was accepted, edited or promoted into GP-CM05V scope.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
@@ -741,8 +770,9 @@ visual studies, plus the seven Revision/geometry/traceability members listed
 above, the four execution packets and four identity/title-block/audit members
 plus the detailed authority/offline/impact contracts and four workspace/Publish
 members plus the GUI contract, Revision visual brief and prototype inventory,
-and the six agent/clay/carry-forward studies plus both grid studies above
-have been read completely (66 files); the other 13 files remain to
+and the six agent/clay/carry-forward studies, both grid studies and the Project
+Working Units category study above
+have been read completely (67 files); the other 12 files remain to
 review. No complete settings route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
 mutation, identity and authoring
