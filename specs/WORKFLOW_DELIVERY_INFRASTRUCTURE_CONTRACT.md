@@ -40,8 +40,9 @@ The stable authority closure contains this specification, its machine contract,
 the local evidence review and PM042. Progress, mapping proposals, runtime proof,
 review and owner receipts are separate operational records. Normative changes
 invalidate proof; recording a result must not rewrite its own requirements.
-No new inventory schema is introduced: PM041 contract schema 1 and the prepared
-version-2 checkpoint mapping are reused.
+PM041 contract schema 1 and the prepared version-2 checkpoint mapping are reused.
+The proposed PM042 environment-selection/headless extension is separate from
+contract shape and remains unimplemented until its candidate work is verified.
 
 <!-- WDQ-INFRA-FOUNDATIONS -->
 ## Foundation dispositions
@@ -129,6 +130,16 @@ a running isolated invocation, record termination and protected-state hashes,
 then invoke a valid fresh case successfully. Repeat after a refusal. No automatic
 claim, digest refresh, index repair, owner receipt, config update or destructive
 rollback is permitted.
+
+Resolve `dat-wdq-environment-scope-kgq` using the proposed PM042 environment
+section before producing mixed-enrollment proof. Exercise the unchanged accepted
+pilot environment alongside a distinct observed headless infrastructure
+environment through CLI, selector and owner-hook paths. Selection is explicit
+per enrolled identity and pinned to owner-selected authority, never inferred
+from candidate proof. Include every environment-shape, selection, identity,
+toolchain and authority refusal listed in that section. Pipes have no terminal
+dimensions; an actual PTY records character columns/rows, not fictitious pixels.
+Headless infrastructure must not weaken product native evidence requirements.
 
 <!-- WDQ-INFRA-LIMITS -->
 ## Remaining obligations and proof storage

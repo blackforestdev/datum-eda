@@ -929,3 +929,19 @@ I03 tooling and producer verification, distinct independent review, exact I04
 owner activation including the Preferences boundary, actual enrollment and full
 adoption of all three cohorts, and I06 acceptance remain mandatory. No product
 owner, dependency, license obligation, prototype or installed authority changes.
+
+### WDQ-READY — environment contract proposal, not readiness completion
+
+`dat-wdq-environment-scope-kgq` now has a proposed resolution in PM042's
+`WDQ-042-ENVIRONMENTS` section, reconciled with the infrastructure source and
+INFRA-S06 contract. Schema-2 selection binds each enrolled identity to an exact
+owner-pinned environment Blob. The infrastructure-only headless shape records
+real interpreter/Git identities and pipes or actual PTY dimensions; it cannot
+replace product GUI evidence. Existing PM041 pilot objects and installed
+configuration remain unchanged. The new selection-file inventory is registered
+at zero instances, not filled with fictional environments.
+
+Implementation, malformed/mixed-enrollment tests, real CLI/selector/hook proof
+and independent replay remain outstanding. The issue stays open. WDQ-READY
+still needs the full fixture recipe, input closure and scenario review before
+its completion; this proposed mechanism is subject to exact I04 ratification.
