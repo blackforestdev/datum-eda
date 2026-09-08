@@ -984,3 +984,25 @@ External interpreter/tool/shared-library identity and future capture-module/data
 closure are explicitly separate. No runtime, Rust file, product record, policy
 or installed hook changed. Final capture/toolchain accounting remains necessary
 before infrastructure readiness and producer proof can be claimed.
+
+### WDQ-READY — observed toolchain preflight
+
+`docs/reviews/workflow-delivery-rollout/toolchain-preflight.json` records actual
+read-only executable/version/hash observations for Python, Git, bash, realpath
+and rustfmt at main baseline `2f27e5ec`. It retains exact observer commands,
+startup flags, non-TTY state, 53 observer module files and 16 mapped files.
+These are observations of the preflight process, not the delivery validator,
+child tools or future capture process, and not a complete proof input closure.
+
+The initial rustfmt lookup resolved its launcher to rustup and therefore obtained
+rustup's version. The record preserves that mistake and its correction:
+`rustup which rustfmt` located the installed formatter, whose actual binary and
+version were then read. No tool was fetched, installed or updated. Future capture
+must distinguish dispatch launchers from executed tools and observe the real
+runtime dependencies; a plausible path or interpreter hash alone is insufficient.
+
+This operational record stays outside the infrastructure contract's authority
+closure. It supplies no environment-selection instance, build receipt, fixture,
+native event, independent review or owner approval. WDQ-READY remains incomplete
+pending binding of the final capture/source/runtime inputs and actual readiness
+validation; no product or installed-trust state changed.

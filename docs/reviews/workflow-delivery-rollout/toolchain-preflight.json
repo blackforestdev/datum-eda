@@ -1,0 +1,353 @@
+{
+  "schema_version": 1,
+  "record_type": "toolchain_preflight",
+  "marker": "WDQ-READY-TOOLCHAIN-PREFLIGHT",
+  "observed_at": "2026-09-08T15:23:10.208666+00:00",
+  "main_ref": "2f27e5ec8abe62baf160ccaf6dbb980db3f5015f",
+  "tools": [
+    {
+      "name": "python3",
+      "path": "/usr/bin/python3.13",
+      "sha256": "17b78e0a93175e86f9ac03141924fd7a7f0c0c52e66b34bfa0de20ffef989df1",
+      "version": "Python 3.13.5"
+    },
+    {
+      "name": "git",
+      "path": "/usr/bin/git",
+      "sha256": "356db14e102d68a1a37d8a1ac577dfd678d45d46e92f468bef8b7154e7bfdc60",
+      "version": "git version 2.47.3"
+    },
+    {
+      "name": "bash",
+      "path": "/usr/bin/bash",
+      "sha256": "223fe8564b60636bc738b6178d3ba9a50ef7d791266b0efae6363bb716e4c47f",
+      "version": "GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)"
+    },
+    {
+      "name": "realpath",
+      "path": "/usr/bin/realpath",
+      "sha256": "43708156c6862ae153685c621c4b9c601ae3f77fefa737cf2f47f3a0f5afaf24",
+      "version": "realpath (GNU coreutils) 9.7"
+    },
+    {
+      "name": "rustfmt",
+      "path": "/home/bfadmin/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustfmt",
+      "sha256": "c7d4d911e75fa66321fd04ac81cf6ea1b3a2c759efe39e61caccb10f3c850918",
+      "version": "rustfmt 1.8.0-stable (01f6ddf758 2026-02-11)",
+      "launcher": "/usr/bin/rustfmt",
+      "resolver_command": [
+        "rustup",
+        "which",
+        "rustfmt"
+      ]
+    }
+  ],
+  "python_flags": {
+    "ignore_environment": 1,
+    "no_user_site": 1,
+    "no_site": 1,
+    "dont_write_bytecode": 1
+  },
+  "stdin_isatty": false,
+  "stdout_isatty": false,
+  "observer_python_module_files": [
+    {
+      "path": "/usr/lib/python3.13/_collections_abc.py",
+      "sha256": "2cfe340c4cf54077f054cd366a2c7a515e9ee8da7d8b3fa071251f280034756d"
+    },
+    {
+      "path": "/usr/lib/python3.13/_compression.py",
+      "sha256": "3ad5d60627477a60939ee44fc1bb3a05dbe8fb52f0f75039b8f5d8f1a278b981"
+    },
+    {
+      "path": "/usr/lib/python3.13/_weakrefset.py",
+      "sha256": "91895a451d06e9f521a1171b31b9b19bc9740f35af00d4fa106338ab7167c9ac"
+    },
+    {
+      "path": "/usr/lib/python3.13/abc.py",
+      "sha256": "e558702a95cdce3febd289da021715d2b92bc43995b8a1bc58dfa1c3d8010287"
+    },
+    {
+      "path": "/usr/lib/python3.13/bz2.py",
+      "sha256": "b217459e4c74ccb3da3a44b51dd335cfddcbe9d3014b3279dda1c1a7ca448c08"
+    },
+    {
+      "path": "/usr/lib/python3.13/codecs.py",
+      "sha256": "514b00fe93120b4face4508351aa9f1246ecc808c4da3e599dfee7430fe459f9"
+    },
+    {
+      "path": "/usr/lib/python3.13/collections/__init__.py",
+      "sha256": "2347f647577b6c11b82fc48fa4a1744f7af1af87f15942f92b7cc4410f0a817b"
+    },
+    {
+      "path": "/usr/lib/python3.13/contextlib.py",
+      "sha256": "c1e0d67b2007de11ae93cd36cf6faf38d9ab32656a832d592a49325eec579f96"
+    },
+    {
+      "path": "/usr/lib/python3.13/copyreg.py",
+      "sha256": "c8eda41f05c6bf95a4da4726a530409d2485ae060b8d019b3a8034389a15d3e9"
+    },
+    {
+      "path": "/usr/lib/python3.13/datetime.py",
+      "sha256": "ef20dc6b3554cd585dddffdc573f1f9a7a54c522f2a3fb4576c44edbb1e14238"
+    },
+    {
+      "path": "/usr/lib/python3.13/encodings/__init__.py",
+      "sha256": "78c4744d407690f321565488710b5aaf6486b5afa8d185637aa1e7633ab59cd8"
+    },
+    {
+      "path": "/usr/lib/python3.13/encodings/aliases.py",
+      "sha256": "cac92d68c7ea5bc0f05b448b9144e3bdf236d0b7d27ab66112e96d43aad15b3f"
+    },
+    {
+      "path": "/usr/lib/python3.13/encodings/utf_8.py",
+      "sha256": "ba0cac060269583523ca9506473a755203037c57d466a11aa89a30a5f6756f3d"
+    },
+    {
+      "path": "/usr/lib/python3.13/enum.py",
+      "sha256": "419c011ac6db4efd60e737db7cbba83eb67110ed20d91781f7c60cdeed61e0b6"
+    },
+    {
+      "path": "/usr/lib/python3.13/fnmatch.py",
+      "sha256": "95391dac2ce9f60084d65eba2f4b9d9735e28136d55b684e1fde7d6342555963"
+    },
+    {
+      "path": "/usr/lib/python3.13/functools.py",
+      "sha256": "7aa8725afbe9b9fc47a825b4e7c0330fa374432f481d7be8202b96f56eeac9a0"
+    },
+    {
+      "path": "/usr/lib/python3.13/genericpath.py",
+      "sha256": "cdac5a68dd738051e0d66fc81d5947d6a1776248fc6fe862253477608d870ec4"
+    },
+    {
+      "path": "/usr/lib/python3.13/glob.py",
+      "sha256": "3399f242a9bfb4e0b2b8bbbcdc0231487e453a861f4a4ca109c2a560e05698e8"
+    },
+    {
+      "path": "/usr/lib/python3.13/hashlib.py",
+      "sha256": "f129b330e6ab878a96085843b3606acd7d157b8fe6edfa15e37fa13988cef19c"
+    },
+    {
+      "path": "/usr/lib/python3.13/importlib/_bootstrap_external.py",
+      "sha256": "6cfeeeb243d340a6fa551e73f1752e9d45155dfc529631ce485b9948def20e8e"
+    },
+    {
+      "path": "/usr/lib/python3.13/io.py",
+      "sha256": "7cec3cb8ac004058dd0a5af246e6d950fb59c7ddd0058fda48bcb3fcb98d8822"
+    },
+    {
+      "path": "/usr/lib/python3.13/json/__init__.py",
+      "sha256": "d5d41e2c29049515d295d81a6d40b4890fbec8d8482cfb401630f8ef2f77e4d5"
+    },
+    {
+      "path": "/usr/lib/python3.13/json/decoder.py",
+      "sha256": "6d95679fccf178f2af9e9eead42f8efb084c58735951dc47fce89aec11d44955"
+    },
+    {
+      "path": "/usr/lib/python3.13/json/encoder.py",
+      "sha256": "4b24ae9c0efbe73272f6a891054b2f40cc6e07c3c9957b33a2ebc8da130e671e"
+    },
+    {
+      "path": "/usr/lib/python3.13/json/scanner.py",
+      "sha256": "572958017eae8842eeddd0e3d18d3c56cc0a197348224915e1d87ce937841764"
+    },
+    {
+      "path": "/usr/lib/python3.13/keyword.py",
+      "sha256": "18c2be738c04ad20ad375f6a71db34b3823c7f40b0340f5294d0e89f3c9b093b"
+    },
+    {
+      "path": "/usr/lib/python3.13/lib-dynload/_bz2.cpython-313-x86_64-linux-gnu.so",
+      "sha256": "1a5aa6f0bc1b1b2ddd771173d6c4f610c3c32e54e810d566ef4a27d3a3f2b4ff"
+    },
+    {
+      "path": "/usr/lib/python3.13/lib-dynload/_hashlib.cpython-313-x86_64-linux-gnu.so",
+      "sha256": "0ca6f1e697999ea9a54dcfe92f993a7d3cca25d35574c10e123de08eef98ef17"
+    },
+    {
+      "path": "/usr/lib/python3.13/lib-dynload/_lzma.cpython-313-x86_64-linux-gnu.so",
+      "sha256": "1c5465e765d4097d8c73d49ef151569dd8d512f2653835f27538a1ad568b76b0"
+    },
+    {
+      "path": "/usr/lib/python3.13/locale.py",
+      "sha256": "ccffa53357828663c7a9d3f6817aab92dab378eaa950b460a72401d842f74365"
+    },
+    {
+      "path": "/usr/lib/python3.13/lzma.py",
+      "sha256": "6a923ba49b33897152a9398d2a39d08670238290c90c050b8f4d838046339db5"
+    },
+    {
+      "path": "/usr/lib/python3.13/ntpath.py",
+      "sha256": "7c5c992b1b52f97d7dc73ad09ea8b97917475e7e4474563379e71b03015f04ca"
+    },
+    {
+      "path": "/usr/lib/python3.13/operator.py",
+      "sha256": "c048f8a6852832d5fa750d6ae772d7658c52c3511d261cb902f7edfd262e9127"
+    },
+    {
+      "path": "/usr/lib/python3.13/os.py",
+      "sha256": "b6b68783d438ff044c096fd0c3d1dfc9479a9b632e0a450a376be6c01655aafe"
+    },
+    {
+      "path": "/usr/lib/python3.13/pathlib/__init__.py",
+      "sha256": "07921047886282e3d324acf95f7d9f840faa806664ee7007e7333a7df4cdcaf6"
+    },
+    {
+      "path": "/usr/lib/python3.13/pathlib/_abc.py",
+      "sha256": "75e6bc728013d11446126d535f92b8907fb6dae7404df3d0268ac7b6865a2090"
+    },
+    {
+      "path": "/usr/lib/python3.13/pathlib/_local.py",
+      "sha256": "d147f1b179b684138519b31cddebec8fe1d6e9e576d37bd672e9c1519591aeec"
+    },
+    {
+      "path": "/usr/lib/python3.13/posixpath.py",
+      "sha256": "69acb9e294987cd6056a2237048373cf8d6201faf1e43a49c38889b47d2fb28e"
+    },
+    {
+      "path": "/usr/lib/python3.13/re/__init__.py",
+      "sha256": "dbe158a677c6aaacf717ea2abc23c56233453d38024aef75b7c3d93612cabb93"
+    },
+    {
+      "path": "/usr/lib/python3.13/re/_casefix.py",
+      "sha256": "1b12d9136f23db6c3f6f26053fefc15ca964b886838c7b9c1fabf8d2efc1e5c8"
+    },
+    {
+      "path": "/usr/lib/python3.13/re/_compiler.py",
+      "sha256": "83537237a82294d084d40abaa42e86149be33eef338a5ef028a7fd2fad0dafd5"
+    },
+    {
+      "path": "/usr/lib/python3.13/re/_constants.py",
+      "sha256": "1dbe236d34fa934e3e7172ba9d6b0dcfab338ecf7717f370f1fd4a9d24b2ecdb"
+    },
+    {
+      "path": "/usr/lib/python3.13/re/_parser.py",
+      "sha256": "c7a6c80b3b448f50684c320265a7b5efb5d0b1daf0a36fb5dee8dd83628359d7"
+    },
+    {
+      "path": "/usr/lib/python3.13/reprlib.py",
+      "sha256": "af33116cdd0d8baf2d5d41d9e6eafa9f5a0b7fb5af7e7343218877a04965f2f3"
+    },
+    {
+      "path": "/usr/lib/python3.13/selectors.py",
+      "sha256": "4b8a60cfbb619d080f87dffe1578372e56e8c0ac826f043224a154cf7b77606d"
+    },
+    {
+      "path": "/usr/lib/python3.13/shutil.py",
+      "sha256": "ce110d23884b9bdc75f7b1654dbd2d7cf5d6762046a4cf8c316b96fd937d1e0b"
+    },
+    {
+      "path": "/usr/lib/python3.13/signal.py",
+      "sha256": "0363c964c90ac0b3e515de5749205e6e6454051a1211058375d84d91eab6071a"
+    },
+    {
+      "path": "/usr/lib/python3.13/stat.py",
+      "sha256": "f76eaa7f02d6ef4a8c3c3e82cae34ed72870b643b8c94937a34c697d1e9d6ca2"
+    },
+    {
+      "path": "/usr/lib/python3.13/subprocess.py",
+      "sha256": "21ecc4c8f4fcf641974fc0d9cc28e97b07670ed1cef7e9d96769b31bb8345586"
+    },
+    {
+      "path": "/usr/lib/python3.13/threading.py",
+      "sha256": "61e1cd79adb93cfacf69dc3900ea99fbc8042d65f3742233c07c5707e39add84"
+    },
+    {
+      "path": "/usr/lib/python3.13/types.py",
+      "sha256": "74516af714d270b59d67e5ae5e60a02cb4ff32ecdd373e165ad1d780fbfd2c5d"
+    },
+    {
+      "path": "/usr/lib/python3.13/warnings.py",
+      "sha256": "1fc53fd4ecec5e32214116b1fe02c3ef1509ab0e57661f79d98ef3a598ec87bd"
+    },
+    {
+      "path": "/usr/lib/python3.13/zipimport.py",
+      "sha256": "ec9f157ff6d4ebd26a6fd1715247578068b5af2799d07ecf06f2b531a5605e13"
+    }
+  ],
+  "observer_mapped_files": [
+    {
+      "path": "/usr/bin/python3.13",
+      "sha256": "17b78e0a93175e86f9ac03141924fd7a7f0c0c52e66b34bfa0de20ffef989df1"
+    },
+    {
+      "path": "/usr/lib/locale/C.utf8/LC_CTYPE",
+      "sha256": "1257597210f43630e7c8a745ae95127e96b93a43515ac5163cab459ddc1664b3"
+    },
+    {
+      "path": "/usr/lib/locale/locale-archive",
+      "sha256": "4c3b8c3ae5e03113701a5e760ca2135573679e212e048a578d04c1651cee43c0"
+    },
+    {
+      "path": "/usr/lib/python3.13/lib-dynload/_bz2.cpython-313-x86_64-linux-gnu.so",
+      "sha256": "1a5aa6f0bc1b1b2ddd771173d6c4f610c3c32e54e810d566ef4a27d3a3f2b4ff"
+    },
+    {
+      "path": "/usr/lib/python3.13/lib-dynload/_hashlib.cpython-313-x86_64-linux-gnu.so",
+      "sha256": "0ca6f1e697999ea9a54dcfe92f993a7d3cca25d35574c10e123de08eef98ef17"
+    },
+    {
+      "path": "/usr/lib/python3.13/lib-dynload/_lzma.cpython-313-x86_64-linux-gnu.so",
+      "sha256": "1c5465e765d4097d8c73d49ef151569dd8d512f2653835f27538a1ad568b76b0"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/gconv/gconv-modules.cache",
+      "sha256": "52c227df9d53248238602c1ddaccd2c8ddc4cc6a61aa45d7c425af590b8806a5"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+      "sha256": "438c546d8e8cc48496bf3a95f753051afd9db66a629a74e31a9ded71586b56e0"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libbz2.so.1.0.4",
+      "sha256": "c630f057efedc12f848710d71f40283895591e5b4608539f387895c64e0553da"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+      "sha256": "fa430b8f298f817a266046af84a77533185ad6fc4406c7d3787b5a0a0c207826"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libcrypto.so.3",
+      "sha256": "8bb5f3fdffe280d4453eb79a4663c2c47af70b7c247fe2e94e2da703cee1fd3d"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libexpat.so.1.12.3",
+      "sha256": "0fd7d092bd0bf5dcc29f31daaba2bad993b0d18a1ab771fb844e0a6dfa8efe18"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/liblzma.so.5.8.1",
+      "sha256": "01e05a4b5268805a10a2414a8904fb1fb45c60626dce53b5ea19c1d491049b99"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libm.so.6",
+      "sha256": "6d567d53e895273ca14a1f9dc164fc6c8d39aed2f60aa46a733c2784228915f3"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libz.so.1.3.1",
+      "sha256": "85590dd58edf5445e18bc7193e5ebc01ac5841f1ae187e97705a662e90c6421e"
+    },
+    {
+      "path": "/usr/lib/x86_64-linux-gnu/libzstd.so.1.5.7",
+      "sha256": "27f07c9a49c2c956bcfb64cd4712976586a66facbf15fc7f09bc37413b5f2b21"
+    }
+  ],
+  "limitations": [
+    "Read-only preflight observer, not the delivery validator/capture process.",
+    "Module and mapped-file records describe this observer only, not complete future proof or subprocess dependency closure.",
+    "No new environment selection, fixture, build receipt, producer event, independent replay or owner approval is asserted."
+  ],
+  "readiness_asserted": false,
+  "acceptance_asserted": false,
+  "observer_command": "python3 -E -s -S -B - <<'PY'\nimport datetime, hashlib, json, pathlib, shutil, subprocess, sys\nroot=pathlib.Path.cwd()\ntools=[]\nfor name in ('python3','git','bash','realpath','rustfmt'):\n    path=pathlib.Path(shutil.which(name)).resolve()\n    result=subprocess.run([str(path),'--version'],capture_output=True,text=True,check=True)\n    tools.append({'name':name,'path':str(path),'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'version':result.stdout.splitlines()[0]})\nfiles={}\nfor name,module in sorted(sys.modules.items()):\n    path=getattr(module,'__file__',None)\n    if path and pathlib.Path(path).is_file():\n        p=pathlib.Path(path).resolve()\n        files[str(p)]={'path':str(p),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()}\nmapped=[]\nfor line in pathlib.Path('/proc/self/maps').read_text().splitlines():\n    parts=line.split()\n    if len(parts)>=6 and parts[-1].startswith('/'):\n        p=pathlib.Path(parts[-1])\n        if p.is_file():\n            mapped.append({'path':str(p),'sha256':hashlib.sha256(p.read_bytes()).hexdigest()})\nmapped=list({r['path']:r for r in mapped}.values())\nprint(json.dumps({'schema_version':1,'record_type':'toolchain_preflight','marker':'WDQ-READY-TOOLCHAIN-PREFLIGHT',\n'observed_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),\n'main_ref':subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip(),\n'tools':tools,'python_flags':{'ignore_environment':sys.flags.ignore_environment,'no_user_site':sys.flags.no_user_site,'no_site':sys.flags.no_site,'dont_write_bytecode':sys.flags.dont_write_bytecode},\n'stdin_isatty':sys.stdin.isatty(),'stdout_isatty':sys.stdout.isatty(),\n'observer_python_module_files':sorted(files.values(),key=lambda x:x['path']),\n'observer_mapped_files':sorted(mapped,key=lambda x:x['path']),\n'limitations':['Read-only preflight observer, not the delivery validator/capture process.','Module and mapped-file records describe this observer only, not complete future proof or subprocess dependency closure.','No new environment selection, fixture, build receipt, producer event, independent replay or owner approval is asserted.'],\n'readiness_asserted':False,'acceptance_asserted':False}))\nPY",
+  "corrections": [
+    {
+      "reason": "Resolving the rustfmt symlink before invocation selected rustup rather than the formatter. Preserve the initial observation but do not label its hash as rustfmt.",
+      "initial_observation": {
+        "name": "rustfmt",
+        "path": "/usr/bin/rustup",
+        "sha256": "a0101dc13d73ceb604b16a922cd7f41738a6d7c29808ede6a9bc21a1cd5c6a5f",
+        "version": "rustup 1.27.1 (2025-05-09)"
+      },
+      "correction_command": "python3 -E -s -S -B - <<'PY'\nimport hashlib,json,pathlib,subprocess\npath=pathlib.Path(subprocess.check_output(['rustup','which','rustfmt'],text=True).strip())\nprint(json.dumps({'name':'rustfmt','path':str(path),'sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'version':subprocess.check_output([str(path),'--version'],text=True).strip(),'launcher':'/usr/bin/rustfmt','resolver_command':['rustup','which','rustfmt']}))\nPY"
+    }
+  ]
+}
