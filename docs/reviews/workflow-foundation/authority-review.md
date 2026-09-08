@@ -282,14 +282,54 @@ guide is not a prerequisite or completion witness for the native doorway.
 These are reviewed source obligations for the later connected workflow contract,
 not executed race/cancel/refusal tests or acceptance of a new implementation.
 
+## Product-service and creation proof boundary
+
+At `fd96b893`, the complete product-surface contract, production acceptance
+matrix and 1,246-line Preferences implementation plan were read. They supply
+concrete consumer contracts, not acceptance of this foundation lane:
+
+- Global and factory creation normalize into one engine request. MCP must name
+  the source explicitly; GUI/CLI defaults are made visible. Unreadable Global
+  state refuses, preserves entered name/location and offers—but never selects—
+  factory mode. Factory mode neither reads nor creates a Preferences repository.
+- Expected-generation checks use the full reference, not just its number. A
+  reachable daemon refusal cannot trigger a second standalone writer. No-op
+  writes still validate authority and expectations before returning unchanged.
+- Genesis pins one eight-key seed, validates complete staged shards, and
+  atomically publishes to an absent destination. Concurrent/repeated requests
+  resolve the winning immutable evidence; cleanup is restricted to the caller's
+  exact marked stage. Edit/reopen delivery cannot replace this with fixture-only
+  Project construction or a private GUI writer.
+- V1 seed receipts remain immutable; missing historical facts cannot be invented
+  to relabel them V2. This is important for migration fixtures and Project Reset
+  provenance, not permission to rewrite a receipt during ordinary opening.
+- The production matrix is explicitly candidate evidence pending GP-CM05V.
+  Its fifteen corpus cases and eight budget families are Preferences/creation
+  evidence, not accepted board-edit latency budgets or proof of authored geometry.
+  That owner decision remains exclusively with the other session's lane.
+
+**Tracked discrepancy: `dat-preferences-unknown-field-code-ccc`.** The product
+contract §3 assigns unknown request fields `unsupported_schema_version`, while
+§7 assigns them `invalid_request`. The contract requires clients to rely on
+symbolic codes, so this needs an explicit input-domain/precedence reconciliation
+and cross-adapter negative vectors. It is source-level intake, not a reproduced
+runtime defect or an amendment to Preferences acceptance. Preserve rejection of
+unknown authority fields and trusted transport actor context; do not choose a
+code here to make implementation appear conformant.
+
+The implementation plan also explicitly states that the Units GUI adapter did
+not supply a broad geometry numeric editor. Its accepted Units history cannot
+close F2 native authoring by implication. F01 must connect that shared exact
+service to the still-required field, mutation and ordinary-entry workflow.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
 contains 79 files. PM035 through PM040, `PROJECT_PREFERENCES_SPEC.md`, the shared
 Units requirement, GP-C04, GP-C05, the V1 descriptor catalog, the five historical
 baseline files, the six typed-authority/history files, and the complete
-seed/context packet listed above have been read completely (23 files); the other
-56 files remain to review. No complete settings
+seed/context packet and three product-surface/acceptance files listed above have
+been read completely (26 files); the other 53 files remain to review. No complete settings
 route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
 mutation, identity and authoring
