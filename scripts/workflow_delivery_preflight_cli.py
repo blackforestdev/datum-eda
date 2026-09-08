@@ -34,19 +34,20 @@ def main(argv=None):
         from workflow_delivery_io import canonical_json, parse_json, sha256
         from workflow_delivery_shapes import closed
         from workflow_delivery_support_store import support_locations
+        from workflow_delivery_support_bundle import verify_bundle
 
         raw = args.request.read_bytes()
         if not re.fullmatch(r"[0-9a-f]{64}", args.request_sha256) or sha256(raw) != args.request_sha256:
             raise ValueError("request bytes differ from explicit SHA-256")
         request = parse_json(raw, str(args.request))
-        closed(request, "schema_version kind base candidate input_roots prior_local_trust", "preflight request")
+        closed(request, "schema_version kind base candidate authority input_roots prior_local_trust", "preflight request")
         if (type(request["schema_version"]) is not int or request["schema_version"] != 1
                 or request["kind"] != "datum.workflow-delivery.preflight-request"):
             raise ValueError("closed preflight request version 1 required")
         if (type(request["input_roots"]) is not list
                 or not all(type(path) is str for path in request["input_roots"])):
             raise ValueError("explicit string input roots required")
-        locations = support_locations(args.root, request["candidate"])
+        locations = support_locations(args.root, request["authority"])
         output = args.output
         if (not output.is_absolute() or output.parent != locations["logs"]
                 or output.resolve() != output
@@ -60,9 +61,13 @@ def main(argv=None):
                        "request": request, "activation_asserted": False,
                        "publication_authorized": False}
             try:
+                support = verify_bundle(args.root, request["authority"])
                 payload["preflight"] = preflight(args.root, base=request["base"],
                     candidate=request["candidate"], input_roots=request["input_roots"],
                     expected_local_trust=request["prior_local_trust"])
+                if verify_bundle(args.root, request["authority"]) != support:
+                    raise ValueError("proposed support changed during inspection")
+                payload["support_bundle"] = support
                 payload["ok"] = True
             except (ValueError, OSError, RuntimeError) as error:
                 payload.update(ok=False, error={"type": type(error).__name__, "detail": str(error)})
@@ -73,7 +78,7 @@ def main(argv=None):
                       request_sha256=args.request_sha256)
         if not payload["ok"]:
             report["findings"].append(payload["error"])
-    except (ValueError, OSError, RuntimeError) as error:
+    except (ValueError, OSError, RuntimeError, ImportError) as error:
         report["findings"].append({"type": type(error).__name__, "detail": str(error)})
     print(json.dumps(report, sort_keys=True), flush=True)
     return 0 if report["ok"] else 2
