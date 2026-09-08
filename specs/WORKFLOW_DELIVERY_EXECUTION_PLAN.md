@@ -856,3 +856,30 @@ Full policy/enrollment assembly, actual infrastructure readiness, controlled
 promotion proof, independent review, explicit owner activation and real native
 adoption remain outstanding. WDQ-I02 remains selected; no preparation count or
 passing helper check closes the broader goal.
+
+### WDQ-I02 — assembled source integration verification
+
+Retained candidate `49ecf406f18e89cb8ad7bbd058ac6490e54f0a5e` assembles the exact
+28-file implementation delta from `2a85005c` onto current main baseline
+`5da7ff0c3946e972144762d190d33de59692123e`. Its detached worktree is inside the
+repository's Git-common support directory; no new Documents-level bundle or
+live trust change occurred. Every copied file has the exact source-candidate
+Git blob identity, and current main had no overlapping source changes.
+
+`assembled-source-verification.json` binds the candidate, baseline, retained
+ref, source paths, test commands/counts and explicit limitations. All 227 gate
+tests and 125 current roadmap/contract tests pass together. Traceability,
+spec governance, parity, source health and whitespace checks pass in that exact
+candidate. A real read-only CLI check with explicit prospective candidate pins
+and unchanged schema-1 policy preserves the accepted pilot. With actual
+installed pins, the same candidate correctly refuses `WDQ-POLICY: gate
+implementation set changed without promotion`. Neither invocation installs pins.
+
+This proves combined source compatibility and the existing trust boundary, not
+the complete new policy or infrastructure/native delivery. Product enrollment
+still needs explicit actual implementation-session identities and owner activation
+evidence; no fictitious sessions are inserted to satisfy the policy shape.
+The final infrastructure input/tooling scope needs reconciliation against the
+assembled producer recipe. Exact policy assembly, readiness, independent review,
+owner activation and all three native adoption outcomes remain outstanding.
+I02 remains selected and every product lane, especially Preferences, is unchanged.
