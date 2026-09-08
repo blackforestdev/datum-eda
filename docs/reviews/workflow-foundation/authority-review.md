@@ -492,6 +492,45 @@ The remaining route review must still reconcile present consumers; this record
 does not correct the original research, refresh its digest or accept a runtime
 implementation merely because the contradiction was previously documented.
 
+## Exact context, library uptake and offline proof inputs
+
+At `7852e16a`, the full 1,033-line Revision authority model and complete
+REV-C04 offline/exchange and REV-C05 impact/reproduction contracts were read.
+Their candidate headers and historical gap statements remain subordinate to the
+later dispositions and implementation evidence already reviewed.
+
+The detailed model makes `ConfigurationRef::Working` exact at query time, not
+a live reference that can safely be reused without retaining its model revision
+and accepted tip. This reinforces the F3/F5 need to pin the selected subjects
+and expected context before an edit, then refuse a stale request without
+reconstructing intent from labels, filenames or current selection.
+
+REV-C05 §§5–6 supplies concrete F7 handoff distinctions: a newer library object
+creates an uptake opportunity but leaves a placed binding unchanged; lifecycle
+or review-annotation changes may produce findings without replacing geometry;
+missing retained pinned bytes never resolve through `latest`. Preview is
+read-only, while adoption is explicit, journaled and undoable before release.
+These are separate observations for future consumer proof, not evidence that
+the complete uptake/impact engine is currently delivered.
+
+REV-C04 §§5 and 7–9 separates local journal atomicity from external delivery.
+An optional adapter's failure cannot roll back a completed local transaction,
+and ordinary open/edit/query cannot depend on Git availability. An externally
+received tree must resolve and validate in isolation before typed acceptance;
+a clean textual merge is not semantic proof. F6's native Project workflow must
+therefore work without making the development repository or a remote service a
+hidden product prerequisite. This does not authorize distributed merge or a new
+adapter in the foundation slice.
+
+REV-C05 §§5 and 9 makes evidence freshness depend on every declared influential
+input, including rules, producer, settings and environment—not solely geometry
+or model identity. Its release-reproduction contract also distinguishes a new
+generation of evidence from replay of an old frozen output. These are useful
+source constraints for later proof design, not permission to impose the full
+formal Release program on the first manual workflow or to relabel diagnostic
+equivalence as byte reproduction. Missing evidence and unavailable producers
+must stay explicit rather than becoming successful empty checks.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
@@ -501,7 +540,8 @@ baseline files, the six typed-authority/history files, and the complete
 seed/context packet, three product-surface/acceptance files and seven supporting
 visual studies, plus the seven Revision/geometry/traceability members listed
 above, the four execution packets and four identity/title-block/audit members
-have been read completely (48 files); the other 31 files remain to review.
+and the detailed authority/offline/impact contracts have been read completely
+(51 files); the other 28 files remain to review.
 No complete settings
 route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
