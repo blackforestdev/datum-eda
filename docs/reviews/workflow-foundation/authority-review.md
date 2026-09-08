@@ -93,20 +93,50 @@ document-level contradiction; no runtime failure is claimed. Intake is related
 to this foundation review and the existing S5A owner, without amending their
 hard dependencies or accepting a replacement schema.
 
-The correction must preserve PM026, complete the other owning route
-(`prototype-selection`) before editing the shared UVT specification, and name
+The correction must preserve PM026, review both owning routes before editing
+the shared UVT specification, and name
 exact vocabulary/serialization parity proof. Read-only S5A cannot be made an
 editing feature to bypass the discrepancy. The historical matrix's code-status
 columns remain historical observations, not a current implementation audit.
 
+## Selection visual-authority review
+
+At `8a743d8f`, the remaining `prototype-selection` members were read completely:
+the selection study's HTML/CSS/SVG and the Rendering Book. Together with the
+already-read UVT specification, this completes the three-file source review.
+The unchanged route digest is
+`cf208f77ef12aee380bdb7ce04c433e9352982b31bf712cabdca99d018c9a359`.
+No new render, visual approval or native conformance result is asserted.
+
+The study's nine panels cover construction, compound equality, locked objects,
+channel collision, pane projection, Global Net/Bus, text/points, dense fallback
+and accessibility/zoom. They illustrate visual behavior, not an alternative
+wire schema for the selection envelope. The pending-review banner is historical
+wording: UVT §2.2.21/22 and PM026 record the later owner approval. It must not be
+used to reopen the approved visual choices or to claim a new approval here.
+
+For `dat-selection-envelope-run-flr`, the reviewed sources supply no reason to
+alter the prototype. The bounded reconciliation is a specification mapping and
+its proof: carry Run without losing origin or revision-derived membership;
+make Proposal/Review representation explicit; preserve same-identity versus
+merely-related mappings; and test every supported wire round-trip without
+silently collapsing distinct subjects. Any actual change to PM026's identity
+law requires owner disposition, not a cosmetic digest refresh.
+
+Future exact-edit proof must separately demonstrate that selected geometry
+retains material/semantic appearance, pane focus alone identifies GUI mutation
+authority, selection never changes hit geometry or authored buffers, and
+aggregate rendering never truncates membership. A screenshot of a selected
+object cannot prove correct target identity, mutation, cancellation or undo.
+
 ## Remaining review coverage
 
-WDQ-F01 remains in progress. Remaining routed-domain review includes
-`prototype-selection` (three files, with the viewport-spec consumer now read),
-and `workspace-documentation-and-revision` (79 files; PM037, PM039 and PM040
-have been read, not the complete route). These counts are inventory, not claims
-of completed semantic review. Their complete sources and consumers must be
-reviewed before final F1–F8 adjudication or specification edits. Later storage, mutation, identity and authoring
+WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
+contains 79 files. PM035 through PM040 and `PROJECT_PREFERENCES_SPEC.md` have
+been read completely; the other 72 files remain to review. No complete settings
+route reconciliation is claimed. The remaining sources and consumers must be
+reviewed before final F1–F8 adjudication or specification edits. Later storage,
+mutation, identity and authoring
 authority must also be checked where it resolves the historical questions above.
 
 WDQ-F02 still owes concrete values, boundary cases, transaction timelines and
