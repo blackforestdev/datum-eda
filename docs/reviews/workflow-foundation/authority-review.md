@@ -129,11 +129,45 @@ authority, selection never changes hit geometry or authored buffers, and
 aggregate rendering never truncates membership. A screenshot of a selected
 object cannot prove correct target identity, mutation, cancellation or undo.
 
+## Units, field entry, and recovery handoff inputs
+
+At `7615ca98`, the shared Units requirement, GP-C04 storage/recovery contract,
+GP-C05 interaction contract, and V1 descriptor catalog were read completely.
+These are four further members of the existing settings route, not a completed
+route reconciliation or an audit of the other session's implementation.
+
+The following distinctions narrow what the later foundation contract must
+connect and what evidence cannot substitute for it:
+
+| Reviewed source | Existing requirement | Foundation handoff consequence |
+| --- | --- | --- |
+| Shared Units, Lossless display and edit contract | Focus regenerates exact suffixed text from canonical geometry; unchanged Enter/blur is a no-op; Escape restores the pre-edit value; only a changed canonical value journals | F2/F5 need observations of canonical value, dirty state and journal before/after each action, not merely a parser test or screenshot |
+| Shared Units, exact grammar and adapters | Scalar decimal/scientific input uses checked rational conversion; sub-nanometer input refuses; explicit suffix is profile-independent; bare input requires declared field/Project context | Authoring consumes the existing service and context, not a new field parser. `5.08mm`, `200mil`, `0.2in` and `5080000nm` supply the existing cross-surface equivalence oracle |
+| Shared Units, surface and seed ownership | Project Reset reads the immutable seed/migration receipt, never current Global defaults; missing receipt makes Reset unavailable with a typed reason | F1/F8 distinguish Global default changes, Project display-setting mutations and authored geometry changes; a settings-only no-geometry proof cannot establish exact board editing |
+| GP-C04 §§4–5 and 10 | Preferences commit point is repository head promotion; corrupt machine data is preserved, recovery is offered, and authoring remains available; machine recovery never mutates Project authority | F6 must separately specify Project journal recovery and writer ownership. Preferences backup/restore proof cannot discharge Project edit/reopen or durable undo |
+| GP-C05 §§4–9 and catalog §2 | Reserved controls stay absent; active controls need real consumers, truthful provenance, keyboard access, non-color state and accessible announcements | Do not activate reserved grid, autosave or library preferences to fill an authoring gap. Existing editor behavior and future preference activation are separate obligations |
+| GP-C05 §7 and Shared Units lossless editing | Refused input remains available for correction without changing the last valid value; cancellation and successful commit are distinct | Future numeric-entry scenarios need invalid/intermediate entry and recovery, not only accepted final strings. Field-level transient grammar and focus choreography still require the complete authoring review |
+
+The reviewed Units requirement explicitly rejects persisting authored expression
+text as geometry authority under this step, despite comparative prototype prose
+about remembering how every number was written. A future authored-unit-intent
+schema needs its own decision. Likewise, general formulas, radians and DMS are
+not silently included in the ratified scalar/decimal-degree service.
+
+GP-C04's broad store-management contract is not proof that its entire surface is
+active: GP-C05 expressly withholds Manage Preferences until its operations are
+implemented and proved. Catalog table cells describing eventual live consumers
+are subordinate to its explicit eleven-active/45-reserved inventory. These
+distinctions prevent a future authoring handoff from treating reserved identities
+or historical planning status as usable capability. No request to reopen or
+accept GP-CM05V is implied.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
-contains 79 files. PM035 through PM040 and `PROJECT_PREFERENCES_SPEC.md` have
-been read completely; the other 72 files remain to review. No complete settings
+contains 79 files. PM035 through PM040, `PROJECT_PREFERENCES_SPEC.md`, the shared
+Units requirement, GP-C04, GP-C05 and the V1 descriptor catalog have been read
+completely (11 files); the other 68 files remain to review. No complete settings
 route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
 mutation, identity and authoring
