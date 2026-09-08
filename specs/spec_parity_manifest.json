@@ -2,6 +2,14 @@
   "version": 1,
   "inventories": [
     {
+      "id": "workflow_delivery_environment_selections",
+      "kind": "file_glob",
+      "glob": "specs/workflow_delivery/*.environments.json",
+      "owner_spec": "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md",
+      "notes": "Proposed PM042 per-enrollment environment selection filenames only; zero instances during WDQ-READY preparation. This does not validate shape, observed environments, trust, readiness or acceptance.",
+      "planned_shapes": ["EnvironmentSelectionV2", "HeadlessEnvironmentV2"]
+    },
+    {
       "id": "workflow_delivery_contract_instances",
       "kind": "file_glob",
       "glob": "specs/workflow_delivery/*.contract.json",

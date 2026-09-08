@@ -49,3 +49,26 @@ remain additional I03/REVIEW obligations. Three native product cohorts and the
 Preferences lane retain their own authority and owners. No infrastructure test
 answers missing CAD units, numeric entry, selection, snapping, connectivity or
 native persistence specifications.
+
+## WDQ-READY — mixed-environment evidence finding
+
+Direct inspection of the CLI and selector in assembled candidate `beddc2ef`
+shows one requested environment object passed to every enrollment. The existing
+validator requires exact object equality with each recorded proof environment,
+including reproduction commands and toolchain. The accepted pilot records
+Rust/X11/XTest; the observed infrastructure process uses `/usr/bin/python3`,
+Python 3.13.5, and pipes with neither stdin nor stdout a TTY. A read-only check
+confirmed unchanged pilot environment success and WDQ-ENVIRONMENT refusal when
+the requested toolchain was replaced with this Python version. This is a
+diagnostic, not a second workflow proof. Bead: `dat-wdq-environment-scope-kgq`.
+
+The proposed PM042 environment section separates explicit owner-selected
+per-enrollment requests from the proof being judged and provides an honest
+infrastructure-only headless representation. Legacy pilot bytes and exact
+equality remain controlling for the existing installation. A shared request
+cannot become a blanket equivalence waiver, and absent display data cannot be
+filled with invented positive window dimensions. The proposal needs candidate
+implementation and real mixed-enrollment negative/replay proof before activation.
+No environment selection instance, new observed proof or owner approval is
+created by this review. Full fixture and runtime input closure remain separate
+readiness obligations; a binary hash alone does not describe Python dependencies.
