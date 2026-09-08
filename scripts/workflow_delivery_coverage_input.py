@@ -6,6 +6,9 @@ from datetime import datetime, timedelta, timezone
 from workflow_delivery_io import canonical_json, parse_json, sha256
 
 BOUNDARY_CASES = {
+    "INFRA-S02-11.rust": ("crates/synthetic/src/new.rs", "WDQ-COVERAGE", "production change has no promoted scope"),
+    "INFRA-S02-11.mcp": ("mcp-server/synthetic_new.py", "WDQ-COVERAGE", "production change has no promoted scope"),
+    "INFRA-S02-11.workflow": ("scripts/synthetic_workflow.py", "WDQ-COVERAGE", "production change has no promoted scope"),
     "INFRA-S02-02.reopen": ("TASK", "WDQ-COVERAGE", "historical reopening requires reclassification"),
     "INFRA-S02-02.add-execution": ("TASK", "WDQ-COVERAGE", "historical completion/landing evidence changed"),
     "INFRA-S02-04.retained-history": (None, None, None),
@@ -95,7 +98,7 @@ def prepare_external_boundary(f, manifest, policy):
         "category": "deferred", "boundary_ref": f.ref, "external_handoff_ref": None})
     f.write(".beads/issues.jsonl", b"".join(canonical_json(issue) for issue in issues))
     policy["coverage"]["rows"][1].update(category="external_lane", boundary_ref=f.ref, external_handoff_ref=f.ref)
-    policy["coverage"]["production_roots"].append("external")
+    policy["coverage"]["production_roots"].extend(["external", "crates", "mcp-server", "scripts"])
     policy["coverage"]["source_scopes"] = [{"frontier_key": "NEXT", "step_ids": ["NEXT-C01"],
         "paths": ["external/owned"], "boundary_ref": f.ref}]
     f.write("external/owned/input.py", b"# Synthetic external baseline.\n")
@@ -108,10 +111,12 @@ def mutate_external_boundary(root, case_id):
     from project_status import render_block
     from workflow_delivery_capture_state import git
     changes = {}
-    path = ("external/unpermitted/input.py" if case_id.endswith(".unpermitted") else
+    path = (BOUNDARY_CASES[case_id][0] if case_id.startswith("INFRA-S02-11.") else
+            "external/unpermitted/input.py" if case_id.endswith(".unpermitted") else
             "external/owned_elsewhere/input.py" if case_id.endswith(".prefix-lookalike") else
             "external/owned/input.py")
-    changes[path] = b"# Actual candidate change in an isolated synthetic lane.\n"
+    changes[path] = (b"// Actual synthetic Rust source, never compiled.\npub fn fixture() {}\n"
+                     if path.endswith(".rs") else b"# Actual candidate change in an isolated synthetic lane.\n")
     if case_id.startswith("INFRA-S02-02."):
         manifest = parse_json((root / "specs/active_frontier.json").read_bytes(), "Frontier")
         historical = next(item for item in manifest["frontier"] if item["key"] == "TASK")

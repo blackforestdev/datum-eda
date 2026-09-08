@@ -99,7 +99,8 @@ def prepare_fixture(root, packet, *, fixture_variant=None):
     bundle = packet / "fixture.bundle"
     f.git("bundle", "create", str(bundle), "--all")
     f.git("bundle", "verify", str(bundle))
-    input_roots = ["src", "external"] if fixture_variant in BOUNDARY_CASES else ["src"]
+    input_roots = (["src", "external", "crates", "mcp-server", "scripts"]
+                   if fixture_variant in BOUNDARY_CASES else ["src"])
     state = protected_state(f.root, input_roots)
     save(packet / "prepared-state.json", state)
     recipe = {"schema_version": 1, "kind": "synthetic-validator-input",

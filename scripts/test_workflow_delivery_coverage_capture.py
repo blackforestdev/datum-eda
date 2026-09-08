@@ -3,6 +3,8 @@
 import os
 import json
 from pathlib import Path
+import shutil
+import subprocess
 import tempfile
 import unittest
 
@@ -16,6 +18,15 @@ from workflow_delivery_io import DeliveryInputError
 
 class CoverageCaptureTest(unittest.TestCase):
     def test_missing_and_duplicate_classifications_refuse_and_recover(self):
+        # Select an already installed formatter, not a rustup proxy that could
+        # seek toolchains under the isolated fixture HOME. Never install one.
+        formatter = shutil.which("rustfmt")
+        self.assertIsNotNone(formatter, "installed rustfmt required for the actual Rust hook case")
+        formatter = Path(formatter).resolve(strict=True)
+        if formatter.name == "rustup":
+            formatter = Path(subprocess.check_output(
+                [str(formatter), "which", "rustfmt"], text=True).strip()).resolve(strict=True)
+        self.assertNotEqual("rustup", formatter.name)
         with tempfile.TemporaryDirectory() as temporary:
             store = Path(temporary)
             baseline = store / "baseline-packet"
@@ -23,7 +34,8 @@ class CoverageCaptureTest(unittest.TestCase):
             external_baseline = store / "external-baseline-packet"
             prepare_fixture(store / "external-baseline", external_baseline, fixture_variant="INFRA-S02-06.authorized")
             runtime = Path(__file__).resolve().parents[1]
-            environment = {"PATH": os.defpath, "HOME": str(store), "XDG_CONFIG_HOME": str(store),
+            environment = {"PATH": str(formatter.parent) + os.pathsep + os.defpath,
+                           "HOME": str(store), "XDG_CONFIG_HOME": str(store),
                            "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "LANG": "C"}
             identities = set()
             for variant in COVERAGE_INPUT_CASES:
@@ -54,7 +66,7 @@ class CoverageCaptureTest(unittest.TestCase):
                             self.assertFalse(result["acceptance_asserted"])
                             self.assertNotIn(result["invocation_id"], identities)
                             identities.add(result["invocation_id"])
-            self.assertEqual(170, len(identities))
+            self.assertEqual(200, len(identities))
 
 
 if __name__ == "__main__":
