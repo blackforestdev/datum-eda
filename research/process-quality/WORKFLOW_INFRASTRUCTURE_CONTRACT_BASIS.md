@@ -178,3 +178,13 @@ step. The separate publication-delta obligation remains open. Existing scenario,
 foundation, consumer, independent-review and owner-activation requirements are
 unchanged; PM042 is not ratified by this input reconciliation. Older snapshots
 and failed captures retain their old identities rather than being refreshed.
+
+The subsequent shell/data review at `e16f3f0fea546a13922d72313f2ffc779fc5c392`
+adds four concrete inputs beyond that Python inventory: the authenticated owner
+hook shell source, explicit selection document, and both environment Blobs named
+by that document. The resulting 149-path inventory preserves accepted pilot bytes
+and keeps environment evidence outside its own normative authority route.
+An input regression follows these exact selected data references and checks their
+hashes; it does not select environments from proof or widen source permissions.
+Observed executable versions remain distinct from actual hook/child invocation
+and shared-library closure. Readiness and producer verification remain incomplete.

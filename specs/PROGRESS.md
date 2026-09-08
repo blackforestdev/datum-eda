@@ -3159,9 +3159,10 @@ Status: [x] Closed for scoped M4 slice
 
 ## Infrastructure
 
-WDQ-TOOLS candidate preparation: the rollout contract now includes 145 explicit
+WDQ-TOOLS candidate preparation: the rollout contract now includes 149 explicit
 repository inputs, reconciling 66 implemented Python capture/environment/promotion
-files and three rollout tests missing from its prior 76-path baseline. This is
+files, three rollout tests, the prepared hook shell source, and the explicit
+environment selection with both referenced Blobs missing from its prior baseline. This is
 input coverage, not expanded write permission, complete runtime closure, readiness
 or installed enforcement. The selected step and other agents' lanes are unchanged.
 

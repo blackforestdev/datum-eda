@@ -151,6 +151,18 @@ class RolloutContractTest(unittest.TestCase):
         self.assertEqual([], sorted(required - set(self.contract["input_roots"])),
                          "Reconcile new inputs explicitly; this test must not update authority")
 
+    def test_prepared_hook_and_selected_environment_bytes_are_inputs(self):
+        import hashlib
+        from workflow_delivery_bootstrap import HOOK_SOURCE
+        selection_path = "specs/workflow_delivery/rollout.environments.json"
+        required = {HOOK_SOURCE, selection_path}
+        selection = self.tree.json(selection_path)
+        for row in selection["environments"]:
+            blob = row["environment"]
+            required.add(blob["path"])
+            self.assertEqual(blob["sha256"], hashlib.sha256(self.tree.read(blob["path"])).hexdigest())
+        self.assertEqual([], sorted(required - set(self.contract["input_roots"])))
+
     def test_case_inventory_has_unique_ids_and_known_scenarios_and_surfaces(self):
         rows = self.case_rows()
         self.assertTrue(rows)
