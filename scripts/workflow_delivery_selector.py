@@ -43,7 +43,7 @@ def selector_failures(root, manifest):
             enrolled = trust.enrolled
         environment = tree.json(env_path) if env_path else None
         if trust:
-            validate_coverage(tree, manifest, trust)
+            validate_coverage(tree, manifest, trust, environment=environment)
         for item in declared:
             validate_delivery(tree, item, phase=None if item["key"] in enrolled else "structure",
                               trust=trust if item["key"] in enrolled else None,

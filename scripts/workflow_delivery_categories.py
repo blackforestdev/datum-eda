@@ -4,6 +4,7 @@ from workflow_delivery_shapes import require
 
 
 def validate_categories(items, coverage, enrolled, authority):
+    readiness = []
     promoted = {i["key"]: i for i in authority.json("specs/active_frontier.json")["frontier"]}
     for row in coverage["rows"]:
         key, category = row["frontier_key"], row["category"]
@@ -34,6 +35,8 @@ def validate_categories(items, coverage, enrolled, authority):
                     key, "readiness/execution requires a delivery declaration", "WDQ-COVERAGE")
             require(not executing or key in enrolled, key,
                     "execution requires owner-promoted enrollment", "WDQ-COVERAGE")
+            if executing or preflight_done:
+                readiness.append(key)
         elif category == "external_lane":
             old = promoted.get(key, {}).get("completion", {})
             selected = completion.get("canonical_next_step_id")
@@ -50,3 +53,4 @@ def validate_categories(items, coverage, enrolled, authority):
             require({k: v for k, v in old_step.items() if k not in mutable} ==
                     {k: v for k, v in new_step.items() if k not in mutable}, key,
                     "external-lane selected requirement/authority changed", "WDQ-COVERAGE")
+    return readiness

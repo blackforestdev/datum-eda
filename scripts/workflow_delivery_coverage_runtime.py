@@ -2,17 +2,25 @@
 
 from workflow_delivery_coverage import validate_classifications
 from workflow_delivery_categories import validate_categories
+from workflow_delivery_checkpoints import validate_delivery
 from workflow_delivery_proof import _issues
 from workflow_delivery_source_scopes import authorize_source_paths
 from workflow_delivery_transaction import changed_production_paths
 
 
-def validate_coverage(tree, manifest, trust):
+def validate_coverage(tree, manifest, trust, *, environment=None):
     if trust.policy["schema_version"] == 1:
         return []
     coverage = trust.policy["coverage"]
     items = validate_classifications(tree, coverage, manifest, authority=trust.authority)
-    validate_categories(items, coverage, trust.enrolled, trust.authority)
+    readiness = validate_categories(items, coverage, trust.enrolled, trust.authority)
+    for key in readiness:
+        # Unenrolled declarations normally receive structure-only diagnostics.
+        # Completing a covered preflight must also resolve its actual authority
+        # and mandatory decisions, without demanding future activation proof.
+        validate_delivery(tree, items[key], phase="ready",
+                          trust=trust if key in trust.enrolled else None,
+                          environment=environment)
     # For an ordinary staged/worktree check HEAD is the transaction's parent,
     # not a substitute trust anchor. Candidate-ref review uses the explicit
     # owner-selected base and therefore covers the entire proposed source delta.

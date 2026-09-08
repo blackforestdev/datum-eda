@@ -33,7 +33,7 @@ def run(args):
     manifest = validate_frontier(tree) if args.enforce else tree.json(FRONTIER_PATH)
     if trust:
         enrolled = trust.enrolled
-        validate_coverage(tree, manifest, trust)
+        validate_coverage(tree, manifest, trust, environment=environment)
     elif POLICY_PATH in tree.entries:
         enrolled = {r["frontier_key"]: r for r in policy_shape(tree.json(POLICY_PATH))["enrolled"]}
     else:
