@@ -4,7 +4,8 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from workflow_delivery_support_store import support_locations, validate_support_entry
+from workflow_delivery_support_store import support_locations, validate_support_entry, proposed_local_trust
+from workflow_delivery_capture_state import TRUST_KEYS, protected_state
 from workflow_delivery_test_support import Fixture
 
 
@@ -30,6 +31,29 @@ class SupportStoreTest(unittest.TestCase):
             linked = Path(temporary) / "linked"
             self.f.git("worktree", "add", "--detach", str(linked), self.f.head)
             self.assertEqual(expected, support_locations(linked, self.f.head))
+
+    def test_proposed_configuration_is_exact_and_does_not_install_itself(self):
+        before = protected_state(self.f.root, ["src"])
+        value = proposed_local_trust(self.f.root, authority=self.f.head, base=self.f.head,
+                                     environment_path="specs/example.environments.json")
+        self.assertEqual(set(TRUST_KEYS), set(value))
+        self.assertEqual([str(self.locations()["runner"])], value["datum.workflowDeliveryRunnerPath"])
+        self.assertEqual([str(self.locations()["hooks"])], value["core.hooksPath"])
+        self.assertEqual([self.f.head], value["datum.workflowDeliveryAuthorityRef"])
+        self.assertEqual([self.f.head], value["datum.workflowDeliveryBaseRef"])
+        self.assertEqual(["specs/example.environments.json"], value["datum.workflowDeliveryEnvironmentPath"])
+        self.assertEqual(before, protected_state(self.f.root, ["src"]))
+        self.assertFalse(self.locations()["store"].exists())
+
+    def test_proposal_rejects_ambiguous_pins_and_non_repository_environment_paths(self):
+        for base in ("HEAD", "0" * 40):
+            with self.assertRaises((ValueError, RuntimeError)):
+                proposed_local_trust(self.f.root, authority=self.f.head, base=base,
+                                     environment_path="environment.json")
+        for path in ("../environment.json", "/environment.json", ".git/config", "", False):
+            with self.subTest(path=path), self.assertRaises(ValueError):
+                proposed_local_trust(self.f.root, authority=self.f.head, base=self.f.head,
+                                     environment_path=path)
 
     def test_moving_unknown_or_noncommit_authority_refuses(self):
         for authority in ("HEAD", "0" * 40):

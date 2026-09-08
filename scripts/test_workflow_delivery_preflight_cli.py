@@ -13,7 +13,7 @@ from workflow_delivery_io import canonical_json, sha256
 from workflow_delivery_test_support import Fixture
 from workflow_delivery_trust_test_support import accepted_fixture
 from workflow_delivery_support_bundle import prepare_bundle
-from workflow_delivery_support_store import support_locations
+from workflow_delivery_support_store import support_locations, proposed_local_trust
 from workflow_delivery_publication_delta import publication_delta
 
 
@@ -35,6 +35,9 @@ class PreflightCliTest(unittest.TestCase):
         delta = publication_delta(self.f.root, base=self.f.head, candidate=candidate)
         self.request["publication_review"] = {"delta_sha256": sha256(canonical_json(delta)),
                                               "paths": delta["touched_paths"]}
+        self.request["environment_path"] = "evidence/environment.json"
+        self.request["proposed_local_trust"] = proposed_local_trust(self.f.root,
+            authority=self.f.head, base=self.f.head, environment_path=self.request["environment_path"])
         self.path = self.store / "request.json"
         self.path.write_bytes(canonical_json(self.request))
         self.output = self.f.root / ".git/datum-wdq/logs/preflight.json"
@@ -66,6 +69,7 @@ class PreflightCliTest(unittest.TestCase):
         from copy import deepcopy
         self.request["kind"] = "datum.workflow-delivery.activation-state-request"
         del self.request["publication_review"]
+        del self.request["environment_path"]
         proposed = deepcopy(self.request["prior_local_trust"])
         proposed["datum.workflowDeliveryAuthorityRef"] = [self.request["candidate"]]
         self.request["proposed_local_trust"] = proposed
@@ -101,6 +105,58 @@ class PreflightCliTest(unittest.TestCase):
         payload = json.loads(self.output.read_bytes())
         self.assertFalse(payload["ok"])
         self.assertFalse(payload["publication_authorized"])
+        self.assertEqual(before, protected_state(self.f.root, ["src"]))
+
+    def test_each_replacement_trust_value_is_bound_to_the_request(self):
+        from copy import deepcopy
+        original = deepcopy(self.request)
+        before = protected_state(self.f.root, ["src"])
+        for index, key in enumerate(original["proposed_local_trust"]):
+            with self.subTest(key=key):
+                request = deepcopy(original)
+                request["proposed_local_trust"][key] = ["unreviewed-replacement"]
+                self.path.write_bytes(canonical_json(request))
+                output = self.output.with_name(f"replacement-{index}.json")
+                result = self.run_cli(output=output)
+                self.assertEqual(2, result.returncode, result.stdout + result.stderr)
+                self.assertIn(b"proposed local trust differs", result.stdout)
+                self.assertFalse(json.loads(output.read_bytes())["publication_authorized"])
+                self.assertEqual(before, protected_state(self.f.root, ["src"]))
+
+    def test_missing_environment_does_not_pass_from_a_consistent_config_map(self):
+        self.request["environment_path"] = "missing-environment.json"
+        self.request["proposed_local_trust"] = proposed_local_trust(self.f.root,
+            authority=self.f.head, base=self.f.head, environment_path=self.request["environment_path"])
+        self.path.write_bytes(canonical_json(self.request))
+        before = protected_state(self.f.root, ["src"])
+        result = self.run_cli()
+        self.assertEqual(2, result.returncode, result.stdout + result.stderr)
+        self.assertIn(b"missing-environment.json", result.stdout)
+        self.assertFalse(json.loads(self.output.read_bytes())["ok"])
+        self.assertEqual(before, protected_state(self.f.root, ["src"]))
+
+    def test_candidate_only_environment_change_is_not_selected_authority(self):
+        path = self.request["environment_path"]
+        original = (self.f.root / path).read_bytes()
+        value = json.loads(original)
+        value["os"] = "candidate-only environment"
+        self.f.save(path, value)
+        self.f.stage()
+        tree = self.f.git("write-tree").decode().strip()
+        candidate = self.f.git("commit-tree", tree, "-p", self.f.head,
+                               "-m", "synthetic changed environment").decode().strip()
+        self.f.write(path, original)
+        self.f.stage()
+        self.request["candidate"] = candidate
+        delta = publication_delta(self.f.root, base=self.f.head, candidate=candidate)
+        self.request["publication_review"] = {"delta_sha256": sha256(canonical_json(delta)),
+                                              "paths": delta["touched_paths"]}
+        self.path.write_bytes(canonical_json(self.request))
+        before = protected_state(self.f.root, ["src"])
+        result = self.run_cli()
+        self.assertEqual(2, result.returncode, result.stdout + result.stderr)
+        self.assertIn(b"environment differs", result.stdout)
+        self.assertFalse(json.loads(self.output.read_bytes())["ok"])
         self.assertEqual(before, protected_state(self.f.root, ["src"]))
 
     def test_detached_checkout_refusal_is_visible_retained_and_nonmutating(self):

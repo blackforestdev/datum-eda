@@ -36,8 +36,11 @@ def main(argv=None):
         from workflow_delivery_activation_state import inspect_activation_state
         from workflow_delivery_io import canonical_json, parse_json, sha256
         from workflow_delivery_shapes import closed
-        from workflow_delivery_support_store import support_locations
+        from workflow_delivery_support_store import support_locations, proposed_local_trust
         from workflow_delivery_support_bundle import verify_bundle
+        from workflow_delivery_environments import load_environments
+        from workflow_delivery_tree import Tree
+        from workflow_delivery_trust import POLICY_PATH, policy_shape
 
         raw = args.request.read_bytes()
         if not re.fullmatch(r"[0-9a-f]{64}", args.request_sha256) or sha256(raw) != args.request_sha256:
@@ -49,7 +52,7 @@ def main(argv=None):
             fields += " proposed_local_trust"
             expected_kind = "datum.workflow-delivery.activation-state-request"
         else:
-            fields += " publication_review"
+            fields += " publication_review proposed_local_trust environment_path"
         closed(request, fields, "preflight request")
         if (type(request["schema_version"]) is not int or request["schema_version"] != 1
                 or request["kind"] != expected_kind):
@@ -76,7 +79,21 @@ def main(argv=None):
                         base=request["base"], candidate=request["candidate"], input_roots=request["input_roots"],
                         prior_trust=request["prior_local_trust"], proposed_trust=request["proposed_local_trust"])
                 else:
+                    proposed = proposed_local_trust(args.root, authority=request["authority"],
+                        base=request["base"], environment_path=request["environment_path"])
+                    if canonical_json(request["proposed_local_trust"]) != canonical_json(proposed):
+                        raise ValueError("proposed local trust differs from the exact requested pins and support locations")
                     support = verify_bundle(args.root, request["authority"])
+                    authority_tree = Tree(args.root, revision=request["authority"])
+                    candidate_tree = Tree(args.root, revision=request["candidate"])
+                    environment_path = request["environment_path"]
+                    if candidate_tree.read(environment_path, committed=True) != authority_tree.read(environment_path, committed=True):
+                        raise ValueError("proposed environment differs between candidate and selected authority")
+                    environments = load_environments(candidate_tree, environment_path,
+                        policy_shape(authority_tree.json(POLICY_PATH)), authority=authority_tree)
+                    payload["environment_selection"] = {"path": environment_path,
+                        "sha256": sha256(authority_tree.read(environment_path, committed=True)),
+                        "enrolled_keys": sorted(environments)}
                     payload["preflight"] = preflight(args.root, base=request["base"],
                         candidate=request["candidate"], input_roots=request["input_roots"],
                         expected_local_trust=request["prior_local_trust"],
