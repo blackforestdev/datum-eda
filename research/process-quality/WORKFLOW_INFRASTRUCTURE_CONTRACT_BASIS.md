@@ -72,3 +72,27 @@ implementation and real mixed-enrollment negative/replay proof before activation
 No environment selection instance, new observed proof or owner approval is
 created by this review. Full fixture and runtime input closure remain separate
 readiness obligations; a binary hash alone does not describe Python dependencies.
+
+## WDQ-READY — fixture and capture review
+
+The inspected coverage-entrypoint suite calls the real main function under
+redirected stdout and the selector helper directly. Its Fixture snapshot excludes
+Git metadata; accepted_fixture deliberately fabricates native evidence and owner
+receipts as validator INPUT. These are valid refusal-test techniques, not the
+real subprocess, complete protected-state or independent delivery observations
+required by INFRA-S01..S06. The infrastructure procedure now makes that boundary
+explicit and requires both a complete real-roadmap case and isolated hostile
+inputs, retained restoration parameters, actual invocations and fresh replay.
+
+The currently installed owner hook was inspected read-only. In addition to the
+WDQ runner it invokes file-lane and rustfmt gates; the latter reads the exemption
+manifest and staged source. It also uses Git, bash and realpath. Those dependencies
+are not established by the earlier Python-only import audit. Its current
+outside-worktree runner restriction is a baseline observation, not compatible
+repository-local support implementation. I03 must verify the reviewed replacement
+and complete its input closure; this review does not modify or bypass that hook.
+
+No fixture archive, capture instrumentation, producer event or independent replay
+was created during this planning review. The procedure is the implementation
+contract for those outputs, not evidence that they exist. Full subcase inventory
+and source/toolchain closure remain necessary before readiness can be asserted.
