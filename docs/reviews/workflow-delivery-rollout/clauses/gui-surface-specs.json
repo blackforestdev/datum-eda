@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-CLAUSES.GUI-SURFACE-SPECS",
+  "frontier_key": "GUI-SURFACE-SPECS",
+  "clauses": [
+    {
+      "id": "REQUIREMENTS-AUTHORITY",
+      "step_id": "SURFACE-S01",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S01"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "SURFACE-S01 inventories current schematic and library requirements, prototypes,"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "RESEARCH-QUESTIONS",
+      "step_id": "SURFACE-S01",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S01"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "research, code seams, object authority, and unresolved product questions before"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "SCHEMATIC-HIERARCHY",
+      "step_id": "SURFACE-S02",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S02"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "contract, including document/hierarchy behavior, viewport tooling inheritance,"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "SCHEMATIC-AUTHORING",
+      "step_id": "SURFACE-S02",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S02"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "read-only versus authoring boundaries, accessibility, and honest conformance"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "SCHEMATIC-OBJECTS",
+      "step_id": "SURFACE-S02",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S02"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "- symbols, pins, wires, labels, ports, buses, bus entries, junctions,"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "LIBRARY-OBJECTS",
+      "step_id": "SURFACE-S03",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S03"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "contract across symbols, units, parts, packages, footprints, padstacks,"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "LIBRARY-VALIDATION",
+      "step_id": "SURFACE-S03",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S03"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "pin-pad maps, models, metadata, and validation, with honest conformance"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "LIBRARY-MANUAL-USE",
+      "step_id": "SURFACE-S03",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S03"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "to know object UUIDs or CLI incantations for basic library inspection."
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "SHARED-MUTATION",
+      "step_id": "SURFACE-S04",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S04"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "selection/inspection tooling, manual-first workflow, engine authority, visual"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GOVERNANCE-HANDOFF",
+      "step_id": "SURFACE-S04",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S04"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "prototype inventory, specification governance, and roadmap dependencies."
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "INDEPENDENT-REVIEW",
+      "step_id": "SURFACE-REVIEW",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+        "marker": "SURFACE-REVIEW"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+          "marker": "A distinct reviewer checks both complete surface contracts after SURFACE-S04"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "FULL-SPECIFICATION-SCOPE",
+      "step_id": "SURFACE-REVIEW",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+        "marker": "SURFACE-REVIEW"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+          "marker": "option as completion of the full schematic/library specification."
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "OWNER-RATIFICATION",
+      "step_id": "SURFACE-S05",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S05"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "SURFACE-S05 records the owner's visual and product disposition, resolves or"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "SEPARATE-EXECUTION",
+      "step_id": "SURFACE-S05",
+      "requirement_ref": {
+        "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "marker": "SURFACE-S05"
+      },
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+          "marker": "implementation successor without granting execution authority implicitly."
+        }
+      ],
+      "requires_owner_decision": false
+    }
+  ]
+}

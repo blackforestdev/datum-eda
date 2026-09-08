@@ -1,0 +1,322 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-CLAUSES.PROJECT-PREFERENCES-SPEC",
+  "frontier_key": "PROJECT-PREFERENCES-SPEC",
+  "clauses": [
+    {
+      "id": "COMPLETE-INVENTORY",
+      "step_id": "PPS-C01",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "Inventory every Project-owned setting, governing authority, current persistence"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "EXCLUSIONS",
+      "step_id": "PPS-C01",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "restartable UI state, and deferred Revision behavior must remain outside."
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "UNITS-OWNERSHIP",
+      "step_id": "PPS-C01",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "and to keep Publish/document units visibly separate."
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "UNITS-AGGREGATE",
+      "step_id": "PPS-C01",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "`ProjectDisplayUnits` through one typed aggregate mutation."
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "MENU-SCOPE",
+      "step_id": "PPS-C02",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "- `Global Preferences…` and `Project Preferences…` under Edit > Preferences;"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "NO-PROJECT-NAVIGATOR",
+      "step_id": "PPS-C02",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "- Project disabled with no open Project;\n- unmistakable Global versus Project scope;\n- read-only Global-to-Project doorway;\n- no settings presence in the Navigator;"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "VISUAL-ACCESSIBILITY",
+      "step_id": "PPS-C02",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "- ordinary, narrow, keyboard-only, reduced-motion, non-color, and screen-reader"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "REAL-CATEGORIES",
+      "step_id": "PPS-C02",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "It must not draw future categories merely to"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "PROTECTED-LANE",
+      "step_id": "PPS-C02",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "Codex must provide a bounded handoff and must not edit prototype HTML."
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "IMMEDIATE-COMMIT",
+      "step_id": "PPS-C03",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "The Units-only slice uses immediate per-control commits, not staged Apply/OK/"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "RESET-RECEIPT",
+      "step_id": "PPS-C03",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "Reset restores that row to the value recorded in this Project's immutable seed"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "STALE-REFUSAL",
+      "step_id": "PPS-C03",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "An external generation change triggers re-read and explicit stale-edit refusal,"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "REOPEN-ESCAPE-FOCUS",
+      "step_id": "PPS-C03",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "Window close discards search, open choices, transient"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "ACCESSIBLE-VALUES",
+      "step_id": "PPS-C03",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "Controls announce name, role, stored and resolved value, Project scope,"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "NATIVE-CONFORMANCE",
+      "step_id": "PPS-C03",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "fixtures must prove undo, stale refusal, reopen state, zero geometry mutation,"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "MIGRATION-INDEPENDENCE",
+      "step_id": "PPS-C03",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "factory profile—not from the current machine's Global settings."
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "INDEPENDENT-REVIEW",
+      "step_id": "PPS-REVIEW",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+        "marker": "PPS-REVIEW"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+          "marker": "A distinct reviewer checks the complete PPS-C01 through PPS-C03 inventory,"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "ACCEPTED-UNITS-SCOPE",
+      "step_id": "PPS-REVIEW",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+        "marker": "PPS-REVIEW"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+          "marker": "Carry forward exact already-approved Units evidence without asking for duplicate"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "COMPLETE-CATEGORY-DISPOSITION",
+      "step_id": "PPS-REVIEW",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+        "marker": "PPS-REVIEW"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+          "marker": "complete the required Project inventory and explicitly dispose every in-scope"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "OWNER-RATIFICATION",
+      "step_id": "PPS-C04",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C04"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "Return the complete inventory, protected renders, specification, and proposed"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "SLICE-NOT-CATEGORY-APPROVAL",
+      "step_id": "PPS-C04",
+      "requirement_ref": {
+        "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+        "marker": "PPS-C04"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+          "marker": "other Project Preferences category."
+        }
+      ],
+      "requires_owner_decision": false
+    }
+  ]
+}

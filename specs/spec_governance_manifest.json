@@ -74,6 +74,21 @@
       "progress_anchor": "NATIVE-WORKFLOW-BUDGETS",
       "notes": "WDQ-I02 prepared ten-clause specification inventory, including independent review and exact owner ratification; not installed policy or completed product evidence."
     },
+    "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-I02 pending independent specification reviews for GUI-SURFACE-SPECS and PROJECT-PREFERENCES-SPEC; preserves original product authority and external ownership."
+    },
+    "docs/reviews/workflow-delivery-rollout/clauses/gui-surface-specs.json": {
+      "class": "governed",
+      "progress_anchor": "GUI-SURFACE-SPECS",
+      "notes": "Prepared fourteen-clause specification inventory, not installed policy or product completion."
+    },
+    "docs/reviews/workflow-delivery-rollout/clauses/project-preferences-spec.json": {
+      "class": "governed",
+      "progress_anchor": "PROJECT-PREFERENCES-SPEC",
+      "notes": "Prepared twenty-one-clause specification inventory; no Global Preferences ownership change or Units reapproval."
+    },
     "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md": {
       "class": "governed",
       "progress_anchor": "ADOPTED-DRAFTING-STANDARD-SPEC",

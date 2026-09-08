@@ -761,3 +761,35 @@ Five of the seven active specification inventories are now prepared; GUI surface
 and Project Preferences inventories remain. WDQ-I02 still requires complete
 enrollment preparation and transition audit; readiness, activation and actual
 adoption are not established by these clause inventories.
+
+### WDQ-I02 — complete specification inventory preparation
+
+GUI-SURFACE-SPECS and PROJECT-PREFERENCES-SPEC now have prepared fourteen- and
+twenty-one-clause inventories respectively. Their original complete requirement
+sets remain in the product specifications, which were inspected but not edited.
+The new workflow review companion adds pending SURFACE-REVIEW after S04 and
+PPS-REVIEW after C03, before their unchanged owner decision packets. Existing
+step IDs, selected steps, states, authorization, prerequisites and owners remain
+unchanged. Project Preferences remains blocked on Global Preferences completion;
+no active Global Preferences or Units work is claimed, changed or reopened.
+
+Surface coverage includes the complete schematic and library families, shared
+tooling, manual operation, authority, accessibility, conformance, governance and
+exact owner disposition. Project Preferences coverage includes the full Project
+inventory and exclusions, separate unit/document authorities, menu and scope,
+real categories, protected visuals, immediate Units commits, immutable receipt
+reset, stale refusal, reopen/Escape/focus, accessible values, migration and native
+conformance obligations. Its review carries accepted Units evidence forward
+without duplicate approval or treating that slice as approval of other categories.
+The complete product routes still require review by future product authors.
+
+Five new tests pass for actual PM025 contract validity, independent-review
+ordering, refusal of premature owner selection, complete resolving clause
+coverage and no implicit execution/successor authority. Actual candidate
+`2a85005c` now validates all seven active specification inventories: 96 clauses
+and pending output states without fictional authored evidence. Its 56-item
+category preflight still reports only the workflow's uninstalled delivery
+declaration. This completes inventory preparation, not specification authorship,
+full enrollment, workflow readiness, owner activation or actual product adoption.
+WDQ-I02 remains selected for exact enrollment/contract preparation and the
+remaining transition audit. No dependency, licensing or prototype change occurs.
