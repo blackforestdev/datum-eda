@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "record_type": "product_delivery_mapping_proposals",
+  "basis_ref": "e0c4146a9b576c82fb94d58fcb8bd5c89150915d",
+  "mappings": [
+    {
+      "frontier_key": "UVT-S5A-BUILD",
+      "issue_id": "dat-uvt-s5a-build-1wv",
+      "category": "product",
+      "delivery": {
+        "schema_version": 2,
+        "contract_path": "specs/workflow_delivery/s5a.contract.json",
+        "checkpoints": {
+          "ready": "S5A-C01",
+          "activate": "S5A-C03",
+          "verify": "S5A-C04",
+          "review": "S5A-C05",
+          "accept": "S5A-C06"
+        }
+      },
+      "intervening_owner_authorization": "S5A-C02"
+    },
+    {
+      "frontier_key": "GUI-WRITE-PATH",
+      "issue_id": "dat-gui-write-path-qiu",
+      "category": "product",
+      "delivery": {
+        "schema_version": 2,
+        "contract_path": "specs/workflow_delivery/gui-write-path.contract.json",
+        "checkpoints": {
+          "ready": "GWP-C01",
+          "activate": "GWP-C03",
+          "verify": "GWP-C04",
+          "review": "GWP-C05",
+          "accept": "GWP-C06"
+        }
+      },
+      "intervening_owner_authorization": "GWP-C02"
+    },
+    {
+      "frontier_key": "NATIVE-AUTHORING",
+      "issue_id": "dat-native-authoring-depth-sf9",
+      "category": "product",
+      "delivery": {
+        "schema_version": 2,
+        "contract_path": "specs/workflow_delivery/native-authoring.contract.json",
+        "checkpoints": {
+          "ready": "NA-C01",
+          "activate": "NA-C03",
+          "verify": "NA-C04",
+          "review": "NA-C05",
+          "accept": "NA-C06"
+        }
+      },
+      "intervening_owner_authorization": "NA-C02"
+    }
+  ],
+  "readiness_asserted": false,
+  "enrollment_asserted": false,
+  "acceptance_asserted": false
+}

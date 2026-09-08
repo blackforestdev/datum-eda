@@ -54,6 +54,31 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/cohort-mappings.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-I02 exact proposed five-phase mappings for three native cohorts, preserving intervening C02 owner authorization; not live enrollment."
+    },
+    "research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-I02 local preparation basis for explicitly not-ready cohort drafts; no product choices or native evidence."
+    },
+    "specs/workflow_delivery/s5a.contract.json": {
+      "class": "governed",
+      "progress_anchor": "UVT-S5A-BUILD",
+      "notes": "Prepared complete-scope scenario groups with unresolved C01 inputs and null handlers; not enrolled or ready."
+    },
+    "specs/workflow_delivery/gui-write-path.contract.json": {
+      "class": "governed",
+      "progress_anchor": "GUI-WRITE-PATH",
+      "notes": "Prepared P0/W1/W2/W3 scenario groups with unresolved C01 inputs and null handlers; not enrolled or ready."
+    },
+    "specs/workflow_delivery/native-authoring.contract.json": {
+      "class": "governed",
+      "progress_anchor": "NATIVE-AUTHORING",
+      "notes": "Prepared complete schematic/PCB scenario groups with unresolved C01 inputs and null handlers; not enrolled or ready."
+    },
     "specs/WORKFLOW_DELIVERY_MARKING_MENU_COMPLETION_PLAN.md": {
       "class": "governed",
       "progress_anchor": "GUI-MARKING-MENU",
