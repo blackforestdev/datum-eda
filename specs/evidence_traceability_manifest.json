@@ -36,9 +36,9 @@
       "id": "workflow-delivery-rollout",
       "status": "in_progress",
       "sources": ["research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md"],
-      "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md", "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md", "docs/reviews/workflow-delivery-rollout/proposal.json", "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md"],
-      "reviewed_digest": "738ad2925f50bf8671f4c9f238877cbf01ffe0311dc2949621cb56fa20b861e4",
-      "review_note": "WDQ-I02 partial review reconciles the source and all five consumers with candidate cd773629. Versioned five-phase mappings enforce independent replay before review completion while retaining separate trusted owner acceptance and legacy compatibility; 218 WDQ and 50 project-status tests pass. Exact contract/coverage/enrollment preparation, rollout infrastructure contract, numbered amendment and remaining transition audit stay incomplete. Preserve exact R02 artifacts, I01 dormant-state correction, product owners and installed trust. No native adoption, independent gate review, activation or owner acceptance is asserted."
+      "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md", "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md", "docs/reviews/workflow-delivery-rollout/proposal.json", "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md", "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md"],
+      "reviewed_digest": "b0358931bfa947b42a693d0c6aec5bae5250faa1f4bdb81c7609a6d84cd7f188",
+      "review_note": "WDQ-I02 review reconciles the source and all six consumers, including proposed PM042, with candidate a5f3d219. Version-2 required normal product behavior now needs real handler references and observed enabled invocation in producer/replay; 223 WDQ and 50 project-status tests pass. The numbered amendment is governed but unratified. Self-enrollment lacks a genuine planning/governance readiness mapping; exact plan adjustment, contracts, coverage/enrollment and full transition proof remain outstanding. Preserve exact R02 artifacts, PM041, product owners and installed trust; no native adoption, independent gate review, activation or owner acceptance is asserted."
     },
     {
       "id": "research-governance-index",
