@@ -54,6 +54,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/toolchain-preflight.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-READY read-only host/tool observation, including corrected rustfmt launcher resolution. Not a selected proof environment, complete capture dependency closure or readiness/acceptance receipt."
+    },
     "docs/reviews/workflow-delivery-rollout/assembled-source-verification.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
