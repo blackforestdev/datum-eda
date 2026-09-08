@@ -212,3 +212,33 @@ clause completeness or authenticated owner approval. WDQ-I01 remains in progress
 for clause/disposition validation, remaining category negative coverage and the
 historical/multi-commit transaction-baseline audit. This candidate is not
 installed and changes no live trust, product ownership, dependency or acceptance.
+
+### WDQ-I01 transaction-history audit and candidate increment
+
+Candidate: `4b958a000c82d09f0d6d820a256511869570d2ab`, parent `3088985c0dac3ea5e73ab2b4177deae0da224dbb`.
+Retained under `refs/datum/workflow-delivery-candidates/4b958a000c82d09f0d6d820a256511869570d2ab`.
+Exact zero-context increment: `docs/reviews/workflow-delivery-rollout/i01-history.patch`;
+apply/check with `--unidiff-zero` only against the recorded pinned inputs.
+
+The audit found that a net-tree diff missed intermediate source mutations later
+reverted or deleted. Candidate-ref checks now require ancestry from the explicit
+base and authorize the union of changed production paths across every intervening
+commit, including merge-parent differences. Tests demonstrate refusal through the
+actual candidate CLI even when the final production tree equals the base.
+
+An ordinary staged check authorizes only its current captured-index transaction
+against HEAD. It does not certify earlier commits or recover bypassed hook runs.
+Candidate promotion instead applies current promoted permissions and current
+synchronized claims to the entire proposed path union. An expired/released claim
+cannot be reconstructed from Git timestamps or treated as historical approval;
+the candidate must obtain a valid coordinated current scope before proceeding.
+This is path-permission enforcement, not authentication of every historical
+author, semantic intent or past review. Independent review and exact owner
+promotion remain required and cannot be replaced by a passing history scan.
+
+All 169 WDQ tests pass, including new real Git cases for transient inputs,
+nonancestor bases and merge-side edits plus the actual CLI net-zero regression.
+Candidate source health passes 1823 files; staged whitespace passes. This closes
+the identified net-diff audit gap, not WDQ-I01: specification clause/disposition
+validation and remaining category/refusal coverage still need completion.
+Live enforcement, Preferences ownership and product acceptance remain unchanged.
