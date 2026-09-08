@@ -8269,7 +8269,8 @@
         "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
         "docs/reviews/workflow-foundation/handoff.md"
       ],
-      "state": "ready",
+      "state": "landed",
+      "landing_commit": "7762e68a",
       "authorization": "none",
       "canonical_next": false,
       "parallel": true,
