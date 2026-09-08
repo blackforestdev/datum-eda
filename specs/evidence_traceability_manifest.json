@@ -37,8 +37,8 @@
       "status": "in_progress",
       "sources": ["research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md"],
       "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md", "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md", "docs/reviews/workflow-delivery-rollout/proposal.json", "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md"],
-      "reviewed_digest": "b4abb050fde3adeaa73f4937ef6e3f99bef6a5939e882ffb8d6d8ebc54e6996c",
-      "review_note": "WDQ-I01 partial implementation review reconciles the source and all five consumers with candidate 77172c7e and exact incremental patches. Specification clause accounting now uses the existing pinned boundary reference, exact output matrices, explicit pending owner steps and promoted controlling doctrine; 184 WDQ tests pass. Serialization details remain subject to the I02 amendment and I04 promotion; structural completeness never proves semantic fidelity. Remaining category/refusal coverage precedes I01 closure. Preserve exact R02 approval artifacts, product routes/owners, installed gate/trust/policy and pilot evidence; candidate integration is not activation or acceptance."
+      "reviewed_digest": "11ce91a04372960cfd1ebeccedb51a5b69a1945c5e536ddf1938471bc3e392cc",
+      "review_note": "WDQ-I01 completion review reconciles the source and all five consumers with candidate 79d6c7b and the requirement-to-test audit. Coverage, clause accounting, readiness, category/source/claim and external/deferred refusals are implemented in the isolated candidate; 202 WDQ, 50 project-status, seven foundation and five proposal tests pass. Select WDQ-I02 under existing execution authority; the issue and full rollout remain incomplete. Preserve exact R02 approval artifacts, product routes/owners, installed gate/trust/policy and pilot evidence. I02 amendment/enrollment preparation, independent review, exact owner promotion and actual adoption remain outstanding; this milestone is not activation or acceptance."
     },
     {
       "id": "research-governance-index",
