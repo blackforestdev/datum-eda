@@ -945,6 +945,46 @@ No hard dependency was added and no consuming-owner acceptance is asserted.
 This is an actual rollout gap, independent of GP-CM05V. F01 cannot claim complete
 consumer verification while these selectors fail.
 
+## Native authoring and storage clause adjudication
+
+At `f95db191`, PM003, PM007, PM017, PM018, the GUI Write-Path Plan,
+both schematic and PCB authoring contracts, and both connectivity documents
+(`docs/` rationale and controlling `specs/` contract) were read completely.
+None of these nine files is a member of an evidence route in the inspected
+manifest. This does not waive review of their linked authorities: the GUI
+write-path's PM019 editor-shell route and remaining storage/library authority
+are still outstanding. No historical implementation inventory was promoted to
+fresh runtime evidence.
+
+| Clause / foundation concern | Authority classification and bounded disposition | Required handoff evidence |
+| --- | --- | --- |
+| PM018 Decision and Invariants; F6 genesis | Ratified: genesis is engine-owned and non-journaled; later accepted Units receipts are separate genesis evidence, not a fabricated zero-operation transaction | New Project proof distinguishes publication/receipt from the first authored edit; no undo entry, model-revision production or journal count attributed to genesis |
+| PM007 persistence boundary; F5/F6/F8 workspace | Project source, workspace composition and volatile entry/drag state are distinct; later PM021/PM039 govern their detailed UI exceptions | Closing or rearranging a pane cannot delete source; restoring stale workspace references must resolve current identities, never replay edits or roll back source |
+| GUI Write-Path W4/P0 and PM017; F2/F5 dispatch | Required typed GUI action to daemon/native commit or proposal, then resolver refresh; registry enumeration is not proof of a callable native edit | Native input, typed request, journal result and refreshed stable object must be observed together; a terminal command string or successful catalog query cannot substitute |
+| PCB contract §3 and Current proof slices versus UVT §2.2.14 S5-C06; F3/F4/F5 | Contradictory: the PCB text permits locked-member skipping; later atomic-refusal law explicitly covers align and every selection-derived surface | Reconcile to complete preflight and whole refusal for locked/stale/incompatible/constrained/invalid members, with zero journal effect, exact blocker report and unchanged selection; do not bless the legacy partial result |
+| Schematic place-symbol / end-to-end proof versus PM001 durable undo; F5 | Contradictory: restoring geometry is not restoring revision history. Compensating undo is append-only and advances object revisions, so a blanket requirement that model_revision reverts is incorrect | Assert exact restored domain values and stable identities separately from new transaction, object revisions and resulting model hash; test after reopening |
+| Schematic end-to-end proof versus run-erc §10; F5/F7 | Contradictory: the sequence requires one transaction at every step although run-erc explicitly emits no Operation | Count authored mutations only; check evaluation has no authored-source mutation. Any durable check-evidence path needs its own classification, not an invented source edit |
+| Both authoring contracts' grounding / unsupported / open-question sections; F2–F7 | Historical status conflicts with later sections describing landed native journal and hierarchy support; controlling CLAUDE also declares native write convergence complete | Reconcile dated grounding against current canonical status and inspect implementation evidence for the bounded handoff; retain genuine normalization/GUI gaps without rescheduling retired private-writer migration |
+| Schematic draw-wire §4 versus connectivity rationale §§1–2; F4/F7 | Contradictory lower-level instructions: auto-junctions at crossings/Ts versus never implicitly create a junction. The formal spec distinguishes explicit crossing joins and source-format semantics | Resolve endpoint-on-segment T, crossing without junction, crossing with explicit join and pin attachment separately; imported-format exceptions cannot silently set native gesture policy |
+| Schematic draw-wire §4; F5/F7 | Unanswered transaction boundary: “double-click/Esc to finish” does not say which previously clicked segments are already committed or what Escape discards | Specify exact before/after journal counts for start, vertex, finish and Escape. Preserve no-write cancellation for an uncommitted preview rather than treating every Escape as success |
+| Connectivity rationale §4 versus formal spec §5 and PM003 Identity; F7 | Conflicting identity explanation: UUID-from-name rationale cannot override names-as-attributes and stable NetId/NetAnchor authority | Separate connectivity formation from durable identity; rename, merge/split and connected movement need exact identity and topology assertions, not visually touching endpoints |
+
+`dat-authoring-clause-authority-blm` captures the atomic-refusal, undo/check
+and stale-grounding reconciliation. The junction, gesture and net-identity
+observations extend the bounded F4/F7 question in
+`dat-grid-connectivity-authority-5s6`; they do not select a replacement
+connectivity model or alter a Claude prototype. PM003 distinguishes electrical
+intent, physical realization, authored relationship kind and derived relationship
+status: moving board geometry cannot silently rewrite electrical intent, and
+merely placing a package does not prove its unrouted nets are implemented.
+
+The existing writer-lock issue `dat-project-write-ownership-lock-0ne` is still
+open and explicitly requires a numbered decision before GUI-WRITE-PATH. Its
+description identifies a journal-tip check/rename race, not a ratified choice
+between daemon-only ownership and per-process locking. The foundation proposal
+must present that exact choice with stale/second-writer and crash consequences;
+it cannot copy the Global Preferences writer lease into Project authority.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
