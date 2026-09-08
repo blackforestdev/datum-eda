@@ -11,6 +11,8 @@ from workflow_delivery_proof import packet_sha256
 from workflow_delivery_tree import Tree
 
 REVIEW_PHASE_CASES = {
+    "INFRA-S04-06.producer-unavailable": ("reader", "WDQ-CONSUMER", "required enabled behavior lacks invocation on every reviewed surface"),
+    "INFRA-S04-06.reviewer-unavailable": ("reader", "WDQ-CONSUMER", "required enabled behavior lacks invocation on every reviewed surface"),
     "INFRA-S04-01.skipped-review": ("TASK", "WDQ-TRANSITION", "checkpoints must follow dependency order"),
     "INFRA-S04-01.missing-record": ("docs/reviews/review.json", "WDQ-ARTIFACT", "required artifact is not in candidate Git tree"),
     "INFRA-S04-07.owner-pending": (None, None, None),
@@ -66,6 +68,8 @@ def prepare_review_phase(f, manifest, policy, variant):
     if variant.endswith(".skipped-review"):
         review_step.update(status="pending", completion_evidence=[])
         completion["steps"][-1]["depends_on"] = ["V"]
+    if variant.startswith("INFRA-S04-06."):
+        unavailable_run(f, tree, review, replay=variant.endswith(".reviewer-unavailable"))
     next(row for row in policy["coverage"]["rows"] if row["frontier_key"] == "TASK")["category"] = category
     f.save(f.contract["review_path"], review)
     if variant.endswith(".missing-record"):
@@ -75,3 +79,26 @@ def prepare_review_phase(f, manifest, policy, variant):
         f.git("add", "--", f.contract["review_path"])
     f.save("specs/active_frontier.json", manifest)
     f.write("specs/PROGRESS.md", render_block(manifest).encode())
+
+
+def unavailable_run(f, tree, review, *, replay):
+    """Disable only the named synthetic run; preserve the other run's registry."""
+    path = review["replay"]["path"] if replay else f.contract["proof_path"]
+    proof = tree.json(path)
+    producer = proof["producer_session"]
+    index_path = f"evidence/{producer}-roles.json"
+    roles = tree.json(index_path)
+    registry = tree.json(roles["registry"]["path"])
+    registry["entries"][0]["contexts"]["fixture"].update(enabled=False, reason="unavailable")
+    roles["registry"] = f.blob(f"evidence/{producer}-unavailable-registry.json", canonical_json(registry))
+    event = tree.json(roles["events"][0]["path"])
+    event["dispatches"][0].update(eligible=False, enabled=False, invoked=False, unavailable_reason="unavailable")
+    roles["events"][0] = f.blob(roles["events"][0]["path"], canonical_json(event))
+    index = f.blob(index_path, canonical_json(roles))
+    proof["results"][0]["artifacts"] = (roles["events"] + roles["captures"] + roles["state"]
+                                         + [roles["registry"], index])
+    if replay:
+        review["replay"] = f.blob(path, canonical_json(proof))
+    else:
+        f.save(path, proof)
+        review["packet_sha256"] = packet_sha256(f.contract, proof, authority_sha256(tree, f.contract))

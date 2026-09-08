@@ -59,7 +59,7 @@ class ReviewPhaseCaptureTest(unittest.TestCase):
                             self.assertFalse(recovery["complete_matrix"])
                             self.assertNotIn(recovery["invocation_id"], identities)
                             identities.add(recovery["invocation_id"])
-            self.assertEqual(30, len(identities))
+            self.assertEqual(50, len(identities))
 
 
 if __name__ == "__main__":
