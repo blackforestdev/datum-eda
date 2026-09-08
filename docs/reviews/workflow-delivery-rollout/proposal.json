@@ -1,0 +1,381 @@
+{
+  "schema_version": 1,
+  "record_type": "rollout_proposal",
+  "baseline_ref": "327b71d121c89ff33e88f35835005ccd2c81e3e0",
+  "implementation_authorized": false,
+  "candidate_ref": null,
+  "promotion_asserted": false,
+  "acceptance_asserted": false,
+  "authority_plan": "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md",
+  "classification_proposal": [
+    {
+      "frontier_key": "STATE-ALIGNMENT",
+      "issue_id": "dat-project-management-alignment-pua",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "UVT-S5-SPEC",
+      "issue_id": "dat-s5-selection-visual-contract-zid",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "FULL-NATIVE-TERMINAL-CONTRACT",
+      "issue_id": "dat-full-native-terminal-contract-e2d",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-EPIC",
+      "issue_id": "dat-terminal-emulator-epic-jzv",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-AGENT-INTEROP-CONTRACT",
+      "issue_id": "dat-terminal-emulator-epic-jzv.7",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-T0-SHELL-TRUTH",
+      "issue_id": "dat-pan-trace-terminal-pollution-0j0",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-P0-FOCUS",
+      "issue_id": "dat-terminal-focus-authority-6aw",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-T1-INPUT",
+      "issue_id": "dat-terminal-dual-input-model-75y",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-T1-PTY",
+      "issue_id": "dat-terminal-emulator-epic-jzv.1",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-T1-CORE",
+      "issue_id": "dat-terminal-emulator-epic-jzv.2",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-T2-NATIVE",
+      "issue_id": "dat-terminal-emulator-epic-jzv.3",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-T3-UX",
+      "issue_id": "dat-terminal-emulator-epic-jzv.4",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-T3-PROTOCOLS",
+      "issue_id": "dat-terminal-emulator-epic-jzv.5",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-T4A-AGENT-LAUNCH",
+      "issue_id": "dat-terminal-emulator-epic-jzv.8",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-T4B-MCP",
+      "issue_id": "dat-terminal-emulator-epic-jzv.9",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-T4C-CONTEXT-AUTHORITY",
+      "issue_id": "dat-terminal-emulator-epic-jzv.10",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-T4D-WORKFLOW-PARITY",
+      "issue_id": "dat-terminal-emulator-epic-jzv.11",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "TERMINAL-T4-VERIFY",
+      "issue_id": "dat-terminal-emulator-epic-jzv.6",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "CONSOLE-CONTRACT-RECOVERY",
+      "issue_id": "dat-output-lane-t6v",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "DATUM-CONSOLE-OUTPUT",
+      "issue_id": "dat-datum-console-output-djd",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "GUI-SURFACE-SPECS",
+      "issue_id": "dat-gui-surface-specs-usb",
+      "category": "specification"
+    },
+    {
+      "frontier_key": "UVT-S5A-BUILD",
+      "issue_id": "dat-uvt-s5a-build-1wv",
+      "category": "product"
+    },
+    {
+      "frontier_key": "GUI-P2-CROSSPROBE",
+      "issue_id": "dat-gui-p2-cross-probe-27z",
+      "category": "product"
+    },
+    {
+      "frontier_key": "GUI-P2-INSPECTOR",
+      "issue_id": "dat-gui-p2-full-inspector-0ye",
+      "category": "product"
+    },
+    {
+      "frontier_key": "GUI-MARKING-MENU",
+      "issue_id": "dat-marking-menu-shell-g0w",
+      "category": "product"
+    },
+    {
+      "frontier_key": "GUI-WRITE-PATH",
+      "issue_id": "dat-gui-write-path-qiu",
+      "category": "product"
+    },
+    {
+      "frontier_key": "NATIVE-AUTHORING",
+      "issue_id": "dat-native-authoring-depth-sf9",
+      "category": "product"
+    },
+    {
+      "frontier_key": "DOC-SYSTEM-SPEC",
+      "issue_id": "dat-documentation-system-spec-y8z",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "STATE-NEXT-OWNERSHIP",
+      "issue_id": "dat-next-output-ownership-uqz",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "STATE-TASK-DETAILS",
+      "issue_id": "dat-task-completion-alignment-4jp",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "STATE-DETAIL-PRESENTATION",
+      "issue_id": "dat-task-detail-presentation-bjk",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "DISTRIBUTED-COLLAB-SPEC",
+      "issue_id": "dat-distributed-collaboration-architecture-lt1",
+      "category": "specification"
+    },
+    {
+      "frontier_key": "PRODUCT-REVISION-SPEC",
+      "issue_id": "dat-product-revision-engine-k9f",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "GLOBAL-PREFERENCES-SPEC",
+      "issue_id": "dat-global-preferences-engine-qcv",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "SHARED-UNITS-ENGINE",
+      "issue_id": "dat-shared-units-engine-build-915",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "GLOBAL-PREFERENCES-ENGINE",
+      "issue_id": "dat-global-preferences-engine-build-vge",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "SHARED-UNITS-SURFACE-PARITY",
+      "issue_id": "dat-shared-units-surface-parity-s9x",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "GLOBAL-PREFERENCES-COMPLETION",
+      "issue_id": "dat-global-preferences-completion-f84",
+      "category": "external_lane"
+    },
+    {
+      "frontier_key": "PROJECT-PREFERENCES-SPEC",
+      "issue_id": "dat-project-preferences-spec-kiw",
+      "category": "specification"
+    },
+    {
+      "frontier_key": "PROJECT-PREFERENCES-BUILD",
+      "issue_id": "dat-project-preferences-build-tlq",
+      "category": "product"
+    },
+    {
+      "frontier_key": "PRODUCT-REVISION-ENGINE",
+      "issue_id": "dat-product-revision-engine-build-18f",
+      "category": "deferred"
+    },
+    {
+      "frontier_key": "MCAD-INTEROP-PLACEHOLDER",
+      "issue_id": "dat-mcad-interop-l3p",
+      "category": "deferred"
+    },
+    {
+      "frontier_key": "DRAFTING-STANDARD-AUTHORITY",
+      "issue_id": "dat-drafting-standard-authority-jcz",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "SCHEMATIC-BACKGROUND-OWNER-DECISION",
+      "issue_id": "dat-schematic-background-owner-decision-gom",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "ADOPTED-DRAFTING-STANDARD-SPEC",
+      "issue_id": "dat-adopted-drafting-standard-object-er9",
+      "category": "specification"
+    },
+    {
+      "frontier_key": "VISUAL-TRUTH-FILE-LANE",
+      "issue_id": "dat-visual-truth-file-lane-enforcement-jfl",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "REVISION-PRODUCT-RECOVERY",
+      "issue_id": "dat-revision-product-recovery-dap",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "WORKFLOW-DELIVERY-QUALITY",
+      "issue_id": "dat-workflow-delivery-quality-xgj",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "FOUNDATION-WORKFLOW-SPEC",
+      "issue_id": "dat-manual-foundation-contracts-fsw",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "WORKFLOW-DELIVERY-GATE-PILOT",
+      "issue_id": "dat-workflow-gate-pilot-b3s",
+      "category": "historical"
+    },
+    {
+      "frontier_key": "WORKFLOW-DELIVERY-ROLLOUT",
+      "issue_id": "dat-wdq-broader-rollout-tqh",
+      "category": "specification"
+    },
+    {
+      "frontier_key": "PROJECT-WRITER-OWNERSHIP",
+      "issue_id": "dat-project-write-ownership-lock-0ne",
+      "category": "specification"
+    },
+    {
+      "frontier_key": "NATIVE-CONNECTIVITY-CONTRACT",
+      "issue_id": "dat-grid-connectivity-authority-5s6",
+      "category": "specification"
+    },
+    {
+      "frontier_key": "NATIVE-PROJECT-DOORWAY",
+      "issue_id": "dat-native-project-startup-vrf",
+      "category": "product"
+    },
+    {
+      "frontier_key": "NATIVE-WORKFLOW-BUDGETS",
+      "issue_id": "dat-native-workflow-budgets-0h4",
+      "category": "specification"
+    }
+  ],
+  "enrollment_intents": [
+    {
+      "frontier_key": "UVT-S5A-BUILD",
+      "issue_id": "dat-uvt-s5a-build-1wv",
+      "contract_path": "specs/workflow_delivery/s5a.contract.json",
+      "mapping_version": 2,
+      "checkpoints": {
+        "ready": "S5A-C01",
+        "activate": "S5A-C03",
+        "verify": "S5A-C04",
+        "review": "S5A-C05",
+        "accept": "S5A-C06"
+      },
+      "authorization_step": "S5A-C02",
+      "scenario_groups": [
+        "S5A-S01",
+        "S5A-S02",
+        "S5A-S03",
+        "S5A-S04",
+        "S5A-S05",
+        "S5A-S06"
+      ],
+      "product_owner_session": null,
+      "independent_reviewer_session": null,
+      "adoption_events": [],
+      "input_roots_status": "conservative proposal; exact closure and fixture require owning-lane review",
+      "readiness_asserted": false
+    },
+    {
+      "frontier_key": "GUI-WRITE-PATH",
+      "issue_id": "dat-gui-write-path-qiu",
+      "contract_path": "specs/workflow_delivery/gui-write-path.contract.json",
+      "mapping_version": 2,
+      "checkpoints": {
+        "ready": "GWP-C01",
+        "activate": "GWP-C03",
+        "verify": "GWP-C04",
+        "review": "GWP-C05",
+        "accept": "GWP-C06"
+      },
+      "authorization_step": "GWP-C02",
+      "scenario_groups": [
+        "GWP-S01",
+        "GWP-S02",
+        "GWP-S03",
+        "GWP-S04",
+        "GWP-S05",
+        "GWP-S06"
+      ],
+      "product_owner_session": null,
+      "independent_reviewer_session": null,
+      "adoption_events": [],
+      "input_roots_status": "conservative proposal; exact closure and fixture require owning-lane review",
+      "readiness_asserted": false
+    },
+    {
+      "frontier_key": "NATIVE-AUTHORING",
+      "issue_id": "dat-native-authoring-depth-sf9",
+      "contract_path": "specs/workflow_delivery/native-authoring.contract.json",
+      "mapping_version": 2,
+      "checkpoints": {
+        "ready": "NA-C01",
+        "activate": "NA-C03",
+        "verify": "NA-C04",
+        "review": "NA-C05",
+        "accept": "NA-C06"
+      },
+      "authorization_step": "NA-C02",
+      "scenario_groups": [
+        "NA-S01",
+        "NA-S02",
+        "NA-S03",
+        "NA-S04",
+        "NA-S05",
+        "NA-S06",
+        "NA-S07",
+        "NA-S08"
+      ],
+      "product_owner_session": null,
+      "independent_reviewer_session": null,
+      "adoption_events": [],
+      "input_roots_status": "conservative proposal; exact closure and fixture require owning-lane review",
+      "readiness_asserted": false
+    }
+  ],
+  "external_lane": {
+    "frontier_key": "GLOBAL-PREFERENCES-COMPLETION",
+    "owner_boundary": "GP-CM05V",
+    "handoff_received": false,
+    "source_scope_authorized": false
+  },
+  "support_store_proposal": "<resolved-git-common-dir>/datum-wdq",
+  "source_scopes_proposed": [],
+  "source_scope_note": "No product scope is approved by this proposal; prepare exact paths/step IDs with each owning lane before activation."
+}

@@ -7,6 +7,7 @@
     "docs/gui/*.md"
   ],
   "tracked_docs": [
+    "docs/reviews/workflow-delivery-rollout/proposal.json",
     "docs/reviews/workflow-foundation/handoff.md",
     "docs/reviews/workflow-foundation/authority-review.md",
     "specs/workflow_delivery_policy.json",
@@ -49,6 +50,14 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md": {
+      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
+      "notes": "WDQ-R02 bounded implementation proposal, not installed policy: roadmap/source coverage, separate review phase, exact promotion, local support storage and three real adoption cohorts. R03 owner authorization and later exact promotion remain required."
+    },
+    "docs/reviews/workflow-delivery-rollout/proposal.json": {
+      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
+      "notes": "Non-operative exact-baseline classification and checkpoint/enrollment-intent inventory for R02 review. Null candidate/owner/reviewer and empty adoption events are honest absence, not runtime policy or evidence."
+    },
     "specs/FOUNDATION_FOLLOWUP_PLANS.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
       "notes": "WDQ-R01 schedules four owner-approved foundation follow-ups with explicit planning, ratification and doorway delivery boundaries. No product claim, hard-edge amendment, mechanism ratification or execution authorization."
