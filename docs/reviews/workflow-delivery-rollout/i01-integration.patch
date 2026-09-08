@@ -2,22 +2,10 @@ diff --git a/scripts/check_workflow_delivery.py b/scripts/check_workflow_deliver
 index 4b9e4b05..04e6724a 100644
 --- a/scripts/check_workflow_delivery.py
 +++ b/scripts/check_workflow_delivery.py
-@@ -9,6 +9,7 @@ import sys
- from workflow_delivery_authority import authority_sha256
- from workflow_delivery_checkpoints import validate_delivery
- from workflow_delivery_contract import load_contract, validate_handler_files
+@@ -11,0 +12 @@ from workflow_delivery_contract import load_contract, validate_handler_files
 +from workflow_delivery_coverage_runtime import validate_coverage
- from workflow_delivery_frontier import validate_frontier
- from workflow_delivery_io import DeliveryInputError
- from workflow_delivery_shapes import require
-@@ -32,6 +33,7 @@ def run(args):
-     manifest = validate_frontier(tree) if args.enforce else tree.json(FRONTIER_PATH)
-     if trust:
-         enrolled = trust.enrolled
+@@ -34,0 +36 @@ def run(args):
 +        validate_coverage(tree, manifest, trust)
-     elif POLICY_PATH in tree.entries:
-         enrolled = {r["frontier_key"]: r for r in policy_shape(tree.json(POLICY_PATH))["enrolled"]}
-     else:
 diff --git a/scripts/test_workflow_delivery_coverage_entrypoints.py b/scripts/test_workflow_delivery_coverage_entrypoints.py
 new file mode 100644
 index 00000000..3a08e4b8
@@ -293,23 +281,11 @@ diff --git a/scripts/workflow_delivery_selector.py b/scripts/workflow_delivery_s
 index 52c1fdc9..2ad48f2d 100644
 --- a/scripts/workflow_delivery_selector.py
 +++ b/scripts/workflow_delivery_selector.py
-@@ -4,6 +4,7 @@ from pathlib import Path
- import subprocess
- 
- from workflow_delivery_checkpoints import validate_delivery
+@@ -6,0 +7 @@ from workflow_delivery_checkpoints import validate_delivery
 +from workflow_delivery_coverage_runtime import validate_coverage
- from workflow_delivery_io import DeliveryInputError
- from workflow_delivery_shapes import require
- from workflow_delivery_tree import Tree
-@@ -41,6 +42,8 @@ def selector_failures(root, manifest):
-                     "trusted enrollment cannot disappear from candidate", "WDQ-POLICY")
-             enrolled = trust.enrolled
-         environment = tree.json(env_path) if env_path else None
+@@ -43,0 +45,2 @@ def selector_failures(root, manifest):
 +        if trust:
 +            validate_coverage(tree, manifest, trust)
-         for item in declared:
-             validate_delivery(tree, item, phase=None if item["key"] in enrolled else "structure",
-                               trust=trust if item["key"] in enrolled else None,
 diff --git a/scripts/workflow_delivery_transaction.py b/scripts/workflow_delivery_transaction.py
 new file mode 100644
 index 00000000..f77a3200
@@ -352,22 +328,12 @@ diff --git a/scripts/workflow_delivery_trust.py b/scripts/workflow_delivery_trus
 index e7908fba..df6182e6 100644
 --- a/scripts/workflow_delivery_trust.py
 +++ b/scripts/workflow_delivery_trust.py
-@@ -4,9 +4,10 @@ from pathlib import Path
- 
- from workflow_delivery_authority import resolve_ref
- from workflow_delivery_contract import canonical_contract, validate_contract
+@@ -6,0 +7 @@ from workflow_delivery_contract import canonical_contract, validate_contract
 +from workflow_delivery_coverage_shapes import coverage_shape
- from workflow_delivery_io import DeliveryInputError, canonical_json
- from workflow_delivery_shapes import (
+@@ -9 +10 @@ from workflow_delivery_shapes import (
 -    array, closed, commit_id, ids, identifier, ref, require, unique, version,
 +    array, closed, commit_id, ids, identifier, ref, require, unique,
- )
- from workflow_delivery_tree import Tree
- 
-@@ -23,8 +24,14 @@ def policy_shape(value):
- 
- 
- def _policy_shape(value):
+@@ -26,2 +27,8 @@ def _policy_shape(value):
 -    closed(value, "schema_version decision_ref enrolled legacy_baseline", POLICY_PATH, "WDQ-POLICY")
 -    version(value["schema_version"], POLICY_PATH)
 +    require(type(value) is dict, POLICY_PATH, "policy object required", "WDQ-POLICY")
@@ -378,6 +344,3 @@ index e7908fba..df6182e6 100644
 +    closed(value, fields + (" coverage" if schema == 2 else ""), POLICY_PATH, "WDQ-POLICY")
 +    if schema == 2:
 +        coverage_shape(value["coverage"])
-     ref(value["decision_ref"], POLICY_PATH)
-     commit_id(value["legacy_baseline"], POLICY_PATH)
-     array(value["enrolled"], POLICY_PATH)
