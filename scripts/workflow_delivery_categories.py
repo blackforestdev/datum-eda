@@ -17,7 +17,8 @@ def validate_categories(items, coverage, enrolled, authority):
             s.get("kind") == "execution" and s.get("status") in ("in_progress", "complete")
             for s in steps)
         if category == "deferred":
-            require(item.get("authorization") == "none" and not item.get("claim")
+            require(item.get("state") == "deferred" and
+                    item.get("authorization") == "none" and not item.get("claim")
                     and not executing, key, "deferred work requires reclassification before execution",
                     "WDQ-COVERAGE")
             continue
@@ -38,7 +39,19 @@ def validate_categories(items, coverage, enrolled, authority):
             if executing or preflight_done:
                 readiness.append(key)
         elif category == "external_lane":
-            old = promoted.get(key, {}).get("completion", {})
+            prior = promoted.get(key, {})
+            old = prior.get("completion", {})
+            require(item.get("authorization") == prior.get("authorization"), key,
+                    "external-lane authorization changed; coordinated promotion required",
+                    "WDQ-COVERAGE")
+            require(all(item.get(field) == prior.get(field)
+                        for field in ("dependencies", "governing_docs")), key,
+                    "external-lane governing boundary changed; coordinated promotion required",
+                    "WDQ-COVERAGE")
+            require({k: v for k, v in completion.items() if k != "steps"} ==
+                    {k: v for k, v in old.items() if k != "steps"}, key,
+                    "external-lane completion boundary changed; coordinated promotion required",
+                    "WDQ-COVERAGE")
             selected = completion.get("canonical_next_step_id")
             require(selected == old.get("canonical_next_step_id"), key,
                     "external-lane selected boundary changed; coordinated promotion required",

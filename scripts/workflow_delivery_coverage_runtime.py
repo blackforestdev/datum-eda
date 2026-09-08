@@ -3,10 +3,13 @@
 from workflow_delivery_coverage import validate_classifications
 from workflow_delivery_categories import validate_categories
 from workflow_delivery_checkpoints import validate_delivery
+from workflow_delivery_contract import load_contract
+from workflow_delivery_io import DeliveryInputError
 from workflow_delivery_proof import _issues
 from workflow_delivery_source_scopes import authorize_source_paths
 from workflow_delivery_specification import validate_specification_outputs
 from workflow_delivery_transaction import changed_production_paths
+from workflow_delivery_shapes import require
 
 
 def validate_coverage(tree, manifest, trust, *, environment=None):
@@ -16,6 +19,22 @@ def validate_coverage(tree, manifest, trust, *, environment=None):
     items = validate_classifications(tree, coverage, manifest, authority=trust.authority)
     readiness = validate_categories(items, coverage, trust.enrolled, trust.authority)
     validate_specification_outputs(tree, items, coverage, trust.authority)
+    for row in coverage["rows"]:
+        if row["category"] not in ("product", "infrastructure"):
+            continue
+        item = items[row["frontier_key"]]
+        declaration = item["completion"].get("delivery")
+        if declaration is not None:
+            try:
+                contract = load_contract(tree, declaration["contract_path"],
+                                         frontier_key=item["key"], issue_id=item["issue_id"])
+                require(contract["category"] == row["category"], item["key"],
+                        "delivery contract category must match owner-promoted classification",
+                        "WDQ-COVERAGE")
+            except DeliveryInputError as error:
+                error.key = item["key"]
+                error.step = item["completion"]["canonical_next_step_id"]
+                raise
     for key in readiness:
         # Unenrolled declarations normally receive structure-only diagnostics.
         # Completing a covered preflight must also resolve its actual authority

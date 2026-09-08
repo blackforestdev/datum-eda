@@ -111,6 +111,48 @@ class ReadinessBoundaryTest(unittest.TestCase):
         self.assertEqual("WDQ-AUTHORITY", report["findings"][0]["code"])
         self.assertIn("owning route review is stale", report["findings"][0]["detail"])
 
+    def test_completed_preflight_cannot_omit_its_delivery_declaration(self):
+        del self.item["completion"]["delivery"]
+        self.save()
+        code, report = self.h.cli()
+        self.assertEqual(1, code, report)
+        self.assertIn("requires a delivery declaration", report["findings"][0]["detail"])
+
+    def test_execution_requires_promoted_enrollment(self):
+        owner = self.item["completion"]["steps"][1]
+        owner.update(status="complete", completion_evidence=[{"kind": "review", **self.f.ref}])
+        self.item.update(state="ready", authorization="execution")
+        self.item["completion"]["canonical_next_step_id"] = "NEXT-C03"
+        self.save()
+        code, report = self.h.cli()
+        self.assertEqual(1, code, report)
+        self.assertIn("requires owner-promoted enrollment", report["findings"][0]["detail"])
+
+    def test_product_classification_cannot_use_infrastructure_contract(self):
+        policy = Tree(self.f.root).json("specs/workflow_delivery_policy.json")
+        next(r for r in policy["coverage"]["rows"] if r["frontier_key"] == "NEXT")[
+            "category"] = "product"
+        self.f.save("specs/workflow_delivery_policy.json", policy)
+        self.save()
+        self.f.git("commit", "-qm", "fixture product classification with incorrect contract")
+        self.h.authority = self.f.git("rev-parse", "HEAD").decode().strip()
+        for key in ("AuthorityRef", "BaseRef"):
+            self.f.git("config", "datum.workflowDelivery" + key, self.h.authority)
+        code, report = self.h.cli()
+        self.assertEqual(1, code, report)
+        self.assertIn("category must match owner-promoted classification",
+                      report["findings"][0]["detail"])
+
+    def test_pending_planning_does_not_require_future_contract(self):
+        self.item["completion"]["steps"][0].update(status="pending", completion_evidence=[])
+        self.item.update(state="specified", authorization="planning")
+        self.item["completion"]["canonical_next_step_id"] = "NEXT-C01"
+        del self.item["completion"]["delivery"]
+        self.save()
+        code, report = self.h.cli()
+        self.assertEqual(0, code, report)
+        self.assertEqual([], selector_failures(self.f.root, self.m))
+
 
 if __name__ == "__main__":
     unittest.main()
