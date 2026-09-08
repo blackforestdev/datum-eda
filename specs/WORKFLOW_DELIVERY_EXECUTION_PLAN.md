@@ -543,3 +543,48 @@ The existing parity gate initially refused the added contract because its
 filename inventory still contained only the pilot. The owning-lane change
 updates only that inventory's count/digest and explanatory notes; all 16 parity
 inventories then pass. No accepted pilot authority or proof digest was refreshed.
+
+### WDQ-I02 — actual-roadmap category preflight and deferred-history correction
+
+`docs/reviews/workflow-delivery-rollout/category-preflight.json` records actual
+per-item calls to `workflow_delivery_categories.validate_categories` for all 56
+items at `91e4b113866494414f37bc4f53a50947c11d8a48`. Inputs are the exact baseline
+Frontier and installed enrollment list, and the approved proposal classifications
+with two explicit baseline adjustments: landed WORKFLOW-DELIVERY-ROLLOUT becomes
+historical; its existing implementation successor is infrastructure. No live
+classification or task state changes. Counts: 37 historical, seven specification,
+eight product, two deferred, one external lane and one infrastructure.
+
+The actual preflight exposed a validator defect: PRODUCT-REVISION-ENGINE is
+properly deferred/none but retains historical completed execution steps. Candidate
+`a5f3d219` mistook those records for current execution. Corrected candidate
+`2a85005ce7648322424391281a02c092bff15414` permits exact promoted completion history
+only while preserving dormant lifecycle, none authorization and no claim. Live
+execution and any completion-record change, including new completion or altered
+requirements, still refuse. PM042's proposed text now states that distinction;
+the real Revision Engine record was not rewritten or reclassified.
+
+Retained ref:
+`refs/datum/workflow-delivery-candidates/2a85005ce7648322424391281a02c092bff15414`.
+Exact parent-to-candidate patch: `docs/reviews/workflow-delivery-rollout/i02-deferred-history.patch`.
+All 227 workflow-delivery and 50 project-status candidate tests pass; source health
+passes 1832 files. Four new real CLI/selector fixture tests preserve old completed
+history while rejecting unauthorized completion and requirement changes. The
+zero-context patch matches the retained Git diff and reverses cleanly. Defect
+`dat-wdq-deferred-history-1qi` is corrected in this uninstalled candidate only.
+
+Repeating the exact-baseline audit removes only the false Revision Engine refusal.
+Five genuine missing completion plans remain: GUI-P2-CROSSPROBE, GUI-P2-INSPECTOR,
+GUI-MARKING-MENU, DISTRIBUTED-COLLAB-SPEC and ADOPTED-DRAFTING-STANDARD-SPEC.
+`dat-wdq-missing-plans-b8y` captures their repair within existing WDQ-I02 before
+I04 promotion, not as rival task selection. Prepare requirement-linked pending
+plans after complete owning-route review, preserve dependencies and owners, and
+provide proper specification clause or product readiness/proof/review boundaries.
+Do not exempt these items or execute their product scope to make coverage pass.
+
+The sixth remaining category refusal is this implementation task's still-missing
+operative delivery declaration; the separately prepared contract/mapping is not
+installed enrollment. This diagnostic is deliberately not full policy, scope,
+clause, readiness or proof validation. The five plan repairs, exact product/
+coverage/enrollment preparation and remaining I02 work continue; Preferences,
+all product states, installed trust and future owner checkpoints are unchanged.
