@@ -67,8 +67,11 @@ scripts, CI and MCP code so non-Rust production changes cannot escape merely
 because the native Cargo closure omitted them. This broader explicit root list
 requires owner review at promotion; it is not an already-approved permission.
 
-The sole proposed source scope is the rollout infrastructure's current explicit
-69-file input inventory, tied to WDQ-I03 and WDQ-REVIEW. These are existing
+The sole proposed source scope retains the rollout infrastructure's original
+69 explicit permission paths, tied to WDQ-I03 and WDQ-REVIEW. The contract's
+read-input list is now larger: hook checks, their exemption manifest and referenced
+Rust files are proof dependencies, not permission to edit those lanes. A read
+dependency must never automatically become a source scope. These are existing
 execution checkpoints, not authority to skip their prerequisites or use a stale
 claim. No whole-crates, whole-scripts or whole-repository write permission is
 granted. New promotion-tooling files and any corrected input closure must be

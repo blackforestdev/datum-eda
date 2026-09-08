@@ -104,3 +104,25 @@ real candidate history from staged/worktree views and preserves early hook
 diagnostics. Two consistency tests check identity, scenario/surface coverage and
 snapshot applicability only. They do not certify semantic completeness or an
 unexecuted refusal. The full fixture capture and final input closure remain due.
+
+## WDQ-READY — repository read inputs versus write authority
+
+Inspection of the actual hook and rustfmt loader identified seven concrete
+repository dependencies outside the original 69-file list: the file-lane and
+rustfmt checkers, the exemption manifest, and its four existing Rust paths.
+The contract now binds those 76 inputs conservatively. The Rust paths are checked
+for existence and can be examined as staged formatting inputs; including their
+bytes avoids an understated proof boundary. No Rust source was changed.
+
+The permission proposal stays at its original 69 paths. A test previously
+required equality between read inputs and write scope; it now checks the proper
+subset relationship, and a negative scope test prevents these seven dependencies
+from becoming workflow write permissions. Separate input coverage tests derive
+the current exemption references rather than hiding omissions behind a fixed count.
+
+Read-only review of drift/CI wiring also distinguishes supplementary full-build
+verification from bounded CLI/selector/hook observations. External tools and
+actual loaded Python/shared-library inputs require separate observed toolchain
+accounting. Future capture/fixture modules and environment files must be added
+when implemented before proof; this 76-file baseline does not certify those
+not-yet-existing files, completed readiness or full installation.

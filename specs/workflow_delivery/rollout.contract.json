@@ -106,7 +106,13 @@
   "open_decisions": [],
   "input_roots": [
     ".github/workflows/alignment.yml",
+    "crates/cli/src/command_plan.rs",
+    "crates/cli/src/commands/board/routing_net.rs",
+    "crates/cli/src/commands/project/validate.rs",
+    "crates/engine/src/substrate/journal.rs",
     "scripts/check_evidence_traceability.py",
+    "scripts/check_file_lane_ownership.py",
+    "scripts/check_rustfmt.py",
     "scripts/check_workflow_delivery.py",
     "scripts/git-hooks/pre-commit",
     "scripts/project_status.py",
@@ -173,7 +179,8 @@
     "scripts/workflow_delivery_transaction.py",
     "scripts/workflow_delivery_tree.py",
     "scripts/workflow_delivery_trust.py",
-    "scripts/workflow_delivery_trust_test_support.py"
+    "scripts/workflow_delivery_trust_test_support.py",
+    "specs/rustfmt_exemption_manifest.json"
   ],
   "consumers": [
     {

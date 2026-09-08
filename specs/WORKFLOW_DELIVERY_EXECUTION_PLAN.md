@@ -972,3 +972,15 @@ are not misrepresented as selector or empty-index certification. Two preparation
 tests cover case identity/scenario/surface consistency and snapshot applicability;
 they are not 62 executed delivery tests. Final source/toolchain closure, actual
 capture tooling, full producer/reviewer observations and readiness remain due.
+
+### WDQ-READY — concrete repository input correction
+
+The infrastructure contract now includes 76 repository inputs: the original 69
+plus the actual file-lane/rustfmt checkers, exemption manifest and its four Rust
+references. The source-permission proposal remains unchanged at 69 paths;
+dependency consumption does not authorize editing those files. Two additional
+tests cover actual hook input inclusion and absence of implicit write authority.
+External interpreter/tool/shared-library identity and future capture-module/data
+closure are explicitly separate. No runtime, Rust file, product record, policy
+or installed hook changed. Final capture/toolchain accounting remains necessary
+before infrastructure readiness and producer proof can be claimed.
