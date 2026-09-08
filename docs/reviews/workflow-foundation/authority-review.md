@@ -254,13 +254,42 @@ current code. The inventory's old Frontier table and runtime observations are
 dated evidence, not task selection or a fresh implementation audit. PM038
 remains controlling, and no Revision or Preferences task is claimed here.
 
+## Complete seed/context disposition review
+
+At `734ea079`, all 2,048 lines of
+`GP_C03_PROJECT_SEED_AND_CONTEXT_DECISION_PACKET.md` were read, including every
+candidate, render-gap disposition, bounded clause and owner response for Q5,
+Q5A, Q11 and Q6–Q10. Its historical next-step wording does not select work now.
+
+The packet resolves these additional F2/F6/F8 handoff obligations:
+
+| Boundary | Settled rule and consequence |
+| --- | --- |
+| Preview versus genesis | Q11 §3.2.5 clause 7 says preview neither freezes nor copies a seed. Q5 §2.5 pins an immutable snapshot at genesis. A preview, intervening Global change, then creation must be assessed against the actual captured snapshot and receipt, not assumed to use the earlier preview |
+| Operation cancellation | Q6 §4.5 clauses 8–9 retain explicit per-invocation input and forbid silently remembering it on cancellation or completion. A cancel proof needs to cover machine preference state as well as Project geometry/journal when the workflow could otherwise capture a default |
+| Correctable refusal | Q7 §5.5 clauses 2–4 forbid semantic clamping/substitution, retain the attempted interactive value, and return typed non-interactive refusals. The last valid effective value and the uncommitted draft are different observations |
+| Unknown seed inputs | Q8 §7.5 clauses 1–4 exclude unknown records from seeding, context, defaults and controls. Stored bytes or a matching label do not establish active authority; later consumer-ready activation further narrows registration eligibility |
+| Explanation snapshot | Q9 §9.5 clauses 1, 3–5 and 16 require one evaluation snapshot, explicit absence/conflict, and side-effect-free explanation. A displayed value plus a separately inferred reason cannot prove provenance |
+
+The packet still contains historical six-Units-row wording and Q10's original
+Revision visibility/onboarding clauses. PM040 and the revised eight-row Units
+contract control the former; PM038 and later activation amendments control the
+latter. Neither the original approved Q10 response nor the packet's completed
+status authorizes reviving those withdrawn product surfaces. Q5A's zero-required-
+choices law remains relevant to ordinary startup, but its deferred four-checkpoint
+guide is not a prerequisite or completion witness for the native doorway.
+
+These are reviewed source obligations for the later connected workflow contract,
+not executed race/cancel/refusal tests or acceptance of a new implementation.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
 contains 79 files. PM035 through PM040, `PROJECT_PREFERENCES_SPEC.md`, the shared
 Units requirement, GP-C04, GP-C05, the V1 descriptor catalog, the five historical
-baseline files and the six typed-authority/history files listed above have been
-read completely (22 files); the other 57 files remain to review. No complete settings
+baseline files, the six typed-authority/history files, and the complete
+seed/context packet listed above have been read completely (23 files); the other
+56 files remain to review. No complete settings
 route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
 mutation, identity and authoring
