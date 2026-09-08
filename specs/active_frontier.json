@@ -9655,8 +9655,8 @@
         "harness": "codex-cli",
         "session": "codex-wdq-rollout-implementation-20260908",
         "claimed_at": "2026-09-08T06:39:04Z",
-        "heartbeat_at": "2026-09-08T06:39:04Z",
-        "expires_at": "2026-09-08T14:39:04Z",
+        "heartbeat_at": "2026-09-08T14:53:13Z",
+        "expires_at": "2026-09-08T22:53:13Z",
         "scope": [
           "WDQ-R03 approved workflow implementation only: coverage, independent-review transitions, candidate preparation and tests in the repository-local isolated candidate workflow. Preserve installed trust until exact promotion; no product implementation, GP-CM05V takeover, prototype edit, dependency or product acceptance."
         ],
