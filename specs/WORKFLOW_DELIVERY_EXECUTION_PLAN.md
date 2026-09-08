@@ -38,10 +38,28 @@ missing handlers, fixtures or mechanisms remain explicit refusals. Do not fill
 missing native proof or independent sessions with invented values. Prepare the
 numbered mechanism amendment for owner ratification before promotion.
 
+<!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-TOOLS -->
+## WDQ-TOOLS — construct bounded tooling before reviewing its final inputs
+
+Build the already R03-authorized environment-selection, infrastructure fixture/
+capture and controlled-promotion tooling in the repository-local isolated
+candidate. Implement the proposed PM042 environment resolution and the reviewed
+fixture/case procedure. Preserve legacy pilot behavior. Retain source, exact
+fixture recipes, dependency/toolchain observations and regression results so
+WDQ-READY can inspect actual inputs rather than future filenames.
+
+This is the preparatory implementation portion of original I03, not new product
+scope or a second active step. Development tests may exercise isolated fixtures;
+they do not complete the following producer verification, independent review or
+owner activation. Do not install local trust, modify Preferences, manufacture
+native evidence or introduce dependencies. Reconcile actual new module/input
+paths and bounded permissions before the exact final promotion packet is frozen.
+
 <!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-READY -->
 ## WDQ-READY — establish actual infrastructure readiness
 
-After I02 prepares the exact contract and mapping, review the real infrastructure
+After I02 prepares the contract/mapping and WDQ-TOOLS constructs its tooling,
+review the real infrastructure
 consumers, handler paths, input closure, foundation dispositions, scenarios,
 environment and refusal expectations against the assembled candidate. Run actual
 readiness validation with its governed source/consumer routes reconciled. Record
@@ -53,8 +71,9 @@ It does not authorize promotion, product implementation or independent acceptanc
 <!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I03 -->
 ## WDQ-I03 — prepare controlled promotion and producer verification
 
-Implement general candidate preparation and visible activation diagnostics in
-the resolved Git-common support store. Prove exact pins, clean-state refusal,
+Use the WDQ-TOOLS candidate preparation and visible activation diagnostics in
+the resolved Git-common support store. Complete its exact promotion packet and
+prove exact pins, clean-state refusal,
 no live mutation during preparation, interrupted/partial activation handling
 and retained trusted evidence. Exercise all approved negative cases through
 real CLI/index/selector/hook paths; replay existing suites and governance gates.
@@ -856,3 +875,169 @@ Full policy/enrollment assembly, actual infrastructure readiness, controlled
 promotion proof, independent review, explicit owner activation and real native
 adoption remain outstanding. WDQ-I02 remains selected; no preparation count or
 passing helper check closes the broader goal.
+
+### WDQ-I02 — assembled source integration verification
+
+Retained candidate `49ecf406f18e89cb8ad7bbd058ac6490e54f0a5e` assembles the exact
+28-file implementation delta from `2a85005c` onto current main baseline
+`5da7ff0c3946e972144762d190d33de59692123e`. Its detached worktree is inside the
+repository's Git-common support directory; no new Documents-level bundle or
+live trust change occurred. Every copied file has the exact source-candidate
+Git blob identity, and current main had no overlapping source changes.
+
+`assembled-source-verification.json` binds the candidate, baseline, retained
+ref, source paths, test commands/counts and explicit limitations. All 227 gate
+tests and 125 current roadmap/contract tests pass together. Traceability,
+spec governance, parity, source health and whitespace checks pass in that exact
+candidate. A real read-only CLI check with explicit prospective candidate pins
+and unchanged schema-1 policy preserves the accepted pilot. With actual
+installed pins, the same candidate correctly refuses `WDQ-POLICY: gate
+implementation set changed without promotion`. Neither invocation installs pins.
+
+This proves combined source compatibility and the existing trust boundary, not
+the complete new policy or infrastructure/native delivery. Product enrollment
+still needs explicit actual implementation-session identities and owner activation
+evidence; no fictitious sessions are inserted to satisfy the policy shape.
+The final infrastructure input/tooling scope needs reconciliation against the
+assembled producer recipe. Exact policy assembly, readiness, independent review,
+owner activation and all three native adoption outcomes remain outstanding.
+I02 remains selected and every product lane, especially Preferences, is unchanged.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I02-COMPLETE -->
+### WDQ-I02 — preparation complete; infrastructure readiness follows
+
+Retained candidate `beddc2efc917e1e44ec2c0c6389a209540c0b1fb` adds the exact
+56-row schema-2 coverage proposal and infrastructure delivery mapping to
+`49ecf406f18e89cb8ad7bbd058ac6490e54f0a5e`. The retained reference is
+`refs/datum/workflow-delivery-candidates/beddc2efc917e1e44ec2c0c6389a209540c0b1fb`.
+Its checkout remains in the Git-common support store. Installed main policy,
+hooks, runner and owner-selected pins are unchanged.
+
+The candidate retains pilot enrollment and proposes infrastructure enrollment
+using the actual `codex-wdq-rollout-implementation-20260908` session. Its I04
+activation reference names the pending owner decision, not an executed approval.
+All three native cohorts retain their exact prepared contracts and mappings,
+unresolved C01 inputs and planning status. They are deliberately not enrolled.
+Future participant identities are prerequisites for their enrollment, not for
+preparing the workflow machinery. This corrects the earlier blocking assessment;
+it neither invents sessions nor drops the three required adoption outcomes.
+
+The exact candidate passed all 227 workflow-delivery tests. Evidence traceability,
+specification governance, parity, source health and whitespace checks passed.
+The real enforcement command, with authority/base/candidate each explicitly
+pinned to `beddc2efc917e1e44ec2c0c6389a209540c0b1fb` and environment path
+`docs/reviews/workflow-delivery-pilot/proof-artifacts/environment.json`, returned
+exit zero, no findings, `WORKFLOW-DELIVERY-GATE-PILOT: accept` and
+`WORKFLOW-DELIVERY-IMPLEMENTATION: ready`. Both assertion flags remained false.
+These prospective pins establish assembled-policy consistency only: they are
+not live trust, a publication-base proof, independent review or completion of
+WDQ-READY. Report-only inspection without promoted trust correctly could not
+certify the accepted pilot; installed trust correctly refused candidate policy.
+
+The separate-review implementation, enabled-consumer refusals, prepared numbered
+PM042 amendment, complete roadmap classifications, seven specification clause
+inventories, infrastructure contract and three explicitly unready product drafts
+satisfy I02 preparation. No product research, native proof, ratification or
+acceptance is claimed. WDQ-READY is now selected under planning authorization to
+review the actual fixture recipe, environment, source/input closure, handlers
+and full refusal matrix. Static local-import inspection found all 66 reachable
+Python files within the declared 69 paths; subprocess/data/fixture inputs and
+the final producer recipe still require that readiness review.
+
+I03 tooling and producer verification, distinct independent review, exact I04
+owner activation including the Preferences boundary, actual enrollment and full
+adoption of all three cohorts, and I06 acceptance remain mandatory. No product
+owner, dependency, license obligation, prototype or installed authority changes.
+
+### WDQ-READY — environment contract proposal, not readiness completion
+
+`dat-wdq-environment-scope-kgq` now has a proposed resolution in PM042's
+`WDQ-042-ENVIRONMENTS` section, reconciled with the infrastructure source and
+INFRA-S06 contract. Schema-2 selection binds each enrolled identity to an exact
+owner-pinned environment Blob. The infrastructure-only headless shape records
+real interpreter/Git identities and pipes or actual PTY dimensions; it cannot
+replace product GUI evidence. Existing PM041 pilot objects and installed
+configuration remain unchanged. The new selection-file inventory is registered
+at zero instances, not filled with fictional environments.
+
+Implementation, malformed/mixed-enrollment tests, real CLI/selector/hook proof
+and independent replay remain outstanding. The issue stays open. WDQ-READY
+still needs the full fixture recipe, input closure and scenario review before
+its completion; this proposed mechanism is subject to exact I04 ratification.
+
+### WDQ-READY — fixture and capture procedure reviewed
+
+The infrastructure contract now specifies retained real-roadmap and hostile
+fixture families, exact Git/index/history and clock parameters, actual subprocess
+and handler observations, complete protected-state comparison, honest interruption
+recovery and distinct replay. Existing synthetic test factories remain INPUT
+recipes, never actual delivery evidence. Read-only inspection also identified
+the file-lane/rustfmt scripts, exemption manifest and shell/tool identities that
+the real owner-hook proof must include beyond the earlier Python import inventory.
+
+This is procedure authorship, not fixture capture or completed readiness. The
+full per-entry-point subcase inventory and final input/toolchain closure remain
+to be bound to the assembled candidate; no new proof, enrollment, native outcome
+or owner acceptance is asserted. I03 must implement the reviewed procedure and
+record real observations. Preferences and installed trust remain untouched.
+
+### WDQ-READY — explicit infrastructure case inventory
+
+The infrastructure contract contains 62 stable case rows spanning all six
+scenario groups and the mixed-environment amendment. Each enumerated variant
+and named process surface needs a separate observation, followed by state
+preservation and restored-valid checks where required. Candidate-history cases
+are not misrepresented as selector or empty-index certification. Two preparation
+tests cover case identity/scenario/surface consistency and snapshot applicability;
+they are not 62 executed delivery tests. Final source/toolchain closure, actual
+capture tooling, full producer/reviewer observations and readiness remain due.
+
+### WDQ-READY — concrete repository input correction
+
+The infrastructure contract now includes 76 repository inputs: the original 69
+plus the actual file-lane/rustfmt checkers, exemption manifest and its four Rust
+references. The source-permission proposal remains unchanged at 69 paths;
+dependency consumption does not authorize editing those files. Two additional
+tests cover actual hook input inclusion and absence of implicit write authority.
+External interpreter/tool/shared-library identity and future capture-module/data
+closure are explicitly separate. No runtime, Rust file, product record, policy
+or installed hook changed. Final capture/toolchain accounting remains necessary
+before infrastructure readiness and producer proof can be claimed.
+
+### WDQ-READY — observed toolchain preflight
+
+`docs/reviews/workflow-delivery-rollout/toolchain-preflight.json` records actual
+read-only executable/version/hash observations for Python, Git, bash, realpath
+and rustfmt at main baseline `2f27e5ec`. It retains exact observer commands,
+startup flags, non-TTY state, 53 observer module files and 16 mapped files.
+These are observations of the preflight process, not the delivery validator,
+child tools or future capture process, and not a complete proof input closure.
+
+The initial rustfmt lookup resolved its launcher to rustup and therefore obtained
+rustup's version. The record preserves that mistake and its correction:
+`rustup which rustfmt` located the installed formatter, whose actual binary and
+version were then read. No tool was fetched, installed or updated. Future capture
+must distinguish dispatch launchers from executed tools and observe the real
+runtime dependencies; a plausible path or interpreter hash alone is insufficient.
+
+This operational record stays outside the infrastructure contract's authority
+closure. It supplies no environment-selection instance, build receipt, fixture,
+native event, independent review or owner approval. WDQ-READY remains incomplete
+pending binding of the final capture/source/runtime inputs and actual readiness
+validation; no product or installed-trust state changed.
+
+### Workflow sequencing correction — tooling before final readiness
+
+The added READY checkpoint had created a construction/review loop: final capture
+and runtime inputs could not be inspected until the I03 tooling existed, but
+I03 depended on readiness completion. Split the already R03-authorized tooling
+construction into WDQ-TOOLS after I02. Select TOOLS under execution authorization,
+retain readiness work as pending final review, then preserve I03 producer proof,
+WDQ-REVIEW and exact I04/I06 owner decisions in their original order.
+
+No completion evidence is fabricated or discarded. I01/I02 remain complete;
+TOOLS begins in progress without completion evidence. The five-phase delivery
+mapping and every product item are unchanged. Existing readiness observations
+remain useful preparation evidence, not a declaration that future inputs exist.
+This correction supplies no live-trust installation, new source permission,
+product implementation, dependency, independent-review waiver or acceptance.

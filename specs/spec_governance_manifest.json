@@ -54,6 +54,16 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/toolchain-preflight.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-READY read-only host/tool observation, including corrected rustfmt launcher resolution. Not a selected proof environment, complete capture dependency closure or readiness/acceptance receipt."
+    },
+    "docs/reviews/workflow-delivery-rollout/assembled-source-verification.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-I02 exact combined code/roadmap candidate verification: 352 source-level tests, governance, legacy compatibility and installed-pin refusal; not broad policy activation or native adoption."
+    },
     "specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
@@ -157,12 +167,12 @@
     "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
-      "notes": "WDQ-I02 read-only infrastructure consumer/scenario authority. Actual WDQ-READY, proof, independent replay and owner activation are separate; no product acceptance."
+      "notes": "Read-only infrastructure consumer/scenario authority; WDQ-TOOLS reconciles the existing matrix's owner-hook surface and honest early-refusal observations. Actual WDQ-READY, proof, independent replay and owner activation are separate; no product acceptance."
     },
     "specs/workflow_delivery/rollout.contract.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
-      "notes": "Prepared schema-1 infrastructure contract for the proposed version-2 rollout mapping, not operative enrollment or proof. Exact source closure must be reconciled against the assembled candidate at WDQ-READY."
+      "notes": "Prepared schema-1 infrastructure contract with staged_cli, candidate_cli and owner_hook validator surfaces plus the selector, for the proposed version-2 rollout mapping; not operative enrollment or proof. Exact source closure must be reconciled against the assembled candidate at WDQ-READY."
     },
     "docs/reviews/workflow-delivery-rollout/rollout-mapping.json": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",

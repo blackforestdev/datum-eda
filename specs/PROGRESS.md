@@ -191,6 +191,12 @@
 
 ## WORKFLOW-DELIVERY-QUALITY — workflow evidence and readiness adoption
 
+### WORKFLOW-DELIVERY-IMPLEMENTATION — prepared infrastructure contract
+
+| Governed documents | Current evidence | Remaining boundary |
+| --- | --- | --- |
+| `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json` | WDQ-TOOLS reconciles the matrix's owner-hook surface with the existing validator handler; early hook refusal remains distinct from observed dispatch. Prepared hook source: `d56e113deea8b39600509285e392cdce1a3ddda4`. | `dat-wdq-rollout-implementation-ffy` remains open. Final input closure, complete matrix, readiness, producer proof, independent replay and exact owner activation remain due; no installed enforcement or product acceptance is claimed. |
+
 | Governed document | Current evidence | Target | Tracking |
 | --- | --- | --- | --- |
 | `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`, ratified PM041, `specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md` | WDQ-C01–C05 landed in `29fead0a`: explicit owner adoption, numbered ratification and zero-instance inventory registration | Separate foundation research and gate-pilot planning; no executable gate or native pilot acceptance | `dat-workflow-delivery-quality-xgj` closed; no successor selection or execution authorization |

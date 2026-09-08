@@ -152,6 +152,68 @@ transition cannot skip a reviewed baseline. Infrastructure review remains review
 not product acceptance. Independent replay and owner intent judgment are not
 replaced by syntactic completeness or matching hashes.
 
+<!-- WDQ-042-ENVIRONMENTS -->
+## Explicit mixed-enrollment environments
+
+This proposed extension resolves `dat-wdq-environment-scope-kgq`; it is not
+implemented or ratified by this text. Preserve PM041's existing unversioned
+environment object and single-pilot command/config behavior byte-for-byte.
+Do not refresh accepted pilot evidence to make a different workflow match it.
+
+For policy schema 2, the owner-selected `--environment-path` (and existing
+`datum.workflowDeliveryEnvironmentPath` selector/hook setting) names an explicit
+selection document. Its closed shape is `{schema_version: 2,
+kind: "datum.workflow-delivery.environments", environments}`. Each array entry
+has exactly `{frontier_key, environment}`, where environment is the existing
+`{path, sha256}` Blob. Require exactly one entry for every trusted enrolled key,
+including a currently unproved infrastructure enrollment; reject missing,
+duplicate or unknown identities. Planning cohorts not enrolled are not entries.
+Proposed selection-file inventory: `specs/workflow_delivery/*.environments.json`;
+no actual selection instance or observed environment is supplied by this text.
+
+Read the selected document and its Blobs from the requested snapshot, but require
+the selection document's bytes to match the same path in owner-selected authority
+and every selected Blob's bytes/hash to match that authority. Paths are normalized
+repository-relative data references, never executable commands. Missing authority
+members or changed candidate selections refuse; the candidate cannot bless its
+own requested environment. The owner promotes a changed selection as part of an
+exact reviewed packet, not through a proof-file edit or a moving-ref fallback.
+
+Pass only the explicit matching key's environment to readiness, proof and review
+checks. Never broadcast one workflow's environment to other enrollments, select
+it from the proof being judged, infer it from the host, or claim equivalence.
+The recorded proof environment must equal the selected object exactly. Producer
+and independent replay remain bound to that same exact environment, fixture,
+input closure and executable identity. CLI, selector and owner-hook paths share
+this selection behavior; report-only inspection cannot promote it.
+
+An environment Blob may retain the legacy GUI shape. Alternatively, infrastructure
+alone may use the closed headless shape `{schema_version: 2, kind: "headless",
+os, toolchain, transport, terminal_size, input_method, tools,
+reproduction_commands}`. All descriptive fields are nonempty strings; transport
+is `pipes` or `pty`. For pipes, terminal_size is null; for a real PTY it is exactly
+the observed positive integer `[columns, rows]`. No scale or pixel window is
+invented. Product contracts must reject this headless shape: it does not waive
+their native GUI, input, capture or accessibility evidence.
+
+Tools is a nonempty array of closed `{name, path, sha256, version}` records with
+unique nonempty names, observed executable paths, exact binary digests and
+nonempty version output. Require interpreter and Git records; the interpreter
+digest equals the proof build receipt's binary_sha256, and toolchain equals the
+proof build toolchain. These paths describe observed tools; the validator never
+executes them. Reproduction commands remain a nonempty string array describing
+the actual invocation recipe. Producer tooling must capture these values from
+the run, not generate plausible evidence from this schema. Script, data, fixture
+and runtime-library closure still need their separate input/toolchain accounting.
+
+Required refusal proof includes malformed versions/shapes, missing/duplicate/
+unknown keys, swapped workflow environments, changed selection or Blob bytes,
+candidate-only authority, wrong toolchain/interpreter digest, fabricated terminal
+dimensions, and product use of the headless shape. Demonstrate legacy pilot plus
+distinct infrastructure success through real CLI, selector and hook invocations,
+and fresh independent replay. No readiness completion follows from this proposal;
+implement and verify it within the authorized candidate before broad activation.
+
 <!-- WDQ-042-PROMOTION -->
 ## Exact promotion, storage and evidence of adoption
 
@@ -175,6 +237,14 @@ before I04. They start pending with no invented evidence. I01/I02 remain prior
 candidate preparation; neither they nor R03 approval are relabeled readiness.
 The exact mapping proposal is recorded separately and is not installed enrollment.
 Actual contract readiness, independent replay and I04 owner approval remain due.
+
+WDQ-TOOLS separates the already-authorized preparatory implementation portion of
+original I3 from producer verification: I02 -> TOOLS -> READY -> I03 -> REVIEW
+-> I04. Final readiness must inspect actual tooling inputs, so their construction
+cannot depend on that review already being complete. TOOLS is unmapped candidate
+preparation, not an alternative readiness, verification or activation checkpoint.
+Its development tests do not replace I03 proof or distinct replay. No product
+implementation, promotion, dependency or acceptance authority is added.
 
 Product C01 owners retain actual handler, fixture, domain scope and prerequisite
 review. Cohort mappings and scenario identities from the approved R03 packet are

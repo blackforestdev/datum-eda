@@ -66,10 +66,19 @@ class CoverageProposalTest(unittest.TestCase):
         self.assertEqual("WORKFLOW-DELIVERY-IMPLEMENTATION", scope["frontier_key"])
         self.assertEqual(["WDQ-I03", "WDQ-REVIEW"], scope["step_ids"])
         contract = self.tree.json("specs/workflow_delivery/rollout.contract.json")
-        self.assertEqual(contract["input_roots"], scope["paths"])
+        self.assertTrue(set(scope["paths"]) <= set(contract["input_roots"]))
         self.assertNotIn("crates", scope["paths"])
         self.assertNotIn("scripts", scope["paths"])
         resolve_ref(self.tree, scope["boundary_ref"])
+
+    def test_hook_read_dependencies_do_not_become_workflow_write_permissions(self):
+        exemptions = self.tree.json("specs/rustfmt_exemption_manifest.json")["exemptions"]
+        read_only = set(exemptions) | {"scripts/check_file_lane_ownership.py",
+            "scripts/check_rustfmt.py", "specs/rustfmt_exemption_manifest.json"}
+        for scope in self.coverage["source_scopes"]:
+            for dependency in read_only:
+                self.assertFalse(any(dependency == p or dependency.startswith(p + "/")
+                                     for p in scope["paths"]))
 
     def test_production_roots_cover_non_rust_code_without_git_metadata(self):
         roots = self.coverage["production_roots"]

@@ -9670,7 +9670,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
-        "canonical_next_step_id": "WDQ-I02",
+        "canonical_next_step_id": "WDQ-TOOLS",
         "delivery": {
           "schema_version": 2,
           "contract_path": "specs/workflow_delivery/rollout.contract.json",
@@ -9722,7 +9722,7 @@
           {
             "id": "WDQ-I02",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Implement separate independent-review enforcement and prepare exact enrollment/contract candidates.",
             "depends_on": [
               "WDQ-I01"
@@ -9733,6 +9733,30 @@
                 "marker": "WDQ-I02"
               }
             ],
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "<!-- EVIDENCE:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I02-COMPLETE -->"
+              },
+              {
+                "kind": "commit",
+                "revision": "beddc2efc917e1e44ec2c0c6389a209540c0b1fb"
+              }
+            ]
+          },
+          {
+            "id": "WDQ-TOOLS",
+            "kind": "execution",
+            "status": "in_progress",
+            "action": "Build bounded environment, capture and promotion tooling before final readiness review.",
+            "depends_on": ["WDQ-I02"],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "WDQ-TOOLS"
+              }
+            ],
             "completion_evidence": []
           },
           {
@@ -9741,7 +9765,7 @@
             "status": "pending",
             "action": "Establish actual rollout infrastructure readiness from the exact prepared contract and assembled candidate.",
             "depends_on": [
-              "WDQ-I02"
+              "WDQ-TOOLS"
             ],
             "requirement_refs": [
               {
@@ -9755,7 +9779,7 @@
             "id": "WDQ-I03",
             "kind": "execution",
             "status": "pending",
-            "action": "Prepare controlled promotion tooling and produce exact candidate verification for independent replay.",
+            "action": "Verify the prepared promotion tooling and produce exact candidate evidence for independent replay.",
             "depends_on": [
               "WDQ-READY"
             ],

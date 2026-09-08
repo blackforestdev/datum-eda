@@ -3,6 +3,7 @@
 import ast
 from copy import deepcopy
 from pathlib import Path
+import re
 import unittest
 
 from workflow_delivery_authority import authority_manifest
@@ -58,9 +59,10 @@ class RolloutContractTest(unittest.TestCase):
             self.assertEqual(Path(handler["path"]).stem + "." + handler["symbol"],
                              consumer["dispatch_key"])
 
-    def test_both_cli_snapshots_and_real_selector_are_covered(self):
+    def test_cli_snapshots_owner_hook_and_real_selector_are_covered(self):
         consumers = {c["id"]: c for c in self.contract["consumers"]}
-        self.assertEqual({"staged_cli", "candidate_cli"}, set(consumers["validator"]["entry_surfaces"]))
+        self.assertEqual({"staged_cli", "candidate_cli", "owner_hook"},
+                         set(consumers["validator"]["entry_surfaces"]))
         self.assertEqual(["project_status"], consumers["selector"]["entry_surfaces"])
         self.assertEqual({f"INFRA-S0{i}" for i in range(1, 7)},
                          {s["id"] for s in self.contract["scenarios"]})
@@ -104,14 +106,62 @@ class RolloutContractTest(unittest.TestCase):
         self.assertEqual("WDQ-AUTHORITY", raised.exception.code)
 
     def test_input_inventory_is_explicit_and_foundations_do_not_fake_cad_proof(self):
-        self.assertTrue(all(p.endswith((".py", ".sh", ".yml", "/pre-commit"))
+        self.assertTrue(all(p.endswith((".py", ".sh", ".yml", ".json", ".rs", "/pre-commit"))
                             for p in self.contract["input_roots"]))
         self.assertNotIn("scripts", self.contract["input_roots"])
+        self.assertNotIn("crates", self.contract["input_roots"])
         for key in ("units_precision", "numeric_entry", "selection_identity",
                     "grid_snap", "library_connectivity"):
             self.assertEqual("not_applicable", self.contract["foundation_answers"][key]["disposition"])
         for key in ("undo_cancel", "persistence_recovery", "settings_scope"):
             self.assertEqual("required", self.contract["foundation_answers"][key]["disposition"])
+
+    def case_rows(self):
+        source = self.tree.read(SPEC).decode()
+        return [tuple(part.strip() for part in line.strip("|").split("|"))
+                for line in source.splitlines() if line.startswith("| INFRA-S")]
+
+    def test_hook_read_dependencies_are_in_the_input_inventory(self):
+        exemptions = self.tree.json("specs/rustfmt_exemption_manifest.json")["exemptions"]
+        required = set(exemptions) | {"scripts/check_file_lane_ownership.py",
+            "scripts/check_rustfmt.py", "specs/rustfmt_exemption_manifest.json"}
+        self.assertTrue(required <= set(self.contract["input_roots"]))
+        self.assertTrue(all((ROOT / path).is_file() for path in required))
+
+    def test_case_inventory_has_unique_ids_and_known_scenarios_and_surfaces(self):
+        rows = self.case_rows()
+        self.assertTrue(rows)
+        self.assertTrue(all(len(row) == 4 for row in rows))
+        self.assertEqual(len(rows), len({row[0] for row in rows}))
+        scenarios = {s["id"] for s in self.contract["scenarios"]}
+        self.assertEqual(scenarios, {row[0].rsplit("-", 1)[0] for row in rows})
+        for identity, condition, outcome, surfaces in rows:
+            self.assertRegex(identity, r"^INFRA-S0[1-6]-[0-9]{2}$")
+            self.assertTrue(condition and outcome)
+            names = surfaces.split()
+            self.assertTrue(names and set(names) <= {"C", "R", "S", "H"})
+            self.assertEqual(len(names), len(set(names)))
+        declared = re.findall(r"^\| (INFRA-S\S+) \|", self.tree.read(SPEC).decode(), re.M)
+        self.assertEqual(declared, [row[0] for row in rows])
+
+    def test_case_inventory_distinguishes_history_from_worktree_snapshots(self):
+        rows = {row[0]: row for row in self.case_rows()}
+        for identity in ("INFRA-S05-03", "INFRA-S05-04", "INFRA-S05-07", "INFRA-S05-08"):
+            self.assertEqual("R", rows[identity][3])
+        for identity in ("INFRA-S05-01", "INFRA-S05-02", "INFRA-S05-05"):
+            self.assertEqual({"C", "S", "H"}, set(rows[identity][3].split()))
+
+    def test_every_matrix_surface_is_declared_by_its_scenario_consumers(self):
+        surfaces = {"C": "staged_cli", "R": "candidate_cli",
+                    "S": "project_status", "H": "owner_hook"}
+        consumers = {c["id"]: set(c["entry_surfaces"])
+                     for c in self.contract["consumers"]}
+        scenarios = {s["id"]: set().union(*(consumers[c] for c in s["consumer_ids"]))
+                     for s in self.contract["scenarios"]}
+        for identity, _, _, required in self.case_rows():
+            with self.subTest(case=identity):
+                declared = scenarios[identity.rsplit("-", 1)[0]]
+                self.assertTrue({surfaces[s] for s in required.split()} <= declared)
 
 
 if __name__ == "__main__":
