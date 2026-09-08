@@ -9,29 +9,34 @@ from workflow_delivery_capture_cases import run_case
 from workflow_delivery_capture_fixture import prepare_fixture
 from workflow_delivery_capture_hook import run_hook_case
 from workflow_delivery_readiness_input import READINESS_CASES, READY_VALID
+from workflow_delivery_product_readiness_input import PRODUCT_READINESS_CASES, PRODUCT_READY
 
 
 class ReadinessCaptureTest(unittest.TestCase):
     def test_readiness_cases_and_fresh_recovery_through_all_entrypoints(self):
         with tempfile.TemporaryDirectory() as temporary:
             store = Path(temporary)
-            baseline = store / "baseline-packet"
-            recipe = prepare_fixture(store / "baseline", baseline, fixture_variant=READY_VALID)
-            self.assertEqual("accepted-history-and-readiness", recipe["fixture_family"])
+            baselines = {}
+            for normal in (READY_VALID, PRODUCT_READY):
+                baselines[normal] = store / (normal + "-packet")
+                recipe = prepare_fixture(store / (normal + "-source"), baselines[normal], fixture_variant=normal)
+                self.assertEqual("accepted-history-and-readiness", recipe["fixture_family"])
             runtime = Path(__file__).resolve().parents[1]
             environment = {"PATH": os.defpath, "HOME": str(store), "XDG_CONFIG_HOME": str(store),
                            "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "LANG": "C"}
             identities = set()
             for variant in READINESS_CASES:
+                normal = PRODUCT_READY if variant in PRODUCT_READINESS_CASES else READY_VALID
+                baseline = baselines[normal]
                 packet = baseline
-                if variant != READY_VALID:
+                if variant != normal:
                     packet = store / (variant + "-packet")
                     prepare_fixture(store / (variant + "-source"), packet, fixture_variant=variant)
                 for surface in ("C", "R", "S-check", "S-details", "H"):
                     with self.subTest(case=variant, surface=surface):
                         phases = [("case", packet, variant)]
-                        if variant != READY_VALID:
-                            phases.append(("recovery", baseline, READY_VALID))
+                        if variant != normal:
+                            phases.append(("recovery", baseline, normal))
                         for phase, source, case in phases:
                             destination = store / (variant + surface + phase)
                             if surface == "H":
@@ -45,7 +50,7 @@ class ReadinessCaptureTest(unittest.TestCase):
                             identities.add(result["invocation_id"])
                             self.assertFalse((destination / "fixture/missing-future-proof.json").exists())
                             self.assertFalse((destination / "fixture/missing-future-review.json").exists())
-            self.assertEqual(45, len(identities))
+            self.assertEqual(70, len(identities))
 
 
 if __name__ == "__main__":

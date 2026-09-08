@@ -5,6 +5,7 @@ import json
 
 from project_status import render_block
 from workflow_delivery_io import canonical_json
+from workflow_delivery_product_readiness_input import PRODUCT_READINESS_CASES, product_readiness
 
 READY_VALID = "INFRA-S03-01.ready-valid"
 READINESS_CASES = {
@@ -14,6 +15,7 @@ READINESS_CASES = {
     "INFRA-S03-03.owner-question": ("MISSING", "WDQ-AUTHORITY", "mandatory owner question unresolved"),
     "INFRA-S03-03.foundation-answer": ("next.contract.json.foundation_answers", "WDQ-COVERAGE", "missing=['units_precision']"),
 }
+READINESS_CASES.update(PRODUCT_READINESS_CASES)
 
 
 def prepare_readiness(f, manifest, policy, variant):
@@ -57,7 +59,13 @@ def prepare_readiness(f, manifest, policy, variant):
             "required_for_scenarios": [contract["scenarios"][0]["id"]], "disposition_ref": None}]
     elif variant.endswith(".foundation-answer"):
         del contract["foundation_answers"]["units_precision"]
-    next(row for row in policy["coverage"]["rows"] if row["frontier_key"] == "NEXT")["category"] = "infrastructure"
+    if variant in PRODUCT_READINESS_CASES:
+        additions = product_readiness(item, contract, variant)
+        f.write(doc, (f.root / doc).read_bytes() + additions.encode())
+        next(row for row in issues if row["id"] == "dat-next")["acceptance_criteria"] += (
+            "\nNEXT-C04: Verify\nNEXT-C05: Independent review\nNEXT-C06: Owner acceptance")
+        f.write(".beads/issues.jsonl", b"".join(canonical_json(row) for row in issues))
+    next(row for row in policy["coverage"]["rows"] if row["frontier_key"] == "NEXT")["category"] = contract["category"]
     f.save("next.contract.json", contract)
     f.save("specs/active_frontier.json", manifest)
     f.write("specs/PROGRESS.md", render_block(manifest).encode())
