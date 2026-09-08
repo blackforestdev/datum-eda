@@ -677,6 +677,59 @@ beside the release confirmation, preserves focus and never gates issuance.
 Neither that formal-release ceremony nor its onboarding state is a prerequisite
 for the ordinary manual edit/reopen foundation workflow.
 
+## Grid presets, exact readouts and connectivity evidence
+
+`grid-basis-candidate-d.html` and `units-and-grid-model.html` were read
+completely, including CSS and both later Units amendments, with only opaque
+embedded font bytes elided. Candidate D is retired: the later study explicitly
+rejects pitch-derived footprint grids and its proposed metric-native library
+module. Neither is a foundation requirement. The later study retains the
+August 29 grid-set/default disposition, separately from PM040's supersession
+of per-person live display ownership and the still-unratified authored-expression
+persistence. Existing Projects use Project Working Units; switching a reading
+must neither move geometry nor implicitly quantize it.
+
+The owner-dispositioned preset values in section 7B, not candidate D or earlier
+illustrative section 5, are the relevant visual reference for F4:
+
+| Set | Pitches shown | Default/qualification stated |
+| --- | --- | --- |
+| Metric | 2.5, 1.0, 0.5, 0.2, 0.1, 0.05 mm | Default set; board 0.5 mm, schematic 2.5 mm |
+| Mil | 100, 50, 20, 10, 5, 1 mil | Optional set, not imposed by a display change |
+| Imperial-derived metric | 2.54, 1.27, 0.635, 0.254, 0.127 mm | Never the default and never suggested |
+
+This does not activate the excluded grid descriptor or supersede PM023's
+shared profile/snap ownership. The study's historical claim that the fine-grid
+descriptor already ships is not current production-active catalog evidence.
+Likewise, a named preset and a rounded label are not an exact edit buffer:
+0.5 mm is exactly 500,000 nm and 2500/127 mil, not exactly 19.685 mil. The shared
+Units focus/no-op contract controls how a finite display is distinguished from
+canonical input. No manufacturing precision or standards-conformance claim is
+inferred from the nanometre representation or the study's peer comparisons.
+
+F4/F7 must explicitly resolve a source conflict captured in
+`dat-grid-connectivity-authority-5s6`: the study's section 2 relies on exact
+coordinate coincidence, citing `docs/SCHEMATIC_CONNECTIVITY_SPEC.md:92`, while
+UVT section 3.3 says connectivity survives quantize because nets are UUID/net
+addressed, not coordinate-coincident. These may describe different layers but
+cannot substitute for a specified attachment/update contract. The full
+connectivity/authoring review must distinguish net identity, geometric
+connection formation and connected-wire movement. Preserve PM023's exact
+committed coordinates, UVT's grid-then-object override, screen-pixel eligibility,
+target filtering, explicit align `reference: grid` and whole-batch refusal;
+do not choose an electrical model from whichever paragraph is closest.
+
+The study's two manufacturing allegations were checked against current source,
+not accepted wholesale. `dat-export-signed-decimal-parse-tc3` records the
+engine helper's signed-fraction arithmetic and the CLI helper's negative-zero
+loss. Inspected callers use a fixed outline aperture or parse aperture sizes;
+they do not establish the claimed corruption of negative board-coordinate
+verification. `dat-excellon-header-dialect-yph` records the observed `METRIC,TZ`
+header with decimal coordinates as a dialect research question, not a reproduced
+CAM scaling failure or authority for the proposed one-line fix. Both require
+owning-lane work and independently grounded proof. No runtime files, manufacturing
+contract, protected HTML, source digest or Preferences acceptance were changed.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
@@ -688,8 +741,8 @@ visual studies, plus the seven Revision/geometry/traceability members listed
 above, the four execution packets and four identity/title-block/audit members
 plus the detailed authority/offline/impact contracts and four workspace/Publish
 members plus the GUI contract, Revision visual brief and prototype inventory,
-and the six agent/clay/carry-forward studies above
-have been read completely (64 files); the other 15 files remain to
+and the six agent/clay/carry-forward studies plus both grid studies above
+have been read completely (66 files); the other 13 files remain to
 review. No complete settings route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
 mutation, identity and authoring
