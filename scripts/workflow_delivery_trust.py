@@ -4,9 +4,10 @@ from pathlib import Path
 
 from workflow_delivery_authority import resolve_ref
 from workflow_delivery_contract import canonical_contract, validate_contract
+from workflow_delivery_coverage_shapes import coverage_shape
 from workflow_delivery_io import DeliveryInputError, canonical_json
 from workflow_delivery_shapes import (
-    array, closed, commit_id, ids, identifier, ref, require, unique, version,
+    array, closed, commit_id, ids, identifier, ref, require, unique,
 )
 from workflow_delivery_tree import Tree
 
@@ -23,8 +24,14 @@ def policy_shape(value):
 
 
 def _policy_shape(value):
-    closed(value, "schema_version decision_ref enrolled legacy_baseline", POLICY_PATH, "WDQ-POLICY")
-    version(value["schema_version"], POLICY_PATH)
+    require(type(value) is dict, POLICY_PATH, "policy object required", "WDQ-POLICY")
+    schema = value.get("schema_version")
+    require(type(schema) is int and schema in (1, 2), POLICY_PATH,
+            "integer policy schema 1 or 2 required", "WDQ-POLICY")
+    fields = "schema_version decision_ref enrolled legacy_baseline"
+    closed(value, fields + (" coverage" if schema == 2 else ""), POLICY_PATH, "WDQ-POLICY")
+    if schema == 2:
+        coverage_shape(value["coverage"])
     ref(value["decision_ref"], POLICY_PATH)
     commit_id(value["legacy_baseline"], POLICY_PATH)
     array(value["enrolled"], POLICY_PATH)

@@ -4,6 +4,7 @@ from pathlib import Path
 import subprocess
 
 from workflow_delivery_checkpoints import validate_delivery
+from workflow_delivery_coverage_runtime import validate_coverage
 from workflow_delivery_io import DeliveryInputError
 from workflow_delivery_shapes import require
 from workflow_delivery_tree import Tree
@@ -41,6 +42,8 @@ def selector_failures(root, manifest):
                     "trusted enrollment cannot disappear from candidate", "WDQ-POLICY")
             enrolled = trust.enrolled
         environment = tree.json(env_path) if env_path else None
+        if trust:
+            validate_coverage(tree, manifest, trust)
         for item in declared:
             validate_delivery(tree, item, phase=None if item["key"] in enrolled else "structure",
                               trust=trust if item["key"] in enrolled else None,
