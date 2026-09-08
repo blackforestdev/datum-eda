@@ -79,6 +79,17 @@ class RolloutMappingTest(unittest.TestCase):
             self.assertEqual("owner_decision", self.steps[sid]["kind"])
             self.assertTrue(self.steps[sid]["owner_input"]["requests"])
 
+    def test_tool_construction_precedes_readiness_without_replacing_proof(self):
+        points = self.proposal["delivery"]["checkpoints"]
+        self.assertEqual("execution", self.steps["WDQ-TOOLS"]["kind"])
+        self.assertIn("WDQ-I02", self.ancestors("WDQ-TOOLS"))
+        self.assertIn("WDQ-TOOLS", self.ancestors(points["ready"]))
+        self.assertNotIn("WDQ-TOOLS", points.values())
+        self.assertNotIn(points["ready"], self.ancestors("WDQ-TOOLS"))
+        self.assertIn(points["ready"], self.ancestors(points["verify"]))
+        self.assertIn(points["verify"], self.ancestors(points["review"]))
+        self.assertIn(points["review"], self.ancestors("WDQ-I04"))
+
     def test_mapping_targets_a_contract_not_the_live_policy(self):
         self.assertEqual("specs/workflow_delivery/rollout.contract.json",
                          self.proposal["delivery"]["contract_path"])

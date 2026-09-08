@@ -38,10 +38,28 @@ missing handlers, fixtures or mechanisms remain explicit refusals. Do not fill
 missing native proof or independent sessions with invented values. Prepare the
 numbered mechanism amendment for owner ratification before promotion.
 
+<!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-TOOLS -->
+## WDQ-TOOLS — construct bounded tooling before reviewing its final inputs
+
+Build the already R03-authorized environment-selection, infrastructure fixture/
+capture and controlled-promotion tooling in the repository-local isolated
+candidate. Implement the proposed PM042 environment resolution and the reviewed
+fixture/case procedure. Preserve legacy pilot behavior. Retain source, exact
+fixture recipes, dependency/toolchain observations and regression results so
+WDQ-READY can inspect actual inputs rather than future filenames.
+
+This is the preparatory implementation portion of original I03, not new product
+scope or a second active step. Development tests may exercise isolated fixtures;
+they do not complete the following producer verification, independent review or
+owner activation. Do not install local trust, modify Preferences, manufacture
+native evidence or introduce dependencies. Reconcile actual new module/input
+paths and bounded permissions before the exact final promotion packet is frozen.
+
 <!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-READY -->
 ## WDQ-READY — establish actual infrastructure readiness
 
-After I02 prepares the exact contract and mapping, review the real infrastructure
+After I02 prepares the contract/mapping and WDQ-TOOLS constructs its tooling,
+review the real infrastructure
 consumers, handler paths, input closure, foundation dispositions, scenarios,
 environment and refusal expectations against the assembled candidate. Run actual
 readiness validation with its governed source/consumer routes reconciled. Record
@@ -53,8 +71,9 @@ It does not authorize promotion, product implementation or independent acceptanc
 <!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I03 -->
 ## WDQ-I03 — prepare controlled promotion and producer verification
 
-Implement general candidate preparation and visible activation diagnostics in
-the resolved Git-common support store. Prove exact pins, clean-state refusal,
+Use the WDQ-TOOLS candidate preparation and visible activation diagnostics in
+the resolved Git-common support store. Complete its exact promotion packet and
+prove exact pins, clean-state refusal,
 no live mutation during preparation, interrupted/partial activation handling
 and retained trusted evidence. Exercise all approved negative cases through
 real CLI/index/selector/hook paths; replay existing suites and governance gates.
@@ -1006,3 +1025,19 @@ closure. It supplies no environment-selection instance, build receipt, fixture,
 native event, independent review or owner approval. WDQ-READY remains incomplete
 pending binding of the final capture/source/runtime inputs and actual readiness
 validation; no product or installed-trust state changed.
+
+### Workflow sequencing correction — tooling before final readiness
+
+The added READY checkpoint had created a construction/review loop: final capture
+and runtime inputs could not be inspected until the I03 tooling existed, but
+I03 depended on readiness completion. Split the already R03-authorized tooling
+construction into WDQ-TOOLS after I02. Select TOOLS under execution authorization,
+retain readiness work as pending final review, then preserve I03 producer proof,
+WDQ-REVIEW and exact I04/I06 owner decisions in their original order.
+
+No completion evidence is fabricated or discarded. I01/I02 remain complete;
+TOOLS begins in progress without completion evidence. The five-phase delivery
+mapping and every product item are unchanged. Existing readiness observations
+remain useful preparation evidence, not a declaration that future inputs exist.
+This correction supplies no live-trust installation, new source permission,
+product implementation, dependency, independent-review waiver or acceptance.

@@ -9649,7 +9649,7 @@
         "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md"
       ],
       "state": "in_progress",
-      "authorization": "planning",
+      "authorization": "execution",
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
@@ -9670,7 +9670,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
-        "canonical_next_step_id": "WDQ-READY",
+        "canonical_next_step_id": "WDQ-TOOLS",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -9735,12 +9735,26 @@
             ]
           },
           {
+            "id": "WDQ-TOOLS",
+            "kind": "execution",
+            "status": "in_progress",
+            "action": "Build bounded environment, capture and promotion tooling before final readiness review.",
+            "depends_on": ["WDQ-I02"],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "WDQ-TOOLS"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
             "id": "WDQ-READY",
             "kind": "governance",
-            "status": "in_progress",
+            "status": "pending",
             "action": "Establish actual rollout infrastructure readiness from the exact prepared contract and assembled candidate.",
             "depends_on": [
-              "WDQ-I02"
+              "WDQ-TOOLS"
             ],
             "requirement_refs": [
               {
@@ -9754,7 +9768,7 @@
             "id": "WDQ-I03",
             "kind": "execution",
             "status": "pending",
-            "action": "Prepare controlled promotion tooling and produce exact candidate verification for independent replay.",
+            "action": "Verify the prepared promotion tooling and produce exact candidate evidence for independent replay.",
             "depends_on": [
               "WDQ-READY"
             ],
