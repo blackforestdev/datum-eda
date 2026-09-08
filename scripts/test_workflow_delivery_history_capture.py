@@ -1,0 +1,68 @@
+"""Actual candidate CLI refuses net-zero history; current snapshots are distinct."""
+
+import json
+import os
+from pathlib import Path
+import tempfile
+import unittest
+
+from workflow_delivery_capture_cases import run_case
+from workflow_delivery_capture_fixture import prepare_fixture
+from workflow_delivery_capture_history import HISTORY_CASES
+from workflow_delivery_capture_hook import run_hook_case
+from workflow_delivery_capture_state import git
+from workflow_delivery_publication_delta import verify_publication_delta
+from workflow_delivery_io import sha256
+
+
+class HistoryCaptureTest(unittest.TestCase):
+    def test_each_net_zero_history_refuses_and_fresh_candidate_recovers(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            store = Path(temporary)
+            packet = store / "packet"
+            prepare_fixture(store / "baseline", packet)
+            environment = {"PATH": os.defpath, "HOME": str(store), "XDG_CONFIG_HOME": str(store),
+                           "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "LANG": "C"}
+            runtime = Path(__file__).resolve().parents[1]
+            identities = set()
+            for case_id, (target, _) in HISTORY_CASES.items():
+                with self.subTest(case=case_id):
+                    destination = store / case_id
+                    result = run_case(packet, destination, runtime, environment,
+                                      case_id=case_id, surface="R")
+                    mutation = json.loads((destination / "mutation.json").read_bytes())
+                    delta = mutation["publication_delta"]
+                    root = destination / "fixture"
+                    verify_publication_delta(root, delta, base=delta["base"], candidate=delta["candidate"])
+                    archive = destination / mutation["history_bundle"]["path"]
+                    self.assertEqual(sha256(archive.read_bytes()), mutation["history_bundle"]["sha256"])
+                    restored = destination / "restored-history"
+                    git(root, "clone", "--quiet", str(archive), str(restored))
+                    verify_publication_delta(restored, delta, base=delta["base"], candidate=delta["candidate"])
+                    self.assertEqual([], delta["net_changes"])
+                    self.assertEqual([target], delta["touched_paths"])
+                    self.assertEqual(b"", git(root, "status", "--porcelain"))
+                    self.assertEqual(4 if "merge-parent" in case_id else 2, len(delta["commits"]))
+                    if "merge-parent" in case_id:
+                        self.assertEqual(2, len(delta["commits"][-1]["parents"]))
+                    recovery = run_case(packet, store / (case_id + "-recovery"), runtime,
+                                        environment, case_id="INFRA-S01-01", surface="R")
+                    for observed in (result, recovery):
+                        self.assertTrue(observed["observation_matches_expected"])
+                        self.assertFalse(observed["complete_matrix"])
+                        self.assertFalse(observed["acceptance_asserted"])
+                        self.assertNotIn(observed["invocation_id"], identities)
+                        identities.add(observed["invocation_id"])
+            self.assertEqual(6, len(identities))
+
+    def test_history_cases_cannot_be_relabelled_as_current_snapshot_proof(self):
+        for case_id in HISTORY_CASES:
+            for surface in ("C", "S-check", "S-details"):
+                with self.assertRaisesRegex(ValueError, "surface R"):
+                    run_case(None, None, None, {}, case_id=case_id, surface=surface)
+            with self.assertRaisesRegex(ValueError, "explicit implemented hook"):
+                run_hook_case(None, None, {}, case_id=case_id)
+
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1,6 +1,7 @@
 """Explicit synthetic refusal inputs, with the exact diagnostic each must reach."""
 
 from workflow_delivery_io import canonical_json, parse_json
+from workflow_delivery_capture_history import HISTORY_CASES
 from workflow_delivery_environment_cases import FIXTURE_VARIANTS, HEADLESS_VARIANTS, MIXED_VARIANT, SWAPPED_VARIANT
 
 POLICY = "specs/workflow_delivery_policy.json"
@@ -16,6 +17,7 @@ CASES = {
     "INFRA-S06-11.blob": ("selected-environment.json", "WDQ-ENVIRONMENT"),
 }
 CASES.update({key: ("requested-environment.json", "WDQ-ENVIRONMENT") for key in FIXTURE_VARIANTS})
+CASES.update(HISTORY_CASES)
 CASES[MIXED_VARIANT] = (None, None)
 # This prepared-input case names the diagnostic environment context, not a
 # candidate file to mutate. The exact selected bytes live in its retained bundle.
@@ -24,6 +26,8 @@ CASES.update({key: (path, "WDQ-ENVIRONMENT") for key, (path, _) in HEADLESS_VARI
 
 
 def expected_detail(case_id):
+    if case_id in HISTORY_CASES:
+        return "production change has no promoted scope"
     if case_id in HEADLESS_VARIANTS:
         return HEADLESS_VARIANTS[case_id][1]
     if case_id == MIXED_VARIANT:

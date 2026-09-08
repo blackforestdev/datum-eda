@@ -10,6 +10,7 @@ from workflow_delivery_capture_assertions import capture_envelope, observer_call
 from workflow_delivery_capture_command import capture_command, save
 from workflow_delivery_capture_fixture import restore_fixture
 from workflow_delivery_capture_mutations import CASES, changed_bytes, expected_detail
+from workflow_delivery_capture_history import HISTORY_CASES
 from workflow_delivery_capture_state import git
 from workflow_delivery_io import parse_json, sha256
 from workflow_delivery_shapes import require
@@ -61,7 +62,7 @@ def evaluate_hook(output, *, case_id, hook):
 
 
 def run_hook_case(packet, destination, environment, *, case_id):
-    if case_id not in CASES:
+    if case_id not in CASES or case_id in HISTORY_CASES:
         raise ValueError("explicit implemented hook case required")
     destination = Path(destination).resolve()
     destination.mkdir(exist_ok=False)
