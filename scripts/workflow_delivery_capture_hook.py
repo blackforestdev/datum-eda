@@ -45,7 +45,8 @@ def evaluate_hook(output, *, case_id, hook):
         target, code, detail = snapshot_expectation(case_id, "H")
     else:
         detail = expected_detail(case_id)
-    require(result["returncode"] == (0 if code is None else 1), "hook", "unexpected hook status")
+    expected_status = 0 if code is None else 2 if code == "WDQ-TRUST" else 1
+    require(result["returncode"] == expected_status, "hook", "unexpected hook status")
     lines = (output / "stdout.bin").read_bytes().splitlines()
     require(len(lines) == 3 and lines[0].startswith(b"visual-truth file-lane gate passed")
             and lines[1].startswith(b"rustfmt gate passed"),

@@ -73,6 +73,8 @@ def evaluate_capture(output, *, case_id, surface, expected_code, script,
     require(command[command.index("--script") + 1] == str(script), "calls", "observer script differs")
     observer_calls(output, result, invocation, script, command[command.index("--") + 1:])
     expected_status = 0 if expected_code is None else 1
+    if expected_code == "WDQ-TRUST" and surface in ("C", "R"):
+        expected_status = 2
     require(result["returncode"] == expected_status, "status", "unexpected exit status")
     report = parse_json((output / "stdout.bin").read_bytes(), "stdout.bin")
     if surface in ("C", "R"):
