@@ -86,3 +86,34 @@ completed adoption measurements and scheduled specification obligations with
 honest remaining status. Obtain explicit owner acceptance of the full rollout.
 Close only after all requirements are evidenced; do not equate candidate code,
 planning approval, a green pilot or partial adoption with completion.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I01-PARTIAL -->
+## WDQ-I01 implementation evidence — partial, not installed
+
+Candidate commit: `f91b939ec43df72277a022e5af9b4afed56255da`.
+Candidate base: `419859c74181f3e33685cc69b1e3826d3ab6685f`.
+Retained Git object reference:
+`refs/datum/workflow-delivery-candidates/f91b939ec43df72277a022e5af9b4afed56255da`.
+Reviewable patch: `docs/reviews/workflow-delivery-rollout/i01-coverage.patch`.
+Owned candidate checkout: resolved Git common directory plus
+`datum-wdq/proposals/wdq-i01-20260908/candidate`.
+
+The candidate implements closed coverage/source-scope shapes and real Git-view
+classification/baseline/pinned-reference validation. Ten new tests exercise
+missing/duplicate/foreign identities, historical reopening or changed completion,
+same-marker boundary edits, index/worktree separation, bounded permission paths
+and external-handoff shape. Historical live unblocks may legitimately shrink;
+that bookkeeping is not frozen as an execution obligation.
+
+Verification in the candidate: all 135 workflow-delivery tests pass (125 existing
+plus 10 new), source health passes 1813 files, and staged whitespace checks pass.
+The isolated candidate commit uses the approved preparation/object-retention
+workflow, not a feature branch or live gate replacement. Main's pinned validator,
+policy, trust, hooks, pilot proof and all product/prototype files remain unchanged.
+No native product proof, independent review, promotion or readiness is asserted.
+
+WDQ-I01 remains in progress: category-specific readiness/specification checks,
+source-scope authorization against synchronized live claims, production changed-
+path enforcement and selector/staged-CLI integration still require implementation
+and negative verification. The candidate modules are not yet called by those
+production entry points; their passing helper tests cannot establish enforcement.

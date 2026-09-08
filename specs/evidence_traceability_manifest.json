@@ -37,8 +37,8 @@
       "status": "in_progress",
       "sources": ["research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md"],
       "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md", "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md", "docs/reviews/workflow-delivery-rollout/proposal.json", "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md"],
-      "reviewed_digest": "82358e3215258409bdc339b6f5d11fb2cf75eaa847260e6bb98c2cb27f263b52",
-      "review_note": "WDQ-R03 complete route review records the owner's approved /goal resume response against unchanged exact R02 packet hashes. Add the I01-I06 execution/adoption successor with implementation authorization, independent review, exact owner ratification/promotion and final measured acceptance boundaries. Review source and all five consumers together. No pilot/product route, hard dependency, gate code, installed trust, enrollment, product implementation, prototype or acceptance changes in this approval transaction."
+      "reviewed_digest": "f37b4500ae17faef584adcef7ace7febc2f778f8f189223bf49ce77a6c353481",
+      "review_note": "WDQ-I01 partial implementation review reconciles the source and all five consumers with retained candidate f91b939e and its exact review patch. Closed shapes and Git-view identity/baseline checks pass ten new tests plus 125 existing WDQ tests, but source-scope/category enforcement and production integration remain incomplete. Preserve exact R02 approval artifacts, all product routes/owners, installed gate/trust/policy and pilot evidence; candidate code is not activated or accepted."
     },
     {
       "id": "research-governance-index",
