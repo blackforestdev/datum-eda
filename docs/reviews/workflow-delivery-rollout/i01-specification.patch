@@ -1,0 +1,161 @@
+diff --git a/scripts/test_workflow_delivery_specification.py b/scripts/test_workflow_delivery_specification.py
+new file mode 100644
+index 00000000..07c0c37c
+--- /dev/null
++++ b/scripts/test_workflow_delivery_specification.py
+@@ -0,0 +1,75 @@
++"""Completed authoring evidence through actual schema-2 entry points."""
++
++import unittest
++
++import test_workflow_delivery_readiness_boundary as support
++from workflow_delivery_selector import selector_failures
++from workflow_delivery_tree import Tree
++
++
++class SpecificationBoundaryTest(unittest.TestCase):
++    def setUp(self):
++        self.r = support.ReadinessBoundaryTest()
++        self.r.setUp()
++        self.addCleanup(self.r.doCleanups)
++        self.h, self.f = self.r.h, self.r.f
++        item = self.r.item
++        item["completion"]["steps"][2]["kind"] = "planning"
++        del item["completion"]["delivery"]
++        policy = Tree(self.f.root).json("specs/workflow_delivery_policy.json")
++        policy["coverage"]["rows"][1]["category"] = "specification"
++        self.f.save("specs/workflow_delivery_policy.json", policy)
++        self.step = item["completion"]["steps"][0]
++        self.step.update(status="pending", completion_evidence=[])
++        item.update(authorization="planning")
++        item["completion"]["canonical_next_step_id"] = "NEXT-C01"
++        self.r.save()
++        self.f.git("commit", "-qm", "test(specification): pin pending authoring fixture\n\nSynthetic policy, not product authority.")
++        self.h.authority = self.f.git("rev-parse", "HEAD").decode().strip()
++        for key in ("AuthorityRef", "BaseRef"):
++            self.f.git("config", "datum.workflowDelivery" + key, self.h.authority)
++        self.step.update(status="complete", completion_evidence=[
++            {"kind": "document", **self.f.ref}])
++        item.update(authorization="owner_decision")
++        item["completion"]["canonical_next_step_id"] = "NEXT-C02"
++        self.r.save()
++
++    def test_reviewed_output_passes_without_future_product_proof(self):
++        code, report = self.h.cli()
++        self.assertEqual(0, code, report)
++        self.assertEqual([], selector_failures(self.f.root, self.r.m))
++
++    def test_commit_alone_does_not_establish_authored_output(self):
++        self.step["completion_evidence"] = [{"kind": "commit", "revision": self.h.authority}]
++        self.r.save()
++        code, report = self.h.cli()
++        self.assertEqual(1, code, report)
++        self.assertIn("requires governed output", report["findings"][0]["detail"])
++
++    def test_governed_output_without_route_refuses(self):
++        self.step["completion_evidence"] = [{"kind": "document",
++            "path": self.r.item["governing_docs"][0], "marker": "NEXT-READY-EVIDENCE"}]
++        self.r.save()
++        code, report = self.h.cli()
++        self.assertEqual(1, code, report)
++        self.assertIn("requires an owning evidence route", report["findings"][0]["detail"])
++
++    def test_stale_source_refuses_and_unstaged_repair_cannot_bless_index(self):
++        old = self.f.root.joinpath("research/source.md").read_bytes()
++        self.f.write("research/source.md", b"Unreviewed specification input.\n")
++        self.f.stage()
++        self.f.write("research/source.md", old)
++        code, report = self.h.cli()
++        self.assertEqual(1, code, report)
++        self.assertIn("owning route review is stale", report["findings"][0]["detail"])
++        self.assertEqual([], selector_failures(self.f.root, self.r.m))
++
++    def test_stale_source_refuses_selector_too(self):
++        self.f.write("research/source.md", b"Unreviewed source.\n")
++        self.f.stage()
++        self.assertTrue(any("owning route review is stale" in e
++                            for e in selector_failures(self.f.root, self.r.m)))
++
++
++if __name__ == "__main__":
++    unittest.main()
+diff --git a/scripts/workflow_delivery_authority.py b/scripts/workflow_delivery_authority.py
+index 4635cf7f..11d171f4 100644
+--- a/scripts/workflow_delivery_authority.py
++++ b/scripts/workflow_delivery_authority.py
+@@ -20 +20 @@ def resolve_ref(tree, reference):
+-def authority_manifest(tree, contract, *, ready=True):
++def evidence_routes(tree):
+@@ -24,0 +25,15 @@ def authority_manifest(tree, contract, *, ready=True):
++    return routes
++
++
++def reviewed_route_members(tree, key, route):
++    members = route["sources"] + route["consumers"]
++    current = hashlib.sha256()
++    for path in sorted(members):
++        current.update(path.encode("utf-8") + b"\0" + tree.read(path) + b"\0")
++    require(current.hexdigest() == route["reviewed_digest"], key,
++            "owning route review is stale; return to owning lane", "WDQ-AUTHORITY")
++    return members
++
++
++def authority_manifest(tree, contract, *, ready=True):
++    routes = evidence_routes(tree)
+@@ -36,8 +51 @@ def authority_manifest(tree, contract, *, ready=True):
+-        route = routes[key]
+-        members = route["sources"] + route["consumers"]
+-        current = hashlib.sha256()
+-        for path in sorted(members):
+-            current.update(path.encode("utf-8") + b"\0" + tree.read(path) + b"\0")
+-        require(current.hexdigest() == route["reviewed_digest"], key,
+-                "owning route review is stale; return to owning lane", "WDQ-AUTHORITY")
+-        paths.update(members)
++        paths.update(reviewed_route_members(tree, key, routes[key]))
+diff --git a/scripts/workflow_delivery_coverage_runtime.py b/scripts/workflow_delivery_coverage_runtime.py
+index 5096499d..a63fdeff 100644
+--- a/scripts/workflow_delivery_coverage_runtime.py
++++ b/scripts/workflow_delivery_coverage_runtime.py
+@@ -7,0 +8 @@ from workflow_delivery_source_scopes import authorize_source_paths
++from workflow_delivery_specification import validate_specification_outputs
+@@ -16,0 +18 @@ def validate_coverage(tree, manifest, trust, *, environment=None):
++    validate_specification_outputs(tree, items, coverage)
+diff --git a/scripts/workflow_delivery_specification.py b/scripts/workflow_delivery_specification.py
+new file mode 100644
+index 00000000..922e431e
+--- /dev/null
++++ b/scripts/workflow_delivery_specification.py
+@@ -0,0 +1,33 @@
++"""Check completed specification outputs, not semantic completeness or approval."""
++
++from workflow_delivery_authority import evidence_routes, resolve_ref, reviewed_route_members
++from workflow_delivery_shapes import require
++
++
++def validate_specification_outputs(tree, items, coverage):
++    completed = [
++        (row["frontier_key"], step)
++        for row in coverage["rows"] if row["category"] == "specification"
++        for step in items[row["frontier_key"]]["completion"]["steps"]
++        if step["status"] == "complete"
++    ]
++    if not completed:
++        return  # Pending authorship does not require future outputs.
++    routes = evidence_routes(tree)
++    checked = set()
++    for key, step in completed:
++        refs = [proof for proof in step["completion_evidence"]
++                if proof["kind"] in ("document", "review", "decision")]
++        require(bool(refs), key,
++                f"{step['id']}: completed specification requires governed output references",
++                "WDQ-COVERAGE")
++        for reference in refs:
++            resolve_ref(tree, reference)
++            owners = {name for name, route in routes.items()
++                      if reference["path"] in route["sources"] + route["consumers"]}
++            require(bool(owners), reference["path"],
++                    "completed specification output requires an owning evidence route",
++                    "WDQ-AUTHORITY")
++            for name in sorted(owners - checked):
++                reviewed_route_members(tree, name, routes[name])
++                checked.add(name)

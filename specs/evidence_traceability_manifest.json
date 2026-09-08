@@ -37,8 +37,8 @@
       "status": "in_progress",
       "sources": ["research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md"],
       "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md", "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md", "docs/reviews/workflow-delivery-rollout/proposal.json", "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md"],
-      "reviewed_digest": "dd44d68642896ca7e30d2e95598718784580458d2ea4ddd7106eddbe816e0d1c",
-      "review_note": "WDQ-I01 partial implementation review reconciles source and all five consumers with candidate 1131c5a5 and exact incremental patches. Completed covered preflight now validates actual authority, foundation answers and owning-route freshness before enrollment; 160 WDQ tests pass. Specification-authoring validation, remaining category negative coverage and transaction-baseline audit remain unfinished. Preserve exact R02 approval artifacts, product routes/owners, installed gate/trust/policy and pilot evidence; candidate integration is not activation or acceptance."
+      "reviewed_digest": "27b788385f815fa44b5e7ce5cfd1708fa395b6f494a4c31d1ff1e8c1de87d537",
+      "review_note": "WDQ-I01 partial implementation review reconciles the source and all five consumers with candidate 3088985c and exact incremental patches. Completed specification outputs require governed references and fresh complete owning routes; 165 WDQ tests pass. Route freshness does not establish semantic clause completeness or owner approval. Clause/disposition validation, remaining category negative coverage and transaction-baseline audit remain unfinished. Preserve exact R02 approval artifacts, product routes/owners, installed gate/trust/policy and pilot evidence; candidate integration is not activation or acceptance."
     },
     {
       "id": "research-governance-index",
