@@ -4032,7 +4032,8 @@
       "issue_id": "dat-gui-surface-specs-usb",
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_019_GUI_PRODUCT_MODEL.md",
-        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md"
+        "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
+        "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md"
       ],
       "state": "planned",
       "authorization": "planning",
@@ -4124,12 +4125,21 @@
             "completion_evidence": []
           },
           {
+            "id": "SURFACE-REVIEW",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Obtain independent review of the complete schematic and library specifications, visual authority and clause dispositions.",
+            "depends_on": ["SURFACE-S04"],
+            "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md", "marker": "SURFACE-REVIEW"}],
+            "completion_evidence": []
+          },
+          {
             "id": "SURFACE-S05",
             "kind": "owner_decision",
             "status": "pending",
             "action": "Record the owner's visual and product disposition, resolve or defer remaining questions, and select a bounded implementation successor.",
             "depends_on": [
-              "SURFACE-S04"
+              "SURFACE-REVIEW"
             ],
             "requirement_refs": [
               {
@@ -7156,7 +7166,8 @@
         "research/preferences-system/PREFERENCES_FIRST_REENTRY_AUDIT.md",
         "docs/gui/DATUM_GUI_PRODUCT_SPEC.md",
         "docs/gui/DATUM_GUI_MENU_BINDINGS.md",
-        "docs/gui/prototypes/preferences-window.html"
+        "docs/gui/prototypes/preferences-window.html",
+        "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md"
       ],
       "state": "blocked",
       "authorization": "planning",
@@ -7175,8 +7186,12 @@
           {"id": "PPS-C02", "kind": "planning", "status": "pending", "action": "Reconcile the two-command menu doorway and Project Preferences primary visual truth through the Claude-owned protected lane.", "depends_on": ["PPS-C01"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C02"}], "completion_evidence": []},
           {"id": "PPS-C03", "kind": "planning", "status": "pending", "action": "Publish the buildable Project Preferences authority, interaction, accessibility, and conformance specification.", "depends_on": ["PPS-C02"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C03"}], "completion_evidence": []},
           {
+            "id": "PPS-REVIEW", "kind": "planning", "status": "pending", "action": "Obtain independent review of the complete Project Preferences specification, visual authority and clause dispositions.",
+            "depends_on": ["PPS-C03"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md", "marker": "PPS-REVIEW"}], "completion_evidence": []
+          },
+          {
             "id": "PPS-C04", "kind": "owner_decision", "status": "pending", "action": "Review and ratify or revise the complete Project Preferences specification and bounded build placement.",
-            "depends_on": ["PPS-C03"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C04"}], "completion_evidence": [],
+            "depends_on": ["PPS-REVIEW"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C04"}], "completion_evidence": [],
             "owner_input": {"response_format": "Reply exactly `PROJECT-PREFERENCES-SPEC: approve` or `PROJECT-PREFERENCES-SPEC: revise — <specific authority, menu, interaction, accessibility, visual, or proof correction>`.", "requests": [{"id": "PPS-C04", "question": "Does the complete Project Preferences contract faithfully implement PM-039 without exposing Revision or mixing machine and Project authority?", "recommended_response": "Approve only after the exact inventory, protected renders, canonical mutation paths, and accessibility proof are complete.", "source_ref": {"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C04"}}]}
           }
         ],
