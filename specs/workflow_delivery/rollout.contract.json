@@ -4,10 +4,10 @@
   "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
   "issue_id": "dat-wdq-rollout-implementation-ffy",
   "category": "infrastructure",
-  "consuming_workflow": "Contributors validate staged work, exact proposed candidates and current roadmap delivery status through the real read-only CLI and project-status selector.",
+  "consuming_workflow": "Contributors validate staged work, exact proposed candidates and current roadmap delivery status through the real read-only CLI, prepared owner hook and project-status selector.",
   "intent": "Reject unauthorized or unsupported delivery transitions with usable diagnostics, exact snapshot identity and no automatic repair or acceptance.",
   "scope": "Read-only validator entry points and their complete success/refusal matrix in isolated infrastructure fixtures. Prepared candidate contract; actual readiness, enrollment, independent proof and activation remain separate.",
-  "exclusions": "No native EDA acceptance, Preferences takeover, prototype change or dependency. Real owner-hook and promotion-tooling verification remain additional I03/WDQ-REVIEW obligations; installed activation and three native adoption cohorts are not satisfied by this contract.",
+  "exclusions": "No native EDA acceptance, Preferences takeover, prototype change or dependency. Declaring owner_hook does not satisfy its real process and handler proof. Promotion-tooling verification remains an additional I03/WDQ-REVIEW obligation; installed activation and three native adoption cohorts are not satisfied by this contract.",
   "authority_refs": [
     {
       "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
@@ -187,7 +187,8 @@
       "id": "validator",
       "entry_surfaces": [
         "staged_cli",
-        "candidate_cli"
+        "candidate_cli",
+        "owner_hook"
       ],
       "dispatch_key": "check_workflow_delivery.main",
       "handler_ref": {
@@ -197,7 +198,7 @@
       "scope": "Explicit isolated repository, externally selected trust and requested snapshot only.",
       "timing": "Validate before reporting a permitted transition; return actual findings without repairing inputs.",
       "persistence": "Read-only protected repository state; owned diagnostic logs and derived caches recorded separately.",
-      "unavailable_reason": "Missing or inconsistent authority, inputs or evidence produces a structured refusal; never a fabricated success.",
+      "unavailable_reason": "Missing or inconsistent authority, inputs or evidence refuses. Early hook trust or prerequisite failures may precede validator dispatch and JSON; retain the actual diagnostic and uninvoked handler, never a fabricated success.",
       "scenario_ids": [
         "INFRA-S01",
         "INFRA-S02",
@@ -246,7 +247,7 @@
       ],
       "preconditions": "Complete valid isolated enrolled fixture plus malformed invocation; exact assembled candidate and externally selected fixture trust.",
       "inputs": [
-        "Invoke the real staged CLI, exact-candidate CLI and project-status selector on valid inputs; retain arguments, stdout/stderr and status.",
+        "Invoke the real staged CLI, exact-candidate CLI, prepared owner hook and project-status selector on valid inputs; retain arguments, stdout/stderr, status and actual handler observations.",
         "Repeat with an invalid invocation, and distinguish diagnostic report-only from enforcing mode."
       ],
       "expected_visible": "Valid inputs succeed with no findings and preserve the selected step; invalid input gives a readable reason and nonzero enforcement status. No color or GUI is required.",
