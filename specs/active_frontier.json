@@ -7818,7 +7818,8 @@
         "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
         "docs/decisions/PRODUCT_MECHANICS_034_PRODUCT_REVISION_ENGINE.md",
         "specs/PUBLISH_SPACE_SPEC.md",
-        "specs/STANDARDS_COMPLIANCE_SPEC.md"
+        "specs/STANDARDS_COMPLIANCE_SPEC.md",
+        "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md"
       ],
       "state": "planned",
       "authorization": "planning",
@@ -7828,7 +7829,126 @@
       "dependencies": [
         "dat-drafting-standard-authority-jcz"
       ],
-      "unblocks": []
+      "unblocks": [],
+      "completion": {
+        "outcome": "Complete researched and independently reviewed adopted drafting-standard specification with exact owner ratification, preserved PM035 ownership, complete consumer/migration/conformance obligations and a non-executing governed handoff.",
+        "canonical_next_step_id": "ADS-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "ADS-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Research and reconcile exact drafting-standard requirements and existing authority.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+                "marker": "ADS-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "ADS-C02",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Specify the complete adopted object, typed authority, consumer seams, migration and conformance.",
+            "depends_on": [
+              "ADS-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+                "marker": "ADS-C02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "ADS-C03",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Obtain independent specification review and resolve every finding.",
+            "depends_on": [
+              "ADS-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+                "marker": "ADS-C03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "ADS-C04",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain exact owner ratification of the specification and new mechanism choices.",
+            "depends_on": [
+              "ADS-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+                "marker": "ADS-C04"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `ADOPTED-DRAFTING-STANDARD-SPEC: ratify specification — <exact numbered decision and reviewed evidence>`, `ADOPTED-DRAFTING-STANDARD-SPEC: revise — <correction>`, or `ADOPTED-DRAFTING-STANDARD-SPEC: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "RATIFY",
+                  "question": "Do you ratify the exact reviewed object specification and its new mechanism or normative selections while preserving PM035 ownership?",
+                  "recommended_response": "Ratify only supported choices in the exact numbered decision; preserve unresolved mandatory issues and separate implementation and migration authority.",
+                  "source_ref": {
+                    "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+                    "marker": "RATIFY"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "ADS-C05",
+            "kind": "governance",
+            "status": "pending",
+            "action": "Reconcile accepted specification and future delivery obligations without authorizing implementation.",
+            "depends_on": [
+              "ADS-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md",
+                "marker": "ADS-C05"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Close specification authorship only after exact owner ratification and complete governance reconciliation; implementation and migration execution remain separately authorized work."
+          ],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "VISUAL-TRUTH-FILE-LANE",

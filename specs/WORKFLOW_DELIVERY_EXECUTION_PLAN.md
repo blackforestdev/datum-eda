@@ -688,3 +688,40 @@ shell proof, full enrollment readiness, operation capability or owner acceptance
 `dat-wdq-missing-plans-b8y` remains open for the final missing plan. WDQ-I02 and
 all product execution/acceptance boundaries, especially Preferences, remain open
 and unchanged.
+
+### WDQ-I02 — adopted drafting-standard plan and clause inventory
+
+The last of the five missing completion plans now exists on the actual
+ADOPTED-DRAFTING-STANDARD-SPEC record: research/authority reconciliation, complete
+object and behavior authorship, independent specification review, exact owner
+ratification, and governed non-executing handoff. All five steps remain pending.
+The original planned/planning status, closed ownership prerequisite, order and
+unclaimed state remain unchanged.
+
+`specs/WORKFLOW_DELIVERY_DRAFTING_STANDARD_COMPLETION_PLAN.md` and its prepared
+sixteen-clause inventory preserve PM035's already-approved documentation-system
+ownership. They do not select a drafting standard, edition, profile, default,
+schema or migration mechanism. The complete PM035 decision and ownership packet,
+current PM010/PM020/PM034 text, Publish specification and standards specification
+were inspected to retain their boundaries. Product specification authorship is
+still pending: ADS-C01 explicitly requires complete product-route review and
+primary-source research; this workflow-only preparation does not pretend to
+reconcile the entire standards, documentation/revision or Publish evidence corpus.
+Those product routes and all Claude-owned prototypes are unchanged.
+
+The plan accounts for exact registry references, unavailable standards, typed
+Project authority, document conventions and shared units, templates/annotations,
+revision projections, explicit seed receipt, existing-Project migration,
+provenance, conformance, accessibility and standards claim discipline. New
+mechanism and normative choices require owner disposition; previously ratified
+ownership does not require duplicate approval. No implementation, migration
+execution, dependency, Preferences takeover or Revision Engine resumption occurs.
+
+Six completion/inventory tests pass. Actual candidate `2a85005c` validates all
+sixteen clauses and the pending specification without fictional future outputs.
+Its category preflight covers all 56 actual Frontier records and now leaves only
+this workflow's not-yet-installed delivery declaration. All five missing plans
+tracked by `dat-wdq-missing-plans-b8y` have been repaired; further specification
+inventories, exact enrollment, readiness, activation and real adoption evidence
+remain WDQ-I02 and later workflow obligations. Structural plan coverage is not
+full policy validation, completed specification authorship or native EDA proof.
