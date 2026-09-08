@@ -242,3 +242,63 @@ Candidate source health passes 1823 files; staged whitespace passes. This closes
 the identified net-diff audit gap, not WDQ-I01: specification clause/disposition
 validation and remaining category/refusal coverage still need completion.
 Live enforcement, Preferences ownership and product acceptance remain unchanged.
+
+### WDQ-I01 clause-inventory and disposition candidate increment
+
+Candidate: `77172c7e7aff1a4c88044134c66eeff45f161066`, parent `4b958a000c82d09f0d6d820a256511869570d2ab`.
+Retained under `refs/datum/workflow-delivery-candidates/77172c7e7aff1a4c88044134c66eeff45f161066`.
+Exact zero-context increment: `docs/reviews/workflow-delivery-rollout/i01-clauses.patch`;
+apply/check with `--unidiff-zero` only against the recorded pinned inputs.
+
+The approved requirement for a complete clause/disposition matrix previously had
+no machine-readable inventory. This candidate uses the existing specification
+row's owner-pinned `boundary_ref` rather than adding another policy permission
+or a parallel task status. Its exact serialization is an implementation detail
+for the I02 numbered amendment and I04 owner review, not ratified live doctrine.
+
+The referenced governed JSON inventory has exactly `schema_version` (integer 1),
+`marker` (the boundary marker), `frontier_key` and nonempty `clauses`. Each clause
+has exactly `id`, `step_id`, `requirement_ref`, `authority_refs` and boolean
+`requires_owner_decision`. IDs are unique; each clause maps an existing step's
+requirement reference, and every step requirement has at least one clause.
+References retain existing `{path, marker}` semantics. The complete boundary
+file is pinned by coverage authority, so a candidate cannot shrink its inventory,
+change a mechanism flag or silently rewrite the covered requirement references.
+Inventory authors and reviewers must enumerate the actual normative clauses at
+useful granularity: this structural check does not discover omitted prose by
+itself or prove that a coarse one-row description captures the intended product.
+
+Every completed specification step references exactly one governed JSON matrix
+using marker `WDQ-CLAUSE-MATRIX.<Frontier-key>.<step-id>`. Its exact fields are
+`schema_version` (integer 1), `marker`, `frontier_key`, `step_id` and nonempty
+`dispositions`. Each row has exactly `clause_id`, `disposition`, `evidence_refs`
+and `owner_step_id`. Rows cover exactly that step's pinned clauses, with no
+unknown or duplicate clause. Outputs, inventory, clause authority and disposition
+references must resolve through complete fresh owning evidence routes.
+
+Disposition meanings and boundaries:
+
+- `documented`: referenced output addresses the clause; `owner_step_id` is null.
+  This cannot satisfy a clause flagged as requiring an owner mechanism decision.
+- `pending_owner`: referenced evidence identifies the open choice and names an
+  existing pending owner-decision step that transitively depends on the authored
+  step. It cannot stand for a completed decision or a landed item. When the owner
+  decision advances, the prior open disposition must be reconciled too.
+- `ratified`: evidence includes numbered PRODUCT_MECHANICS doctrine already
+  classified controlling in owner-promoted authority, with unchanged referenced
+  file bytes. A newly authored or candidate-only doctrine file is not ratification.
+  `owner_step_id` is null; semantic relevance remains an independent-review duty.
+
+Completed specification owner-decision steps must themselves exactly match the
+owner-promoted step and document/review/decision evidence bytes. Neither a matrix
+label nor an ordinary governance commit can manufacture that authorization.
+Pending authorship requires its reviewed inventory but not future output matrices.
+
+All 184 WDQ tests pass; candidate source health passes 1826 files and staged
+whitespace passes. New actual CLI/selector cases cover omitted/duplicate/unknown
+clauses, identity mismatch, missing references, inventory reduction, uncovered
+requirements, unresolved mechanism choices, explicit downstream owner handling,
+promoted doctrine and candidate-only ratification/owner completion refusal.
+WDQ-I01 remains in progress for remaining category/refusal coverage. These are
+hermetic mechanism checks, not installed enforcement, independent semantic review,
+product proof or acceptance. Live trust and the Preferences lane remain unchanged.
