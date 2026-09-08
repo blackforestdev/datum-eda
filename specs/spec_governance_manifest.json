@@ -403,7 +403,8 @@
       "class": "doctrine"
     },
     "docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md": {
-      "class": "doctrine"
+      "class": "doctrine",
+      "reason": "Quality-bar authority with explicit clause limits: PM001 ratifications and the 2026-08-23 workspace correction remain controlling; unresolved fixtures, numeric budgets and owner questions are not ratified by classification. WDQ-F01 reconciles the former blanket draft header without asserting implementation or product acceptance."
     },
     "docs/decisions/PRODUCT_MECHANICS_013_GUI_SUPERVISION_AND_PARITY.md": {
       "class": "historical",

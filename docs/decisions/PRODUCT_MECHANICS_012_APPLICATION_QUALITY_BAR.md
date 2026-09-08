@@ -1,13 +1,38 @@
 # Product Mechanics Decision 012: Application Quality Bar
 
-Status: draft hypothesis + how/mechanism woven 2026-06-18; quality gates tied
-to 000-001 mechanisms.
+Status: quality-bar doctrine with clause-level authority limits; quality gates
+are tied to 000–001 mechanisms. Fixture selection, numeric budgets and the
+remaining owner questions below are not ratified by this document's status.
 Date: 2026-06-18
 
 Owner correction 2026-08-23: PiP, floating-window, detached-window, and
 multi-monitor composition requirements were never approved and are withdrawn.
 Quality applies to recursive internal tiling, pane Zoom, and Full-Screen Stage
 inside one cohesive native Datum window.
+
+## Authority and unresolved choices
+
+WDQ-F01 clarification: the former blanket “draft hypothesis” header and the
+governance manifest's `doctrine` classification described different things.
+The classification identifies this document's governing role; it is not a
+blanket approval of every proposed parameter or open question. Conversely,
+draft wording does not suspend mechanisms explicitly ratified in PM001 or
+the subsequent owner correction above. This clarification changes no product
+mechanism and records no new owner acceptance.
+
+| Clause group | Authority boundary |
+| --- | --- |
+| Canonical mutation, stable identity, journal commit point and compensating durable undo | Preserve PM001's explicit ratifications. Open questions here cannot authorize private writers, session-only undo or silently accepted partial source state. |
+| Direct-editing preview, field validation and cancellation | Apply the existing quality requirements alongside PM001/002 and the consuming editor's ratified interaction contract. This document alone does not select every gesture's transaction boundary. |
+| Workspace composition | The 2026-08-23 owner correction withdraws floating/PiP/detached/multi-monitor composition requirements. Internal tiling, Zoom and Stage remain; workspace restoration is not source mutation. |
+| Performance fixtures and numeric thresholds | Still owner-defined as stated under QG-PERFORMANCE-LATENCY. No numeric budget is inferred from doctrine classification, another workflow's measurements or a passing screenshot gate. |
+| First proof slice and Open Owner Questions | Requirements and unresolved choices, not evidence that the slice was run or accepted. Preserve already-settled mechanisms when resolving the remaining coverage, fixture and diagnostic choices. |
+
+Implementation and product-readiness claims require evidence for the actual
+workflow and its applicable gates. Neither this status clarification nor a
+document classification establishes executable enforcement, native usability,
+independent review or owner acceptance. WDQ-F01 tracks this clarification under
+`FOUNDATION-WORKFLOW-SPEC`; the broader F1–F8 contract remains unfinished.
 
 Driven by:
 - `docs/DATUM_PRODUCT_MECHANICS.md`
