@@ -1,0 +1,232 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-CLAUSES.DISTRIBUTED-COLLAB-SPEC",
+  "frontier_key": "DISTRIBUTED-COLLAB-SPEC",
+  "clauses": [
+    {
+      "id": "RESEARCH-DVCS",
+      "step_id": "DC-C01",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:RESEARCH-DVCS -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "RESEARCH-LOCAL-FIRST",
+      "step_id": "DC-C01",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:RESEARCH-LOCAL-FIRST -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "RESEARCH-CAD",
+      "step_id": "DC-C01",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:RESEARCH-CAD -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "RESEARCH-TRACE",
+      "step_id": "DC-C01",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:RESEARCH-TRACE -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "MODEL-AUTHORITY",
+      "step_id": "DC-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:MODEL-AUTHORITY -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "STORAGE-ATOMICITY",
+      "step_id": "DC-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:STORAGE-ATOMICITY -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "CONFORMANCE-IMPACT",
+      "step_id": "DC-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:CONFORMANCE-IMPACT -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "DURABLE-MECHANISM",
+      "step_id": "DC-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:DURABLE-MECHANISM -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "LIVE-MECHANISM",
+      "step_id": "DC-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:LIVE-MECHANISM -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "CONFLICT-MECHANISM",
+      "step_id": "DC-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:CONFLICT-MECHANISM -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "SECURITY-MECHANISM",
+      "step_id": "DC-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:SECURITY-MECHANISM -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "RELEASE-MECHANISM",
+      "step_id": "DC-C02",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:RELEASE-MECHANISM -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "INDEPENDENT-REVIEW",
+      "step_id": "DC-C03",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:INDEPENDENT-REVIEW -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "OWNER-RATIFICATION",
+      "step_id": "DC-C04",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C04"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:OWNER-RATIFICATION -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GOVERNANCE-HANDOFF",
+      "step_id": "DC-C05",
+      "requirement_ref": {
+        "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+        "marker": "DC-C05"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+          "marker": "<!-- CLAUSE:COLLAB:GOVERNANCE-HANDOFF -->"
+        }
+      ],
+      "requires_owner_decision": false
+    }
+  ]
+}

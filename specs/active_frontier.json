@@ -5595,7 +5595,8 @@
       "issue_id": "dat-distributed-collaboration-architecture-lt1",
       "governing_docs": [
         "docs/decisions/PRODUCT_MECHANICS_007_PROJECT_WORKSPACE_MODEL.md",
-        "docs/decisions/PRODUCT_MECHANICS_001_CANONICAL_EDIT_MODEL.md"
+        "docs/decisions/PRODUCT_MECHANICS_001_CANONICAL_EDIT_MODEL.md",
+        "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md"
       ],
       "state": "planned",
       "authorization": "planning",
@@ -5605,9 +5606,126 @@
       "dependencies": [
         "dat-documentation-system-spec-y8z"
       ],
-      "unblocks": [
-        "multi-user project collaboration implementation"
-      ]
+      "unblocks": [],
+      "completion": {
+        "outcome": "Complete researched and independently reviewed distributed collaboration specification with exact numbered owner mechanism decisions, conformance/security/licensing obligations and an explicit non-executing handoff.",
+        "canonical_next_step_id": "DC-C01",
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
+        "steps": [
+          {
+            "id": "DC-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Research primary sources and complete distributed/offline collaboration constraints.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+                "marker": "DC-C01"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "DC-C02",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Author the complete architecture, conformance obligations and explicit mechanism choices.",
+            "depends_on": [
+              "DC-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+                "marker": "DC-C02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "DC-C03",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Obtain independent specification review and account for every finding.",
+            "depends_on": [
+              "DC-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+                "marker": "DC-C03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "DC-C04",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain exact numbered owner ratification of the collaboration mechanisms.",
+            "depends_on": [
+              "DC-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+                "marker": "DC-C04"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `DISTRIBUTED-COLLAB-SPEC: ratify mechanisms — <exact numbered decision and reviewed evidence>`, `DISTRIBUTED-COLLAB-SPEC: revise — <correction>`, or `DISTRIBUTED-COLLAB-SPEC: defer — <reason>`.",
+              "requests": [
+                {
+                  "id": "RATIFY",
+                  "question": "Do you ratify the exact durable/live collaboration, conflict/writer, security/exchange and release mechanisms after independent review?",
+                  "recommended_response": "Ratify only complete supported choices in the exact numbered decision; preserve unresolved mandatory issues and separate implementation authority.",
+                  "source_ref": {
+                    "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+                    "marker": "RATIFY"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "DC-C05",
+            "kind": "governance",
+            "status": "pending",
+            "action": "Reconcile governed specification and successor requirements without authorizing implementation.",
+            "depends_on": [
+              "DC-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_COLLABORATION_COMPLETION_PLAN.md",
+                "marker": "DC-C05"
+              }
+            ],
+            "completion_evidence": []
+          }
+        ],
+        "post_completion": {
+          "effects": [
+            "Close specification authorship only after explicit numbered mechanism ratification and complete governance reconciliation; implementation remains a separately authorized successor."
+          ],
+          "unblocks_issue_ids": [],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
+      }
     },
     {
       "key": "PRODUCT-REVISION-SPEC",
