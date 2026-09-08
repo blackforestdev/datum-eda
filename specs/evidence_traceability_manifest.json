@@ -28,9 +28,9 @@
       "id": "foundation-manual-workflow",
       "status": "in_progress",
       "sources": ["research/process-quality/FOUNDATION_MANUAL_WORKFLOW_RESEARCH.md"],
-      "consumers": ["specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md"],
-      "reviewed_digest": "addbb41e61fab3130971619dd8edd8d443951b85192648ed63212061c5163ad7",
-      "review_note": "WDQ-F02 complete review of the new bounded research source and concrete draft contract, using the completed WDQ-F01 authority review. Inherited Units, selection, mutation and persistence rules are distinguished from proposed doorway/fixture/writer/gesture choices. Primary Linux interface research informs unresolved Project writer ownership, not a new mechanism or dependency approval. Visual-owner handoffs, exact prerequisite proposals and owner dispositions remain unfinished; no runtime, product acceptance, delivery enrollment, existing route or pilot authority change."
+      "consumers": ["specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md", "docs/reviews/workflow-foundation/handoff.md"],
+      "reviewed_digest": "a61d44751357bced844d5ec08020ede613eb3c2c0005ab448cad19f6fa03b113",
+      "review_note": "WDQ-F02 complete review of the research source and both consumers: concrete contract and bounded handoff/owner packet. Inherited Units, selection, mutation and persistence rules remain distinct from proposed doorway/fixture/writer/gesture choices. Primary Linux research informs unresolved Project writer ownership, not a new mechanism/dependency approval. Exact Claude regions, consumer mapping, three prerequisite additions and four individual owner requests are specified but unapproved. Authorship is complete; owner disposition, route-specific product reconciliation, execution and broader enrollment/adoption are not. Existing product routes and accepted pilot authority remain unchanged."
     },
     {
       "id": "research-governance-index",

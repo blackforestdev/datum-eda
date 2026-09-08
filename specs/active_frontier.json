@@ -7892,34 +7892,79 @@
       "order": 48,
       "title": "Specify the first manual workflow foundation contracts",
       "issue_id": "dat-manual-foundation-contracts-fsw",
-      "governing_docs": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "docs/reviews/workflow-foundation/authority-review.md", "docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md", "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md"],
-      "state": "in_progress",
-      "authorization": "planning",
+      "governing_docs": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "docs/reviews/workflow-foundation/authority-review.md", "docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md", "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md", "docs/reviews/workflow-foundation/handoff.md"],
+      "state": "specified",
+      "authorization": "owner_decision",
       "canonical_next": false,
       "parallel": true,
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-wdq-rollout-foundation-20260908",
-        "claimed_at": "2026-09-08T02:12:14Z",
-        "heartbeat_at": "2026-09-08T02:12:14Z",
-        "expires_at": "2026-09-08T10:12:14Z",
-        "scope": ["Owner-directed workflow-quality lane: close WDQ-F01 authority review and bounded consumer completion-plan repair under dat-foundation-consumer-plans-9at, then author the WDQ-F02 concrete F1-F8 manual-workflow contract and owning-lane handoffs. Preserve consumers' ownership, lifecycle, authorization, prerequisites and complete product scope. Preserve GLOBAL-PREFERENCES-COMPLETION selection, ownership, evidence and GP-CM05V acceptance. No runtime or prototype edits, prerequisite amendment, gate enrollment or trust promotion."],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "5384de3c8dbced048f360cd43008c5d59fc63630"
-      },
       "summary": "Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection.",
       "dependencies": ["dat-workflow-delivery-quality-xgj"],
       "unblocks": ["dat-native-project-startup-vrf"],
       "completion": {
         "outcome": "A reviewed clause-level foundation contract covers one ordinary native project doorway and exact board-edit/reopen workflow, with explicit consuming-owner handoffs and unresolved decisions left blocking.",
-        "canonical_next_step_id": "WDQ-F02",
+        "canonical_next_step_id": "WDQ-F03",
         "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
         "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
         "steps": [
           {"id": "WDQ-F01", "kind": "planning", "status": "complete", "action": "Review complete foundation evidence routes, reconcile clause authority and confirm F1-F8 consumers with their existing owners.", "depends_on": [], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F01"}], "completion_evidence": [{"kind": "document", "path": "docs/reviews/workflow-foundation/authority-review.md", "marker": "<!-- EVIDENCE:FOUNDATION-WORKFLOW-SPEC:WDQ-F01-COMPLETE -->"}]},
-          {"id": "WDQ-F02", "kind": "planning", "status": "in_progress", "action": "Specify concrete foundation behavior and failure examples for the bounded manual workflow; return visual changes to Claude and leave implementation unauthorized.", "depends_on": ["WDQ-F01"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F02"}], "completion_evidence": []},
-          {"id": "WDQ-F03", "kind": "owner_decision", "status": "pending", "action": "Obtain owner disposition of F1-F8 resolutions, consuming-owner handoff and exact proposed prerequisite changes before execution authorization.", "depends_on": ["WDQ-F02"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F03"}], "completion_evidence": [], "owner_input": {"response_format": "Reply `FOUNDATION-WORKFLOW-SPEC: approve contract`, `FOUNDATION-WORKFLOW-SPEC: revise — <specific correction>`, or `FOUNDATION-WORKFLOW-SPEC: defer — <reason>`.", "requests": [{"id": "FOUNDATION-ADOPTION", "question": "Do the concrete F1-F8 contract and consuming-owner handoff resolve the requirements needed for the bounded manual workflow?", "recommended_response": "Approve only the reviewed contract and explicit prerequisite changes; separately authorize product implementation.", "source_ref": {"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F03"}}]}}
+          {"id": "WDQ-F02", "kind": "planning", "status": "complete", "action": "Specify concrete foundation behavior and failure examples for the bounded manual workflow; return visual changes to Claude and leave implementation unauthorized.", "depends_on": ["WDQ-F01"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F02"}], "completion_evidence": [{"kind": "document", "path": "docs/reviews/workflow-foundation/handoff.md", "marker": "<!-- EVIDENCE:FOUNDATION-WORKFLOW-SPEC:WDQ-F02-COMPLETE -->"}]},
+          {
+            "id": "WDQ-F03",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Obtain owner disposition of F1-F8 resolutions, consuming-owner handoff and exact proposed prerequisite changes before execution authorization.",
+            "depends_on": [
+              "WDQ-F02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md",
+                "marker": "WDQ-F03"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply `FOUNDATION-WORKFLOW-SPEC/WDQ-F03: CONTRACT=<approve|revise|defer>; OPEN-CHOICES=<approve|revise|defer>; PREREQUISITES=<approve|revise|defer>; ROLLOUT=<approve|revise|defer>`. Include the correction or reason for each revise/defer. OPEN-CHOICES approves scheduling specification work only, not its unresolved mechanisms; ROLLOUT approves packet preparation only, not enrollment or trusted execution.",
+              "requests": [
+                {
+                  "id": "CONTRACT",
+                  "question": "Adopt the bounded F1-F8 contract and concrete handoffs, preserving inherited authority and leaving unresolved mechanisms unapproved?",
+                  "recommended_response": "Approve the reviewed contract and handoff limits only; no runtime, prototype or product acceptance.",
+                  "source_ref": {
+                    "path": "docs/reviews/workflow-foundation/handoff.md",
+                    "marker": "CONTRACT"
+                  }
+                },
+                {
+                  "id": "OPEN-CHOICES",
+                  "question": "Authorize bounded specification follow-ups for Project writer ownership, wire gesture/formation, native doorway/fixture and performance budgets, with unresolved required behavior still blocking?",
+                  "recommended_response": "Approve scheduling and research/specification, not the proposed mechanisms or numerical budgets; preserve applicable numbered-decision boundaries.",
+                  "source_ref": {
+                    "path": "docs/reviews/workflow-foundation/handoff.md",
+                    "marker": "OPEN-CHOICES"
+                  }
+                },
+                {
+                  "id": "PREREQUISITES",
+                  "question": "Approve exactly the three foundation prerequisite additions to GUI-SURFACE-SPECS, GUI-WRITE-PATH and NATIVE-AUTHORING listed in the handoff?",
+                  "recommended_response": "Approve only those additions; preserve all existing edges, canonical selection and execution authority.",
+                  "source_ref": {
+                    "path": "docs/reviews/workflow-foundation/handoff.md",
+                    "marker": "PREREQUISITES"
+                  }
+                },
+                {
+                  "id": "ROLLOUT",
+                  "question": "Authorize preparation of the remaining broader enrollment, tripwire and three-slice adoption packet while preserving product-lane ownership and exact PM041 promotion boundaries?",
+                  "recommended_response": "Approve packet preparation only; the full goal remains incomplete until broader enforcement and adoption are verified.",
+                  "source_ref": {
+                    "path": "docs/reviews/workflow-foundation/handoff.md",
+                    "marker": "ROLLOUT"
+                  }
+                }
+              ]
+            }
+          }
         ],
         "post_completion": {"effects": ["Record owner disposition and reconcile approved clauses in their owning evidence routes.", "Propose explicit native-doorway and existing-authoring handoffs without automatically authorizing or selecting implementation."], "unblocks_issue_ids": ["dat-native-project-startup-vrf"], "selection": "explicit_frontier_update", "authorizes_successor": false, "selects_successor": false}
       }

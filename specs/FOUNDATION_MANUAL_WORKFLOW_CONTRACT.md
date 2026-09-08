@@ -1,6 +1,6 @@
 # Native doorway and exact-edit foundation contract
 
-Status: WDQ-F02 draft for owner review; no execution or product acceptance.
+Status: WDQ-F02 authored; pending WDQ-F03 owner review. No execution or product acceptance.
 Frontier: FOUNDATION-WORKFLOW-SPEC; issue `dat-manual-foundation-contracts-fsw`.
 Owning route: `foundation-manual-workflow`.
 Evidence: `research/process-quality/FOUNDATION_MANUAL_WORKFLOW_RESEARCH.md`
@@ -207,8 +207,10 @@ units and bare-context multi-surface parity, stale/mixed selection and pinned
 library failures. Build/source/environment provenance and independent replay
 are mandatory; screenshots, parser tests and clean unchanged reopen alone fail.
 
-WDQ-F03 still needs a bounded visual-owner reconciliation list, exact consuming
-owner handoffs and proposed prerequisite edits. Writer mechanism, native wire
+The complete bounded visual-owner reconciliation list, consuming-owner handoffs,
+proposed prerequisite edits and ordered decision packet are in
+`docs/reviews/workflow-foundation/handoff.md`. Writer mechanism, native wire
 gesture/formation, doorway design and fixture-specific latency budgets remain
-explicit unapproved choices. This draft is not a complete WDQ-F02 handoff packet
-and does not permit execution, delivery enrollment or successor selection.
+explicit unapproved choices. WDQ-F02 authorship is complete; WDQ-F03 must record
+the owner's individual dispositions. No execution, delivery enrollment or
+successor selection is permitted by this packet alone.
