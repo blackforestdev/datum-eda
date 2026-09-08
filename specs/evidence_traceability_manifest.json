@@ -37,8 +37,8 @@
       "status": "in_progress",
       "sources": ["research/process-quality/WORKFLOW_ROLLOUT_PLANNING_BASIS.md"],
       "consumers": ["specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md", "specs/FOUNDATION_FOLLOWUP_PLANS.md", "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md", "docs/reviews/workflow-delivery-rollout/proposal.json", "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md"],
-      "reviewed_digest": "4fe88d0ad3deb813879163816586c9f88ef5153ad1ea4bec829463228ba09bd4",
-      "review_note": "WDQ-I01 partial implementation review reconciles the source and all five consumers with retained candidates f91b939e and d7f7c972 and exact incremental patches. Coverage identity/baseline checks and PM025-backed source-scope authorization have 17 new tests plus 125 existing WDQ tests; trusted diff capture, category checks and production integration remain incomplete. Preserve exact R02 approval artifacts, all product routes/owners, installed gate/trust/policy and pilot evidence; candidate code is not activated or accepted."
+      "reviewed_digest": "59420b83de67c1b3adf45d55282ed92190e0a77d27d5807a9eb42fc29e46dbf0",
+      "review_note": "WDQ-I01 partial implementation review reconciles source and all five consumers with candidate ea7ccf2a and exact incremental patches. Transaction capture, schema-2 category/source coverage and candidate CLI/selector integration pass 155 WDQ tests. Full readiness/specification route checks, complete negative coverage and transaction-baseline audit remain unfinished. Preserve exact R02 approval artifacts, all product routes/owners, installed gate/trust/policy and pilot evidence; candidate integration is not activation or acceptance."
     },
     {
       "id": "research-governance-index",
