@@ -30,8 +30,9 @@ class SpecificationCaptureTest(unittest.TestCase):
                 for surface in ("C", "R", "S-check", "S-details", "H"):
                     with self.subTest(case=variant, surface=surface):
                         runs = [("case", packet, variant)]
-                        if variant != SPEC_VALID:
-                            runs.append(("recovery", packets[SPEC_VALID], SPEC_VALID))
+                        if SPECIFICATION_INPUT_CASES[variant][1] is not None:
+                            valid = "INFRA-S03-09.pending-owner-valid" if variant.startswith("INFRA-S03-09.") else SPEC_VALID
+                            runs.append(("recovery", packets[valid], valid))
                         for phase, source, case in runs:
                             destination = store / (variant + surface + phase)
                             if surface == "H":
@@ -43,7 +44,7 @@ class SpecificationCaptureTest(unittest.TestCase):
                             self.assertFalse(result["acceptance_asserted"])
                             self.assertNotIn(result["invocation_id"], identities)
                             identities.add(result["invocation_id"])
-            self.assertEqual(25, len(identities))
+            self.assertEqual(60, len(identities))
 
 
 if __name__ == "__main__":

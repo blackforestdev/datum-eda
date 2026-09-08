@@ -13,6 +13,12 @@ SPECIFICATION_INPUT_CASES = {
                                     "matrix must dispose every clause for the completed step"),
     "INFRA-S03-07.duplicate-disposition": ("docs/specification-matrix.json", "WDQ-COVERAGE",
                                            "duplicate identity"),
+    "INFRA-S03-06.non-inventory-boundary": ("docs/authority.md", "WDQ-CONTRACT", "Expecting value"),
+    "INFRA-S03-09.pending-owner-valid": (None, None, None),
+    "INFRA-S03-09.absent-owner": ("docs/specification-matrix.json", "WDQ-COVERAGE",
+                                  "open clause requires a pending explicit owner-decision step"),
+    "INFRA-S03-09.planning-owner": ("docs/specification-matrix.json", "WDQ-COVERAGE",
+                                    "open clause requires a pending explicit owner-decision step"),
 }
 
 
@@ -35,6 +41,17 @@ def prepare_specification_input(f, manifest, policy, variant):
         dispositions["dispositions"].pop()
     elif variant.endswith(".duplicate-disposition"):
         dispositions["dispositions"].append(deepcopy(dispositions["dispositions"][0]))
+    elif variant.startswith("INFRA-S03-09."):
+        clauses["clauses"][0]["requires_owner_decision"] = True
+        f.save("docs/specification-inventory.json", clauses)
+        target = {"INFRA-S03-09.pending-owner-valid": "NEXT-C02",
+                  "INFRA-S03-09.absent-owner": "ABSENT",
+                  "INFRA-S03-09.planning-owner": "NEXT-C03"}[variant]
+        dispositions["dispositions"][0].update(disposition="pending_owner", owner_step_id=target)
+    elif variant.endswith(".non-inventory-boundary"):
+        # A general authority document is not a declared clause inventory.
+        # Leave unused fixture artifacts intact; this tests the boundary reference.
+        next(row for row in policy["coverage"]["rows"] if row["frontier_key"] == "NEXT")["boundary_ref"] = f.ref
     f.save(reference["path"], dispositions)
     # This refresh constructs synthetic INPUT before its fixture authority pin;
     # it neither reconciles real routes nor approves a real authored output.
