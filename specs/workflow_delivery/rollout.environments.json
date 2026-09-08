@@ -12,8 +12,8 @@
     {
       "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
       "environment": {
-        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-pipes-environment.json",
-        "sha256": "750d84800ebde0b2ee261011b20039268e6799034d87df8e21396120c6ed5d15"
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+        "sha256": "a1c33121f265812cba27e1bd7867061b9d82d4e8111012ae8cbfa3e1c20c3fca"
       }
     }
   ]
