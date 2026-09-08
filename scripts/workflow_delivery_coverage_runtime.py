@@ -15,7 +15,7 @@ def validate_coverage(tree, manifest, trust, *, environment=None):
     coverage = trust.policy["coverage"]
     items = validate_classifications(tree, coverage, manifest, authority=trust.authority)
     readiness = validate_categories(items, coverage, trust.enrolled, trust.authority)
-    validate_specification_outputs(tree, items, coverage)
+    validate_specification_outputs(tree, items, coverage, trust.authority)
     for key in readiness:
         # Unenrolled declarations normally receive structure-only diagnostics.
         # Completing a covered preflight must also resolve its actual authority

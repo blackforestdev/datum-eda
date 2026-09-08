@@ -12,6 +12,7 @@ from workflow_delivery_native_test_support import environment
 from workflow_delivery_test_support import Fixture
 from workflow_delivery_tree import Tree
 from workflow_delivery_trust_test_support import accepted_fixture
+from workflow_delivery_clause_test_support import inventory
 
 
 class CoverageEntrypointsTest(unittest.TestCase):
@@ -33,6 +34,7 @@ class CoverageEntrypointsTest(unittest.TestCase):
                       "category": "historical" if i["state"] == "landed" else "specification",
                       "boundary_ref": self.f.ref, "external_handoff_ref": None}
                      for i in self.manifest["frontier"]]})
+        inventory(self.f, next_item, policy)
         self.f.save("specs/workflow_delivery_policy.json", policy)
         self.f.save("requested-environment.json", environment())
         self.f.stage()
