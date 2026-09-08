@@ -14,6 +14,7 @@ import uuid
 
 from workflow_delivery_capture_state import protected_state
 from workflow_delivery_io import canonical_json, sha256
+from workflow_delivery_capture_interrupt import interrupt_after_call, validate_trigger
 
 ENV_KEYS = {"PATH", "HOME", "XDG_CONFIG_HOME", "LANG", "LC_ALL", "TZ",
             "GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_GLOBAL", "PYTHONDONTWRITEBYTECODE", "DATUM_WDQ_OBSERVE_PATH"}
@@ -37,7 +38,7 @@ def stop_owned(process):
 
 
 def capture_command(root, output, command, environment, *, fixture_nonce, case_id,
-                    surface, untracked_roots, timeout):
+                    surface, untracked_roots, timeout, interrupt_on_call=None):
     root, output = Path(root).resolve(strict=True), Path(output).resolve()
     marker = root / ".git/datum-wdq-capture-owner"
     if (not fixture_nonce or not (root / ".git").is_dir() or marker.is_symlink()
@@ -59,6 +60,8 @@ def capture_command(root, output, command, environment, *, fixture_nonce, case_i
         raise ValueError("finite positive timeout required")
     if not case_id or surface not in ("C", "R", "S", "H"):
         raise ValueError("named case and actual entry surface required")
+    if interrupt_on_call is not None:
+        validate_trigger(interrupt_on_call)
     output.mkdir(exist_ok=False)
     invocation = str(uuid.uuid4())
     save(output / "invocation.json", {
@@ -66,6 +69,7 @@ def capture_command(root, output, command, environment, *, fixture_nonce, case_i
         "argv": command, "cwd": str(root), "environment": environment,
         "timeout_seconds": timeout, "started_ns": time.time_ns(),
         "fixture_nonce": fixture_nonce,
+        "interrupt_on_call": interrupt_on_call,
     })
     before = protected_state(root, untracked_roots)
     save(output / "before.json", before)
@@ -82,7 +86,14 @@ def capture_command(root, output, command, environment, *, fixture_nonce, case_i
                 save(output / "started.json", {"pid": process.pid, "invocation_id": invocation,
                                               "observed_ns": time.time_ns()})
                 try:
-                    process.wait(timeout=timeout)
+                    if interrupt_on_call is None:
+                        process.wait(timeout=timeout)
+                    else:
+                        interruption = interrupt_after_call(process, output, interrupt_on_call, timeout)
+                        if interruption is not None:
+                            result["kind"] = ("interrupted" if process.returncode < 0
+                                              else "interrupt_requested_but_exited")
+                            save(output / "interruption.json", interruption)
                 except subprocess.TimeoutExpired:
                     result["kind"] = "timeout"
                     stop_owned(process)

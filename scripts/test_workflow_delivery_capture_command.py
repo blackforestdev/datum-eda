@@ -27,7 +27,8 @@ class CaptureCommandTest(unittest.TestCase):
     def run_command(self, command, **kwargs):
         return capture_command(self.f.root, self.output, command, self.environment,
             fixture_nonce="fixture-owned-nonce", case_id="fixture-only", surface="C",
-            untracked_roots=["src"], timeout=kwargs.get("timeout", 10))
+            untracked_roots=["src"], timeout=kwargs.get("timeout", 10),
+            interrupt_on_call=kwargs.get("interrupt_on_call"))
 
     def test_exit_output_and_exact_unchanged_state_are_retained(self):
         result = self.run_command([sys.executable, "-I", "-S", "-B", "-c",
@@ -73,6 +74,21 @@ class CaptureCommandTest(unittest.TestCase):
         self.assertEqual("launch_or_process_error", result["kind"])
         self.assertIsNone(result["returncode"])
         self.assertIsNone(result["pid"])
+
+    def test_missing_call_event_timeout_is_not_interruption_proof(self):
+        result = self.run_command([sys.executable, "-I", "-S", "-B", "-c",
+                                  'import time; time.sleep(60)'], timeout=0.2,
+            interrupt_on_call={"trace": "missing.jsonl", "source": "/not-observed.py", "function": "main"})
+        self.assertEqual("timeout", result["kind"])
+        self.assertFalse((self.output / "interruption.json").exists())
+        self.assertEqual([], result["changed_state_fields"])
+
+    def test_exit_before_call_event_is_not_interruption_proof(self):
+        result = self.run_command([sys.executable, "-I", "-S", "-B", "-c", 'print("ordinary exit")'],
+            interrupt_on_call={"trace": "missing.jsonl", "source": "/not-observed.py", "function": "main"})
+        self.assertEqual("exited", result["kind"])
+        self.assertEqual(0, result["returncode"])
+        self.assertFalse((self.output / "interruption.json").exists())
 
     def test_no_ownership_or_existing_output_refuses_without_launch(self):
         marker = self.f.root / ".git/datum-wdq-capture-owner"
