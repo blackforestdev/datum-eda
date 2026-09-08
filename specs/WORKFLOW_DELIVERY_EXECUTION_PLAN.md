@@ -883,3 +883,49 @@ The final infrastructure input/tooling scope needs reconciliation against the
 assembled producer recipe. Exact policy assembly, readiness, independent review,
 owner activation and all three native adoption outcomes remain outstanding.
 I02 remains selected and every product lane, especially Preferences, is unchanged.
+
+<!-- EVIDENCE:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I02-COMPLETE -->
+### WDQ-I02 — preparation complete; infrastructure readiness follows
+
+Retained candidate `beddc2efc917e1e44ec2c0c6389a209540c0b1fb` adds the exact
+56-row schema-2 coverage proposal and infrastructure delivery mapping to
+`49ecf406f18e89cb8ad7bbd058ac6490e54f0a5e`. The retained reference is
+`refs/datum/workflow-delivery-candidates/beddc2efc917e1e44ec2c0c6389a209540c0b1fb`.
+Its checkout remains in the Git-common support store. Installed main policy,
+hooks, runner and owner-selected pins are unchanged.
+
+The candidate retains pilot enrollment and proposes infrastructure enrollment
+using the actual `codex-wdq-rollout-implementation-20260908` session. Its I04
+activation reference names the pending owner decision, not an executed approval.
+All three native cohorts retain their exact prepared contracts and mappings,
+unresolved C01 inputs and planning status. They are deliberately not enrolled.
+Future participant identities are prerequisites for their enrollment, not for
+preparing the workflow machinery. This corrects the earlier blocking assessment;
+it neither invents sessions nor drops the three required adoption outcomes.
+
+The exact candidate passed all 227 workflow-delivery tests. Evidence traceability,
+specification governance, parity, source health and whitespace checks passed.
+The real enforcement command, with authority/base/candidate each explicitly
+pinned to `beddc2efc917e1e44ec2c0c6389a209540c0b1fb` and environment path
+`docs/reviews/workflow-delivery-pilot/proof-artifacts/environment.json`, returned
+exit zero, no findings, `WORKFLOW-DELIVERY-GATE-PILOT: accept` and
+`WORKFLOW-DELIVERY-IMPLEMENTATION: ready`. Both assertion flags remained false.
+These prospective pins establish assembled-policy consistency only: they are
+not live trust, a publication-base proof, independent review or completion of
+WDQ-READY. Report-only inspection without promoted trust correctly could not
+certify the accepted pilot; installed trust correctly refused candidate policy.
+
+The separate-review implementation, enabled-consumer refusals, prepared numbered
+PM042 amendment, complete roadmap classifications, seven specification clause
+inventories, infrastructure contract and three explicitly unready product drafts
+satisfy I02 preparation. No product research, native proof, ratification or
+acceptance is claimed. WDQ-READY is now selected under planning authorization to
+review the actual fixture recipe, environment, source/input closure, handlers
+and full refusal matrix. Static local-import inspection found all 66 reachable
+Python files within the declared 69 paths; subprocess/data/fixture inputs and
+the final producer recipe still require that readiness review.
+
+I03 tooling and producer verification, distinct independent review, exact I04
+owner activation including the Preferences boundary, actual enrollment and full
+adoption of all three cohorts, and I06 acceptance remain mandatory. No product
+owner, dependency, license obligation, prototype or installed authority changes.
