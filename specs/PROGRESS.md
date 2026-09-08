@@ -165,7 +165,7 @@
    *Dependencies:* none. *Unblocks:* dat-manual-foundation-contracts-fsw. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`.
 - **Specify the first manual workflow foundation contracts** (`FOUNDATION-WORKFLOW-SPEC`; `dat-manual-foundation-contracts-fsw`).
    Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection. *state `in_progress`; authorization `planning`; parallel lane.*
-   *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* dat-native-project-startup-vrf. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, `docs/reviews/workflow-foundation/authority-review.md`.
+   *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* dat-native-project-startup-vrf. *Governing:* `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, `docs/reviews/workflow-foundation/authority-review.md`, `docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md`.
 - **Implement and validate the bounded workflow delivery gate pilot** (`WORKFLOW-DELIVERY-GATE-PILOT`; `dat-workflow-gate-pilot-b3s`).
    Prepare a fresh authorized handoff, build the scoped delivery gate and actual action-consumer pilot, and obtain independent replay plus owner activation; no blanket rollout or EDA authoring acceptance. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* `dat-workflow-delivery-quality-xgj`. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md`, `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md`, `docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md`, `docs/reviews/workflow-delivery-pilot/handoff.md`.
@@ -181,7 +181,8 @@
 
 | Governed document | Current evidence | Completion boundary | Tracking |
 | --- | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, WDQ-F01–F03; `docs/reviews/workflow-foundation/authority-review.md` | WDQ-F01 partial review records PM001/002/012 clause-status distinctions and the complete process-route review; domain routes and final clause reconciliation remain unfinished | Complete route review, concrete doorway/edit/reopen contract and explicit owner-approved handoffs; no runtime work | `dat-manual-foundation-contracts-fsw`; owner-directed parallel planning claim, Preferences selection unchanged |
+| `specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md`, WDQ-F01–F03; `docs/reviews/workflow-foundation/authority-review.md` | WDQ-F01 has read the process, settings, selection and editor-shell routes; clause reconciliation and consumer completion-plan repairs remain unfinished | Concrete doorway/edit/reopen contract and explicit owner-approved handoffs; no runtime work | `dat-manual-foundation-contracts-fsw`; owner-directed parallel planning claim, Preferences selection unchanged |
+| `docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md` | WDQ-F01 reconciles the blanket draft header with doctrine classification: inherited ratifications and the workspace correction are preserved; unresolved budgets, fixtures and owner questions remain explicit | Apply clause-specific quality requirements and reviewed fixture budgets to each consuming workflow; no implementation, gate execution or product acceptance inferred from classification | `dat-manual-foundation-contracts-fsw`, WDQ-F01; no mechanism ratification or successor authorization |
 
 ## Spec Governance Coverage
 

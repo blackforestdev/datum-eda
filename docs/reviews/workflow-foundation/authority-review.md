@@ -985,6 +985,38 @@ between daemon-only ownership and per-process locking. The foundation proposal
 must present that exact choice with stale/second-writer and crash consequences;
 it cannot copy the Global Preferences writer lease into Project authority.
 
+## Editor-shell and storage review; PM012 status reconciliation
+
+At `cec92365`, the complete eight-file `prototype-editor-shell-and-panes`
+route was read: PM019, PM021, GUI Design and Conformance specifications,
+Publish visual brief, and board, schematic and workspace prototypes including
+their DOM/CSS and interaction code. Its unchanged digest is
+`33e4ef5a297c1fbc52cd93264cbd87e65b53a7153a86277d7f639380ec09f0af`.
+PM000D was also read completely. No fresh native or screenshot proof was run.
+
+| Clause | Disposition for the bounded consumer contract |
+| --- | --- |
+| PM019 typed GUI dispatch | A real native action must reach the engine builder, commit/proposal and resolver refresh; a terminal string or registry entry is not editor proof. |
+| PM021 focus and layout | Focused leaf supplies editor context; gutter resizing is workspace-only. Tile/Zoom/Stage round trips preserve the view tree and do not journal source changes. |
+| Conformance §0 versus controlling CLAUDE construction-reference rule | The old image-only instruction is superseded: inspect DOM/CSS and translate construction into native primitives while respecting governed tokens. Return any HTML change to its visual-truth owner. |
+| Conformance §0.1/§2.10/G9–G10 | A historical build-to-build screenshot baseline detects visual change, not usable editing or owner acceptance. No baseline refresh or retrospective acceptance follows from this review. |
+| Conformance §8 R1–R4 scheduling versus read-only S5A | Mutation-path proof belongs with the mutating consumer, not an implicit expansion of read-only S5A. A repaired consumer completion plan must preserve this boundary. |
+| Board/schematic/workspace prototype interactions | Focus classes, collapsibles, painted coordinates and static pane examples do not prove native exact entry, recursive resizing, resolver identity or journal behavior. Later Units/grid and continuous-schematic decisions govern historical examples. |
+| PM000D Transactions and Revision Classes | Before the durable journal commit point, discard uncommitted staging; after it, roll forward or expose explicit recovery. Undo restores domain values through a new compensating transaction, not by rewinding model history. |
+| PM000D identity and resolver | Net rename preserves NetId; split preserves the anchored group's identity; merge records the deterministic survivor. Fatal coherence failure exposes read-only diagnostics, not a partially authoritative editable model. |
+| PM000D unresolved layout and writer forks | Single-writer intent does not select its locking mechanism or final partition layout. Preserve the existing writer-lock decision issue; do not copy Preferences storage authority. |
+
+The PM012 blanket draft-header/doctrine-class mismatch is now reconciled in
+its own decision and governance entry, with explicit clause limits and a
+current/target Progress row. PM012 is now listed in this lane's governing docs.
+It has no owning evidence route in the inspected manifest. This is the
+WDQ-F01-requested authority clarification, not a new ratification: PM001's
+settled mechanisms and the August workspace correction remain intact, while
+fixtures, numerical budgets and genuine owner questions remain unresolved.
+No inventory shape was added, so no parity registration changes are required.
+Earlier entries above describe the pre-clarification baseline; their statement
+that this particular header mismatch is pending is superseded by this section.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
