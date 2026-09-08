@@ -169,3 +169,24 @@ for the recorded parent/candidate. Apply/check it only against those pinned
 inputs with `git apply --unidiff-zero`; reverse-check against the candidate also
 verifies its hunk contents without modifying any source. This formatting repair
 does not change or replace the retained candidate commit.
+
+### WDQ-I01 completed-readiness candidate increment
+
+Candidate: `1131c5a53da0c5f5ba4fc2c2f131f103cfd36c2b`, parent `ea7ccf2a75950a4cb86e4470e29062d8ddc8460f`.
+Retained under `refs/datum/workflow-delivery-candidates/1131c5a53da0c5f5ba4fc2c2f131f103cfd36c2b`.
+Exact zero-context increment: `docs/reviews/workflow-delivery-rollout/i01-readiness.patch`;
+apply/check with `--unidiff-zero` only against the recorded pinned inputs.
+
+Covered completed preflight now invokes the existing authority/readiness
+validator even before enrollment. Unresolved required decisions, missing authority
+markers, omitted units answers and stale owning routes refuse through the actual
+candidate CLI/selector. Valid readiness still does not demand future proof or
+premature execution. Explicit environment is propagated when an enrolled source
+change escalates readiness validation to activation proof.
+
+All 160 WDQ tests pass, including five new real-entry-point readiness tests;
+candidate source health passes 1821 files and staged whitespace checks pass.
+These are hermetic infrastructure results, not native product proof. WDQ-I01
+remains in progress for specification-authoring validation, remaining category
+negative coverage and historical/multi-commit transaction-baseline audit.
+The candidate is not installed; live gate/trust/policy and GP-CM05V remain unchanged.
