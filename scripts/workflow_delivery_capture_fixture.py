@@ -46,6 +46,9 @@ def prepare_fixture(root, packet):
                  for item in manifest["frontier"]]})
     inventory(f, next_item, policy)
     f.save("specs/workflow_delivery_policy.json", policy)
+    # Synthetic INPUT for the actual earlier formatting gate. The real-roadmap
+    # fixture must retain its actual exemption manifest and referenced files.
+    f.save("specs/rustfmt_exemption_manifest.json", {"schema_version": 1, "exemptions": {}})
     selected = f.blob("selected-environment.json", canonical_json(environment()))
     f.save("requested-environment.json", {
         "schema_version": 2, "kind": "datum.workflow-delivery.environments",

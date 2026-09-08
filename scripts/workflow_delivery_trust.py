@@ -3,6 +3,7 @@
 from pathlib import Path
 
 from workflow_delivery_authority import resolve_ref
+from workflow_delivery_bootstrap import HOOK_SOURCE, runtime_paths
 from workflow_delivery_contract import canonical_contract, validate_contract
 from workflow_delivery_coverage_shapes import coverage_shape
 from workflow_delivery_io import DeliveryInputError, canonical_json
@@ -45,12 +46,9 @@ def _policy_shape(value):
 
 
 def _gate_paths(tree):
-    fixed = {"scripts/check_workflow_delivery.py", "scripts/project_status.py",
-             "scripts/project_task_details.py", "scripts/check_evidence_traceability.py",
-             "scripts/git-hooks/pre-commit", "scripts/run_drift_gates.sh",
+    fixed = {HOOK_SOURCE, "scripts/git-hooks/pre-commit", "scripts/run_drift_gates.sh",
              ".github/workflows/alignment.yml"}
-    return fixed | {p for p in tree.entries if p.startswith("scripts/workflow_delivery_")
-                    and p.endswith(".py") and not p.endswith("_test_support.py")}
+    return fixed | runtime_paths(tree.entries)
 
 
 class Trust:
