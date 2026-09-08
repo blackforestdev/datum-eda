@@ -7446,10 +7446,21 @@
       "title": "Specify the first manual workflow foundation contracts",
       "issue_id": "dat-manual-foundation-contracts-fsw",
       "governing_docs": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md"],
-      "state": "planned",
+      "state": "in_progress",
       "authorization": "planning",
       "canonical_next": false,
-      "parallel": false,
+      "parallel": true,
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-wdq-rollout-foundation-20260908",
+        "claimed_at": "2026-09-08T02:12:14Z",
+        "heartbeat_at": "2026-09-08T02:12:14Z",
+        "expires_at": "2026-09-08T10:12:14Z",
+        "scope": ["Owner-directed workflow-quality lane: WDQ-F01 complete-route foundation authority review and consumer mapping only. Preserve GLOBAL-PREFERENCES-COMPLETION selection, ownership, evidence and GP-CM05V acceptance. No runtime or prototype edits, prerequisite amendment, gate enrollment or trust promotion."],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "5384de3c8dbced048f360cd43008c5d59fc63630"
+      },
       "summary": "Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection.",
       "dependencies": ["dat-workflow-delivery-quality-xgj"],
       "unblocks": ["dat-native-project-startup-vrf"],
@@ -7459,7 +7470,7 @@
         "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
         "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
         "steps": [
-          {"id": "WDQ-F01", "kind": "planning", "status": "pending", "action": "Review complete foundation evidence routes, reconcile clause authority and confirm F1-F8 consumers with their existing owners.", "depends_on": [], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F01"}], "completion_evidence": []},
+          {"id": "WDQ-F01", "kind": "planning", "status": "in_progress", "action": "Review complete foundation evidence routes, reconcile clause authority and confirm F1-F8 consumers with their existing owners.", "depends_on": [], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F01"}], "completion_evidence": []},
           {"id": "WDQ-F02", "kind": "planning", "status": "pending", "action": "Specify concrete foundation behavior and failure examples for the bounded manual workflow; return visual changes to Claude and leave implementation unauthorized.", "depends_on": ["WDQ-F01"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F02"}], "completion_evidence": []},
           {"id": "WDQ-F03", "kind": "owner_decision", "status": "pending", "action": "Obtain owner disposition of F1-F8 resolutions, consuming-owner handoff and exact proposed prerequisite changes before execution authorization.", "depends_on": ["WDQ-F02"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F03"}], "completion_evidence": [], "owner_input": {"response_format": "Reply `FOUNDATION-WORKFLOW-SPEC: approve contract`, `FOUNDATION-WORKFLOW-SPEC: revise — <specific correction>`, or `FOUNDATION-WORKFLOW-SPEC: defer — <reason>`.", "requests": [{"id": "FOUNDATION-ADOPTION", "question": "Do the concrete F1-F8 contract and consuming-owner handoff resolve the requirements needed for the bounded manual workflow?", "recommended_response": "Approve only the reviewed contract and explicit prerequisite changes; separately authorize product implementation.", "source_ref": {"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F03"}}]}}
         ],
