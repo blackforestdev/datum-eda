@@ -3,7 +3,7 @@
 import json
 import unittest
 
-from workflow_delivery_capture_state import protected_state
+from workflow_delivery_capture_state import git, protected_state
 from workflow_delivery_roadmap_snapshot import prepare_roadmap_snapshot
 from workflow_delivery_test_support import Fixture
 from workflow_delivery_trust_test_support import accepted_fixture
@@ -60,6 +60,37 @@ class RoadmapSnapshotTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Git-common proposals"):
             self.prepare()
         self.assertFalse(self.destination.exists())
+
+    def test_nonancestor_evidence_requires_explicit_export_and_retains_failure(self):
+        tree = self.f.git("rev-parse", "HEAD^{tree}").decode().strip()
+        evidence = self.f.git("commit-tree", tree, "-m", "Detached fixture evidence").decode().strip()
+        evidence_ref = "refs/datum/workflow-delivery-candidates/" + evidence
+        self.f.git("update-ref", evidence_ref, evidence)
+        path = "specs/active_frontier.json"
+        frontier = json.loads((self.f.root / path).read_bytes())
+        frontier["frontier"][0]["completion_evidence"] = [{"revision": evidence}]
+        self.f.save(path, frontier)
+        self.f.git("add", path)
+        self.f.git("commit", "-qm", "Reference detached fixture evidence")
+        self.pin = self.f.git("rev-parse", "HEAD").decode().strip()
+        self.ref = "refs/datum/workflow-delivery-candidates/" + self.pin
+        self.f.git("update-ref", self.ref, self.pin)
+        before = protected_state(self.f.root, [])
+        with self.assertRaisesRegex(ValueError, "referenced Frontier commit absent"):
+            self.prepare()
+        failed = self.destination
+        failure = (failed / "failure.json").read_bytes()
+        self.assertIn(evidence, json.loads(failure)["detail"])
+        self.destination = failed.with_name("snapshot-with-evidence")
+        with self.assertRaisesRegex(ValueError, "evidence export ref differs"):
+            self.prepare(evidence_refs={evidence_ref: self.pin})
+        self.assertFalse(self.destination.exists())
+        result = self.prepare(evidence_refs={evidence_ref: evidence})
+        self.assertIn(evidence, result["resolved_frontier_commits"])
+        self.assertEqual(evidence.encode() + b"\n", git(
+            self.destination / "snapshot", "rev-parse", "--verify", evidence + "^{commit}"))
+        self.assertEqual(before, protected_state(self.f.root, []))
+        self.assertEqual(failure, (failed / "failure.json").read_bytes())
 
 
 if __name__ == "__main__":
