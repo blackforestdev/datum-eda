@@ -148,7 +148,7 @@ def restore_fixture(packet, root):
         stream.write(recipe["fixture_nonce"] + "\n")
     restored = protected_state(root, recipe["untracked_roots"])
     prepared = parse_json((packet / "prepared-state.json").read_bytes(), "prepared-state.json")
-    for field in ("files", "index_entries_hex", "head", "symbolic_head", "refs", "local_trust"):
+    for field in ("files", "index_entries_hex", "git_info_exclude", "head", "symbolic_head", "refs", "local_trust"):
         require(restored[field] == prepared[field], "restore." + field, "restored state differs")
     # Raw index stat-cache bytes are observed afresh, not misrepresented as
     # byte-identical metadata from the original checkout's filesystem.

@@ -73,11 +73,13 @@ def protected_state(root, untracked_roots):
         # Never follow a directory symlink into host files or another worktree.
         protected_path(root, name)
     index_path = Path(git(root, "rev-parse", "--path-format=absolute", "--git-path", "index").decode().strip())
+    exclude_path = Path(git(root, "rev-parse", "--path-format=absolute", "--git-path", "info/exclude").decode().strip())
     return {
         "schema_version": 1, "root": str(root),
         "files": {name: file_state(root / name) for name in sorted(names)},
         "untracked_roots": sorted(untracked_roots),
         "index": file_state(index_path),
+        "git_info_exclude": file_state(exclude_path),
         "index_entries_hex": entries.hex(),
         "head": git(root, "rev-parse", "--verify", "HEAD").decode().strip(),
         "symbolic_head": git(root, "symbolic-ref", "-q", "HEAD", allowed=(0, 1)).decode().strip(),
@@ -85,5 +87,5 @@ def protected_state(root, untracked_roots):
         "local_trust": {key: git(root, "config", "--local", "--no-includes", "--null",
                                   "--get-all", key, allowed=(0, 1)).decode().split("\0")[:-1]
                         for key in TRUST_KEYS},
-        "scope": "tracked paths, explicit untracked roots, index, refs and named local trust only",
+        "scope": "tracked paths, explicit untracked roots, index, refs, local Git exclusions and named local trust only",
     }

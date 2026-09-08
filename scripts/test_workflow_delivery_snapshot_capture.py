@@ -9,7 +9,7 @@ import unittest
 from workflow_delivery_capture_cases import run_case
 from workflow_delivery_capture_fixture import prepare_fixture
 from workflow_delivery_capture_hook import run_hook_case
-from workflow_delivery_capture_snapshots import POLICY, SNAPSHOT_CASES
+from workflow_delivery_capture_snapshots import POLICY, SNAPSHOT_CASES, UNTRACKED_CASES
 from workflow_delivery_capture_state import git
 from workflow_delivery_io import sha256
 
@@ -24,7 +24,7 @@ class SnapshotCaptureTest(unittest.TestCase):
                            "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "LANG": "C"}
             runtime = Path(__file__).resolve().parents[1]
             identities = set()
-            for case_id in SNAPSHOT_CASES:
+            for case_id in SNAPSHOT_CASES.keys() - UNTRACKED_CASES:
                 surfaces = ("R",) if "candidate-isolation" in case_id else ("C", "H", "S-check", "S-details")
                 for surface in surfaces:
                     with self.subTest(case=case_id, surface=surface):

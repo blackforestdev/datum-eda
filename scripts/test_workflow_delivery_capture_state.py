@@ -52,6 +52,14 @@ class CaptureStateTest(unittest.TestCase):
         self.f.git("config", "credential.helper", "fixture secret sentinel")
         self.assertNotIn("fixture secret sentinel", str(self.capture()))
 
+    def test_local_exclusions_are_captured_without_hiding_production_input(self):
+        before = self.capture()
+        self.f.write(".git/info/exclude", b"/src/ignored.py\n")
+        self.f.write("src/ignored.py", b"ignored production input\n")
+        after = self.capture()
+        self.assertNotEqual(before["git_info_exclude"], after["git_info_exclude"])
+        self.assertEqual("file", after["files"]["src/ignored.py"]["kind"])
+
     def test_inherited_git_repository_overrides_are_not_used(self):
         before = self.capture()
         with patch.dict(os.environ, {"GIT_DIR": "/nonexistent-foreign-repository",
