@@ -9638,6 +9638,8 @@
         "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
         "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
         "specs/workflow_delivery/rollout.contract.json",
+        "specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md",
+        "docs/reviews/workflow-delivery-rollout/coverage-proposal.json",
         "research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md",
         "docs/reviews/workflow-delivery-rollout/cohort-mappings.json",
         "specs/workflow_delivery/s5a.contract.json",

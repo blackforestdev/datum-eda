@@ -54,6 +54,16 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-I02 proposed complete classifications, bounded source permissions and explicit Preferences owner-boundary hold; not installed authority or coordinated handoff approval."
+    },
+    "docs/reviews/workflow-delivery-rollout/coverage-proposal.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "Exact coverage-schema proposal for 56 identities and bounded infrastructure source scope; final enrollment and owner promotion remain required."
+    },
     "docs/reviews/workflow-delivery-rollout/cohort-mappings.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",

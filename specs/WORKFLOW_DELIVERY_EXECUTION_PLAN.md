@@ -824,3 +824,35 @@ separately refuses every null production handler. No native events, environment,
 build identity, reviewer or owner receipt were fabricated. Full enrollment and
 actual infrastructure readiness remain pending; these refusals are preparation
 evidence, not delivered EDA behavior or completion of the three adoption cohorts.
+
+### WDQ-I02 — exact coverage and permission proposal
+
+`coverage-proposal.json` now records every one of the 56 actual baseline
+Frontier identities, exact category/boundary references and the seven clause
+inventories. It preserves approved classification intent with the already
+documented landed-rollout and new-infrastructure adjustments. Its source scope
+is limited to the current 69-file infrastructure inventory at WDQ-I03 and
+WDQ-REVIEW; unready product cohorts and the external Preferences lane receive
+no write permission. Final I03 tooling paths still need review into the final
+packet. Explicit proposed production roots also cover scripts, CI and MCP;
+this root extension requires owner promotion and is not silently installed.
+
+The companion records Preferences exactly as observed at the pinned baseline:
+specified, owner_decision, no claim, GP-CM05V selected. It proposes preserving
+that boundary, not taking over work or claiming another session consented.
+Owner approval of the bounded continuing hold or coordinated replacement is
+still required before activation; future Preferences transitions cannot be
+silently trapped by installing this draft mid-work.
+
+Six proposal tests pass. Actual candidate `2a85005c` validates the complete
+classification/baseline/reference proposal and rejects eight in-memory negative
+cases: omitted/duplicate classification, wrong issue identity, historical
+reopening, external authorization change, and unpermitted Rust, MCP and workflow
+source changes. The same-view reference check establishes proposal consistency
+only, never trusted owner promotion or complete installed-policy validation.
+No Frontier lifecycle, claim, product record or tracker bytes changed.
+
+Full policy/enrollment assembly, actual infrastructure readiness, controlled
+promotion proof, independent review, explicit owner activation and real native
+adoption remain outstanding. WDQ-I02 remains selected; no preparation count or
+passing helper check closes the broader goal.
