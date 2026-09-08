@@ -1,4 +1,4 @@
-"""Real self-review and defect-accounting refusals, not independent review proof."""
+"""Review and acceptance-boundary refusals, not independent review proof."""
 
 import os
 from pathlib import Path
@@ -12,7 +12,7 @@ from workflow_delivery_review_input import REVIEW_INPUT_CASES
 
 
 class ReviewCaptureTest(unittest.TestCase):
-    def test_review_identity_and_unaccounted_defects_refuse_on_every_entrypoint(self):
+    def test_review_and_acceptance_refusals_on_every_entrypoint(self):
         with tempfile.TemporaryDirectory() as temporary:
             store = Path(temporary)
             baseline = store / "baseline-packet"
@@ -38,7 +38,7 @@ class ReviewCaptureTest(unittest.TestCase):
                             self.assertFalse(result["acceptance_asserted"])
                             self.assertNotIn(result["invocation_id"], identities)
                             identities.add(result["invocation_id"])
-            self.assertEqual(40, len(identities))
+            self.assertEqual(60, len(identities))
 
 
 if __name__ == "__main__":
