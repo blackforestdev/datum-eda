@@ -816,6 +816,64 @@ determinism or which change the owner wants. The page's final suggested blanket
 bless is therefore not acceptance authority. No current defect, visual golden,
 route digest or pilot acceptance was inferred from the historical percentage.
 
+## Revision identity, impact and release source closure
+
+The remaining five Revision studies were read completely:
+`revision-identity-study.html`, `revision-authority-study.html`,
+`revision-ux-impact-study.html`, `revision-ux-release-study.html` and
+`revision-ux-shell-study.html`. This includes all CSS, inline SVG title-block
+examples, comparative candidates, selected amendments and final indexes. Only
+opaque embedded font bytes were elided. No prototype was changed or native
+conformance asserted.
+
+The identity study retains original no-default/candidate language despite its
+ratification badge. Later REV-C03 dispositions, PM034 and the shell study's
+preserved-disposition list control the settled profile, provisional reservation
+and per-CI boundaries; the original candidates are not fresh owner questions.
+ASME sequence examples remain licensed-text-gated, not standards-conformance
+proof. Short title-block labels require recoverable namespace, scheme and
+allocating-event context; a baseline manifest, BuildIdentity, member revision
+and Release cannot stand in for one another. A previewed next label allocates
+nothing, and identity-free successor collection is not issuance.
+
+The authority study's final index resolves per-CI ownership and the separate
+ControlledDocument chain even where earlier captions still say no candidate
+selected. All Sheets retains Sheet bodies; editable Publish Sets supply ordered
+references, not issued identity. Renaming or reordering a set cannot rewrite an
+issued document. Referenced-set deletion refuses with a retarget/removal route,
+rather than erasing downstream authority. V10-C preserves three typed standing
+facts and profile-governed terminology; a display label is not an arbitrary
+mutable lifecycle string, and redelivery does not restore withdrawn authority.
+These are consumer boundaries, not added prerequisites for native board entry.
+
+Impact UX-V4 keeps Unknown and graph scope visible even when zero/complete.
+Both Affected and Unaffected need witnesses; a missing evaluator cannot become
+a clean result. UX-V5 separately presents pinned library identity, read-only
+uptake preview, compatibility and freshness. A new library version does not
+rebind a placed instance, and a producer-version change can invalidate evidence
+without a geometry edit. UX-V6 compares stable identities, so rename is not
+delete/add; unaccounted controlled differences have an explicit resolution
+route. The full controlled-release graph is not claimed by the bounded F7
+library/connectivity handoff.
+
+Release UX-V7 distinguishes candidate regeneration from reproduction of an
+issued output. Reuse needs current-input proof; regeneration creates successor
+evidence, never refreshes history in place. UX-V8's selected amendment keeps
+nine section headings/verdicts/counts visible, with deficient details not
+collapsible. Covered-digest changes invalidate affected approvals. UX-V9's
+selected amendment is the two-step in-pane bar: first arm and show exact
+consequence, then confirm; Escape or outside interaction disarms. Historical
+modal candidates are not the chosen mechanism. The factory manual edit path
+does not acquire this irreversible-release ceremony.
+
+The shell study explicitly withdraws default Revision groups and its old hide
+toggle while retaining contextual entry. Complete Q4 panes keep record meaning
+and section order stable across profiles; changing an obligation is not changing
+the record's identity. Its baseline-view refusal, quiet post-release collection
+and regulated-policy refusal illustrate different contexts. Foundation proof
+must identify the actual context instead of copying one of those behaviors
+universally, especially into an unmanaged Project.
+
 ## Remaining review coverage
 
 WDQ-F01 remains in progress. The `workspace-documentation-and-revision` route
@@ -829,9 +887,10 @@ plus the detailed authority/offline/impact contracts and four workspace/Publish
 members plus the GUI contract, Revision visual brief and prototype inventory,
 and the six agent/clay/carry-forward studies, both grid studies and the Project
 Working Units category study, four Revision entry/evidence members and the
-completed shell image comparison above
-have been read completely (72 files); the other seven files remain to
-review. No complete settings route reconciliation is claimed. The remaining sources and consumers must be
+completed shell image comparison, and five Revision identity/authority/UX
+studies above have been read completely (77 files). Only
+`preferences-ux-study.html` and `preferences-window.html` remain in this route.
+No complete settings route reconciliation is claimed. The remaining sources and consumers must be
 reviewed before final F1–F8 adjudication or specification edits. Later storage,
 mutation, identity and authoring
 authority must also be checked where it resolves the historical questions above.
