@@ -38,7 +38,7 @@ class ReviewCaptureTest(unittest.TestCase):
                             self.assertFalse(result["acceptance_asserted"])
                             self.assertNotIn(result["invocation_id"], identities)
                             identities.add(result["invocation_id"])
-            self.assertEqual(100, len(identities))
+            self.assertEqual(210, len(identities))
 
 
 if __name__ == "__main__":

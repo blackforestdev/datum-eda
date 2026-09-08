@@ -1,4 +1,4 @@
-"""Hostile synthetic review INPUT; never independent replay or owner acceptance."""
+"""Hostile synthetic proof/review INPUT; never actual replay or acceptance."""
 
 from workflow_delivery_authority import authority_sha256
 from workflow_delivery_io import canonical_json
@@ -6,6 +6,20 @@ from workflow_delivery_proof import packet_sha256
 from workflow_delivery_tree import Tree
 
 REVIEW_PATH = "docs/reviews/review.json"
+EVENT_PATH = "evidence/original-events.json"
+PROOF_INPUT_CASES = {
+    "INFRA-S06-03.authority": (EVENT_PATH, "WDQ-STALE", "governing authority changed since observed run"),
+    "INFRA-S06-03.source": ("evidence/inputs.json", "WDQ-INDEX", "changed relevant inputs"),
+    "INFRA-S06-04.fixture": ("evidence/fixture.txt", "WDQ-STALE", "artifact hash mismatch"),
+    "INFRA-S06-04.binary": ("evidence/registry.json", "WDQ-CONSUMER", "registry must identify tested binary"),
+    "INFRA-S06-04.build": ("evidence/build.json", "WDQ-STALE", "build receipt disagrees with proof inputs/command/toolchain"),
+    "INFRA-S06-04.registry": ("evidence/registry.json", "WDQ-CONSUMER", "registry must identify tested binary"),
+    "INFRA-S06-05.inputs": (EVENT_PATH, "WDQ-RESULT", "input/method/session/binary correlation mismatch"),
+    "INFRA-S06-05.dispatch": (EVENT_PATH, "WDQ-CONSUMER", "eligibility/enablement/dispatch registry disagreement"),
+    "INFRA-S06-05.visible": (EVENT_PATH, "WDQ-RESULT", "event and observed result disagree"),
+    "INFRA-S06-05.state": (EVENT_PATH, "WDQ-RESULT", "event and observed result disagree"),
+    "INFRA-S06-05.artifact": ("evidence/original-roles.json", "WDQ-RESULT", "roles must bind every sibling artifact exactly"),
+}
 REVIEW_INPUT_CASES = {
     "INFRA-S04-02.implementation-session": (REVIEW_PATH, "WDQ-REVIEW", "reviewer not independent of implementation/original proof"),
     "INFRA-S04-02.producer-session": (REVIEW_PATH, "WDQ-REVIEW", "reviewer not independent of implementation/original proof"),
@@ -18,6 +32,14 @@ REVIEW_INPUT_CASES = {
     "INFRA-S04-04.inputs": (REVIEW_PATH, "WDQ-REVIEW", "independent replay session/input identity mismatch"),
     "INFRA-S04-04.executable": (REVIEW_PATH, "WDQ-REVIEW", "independent replay must exercise the reviewed executable/build identity"),
 }
+REVIEW_INPUT_CASES.update(PROOF_INPUT_CASES)
+
+
+def proof_expectation(variant, surface):
+    path, code, detail = PROOF_INPUT_CASES[variant]
+    if variant == "INFRA-S06-03.source" and surface not in ("C", "H"):
+        code = "WDQ-STALE"
+    return path, code, detail
 
 
 def prepare_review_input(f, variant):
@@ -27,6 +49,9 @@ def prepare_review_input(f, variant):
     contract = f.contract
     proof = tree.json(contract["proof_path"])
     review = tree.json(contract["review_path"])
+    if variant in PROOF_INPUT_CASES:
+        prepare_proof_input(f, tree, proof, variant)
+        return
     if variant.endswith(".implementation-session"):
         review["reviewer_session"] = "writer"
     elif variant.endswith(".producer-session"):
@@ -49,6 +74,51 @@ def prepare_review_input(f, variant):
         change_replay(f, tree, replay, variant)
         review["replay"] = f.blob(review["replay"]["path"], canonical_json(replay))
     f.save(contract["review_path"], review)
+
+
+def prepare_proof_input(f, tree, proof, variant):
+    """Alter synthetic input before its fixture pin, not real authority/proof."""
+    from hashlib import sha256
+    from workflow_delivery_native_test_support import replace_role
+    if variant.endswith(".authority"):
+        f.write("docs/authority.md", tree.read("docs/authority.md") + b"\nChanged synthetic requirement.\n")
+        manifest = tree.json("specs/evidence_traceability_manifest.json")
+        route = manifest["routes"][0]
+        digest = sha256()
+        for path in sorted(route["sources"] + route["consumers"]):
+            digest.update(path.encode() + b"\0" + (f.root / path).read_bytes() + b"\0")
+        route["reviewed_digest"] = digest.hexdigest()
+        f.save("specs/evidence_traceability_manifest.json", manifest)
+    elif variant.endswith(".source"):
+        f.write("src/read.py", tree.read("src/read.py") + b"\n# Changed synthetic proof input.\n")
+    elif variant.endswith(".fixture"):
+        f.write(proof["fixture"]["path"], b"Changed synthetic fixture bytes.\n")
+    elif variant.endswith((".binary", ".build")):
+        receipt = tree.json(proof["build"]["receipt"]["path"])
+        receipt["binary_sha256" if variant.endswith(".binary") else "input_manifest_sha256"] = "0" * 64
+        proof["build"]["receipt"] = f.blob(proof["build"]["receipt"]["path"], canonical_json(receipt))
+        f.save(f.contract["proof_path"], proof)
+    else:
+        roles = tree.json("evidence/original-roles.json")
+        if variant.endswith(".registry"):
+            registry = tree.json(roles["registry"]["path"])
+            registry["binary_sha256"] = "0" * 64
+            replace_role(f, proof, roles, "registry", registry)
+        elif variant.endswith(".artifact"):
+            roles["state"] = [f.blob("evidence/unlisted-state.txt", b"Unlisted synthetic state.\n")]
+            index = f.blob("evidence/original-roles.json", canonical_json(roles))
+            proof["results"][0]["artifacts"] = [index if row["path"] == index["path"] else row
+                                                  for row in proof["results"][0]["artifacts"]]
+            f.save(f.contract["proof_path"], proof)
+        else:
+            event = tree.json(EVENT_PATH)
+            if variant.endswith(".inputs"):
+                event["inputs"] = ["Unreviewed synthetic input"]
+            elif variant.endswith(".dispatch"):
+                event["dispatches"][0]["eligible"] = False
+            else:
+                event["actual_visible" if variant.endswith(".visible") else "actual_state"] = "Disagrees with result"
+            replace_role(f, proof, roles, "events", event)
 
 
 def change_replay(f, tree, replay, variant):

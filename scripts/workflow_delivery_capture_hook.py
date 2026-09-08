@@ -19,6 +19,7 @@ from workflow_delivery_environment_cases import case_uses_prepared_input
 from workflow_delivery_support_bundle import prepare_bundle, verify_bundle
 from workflow_delivery_support_store import support_locations
 from workflow_delivery_interruption_case import INTERRUPTION_CASE, evaluate_interruption
+from workflow_delivery_review_input import PROOF_INPUT_CASES, proof_expectation
 
 
 def evaluate_hook(output, *, case_id, hook):
@@ -45,6 +46,8 @@ def evaluate_hook(output, *, case_id, hook):
         target, code, detail = snapshot_expectation(case_id, "H")
     else:
         detail = expected_detail(case_id)
+    if case_id in PROOF_INPUT_CASES:
+        target, code, detail = proof_expectation(case_id, "H")
     expected_status = 0 if code is None else 2 if code == "WDQ-TRUST" else 1
     require(result["returncode"] == expected_status, "hook", "unexpected hook status")
     lines = (output / "stdout.bin").read_bytes().splitlines()
