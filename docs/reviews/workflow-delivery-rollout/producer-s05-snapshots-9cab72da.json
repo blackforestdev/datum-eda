@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "record_type": "infrastructure_producer_s05_snapshots_observations",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-I03",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "source_commit": "9cab72daab46122da6d2c45ab7f972814f702880",
+  "producer_session": "wdq-i03-producer-20260909",
+  "raw_storage": "Git-common/datum-wdq/proposals/wdq-i03-9cab72da-s05-snapshots",
+  "index_file": "observations-final.json",
+  "index_sha256": "c3ea8204d40ccbc38cec78f336a0d91639475f6b6d458453279fdffc82556fb0",
+  "primary_invocations": 26,
+  "fresh_recovery_invocations": 13,
+  "cases": [
+    "INFRA-S05-01.staged-bad",
+    "INFRA-S05-02.worktree-bad",
+    "INFRA-S05-03.candidate-isolation",
+    "INFRA-S05-04.missing-base",
+    "INFRA-S05-04.nonancestor-base",
+    "INFRA-S05-05.ignored",
+    "INFRA-S05-05.untracked",
+    "INFRA-S05-07.add-delete",
+    "INFRA-S05-07.change-revert",
+    "INFRA-S05-08.merge-parent",
+    "INFRA-S05-09.empty-current-transaction"
+  ],
+  "raw_capture_integrity_rechecked": true,
+  "protected_state_unchanged": true,
+  "all_expected_diagnostics_matched": true,
+  "limits": [
+    "S05-06 live-ownership deletion and rename cases remain outstanding.",
+    "These actual entrypoint observations use synthetic inputs, not product adoption evidence.",
+    "Typed proof, independent replay, promotion verification and owner activation remain required."
+  ],
+  "scenario_proof_complete": false,
+  "complete_matrix": false,
+  "acceptance_asserted": false
+}
