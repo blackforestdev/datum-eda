@@ -1,0 +1,11 @@
+{
+  "source_commit": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "input_manifest_sha256": "7ec747490e0046563ca561a87bad7113bb048cc2b261764c563258eb29c0674b",
+  "toolchain": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "modules_compiled": 148,
+  "source_clean": true,
+  "artifacts_written": false,
+  "command": "python3 -I -S -B -c 'import sys,subprocess,hashlib,json; from pathlib import Path; root=Path.cwd(); pin=\"0e5b8064a9faca407fac43bd2b362ba4d7200327\"; git=lambda *a: subprocess.check_output([\"git\",\"--no-optional-locks\",*a],cwd=root); assert git(\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(\"status\",\"--porcelain\"); sys.path.insert(0,str(root/\"scripts\")); from workflow_delivery_tree import Tree; from workflow_delivery_io import canonical_json; tree=Tree(root,revision=pin); contract=tree.json(\"specs/workflow_delivery/rollout.contract.json\"); manifest=tree.manifest(contract[\"input_roots\"]); assert len(manifest)==161 and manifest==Tree(root).manifest(contract[\"input_roots\"]); modules=[r for r in manifest if r[\"path\"].endswith(\".py\")]; [compile((root/r[\"path\"]).read_bytes(),r[\"path\"],\"exec\") for r in modules]; assert git(\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(\"status\",\"--porcelain\"); print(json.dumps({\"source_commit\":pin,\"input_manifest\":manifest,\"input_manifest_sha256\":hashlib.sha256(canonical_json(manifest)).hexdigest(),\"toolchain\":sys.version,\"modules_compiled\":len(modules),\"source_clean\":True,\"artifacts_written\":False}))'",
+  "exit_code": 0,
+  "scope": "Exact 0e5b8064 source construction only; no full regression, renewed scenario proof or activation."
+}
