@@ -153,6 +153,17 @@
     "compatibility_accepted": false,
     "activation_performed": false
   },
+  "workspace_source_scope_followup": {
+    "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+    "retained_ref": "refs/datum/workflow-delivery-candidates/22192085c55ec654eb209deccc0450afd53b2c65",
+    "change": "Matching candidate policy and coverage proposal now contain 149 exact paths: the previous 141 plus eight implemented compatibility modules/tests. Production roots, step bindings and product/Preferences permissions are unchanged. Current coverage prose and rollout evidence route are reconciled.",
+    "verification": {"coverage_proposal_tests": 10, "contract_tests": 17, "traceability_routes": 25, "governed_classifications": 247, "parity_inventories": 18, "source_health_files": 1919, "all_passed": true},
+    "history_scope": "Regression inspects every parent-edge production path from 2d60cd05dca71727ba28b1355b988de653eed82f through afc3caa14ce253725c26fc9f8125f54eccdad309, including net-zero changes. Later publication against current main still requires exact inspection.",
+    "independent_review": "Distinct read-only review found no bounded defect, confirmed exactly eight additions and unchanged roots/step IDs/product boundaries, and independently ran all 10 coverage-proposal tests successfully in 1.740 seconds. No full compatibility or activation approval was given.",
+    "remaining": "Renew affected producer evidence for the changed candidate and added INFRA-S05 compatibility requirements; obtain independent replay and final publication inspection; retain separate WDQ-I04 activation and all three actual adoption cohorts.",
+    "compatibility_accepted": false,
+    "activation_performed": false
+  },
   "compatibility_complete": false,
   "activation_authorized": false,
   "activation_performed": false,
