@@ -115,9 +115,20 @@ class WorkspaceInputs:
         require(Path(root).resolve(strict=True) == self.root
                 and set(tracked_paths) <= self.tracked,
                 "workspace", "classifier must cover this root and every tracked input", "WDQ-WORKSPACE")
+        self.require_pinned_presence(captured_files=captured_files)
         explicit = set(explicit_paths)
         return {name for name in names if name in explicit
                 or self.classify(name, captured_files=captured_files) == "input"}
+
+    def require_pinned_presence(self, *, captured_files=None):
+        # Enumeration omits deleted files. An exact local baseline must not
+        # silently become optional merely because a pin no longer appears.
+        for name in self.local:
+            require(regular_file(self.root, name) is not None, name,
+                    "required pinned local file is missing or redirected", "WDQ-WORKSPACE")
+            if captured_files is not None:
+                require(captured_files.get(name, {}).get("kind") == "file", name,
+                        "required pinned local file is absent from captured state", "WDQ-WORKSPACE")
 
     def _captured(self, name, file, raw, captured_files):
         if captured_files is None:

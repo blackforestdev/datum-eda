@@ -132,6 +132,28 @@ class WorkspaceConsumersTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "untracked, ignored"):
             clean_inputs(self.f.root, captured, self.f.head, workspace=self.workspace)
 
+    def test_deleted_pin_refuses_even_when_enumeration_does_not_include_it(self):
+        (self.f.root / "src/local.sh").unlink()
+        for call in (self.changes, lambda: self.tree.manifest(["src"], workspace=self.workspace), self.inspect):
+            with self.assertRaisesRegex(ValueError, "required pinned local file is missing"):
+                call()
+
+    def test_live_restoration_cannot_replace_missing_captured_pin(self):
+        path = self.f.root / "src/local.sh"
+        original = path.read_bytes()
+        path.unlink()
+        captured = protected_state(self.f.root, ["src", ".beads"])
+        path.write_bytes(original)
+        path.chmod(0o775)
+        with self.assertRaisesRegex(ValueError, "absent from captured state"):
+            clean_inputs(self.f.root, captured, self.f.head, workspace=self.workspace)
+
+    def test_derived_cache_absence_does_not_require_unpinned_runtime(self):
+        from pathlib import Path
+        Path(self.cache).unlink()
+        self.assertEqual([], self.changes())
+        self.assertFalse(self.inspect()["publication_authorized"])
+
 
 if __name__ == "__main__":
     unittest.main()
