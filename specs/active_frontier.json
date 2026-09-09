@@ -9669,7 +9669,7 @@
       },
       "canonical_next": false,
       "parallel": true,
-      "summary": "Owner-authorized bounded WDQ-COMPAT repair of dat-wdq-workspace-inputs-zmt and independent reinspection is active. Preserve Beads and owner-local files, undeclared-source detection, all product ownership, pending exact I04 activation and all three adoption cohorts.",
+      "summary": "Owner-authorized WDQ-COMPAT repair and renewed producer proof is active; distinct WDQ-RECHECK replay and publication inspection remains pending before I04. Preserve historical evidence, Beads and owner-local files, source detection, all product ownership and three actual adoption cohorts.",
       "dependencies": [],
       "unblocks": [],
       "completion": {
@@ -9838,7 +9838,7 @@
             "id": "WDQ-COMPAT",
             "kind": "execution",
             "status": "in_progress",
-            "action": "Repair ignored-workspace compatibility and obtain independent reinspection without weakening source authority or activating.",
+            "action": "Repair ignored-workspace compatibility and renew exact producer evidence without weakening source authority or activating.",
             "depends_on": [
               "WDQ-REVIEW"
             ],
@@ -9846,6 +9846,24 @@
               {
                 "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-repair-authorization.json",
                 "marker": "WDQ-COMPAT"
+              },
+              {
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "WDQ-COMPAT"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "WDQ-RECHECK",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Independently replay and inspect the renewed exact compatibility and publication evidence.",
+            "depends_on": ["WDQ-COMPAT"],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "WDQ-RECHECK"
               }
             ],
             "completion_evidence": []
@@ -9856,7 +9874,7 @@
             "status": "pending",
             "action": "Obtain owner mechanism ratification and exact activation; verify installed main and safely retire unreferenced support.",
             "depends_on": [
-              "WDQ-COMPAT"
+              "WDQ-RECHECK"
             ],
             "requirement_refs": [
               {

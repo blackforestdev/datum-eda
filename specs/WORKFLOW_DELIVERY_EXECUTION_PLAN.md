@@ -99,6 +99,44 @@ I01/I02 remain candidate preparation, not retrospectively enrolled execution.
 READY and REVIEW start pending; no evidence or owner disposition is manufactured.
 The existing I04/I06 owner decisions and all product lane boundaries are unchanged.
 
+<!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-COMPAT -->
+## WDQ-COMPAT — repair and renew producer verification
+
+The recorded workspace-repair authorization permits renewed source/authority
+evidence and distinct reinspection before activation. Preserve completed I03
+and REVIEW records as historical evidence for their exact candidates; they do
+not certify the changed workspace implementation or requirements. Preserve all
+original scenario variants, additional workspace observations, source scopes,
+bounded tool/input accounting, real-roadmap coverage and failure records.
+
+Complete the authorized repair, reconcile current readiness and exact inputs,
+and produce replacement evidence from actual invocations. Prepare the candidate
+mapping with WDQ-COMPAT as verification and WDQ-RECHECK as independent review,
+retaining WDQ-READY and null infrastructure activate/accept. Reconcile the
+activation-conditional PM042 text, candidate mapping and publication checks
+before freezing the renewed candidate. The old mapping proposal remains an
+identified historical preparation input until that reconciliation lands.
+
+This separates the already-authorized renewal work; it does not roll back old
+completion, waive evidence, alter installed authority or authorize a product.
+Do not fabricate provisional proof/review to make a real-roadmap run pass.
+Changing normative inputs requires fresh identified evidence; unchanged runtime
+observations retain their original pins and may not be relabeled as new runs.
+
+<!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-RECHECK -->
+## WDQ-RECHECK — independently review the renewed candidate
+
+After renewed producer verification, a distinct eligible session independently
+replays the exact repaired candidate and reviews all original and additional
+compatibility requirements, real-roadmap clean/mixed state, typed proof and
+defect accounting. Retain actual fresh invocation identities and failed attempts.
+Perform renewed exact-publication inspection before presenting WDQ-I04. Preserve
+historical I03/REVIEW evidence and all five prior finding dispositions within
+their original scope; close the workspace finding only with its own complete
+repair and independent evidence. No copied logs or archive inspection alone
+satisfies independent execution. WDQ-I04 activation and all three real adoption
+cohorts remain separate mandatory outcomes.
+
 <!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I04 -->
 <!-- OWNER:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I04:ACTIVATE -->
 ## WDQ-I04 — owner ratification and exact activation
