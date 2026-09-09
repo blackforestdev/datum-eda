@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "review_session": "/root/wdq_independent_review",
+  "candidate": "94dc7b352285dc8db1413f794c10b51b66ffdd1c",
+  "runtime_source_commit": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "packet_sha256": "678daa96208fb7a372962c383832a099f90ccc1bd63d76c091fee9b4d3fb84f9",
+  "verified": {
+    "exact_committed_proof": true,
+    "externally_selected_environment": true,
+    "correlations": 6,
+    "unchanged_input_manifest_entries": 161,
+    "unchanged_authority": true,
+    "evidence_only_paths_added_or_changed": 119,
+    "claim_import_paths": 2,
+    "claim_import_changed_lines_match_main_transaction": "21b3330f6192cfcaea071e6cab05dbf4785164ca"
+  },
+  "result": "No concrete producer-closeout blocker found. Full CLI receipt reports ready, not producer completion. Git diff header object IDs and Frontier offsets differ naturally, while actual imported claim/Beads changes match the recorded main transaction.",
+  "independent_replay_complete": false,
+  "publication_verified": false,
+  "activation_performed": false,
+  "workspace_defect_closed": false
+}
