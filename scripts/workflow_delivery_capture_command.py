@@ -17,7 +17,8 @@ from workflow_delivery_io import canonical_json, sha256
 from workflow_delivery_capture_interrupt import interrupt_after_call, validate_trigger
 
 ENV_KEYS = {"PATH", "HOME", "XDG_CONFIG_HOME", "LANG", "LC_ALL", "TZ",
-            "GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_GLOBAL", "PYTHONDONTWRITEBYTECODE", "DATUM_WDQ_OBSERVE_PATH"}
+            "GIT_CONFIG_NOSYSTEM", "GIT_CONFIG_GLOBAL", "PYTHONDONTWRITEBYTECODE", "DATUM_WDQ_OBSERVE_PATH",
+            "TERM", "NO_COLOR", "CLICOLOR", "FORCE_COLOR"}
 
 
 def save(path, value):

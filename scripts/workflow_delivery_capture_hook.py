@@ -7,9 +7,11 @@ accounting and child/tool closure still remain separate I03 obligations.
 from pathlib import Path
 
 from workflow_delivery_capture_assertions import capture_envelope, observer_calls
+from workflow_delivery_capture_assertions import evaluate_text_output, recovery_link
 from workflow_delivery_capture_command import capture_command, save
 from workflow_delivery_capture_fixture import restore_fixture
 from workflow_delivery_capture_mutations import CASES, CLI_ERROR_CASES, changed_bytes, expected_detail
+from workflow_delivery_capture_mutations import TEXT_CASES, RECOVERY_CASE, text_environment
 from workflow_delivery_capture_history import BASE_CASES, HISTORY_CASES
 from workflow_delivery_capture_history import CURRENT_HISTORY_CASE, prepare_current_history
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES, prepare_snapshots, snapshot_expectation
@@ -83,6 +85,9 @@ def run_hook_case(packet, destination, environment, *, case_id):
         snapshot_expectation(case_id, "H")
     destination = Path(destination).resolve()
     destination.mkdir(exist_ok=False)
+    if case_id == RECOVERY_CASE:
+        run_hook_case(packet, destination / "prior-refusal", environment,
+                      case_id="INFRA-S02-09.outside-scope")
     root, output = destination / "fixture", destination / "capture"
     recipe = restore_fixture(packet, root)
     prepared_input = case_uses_prepared_input(case_id, recipe)
@@ -111,7 +116,8 @@ def run_hook_case(packet, destination, environment, *, case_id):
         mutation["after_hex"] = changed.hex()
         git(root, "add", "--", target)
     save(destination / "mutation.json", mutation)
-    observed_environment = dict(environment, DATUM_WDQ_OBSERVE_PATH=str(output / "calls.jsonl"))
+    observed_environment = dict(text_environment(environment) if case_id in TEXT_CASES else environment,
+                                DATUM_WDQ_OBSERVE_PATH=str(output / "calls.jsonl"))
     trigger = ({"trace": "calls.jsonl", "source": str(locations["runner"]), "function": "main"}
                if case_id == INTERRUPTION_CASE else None)
     capture_command(root, output, [str(locations["hook"])], observed_environment,
@@ -123,5 +129,10 @@ def run_hook_case(packet, destination, environment, *, case_id):
     assessment = (evaluate_interruption(output, case_id=case_id, surface="H", trigger=trigger)
                   if trigger is not None else evaluate_hook(output, case_id=case_id, hook=locations["hook"]))
     assessment["support_manifest_sha256"] = sha256((destination / "support-before.json").read_bytes())
+    if case_id in TEXT_CASES:
+        assessment["text_evidence"] = evaluate_text_output(output, surface="H")
+    if case_id == RECOVERY_CASE:
+        assessment["recovery"] = recovery_link(destination / "prior-refusal", output,
+                                              case_id=case_id, surface="H")
     save(destination / "assessment.json", assessment)
     return assessment

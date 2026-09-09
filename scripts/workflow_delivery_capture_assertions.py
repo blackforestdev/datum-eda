@@ -130,3 +130,61 @@ def evaluate_capture(output, *, case_id, surface, expected_code, script,
             "report_only": expected_mode == "report-only",
             "result_sha256": sha256((output / "result.json").read_bytes()),
             "acceptance_asserted": False}
+
+
+def evaluate_text_output(output, *, surface):
+    """Inspect actual text and observed descriptors, not a GUI accessibility claim."""
+    output = Path(output)
+    invocation = parse_json((output / "invocation.json").read_bytes(), "invocation")
+    environment = invocation["environment"]
+    require(all(environment.get(key) == value for key, value in
+                {"TERM": "dumb", "NO_COLOR": "1", "CLICOLOR": "0", "FORCE_COLOR": "0"}.items())
+            and not {"DISPLAY", "WAYLAND_DISPLAY"} & set(environment), "text",
+            "explicit no-color and GUI-free environment required")
+    start = parse_json((output / "calls.jsonl").read_bytes().splitlines()[0], "observer start")
+    require(start["stdio_tty"] == {"stdin": False, "stdout": False, "stderr": False}
+            and start["stdin_target"] == "/dev/null", "text", "observed noninteractive descriptors required")
+    stdout, stderr = ((output / name).read_bytes() for name in ("stdout.bin", "stderr.bin"))
+    require(b"\x1b" not in stdout + stderr and b"\x9b" not in stdout + stderr,
+            "text", "color/control escape sequence present")
+    report = parse_json(stdout.splitlines()[-1] if surface == "H" else stdout, "text report")
+    if surface == "S":
+        diagnostics = report.get("failures", [])
+        require(all("WDQ-COVERAGE: src/unscoped.py: production change has no promoted scope" in item
+                    for item in diagnostics), "text", "selector refusal lacks path and authority context")
+    else:
+        diagnostics = report["findings"]
+        require(all(item.get("path") and item.get("detail") and item.get("owning_lane")
+                    for item in diagnostics), "text", "refusal lacks path, explanation or responsible lane")
+    return {"noninteractive_descriptors_observed": True, "no_color_escapes": True,
+            "diagnostics": diagnostics, "gui_accessibility_asserted": False}
+
+
+def recovery_link(prior, current, *, case_id, surface):
+    """Bind a real ordinary refusal to a fresh invocation without authority repair."""
+    prior, current = Path(prior), Path(current)
+    previous, previous_invocation = capture_envelope(prior / "capture", "INFRA-S02-09.outside-scope", surface)
+    result, invocation = capture_envelope(current, case_id, surface)
+    require(previous["returncode"] == 1 and result["returncode"] == 0
+            and previous["invocation_id"] != result["invocation_id"]
+            and previous_invocation["fixture_nonce"] == invocation["fixture_nonce"],
+            "recovery", "distinct refused and successful invocations of one retained recipe required")
+    raw = (prior / "capture/stdout.bin").read_bytes()
+    report = parse_json(raw.splitlines()[-1] if surface == "H" else raw, "prior refusal")
+    if surface == "S":
+        require(len(report["failures"]) == 1 and report["failures"][0].startswith(
+            "WDQ-COVERAGE: src/unscoped.py: production change has no promoted scope"),
+            "recovery", "wrong prior refusal")
+    else:
+        require(len(report["findings"]) == 1 and report["findings"][0]["code"] == "WDQ-COVERAGE"
+                and report["findings"][0]["path"] == "src/unscoped.py", "recovery", "wrong prior refusal")
+    before = parse_json((prior / "capture/before.json").read_bytes(), "prior state")
+    restored = parse_json((current / "before.json").read_bytes(), "recovery state")
+    for key in ("datum.workflowDeliveryAuthorityRef", "datum.workflowDeliveryBaseRef",
+                "datum.workflowDeliveryEnvironmentPath"):
+        require(before["local_trust"][key] == restored["local_trust"][key], "recovery", "authority was refreshed")
+    for path in ("specs/workflow_delivery_policy.json", "requested-environment.json"):
+        require(before["files"][path] == restored["files"][path], "recovery", "policy or environment changed")
+    return {"prior_invocation_id": previous["invocation_id"],
+            "prior_result_sha256": sha256((prior / "capture/result.json").read_bytes()),
+            "prior_result_path": "prior-refusal/capture/result.json", "authority_refreshed": False}

@@ -90,6 +90,9 @@ def main(argv=None):
             stream.flush()
 
         emit("start", argv=[str(script), *arguments], cwd=str(Path.cwd()),
+             stdio_tty={name: stream.isatty() for name, stream in
+                        (("stdin", sys.stdin), ("stdout", sys.stdout), ("stderr", sys.stderr))},
+             stdin_target=os.readlink("/proc/self/fd/0"),
              source_root=str(root), script=script_before, interpreter=identity(sys.executable),
              python_version=sys.version, observer=identity(__file__),
              flags={key: getattr(sys.flags, key) for key in

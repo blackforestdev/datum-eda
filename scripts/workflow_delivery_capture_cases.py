@@ -4,6 +4,7 @@ from pathlib import Path
 import sys
 
 from workflow_delivery_capture_assertions import evaluate_capture, evaluate_invocation_error
+from workflow_delivery_capture_assertions import evaluate_text_output, recovery_link
 from workflow_delivery_capture_command import capture_command, save
 from workflow_delivery_capture_fixture import restore_fixture
 from workflow_delivery_capture_state import git
@@ -11,6 +12,7 @@ from workflow_delivery_capture_history import BASE_CASES, HISTORY_CASES, prepare
 from workflow_delivery_capture_history import CURRENT_HISTORY_CASE, prepare_current_history
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES, prepare_snapshots, snapshot_expectation
 from workflow_delivery_capture_mutations import CASES, CLI_ERROR_CASES, changed_bytes, expected_detail
+from workflow_delivery_capture_mutations import TEXT_CASES, RECOVERY_CASE, text_environment
 from workflow_delivery_io import sha256
 from workflow_delivery_interruption_case import INTERRUPTION_CASE, evaluate_interruption
 from workflow_delivery_environment_cases import case_uses_prepared_input
@@ -34,6 +36,9 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
         snapshot_expectation(case_id, surface)
     destination, runtime_root = Path(destination).resolve(), Path(runtime_root).resolve(strict=True)
     destination.mkdir(exist_ok=False)
+    if case_id == RECOVERY_CASE:
+        run_case(packet, destination / "prior-refusal", runtime_root, environment,
+                 case_id="INFRA-S02-09.outside-scope", surface=surface)
     root, output = destination / "fixture", destination / "capture"
     recipe = restore_fixture(packet, root)
     prepared_input = case_uses_prepared_input(case_id, recipe)
@@ -104,7 +109,8 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
     trigger = ({"trace": "calls.jsonl", "source": str(runtime_root / "scripts/workflow_delivery_selector.py")
                 if selector else str(script), "function": "selector_failures" if selector else "main"}
                if case_id == INTERRUPTION_CASE else None)
-    capture_command(root, output, command, environment, fixture_nonce=recipe["fixture_nonce"],
+    observed_environment = text_environment(environment) if case_id in TEXT_CASES else environment
+    capture_command(root, output, command, observed_environment, fixture_nonce=recipe["fixture_nonce"],
                     case_id=case_id, surface="S" if selector else surface,
                     untracked_roots=recipe["untracked_roots"], timeout=30, interrupt_on_call=trigger)
     try:
@@ -128,6 +134,11 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
         save(destination / "assessment-error.json", {"type": type(error).__name__, "detail": str(error),
                                                    "acceptance_asserted": False})
         raise
+    if case_id in TEXT_CASES:
+        assessment["text_evidence"] = evaluate_text_output(output, surface="S" if selector else surface)
+    if case_id == RECOVERY_CASE:
+        assessment["recovery"] = recovery_link(destination / "prior-refusal", output,
+                                              case_id=case_id, surface="S" if selector else surface)
     assessment.update(selector_operation=surface if selector else None, complete_matrix=False)
     save(destination / "assessment.json", assessment)
     return assessment

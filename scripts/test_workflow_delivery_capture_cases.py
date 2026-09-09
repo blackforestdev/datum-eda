@@ -8,6 +8,7 @@ import unittest
 
 from workflow_delivery_capture_cases import CASES, CLI_ERROR_CASES, run_case
 from workflow_delivery_capture_assertions import evaluate_capture
+from workflow_delivery_capture_mutations import TEXT_CASES, RECOVERY_CASE
 from workflow_delivery_capture_fixture import prepare_fixture
 from workflow_delivery_io import canonical_json, sha256
 from workflow_delivery_environment_cases import PREPARED_VARIANTS
@@ -40,6 +41,14 @@ class CaptureCasesTest(unittest.TestCase):
                         self.assertFalse(result["complete_matrix"])
                         self.assertNotIn(result["invocation_id"], invocations)
                         invocations.add(result["invocation_id"])
+                        if case_id in TEXT_CASES:
+                            self.assertTrue(result["text_evidence"]["noninteractive_descriptors_observed"])
+                            self.assertTrue(result["text_evidence"]["no_color_escapes"])
+                            self.assertFalse(result["text_evidence"]["gui_accessibility_asserted"])
+                        if case_id == RECOVERY_CASE:
+                            self.assertFalse(result["recovery"]["authority_refreshed"])
+                            self.assertNotEqual(result["invocation_id"], result["recovery"]["prior_invocation_id"])
+                            self.assertTrue((output / result["recovery"]["prior_result_path"]).is_file())
                         script = runtime / "scripts" / ("project_status.py" if surface.startswith("S-")
                                                         else "check_workflow_delivery.py")
                         if CASES[case_id][1] is not None:
@@ -59,7 +68,7 @@ class CaptureCasesTest(unittest.TestCase):
                             self.assertTrue(recovery["observation_matches_expected"])
                             self.assertNotIn(recovery["invocation_id"], invocations)
                             invocations.add(recovery["invocation_id"])
-            self.assertEqual(4 + 8 * (len(ordinary_cases) - 1), len(invocations))
+            self.assertEqual(4 * sum(1 + (code is not None) for _, code in ordinary_cases.values()), len(invocations))
 
     def test_invocation_errors_have_no_success_report_and_recover(self):
         with tempfile.TemporaryDirectory() as temporary:

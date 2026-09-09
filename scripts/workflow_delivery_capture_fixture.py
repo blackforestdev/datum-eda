@@ -9,7 +9,7 @@ from project_status import render_block
 from workflow_delivery_capture_command import save
 from workflow_delivery_capture_state import git, protected_state
 from workflow_delivery_environment_cases import (
-    FIXTURE_VARIANTS, MIXED_VARIANTS, PREPARED_VARIANTS, SWAPPED_VARIANT, malformed_selection,
+    FIXTURE_VARIANTS, MIXED_VARIANTS, PREPARED_VARIANTS, SWAPPED_VARIANT, PRODUCT_HEADLESS_VARIANT, malformed_selection,
 )
 from workflow_delivery_mixed_test_support import add_infrastructure, headless_environment
 from workflow_delivery_clause_test_support import inventory
@@ -85,6 +85,10 @@ def prepare_fixture(root, packet, *, fixture_variant=None):
     if fixture_variant == SWAPPED_VARIANT:
         rows = selection["environments"]
         rows[0]["environment"], rows[1]["environment"] = rows[1]["environment"], rows[0]["environment"]
+    if fixture_variant == PRODUCT_HEADLESS_VARIANT:
+        # Change only the product's requested environment; retain the valid
+        # infrastructure selection rather than conflating this with a swap.
+        next(row for row in selection["environments"] if row["frontier_key"] == "TASK")["environment"] = infra_selected
     f.save("requested-environment.json", selection)
     f.stage()
     f.git("commit", "-qm", "test(workflow): freeze synthetic capture input\n\nNo actual native proof or owner approval.")

@@ -8,6 +8,7 @@ import unittest
 from workflow_delivery_capture_fixture import prepare_fixture
 from workflow_delivery_capture_hook import evaluate_hook, run_hook_case
 from workflow_delivery_capture_mutations import CASES, CLI_ERROR_CASES
+from workflow_delivery_capture_mutations import TEXT_CASES, RECOVERY_CASE
 from workflow_delivery_environment_cases import PREPARED_VARIANTS
 from workflow_delivery_capture_history import BASE_CASES, CURRENT_HISTORY_CASE, HISTORY_CASES
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES
@@ -37,6 +38,14 @@ class HookCaptureTest(unittest.TestCase):
                         self.assertFalse(result[key])
                     self.assertNotIn(result["invocation_id"], identities)
                     identities.add(result["invocation_id"])
+                    if case_id in TEXT_CASES:
+                        self.assertTrue(result["text_evidence"]["noninteractive_descriptors_observed"])
+                        self.assertTrue(result["text_evidence"]["no_color_escapes"])
+                        self.assertFalse(result["text_evidence"]["gui_accessibility_asserted"])
+                    if case_id == RECOVERY_CASE:
+                        self.assertFalse(result["recovery"]["authority_refreshed"])
+                        self.assertNotEqual(result["invocation_id"], result["recovery"]["prior_invocation_id"])
+                        self.assertTrue((output / result["recovery"]["prior_result_path"]).is_file())
                     if code:
                         recovery = run_hook_case(packet, store / (case_id + "-recovery"), environment,
                                                  case_id="INFRA-S01-01")
@@ -46,7 +55,7 @@ class HookCaptureTest(unittest.TestCase):
                     stdout.write_bytes(stdout.read_bytes() + b"changed capture\n")
                     with self.assertRaisesRegex(ValueError, "capture hash mismatch"):
                         evaluate_hook(output / "capture", case_id=case_id, hook="unused")
-            self.assertEqual(2 * len(ordinary_cases) - 1, len(identities))
+            self.assertEqual(sum(1 + (code is not None) for _, code in ordinary_cases.values()), len(identities))
 
 
 if __name__ == "__main__":

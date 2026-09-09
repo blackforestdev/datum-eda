@@ -17,6 +17,7 @@ FIXTURE_VARIANTS = {
 }
 MIXED_VARIANT = "INFRA-S06-08.mixed"
 SWAPPED_VARIANT = "INFRA-S06-10.swapped"
+PRODUCT_HEADLESS_VARIANT = "INFRA-S06-15.product-headless"
 HEADLESS_VARIANTS = {
     "INFRA-S06-12.environment-version": ("environment", "integer headless environment version 2 required"),
     "INFRA-S06-12.environment-kind": ("environment.kind", "expected one of"),
@@ -26,7 +27,7 @@ HEADLESS_VARIANTS = {
     "INFRA-S06-14.pipes-dimensions": ("environment.terminal_size", "pipes have no terminal dimensions"),
     "INFRA-S06-14.pty-dimensions": ("environment.terminal_size", "PTY requires observed positive columns/rows"),
 }
-MIXED_VARIANTS = {MIXED_VARIANT, SWAPPED_VARIANT} | set(HEADLESS_VARIANTS)
+MIXED_VARIANTS = {MIXED_VARIANT, SWAPPED_VARIANT, PRODUCT_HEADLESS_VARIANT} | set(HEADLESS_VARIANTS)
 PREPARED_VARIANTS = set(FIXTURE_VARIANTS) | MIXED_VARIANTS | set(READINESS_CASES) | set(REVIEW_INPUT_CASES)
 PREPARED_VARIANTS.update(COVERAGE_INPUT_CASES)
 PREPARED_VARIANTS.update(SPECIFICATION_INPUT_CASES)

@@ -9,12 +9,17 @@ from workflow_delivery_review_input import REPORT_CASES, REPORT_FIXTURE, REPORT_
 from workflow_delivery_coverage_input import COVERAGE_INPUT_CASES
 from workflow_delivery_specification_input import SPECIFICATION_INPUT_CASES
 from workflow_delivery_review_phase_input import REVIEW_PHASE_CASES
-from workflow_delivery_environment_cases import FIXTURE_VARIANTS, HEADLESS_VARIANTS, MIXED_VARIANT, SWAPPED_VARIANT
+from workflow_delivery_environment_cases import FIXTURE_VARIANTS, HEADLESS_VARIANTS, MIXED_VARIANT, SWAPPED_VARIANT, PRODUCT_HEADLESS_VARIANT
 
 POLICY = "specs/workflow_delivery_policy.json"
 CLI_ERROR_CASES = {"INFRA-S01-02.invalid-argument", "INFRA-S01-02.conflicting-views"}
+TEXT_CASES = {"INFRA-S01-04.valid", "INFRA-S01-04.refused"}
+RECOVERY_CASE = "INFRA-S06-07.fresh-after-refusal"
 CASES = {
     "INFRA-S01-01": (None, None),
+    "INFRA-S01-04.valid": (None, None),
+    "INFRA-S01-04.refused": ("src/unscoped.py", "WDQ-COVERAGE"),
+    RECOVERY_CASE: (None, None),
     "INFRA-S02-09.outside-scope": ("src/unscoped.py", "WDQ-COVERAGE"),
     "INFRA-S02-10.category": (POLICY, "WDQ-POLICY"),
     "INFRA-S02-10.scope": (POLICY, "WDQ-POLICY"),
@@ -42,10 +47,15 @@ CASES[MIXED_VARIANT] = (None, None)
 # This prepared-input case names the diagnostic environment context, not a
 # candidate file to mutate. The exact selected bytes live in its retained bundle.
 CASES[SWAPPED_VARIANT] = ("environment", "WDQ-ENVIRONMENT")
+CASES[PRODUCT_HEADLESS_VARIANT] = ("environment", "WDQ-ENVIRONMENT")
 CASES.update({key: (path, "WDQ-ENVIRONMENT") for key, (path, _) in HEADLESS_VARIANTS.items()})
 
 
 def expected_detail(case_id):
+    if case_id in ("INFRA-S01-04.valid", RECOVERY_CASE):
+        return None
+    if case_id == "INFRA-S01-04.refused":
+        return "production change has no promoted scope"
     if case_id == REPORT_ONLY_CASE:
         return "owner-selected environment authority required"
     if case_id in REPORT_CASES:
@@ -74,7 +84,7 @@ def expected_detail(case_id):
         return HEADLESS_VARIANTS[case_id][1]
     if case_id == MIXED_VARIANT:
         return None
-    if case_id == SWAPPED_VARIANT:
+    if case_id in (SWAPPED_VARIANT, PRODUCT_HEADLESS_VARIANT):
         return "headless environment cannot substitute for product native evidence"
     if case_id in FIXTURE_VARIANTS:
         return FIXTURE_VARIANTS[case_id]
@@ -110,3 +120,9 @@ def changed_bytes(case_id, raw):
     else:
         raise ValueError("no implemented mutation for " + case_id)
     return canonical_json(value)
+
+
+def text_environment(environment):
+    value = {key: data for key, data in environment.items() if key not in ("DISPLAY", "WAYLAND_DISPLAY")}
+    value.update(TERM="dumb", NO_COLOR="1", CLICOLOR="0", FORCE_COLOR="0")
+    return value
