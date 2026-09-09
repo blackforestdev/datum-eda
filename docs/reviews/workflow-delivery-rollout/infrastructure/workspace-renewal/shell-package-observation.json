@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "method": "Read-only installed package identity supplement; no installation or download.",
+  "observations": [
+    {
+      "command": "dpkg-query -W -f='${Package} ${Version}\\n' dash",
+      "exit_code": 0,
+      "output": "dash 0.5.12-12\n"
+    },
+    {
+      "command": "dpkg-query -S /usr/bin/dash",
+      "exit_code": 0,
+      "output": "dash: /usr/bin/dash\n"
+    },
+    {
+      "command": "dpkg -V dash",
+      "exit_code": 0,
+      "output": ""
+    },
+    {
+      "command": "readlink -f /bin/sh",
+      "exit_code": 0,
+      "output": "/usr/bin/dash\n"
+    },
+    {
+      "command": "sha256sum /usr/bin/dash",
+      "exit_code": 0,
+      "output": "a6f559e00b69a4aa4d8cb607be18d9386c5aee55c509e2c075549dcf00e00fc7  /usr/bin/dash\n"
+    }
+  ],
+  "scope": "Current /bin/sh resolves to /usr/bin/dash, owned by dash 0.5.12-12; installed package verification returned no discrepancy. Hash correlates to regression tool identity. This supplements shell identity, not a shell --version result or retroactive per-capture tool receipt.",
+  "earlier_lookup": "An initial ownership query included both /bin/dash and /usr/bin/dash. The former is not listed in the package database; the resolved /usr/bin/dash target is. Exact-target queries are retained here."
+}
