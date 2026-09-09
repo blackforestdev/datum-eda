@@ -1,4 +1,4 @@
-# Independent infrastructure proof review — publication review pending
+# Independent infrastructure review — bounded technical review passed
 
 Reviewer: `wdq-independent-review-20260906`, task `/root/wdq_independent_review`.
 Date: 2026-09-09 UTC. This session did not author the rollout implementation or
@@ -10,11 +10,13 @@ Frontier, installed trust, or main commits.
 
 The corrected infrastructure proof packet
 `bf726cbb753c7e3d3956f7a624ee0286268a78d90fd2d5e5e17b9b744317295e`
-has passing independent INFRA-S01 through INFRA-S06 replay. The typed approval
-is limited to that proof and its exact reviewed inputs. Overall WDQ-REVIEW
-completion remains pending actual full-candidate promotion inspection by both
-producer and reviewer, followed by the final publication-delta review. This
-document does not approve activation, complete WDQ-I04, or grant owner defect
+has passing independent INFRA-S01 through INFRA-S06 replay. Both producer and
+independent reviewer also executed the full-candidate promotion inspection
+successfully on the exact isolated proposed publication described below.
+Bounded technical WDQ-REVIEW completion is recommended once these actual
+artifacts are landed. Final publication-base/candidate reinspection remains
+required after governance closeout, before presenting an activation-ready
+packet. This document does not approve activation, complete WDQ-I04, or grant owner defect
 dispositions. The typed owner receipt and all five disposition references are
 null. The earlier two-finding provisional review is retained separately; it is
 historical, not the final complete issue inventory.
@@ -117,11 +119,13 @@ Three pre-existing relevant obligations are also included, not silently dropped:
   replacement/graft and repository redirection while retaining the explicitly
   selected index. An additional 23 independent existing index/support/hook
   regressions pass, including actual alternate-index CLI and pinned hook paths.
-  Candidate repair does not imply that the old installed runner changed.
+  Candidate repair does not imply that the old installed runner changed. Its
+  issue explicitly requires remaining open through owner-controlled promotion;
+  the reviewer does not recommend autonomous closure from candidate tests.
 - `dat-wdq-promotion-delta-mb9`: the reviewed full-history publication path
   preserves ordinary execution-claim enforcement rather than substituting an
-  empty delta. The 44 supplemental activation tests pass, but the actual complete
-  publication inspection described below remains necessary. No owner resolution
+  empty delta. The 44 supplemental activation tests and both actual complete
+  publication inspections described below pass. No owner resolution
   or live activation is inferred from the implementation or those tests.
 
 These retain blocking accounting with null references pending exact resolution
@@ -159,13 +163,60 @@ Full drift/CI, Rust/GUI builds, native adoption cohorts, installed-main validati
 and owner-controlled activation remain separate. GP-CM05V and the existing
 accepted pilot remain unchanged.
 
-## Remaining publication obligation
+## Actual full-candidate inspection and remaining owner boundary
 
-The retained evidence candidate is not an activatable main publication. An
-isolated proposed claim-free WDQ-I04 base/candidate may be inspected without
-changing live REVIEW status. Its actual complete publication delta, prepared
-runner pins, exact caller-selected inspection response and successful full
-inspection must be independently verified before overall review completion.
-After that evidence is recorded, final main handoff changes require one last
-exact delta inspection. Neither a synthetic success nor this provisional
-matrix-proof approval substitutes for those observations.
+Both real `--inspect-promotion` subprocesses passed for proposed base
+`7d8a8de678d0ad1b8021e96e5c9714ce35fc8ed8` and candidate
+`800f180b8eacc56c82c2f7c10ceeafb9c4026100`. The independently rebuilt publication
+delta contains one actual commit and 138 touched/net paths, SHA-256
+`e0603ec4a2d72b5284729a09aeba5c675fc71b2327bc6714e0a016b0ecbf36a6`.
+All 152 tested runtime inputs still match source `9cab72da`; all other 55
+Frontier lanes are identical between proposed base and candidate. No production
+path escapes the exact approved infrastructure scope, and no prototype or Rust
+product change is included. The proposed completion record explicitly says it
+is isolated hypothetical state, not actual main completion or owner approval.
+
+Producer subprocess PID 1083541 exited zero with full-log SHA
+`4dcaac3eaafcfdb2e9467fdbe9aba5888da8ecfe358110040bcc4d430c546126`.
+Reviewer subprocess PID 1107122 independently exited zero with request SHA
+`9701b386a15ad31b2b247c0787bf4f9f428f68ee1c10a033a6744d9fd60d8fe0`
+and full-log SHA
+`9903958655a2506d0eed0f9cf2baddbb20261adb7d099ef795c505814b4b8eef`.
+The reviewer used a fresh clone, separately prepared authenticated bundle,
+isolated HOME/XDG configuration and freshly selected diagnostic response.
+Both checks report no findings, preserve complete before/after protected state
+and support, validate the accepted pilot plus the rollout review, and leave
+`publication_authorized` and `activation_asserted` false. No response author
+identity is inferred from the matching input bytes.
+
+Across producer and reviewer fixtures, protected files/modes, index entries,
+HEAD, symbolic HEAD, exclusions and named prior trust match. The reviewer clone
+removed origin; the producer retained three unused origin remote-tracking refs.
+That explicit clone-local metadata difference does not change the full pinned
+base/candidate history or selected authority. It is not claimed as identical
+raw Git metadata. Neither run changed its own captured refs. Full commands,
+response-input provenance, exact requested pins, raw output and state snapshots
+are retained in the separate full-inspection archive.
+
+The earlier provisional reports, validation records and failed assembly/clone
+attempts are historical and remain retained; their pending-status fields are
+not rewritten as if this later inspection had already happened.
+
+Technical review is now evidenced, but the final main closeout changes the real
+publication base and documentation delta. Reassemble that exact final candidate
+without changing the tested 152 inputs or authority closure, inspect its complete
+history and both source/metadata boundaries, and repeat the actual full
+inspection before presenting the exact WDQ-I04 packet. A changed relevant
+source, contract, fixture or selected environment requires renewed applicable
+proof/review, not a digest refresh or inference from these results.
+
+All five findings require explicit owner disposition. In particular, activation
+enforcement requires blocking records closed and exact trusted `RESOLVED` and
+`REPLAY` lines before mutation, whereas the Git-authority issue explicitly keeps
+owner promotion/installed verification outstanding. WDQ-I04 must explicitly
+resolve that closure and remaining installed-verification scope; neither the
+reviewer nor coordinator may infer an owner resolution or silently drop that
+condition. No autonomous tracker closure is recommended. The owner receipt
+remains null, and all five disposition references remain null. Actual activation,
+installed-main checks, safe support retirement, three full native adoption
+cohorts and final owner acceptance remain uncompleted separate obligations.
