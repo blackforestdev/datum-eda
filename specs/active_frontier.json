@@ -11027,19 +11027,32 @@
         "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md",
         "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
         "docs/reviews/workflow-delivery-rollout/infrastructure/independent/review-completion.json",
-        "docs/reviews/workflow-delivery-rollout/infrastructure/owner-dispositions.md"
+        "docs/reviews/workflow-delivery-rollout/infrastructure/owner-dispositions.md",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-repair-authorization.json"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
-      "claim": null,
+      "state": "in_progress",
+      "authorization": "execution",
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-wdq-workspace-repair-20260909",
+        "claimed_at": "2026-09-09T17:08:50Z",
+        "heartbeat_at": "2026-09-09T17:08:50Z",
+        "expires_at": "2026-09-09T21:08:50Z",
+        "scope": [
+          "WDQ-COMPAT isolated candidate repair and proof; workflow-only governance and Beads transaction; no product or live trust changes"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "96d1c582493d771d15b936c10267533602dea35d"
+      },
       "canonical_next": false,
       "parallel": true,
-      "summary": "Owner approved closure of five reviewed candidate findings and preparation of the final packet only; see infrastructure/owner-dispositions.md. WDQ-I04 exact activation and installed verification remain pending, followed by three genuine adoption cohorts. Product ownership and live trust remain unchanged.",
+      "summary": "Owner-authorized WDQ-COMPAT repair and renewed producer proof is active; distinct WDQ-RECHECK replay and publication inspection remains pending before I04. Preserve historical evidence, Beads and owner-local files, source detection, all product ownership and three actual adoption cohorts.",
       "dependencies": [],
       "unblocks": [],
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
-        "canonical_next_step_id": "WDQ-I04",
+        "canonical_next_step_id": "WDQ-COMPAT",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -11200,12 +11213,48 @@
             ]
           },
           {
+            "id": "WDQ-COMPAT",
+            "kind": "execution",
+            "status": "in_progress",
+            "action": "Repair ignored-workspace compatibility and renew exact producer evidence without weakening source authority or activating.",
+            "depends_on": [
+              "WDQ-REVIEW"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-repair-authorization.json",
+                "marker": "WDQ-COMPAT"
+              },
+              {
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "WDQ-COMPAT"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "WDQ-RECHECK",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Independently replay and inspect the renewed exact compatibility and publication evidence.",
+            "depends_on": [
+              "WDQ-COMPAT"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                "marker": "WDQ-RECHECK"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
             "id": "WDQ-I04",
             "kind": "owner_decision",
             "status": "pending",
             "action": "Obtain owner mechanism ratification and exact activation; verify installed main and safely retire unreferenced support.",
             "depends_on": [
-              "WDQ-REVIEW"
+              "WDQ-RECHECK"
             ],
             "requirement_refs": [
               {
@@ -11219,7 +11268,7 @@
               "requests": [
                 {
                   "id": "ACTIVATE",
-                  "question": "The owner approved all five finding dispositions and preparation only. After final publication-base/candidate reinspection, obtain separate owner mechanism ratification and exact activation; verify installed main and safely retire unreferenced support. No activation-ready final packet exists yet; the isolated inspection candidate is not live authority.",
+                  "question": "After resolving dat-wdq-workspace-inputs-zmt and reinspecting the resulting exact publication-base/candidate, obtain separate owner mechanism ratification and exact activation; verify installed main and safely retire unreferenced support. Five prior dispositions are approved, but the isolated passing candidate is not an activation-ready live packet.",
                   "recommended_response": "Approve only the exact completed evidence and reviewed scope; preserve all product ownership, trust and independent-review boundaries.",
                   "source_ref": {
                     "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
@@ -11291,8 +11340,8 @@
           "checkpoints": {
             "ready": "WDQ-READY",
             "activate": null,
-            "verify": "WDQ-I03",
-            "review": "WDQ-REVIEW",
+            "verify": "WDQ-COMPAT",
+            "review": "WDQ-RECHECK",
             "accept": null
           }
         }

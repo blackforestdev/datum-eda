@@ -42,9 +42,19 @@ def promotion_boundary(manifest, baseline, coverage, changed_paths):
         owner = steps.get("WDQ-I04", {})
         require(owner.get("kind") == "owner_decision" and owner.get("status") == "pending",
                 "WDQ-I04 must await exact owner activation, not claim prior completion")
-        for sid in ("WDQ-TOOLS", "WDQ-READY", "WDQ-I03", "WDQ-REVIEW"):
+        for sid in ("WDQ-TOOLS", "WDQ-READY", "WDQ-I03", "WDQ-REVIEW",
+                    "WDQ-COMPAT", "WDQ-RECHECK"):
             require(steps.get(sid, {}).get("status") == "complete",
                     "publication requires completed " + sid)
+        require(owner.get("depends_on") == ["WDQ-RECHECK"]
+                and steps["WDQ-RECHECK"].get("depends_on") == ["WDQ-COMPAT"]
+                and steps["WDQ-COMPAT"].get("depends_on") == ["WDQ-REVIEW"],
+                "publication requires the exact renewal dependency chain")
+        delivery = completion.get("delivery", {})
+        require(delivery.get("schema_version") == 2 and delivery.get("checkpoints") == {
+            "ready": "WDQ-READY", "activate": None, "verify": "WDQ-COMPAT",
+            "review": "WDQ-RECHECK", "accept": None},
+            "publication requires the renewed verification and independent-review mapping")
     scopes = coverage["source_scopes"]
     require(len(scopes) == 1 and scopes[0]["frontier_key"] == ROLLOUT
             and scopes[0]["step_ids"] == ["WDQ-I03", "WDQ-REVIEW"],

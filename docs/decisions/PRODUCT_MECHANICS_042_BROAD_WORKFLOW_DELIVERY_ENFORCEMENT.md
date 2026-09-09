@@ -323,7 +323,8 @@ not an automatic destructive reset or silent hook bypass.
 Initial rollout promotion has a separate owner boundary, not an ordinary source
 transaction with an invented execution claim. Both exact publication base and
 candidate must select pending, claim-free WDQ-I04 after completed TOOLS, READY,
-I03 and REVIEW. Preserve every other Frontier item exactly. Require the complete
+I03 and REVIEW, plus completed COMPAT and RECHECK for the authorized workspace
+renewal. Preserve every other Frontier item exactly. Require the complete
 candidate as prospective authority, schema-2 coverage and rollout enrollment;
 check every production path on every intervening parent edge against the sole
 explicit rollout scope for I03/REVIEW, including reverted and merge-side changes.
@@ -376,7 +377,7 @@ immutable trusted runners and logs. Keep any currently referenced external
 support until its replacement is installed and verified. Remove only positively
 unreferenced owned artifacts; no broad sweep of Documents or shared build output.
 
-Self-enrollment maps actual completion kinds: WDQ-READY (governance) is readiness,
+Initial self-enrollment mapped actual completion kinds: WDQ-READY (governance) is readiness,
 WDQ-I03 (execution) is producer verification, and WDQ-REVIEW (execution) is
 independent replay. Infrastructure activate/accept are null. The added READY and
 REVIEW checkpoints refine the original I3 stage without removing any obligation
@@ -384,6 +385,16 @@ before I04. They start pending with no invented evidence. I01/I02 remain prior
 candidate preparation; neither they nor R03 approval are relabeled readiness.
 The exact mapping proposal is recorded separately and is not installed enrollment.
 Actual contract readiness, independent replay and I04 owner approval remain due.
+
+The authorized workspace compatibility renewal preserves I03 and REVIEW as
+completed historical evidence for their exact candidates. Its prepared mapping
+retains WDQ-READY and null infrastructure activate/accept, but maps verification
+to WDQ-COMPAT and independent replay to WDQ-RECHECK. Both renewal checkpoints
+require fresh evidence before I04; historical proof cannot certify changed
+normative inputs. This does not reopen completed steps, waive any original
+scenario or change the historical I03/REVIEW publication source scope. Full
+promotion validation must enforce the current mapped independent-review phase
+and the Frontier dependency on completed RECHECK, not only historical completion.
 
 WDQ-TOOLS separates the already-authorized preparatory implementation portion of
 original I3 from producer verification: I02 -> TOOLS -> READY -> I03 -> REVIEW
@@ -407,7 +418,8 @@ future task names, hermetic fixtures or this amendment as completed adoption.
 ## Ratification evidence boundary
 
 WDQ-I04 must review the final complete amendment and exact activation packet
-after WDQ-I03 producer proof and WDQ-REVIEW independent verification. Record
+after the historical WDQ-I03/WDQ-REVIEW evidence and renewed WDQ-COMPAT producer
+proof and WDQ-RECHECK independent verification. Record
 the owner disposition in the operational activation packet, outside the
 infrastructure contract's own authority closure. Pin this exact normative text
 in that packet; do not rewrite it to embed its own proof or acceptance receipt.

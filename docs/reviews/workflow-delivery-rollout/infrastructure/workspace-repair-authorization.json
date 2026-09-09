@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-WORKSPACE-REPAIR-OWNER-AUTHORIZATION",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "issue_id": "dat-wdq-workspace-inputs-zmt",
+  "owner_response_verbatim": "aproved",
+  "approved_request": "WORKFLOW-DELIVERY-IMPLEMENTATION: revise — authorize bounded workspace-input compatibility repair and independent reinspection, preserving detection of undeclared executable/source inputs, Beads operation, owner-local files and all product ownership; no activation is authorized.",
+  "evidence": "docs/reviews/workflow-delivery-rollout/infrastructure/final-publication/independent-review.md",
+  "requirement_marker": "<!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-COMPAT -->",
+  "authorized_work": [
+    "Resolve dat-wdq-workspace-inputs-zmt in the repository-local isolated candidate and retain exact reviewed changes in Git.",
+    "Distinguish normal derived runtime state and explicitly reviewed owner-local files from undeclared executable/source inputs without blanket Git-ignore exemptions.",
+    "Preserve detection of untracked and ignored real source inputs, selected-index identity, owner-pinned authority and complete publication history.",
+    "Verify clean checkout, recurring caches, Beads runtime state and unchanged owner-local script compatibility; retain negative checks for new or changed undeclared source inputs.",
+    "Obtain distinct independent reinspection and renew affected source/authority evidence before presenting a new exact publication packet."
+  ],
+  "preserved_boundaries": [
+    "No deletion, relocation or modification of owner-local files or Beads runtime data as a workaround.",
+    "No activation, local-trust or installed-hook change, dependency introduction, prototype edit or product ownership change.",
+    "No invented completion, reuse of stale proof for changed inputs, or preflight-only root narrowing to conceal installed-selector refusal.",
+    "The five previously approved candidate findings remain resolved within their recorded scope; this compatibility issue stays open until its own evidence and disposition support closure.",
+    "WDQ-I04 exact ratification, activation and installed verification remain pending; WDQ-I05 real cohorts and WDQ-I06 owner acceptance remain required."
+  ],
+  "roadmap_effect": "Select the bounded execution repair before pending WDQ-I04. This records the owner's corrective work authorization, not completion of the activation decision or ratification of a new mechanism.",
+  "activation_authorized": false,
+  "repair_complete": false
+}

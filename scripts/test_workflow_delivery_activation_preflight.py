@@ -128,8 +128,15 @@ class PromotionBoundaryTest(unittest.TestCase):
             "authorization": "owner_decision", "claim": None, "completion": {
                 "canonical_next_step_id": "WDQ-I04", "steps": [
                     {"id": sid, "kind": "execution", "status": "complete"}
-                    for sid in ("WDQ-TOOLS", "WDQ-READY", "WDQ-I03", "WDQ-REVIEW")] + [
+                    for sid in ("WDQ-TOOLS", "WDQ-READY", "WDQ-I03", "WDQ-REVIEW",
+                                "WDQ-COMPAT", "WDQ-RECHECK")] + [
                     {"id": "WDQ-I04", "kind": "owner_decision", "status": "pending"}]}}
+        steps = self.item["completion"]["steps"]
+        for step, dependency in zip(steps[-3:], ("WDQ-REVIEW", "WDQ-COMPAT", "WDQ-RECHECK")):
+            step["depends_on"] = [dependency]
+        self.item["completion"]["delivery"] = {"schema_version": 2, "checkpoints": {
+            "ready": "WDQ-READY", "activate": None, "verify": "WDQ-COMPAT",
+            "review": "WDQ-RECHECK", "accept": None}}
         self.manifest = {"frontier": [self.item, {"key": "EXTERNAL", "claim": "preserved"}]}
         self.baseline = deepcopy(self.manifest)
         ref = {"path": "docs/scope.md", "marker": "scope"}
@@ -168,6 +175,35 @@ class PromotionBoundaryTest(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, "claim-free WDQ-I04"):
                         self.check()
                     item[field] = original
+
+    def test_renewal_missing_pending_mapping_and_dependencies_refuse_in_both_views(self):
+        for view in (self.manifest, self.baseline):
+            for sid in ("WDQ-COMPAT", "WDQ-RECHECK"):
+                for missing in (False, True):
+                    with self.subTest(baseline=view is self.baseline, step=sid, missing=missing):
+                        original = deepcopy(view["frontier"][0])
+                        completion = view["frontier"][0]["completion"]
+                        if missing:
+                            completion["steps"] = [s for s in completion["steps"] if s["id"] != sid]
+                        else:
+                            next(s for s in completion["steps"] if s["id"] == sid)["status"] = "pending"
+                        with self.assertRaisesRegex(ValueError, "requires completed " + sid):
+                            self.check()
+                        view["frontier"][0] = original
+            completion = view["frontier"][0]["completion"]
+            for step in completion["steps"][-3:]:
+                original = step["depends_on"]
+                step["depends_on"] = []
+                with self.assertRaisesRegex(ValueError, "renewal dependency chain"):
+                    self.check()
+                step["depends_on"] = original
+            for phase, old_step in (("verify", "WDQ-I03"), ("review", "WDQ-REVIEW")):
+                points = completion["delivery"]["checkpoints"]
+                original = points[phase]
+                points[phase] = old_step
+                with self.assertRaisesRegex(ValueError, "independent-review mapping"):
+                    self.check()
+                points[phase] = original
 
     def test_owner_completion_cannot_be_manufactured_before_publication(self):
         self.item["completion"]["steps"][-1]["status"] = "complete"
@@ -224,6 +260,7 @@ class PromotionCandidateTest(unittest.TestCase):
         steps, lines = [], []
         for sid, kind in (("WDQ-TOOLS", "execution"), ("WDQ-READY", "governance"),
                           ("WDQ-I03", "execution"), ("WDQ-REVIEW", "execution"),
+                          ("WDQ-COMPAT", "execution"), ("WDQ-RECHECK", "execution"),
                           ("WDQ-I04", "owner_decision")):
             step = deepcopy(template)
             step.update(id=sid, kind=kind, status="pending" if sid == "WDQ-I04" else "complete",
@@ -238,8 +275,8 @@ class PromotionCandidateTest(unittest.TestCase):
             lines.extend([f"<!-- REQ:{ROLLOUT}:{sid} -->", "REQ-" + sid, "DONE-" + sid])
         completion.update(steps=steps, canonical_next_step_id="WDQ-I04", delivery={
             "schema_version": 2, "contract_path": "contract.json", "checkpoints": {
-                "ready": "WDQ-READY", "activate": None, "verify": "WDQ-I03",
-                "review": "WDQ-REVIEW", "accept": None}})
+                "ready": "WDQ-READY", "activate": None, "verify": "WDQ-COMPAT",
+                "review": "WDQ-RECHECK", "accept": None}})
         self.f.write(doc, (self.f.root / doc).read_bytes() + ("\n" + "\n".join(lines)).encode())
         self.f.save("specs/active_frontier.json", manifest)
         self.f.write("specs/PROGRESS.md", render_block(manifest).encode())
