@@ -171,6 +171,7 @@
     "scripts/test_workflow_delivery_review_phase_capture.py",
     "scripts/test_workflow_delivery_roadmap_snapshot.py",
     "scripts/test_workflow_delivery_snapshot_capture.py",
+    "scripts/test_workflow_delivery_source_only.py",
     "scripts/test_workflow_delivery_source_scopes.py",
     "scripts/test_workflow_delivery_specification.py",
     "scripts/test_workflow_delivery_specification_capture.py",
@@ -179,6 +180,10 @@
     "scripts/test_workflow_delivery_transaction.py",
     "scripts/test_workflow_delivery_trust.py",
     "scripts/test_workflow_delivery_untracked_capture.py",
+    "scripts/test_workflow_delivery_workspace.py",
+    "scripts/test_workflow_delivery_workspace_authority.py",
+    "scripts/test_workflow_delivery_workspace_consumers.py",
+    "scripts/test_workflow_delivery_workspace_entrypoints.py",
     "scripts/test_workflow_rollout_contract.py",
     "scripts/test_workflow_rollout_mapping.py",
     "scripts/test_workflow_rollout_proposal.py",
@@ -245,6 +250,7 @@
     "scripts/workflow_delivery_roadmap_snapshot.py",
     "scripts/workflow_delivery_selector.py",
     "scripts/workflow_delivery_shapes.py",
+    "scripts/workflow_delivery_source_only.py",
     "scripts/workflow_delivery_source_scopes.py",
     "scripts/workflow_delivery_specification.py",
     "scripts/workflow_delivery_specification_input.py",
@@ -255,6 +261,8 @@
     "scripts/workflow_delivery_tree.py",
     "scripts/workflow_delivery_trust.py",
     "scripts/workflow_delivery_trust_test_support.py",
+    "scripts/workflow_delivery_workspace.py",
+    "scripts/workflow_delivery_workspace_authority.py",
     "specs/rustfmt_exemption_manifest.json",
     "specs/workflow_delivery/rollout.environments.json"
   ],
@@ -771,12 +779,17 @@
         {
           "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
           "marker": "<!-- WDQ-INFRA-S05 -->"
+        },
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-WORKSPACE -->"
         }
       ],
       "preconditions": "Real isolated Git index, worktree and descendant/nonancestor candidate histories; recorded base and captured index identities.",
       "inputs": [
         "Stage a bad record and repair only the worktree; reverse the setup and compare requested snapshot behavior.",
-        "Exercise missing/nonancestor base, ignored input, deletion/rename, intervening add/delete/revert and merge-parent changes; compare current selector diagnostics separately."
+        "Exercise missing/nonancestor base, ignored input, deletion/rename, intervening add/delete/revert and merge-parent changes; compare current selector diagnostics separately.",
+        "Execute every additional workspace compatibility condition in WDQ-INFRA-WORKSPACE, including proof-closure preservation, genuine legacy-cache lifecycle and renewed independent real-workspace publication inspection."
       ],
       "expected_visible": "Staged validation uses staged bytes; exact candidate validation accounts for every intervening protected path. Worktree diagnostics do not certify prior commits.",
       "expected_state": "No index repair, silent base fallback, history laundering or live shared-repository mutation.",

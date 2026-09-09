@@ -134,6 +134,43 @@ cannot erase a permission violation. The selector remains a current-worktree
 diagnostic, not a certificate for historical commits. Never mutate a captured
 snapshot as an automatic repair.
 
+<!-- WDQ-INFRA-WORKSPACE -->
+### Workspace compatibility proof within INFRA-S05
+
+Apply proposed PM042's `WDQ-042-WORKSPACE` boundary without weakening any original
+matrix case. In addition to uncovered ignored source, retain separately named
+compatibility observations for each of the following conditions:
+
+1. Clean strict-policy checkout, recurring verified caches at all supported
+   optimization levels, standard Beads runtime, and exact owner-local baseline.
+   Run actual CLI, selector and preflight; keep selected-index/history isolation.
+2. Candidate-only, changed, removed, malformed, executable or redirected workspace
+   policy refuses. Cache policy without verified fresh source-only startup refuses.
+3. Changed or deleted owner-local pins, unknown ignored source, cache lookalikes,
+   forged payloads and redirects refuse; restored reviewed inputs succeed.
+4. Legacy caches may be genuinely absent or regenerate into fully verified
+   current tracked-source output. Changed unverified bytes and false absence
+   through redirects refuse. Do not delete or regenerate real owner caches to
+   construct these cases; use owned isolated fixtures.
+5. Captured bad local/cache bytes cannot borrow temporarily qualifying live
+   bytes, and captured missing owner files cannot borrow later restoration.
+   Preserve the complete before/after state and cache-source identity.
+6. Proof roots retain owner-local files, legacy payloads and Beads data. A cache
+   whose source is outside the proof closure stays an input. A pinned runtime
+   file inside existing proof roots must stale older proof through the actual
+   CLI and selector; workspace eligibility is not product input irrelevance.
+7. Observe the actual Datum ignored-workspace inventory read-only; distinguish
+   derived files from the exact proposed legacy/local pins. Reproduce that mixed
+   state in the real-roadmap fixture without changing another lane or deleting
+   files to recover a passing check. Preserve both clean and mixed-state results.
+8. Independently repeat the supported entrypoints and renewed exact publication
+   inspection against the reviewed policy, source and input identities. Retain
+   refusals and corrected attempts; no old proof certifies changed requirements.
+
+These additional observations belong to INFRA-S05, not a substitute scenario or
+product cohort. Existing 62 matrix identities and all their surfaces remain
+required. Activation, installed verification and native adoption remain separate.
+
 <!-- WDQ-INFRA-S06 -->
 ## INFRA-S06 — trust, correlation and recovery
 

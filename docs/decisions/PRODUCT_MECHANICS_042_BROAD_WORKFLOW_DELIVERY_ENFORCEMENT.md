@@ -92,6 +92,77 @@ changes. Current permissions apply to that path union. This does not authenticat
 past authors or infer expired claims from timestamps, and a clean new transaction
 does not certify earlier bypassed commits.
 
+<!-- WDQ-042-WORKSPACE -->
+### Preserved workspace state is not source permission
+
+Schema-2 installations may carry the fixed data file
+`specs/workflow_delivery/workspace-inputs.json` in the externally selected
+authority commit. Its absence retains strict enumeration; candidate-only
+addition, removal, changed bytes, executable mode or redirection refuses.
+Do not infer this policy from Git ignores, proof content, environment variables
+or an automatic inventory. It is part of the exact owner-reviewed promotion
+packet, not an independently writable source of exemptions. Schema 1 is unchanged.
+
+The closed shape is `{schema_version: 1,
+kind: "datum.workflow-delivery.workspace-inputs", local_files, python_caches,
+beads_runtime}`. `python_caches` is `none` or `verified-source-v1`;
+`beads_runtime` is `none` or `standard-v1`. Each local-file record has exactly
+`path`, lowercase SHA-256 `sha256`, nonnegative integer `size`, integer permission
+`mode` in 0..0777, and `category` (`owner_local` or `legacy_python_cache`). Boolean
+integers, duplicate/non-normalized paths, Git metadata and local pins under
+`.beads/` refuse. Legacy pins name non-executable CPython `__pycache__` files.
+An inventory observation is not approval of those identities.
+
+An `owner_local` pin remains a required regular, nonredirected file with exact
+bytes, size and mode; missing files must not escape detection through enumeration.
+A legacy cache may retain its exact reviewed identity, genuinely be absent, or
+become fully verified current-source cache output when that policy is enabled.
+Absence through a symlink, broken redirect, special file or read error is not
+genuine absence. Any other changed cache remains an input. This rule authorizes
+no deletion, regeneration or relocation of owner files or runtime data.
+
+Verified cache output requires the current interpreter's standard cache tag,
+magic and supported header flags, a tracked regular source, and exact payload
+bytes equal to newly compiled source at the stated optimization level. The
+comparison never executes or deserializes a cache payload. Bound cache/source
+reads to 8 MiB; other files remain inputs rather than acquiring an exception.
+Unknown files, payloads and redirects do not qualify by extension or filename.
+
+Cache classification requires verified source-only startup of the supported
+fresh gate process before repository imports. Authenticate the running gate
+source through existing owner-selected trust; observe its actual source loader
+and matching finder, not a candidate-provided Boolean. This does not certify
+arbitrary embedding hosts or product subprocess imports. Explicit loader calls,
+already imported modules and independent product execution need their own input
+review; gate-process cache isolation is not universal runtime isolation.
+
+Standard Beads runtime comprises only regular non-executable `.beads/beads.db`,
+its `-wal`/`-shm` files, `.sync.lock`, `.write.lock`, `last-touched`, and anchored
+`.br_history/issues.YYYYMMDD_HHMMSS_<digits>.jsonl` names with optional
+`.meta.json`. Canonical `issues.jsonl`, configuration and unknown files remain
+inputs. These classifications never delete data, grant a claim or bypass Beads.
+
+Coverage and preflight may recognize this unchanged owner-pinned workspace state.
+Tracked paths and explicitly named file inputs always take precedence. Index and
+commit/history checks never use local worktree exemptions. Preflight retains the
+complete protected-state capture; every exemption must match the exact captured
+bytes, mode, size and kind used for classification, including the source of a
+verified cache. Repeated state checks and owner-coordinated writer pause remain
+mandatory; a captured bad file cannot borrow temporarily qualifying live bytes.
+
+Proof manifests have a stricter boundary: retain owner-local files, legacy cache
+payloads and Beads runtime whenever declared input roots include them. Only a
+verified-source cache whose source is also in that proof closure may be omitted;
+an explicitly named cache remains an input. Pinning workspace bytes does not
+prove that a product process cannot consume them. Do not narrow proof roots to
+hide a freshness refusal. Actual product-native proof obligations are unchanged.
+
+The real installation's reviewed baseline and these rules must receive renewed
+producer and distinct independent compatibility evidence before I04. Prepared
+code, a local-state inventory or a passing unit test neither ratifies this
+amendment nor activates it. Preserve all prior failed inspections and original
+proof identities; changed source and requirements need newly identified evidence.
+
 <!-- WDQ-042-AUTHORSHIP -->
 ## Specification completion and unresolved choices
 

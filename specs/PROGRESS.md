@@ -193,6 +193,14 @@
 
 ### WORKFLOW-DELIVERY-IMPLEMENTATION — prepared infrastructure contract
 
+WDQ-COMPAT candidate preparation adds the proposed PM042 fixed workspace-policy
+shape and explicit INFRA-S05 compatibility observations, preserving actual proof
+inputs and normal derived-cache lifecycle. The read inventory now includes 160
+implemented inputs; exact real policy data and full publication/source-permission
+reconciliation remain due. Regression evidence is not renewed producer replay,
+compatibility acceptance, ratification or installed enforcement. The canonical
+Frontier, not this preparation note, controls current task selection.
+
 | Governed documents | Current evidence | Remaining boundary |
 | --- | --- | --- |
 | `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json` | WDQ-TOOLS has real-roadmap pilot-preservation captures on all five entry operations (`824cab16`). Owner approved bounded source/named-tool verification on 2026-09-08; exhaustive descendant/runtime-library tracing is no longer required. | `dat-wdq-rollout-implementation-ffy` remains open. Bounded input review, complete matrix, readiness, producer proof, independent replay and exact owner activation remain due; product-native evidence is unchanged and no installed enforcement or acceptance is claimed. |

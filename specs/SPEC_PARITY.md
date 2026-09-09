@@ -21,6 +21,7 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 
 | Inventory | Owner Spec | Count | SHA256 |
 |-----------|------------|-------|--------|
+| `workflow_delivery_workspace_policy` | `docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md` | 0 | `01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b` |
 | `workflow_delivery_contract_instances` | `specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md` | 5 | `a5c1b833847642f6af4a02f1ab6009b2fcba3cae888591caccd713b66567f341` |
 | `workflow_delivery_environment_selections` | `docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md` | 1 | `83d98507425c278c19ece414d87863a1218cb07757048ef90e67e2180d2d9399` |
 | `mcp_runtime_methods` | `specs/MCP_API_SPEC.md` | 190 | `f9cd8102aff153cd4c9f3a86ecc501fc99aac66d41010eb8d33309740e5b48f5` |

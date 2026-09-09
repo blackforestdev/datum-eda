@@ -102,6 +102,20 @@ def read_stable(file, *, limit):
         return None
 
 
+def genuinely_absent(root, name):
+    path = root / name
+    try:
+        path.lstat()
+    except FileNotFoundError:
+        try:
+            return path.resolve(strict=False) == path
+        except (OSError, RuntimeError):
+            return False
+    except (OSError, RuntimeError):
+        pass
+    return False
+
+
 class WorkspaceInputs:
     def __init__(self, root, policy, tracked_paths, *, cache_isolated=False):
         self.root = Path(root).resolve(strict=True)
@@ -130,7 +144,9 @@ class WorkspaceInputs:
     def require_pinned_presence(self, *, captured_files=None):
         # Enumeration omits deleted files. An exact local baseline must not
         # silently become optional merely because a pin no longer appears.
-        for name in self.local:
+        for name, row in self.local.items():
+            if row["category"] == "legacy_python_cache" and genuinely_absent(self.root, name):
+                continue
             require(regular_file(self.root, name) is not None, name,
                     "required pinned local file is missing or redirected", "WDQ-WORKSPACE")
             if captured_files is not None:
@@ -166,7 +182,11 @@ class WorkspaceInputs:
                     and self._captured(name, file, raw, captured_files)
                     and hashlib.sha256(raw).hexdigest() == row["sha256"]):
                 return row["category"]
-            return "input"  # Changed pinned files cannot fall through to an exemption.
+            if (row["category"] == "legacy_python_cache" and not mode & 0o111
+                    and self.policy["python_caches"] == "verified-source-v1"
+                    and self._verified_cache(name, file, captured_files)):
+                return "python_cache"
+            return "input"  # Owner files never acquire a derived-cache exception.
         if (self.cache_isolated and self.policy["python_caches"] == "verified-source-v1"
                 and not mode & 0o111 and self._verified_cache(name, file, captured_files)):
             return "python_cache"

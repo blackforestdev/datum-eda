@@ -2,6 +2,14 @@
   "version": 1,
   "inventories": [
     {
+      "id": "workflow_delivery_workspace_policy",
+      "kind": "file_glob",
+      "glob": "specs/workflow_delivery/workspace-inputs.json",
+      "owner_spec": "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md",
+      "notes": "Proposed fixed-path workspace policy inventory only. Shape, owner authority, input relevance and compatibility proof remain separate checks; no policy instance or approval follows from registration.",
+      "planned_shapes": ["WorkspaceInputsV1", "WorkspaceLocalFileV1"]
+    },
+    {
       "id": "workflow_delivery_environment_selections",
       "kind": "file_glob",
       "glob": "specs/workflow_delivery/*.environments.json",

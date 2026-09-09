@@ -278,3 +278,33 @@ arbitrary host-library substitution. Source/data/fixture inventory, every named
 tool actually used, the case matrix, independent replay, product/native evidence,
 and exact I04 owner activation remain required. This approval does not ratify
 the complete PM042 activation packet, complete a checkpoint or approve a product.
+
+## WDQ-COMPAT — preserved workspace and proof-input review
+
+The actual final-publication inspection exposed a workspace mismatch: broad
+ignored-input enumeration refused the unchanged owner GUI runner and ordinary
+Python caches, and publication preflight also refused Beads runtime. The owner
+authorized bounded repair, not cleanup, activation or new product authority.
+Read-only inventory at main `b726cb6972148a6727971eed3e38066af543d4b3`
+found 205 named Beads runtime files, 227 byte-verified current-source caches,
+23 unclassified caches and the unchanged local GUI script. These observations
+identify review inputs; they are not permission to exclude them.
+
+The proposed PM042 workspace section separates exact owner-pinned local state,
+derived runtime classification and actual proof closure. Source-only gate
+startup prevents cache consumption by supported fresh gate imports; it cannot
+establish irrelevance to independent product processes. Distinct inspection
+identified two defects in the developing candidate: snapshot/live substitution
+and proof exclusion based only on workspace eligibility. The corrected design
+binds exemption bytes to captured state and retains local files, legacy payloads
+and Beads data inside declared proof roots. Only verified-source cache output
+with its source in the same proof closure can be omitted there.
+
+Normal cache lifecycle is distinct from required owner files: genuinely absent
+legacy caches or fully verified current-source regeneration do not imply source
+mutation permission. Malformed replacements and false absence still refuse.
+The implementation's regression tests support this design but do not replace
+the newly required actual compatibility observations, final input/permission
+reconciliation, distinct replay or exact I04 owner ratification. No owner cache,
+local script, Beads runtime, prototype or Preferences record was changed to
+manufacture compatibility. All native adoption obligations remain intact.

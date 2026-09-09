@@ -172,6 +172,26 @@ class WorkspaceConsumersTest(unittest.TestCase):
         names = {row["path"] for row in self.tree.manifest(["src/__pycache__"], workspace=self.workspace)}
         self.assertEqual({"src/__pycache__/" + Path(self.cache).name}, names)
 
+    def test_legacy_cache_absence_and_regeneration_preserve_normal_lifecycle(self):
+        cache = Path(self.cache)
+        name = cache.relative_to(self.f.root).as_posix()
+        cache.write_bytes(cache.read_bytes()[:16] + b"old reviewed payload")
+        self.policy["local_files"].append({"path": name, "category": "legacy_python_cache",
+            "sha256": hashlib.sha256(cache.read_bytes()).hexdigest(),
+            "size": cache.stat().st_size, "mode": stat.S_IMODE(cache.stat().st_mode)})
+        self.workspace = WorkspaceInputs(self.f.root, self.policy, self.tree.entries, cache_isolated=True)
+        cache.unlink()
+        self.assertEqual([], self.changes())
+        self.assertFalse(self.inspect()["publication_authorized"])
+        py_compile.compile(str(self.f.root / "src/read.py"), doraise=True)
+        self.assertEqual("python_cache", self.workspace.classify(name))
+        self.assertEqual([], self.changes())
+        self.assertNotIn(name, {row["path"] for row in self.tree.manifest(["src"], workspace=self.workspace)})
+        cache.unlink()
+        cache.symlink_to(self.f.root / "missing-target")
+        with self.assertRaisesRegex(ValueError, "missing or redirected"):
+            self.changes()
+
 
 if __name__ == "__main__":
     unittest.main()

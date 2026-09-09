@@ -131,12 +131,14 @@ class WorkspaceInputsTest(unittest.TestCase):
         path.write_bytes(path.read_bytes() + b"changed")
         self.assertEqual("input", reader.classify(name))
 
-    def test_changed_pinned_cache_cannot_fall_through_to_generated_rule(self):
+    def test_legacy_pin_may_transition_only_to_fully_verified_derived_cache(self):
         path, name = self.cache()
         self.pin(name, "legacy_python_cache")
         reader = self.reader()
         raw = path.read_bytes()
         path.write_bytes(raw[:8] + b"12345678" + raw[16:])
+        self.assertEqual("python_cache", reader.classify(name))
+        path.write_bytes(raw[:16] + b"unverified replacement")
         self.assertEqual("input", reader.classify(name))
 
     def test_beads_runtime_can_change_but_canonical_and_unknown_files_stay_inputs(self):
