@@ -54,6 +54,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/i03-closeout.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-I03 exact producer candidate and verification handoff. Not independent review, owner activation or product acceptance."
+    },
     "docs/reviews/workflow-delivery-rollout/readiness-review.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
