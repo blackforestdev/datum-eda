@@ -1,0 +1,4575 @@
+{
+  "main_head": "f94f57f0e210b7ab84a2b53a04b84af10d959ba4",
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "counts": {
+    "beads_runtime": 205,
+    "python_cache": 227,
+    "legacy_python_cache": 23,
+    "owner_local": 1
+  },
+  "files": [
+    {
+      "path": ".beads/.br_history/issues.20260908_041542_913154001.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 507596,
+        "sha256": "85d1add360e9d021eaf7134470c8e3f8646a906c4331c3e168d7b2f7960d0a55"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_041542_913154001.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_055837_392271502.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 507570,
+        "sha256": "b69b2908405613f94b74ea1cac850c0cfd1d1e4a2c9f29ef8efb876449f1091f"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_055837_392271502.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_060046_780607507.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 508216,
+        "sha256": "d18a75756c4789eda3a0fc4b74523d7ed2c6dd231b3c365f8995ea4746a34dd1"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_060046_780607507.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_060207_091259445.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 509343,
+        "sha256": "6db76eb9c1d9db59af449cd36beb0097ca51d32390197ae4fd6cb6f145257aa3"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_060207_091259445.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_060538_223151520.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 509779,
+        "sha256": "50b603ea5aa7ac47e63b17ed2f47a24cd08996a1e4d7c20b5f210503a3318223"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_060538_223151520.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_061258_674460525.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 509805,
+        "sha256": "55c93bc06e50a24701f61f5b40f044bb3baa0e975a31f8f1847376de4b3b003a"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_061258_674460525.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_061708_952039260.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 510862,
+        "sha256": "6e7a32031f6b80965baf9d3e78242d9e054fa59f37d64cf7bab667bb31e19fd7"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_061708_952039260.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_063028_423169977.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 513284,
+        "sha256": "c5dbf10a72a8bfb32fb6e0066abd4f3fa3da1ac4c0f208145e730069cefbdecf"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_063028_423169977.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_063904_949869982.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 513539,
+        "sha256": "c8bd40fa98992512a8b4b04bcbc3ebe8f370e602249ad1e9d4781c92a4f846cc"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_063904_949869982.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_064109_967184648.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 514482,
+        "sha256": "ebd652b9a0c8608c457fa7180c564402130e13b5910a0ed2deabe06824d2d91e"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_064109_967184648.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_064347_356956695.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 515299,
+        "sha256": "dfb9889a6fee8fd0aea9820a46c0353d0e65a160febdbf3e12169e87230edef1"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_064347_356956695.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_065219_735303286.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 515677,
+        "sha256": "d56f48469d1fb8af58042a32575686959fcf0068c41ae6a851fd3963c9878f41"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_065219_735303286.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_065643_012970091.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 516080,
+        "sha256": "c6a0e929c74134132d7094cc26ea45e8953e4e2ce0d2d5db46b98ccd495b0113"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_065643_012970091.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_070721_245492781.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 516094,
+        "sha256": "c0701104fccd0093f666b2066673497d243347e703426b16e923455c62da8fe1"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_070721_245492781.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_071637_167209895.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 516102,
+        "sha256": "5ad268090d0c9f77b22cbfffaf2ba955bdf2882adac67daa6f26e9505077439e"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_071637_167209895.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_072619_724333306.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 516091,
+        "sha256": "3278b316bf113ec4e9c8637e769d81af981acfa37536b33ac4b3ee2c039dd1b1"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_072619_724333306.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_073044_964437902.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 516155,
+        "sha256": "0eb0facbc8501ba72ff5b4c0a8d12dc55a94132f6f29b86eae32f468a76e4b0f"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_073044_964437902.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_074056_089757520.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 516253,
+        "sha256": "aebdf5869918de3488642e01b3119d52c9a980b8567b1b6c3b3fdceb508fbae8"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_074056_089757520.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_075339_484947512.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 516245,
+        "sha256": "c57d72a81e02a2b714ca2213c202d3dcdcf8d37cc4bd0554e4b3002376ba8586"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_075339_484947512.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_075804_505726074.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 516297,
+        "sha256": "7d04018f3d54551c0df29ceb03883247d86e5126fe48095b964bd2507346272b"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_075804_505726074.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_080841_777316669.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 516276,
+        "sha256": "28b58b8c54f68ba7ccc8564c5779568e53da3796ceb8a26285e63973ef7777bb"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_080841_777316669.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_082012_650580698.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 516243,
+        "sha256": "3faadd6e0ca2f8c3ac5a2bc438a778c64c4f10d423e88bc0fed51c28ed7a8d99"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_082012_650580698.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_083125_713004626.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 516309,
+        "sha256": "5d59e7041db0f01beb8310f149461351574f45510c7dec6bda042b75f7412781"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_083125_713004626.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_090251_826898533.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 516451,
+        "sha256": "570437edd48c99bbd9618aab0589016863547ccdd35db54cb0cd52840ffb5666"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_090251_826898533.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_090301_413291046.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 517854,
+        "sha256": "84c52eb4e9bff1b5b27c430421314d632df98c2dd8ed3192a593b7f05161c109"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_090301_413291046.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_090437_232368316.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 518080,
+        "sha256": "a483c47e4b45b35b6516e1e1f8ace401add38eb51dcd24100e6b5fac3ca85b6a"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_090437_232368316.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_090449_851007973.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 519126,
+        "sha256": "e930178ecbb23febd7ead5e381221314fc9e457deca73818307537c191cc4765"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_090449_851007973.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_090857_562584937.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 519355,
+        "sha256": "f4baee820900eae6bf325c4eb245586fb8b215f2c26dd95f7fe7b28164e35e27"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_090857_562584937.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_091019_876997340.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 519751,
+        "sha256": "987af9e7ad940f399fa900b938933ca19fd8928d67991601ec81aecb596823b4"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_091019_876997340.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_091625_607828807.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 519779,
+        "sha256": "9efe6d96ddd45f351b697aaca0e83a9aae3c8e9884812ef65068a63a8f015438"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_091625_607828807.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_091929_862805429.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 520496,
+        "sha256": "be1170a25dca5584b520f90324fb18c04c3ba80a3f4b3c7940f10f523cbab789"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_091929_862805429.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_092446_193506106.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 520942,
+        "sha256": "b620c6ecf922b070a8a0a0faafc1854444acf4154e8fa65888427b076b4b50e3"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_092446_193506106.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_092727_399920082.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 520504,
+        "sha256": "5ebb68700dae90244d8810b921665aa3752df996f0d75926f66bea05bfce4230"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_092727_399920082.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_093310_210656252.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 520536,
+        "sha256": "38b983cff45b6e32a64b7c7f00daac8c388157958150677663e717fae975fc3b"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_093310_210656252.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_093540_761687806.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 521575,
+        "sha256": "0dca997244f2f3d40adab952de04bae12bda6ea4f8344848226e06eef975351c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_093540_761687806.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_094157_043769279.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 522150,
+        "sha256": "4c2f6bdabe34aa54f7b230fd9bce5298631f50ad0f9fdc67c0df2f9849e93c09"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_094157_043769279.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_094350_652666640.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 522242,
+        "sha256": "87ed1a1b8044b7f596bb5b7549e42d9dfb6ea526df0ff3f26a066146c5b89722"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_094350_652666640.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_094815_899485860.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 522567,
+        "sha256": "18011c62243f0f3765ce750721a47b60e53b1ec3dd047ce7490131ac997a620c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_094815_899485860.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_095005_674440307.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 523169,
+        "sha256": "25272d893008b4d8d037d30fe83b7e9162999b46cd2e38c8099fd3ec78c537a2"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_095005_674440307.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_095222_688872576.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 523233,
+        "sha256": "7109b49f544b8c532060b15e55eb3b7ac658ed7181ff7a90934878b61ee1b8d2"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_095222_688872576.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_095510_736974201.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 523693,
+        "sha256": "fb722947bd511de251c240d209b98a855c74bba687239c97cb9f9adfc1e447d3"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_095510_736974201.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_100225_437731760.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 524053,
+        "sha256": "f72702b52ff653026c4196398cdb0f512213cb443d01436f5b4b5a62f0a3c549"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_100225_437731760.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_145327_367659197.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 524398,
+        "sha256": "f462358de71451c49d7f94d8f1bca20c5be90b645a2ebd7017a9a1b577f35346"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_145327_367659197.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_145811_376309724.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 524398,
+        "sha256": "0ea8ac36a3842d84b6c6f7d2dceed43494ac4b3f1945d156437f8b86709ba679"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_145811_376309724.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_150110_381326884.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 524564,
+        "sha256": "20c0373b52f44bc549fcf34a20895203ecde123872a368899c2c368086f2e501"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_150110_381326884.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_150123_490834585.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 526422,
+        "sha256": "3d4a051bee92ed4ba7d526e7d7352be1ca49fb6b12ee981b66035c0ceefe241c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_150123_490834585.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_150152_825065545.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 527285,
+        "sha256": "f343d17ce72bfb1939eae6d6549867c4f8b5afa8c100e02d101ba5b0eed2c527"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_150152_825065545.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_150619_627269241.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 527334,
+        "sha256": "5e59af2bf8c1352e003793f13aea5e04c603e7cac04a4f8a704e1458eff5c22c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_150619_627269241.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_152940_383566628.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 527946,
+        "sha256": "b728b7d15b75640195fd9c43ac15fdc91f932b2b5fde6b24c1b70f2f30d5de64"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_152940_383566628.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_153008_345173147.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 529021,
+        "sha256": "4b2c03ab4d2819c3425792654ce9334c042ff00aabdf413ed6d1080bc9d8a092"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_153008_345173147.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_153215_166056369.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 529214,
+        "sha256": "14071894a4492a1eda163189656d5d304622a0d4d9a1ede6bd4dcda18454a0d6"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_153215_166056369.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_163741_738782605.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 529713,
+        "sha256": "e0a9607d745c4a310a05c0ab2bd3a50d30224007620a572e1940c4e431b6b4d5"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_163741_738782605.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_163757_570850606.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 530636,
+        "sha256": "114faa784af7422b63a78e7930422a6b6d032a2e398bf2c98128d12db1b7c370"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_163757_570850606.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_164420_033333669.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 530874,
+        "sha256": "ae1080f2043dcbb361ad834d5683e9a9b920a22755c8430ae7217f8e648fd73e"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_164420_033333669.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_165505_532247115.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 531276,
+        "sha256": "4f614690216c22a1e371e0530ee5dbf61f6320285f87e85617d84832d5f1af78"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_165505_532247115.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_171724_373760611.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 531417,
+        "sha256": "1558454122efecbc41e975279ff7fff9748a748790a56773fb964ee1ea4c1178"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_171724_373760611.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_171735_042296184.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 532904,
+        "sha256": "9bbfed170929da5dfd437876eb1e16240aa22d18a8d6809b4eb248f685b8ef84"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_171735_042296184.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_171831_663690832.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 533132,
+        "sha256": "057270704d5173693a0df95a0dcb26f0bd867776e9c8e8d4937642b6094b4ac8"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_171831_663690832.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_224903_317931826.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 533182,
+        "sha256": "fc896dea0532990d5fb42805f7961966e040cf037dd8250291e05234324719af"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260908_224903_317931826.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_024657_587424227.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 533182,
+        "sha256": "e5c6907a1f19a5d194e1f8e1afeda398187b70a7c70fd9b574568e1dac126fa0"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_024657_587424227.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_025344_973037443.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 533163,
+        "sha256": "7e180a1b110b7ebce4c1bbe22fca2da64d5c1acafda1147086a1a661fb805827"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_025344_973037443.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_041013_690309717.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 533175,
+        "sha256": "4b747d4a8704aee27a9a156d2bf30be551541cbc7d167e34958c1e5a2c4b43c8"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_041013_690309717.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_043055_572669844.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 533307,
+        "sha256": "6a24a65ce3b73fa3946227bc159d7f753be1405e87e19a0630960eb95b5fa43d"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_043055_572669844.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_043103_096713516.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 534485,
+        "sha256": "78a8fc7bc75e5d3fd11b268970c9c49367be1528c1ae6c5bd563f11e0b986ab4"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_043103_096713516.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_043200_933991129.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 534720,
+        "sha256": "6e530d2def422fee4b13db5f51fc9c03082950f9a7cbd75c05260556e74e8561"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_043200_933991129.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_043734_446928439.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 534748,
+        "sha256": "d9a25e4cdb40beb8b82015017bbed10f7c39fc12cd8a516921f61894d2c87fd6"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_043734_446928439.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_043800_091700735.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 535961,
+        "sha256": "47e2d889ef0f8f7e819d7bb5a975417e89916d0a6856905089eea18db2e3ee8b"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_043800_091700735.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_051434_103753113.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 536192,
+        "sha256": "d29ab3eeb950d57fbf346903d3967c544c85f73ce035e9de36ed4fb5b4e34b46"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_051434_103753113.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_154450_210337477.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 536290,
+        "sha256": "9da566f772e352a7f71dc016e62227c7631245350e88adeaacde5a57f6761922"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_154450_210337477.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_155241_969732114.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 539877,
+        "sha256": "e83e29f3d25366f690ef51fc7606d26546b3301cd4290a0fb9596fb7510579e8"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_155241_969732114.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_155441_535861830.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 541738,
+        "sha256": "5d9a236dccf30d65d15f3cb3a9725ea88fcc303c43119242a5eb68e1363583c8"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_155441_535861830.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_155653_692283345.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 541749,
+        "sha256": "2f48a73780b40d9595125f58c2dd9f36dfd1550dd85df2a16b6df9846a829b13"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_155653_692283345.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_170904_919163936.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 542622,
+        "sha256": "b559d6dc6a18c81e82feeba026182b0b75beedd528126ac5ac8bd691e2de8dc2"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_170904_919163936.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_172137_345316677.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 542343,
+        "sha256": "204fa663e0a8b11197fa4309fd8671c09d1b3bb929d5505d5ca24de82c1dc133"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_172137_345316677.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_174033_946964913.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 542200,
+        "sha256": "86a79eb4940f2438c53e7cb97bdcefefcb8cae0fa8ff25a6d6fae97ed5aa0718"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_174033_946964913.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_174345_759863319.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 543066,
+        "sha256": "234b61a7e35d9a29b084a2c377f253a9638aa8ce939d9ac99c10ab5b256c4779"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_174345_759863319.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_175229_047818829.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 543708,
+        "sha256": "483d4fe1d8b67b9bcb9f20633712a0f20812147ccbd2c07a0eeaace24690453d"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_175229_047818829.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_180007_462711560.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 544419,
+        "sha256": "4a64cf091b47e7236bf59248264130cc0cadba6635d1a67f099bdeca7d2e1a08"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_180007_462711560.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_181210_577826280.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 545297,
+        "sha256": "0042317c081fd8d031420c557c0e7193a34a72d7d17b12fe633b7b6c8d624824"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_181210_577826280.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_182203_208114110.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 546167,
+        "sha256": "dd16aac68d86772c05df6ab4b65afe1076ae5e391471c981e81729750cc286dd"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_182203_208114110.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_182557_706554048.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 546736,
+        "sha256": "2ac35358b6e09979deeb612bd6bce220e50e96ead23c9933a03d0c5f0d2f9f73"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_182557_706554048.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_183003_583645129.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 547291,
+        "sha256": "ffa3aab3f87b83ff728b400ee496f3fa08837fa5adb066abfa9e7bad66a4cd6b"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_183003_583645129.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_183319_295172961.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 547811,
+        "sha256": "f819123cf72676231f25a04081a63200b08fbf6f1e3a001148123994d1620826"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_183319_295172961.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_185305_862229202.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 548395,
+        "sha256": "b263dc412920f48e954668c5c0356143a7e4fe3d7a106eb010e2ce1969af79a1"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_185305_862229202.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_185547_023137554.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 548964,
+        "sha256": "6584fcc5d66464e8ed449b62465f74441eda3bbf84cf6c470b39bd657a42e23b"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_185547_023137554.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_185926_981703885.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 549531,
+        "sha256": "7bfafc08577f52531adfb578d25b324b2c716b06cd2307b43688ca5f000b3185"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_185926_981703885.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_190202_704738136.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 550119,
+        "sha256": "d683ad20c4a393b8d9bb64bf26119169ce8e14676f51c3c168be9cf8c680426a"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_190202_704738136.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_190521_297372302.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 550751,
+        "sha256": "2ea039d49aca02d32fdf44da351b6b4bcf706c6a6687b12edf656f7236c05af2"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_190521_297372302.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_190806_983374656.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 551379,
+        "sha256": "9bb692466dfc842f209cc5c7f47ab7207c991c8ec7dab62c62b6855eeb40fe54"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_190806_983374656.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_191223_469623455.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 552007,
+        "sha256": "a3a9fd2e8f885cf4e2aff3c3b399e03df2c28f059644fe9e87645c9f08156821"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_191223_469623455.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_191635_468207748.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 552688,
+        "sha256": "7138e9dd4b958ac9173cc8e6ce1035371011556775ddc5d7108f4c89fac429fe"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_191635_468207748.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_192556_120450870.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 553416,
+        "sha256": "9c46482a8a8046bb6f0aff99cfbb357d1b934b7d47e97e0a09a24642040741f5"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_192556_120450870.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_192953_149014569.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 554023,
+        "sha256": "d102a01baa778a11b9f00cc375f5f898adf944253688a192872145ffd4bc55ff"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_192953_149014569.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_193043_410679061.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 554627,
+        "sha256": "b8e8f6f43d0b2c3026d51b9ede7335e131f7de1b25fa7fb631f3f7e8b3656168"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_193043_410679061.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_193515_827489098.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 555158,
+        "sha256": "1e69dfff973dd5a883214a2e29979a4fbb2923a4916321d66b2e095f04191ee3"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_193515_827489098.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_194018_916036513.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 556021,
+        "sha256": "b950a4308e683d01285fa7394d8ef661315884f5c6532a99e6d3d864a9e3ca2d"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_194018_916036513.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_194209_372894770.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 556124,
+        "sha256": "463c7d903e9ead6f986dedf14ea694cbb403083ac1abaf67e1dae98f72cf19c6"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_194209_372894770.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_195610_922418194.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 556781,
+        "sha256": "12e052700583eee98c536197129827f9cf01d4db16d97499eb7d026b99a5e7ac"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_195610_922418194.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_200028_490269634.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 557555,
+        "sha256": "695f5d5763c19063d65b45b596ec822d6f8d19d26e9590bc73d00ff67e290118"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_200028_490269634.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_200743_539494769.jsonl",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 558127,
+        "sha256": "334f1f40faea728ea79479fd027aabc36cef26e69a47cc3159253f04c91d00aa"
+      }
+    },
+    {
+      "path": ".beads/.br_history/issues.20260909_200743_539494769.jsonl.meta.json",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 52,
+        "sha256": "fec26c7e99d0d35b02d11b15c2cfff58d0876308149c32e3f8e1fee30463eb4c"
+      }
+    },
+    {
+      "path": ".beads/.sync.lock",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": ".beads/.write.lock",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "path": ".beads/beads.db",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3874816,
+        "sha256": "6aaf3ef96071cd85e2f92f485e4acb5537f4d99901fc232d7d0e239abb9fb0d1"
+      }
+    },
+    {
+      "path": ".beads/beads.db-wal",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 32,
+        "sha256": "9882a53e8035af6dc841c2bdc1e58abd724291fae8aeadb962746b713cc71667"
+      }
+    },
+    {
+      "path": ".beads/last-touched",
+      "category": "beads_runtime",
+      "state": {
+        "kind": "file",
+        "mode": 384,
+        "size": 29,
+        "sha256": "eed9789d63713ea544c9e5b8a700ba4c50c8837778d2fb226cd8ced4f4ef3234"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/agent_audit.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 10165,
+        "sha256": "4a023bae635707b40b01aa74f3f6d605b68f7417c6406f7bff937d99abed2363"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/agent_authority_test_support.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 2500,
+        "sha256": "7064a3f125b8e62d97b813bdee9010d237908239a32b71c6ec5cdeb6a0d0a97e"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/agent_capability.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11142,
+        "sha256": "293464f9675708a3daa9f63503ba43ef07238ce48bafc0f836a3165e7be6f13a"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/agent_session_authority.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8530,
+        "sha256": "3949e959904e7b6bb00e5d223f12b51d8edb72fae3f0016367cbd8591ac115b3"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/context_revision_fence.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 10677,
+        "sha256": "9ef9381a7bff63c62229c0f7c63bb0ecd29359c535e255423a004131a8d22b3f"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/daemon_client_artifact_generate_request_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 1946,
+        "sha256": "f8c4c6874cd253741b8771bfca4f9fdb8499fe68a6e0f8a5fdb95799950d661b"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/daemon_client_check_request_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 9074,
+        "sha256": "14a6b426cda96231cef5e146979bbc0c0f1aad54d815aac37ea23221daf043b3"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/daemon_client_datum_taxonomy_request_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6356,
+        "sha256": "47efaaaec340e8d06871a41236d4c73f5f045ed2c83b02c8f3539909647052c3"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/daemon_client_import_map_request_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 1703,
+        "sha256": "66fcfb857fb9f581d73cccbcedbca4415678a4ef40d5ed0ddfdbe228e27c17ae"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/daemon_client_journal_request_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5470,
+        "sha256": "14169847c60e7688d70019f1657171157fdd0e65c5d409c5db2c7fccbd5a36d8"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/daemon_client_library_request_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 53971,
+        "sha256": "dad85b870d78be26fac9e36cf1fe79207aa750092c517845061212604751d9a0"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/daemon_client_manufacturing_proposals_request_tests.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7374,
+        "sha256": "4e5e7cb087c3a607e9800133198665d9fc4e2e6253332b623e414af0a61296a4"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/daemon_client_native_query_request_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7693,
+        "sha256": "cc1eb61797f0df68dc46e882732411e060f97f0df4f3b5b256f7ba2b1ecc30fd"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/daemon_client_proposal_request_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4158,
+        "sha256": "aaa3fb3b7f1b7636654058435f12c5eed62d1ac10d785d93984277e0c4bfb9d5"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/daemon_client_proposals_request_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 19230,
+        "sha256": "abcbdef86843fb96806194df1ef835cc880c5a5c4904295d3fb13bcbca9391bd"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/daemon_client_relationship_request_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 9362,
+        "sha256": "e079a9d5cac65f6413d5c71c56203dfa930a824701643fd1f51b8c28ce0bb903"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/daemon_client_request_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 97084,
+        "sha256": "04952a6cb43159dcf8a596a14c8ddd6da40d37ced5f7de4d3fe451486d445459"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/daemon_client_transport_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8913,
+        "sha256": "651ea3664a3c24368c3a05a7305ee7f23e35a7f7f4c4324c8b36e4c95156c598"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/datum_result_normalization.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 22932,
+        "sha256": "446d7907e8c420996fa1fcbe1f12b278069e1dc878af5f14a5ca5f33bce8a0d2"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/discovery_scope.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11105,
+        "sha256": "3312e0575b37b0542ba729834229ebb8cef0bfd7824363b3ccee707a644cfceb"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/dispatch_core_project_write_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8948,
+        "sha256": "4fe04666b2c1dac74250fa6dba978a81a679c3d324ea2b15c7846db079cf7880"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/dispatch_core_replacement_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8414,
+        "sha256": "3733fc88cb1dab5fdc0836716a65ac130ff79782ea2fa2f241cb7abf55a544d3"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/dispatch_read_surface_pool_candidates_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8062,
+        "sha256": "1f90ef287f6411fdfe80a383551be083aff132d8328dd39b68b747e92ab1b640"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/dispatch_read_surface_query_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11929,
+        "sha256": "d53f478bd79ce97993269bfd6d4fabd53ba73259b2820704a25ee74940c46f85"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/dispatch_write_basics_command_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4979,
+        "sha256": "0d88773e9cd45c77f1afaaef004e9a9006845292b7341bdad9bf6b4903b9cf6d"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/dispatch_write_basics_stateful_tests.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 15441,
+        "sha256": "21685d478389761472fddfa1bb97c939eb3a737af975c6a210633612a1bd4718"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/fake_daemon_support_base.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6357,
+        "sha256": "0f02e3cd8386e8fd46303a2e833894ad26d18571bd14046a351ae5aaa4e7e2db"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/fake_daemon_support_checks.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8080,
+        "sha256": "f85e028b17cd473d45bff7bda39260ad100a43777cb169b8f9ea383cb50a3767"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/fake_daemon_support_import_map.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 1429,
+        "sha256": "f4cf2e2a4588d100ff5ba560746e882a7040edac0e7031bd5de15223aed81f4a"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/fake_daemon_support_journal.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3763,
+        "sha256": "4a524a764b677cbd3f99cf86ef38520c15878af7c13611c196055e88e789f5bb"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/fake_daemon_support_library.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 41587,
+        "sha256": "4cbbe2cbdcf6829007287f4923f8fa8e8ca593aa6b0f176611057acbe1530d47"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/fake_daemon_support_mutations.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 59438,
+        "sha256": "c7fda1a8e57e218d842565034bcd3651b7d5fe8a0d902cf79d83045cd9ef92f3"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/fake_daemon_support_preferences.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3736,
+        "sha256": "7687831c48529f87f326d8c6c38c2dd010935d1d6b2e5ac196f6d232a7c97080"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/fake_daemon_support_proposals.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 35166,
+        "sha256": "628ff6833db6dc57308dc1b64c040c5586d11de8de63212cbbf83d3a42ac7d77"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/fake_daemon_support_queries.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 73131,
+        "sha256": "71e05fcbe5dffd3667b37a150bcb7ec07819dbf2d499cfc3adf50837eb8c94a0"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/fake_daemon_support_relationships.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5279,
+        "sha256": "175f9739c3185f9612c39274f05a0b34ab0e081bfd79ffdc77ddd63e04cc243f"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/fake_daemon_support_replacements.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4575,
+        "sha256": "925c53082f38f5c0666dcf7c8f799015b1883ce6eaf3316135128a16485b0de2"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/fake_daemon_support_units.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 1910,
+        "sha256": "8c55f6d21ab0bb4e68427f70c9b22289d9c9ffcda8bf90c2f9ab72f26b558fc3"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/library_authoring_methods.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 2472,
+        "sha256": "59880a315cd007ad9e06291481985ee1113d8d4e406e14bb073dabdc3eabe899"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/prompts_catalog.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 2794,
+        "sha256": "7f61325c127c4f6aa3d377709a66031240a81ea677f225fe1a1ef2f6f322c2d1"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/resources_catalog.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8565,
+        "sha256": "3f7515485ea432c2416505e028ecf45d8c3342df8bf0a56a5971e972ca6155e0"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/server.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3684,
+        "sha256": "0915e5e9a4c2106be9845980bc914efa65f7bd460e30df3e3409ad183b60e641"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/server_runtime.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 132042,
+        "sha256": "ec184e848fa78993880eeb3763fd0311139505491245cc0c65d092b7a65d942e"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/server_runtime_daemon_client_specs.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4609,
+        "sha256": "d0192175824f85adaec1cdb2c1089f37c64e2c576f4426f0cc89bc22ae57fbad"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/server_runtime_library.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 38761,
+        "sha256": "7623064382a77dcc1c30a83ba6bb3ad4994d7f8d2cc3d89d7d42a3338f416e4d"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/server_runtime_preferences.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 2633,
+        "sha256": "5ace7f44170bf66766d87815961d99dad33220d43d9f903df60587f02bca0a87"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/server_runtime_project_genesis.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 1248,
+        "sha256": "5821decf29dba3ed92759ce2e138b7d18dcc5b7b9260109f06ab78badb975682"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/server_runtime_project_query.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5106,
+        "sha256": "dbd896e0795467d643c50cdf511f269b381968794c58958a9acc398dcf9d8d30"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/server_runtime_proposals.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 32318,
+        "sha256": "0e8f8cfa0154d47311e5425cde3730aca61e2c13db7b96a754e8faeb993935c2"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/server_runtime_schematic_drawing.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6900,
+        "sha256": "7250b940fdf2ae0ecb4677a09095754267f5d2b0f131d8dc1222ca4c5d52bf59"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/server_runtime_schematic_sheet.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5111,
+        "sha256": "33522181f6017787fba57b174835c7cedbe3fca0933d95bff022f61bd420b1b9"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/server_runtime_schematic_symbol.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11900,
+        "sha256": "9f930f5ea09e243af06f58b8811cd34f1a8573e4dadcadfd7d42d2be27347299"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/server_runtime_units.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 2367,
+        "sha256": "98cb686146bc289b85d130b0bfa9ca6909b34baf526423bc6a9a9d06d9e4edef"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/stdio_tool_host.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 17696,
+        "sha256": "47d5fb5499f2fb96a02883f5c1786cff213ad50e52b0582943a2aa6a3b667f5a"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/streamable_http.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 10569,
+        "sha256": "129d14b454fc0ba845cdf4dfe2d091b411bc443f2b300fc3e6479dce9d911aa5"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_agent_capability.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 16302,
+        "sha256": "5b3e49752ec13d5a08d2dd9de72935f1741d2aca46241fea32341a0dc84a828d"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_agent_session_authority.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11676,
+        "sha256": "f36555440b23cf056d5a7d9282cbcdf27d2f99e8993f3d9dd08568e59c237b20"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_context_revision_fence.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 18044,
+        "sha256": "ecffcda46bccc065dcc95b5a9ff9cf2a33c6b7377884e493e3da88cdb8129f10"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_daemon_client.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 449,
+        "sha256": "759d6931e98848d11e7d798eb2ad0f21bc91ce6ef57a61a9285d34c8a92ecba8"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_daemon_client_manufacturing_proposals_request.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7326,
+        "sha256": "bbcaf4197cd1d4c38b7f762e21d50b498fa843e6b25ebbe9b060fd88c03b52d0"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_artifact_generate.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3387,
+        "sha256": "059545e70887b9788c206c2625ce42191893709fdc3a20b8e2a25f856c4f80f1"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_checks.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 13043,
+        "sha256": "8d8c3893372f6acd7850b3ff3cb8342f1eb67bf85788d5087add80d26d6f9b0c"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_context_active_commands.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6809,
+        "sha256": "36e9dcf55be5ea7d7d75f6ae7c0da05035fda1486a28c2d70fb1a7da73076cc3"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_context_session_events.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5822,
+        "sha256": "975b35c9919adf30bb40e34b12a56502f7ba0ac3d55deb48ac1df8263b2a4a0e"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_core.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 432,
+        "sha256": "eecb992957294ae4c5b6337841aa7d5a27523e620701824c13c2f02e12b4af10"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_datum_taxonomy.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 58313,
+        "sha256": "36724160cd8dbb60af84645bd602cd5313b1a784eb6ce4899c3df705726e08d9"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_datum_taxonomy_catalog.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8250,
+        "sha256": "a6247825008c89ab184f85181e6621b42f67d7f12e6dff2092792093a93c2f25"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_explain_violation.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4253,
+        "sha256": "c11c19587d3c8fb05bc735e1db1d5d8aed30645a32a11fc42a0182f86b448614"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_import_map.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 1618,
+        "sha256": "187e78c71f6f859caca073182b55e2946ca6b6f9a60c5e9c445930d32d05789a"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_journal.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4541,
+        "sha256": "bdf1143d14c2a509b489f65c8bbbdda1da095595a665a75d074f5664ef24f89f"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_legacy_route_canonical_aliases.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5435,
+        "sha256": "c9941b0ba14ca5af2014acb27f54bc198c45a3fa12d25eca882b5d4b40fcc4ef"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_legacy_session_canonical_aliases.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7059,
+        "sha256": "080b3c5510ba63df614a68ae2b0adede001eb05a47a1d2d43cd83304b8fe486d"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_library.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 15411,
+        "sha256": "24be02be0aa870e925baa14a6c1fc0a0a37f1acb6dfcbb9894abbe074eabdb98"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_library_aliases.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11035,
+        "sha256": "29e7bdf97b1cef14cacec37359ecb53cf03e9ea2b984e9fd6870c5c0e7146347"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_library_footprint.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4181,
+        "sha256": "325898665b9be703fbc1425c3966b9de50fc3a281fdbbc487c90a8d644fa738e"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_manufacturing_proposals.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 2534,
+        "sha256": "d5be0921a1b116546cb48b2175ea12abd0db26f24857642dea82a45d7ab7b993"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_output_job_canonical_aliases.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4313,
+        "sha256": "f2f85274fa8f86d1e404fc45b3a71490bdeebd73259792cdceef62bfaa19a4a6"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_output_job_proposals.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3756,
+        "sha256": "50e25701ea7ac47764382283adbf5248c2487d31f27ab5a7e760aa9f3f50570e"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_output_job_run.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6452,
+        "sha256": "923fdc90f7db1b575391613c6c287259ca8f5802d10668c3d552d6d39299b504"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_output_jobs.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 16995,
+        "sha256": "3405eca19c6d218ca197d4847556d2cb2d9f08402d6682662eb8123042480c25"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_package_candidates.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 21230,
+        "sha256": "aa443d7adaec8e8d2fa1151c61e2391a165b84b52e998886c276cb1296784cc2"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_proposals.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 45826,
+        "sha256": "1405773b1414cbe4b1fb7599d8726abc6c90557eeec53850864e4ff34877a013"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_queries.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 27641,
+        "sha256": "b962d14f7ed955919b3040daaa3143eec572c2729d05022cf21a2c4759d42fba"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_query_hierarchy.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4774,
+        "sha256": "5d047cd69ce1df708f680c3f7c2558456406e405bc23d585435d1dcf24d7ff84"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_read_surface.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 472,
+        "sha256": "1db260144e34b5d5e0495aa0b9b33bf29900952d0c688db947e399c28a5b6407"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_relationships.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5774,
+        "sha256": "f0840ece8be3f41a029c45feb59c7ff42e1b77904f0516a2f650a05c66fb8f8a"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_run_drc_rules.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 1620,
+        "sha256": "2bf4044648afc76516c87f3e7f63c9d498d0c4e5d06a1054ede05d8b273aede8"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_schematic_sheet.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11010,
+        "sha256": "0078922075512a55f6a3e1d373cbdfd3e1f75feb77c3867968dbb59460913ff0"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_stateful.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 309,
+        "sha256": "217fb74061ae949f5621a2eaaceda4fd17dc593efcb7940b95e1e7c8a2787ebc"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_write_basics.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 457,
+        "sha256": "724a4fb4652da2eb7f773c0aaca223b80b618bb46127d76f2259d191c7a32a2b"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_write_followup_mutations.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 9960,
+        "sha256": "35ef7a90d99f97d7a71a63f963c87d422071c3d092eb887918d3082f86191666"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_dispatch_write_mutations.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 12726,
+        "sha256": "11c9ee65d345d8890f2a7b9b59941b391d13fe10fbbadbff7ef41bac600c464a"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_mcp_resources_prompts.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 14049,
+        "sha256": "dec3eabc118d606979cb6a1e4ef36ac76f518af9f673c6c88de74acf59a9f1f0"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_native_pcb_dimension_parity.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5791,
+        "sha256": "71bd68e20381a28178865648358dd8558a5e0ac3871e21298fde5b20a79cc741"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_native_pcb_keepout_parity.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5226,
+        "sha256": "cd902ccdbed69b2f650669907cd3738a7cd323b443e487454c3e5844b82be7e8"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_native_pcb_net_parity.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8461,
+        "sha256": "d80fd2917f0b554e47a799079199fbfee1aabc1cddc9f17123b2586144618b06"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_native_pcb_outline_parity.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3991,
+        "sha256": "0f94a87658149199bf349964705b66f65f1401744ead06fd54c7cc0f2a6500aa"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_native_pcb_query_alias_parity.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 9080,
+        "sha256": "b42c0453d0c0e0362234fea9cb0c9f91330d13d96f46db70c79ab17f10c635b2"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_native_pcb_stackup_parity.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7163,
+        "sha256": "6c8cafa583c17b5f206205e8af2ef2f67236b619eb1e7a480355d99e0986bb65"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_native_pcb_text_parity.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6627,
+        "sha256": "c323db342519852fffcda6b8c2e71701da95e8a11370f4a37def988095f6f352"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_native_pcb_zone_parity.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7089,
+        "sha256": "3dccaa0c036adfe24546b561608e5e55740a519c42d4a2ffc28bb300dfaf7b35"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_native_schematic_drawing_shape_parity.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 10940,
+        "sha256": "cf12f314e94496c6a8c179e3d2a5b211b09801d5bb4351c53774d4dc4a20a88b"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_native_write_parity.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 45821,
+        "sha256": "287d27d5193bb14b1f912ceae8fc360f2ad2867c9cd8e65ae916a33677890b1b"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_native_write_parity_pcb.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 12352,
+        "sha256": "2b6d5885dd13789f91db92bbb7e56f983ddb7091726dc1c5d6abb899ef62ac4f"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_preferences_product.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6387,
+        "sha256": "1db5494309dd1a60b8f68ed84fa9b960cdc05743006039643b33358cadd32b7b"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_project_display_units_request.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6248,
+        "sha256": "d717d210ebd97e34e86931fbe1b0a67143b6284d9d7320122f0b7924dfeb99ce"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_protocol_catalog.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 24905,
+        "sha256": "c144e9b3241adce4fa71afc11c0a01c0d3dd86e038b1c8902eaf8dde0e9aa2ee"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_server.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 266,
+        "sha256": "80a4445f335fa44ae8bb53a42e8625e6950977da8623fd3d5e4da62333c84d20"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_stdio_broker.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6816,
+        "sha256": "c1bb1ea986f9b842b47f06b3c2027da3d435758d28dfb4f991a9445c372c86e6"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_streamable_http.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7148,
+        "sha256": "a50b3ccd88c3c24c869c1bb49c760cd80bcbda1a0448b17346425bd6dd1f30a9"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_support.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 1534,
+        "sha256": "fd138d413fd3fe9c90c4fddc46ba172b1ae339638af3af29d70b9cda095efb94"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_support_base.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6164,
+        "sha256": "f820abd9dd338d34d4bd3e8df0ba30e63940bbce7b0cf77252d47276bc86b536"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_support_mutations.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 9070,
+        "sha256": "57140a5269875f0a9094fd363edd6fbc679403446f2f0c37d40c0c4eb3ad6aa2"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_support_queries.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8102,
+        "sha256": "dacfb83bbf77054515d03fee751f75721ffea164877ded84bbe918e825d9bc7b"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_support_replacements.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4568,
+        "sha256": "6ad752a7780aadfdf26a7f95379f2e8405b7aa6fee9bab7df6656f2300276bdb"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_terminal_command_catalog_parity.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4730,
+        "sha256": "41b5a6294c0ad25f2f54a2a4d3e99680b7d6baa5d50991b153702249178dd41e"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/test_workflow_catalog.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4961,
+        "sha256": "a8ef7d8b2f81a0a85d293d308b6446dbee5a0b7ca9cda265be5a3cf2c52b3922"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tool_dispatch.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 2775,
+        "sha256": "8255fee8ec7139b1c30fe9ed2dce7a4d84bec7f64bd02160a86a97069fa07e7f"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 347,
+        "sha256": "1a72469a48180eabef0929d47dff39deebc06544fa4bd599595b149511404663"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_checks.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 2787,
+        "sha256": "d9ac65b835ce869ff4a20ae3c0aa9686f3ec33fc23e826be1eded1e6f421cb4a"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_data.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 33927,
+        "sha256": "ad1e06c0a4ac2554a7970c8940b3f9d75fdee9f587d7f4df05e90aed2d58e606"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_datum.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 44268,
+        "sha256": "92dda98ea2742c006744c922bb2b9949a311dbd85afa37cb5a50da9f593479e1"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_drc.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 519,
+        "sha256": "0119bc23a2c89ef64396cd15defd7903fdf9528b8a348f535d6c02a41b711647"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_generated.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 12386,
+        "sha256": "ea597af1e5da272a9500545835682b441ed9e8f410d81b1ee12e4989e7aeb1c6"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_import_map.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 493,
+        "sha256": "5ae077e3a2a2e7c301780c564ef50e03f5e279266f01482295fe14b2522fa9c3"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_journal.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 1230,
+        "sha256": "fcd2781caa7009c02d53cdbaadcb994e3dadf92c321fb23ae861a85b014e6d4c"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_legacy_aliases.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3541,
+        "sha256": "d63457f56af263332fd055342bce2f6f057a6790dd28f100d933355a476536f4"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_library.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 21435,
+        "sha256": "1737c462ab6c0b0f52545740b8ffd9120dd519f22080461647171089bf4c902c"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_output_jobs.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11711,
+        "sha256": "e64d20a1526e4105ca1edab1d64e4b48944dceced1398ff55ffeff79159ce778"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_preferences.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4921,
+        "sha256": "df07223a748607019506b9258dd170383784e45349e4f877344d6f4f274188ba"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_project_genesis.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 1367,
+        "sha256": "f794281cff01e4f548692ff4a6ea06b75eb18da7369f0d70e015f2818f8d4894"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_proposals.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 15405,
+        "sha256": "6c69c0e1044729afbf8f7d51b1b2cccf6a6f41df4f8f784bb657223ba93ea65a"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_relationships.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 2247,
+        "sha256": "44dbebd151f9feecf9c6115cf8cc91b7c1ed48fc81cbcf397d6d8257ac48f75d"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/tools_catalog_retirement.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 22687,
+        "sha256": "4223cd77690fb98f5c3323c202c4727d1c4315fa22d2e0439701b121a3e24977"
+      }
+    },
+    {
+      "path": "mcp-server/__pycache__/workflow_catalog.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8652,
+        "sha256": "703ed0a532136e989b4ed2567acccc36bda28c6b82a2cec0bbcfa1588b2bedf9"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/agent_mcp_adapter_probe.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 18617,
+        "sha256": "22cc3f37f811e09bc3193a2c4782827a783cd1015199a184e55c68e352caca1c"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/build_libghostty_vt.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 19359,
+        "sha256": "dd4754cb26b34b75b4b6d6710a9ab07c7024bd8a3e04c49ba11d16121fdf8a9f"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_agent_workflow_parity.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8159,
+        "sha256": "7d86c32af44654be9758816ffdc1280257ee70682b26b464dfc89d3d13d50106"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_alignment.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 10602,
+        "sha256": "d6819cbe1846e597ef2a6a86a13826941acde978183ebb287b1318f7c57a04f0"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_cargo_resource_policy.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3384,
+        "sha256": "1c9029a14eec6e2dd83215f24d4bc291037da55654ee6188ad4f564cc83b5970"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_datum_console_boundary.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7256,
+        "sha256": "8531b7a135cf541f53d324c64c7eb716a25ff04f8ad6d6ed62b84140b24c30da"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_evidence_traceability.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7571,
+        "sha256": "e5713dd7a3c31a1c3d1f37f83153a974084785282b348ce2797ba88a7492cd5f"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_file_lane_ownership.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7084,
+        "sha256": "97ad4d94d41b359abe50a36813ef115e84907d2dc2990f4992c3ba9f4b2b7125"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_file_size_budgets.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3585,
+        "sha256": "40dfa54fd4a408ca3ca959864807844d207a0531932591c7cb25e228c798fd4b"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_global_preferences_production_matrix.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6318,
+        "sha256": "3eb51e1ec05b0f831306c0240ea2e78af4c5031d606d6557cb676613e7e88e88"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_gui_agent_terminal_convergence.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 37089,
+        "sha256": "8140e8e31b476f669d462d4d9b57fa510c79f10791b222f6f698991079ffd57d"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_gui_conformance.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 2408,
+        "sha256": "c406d637d0be5335c22c60669151ced5a91a0400022fa7a478249601b8ba8392"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_gui_reference_capture.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4861,
+        "sha256": "415d96347cb4ed4653f368e1e87a00eb062ad56491797230f1b68ba78e9bc1f1"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_gui_visual_parity.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 12875,
+        "sha256": "0226c93569465dcfcaeb53aa167dc06e3279b7f97f996fa96a4a5d63fa3476c2"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_mcp_public_taxonomy.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 17673,
+        "sha256": "e1acc88f3a6c781c42552a8e3ca91695530325e587f9d36cfa24fdbc13ba736e"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_progress_coverage.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 24907,
+        "sha256": "2ec18d36a84ebde39917adaa3529961e4c79e75e2ae44b5d64852b4e726272ea"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_resolver_raw_loads.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3487,
+        "sha256": "63a52cba1a933eeb7ebe83a7cbbc0b0437d1186871a0977d2ef8c43b1ddd77e6"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_rustfmt.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7262,
+        "sha256": "9e0b729988098d0495149bcc3452ea4bdee145a40d812695e40b93cc70625210"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_source_health.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 34307,
+        "sha256": "5883fcef2573c6ba918bc80708af1a2a515f5fedb24c6a79b9c7f297f03f9d4a"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_source_module_size.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8327,
+        "sha256": "5b8de6fbf502cb672f52d9d5ceed525d89354c789da6d37cbdfbb8440e13bda5"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_spec_parity.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 26067,
+        "sha256": "1f0f28717065791a6dc6fecb02510592ff8f3bd2663ace02c9f9b12ea347429e"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_compatibility_matrix.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6284,
+        "sha256": "3d4d6172753da17d634e571969e5158eb7016f6068e4af42b18bf0db4f766d84"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_core_adapter_boundary.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11288,
+        "sha256": "0025cd01d7f531498912bc5ecae950b650498cb62c99646c6c3c00732e6b1189"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_core_boundary.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 34707,
+        "sha256": "aa1d21515fd81ec97297f70d735d2b579f07fdb5fb4dbc936c7d6bb5f37e97c9"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_core_proof.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4711,
+        "sha256": "20a17ebbf7b2466ec8e805acc71ba3791143d9a7c64db3c0e9ba705f350de209"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_core_renderer_boundary.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7351,
+        "sha256": "6e6627ea17ee1656dc8f55c5fe71b86504522454694ca2292843ebc9ac85d2f0"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_kitty_boundary.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6296,
+        "sha256": "ccc1186e1a59eef36d1ce9f81c90c01b1d8c070b864dca6b8bf00cb0d753fb83"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_native_interaction.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 9696,
+        "sha256": "0eb7322267904c816f0e97d8de1223fbc2c8314dc00cd2fadcbf31e297e736fa"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_production_verification_matrix.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6343,
+        "sha256": "66957551a6384f5b4a143d707d5c09541b9706faf3dbbeb88e958becd42ae362"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_shadow_boundary.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4571,
+        "sha256": "f1f745568208096e1e44391be30a78d37266f091b540177c8b348059cd3d8367"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_shell_metadata_boundary.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3231,
+        "sha256": "d327fda4c5e75e046adc8ac406d0634340bc623578ec4a80b79ed83bab765ee7"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_snapshot_boundary.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4586,
+        "sha256": "4ff1700713f7a1ee5d011f88f4358e3a5f52c0a24ae538fab1c2bd83827bbcc8"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_split_boundary.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6640,
+        "sha256": "d56b8cea66759050f4f3566855b4e557795805d502d30e5a634c65157e7861a5"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_transport_boundary.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 25713,
+        "sha256": "86724cb4e253f02ef8d153e9328c9a75cbac7432df61469479e27505a496abe2"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_test_file_sizes.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 2247,
+        "sha256": "5c7d9487f03a7ee220c9c04ebd9da42550b3fcbf445a1a88adc88a8a5a86d681"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_touched_monolith_growth.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 10217,
+        "sha256": "49679811c637c15e21d294f0bc8e4b0b0023c7e15711835fe050d0f3529747e9"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/check_workflow_delivery.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6436,
+        "sha256": "109b5f2b19e56ff23e19938c4dd27d86a45a3e4a7e4e3283c31e9e61d783adb7"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/format_rust.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5560,
+        "sha256": "0a523d10682f30fe06f2e7b5cf74c4ba60116749480199cf81eba5d3782a6820"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/measure_global_preferences_release.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11909,
+        "sha256": "f295315d9c4890b5a8895a01cbb3e6a426ae5dace84ae506c2b1ac983b64d886"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/menu_model_csv.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 10441,
+        "sha256": "5710c606f22ef74a0503b1fad0fbfaf1e85e00d7ea69ab8716fde5d9518f3dfc"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/project_status.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 38144,
+        "sha256": "29b1366276d5afeae04014a003b89ee3e5165470ec76bdb445bd17d4878acca5"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/project_task_details.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 36633,
+        "sha256": "94a32eac99a812a6e1094d03165245d748fe7b3eeefca56f6513bec594b407b2"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/run_cargo_guarded.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 14655,
+        "sha256": "6704b23414160a88910ca841a8d8f1c1401f27edc25ca4dec76c79a8fc08c8cb"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/run_global_preferences_production_acceptance.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3766,
+        "sha256": "a4ca2860f5ddc12d968236ff6824f78a62a79120d941be8b007cf347c7a1fcf5"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/run_terminal_core_proof.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 1762,
+        "sha256": "9e4ac1ed9f0389079f5fe960bf4b9e66f646f93e3bc57a48a78b108a8aa4d1e6"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_agent_workflow_parity.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6631,
+        "sha256": "49b8f82906b5fb55168078555c4654d317aa67cd4ba555cfd69bf5fb7647738c"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_build_libghostty_vt.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7178,
+        "sha256": "b54e247e2641d0d970ee12c0f2fafd813a9f9cb60a1d547949a5e20eb0918c1f"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_cargo_resource_policy.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3723,
+        "sha256": "3b9f4069fcb269365ad6ae95dd8ea3dd523064e6c45091d96e0b523f02a17c5b"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_cohort_contract_preparation.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 9274,
+        "sha256": "74e8df3c474366229056caefdec8949ef88e39c37edb1a6313b33ad15b67e364"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_collaboration_completion.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7173,
+        "sha256": "1226e8c3f214a9176033814666a789e4c33099ccf214c3f1169b6003b896f0cb"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_drafting_standard_completion.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7789,
+        "sha256": "cf304ee3596bd1b5e55b5494e90fd1c9ddc7065b9459c29d8d5f6c09dfc7e063"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_file_lane_ownership.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 16328,
+        "sha256": "df41febc86375271de3ea5a7a5af6d129f3a56ce6a62b5c47a8cd0d51e9928f5"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_format_rust.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5557,
+        "sha256": "9790ddf18dcf12c685d2622a652929a9975d34706c3cfa6fd07c04ba0160a7bf"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_foundation_consumer_completion.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 13546,
+        "sha256": "d611dcffa61a4d5a33b02a7a8af41aac5185c71a0457c5119c0dcb6c5053b18c"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_foundation_specification_clauses.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 9660,
+        "sha256": "78b5bb40730eecc7600cf6897ff45425b718968f72bf12f8969564dfed9e1001"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_gui_agent_terminal_convergence.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 31179,
+        "sha256": "d085bff5c1ab029e6ec1a47b93819f169d34c785a14bd9f8807799c555ae9fc9"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_marking_menu_completion.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5526,
+        "sha256": "50e638cbc238e9538cf0937d3d47cd1d5bb32d717b98b5684d56ea50938b39fb"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_phase2_completion.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8566,
+        "sha256": "ff0a9e200cd441b3e93198db9d7c43c93c9b515c89cfcac78514c999e4d57d65"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_project_status.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 56418,
+        "sha256": "f879ddd72706a63906bc34c7f97717324ad644a2af5adde6d5ae49a44ccb98c7"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_project_status_claim.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4463,
+        "sha256": "e5cfd35cf258f76656e2e016803ce50da90b4c8f39f6550022bf5bf88d9b867c"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_run_cargo_guarded.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8823,
+        "sha256": "f5872042229459704a4245e1cc4e77eaec8a7141bd7f4435f05569ef97f8b26b"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_rustfmt_gate.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5453,
+        "sha256": "7b4ca3c3a75382fd92915f745f0fac1ec7f768529ebee823f46e65e26bd1b25f"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_source_health_governance.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 22421,
+        "sha256": "78e2e9a797f3ad70c4ecbffe8d5ef378423f414ac2e820386763773e2db5a32f"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_surface_specification_clauses.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8338,
+        "sha256": "05f57ec26f73614f01445182abfcdf634937dca306c2732e114eb62d0898a220"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_core_adapter_boundary.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 12933,
+        "sha256": "6dd112a52d0ab347c337b53208e8451aec0c7c8e3d119ec13b80d3b6408dd138"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_core_boundary.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 45810,
+        "sha256": "c0ee664cedd6d2f6362269f277a9e7c2b8590a3ceeb1aaa060d12c4b1efb4210"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_core_proof.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7557,
+        "sha256": "2e047a583abf3d4e09efc4b47083e3517f69d4c960cf31d11da0859f93eca3df"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_production_verification_matrix.cpython-313.pyc",
+      "category": "legacy_python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7227,
+        "sha256": "35ce6bf2f70b584c7eefa5d7cd421647a48d547053903a0a1ebbd9aeb639d963"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_shell_metadata_boundary.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3753,
+        "sha256": "78e37ee7ddf255d27e3e3c2aab71833800ff5b8dd1d0acfb70b27be41c43c8f5"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_snapshot_boundary.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7704,
+        "sha256": "fb4a446673f0b34420636ac5075db8980b0a5addf9d66f76913e322a86079469"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_split_boundary.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4771,
+        "sha256": "94620f8cfbfb64679dbb5a01c287a0b8e8dc07c677f55ae2fa3787033d77d6c7"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_transport_boundary.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 44739,
+        "sha256": "11927077b54bd57a34a4306ba918744e27b64a475d433f15cf1bffb5703ba29c"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_coverage_proposal.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 10119,
+        "sha256": "0ae6587ab67e388beb5fc574488f18a65a15de4827c621e3bba7a838cd54a757"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_cli.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 13698,
+        "sha256": "9a22d3a6ebdfc97fed8624b579cfdc7582ab102cd443ea058af74f5058a157a1"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_contract.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11613,
+        "sha256": "59b2c78a1843b9b378b2331e3b1bce225cd227d2f9df56037798cc3d92531d46"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_hook.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 2899,
+        "sha256": "02a2065f4a3ab7401e1bb6c708eb2b21c75f8f2d31c7d6b9a9ccd951b1c0c18d"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_io.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11792,
+        "sha256": "891b92f9ff63069fa9ec2ed4481ba2c4d9f5580e3e663317e3328640f57bb777"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_native.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11336,
+        "sha256": "26cb9910b8588067fe6ff8673a96fab7c3211e9e2355b7641c0809f67851a901"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_pilot_capture.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 10920,
+        "sha256": "13661163f1531b4ed1082bc125c19be092710feb152ecf60e0093fd1140bc7a4"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_pilot_package.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5299,
+        "sha256": "06a4cc60f1ee381921641b4906f0ddd7b232083352f860d1714e27f516fd8047"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_prepare.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 21858,
+        "sha256": "b8a37c2d470d2bf252b7d63957999d19dc52ca2d69c00c8315edf2695eb5fa47"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_prepare_review.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11335,
+        "sha256": "dad9eadd766a55025a8ce88d55b934c1452cf722c97ac08b662b2633802ba343"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_prepare_script.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6569,
+        "sha256": "fab067875f9c492b535e6575ff402658de4bcf2fde3c0f3723655a86019b0ad6"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_proof.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11151,
+        "sha256": "4c96e70e3228935ba3762feb46c3b9d1308d5789c112d33f7471d5df44d19562"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_rehearsal.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6947,
+        "sha256": "e8b5d5a62abf826778b298a6f01e3553716434695bdd81316791953943ad90c2"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_trust.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 23549,
+        "sha256": "952800aa3ce688bf27304888940e0ebacaaf76c58a694998cdb767247bebf859"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_rollout_contract.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 18591,
+        "sha256": "e27292e872776f156bb1d9311f2ade87bc486e9ae5e330b938353a7d9a93baf3"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_rollout_mapping.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 9936,
+        "sha256": "0330fcae7756d10f98bef47f73414689ae456f4eaa68e65d359e41c84a1e8ebc"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_rollout_proposal.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8400,
+        "sha256": "fb1c51d5370b8f1d80e6b25990ea19e6ba6956369cf1d667791074afc7e8ee47"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_authority.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3956,
+        "sha256": "5628bd530da3b2babe250fb0545399454ba77f0b8b62778ab51b6e6e09f2e23b"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_checkpoints.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11661,
+        "sha256": "ddfb558467e672f8c9e5ef15ab4ec9776853c1a2e0ffe77e5ad5db3056a54af7"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_contract.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 11564,
+        "sha256": "ad458cb4f789f847e64dfa2262b2c8bcb7c6b3144fbd00524654dc8a2c5674b1"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_evidence_shapes.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7176,
+        "sha256": "26650bc0cf57ff7e6b62e2a2cbc63c3dc2992bfc4d72150ba0239c4b4adeacd7"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_frontier.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4229,
+        "sha256": "255daaa285e38cb4162c1a6b020568afb033678633cbd79df12e0d01583799bc"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_io.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7769,
+        "sha256": "e148924e2076e7c7d8aa051233d29782599838f776c986e73518a7743aceaf56"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_native.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 13843,
+        "sha256": "91d24fdb510457718e7e51439ca918e8350e1a94a1ba16c062f090e3d2d73f48"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_native_test_support.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4422,
+        "sha256": "21942932a90eade54f82ff9490af9282e4082dd1607b6f78d8b77157656ce6e8"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_pilot_build.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6465,
+        "sha256": "9dd3ef00d68f3813ebea33b8bb588e2e89a93bbfbdeed99b4faeef30304e8bd9"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_pilot_capture.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 25235,
+        "sha256": "77f2c5fdf081fe8388bdf8e71f9462cff01307cc66eaf9b1b6fc6803c8fbcb79"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_pilot_observations.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 21500,
+        "sha256": "2fa2c0ffcb07afcb465904d8ea5029bde1ff2410b43ec0dea2b57b019072bb9b"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_pilot_package.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 12847,
+        "sha256": "3843dd89b11820a23dcd22014791f4e99c8f60ec4a13738df5afeefc1b2091e5"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_pilot_scenarios.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7791,
+        "sha256": "42a29412111e644c5a7ccfe3c15e041873feffc709e8e7751c4ebe7dcaa587ce"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_pilot_x11.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4270,
+        "sha256": "397c74098e5a5141a7afe1adea69b3247efe437015ee022092af75f940cbce75"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_prepare.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 18472,
+        "sha256": "c16218473563860d09093686828678188c3b1e6c885438716476d3eeea379d12"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_prepare_handoff.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 5108,
+        "sha256": "1d0078a13390a451148fa9cfe9e2729a7607253365d949cf30b02a4dd7d447a1"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_prepare_review.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 4421,
+        "sha256": "f8df3928b90f32531a6805bf68bff41b4a92a5c945088800f364616f2e75e39b"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_prepare_script.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 2468,
+        "sha256": "2f740124ac91986b4ea00b5c8c2ece15799e132500ebafca3d9d64fc275046f7"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_proof.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7197,
+        "sha256": "0e8d465cf9631e9f4f688c60a5380628dac82be9c09691dc16f4043135303834"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_review.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 7465,
+        "sha256": "14781c9b17805587236c9bf79528bb4bd8fed757efca09744b27d474757f52e4"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_selector.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 3841,
+        "sha256": "78bc91b21ea32c278bd331661213739a0919cd6410640d57444b9debebcf8ddc"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_shapes.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 6842,
+        "sha256": "a487a5b8e063a5835d49da20c49747bab44056f5d126c464d59e71bac4ff5d2b"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_test_support.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 9575,
+        "sha256": "3cac7609fd2fbc213dc956c6689517bf632292b79e5c559bc8f39291b60cfff0"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_tree.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 9077,
+        "sha256": "f0aa28a46340bacc61d8947e4cd14f2d83fafb10fea53a29a7fb53efc8a3aece"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_trust.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 9256,
+        "sha256": "76ec88d46255121b6757fe9d48cc5377b3a666263e4900bb1aea1606df87a1f3"
+      }
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_trust_test_support.cpython-313.pyc",
+      "category": "python_cache",
+      "state": {
+        "kind": "file",
+        "mode": 436,
+        "size": 8172,
+        "sha256": "8545d7261c89d99fe5e80a5ffad1c0cdead3f808f2bd1c842509021419192820"
+      }
+    },
+    {
+      "path": "scripts/run_gui_doa2526.sh",
+      "category": "owner_local",
+      "state": {
+        "kind": "file",
+        "mode": 509,
+        "size": 3416,
+        "sha256": "7171e4812c1b7b150adf1be6d84b76897f72c52fbb2be054e1e3c62aff883cbd"
+      }
+    }
+  ],
+  "scope": "Read-only current main inventory under proposed source-only premise; no installed validation or approval.",
+  "source_only_premise": true,
+  "command": "python3 -I -S -B -c 'import sys,json,subprocess,collections\nfrom pathlib import Path\nruntime=Path(\".git/datum-wdq/proposals/wdq-final-owner-disposed-producer-20260909\").resolve()\nsys.path.insert(0,str(runtime/\"scripts\"))\nfrom workflow_delivery_workspace import WorkspaceInputs\nfrom workflow_delivery_capture_state import git,file_state\nroot=Path.cwd()\npolicy=json.loads((runtime/\"specs/workflow_delivery/workspace-inputs.json\").read_text())\ntracked=set(git(root,\"ls-files\",\"-z\").decode().split(\"\\0\"))-{\"\"}\nroots=json.loads((runtime/\"specs/workflow_delivery_policy.json\").read_text())[\"coverage\"][\"production_roots\"]+[\".beads\"]\nnames=set()\nfor ignored in (False,True):\n args=[\"ls-files\",\"--others\",\"--exclude-standard\",\"-z\"]\n if ignored: args+=[\"--ignored\"]\n names.update(git(root,*args,\"--\",*roots).decode().split(\"\\0\"))\nnames.discard(\"\")\nworkspace=WorkspaceInputs(root,policy,tracked,cache_isolated=True)\nworkspace.require_pinned_presence()\nrows=[{\"path\":name,\"category\":workspace.classify(name),\"state\":file_state(root/name)} for name in sorted(names)]\nprint(json.dumps({\"main_head\":git(root,\"rev-parse\",\"HEAD\").decode().strip(),\"candidate\":git(runtime,\"rev-parse\",\"HEAD\").decode().strip(),\"counts\":dict(collections.Counter(r[\"category\"] for r in rows)),\"files\":rows,\"scope\":\"Read-only current main inventory under proposed source-only premise; no installed validation or approval.\",\"source_only_premise\":True}))\n'"
+}
