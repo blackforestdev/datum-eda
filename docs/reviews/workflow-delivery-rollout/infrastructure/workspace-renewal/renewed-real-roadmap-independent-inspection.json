@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "review_session": "/root/wdq_independent_review",
+  "method": "Independent read-only inspection of raw capture records; not independent execution replay.",
+  "verified": {
+    "invocations": 15,
+    "artifact_hashes": 105,
+    "distinct_outer_and_observer_identities": 15,
+    "unique_trace_events": 66,
+    "source_hash_observations": 564,
+    "distinct_source_files": 33,
+    "before_after_identical": true,
+    "all_production_roots_and_beads_captured": true,
+    "required_owner_script_exact_hash_size_mode": true
+  },
+  "outcomes": "Clean five pass; mixed unknown source refuses only both selectors with WDQ-COVERAGE; C/R/H preserve snapshot isolation; restored five pass retaining three optimization caches.",
+  "limit": "Mixed fixture does not reproduce the full observed legacy-cache/Beads-runtime inventory. That obligation remains incomplete.",
+  "full_compatibility_verified": false,
+  "execution_replay_performed": false,
+  "activation_asserted": false
+}

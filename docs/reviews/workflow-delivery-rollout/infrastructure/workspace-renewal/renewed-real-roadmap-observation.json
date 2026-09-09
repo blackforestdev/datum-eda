@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "command": "python3 -I -S -B -c 'import os,sys,json,uuid,subprocess,hashlib,py_compile\nfrom pathlib import Path\nsys.path.insert(0,\"scripts\")\nfrom workflow_delivery_capture_command import capture_command,save\nfrom workflow_delivery_capture_state import git\nfrom workflow_delivery_support_bundle import prepare_bundle\nfrom workflow_delivery_support_store import support_locations\nruntime=Path.cwd()\npin=\"0e5b8064a9faca407fac43bd2b362ba4d7200327\"\npacket=support_locations(runtime,pin)[\"proposals\"]/\"renewed-real-roadmap-0e5b8064\"\nstore=packet.parent/\"renewed-real-roadmap-captures-0e5b8064\"\nstore.mkdir(exist_ok=False)\nroot=store/\"fixture\"\nroot.mkdir()\ngit(root,\"init\",\"-q\")\nrequest=json.loads((packet/\"request.json\").read_text())\ngit(root,\"fetch\",\"--quiet\",\"--no-tags\",str(packet/\"source.bundle\"),request[\"source_ref\"],*sorted(request[\"evidence_refs\"]))\ngit(root,\"checkout\",\"--quiet\",\"--detach\",pin)\npolicy=json.loads((root/\"specs/workflow_delivery/workspace-inputs.json\").read_text())\nowner=next(x for x in policy[\"local_files\"] if x[\"path\"]==\"scripts/run_gui_doa2526.sh\")\nraw=(Path(\"/home/bfadmin/Documents/datum-eda\")/owner[\"path\"]).read_bytes()\nassert len(raw)==owner[\"size\"] and hashlib.sha256(raw).hexdigest()==owner[\"sha256\"]\n(root/owner[\"path\"]).write_bytes(raw)\n(root/owner[\"path\"]).chmod(owner[\"mode\"])\nnonce=str(uuid.uuid4())\n(root/\".git/datum-wdq-capture-owner\").write_text(nonce+\"\\n\")\nfor key,value in ((\"AuthorityRef\",pin),(\"BaseRef\",pin),(\"EnvironmentPath\",\"specs/workflow_delivery/rollout.environments.json\")):\n git(root,\"config\",\"--local\",\"datum.workflowDelivery\"+key,value)\nprepare_bundle(root,pin)\nlocations=support_locations(root,pin)\ngit(root,\"config\",\"--local\",\"core.hooksPath\",str(locations[\"hooks\"]))\ngit(root,\"config\",\"--local\",\"datum.workflowDeliveryRunnerPath\",str(locations[\"runner\"]))\nroots=json.loads((root/\"specs/workflow_delivery_policy.json\").read_text())[\"coverage\"][\"production_roots\"]+[\".beads\"]\nenv={\"PATH\":os.environ[\"PATH\"],\"HOME\":str(store),\"XDG_CONFIG_HOME\":str(store),\"GIT_CONFIG_NOSYSTEM\":\"1\",\"GIT_CONFIG_GLOBAL\":os.devnull,\"LANG\":\"C\"}\nresults=[]\ndef observe(label,refusal=False):\n for surface in (\"C\",\"R\",\"S-check\",\"S-details\",\"H\"):\n  output=store/(label+\"-\"+surface)\n  environment=dict(env)\n  selector=surface.startswith(\"S-\")\n  if surface==\"H\":\n   command=[str(locations[\"hook\"])]\n   environment[\"DATUM_WDQ_OBSERVE_PATH\"]=str(output/\"calls.jsonl\")\n  else:\n   script=runtime/\"scripts\"/(\"project_status.py\" if selector else \"check_workflow_delivery.py\")\n   args=[\"--root\",str(root)]\n   if selector:\n    args+=[\"--json\",surface.removeprefix(\"S-\")]\n    if surface==\"S-details\": args+=[\"WORKFLOW-DELIVERY-IMPLEMENTATION\"]\n   else:\n    args+=[\"--enforce\",\"--authority-ref\",pin,\"--base-ref\",pin,\"--environment-path\",\"specs/workflow_delivery/rollout.environments.json\"]\n    args+=([\"--staged\"] if surface==\"C\" else [\"--candidate-ref\",pin])\n   command=[sys.executable,\"-I\",\"-S\",\"-B\",str(runtime/\"scripts/workflow_delivery_observe_python.py\"),\"--script\",str(script),\"--source-root\",str(runtime),\"--output\",str(output/\"calls.jsonl\"),\"--function\",\"main\",\"--function\",\"selector_failures\",\"--\",*args]\n  result=capture_command(root,output,command,environment,fixture_nonce=nonce,case_id=\"WORKSPACE-REAL-\"+label,surface=\"S\" if selector else surface,untracked_roots=roots,timeout=180)\n  stdout=(output/\"stdout.bin\").read_text()\n  stderr=(output/\"stderr.bin\").read_text()\n  expected=refusal and selector\n  assessment={\"case\":label,\"surface\":surface,\"expected_refusal\":expected,\"invocation_id\":result[\"invocation_id\"],\"returncode\":result[\"returncode\"],\"state_unchanged\":not result[\"changed_state_fields\"] and not result[\"changed_files\"],\"capture_directory\":output.name}\n  results.append(assessment)\n  print(json.dumps(assessment),flush=True)\n  assert result[\"kind\"]==\"exited\" and (result[\"returncode\"]!=0)==expected,(stdout,stderr)\n  assert assessment[\"state_unchanged\"],result\n  if expected: assert \"WDQ-COVERAGE\" in stdout+stderr\nobserve(\"clean\")\nfor level in (0,1,2):\n py_compile.compile(str(root/\"scripts/workflow_delivery_io.py\"),optimize=level,doraise=True)\nunknown=root/\"scripts/__pycache__/wdq_undeclared_source.py\"\nunknown.write_bytes(b\"undeclared_source = True\\n\")\nobserve(\"mixed-unknown-source\",True)\nunknown.unlink()\nobserve(\"restored-with-verified-caches\")\nsave(store/\"observations.json\",{\"candidate\":pin,\"invocations\":results,\"snapshot_bundle_sha256\":hashlib.sha256((packet/\"source.bundle\").read_bytes()).hexdigest(),\"scope\":\"One exact real-roadmap fixture with all production roots and .beads captured; required owner-local script; clean, ignored undeclared source amid verified optimization caches, and restoration. Not all workspace groups or independent replay.\",\"compatibility_complete\":False,\"activation_performed\":False})\nassert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\")\nprint(json.dumps({\"completed\":len(results),\"store\":str(store)}),flush=True)\n'",
+  "process_exit_code": 0,
+  "observations": {
+    "activation_performed": false,
+    "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+    "compatibility_complete": false,
+    "invocations": [
+      {
+        "capture_directory": "clean-C",
+        "case": "clean",
+        "expected_refusal": false,
+        "invocation_id": "9686455e-7e7a-4be7-8525-67c79d049601",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "C"
+      },
+      {
+        "capture_directory": "clean-R",
+        "case": "clean",
+        "expected_refusal": false,
+        "invocation_id": "876262f6-edd2-4ac7-a8f3-320a9d695c68",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "R"
+      },
+      {
+        "capture_directory": "clean-S-check",
+        "case": "clean",
+        "expected_refusal": false,
+        "invocation_id": "9d36e421-80f5-4203-8c60-45a993e36520",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "S-check"
+      },
+      {
+        "capture_directory": "clean-S-details",
+        "case": "clean",
+        "expected_refusal": false,
+        "invocation_id": "61880fcd-21fc-48aa-ad35-a5e4ee4f3c2d",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "S-details"
+      },
+      {
+        "capture_directory": "clean-H",
+        "case": "clean",
+        "expected_refusal": false,
+        "invocation_id": "603a8683-a227-4946-896a-e324949290fd",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "H"
+      },
+      {
+        "capture_directory": "mixed-unknown-source-C",
+        "case": "mixed-unknown-source",
+        "expected_refusal": false,
+        "invocation_id": "3b93285f-c6eb-4916-8132-52ab9a8011fd",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "C"
+      },
+      {
+        "capture_directory": "mixed-unknown-source-R",
+        "case": "mixed-unknown-source",
+        "expected_refusal": false,
+        "invocation_id": "ade3957b-19d1-4aa3-bed7-b3854773efd4",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "R"
+      },
+      {
+        "capture_directory": "mixed-unknown-source-S-check",
+        "case": "mixed-unknown-source",
+        "expected_refusal": true,
+        "invocation_id": "0adec3fd-192c-436d-8d5d-58342a59e5dc",
+        "returncode": 1,
+        "state_unchanged": true,
+        "surface": "S-check"
+      },
+      {
+        "capture_directory": "mixed-unknown-source-S-details",
+        "case": "mixed-unknown-source",
+        "expected_refusal": true,
+        "invocation_id": "ae57df5a-f9fb-4a65-9ba9-44b5fd077b0a",
+        "returncode": 1,
+        "state_unchanged": true,
+        "surface": "S-details"
+      },
+      {
+        "capture_directory": "mixed-unknown-source-H",
+        "case": "mixed-unknown-source",
+        "expected_refusal": false,
+        "invocation_id": "d3c96828-1aa6-4d40-bd6b-3035b0932d45",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "H"
+      },
+      {
+        "capture_directory": "restored-with-verified-caches-C",
+        "case": "restored-with-verified-caches",
+        "expected_refusal": false,
+        "invocation_id": "c43a3e46-52dd-49d4-9baf-edecb26a9eeb",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "C"
+      },
+      {
+        "capture_directory": "restored-with-verified-caches-R",
+        "case": "restored-with-verified-caches",
+        "expected_refusal": false,
+        "invocation_id": "a4e00bf7-d100-4431-b33f-71e307947532",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "R"
+      },
+      {
+        "capture_directory": "restored-with-verified-caches-S-check",
+        "case": "restored-with-verified-caches",
+        "expected_refusal": false,
+        "invocation_id": "5419e104-d302-463c-b486-4dd6d3b80934",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "S-check"
+      },
+      {
+        "capture_directory": "restored-with-verified-caches-S-details",
+        "case": "restored-with-verified-caches",
+        "expected_refusal": false,
+        "invocation_id": "17aeb209-287d-4dcc-b6ac-1c4eaf709aa7",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "S-details"
+      },
+      {
+        "capture_directory": "restored-with-verified-caches-H",
+        "case": "restored-with-verified-caches",
+        "expected_refusal": false,
+        "invocation_id": "457a4e43-9553-4102-90f1-0680998a1317",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "H"
+      }
+    ],
+    "scope": "One exact real-roadmap fixture with all production roots and .beads captured; required owner-local script; clean, ignored undeclared source amid verified optimization caches, and restoration. Not all workspace groups or independent replay.",
+    "snapshot_bundle_sha256": "568325e3d25f5ebf5d1ca03f9d22afd89e39758dd81dc581ec7b6c75ca808b74"
+  },
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-real-roadmap-captures.tar.xz",
+    "sha256": "d8460729c26b5987ae27fb1612c83b3e96ca118b0b66b12e1e61c654373b6bbc",
+    "bytes": 11025080,
+    "contents": "All 15 raw capture directories, observations and snapshot metadata. Does not embed duplicate Git histories or fixture checkout.",
+    "excluded_retained_local": [
+      ".git/datum-wdq/proposals/wdq-final-owner-disposed-producer-20260909/.git/datum-wdq/proposals/renewed-real-roadmap-0e5b8064/source.bundle",
+      ".git/datum-wdq/proposals/wdq-final-owner-disposed-producer-20260909/.git/datum-wdq/proposals/renewed-real-roadmap-0e5b8064/snapshot",
+      ".git/datum-wdq/proposals/wdq-final-owner-disposed-producer-20260909/.git/datum-wdq/proposals/renewed-real-roadmap-captures-0e5b8064/fixture"
+    ],
+    "source_retained_ref": "refs/datum-wdq/candidates/workspace-renewal-20260909"
+  },
+  "limitations": [
+    "This verifies exact candidate real-roadmap behavior for clean, ignored source drift and cache-retaining restoration; not all eight compatibility groups.",
+    "Prepared fixture trust is not installed main trust. No publication or owner acceptance.",
+    "Normal Beads runtime payload variants, remaining full matrix and distinct execution replay remain separate obligations."
+  ],
+  "compatibility_complete": false,
+  "activation_performed": false
+}
