@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "review_session": "/root/wdq_independent_review",
+  "method": "Independent raw producer-artifact inspection, not execution replay.",
+  "verified": {
+    "ordered_original_observations": 190,
+    "primary": 100,
+    "recovery": 90,
+    "distinct_outer_and_observer_ids": 190,
+    "events": 739,
+    "artifact_hashes": 1330,
+    "source_hash_checks": 7031,
+    "distinct_source_files": 33,
+    "all_before_after_identical": true,
+    "failed_formatter_artifact_hashes": 7,
+    "failed_formatter_state_unchanged": true,
+    "corrected_formatter_path_and_current_hash": true
+  },
+  "outcomes": {
+    "negative_primary_exit_1": 90,
+    "positive_primary_exit_0": 10,
+    "recovery_exit_0": 90,
+    "negative_diagnostics": {
+      "WDQ-COVERAGE": 81,
+      "WDQ-TRANSITION": 9
+    },
+    "failed_formatter_invocation_excluded_from_successes": true
+  },
+  "limitation": "Raw captures bind PATH, not a separate contemporaneous formatter hash/version receipt. The producer separately retains its pre-retry tool observation; complete child/tool closure is not asserted.",
+  "archive_independently_verified": false,
+  "independent_replay_performed": false,
+  "complete_matrix": false,
+  "activation_performed": false
+}
