@@ -13,6 +13,7 @@ from workflow_delivery_capture_history import CURRENT_HISTORY_CASE, prepare_curr
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES, prepare_snapshots, snapshot_expectation
 from workflow_delivery_capture_mutations import CASES, CLI_ERROR_CASES, changed_bytes, expected_detail
 from workflow_delivery_capture_mutations import TEXT_CASES, RECOVERY_CASE, text_environment
+from workflow_delivery_capture_mutations import TRUST_CASES, prepare_trust_input
 from workflow_delivery_io import sha256
 from workflow_delivery_interruption_case import INTERRUPTION_CASE, evaluate_interruption
 from workflow_delivery_environment_cases import case_uses_prepared_input
@@ -52,7 +53,9 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
         target, expected, detail = review_phase_expectation(case_id, surface)
     mutation = {"case_id": case_id, "path": target, "before_sha256": None, "after_hex": None,
                 "prepared_fixture_variant": recipe.get("fixture_variant")}
-    if case_id in BOUNDARY_CASES:
+    if case_id in TRUST_CASES:
+        mutation = prepare_trust_input(root, case_id)
+    elif case_id in BOUNDARY_CASES:
         mutation = mutate_external_boundary(root, case_id)
         if surface == "R":
             git(root, "-c", "user.name=Fixture", "-c", "user.email=fixture@example.invalid",
@@ -94,6 +97,13 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
                       "--environment-path", "requested-environment.json"]
         arguments += ["--candidate-ref", candidate] if surface == "R" else ["--staged"]
     invocation_error = None
+    if case_id in TRUST_CASES and not selector:
+        field, value = TRUST_CASES[case_id]
+        position = arguments.index("--" + field + "-ref")
+        if value is None:
+            del arguments[position:position + 2]
+        else:
+            arguments[position + 1] = value
     if case_id == "INFRA-S01-02.invalid-argument":
         arguments += ["--synthetic-invalid-option"]
         invocation_error = "unrecognized arguments: --synthetic-invalid-option"

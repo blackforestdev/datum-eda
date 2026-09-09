@@ -15,6 +15,12 @@ POLICY = "specs/workflow_delivery_policy.json"
 CLI_ERROR_CASES = {"INFRA-S01-02.invalid-argument", "INFRA-S01-02.conflicting-views"}
 TEXT_CASES = {"INFRA-S01-04.valid", "INFRA-S01-04.refused"}
 RECOVERY_CASE = "INFRA-S06-07.fresh-after-refusal"
+TRUST_CASES = {
+    "INFRA-S06-01.missing-authority": ("authority", None),
+    "INFRA-S06-01.missing-base": ("base", None),
+    "INFRA-S06-01.moving-authority": ("authority", "HEAD"),
+    "INFRA-S06-01.moving-base": ("base", "HEAD"),
+}
 CASES = {
     "INFRA-S01-01": (None, None),
     "INFRA-S01-04.valid": (None, None),
@@ -48,10 +54,16 @@ CASES[MIXED_VARIANT] = (None, None)
 # candidate file to mutate. The exact selected bytes live in its retained bundle.
 CASES[SWAPPED_VARIANT] = ("environment", "WDQ-ENVIRONMENT")
 CASES[PRODUCT_HEADLESS_VARIANT] = ("environment", "WDQ-ENVIRONMENT")
+CASES.update({key: ("trust" if value is None else field + "_ref", "WDQ-TRUST")
+              for key, (field, value) in TRUST_CASES.items()})
 CASES.update({key: (path, "WDQ-ENVIRONMENT") for key, (path, _) in HEADLESS_VARIANTS.items()})
 
 
 def expected_detail(case_id):
+    if case_id in TRUST_CASES:
+        return ("owner-selected --authority-ref and trusted --base-ref required; no HEAD fallback"
+                if TRUST_CASES[case_id][1] is None else
+                "trusted refs must pin full commit IDs, not moving candidate names")
     if case_id in ("INFRA-S01-04.valid", RECOVERY_CASE):
         return None
     if case_id == "INFRA-S01-04.refused":
@@ -126,3 +138,16 @@ def text_environment(environment):
     value = {key: data for key, data in environment.items() if key not in ("DISPLAY", "WAYLAND_DISPLAY")}
     value.update(TERM="dumb", NO_COLOR="1", CLICOLOR="0", FORCE_COLOR="0")
     return value
+
+
+def prepare_trust_input(root, case_id):
+    """Change only nonce-owned fixture trust, never repair the live checkout."""
+    from workflow_delivery_capture_state import git
+    field, value = TRUST_CASES[case_id]
+    key = "datum.workflowDelivery" + field.title() + "Ref"
+    before = git(root, "config", "--local", "--get", key).decode().strip()
+    if value is None:
+        git(root, "config", "--local", "--unset-all", key)
+    else:
+        git(root, "config", "--local", "--replace-all", key, value)
+    return {"case_id": case_id, "local_trust_key": key, "before": before, "after": value}

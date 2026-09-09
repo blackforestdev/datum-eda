@@ -12,6 +12,7 @@ from workflow_delivery_capture_command import capture_command, save
 from workflow_delivery_capture_fixture import restore_fixture
 from workflow_delivery_capture_mutations import CASES, CLI_ERROR_CASES, changed_bytes, expected_detail
 from workflow_delivery_capture_mutations import TEXT_CASES, RECOVERY_CASE, text_environment
+from workflow_delivery_capture_mutations import TRUST_CASES, prepare_trust_input
 from workflow_delivery_capture_history import BASE_CASES, HISTORY_CASES
 from workflow_delivery_capture_history import CURRENT_HISTORY_CASE, prepare_current_history
 from workflow_delivery_capture_snapshots import SNAPSHOT_CASES, prepare_snapshots, snapshot_expectation
@@ -31,6 +32,20 @@ def evaluate_hook(output, *, case_id, hook):
     output = Path(output)
     result, invocation = capture_envelope(output, case_id, "H")
     require(invocation["argv"] == [str(hook)], "hook", "actual owner-hook entry required")
+    if case_id in TRUST_CASES:
+        field, value = TRUST_CASES[case_id]
+        message = "missing " + field if value is None else field + " must be a full commit ID"
+        require(result["returncode"] == 2 and (output / "stdout.bin").read_bytes() == b""
+                and (output / "stderr.bin").read_bytes() == ("WDQ-TRUST: " + message + "\n").encode(),
+                "hook", "exact pre-bootstrap trust refusal required")
+        require(not (output / "calls.jsonl").exists(), "hook",
+                "pre-bootstrap refusal must not claim validator observations")
+        return {"case_id": case_id, "surface": "H", "invocation_id": result["invocation_id"],
+                "observation_matches_expected": True, "validator_entrypoint_observed": False,
+                "refusal_boundary": "owner-hook-before-bootstrap", "expected_error": message,
+                "result_sha256": sha256((output / "result.json").read_bytes()),
+                "handler_trace_complete": False, "child_tool_closure_complete": False,
+                "complete_matrix": False, "acceptance_asserted": False}
     root = invocation["cwd"]
     trust = parse_json((output / "before.json").read_bytes(), "before.json")["local_trust"]
     scripts = Path(hook).parent.parent / "scripts"
@@ -101,7 +116,9 @@ def run_hook_case(packet, destination, environment, *, case_id):
     target, _ = CASES[case_id]
     mutation = {"case_id": case_id, "path": target, "before_sha256": None, "after_hex": None,
                 "prepared_fixture_variant": recipe.get("fixture_variant")}
-    if case_id in BOUNDARY_CASES:
+    if case_id in TRUST_CASES:
+        mutation = prepare_trust_input(root, case_id)
+    elif case_id in BOUNDARY_CASES:
         mutation = mutate_external_boundary(root, case_id)
     elif case_id in SNAPSHOT_CASES:
         mutation = prepare_snapshots(root, case_id)

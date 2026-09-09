@@ -9,6 +9,8 @@ import unittest
 from workflow_delivery_capture_cases import CASES, CLI_ERROR_CASES, run_case
 from workflow_delivery_capture_assertions import evaluate_capture
 from workflow_delivery_capture_mutations import TEXT_CASES, RECOVERY_CASE
+from workflow_delivery_capture_mutations import TRUST_CASES
+from workflow_delivery_capture_hook import run_hook_case
 from workflow_delivery_capture_fixture import prepare_fixture
 from workflow_delivery_io import canonical_json, sha256
 from workflow_delivery_environment_cases import PREPARED_VARIANTS
@@ -30,7 +32,7 @@ class CaptureCasesTest(unittest.TestCase):
             runtime = Path(__file__).resolve().parents[1]
             invocations = set()
             ordinary_cases = {key: value for key, value in CASES.items()
-                              if key not in PREPARED_VARIANTS | HISTORY_CASES.keys() | BASE_CASES.keys() | SNAPSHOT_CASES.keys() | CLI_ERROR_CASES | REPORT_CASES | {INTERRUPTION_CASE, CURRENT_HISTORY_CASE}}
+                              if key not in PREPARED_VARIANTS | HISTORY_CASES.keys() | BASE_CASES.keys() | SNAPSHOT_CASES.keys() | CLI_ERROR_CASES | REPORT_CASES | TRUST_CASES.keys() | {INTERRUPTION_CASE, CURRENT_HISTORY_CASE}}
             for case_id in ordinary_cases:
                 for surface in ("C", "R", "S-check", "S-details"):
                     with self.subTest(case_id=case_id, surface=surface):
@@ -69,6 +71,39 @@ class CaptureCasesTest(unittest.TestCase):
                             self.assertNotIn(recovery["invocation_id"], invocations)
                             invocations.add(recovery["invocation_id"])
             self.assertEqual(4 * sum(1 + (code is not None) for _, code in ordinary_cases.values()), len(invocations))
+
+    def test_missing_and_moving_trust_refs_refuse_separately_on_every_surface(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            store = Path(temporary)
+            packet = store / "packet"
+            recipe = prepare_fixture(store / "baseline", packet)
+            environment = {"PATH": os.defpath, "HOME": str(store), "XDG_CONFIG_HOME": str(store),
+                           "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "LANG": "C"}
+            runtime = Path(__file__).resolve().parents[1]
+            identities = set()
+            for case, (field, value) in TRUST_CASES.items():
+                for surface in ("C", "R", "S-check", "S-details", "H"):
+                    with self.subTest(case=case, surface=surface):
+                        for phase, selected in (("refusal", case), ("recovery", "INFRA-S01-01")):
+                            output = store / (case + surface + phase)
+                            result = (run_hook_case(packet, output, environment, case_id=selected)
+                                      if surface == "H" else run_case(packet, output, runtime, environment,
+                                                                     case_id=selected, surface=surface))
+                            self.assertTrue(result["observation_matches_expected"])
+                            self.assertFalse(result["acceptance_asserted"])
+                            self.assertFalse(result["complete_matrix"])
+                            self.assertNotIn(result["invocation_id"], identities)
+                            identities.add(result["invocation_id"])
+                            before = json.loads((output / "capture/before.json").read_bytes())
+                            key = "datum.workflowDelivery" + field.title() + "Ref"
+                            expected = value if phase == "refusal" else recipe["head"]
+                            self.assertEqual([] if expected is None else [expected], before["local_trust"][key])
+                            other = "Base" if field == "authority" else "Authority"
+                            self.assertEqual([recipe["head"]], before["local_trust"]["datum.workflowDelivery" + other + "Ref"])
+                            if surface == "H" and phase == "refusal":
+                                self.assertFalse(result["validator_entrypoint_observed"])
+                                self.assertEqual("owner-hook-before-bootstrap", result["refusal_boundary"])
+            self.assertEqual(40, len(identities))
 
     def test_invocation_errors_have_no_success_report_and_recover(self):
         with tempfile.TemporaryDirectory() as temporary:
