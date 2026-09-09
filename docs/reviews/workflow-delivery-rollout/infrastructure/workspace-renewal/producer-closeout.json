@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-COMPAT-PRODUCER-VERIFICATION-COMPLETE",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "authority": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-repair-authorization.json",
+  "runtime_source_commit": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "evidence_candidate": "94dc7b352285dc8db1413f794c10b51b66ffdd1c",
+  "candidate_ref": "refs/datum-wdq/candidates/compat-current-claim-20260909",
+  "packet_sha256": "678daa96208fb7a372962c383832a099f90ccc1bd63d76c091fee9b4d3fb84f9",
+  "authority_sha256": "84c7c292bc93a857ddf2ea6d413ac0c78c9da9edcf6f15385a92c5d296577807",
+  "committed_independent_inspection": "committed-independent-inspection.json",
+  "producer_requirements": [
+    {
+      "requirement": "Reconcile current candidate requirements, mapping and publication checks without activation.",
+      "evidence": "candidate-reconciliation.json",
+      "result": "Renewed mapping uses READY, null activation, COMPAT verification, RECHECK independent review and null acceptance. Activation-conditional PM042 and both publication views require renewal completion; 25 independent preflight tests passed. Historical source-scope IDs and six completed steps remain unchanged."
+    },
+    {
+      "requirement": "Renew actual construction and exact source/input identity.",
+      "evidence": ["renewed-construction-independent-inspection.json", "typed-build-observation.json", "typed-build-receipt.json"],
+      "result": "161 exact input entries; 148 Python modules compiled in memory; interpreter binary and validator source hashes distinguished; canonical manifest bytes agree with the build receipt."
+    },
+    {
+      "requirement": "Preserve all original scenarios and produce current-source evidence with additional workspace cases.",
+      "evidence": ["typed-observation-assembly.json", "typed-assembly-independent-inspection.json", "renewed-workspace-independent-inspection.json"],
+      "result": "1,123 original case/surface/phase observations plus 191 additional workspace observations, totaling 1,314 distinct invocations; 45 focused regression tests pass. Original and additional expected refusals, recovery, interruptions, uninvoked hooks and failed construction attempts remain explicit."
+    },
+    {
+      "requirement": "Verify real-roadmap clean/mixed state and actual workspace inventory without modifying owner data.",
+      "evidence": ["renewed-roadmap-snapshot.json", "renewed-real-roadmap-independent-inspection.json", "full-workspace-inventory-independent-inspection.json"],
+      "result": "Snapshot preserves 56 Frontier identities, 40 historical commits and six export refs. Fifteen clean/mixed/restored invocations plus nine full-inventory invocations cover 456 entries: 229 exact bytes/modes and 227 explicitly regenerated derived caches. Protected before/after state matches."
+    },
+    {
+      "requirement": "Assemble and validate typed proof against exact committed candidate inputs and selected environment.",
+      "evidence": ["typed-packet-package.json", "typed-packet-independent-inspection.json", "committed-packet-verification.json", "candidate-claim-import.json", "committed-entrypoint-verification.json"],
+      "result": "Committed-tree proof, exact selected environment and six artifact correlations pass. Exact existing synchronized main claim transaction resolves the candidate's historical expiry. Full enforce entrypoint exits zero with no findings; its lifecycle remains ready until this producer-closeout transition."
+    }
+  ],
+  "preserved_limits": [
+    "This closes producer renewal only, not the overall compatibility finding or rollout goal.",
+    "Read-only independent artifact inspection is not independent execution replay. WDQ-RECHECK must repeat entrypoints and inspect exact final publication history.",
+    "Runtime accounting is bounded repository/fixture/named-tool evidence, not exhaustive descendant or shared-library tracing; host substitution remains a reported limit.",
+    "Raw capture archives omit duplicated full real-roadmap checkouts; exact source bundle and fixtures remain at recorded repository-local retained paths. No standalone portable replay claim.",
+    "Beads operates on main. Fixture br execution was refused by its .git storage guard and is not claimed; the exact real export was imported without bypass.",
+    "Earlier candidate evidence and failed attempts remain historical with original pins; none is relabeled as a current run."
+  ],
+  "open_defects": ["dat-wdq-workspace-inputs-zmt"],
+  "next_step": "WDQ-RECHECK",
+  "independent_replay_complete": false,
+  "publication_verified": false,
+  "activation_performed": false,
+  "product_acceptance_asserted": false,
+  "remaining_owner_and_product_outcomes": ["WDQ-I04", "WDQ-I05", "WDQ-I06"]
+}
