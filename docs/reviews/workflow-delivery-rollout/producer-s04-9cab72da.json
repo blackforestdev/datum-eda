@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "record_type": "infrastructure_producer_s04_observations",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-I03",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "source_commit": "9cab72daab46122da6d2c45ab7f972814f702880",
+  "producer_session": "wdq-i03-producer-20260909",
+  "raw_storage": "Git-common/datum-wdq/proposals/wdq-i03-9cab72da-s04",
+  "index_file": "observations-final.json",
+  "index_sha256": "a031509cb27d2caa158f6cf59a5bb5ddbe17632250cc29eabd064d086c69e445",
+  "synthetic_primary_invocations": 95,
+  "fresh_recovery_invocations": 80,
+  "real_roadmap_primary_invocations": 5,
+  "real_roadmap_captures": [
+    {
+      "surface": "C",
+      "directory": "wdq-i03-9cab72da-real-C",
+      "invocation_id": "f78dc817-3fff-42bb-8515-65e6cd56cca6",
+      "result_sha256": "18d4476911824cbf85001a7c5f36b20b04d5c9c1a276a22ea46bcc744eb9478c",
+      "driver_result_sha256": "e64789b7169920d6f9a70b4b6f1ce4c076a3cb43d08931032ea7278bd3b1fdab"
+    },
+    {
+      "surface": "R",
+      "directory": "wdq-i03-9cab72da-real-R",
+      "invocation_id": "219dafb8-da3e-4c6c-8aa2-2e553d9af67a",
+      "result_sha256": "c7405df83bc34f1e7229cea0949f67399ce7b206fbcf81d36ada3ba9bb0de1ca",
+      "driver_result_sha256": "b8265edde7f2fcd3ae7f7f040db2c3f2549fc45badf2bee8de7af1957cd0dfab"
+    },
+    {
+      "surface": "S-check",
+      "directory": "wdq-i03-9cab72da-real-S-check",
+      "invocation_id": "df51453f-4e50-4b80-a9c8-28b8e4527b53",
+      "result_sha256": "94fe94064509409528543f9e8a4fec54b06feb8efeb0652761d0e3627c9b182a",
+      "driver_result_sha256": "5e92652a35c32535e3cd3a950ae39d6b153bbb12032741708bd9f133a3b57efc"
+    },
+    {
+      "surface": "S-details",
+      "directory": "wdq-i03-9cab72da-real-S-details",
+      "invocation_id": "f803ea1c-407d-4550-b8fc-a08dd4be93ea",
+      "result_sha256": "f08fb717fd71c8b7d4be76d9e72ac1d6b78a652a618ef81ab207c74c725a1d51",
+      "driver_result_sha256": "8c471cf4dd395d582c442f220faaeaf0ebafb59c7d6a6265b9c2ca4a78d61527"
+    },
+    {
+      "surface": "H",
+      "directory": "wdq-i03-9cab72da-real-H",
+      "invocation_id": "19122cbf-c780-4a8c-84ce-92784c8fcd98",
+      "result_sha256": "8c2ba4f40e31f860ed245895652e7ec64691068e9b21f359dd2cfbe90f186e40",
+      "driver_result_sha256": "eac2bcead8654748529d409ce8de4edf86906da39455448bb8d435e5d9202f98"
+    }
+  ],
+  "raw_capture_integrity_rechecked": true,
+  "protected_state_unchanged": true,
+  "all_expected_diagnostics_matched": true,
+  "limits": [
+    "Synthetic review and receipt inputs test enforcement; they are not independent review or owner acceptance of this candidate.",
+    "The real-roadmap snapshot checks exercise five candidate entrypoints without publishing the candidate or changing installed trust.",
+    "Typed scenario proof, independent replay, promotion verification and owner activation remain outstanding."
+  ],
+  "scenario_proof_complete": false,
+  "complete_matrix": false,
+  "acceptance_asserted": false
+}
