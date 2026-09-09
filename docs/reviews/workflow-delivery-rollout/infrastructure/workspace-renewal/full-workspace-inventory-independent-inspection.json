@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "review_session": "/root/wdq_independent_review",
+  "method": "Independent producer-artifact inspection; no execution replay.",
+  "result": "No defect found.",
+  "verified": {
+    "materialized_entries_in_every_capture": 456,
+    "exact_observed_bytes_and_modes": 229,
+    "explicitly_regenerated_caches": 227,
+    "distinct_outer_and_observer_invocations": 9,
+    "artifact_hashes": 63,
+    "unique_events": 38,
+    "source_hash_checks": 336,
+    "distinct_source_files": 33,
+    "all_before_after_byte_identical": true,
+    "archive_sha256": "8e74faaca4a1c62f242d6847740886715fc7cb0327e993fd7178fd4816d3ffa8",
+    "archive_bytes": 6399024,
+    "archive_files_matching_raw": 74
+  },
+  "outcomes": "Five baseline passes; two WDQ-COVERAGE selector refusals naming scripts/__pycache__/wdq_undeclared_source.py; two restored passes.",
+  "limits": [
+    "Not independent execution replay.",
+    "Not actual Beads operation inside fixture.",
+    "Not full compatibility, publication or activation acceptance."
+  ]
+}

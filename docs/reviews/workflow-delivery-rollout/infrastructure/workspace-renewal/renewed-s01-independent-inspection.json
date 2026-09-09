@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "review_session": "/root/wdq_independent_review",
+  "method": "Independent inspection of raw producer artifacts, not execution replay.",
+  "verified": {
+    "ordered_historical_inventory_preserved": true,
+    "distinct_outer_and_observer_invocations": 36,
+    "primary": 18,
+    "recovery": 18,
+    "no_original_invocation_ids_reused": true,
+    "artifact_hashes": 252,
+    "unique_events": 127,
+    "source_hash_checks": 1307,
+    "distinct_source_files": 33,
+    "all_before_after_identical": true,
+    "assessment_result_hash_bindings": true,
+    "failed_setup_excluded_from_successes": true
+  },
+  "outcomes": {
+    "argument_exit_2": 4,
+    "refusal_exit_1": 7,
+    "valid_or_report_only_exit_0": 7,
+    "all_18_recovery_exit_codes": 0
+  },
+  "archive_independently_verified": false,
+  "complete_matrix": false,
+  "activation_performed": false
+}
