@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "archive_sha256": "f77cf6def60fea2183a0e883144021da9118b37b560999cba0fd6031f42b2d51",
+  "archive_bytes": 607324,
+  "method": "Distinct independent streaming inspection; no extraction, payload execution or writes.",
+  "result": "No inconsistency found in the retained producer subset.",
+  "verified": {
+    "assessments_and_raw_results": 18,
+    "indexed_capture_artifact_hashes": 126,
+    "outer_invocations_distinct": 18,
+    "observer_invocations_distinct": 18,
+    "unique_trace_events": 72,
+    "source_hash_comparisons": 664,
+    "distinct_source_files": 33,
+    "before_after_bytes_identical": true,
+    "pid_time_bindings_consistent": true,
+    "fresh_recoveries_exit_zero": 9
+  },
+  "observed_behavior": "Staged-bad refuses staged CLI/hook and passes worktree selectors; worktree-bad passes staged CLI/hook and refuses worktree selectors; explicit candidate-isolation passes candidate CLI.",
+  "scope": "Partial original-matrix producer evidence only. Not additional workspace conditions, full producer renewal, independent execution replay, publication review or acceptance.",
+  "compatibility_complete": false,
+  "activation_performed": false
+}

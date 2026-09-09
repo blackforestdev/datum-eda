@@ -1,0 +1,590 @@
+{
+  "schema_version": 1,
+  "scenario_id": "INFRA-S01",
+  "producer_session": "wdq-compat-producer-20260909",
+  "method": "infrastructure",
+  "binary_sha256": "17b78e0a93175e86f9ac03141924fd7a7f0c0c52e66b34bfa0de20ffef989df1",
+  "authority_sha256": "84c7c292bc93a857ddf2ea6d413ac0c78c9da9edcf6f15385a92c5d296577807",
+  "inputs": [
+    "Invoke the real staged CLI, exact-candidate CLI, prepared owner hook and project-status selector on valid inputs; retain arguments, stdout/stderr, status and actual handler observations.",
+    "Repeat with an invalid invocation, and distinguish diagnostic report-only from enforcing mode."
+  ],
+  "dispatches": [
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "staged_cli",
+      "context": "invocation-5f2528c7-1907-4693-b66a-70fe0c679736",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "staged_cli",
+      "context": "invocation-285bace4-af74-4691-86b8-b1e9345aa047",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "candidate_cli",
+      "context": "invocation-4cfb1379-8885-4966-8418-e4eed6624ee7",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "candidate_cli",
+      "context": "invocation-bc23b77a-8fcf-4ed8-b382-bae7fafcd9ad",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "staged_cli",
+      "context": "invocation-d7bf8136-fef1-48cb-b78e-4427d1547a75",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "staged_cli",
+      "context": "invocation-ea8595bd-90a5-4758-b028-84605664015a",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "candidate_cli",
+      "context": "invocation-37c08a66-1afa-4bd0-b419-1bd6c443ede7",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "candidate_cli",
+      "context": "invocation-cd8669b0-89a8-49d9-927a-ecb7fba1be9e",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "staged_cli",
+      "context": "invocation-93408553-3640-4d6e-9ab7-0a371f2e96af",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "staged_cli",
+      "context": "invocation-a5332e35-1618-4689-9733-a7eaa4e54dc0",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "candidate_cli",
+      "context": "invocation-32011d34-d88d-4735-8aa3-d6745e9cf554",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "candidate_cli",
+      "context": "invocation-0c11d30b-4bbf-48b1-af31-89413cee3505",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "staged_cli",
+      "context": "invocation-e81a08cf-ab34-4d5c-9b85-76a91587c572",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "staged_cli",
+      "context": "invocation-530ebbe3-b398-4548-b926-64bf81acb7bc",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "candidate_cli",
+      "context": "invocation-e5c7bde6-d97b-4f4e-ba2e-4423ed4c0864",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "candidate_cli",
+      "context": "invocation-423b9095-5c52-4d6f-91b8-602f575abeb3",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "staged_cli",
+      "context": "invocation-2c2a1508-1b22-49b0-8d2e-f8d2b3d64ac4",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "staged_cli",
+      "context": "invocation-fb428990-9ce6-4ab0-acef-98243ee18fa0",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "candidate_cli",
+      "context": "invocation-c660cf56-63bd-45f9-9e83-12ffb03de0b4",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "candidate_cli",
+      "context": "invocation-4dd07979-fb27-4b36-84cc-d736259fcd7b",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "workflow_delivery_selector.selector_failures",
+      "entry_surface": "project_status",
+      "context": "invocation-a6f63006-cfde-478b-9a87-060bcc150b1b",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "workflow_delivery_selector.selector_failures",
+      "entry_surface": "project_status",
+      "context": "invocation-aea40c66-1e48-4567-adcc-7dc3fb75760d",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "workflow_delivery_selector.selector_failures",
+      "entry_surface": "project_status",
+      "context": "invocation-b68e9cfa-9862-4263-8ecf-2d32007d0aa5",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "workflow_delivery_selector.selector_failures",
+      "entry_surface": "project_status",
+      "context": "invocation-57d5c4fa-0963-4f3b-aa25-85d0689ba431",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "owner_hook",
+      "context": "invocation-22f60907-6e9a-4610-a799-71efdac1b17f",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "owner_hook",
+      "context": "invocation-4e0190b5-5d12-4a5b-9f02-3e9f3ce32d39",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "staged_cli",
+      "context": "invocation-57c5cd10-f0ee-4ab7-9b57-b9e1e583186a",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "staged_cli",
+      "context": "invocation-8ddc1cf7-6a97-4d0b-a93a-3c3e45ab4457",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "candidate_cli",
+      "context": "invocation-13d8b0dc-9da6-4096-9ffc-32488febbf89",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "candidate_cli",
+      "context": "invocation-c62cf6c7-1c40-44e8-8686-e3a037789638",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "workflow_delivery_selector.selector_failures",
+      "entry_surface": "project_status",
+      "context": "invocation-d200cf76-dca2-4ed4-99ec-c4732d328ec5",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "workflow_delivery_selector.selector_failures",
+      "entry_surface": "project_status",
+      "context": "invocation-12d2d353-09f6-4cb7-a603-3f236d117662",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "workflow_delivery_selector.selector_failures",
+      "entry_surface": "project_status",
+      "context": "invocation-c73daecd-1de3-43ae-95f8-9d447bfff3ab",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "workflow_delivery_selector.selector_failures",
+      "entry_surface": "project_status",
+      "context": "invocation-7c904b93-73e4-437f-b7d6-e98b781770fa",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "owner_hook",
+      "context": "invocation-c5260ae7-7549-4440-96e3-4c81c9e70c0f",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "owner_hook",
+      "context": "invocation-0b61fdb4-db86-42d9-8f8e-ab58d660f9db",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "staged_cli",
+      "context": "invocation-615d06fb-0e58-4ccd-aa70-f6fc92e4ad9e",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "candidate_cli",
+      "context": "invocation-7239d580-836f-4a1c-9ae0-5989661cc5f7",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "workflow_delivery_selector.selector_failures",
+      "entry_surface": "project_status",
+      "context": "invocation-a88f9a62-e7a0-41ed-bf0d-e4e93e48846d",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "workflow_delivery_selector.selector_failures",
+      "entry_surface": "project_status",
+      "context": "invocation-e1c05e1a-0cd7-43b2-a0b6-32136beb385c",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    },
+    {
+      "dispatch_key": "check_workflow_delivery.main",
+      "entry_surface": "owner_hook",
+      "context": "invocation-c11303db-2322-475e-be3c-9a553084bf7c",
+      "eligible": true,
+      "enabled": true,
+      "invoked": true,
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "unavailable_reason": null,
+      "mutation_count": 0
+    }
+  ],
+  "actual_visible": "Observed 41 invocations: phases {'primary': 23, 'recovery': 18}, return codes {'2': 4, '0': 30, '1': 7}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+  "actual_state": "All 41 recorded protected before/after states matched. Producer evidence only; independent repetition/publication remains under WDQ-RECHECK. No activation or product acceptance."
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "review_session": "/root/wdq_independent_review",
+  "method": "Distinct read-only construction verification and independent in-memory compilation, not scenario replay.",
+  "verified": {
+    "input_paths_and_hashes": 161,
+    "input_manifest_sha256": "7ec747490e0046563ca561a87bad7113bb048cc2b261764c563258eb29c0674b",
+    "python_modules_compiled_in_memory": 148,
+    "bundle_verification": "pass",
+    "declared_export_refs": 6,
+    "frontier_identities": 56,
+    "resolved_historical_commits": 40,
+    "source_before_after_byte_identical": true,
+    "restored_head_and_tree_match": true,
+    "restored_receipt_has_no_installed_trust": true
+  },
+  "result": "No inconsistency found.",
+  "scenario_proof_verified": false,
+  "activation_readiness_asserted": false
+}

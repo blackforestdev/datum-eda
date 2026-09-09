@@ -1,0 +1,487 @@
+{
+  "schema_version": 1,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "command": "python3 -I -S -B -c 'import sys,os,json,shutil,subprocess; from pathlib import Path; runtime=Path.cwd(); sys.path.insert(0,str(runtime/\"scripts\")); from workflow_delivery_capture_fixture import prepare_fixture; from workflow_delivery_capture_cases import run_case; from workflow_delivery_capture_hook import run_hook_case; from workflow_delivery_capture_state import git; from workflow_delivery_capture_command import save; pin=\"22192085c55ec654eb209deccc0450afd53b2c65\"; assert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\"); formatter=Path(shutil.which(\"rustfmt\")).resolve(strict=True); formatter=Path(subprocess.check_output([str(formatter),\"which\",\"rustfmt\"],text=True).strip()).resolve(strict=True) if formatter.name==\"rustup\" else formatter; assert formatter.name!=\"rustup\"; store=Path(\"/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/workspace-renewal-delete-rename\"); store.mkdir(exist_ok=False); recovery_packet=store/\"recovery-packet\"; prepare_fixture(store/\"recovery-baseline\",recovery_packet,fixture_variant=\"INFRA-S02-06.authorized\"); environment={\"PATH\":str(formatter.parent)+os.pathsep+os.defpath,\"HOME\":str(store),\"XDG_CONFIG_HOME\":str(store),\"GIT_CONFIG_NOSYSTEM\":\"1\",\"GIT_CONFIG_GLOBAL\":os.devnull,\"LANG\":\"C\"}; results=[]\nfor case in (\"INFRA-S05-06.delete-unpermitted\",\"INFRA-S05-06.rename-escape\"):\n packet=store/(case+\"-packet\"); prepare_fixture(store/(case+\"-source\"),packet,fixture_variant=case)\n for surface in (\"C\",\"R\",\"H\",\"S-check\",\"S-details\"):\n  for phase,source,identity in ((\"primary\",packet,case),(\"recovery\",recovery_packet,\"INFRA-S02-06.authorized\")):\n   destination=store/(case+\"-\"+surface+\"-\"+phase); result=run_hook_case(source,destination,environment,case_id=identity) if surface==\"H\" else run_case(source,destination,runtime,environment,case_id=identity,surface=surface); assert result[\"observation_matches_expected\"]\n   if phase==\"primary\":\n    mutation=json.loads((destination/\"mutation.json\").read_bytes()); expected=\"D\\texternal/unpermitted/deletable.py\" if case.endswith(\"delete-unpermitted\") else \"R100\\texternal/owned/input.py\\texternal/unpermitted/renamed.py\"; assert expected in mutation[\"staged_name_status\"].splitlines()\n   results.append({\"requested_case\":case,\"surface\":surface,\"phase\":phase,\"assessment\":result,\"capture_directory\":destination.name}); print(json.dumps({\"completed\":len(results),\"case\":case,\"surface\":surface,\"phase\":phase}),flush=True)\nassert len(results)==20; assert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\"); save(store/\"renewal-result.json\",{\"candidate\":pin,\"invocations\":results,\"scope\":\"Original INFRA-S05-06 deletion/rename boundary and authorized recovery on five surfaces; synthetic ownership, not product permission\",\"formatter\":str(formatter),\"complete_matrix\":False,\"activation_performed\":False}); print(\"Deletion/rename renewal completed: 20 actual invocations\",flush=True)'",
+  "formatter": "/home/bfadmin/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustfmt",
+  "exit_code": 0,
+  "invocation_count": 20,
+  "results": [
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-06.delete-unpermitted",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "external/unpermitted/deletable.py"
+          }
+        ],
+        "expected_path": "external/unpermitted/deletable.py",
+        "invocation_id": "e58cab7a-5264-4e8a-89ab-4284a75dfcfb",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "042f13ee05032c93f228beb55f0a9f9548d8a5145190b204611b32d4d3c4ebd6",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S05-06.delete-unpermitted-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-06.delete-unpermitted",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-06.authorized",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "b41ca95a-7585-4bb4-9d39-efb4128e3f27",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "b7f9e0555ad909722ecbad36d92bf79c0368a905742f1c0f5faaa122feb43dd5",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S05-06.delete-unpermitted-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-06.delete-unpermitted",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-06.delete-unpermitted",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "external/unpermitted/deletable.py"
+          }
+        ],
+        "expected_path": "external/unpermitted/deletable.py",
+        "invocation_id": "30e957e3-85a9-4dab-9924-f69b24828c05",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "cbb45100bc979423a4e5a6c3bbf67c5d3cfa54c04fc66e3dca18e80c691ba994",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-06.delete-unpermitted-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-06.delete-unpermitted",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-06.authorized",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "636e0854-4791-480a-8215-53a3d8c4c6e9",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "9c331820cf97299aab65595041dfb98816d94733f5d2779f05a79db6c8761664",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-06.delete-unpermitted-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-06.delete-unpermitted",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-06.delete-unpermitted",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "9352060f-6167-41a2-88e8-31a2e303c9a0",
+        "observation_matches_expected": true,
+        "result_sha256": "86ff9e9c21c8eabad341dc9cc96d0e2b6e35d4361ba30b986699618eeb4dc748",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "bccf9ffb561ba46db8eba5541c1fb6b2767b70ef2ab288744fa81c8bee6b4bf8",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S05-06.delete-unpermitted-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-06.delete-unpermitted",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-06.authorized",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "e7fbe898-2594-4ab4-9fff-8fcf435d95da",
+        "observation_matches_expected": true,
+        "result_sha256": "66fff416238a1b9549fe51b9eae7dfb9f4f3f7e4cb09133af5b2ba9df6e1afc8",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "63fa8b919d59d41b558417cae1911c6525374033f944d5ec153dc17c114798bc",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S05-06.delete-unpermitted-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-06.delete-unpermitted",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-06.delete-unpermitted",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "external/unpermitted/deletable.py"
+          }
+        ],
+        "expected_path": "external/unpermitted/deletable.py",
+        "invocation_id": "50d82c4e-22a3-4379-9bf0-b84781a97165",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "a344156b9b7e82df0fbe976f16d9e2aa07375a052308b2696b71b8b811ba91b2",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-06.delete-unpermitted-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-06.delete-unpermitted",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-06.authorized",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "e72841ac-9b3b-4b1c-8469-b0890c379db5",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "9fa56af6f65320eef89d646563f2ddb57ae3518737b368d7c295fc5d50d89218",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-06.delete-unpermitted-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-06.delete-unpermitted",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-06.delete-unpermitted",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "external/unpermitted/deletable.py"
+          }
+        ],
+        "expected_path": "external/unpermitted/deletable.py",
+        "invocation_id": "61ff1bd7-2a6f-4be6-87aa-31cf9591e8f4",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "f413428778a2b435436ea4b09441e47b6d8274420f4694e15b9d8371c77c1548",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-06.delete-unpermitted-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-06.delete-unpermitted",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-06.authorized",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "c026c595-79af-46e2-bd02-53c7c5d1dc07",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "7fd6e4b85989fd494f3882087ed7b1b73ee428e38ea336e1f35b8fc6bc564b4e",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-06.delete-unpermitted-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-06.delete-unpermitted",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-06.rename-escape",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "external/unpermitted/renamed.py"
+          }
+        ],
+        "expected_path": "external/unpermitted/renamed.py",
+        "invocation_id": "8af6bc13-932c-43b1-818e-653cb7ebdd58",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "93f527c3174aefa7e92f4d05d295c2140f66d6e0d953864648d2fc9e64124cda",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S05-06.rename-escape-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-06.rename-escape",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-06.authorized",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "34ff9af3-a32d-4175-b594-4cdafccdf3ba",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "c5a18b6dd6153e7da336bc1d1eb0d9e3f7bc5aebe33d69fe45d342f6643c723c",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S05-06.rename-escape-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-06.rename-escape",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-06.rename-escape",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "external/unpermitted/renamed.py"
+          }
+        ],
+        "expected_path": "external/unpermitted/renamed.py",
+        "invocation_id": "fe56d2a7-de7a-4f59-834e-a4c32d9f8d62",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "c61e2f687fd2f39c2d9d8bb3be69ccb0fde63bf5969adc23059acd4ed4312a1b",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-06.rename-escape-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-06.rename-escape",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-06.authorized",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "f4fe1e33-c29b-482c-86ba-c84c0c8a2ffd",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "77f82af8d967421b31172aa438281945c06ff9312f002027bc4c83d9aab2b4b2",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-06.rename-escape-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-06.rename-escape",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-06.rename-escape",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "1d8d4d6a-5e1a-46bd-9221-898f8ef59b73",
+        "observation_matches_expected": true,
+        "result_sha256": "80e0383cebb166edc09b3ea5d5ef313638382c921491dcbf1e0af57d9a73e557",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "2b182e2427d8d50a704441040dd4598bb5ec6e3ae25528902e6fa7adc5db7975",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S05-06.rename-escape-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-06.rename-escape",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-06.authorized",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "663f0420-2fab-43ab-9137-ad78cd90657d",
+        "observation_matches_expected": true,
+        "result_sha256": "385e5f114ff235ea756352dae5b307c3e7e7719fc3ececd98df93b310891be14",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "63fa8b919d59d41b558417cae1911c6525374033f944d5ec153dc17c114798bc",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S05-06.rename-escape-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-06.rename-escape",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-06.rename-escape",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "external/unpermitted/renamed.py"
+          }
+        ],
+        "expected_path": "external/unpermitted/renamed.py",
+        "invocation_id": "96b191d7-8ef5-4966-ac74-2c72d8df9c8f",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "ebd66165acace10d1a37e9cedc78fc67126ce2e3f6a27d831e982cb477a82b34",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-06.rename-escape-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-06.rename-escape",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-06.authorized",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "bbac6ff8-0482-4060-bbf6-b9ae0cd0d563",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "fe09644db923e318f16035a403e15aafae09a2dfc6bb644bc5fb0ee7ad2f2cb8",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-06.rename-escape-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-06.rename-escape",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-06.rename-escape",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "external/unpermitted/renamed.py"
+          }
+        ],
+        "expected_path": "external/unpermitted/renamed.py",
+        "invocation_id": "744b9533-040d-46d1-91a3-a5215489b861",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "462e5aec53af722287f50e60c05e372b6435d69938093b07d93120b22fb5b140",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-06.rename-escape-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-06.rename-escape",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-06.authorized",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "aa442cde-ed4f-4e8f-a478-9d0548e5830c",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "fd121ed734cbf9fd238d6cfb69c11866964d6fbf3448bdfc8288f9d3115a119f",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-06.rename-escape-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-06.rename-escape",
+      "surface": "S-details"
+    }
+  ],
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/delete-rename-captures.tar.xz",
+    "sha256": "032e647ba44beb2a03274f0d804c4801d91f5d0dfad45edd56e52d85728c0656",
+    "size": 986724
+  },
+  "scope": "Original INFRA-S05-06 deletion/rename boundary and authorized recovery on five surfaces; synthetic ownership, not product permission",
+  "complete_matrix": false,
+  "compatibility_complete": false,
+  "activation_performed": false
+}

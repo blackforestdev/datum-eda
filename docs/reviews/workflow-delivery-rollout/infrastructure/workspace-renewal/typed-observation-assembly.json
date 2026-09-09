@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/assemble_observations.py --root /home/bfadmin/Documents/datum-eda --runtime /home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-final-owner-disposed-producer-20260909 --output /home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/typed-observations-complete-0e5b8064",
+  "exit_code": 0,
+  "original_observations": 1123,
+  "additional_workspace_observations": 191,
+  "total": 1314,
+  "scenarios": {
+    "INFRA-S01": 41,
+    "INFRA-S02": 280,
+    "INFRA-S03": 185,
+    "INFRA-S04": 180,
+    "INFRA-S05": 250,
+    "INFRA-S06": 378
+  },
+  "checks": [
+    "Exact original case/captured-case/surface/phase multiset",
+    "Distinct outer invocation IDs; no original ID reuse",
+    "Result artifact hashes and identical protected before/after bytes",
+    "Actual handler source hashes and observed calls, preserving six predispatch refusals",
+    "Expected additional workspace outcomes and actual record identities"
+  ],
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-observations.tar.xz",
+    "sha256": "1d8b43908268b48b4b6d68c94fa064a35d3c3704d36b7f0ac8ae33933a02ccaa",
+    "bytes": 155144,
+    "producer_tar_compare_exit_code": 0
+  },
+  "scope": "Derived observation index, registry entries and scenario dispatches. Raw capture archives remain separately retained. No complete proof, independently replayed packet or acceptance is asserted.",
+  "complete_proof": false,
+  "independent_replay_complete": false,
+  "activation_performed": false
+}

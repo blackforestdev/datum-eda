@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "archive_sha256": "032e647ba44beb2a03274f0d804c4801d91f5d0dfad45edd56e52d85728c0656",
+  "archive_bytes": 986724,
+  "method": "Distinct independent streaming inspection; no extraction, execution or edits.",
+  "result": "No inconsistency found in the 20 retained captures.",
+  "verified": {
+    "assessments_and_raw_results": 20,
+    "indexed_capture_artifact_hashes": 140,
+    "outer_invocations_distinct": 20,
+    "observer_invocations_distinct": 20,
+    "unique_trace_events": 78,
+    "source_hash_comparisons": 742,
+    "distinct_source_files": 33,
+    "before_after_bytes_identical": true,
+    "pid_time_bindings_consistent": true,
+    "mutation_poststates_match": true,
+    "rename_byte_identity_records": 5,
+    "refusals_with_WDQ_COVERAGE": 10,
+    "authorized_recoveries_exit_zero": 10
+  },
+  "scope": "Producer-artifact verification only; not additional workspace conditions, independent execution replay, publication review or acceptance.",
+  "compatibility_complete": false,
+  "activation_performed": false
+}

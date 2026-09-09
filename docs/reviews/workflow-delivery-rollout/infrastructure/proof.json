@@ -1,1 +1,1466 @@
-{"build":{"command":["/usr/bin/python3","-I","-S","-B","-c","import sys,subprocess,hashlib,json\nfrom pathlib import Path\nroot=Path(sys.argv[1]);pin=sys.argv[2]\nassert subprocess.check_output(['git','--no-optional-locks','rev-parse','HEAD'],cwd=root).decode().strip()==pin\nassert not subprocess.check_output(['git','--no-optional-locks','status','--porcelain'],cwd=root)\nsys.path.insert(0,str(root/'scripts'))\nfrom workflow_delivery_tree import Tree\nfrom workflow_delivery_io import canonical_json\nhistorical=Tree(root,revision=pin);contract=historical.json('specs/workflow_delivery/rollout.contract.json');manifest=historical.manifest(contract['input_roots'])\nassert manifest==Tree(root).manifest(contract['input_roots']) and len(manifest)==152\nassert hashlib.sha256(canonical_json(manifest)).hexdigest()=='ab90c27b89f820df22200fc8ed1c200faae5536b7a28d64b14ae25869fc03564'\ncount=0\nfor row in manifest:\n if row['path'].endswith('.py'):\n  compile((root/row['path']).read_bytes(),row['path'],'exec');count+=1\nprint(json.dumps({'source_commit':pin,'input_count':len(manifest),'python_modules_compiled_in_memory':count,'source_clean':True,'compilation_output_written':False}))\n","/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-i02-assembled-20260908/candidate","9cab72daab46122da6d2c45ab7f972814f702880"],"receipt":{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/build-receipt.json","sha256":"b73af5bb17981ea8da774fe51a597f8ed784642e5c0ea30c8b870541e5d03971"},"source_clean":true,"toolchain":"3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]"},"contract_sha256":"e16c3f5746dde8580f499a7e1196709e8d7f19af7f823cc6f7924fb8b7fa2619","environment":{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/producer-environment.json","sha256":"a1c33121f265812cba27e1bd7867061b9d82d4e8111012ae8cbfa3e1c20c3fca"},"fixture":{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/fixtures.tar.xz","sha256":"19944e0ae4ad6d76dab2418e94773a57662197b635a0ec59c68c04b7bcb76586"},"input_manifest":{"path":"docs/reviews/workflow-delivery-rollout/input-manifest-9cab72da.json","sha256":"ab90c27b89f820df22200fc8ed1c200faae5536b7a28d64b14ae25869fc03564"},"producer_session":"wdq-i03-producer-20260909","results":[{"actual_state":"All 41 protected before/after snapshots matched. No automatic authority repair, claim, acceptance or live Preferences mutation was performed.","actual_visible":"Observed 23 required primary invocations and 18 fresh recoveries; 30 exited zero, 11 exited nonzero, including 0 recorded interruptions. All matched the case-specific expected diagnostics and outcomes.","artifacts":[{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s01-roles.json","sha256":"e4f5cccb61c24be911709d242cc0836ef7db5f9b99e5118139256cf7a1deaa81"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s01-events.json","sha256":"c0aeacd3b808d0eae0d48637d710a79b94fe4b7f2000ea1651fcbc0aa45766b4"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/captures-nonlease.tar.xz","sha256":"b2d52004f26363c2634fdeada982e6ae8c08a0c42170ffff06c29f9cddfac582"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/captures-live-ownership.tar.xz","sha256":"30e6190a713876a4580ea1398e1eb1b8300e67106d74f2fdb42a2cceae2bdb65"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/history-fixtures.tar.xz","sha256":"ca8d23a06ccf41f6f80af1a5c5928c5344ee282a7781514b0046f6beed519570"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s01-observations.json","sha256":"46a7e555d7adb8987c68a244c13752b40c7c05a374b23ce66f5938d9bfd5cc25"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/build-observation.json","sha256":"caea362a05c9b829cb4e93f98d09330cf4857d302db77cc61f90934ab86528bc"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/registry.json","sha256":"a06ca8bb007b4de12d919abceeab822fd9c663e2b277faa212ba6e52c9bd1095"}],"assertions":[{"dimension":"normal","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"30 successful invocations; case-specific success reports were checked.","outcome":"pass"},{"dimension":"invalid","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"11 expected nonzero outcomes retained with exact diagnostic assessments; report-only exceptions are separately identified in raw observations.","outcome":"pass"},{"dimension":"scope","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"All 41 protected before/after snapshots matched. No automatic authority repair, claim, acceptance or live Preferences mutation was performed.","outcome":"pass"},{"dimension":"accessibility","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"Text-valid and text-refused cases across five entrypoints passed explicit no-color, noninteractive descriptor and readable-diagnostic checks, with fresh recoveries. No GUI accessibility claim.","outcome":"pass"},{"dimension":"failure_recovery","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"18 distinct fresh recovery invocations exited zero. Malformed and restored-valid fixture identities remain separately recorded; no claim of repairing the rejected authority is made.","outcome":"pass"}],"defects":[],"outcome":"pass","scenario_id":"INFRA-S01"},{"actual_state":"All 280 protected before/after snapshots matched. No automatic authority repair, claim, acceptance or live Preferences mutation was performed.","actual_visible":"Observed 145 required primary invocations and 135 fresh recoveries; 145 exited zero, 135 exited nonzero, including 0 recorded interruptions. All matched the case-specific expected diagnostics and outcomes.","artifacts":[{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/corrected-producer/infra-s02-roles.json","sha256":"5eb9041be6025dcabd65a46f26b7154975dc69ba745e14026d64ebafa18d7709"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/corrected-producer/infra-s02-events.json","sha256":"80ef8a7c3846e0b63d8c0b836caad8d46d1aac898debc547a323f44c84da5d73"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/captures-nonlease.tar.xz","sha256":"b2d52004f26363c2634fdeada982e6ae8c08a0c42170ffff06c29f9cddfac582"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/captures-live-ownership.tar.xz","sha256":"30e6190a713876a4580ea1398e1eb1b8300e67106d74f2fdb42a2cceae2bdb65"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/history-fixtures.tar.xz","sha256":"ca8d23a06ccf41f6f80af1a5c5928c5344ee282a7781514b0046f6beed519570"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/rustfmt-correction/captures.tar.xz","sha256":"4924c137f823ddaaef9f763c0e7c091d648b674951cc829b1bac70644b1497d8"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/corrected-producer/infra-s02-observations.json","sha256":"c9f0951dfe777fde3686ebe297fd0b46675153c07319f80738aefb0b18b8a6c6"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/build-observation.json","sha256":"caea362a05c9b829cb4e93f98d09330cf4857d302db77cc61f90934ab86528bc"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/rustfmt-correction/receipt.json","sha256":"28fa13621c543bff1b5785a49ba9059d73b9aca1e6b87d64e668900680f81c12"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/corrected-producer/registry.json","sha256":"2bffd6fb659b65cc09a94557b0e61e71030b821657137b67bd68702280d35d64"}],"assertions":[{"dimension":"normal","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"145 successful invocations; case-specific success reports were checked.","outcome":"pass"},{"dimension":"invalid","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"135 expected nonzero outcomes retained with exact diagnostic assessments; report-only exceptions are separately identified in raw observations.","outcome":"pass"},{"dimension":"scope","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"All 280 protected before/after snapshots matched. No automatic authority repair, claim, acceptance or live Preferences mutation was performed.","outcome":"pass"},{"dimension":"failure_recovery","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"135 distinct fresh recovery invocations exited zero. Malformed and restored-valid fixture identities remain separately recorded; no claim of repairing the rejected authority is made.","outcome":"pass"}],"defects":["dat-wdq-formatter-evidence-7wm"],"outcome":"pass","scenario_id":"INFRA-S02"},{"actual_state":"All 185 protected before/after snapshots matched. No automatic authority repair, claim, acceptance or live Preferences mutation was performed.","actual_visible":"Observed 110 required primary invocations and 75 fresh recoveries; 110 exited zero, 75 exited nonzero, including 0 recorded interruptions. All matched the case-specific expected diagnostics and outcomes.","artifacts":[{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s03-roles.json","sha256":"58a86b19729a709272f10fd58b33d1ea1f82897147e714051277afe4d042101b"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s03-events.json","sha256":"336e29acb83a7947488f65192683ea5e6785bdb7a74ff7bea649b1f48aa25020"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/captures-nonlease.tar.xz","sha256":"b2d52004f26363c2634fdeada982e6ae8c08a0c42170ffff06c29f9cddfac582"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/captures-live-ownership.tar.xz","sha256":"30e6190a713876a4580ea1398e1eb1b8300e67106d74f2fdb42a2cceae2bdb65"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/history-fixtures.tar.xz","sha256":"ca8d23a06ccf41f6f80af1a5c5928c5344ee282a7781514b0046f6beed519570"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s03-observations.json","sha256":"a5edf2da03ec5ed6c152eb5c5b252acb48a2d70418ce0d83a9a53a139527d102"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/build-observation.json","sha256":"caea362a05c9b829cb4e93f98d09330cf4857d302db77cc61f90934ab86528bc"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/registry.json","sha256":"a06ca8bb007b4de12d919abceeab822fd9c663e2b277faa212ba6e52c9bd1095"}],"assertions":[{"dimension":"normal","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"110 successful invocations; case-specific success reports were checked.","outcome":"pass"},{"dimension":"invalid","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"75 expected nonzero outcomes retained with exact diagnostic assessments; report-only exceptions are separately identified in raw observations.","outcome":"pass"},{"dimension":"scope","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"All 185 protected before/after snapshots matched. No automatic authority repair, claim, acceptance or live Preferences mutation was performed.","outcome":"pass"},{"dimension":"failure_recovery","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"75 distinct fresh recovery invocations exited zero. Malformed and restored-valid fixture identities remain separately recorded; no claim of repairing the rejected authority is made.","outcome":"pass"}],"defects":[],"outcome":"pass","scenario_id":"INFRA-S03"},{"actual_state":"All 180 protected before/after snapshots matched. No automatic authority repair, claim, acceptance or live Preferences mutation was performed.","actual_visible":"Observed 100 required primary invocations and 80 fresh recoveries; 100 exited zero, 80 exited nonzero, including 0 recorded interruptions. All matched the case-specific expected diagnostics and outcomes.","artifacts":[{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s04-roles.json","sha256":"a33313051c87720731b2b2f8f2f447b6b26aa249e7430371b3c723fdc483a0c3"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s04-events.json","sha256":"cd213e84cf022768ac55fdfbeed31da0c9e51711693cf25653a6343368ac73db"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/captures-nonlease.tar.xz","sha256":"b2d52004f26363c2634fdeada982e6ae8c08a0c42170ffff06c29f9cddfac582"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/captures-live-ownership.tar.xz","sha256":"30e6190a713876a4580ea1398e1eb1b8300e67106d74f2fdb42a2cceae2bdb65"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/history-fixtures.tar.xz","sha256":"ca8d23a06ccf41f6f80af1a5c5928c5344ee282a7781514b0046f6beed519570"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s04-observations.json","sha256":"7b56f0ed7fc5214b4781566708ef13cc157b271fe4f6531e327a6a1b93765dec"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/build-observation.json","sha256":"caea362a05c9b829cb4e93f98d09330cf4857d302db77cc61f90934ab86528bc"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/registry.json","sha256":"a06ca8bb007b4de12d919abceeab822fd9c663e2b277faa212ba6e52c9bd1095"}],"assertions":[{"dimension":"normal","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"100 successful invocations; case-specific success reports were checked.","outcome":"pass"},{"dimension":"invalid","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"80 expected nonzero outcomes retained with exact diagnostic assessments; report-only exceptions are separately identified in raw observations.","outcome":"pass"},{"dimension":"scope","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"All 180 protected before/after snapshots matched. No automatic authority repair, claim, acceptance or live Preferences mutation was performed.","outcome":"pass"},{"dimension":"failure_recovery","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"80 distinct fresh recovery invocations exited zero. Malformed and restored-valid fixture identities remain separately recorded; no claim of repairing the rejected authority is made.","outcome":"pass"}],"defects":[],"outcome":"pass","scenario_id":"INFRA-S04"},{"actual_state":"All 59 protected before/after snapshots matched. No automatic authority repair, claim, acceptance or live Preferences mutation was performed.","actual_visible":"Observed 36 required primary invocations and 23 fresh recoveries; 36 exited zero, 23 exited nonzero, including 0 recorded interruptions. All matched the case-specific expected diagnostics and outcomes.","artifacts":[{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s05-roles.json","sha256":"2fb344f458d43fcf782a59cdc15c58ad38b2ddef4c9f06ba6e8984911d5f1980"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s05-events.json","sha256":"36c23b51502585db7c8ba85419317fc9c4079e9e7346afdc922f24bd9102b4e7"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/captures-nonlease.tar.xz","sha256":"b2d52004f26363c2634fdeada982e6ae8c08a0c42170ffff06c29f9cddfac582"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/captures-live-ownership.tar.xz","sha256":"30e6190a713876a4580ea1398e1eb1b8300e67106d74f2fdb42a2cceae2bdb65"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/history-fixtures.tar.xz","sha256":"ca8d23a06ccf41f6f80af1a5c5928c5344ee282a7781514b0046f6beed519570"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s05-observations.json","sha256":"a2fd8597bf0a9e684bd4ede7400d27ee5c9836781891f9278655a5f64be50ae8"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/build-observation.json","sha256":"caea362a05c9b829cb4e93f98d09330cf4857d302db77cc61f90934ab86528bc"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/registry.json","sha256":"a06ca8bb007b4de12d919abceeab822fd9c663e2b277faa212ba6e52c9bd1095"}],"assertions":[{"dimension":"normal","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"36 successful invocations; case-specific success reports were checked.","outcome":"pass"},{"dimension":"invalid","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"23 expected nonzero outcomes retained with exact diagnostic assessments; report-only exceptions are separately identified in raw observations.","outcome":"pass"},{"dimension":"scope","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"All 59 protected before/after snapshots matched. No automatic authority repair, claim, acceptance or live Preferences mutation was performed.","outcome":"pass"},{"dimension":"failure_recovery","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"23 distinct fresh recovery invocations exited zero. Malformed and restored-valid fixture identities remain separately recorded; no claim of repairing the rejected authority is made.","outcome":"pass"}],"defects":[],"outcome":"pass","scenario_id":"INFRA-S05"},{"actual_state":"All 378 protected before/after snapshots matched. No automatic authority repair, claim, acceptance or live Preferences mutation was performed.","actual_visible":"Observed 194 required primary invocations and 184 fresh recoveries; 194 exited zero, 184 exited nonzero, including 5 recorded interruptions. All matched the case-specific expected diagnostics and outcomes.","artifacts":[{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s06-roles.json","sha256":"be3e22a1146db102f073c8ade003ccd8bb8680887dff1d1476e7f463aecb003a"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s06-events.json","sha256":"d7126f9cb0ffcf9650d9e7194f27914405c64468b854f382b4d202cc4484a210"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/captures-nonlease.tar.xz","sha256":"b2d52004f26363c2634fdeada982e6ae8c08a0c42170ffff06c29f9cddfac582"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/captures-live-ownership.tar.xz","sha256":"30e6190a713876a4580ea1398e1eb1b8300e67106d74f2fdb42a2cceae2bdb65"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/history-fixtures.tar.xz","sha256":"ca8d23a06ccf41f6f80af1a5c5928c5344ee282a7781514b0046f6beed519570"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/infra-s06-observations.json","sha256":"4f7c663694af372c49462fb0135984ec496a952608a41122f2e4d5a94cffbedd"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/build-observation.json","sha256":"caea362a05c9b829cb4e93f98d09330cf4857d302db77cc61f90934ab86528bc"},{"path":"docs/reviews/workflow-delivery-rollout/infrastructure/registry.json","sha256":"a06ca8bb007b4de12d919abceeab822fd9c663e2b277faa212ba6e52c9bd1095"}],"assertions":[{"dimension":"normal","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"194 successful invocations; case-specific success reports were checked.","outcome":"pass"},{"dimension":"invalid","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"184 expected nonzero outcomes retained with exact diagnostic assessments; report-only exceptions are separately identified in raw observations.","outcome":"pass"},{"dimension":"cancel","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"All five interrupted entrypoint invocations retained interrupted status and unchanged protected state, followed by fresh successful recovery.","outcome":"pass"},{"dimension":"scope","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"All 378 protected before/after snapshots matched. No automatic authority repair, claim, acceptance or live Preferences mutation was performed.","outcome":"pass"},{"dimension":"save_reopen","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"Retained fixture bundles and local configuration recipes were restored for fresh processes; successful recoveries preserve read-only configuration and selected authority. This is infrastructure restoration, not native CAD saving.","outcome":"pass"},{"dimension":"failure_recovery","expected":"Exercise the normative success/refusal and protected-state result for this scenario.","observed":"184 distinct fresh recovery invocations exited zero. Malformed and restored-valid fixture identities remain separately recorded; no claim of repairing the rejected authority is made.","outcome":"pass"}],"defects":[],"outcome":"pass","scenario_id":"INFRA-S06"}],"schema_version":1,"source_commit":"9cab72daab46122da6d2c45ab7f972814f702880"}
+{
+  "schema_version": 1,
+  "contract_sha256": "9b14790c50500a22f10045ee9cda2b80c8008ddec75720171c495faf8b4ed49d",
+  "producer_session": "wdq-compat-producer-20260909",
+  "source_commit": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "input_manifest": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/input-manifest.json",
+    "sha256": "7ec747490e0046563ca561a87bad7113bb048cc2b261764c563258eb29c0674b"
+  },
+  "build": {
+    "command": [
+      "python3",
+      "-I",
+      "-S",
+      "-B",
+      "-c",
+      "import sys,subprocess,hashlib,json\nfrom pathlib import Path\nroot=Path.cwd()\npin=\"0e5b8064a9faca407fac43bd2b362ba4d7200327\"\ngit=lambda *args: subprocess.check_output([\"git\",\"--no-optional-locks\",*args],cwd=root)\nassert git(\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(\"status\",\"--porcelain\")\nsys.path.insert(0,str(root/\"scripts\"))\nfrom workflow_delivery_tree import Tree\nfrom workflow_delivery_io import canonical_json\ntree=Tree(root,revision=pin)\ncontract=tree.json(\"specs/workflow_delivery/rollout.contract.json\")\nmanifest=tree.manifest(contract[\"input_roots\"])\nassert len(manifest)==161 and manifest==Tree(root).manifest(contract[\"input_roots\"])\nmodules=[r for r in manifest if r[\"path\"].endswith(\".py\")]\nfor row in modules: compile((root/row[\"path\"]).read_bytes(),row[\"path\"],\"exec\")\nexecutable=Path(sys.executable).resolve()\nassert git(\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(\"status\",\"--porcelain\")\nprint(json.dumps({\"source_commit\":pin,\"input_manifest_sha256\":hashlib.sha256(canonical_json(manifest)).hexdigest(),\"toolchain\":sys.version,\"modules_compiled\":len(modules),\"source_clean\":True,\"artifacts_written\":False,\"interpreter\":{\"path\":str(executable),\"sha256\":hashlib.sha256(executable.read_bytes()).hexdigest()},\"validator_source_sha256\":hashlib.sha256((root/\"scripts/check_workflow_delivery.py\").read_bytes()).hexdigest()},indent=2))\n"
+    ],
+    "receipt": {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-build-receipt.json",
+      "sha256": "cb245d98c36ad83ff727805a3edc08e417d7bb92d55b3c7918143eca6da2f43f"
+    },
+    "toolchain": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+    "source_clean": true
+  },
+  "fixture": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/fixtures.json",
+    "sha256": "52e54975278e5c1137f4c30af4e48ee391e2538bfbaf0fb28f45c6d39252e3d4"
+  },
+  "environment": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+    "sha256": "a1c33121f265812cba27e1bd7867061b9d82d4e8111012ae8cbfa3e1c20c3fca"
+  },
+  "results": [
+    {
+      "scenario_id": "INFRA-S01",
+      "outcome": "pass",
+      "actual_visible": "Observed 41 invocations: phases {'primary': 23, 'recovery': 18}, return codes {'2': 4, '0': 30, '1': 7}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+      "actual_state": "All 41 recorded protected before/after states matched. Producer evidence only; independent repetition/publication remains under WDQ-RECHECK. No activation or product acceptance.",
+      "assertions": [
+        {
+          "dimension": "normal",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Observed 41 invocations: phases {'primary': 23, 'recovery': 18}, return codes {'2': 4, '0': 30, '1': 7}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "invalid",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Observed 41 invocations: phases {'primary': 23, 'recovery': 18}, return codes {'2': 4, '0': 30, '1': 7}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "scope",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "All 41 recorded protected before/after states matched. Producer evidence only; independent repetition/publication remains under WDQ-RECHECK. No activation or product acceptance.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "accessibility",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Original text-only diagnostic and usage cases passed their existing capture assessments; no native GUI accessibility claim.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "failure_recovery",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Original recovery invocations: 18; additional compatibility restorations retain their named cases. All expected recovery outcomes passed.",
+          "outcome": "pass"
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S01-roles.json",
+          "sha256": "9a5767e5fe0a732c1844833146b9cd06735c4906a313254a8af17c854433f835"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S01-events.json",
+          "sha256": "980b5484a0c40a7dad6a45042cb3cb7effff639dfeba7cb2a599638cedb05de6"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/registry.json",
+          "sha256": "fc72aea6692d2b6d5de6210f7e1c570333ff165746861baccd37525e302d41a9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S01-observations.json",
+          "sha256": "97f664302b1031bbe9cb3d72df7433a84d87c59670dcdf5801042a5328fb927b"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/limits.json",
+          "sha256": "aa3181d3f654867f4e780544d4f30ee8ecd12a2d7cc5904c9c212ed951934c76"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/fixtures.json",
+          "sha256": "52e54975278e5c1137f4c30af4e48ee391e2538bfbaf0fb28f45c6d39252e3d4"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+          "sha256": "a1c33121f265812cba27e1bd7867061b9d82d4e8111012ae8cbfa3e1c20c3fca"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-build-observation.json",
+          "sha256": "311bf81dfde9dbcda1678ebd75f29667909905e2855d834c874ac7ef1b378d9a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-assembly-independent-inspection.json",
+          "sha256": "6f48a5562725057a85df09855c97890f7f69605a9ddf308630204670464ac2e5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-regression.json",
+          "sha256": "62ca0f816e0eb9baa841fb4399bd245e6220d93713770ac48154a2f6c5d4b695"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-independent-inspection.json",
+          "sha256": "781ec36c29fe9ca8afb6c3acfe2cecbeb16ad3103c16f48a7b1db7cbd2defc2f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/shell-package-observation.json",
+          "sha256": "0b200a96dde8bcf512cf6bf923fdef6b5fe2a3fafc82c5d2519cf2c513bd3cf1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/assemble_observations.py",
+          "sha256": "f37fe624219232f87cc9516dd2d2cac23ab488e48cc6fdb79be5ef20475ed996"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/build_typed_packet.py",
+          "sha256": "acb7af1e8c0596a5c9cfaa68590bf806f06ee6f47c605e45e045b973dffc99be"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-packet-attempts.json",
+          "sha256": "8b5f6a7d301742e791e3270ea839a9be22fd742d29eeb96596780671d4e7aabb"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-setup-attempts.json",
+          "sha256": "702bffd7e5dbc259960ee44b6ebf49457568d1b74d0179dad8d1f8cb86cf299b"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-ownership-observation.json",
+          "sha256": "c22556b09a89f87e30b0def55078f4cf765d1a395c3667d954b9fa50d68e66e5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/ownership-formatter-observation.json",
+          "sha256": "239c1904b446d65e85a2feaf67dd83908309dcc2b6ed2ec503f371b421c0c1b2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s01-observation.json",
+          "sha256": "f39aa2da02a204829ac4c5f8213ac497eca8045eca1b7dee3daaf8b58e79b134"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/full-workspace-inventory-observation.json",
+          "sha256": "5551739514657c07315d313b90c932b5ccba561d3d032fc97e5ebc4b9bf59c03"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-baseline-observation.json",
+          "sha256": "320b0bce2a8a70508706aa3e63650ff76b50711e7074d97072fa0dddf37046b4"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-build-observation.json",
+          "sha256": "2042dc3cd2a8bda06603ed0e6313fed4c21feb1613cd61f67fae9ef89f288e15"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-real-roadmap-observation.json",
+          "sha256": "93d4d1e3ec040021211701ae48b1600b5b2196eed07410b9f125e198791356e7"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-coverage-observation.json",
+          "sha256": "5635950123e6222229c0473b306fd41be5c1d2390d956f498b5c3b243858fe9a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-observation.json",
+          "sha256": "7058cb5d1c313910ce948a01f713fe5264c600bc22cb184256b9ae3d40e78bd9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s04-observation.json",
+          "sha256": "1694ae8fe6282b3eda512a17890bba74e9cb462cb732be6d3c61adabfbab60f3"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s05-snapshots-observation.json",
+          "sha256": "09eea66c18900be55eae2a0b56c436f1c77ba53468d3f383d18d9e0f8bc9dda2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-headless-observation.json",
+          "sha256": "99ee48cc64f12cd6eb06d34f1eda264c72043fe7f06556d7c7e8b7bdc1efa640"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-selection-observation.json",
+          "sha256": "6f72a21a46dc47048dc98c826a9b49f457ad85247bd557dd619c0840f4df06c6"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-trust-observation.json",
+          "sha256": "840c8a1ef2dad9f52814b77fe5d2799c526b58c964b8c7acc1d5434ba0e3c09a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-policy-legacy-observation.json",
+          "sha256": "12a1943b4f809c87d349487d1996e79be795b53d73b888f5be4b23410cbb2bc9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-proof-input-observation.json",
+          "sha256": "025cd86b2bd9d9941ae9fe26082599c0efe19da65833c84f43711e859deff422"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-runtime-observation.json",
+          "sha256": "7c855c84093785e806cab27b358bfeede01fbac6f9947bf97ef9b448abcda0a1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/observed-tools.json",
+          "sha256": "4f619c3810f8fdcf2305dd663d7e73e9957fbd61dbcf61fc51c1876130840515"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-baseline-captures.tar.xz",
+          "sha256": "29027e20996a8fd3141543110536248ac727148b46e60466b1b9a8b626d24dcd"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-real-roadmap-captures.tar.xz",
+          "sha256": "d8460729c26b5987ae27fb1612c83b3e96ca118b0b66b12e1e61c654373b6bbc"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s01-captures.tar.xz",
+          "sha256": "adfa5f80f6ac4442944c426cf4aa60bd1772f83ea38f28a7be323cc4281369a2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-coverage-captures.tar.xz",
+          "sha256": "7206d2e954dafd79fda9feebb2f4bc0c0310a8b1171468be01f4801b41b81360"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-ownership-captures.tar.xz",
+          "sha256": "189764b2f4a9d59e6baeb1593d0a646da3d7c30e304a01414c3f926f29b9bfd1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-captures.tar.xz",
+          "sha256": "e88a797ef069015dfade23e3c5b5a5b649e030aecd5ae99763076403210cd62d"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s04-captures.tar.xz",
+          "sha256": "fb71e20213964fadf400efeed7afb9d1602d696645b4a92ac8510c02b74c4928"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s05-snapshots-captures.tar.xz",
+          "sha256": "87f6dda9783ffbb5432d058aa01cb8d2f9e608ec0d71d0b876ba99d4cf58fac5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-headless-captures.tar.xz",
+          "sha256": "ce9698f522e2fbd97beedbe79a7d18a90313a7de1fe174a78125f28cf6e52568"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-selection-captures.tar.xz",
+          "sha256": "26ff7f1cee76964bd282dc7f90df611880c602dba879ab2f4391fb9d776379c9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-trust-captures.tar.xz",
+          "sha256": "0e52195d3438aa8cc3b730ed2e20bce1a9a943e2ab1f26a9799390530d61e9ec"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-policy-legacy-captures.tar.xz",
+          "sha256": "f64943b10f9ac213884b251bd0751fdc5dc21b1a0faa2da972f3c3287f68b2e8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-proof-input-captures.tar.xz",
+          "sha256": "040966e9d4099b12c27df70042b0c080aaf1ce467fd884ccaeefdd5abee8b9df"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-runtime-captures.tar.xz",
+          "sha256": "b2c8e5bafb94dea69f06e62ca5ddff173ac2940b4f942e5fdc4790cdf1cb9019"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/full-workspace-inventory-captures.tar.xz",
+          "sha256": "8e74faaca4a1c62f242d6847740886715fc7cb0327e993fd7178fd4816d3ffa8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-observations.tar.xz",
+          "sha256": "1d8b43908268b48b4b6d68c94fa064a35d3c3704d36b7f0ac8ae33933a02ccaa"
+        }
+      ],
+      "defects": []
+    },
+    {
+      "scenario_id": "INFRA-S02",
+      "outcome": "pass",
+      "actual_visible": "Observed 280 invocations: phases {'primary': 145, 'recovery': 135}, return codes {'2': 3, '0': 145, '1': 132}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+      "actual_state": "All 280 recorded protected before/after states matched. Producer evidence only; independent repetition/publication remains under WDQ-RECHECK. No activation or product acceptance.",
+      "assertions": [
+        {
+          "dimension": "normal",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Observed 280 invocations: phases {'primary': 145, 'recovery': 135}, return codes {'2': 3, '0': 145, '1': 132}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "invalid",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Observed 280 invocations: phases {'primary': 145, 'recovery': 135}, return codes {'2': 3, '0': 145, '1': 132}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "scope",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "All 280 recorded protected before/after states matched. Producer evidence only; independent repetition/publication remains under WDQ-RECHECK. No activation or product acceptance.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "failure_recovery",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Original recovery invocations: 135; additional compatibility restorations retain their named cases. All expected recovery outcomes passed.",
+          "outcome": "pass"
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S02-roles.json",
+          "sha256": "fe97ad269a7b38b154b3a7e323c719b1f892b13bd67432e78d4d9953a9875085"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S02-events.json",
+          "sha256": "76043bb4fac9b0f2104430178b4f856a1cc91e39926c54ab70949a2b3daad64e"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/registry.json",
+          "sha256": "fc72aea6692d2b6d5de6210f7e1c570333ff165746861baccd37525e302d41a9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S02-observations.json",
+          "sha256": "aa10e329f877997e0f16310083b5074433f2a267e9acda5a982879f1ad38ccb0"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/limits.json",
+          "sha256": "aa3181d3f654867f4e780544d4f30ee8ecd12a2d7cc5904c9c212ed951934c76"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/fixtures.json",
+          "sha256": "52e54975278e5c1137f4c30af4e48ee391e2538bfbaf0fb28f45c6d39252e3d4"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+          "sha256": "a1c33121f265812cba27e1bd7867061b9d82d4e8111012ae8cbfa3e1c20c3fca"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-build-observation.json",
+          "sha256": "311bf81dfde9dbcda1678ebd75f29667909905e2855d834c874ac7ef1b378d9a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-assembly-independent-inspection.json",
+          "sha256": "6f48a5562725057a85df09855c97890f7f69605a9ddf308630204670464ac2e5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-regression.json",
+          "sha256": "62ca0f816e0eb9baa841fb4399bd245e6220d93713770ac48154a2f6c5d4b695"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-independent-inspection.json",
+          "sha256": "781ec36c29fe9ca8afb6c3acfe2cecbeb16ad3103c16f48a7b1db7cbd2defc2f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/shell-package-observation.json",
+          "sha256": "0b200a96dde8bcf512cf6bf923fdef6b5fe2a3fafc82c5d2519cf2c513bd3cf1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/assemble_observations.py",
+          "sha256": "f37fe624219232f87cc9516dd2d2cac23ab488e48cc6fdb79be5ef20475ed996"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/build_typed_packet.py",
+          "sha256": "acb7af1e8c0596a5c9cfaa68590bf806f06ee6f47c605e45e045b973dffc99be"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-packet-attempts.json",
+          "sha256": "8b5f6a7d301742e791e3270ea839a9be22fd742d29eeb96596780671d4e7aabb"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-setup-attempts.json",
+          "sha256": "702bffd7e5dbc259960ee44b6ebf49457568d1b74d0179dad8d1f8cb86cf299b"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-ownership-observation.json",
+          "sha256": "c22556b09a89f87e30b0def55078f4cf765d1a395c3667d954b9fa50d68e66e5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/ownership-formatter-observation.json",
+          "sha256": "239c1904b446d65e85a2feaf67dd83908309dcc2b6ed2ec503f371b421c0c1b2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s01-observation.json",
+          "sha256": "f39aa2da02a204829ac4c5f8213ac497eca8045eca1b7dee3daaf8b58e79b134"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/full-workspace-inventory-observation.json",
+          "sha256": "5551739514657c07315d313b90c932b5ccba561d3d032fc97e5ebc4b9bf59c03"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-baseline-observation.json",
+          "sha256": "320b0bce2a8a70508706aa3e63650ff76b50711e7074d97072fa0dddf37046b4"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-build-observation.json",
+          "sha256": "2042dc3cd2a8bda06603ed0e6313fed4c21feb1613cd61f67fae9ef89f288e15"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-real-roadmap-observation.json",
+          "sha256": "93d4d1e3ec040021211701ae48b1600b5b2196eed07410b9f125e198791356e7"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-coverage-observation.json",
+          "sha256": "5635950123e6222229c0473b306fd41be5c1d2390d956f498b5c3b243858fe9a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-observation.json",
+          "sha256": "7058cb5d1c313910ce948a01f713fe5264c600bc22cb184256b9ae3d40e78bd9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s04-observation.json",
+          "sha256": "1694ae8fe6282b3eda512a17890bba74e9cb462cb732be6d3c61adabfbab60f3"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s05-snapshots-observation.json",
+          "sha256": "09eea66c18900be55eae2a0b56c436f1c77ba53468d3f383d18d9e0f8bc9dda2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-headless-observation.json",
+          "sha256": "99ee48cc64f12cd6eb06d34f1eda264c72043fe7f06556d7c7e8b7bdc1efa640"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-selection-observation.json",
+          "sha256": "6f72a21a46dc47048dc98c826a9b49f457ad85247bd557dd619c0840f4df06c6"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-trust-observation.json",
+          "sha256": "840c8a1ef2dad9f52814b77fe5d2799c526b58c964b8c7acc1d5434ba0e3c09a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-policy-legacy-observation.json",
+          "sha256": "12a1943b4f809c87d349487d1996e79be795b53d73b888f5be4b23410cbb2bc9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-proof-input-observation.json",
+          "sha256": "025cd86b2bd9d9941ae9fe26082599c0efe19da65833c84f43711e859deff422"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-runtime-observation.json",
+          "sha256": "7c855c84093785e806cab27b358bfeede01fbac6f9947bf97ef9b448abcda0a1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/observed-tools.json",
+          "sha256": "4f619c3810f8fdcf2305dd663d7e73e9957fbd61dbcf61fc51c1876130840515"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-baseline-captures.tar.xz",
+          "sha256": "29027e20996a8fd3141543110536248ac727148b46e60466b1b9a8b626d24dcd"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-real-roadmap-captures.tar.xz",
+          "sha256": "d8460729c26b5987ae27fb1612c83b3e96ca118b0b66b12e1e61c654373b6bbc"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s01-captures.tar.xz",
+          "sha256": "adfa5f80f6ac4442944c426cf4aa60bd1772f83ea38f28a7be323cc4281369a2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-coverage-captures.tar.xz",
+          "sha256": "7206d2e954dafd79fda9feebb2f4bc0c0310a8b1171468be01f4801b41b81360"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-ownership-captures.tar.xz",
+          "sha256": "189764b2f4a9d59e6baeb1593d0a646da3d7c30e304a01414c3f926f29b9bfd1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-captures.tar.xz",
+          "sha256": "e88a797ef069015dfade23e3c5b5a5b649e030aecd5ae99763076403210cd62d"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s04-captures.tar.xz",
+          "sha256": "fb71e20213964fadf400efeed7afb9d1602d696645b4a92ac8510c02b74c4928"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s05-snapshots-captures.tar.xz",
+          "sha256": "87f6dda9783ffbb5432d058aa01cb8d2f9e608ec0d71d0b876ba99d4cf58fac5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-headless-captures.tar.xz",
+          "sha256": "ce9698f522e2fbd97beedbe79a7d18a90313a7de1fe174a78125f28cf6e52568"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-selection-captures.tar.xz",
+          "sha256": "26ff7f1cee76964bd282dc7f90df611880c602dba879ab2f4391fb9d776379c9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-trust-captures.tar.xz",
+          "sha256": "0e52195d3438aa8cc3b730ed2e20bce1a9a943e2ab1f26a9799390530d61e9ec"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-policy-legacy-captures.tar.xz",
+          "sha256": "f64943b10f9ac213884b251bd0751fdc5dc21b1a0faa2da972f3c3287f68b2e8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-proof-input-captures.tar.xz",
+          "sha256": "040966e9d4099b12c27df70042b0c080aaf1ce467fd884ccaeefdd5abee8b9df"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-runtime-captures.tar.xz",
+          "sha256": "b2c8e5bafb94dea69f06e62ca5ddff173ac2940b4f942e5fdc4790cdf1cb9019"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/full-workspace-inventory-captures.tar.xz",
+          "sha256": "8e74faaca4a1c62f242d6847740886715fc7cb0327e993fd7178fd4816d3ffa8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-observations.tar.xz",
+          "sha256": "1d8b43908268b48b4b6d68c94fa064a35d3c3704d36b7f0ac8ae33933a02ccaa"
+        }
+      ],
+      "defects": []
+    },
+    {
+      "scenario_id": "INFRA-S03",
+      "outcome": "pass",
+      "actual_visible": "Observed 185 invocations: phases {'primary': 110, 'recovery': 75}, return codes {'1': 75, '0': 110}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+      "actual_state": "All 185 recorded protected before/after states matched. Producer evidence only; independent repetition/publication remains under WDQ-RECHECK. No activation or product acceptance.",
+      "assertions": [
+        {
+          "dimension": "normal",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Observed 185 invocations: phases {'primary': 110, 'recovery': 75}, return codes {'1': 75, '0': 110}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "invalid",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Observed 185 invocations: phases {'primary': 110, 'recovery': 75}, return codes {'1': 75, '0': 110}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "scope",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "All 185 recorded protected before/after states matched. Producer evidence only; independent repetition/publication remains under WDQ-RECHECK. No activation or product acceptance.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "failure_recovery",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Original recovery invocations: 75; additional compatibility restorations retain their named cases. All expected recovery outcomes passed.",
+          "outcome": "pass"
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S03-roles.json",
+          "sha256": "3602357f1a36152e72106c09c4c2a743289dcae4218ccf03e0fb4ad5b252513b"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S03-events.json",
+          "sha256": "b1914f13939e7f97f2dddd0965e783713e3747da9feac107a37402f67879d155"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/registry.json",
+          "sha256": "fc72aea6692d2b6d5de6210f7e1c570333ff165746861baccd37525e302d41a9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S03-observations.json",
+          "sha256": "523e8dbae41d88d559ee823039c8a6468c1f8f3108892a83d40e017a53f99a6b"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/limits.json",
+          "sha256": "aa3181d3f654867f4e780544d4f30ee8ecd12a2d7cc5904c9c212ed951934c76"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/fixtures.json",
+          "sha256": "52e54975278e5c1137f4c30af4e48ee391e2538bfbaf0fb28f45c6d39252e3d4"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+          "sha256": "a1c33121f265812cba27e1bd7867061b9d82d4e8111012ae8cbfa3e1c20c3fca"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-build-observation.json",
+          "sha256": "311bf81dfde9dbcda1678ebd75f29667909905e2855d834c874ac7ef1b378d9a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-assembly-independent-inspection.json",
+          "sha256": "6f48a5562725057a85df09855c97890f7f69605a9ddf308630204670464ac2e5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-regression.json",
+          "sha256": "62ca0f816e0eb9baa841fb4399bd245e6220d93713770ac48154a2f6c5d4b695"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-independent-inspection.json",
+          "sha256": "781ec36c29fe9ca8afb6c3acfe2cecbeb16ad3103c16f48a7b1db7cbd2defc2f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/shell-package-observation.json",
+          "sha256": "0b200a96dde8bcf512cf6bf923fdef6b5fe2a3fafc82c5d2519cf2c513bd3cf1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/assemble_observations.py",
+          "sha256": "f37fe624219232f87cc9516dd2d2cac23ab488e48cc6fdb79be5ef20475ed996"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/build_typed_packet.py",
+          "sha256": "acb7af1e8c0596a5c9cfaa68590bf806f06ee6f47c605e45e045b973dffc99be"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-packet-attempts.json",
+          "sha256": "8b5f6a7d301742e791e3270ea839a9be22fd742d29eeb96596780671d4e7aabb"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-setup-attempts.json",
+          "sha256": "702bffd7e5dbc259960ee44b6ebf49457568d1b74d0179dad8d1f8cb86cf299b"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-ownership-observation.json",
+          "sha256": "c22556b09a89f87e30b0def55078f4cf765d1a395c3667d954b9fa50d68e66e5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/ownership-formatter-observation.json",
+          "sha256": "239c1904b446d65e85a2feaf67dd83908309dcc2b6ed2ec503f371b421c0c1b2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s01-observation.json",
+          "sha256": "f39aa2da02a204829ac4c5f8213ac497eca8045eca1b7dee3daaf8b58e79b134"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/full-workspace-inventory-observation.json",
+          "sha256": "5551739514657c07315d313b90c932b5ccba561d3d032fc97e5ebc4b9bf59c03"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-baseline-observation.json",
+          "sha256": "320b0bce2a8a70508706aa3e63650ff76b50711e7074d97072fa0dddf37046b4"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-build-observation.json",
+          "sha256": "2042dc3cd2a8bda06603ed0e6313fed4c21feb1613cd61f67fae9ef89f288e15"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-real-roadmap-observation.json",
+          "sha256": "93d4d1e3ec040021211701ae48b1600b5b2196eed07410b9f125e198791356e7"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-coverage-observation.json",
+          "sha256": "5635950123e6222229c0473b306fd41be5c1d2390d956f498b5c3b243858fe9a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-observation.json",
+          "sha256": "7058cb5d1c313910ce948a01f713fe5264c600bc22cb184256b9ae3d40e78bd9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s04-observation.json",
+          "sha256": "1694ae8fe6282b3eda512a17890bba74e9cb462cb732be6d3c61adabfbab60f3"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s05-snapshots-observation.json",
+          "sha256": "09eea66c18900be55eae2a0b56c436f1c77ba53468d3f383d18d9e0f8bc9dda2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-headless-observation.json",
+          "sha256": "99ee48cc64f12cd6eb06d34f1eda264c72043fe7f06556d7c7e8b7bdc1efa640"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-selection-observation.json",
+          "sha256": "6f72a21a46dc47048dc98c826a9b49f457ad85247bd557dd619c0840f4df06c6"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-trust-observation.json",
+          "sha256": "840c8a1ef2dad9f52814b77fe5d2799c526b58c964b8c7acc1d5434ba0e3c09a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-policy-legacy-observation.json",
+          "sha256": "12a1943b4f809c87d349487d1996e79be795b53d73b888f5be4b23410cbb2bc9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-proof-input-observation.json",
+          "sha256": "025cd86b2bd9d9941ae9fe26082599c0efe19da65833c84f43711e859deff422"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-runtime-observation.json",
+          "sha256": "7c855c84093785e806cab27b358bfeede01fbac6f9947bf97ef9b448abcda0a1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/observed-tools.json",
+          "sha256": "4f619c3810f8fdcf2305dd663d7e73e9957fbd61dbcf61fc51c1876130840515"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-baseline-captures.tar.xz",
+          "sha256": "29027e20996a8fd3141543110536248ac727148b46e60466b1b9a8b626d24dcd"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-real-roadmap-captures.tar.xz",
+          "sha256": "d8460729c26b5987ae27fb1612c83b3e96ca118b0b66b12e1e61c654373b6bbc"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s01-captures.tar.xz",
+          "sha256": "adfa5f80f6ac4442944c426cf4aa60bd1772f83ea38f28a7be323cc4281369a2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-coverage-captures.tar.xz",
+          "sha256": "7206d2e954dafd79fda9feebb2f4bc0c0310a8b1171468be01f4801b41b81360"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-ownership-captures.tar.xz",
+          "sha256": "189764b2f4a9d59e6baeb1593d0a646da3d7c30e304a01414c3f926f29b9bfd1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-captures.tar.xz",
+          "sha256": "e88a797ef069015dfade23e3c5b5a5b649e030aecd5ae99763076403210cd62d"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s04-captures.tar.xz",
+          "sha256": "fb71e20213964fadf400efeed7afb9d1602d696645b4a92ac8510c02b74c4928"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s05-snapshots-captures.tar.xz",
+          "sha256": "87f6dda9783ffbb5432d058aa01cb8d2f9e608ec0d71d0b876ba99d4cf58fac5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-headless-captures.tar.xz",
+          "sha256": "ce9698f522e2fbd97beedbe79a7d18a90313a7de1fe174a78125f28cf6e52568"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-selection-captures.tar.xz",
+          "sha256": "26ff7f1cee76964bd282dc7f90df611880c602dba879ab2f4391fb9d776379c9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-trust-captures.tar.xz",
+          "sha256": "0e52195d3438aa8cc3b730ed2e20bce1a9a943e2ab1f26a9799390530d61e9ec"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-policy-legacy-captures.tar.xz",
+          "sha256": "f64943b10f9ac213884b251bd0751fdc5dc21b1a0faa2da972f3c3287f68b2e8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-proof-input-captures.tar.xz",
+          "sha256": "040966e9d4099b12c27df70042b0c080aaf1ce467fd884ccaeefdd5abee8b9df"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-runtime-captures.tar.xz",
+          "sha256": "b2c8e5bafb94dea69f06e62ca5ddff173ac2940b4f942e5fdc4790cdf1cb9019"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/full-workspace-inventory-captures.tar.xz",
+          "sha256": "8e74faaca4a1c62f242d6847740886715fc7cb0327e993fd7178fd4816d3ffa8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-observations.tar.xz",
+          "sha256": "1d8b43908268b48b4b6d68c94fa064a35d3c3704d36b7f0ac8ae33933a02ccaa"
+        }
+      ],
+      "defects": []
+    },
+    {
+      "scenario_id": "INFRA-S04",
+      "outcome": "pass",
+      "actual_visible": "Observed 180 invocations: phases {'primary': 100, 'recovery': 80}, return codes {'1': 80, '0': 100}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+      "actual_state": "All 180 recorded protected before/after states matched. Producer evidence only; independent repetition/publication remains under WDQ-RECHECK. No activation or product acceptance.",
+      "assertions": [
+        {
+          "dimension": "normal",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Observed 180 invocations: phases {'primary': 100, 'recovery': 80}, return codes {'1': 80, '0': 100}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "invalid",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Observed 180 invocations: phases {'primary': 100, 'recovery': 80}, return codes {'1': 80, '0': 100}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "scope",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "All 180 recorded protected before/after states matched. Producer evidence only; independent repetition/publication remains under WDQ-RECHECK. No activation or product acceptance.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "failure_recovery",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Original recovery invocations: 80; additional compatibility restorations retain their named cases. All expected recovery outcomes passed.",
+          "outcome": "pass"
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S04-roles.json",
+          "sha256": "25ef7c654105ed2eaf7d57fa6ff176d1c6df39df870ad684201125bb4df11ffb"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S04-events.json",
+          "sha256": "f9c35b18fb8b34be3050c342c7d2490f7b8ae8e82b847953ccb5a8e9b28562ad"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/registry.json",
+          "sha256": "fc72aea6692d2b6d5de6210f7e1c570333ff165746861baccd37525e302d41a9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S04-observations.json",
+          "sha256": "09b0c865bb95b5013a424ecaa72cb1ffdf5dadbc603fc942ee243811f8acf872"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/limits.json",
+          "sha256": "aa3181d3f654867f4e780544d4f30ee8ecd12a2d7cc5904c9c212ed951934c76"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/fixtures.json",
+          "sha256": "52e54975278e5c1137f4c30af4e48ee391e2538bfbaf0fb28f45c6d39252e3d4"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+          "sha256": "a1c33121f265812cba27e1bd7867061b9d82d4e8111012ae8cbfa3e1c20c3fca"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-build-observation.json",
+          "sha256": "311bf81dfde9dbcda1678ebd75f29667909905e2855d834c874ac7ef1b378d9a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-assembly-independent-inspection.json",
+          "sha256": "6f48a5562725057a85df09855c97890f7f69605a9ddf308630204670464ac2e5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-regression.json",
+          "sha256": "62ca0f816e0eb9baa841fb4399bd245e6220d93713770ac48154a2f6c5d4b695"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-independent-inspection.json",
+          "sha256": "781ec36c29fe9ca8afb6c3acfe2cecbeb16ad3103c16f48a7b1db7cbd2defc2f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/shell-package-observation.json",
+          "sha256": "0b200a96dde8bcf512cf6bf923fdef6b5fe2a3fafc82c5d2519cf2c513bd3cf1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/assemble_observations.py",
+          "sha256": "f37fe624219232f87cc9516dd2d2cac23ab488e48cc6fdb79be5ef20475ed996"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/build_typed_packet.py",
+          "sha256": "acb7af1e8c0596a5c9cfaa68590bf806f06ee6f47c605e45e045b973dffc99be"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-packet-attempts.json",
+          "sha256": "8b5f6a7d301742e791e3270ea839a9be22fd742d29eeb96596780671d4e7aabb"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-setup-attempts.json",
+          "sha256": "702bffd7e5dbc259960ee44b6ebf49457568d1b74d0179dad8d1f8cb86cf299b"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-ownership-observation.json",
+          "sha256": "c22556b09a89f87e30b0def55078f4cf765d1a395c3667d954b9fa50d68e66e5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/ownership-formatter-observation.json",
+          "sha256": "239c1904b446d65e85a2feaf67dd83908309dcc2b6ed2ec503f371b421c0c1b2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s01-observation.json",
+          "sha256": "f39aa2da02a204829ac4c5f8213ac497eca8045eca1b7dee3daaf8b58e79b134"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/full-workspace-inventory-observation.json",
+          "sha256": "5551739514657c07315d313b90c932b5ccba561d3d032fc97e5ebc4b9bf59c03"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-baseline-observation.json",
+          "sha256": "320b0bce2a8a70508706aa3e63650ff76b50711e7074d97072fa0dddf37046b4"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-build-observation.json",
+          "sha256": "2042dc3cd2a8bda06603ed0e6313fed4c21feb1613cd61f67fae9ef89f288e15"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-real-roadmap-observation.json",
+          "sha256": "93d4d1e3ec040021211701ae48b1600b5b2196eed07410b9f125e198791356e7"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-coverage-observation.json",
+          "sha256": "5635950123e6222229c0473b306fd41be5c1d2390d956f498b5c3b243858fe9a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-observation.json",
+          "sha256": "7058cb5d1c313910ce948a01f713fe5264c600bc22cb184256b9ae3d40e78bd9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s04-observation.json",
+          "sha256": "1694ae8fe6282b3eda512a17890bba74e9cb462cb732be6d3c61adabfbab60f3"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s05-snapshots-observation.json",
+          "sha256": "09eea66c18900be55eae2a0b56c436f1c77ba53468d3f383d18d9e0f8bc9dda2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-headless-observation.json",
+          "sha256": "99ee48cc64f12cd6eb06d34f1eda264c72043fe7f06556d7c7e8b7bdc1efa640"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-selection-observation.json",
+          "sha256": "6f72a21a46dc47048dc98c826a9b49f457ad85247bd557dd619c0840f4df06c6"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-trust-observation.json",
+          "sha256": "840c8a1ef2dad9f52814b77fe5d2799c526b58c964b8c7acc1d5434ba0e3c09a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-policy-legacy-observation.json",
+          "sha256": "12a1943b4f809c87d349487d1996e79be795b53d73b888f5be4b23410cbb2bc9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-proof-input-observation.json",
+          "sha256": "025cd86b2bd9d9941ae9fe26082599c0efe19da65833c84f43711e859deff422"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-runtime-observation.json",
+          "sha256": "7c855c84093785e806cab27b358bfeede01fbac6f9947bf97ef9b448abcda0a1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/observed-tools.json",
+          "sha256": "4f619c3810f8fdcf2305dd663d7e73e9957fbd61dbcf61fc51c1876130840515"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-baseline-captures.tar.xz",
+          "sha256": "29027e20996a8fd3141543110536248ac727148b46e60466b1b9a8b626d24dcd"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-real-roadmap-captures.tar.xz",
+          "sha256": "d8460729c26b5987ae27fb1612c83b3e96ca118b0b66b12e1e61c654373b6bbc"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s01-captures.tar.xz",
+          "sha256": "adfa5f80f6ac4442944c426cf4aa60bd1772f83ea38f28a7be323cc4281369a2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-coverage-captures.tar.xz",
+          "sha256": "7206d2e954dafd79fda9feebb2f4bc0c0310a8b1171468be01f4801b41b81360"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-ownership-captures.tar.xz",
+          "sha256": "189764b2f4a9d59e6baeb1593d0a646da3d7c30e304a01414c3f926f29b9bfd1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-captures.tar.xz",
+          "sha256": "e88a797ef069015dfade23e3c5b5a5b649e030aecd5ae99763076403210cd62d"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s04-captures.tar.xz",
+          "sha256": "fb71e20213964fadf400efeed7afb9d1602d696645b4a92ac8510c02b74c4928"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s05-snapshots-captures.tar.xz",
+          "sha256": "87f6dda9783ffbb5432d058aa01cb8d2f9e608ec0d71d0b876ba99d4cf58fac5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-headless-captures.tar.xz",
+          "sha256": "ce9698f522e2fbd97beedbe79a7d18a90313a7de1fe174a78125f28cf6e52568"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-selection-captures.tar.xz",
+          "sha256": "26ff7f1cee76964bd282dc7f90df611880c602dba879ab2f4391fb9d776379c9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-trust-captures.tar.xz",
+          "sha256": "0e52195d3438aa8cc3b730ed2e20bce1a9a943e2ab1f26a9799390530d61e9ec"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-policy-legacy-captures.tar.xz",
+          "sha256": "f64943b10f9ac213884b251bd0751fdc5dc21b1a0faa2da972f3c3287f68b2e8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-proof-input-captures.tar.xz",
+          "sha256": "040966e9d4099b12c27df70042b0c080aaf1ce467fd884ccaeefdd5abee8b9df"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-runtime-captures.tar.xz",
+          "sha256": "b2c8e5bafb94dea69f06e62ca5ddff173ac2940b4f942e5fdc4790cdf1cb9019"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/full-workspace-inventory-captures.tar.xz",
+          "sha256": "8e74faaca4a1c62f242d6847740886715fc7cb0327e993fd7178fd4816d3ffa8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-observations.tar.xz",
+          "sha256": "1d8b43908268b48b4b6d68c94fa064a35d3c3704d36b7f0ac8ae33933a02ccaa"
+        }
+      ],
+      "defects": []
+    },
+    {
+      "scenario_id": "INFRA-S05",
+      "outcome": "pass",
+      "actual_visible": "Observed 250 invocations: phases {'primary': 36, 'recovery': 23, 'compatibility': 191}, return codes {'1': 55, '0': 194, '2': 1}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+      "actual_state": "All 250 recorded protected before/after states matched. Producer evidence only; independent repetition/publication remains under WDQ-RECHECK. No activation or product acceptance.",
+      "assertions": [
+        {
+          "dimension": "normal",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Observed 250 invocations: phases {'primary': 36, 'recovery': 23, 'compatibility': 191}, return codes {'1': 55, '0': 194, '2': 1}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "invalid",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Observed 250 invocations: phases {'primary': 36, 'recovery': 23, 'compatibility': 191}, return codes {'1': 55, '0': 194, '2': 1}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "scope",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "All 250 recorded protected before/after states matched. Producer evidence only; independent repetition/publication remains under WDQ-RECHECK. No activation or product acceptance.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "failure_recovery",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Original recovery invocations: 23; additional compatibility restorations retain their named cases. All expected recovery outcomes passed.",
+          "outcome": "pass"
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S05-roles.json",
+          "sha256": "04d4852d972c817d71334fa1ae7b0e9ec8dd5788e10d5ae7587a1de674662c53"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S05-events.json",
+          "sha256": "86299753af5bfc7431ec0e5c936674346f07b695261d381569e2f9e97601680a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/registry.json",
+          "sha256": "fc72aea6692d2b6d5de6210f7e1c570333ff165746861baccd37525e302d41a9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S05-observations.json",
+          "sha256": "be20348c9aa1e8bad5742c3ed994f529a84fc75a2be0e3e15b430c9a473bbeab"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/limits.json",
+          "sha256": "aa3181d3f654867f4e780544d4f30ee8ecd12a2d7cc5904c9c212ed951934c76"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/fixtures.json",
+          "sha256": "52e54975278e5c1137f4c30af4e48ee391e2538bfbaf0fb28f45c6d39252e3d4"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+          "sha256": "a1c33121f265812cba27e1bd7867061b9d82d4e8111012ae8cbfa3e1c20c3fca"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-build-observation.json",
+          "sha256": "311bf81dfde9dbcda1678ebd75f29667909905e2855d834c874ac7ef1b378d9a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-assembly-independent-inspection.json",
+          "sha256": "6f48a5562725057a85df09855c97890f7f69605a9ddf308630204670464ac2e5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-regression.json",
+          "sha256": "62ca0f816e0eb9baa841fb4399bd245e6220d93713770ac48154a2f6c5d4b695"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-independent-inspection.json",
+          "sha256": "781ec36c29fe9ca8afb6c3acfe2cecbeb16ad3103c16f48a7b1db7cbd2defc2f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/shell-package-observation.json",
+          "sha256": "0b200a96dde8bcf512cf6bf923fdef6b5fe2a3fafc82c5d2519cf2c513bd3cf1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/assemble_observations.py",
+          "sha256": "f37fe624219232f87cc9516dd2d2cac23ab488e48cc6fdb79be5ef20475ed996"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/build_typed_packet.py",
+          "sha256": "acb7af1e8c0596a5c9cfaa68590bf806f06ee6f47c605e45e045b973dffc99be"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-packet-attempts.json",
+          "sha256": "8b5f6a7d301742e791e3270ea839a9be22fd742d29eeb96596780671d4e7aabb"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-setup-attempts.json",
+          "sha256": "702bffd7e5dbc259960ee44b6ebf49457568d1b74d0179dad8d1f8cb86cf299b"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-ownership-observation.json",
+          "sha256": "c22556b09a89f87e30b0def55078f4cf765d1a395c3667d954b9fa50d68e66e5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/ownership-formatter-observation.json",
+          "sha256": "239c1904b446d65e85a2feaf67dd83908309dcc2b6ed2ec503f371b421c0c1b2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s01-observation.json",
+          "sha256": "f39aa2da02a204829ac4c5f8213ac497eca8045eca1b7dee3daaf8b58e79b134"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/full-workspace-inventory-observation.json",
+          "sha256": "5551739514657c07315d313b90c932b5ccba561d3d032fc97e5ebc4b9bf59c03"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-baseline-observation.json",
+          "sha256": "320b0bce2a8a70508706aa3e63650ff76b50711e7074d97072fa0dddf37046b4"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-build-observation.json",
+          "sha256": "2042dc3cd2a8bda06603ed0e6313fed4c21feb1613cd61f67fae9ef89f288e15"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-real-roadmap-observation.json",
+          "sha256": "93d4d1e3ec040021211701ae48b1600b5b2196eed07410b9f125e198791356e7"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-coverage-observation.json",
+          "sha256": "5635950123e6222229c0473b306fd41be5c1d2390d956f498b5c3b243858fe9a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-observation.json",
+          "sha256": "7058cb5d1c313910ce948a01f713fe5264c600bc22cb184256b9ae3d40e78bd9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s04-observation.json",
+          "sha256": "1694ae8fe6282b3eda512a17890bba74e9cb462cb732be6d3c61adabfbab60f3"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s05-snapshots-observation.json",
+          "sha256": "09eea66c18900be55eae2a0b56c436f1c77ba53468d3f383d18d9e0f8bc9dda2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-headless-observation.json",
+          "sha256": "99ee48cc64f12cd6eb06d34f1eda264c72043fe7f06556d7c7e8b7bdc1efa640"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-selection-observation.json",
+          "sha256": "6f72a21a46dc47048dc98c826a9b49f457ad85247bd557dd619c0840f4df06c6"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-trust-observation.json",
+          "sha256": "840c8a1ef2dad9f52814b77fe5d2799c526b58c964b8c7acc1d5434ba0e3c09a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-policy-legacy-observation.json",
+          "sha256": "12a1943b4f809c87d349487d1996e79be795b53d73b888f5be4b23410cbb2bc9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-proof-input-observation.json",
+          "sha256": "025cd86b2bd9d9941ae9fe26082599c0efe19da65833c84f43711e859deff422"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-runtime-observation.json",
+          "sha256": "7c855c84093785e806cab27b358bfeede01fbac6f9947bf97ef9b448abcda0a1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/observed-tools.json",
+          "sha256": "4f619c3810f8fdcf2305dd663d7e73e9957fbd61dbcf61fc51c1876130840515"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-baseline-captures.tar.xz",
+          "sha256": "29027e20996a8fd3141543110536248ac727148b46e60466b1b9a8b626d24dcd"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-real-roadmap-captures.tar.xz",
+          "sha256": "d8460729c26b5987ae27fb1612c83b3e96ca118b0b66b12e1e61c654373b6bbc"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s01-captures.tar.xz",
+          "sha256": "adfa5f80f6ac4442944c426cf4aa60bd1772f83ea38f28a7be323cc4281369a2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-coverage-captures.tar.xz",
+          "sha256": "7206d2e954dafd79fda9feebb2f4bc0c0310a8b1171468be01f4801b41b81360"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-ownership-captures.tar.xz",
+          "sha256": "189764b2f4a9d59e6baeb1593d0a646da3d7c30e304a01414c3f926f29b9bfd1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-captures.tar.xz",
+          "sha256": "e88a797ef069015dfade23e3c5b5a5b649e030aecd5ae99763076403210cd62d"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s04-captures.tar.xz",
+          "sha256": "fb71e20213964fadf400efeed7afb9d1602d696645b4a92ac8510c02b74c4928"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s05-snapshots-captures.tar.xz",
+          "sha256": "87f6dda9783ffbb5432d058aa01cb8d2f9e608ec0d71d0b876ba99d4cf58fac5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-headless-captures.tar.xz",
+          "sha256": "ce9698f522e2fbd97beedbe79a7d18a90313a7de1fe174a78125f28cf6e52568"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-selection-captures.tar.xz",
+          "sha256": "26ff7f1cee76964bd282dc7f90df611880c602dba879ab2f4391fb9d776379c9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-trust-captures.tar.xz",
+          "sha256": "0e52195d3438aa8cc3b730ed2e20bce1a9a943e2ab1f26a9799390530d61e9ec"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-policy-legacy-captures.tar.xz",
+          "sha256": "f64943b10f9ac213884b251bd0751fdc5dc21b1a0faa2da972f3c3287f68b2e8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-proof-input-captures.tar.xz",
+          "sha256": "040966e9d4099b12c27df70042b0c080aaf1ce467fd884ccaeefdd5abee8b9df"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-runtime-captures.tar.xz",
+          "sha256": "b2c8e5bafb94dea69f06e62ca5ddff173ac2940b4f942e5fdc4790cdf1cb9019"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/full-workspace-inventory-captures.tar.xz",
+          "sha256": "8e74faaca4a1c62f242d6847740886715fc7cb0327e993fd7178fd4816d3ffa8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-observations.tar.xz",
+          "sha256": "1d8b43908268b48b4b6d68c94fa064a35d3c3704d36b7f0ac8ae33933a02ccaa"
+        }
+      ],
+      "defects": [
+        "dat-wdq-workspace-inputs-zmt"
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S06",
+      "outcome": "pass",
+      "actual_visible": "Observed 378 invocations: phases {'primary': 194, 'recovery': 184}, return codes {'1': 163, '0': 194, '2': 16, '-15': 5}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+      "actual_state": "All 378 recorded protected before/after states matched. Producer evidence only; independent repetition/publication remains under WDQ-RECHECK. No activation or product acceptance.",
+      "assertions": [
+        {
+          "dimension": "normal",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Observed 378 invocations: phases {'primary': 194, 'recovery': 184}, return codes {'1': 163, '0': 194, '2': 16, '-15': 5}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "invalid",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Observed 378 invocations: phases {'primary': 194, 'recovery': 184}, return codes {'1': 163, '0': 194, '2': 16, '-15': 5}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "cancel",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Five real interrupted invocations and hashed interruption receipts are retained with unchanged protected state.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "scope",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "All 378 recorded protected before/after states matched. Producer evidence only; independent repetition/publication remains under WDQ-RECHECK. No activation or product acceptance.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "save_reopen",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Fresh-process recovery after interruption/refusal is retained; no native Save or design reopen claim.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "failure_recovery",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Original recovery invocations: 184; additional compatibility restorations retain their named cases. All expected recovery outcomes passed.",
+          "outcome": "pass"
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S06-roles.json",
+          "sha256": "553535f722dd5c3a21b7c1603f9c7192056a9bb95f5536da006d6f086e70e9d4"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S06-events.json",
+          "sha256": "b7c6e831f02fed3919ff50618244d109924b5c38bcd5d8ae09b53876ce37546d"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/registry.json",
+          "sha256": "fc72aea6692d2b6d5de6210f7e1c570333ff165746861baccd37525e302d41a9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/INFRA-S06-observations.json",
+          "sha256": "96178443af1ef1b26439b25b33a4a9b5a27065d446b13d4256f59d4df86ed881"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/limits.json",
+          "sha256": "aa3181d3f654867f4e780544d4f30ee8ecd12a2d7cc5904c9c212ed951934c76"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/fixtures.json",
+          "sha256": "52e54975278e5c1137f4c30af4e48ee391e2538bfbaf0fb28f45c6d39252e3d4"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+          "sha256": "a1c33121f265812cba27e1bd7867061b9d82d4e8111012ae8cbfa3e1c20c3fca"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-build-observation.json",
+          "sha256": "311bf81dfde9dbcda1678ebd75f29667909905e2855d834c874ac7ef1b378d9a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-assembly-independent-inspection.json",
+          "sha256": "6f48a5562725057a85df09855c97890f7f69605a9ddf308630204670464ac2e5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-regression.json",
+          "sha256": "62ca0f816e0eb9baa841fb4399bd245e6220d93713770ac48154a2f6c5d4b695"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-independent-inspection.json",
+          "sha256": "781ec36c29fe9ca8afb6c3acfe2cecbeb16ad3103c16f48a7b1db7cbd2defc2f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/shell-package-observation.json",
+          "sha256": "0b200a96dde8bcf512cf6bf923fdef6b5fe2a3fafc82c5d2519cf2c513bd3cf1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/assemble_observations.py",
+          "sha256": "f37fe624219232f87cc9516dd2d2cac23ab488e48cc6fdb79be5ef20475ed996"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/build_typed_packet.py",
+          "sha256": "acb7af1e8c0596a5c9cfaa68590bf806f06ee6f47c605e45e045b973dffc99be"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-packet-attempts.json",
+          "sha256": "8b5f6a7d301742e791e3270ea839a9be22fd742d29eeb96596780671d4e7aabb"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-setup-attempts.json",
+          "sha256": "702bffd7e5dbc259960ee44b6ebf49457568d1b74d0179dad8d1f8cb86cf299b"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-ownership-observation.json",
+          "sha256": "c22556b09a89f87e30b0def55078f4cf765d1a395c3667d954b9fa50d68e66e5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/ownership-formatter-observation.json",
+          "sha256": "239c1904b446d65e85a2feaf67dd83908309dcc2b6ed2ec503f371b421c0c1b2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s01-observation.json",
+          "sha256": "f39aa2da02a204829ac4c5f8213ac497eca8045eca1b7dee3daaf8b58e79b134"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/full-workspace-inventory-observation.json",
+          "sha256": "5551739514657c07315d313b90c932b5ccba561d3d032fc97e5ebc4b9bf59c03"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-baseline-observation.json",
+          "sha256": "320b0bce2a8a70508706aa3e63650ff76b50711e7074d97072fa0dddf37046b4"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-build-observation.json",
+          "sha256": "2042dc3cd2a8bda06603ed0e6313fed4c21feb1613cd61f67fae9ef89f288e15"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-real-roadmap-observation.json",
+          "sha256": "93d4d1e3ec040021211701ae48b1600b5b2196eed07410b9f125e198791356e7"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-coverage-observation.json",
+          "sha256": "5635950123e6222229c0473b306fd41be5c1d2390d956f498b5c3b243858fe9a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-observation.json",
+          "sha256": "7058cb5d1c313910ce948a01f713fe5264c600bc22cb184256b9ae3d40e78bd9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s04-observation.json",
+          "sha256": "1694ae8fe6282b3eda512a17890bba74e9cb462cb732be6d3c61adabfbab60f3"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s05-snapshots-observation.json",
+          "sha256": "09eea66c18900be55eae2a0b56c436f1c77ba53468d3f383d18d9e0f8bc9dda2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-headless-observation.json",
+          "sha256": "99ee48cc64f12cd6eb06d34f1eda264c72043fe7f06556d7c7e8b7bdc1efa640"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-selection-observation.json",
+          "sha256": "6f72a21a46dc47048dc98c826a9b49f457ad85247bd557dd619c0840f4df06c6"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-trust-observation.json",
+          "sha256": "840c8a1ef2dad9f52814b77fe5d2799c526b58c964b8c7acc1d5434ba0e3c09a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-policy-legacy-observation.json",
+          "sha256": "12a1943b4f809c87d349487d1996e79be795b53d73b888f5be4b23410cbb2bc9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-proof-input-observation.json",
+          "sha256": "025cd86b2bd9d9941ae9fe26082599c0efe19da65833c84f43711e859deff422"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-runtime-observation.json",
+          "sha256": "7c855c84093785e806cab27b358bfeede01fbac6f9947bf97ef9b448abcda0a1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed/observed-tools.json",
+          "sha256": "4f619c3810f8fdcf2305dd663d7e73e9957fbd61dbcf61fc51c1876130840515"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-baseline-captures.tar.xz",
+          "sha256": "29027e20996a8fd3141543110536248ac727148b46e60466b1b9a8b626d24dcd"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-real-roadmap-captures.tar.xz",
+          "sha256": "d8460729c26b5987ae27fb1612c83b3e96ca118b0b66b12e1e61c654373b6bbc"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s01-captures.tar.xz",
+          "sha256": "adfa5f80f6ac4442944c426cf4aa60bd1772f83ea38f28a7be323cc4281369a2"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-coverage-captures.tar.xz",
+          "sha256": "7206d2e954dafd79fda9feebb2f4bc0c0310a8b1171468be01f4801b41b81360"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-ownership-captures.tar.xz",
+          "sha256": "189764b2f4a9d59e6baeb1593d0a646da3d7c30e304a01414c3f926f29b9bfd1"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s03-captures.tar.xz",
+          "sha256": "e88a797ef069015dfade23e3c5b5a5b649e030aecd5ae99763076403210cd62d"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s04-captures.tar.xz",
+          "sha256": "fb71e20213964fadf400efeed7afb9d1602d696645b4a92ac8510c02b74c4928"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s05-snapshots-captures.tar.xz",
+          "sha256": "87f6dda9783ffbb5432d058aa01cb8d2f9e608ec0d71d0b876ba99d4cf58fac5"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-headless-captures.tar.xz",
+          "sha256": "ce9698f522e2fbd97beedbe79a7d18a90313a7de1fe174a78125f28cf6e52568"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-selection-captures.tar.xz",
+          "sha256": "26ff7f1cee76964bd282dc7f90df611880c602dba879ab2f4391fb9d776379c9"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s06-trust-captures.tar.xz",
+          "sha256": "0e52195d3438aa8cc3b730ed2e20bce1a9a943e2ab1f26a9799390530d61e9ec"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-policy-legacy-captures.tar.xz",
+          "sha256": "f64943b10f9ac213884b251bd0751fdc5dc21b1a0faa2da972f3c3287f68b2e8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-proof-input-captures.tar.xz",
+          "sha256": "040966e9d4099b12c27df70042b0c080aaf1ce467fd884ccaeefdd5abee8b9df"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-workspace-runtime-captures.tar.xz",
+          "sha256": "b2c8e5bafb94dea69f06e62ca5ddff173ac2940b4f942e5fdc4790cdf1cb9019"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/full-workspace-inventory-captures.tar.xz",
+          "sha256": "8e74faaca4a1c62f242d6847740886715fc7cb0327e993fd7178fd4816d3ffa8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-observations.tar.xz",
+          "sha256": "1d8b43908268b48b4b6d68c94fa064a35d3c3704d36b7f0ac8ae33933a02ccaa"
+        }
+      ],
+      "defects": []
+    }
+  ]
+}

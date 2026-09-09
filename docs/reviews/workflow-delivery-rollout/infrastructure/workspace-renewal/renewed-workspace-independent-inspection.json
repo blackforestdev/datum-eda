@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "review_session": "/root/wdq_independent_review",
+  "method": "Independent raw artifact and regression receipt/source inspection; no execution replay.",
+  "runtime": {
+    "observations": 52,
+    "distinct_outer_and_observer_ids": 52,
+    "events": 208,
+    "artifact_hashes": 364,
+    "source_hash_checks": 1935,
+    "source_files": 33,
+    "passes": 47,
+    "expected_refusals": 5,
+    "all_states_unchanged": true
+  },
+  "policy_legacy": {
+    "observations": 75,
+    "distinct_outer_and_observer_ids": 75,
+    "events": 300,
+    "artifact_hashes": 525,
+    "source_hash_checks": 2780,
+    "source_files": 33,
+    "passes": 63,
+    "expected_refusals": 12,
+    "all_states_unchanged": true
+  },
+  "proof_inputs": {
+    "observations": 45,
+    "distinct_outer_and_observer_ids": 45,
+    "events": 180,
+    "artifact_hashes": 315,
+    "source_hash_checks": 1674,
+    "source_files": 33,
+    "passes": 33,
+    "expected_refusals": 12,
+    "stale": 8,
+    "coverage": 4,
+    "all_states_unchanged": true
+  },
+  "regression": {
+    "tests_passed": 45,
+    "test_source_hashes_verified": 4,
+    "tool_byte_identities_verified": 6,
+    "raw_receipt_exact_equality": true,
+    "transcription_correction": "Two nanosecond timestamps were rounded by initial uncommitted JS numeric serialization. Corrected by preserving raw JSON text; independent comparison after dropping producer_command verifies all fields exactly.",
+    "limitation": "Shell path/hash is bound, but no shell version was recorded. Unit and subprocess regression is bounded producer evidence, not independent entrypoint replay."
+  },
+  "remaining": "Typed evidence assembly, correlations, complete input/tool accounting and explicit unsupported-subcase accounting, then distinct RECHECK execution; no blanket runtime rerun required.",
+  "archive_members_independently_compared": false,
+  "compatibility_complete": false,
+  "independent_replay_performed": false,
+  "activation_performed": false
+}

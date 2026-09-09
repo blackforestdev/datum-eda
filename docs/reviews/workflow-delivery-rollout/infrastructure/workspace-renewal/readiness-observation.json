@@ -1,0 +1,2543 @@
+{
+  "schema_version": 1,
+  "activation_performed": false,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "complete_matrix": false,
+  "invocations": [
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "b9ea9135-82db-48cc-a563-26e26ee29e24",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "12b472aedc8f0535a1e480b999235c7b96c7f159c9eafb658c1fd6413229afd7",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-01.ready-valid-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-01.ready-valid",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "079ab5aa-fba3-4660-b224-6f72368546ec",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "756889a9e243ebe86738dd4313e5da9125b545fa4fd7189ab880da53819efd6e",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-01.ready-valid-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-01.ready-valid",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "cf9ca4df-60d0-4634-aeed-e8d6101b3b71",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "49e71bbb29019ed140b7e932be07e319358ff5812d780fa2b359caaa16f1f1b2",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-01.ready-valid-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-01.ready-valid",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "5e0ff334-7ba2-45d9-ba12-f41df4339090",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "23e6c8a89dbd2f1d8dab9c410ed0ec1d608b04ed1e27da3a6adac1cd8accddb7",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-01.ready-valid-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-01.ready-valid",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "45d12b32-1e86-4a8a-86db-d37d55796b22",
+        "observation_matches_expected": true,
+        "result_sha256": "fceddb7fe5c7af3693afe2797d74cd83957989a85e4997480da42f7be8fac97f",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "d2841afbcaf8610732fca1803cbedeb76a2ef229204a1a3ebb52ed0dfaa1ad97",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-01.ready-valid-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-01.ready-valid",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.no-declaration",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "requires a delivery declaration",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "requires a delivery declaration",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "99ec07df-11e8-46fa-ae70-f76a46c15f59",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "6690ce3081456851bef99d8b3ec2a4bd1c95224aef6a080efea32324d0276c1f",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-01.no-declaration-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-01.no-declaration",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "1caa7c01-c44c-45e8-b49a-a423054a1eed",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "ea84a1f565157ee728dc130a05039151928db73ad9d7cad4de982ebdbbab30bf",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-01.no-declaration-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-01.no-declaration",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.no-declaration",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "requires a delivery declaration",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "requires a delivery declaration",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "d312c0a0-af59-4228-bcd5-bc6abde5f26a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "42c8fab447d75d2a360c25f4cdffa02fd4c65bae283edf69b9102cb0ebd7f86c",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-01.no-declaration-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-01.no-declaration",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "eae9e157-d139-4d64-a850-b833847e4e6a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "9f3f850069e7436a39656b64efcf3f73c871b481e147d29dae84fe8e5df2fabe",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-01.no-declaration-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-01.no-declaration",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.no-declaration",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "requires a delivery declaration",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "requires a delivery declaration",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "072e4a7e-c010-4389-8f3a-f9fd04aa338a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "f2eee155ee94f8341baf39efb4b7046e957d39bf6a8d6ea94db54a2dc4cabbae",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-01.no-declaration-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-01.no-declaration",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "3a1bfdc8-6923-459d-b208-0e8b7f2bd404",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "efbb7b24f17a793d9955c8fe8cef3d9c63d85c5f6587ccaa3c7e1f5f5e22be4d",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-01.no-declaration-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-01.no-declaration",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.no-declaration",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "requires a delivery declaration",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "requires a delivery declaration",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "00d90e15-6af7-4993-be74-e5d06a83df7c",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "e8ff7781d06999fcca63fc37fde8ddf73884015b085de008e3b49214c9b5f5ea",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-01.no-declaration-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-01.no-declaration",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "9573d63d-1bef-4129-a577-5f3a5466c94e",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "7b5be46043916c4dbfeb8ec8fdd189a4966972e38ab1477254e8718fc6e594f2",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-01.no-declaration-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-01.no-declaration",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.no-declaration",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "496a37ae-909e-4b7c-b8da-7c707350abf6",
+        "observation_matches_expected": true,
+        "result_sha256": "e5bc4fe62b1ca1faeed4df72764cdeb7a8d890ae2911c9465c473b129124b9cd",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "a4527b843c2d4bddd51e6d43f39f74d7a90d00a15d44979f75244ced4eb75249",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-01.no-declaration-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-01.no-declaration",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "877c21fd-370d-4182-b084-37f4c7bb1406",
+        "observation_matches_expected": true,
+        "result_sha256": "a6408d45703595d6a0e2d817a0af35f921a9e1e2ff52b171dabcde02347854fc",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "d2841afbcaf8610732fca1803cbedeb76a2ef229204a1a3ebb52ed0dfaa1ad97",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-01.no-declaration-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-01.no-declaration",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-02.missing-marker",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "marker must occur exactly once: missing-reference",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "marker must occur exactly once: missing-reference",
+            "path": "docs/authority.md"
+          }
+        ],
+        "expected_path": "docs/authority.md",
+        "invocation_id": "b6e5011a-f0c6-4e13-ad88-39b942e17108",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "8c0fcee265dfa1fcf3df5abee8da9ee7030b25874e77831bce3c9e5125f5d87c",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-02.missing-marker-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-02.missing-marker",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "48580ce6-67c1-4b54-b142-b5e2073dbd1a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "82a6ab1c02f778d98761907515cc9f04158acbefa88a415859aa266dc947e8bb",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-02.missing-marker-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-02.missing-marker",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-02.missing-marker",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "marker must occur exactly once: missing-reference",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "marker must occur exactly once: missing-reference",
+            "path": "docs/authority.md"
+          }
+        ],
+        "expected_path": "docs/authority.md",
+        "invocation_id": "fdba5d71-92ff-4d65-84c9-391abea91a39",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "64d500b7fe2c0dffdbe65cf6c09b383d04c3751f056e84ab6bc6c9d7214cde01",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-02.missing-marker-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-02.missing-marker",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "fa146516-798f-40b9-af24-8c3ac9f80d5d",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "5452254b5d272f66573415739e3655ad39368357dfcdef894edff8d1a102d028",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-02.missing-marker-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-02.missing-marker",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-02.missing-marker",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "marker must occur exactly once: missing-reference",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "marker must occur exactly once: missing-reference",
+            "path": "docs/authority.md"
+          }
+        ],
+        "expected_path": "docs/authority.md",
+        "invocation_id": "de34d2e2-07f9-43ba-b8c8-dff7ab365dca",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "f3ba486581ce56ffbde4136b07c182e7049d04f1c3a205d65366ce793c68161d",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-02.missing-marker-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-02.missing-marker",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "9ac50822-7dae-4567-ac0b-fd04ecaffeb9",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "1ab1a5a083e2365ba4b9e2581bdb1cfdb723b4475a2049d6bddb734cb80e266d",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-02.missing-marker-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-02.missing-marker",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-02.missing-marker",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "marker must occur exactly once: missing-reference",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "marker must occur exactly once: missing-reference",
+            "path": "docs/authority.md"
+          }
+        ],
+        "expected_path": "docs/authority.md",
+        "invocation_id": "02665b2d-6653-4e21-88eb-4370e78efe4a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "adbbcb78bf336522c3489d692cad8a73694c4c978e61ee2c19c57ccccf5db9cc",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-02.missing-marker-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-02.missing-marker",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "0a904ba8-3b04-480e-81ec-989fe6c46db4",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "8fbf4f2dcacac2587f431475aa253845bad3b4f80ac460408c6180485705974b",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-02.missing-marker-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-02.missing-marker",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-02.missing-marker",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "52562be4-a0d3-4748-a660-713e2512e2ef",
+        "observation_matches_expected": true,
+        "result_sha256": "f96cf8cc1a7be3ca3940bd75dd1e58ecf3d0a35a9e6e4ba97023da70f04abc45",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "29e08b0b98f351785aba07129492dc1e82ea98c9d503305c3bf263205d820ad0",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-02.missing-marker-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-02.missing-marker",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "78367357-30ce-4942-a7c4-2f352a52ae9e",
+        "observation_matches_expected": true,
+        "result_sha256": "d2ed6da4791392dc33576261c41b28156e07e7d8b159544c54606156d8fab9f1",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "d2841afbcaf8610732fca1803cbedeb76a2ef229204a1a3ebb52ed0dfaa1ad97",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-02.missing-marker-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-02.missing-marker",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-02.stale-route",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "owning route review is stale; return to owning lane",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "owning route review is stale; return to owning lane",
+            "path": "next-readiness-input"
+          }
+        ],
+        "expected_path": "next-readiness-input",
+        "invocation_id": "9181fd11-f949-4e33-8523-e4576a26635f",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "136436b34e6bbac894ce043e85cb5c2278f46bc70e516e4739750debbf7e0cd4",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-02.stale-route-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-02.stale-route",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "0f9e1264-d18e-445c-848b-a87a0c8ebdd4",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "398823217e1df241f29bd0da66d31454d25ab3d5f7ac6a1dc70908a3a4e5176d",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-02.stale-route-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-02.stale-route",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-02.stale-route",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "owning route review is stale; return to owning lane",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "owning route review is stale; return to owning lane",
+            "path": "next-readiness-input"
+          }
+        ],
+        "expected_path": "next-readiness-input",
+        "invocation_id": "b5b626b3-1842-48fd-868d-d400b241efe2",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "075d579bdce6e840474ade5d7aa8b095795b5076faafd5927988e81ac26a8340",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-02.stale-route-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-02.stale-route",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "a5895ebe-af5d-437c-be42-aa34802c6748",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "79d5922145e32476a818279a7cb1531e2e8fb5274975c7408585c5e3a272aa0c",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-02.stale-route-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-02.stale-route",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-02.stale-route",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "owning route review is stale; return to owning lane",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "owning route review is stale; return to owning lane",
+            "path": "next-readiness-input"
+          }
+        ],
+        "expected_path": "next-readiness-input",
+        "invocation_id": "3115d4b3-703c-425b-a72e-b69c4dfc0e15",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "63e95b98b4b1cc185a812dd93160cca86969c6d7a9bb0d53ff959b909edd7e91",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-02.stale-route-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-02.stale-route",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "cdc7a0f5-d020-4a66-a1c2-48133d2d62e6",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "854d47a5a4734641c507c6f089c7352dddc81123e51147490424ac05ad4fcc28",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-02.stale-route-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-02.stale-route",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-02.stale-route",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "owning route review is stale; return to owning lane",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "owning route review is stale; return to owning lane",
+            "path": "next-readiness-input"
+          }
+        ],
+        "expected_path": "next-readiness-input",
+        "invocation_id": "6e72362e-83ed-49f9-bb26-18d7f2ab0c3f",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "343e3349cdeec5dbb476954bc70f3fc6a20d89e8a74dfaa2bb578c85ced5e4b8",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-02.stale-route-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-02.stale-route",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "acd03990-6cc3-4ac2-af54-f652aabcb2a5",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "f62dca8c235e4dc1738edc23f7737cf50003f416982d0674f25d404eb2a04b5c",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-02.stale-route-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-02.stale-route",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-02.stale-route",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "1cf23505-46ca-4765-a557-a9ae52b29bbe",
+        "observation_matches_expected": true,
+        "result_sha256": "3e7c796f67f4dab26eecc9c9deb72a2cbb4f7ce07e668997cdbb99328db8061c",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "57cbedceaea866c9a390d16baa3622f3b9dd009f1ae2a6b85ef645bfd27d5163",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-02.stale-route-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-02.stale-route",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "6bafd550-b827-4755-be41-666fabe06fbe",
+        "observation_matches_expected": true,
+        "result_sha256": "7f1cb72049dc72738dd8edf00d614ac463c2ef6d64311c794a77e83b1ffc5189",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "d2841afbcaf8610732fca1803cbedeb76a2ef229204a1a3ebb52ed0dfaa1ad97",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-02.stale-route-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-02.stale-route",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-03.owner-question",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "mandatory owner question unresolved",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "mandatory owner question unresolved",
+            "path": "MISSING"
+          }
+        ],
+        "expected_path": "MISSING",
+        "invocation_id": "256ecd4c-6d16-49b8-84a4-99e6a7f6a3d9",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "aa05da7824e909484f336002cc6167631a7e316a9b13c1c22fb94eadc7a5303b",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-03.owner-question-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-03.owner-question",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "b8a949a0-3129-43d3-ac84-d04dfa023f38",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "0d43c5b41296b326a3f3706e47843fad8ff45ac7480b3b96f69bcafadcc08a42",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-03.owner-question-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-03.owner-question",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-03.owner-question",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "mandatory owner question unresolved",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "mandatory owner question unresolved",
+            "path": "MISSING"
+          }
+        ],
+        "expected_path": "MISSING",
+        "invocation_id": "482d8734-83b0-4412-a55d-2ed8fbeca5ab",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "21f14820c5fb5c35043a4b37d02f13a91b5c9ed313cac97cdc5bb461dc95c805",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-03.owner-question-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-03.owner-question",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "0e4a7cfe-a703-4ec6-93a5-927e0ff40abd",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "c1e47494a26c143f05eb52435891445052e601b5ecf25f9f1138f289466c71e4",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-03.owner-question-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-03.owner-question",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-03.owner-question",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "mandatory owner question unresolved",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "mandatory owner question unresolved",
+            "path": "MISSING"
+          }
+        ],
+        "expected_path": "MISSING",
+        "invocation_id": "be0b5fb9-3c3a-43f4-9d73-2a43be9ee957",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "e0cd4bde0bb7eb3d2962823f79a1e1805b8d123dd20cb30df63e804dafccad16",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-03.owner-question-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-03.owner-question",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "113f261d-5214-4200-a0ec-37e52a88c5c9",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "713ad787a0c84e44336bb24e6978b5ddfc484810499d24f86a4a69608ef626fb",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-03.owner-question-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-03.owner-question",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-03.owner-question",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "mandatory owner question unresolved",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "mandatory owner question unresolved",
+            "path": "MISSING"
+          }
+        ],
+        "expected_path": "MISSING",
+        "invocation_id": "e9f05284-9a35-4e9f-97f8-d3ebb5418a86",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "3c2673f323c67b284e03e13aabf76105a8a82000d774968e98f28b79d7565734",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-03.owner-question-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-03.owner-question",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "f07eb71d-c057-43fe-a01f-36a6753f3790",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "d4f0a4449d8f85f30ff710deb005a85955608cd499c37afb40e9379c8adee1d6",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-03.owner-question-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-03.owner-question",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-03.owner-question",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "e62a097b-9582-43a4-82aa-1b8f24e6b701",
+        "observation_matches_expected": true,
+        "result_sha256": "bb35b47b1ab4c27965eb25269363d8d95fe7bb13b348a0c615a03da1f17f0d0b",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "f556d817399de8cf8a726ea7366d44722187810b1cdacae73fa689a9a5ae586c",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-03.owner-question-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-03.owner-question",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "0bbf650e-6b8c-4ed9-8f54-734fa94899f7",
+        "observation_matches_expected": true,
+        "result_sha256": "dc31cbac89d1781986048fa155de4058d44d51532909e65cb2fabdd029e563fb",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "d2841afbcaf8610732fca1803cbedeb76a2ef229204a1a3ebb52ed0dfaa1ad97",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-03.owner-question-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-03.owner-question",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-03.foundation-answer",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "missing=['units_precision']",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "missing=['units_precision']",
+            "path": "next.contract.json.foundation_answers"
+          }
+        ],
+        "expected_path": "next.contract.json.foundation_answers",
+        "invocation_id": "5a659ef2-8465-452e-ae65-34c4f46d7a59",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "52ffea62a0ba5dfea02839ef8863a8f2ec309879143fa8924afb106fcd916660",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-03.foundation-answer-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-03.foundation-answer",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "e8a6fb6b-1e55-4ac0-b246-dd250da457fc",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "ced83ca4e33b2af4fc67c43a000e70e8773a55692b91c3448a22df205457bcda",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-03.foundation-answer-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-03.foundation-answer",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-03.foundation-answer",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "missing=['units_precision']",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "missing=['units_precision']",
+            "path": "next.contract.json.foundation_answers"
+          }
+        ],
+        "expected_path": "next.contract.json.foundation_answers",
+        "invocation_id": "20b7a1d2-b980-496b-a6b5-b6fa9796a69f",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "88785a2220106ee3d8a89ec4c7c5573ae0e071bd3b51b484b081022e9a667c0d",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-03.foundation-answer-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-03.foundation-answer",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "ce76847d-31bf-4bc7-b10b-2c5a00eaf59b",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "53ffc31f8ac050f2ec775fd3d31722297a2a6f68dd5b4cba81a2250ad96f13a6",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-03.foundation-answer-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-03.foundation-answer",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-03.foundation-answer",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "missing=['units_precision']",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "missing=['units_precision']",
+            "path": "next.contract.json.foundation_answers"
+          }
+        ],
+        "expected_path": "next.contract.json.foundation_answers",
+        "invocation_id": "da695331-6db4-499c-9f2d-7111d8f40c33",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "3da9a344e4545e120b552643a0d51175f38a759a0281b5f27cd637e62554d40c",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-03.foundation-answer-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-03.foundation-answer",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "4f8d34b6-c773-4261-ad85-5cecefa22616",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "cbc071f3d9d9dbbb5611e6407fa74b7fd6ed85fcf8e765eef6ae31e36cec8ec0",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-03.foundation-answer-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-03.foundation-answer",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-03.foundation-answer",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "missing=['units_precision']",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "missing=['units_precision']",
+            "path": "next.contract.json.foundation_answers"
+          }
+        ],
+        "expected_path": "next.contract.json.foundation_answers",
+        "invocation_id": "1cdd8eec-1e94-4079-9b4b-cd5897edb80f",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "337773fc2e05ecaa2951e85cb16afe432e130b2c29604df58602af6ea71574fc",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-03.foundation-answer-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-03.foundation-answer",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "54c85e7e-e288-4eb5-a265-148a43ad3f25",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "9a6b589ef32cf79d0429ee843425cd499b6c8f349dfea066772c8ca1ddb804bc",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-03.foundation-answer-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-03.foundation-answer",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-03.foundation-answer",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "ed9cdf14-9bb3-49aa-96b3-4057a4fc7eac",
+        "observation_matches_expected": true,
+        "result_sha256": "cc46bed5ba48ceac329f6ded27b75e6fb9d7dba11be8f75539574fc90fe53b9c",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "2e0e1b5afe995f6f8aabb991da8b71124ed8edcc0dd9cb2fd9993162e8d0ce09",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-03.foundation-answer-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-03.foundation-answer",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-01.ready-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "e57d9d20-8676-408b-9604-2b8779e8d351",
+        "observation_matches_expected": true,
+        "result_sha256": "e31fe3f10df499c9da8126a4b9d5d14143972b4687893018b7e5f1d5fdaf3243",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "d2841afbcaf8610732fca1803cbedeb76a2ef229204a1a3ebb52ed0dfaa1ad97",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-03.foundation-answer-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-03.foundation-answer",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "b21fd218-412d-4c35-afd3-e8be733edc84",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "078da6059a84bc064b3a403ef2059a7fd56113d298b4253a3f7ee28d7986ddb3",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-04.product-valid-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-04.product-valid",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "192ea0e7-145b-4a4e-a82d-8ea410429a39",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "3de78b83135ca1bf4bdce1dc6405dbfc9102374a99171d720a3d15a93db8465e",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-04.product-valid-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-04.product-valid",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "278b37de-4493-435a-97e5-260fb13019af",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "37db726ce0b00ff111c1ea0b9b706830327579c997a50ad70d809efeb11e4507",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-04.product-valid-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-04.product-valid",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "147cc367-b55d-4ff8-9522-0a4e0e2048e7",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "dc186b292e90adc81620c41049ed319a796bfefa9d0de4df43a62a77f314c2d4",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-04.product-valid-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-04.product-valid",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "553bc2cd-3928-4088-b99a-7ca59e36b457",
+        "observation_matches_expected": true,
+        "result_sha256": "4a8e93a620d524d88753dfcd237646b45f542479a61325d8e9e257c7881462f2",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "374f1a0b8c61e3ccfd48e06fec856d9e62ae0a4680ce5b9626b41459da15bda7",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-04.product-valid-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-04.product-valid",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.missing-handler",
+        "complete_matrix": false,
+        "expected_code": "WDQ-CONSUMER",
+        "expected_detail": "required enabled consumer has no production handler",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-CONSUMER",
+            "detail": "required enabled consumer has no production handler",
+            "path": "reader"
+          }
+        ],
+        "expected_path": "reader",
+        "invocation_id": "c5f38008-b437-4199-8184-a0661040e88c",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "fc330aedbd010641a2b0d98750c385b0f5a78d55ad6b7c99117dc336af68a2d9",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-04.missing-handler-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-04.missing-handler",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "1fc72e3d-af73-4651-b3fc-151e817cbff9",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "b8d2cbd57faef45e2a0ce8d16133c76457c40c0f71baa8dcfc2c03b08e7365b8",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-04.missing-handler-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-04.missing-handler",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.missing-handler",
+        "complete_matrix": false,
+        "expected_code": "WDQ-CONSUMER",
+        "expected_detail": "required enabled consumer has no production handler",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-CONSUMER",
+            "detail": "required enabled consumer has no production handler",
+            "path": "reader"
+          }
+        ],
+        "expected_path": "reader",
+        "invocation_id": "30bd866d-40c9-4b3e-b5f6-4721a210a75e",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "c95f754334daa90c78da026b8c8b361040b89f742b4a48436b926aa57bbede97",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-04.missing-handler-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-04.missing-handler",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "e7e8cb97-07e3-4274-98e8-e1957242eb52",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "4cb80313f8ff1a138bc846c887129349d613831abe0cc327440cf3c89619c066",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-04.missing-handler-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-04.missing-handler",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.missing-handler",
+        "complete_matrix": false,
+        "expected_code": "WDQ-CONSUMER",
+        "expected_detail": "required enabled consumer has no production handler",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-CONSUMER",
+            "detail": "required enabled consumer has no production handler",
+            "path": "reader"
+          }
+        ],
+        "expected_path": "reader",
+        "invocation_id": "e8024b25-0b9e-4260-a288-45c2344f8da9",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "848eefbcb85d7eec62cf8fd69b5a0a163c4474ffb123a5b91481545f636468bc",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-04.missing-handler-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-04.missing-handler",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "546501df-0f66-495e-8a87-e849c5c7863b",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "e64b7ee81ef96a087ecd026c10353a1cf68634c417bdee8851f643ff23559f3a",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-04.missing-handler-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-04.missing-handler",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.missing-handler",
+        "complete_matrix": false,
+        "expected_code": "WDQ-CONSUMER",
+        "expected_detail": "required enabled consumer has no production handler",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-CONSUMER",
+            "detail": "required enabled consumer has no production handler",
+            "path": "reader"
+          }
+        ],
+        "expected_path": "reader",
+        "invocation_id": "0b5a8b29-1a34-4b3a-946c-e3edd01da292",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "57e7dc682f2faee640cb3b8b37047a2d4ffe83929a744ea20cc08b24e2f7b0b5",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-04.missing-handler-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-04.missing-handler",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "2572c5bb-7c94-4e37-a8e2-a0ab87376118",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "c8673de4085cfc7118beef65f7a894e1238e05e3640c7d37451cfa42fdaf5f48",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-04.missing-handler-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-04.missing-handler",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.missing-handler",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "d25b3c29-ffcf-4b91-8621-da1d94997109",
+        "observation_matches_expected": true,
+        "result_sha256": "3383df82625a21f790b917c11117c73e610f7e1742a0f3d7196873811539d61a",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "325f486a557010e43fae03eefffdeb4e5a80fc2b4d073420e8e9a4b7a65e1871",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-04.missing-handler-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-04.missing-handler",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "77027010-be5f-4e24-afc2-b28a1376dbb5",
+        "observation_matches_expected": true,
+        "result_sha256": "78a0c64b03ae2f5d0b78be831a51452d982707f7b2e9e02bae79f3478ba1704f",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "374f1a0b8c61e3ccfd48e06fec856d9e62ae0a4680ce5b9626b41459da15bda7",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-04.missing-handler-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-04.missing-handler",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-05.all-normal-na",
+        "complete_matrix": false,
+        "expected_code": "WDQ-CONSUMER",
+        "expected_detail": "product delivery requires at least one normal enabled scenario",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-CONSUMER",
+            "detail": "product delivery requires at least one normal enabled scenario",
+            "path": "next-contract"
+          }
+        ],
+        "expected_path": "next-contract",
+        "invocation_id": "0dcc9802-0297-4613-ad15-8504d47fea0a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "1ecac8fa84aa859a439747953bfb10d6ac91966de6451a52b13693f0bd7e6503",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-05.all-normal-na-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-05.all-normal-na",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "46e493b3-8626-4b19-8811-3f0b1bae205f",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "0d57ebfc6aa21f0b4e650d8be07e258306f35d0cf6ee2c2675bd5eece6930f5c",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-05.all-normal-na-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-05.all-normal-na",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-05.all-normal-na",
+        "complete_matrix": false,
+        "expected_code": "WDQ-CONSUMER",
+        "expected_detail": "product delivery requires at least one normal enabled scenario",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-CONSUMER",
+            "detail": "product delivery requires at least one normal enabled scenario",
+            "path": "next-contract"
+          }
+        ],
+        "expected_path": "next-contract",
+        "invocation_id": "cfd3cbb9-102d-40fd-a668-e61727a99d39",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "84a223609960461045d1a044d8ff6717ad74adcd2e89c38fddcc2dd09cf3fb81",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-05.all-normal-na-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-05.all-normal-na",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "9f809d02-9d05-4303-a62d-5afde2b7f20e",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "06d7ab58d13567c3a6eb0e7ec56bcbdd06b4ca28a74ec450fc82d50224c8e421",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-05.all-normal-na-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-05.all-normal-na",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-05.all-normal-na",
+        "complete_matrix": false,
+        "expected_code": "WDQ-CONSUMER",
+        "expected_detail": "product delivery requires at least one normal enabled scenario",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-CONSUMER",
+            "detail": "product delivery requires at least one normal enabled scenario",
+            "path": "next-contract"
+          }
+        ],
+        "expected_path": "next-contract",
+        "invocation_id": "b763cc1f-e9e6-487f-a323-251e9fb34eed",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "3d4e9f878091c4ae9b72417d4f313f9e3cc32affd18a43e396967c6bd0f3a176",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-05.all-normal-na-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-05.all-normal-na",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "6cdb66bb-01bb-41a8-8fc2-0b9dd3b901ce",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "006d2bd4ea28d479b6b3c9d5095911f97ad52f920eb3b27e43e07ee589b0e754",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-05.all-normal-na-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-05.all-normal-na",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-05.all-normal-na",
+        "complete_matrix": false,
+        "expected_code": "WDQ-CONSUMER",
+        "expected_detail": "product delivery requires at least one normal enabled scenario",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-CONSUMER",
+            "detail": "product delivery requires at least one normal enabled scenario",
+            "path": "next-contract"
+          }
+        ],
+        "expected_path": "next-contract",
+        "invocation_id": "ef01dc05-000d-4cf1-8c5e-200066bd8ce4",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "c6321a7208b91cc0a5ac3255781ec91ae2395b7ae06b3fcdcceea79486d904b3",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-05.all-normal-na-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-05.all-normal-na",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "bc727b56-7398-49ac-a784-5668d84c924e",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "3843b5a623df4bd5917c73f80d500c253a69d0aca7bbcfcc16936ffb1c4d45f5",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-05.all-normal-na-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-05.all-normal-na",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-05.all-normal-na",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "4e5df3ad-8b17-457f-8f4f-dee74445d11a",
+        "observation_matches_expected": true,
+        "result_sha256": "de4337d6912597607eba10afcf90554eaa1dfa1ef397aa75900d2827c3541e46",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "3b9c20c313f3d2caa7c2da7f9278dfb26cdcbcd348c8310570bc884bb869287c",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-05.all-normal-na-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-05.all-normal-na",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-04.product-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "168c034a-48aa-4979-8bc8-bc434400a984",
+        "observation_matches_expected": true,
+        "result_sha256": "24ac3d5100d3da6475be01ce6551ccd18b887cced44e2e3c57e478edcf239009",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "374f1a0b8c61e3ccfd48e06fec856d9e62ae0a4680ce5b9626b41459da15bda7",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-05.all-normal-na-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-05.all-normal-na",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-product",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "90176ebf-a664-4c14-af79-b96212b51969",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "71fa83db92e716edb7c019ad3a19bf984b87fcf2ecf1c4bf43de44734b1bb177",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-11.pending-product-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-11.pending-product",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-product",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "2e9bdbe8-b915-486a-9920-dd6738b9b2ec",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "f1cc4f7d82d3e8508445453ef308a77758240ed3480192affd97c15f54ddadfc",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-11.pending-product-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-11.pending-product",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-product",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "e26ab049-0389-4233-ac85-ddeaf9b88e3c",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "0fe00d48a4677ea80293bc2f684f5d57789d320e585861c7c2e060b25895b1c6",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-11.pending-product-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-11.pending-product",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-product",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "5ae905b0-06d1-41bf-bcf1-e54fde706f5a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "0e162ea156db9cbd32394812a2f1560cf7317dab8950bb53a3db5060c8672d28",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-11.pending-product-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-11.pending-product",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-product",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "a0dcc5a0-2ce9-4507-926e-8e6754bea960",
+        "observation_matches_expected": true,
+        "result_sha256": "768cbd692105304defd27cefe089cf9dfba7f1f7146f729ca1c32b353d8f444e",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "72817b502534a9b88da5bf779cd03b2d58e25311fb19de6df05fba42a5487f1b",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-11.pending-product-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-11.pending-product",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-infrastructure",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "43e4adb7-87e8-4f7c-8dba-5735450ac994",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "0b080558cdd42d044a8a525474e8285c31c1c7075cb75461f852760c040c27cb",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-11.pending-infrastructure-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-11.pending-infrastructure",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-infrastructure",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "e9942de8-7a1a-4e87-a345-3c8809ec5103",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "8d2004be3d0fc69c15c5130fcca999856258c5a2be430d8461593fcfe4cbcb06",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-11.pending-infrastructure-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-11.pending-infrastructure",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-infrastructure",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "dca734d2-0779-4802-bc48-4d209d5e8b5c",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "ae7e7e319cfa8038586f0b5d6040cb5048d7cc02f11ca313a11a9dddfa8a6254",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-11.pending-infrastructure-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-11.pending-infrastructure",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-infrastructure",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "30d1d171-6c74-4577-8641-4f2ba8cc8f53",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "a7cdc5706045689737426d462b5623d05b5c215d7c7c706e2edd68deb254484f",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-11.pending-infrastructure-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-11.pending-infrastructure",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-infrastructure",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "1b5f0b1b-8ee2-45e4-9ac8-2811ae0b6a20",
+        "observation_matches_expected": true,
+        "result_sha256": "070cea77b2d9fe018ab0fabc8b0aba19e23a4d9cfa1c97435091ad14251c02af",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "75e78a2ad5b752ea96920e0f71b330ef101600ed211443acbe47f43ea437c8fc",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-11.pending-infrastructure-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-11.pending-infrastructure",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-07.product",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "execution requires owner-promoted enrollment",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "execution requires owner-promoted enrollment",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "8ee3fb07-bf42-4e52-ad0a-ff13557969d3",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "895285b4a9406b56ea9b2d2ac80108bbaec3d20988f56d9eecef1158f95a5375",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S02-07.product-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-07.product",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-product",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "049a3d51-a14a-4897-9adb-d3e74b832104",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "ec4848a62da1956e256aab984e48b9040b76d73ca992e75dd83a456afed56fa0",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S02-07.product-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-07.product",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-07.product",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "execution requires owner-promoted enrollment",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "execution requires owner-promoted enrollment",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "3e84f1e7-136b-455a-99fb-2c6d2e40f4fa",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "f3ea90c1e093a98544e8fb9f7517ba445889a891d51aa4cf0e48ecc94a824089",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S02-07.product-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-07.product",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-product",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "4b90886d-8395-43ae-9175-b8212571d323",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "c4326cfc9cb5facb97ef9aa9a23688b7e740a464584f27b6b7cd0184d608c8a3",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S02-07.product-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-07.product",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-07.product",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "execution requires owner-promoted enrollment",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "execution requires owner-promoted enrollment",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "020be3b0-7d0a-486a-b28b-e890e073bad3",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "1b81191cec6786e8983459c22d13a7a5488a5a152175ac4245d6b96c012b645d",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-07.product-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-07.product",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-product",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "386feb1e-e5fc-470a-8a42-580afcf8a1c2",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "ea3162824a3a97d291179311c3cd19b4d2277dc24520d1adb6dbb46a62d3f28f",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-07.product-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-07.product",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-07.product",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "execution requires owner-promoted enrollment",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "execution requires owner-promoted enrollment",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "2a859fc7-1003-4697-9124-e302e21f9d48",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "955d78eefc682152b4ed76416ae60123500a549d03c0061ca940805eb1c5e0eb",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-07.product-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-07.product",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-product",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "f8678e4a-f333-4c32-b343-1d401e65f4e1",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "392027f639571488645f94823a0eb9bc9dc8044e19278009a418718a0b81c907",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-07.product-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-07.product",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-07.product",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "45014051-b259-4086-93a9-28daafb61b57",
+        "observation_matches_expected": true,
+        "result_sha256": "c0a8bc9c7f6271f35e5d2ac5067cf0ba4b176dc6faa58db59cb324032a6ada3a",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "3bea0283de45c958c9ce48f55bf04e3861f9c9b937e085b7bafe6d113dd5a308",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S02-07.product-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-07.product",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-product",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "f0f40bdb-82ac-4473-a748-5c635ae331cd",
+        "observation_matches_expected": true,
+        "result_sha256": "ac2c2869482d42713ac9198f992cb7ed85784448e702eabda36b4946842bfb67",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "72817b502534a9b88da5bf779cd03b2d58e25311fb19de6df05fba42a5487f1b",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S02-07.product-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-07.product",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-07.infrastructure",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "execution requires owner-promoted enrollment",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "execution requires owner-promoted enrollment",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "cba9ab59-9c88-4bff-b75e-826d9b45c422",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "d12ba06b3a4f739375ee711b5b088e878ddd2c3aaa82d08a3e1a40da7fa7e893",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S02-07.infrastructure-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-07.infrastructure",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-infrastructure",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "9c40040b-2f6d-486c-9005-165e6b992fc4",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "d3568e8d186340ebe591d4bb86745c0c0208c5738171e292ace06a6602794054",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S02-07.infrastructure-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-07.infrastructure",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-07.infrastructure",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "execution requires owner-promoted enrollment",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "execution requires owner-promoted enrollment",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "6245fccf-b04e-414b-aba3-7b32da37ed4a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "0b735618a199fda95ae26d8132c78f952e98e79e2e3b8bb243138c1eca7b8433",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S02-07.infrastructure-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-07.infrastructure",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-infrastructure",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "6066bf21-41e0-44b1-b1ee-d13ceb333f58",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "d7d8ebf87b1543efa56bf4e799e37c15b83ed485a166a5fa634d87561fb67c73",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S02-07.infrastructure-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-07.infrastructure",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-07.infrastructure",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "execution requires owner-promoted enrollment",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "execution requires owner-promoted enrollment",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "46712432-5f39-4783-92a9-f7899649b76d",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "2cde5876ab4ec269fa7547857c85a887eab32468333ed83644d04d1739b202f9",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-07.infrastructure-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-07.infrastructure",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-infrastructure",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "5eb9cc7b-8d35-49dc-833b-38a06693ec1b",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "1783bbe9bf5688bfa6008c68568ebda2ed8b04ab5c415a5eef357148243df2d8",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-07.infrastructure-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-07.infrastructure",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-07.infrastructure",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "execution requires owner-promoted enrollment",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "execution requires owner-promoted enrollment",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "6ea6dc45-9b93-4a9c-bf47-f9f577668043",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "446449e893796ebea49b29f495feeca0811e48a08be86854b3d10ab4e91a2170",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-07.infrastructure-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-07.infrastructure",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-infrastructure",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "a348f8fa-f70c-4615-bf9a-fe43c12b60b1",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "4c9bfa809e1a44a8553fc6289dccf10da8ef4438e8a4216dd4b8244a5a284f06",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-07.infrastructure-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-07.infrastructure",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-07.infrastructure",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "d51d6118-ff10-4699-8d24-bdfb4b14afb1",
+        "observation_matches_expected": true,
+        "result_sha256": "08bd22b52b347abcc96e336d79aca4fff3a8e2ae4214c9da04ccb05b677f4fbf",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "08eb16887502a20d17b59981a711384e14050d6cd6fc33ee7ee15f9306088dcb",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S02-07.infrastructure-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-07.infrastructure",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-11.pending-infrastructure",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "a0b68769-1c6f-4b52-99a0-0b8f049e0531",
+        "observation_matches_expected": true,
+        "result_sha256": "3d488b6782fffa4564ca712f9fd5ff56affbd288b5bf13c0ac70cdbb87fbb6af",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "75e78a2ad5b752ea96920e0f71b330ef101600ed211443acbe47f43ea437c8fc",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S02-07.infrastructure-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-07.infrastructure",
+      "surface": "H"
+    }
+  ],
+  "scope": "Fresh readiness and product-readiness refusal/recovery matrix from unchanged candidate. Synthetic infrastructure evidence, not actual product readiness or complete compatibility.",
+  "archive": "readiness-captures.tar.xz",
+  "archive_sha256": "af692c7da8dc1b236ccc4f90edff2d03ff6f0abb11c1fe3c07b7ee2c2d4a28f8",
+  "archive_bytes": 5072820,
+  "command": "python3 -I -S -B -c 'import sys,os,json; from pathlib import Path; runtime=Path.cwd(); sys.path.insert(0,str(runtime/\"scripts\")); from workflow_delivery_capture_fixture import prepare_fixture; from workflow_delivery_capture_cases import run_case; from workflow_delivery_capture_hook import run_hook_case; from workflow_delivery_readiness_input import READINESS_CASES,READY_VALID,PENDING_CATEGORIES,ENROLLMENT_BASELINES; from workflow_delivery_product_readiness_input import PRODUCT_READINESS_CASES,PRODUCT_READY; from workflow_delivery_capture_state import git; from workflow_delivery_capture_command import save; pin=\"22192085c55ec654eb209deccc0450afd53b2c65\"; assert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\"); store=Path(\"/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/workspace-renewal-readiness\"); store.mkdir(exist_ok=False); environment={\"PATH\":os.defpath,\"HOME\":str(store),\"XDG_CONFIG_HOME\":str(store),\"GIT_CONFIG_NOSYSTEM\":\"1\",\"GIT_CONFIG_GLOBAL\":os.devnull,\"LANG\":\"C\"}; baselines={}; results=[]\nfor normal in (READY_VALID,PRODUCT_READY,*PENDING_CATEGORIES):\n packet=store/(normal+\"-packet\"); prepare_fixture(store/(normal+\"-source\"),packet,fixture_variant=normal); baselines[normal]=packet\nfor variant in READINESS_CASES:\n normal=PRODUCT_READY if variant in PRODUCT_READINESS_CASES else READY_VALID\n if variant in PENDING_CATEGORIES: normal=variant\n elif variant in ENROLLMENT_BASELINES: normal=ENROLLMENT_BASELINES[variant]\n packet=baselines[normal]\n if variant!=normal:\n  packet=store/(variant+\"-packet\"); prepare_fixture(store/(variant+\"-source\"),packet,fixture_variant=variant)\n for surface in (\"C\",\"R\",\"S-check\",\"S-details\",\"H\"):\n  phases=[(\"primary\",packet,variant)]\n  if variant!=normal: phases.append((\"recovery\",baselines[normal],normal))\n  for phase,source,identity in phases:\n   destination=store/(variant+\"-\"+surface+\"-\"+phase); result=run_hook_case(source,destination,environment,case_id=identity) if surface==\"H\" else run_case(source,destination,runtime,environment,case_id=identity,surface=surface); assert result[\"observation_matches_expected\"]; results.append({\"requested_case\":variant,\"surface\":surface,\"phase\":phase,\"assessment\":result,\"capture_directory\":destination.name}); print(json.dumps({\"completed\":len(results),\"case\":variant,\"surface\":surface,\"phase\":phase}),flush=True)\nassert len(results)==110; assert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\"); save(store/\"renewal-result.json\",{\"candidate\":pin,\"invocations\":results,\"scope\":\"Fresh readiness and product-readiness refusal/recovery matrix from unchanged candidate. Synthetic infrastructure evidence, not actual product readiness or complete compatibility.\",\"complete_matrix\":False,\"activation_performed\":False}); print(\"Readiness renewal completed: 110 actual invocations\",flush=True)'",
+  "exit_code": 0,
+  "actual_invocations": 110,
+  "compatibility_complete": false,
+  "independent_review": "Pending for this subset"
+}

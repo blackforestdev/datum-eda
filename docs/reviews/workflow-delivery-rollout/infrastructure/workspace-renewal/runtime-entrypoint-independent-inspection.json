@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "archive_sha256": "91ea624d4871ccde46470edbea0a9d900772abe1fb3c310d267c006eb50daf47",
+  "archive_bytes": 393936,
+  "method": "Distinct independent streaming inspection; no extraction, execution or edits.",
+  "result": "No inconsistency found in the 52-command subset.",
+  "verified": {
+    "indexed_capture_artifact_hashes": 364,
+    "outer_invocations_distinct": 52,
+    "observer_invocations_distinct": 52,
+    "unique_trace_events": 208,
+    "source_hash_comparisons": 1935,
+    "distinct_source_files": 33,
+    "restored_fixture_regular_files": 117,
+    "before_after_bytes_identical": true,
+    "pid_time_bindings_consistent": true,
+    "expected_worktree_mutation_refusals": 5,
+    "restoration_runs_succeed": true
+  },
+  "observed_behavior": "Cache levels 0/1/2 coexist successfully. Five worktree mutations refuse S-check; C/R/H retain selected-index/revision semantics. Restorations succeed.",
+  "scope": "Producer-artifact verification only. S-details, preflight, remaining policy variants, legacy lifecycle, real-roadmap reproduction and renewed publication inspection are not established by this subset.",
+  "compatibility_complete": false,
+  "activation_performed": false
+}

@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "review_session": "/root/wdq_independent_review",
+  "method": "Independent raw artifact and retained Git-object inspection, not execution replay.",
+  "snapshots": {
+    "ordered_original_observations": 39,
+    "primary": 26,
+    "recovery": 13,
+    "distinct_outer_and_observer_ids": 39,
+    "events": 149,
+    "artifact_hashes": 273,
+    "source_hash_checks": 1434,
+    "distinct_source_files": 33,
+    "history_bundle_hashes": 9,
+    "original_commit_bytes_tree_and_parent_identities": 16,
+    "all_before_after_identical": true,
+    "all_expected_outcomes": true
+  },
+  "baseline": {
+    "explicit_primary_surfaces": 5,
+    "distinct_outer_and_observer_ids": 5,
+    "events": 20,
+    "artifact_hashes": 35,
+    "source_hash_checks": 186,
+    "distinct_source_files": 33,
+    "all_before_after_identical": true,
+    "all_exit_zero": true
+  },
+  "archive_independently_inspected": false,
+  "independent_replay_performed": false,
+  "complete_matrix": false,
+  "activation_performed": false
+}

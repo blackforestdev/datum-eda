@@ -1,0 +1,2672 @@
+{
+  "schema_version": 1,
+  "activation_performed": false,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "complete_matrix": false,
+  "invocations": [
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-03.execution-authorized",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "specification classification cannot authorize implementation",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "specification classification cannot authorize implementation",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "de294f70-e0b4-4a11-94fe-2be1dd78c01b",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "e6c06c5131d98bb32e7ba2218dec63248285db3e0d36c5916c44ba5c418ce053",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S02-03.execution-authorized-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-03.execution-authorized",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "ffc66713-3cc9-4967-a87a-7f7f94942eba",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "585cf85a0d3e4b745c2008908d5806fcd2653ab50a25bbf39fbe41664481b05b",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S02-03.execution-authorized-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-03.execution-authorized",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-03.execution-authorized",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "specification classification cannot authorize implementation",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "specification classification cannot authorize implementation",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "5db48f22-9aa4-4486-bdc9-61007a7a906b",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "f88fa514d4435c1ebd50c2762b33c5faf17a78290f3baf094ad6d6da7ca44104",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S02-03.execution-authorized-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-03.execution-authorized",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "3fd56770-395b-4643-bd49-66446eae813d",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "bfd992928b0a4f028c171fda6a80bdafb4f1fe75dc145110bed78477029013f6",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S02-03.execution-authorized-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-03.execution-authorized",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-03.execution-authorized",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "specification classification cannot authorize implementation",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "specification classification cannot authorize implementation",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "b90c747a-1556-457f-9528-b00335911ada",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "b61345d76427f53e0e0cb6eb5a45bea5d5e2b2b4bdb6bbbba12b2489e4a64b0c",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-03.execution-authorized-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-03.execution-authorized",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "ccb6a549-52c8-438f-9871-4627cec2ad86",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "fde4cce058739b56e10febf54761930f006dcac4f344db9b3f6c80a8889e4990",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-03.execution-authorized-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-03.execution-authorized",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-03.execution-authorized",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "specification classification cannot authorize implementation",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "specification classification cannot authorize implementation",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "a67bebaf-5c14-4257-920f-84a2e0e6b947",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "76143995d7a4e42153cdc3098255307255d7c20decba2632633ba7fc5d7783ec",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-03.execution-authorized-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-03.execution-authorized",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "dd58117f-f0e0-44ed-a4ac-928af6092caf",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "5b151b462004bc069807f3f22e872b9bbbad5800207ff4707a0b759fae5e5ddc",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-03.execution-authorized-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-03.execution-authorized",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-03.execution-authorized",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "36285ef6-e958-4b42-88d6-fd1600ce85bd",
+        "observation_matches_expected": true,
+        "result_sha256": "366c3cd6e8b0e799fbcadb8c0c48766154a95d3b6451f1326e75554b504cc17c",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "3f0a4d5dcdd03f497a77d5df632e2f51878717bf107f088c9af595107378e89a",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S02-03.execution-authorized-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-03.execution-authorized",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "7b5a3ece-ad7e-497e-96e9-cb8db8004087",
+        "observation_matches_expected": true,
+        "result_sha256": "97d81eb190e651197af6d8e4de0b9ba4207f757126ab2223da1c69466cdac7bb",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "8f6cf1f18c249d0d9aff8a51654842a8f855098d08b5c9f72505b0376668e127",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S02-03.execution-authorized-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-03.execution-authorized",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-03.execution-step-without-authorization",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "specification classification cannot authorize implementation",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "specification classification cannot authorize implementation",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "e34d9ca4-03e3-4a53-954d-8c1598b38749",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "27ac7ffe79e936b4ac26daa434cf9d817b95fb67eb3d28b61e7b4bb7a726c003",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S02-03.execution-step-without-authorization-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-03.execution-step-without-authorization",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "415f03be-b4b0-4389-8340-ba9de01707df",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "3700c840e16760c44e6b921c7ffe3c47957a25b01c20910ab40629abf5d6128b",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S02-03.execution-step-without-authorization-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-03.execution-step-without-authorization",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-03.execution-step-without-authorization",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "specification classification cannot authorize implementation",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "specification classification cannot authorize implementation",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "0a07917a-9855-4ff0-9b9f-9a7b02cc2d91",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "aecb5a74dc208d5c4b0abe7fe0f401b0a199f558131b046d307aea7e5495dd5c",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S02-03.execution-step-without-authorization-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-03.execution-step-without-authorization",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "37ee3166-81fc-4e61-8205-183ffc227330",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "5e869c3dd3cfe8208284e4c24b43fadef0e67cfc6d6d74f662a2964fe43ecf3e",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S02-03.execution-step-without-authorization-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-03.execution-step-without-authorization",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-03.execution-step-without-authorization",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "specification classification cannot authorize implementation",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "specification classification cannot authorize implementation",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "a1da9b19-9b13-4bab-ae7f-c38bcf61767c",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "c83cf38a64441894a908fdf674ff51c5e9a1f42cee915fb50118504189cc33e2",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-03.execution-step-without-authorization-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-03.execution-step-without-authorization",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "d5dc123f-3af8-49eb-97cc-cefd89bbd113",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "4bdfd4a047d7ab2b1c396a416d47344a116f84de30577834091f836dabbef884",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-03.execution-step-without-authorization-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-03.execution-step-without-authorization",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-03.execution-step-without-authorization",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "specification classification cannot authorize implementation",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "specification classification cannot authorize implementation",
+            "path": "NEXT"
+          }
+        ],
+        "expected_path": "NEXT",
+        "invocation_id": "136c338d-cbb4-4ffd-a767-a59bf943b48d",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "b60f41d331c8a553e7db1a7d53c358b65f3d8bd2cf0515e2bc33930c183b5060",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-03.execution-step-without-authorization-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-03.execution-step-without-authorization",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "91bf4bf9-95e6-47e0-97d3-f437c764745a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "8c93685e12a05d3e03bff6017922973d69f7b23ed87cb33913123fa1a2f6e778",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S02-03.execution-step-without-authorization-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-03.execution-step-without-authorization",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S02-03.execution-step-without-authorization",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "315b9a09-4f80-4a2b-a093-3ef338da4a7f",
+        "observation_matches_expected": true,
+        "result_sha256": "43dbbfb3793721f432231d5398c474d62e02ed92dc5a6c40b3598040961b7f87",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "80f568140caa10f5d27b92c808dd08a37a7dfeb316cbc9b93846869ae0c29bb3",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S02-03.execution-step-without-authorization-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S02-03.execution-step-without-authorization",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "1d280798-ccc3-41a3-a43a-bd91a46d4550",
+        "observation_matches_expected": true,
+        "result_sha256": "9971864235261a881f0f465d8bb59a7a1e5f0cd74ac256421f5f7a2bdd49aecd",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "8f6cf1f18c249d0d9aff8a51654842a8f855098d08b5c9f72505b0376668e127",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S02-03.execution-step-without-authorization-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S02-03.execution-step-without-authorization",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "497b0616-c298-4a7c-aee8-4bc78cda704d",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "4ac6d316073d03946f578a1e4e3515a8d8cfa1384e5d3594a6b828d19da12cd6",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-07.complete-matrix-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.complete-matrix",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "54884db8-6b27-4199-9a87-3a50332d74e0",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "f15dc247c4323f2167128591c54ee01825850e4b1e2c51f55d3398879dba5609",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-07.complete-matrix-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.complete-matrix",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "fa24f3c6-d6e2-430f-8c17-f54723bd604f",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "bc9605cf28a1bc951f66ae2b97d6eccb1ee167f9a1839d30c2249fe210d548ca",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-07.complete-matrix-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.complete-matrix",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "3d6d99e0-fe68-4809-980b-fa5bd8087382",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "ac61d05eb24551dcf1710e4481b52a12ab6762a1b44c57218a6520ccd978b3f1",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-07.complete-matrix-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.complete-matrix",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "e66c93f6-ba4e-492f-b222-1f267b9d2e00",
+        "observation_matches_expected": true,
+        "result_sha256": "2496cb0c441166f027524b0b2bcdfb23c7e2ce3f7d322731c5a21c748de71889",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "8fb95afee628abcc0220ce1221d10449c5dd691d933b63079aa6815c6b4c43dd",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-07.complete-matrix-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.complete-matrix",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "92911dd4-065e-43c9-aca5-02aff58ff833",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "8cda0d978ccaa04321d19b91d4e8746c05f9b50decbf0a6bbd36f4a1c90624a5",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-10.pending-authorship-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-10.pending-authorship",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "4389223a-c409-47b3-8e3a-ebfba2f38058",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "bca5637a2afa9a1cb7ecac32a9d5bcb043b993326ce0110a2e6f38e945e0d43b",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-10.pending-authorship-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-10.pending-authorship",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "4d19e9a3-1ac8-4cb0-a4a5-394a7bc13233",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "d791c408286d15066b7231f284f2660f948a5571fd64386b11ea41e810429c01",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-10.pending-authorship-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-10.pending-authorship",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "e7054b0d-15c3-4c00-8a7a-94a20abac7e1",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "e14e96992c1541247717efa31d528b5a17bb4fb7f3c856d827087aa2e22f8c24",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-10.pending-authorship-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-10.pending-authorship",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-10.pending-authorship",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "dc300cfe-f948-45aa-80cf-184b2116ba13",
+        "observation_matches_expected": true,
+        "result_sha256": "20e8d45838cbded864140132e6e693d8453b8fb65c0db4bca24527744dce1c49",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "8f6cf1f18c249d0d9aff8a51654842a8f855098d08b5c9f72505b0376668e127",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-10.pending-authorship-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-10.pending-authorship",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-08.unratified-proposal",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "ratification requires owner-promoted controlling doctrine",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "ratification requires owner-promoted controlling doctrine",
+            "path": "docs/decisions/PRODUCT_MECHANICS_999_FIXTURE.md"
+          }
+        ],
+        "expected_path": "docs/decisions/PRODUCT_MECHANICS_999_FIXTURE.md",
+        "invocation_id": "8e4f97f3-8305-460e-bfd3-5c8cd1b42d86",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "5046a9c0618e2db8fd95d3b61e1f553901d75f9f02af051c10def8170a7d6093",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-08.unratified-proposal-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-08.unratified-proposal",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "b662a9d2-0ad8-4797-b714-3bd0d16f6f5b",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "ae2fc9dea43ac233ec7a77fe0107971ce409f088afccef9228bf404cd1180edb",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-08.unratified-proposal-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-08.unratified-proposal",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-08.unratified-proposal",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "ratification requires owner-promoted controlling doctrine",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "ratification requires owner-promoted controlling doctrine",
+            "path": "docs/decisions/PRODUCT_MECHANICS_999_FIXTURE.md"
+          }
+        ],
+        "expected_path": "docs/decisions/PRODUCT_MECHANICS_999_FIXTURE.md",
+        "invocation_id": "31ca691e-480b-45b7-b593-6ef1eae7ab75",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "4a0b45d4a51cc70e5287e392b59e37e0f30aa1a97ddd9c599d58cf2951e0a749",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-08.unratified-proposal-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-08.unratified-proposal",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "640c402a-f053-4aa4-bc14-ee8d5ca65048",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "87d31120297d3f1580e9c767600d053e6e30a56513e0ed0ed3696ffae054ef4b",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-08.unratified-proposal-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-08.unratified-proposal",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-08.unratified-proposal",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "ratification requires owner-promoted controlling doctrine",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "ratification requires owner-promoted controlling doctrine",
+            "path": "docs/decisions/PRODUCT_MECHANICS_999_FIXTURE.md"
+          }
+        ],
+        "expected_path": "docs/decisions/PRODUCT_MECHANICS_999_FIXTURE.md",
+        "invocation_id": "77c569ac-cf95-4022-aee4-6c546013d0a4",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "2cdec49ff5ae8ae531c33c940f35d7b064023ff27214c84286ca0e26149e4b54",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-08.unratified-proposal-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-08.unratified-proposal",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "c44722d7-d4f6-4c27-8a9a-bd79da8a628e",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "7f07de6e88bf6d6b200eba91e491412fa757226542107f07a3987955e3801ddf",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-08.unratified-proposal-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-08.unratified-proposal",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-08.unratified-proposal",
+        "complete_matrix": false,
+        "expected_code": "WDQ-AUTHORITY",
+        "expected_detail": "ratification requires owner-promoted controlling doctrine",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-AUTHORITY",
+            "detail": "ratification requires owner-promoted controlling doctrine",
+            "path": "docs/decisions/PRODUCT_MECHANICS_999_FIXTURE.md"
+          }
+        ],
+        "expected_path": "docs/decisions/PRODUCT_MECHANICS_999_FIXTURE.md",
+        "invocation_id": "d649c2a3-d6a4-4613-8c6c-2e49f805c011",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "9601c04390a529c25d4ad2e8e44d5e770b6a342f3336f4efca7194d3ec0ae6c9",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-08.unratified-proposal-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-08.unratified-proposal",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "fe3b3d5c-4aa0-4232-8fd5-40422973cdbf",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "2fe4516ee95fe7dd17f00fd5c21e3f343688ab896d166f4a54dfe4a3635196d6",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-08.unratified-proposal-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-08.unratified-proposal",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-08.unratified-proposal",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "ced7e45b-83e2-4e01-b82f-b78565e387fc",
+        "observation_matches_expected": true,
+        "result_sha256": "d163c349b989ebee51905f84caf3a91df42cb785af941b689847baae92c4b35b",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "d4bbc2353e75ab65f3ec70804b5fb0bfc8b583e2eb579a83faafbf4d578c36d6",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-08.unratified-proposal-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-08.unratified-proposal",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "a9dc718f-a95b-4446-9102-ee67f1eef6b9",
+        "observation_matches_expected": true,
+        "result_sha256": "75c348474219147b993e2e2a9372d70c4e55fc7d04894b2b9bff6dcb93babe21",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "bd8afbfe0144d7a4348486ac315e1edd7abb59419112d3c34d0a820874dad347",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-08.unratified-proposal-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-08.unratified-proposal",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.omitted-clause",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "matrix must dispose every clause for the completed step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "matrix must dispose every clause for the completed step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "3876d76e-cb91-4bbf-b876-61ca5e507915",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "e003cae9f061f3a7d48e3bfc4953ba4babb667e5431626a3da343de4b8cd4a10",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-07.omitted-clause-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.omitted-clause",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "25f1c1ea-41d4-497d-9ffa-1053028333bb",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "ca52feb27692a9cb7ad97e5870c6b737f72f7d8164c67be6d775f039acf2149c",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-07.omitted-clause-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-07.omitted-clause",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.omitted-clause",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "matrix must dispose every clause for the completed step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "matrix must dispose every clause for the completed step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "54bfb199-27da-45fc-9f87-2c7b02de151f",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "43ab1dc9c6e118924e1552e69453bb79d736859dd5831f51f19051d885484bc1",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-07.omitted-clause-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.omitted-clause",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "5177eeb9-d0ec-452f-ad07-3069816dda8a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "e93b6645b3bda32a594269f86fb27c1c94f396a0650cdf75b17582d9afb21e3f",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-07.omitted-clause-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-07.omitted-clause",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.omitted-clause",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "matrix must dispose every clause for the completed step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "matrix must dispose every clause for the completed step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "d0392df3-15a5-4947-a4b5-3b7b83e6416d",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "5921a04622e098d4b9306d8fd32c651239d4efb2b09331df4ec656f623a7ef4f",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-07.omitted-clause-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.omitted-clause",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "927bb178-0f87-4ffa-8700-de270c437f06",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "f3129e8af7e64f0346749881f86423d8479d67a1eb4a2e08f7f927ce905be773",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-07.omitted-clause-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-07.omitted-clause",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.omitted-clause",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "matrix must dispose every clause for the completed step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "matrix must dispose every clause for the completed step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "f9a2f008-acc4-43ab-88dd-fada7468c095",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "bacd5b8e661f83b9554d0bb6dafabb8f65ee2909e8d65217a04450b7dea8cd3e",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-07.omitted-clause-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.omitted-clause",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "6a7d7446-b2de-44d3-a4d5-9d1a8bfc5af1",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "448c1acaa1678c313751c36a89ca3e52073c0bfd19f1234ff5b8964334034719",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-07.omitted-clause-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-07.omitted-clause",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.omitted-clause",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "abef698e-1a09-4db6-aebc-4d66cd8405f5",
+        "observation_matches_expected": true,
+        "result_sha256": "e68fbcfb841d5d2b6b18f3b16245cef9379079bd1ce7a001be8113f69e4f908b",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "3e958c247be18310344d81ce24eaa3e072f71e5b85a5c300d1a3e05660c6dda7",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-07.omitted-clause-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.omitted-clause",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "c161ee9e-2416-4e51-9cfa-9123e29347b6",
+        "observation_matches_expected": true,
+        "result_sha256": "137825c207b9f6496a22739e2f05dc1801c807d6df02825754b1e03f52203cae",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "8fb95afee628abcc0220ce1221d10449c5dd691d933b63079aa6815c6b4c43dd",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-07.omitted-clause-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-07.omitted-clause",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.duplicate-disposition",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "duplicate identity",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "duplicate identity",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "e7df254b-f381-42b9-b84e-17be1b967b06",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "5e9866f70db33935fc461292a95a498f327fedae5a3098a88b9178c1779fa45d",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-07.duplicate-disposition-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.duplicate-disposition",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "4a32e68f-7439-4687-854a-a2b38b514fed",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "e41cb3f7ed4384997cd4cc6c243509d3a1cde4f0625b8e2ee5e05237c2a16de6",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-07.duplicate-disposition-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-07.duplicate-disposition",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.duplicate-disposition",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "duplicate identity",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "duplicate identity",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "972aaa4f-af88-4c4f-a100-ac7c17b0aea2",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "073f45dd4ca1684e0aea85d798f1a023bffd8c8839e6bb3b78e71241a0ec4678",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-07.duplicate-disposition-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.duplicate-disposition",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "e25b532d-efbf-4da5-a8ab-adcd2da4ee82",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "9874540ee33d0775a0be8924536ec150d8a552fc26f9e811f3a6a010b38639a6",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-07.duplicate-disposition-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-07.duplicate-disposition",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.duplicate-disposition",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "duplicate identity",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "duplicate identity",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "0eec094e-3e6f-49e8-b710-327bc7d7821a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "361bb307e08f4a9252b97662d3c1ea5684f05709a6aa7e4ff7e11c0c4cc5fa42",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-07.duplicate-disposition-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.duplicate-disposition",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "a2c8721e-5ebf-4a7d-833d-a0bb2bd933ed",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "4475961e98153546ecadfe7fb5a23bc1c697d44593285e4b737138a111b55ea1",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-07.duplicate-disposition-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-07.duplicate-disposition",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.duplicate-disposition",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "duplicate identity",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "duplicate identity",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "ecaa3bcd-e8ec-4afb-b10d-2243da6dd4c3",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "6421bd157547223d0c8b1e86460f46b9c83f06e3680f3b171b9f5d92a0fb713d",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-07.duplicate-disposition-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.duplicate-disposition",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "2d65d51f-734a-47dc-bf18-b5a3d77b2284",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "63a1df441bd5e8667519d20056c8afe6b5dbbfb7a4314866321d62b4da25fc46",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-07.duplicate-disposition-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-07.duplicate-disposition",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.duplicate-disposition",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "5956711e-7534-4016-989e-95079b49e7ee",
+        "observation_matches_expected": true,
+        "result_sha256": "834b55616e1a50c62f5da1e48e3d878d99eafe1784bb26304dea6ec78b1f630b",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "27aa6e4cb73bedc22ac4ba71813034c71b919ed02886dba445fc39a224fd1e08",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-07.duplicate-disposition-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-07.duplicate-disposition",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "761d762a-561e-4786-9ac9-157801698b73",
+        "observation_matches_expected": true,
+        "result_sha256": "3c1396cc34703f13d75f53f2fa335d33102c27b5644abb18c1844505be09988d",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "8fb95afee628abcc0220ce1221d10449c5dd691d933b63079aa6815c6b4c43dd",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-07.duplicate-disposition-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-07.duplicate-disposition",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-06.non-inventory-boundary",
+        "complete_matrix": false,
+        "expected_code": "WDQ-CONTRACT",
+        "expected_detail": "Expecting value",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-CONTRACT",
+            "detail": "Expecting value",
+            "path": "docs/authority.md"
+          }
+        ],
+        "expected_path": "docs/authority.md",
+        "invocation_id": "9535a6ad-9c90-4b50-8813-c6f3943664ae",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "5c7e6bed99178ec5e7b25b67e6fa54a10e33974a20e5fbaf46ab796bd614d312",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-06.non-inventory-boundary-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-06.non-inventory-boundary",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "4c3618d1-2d6a-4070-969d-b0ed75ae6121",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "6c3945365a4c1e38fa9ef2bd726fb85e0ea556cdf2d95f0c18ad54185b3855a2",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-06.non-inventory-boundary-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-06.non-inventory-boundary",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-06.non-inventory-boundary",
+        "complete_matrix": false,
+        "expected_code": "WDQ-CONTRACT",
+        "expected_detail": "Expecting value",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-CONTRACT",
+            "detail": "Expecting value",
+            "path": "docs/authority.md"
+          }
+        ],
+        "expected_path": "docs/authority.md",
+        "invocation_id": "12e25789-f903-4282-be9c-2927372ab275",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "901cefa29c85088b845ad92ee933b5c20cfb3e569c51f9e48387ad0614de2867",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-06.non-inventory-boundary-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-06.non-inventory-boundary",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "b3f195d2-cff4-47c2-8155-0abf76cebabe",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "bd9a7809554bf404da550545ccfbebc11706b94fd3456852b3f2071c1df22463",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-06.non-inventory-boundary-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-06.non-inventory-boundary",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-06.non-inventory-boundary",
+        "complete_matrix": false,
+        "expected_code": "WDQ-CONTRACT",
+        "expected_detail": "Expecting value",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-CONTRACT",
+            "detail": "Expecting value",
+            "path": "docs/authority.md"
+          }
+        ],
+        "expected_path": "docs/authority.md",
+        "invocation_id": "e2283842-eb4b-41d7-ab88-042133c5fcb5",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "fa01ec28e2980e75d654c00fc9c49434bbe3df8c3fddcf25067d55e400d04bf0",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-06.non-inventory-boundary-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-06.non-inventory-boundary",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "e96ca626-6cf0-4861-b03e-c429ac9c9948",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "4617b7985bfbca558b05e865e876fd9820f9dbc6989c704b939dfafc3a8d9a2c",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-06.non-inventory-boundary-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-06.non-inventory-boundary",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-06.non-inventory-boundary",
+        "complete_matrix": false,
+        "expected_code": "WDQ-CONTRACT",
+        "expected_detail": "Expecting value",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-CONTRACT",
+            "detail": "Expecting value",
+            "path": "docs/authority.md"
+          }
+        ],
+        "expected_path": "docs/authority.md",
+        "invocation_id": "196899f4-0ad3-442f-88ab-0b246c550227",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "e62337693edd118d2e8ef892d4a237bc62f6aac7f231fb2829e7f1bb77ee0382",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-06.non-inventory-boundary-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-06.non-inventory-boundary",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "fafb72b7-e194-43d4-b123-98e2abbca014",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "b61016efe61f9c8d376d3bdb965db54ea0e6cd64fc9cf6a99c4b8e8c0c406a31",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-06.non-inventory-boundary-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-06.non-inventory-boundary",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-06.non-inventory-boundary",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "46c10e11-d0c0-4071-a8bc-6d21fab51941",
+        "observation_matches_expected": true,
+        "result_sha256": "f5690563120f5d042485a06a7c7637d1827d17014b0ff8c3e4963d5453719e82",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "8e1fd92b13863c4f90031ceffa23634a54174b7e2d62096042e67908dcae314a",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-06.non-inventory-boundary-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-06.non-inventory-boundary",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-07.complete-matrix",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "1d1093d6-0c25-4ca8-916c-b0fdec670d12",
+        "observation_matches_expected": true,
+        "result_sha256": "1b58e993c52db46ff7923bafb7dbd12fa80e421ca91be7e1aff789f6ebf76b22",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "8fb95afee628abcc0220ce1221d10449c5dd691d933b63079aa6815c6b4c43dd",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-06.non-inventory-boundary-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-06.non-inventory-boundary",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "600a8aff-8be0-4ad8-8560-82b05ccdc707",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "4e877d983e9bec0619116751f303f823886f0fb1f07e5ad7bab92a0e72837d87",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-09.pending-owner-valid-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.pending-owner-valid",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "729850f9-a25a-4960-a23c-ae6983ef9a99",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "86f38559f84fc9b328805a9f734ee14c0de1fd373f0cf65c62e398041ecd19f6",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-09.pending-owner-valid-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.pending-owner-valid",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "84bf9c26-567a-460b-b88c-bd667f9c2919",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "3ad7db4a63fb2f458f69b0c44a6c067d77887eef6cd8420b7490f1f7de0213b8",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.pending-owner-valid-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.pending-owner-valid",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "91d7bc74-2329-4f91-bed3-739282fb4fdf",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "b53d17036d7fa82db14711cf7c88e8d71b722903f6ec1c006533f02c3d51820f",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.pending-owner-valid-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.pending-owner-valid",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "230ce3c9-83fb-49e4-a81e-b29313a7d568",
+        "observation_matches_expected": true,
+        "result_sha256": "11e15c78d9ccf146331a2835537b77701766a152ee61ea64883ae638ad66ab91",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "bd8afbfe0144d7a4348486ac315e1edd7abb59419112d3c34d0a820874dad347",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-09.pending-owner-valid-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.pending-owner-valid",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.absent-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "open clause requires a pending explicit owner-decision step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "open clause requires a pending explicit owner-decision step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "27780288-2a55-43b0-8a05-96290783a150",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "c97cba3370a40a3253c2b5947d23ba1cb2f1ac4f56e4bb715f6caa56e258d40a",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-09.absent-owner-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.absent-owner",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "f65ca131-dbe9-44bc-be3b-90a648abe16f",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "447bd7330863517d56735f261763ca06368bf3c34ee403ee16b27d1e384e3a25",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-09.absent-owner-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.absent-owner",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.absent-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "open clause requires a pending explicit owner-decision step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "open clause requires a pending explicit owner-decision step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "2beb9ea4-08b1-4eb6-a320-8d2b2a10aa61",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "d66ef89a55516a1fd917fb08522ab7c1098341e34247fe76457e3acedc0cf2f4",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-09.absent-owner-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.absent-owner",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "d27db209-3768-47f9-b3e6-4e070e7986ba",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "86dc8c8e8a38d614752e0a5a236f6b6166aaaa9ac2dd5892adca5a3006ef51ca",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-09.absent-owner-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.absent-owner",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.absent-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "open clause requires a pending explicit owner-decision step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "open clause requires a pending explicit owner-decision step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "1e24a69b-7d14-4339-8ded-af7437f1fbe4",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "4870fac91c2a3d6c959406a377b87d84f167ed0de11190387c1fed451aa2786b",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.absent-owner-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.absent-owner",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "d16303c5-eecd-474a-949c-3fe1a46b33e0",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "bdca5549f6e9fbf2c1e7134c08bfe6a9f946f6554ba8335a527b6b8881941548",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.absent-owner-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.absent-owner",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.absent-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "open clause requires a pending explicit owner-decision step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "open clause requires a pending explicit owner-decision step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "e798a4c0-2057-4c48-9013-52d3428dc0ec",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "5ff314b165f3d0de30643c14081f35b7df35a2e6c7549f1791f5497fb17cdf50",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.absent-owner-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.absent-owner",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "1c7031cf-5417-4141-b964-5b73bf9c5bd8",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "763cb233526d2efaaa1dc738e7e0d9e5f2a0806733cefc74c553836cdd234cfe",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.absent-owner-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.absent-owner",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.absent-owner",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "5ed43a4c-6cb4-44d4-8ae8-a46b6a6c8d37",
+        "observation_matches_expected": true,
+        "result_sha256": "fe1a476c9b7c9c6513d5c2bdf4b4b4052e249aa68dbf7077706e5054ea1b0705",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "f09d03015065c3125cc3bea5ff9f1b069ad764d182313bc4df205356ac440043",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-09.absent-owner-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.absent-owner",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "3696d45a-3ae7-4369-9721-8ea7964cf0bf",
+        "observation_matches_expected": true,
+        "result_sha256": "468d5831c9c129ed015b2fcc9d7994925d62777712a35071f35b7c7b7d2672cb",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "bd8afbfe0144d7a4348486ac315e1edd7abb59419112d3c34d0a820874dad347",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-09.absent-owner-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.absent-owner",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.planning-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "open clause requires a pending explicit owner-decision step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "open clause requires a pending explicit owner-decision step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "e4d87ab6-a18e-460a-8e14-c304e6116a40",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "f3b5ffcae259ac4742bc2b83e9dde9dd7f0e2fbf286d3362be8978478fb92350",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-09.planning-owner-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.planning-owner",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "a514f44b-c0cf-4bdd-bc62-76c08290b54b",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "feab144de600fd70f8829e24ffb186f9d001a8e29e233cceaf54accea9e8a5b7",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-09.planning-owner-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.planning-owner",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.planning-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "open clause requires a pending explicit owner-decision step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "open clause requires a pending explicit owner-decision step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "15f2737f-ffba-4996-9d59-3268c032eeed",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "9d76e16d11cb70fdbb558b149b8450b691a0b5514c310014e5e046a28977d683",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-09.planning-owner-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.planning-owner",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "0b3f6571-7aec-45a1-a47b-7ebfc351e73b",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "578421f242322d4ff3859a4f4da58a3df06ea149b45e983dd4c486e077533774",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-09.planning-owner-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.planning-owner",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.planning-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "open clause requires a pending explicit owner-decision step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "open clause requires a pending explicit owner-decision step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "cd5f4d8d-5cd4-4f2c-8d91-37c3b430f03a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "229c4bbf7edf9a3cfbd3c1940724d6111236f384fadb1038062f1c6b67ae23c2",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.planning-owner-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.planning-owner",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "aaddc700-f46c-4ef3-9579-952ffc29b601",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "4e9f5d26c5a950547eec9819f8dd932d5eefcc0987ebcf8c8df58b107bc78794",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.planning-owner-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.planning-owner",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.planning-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "open clause requires a pending explicit owner-decision step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "open clause requires a pending explicit owner-decision step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "afa139b8-3647-4b98-b84f-dc5d92887776",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "114223958f7c2feaec3a2d41d0d8aebaf7d6b5649e661aee95af9ae851ef2529",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.planning-owner-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.planning-owner",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "56f23b7c-8e22-489f-9898-7468736e4eeb",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "7b5eaec5c769115a2f3150ebb3fb4f517593e2a1ea6b757ad6e407b96367e9bf",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.planning-owner-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.planning-owner",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.planning-owner",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "4f52192d-7187-4105-9598-513cf5d5fe51",
+        "observation_matches_expected": true,
+        "result_sha256": "7958fff40a34ccbc448d5e4c68c99b6c4d7f6f931fb048d46050cedc23c722bc",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "7f95deb8903d377803f1f3c4a56dad29e1308fcda3fb84c68aa424f811822829",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-09.planning-owner-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.planning-owner",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "92580776-750e-47ef-add4-bbc4e09546d0",
+        "observation_matches_expected": true,
+        "result_sha256": "27388543b20244c42d82fea859aafdc476e9c22f5915c7655abed7311d6289d2",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "bd8afbfe0144d7a4348486ac315e1edd7abb59419112d3c34d0a820874dad347",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-09.planning-owner-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.planning-owner",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.completed-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "open clause requires a pending explicit owner-decision step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "open clause requires a pending explicit owner-decision step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "246a45ab-d125-45a8-89de-e7656276b1fb",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "7f424059c0827501514f1183db586ffd84fcc4e253a57a3cfcabd6ff4402adf4",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-09.completed-owner-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.completed-owner",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "9adb42ba-2bfd-48d9-9832-c41ab966efc3",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "e8f4b0e55c4130d29a408574722cd8f7962401e41529a5303a053a1b071b744d",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-09.completed-owner-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.completed-owner",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.completed-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "open clause requires a pending explicit owner-decision step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "open clause requires a pending explicit owner-decision step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "560d308d-a73f-4c1e-aef3-9acc8a29c7df",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "af0909608aad01d92c36cb2a639c4503edb2477ce334e70c9129d334412c36c6",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-09.completed-owner-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.completed-owner",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "eb082f2a-460e-4e6c-8414-74ecbcaba19b",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "3b8704179d18bcc25feb458ef196ea4751c72deb268b1dcd97b244ea6269f9ee",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-09.completed-owner-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.completed-owner",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.completed-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "open clause requires a pending explicit owner-decision step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "open clause requires a pending explicit owner-decision step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "c9774c47-0e36-432c-a678-66473abb33d1",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "e683ad13674a29e0a9b03857d3dd2416365fcc0faa8d5606a930326f9bb3affb",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.completed-owner-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.completed-owner",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "dd88c65f-0483-4efc-91bc-d2c45142f107",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "2b857845a9b071a9fef8032babc35a07686749db3367cac8cf1882f63efc3241",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.completed-owner-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.completed-owner",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.completed-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "open clause requires a pending explicit owner-decision step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "open clause requires a pending explicit owner-decision step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "fdde7ce9-814c-4d99-bc9f-9629093d956e",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "503558553607ee4697bda0a60daeb90d42109a3e5c16d88d716b74b6e79508e2",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.completed-owner-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.completed-owner",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "13eb9a24-c7d8-4abd-b4a5-6513ce7e1bd3",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "533224b6787d2c6704a082262a969ce7af097c4bb99775fae388d9c4cbd9e6aa",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.completed-owner-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.completed-owner",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.completed-owner",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "c3afa886-67ee-4d47-afc6-08349671a3ab",
+        "observation_matches_expected": true,
+        "result_sha256": "9e71e7cff31d31152fa0201e4d23fab31238c60661879f25ea3f6e64bb6cafe2",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "58f72fa4f436987b74e430772001295ca4032688c8a77135338b71a8c7ee0895",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-09.completed-owner-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.completed-owner",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "7c91bd60-fef9-4910-a87a-25b620e7e279",
+        "observation_matches_expected": true,
+        "result_sha256": "a8fbaaf5bbfba9eda0886305f4f63d56f7de2f7ce86e4bb86ff16bfbce19ff6b",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "bd8afbfe0144d7a4348486ac315e1edd7abb59419112d3c34d0a820874dad347",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-09.completed-owner-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.completed-owner",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.non-dependent-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "owner decision must depend on the authored step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "owner decision must depend on the authored step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "79cf976d-a90e-4af7-b830-b2eb1646e97f",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "3643d006d8b241c40e4ab25e9a77594764a8518c292c8301a7430373f3999465",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-09.non-dependent-owner-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.non-dependent-owner",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "dff78680-b613-46fa-83e5-93e73ce259a5",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "7e98814268d17c44eb5c08072bafe218954454064a4daf6a1a98a8cc7b28d1f3",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S03-09.non-dependent-owner-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.non-dependent-owner",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.non-dependent-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "owner decision must depend on the authored step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "owner decision must depend on the authored step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "be5efa5a-7e85-473d-a1e8-90a3923ea2b2",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "cfe155d6a1b38003b4f41a175df692a23f1b4a1f7edd4d1a582100dd7abf732c",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-09.non-dependent-owner-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.non-dependent-owner",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "a58b78eb-292a-429e-9c7b-c02d108c8f25",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "1a3de2f3d9ee127bc7ef0d085c6c6ef680736d2d856302ef83b786d60f065b14",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S03-09.non-dependent-owner-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.non-dependent-owner",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.non-dependent-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "owner decision must depend on the authored step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "owner decision must depend on the authored step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "fba5c831-7fda-4171-97f3-37a0cd6f7776",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "8ada4817d9c2398e9dc6988ca008fcaf01ab136e1547039a1b7875daf79c5d0b",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.non-dependent-owner-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.non-dependent-owner",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "967ce018-a0ae-41f3-8130-91c36cfb1b7a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "34e6fa397f133c25aa8c09b0255602029b954408d2617cdcdb749f2493b1c9e3",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.non-dependent-owner-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.non-dependent-owner",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.non-dependent-owner",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "owner decision must depend on the authored step",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "owner decision must depend on the authored step",
+            "path": "docs/specification-matrix.json"
+          }
+        ],
+        "expected_path": "docs/specification-matrix.json",
+        "invocation_id": "fd32aaac-5f14-4477-b2a3-e5f7b7c05cf4",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "22198d7547f93a192bf732e1da7ebcfdf1d1c489c9ef96e0b1766ead79463151",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.non-dependent-owner-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.non-dependent-owner",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "43544da2-cd22-4daf-b183-a4e5be70552b",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "bc47648417c5567385121042b28a816fc8df379e183cf04c0b9732ec966fbfa3",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S03-09.non-dependent-owner-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.non-dependent-owner",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.non-dependent-owner",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "fa81fc2b-e075-4e5f-a935-dfadbc9bc385",
+        "observation_matches_expected": true,
+        "result_sha256": "af64ffcb17c1a21b97f3a9849c22388885766ce2c00a34e1d7f2e980f3aa816b",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "043debe5633d116f8e095eaffa853e380099bc9bb9b12cea0043bae98596b89d",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-09.non-dependent-owner-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S03-09.non-dependent-owner",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S03-09.pending-owner-valid",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "72c69341-6ccd-4c55-9fc8-c164f1b1466d",
+        "observation_matches_expected": true,
+        "result_sha256": "e6ab55dc4d24b8d5a8f8f58a8a8fcac54f0c6c3e5c5c9dd60d94b1ec87c6c7e1",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "bd8afbfe0144d7a4348486ac315e1edd7abb59419112d3c34d0a820874dad347",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S03-09.non-dependent-owner-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S03-09.non-dependent-owner",
+      "surface": "H"
+    }
+  ],
+  "scope": "Fresh specification clause-accounting refusal/recovery matrix from unchanged candidate. Synthetic infrastructure evidence, not authored product specification acceptance or complete compatibility.",
+  "archive": "specification-captures.tar.xz",
+  "archive_sha256": "b3705e68b0a44cec1e9e25c0dbf2b69b7aaf21f2f0bfd62b16ce94ee573f7bf2",
+  "archive_bytes": 5166204,
+  "command": "python3 -I -S -B -c 'import sys,os,json; from pathlib import Path; runtime=Path.cwd(); sys.path.insert(0,str(runtime/\"scripts\")); from workflow_delivery_capture_fixture import prepare_fixture; from workflow_delivery_capture_cases import run_case; from workflow_delivery_capture_hook import run_hook_case; from workflow_delivery_specification_input import SPECIFICATION_INPUT_CASES,SPEC_VALID,SPEC_PENDING; from workflow_delivery_capture_state import git; from workflow_delivery_capture_command import save; pin=\"22192085c55ec654eb209deccc0450afd53b2c65\"; assert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\"); store=Path(\"/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/workspace-renewal-specification\"); store.mkdir(exist_ok=False); environment={\"PATH\":os.defpath,\"HOME\":str(store),\"XDG_CONFIG_HOME\":str(store),\"GIT_CONFIG_NOSYSTEM\":\"1\",\"GIT_CONFIG_GLOBAL\":os.devnull,\"LANG\":\"C\"}; packets={}; results=[]\nfor variant in SPECIFICATION_INPUT_CASES:\n packet=store/(variant+\"-packet\"); recipe=prepare_fixture(store/(variant+\"-source\"),packet,fixture_variant=variant); assert recipe[\"fixture_family\"]==\"synthetic-specification-output\"; packets[variant]=packet\nfor variant,packet in packets.items():\n for surface in (\"C\",\"R\",\"S-check\",\"S-details\",\"H\"):\n  phases=[(\"primary\",packet,variant)]\n  if SPECIFICATION_INPUT_CASES[variant][1] is not None:\n   valid=\"INFRA-S03-09.pending-owner-valid\" if variant.startswith((\"INFRA-S03-09.\",\"INFRA-S03-08.\")) else SPEC_VALID\n   if variant.startswith(\"INFRA-S02-03.\"): valid=SPEC_PENDING\n   phases.append((\"recovery\",packets[valid],valid))\n  for phase,source,identity in phases:\n   destination=store/(variant+\"-\"+surface+\"-\"+phase); result=run_hook_case(source,destination,environment,case_id=identity) if surface==\"H\" else run_case(source,destination,runtime,environment,case_id=identity,surface=surface); assert result[\"observation_matches_expected\"]; results.append({\"requested_case\":variant,\"surface\":surface,\"phase\":phase,\"assessment\":result,\"capture_directory\":destination.name}); print(json.dumps({\"completed\":len(results),\"case\":variant,\"surface\":surface,\"phase\":phase}),flush=True)\nassert len(results)==115; assert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\"); save(store/\"renewal-result.json\",{\"candidate\":pin,\"invocations\":results,\"scope\":\"Fresh specification clause-accounting refusal/recovery matrix from unchanged candidate. Synthetic infrastructure evidence, not authored product specification acceptance or complete compatibility.\",\"complete_matrix\":False,\"activation_performed\":False}); print(\"Specification renewal completed: 115 actual invocations\",flush=True)'",
+  "exit_code": 0,
+  "actual_invocations": 115,
+  "compatibility_complete": false,
+  "independent_review": "Pending for this subset"
+}
