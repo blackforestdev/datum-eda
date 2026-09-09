@@ -54,6 +54,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/infrastructure/independent/review-completion.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "Independent bounded WDQ-REVIEW technical completion evidence. Final exact publication-delta reinspection, five owner defect dispositions and activation remain separate; no owner approval or product acceptance."
+    },
     "docs/reviews/workflow-delivery-rollout/i03-closeout.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
