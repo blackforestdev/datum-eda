@@ -195,7 +195,7 @@
 
 | Governed documents | Current evidence | Remaining boundary |
 | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json`, `docs/reviews/workflow-delivery-rollout/tooling-closeout.json`, `docs/reviews/workflow-delivery-rollout/readiness-review.json` | WDQ-TOOLS and WDQ-READY complete for retained candidate `f2e28a572b09296986d4748d456ef8bf5bd4c568`: constructed tooling, explicit ready-phase validation, exact authority/input/environment hashes, actual handler definitions and bounded named-tool review. Candidate code remains uninstalled. | `dat-wdq-rollout-implementation-ffy` remains open. WDQ-I03 is selected for complete final producer verification. Distinct replay, exact owner activation and three genuine product-adoption cohorts remain due; infrastructure readiness does not assert product readiness or acceptance. |
+| `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json` | WDQ-TOOLS has real-roadmap pilot-preservation captures on all five entry operations (`824cab16`). Owner approved bounded source/named-tool verification on 2026-09-08; exhaustive descendant/runtime-library tracing is no longer required. | `dat-wdq-rollout-implementation-ffy` remains open. Bounded input review, complete matrix, readiness, producer proof, independent replay and exact owner activation remain due; product-native evidence is unchanged and no installed enforcement or acceptance is claimed. |
 
 | Governed document | Current evidence | Target | Tracking |
 | --- | --- | --- | --- |
@@ -3158,6 +3158,38 @@ Status: [x] Closed for scoped M4 slice
 ---
 
 ## Infrastructure
+
+WDQ-TOOLS candidate preparation: the rollout contract now includes 152 explicit
+repository inputs, reconciling 66 implemented Python capture/environment/promotion
+files, three rollout tests, the prepared hook shell source, and the explicit
+environment selection with both referenced Blobs missing from its prior baseline. This is
+input coverage, not complete runtime closure, readiness or installed enforcement.
+Separate full-history scope reconciliation proposes 141 exact workflow paths,
+including the coverage regression itself; read-only hook/Rust dependencies remain
+excluded. Candidate policy and proposal agree, but I04 publication authorization
+and controlled activation remain unfinished. No live trust or other agent lane
+changes; WDQ-TOOLS remains selected.
+
+The candidate's separate promotion inspection now checks claim-free pending I04
+in both exact base and candidate, completed preceding checkpoints, unchanged
+other Frontier lanes, full-history scope and actual enrolled delivery/review
+evidence. Ordinary transactions retain live execution-claim checks. The new
+inspection is non-operative; successful full-packet proof and actual controlled
+activation remain incomplete, and PM042 remains a proposal awaiting I04.
+
+Bounded activation is now implemented and exercised only in synthetic Git
+repositories: authenticated runtime, exact owner inputs, cooperative lock,
+durable progress, forward publication/configuration, installed gate checks and
+partial-state refusal. Real rollout readiness, independent proof, owner
+ratification/activation and adoption remain incomplete. No Datum main trust or
+other lane changed.
+
+Live-child interruption construction now defers SIGINT/SIGTERM until the owned
+child finishes, retains its lock across parent/child lifetimes, bounds timeout
+termination to the owned group, and refuses subsequent mutations. Actual signal,
+timeout and parent-death development tests pass in synthetic repositories.
+This is not the full rollout crash/recovery matrix, readiness or independent
+proof; WDQ-TOOLS and the broader goal remain incomplete.
 
 | Item | Status | Notes |
 |------|--------|-------|

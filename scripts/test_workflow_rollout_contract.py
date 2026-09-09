@@ -128,6 +128,41 @@ class RolloutContractTest(unittest.TestCase):
         self.assertTrue(required <= set(self.contract["input_roots"]))
         self.assertTrue(all((ROOT / path).is_file() for path in required))
 
+    def test_implemented_workflow_python_and_local_imports_are_explicit_inputs(self):
+        import ast
+        required = {p.relative_to(ROOT).as_posix() for pattern in
+                    ("workflow_delivery_*.py", "test_workflow_delivery_*.py", "test_workflow_rollout_*.py")
+                    for p in (ROOT / "scripts").glob(pattern)}
+        queue = list(required | {p for p in self.contract["input_roots"] if p.endswith(".py")})
+        visited = set()
+        while queue:
+            path = queue.pop()
+            if path in visited:
+                continue
+            visited.add(path)
+            for node in ast.walk(ast.parse((ROOT / path).read_bytes(), filename=path)):
+                modules = ([a.name for a in node.names] if isinstance(node, ast.Import) else
+                           [node.module] if isinstance(node, ast.ImportFrom) and node.module else [])
+                for module in modules:
+                    local = "scripts/" + module.split(".")[0] + ".py"
+                    if (ROOT / local).is_file():
+                        required.add(local)
+                        queue.append(local)
+        self.assertEqual([], sorted(required - set(self.contract["input_roots"])),
+                         "Reconcile new inputs explicitly; this test must not update authority")
+
+    def test_prepared_hook_and_selected_environment_bytes_are_inputs(self):
+        import hashlib
+        from workflow_delivery_bootstrap import HOOK_SOURCE
+        selection_path = "specs/workflow_delivery/rollout.environments.json"
+        required = {HOOK_SOURCE, selection_path}
+        selection = self.tree.json(selection_path)
+        for row in selection["environments"]:
+            blob = row["environment"]
+            required.add(blob["path"])
+            self.assertEqual(blob["sha256"], hashlib.sha256(self.tree.read(blob["path"])).hexdigest())
+        self.assertEqual([], sorted(required - set(self.contract["input_roots"])))
+
     def test_case_inventory_has_unique_ids_and_known_scenarios_and_surfaces(self):
         rows = self.case_rows()
         self.assertTrue(rows)

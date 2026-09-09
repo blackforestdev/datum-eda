@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "kind": "datum.workflow-delivery.environment-preparation",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-TOOLS",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "observation_source_commit": "b356e852462984ac7fcb87ea2720a3a9710de386",
+  "observed_at_ns": 1788899290519798000,
+  "git_common_relative_observation_log": "datum-wdq/logs/environment-observation-3b0c440b-c9a4-41d4-82e0-a26671167b67.json",
+  "observation_sha256": "e4f66484e27e5747f1e3fbd698ffc0401bed3c2a6b750369773f631c3344ee81",
+  "environment_path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-pipes-environment.json",
+  "recipe_source": "explicit caller description, not an execution assertion",
+  "recipe_parameters": [
+    "WDQ_CALLS: fresh output path",
+    "WDQ_SNAPSHOT: exact isolated real-roadmap input",
+    "WDQ_AUTHORITY: exact reviewed proposed authority",
+    "WDQ_BASE: exact reviewed base",
+    "WDQ_CANDIDATE: exact reviewed candidate"
+  ],
+  "remaining": [
+    "Hook recipe and shell/realpath/rustfmt observations remain due.",
+    "Capture recipes are templates, not evidence that commands ran.",
+    "Exact final source/runtime closure, packet parameters, producer verification and independent replay remain due."
+  ],
+  "selection_authorized": false,
+  "input_closure_complete": false,
+  "readiness_asserted": false,
+  "activation_asserted": false,
+  "acceptance_asserted": false
+}

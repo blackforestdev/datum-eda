@@ -55,6 +55,15 @@ owner activation. Do not install local trust, modify Preferences, manufacture
 native evidence or introduce dependencies. Reconcile actual new module/input
 paths and bounded permissions before the exact final promotion packet is frozen.
 
+Owner-approved verification bound (2026-09-08): final infrastructure input/
+toolchain review means the pinned source, fixture and named-tool accounting in
+`WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md#bounded-source-and-tool-verification`.
+Exhaustive descendant/runtime-library tracing is not required. Actual case
+behavior, state preservation, independent replay and product-native evidence
+remain mandatory; this is not a completion or activation disposition. Exact
+owner input is retained in
+`docs/reviews/workflow-delivery-rollout/verification-boundary-owner-20260908.json`.
+
 <!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-READY -->
 ## WDQ-READY — establish actual infrastructure readiness
 

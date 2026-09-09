@@ -67,18 +67,30 @@ scripts, CI and MCP code so non-Rust production changes cannot escape merely
 because the native Cargo closure omitted them. This broader explicit root list
 requires owner review at promotion; it is not an already-approved permission.
 
-The sole proposed source scope retains the rollout infrastructure's original
-69 explicit permission paths, tied to WDQ-I03 and WDQ-REVIEW. The contract's
-read-input list is now larger: hook checks, their exemption manifest and referenced
-Rust files are proof dependencies, not permission to edit those lanes. A read
-dependency must never automatically become a source scope. These are existing
-execution checkpoints, not authority to skip their prerequisites or use a stale
-claim. No whole-crates, whole-scripts or whole-repository write permission is
-granted. New promotion-tooling files and any corrected input closure must be
-reviewed into the exact final packet before installation; this snapshot is not
-a claim that the eventual I03 source list is complete. Changes outside the
-scope refuse until a bounded owner promotion supplies authority. No product or
-external-lane scope is manufactured from a future task name.
+The sole proposed source scope contains 141 explicit file paths, tied to WDQ-I03
+and WDQ-REVIEW. WDQ-TOOLS reconciles the original 69 paths with the implemented
+capture, environment, support and promotion modules and their tests. Review used
+the complete parent-edge history from main `7a77e40a850172b50e2251132d171d55a8adfb37`
+to candidate `701c3b82363973857c47d16f46a8baa0a597c008`, not only the final tree
+diff: the rollout mapping test also changed in that history. The coverage test
+itself is included explicitly. The subsequent bounded activation implementation
+and its integration tests add two separately reviewed files. The assembled candidate policy matches this
+proposal; neither copy is installed or owner-promoted authority.
+
+The contract has 152 read inputs. Hook checks, their exemption manifest,
+referenced Rust files and environment data remain proof dependencies, not write
+permission. A read dependency must never automatically become a source scope.
+The existing execution checkpoints cannot skip prerequisites or use stale claims.
+No directory-wide permission, product scope or external-lane scope is granted.
+Subsequent tooling changes still require exact final-packet reconciliation.
+
+This path reconciliation does not solve owner publication at WDQ-I04: ordinary
+source validation still requires selected execution with a synchronized live
+claim, whereas I04 is an owner decision. The controlled promotion protocol must
+separately bind the full delta, independent evidence and exact owner disposition;
+it must not invent an execution claim or weaken ordinary transaction checks.
+`dat-wdq-promotion-delta-mb9` remains open until that behavior is implemented and
+verified. Listing paths here does not authorize publishing any candidate.
 
 ## Remaining installation obligations
 

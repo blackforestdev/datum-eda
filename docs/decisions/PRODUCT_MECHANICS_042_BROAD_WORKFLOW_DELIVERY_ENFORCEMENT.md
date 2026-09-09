@@ -204,7 +204,32 @@ proof build toolchain. These paths describe observed tools; the validator never
 executes them. Reproduction commands remain a nonempty string array describing
 the actual invocation recipe. Producer tooling must capture these values from
 the run, not generate plausible evidence from this schema. Script, data, fixture
-and runtime-library closure still need their separate input/toolchain accounting.
+and named-tool inputs still need their separate input/toolchain accounting.
+
+<!-- WDQ-042-BOUNDED-INFRA-VERIFICATION -->
+### Bounded infrastructure verification
+
+For this workflow infrastructure, input completeness means reviewed, pinned
+repository source/data/fixture inputs and identified interpreter and named tools,
+not exhaustive tracing of every descendant process or runtime/shared-library
+load. Record executable paths, hashes and versions for the interpreter, Git,
+shell, env, realpath and rustfmt when invoked. Review the actual script/import,
+hook and subprocess command paths; an additional named tool or repository input
+must be accounted for before claiming bounded input completeness.
+
+Retain actual handler and entry-point observations, exact source/fixture/
+environment identity, raw success/refusal results, state-preservation and
+interruption/recovery checks, and independent replay. Disable unreviewed Python
+startup/user-site injection. Existing module/maps observations remain useful
+supplemental evidence, but absent exhaustive descendant/library tracing is not
+an infrastructure readiness or delivery blocker. Do not label that unperformed
+tracing complete or rewrite older observations to say it occurred.
+
+This bound does not establish a hermetic runtime or detect arbitrary host-library
+substitution. Report that residual limit in producer and independent review.
+It changes no product-native evidence, accepted pilot bytes, scenario matrix,
+dependency authority, source permission, owner receipt or activation boundary.
+The exact complete PM042 activation packet still requires WDQ-I04 ratification.
 
 Required refusal proof includes malformed versions/shapes, missing/duplicate/
 unknown keys, swapped workflow environments, changed selection or Blob bytes,
@@ -223,6 +248,57 @@ Preparation is non-operative. Stale base, dirty index/worktree, missing runner,
 ambiguous mode or incomplete evidence must fail visibly before publication.
 Partial activation must be reported as partial; repair is explicit and forward,
 not an automatic destructive reset or silent hook bypass.
+
+Initial rollout promotion has a separate owner boundary, not an ordinary source
+transaction with an invented execution claim. Both exact publication base and
+candidate must select pending, claim-free WDQ-I04 after completed TOOLS, READY,
+I03 and REVIEW. Preserve every other Frontier item exactly. Require the complete
+candidate as prospective authority, schema-2 coverage and rollout enrollment;
+check every production path on every intervening parent edge against the sole
+explicit rollout scope for I03/REVIEW, including reverted and merge-side changes.
+No prototype path or additional product-lane scope is permitted by this initial
+rollout protocol. Subsequent unrelated promotions need their own reviewed scope.
+
+Promotion inspection reuses full Frontier, classification, specification,
+readiness, environment and enrolled delivery checks, explicitly demanding the
+rollout's independent-review phase. Sharing state checks must not remove source
+claim enforcement from ordinary CLI, selector or hook transactions. Exact owner
+response bytes are selected separately from candidate content and bound to the
+request digest. A matching response string is not authentication of its author.
+Inspection must remain read-only and report no publication authority; final
+owner invocation, coordinated mutation, partial-state recovery and installed
+verification remain required. Neither an empty source transaction nor equal
+base/candidate pins can substitute for the complete publication-history check.
+
+Actual publication is a distinct owner invocation, not an inspection flag's side
+effect. Its exact activation-request includes this acknowledgement:
+`All writers to this checkout and its Git-common trust configuration are paused for this exact activation.`
+The owner coordinates that pause; the Git-common activation lock serializes only
+cooperating activators. Authenticate the prepared runtime against the externally
+selected candidate before importing mutation code. Require reviewed defect
+dispositions (closed blocking findings bound to the exact replay; explicit
+nonblocking deferrals) in addition to independent review.
+
+Durably journal the request and each mutation boundary without overwriting old
+logs. After repeated clean-state and evidence checks, fast-forward only the exact
+candidate, install the four Datum trust settings, install hooksPath last, then
+verify the exact state/support and execute the installed hook and selector check.
+Recheck state after verification. A successful installation is not completion of
+I04's canonical owner record, three adoption cohorts or final acceptance. Failure
+or interruption preserves observed partial state and all support; stale retries
+refuse. Any repair requires a separately reviewed explicit forward action.
+This initial activator refuses worktree-specific Git configuration and checks
+effective trust values against its installed local values; an override cannot
+silently select a different hook. Supporting such configuration requires separate
+review. The observed Datum checkout does not enable that extension.
+
+An interrupt during an owned publication or verification child must not release
+the coordination lock or start another mutation while that child is live.
+Defer handled SIGINT/SIGTERM until the child finishes, logging the pending stop
+and exact child identity/result. The child inherits the lock to cover abrupt
+parent death. Bound child execution to 120 seconds; on timeout stop only its
+owned process group and reap the child before reporting failure. Preserve
+partial state and journals; neither interruption nor timeout authorizes repair.
 
 Use the resolved Git-common `.git/datum-wdq` support store for proposals,
 immutable trusted runners and logs. Keep any currently referenced external
