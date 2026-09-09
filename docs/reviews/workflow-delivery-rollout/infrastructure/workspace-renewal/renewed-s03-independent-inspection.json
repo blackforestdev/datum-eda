@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "review_session": "/root/wdq_independent_review",
+  "method": "Independent raw artifact inspection, not execution replay.",
+  "verified": {
+    "ordered_original_observations": 185,
+    "primary": 110,
+    "recovery": 75,
+    "distinct_outer_and_observer_ids": 185,
+    "events": 739,
+    "artifact_hashes": 1295,
+    "source_hash_checks": 6851,
+    "distinct_source_files": 33,
+    "all_before_after_identical": true,
+    "pid_time_bounds": true,
+    "assessment_result_bindings": true
+  },
+  "outcomes": {
+    "primary_exit_1": 75,
+    "primary_exit_0": 35,
+    "recovery_exit_0": 75,
+    "diagnostic_mentions": {
+      "WDQ-COVERAGE": 40,
+      "WDQ-AUTHORITY": 20,
+      "WDQ-CONSUMER": 10,
+      "WDQ-CONTRACT": 5,
+      "WDQ-CLAUSE": 10
+    }
+  },
+  "limitation": "Responses can contain multiple diagnostic codes. Archive and setup-attempt report were not independently checked in this raw inspection.",
+  "independent_replay_performed": false,
+  "complete_matrix": false,
+  "activation_performed": false
+}
