@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "archive_sha256": "af692c7da8dc1b236ccc4f90edff2d03ff6f0abb11c1fe3c07b7ee2c2d4a28f8",
+  "archive_bytes": 5072820,
+  "method": "Distinct independent streaming inspection; no extraction, execution or edits.",
+  "result": "No inconsistency found in the 110-observation subset.",
+  "verified": {
+    "artifact_hashes": 770,
+    "outer_invocations_distinct": 110,
+    "observer_invocations_distinct": 110,
+    "unique_trace_events": 445,
+    "source_hash_comparisons": 4079,
+    "distinct_source_files": 33,
+    "before_after_bytes_identical": true,
+    "pid_time_bindings_consistent": true,
+    "fresh_recoveries_exit_zero": 45
+  },
+  "scope": "Producer artifact inspection of readiness and enrollment refusals, valid and pending cases, and recoveries. Not independent replay, complete matrix or native readiness.",
+  "compatibility_complete": false,
+  "activation_performed": false
+}
