@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "frontier_step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-workspace-inputs-zmt",
+  "candidate": "28b046139ade55e4b7d9187cf0df4f438e65fc35",
+  "parent": "2d60cd05dca71727ba28b1355b988de653eed82f",
+  "retained_ref": "refs/datum/workflow-delivery-candidates/28b046139ade55e4b7d9187cf0df4f438e65fc35",
+  "scope": "Source-only startup prerequisite in an isolated first-party candidate. Not workspace classification, installed verification or completed repair.",
+  "changed_paths": [
+    "scripts/check_workflow_delivery.py",
+    "scripts/project_status.py",
+    "scripts/test_workflow_delivery_preflight_cli.py",
+    "scripts/test_workflow_delivery_source_only.py",
+    "scripts/workflow_delivery_preflight_cli.py",
+    "scripts/workflow_delivery_source_only.py"
+  ],
+  "verification": [
+    {"command": "python3 -B -m unittest discover -s scripts -p test_workflow_delivery_source_only.py -v", "exit_code": 0, "tests": 7, "real_entrypoint_subcases": 4},
+    {"command": "python3 -B -m unittest discover -s scripts -p test_project_status.py -q", "exit_code": 0, "tests": 45},
+    {"command": "python3 -B -m unittest discover -s scripts -p test_workflow_delivery_preflight_cli.py -q", "exit_code": 0, "tests": 22},
+    {"command": "python3 scripts/check_source_health.py", "exit_code": 0, "source_files": 1913},
+    {"command": "git diff --check", "exit_code": 0}
+  ],
+  "preserved_failed_attempt": "The initial 21-test preflight run had one failure: an incomplete-copy fixture lacked the new source bootstrap and therefore returned FileNotFoundError rather than its intended later ModuleNotFoundError. Preserve the original missing-module assertion by supplying the bootstrap, and add a separate missing-bootstrap refusal test; all 22 then pass.",
+  "cache_evidence": "Actual child-process control executes a forged valid-header cache despite -B. Source-only loading instead executes the source and leaves the forged cache and sentinel untouched. Selector, delivery CLI, preflight and the bootstrap cache are separately exercised.",
+  "independent_assessment": "Read-only inspection found no immediate normal-import-path defect. The finder protects future standard filesystem imports under the selected scripts directory, not explicit loader calls or modules already in sys.modules. Searches of the supported WDQ modules found no explicit spec_from_file_location, exec_module or load_module paths; the observer only enumerates sys.modules. This is not final independent compatibility acceptance.",
+  "primary_reference": "https://docs.python.org/3/reference/import.html#cached-bytecode-invalidation",
+  "remaining": [
+    "Shared workspace classification used by coverage, proof inputs and activation preflight.",
+    "Exact owner-local-file baseline and unchanged-file verification; unknown or changed source must still refuse.",
+    "Preserved Beads runtime handling and explicit stale/orphan cache classification.",
+    "Full supported-entrypoint integration and relevant positive/negative compatibility checks.",
+    "Reconcile source permissions and input/authority closure; renew affected proof rather than reusing unchanged9cab claims for changed source.",
+    "Distinct independent compatibility review and exact final publication reinspection before separate owner activation."
+  ],
+  "compatibility_complete": false,
+  "activation_authorized": false,
+  "activation_performed": false,
+  "main_runtime_changed": false,
+  "owner_files_or_beads_runtime_deleted": false
+}
