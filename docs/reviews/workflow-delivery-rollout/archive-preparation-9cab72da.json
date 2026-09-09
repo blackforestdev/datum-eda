@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "record_type": "retained_producer_archive_preparation",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-I03",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "source_commit": "9cab72daab46122da6d2c45ab7f972814f702880",
+  "storage": "Git-common/datum-wdq/proposals/wdq-i03-9cab72da-retained-package",
+  "archive": {
+    "bytes": 91178305,
+    "path": "captured-evidence.tar.gz",
+    "sha256": "7c27a6dff0c4c1b3b5f97532497344170bd2219e1b8d14ceb021072c7ec10c50"
+  },
+  "index_sha256": "80df8860ba9b38072b36d950a4df34c11604640af9c56f4b39ff59289002fb5a",
+  "member_count": 11276,
+  "uncompressed_bytes": 223243055,
+  "archive_member_hashes_verified": true,
+  "original_sources_deleted": false,
+  "preparation_failures": [
+    "First attempt stopped before archive creation: S01 stores a recipe digest without a packet path. Resolved against retained packets by exact hash.",
+    "Second attempt stopped before archive creation: S03 stores group-relative packet paths. Resolved against the owning capture group and verified exact recipe digests."
+  ],
+  "limits": [
+    "Contains completed non-lease capture groups, baseline observations, real-roadmap observations and their retained fixture packets.",
+    "The 100 live-ownership primary captures remain outstanding. This archive is not the final complete replay packet.",
+    "Archive remains in the repository-local support store; this metadata commit does not claim portable committed evidence, typed proof, independent review or activation."
+  ],
+  "complete_matrix": false,
+  "acceptance_asserted": false
+}
