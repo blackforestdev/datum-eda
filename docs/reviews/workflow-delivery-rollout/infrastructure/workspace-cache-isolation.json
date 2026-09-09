@@ -33,6 +33,33 @@
     "Reconcile source permissions and input/authority closure; renew affected proof rather than reusing unchanged9cab claims for changed source.",
     "Distinct independent compatibility review and exact final publication reinspection before separate owner activation."
   ],
+  "workspace_consumer_progress": {
+    "candidate": "fb1be028916bb5f34bcda8e968435f2111b11c11",
+    "retained_ref": "refs/datum/workflow-delivery-candidates/fb1be028916bb5f34bcda8e968435f2111b11c11",
+    "commits": [
+      "5177ce79ba4aaa3159adccdb40a69b42d2a69bd1",
+      "882ac6f9c1ca86fe6769ed7f3503a1e631494455",
+      "fb1be028916bb5f34bcda8e968435f2111b11c11"
+    ],
+    "implemented": "Closed local-state classifier and opt-in shared plumbing for worktree coverage, proof-input enumeration and activation preflight. Tracked and explicitly named inputs retain precedence; staged and revision views bypass local classification. Preflight retains complete protected state.",
+    "verification": [
+      {"command": "python3 -B -m unittest discover -s scripts -p 'test_workflow_delivery_workspace*.py' -q", "tests": 25, "exit_code": 0},
+      {"command": "python3 -B -m unittest discover -s scripts -p test_workflow_delivery_transaction.py -q", "tests": 11, "exit_code": 0, "candidate": "882ac6f9c1ca86fe6769ed7f3503a1e631494455"},
+      {"command": "python3 -B -m unittest discover -s scripts -p test_workflow_delivery_activation_preflight.py -q", "tests": 24, "exit_code": 0, "candidate": "882ac6f9c1ca86fe6769ed7f3503a1e631494455"},
+      {"command": "python3 scripts/check_source_health.py", "source_files": 1916, "exit_code": 0},
+      {"command": "git diff --cached --check", "exit_code": 0}
+    ],
+    "independent_finding": "Read-only review identified snapshot/live substitution: preflight could exempt captured bad bytes using temporarily qualifying live files. The correction binds the exact classification bytes, mode and cache source to captured state, with two captured-bad/live-good regressions. The reviewer has not yet certified this correction.",
+    "remaining": [
+      "Authenticate classification policy from owner-pinned authority; candidate-only policy cannot grant exemptions.",
+      "Validate required local-pin presence, including deletion, rather than relying on enumerated files alone.",
+      "Derive cache isolation from verified supported startup, not candidate JSON or an arbitrary caller assertion.",
+      "Connect supported CLI callers, reconcile proposed mechanism and source/input authority, and renew applicable producer and independent evidence."
+    ],
+    "cli_classification_enabled": false,
+    "installed_runtime_changed": false,
+    "independent_correction_accepted": false
+  },
   "compatibility_complete": false,
   "activation_authorized": false,
   "activation_performed": false,
