@@ -243,3 +243,19 @@ No such command has been run on Datum main. Those observations are development
 regressions, not actual I03/reviewer evidence, owner ratification, installed
 rollout or adoption. Full runtime closure and real interruption/recovery review
 remain outstanding; retained partial state is never silently repaired.
+
+### Observed live-child interruption handling
+
+The activation child runner now defers handled SIGINT/SIGTERM, retains the lock,
+records actual child identities/results and stops before any subsequent mutation.
+Real synthetic Git/post-merge children demonstrate both signal cases: the child
+is confirmed live when signalled, the lock is still held, and releasing that
+child leads to a terminal result and honest partial publication with old trust.
+A bounded-timeout test kills and reaps only the owned process group. A separate
+parent-SIGKILL test observes inherited lock retention until its child exits.
+
+These tests do not claim actual Datum activation or the complete crash/recovery
+matrix. They replace the earlier unproven handled-signal construction gap, not
+the required final runtime closure, exact full producer run, distinct replay,
+owner decision or three native adoption outcomes. No new permission/input path,
+dependency, prototype or other product lane is changed.

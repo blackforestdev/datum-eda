@@ -387,6 +387,18 @@ retain their journal and observed partial state; stale retries refuse, with no
 automatic reset, repair, hook bypass or support deletion. The owner coordinates
 all writers: a cooperative lock cannot stop an unrelated editor or Git client.
 Refuse enabled worktree-specific configuration, and verify effective trust values
-as well as the local configuration written. Current synthetic interruption tests
-raise between actual mutations; they do not establish signal handling during a
-live Git child. Real process-interruption and recovery proof remain mandatory.
+as well as the local configuration written. During an owned mutation or installed
+verification child, handled SIGINT/SIGTERM records a pending stop and retains the
+lock until that child finishes. Do not start another mutation after the signal.
+Observe child PID, command, terminal result and output; the child inherits the
+lock and runs in its own process group. The 120-second child deadline kills only
+that owned group and reaps the child before reporting failure. SIGKILL cannot be
+handled: retain the pre-mutation journal, and keep the inherited lock until the
+surviving child exits. No unverified or interrupted run asserts activation.
+
+Development tests now send actual SIGINT/SIGTERM during a live Git/post-merge
+child and observe lock retention, no subsequent config write, child termination
+and partial publication. A separate child-lifetime test kills its parent and
+observes inherited-lock retention/release; it is not full Git-publication crash
+recovery proof. Actual rollout producer/reviewer observations and complete
+recovery-case coverage remain mandatory.

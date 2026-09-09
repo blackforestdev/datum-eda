@@ -267,6 +267,14 @@ effective trust values against its installed local values; an override cannot
 silently select a different hook. Supporting such configuration requires separate
 review. The observed Datum checkout does not enable that extension.
 
+An interrupt during an owned publication or verification child must not release
+the coordination lock or start another mutation while that child is live.
+Defer handled SIGINT/SIGTERM until the child finishes, logging the pending stop
+and exact child identity/result. The child inherits the lock to cover abrupt
+parent death. Bound child execution to 120 seconds; on timeout stop only its
+owned process group and reap the child before reporting failure. Preserve
+partial state and journals; neither interruption nor timeout authorizes repair.
+
 Use the resolved Git-common `.git/datum-wdq` support store for proposals,
 immutable trusted runners and logs. Keep any currently referenced external
 support until its replacement is installed and verified. Remove only positively

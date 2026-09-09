@@ -3184,6 +3184,13 @@ partial-state refusal. Real rollout readiness, independent proof, owner
 ratification/activation and adoption remain incomplete. No Datum main trust or
 other lane changed.
 
+Live-child interruption construction now defers SIGINT/SIGTERM until the owned
+child finishes, retains its lock across parent/child lifetimes, bounds timeout
+termination to the owned group, and refuses subsequent mutations. Actual signal,
+timeout and parent-death development tests pass in synthetic repositories.
+This is not the full rollout crash/recovery matrix, readiness or independent
+proof; WDQ-TOOLS and the broader goal remain incomplete.
+
 | Item | Status | Notes |
 |------|--------|-------|
 | Rust workspace (8 crates) | [x] | engine, cli, engine-daemon, test-harness, gui-protocol, gui-render, gui-app, verb-registry (locked via `specs/SPEC_PARITY.md` → `workspace_crates`) |
