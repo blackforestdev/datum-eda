@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "review_session": "/root/wdq_independent_review",
+  "method": "Independent raw producer-artifact inspection, not execution replay.",
+  "verified": {
+    "ordered_original_observations": 175,
+    "primary": 95,
+    "recovery": 80,
+    "distinct_outer_and_observer_ids": 175,
+    "no_original_id_reuse": true,
+    "events": 709,
+    "artifact_hashes": 1225,
+    "source_hash_checks": 6517,
+    "distinct_source_files": 33,
+    "all_before_after_identical": true,
+    "assessment_result_hash_and_id": true,
+    "pid_time_bounds": true
+  },
+  "outcomes": {
+    "negative_primary_exit_1": 80,
+    "positive_primary_exit_0": 15,
+    "recovery_exit_0": 80,
+    "negative_diagnostics": {
+      "WDQ-INDEX": 2,
+      "WDQ-ARTIFACT": 3,
+      "WDQ-TRANSITION": 5,
+      "WDQ-REVIEW": 30,
+      "WDQ-DEFECT": 15,
+      "WDQ-CONSUMER": 10,
+      "WDQ-RECEIPT": 15
+    }
+  },
+  "limitation": "S04-11 real-roadmap observations are separate from this synthetic batch. No independent archive verification or execution replay performed.",
+  "complete_matrix": false,
+  "activation_performed": false
+}
