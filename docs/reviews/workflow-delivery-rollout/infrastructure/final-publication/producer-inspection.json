@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-I04-FINAL-CANDIDATE-INSPECTION-NOT-ACTIVATION",
+  "base": "7b52d57f4a4c9b42211fffc0ea62df5d2355933e",
+  "candidate": "2d60cd05dca71727ba28b1355b988de653eed82f",
+  "retained_ref": "refs/datum/workflow-delivery-candidates/2d60cd05dca71727ba28b1355b988de653eed82f",
+  "publication_delta_sha256": "ff2f01bc1d9ba0bd8c29a0538bcfdfef8a76faf88e0235afaa2f4b6c1cf4a259",
+  "publication_commit_count": 1,
+  "publication_touched_paths": 131,
+  "owner_dispositions_commit": "077fb3e5fc558a24c773cc6d29002853b6dc00ea",
+  "review_owner_reference_commit": "7b52d57f4a4c9b42211fffc0ea62df5d2355933e",
+  "reviewed_source": "9cab72daab46122da6d2c45ab7f972814f702880",
+  "candidate_assembly": {
+    "reviewed_input": "800f180b8eacc56c82c2f7c10ceeafb9c4026100",
+    "actual_main_base": true,
+    "hypothetical_frontier_completion_used": false,
+    "reconciliation": [
+      "Preserve actual main Frontier and add only reviewed infrastructure delivery mapping.",
+      "Regenerate Active Frontier over reviewed candidate progress content.",
+      "Preserve final independent review narrative from actual main.",
+      "Preserve current review with only five owner disposition references added."
+    ],
+    "other_frontier_lanes_changed": 0,
+    "preferences_ownership_changed": false
+  },
+  "candidate_validation": {
+    "entrypoint": "inspect_promotion_candidate",
+    "checks": ["WORKFLOW-DELIVERY-GATE-PILOT: accept", "WORKFLOW-DELIVERY-IMPLEMENTATION: review"],
+    "validate_defect_dispositions_passed": true,
+    "closed_owner_dispositions": 5
+  },
+  "actual_cli": {
+    "mode": "--inspect-promotion",
+    "python_flags": ["-I", "-S", "-B"],
+    "fixture": ".git/datum-wdq/proposals/wdq-final-owner-disposed-producer-20260909",
+    "exit_code": 0,
+    "ok": true,
+    "request_sha256": "f7302af85ae363ca0e7a8f4ce1a0f536ee3f57b453ca74eacead6e8b93e5187e",
+    "inspection_only_response_sha256": "d2b9fa26e3ebdcd3cfebbe861a6690466b4da808ad039c94c1c0055a7d275bb6",
+    "log_sha256": "889d78f88c595d115f15d1076c43f4e94f82567e3af38b30da173a4de0206f05",
+    "capture_archive": "producer-inspection.tar.xz",
+    "capture_archive_sha256": "263173b93e5abc2f9117b19b30f194f064fd63d4e3672272cdd2bf30fbddad06",
+    "response_authority": "Synthetic caller-selected diagnostic input only; not actual owner approval and never usable for activation."
+  },
+  "live_workspace_boundary": {
+    "issue": "dat-wdq-workspace-inputs-zmt",
+    "independent_report": "independent-review.md",
+    "independent_handoff": "independent-handoff.json",
+    "independent_raw_archive": "independent-inspection.tar.xz",
+    "actual_selector_reproduction": "Clean exact candidate exits 0. Adding only the unchanged ignored owner GUI script or only an unchanged ignored Python cache independently causes exit 1 WDQ-COVERAGE, with protected state preserved in every case.",
+    "observed": "Main is git-clean but contains ignored Beads runtime/history, Python caches and owner-local scripts/run_gui_doa2526.sh. Broad-root preflight requires their absence; installed worktree coverage also enumerates ignored inputs under source roots.",
+    "actual_main_preflight_pass_claimed": false,
+    "narrowed_root_bypass_performed": false,
+    "owner_files_deleted": false,
+    "requirement": "Resolve real-workspace compatibility with independently reproduced evidence before offering an activation-ready packet. Recording this new finding advances main beyond the inspected base; exact subsequent publication pins require reinspection."
+  },
+  "activation_asserted": false,
+  "publication_authorized": false,
+  "activation_ready": false,
+  "installed_trust_changed": false,
+  "scope": "Final owner-disposed candidate preparation and actual isolated inspection only. Does not satisfy WDQ-I04 installed verification, PM042 ratification, I05 real adoption, or I06 owner acceptance."
+}

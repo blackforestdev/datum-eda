@@ -54,6 +54,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/infrastructure/final-publication/producer-inspection.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "Exact owner-disposed final candidate and actual isolated CLI inspection. Records dat-wdq-workspace-inputs-zmt as an unresolved real-workspace compatibility boundary; not activation readiness or installed verification."
+    },
     "docs/reviews/workflow-delivery-rollout/infrastructure/owner-dispositions.md": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
