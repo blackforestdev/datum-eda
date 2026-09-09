@@ -1,0 +1,414 @@
+{
+  "schema_version": 1,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "command": "python3 -I -S -B -c 'import sys,os,json; from pathlib import Path; runtime=Path.cwd(); sys.path.insert(0,str(runtime/\"scripts\")); from workflow_delivery_capture_fixture import prepare_fixture; from workflow_delivery_capture_cases import run_case; from workflow_delivery_capture_hook import run_hook_case; from workflow_delivery_capture_snapshots import SNAPSHOT_CASES,UNTRACKED_CASES; from workflow_delivery_capture_state import git; from workflow_delivery_capture_command import save; pin=\"22192085c55ec654eb209deccc0450afd53b2c65\"; assert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\"); store=Path(\"/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/workspace-renewal-s05\"); store.mkdir(exist_ok=False); packet=store/\"packet\"; prepare_fixture(store/\"baseline\",packet); environment={\"PATH\":os.defpath,\"HOME\":str(store),\"XDG_CONFIG_HOME\":str(store),\"GIT_CONFIG_NOSYSTEM\":\"1\",\"GIT_CONFIG_GLOBAL\":os.devnull,\"LANG\":\"C\"}; results=[]\nfor case in sorted(SNAPSHOT_CASES.keys()-UNTRACKED_CASES):\n for surface in ((\"R\",) if \"candidate-isolation\" in case else (\"C\",\"H\",\"S-check\",\"S-details\")):\n  for phase,identity in ((\"primary\",case),(\"recovery\",\"INFRA-S01-01\")):\n   destination=store/(case+\"-\"+surface+\"-\"+phase); result=run_hook_case(packet,destination,environment,case_id=identity) if surface==\"H\" else run_case(packet,destination,runtime,environment,case_id=identity,surface=surface); assert result[\"observation_matches_expected\"]; results.append({\"requested_case\":case,\"surface\":surface,\"phase\":phase,\"assessment\":result,\"capture_directory\":destination.name}); print(json.dumps({\"completed\":len(results),\"case\":case,\"surface\":surface,\"phase\":phase}),flush=True)\nassert len(results)==18; assert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\"); save(store/\"renewal-result.json\",{\"candidate\":pin,\"invocations\":results,\"scope\":\"Retained fresh original INFRA-S05-01 through -03 strict-policy snapshot isolation and recovery; not all compatibility conditions or complete matrix\",\"complete_matrix\":False,\"activation_performed\":False}); print(\"Snapshot renewal completed: 18 actual invocations\",flush=True)'",
+  "exit_code": 0,
+  "invocation_count": 18,
+  "results": [
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-01.staged-bad",
+        "complete_matrix": false,
+        "expected_code": "WDQ-POLICY",
+        "expected_detail": "policy change requires owner-controlled promotion",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-POLICY",
+            "detail": "policy change requires owner-controlled promotion",
+            "path": "specs/workflow_delivery_policy.json"
+          }
+        ],
+        "expected_path": "specs/workflow_delivery_policy.json",
+        "invocation_id": "c0e6282e-141d-4cdf-9d0d-0c71b8614431",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "fe38998fe4291a27961ecdef8eaed6ba2a134eb3293708718e2e8b8df086175f",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S05-01.staged-bad-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-01.staged-bad",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "1dfe882e-258a-407f-bedd-f01e5265c6aa",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "fbc13b1eea854e7dcf0c700e7084799147459a21b302c86a6a3560d8ee854429",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S05-01.staged-bad-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-01.staged-bad",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-01.staged-bad",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "b1773e1b-70df-4af6-ade3-25b24110eacd",
+        "observation_matches_expected": true,
+        "result_sha256": "992bc481f61363f947ef2d3937f3abdaf4bd42257b0e5ed382ed547cd8a303de",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "550e8e88919da3f18192146fb20859e62b941f66d3572e5f84842dfacdbc06c9",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S05-01.staged-bad-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-01.staged-bad",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "350c5578-62c7-46ed-8048-0ae305c19195",
+        "observation_matches_expected": true,
+        "result_sha256": "5e23cd1b01254c2326562f2cd3b5e848aabbb38f623836d88914f5b08febeb7e",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "550e8e88919da3f18192146fb20859e62b941f66d3572e5f84842dfacdbc06c9",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S05-01.staged-bad-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-01.staged-bad",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-01.staged-bad",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "164e496b-5b05-41f3-8073-7824930239e4",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "704055a044be3efbcf1d6cd43da35b80d6bb27104101eae68c978ad4bafcfb1f",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-01.staged-bad-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-01.staged-bad",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "a0797c53-1725-4822-8893-c99660ac3f0d",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "700ffc9819494e4cf1465f8e9f581fdce79eb000098f30263e517187ebba2378",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-01.staged-bad-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-01.staged-bad",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-01.staged-bad",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "538601ad-68a9-4682-9b90-2d9264151688",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "713053ff900c87f0b9fbbb823ddd4f785a47ae055235f7e96a38310df2cc3688",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-01.staged-bad-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-01.staged-bad",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "c863bc1e-3c11-4d15-9cbd-c7c2cd5bac45",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "046fe2195718d32a66753a5a97119e6036f11703c57864d592a31d0c9e1b3bf9",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-01.staged-bad-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-01.staged-bad",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-02.worktree-bad",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "dde0ebd1-db0f-4db4-9001-0723a7f43e2d",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "f1f7519863734920b09a6a5db4e90294b68b010592c180d70290cfd20ac37290",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S05-02.worktree-bad-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-02.worktree-bad",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "6e1bef4a-de53-4aed-b601-6c96a3052478",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "1e5774cf39cfce86cb6090f38ce5b92fcca5157f19893d5044dc0a2b4dec8a80",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S05-02.worktree-bad-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-02.worktree-bad",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-02.worktree-bad",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "0d16360d-7320-47e4-ad40-ed6e39b143db",
+        "observation_matches_expected": true,
+        "result_sha256": "f0267e8ee89e5de650103aabe515072138763e8745ff9fbb658e07ebde07016d",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "550e8e88919da3f18192146fb20859e62b941f66d3572e5f84842dfacdbc06c9",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S05-02.worktree-bad-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-02.worktree-bad",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "4ada9ea0-2001-4cae-9a73-824fe2e4f722",
+        "observation_matches_expected": true,
+        "result_sha256": "94c270abd82c5e6e2c459a686d3a446eae1fd420c17eeca12ff6720e5f10e6a1",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "550e8e88919da3f18192146fb20859e62b941f66d3572e5f84842dfacdbc06c9",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S05-02.worktree-bad-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-02.worktree-bad",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-02.worktree-bad",
+        "complete_matrix": false,
+        "expected_code": "WDQ-POLICY",
+        "expected_detail": "policy change requires owner-controlled promotion",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-POLICY",
+            "detail": "policy change requires owner-controlled promotion",
+            "path": "specs/workflow_delivery_policy.json"
+          }
+        ],
+        "expected_path": "specs/workflow_delivery_policy.json",
+        "invocation_id": "6b460487-0af7-4ac6-98b9-2ace046a70bf",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "c5da2a9e6f6fbe44a22fcb2e5c4dd2e31073c0eabe401ae75eaaeedc680bb1d9",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-02.worktree-bad-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-02.worktree-bad",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "50a87313-1278-4aca-afb1-bb6b3704c5af",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "589624c7287e34ce3f08eaed85d9d2645f8cd84612a2edaa60dbff9b519eee7e",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-02.worktree-bad-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-02.worktree-bad",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-02.worktree-bad",
+        "complete_matrix": false,
+        "expected_code": "WDQ-POLICY",
+        "expected_detail": "policy change requires owner-controlled promotion",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-POLICY",
+            "detail": "policy change requires owner-controlled promotion",
+            "path": "specs/workflow_delivery_policy.json"
+          }
+        ],
+        "expected_path": "specs/workflow_delivery_policy.json",
+        "invocation_id": "fd4e2c50-906d-4d4e-88d6-9f27d4ad7478",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "1283bcf6d2c5098b6bd5d25e677cdfedb9e9382a58247b7d383cf751c10533ec",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-02.worktree-bad-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-02.worktree-bad",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "4d8c4c1a-736d-4ac2-a3ea-ac400bb8d9de",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "27c24c7145a377774ad37de04699e3255db3377b6612386aec1e265e891f10eb",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-02.worktree-bad-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-02.worktree-bad",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-03.candidate-isolation",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "609d3395-a1e5-42a4-8374-f8c327aff8ca",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "7db218d9d0efbcb9cdb425e6e9d659b25116ab82c60aa8b10730ff2ce5c87389",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-03.candidate-isolation-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-03.candidate-isolation",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "a30b9ec7-ad3f-4bd8-b5eb-3e3705dd14d3",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "41b934574a15af6f97b28fd098c794bdafb5b40f872533d7290e5f12fc17867a",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-03.candidate-isolation-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-03.candidate-isolation",
+      "surface": "R"
+    }
+  ],
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/snapshot-captures.tar.xz",
+    "sha256": "f77cf6def60fea2183a0e883144021da9118b37b560999cba0fd6031f42b2d51",
+    "size": 607324
+  },
+  "scope": "Retained fresh original INFRA-S05-01 through -03 strict-policy snapshot isolation and recovery; not all compatibility conditions or complete matrix",
+  "complete_matrix": false,
+  "compatibility_complete": false,
+  "activation_performed": false
+}
