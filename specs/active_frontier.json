@@ -9646,23 +9646,12 @@
         "specs/workflow_delivery/gui-write-path.contract.json",
         "specs/workflow_delivery/native-authoring.contract.json",
         "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md",
-        "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md"
+        "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/independent/review-completion.json"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-wdq-rollout-implementation-20260908",
-        "claimed_at": "2026-09-08T06:39:04Z",
-        "heartbeat_at": "2026-09-09T02:45:29Z",
-        "expires_at": "2026-09-09T10:45:29Z",
-        "scope": [
-          "WDQ-R03 approved workflow only: coordinate WDQ-REVIEW independent replay of candidate 69583d27a092465eddc34c77677d1c044fb2c28a and retain review evidence. Producer must not author independent approval. Preserve installed trust until exact I04 promotion; no product implementation, GP-CM05V takeover, prototype edit, dependency or product acceptance."
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "7a77e40a850172b50e2251132d171d55a8adfb37"
-      },
+      "state": "specified",
+      "authorization": "owner_decision",
+      "claim": null,
       "canonical_next": false,
       "parallel": true,
       "summary": "Owner-authorized full workflow rollout: implement and activate real-roadmap tripwires, then verify three genuine adoption cohorts without taking over product owners or treating installation as completion.",
@@ -9670,7 +9659,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
-        "canonical_next_step_id": "WDQ-REVIEW",
+        "canonical_next_step_id": "WDQ-I04",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -9811,7 +9800,7 @@
           {
             "id": "WDQ-REVIEW",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Obtain independent replay and review of the exact candidate, promotion packet and every finding.",
             "depends_on": [
               "WDQ-I03"
@@ -9822,7 +9811,13 @@
                 "marker": "WDQ-REVIEW"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/reviews/workflow-delivery-rollout/infrastructure/independent/review-completion.json",
+                "marker": "WDQ-REVIEW-INDEPENDENT-TECHNICAL-REVIEW-COMPLETE"
+              }
+            ]
           },
           {
             "id": "WDQ-I04",
@@ -9843,8 +9838,17 @@
               "response_format": "Reply `WORKFLOW-DELIVERY-IMPLEMENTATION: approve ACTIVATE — <exact reviewed packet>`, `WORKFLOW-DELIVERY-IMPLEMENTATION: revise — <correction>`, or `WORKFLOW-DELIVERY-IMPLEMENTATION: defer — <reason>`.",
               "requests": [
                 {
+                  "id": "DISPOSITIONS",
+                  "question": "Resolve the five reviewed findings and their closure boundary: dat-wdq-replay-object-identity-6zl, dat-wdq-formatter-evidence-7wm, dat-wdq-environment-scope-kgq, dat-wdq-git-replacement-authority-2cm and dat-wdq-promotion-delta-mb9. In particular, the Git-authority issue requires owner-controlled promotion while activation requires closed blocking records; explicitly determine the closure and remaining installed-verification scope.",
+                  "recommended_response": "Review the candidate repairs against exact independent replay b8a45e71ffdc8c4fa069224e597b854074c3303e27387d3ea950cacf6779f018 and explicitly direct issue disposition. Preserve WDQ-I04 installed verification; no autonomous closure, deferral or activation follows from passing tests.",
+                  "source_ref": {
+                    "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                    "marker": "ACTIVATE"
+                  }
+                },
+                {
                   "id": "ACTIVATE",
-                  "question": "Obtain owner mechanism ratification and exact activation; verify installed main and safely retire unreferenced support.",
+                  "question": "After explicit defect disposition and final publication-base/candidate reinspection, obtain owner mechanism ratification and exact activation; verify installed main and safely retire unreferenced support. The isolated inspection candidate is not an activation-ready live packet.",
                   "recommended_response": "Approve only the exact completed evidence and reviewed scope; preserve all product ownership, trust and independent-review boundaries.",
                   "source_ref": {
                     "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
