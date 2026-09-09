@@ -54,6 +54,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-repair-authorization.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "Recorded explicit owner direction for bounded WDQ-COMPAT repair and distinct reinspection. No activation, new mechanism ratification, deletion, product ownership change or completed repair is asserted."
+    },
     "docs/reviews/workflow-delivery-rollout/infrastructure/final-publication/producer-inspection.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
