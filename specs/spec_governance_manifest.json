@@ -54,6 +54,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/infrastructure/owner-dispositions.md": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "Explicit owner approval to close five candidate-review findings and prepare the final packet only. Exact mechanism ratification, activation and installed verification remain pending under WDQ-I04; no product acceptance or new authority."
+    },
     "docs/reviews/workflow-delivery-rollout/infrastructure/independent/review-completion.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
