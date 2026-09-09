@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "method": "Retained verbatim stdout from the actual formatter version and SHA-256 tool call performed before the corrected ownership capture command.",
+  "commands": [
+    "/home/bfadmin/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustfmt --version",
+    "sha256sum /home/bfadmin/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustfmt"
+  ],
+  "exit_code": 0,
+  "stdout_path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/ownership-formatter-observation.txt",
+  "observed_before_corrected_capture": true,
+  "limitation": "No separate per-tool PID or nanosecond timestamp was collected by that shell observation. This does not assert complete child-process/tool closure.",
+  "independent_followup": "Independent reviewer subsequently measured the same formatter SHA-256."
+}

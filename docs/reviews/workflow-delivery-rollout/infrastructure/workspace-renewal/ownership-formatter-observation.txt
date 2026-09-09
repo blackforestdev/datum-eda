@@ -1,0 +1,2 @@
+rustfmt 1.8.0-stable (01f6ddf758 2026-02-11)
+c7d4d911e75fa66321fd04ac81cf6ea1b3a2c759efe39e61caccb10f3c850918  /home/bfadmin/.rustup/toolchains/stable-x86_64-unknown-linux-gnu/bin/rustfmt
