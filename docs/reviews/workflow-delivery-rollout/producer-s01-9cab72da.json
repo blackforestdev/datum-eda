@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "record_type": "infrastructure_producer_s01_observations",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-I03",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "source_commit": "9cab72daab46122da6d2c45ab7f972814f702880",
+  "producer_session": "wdq-i03-producer-20260909",
+  "raw_storage": "Git-common/datum-wdq/proposals/wdq-i03-9cab72da-s01",
+  "index_file": "observations-final.json",
+  "index_sha256": "f2544308f36e5ca48ca16b8ad41f6e8625d8752356d64d4213173fdd5f95e617",
+  "prior_index_sha256": "d74f64b8957ef7c52d13b8c8a639f2a1715f90c813e491e828389cf30f01eda6",
+  "primary_invocations": 18,
+  "fresh_recovery_invocations": 18,
+  "baseline_observation_record": "docs/reviews/workflow-delivery-rollout/producer-baseline-9cab72da.json",
+  "baseline_invocations": 5,
+  "covered_rows": [
+    "INFRA-S01-01",
+    "INFRA-S01-02",
+    "INFRA-S01-03",
+    "INFRA-S01-04"
+  ],
+  "primary_case_surface_pairs": [
+    {
+      "case_id": "INFRA-S01-02.conflicting-views",
+      "surface": "C"
+    },
+    {
+      "case_id": "INFRA-S01-02.conflicting-views",
+      "surface": "R"
+    },
+    {
+      "case_id": "INFRA-S01-02.invalid-argument",
+      "surface": "C"
+    },
+    {
+      "case_id": "INFRA-S01-02.invalid-argument",
+      "surface": "R"
+    },
+    {
+      "case_id": "INFRA-S01-03.enforce",
+      "surface": "C"
+    },
+    {
+      "case_id": "INFRA-S01-03.enforce",
+      "surface": "R"
+    },
+    {
+      "case_id": "INFRA-S01-03.report-only",
+      "surface": "C"
+    },
+    {
+      "case_id": "INFRA-S01-03.report-only",
+      "surface": "R"
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "surface": "C"
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "surface": "H"
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "surface": "R"
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "surface": "S-check"
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "surface": "S-details"
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "surface": "C"
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "surface": "H"
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "surface": "R"
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "surface": "S-check"
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "surface": "S-details"
+    }
+  ],
+  "raw_capture_integrity_rechecked": true,
+  "protected_state_unchanged": true,
+  "all_expected_diagnostics_matched": true,
+  "failed_attempt": "FileExistsError from exclusive save of observations.json after the second successful capture. Prior index and raw records retained; existing completed captures validated and not rerun.",
+  "completed_captures_reused_without_rerun": 2,
+  "limits": [
+    "Expected invocation/enforcement failures are successful refusal observations, not zero-exit product checks.",
+    "Report-only zero status is not enforcement permission.",
+    "Raw S01 case coverage is present; final typed scenario proof and independent replay are not yet assembled.",
+    "Synthetic fixture approval/native records remain input only.",
+    "Complete global matrix, promotion verification and exact owner activation remain due."
+  ],
+  "raw_case_coverage_complete": true,
+  "scenario_proof_complete": false,
+  "complete_matrix": false,
+  "acceptance_asserted": false
+}
