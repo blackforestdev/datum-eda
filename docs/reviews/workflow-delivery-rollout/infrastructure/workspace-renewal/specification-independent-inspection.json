@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "archive_sha256": "b3705e68b0a44cec1e9e25c0dbf2b69b7aaf21f2f0bfd62b16ce94ee573f7bf2",
+  "archive_bytes": 5166204,
+  "method": "Distinct independent streaming inspection; no extraction, execution or edits.",
+  "result": "No inconsistency found in the 115-capture subset.",
+  "verified": {
+    "artifact_hashes": 805,
+    "outer_invocations_distinct": 115,
+    "observer_invocations_distinct": 115,
+    "unique_trace_events": 450,
+    "source_hash_comparisons": 4248,
+    "distinct_source_files": 33,
+    "before_after_bytes_identical": true,
+    "pid_time_bindings_consistent": true,
+    "fresh_recoveries_exit_zero": 50
+  },
+  "scope": "Producer artifact inspection of specification authority, clause accounting and pending-owner relationships. Not independent replay, complete compatibility or product specification acceptance.",
+  "compatibility_complete": false,
+  "activation_performed": false
+}
