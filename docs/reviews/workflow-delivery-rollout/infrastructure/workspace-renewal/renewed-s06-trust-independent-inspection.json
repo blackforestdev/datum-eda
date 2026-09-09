@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "review_session": "/root/wdq_independent_review",
+  "method": "Independent raw artifact inspection, not execution replay.",
+  "verified": {
+    "ordered_original_observations": 223,
+    "primary": 114,
+    "recovery": 109,
+    "distinct_outer_ids": 223,
+    "distinct_observer_ids": 217,
+    "events": 851,
+    "artifact_hashes": 1560,
+    "source_hash_checks": 7787,
+    "distinct_source_files": 33,
+    "all_before_after_identical": true
+  },
+  "outcomes": {
+    "primary_exit_2": 16,
+    "primary_exit_1": 88,
+    "primary_exit_0": 5,
+    "primary_interrupted_minus_15": 5,
+    "recovery_exit_0": 109,
+    "predispatch_hook_refusals_without_validator_trace": 6,
+    "interruption_receipts_hashed": true
+  },
+  "limitation": "Six expected hook predispatch refusals have no validator call trace and are not counted as validator invocations. Five actual interrupted runs are preserved, not described as ordinary exits.",
+  "archive_independently_inspected": false,
+  "independent_replay_performed": false,
+  "complete_matrix": false,
+  "activation_performed": false
+}
