@@ -7,6 +7,7 @@ import unittest
 
 from workflow_delivery_authority import resolve_ref
 from workflow_delivery_io import parse_json
+from workflow_delivery_publication_delta import publication_delta
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -79,6 +80,27 @@ class CoverageProposalTest(unittest.TestCase):
             for dependency in read_only:
                 self.assertFalse(any(dependency == p or dependency.startswith(p + "/")
                                      for p in scope["paths"]))
+
+    def test_reconciled_scope_covers_reviewed_history_not_only_final_diff(self):
+        # Fixed preparation snapshot, never an authorization of subsequent history.
+        delta = publication_delta(ROOT,
+            base="7a77e40a850172b50e2251132d171d55a8adfb37",
+            candidate="701c3b82363973857c47d16f46a8baa0a597c008")
+        roots = self.coverage["production_roots"]
+        required = {p for p in delta["touched_paths"]
+                    if any(p == r or p.startswith(r + "/") for r in roots)}
+        required.add("scripts/test_workflow_coverage_proposal.py")
+        paths = self.coverage["source_scopes"][0]["paths"]
+        self.assertEqual(sorted(set(paths)), paths)
+        self.assertEqual([], sorted(required - set(paths)))
+        # The mapping test changed in history but not in the final tree diff.
+        self.assertIn("scripts/test_workflow_rollout_mapping.py", required)
+        for path in paths:
+            self.assertTrue((ROOT / path).is_file(), path)
+
+    def test_assembled_policy_contains_exact_reviewed_scope_proposal(self):
+        policy = self.tree.json("specs/workflow_delivery_policy.json")
+        self.assertEqual(self.coverage, policy["coverage"])
 
     def test_production_roots_cover_non_rust_code_without_git_metadata(self):
         roots = self.coverage["production_roots"]

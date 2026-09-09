@@ -11282,6 +11282,17 @@
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
+        },
+        "delivery": {
+          "schema_version": 2,
+          "contract_path": "specs/workflow_delivery/rollout.contract.json",
+          "checkpoints": {
+            "ready": "WDQ-READY",
+            "activate": null,
+            "verify": "WDQ-I03",
+            "review": "WDQ-REVIEW",
+            "accept": null
+          }
         }
       }
     }

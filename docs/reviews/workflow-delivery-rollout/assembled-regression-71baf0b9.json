@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "kind": "datum.workflow-delivery.assembled-regression-record",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-TOOLS",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "source_commit": "71baf0b90765513e2f30be7fdfe2394337f0eb32",
+  "command": [
+    "/usr/bin/python3",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "scripts",
+    "-p",
+    "test_workflow_delivery*.py"
+  ],
+  "result": {
+    "tests": 399,
+    "elapsed_seconds": 1246.384,
+    "exit_code": 0,
+    "verdict": "OK",
+    "session_id": 77564,
+    "pid": 2236674,
+    "source_unchanged_during_run": true,
+    "worktree_clean_after_run": true,
+    "restarted": false
+  },
+  "raw_output": "...............................................................................................................................................................................................................................................................................................................................................................................................................\n----------------------------------------------------------------------\nRan 399 tests in 1246.384s\n\nOK\n",
+  "raw_output_sha256": "9cc579956ae49aa602bf8c0d47fdd1584478704b9afa7723bfd9dff562f8ae83",
+  "retained_observation": {
+    "git_common_relative_directory": "datum-wdq/proposals/wdq-regression-71baf0b9-yHdbJL",
+    "invocation_sha256": "63488f4893329281f966a9e7987c9d9e3eeb6240a3c8e1349ff9eadc794a910d",
+    "result_sha256": "62555e8e36c796fc11e5f23a683a771b617d6c3fd05aab4506c61dad60b9efbe",
+    "started_ns": "1788909502218404005",
+    "finished_ns": "1788910748741793339"
+  },
+  "additional_checks": {
+    "project_status_tests": 50,
+    "rollout_tests": 28,
+    "dependency_authority": "PASS",
+    "cargo_resource_policy": "PASS",
+    "spec_governance": "PASS (241)",
+    "spec_parity": "PASS (17)",
+    "evidence_traceability": "PASS (25 routes, 119 artifacts)",
+    "source_health": "PASS (1909)",
+    "frontier_render": "current",
+    "diff_whitespace": "clean",
+    "observation_source": "Execution-session output on the same unchanged candidate; separate from the retained full-suite raw log."
+  },
+  "capture_registry_audit": {
+    "required_case_rows": 62,
+    "registered_variants": 115,
+    "rows_with_any_registered_variant": 57,
+    "rows_without_registered_variant": [
+      "INFRA-S01-04",
+      "INFRA-S04-11",
+      "INFRA-S06-01",
+      "INFRA-S06-07",
+      "INFRA-S06-15"
+    ],
+    "method": "Normative Markdown row IDs compared with CASES keys grouped before their first dot.",
+    "limits": "Registration is not complete variant/surface coverage or real producer proof. Shared recovery and headless tests do not establish individually identified full-case coverage."
+  },
+  "remaining": [
+    "Complete required variant/surface and actual real-roadmap observations; do not equate this regression with the full INFRA matrix.",
+    "Reconcile exact publication permissions and complete observed runtime/child-tool closure.",
+    "Complete controlled activation tooling, actual readiness, producer evidence and distinct independent replay.",
+    "Obtain exact owner activation, verify installed main, resolve external-lane migration and demonstrate three genuine adoption cohorts before final owner acceptance."
+  ],
+  "readiness_asserted": false,
+  "complete_matrix_asserted": false,
+  "independent_review_asserted": false,
+  "publication_authorized": false,
+  "activation_asserted": false,
+  "product_adoption_asserted": false,
+  "acceptance_asserted": false
+}

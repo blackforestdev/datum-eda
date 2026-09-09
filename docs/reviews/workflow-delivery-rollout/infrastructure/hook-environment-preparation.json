@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "kind": "datum.workflow-delivery.environment-preparation",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-TOOLS",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "observation_source_commit": "6bd95e80f79fd7eb5e0141394cfde98e70ea9fae",
+  "observed_at_ns": 1788900654955384239,
+  "git_common_relative_observation_log": "datum-wdq/logs/hook-environment-observation-568ec012-5470-4340-b959-7d81c2cfb93e.json",
+  "observation_sha256": "7f6fc37903d2a15d90ed1006ff84775b4fb46c6fd7eda5415f8e0d7daf4af17a",
+  "environment_path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+  "environment_sha256": "a1c33121f265812cba27e1bd7867061b9d82d4e8111012ae8cbfa3e1c20c3fca",
+  "recipe_source": "explicit caller description, not an execution assertion",
+  "replaces_proposal_only": "docs/reviews/workflow-delivery-rollout/infrastructure/environment-preparation.json",
+  "preserved": "Prior environment observation and all accepted pilot environment bytes remain unchanged. Only the uninstalled infrastructure selection proposal points to this newer observation.",
+  "remaining": [
+    "Freeze actual WDQ_HOOK and other recipe parameters before producer capture; this observation ran versions, not a hook.",
+    "Observe conditional rustfmt execution when a reviewed case invokes it; it is not included as an observed tool here.",
+    "Bind prepared owner-hook shell source and selected environment data in final input reconciliation.",
+    "Complete actual child-process and runtime-library accounting; current Python module/maps evidence does not establish descendant closure.",
+    "Final readiness, producer verification, independent replay, owner ratification and installation remain due."
+  ],
+  "selection_authorized": false,
+  "input_closure_complete": false,
+  "readiness_asserted": false,
+  "activation_asserted": false,
+  "acceptance_asserted": false
+}
