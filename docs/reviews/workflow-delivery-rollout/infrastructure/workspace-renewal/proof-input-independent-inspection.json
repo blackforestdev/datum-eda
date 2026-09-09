@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "archive_sha256": "c241b2563743bd872b1bd7f13b94e5708d1d92dce8bcde521ef908b87c42e7a9",
+  "archive_bytes": 405632,
+  "method": "Distinct independent streaming inspection; no extraction, execution or edits.",
+  "result": "No inconsistency found in the final 45-command subset.",
+  "verified": {
+    "indexed_capture_artifact_hashes": 315,
+    "outer_invocations_distinct": 45,
+    "observer_invocations_distinct": 45,
+    "unique_trace_events": 180,
+    "source_hash_comparisons": 1674,
+    "distinct_source_files": 33,
+    "restored_fixture_regular_files": 115,
+    "before_after_bytes_identical": true,
+    "pid_time_bindings_consistent": true
+  },
+  "failed_attempts": "Retained separately and excluded from the final 45. First fails on incompatible details arguments, exit 2. Second has five baseline passes before fixture setup failure; exact cause is not asserted.",
+  "scope": "Owner and legacy inputs inside src stale proof, drift refuses coverage, restoration stays stale, and verified source cache regeneration recovers. C/R/H retain selected snapshots. Does not prove real-roadmap mixed workspace, independent execution, complete matrix or publication.",
+  "compatibility_complete": false,
+  "activation_performed": false
+}
