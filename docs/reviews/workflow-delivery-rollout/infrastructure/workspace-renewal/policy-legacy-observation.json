@@ -1,0 +1,619 @@
+{
+  "schema_version": 1,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "fixture_authority": "399a54f1ef33845811a5332e711ee5c1b7b34df4",
+  "command": "python3 -I -S -B -c 'import sys,os,json,uuid,py_compile,subprocess,hashlib,importlib.util\nfrom pathlib import Path\nruntime=Path.cwd()\nsys.path.insert(0,str(runtime/\"scripts\"))\nfrom test_workflow_delivery_workspace_entrypoints import WorkspaceEntrypointsTest\nfrom workflow_delivery_capture_command import capture_command,save\nfrom workflow_delivery_support_bundle import prepare_bundle\nfrom workflow_delivery_support_store import support_locations\nfrom workflow_delivery_capture_state import git\npin=\"22192085c55ec654eb209deccc0450afd53b2c65\"\nassert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\")\nstore=Path(\"/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/workspace-policy-legacy-entrypoints\")\nstore.mkdir(exist_ok=False)\nt=WorkspaceEntrypointsTest()\nt.setUp()\nresults=[]\ntry:\n legacy_source=t.f.root/\"tools/read.py\"\n legacy_source.write_bytes(b\"fixture_value = 42\\n\")\n legacy=Path(importlib.util.cache_from_source(str(legacy_source)))\n legacy.parent.mkdir(parents=True,exist_ok=True)\n legacy_raw=b\"explicit synthetic legacy cache payload\"\n legacy.write_bytes(legacy_raw)\n legacy.chmod(0o644)\n policy=t.f.root/\"specs/workflow_delivery/workspace-inputs.json\"\n value=json.loads(policy.read_bytes())\n value[\"local_files\"].append({\"path\":legacy.relative_to(t.f.root).as_posix(),\"category\":\"legacy_python_cache\",\"sha256\":hashlib.sha256(legacy_raw).hexdigest(),\"size\":len(legacy_raw),\"mode\":0o644})\n t.f.save(policy.relative_to(t.f.root).as_posix(),value)\n exclude=t.f.root/\".git/info/exclude\"\n exclude.write_bytes(exclude.read_bytes()+b\"tools/__pycache__/\\n\")\n t.f.git(\"add\",\"tools/read.py\",policy.relative_to(t.f.root).as_posix())\n t.f.git(\"commit\",\"-qm\",\"test(workflow): pin synthetic legacy lifecycle\\n\\nFixture input only; no real cache mutation or owner approval.\")\n t.authority=t.f.git(\"rev-parse\",\"HEAD\").decode().strip()\n for key in (\"AuthorityRef\",\"BaseRef\"): t.f.git(\"config\",\"datum.workflowDelivery\"+key,t.authority)\n prepare_bundle(t.f.root,t.authority)\n locations=support_locations(t.f.root,t.authority)\n t.f.git(\"config\",\"core.hooksPath\",str(locations[\"hooks\"]))\n t.f.git(\"config\",\"datum.workflowDeliveryRunnerPath\",str(locations[\"runner\"]))\n nonce=str(uuid.uuid4())\n t.f.write(\".git/datum-wdq-capture-owner\",(nonce+\"\\n\").encode())\n environment={\"PATH\":os.defpath,\"HOME\":str(store),\"XDG_CONFIG_HOME\":str(store),\"GIT_CONFIG_NOSYSTEM\":\"1\",\"GIT_CONFIG_GLOBAL\":os.devnull,\"LANG\":\"C\"}\n def observe(label,refusal=None):\n  for surface in (\"C\",\"R\",\"S\",\"D\",\"H\"):\n   output=store/(label+\"-\"+surface)\n   env=dict(environment)\n   if surface==\"H\":\n    command=[str(locations[\"hook\"])]\n    env[\"DATUM_WDQ_OBSERVE_PATH\"]=str(output/\"calls.jsonl\")\n   else:\n    script=runtime/\"scripts\"/(\"project_status.py\" if surface in (\"S\",\"D\") else \"check_workflow_delivery.py\")\n    args=[\"--root\",str(t.f.root)]\n    args+=([\"check\"] if surface==\"S\" else [\"details\",\"NEXT\"]) if surface in (\"S\",\"D\") else [\"--enforce\",\"--authority-ref\",t.authority,\"--base-ref\",t.authority,\"--environment-path\",\"requested-environment.json\"]+([\"--staged\"] if surface==\"C\" else [\"--candidate-ref\",t.authority])\n    command=[sys.executable,\"-I\",\"-S\",\"-B\",str(runtime/\"scripts/workflow_delivery_observe_python.py\"),\"--script\",str(script),\"--source-root\",str(runtime),\"--output\",str(output/\"calls.jsonl\"),\"--function\",\"main\",\"--function\",\"selector_failures\",\"--\",*args]\n   result=capture_command(t.f.root,output,command,env,fixture_nonce=nonce,case_id=\"WORKSPACE-\"+label,surface=(\"S\" if surface==\"D\" else surface),untracked_roots=[\"src\",\"tools\",\".beads\"],timeout=60)\n   text=(output/\"stdout.bin\").read_text()+(output/\"stderr.bin\").read_text()\n   expected_refusal=surface in (\"S\",\"D\") and refusal is not None\n   assert result[\"kind\"]==\"exited\" and (result[\"returncode\"]!=0)==expected_refusal,text\n   assert not result[\"changed_state_fields\"] and not result[\"changed_files\"],result\n   if expected_refusal: assert refusal in text,text\n   results.append({\"case\":label,\"surface\":surface,\"expected_refusal\":expected_refusal,\"invocation_id\":result[\"invocation_id\"],\"returncode\":result[\"returncode\"],\"capture_directory\":output.name})\n   print(json.dumps(results[-1]),flush=True)\n observe(\"legacy-pinned\")\n legacy.unlink()\n observe(\"legacy-absent\")\n py_compile.compile(str(legacy_source),doraise=True)\n observe(\"legacy-regenerated\")\n legacy.write_bytes(b\"unreviewed changed legacy payload\")\n observe(\"legacy-forged\",\"WDQ-COVERAGE\")\n legacy.write_bytes(legacy_raw)\n legacy.chmod(0o644)\n observe(\"legacy-restored\")\n legacy.unlink()\n legacy.symlink_to(legacy_source)\n observe(\"legacy-redirected\",\"required pinned local file is missing or redirected\")\n legacy.unlink()\n legacy.write_bytes(legacy_raw)\n legacy.chmod(0o644)\n observe(\"legacy-redirect-restored\")\n policy_raw=policy.read_bytes()\n policy.write_bytes(b\"malformed policy input\")\n observe(\"policy-malformed\",\"WDQ-POLICY\")\n policy.write_bytes(policy_raw)\n observe(\"policy-malformed-restored\")\n policy.unlink()\n observe(\"policy-removed\",\"WDQ-POLICY\")\n policy.write_bytes(policy_raw)\n policy.chmod(0o644)\n observe(\"policy-removal-restored\")\n policy.chmod(0o755)\n observe(\"policy-executable\",\"WDQ-POLICY\")\n policy.chmod(0o644)\n observe(\"policy-mode-restored\")\n policy.unlink()\n policy.symlink_to(legacy_source)\n observe(\"policy-redirected\",\"WDQ-POLICY\")\n policy.unlink()\n policy.write_bytes(policy_raw)\n policy.chmod(0o644)\n observe(\"policy-redirect-restored\")\n assert len(results)==75\n subprocess.run([\"tar\",\"-cJf\",str(store/\"fixture.tar.xz\"),\"-C\",str(t.f.root),\".\"],check=True)\n save(store/\"renewal-result.json\",{\"candidate\":pin,\"fixture_authority\":t.authority,\"invocations\":results,\"scope\":\"Synthetic legacy lifecycle and worktree policy variants across C/R/S-check/S-details/H. Not malformed promoted authority, all workspace groups, real roadmap or promotion inspection.\",\"compatibility_complete\":False,\"activation_performed\":False})\n assert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\")\nfinally:\n t.doCleanups()\n'",
+  "exit_code": 0,
+  "invocation_count": 75,
+  "results": [
+    {
+      "capture_directory": "legacy-pinned-C",
+      "case": "legacy-pinned",
+      "expected_refusal": false,
+      "invocation_id": "fad2efcf-7b31-4322-af96-c9cdb72baa68",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "legacy-pinned-R",
+      "case": "legacy-pinned",
+      "expected_refusal": false,
+      "invocation_id": "5b401a70-1a86-423b-b840-050ece035c24",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "legacy-pinned-S",
+      "case": "legacy-pinned",
+      "expected_refusal": false,
+      "invocation_id": "ebd2149d-d001-46f5-b0e6-3cb96c05fbe4",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "legacy-pinned-D",
+      "case": "legacy-pinned",
+      "expected_refusal": false,
+      "invocation_id": "32329599-6e44-4530-9826-9a8f2f7f5276",
+      "returncode": 0,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "legacy-pinned-H",
+      "case": "legacy-pinned",
+      "expected_refusal": false,
+      "invocation_id": "1665bf07-eea4-4e36-b4bc-580da3e668d1",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "legacy-absent-C",
+      "case": "legacy-absent",
+      "expected_refusal": false,
+      "invocation_id": "b9435115-4847-4837-ad9f-8d739ce42ca2",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "legacy-absent-R",
+      "case": "legacy-absent",
+      "expected_refusal": false,
+      "invocation_id": "d7f069ea-ef06-488a-9cf1-c6ca1a34c57d",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "legacy-absent-S",
+      "case": "legacy-absent",
+      "expected_refusal": false,
+      "invocation_id": "90ec2925-3767-4411-99ac-538128de6259",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "legacy-absent-D",
+      "case": "legacy-absent",
+      "expected_refusal": false,
+      "invocation_id": "62736f02-bad1-492d-8dd8-2b42390da8cc",
+      "returncode": 0,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "legacy-absent-H",
+      "case": "legacy-absent",
+      "expected_refusal": false,
+      "invocation_id": "95f51b1f-6fed-440f-9721-96152f5b6661",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "legacy-regenerated-C",
+      "case": "legacy-regenerated",
+      "expected_refusal": false,
+      "invocation_id": "d4515763-c89d-4be9-9928-412c2a748e8b",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "legacy-regenerated-R",
+      "case": "legacy-regenerated",
+      "expected_refusal": false,
+      "invocation_id": "aed251a3-f3d1-46b7-add0-5fcb7f150842",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "legacy-regenerated-S",
+      "case": "legacy-regenerated",
+      "expected_refusal": false,
+      "invocation_id": "7d8bd3f5-27aa-428a-860c-3467a30e7281",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "legacy-regenerated-D",
+      "case": "legacy-regenerated",
+      "expected_refusal": false,
+      "invocation_id": "d3488230-6fb6-4823-9424-08b5932e41b3",
+      "returncode": 0,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "legacy-regenerated-H",
+      "case": "legacy-regenerated",
+      "expected_refusal": false,
+      "invocation_id": "e6b7f2f1-2b6e-4a66-bd1a-83e7fffd9db7",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "legacy-forged-C",
+      "case": "legacy-forged",
+      "expected_refusal": false,
+      "invocation_id": "76813859-d52f-4c8f-acea-79b47ff5a960",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "legacy-forged-R",
+      "case": "legacy-forged",
+      "expected_refusal": false,
+      "invocation_id": "feef6a95-96b4-4995-bc58-162882b23c01",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "legacy-forged-S",
+      "case": "legacy-forged",
+      "expected_refusal": true,
+      "invocation_id": "67b44af4-bbfe-4a80-831c-e35b1795bd52",
+      "returncode": 1,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "legacy-forged-D",
+      "case": "legacy-forged",
+      "expected_refusal": true,
+      "invocation_id": "61ec733c-162b-4b36-b71b-8d5874690c36",
+      "returncode": 1,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "legacy-forged-H",
+      "case": "legacy-forged",
+      "expected_refusal": false,
+      "invocation_id": "bf81504f-31c9-4c78-8d36-67cd0a198860",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "legacy-restored-C",
+      "case": "legacy-restored",
+      "expected_refusal": false,
+      "invocation_id": "e24b7f92-bb0d-41b9-9840-db7cf1bdb0db",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "legacy-restored-R",
+      "case": "legacy-restored",
+      "expected_refusal": false,
+      "invocation_id": "28a88b4e-35ed-45d0-988f-64b3cfd72993",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "legacy-restored-S",
+      "case": "legacy-restored",
+      "expected_refusal": false,
+      "invocation_id": "42d07b39-8fcb-4040-a95c-949ccc69658f",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "legacy-restored-D",
+      "case": "legacy-restored",
+      "expected_refusal": false,
+      "invocation_id": "63654fdd-c448-47dc-a965-8726e4ae40e0",
+      "returncode": 0,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "legacy-restored-H",
+      "case": "legacy-restored",
+      "expected_refusal": false,
+      "invocation_id": "35c8204e-ebe6-498d-97d3-90a3ab034e70",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "legacy-redirected-C",
+      "case": "legacy-redirected",
+      "expected_refusal": false,
+      "invocation_id": "ba0dbc90-f9ce-42e3-93a2-18c7eb51043d",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "legacy-redirected-R",
+      "case": "legacy-redirected",
+      "expected_refusal": false,
+      "invocation_id": "4088c1e3-e12d-4d18-b7f2-36e07ed45b54",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "legacy-redirected-S",
+      "case": "legacy-redirected",
+      "expected_refusal": true,
+      "invocation_id": "d0615c7b-e565-4733-9374-c07b5e3078b7",
+      "returncode": 1,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "legacy-redirected-D",
+      "case": "legacy-redirected",
+      "expected_refusal": true,
+      "invocation_id": "0d4d53fa-5573-4872-a44c-804662244bab",
+      "returncode": 1,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "legacy-redirected-H",
+      "case": "legacy-redirected",
+      "expected_refusal": false,
+      "invocation_id": "03891eaa-5d26-4406-9998-d88045985e74",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "legacy-redirect-restored-C",
+      "case": "legacy-redirect-restored",
+      "expected_refusal": false,
+      "invocation_id": "7ca2b43f-ed2e-425e-92f9-5d5cd19c84cd",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "legacy-redirect-restored-R",
+      "case": "legacy-redirect-restored",
+      "expected_refusal": false,
+      "invocation_id": "34454862-d8c0-4611-aecb-aada3f456c97",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "legacy-redirect-restored-S",
+      "case": "legacy-redirect-restored",
+      "expected_refusal": false,
+      "invocation_id": "18b989aa-e4a5-4d79-9255-847442e56988",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "legacy-redirect-restored-D",
+      "case": "legacy-redirect-restored",
+      "expected_refusal": false,
+      "invocation_id": "b903abb2-c24c-4fb5-a6c0-23f82d45f236",
+      "returncode": 0,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "legacy-redirect-restored-H",
+      "case": "legacy-redirect-restored",
+      "expected_refusal": false,
+      "invocation_id": "f78bfbaa-a5c9-4f88-8803-4d5f922300d8",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "policy-malformed-C",
+      "case": "policy-malformed",
+      "expected_refusal": false,
+      "invocation_id": "db001d8e-7224-430e-8693-964b7c5045ea",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "policy-malformed-R",
+      "case": "policy-malformed",
+      "expected_refusal": false,
+      "invocation_id": "2794f92e-f2c3-4c26-a380-92dd9c313faa",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "policy-malformed-S",
+      "case": "policy-malformed",
+      "expected_refusal": true,
+      "invocation_id": "29f2c0a8-0fa9-4f60-96bc-ef962ee0fe7f",
+      "returncode": 1,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "policy-malformed-D",
+      "case": "policy-malformed",
+      "expected_refusal": true,
+      "invocation_id": "169fff7c-aa37-4cc8-994b-c44356c4ec37",
+      "returncode": 1,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "policy-malformed-H",
+      "case": "policy-malformed",
+      "expected_refusal": false,
+      "invocation_id": "c163fdbf-3361-4e9b-9268-713b3c6ce89a",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "policy-malformed-restored-C",
+      "case": "policy-malformed-restored",
+      "expected_refusal": false,
+      "invocation_id": "3b24d3ec-9d14-443d-88e3-3a28e661ec54",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "policy-malformed-restored-R",
+      "case": "policy-malformed-restored",
+      "expected_refusal": false,
+      "invocation_id": "936d99db-b072-45fa-8fbe-2b5c140d683c",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "policy-malformed-restored-S",
+      "case": "policy-malformed-restored",
+      "expected_refusal": false,
+      "invocation_id": "03703be5-602c-420b-89cb-a13985399b6f",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "policy-malformed-restored-D",
+      "case": "policy-malformed-restored",
+      "expected_refusal": false,
+      "invocation_id": "cb029779-5c82-46d4-8b63-9583b2346cde",
+      "returncode": 0,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "policy-malformed-restored-H",
+      "case": "policy-malformed-restored",
+      "expected_refusal": false,
+      "invocation_id": "63462962-4ce6-4e09-88da-a7f5557c8d69",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "policy-removed-C",
+      "case": "policy-removed",
+      "expected_refusal": false,
+      "invocation_id": "033832e0-60a7-4489-b748-6eb11321aa27",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "policy-removed-R",
+      "case": "policy-removed",
+      "expected_refusal": false,
+      "invocation_id": "f81c79c7-e3bd-40f9-8619-579f1fccb7a9",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "policy-removed-S",
+      "case": "policy-removed",
+      "expected_refusal": true,
+      "invocation_id": "e612f40d-7390-4aa3-8884-e41db0881e61",
+      "returncode": 1,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "policy-removed-D",
+      "case": "policy-removed",
+      "expected_refusal": true,
+      "invocation_id": "6d7b07bf-453d-493a-a5f3-36b58c1e4816",
+      "returncode": 1,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "policy-removed-H",
+      "case": "policy-removed",
+      "expected_refusal": false,
+      "invocation_id": "cff703b7-c9f0-482c-b307-5dac6072a2f8",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "policy-removal-restored-C",
+      "case": "policy-removal-restored",
+      "expected_refusal": false,
+      "invocation_id": "801df371-7404-42fd-9b4c-291fc45e9ae2",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "policy-removal-restored-R",
+      "case": "policy-removal-restored",
+      "expected_refusal": false,
+      "invocation_id": "e5396e1e-d919-40b2-bbfe-fe4acb1f178a",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "policy-removal-restored-S",
+      "case": "policy-removal-restored",
+      "expected_refusal": false,
+      "invocation_id": "5d9b37bc-9950-467b-998d-7d6d7b82aa61",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "policy-removal-restored-D",
+      "case": "policy-removal-restored",
+      "expected_refusal": false,
+      "invocation_id": "ea7a88b9-631e-4359-9ff0-47af01ac0a7f",
+      "returncode": 0,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "policy-removal-restored-H",
+      "case": "policy-removal-restored",
+      "expected_refusal": false,
+      "invocation_id": "bdd41ddc-c454-43f9-a715-d0f318d4fc21",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "policy-executable-C",
+      "case": "policy-executable",
+      "expected_refusal": false,
+      "invocation_id": "71f95598-e4aa-4238-824e-6a38e6b09084",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "policy-executable-R",
+      "case": "policy-executable",
+      "expected_refusal": false,
+      "invocation_id": "c0c0370c-7d00-4c9e-8b7b-1745bbf16c83",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "policy-executable-S",
+      "case": "policy-executable",
+      "expected_refusal": true,
+      "invocation_id": "498ca446-6bea-4e13-8e7b-a127ebb43882",
+      "returncode": 1,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "policy-executable-D",
+      "case": "policy-executable",
+      "expected_refusal": true,
+      "invocation_id": "ce693cf0-360d-4245-ae21-5057811f2564",
+      "returncode": 1,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "policy-executable-H",
+      "case": "policy-executable",
+      "expected_refusal": false,
+      "invocation_id": "d7a98b0a-1281-461a-9f4f-d29deb93c201",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "policy-mode-restored-C",
+      "case": "policy-mode-restored",
+      "expected_refusal": false,
+      "invocation_id": "f57b65ee-3ce4-4897-bc9f-47d613fd0b03",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "policy-mode-restored-R",
+      "case": "policy-mode-restored",
+      "expected_refusal": false,
+      "invocation_id": "720e5fa6-d14a-4126-9a3e-00439980a417",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "policy-mode-restored-S",
+      "case": "policy-mode-restored",
+      "expected_refusal": false,
+      "invocation_id": "fe22b69d-7ec5-4196-9fe9-24212527d6fb",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "policy-mode-restored-D",
+      "case": "policy-mode-restored",
+      "expected_refusal": false,
+      "invocation_id": "43fd0002-4ec1-40c7-b4aa-d8d8d3483f5a",
+      "returncode": 0,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "policy-mode-restored-H",
+      "case": "policy-mode-restored",
+      "expected_refusal": false,
+      "invocation_id": "5c788b47-b1f8-4c82-8d21-32cc08a32b70",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "policy-redirected-C",
+      "case": "policy-redirected",
+      "expected_refusal": false,
+      "invocation_id": "823bd5ad-a694-46d7-a7da-a9b0548e63f3",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "policy-redirected-R",
+      "case": "policy-redirected",
+      "expected_refusal": false,
+      "invocation_id": "64bbaf50-547f-4dab-8c61-ec3be9753a90",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "policy-redirected-S",
+      "case": "policy-redirected",
+      "expected_refusal": true,
+      "invocation_id": "d06edcf9-b478-4896-a3af-442700c8aae1",
+      "returncode": 1,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "policy-redirected-D",
+      "case": "policy-redirected",
+      "expected_refusal": true,
+      "invocation_id": "31dfe9b0-04db-4213-b486-7eca16e3167c",
+      "returncode": 1,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "policy-redirected-H",
+      "case": "policy-redirected",
+      "expected_refusal": false,
+      "invocation_id": "6bdabca3-52b7-4b6c-99ef-1db700ed0bab",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "policy-redirect-restored-C",
+      "case": "policy-redirect-restored",
+      "expected_refusal": false,
+      "invocation_id": "a1429061-1a2d-456f-8a37-2a9750d13216",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "policy-redirect-restored-R",
+      "case": "policy-redirect-restored",
+      "expected_refusal": false,
+      "invocation_id": "0bc878e4-875c-4e57-aa52-3197c0e00929",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "policy-redirect-restored-S",
+      "case": "policy-redirect-restored",
+      "expected_refusal": false,
+      "invocation_id": "2c0f3be4-9422-43c4-9da7-88b89da8ea74",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "policy-redirect-restored-D",
+      "case": "policy-redirect-restored",
+      "expected_refusal": false,
+      "invocation_id": "a00ac07a-c2f3-4788-b54c-aca30dfee0d2",
+      "returncode": 0,
+      "surface": "D"
+    },
+    {
+      "capture_directory": "policy-redirect-restored-H",
+      "case": "policy-redirect-restored",
+      "expected_refusal": false,
+      "invocation_id": "2e95b544-b1f5-4584-842e-132f6ca47f5e",
+      "returncode": 0,
+      "surface": "H"
+    }
+  ],
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/policy-legacy-captures.tar.xz",
+    "sha256": "ee4b60f3e748d8eefc652a0b8a6d434b68c3e16f0fe66d32ca9398523986fdf5",
+    "size": 411792
+  },
+  "scope": "Synthetic legacy lifecycle and worktree policy variants across C/R/S-check/S-details/H. Not malformed promoted authority, all workspace groups, real roadmap or promotion inspection.",
+  "complete_matrix": false,
+  "compatibility_complete": false,
+  "activation_performed": false
+}
