@@ -15,7 +15,9 @@ is limited to that proof and its exact reviewed inputs. Overall WDQ-REVIEW
 completion remains pending actual full-candidate promotion inspection by both
 producer and reviewer, followed by the final publication-delta review. This
 document does not approve activation, complete WDQ-I04, or grant owner defect
-dispositions. The typed owner receipt and both disposition references are null.
+dispositions. The typed owner receipt and all five disposition references are
+null. The earlier two-finding provisional review is retained separately; it is
+historical, not the final complete issue inventory.
 
 Original evidence candidate:
 `69583d27a092465eddc34c77677d1c044fb2c28a`.
@@ -104,6 +106,26 @@ pretend its original tool list contained rustfmt. The corrected producer packet
 and independent replay retain this finding rather than hiding the first gap.
 
 ## Scope, authority and inapplicability
+
+Three pre-existing relevant obligations are also included, not silently dropped:
+
+- `dat-wdq-environment-scope-kgq`: S06 independently demonstrates the exact
+  per-enrollment mixed/headless selection and all required refusals without
+  changing the accepted pilot. Proposed PM042 ratification and installation
+  remain owner-only; this is candidate repair evidence, not live completion.
+- `dat-wdq-git-replacement-authority-2cm`: inspected pinned Git readers disable
+  replacement/graft and repository redirection while retaining the explicitly
+  selected index. An additional 23 independent existing index/support/hook
+  regressions pass, including actual alternate-index CLI and pinned hook paths.
+  Candidate repair does not imply that the old installed runner changed.
+- `dat-wdq-promotion-delta-mb9`: the reviewed full-history publication path
+  preserves ordinary execution-claim enforcement rather than substituting an
+  empty delta. The 44 supplemental activation tests pass, but the actual complete
+  publication inspection described below remains necessary. No owner resolution
+  or live activation is inferred from the implementation or those tests.
+
+These retain blocking accounting with null references pending exact resolution
+and owner disposition; no tracker closure was performed by the reviewer.
 
 Controlling AGENTS.md and CLAUDE.md were read. The complete owning
 `workflow-delivery-infrastructure` route and the source/consumer documents of
