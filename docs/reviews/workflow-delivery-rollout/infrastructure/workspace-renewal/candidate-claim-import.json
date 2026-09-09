@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/synchronize_candidate_claim.py",
+  "exit_code": 0,
+  "base_candidate": "e31e7a5c0c1140825d206e4fc1eed33006395f27",
+  "imported_main_transaction": "21b3330f6192cfcaea071e6cab05dbf4785164ca",
+  "candidate": "94dc7b352285dc8db1413f794c10b51b66ffdd1c",
+  "candidate_ref": "refs/datum-wdq/candidates/compat-current-claim-20260909",
+  "tree": "52e0de4a72ef79ff65067f894fc723ff588081a9",
+  "changed_paths": [".beads/issues.jsonl", "specs/active_frontier.json"],
+  "exact_patch_applied": true,
+  "main_unchanged": true,
+  "activation_performed": false,
+  "scope": "Exact already-committed synchronized Frontier/Beads transaction imported into isolated candidate. No new lease, tracker decision, product authority or installed trust is created."
+}
