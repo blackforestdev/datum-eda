@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "review_session": "/root/wdq_independent_review",
+  "runtime_source_commit": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "reviewed_candidate": "94dc7b352285dc8db1413f794c10b51b66ffdd1c",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-recheck-workspace-172.tar.xz",
+    "sha256": "a68ea70e4061c11010b5512fcc69df746ea8d6eab51548e322a3a680b21b3059",
+    "raw_report": "synthetic-172-independent-verification.json",
+    "tar_compare_exit_code": 0
+  },
+  "raw_root": ".git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/independent-recheck-workspace-20260909",
+  "batches": [
+    {"name": "runtime", "invocations": 52, "passes": 47, "expected_refusals": 5, "artifact_hashes_verified": 364, "source_hash_checks": 1935},
+    {"name": "policy-legacy", "invocations": 75, "passes": 63, "expected_refusals": 12, "artifact_hashes_verified": 525, "source_hash_checks": 2780},
+    {"name": "proof-input", "invocations": 45, "passes": 33, "expected_refusals": 12, "artifact_hashes_verified": 315, "source_hash_checks": 1674}
+  ],
+  "distinct_outer_ids": 172,
+  "distinct_observer_ids": 172,
+  "distinct_event_ids": 688,
+  "source_files_checked": 33,
+  "named_tool_bytes_unchanged": true,
+  "protected_states_unchanged": true,
+  "producer_ids_reused": false,
+  "scope": "Actual fresh independent execution of all 172 additional synthetic workspace cases using reviewed recipes. Fresh synthetic fixtures/private authority commits are intentional, not original fixture object identity or owner authority. Exact command, process, start, output, source, fixture archive and tool observations are retained in the archive without rewriting nanosecond timestamps.",
+  "remaining": "Real-roadmap clean/mixed/current-inventory replay, original scenario replay, complete review/defect accounting and exact publication inspection remain required.",
+  "independent_recheck_complete": false,
+  "activation_performed": false,
+  "product_acceptance_asserted": false
+}
