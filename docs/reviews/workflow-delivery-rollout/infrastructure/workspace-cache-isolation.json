@@ -189,6 +189,7 @@
     "remaining": "Retain the additional INFRA-S05 compatibility observations and renew affected producer/independent evidence against the changed source, policy and input identities. Separate owner activation and three actual product cohorts remain required.",
     "compatibility_complete": false
   },
+  "retained_workspace_preflight": {"candidate":"22192085c55ec654eb209deccc0450afd53b2c65","procedure":"WorkspaceEntrypointsTest.setUp then test_actual_preflight_cli_uses_pinned_policy_and_preserves_runtime","archive":"docs/reviews/workflow-delivery-rollout/infrastructure/workspace-preflight-fixture.tar.xz","archive_sha256":"dc02c7f431bcc2434b10a06adefaf19ce0dc1bf1d0f96dc87b1393ecfebad8ef","archive_bytes":344664,"preflight_sha256":"b26ccaa9fe9d91d41caec2f6324a6c67c2d43c485f9e60227ff88173095b53bd","protected_state_sha256":"f096373e2ef844353038be0d3e4bf41a3b98da85fd7ba387f3c6d7661721d90a","mode":"--inspect","actual_process_exit_code":0,"before_after_state_equal":true,"synthetic_fixture":true,"activation_performed":false,"complete_compatibility":false,"limitations":"Retains full synthetic inputs and the actual preflight log. No actual-main workspace reproduction, --inspect-promotion, owner approval, independent replay or complete INFRA-S05 acceptance is asserted. Fixture-local absolute paths are historical capture identities; archive inspection must not execute or restore them into those locations."},
   "compatibility_complete": false,
   "activation_authorized": false,
   "activation_performed": false,
