@@ -70,6 +70,12 @@ def main(argv=None):
             raise ValueError("preflight inspection requires Python -I -S -B")
         if args.activate:
             authenticate_activation_runtime(args)
+        # Activation authenticates the complete bundle first. Inspection remains
+        # non-authoritative, but also must not consume adjacent bytecode caches.
+        source_bootstrap = Path(__file__).with_name("workflow_delivery_source_only.py")
+        source_namespace = {"__name__": "_datum_source_bootstrap"}
+        exec(compile(source_bootstrap.read_bytes(), str(source_bootstrap), "exec"), source_namespace)
+        source_namespace["install"](source_bootstrap.parent)
         # Import only this explicitly executed preparation source, not cwd or
         # PYTHONPATH. This command never promotes its own runtime as authority.
         sys.path.insert(0, str(Path(__file__).resolve().parent))

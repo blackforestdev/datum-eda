@@ -305,12 +305,26 @@ class PreflightCliTest(unittest.TestCase):
     def test_incomplete_script_copy_returns_structured_import_failure(self):
         copy = self.store / "standalone-preflight.py"
         copy.write_bytes(self.script.read_bytes())
+        bootstrap = self.script.with_name("workflow_delivery_source_only.py")
+        (self.store / bootstrap.name).write_bytes(bootstrap.read_bytes())
         self.script = copy
         result = self.run_cli()
         self.assertEqual(2, result.returncode)
         report = json.loads(result.stdout)
         self.assertFalse(report["ok"])
         self.assertEqual("ModuleNotFoundError", report["findings"][0]["type"])
+        self.assertFalse(self.output.exists())
+
+    def test_missing_source_bootstrap_refuses_without_cache_fallback(self):
+        copy = self.store / "standalone-preflight.py"
+        copy.write_bytes(self.script.read_bytes())
+        self.script = copy
+        result = self.run_cli()
+        self.assertEqual(2, result.returncode)
+        report = json.loads(result.stdout)
+        self.assertFalse(report["ok"])
+        self.assertEqual("FileNotFoundError", report["findings"][0]["type"])
+        self.assertIn("workflow_delivery_source_only.py", report["findings"][0]["detail"])
         self.assertFalse(self.output.exists())
 
 

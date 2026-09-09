@@ -6,6 +6,13 @@ import json
 from pathlib import Path
 import sys
 
+# This must precede every repository import, including the bootstrap itself.
+_source_bootstrap = Path(__file__).with_name("workflow_delivery_source_only.py")
+_source_namespace = {"__name__": "_datum_source_bootstrap"}
+exec(compile(_source_bootstrap.read_bytes(), str(_source_bootstrap), "exec"), _source_namespace)
+_source_namespace["install"](_source_bootstrap.parent)
+del _source_namespace, _source_bootstrap
+
 from workflow_delivery_authority import authority_sha256
 from workflow_delivery_checkpoints import validate_delivery
 from workflow_delivery_contract import load_contract, validate_handler_files
