@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "review_session": "/root/wdq_independent_review",
+  "verified": {
+    "observations": 1314,
+    "original_multiset": 1123,
+    "additional_workspace": 191,
+    "distinct_outer_ids_contexts_and_dispatches": 1314,
+    "result_and_trace_hashes": true,
+    "named_handler_calls_and_counts": true,
+    "disabled_handler_contexts": 8,
+    "disabled_without_trace": 6,
+    "disabled_with_observer_trace_but_without_handler_call": 2,
+    "build_command_matches_recorded_invocation": true,
+    "interpreter_binary_and_validator_source_distinguished": true,
+    "manifest_and_toolchain_bindings_agree": true
+  },
+  "limitation": "Assembler is bookkeeping over already inspected raw evidence, not a standalone complete verifier of PID/time/import/state semantics or named-tool completeness. Eight uninvoked hooks include six without traces and two with observer traces but no validator call.",
+  "complete_proof": false,
+  "independent_replay_complete": false,
+  "activation_performed": false
+}

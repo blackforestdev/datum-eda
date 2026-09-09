@@ -1,0 +1,14 @@
+{
+  "binary_sha256": "17b78e0a93175e86f9ac03141924fd7a7f0c0c52e66b34bfa0de20ffef989df1",
+  "build_command": [
+    "python3",
+    "-I",
+    "-S",
+    "-B",
+    "-c",
+    "import sys,subprocess,hashlib,json\nfrom pathlib import Path\nroot=Path.cwd()\npin=\"0e5b8064a9faca407fac43bd2b362ba4d7200327\"\ngit=lambda *args: subprocess.check_output([\"git\",\"--no-optional-locks\",*args],cwd=root)\nassert git(\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(\"status\",\"--porcelain\")\nsys.path.insert(0,str(root/\"scripts\"))\nfrom workflow_delivery_tree import Tree\nfrom workflow_delivery_io import canonical_json\ntree=Tree(root,revision=pin)\ncontract=tree.json(\"specs/workflow_delivery/rollout.contract.json\")\nmanifest=tree.manifest(contract[\"input_roots\"])\nassert len(manifest)==161 and manifest==Tree(root).manifest(contract[\"input_roots\"])\nmodules=[r for r in manifest if r[\"path\"].endswith(\".py\")]\nfor row in modules: compile((root/row[\"path\"]).read_bytes(),row[\"path\"],\"exec\")\nexecutable=Path(sys.executable).resolve()\nassert git(\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(\"status\",\"--porcelain\")\nprint(json.dumps({\"source_commit\":pin,\"input_manifest_sha256\":hashlib.sha256(canonical_json(manifest)).hexdigest(),\"toolchain\":sys.version,\"modules_compiled\":len(modules),\"source_clean\":True,\"artifacts_written\":False,\"interpreter\":{\"path\":str(executable),\"sha256\":hashlib.sha256(executable.read_bytes()).hexdigest()},\"validator_source_sha256\":hashlib.sha256((root/\"scripts/check_workflow_delivery.py\").read_bytes()).hexdigest()},indent=2))\n"
+  ],
+  "toolchain": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+  "input_manifest_sha256": "7ec747490e0046563ca561a87bad7113bb048cc2b261764c563258eb29c0674b",
+  "exit_code": 0
+}
