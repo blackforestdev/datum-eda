@@ -46,7 +46,8 @@ def main(argv=None):
         from workflow_delivery_support_store import support_locations
 
         packet = args.packet.resolve(strict=True)
-        recipe = (packet / "recipe.json").read_bytes()
+        recipe_path = packet / ("result.json" if args.case == "INFRA-S04-11" else "recipe.json")
+        recipe = recipe_path.read_bytes()
         if not re.fullmatch(r"[a-f0-9]{64}", args.recipe_sha256) or sha256(recipe) != args.recipe_sha256:
             raise ValueError("retained recipe differs from explicit SHA-256")
         target = args.destination
@@ -69,12 +70,15 @@ def main(argv=None):
                   "observed_source_head": observed_head,
                   "source_pin_verified": False, "acceptance_asserted": False}
         save(target / "driver-input.json", driver)
-        if args.surface == "H":
+        if args.case == "INFRA-S04-11":
+            from workflow_delivery_roadmap_snapshot import capture_roadmap_snapshot
+            result = capture_roadmap_snapshot(packet, target / "case", runtime, environment, surface=args.surface)
+        elif args.surface == "H":
             result = run_hook_case(packet, target / "case", environment, case_id=args.case)
         else:
             result = run_case(packet, target / "case", runtime, environment,
                               case_id=args.case, surface=args.surface)
-        if (packet / "recipe.json").read_bytes() != recipe:
+        if recipe_path.read_bytes() != recipe:
             raise ValueError("retained recipe changed during capture")
         report.update(ok=True, assessment=result, recipe_sha256=args.recipe_sha256)
     except (ValueError, OSError, RuntimeError, ImportError, KeyError, subprocess.SubprocessError) as error:

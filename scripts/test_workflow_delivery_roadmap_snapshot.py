@@ -4,7 +4,7 @@ import json
 import unittest
 
 from workflow_delivery_capture_state import git, protected_state
-from workflow_delivery_roadmap_snapshot import prepare_roadmap_snapshot
+from workflow_delivery_roadmap_snapshot import prepare_roadmap_snapshot, capture_roadmap_snapshot
 from workflow_delivery_test_support import Fixture
 from workflow_delivery_trust_test_support import accepted_fixture
 
@@ -44,6 +44,15 @@ class RoadmapSnapshotTest(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     self.prepare(**changes)
                 self.assertFalse(self.destination.exists())
+
+    def test_synthetic_snapshot_cannot_claim_real_accepted_pilot_capture(self):
+        self.prepare()
+        output = self.destination.with_name("not-real-pilot")
+        for surface in ("C", "R", "S-check", "S-details", "H"):
+            with self.subTest(surface=surface):
+                with self.assertRaisesRegex(ValueError, "real accepted pilot"):
+                    capture_roadmap_snapshot(self.destination, output, self.f.root, {}, surface=surface)
+                self.assertFalse(output.exists())
 
     def test_dirty_source_and_occupied_destination_are_not_repaired(self):
         self.f.write("uncommitted-note.txt", b"owned dirty fixture input\n")
