@@ -34,6 +34,8 @@ CASES = {
     "INFRA-S06-02.selector-gate": ("scripts/workflow_delivery_selector.py", "WDQ-POLICY"),
     "INFRA-S06-11.selection": ("requested-environment.json", "WDQ-ENVIRONMENT"),
     "INFRA-S06-11.blob": ("selected-environment.json", "WDQ-ENVIRONMENT"),
+    "INFRA-S06-11.authority-membership": (POLICY, "WDQ-POLICY"),
+    "INFRA-S04-08.candidate-only-receipt": ("docs/reviews/owner.md", "WDQ-RECEIPT"),
 }
 CASES.update({key: (None, "INVOCATION-ERROR") for key in sorted(CLI_ERROR_CASES)})
 CASES.update({key: ("requested-environment.json", "WDQ-ENVIRONMENT") for key in FIXTURE_VARIANTS})
@@ -105,6 +107,8 @@ def expected_detail(case_id):
     if case_id.startswith("INFRA-S06-02."):
         return "gate/wiring change requires owner-controlled promotion"
     return {"INFRA-S01-01": None,
+            "INFRA-S04-08.candidate-only-receipt": "candidate receipt differs from promoted authority",
+            "INFRA-S06-11.authority-membership": "policy change requires owner-controlled promotion",
             "INFRA-S02-09.outside-scope": "production change has no promoted scope",
             "INFRA-S06-11.selection": "environment selection change requires owner promotion",
             "INFRA-S06-11.blob": "artifact hash mismatch"}[case_id]
@@ -112,6 +116,8 @@ def expected_detail(case_id):
 
 def changed_bytes(case_id, raw):
     target, _ = CASES[case_id]
+    if case_id == "INFRA-S04-08.candidate-only-receipt":
+        return raw + b"\nCandidate-only synthetic receipt amendment.\n"
     if target == "src/unscoped.py":
         return b"# Synthetic unpermitted implementation input.\n"
     if case_id.startswith("INFRA-S06-02."):
@@ -129,6 +135,8 @@ def changed_bytes(case_id, raw):
         value["environments"] = []
     elif case_id == "INFRA-S06-11.blob":
         value["toolchain"] = "synthetic candidate-only toolchain"
+    elif case_id == "INFRA-S06-11.authority-membership":
+        value["enrolled"].append(dict(value["enrolled"][0], frontier_key="NEXT"))
     else:
         raise ValueError("no implemented mutation for " + case_id)
     return canonical_json(value)

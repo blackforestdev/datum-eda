@@ -45,6 +45,10 @@ def run_case(packet, destination, runtime_root, environment, *, case_id, surface
     prepared_input = case_uses_prepared_input(case_id, recipe)
     target, expected = CASES[case_id]
     detail = None if case_id in SNAPSHOT_CASES else expected_detail(case_id)
+    if case_id == "INFRA-S06-11.authority-membership" and surface.startswith("S-"):
+        # Selector enrollment/declaration consistency precedes pinned-policy
+        # comparison. Retain that exact earlier refusal, not a CLI alias.
+        detail = "enrolled delivery declaration removed"
     if case_id in COVERAGE_INPUT_CASES:
         target, expected, detail = coverage_expectation(case_id, surface)
     if case_id in PROOF_INPUT_CASES:

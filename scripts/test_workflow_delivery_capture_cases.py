@@ -21,6 +21,35 @@ from workflow_delivery_review_input import REPORT_CASES, REPORT_FIXTURE, REPORT_
 
 
 class CaptureCasesTest(unittest.TestCase):
+    def test_candidate_cannot_expand_trusted_environment_membership(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            store = Path(temporary)
+            packet = store / "packet"
+            recipe = prepare_fixture(store / "baseline", packet)
+            environment = {"PATH": os.defpath, "HOME": str(store), "XDG_CONFIG_HOME": str(store),
+                           "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "LANG": "C"}
+            runtime = Path(__file__).resolve().parents[1]
+            identities = set()
+            for surface in ("C", "R", "S-check", "S-details", "H"):
+                with self.subTest(surface=surface):
+                    for phase, case in (("refusal", "INFRA-S06-11.authority-membership"),
+                                        ("recovery", "INFRA-S01-01")):
+                        output = store / (surface + phase)
+                        result = (run_hook_case(packet, output, environment, case_id=case)
+                                  if surface == "H" else run_case(packet, output, runtime, environment,
+                                                                 case_id=case, surface=surface))
+                        self.assertTrue(result["observation_matches_expected"])
+                        self.assertFalse(result["acceptance_asserted"])
+                        self.assertFalse(result["complete_matrix"])
+                        self.assertNotIn(result["invocation_id"], identities)
+                        identities.add(result["invocation_id"])
+                        before = json.loads((output / "capture/before.json").read_bytes())
+                        self.assertEqual([recipe["head"]], before["local_trust"]["datum.workflowDeliveryAuthorityRef"])
+                        policy = json.loads((output / "fixture/specs/workflow_delivery_policy.json").read_bytes())
+                        self.assertEqual(["TASK", "NEXT"] if phase == "refusal" else ["TASK"],
+                                         [row["frontier_key"] for row in policy["enrolled"]])
+            self.assertEqual(10, len(identities))
+
     def test_explicit_cases_refuse_for_intended_reason_and_fresh_baseline_recovers(self):
         with tempfile.TemporaryDirectory() as temporary:
             store = Path(temporary)

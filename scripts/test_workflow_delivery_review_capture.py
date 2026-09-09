@@ -13,6 +13,33 @@ from workflow_delivery_review_input import REVIEW_INPUT_CASES
 
 
 class ReviewCaptureTest(unittest.TestCase):
+    def test_wrong_and_candidate_only_receipts_refuse_and_recover(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            store = Path(temporary)
+            baseline, wrong = store / "baseline-packet", store / "wrong-packet"
+            prepare_fixture(store / "baseline", baseline)
+            prepare_fixture(store / "wrong", wrong, fixture_variant="INFRA-S04-08.wrong-receipt")
+            runtime = Path(__file__).resolve().parents[1]
+            environment = {"PATH": os.defpath, "HOME": str(store), "XDG_CONFIG_HOME": str(store),
+                           "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "LANG": "C"}
+            identities = set()
+            for variant, packet in (("INFRA-S04-08.wrong-receipt", wrong),
+                                    ("INFRA-S04-08.candidate-only-receipt", baseline)):
+                for surface in ("C", "R", "S-check", "S-details", "H"):
+                    with self.subTest(case=variant, surface=surface):
+                        for phase, source, case in (("refusal", packet, variant),
+                                                   ("recovery", baseline, "INFRA-S01-01")):
+                            destination = store / (variant + surface + phase)
+                            result = (run_hook_case(source, destination, environment, case_id=case)
+                                      if surface == "H" else run_case(source, destination, runtime, environment,
+                                                                     case_id=case, surface=surface))
+                            self.assertTrue(result["observation_matches_expected"])
+                            self.assertFalse(result["acceptance_asserted"])
+                            self.assertFalse(result["complete_matrix"])
+                            self.assertNotIn(result["invocation_id"], identities)
+                            identities.add(result["invocation_id"])
+            self.assertEqual(20, len(identities))
+
     def test_review_and_acceptance_refusals_on_every_entrypoint(self):
         with tempfile.TemporaryDirectory() as temporary:
             store = Path(temporary)
@@ -50,7 +77,7 @@ class ReviewCaptureTest(unittest.TestCase):
                             if phase == "refusal" and variant.endswith(".authorized-nonblocking-deferral"):
                                 retained = json.loads((destination / "fixture/docs/reviews/review.json").read_bytes())
                                 self.assertEqual(review["findings"], retained["findings"])
-            self.assertEqual(220, len(identities))
+            self.assertEqual(230, len(identities))
 
 
 if __name__ == "__main__":

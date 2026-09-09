@@ -31,6 +31,7 @@ REVIEW_INPUT_CASES = {
     "INFRA-S04-05.producer-defect": (REVIEW_PATH, "WDQ-DEFECT", "every proof defect requires review disposition"),
     "INFRA-S04-05.replay-defect": (REVIEW_PATH, "WDQ-DEFECT", "every proof defect requires review disposition"),
     "INFRA-S04-08.absent-receipt": (REVIEW_PATH, "WDQ-RECEIPT", "exact owner receipt required"),
+    "INFRA-S04-08.wrong-receipt": ("docs/reviews/owner.md", "WDQ-RECEIPT", "exact owner ACCEPT response missing from referenced section"),
     "INFRA-S04-09.pending-disposition": (REVIEW_PATH, "WDQ-DEFECT", "undisposed defect dat-next"),
     "INFRA-S04-03.copied-events": (REVIEW_PATH, "WDQ-REVIEW", "copied event artifact is not independent replay"),
     "INFRA-S04-04.fixture": (REVIEW_PATH, "WDQ-REVIEW", "independent replay session/input identity mismatch"),
@@ -87,6 +88,13 @@ def prepare_review_input(f, variant):
         review["replay"] = f.blob(review["replay"]["path"], canonical_json(replay))
     elif variant.endswith(".absent-receipt"):
         review["owner_receipt"] = None
+    elif variant.endswith(".wrong-receipt"):
+        receipt = review["owner_receipt"]["path"]
+        exact = f"ACCEPT TASK/A {review['packet_sha256']} {review_sha256(review)}"
+        raw = tree.read(receipt).decode()
+        if raw.splitlines().count(exact) != 1:
+            raise ValueError("exact original synthetic acceptance required")
+        f.write(receipt, raw.replace(exact, "ACCEPT TASK/A " + "0" * 64 + " " + "0" * 64).encode())
     elif variant.endswith(".pending-disposition"):
         review["findings"] = [{"issue_id": "dat-next", "severity": "blocking",
                                "disposition_ref": None}]

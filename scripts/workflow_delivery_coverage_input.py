@@ -29,6 +29,8 @@ BOUNDARY_CASES = {
 }
 
 COVERAGE_INPUT_CASES = {
+    "INFRA-S02-01.newly-unclassified": (
+        "specs/active_frontier.json", "WDQ-COVERAGE", "classification mismatch: missing=['NEW'], absent=[]"),
     "INFRA-S02-01.missing-classification": (
         "specs/active_frontier.json", "WDQ-COVERAGE", "classification mismatch: missing=['NEXT'], absent=[]"),
     "INFRA-S02-01.duplicate-classification": (
@@ -52,7 +54,24 @@ def prepare_coverage_input(policy, variant, *, fixture=None, manifest=None):
         prepare_external_boundary(fixture, manifest, policy)
         return
     rows = policy["coverage"]["rows"]
-    if variant.endswith(".missing-classification"):
+    if variant.endswith(".newly-unclassified"):
+        from project_status import render_block
+        item = deepcopy(manifest["frontier"][1])
+        item.update(key="NEW", issue_id="dat-new", order=2, canonical_next=False)
+        item["completion"]["canonical_next_step_id"] = "NEW-C01"
+        step = item["completion"]["steps"][0]
+        step["id"] = "NEW-C01"
+        step["requirement_refs"][0]["marker"] = "NEW-C01"
+        manifest["frontier"].append(item)
+        doc = item["governing_docs"][0]
+        fixture.write(doc, (fixture.root / doc).read_bytes() + b"\n<!-- REQ:NEW:NEW-C01 -->\n")
+        fixture.write(".beads/issues.jsonl", (fixture.root / ".beads/issues.jsonl").read_bytes() +
+            canonical_json({"id": "dat-new", "status": "open", "labels": ["roadmap:frontier"],
+                            "acceptance_criteria": "NEW-C01: Newly scheduled synthetic planning"}))
+        fixture.save("specs/active_frontier.json", manifest)
+        fixture.write("specs/PROGRESS.md", render_block(manifest).encode())
+        # Existing TASK/NEXT classifications remain intact; only NEW is absent.
+    elif variant.endswith(".missing-classification"):
         policy["coverage"]["rows"] = [row for row in rows if row["frontier_key"] != "NEXT"]
     else:
         rows.append(deepcopy(rows[0]))
