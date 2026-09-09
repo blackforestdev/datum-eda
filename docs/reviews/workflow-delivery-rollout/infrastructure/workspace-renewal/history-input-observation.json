@@ -1,0 +1,786 @@
+{
+  "schema_version": 1,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "command": "python3 -I -S -B -c 'import sys,os,json; from pathlib import Path; runtime=Path.cwd(); sys.path.insert(0,str(runtime/\"scripts\")); from workflow_delivery_capture_fixture import prepare_fixture; from workflow_delivery_capture_cases import run_case; from workflow_delivery_capture_hook import run_hook_case; from workflow_delivery_capture_history import BASE_CASES,HISTORY_CASES,CURRENT_HISTORY_CASE; from workflow_delivery_capture_snapshots import UNTRACKED_CASES; from workflow_delivery_capture_state import git; from workflow_delivery_capture_command import save; pin=\"22192085c55ec654eb209deccc0450afd53b2c65\"; assert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\"); store=Path(\"/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/workspace-renewal-history-inputs\"); store.mkdir(exist_ok=False); packet=store/\"packet\"; prepare_fixture(store/\"baseline\",packet); environment={\"PATH\":os.defpath,\"HOME\":str(store),\"XDG_CONFIG_HOME\":str(store),\"GIT_CONFIG_NOSYSTEM\":\"1\",\"GIT_CONFIG_GLOBAL\":os.devnull,\"LANG\":\"C\"}; results=[]; cases=[(c,(\"R\",)) for c in sorted(BASE_CASES.keys()|HISTORY_CASES.keys())]+[(c,(\"C\",\"H\",\"S-check\",\"S-details\")) for c in sorted(UNTRACKED_CASES|{CURRENT_HISTORY_CASE})]\nfor case,surfaces in cases:\n for surface in surfaces:\n  for phase,identity in ((\"primary\",case),(\"recovery\",\"INFRA-S01-01\")):\n   destination=store/(case+\"-\"+surface+\"-\"+phase); result=run_hook_case(packet,destination,environment,case_id=identity) if surface==\"H\" else run_case(packet,destination,runtime,environment,case_id=identity,surface=surface); assert result[\"observation_matches_expected\"]; results.append({\"requested_case\":case,\"surface\":surface,\"phase\":phase,\"assessment\":result,\"capture_directory\":destination.name}); print(json.dumps({\"completed\":len(results),\"case\":case,\"surface\":surface,\"phase\":phase}),flush=True)\nassert len(results)==34; assert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\"); save(store/\"renewal-result.json\",{\"candidate\":pin,\"invocations\":results,\"scope\":\"Retained fresh original INFRA-S05-04,-05,-07,-08,-09 strict-policy history and ignored-input observations with recovery; not all workspace conditions or full matrix\",\"complete_matrix\":False,\"activation_performed\":False}); print(\"History/input renewal completed: 34 actual invocations\",flush=True)'",
+  "exit_code": 0,
+  "invocation_count": 34,
+  "results": [
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-04.missing-base",
+        "complete_matrix": false,
+        "expected_code": "WDQ-TRUST",
+        "expected_detail": "Needed a single revision",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-TRUST",
+            "detail": "Needed a single revision",
+            "path": "git"
+          }
+        ],
+        "expected_path": "git",
+        "invocation_id": "2b1b5840-3665-4461-b686-abf291909d44",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "4a3ab2cade325a6a6d0c62a49907d3a675fc0887e134f1d4c7b30f506ea1d858",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-04.missing-base-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-04.missing-base",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "62e50201-402a-4723-a6c5-6588a37f6753",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "ac0917664955740856a275fde95497adf59ea3a839cf5c4ef899ef50abe1b10e",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-04.missing-base-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-04.missing-base",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-04.nonancestor-base",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "candidate must descend from the explicit transaction base",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "candidate must descend from the explicit transaction base",
+            "path": "transaction"
+          }
+        ],
+        "expected_path": "transaction",
+        "invocation_id": "9b3d2f2f-d76a-4d98-97c5-fce2082704ce",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "8ed5976eb8f5c3f5b238ee62c5aeb6f26bce79a714353cdf3c988711c1ce59b9",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-04.nonancestor-base-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-04.nonancestor-base",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "5186320f-8bf7-4604-a95b-a7181f98ad0a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "ed6ef406969709c0d87cf3488c0203a7bee00d97bb69f7074247488b6de4ae58",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-04.nonancestor-base-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-04.nonancestor-base",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-07.add-delete",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "src/unscoped.py"
+          }
+        ],
+        "expected_path": "src/unscoped.py",
+        "invocation_id": "b7f4d1e4-3b0a-4ce5-839a-9a39aef5df5e",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "ba0d58e14ecfbd33ae6e2d40712e3dd56b24d677bc72e6fbc1f0884d2a30302f",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-07.add-delete-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-07.add-delete",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "4d72e445-5d2f-4c31-af81-742780da0921",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "f19e8139923881569740f4fbf8e7e5d0b2b4bd3b283fe6ec3704e90ba1902d04",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-07.add-delete-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-07.add-delete",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-07.change-revert",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "src/read.py"
+          }
+        ],
+        "expected_path": "src/read.py",
+        "invocation_id": "415a3990-5fe9-4e38-9b21-7664e261d8c2",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "d621f59aa7ca2866afbd480263969eef283843a253b75d1b732c07ed827a45e4",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-07.change-revert-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-07.change-revert",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "9ca7e988-d2d5-4a7a-b61b-1660f0433c09",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "941084c51dda5b95c2ad886c837f100ecfc18d3ffedc602c0b0c5827355d0ebe",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-07.change-revert-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-07.change-revert",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-08.merge-parent",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "src/unscoped.py"
+          }
+        ],
+        "expected_path": "src/unscoped.py",
+        "invocation_id": "762b8ad1-84e2-4ca3-8337-ef329dc66d9a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "908d72615ab6f3ea16916d5c64253338c2ebf4b7fb3532f7a7e6b7e50c325407",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-08.merge-parent-R-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-08.merge-parent",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "46f9a53f-7296-4045-8121-11a312450c86",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "819d1c17aa7b0722690084b9b22bf99fdf35131a5f36adad80dead7f7dce2df7",
+        "selector_operation": null,
+        "surface": "R"
+      },
+      "capture_directory": "INFRA-S05-08.merge-parent-R-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-08.merge-parent",
+      "surface": "R"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-05.ignored",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "79d5f2c3-c950-41fc-8a16-e0626dfd6e89",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "44ee49a414ea845c6f557be569aad2595884120f482e82f42f3fc5277f145877",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S05-05.ignored-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-05.ignored",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "f33a30b2-136e-48e3-836e-64dceb5ae1ee",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "cbfdc0f65787eba10ab7b1070953187cabcf44c4d04b3188098ff99e557bf690",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S05-05.ignored-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-05.ignored",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-05.ignored",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "d27ebeec-aa43-447f-a251-56c117bef389",
+        "observation_matches_expected": true,
+        "result_sha256": "3d3d100cb99fdf320e1bcdc22195eb5158753b6329587a92983f21666a544ab3",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "6534bf199e1d2c377c2dd5c5cb754ea7c5df229b90ab8372f751bc00e12babc0",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S05-05.ignored-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-05.ignored",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "a0e52072-43c4-460c-8e95-2684495aa77a",
+        "observation_matches_expected": true,
+        "result_sha256": "c468b39ef195e85ed4771db1c8a43f3a700d13ebc046a48dc2ba05c20aedc2ea",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "6534bf199e1d2c377c2dd5c5cb754ea7c5df229b90ab8372f751bc00e12babc0",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S05-05.ignored-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-05.ignored",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-05.ignored",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "src/unscoped.py"
+          }
+        ],
+        "expected_path": "src/unscoped.py",
+        "invocation_id": "168747bb-6187-47ad-90f7-54f3db7de50c",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "a2e3de88d390cc81c5431cf058374bff5bd6cc7f5dcfcf8a7cb3c267ea4fcc5c",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-05.ignored-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-05.ignored",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "67dbaf08-a088-450c-ab9d-eb2a3e69d014",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "3c3ef8ef4bd68f56566da5aae9c9d72cd5d0858880fe6bf2128e03fbc2100bf6",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-05.ignored-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-05.ignored",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-05.ignored",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "src/unscoped.py"
+          }
+        ],
+        "expected_path": "src/unscoped.py",
+        "invocation_id": "ec49f488-b7ea-4c14-9d9c-902cd506dc7d",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "f7e7f0c605ff191a41b7537882b3ddd23b5334f0c3152070a582dfc83c3cad59",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-05.ignored-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-05.ignored",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "18b49034-0af5-4ad1-9946-51988f35e887",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "a63f0cad7a09cf3e2b382eaf380223b44ff27e136250dbd9c78686fde82b593a",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-05.ignored-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-05.ignored",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-05.untracked",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "dea1dc04-fc8a-48b1-9c33-dd36772f1123",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "dc569a0e40a5a7db24181f2087e207d8bf7d7d2adaa9ee43136ef3e880321ea1",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S05-05.untracked-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-05.untracked",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "78ece9c6-6087-4a5a-bc2b-fad685915fda",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "7333c79ee7460b819c221008623426cefe1185e999ada90c254a60fcb919a5ec",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S05-05.untracked-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-05.untracked",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-05.untracked",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "3ef0b0c4-a081-41ff-8ba9-e06899c8ac25",
+        "observation_matches_expected": true,
+        "result_sha256": "8f7889509c180857076c061d05091a90d16d62f9b843b3db2a278f6aa707078c",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "6534bf199e1d2c377c2dd5c5cb754ea7c5df229b90ab8372f751bc00e12babc0",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S05-05.untracked-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-05.untracked",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "1fa3a176-c794-4369-a3f1-d9d6681cec15",
+        "observation_matches_expected": true,
+        "result_sha256": "f4a13afd830e6c3d6f2a1d3498cf9ab1a5f22d0a0bf54851abdb6524ee42429b",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "6534bf199e1d2c377c2dd5c5cb754ea7c5df229b90ab8372f751bc00e12babc0",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S05-05.untracked-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-05.untracked",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-05.untracked",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "src/unscoped.py"
+          }
+        ],
+        "expected_path": "src/unscoped.py",
+        "invocation_id": "ea0bf6f2-f54f-484f-9cdc-28aceb5161ea",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "33883482e28e6eb9f7b4291a12ab5cfa5120e5b52dd1fe54659f358583f09d3d",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-05.untracked-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-05.untracked",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "fb5abc55-0f70-4d60-a318-3165a6daea9a",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "93e27fb0fb5ed4ee9b9abcb3ea703f8fd9e39795c567a672828d1f6680be954e",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-05.untracked-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-05.untracked",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-05.untracked",
+        "complete_matrix": false,
+        "expected_code": "WDQ-COVERAGE",
+        "expected_detail": "production change has no promoted scope",
+        "expected_diagnostics": [
+          {
+            "code": "WDQ-COVERAGE",
+            "detail": "production change has no promoted scope",
+            "path": "src/unscoped.py"
+          }
+        ],
+        "expected_path": "src/unscoped.py",
+        "invocation_id": "9c5a6a24-0dba-4965-adff-d65a84c2469e",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "da3027c6357845ba67284d984c4e0e564338fe0717b10c53f157ce6ed2f98d6f",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-05.untracked-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-05.untracked",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "a3dd4fa8-ce67-463a-9545-b4a436c95095",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "899ec8c6246439bb504aa524bbb335423c2d96306b93085284bfc848071d504f",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-05.untracked-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-05.untracked",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-09.empty-current-transaction",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "dbc8c012-10e7-43e7-817b-78f14513de38",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "007da72757af2cb7822e119ee3b5831269f31638c9191bc63377316da0753f2b",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S05-09.empty-current-transaction-C-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-09.empty-current-transaction",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "4c19c978-cd08-4754-bab2-281df248544e",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "2d90ec3b5bf0405a0e54895465c9dc59b91c0677cb2fa3ba042319f8c973b38a",
+        "selector_operation": null,
+        "surface": "C"
+      },
+      "capture_directory": "INFRA-S05-09.empty-current-transaction-C-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-09.empty-current-transaction",
+      "surface": "C"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-09.empty-current-transaction",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "66a50f0d-5833-41b7-9c19-dd62fb51ac82",
+        "observation_matches_expected": true,
+        "result_sha256": "b64e6833ad828f9cba8cb9a59e8188e1f69a689f6f9d0dc0890cd195c69f772d",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "6534bf199e1d2c377c2dd5c5cb754ea7c5df229b90ab8372f751bc00e12babc0",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S05-09.empty-current-transaction-H-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-09.empty-current-transaction",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "child_tool_closure_complete": false,
+        "complete_matrix": false,
+        "handler_trace_complete": false,
+        "invocation_id": "a228bb56-925c-4818-9e3a-ff0b5d03ed41",
+        "observation_matches_expected": true,
+        "result_sha256": "051eef8ac926fbb7c41f0ebd8618890cb6aa96b4a756328fcb163d8cc44f484d",
+        "support_input_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "support_manifest_sha256": "6534bf199e1d2c377c2dd5c5cb754ea7c5df229b90ab8372f751bc00e12babc0",
+        "support_output_sha256": "fac6cff9af9b6bc81346e8e47eeae2867114edec3ea138ed24ba8b2f71251294",
+        "surface": "H",
+        "validator_entrypoint_observed": true
+      },
+      "capture_directory": "INFRA-S05-09.empty-current-transaction-H-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-09.empty-current-transaction",
+      "surface": "H"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-09.empty-current-transaction",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "3bf95307-9934-4660-9f92-4245b677cab9",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "c6e56949354e5560ee10258854b0d24818372d5573c0897a38b8ffcefc6f7f77",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-09.empty-current-transaction-S-check-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-09.empty-current-transaction",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "8304b4d3-a9dc-488b-8026-d25685f9d927",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "8a6de32862ab59c8eecf47ddc86808b375cb4e35f8a459ab554b4dcbb215b1eb",
+        "selector_operation": "S-check",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-09.empty-current-transaction-S-check-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-09.empty-current-transaction",
+      "surface": "S-check"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S05-09.empty-current-transaction",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "09557ec6-1ed2-4c27-a640-7cc9e281b17c",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "953ef66c9a4322bec94d3fc89e200cc2ac24d3230828f399a56946023be606ef",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-09.empty-current-transaction-S-details-primary",
+      "phase": "primary",
+      "requested_case": "INFRA-S05-09.empty-current-transaction",
+      "surface": "S-details"
+    },
+    {
+      "assessment": {
+        "acceptance_asserted": false,
+        "case_id": "INFRA-S01-01",
+        "complete_matrix": false,
+        "expected_code": null,
+        "expected_detail": null,
+        "expected_diagnostics": [],
+        "expected_path": null,
+        "invocation_id": "8daf460f-834a-4d8e-933b-89b8e7eb7caf",
+        "observation_matches_expected": true,
+        "report_only": false,
+        "result_sha256": "5b417f201110fe65da920c0ae5bb7d78f5f7395ac75439e99ec0c932ffa22834",
+        "selector_operation": "S-details",
+        "surface": "S"
+      },
+      "capture_directory": "INFRA-S05-09.empty-current-transaction-S-details-recovery",
+      "phase": "recovery",
+      "requested_case": "INFRA-S05-09.empty-current-transaction",
+      "surface": "S-details"
+    }
+  ],
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/history-input-captures.tar.xz",
+    "sha256": "55ee94671096643df199c012e83e926d8cbd329868b911e0ea6a2d8db6592682",
+    "size": 1009900
+  },
+  "scope": "Retained fresh original INFRA-S05-04,-05,-07,-08,-09 strict-policy history and ignored-input observations with recovery; not all workspace conditions or full matrix",
+  "complete_matrix": false,
+  "compatibility_complete": false,
+  "activation_performed": false
+}
