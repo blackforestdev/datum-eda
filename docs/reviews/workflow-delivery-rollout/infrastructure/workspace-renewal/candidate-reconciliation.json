@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-COMPAT",
+  "issue_ids": [
+    "dat-wdq-rollout-implementation-ffy",
+    "dat-wdq-workspace-inputs-zmt"
+  ],
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "parent": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "retained_ref": "refs/datum-wdq/candidates/workspace-renewal-20260909",
+  "changes": [
+    "Imported committed c739a1ec renewal sequence, authorization and Beads export into isolated candidate; six historical steps and all 55 other Frontier items unchanged.",
+    "Prepared mapping now uses WDQ-COMPAT verification and WDQ-RECHECK independent review; WDQ-READY and null infrastructure activate/accept preserved.",
+    "Independent review found publication baseline omitted renewal completion. Both base and candidate now require complete renewal steps, exact dependency chain and renewed mapping; historical source-scope IDs unchanged."
+  ],
+  "verification": {
+    "mapping_tests": 7,
+    "rollout_contract_tests": 17,
+    "coverage_tests": 10,
+    "activation_preflight_tests": 25,
+    "independent_activation_preflight_tests": 25,
+    "evidence_routes": 25,
+    "evidence_artifacts": 119,
+    "classified_specs": 248,
+    "parity_inventories": 18,
+    "source_health_files": 1919,
+    "diff_check": "pass",
+    "preservation_and_transition_check": "55 other items and six historical steps unchanged; delivery_shape and validate_transition pass; required_phase is ready"
+  },
+  "exact_candidate_check": {
+    "command": "python3 -B scripts/check_workflow_delivery.py --root . --enforce --authority-ref 0e5b8064a9faca407fac43bd2b362ba4d7200327 --base-ref 0e5b8064a9faca407fac43bd2b362ba4d7200327 --environment-path specs/workflow_delivery/rollout.environments.json --candidate-ref 0e5b8064a9faca407fac43bd2b362ba4d7200327",
+    "exit_code": 0,
+    "result": {
+      "acceptance_asserted": false,
+      "checks": [
+        "WORKFLOW-DELIVERY-GATE-PILOT: accept",
+        "WORKFLOW-DELIVERY-IMPLEMENTATION: ready"
+      ],
+      "findings": [],
+      "mode": "enforce",
+      "readiness_asserted": false
+    },
+    "scope": "Prospective candidate readiness validation with equal exact pins, not publication-history inspection or promotion."
+  },
+  "failed_attempts": [
+    "Candidate br --no-db update and flush refused NGI-3 because candidate lives under .git. No bypass: imported the already committed main br export; verified other issue records unchanged.",
+    "Standard project-status render refused missing authorization classification and old installed policy authority. Added classification; generated projection using existing render_status. This rendering was not represented as validation.",
+    "First exact candidate check supplied nonexistent infrastructure/environment.json and refused WDQ-ENVIRONMENT. Corrected to the checked-in rollout.environments.json selected by the producer environment recipes; subsequent exact check passed."
+  ],
+  "independent_review": {
+    "session": "/root/wdq_independent_review",
+    "result": "Reported renewal-completion blocker resolved; both views require renewal completion, chain and mapping; 25 tests independently passed. No edits or promotion."
+  },
+  "remaining": [
+    "Renew exact source/input construction for changed runtime and normative inputs; older captures retain their original pins and are not relabeled.",
+    "Complete required producer scenarios, additional workspace groups and actual real-roadmap clean/mixed captures, with retained failed attempts.",
+    "Complete distinct renewed replay, typed proof/defect accounting and exact publication inspection before WDQ-I04.",
+    "Separate owner ratification/activation, installed verification, three actual adoption cohorts and final owner acceptance remain mandatory."
+  ],
+  "compatibility_complete": false,
+  "activation_performed": false,
+  "product_lanes_changed": false,
+  "new_dependencies": false
+}
