@@ -264,7 +264,8 @@
     "scripts/workflow_delivery_workspace.py",
     "scripts/workflow_delivery_workspace_authority.py",
     "specs/rustfmt_exemption_manifest.json",
-    "specs/workflow_delivery/rollout.environments.json"
+    "specs/workflow_delivery/rollout.environments.json",
+    "specs/workflow_delivery/workspace-inputs.json"
   ],
   "consumers": [
     {

@@ -10,6 +10,7 @@
     "docs/reviews/workflow-delivery-rollout/clauses/distributed-collaboration.json",
     "docs/reviews/workflow-delivery-rollout/category-preflight.json",
     "specs/workflow_delivery/rollout.contract.json",
+    "specs/workflow_delivery/workspace-inputs.json",
     "docs/reviews/workflow-delivery-rollout/rollout-mapping.json",
     "docs/reviews/workflow-delivery-rollout/proposal.json",
     "docs/reviews/workflow-foundation/handoff.md",
@@ -198,6 +199,11 @@
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
       "notes": "Prepared schema-1 infrastructure contract with staged_cli, candidate_cli and owner_hook validator surfaces plus the selector, for the proposed version-2 rollout mapping; not operative enrollment or proof. Exact source closure must be reconciled against the assembled candidate at WDQ-READY."
+    },
+    "specs/workflow_delivery/workspace-inputs.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-COMPAT exact proposed main-workspace baseline: one required owner script and 23 legacy caches observed read-only. Not owner-promoted authority or permission to delete, regenerate or relocate files. Exact I04 review and renewed compatibility proof remain required."
     },
     "docs/reviews/workflow-delivery-rollout/rollout-mapping.json": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",

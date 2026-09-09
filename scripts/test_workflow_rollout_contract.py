@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = "specs/workflow_delivery/rollout.contract.json"
 SPEC = "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md"
 MECHANISM = "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md"
+WORKSPACE = "specs/workflow_delivery/workspace-inputs.json"
 
 
 class RepositoryView:
@@ -72,19 +73,29 @@ class RolloutContractTest(unittest.TestCase):
 
     def test_authority_is_complete_but_not_its_own_progress_or_receipts(self):
         members = {p["path"] for p in authority_manifest(self.tree, self.contract, ready=False)}
-        self.assertEqual({SPEC, CONTRACT, MECHANISM,
+        self.assertEqual({SPEC, CONTRACT, MECHANISM, WORKSPACE,
             "research/process-quality/WORKFLOW_INFRASTRUCTURE_CONTRACT_BASIS.md"}, members)
         self.assertNotIn(self.contract["proof_path"], members)
         self.assertNotIn(self.contract["review_path"], members)
         self.assertNotIn("specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md", members)
 
     def test_changed_mechanism_or_contract_requires_fresh_route_review(self):
-        for path in (MECHANISM, CONTRACT, SPEC):
+        for path in (MECHANISM, CONTRACT, SPEC, WORKSPACE):
             with self.subTest(path=path):
                 tree = RepositoryView({path: self.tree.read(path) + b"\n"})
                 with self.assertRaises(DeliveryInputError) as raised:
                     authority_manifest(tree, self.contract, ready=False)
                 self.assertEqual("WDQ-AUTHORITY", raised.exception.code)
+
+    def test_workspace_policy_is_an_explicit_validated_proof_input(self):
+        from workflow_delivery_workspace import workspace_policy_shape
+        policy = self.tree.json(WORKSPACE)
+        workspace_policy_shape(policy)
+        self.assertIn(WORKSPACE, self.contract["input_roots"])
+        self.assertEqual(24, len(policy["local_files"]))
+        owners = [row["path"] for row in policy["local_files"]
+                  if row["category"] == "owner_local"]
+        self.assertEqual(["scripts/run_gui_doa2526.sh"], owners)
 
     def test_operational_progress_does_not_rewrite_proof_authority(self):
         path = "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md"
