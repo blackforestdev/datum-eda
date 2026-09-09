@@ -1,0 +1,435 @@
+{
+  "schema_version": 1,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "fixture_authority": "d04dfe433e9c3333b76a3768f2ea7d4379851fe8",
+  "command": "python3 -I -S -B -c 'import sys,os,json,uuid,py_compile,subprocess\nfrom pathlib import Path\nruntime=Path.cwd()\nsys.path.insert(0,str(runtime/\"scripts\"))\nfrom test_workflow_delivery_workspace_entrypoints import WorkspaceEntrypointsTest\nfrom workflow_delivery_capture_command import capture_command,save\nfrom workflow_delivery_support_bundle import prepare_bundle\nfrom workflow_delivery_support_store import support_locations\nfrom workflow_delivery_capture_state import git\npin=\"22192085c55ec654eb209deccc0450afd53b2c65\"\nassert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\")\nstore=Path(\"/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/workspace-runtime-entrypoints\")\nstore.mkdir(exist_ok=False)\nt=WorkspaceEntrypointsTest()\nt.setUp()\nresults=[]\ntry:\n prepare_bundle(t.f.root,t.authority)\n locations=support_locations(t.f.root,t.authority)\n t.f.git(\"config\",\"core.hooksPath\",str(locations[\"hooks\"]))\n t.f.git(\"config\",\"datum.workflowDeliveryRunnerPath\",str(locations[\"runner\"]))\n nonce=str(uuid.uuid4())\n t.f.write(\".git/datum-wdq-capture-owner\",(nonce+\"\\n\").encode())\n environment={\"PATH\":os.defpath,\"HOME\":str(store),\"XDG_CONFIG_HOME\":str(store),\"GIT_CONFIG_NOSYSTEM\":\"1\",\"GIT_CONFIG_GLOBAL\":os.devnull,\"LANG\":\"C\"}\n def observe(label,refusal=None):\n  for surface in (\"C\",\"R\",\"S\",\"H\"):\n   output=store/(label+\"-\"+surface)\n   env=dict(environment)\n   if surface==\"H\":\n    command=[str(locations[\"hook\"])]\n    env[\"DATUM_WDQ_OBSERVE_PATH\"]=str(output/\"calls.jsonl\")\n   else:\n    script=runtime/\"scripts\"/(\"project_status.py\" if surface==\"S\" else \"check_workflow_delivery.py\")\n    args=[\"--root\",str(t.f.root)]\n    args+=[\"check\"] if surface==\"S\" else [\"--enforce\",\"--authority-ref\",t.authority,\"--base-ref\",t.authority,\"--environment-path\",\"requested-environment.json\"]+([\"--staged\"] if surface==\"C\" else [\"--candidate-ref\",t.authority])\n    command=[sys.executable,\"-I\",\"-S\",\"-B\",str(runtime/\"scripts/workflow_delivery_observe_python.py\"),\"--script\",str(script),\"--source-root\",str(runtime),\"--output\",str(output/\"calls.jsonl\"),\"--function\",\"main\",\"--function\",\"selector_failures\",\"--\",*args]\n   result=capture_command(t.f.root,output,command,env,fixture_nonce=nonce,case_id=\"WORKSPACE-\"+label,surface=surface,untracked_roots=[\"src\",\"tools\",\".beads\"],timeout=60)\n   text=(output/\"stdout.bin\").read_text()+(output/\"stderr.bin\").read_text()\n   expected_refusal=surface==\"S\" and refusal is not None\n   assert result[\"kind\"]==\"exited\" and (result[\"returncode\"]!=0)==expected_refusal,text\n   assert not result[\"changed_state_fields\"] and not result[\"changed_files\"],result\n   if expected_refusal: assert refusal in text,text\n   results.append({\"case\":label,\"surface\":surface,\"expected_refusal\":expected_refusal,\"invocation_id\":result[\"invocation_id\"],\"returncode\":result[\"returncode\"],\"capture_directory\":output.name})\n   print(json.dumps(results[-1]),flush=True)\n for level in (0,1,2):\n  py_compile.compile(str(t.f.root/\"src/read.py\"),optimize=level,doraise=True)\n  observe(\"verified-cache-\"+str(level))\n owner=t.f.root/\"tools/local.sh\"\n owner_raw=owner.read_bytes()\n unknown=t.f.root/\"src/__pycache__/unknown.py\"\n unknown.write_bytes(b\"unknown = 1\\n\")\n observe(\"unknown-ignored-source\",\"WDQ-COVERAGE\")\n unknown.unlink()\n observe(\"unknown-restored\")\n owner.write_bytes(b\"changed\")\n observe(\"owner-changed\",\"WDQ-COVERAGE\")\n owner.write_bytes(owner_raw)\n observe(\"owner-restored\")\n owner.unlink()\n observe(\"owner-missing\",\"required pinned local file is missing\")\n owner.write_bytes(owner_raw)\n owner.chmod(0o775)\n observe(\"owner-returned\")\n cache=t.cache\n cache_raw=cache.read_bytes()\n cache.write_bytes(b\"forged bytecode\")\n observe(\"cache-forged\",\"WDQ-COVERAGE\")\n cache.write_bytes(cache_raw)\n observe(\"cache-restored\")\n policy=t.f.root/\"specs/workflow_delivery/workspace-inputs.json\"\n policy_raw=policy.read_bytes()\n policy.write_bytes(policy_raw+b\"\\n\")\n observe(\"policy-changed\",\"WDQ-POLICY\")\n policy.write_bytes(policy_raw)\n observe(\"policy-restored\")\n assert len(results)==52\n subprocess.run([\"tar\",\"-cJf\",str(store/\"fixture.tar.xz\"),\"-C\",str(t.f.root),\".\"],check=True)\n save(store/\"renewal-result.json\",{\"candidate\":pin,\"fixture_authority\":t.authority,\"invocations\":results,\"scope\":\"Synthetic workspace runtime cases across staged CLI, candidate CLI, worktree selector and hook; optimization caches coexist. Not all workspace groups, real roadmap or promotion inspection.\",\"compatibility_complete\":False,\"activation_performed\":False})\n assert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\")\nfinally:\n t.doCleanups()\n'",
+  "exit_code": 0,
+  "invocation_count": 52,
+  "results": [
+    {
+      "capture_directory": "verified-cache-0-C",
+      "case": "verified-cache-0",
+      "expected_refusal": false,
+      "invocation_id": "53a8151b-c352-41b7-b7ff-7766b0236b15",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "verified-cache-0-R",
+      "case": "verified-cache-0",
+      "expected_refusal": false,
+      "invocation_id": "11b281bf-a4ec-444a-a3c2-16002fde5c04",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "verified-cache-0-S",
+      "case": "verified-cache-0",
+      "expected_refusal": false,
+      "invocation_id": "cc788995-4814-45de-a03c-45d318b8db9c",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "verified-cache-0-H",
+      "case": "verified-cache-0",
+      "expected_refusal": false,
+      "invocation_id": "8aedb2b1-aa09-412e-89f8-5242b309510e",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "verified-cache-1-C",
+      "case": "verified-cache-1",
+      "expected_refusal": false,
+      "invocation_id": "b3f84562-088b-4944-a88d-b10bd1919d0f",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "verified-cache-1-R",
+      "case": "verified-cache-1",
+      "expected_refusal": false,
+      "invocation_id": "58566180-de26-4932-8e19-7cccab043939",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "verified-cache-1-S",
+      "case": "verified-cache-1",
+      "expected_refusal": false,
+      "invocation_id": "8c03637b-fc50-4d99-993b-b19cf51aa6f0",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "verified-cache-1-H",
+      "case": "verified-cache-1",
+      "expected_refusal": false,
+      "invocation_id": "649c74d4-84b5-4557-8515-a28a451bd2ed",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "verified-cache-2-C",
+      "case": "verified-cache-2",
+      "expected_refusal": false,
+      "invocation_id": "ef6b531d-4510-4ad4-8c55-abf0c1607980",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "verified-cache-2-R",
+      "case": "verified-cache-2",
+      "expected_refusal": false,
+      "invocation_id": "eda3bbbb-cf59-4be2-b7e8-84b8ee82d909",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "verified-cache-2-S",
+      "case": "verified-cache-2",
+      "expected_refusal": false,
+      "invocation_id": "8ffd5fbd-6d7b-419a-b1d7-a81039e2a030",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "verified-cache-2-H",
+      "case": "verified-cache-2",
+      "expected_refusal": false,
+      "invocation_id": "eef966e9-cade-48c5-b471-c2daab221445",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "unknown-ignored-source-C",
+      "case": "unknown-ignored-source",
+      "expected_refusal": false,
+      "invocation_id": "380d973c-f05d-4f3f-9e92-543883b7995f",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "unknown-ignored-source-R",
+      "case": "unknown-ignored-source",
+      "expected_refusal": false,
+      "invocation_id": "46ba14b2-f935-4cb0-b840-75cea1ca4fc9",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "unknown-ignored-source-S",
+      "case": "unknown-ignored-source",
+      "expected_refusal": true,
+      "invocation_id": "07351b9b-2ca2-4397-b796-fa68760ddb48",
+      "returncode": 1,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "unknown-ignored-source-H",
+      "case": "unknown-ignored-source",
+      "expected_refusal": false,
+      "invocation_id": "dabe99b1-b204-4fb0-9160-7550463c1319",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "unknown-restored-C",
+      "case": "unknown-restored",
+      "expected_refusal": false,
+      "invocation_id": "b6f30e08-5fab-4f7d-bc43-59a025deb63e",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "unknown-restored-R",
+      "case": "unknown-restored",
+      "expected_refusal": false,
+      "invocation_id": "8289eaf8-1065-4887-8cc6-2dc3c430f73c",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "unknown-restored-S",
+      "case": "unknown-restored",
+      "expected_refusal": false,
+      "invocation_id": "e0a2c203-7a27-40dc-b82f-e6e518b2193d",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "unknown-restored-H",
+      "case": "unknown-restored",
+      "expected_refusal": false,
+      "invocation_id": "05deff86-92ea-439f-87a4-20eed86085c7",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "owner-changed-C",
+      "case": "owner-changed",
+      "expected_refusal": false,
+      "invocation_id": "3bf86445-91cc-49e4-b2be-0e69531a8ca2",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "owner-changed-R",
+      "case": "owner-changed",
+      "expected_refusal": false,
+      "invocation_id": "078fe451-4b56-4467-887d-fc7e4d4bbc84",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "owner-changed-S",
+      "case": "owner-changed",
+      "expected_refusal": true,
+      "invocation_id": "aa69285c-8880-4c15-bee6-2a66f88a8c25",
+      "returncode": 1,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "owner-changed-H",
+      "case": "owner-changed",
+      "expected_refusal": false,
+      "invocation_id": "94ca25a1-117a-440e-9c3f-1d6415ee3d71",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "owner-restored-C",
+      "case": "owner-restored",
+      "expected_refusal": false,
+      "invocation_id": "ddb29b80-85c3-41d6-a1f5-bb55e4e3342c",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "owner-restored-R",
+      "case": "owner-restored",
+      "expected_refusal": false,
+      "invocation_id": "942ce5cb-087b-4e8c-8552-bfdc2b8a8f42",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "owner-restored-S",
+      "case": "owner-restored",
+      "expected_refusal": false,
+      "invocation_id": "3fd66d3c-06c1-4e04-b2f6-e710ffebef6b",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "owner-restored-H",
+      "case": "owner-restored",
+      "expected_refusal": false,
+      "invocation_id": "2406c376-fc97-484d-a00d-dfe2be80b61d",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "owner-missing-C",
+      "case": "owner-missing",
+      "expected_refusal": false,
+      "invocation_id": "c5f10338-4019-4980-819a-478010c877c1",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "owner-missing-R",
+      "case": "owner-missing",
+      "expected_refusal": false,
+      "invocation_id": "55566df0-f3a0-44c0-8f51-bf0adc902179",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "owner-missing-S",
+      "case": "owner-missing",
+      "expected_refusal": true,
+      "invocation_id": "3dcc7117-5527-451a-ace4-86c620169583",
+      "returncode": 1,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "owner-missing-H",
+      "case": "owner-missing",
+      "expected_refusal": false,
+      "invocation_id": "00d9c890-c261-475e-808d-118791b2e94c",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "owner-returned-C",
+      "case": "owner-returned",
+      "expected_refusal": false,
+      "invocation_id": "26e32606-8e2d-420f-9199-fc626d0403e2",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "owner-returned-R",
+      "case": "owner-returned",
+      "expected_refusal": false,
+      "invocation_id": "e902224c-3421-4e37-a9db-1cc2cc26115a",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "owner-returned-S",
+      "case": "owner-returned",
+      "expected_refusal": false,
+      "invocation_id": "86f03b68-23ec-4692-9a72-6514fe07fc21",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "owner-returned-H",
+      "case": "owner-returned",
+      "expected_refusal": false,
+      "invocation_id": "38283bcd-73eb-472d-a7a6-c2e284624dd0",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "cache-forged-C",
+      "case": "cache-forged",
+      "expected_refusal": false,
+      "invocation_id": "b1fa97d1-c905-40db-ad77-e2a79c8915cd",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "cache-forged-R",
+      "case": "cache-forged",
+      "expected_refusal": false,
+      "invocation_id": "93e374ab-9c71-428a-b53a-cdb3f5f12a3d",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "cache-forged-S",
+      "case": "cache-forged",
+      "expected_refusal": true,
+      "invocation_id": "a0d71548-da32-4cff-ad74-06b28d7caf35",
+      "returncode": 1,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "cache-forged-H",
+      "case": "cache-forged",
+      "expected_refusal": false,
+      "invocation_id": "f1f2d4dd-9972-4c38-9ae3-6d91a3eb271f",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "cache-restored-C",
+      "case": "cache-restored",
+      "expected_refusal": false,
+      "invocation_id": "6f1d68f6-9ea0-427a-880a-4423f52ab5e0",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "cache-restored-R",
+      "case": "cache-restored",
+      "expected_refusal": false,
+      "invocation_id": "0120410a-0401-48ac-ac6f-36bd26ae1e38",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "cache-restored-S",
+      "case": "cache-restored",
+      "expected_refusal": false,
+      "invocation_id": "0a093af8-0169-4d49-aa83-35900625ab8b",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "cache-restored-H",
+      "case": "cache-restored",
+      "expected_refusal": false,
+      "invocation_id": "4373c4a1-6dd8-4ccc-a31e-333ac887bec0",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "policy-changed-C",
+      "case": "policy-changed",
+      "expected_refusal": false,
+      "invocation_id": "58326da8-d2b7-48a8-b255-7eb91e8c750b",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "policy-changed-R",
+      "case": "policy-changed",
+      "expected_refusal": false,
+      "invocation_id": "0eef8b37-08d7-41de-bec8-a6b39d67983c",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "policy-changed-S",
+      "case": "policy-changed",
+      "expected_refusal": true,
+      "invocation_id": "05176fc5-e7c7-4274-b92a-e7efca8d9d30",
+      "returncode": 1,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "policy-changed-H",
+      "case": "policy-changed",
+      "expected_refusal": false,
+      "invocation_id": "1485a6e8-05ea-4a24-abbc-3f6c6f840ace",
+      "returncode": 0,
+      "surface": "H"
+    },
+    {
+      "capture_directory": "policy-restored-C",
+      "case": "policy-restored",
+      "expected_refusal": false,
+      "invocation_id": "9a1e242a-79a0-4d73-9f7e-ee3c0b90b8d5",
+      "returncode": 0,
+      "surface": "C"
+    },
+    {
+      "capture_directory": "policy-restored-R",
+      "case": "policy-restored",
+      "expected_refusal": false,
+      "invocation_id": "a7364a93-ee2d-42e5-ad27-42f9f619971e",
+      "returncode": 0,
+      "surface": "R"
+    },
+    {
+      "capture_directory": "policy-restored-S",
+      "case": "policy-restored",
+      "expected_refusal": false,
+      "invocation_id": "940381ca-c269-41f7-a01c-74e631ddc119",
+      "returncode": 0,
+      "surface": "S"
+    },
+    {
+      "capture_directory": "policy-restored-H",
+      "case": "policy-restored",
+      "expected_refusal": false,
+      "invocation_id": "4580deb2-8e62-4606-82e8-f73b72067657",
+      "returncode": 0,
+      "surface": "H"
+    }
+  ],
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/runtime-entrypoint-captures.tar.xz",
+    "sha256": "91ea624d4871ccde46470edbea0a9d900772abe1fb3c310d267c006eb50daf47",
+    "size": 393936
+  },
+  "scope": "Synthetic workspace runtime cases across staged CLI, candidate CLI, worktree selector and hook; optimization caches coexist. Not all workspace groups, real roadmap or promotion inspection.",
+  "complete_matrix": false,
+  "compatibility_complete": false,
+  "activation_performed": false
+}
