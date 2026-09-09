@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "command": "python3 -I -S -B -c 'import os,sys,json,hashlib\nfrom pathlib import Path\nsys.path.insert(0,\"scripts\")\nfrom workflow_delivery_capture_fixture import prepare_fixture\nfrom workflow_delivery_capture_cases import run_case\nfrom workflow_delivery_capture_hook import run_hook_case\nfrom workflow_delivery_capture_command import save\nfrom workflow_delivery_capture_state import git\nruntime=Path.cwd()\npin=\"0e5b8064a9faca407fac43bd2b362ba4d7200327\"\nassert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\")\nmain=Path(\"/home/bfadmin/Documents/datum-eda\")\nprior_path=main/\".git/datum-wdq/proposals/wdq-i03-9cab72da-s02-coverage/observations-final.json\"\nprior=json.loads(prior_path.read_text())\nstore=main/\".git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/renewed-s02-coverage-0e5b8064\"\nstore.mkdir(exist_ok=False)\npackets={}\nfor row in prior[\"observations\"]:\n old_packet=Path(row[\"packet\"])\n assert old_packet.is_relative_to(main/\".git/datum-wdq/proposals\")\n raw=(old_packet/\"recipe.json\").read_bytes()\n assert hashlib.sha256(raw).hexdigest()==row[\"recipe_sha256\"]\n key=str(old_packet)\n if key not in packets:\n  index=len(packets)\n  recipe=json.loads(raw)\n  packet=store/(\"packet-\"+str(index))\n  prepare_fixture(store/(\"prepared-fixture-\"+str(index)),packet,fixture_variant=recipe.get(\"fixture_variant\"))\n  packets[key]=packet\nenv={\"PATH\":os.environ[\"PATH\"],\"HOME\":str(store),\"XDG_CONFIG_HOME\":str(store),\"GIT_CONFIG_NOSYSTEM\":\"1\",\"GIT_CONFIG_GLOBAL\":os.devnull,\"LANG\":\"C\"}\nobservations=[]\nfor row in prior[\"observations\"]:\n destination=store/row[\"directory\"]\n case=row[\"captured_case_id\"]\n surface=row[\"surface\"]\n packet=packets[row[\"packet\"]]\n assessment=run_hook_case(packet,destination,env,case_id=case) if surface==\"H\" else run_case(packet,destination,runtime,env,case_id=case,surface=surface)\n assert assessment[\"observation_matches_expected\"]\n record={\"case_id\":row[\"case_id\"],\"captured_case_id\":case,\"surface\":surface,\"phase\":row[\"phase\"],\"directory\":destination.name,\"packet\":packet.name,\"assessment\":assessment}\n observations.append(record)\n print(json.dumps({\"completed\":len(observations),\"case\":case,\"surface\":surface,\"phase\":row[\"phase\"]}),flush=True)\nsave(store/\"observations.json\",{\"candidate\":pin,\"historical_recipe_inventory\":str(prior_path),\"historical_recipe_inventory_sha256\":hashlib.sha256(prior_path.read_bytes()).hexdigest(),\"observations\":observations,\"scope\":\"Renewed original S02 coverage primary/recovery inventory, exact current implementation. Synthetic inputs not product evidence. No full matrix, independent replay or activation claimed.\",\"complete_matrix\":False,\"activation_performed\":False})\nassert len(observations)==110\nassert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\")\n'",
+  "exit_code": 0,
+  "observations": 110,
+  "primary": 55,
+  "recovery": 55,
+  "unique_invocations": 110,
+  "all_expected": true,
+  "fresh_packets": 8,
+  "recipe_selection": "Preserved each historical row's packet and exact verified recipe variant, then prepared new packets from the current implementation. No historical invocation was relabeled.",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renewed-s02-coverage-captures.tar.xz",
+    "sha256": "7206d2e954dafd79fda9feebb2f4bc0c0310a8b1171468be01f4801b41b81360",
+    "bytes": 40662504,
+    "contents": "Complete fixture packets, raw captures, assessments and ordered observations.json for the 110-observation coverage subset."
+  },
+  "scope": "Original S02 coverage subset: classifications, execution authorization, product/infrastructure enrollment, source scope and policy drift plus recoveries. Not the separate live-ownership subset or remaining matrix.",
+  "independent_replay_performed": false,
+  "complete_matrix": false,
+  "activation_performed": false
+}
