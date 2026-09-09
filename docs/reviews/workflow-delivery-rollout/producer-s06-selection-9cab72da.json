@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "record_type": "infrastructure_producer_environment_selection_observations",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-I03",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "source_commit": "9cab72daab46122da6d2c45ab7f972814f702880",
+  "producer_session": "wdq-i03-producer-20260909",
+  "raw_storage": "Git-common/datum-wdq/proposals/wdq-i03-9cab72da-s06-selection",
+  "index_file": "observations-final.json",
+  "index_sha256": "29d0191823678daaee484972c04bae44f758371a149bf35bf97b8154fea55ec3",
+  "primary_invocations": 30,
+  "fresh_recovery_invocations": 30,
+  "cases": [
+    "INFRA-S06-09.duplicate-key",
+    "INFRA-S06-09.missing-key",
+    "INFRA-S06-09.unknown-key",
+    "INFRA-S06-12.selection-fields",
+    "INFRA-S06-12.selection-kind",
+    "INFRA-S06-12.selection-version"
+  ],
+  "raw_capture_integrity_rechecked": true,
+  "protected_state_unchanged": true,
+  "all_expected_diagnostics_matched": true,
+  "limits": [
+    "Actual entrypoint observations use explicitly malformed synthetic environment-selection inputs.",
+    "Only six selection variants are covered here; the remaining S06 cases, typed proof, independent replay and owner activation remain required."
+  ],
+  "scenario_proof_complete": false,
+  "complete_matrix": false,
+  "acceptance_asserted": false
+}

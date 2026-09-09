@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "record_type": "infrastructure_producer_s03_observations",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-I03",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "source_commit": "9cab72daab46122da6d2c45ab7f972814f702880",
+  "producer_session": "wdq-i03-producer-20260909",
+  "raw_storage": "Git-common/datum-wdq/proposals/wdq-i03-9cab72da-s03",
+  "index_file": "observations-final.json",
+  "index_sha256": "d8da9ae3005ef0619c63aa72799326a22c16ba663f86fb3f9140ae088cffd694",
+  "primary_invocations": 110,
+  "fresh_recovery_invocations": 75,
+  "case_counts": {
+    "INFRA-S03-01.no-declaration": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-01.ready-valid": {
+      "primary": 5,
+      "recovery": 0
+    },
+    "INFRA-S03-02.missing-marker": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-02.stale-route": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-03.foundation-answer": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-03.owner-question": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-04.missing-handler": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-04.product-valid": {
+      "primary": 5,
+      "recovery": 0
+    },
+    "INFRA-S03-05.all-normal-na": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-06.non-inventory-boundary": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-07.complete-matrix": {
+      "primary": 5,
+      "recovery": 0
+    },
+    "INFRA-S03-07.duplicate-disposition": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-07.omitted-clause": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-08.unratified-proposal": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-09.absent-owner": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-09.completed-owner": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-09.non-dependent-owner": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-09.pending-owner-valid": {
+      "primary": 5,
+      "recovery": 0
+    },
+    "INFRA-S03-09.planning-owner": {
+      "primary": 5,
+      "recovery": 5
+    },
+    "INFRA-S03-10.pending-authorship": {
+      "primary": 5,
+      "recovery": 0
+    },
+    "INFRA-S03-11.pending-infrastructure": {
+      "primary": 5,
+      "recovery": 0
+    },
+    "INFRA-S03-11.pending-product": {
+      "primary": 5,
+      "recovery": 0
+    }
+  },
+  "raw_capture_integrity_rechecked": true,
+  "protected_state_unchanged": true,
+  "all_expected_diagnostics_matched": true,
+  "limits": [
+    "These are actual infrastructure entrypoint captures against clearly synthetic specification/readiness inputs, not real product authorship or approval.",
+    "INFRA-S03-11 pending planning is captured here; its separate execution-refusal counterparts INFRA-S02-07 remain required in the ownership/enrollment group.",
+    "Complete typed scenario proof, independent replay, final promotion verification and owner activation remain due."
+  ],
+  "registered_s03_primary_coverage_complete": true,
+  "scenario_proof_complete": false,
+  "complete_matrix": false,
+  "acceptance_asserted": false
+}

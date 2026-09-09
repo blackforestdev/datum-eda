@@ -1,0 +1,2497 @@
+{
+  "schema_version": 1,
+  "record_type": "infrastructure_producer_matrix_preparation",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-I03",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "source_commit": "9cab72daab46122da6d2c45ab7f972814f702880",
+  "reviewed_input_manifest_sha256": "ab90c27b89f820df22200fc8ed1c200faae5536b7a28d64b14ae25869fc03564",
+  "normative_source": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+  "matrix_rows": {
+    "INFRA-S01-01": {
+      "input_requirement": "Complete valid enrolled fixture",
+      "required_result": "PASS",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S01-02": {
+      "input_requirement": "Invalid CLI argument and conflicting snapshot modes, separately",
+      "required_result": "Invocation error; no successful check claim",
+      "surfaces": [
+        "C",
+        "R"
+      ]
+    },
+    "INFRA-S01-03": {
+      "input_requirement": "Same invalid delivery input in report-only and enforce modes",
+      "required_result": "Report-only diagnostic is not permission; enforcement REFUSE",
+      "surfaces": [
+        "C",
+        "R"
+      ]
+    },
+    "INFRA-S01-04": {
+      "input_requirement": "Valid and refused cases with no color, GUI or pointer input",
+      "required_result": "Text identifies result, path and responsible context; state unchanged",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S02-01": {
+      "input_requirement": "Missing, duplicate and newly unclassified Frontier rows, separately",
+      "required_result": "REFUSE each classification defect",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S02-02": {
+      "input_requirement": "Reopen a historical item or add execution to its completion, separately",
+      "required_result": "REFUSE without reclassification",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S02-03": {
+      "input_requirement": "Give a specification execution authorization or an execution step, separately",
+      "required_result": "REFUSE both forms",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S02-04": {
+      "input_requirement": "Reactivate deferred work; change its retained completed history, separately",
+      "required_result": "REFUSE; unchanged dormant history still PASS",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S02-05": {
+      "input_requirement": "Cross external-lane authorization, selected-step or requirement boundary, separately",
+      "required_result": "REFUSE without reassignment",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S02-06": {
+      "input_requirement": "Modify production source in an unpermitted external-lane path",
+      "required_result": "REFUSE; no session-name exemption",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S02-07": {
+      "input_requirement": "Authorize product or infrastructure execution without enrollment, separately",
+      "required_result": "REFUSE both categories",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S02-08": {
+      "input_requirement": "Authorized source path with absent, expired or mismatched claim, separately",
+      "required_result": "REFUSE each ownership defect",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S02-09": {
+      "input_requirement": "Source outside any scope; prefix-lookalike path, separately",
+      "required_result": "REFUSE both escapes",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S02-10": {
+      "input_requirement": "Candidate changes policy category, scope or enrollment, separately",
+      "required_result": "REFUSE candidate self-permission",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S02-11": {
+      "input_requirement": "New Rust, MCP and workflow source outside permissions, separately",
+      "required_result": "REFUSE every production root",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S03-01": {
+      "input_requirement": "Complete preflight with no delivery declaration",
+      "required_result": "REFUSE before execution",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S03-02": {
+      "input_requirement": "Stale route digest; missing authority marker, separately",
+      "required_result": "REFUSE stale or absent authority",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S03-03": {
+      "input_requirement": "Unresolved mandatory owner question; missing foundation answer, separately",
+      "required_result": "REFUSE incomplete readiness",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S03-04": {
+      "input_requirement": "Required normal consumer has no real handler",
+      "required_result": "REFUSE readiness",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S03-05": {
+      "input_requirement": "Product contract makes every normal dimension not applicable",
+      "required_result": "REFUSE scope evasion",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S03-06": {
+      "input_requirement": "Specification lacks clause inventory",
+      "required_result": "REFUSE",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S03-07": {
+      "input_requirement": "Completed authorship omits or duplicates a clause disposition, separately",
+      "required_result": "REFUSE incomplete accounting",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S03-08": {
+      "input_requirement": "Candidate claims an unratified mechanism is ratified",
+      "required_result": "REFUSE candidate-only authority",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S03-09": {
+      "input_requirement": "Pending-owner disposition names absent, completed or non-dependent decision, separately",
+      "required_result": "REFUSE each invalid link",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S03-10": {
+      "input_requirement": "Valid pending authorship with no future output",
+      "required_result": "PASS without invented completion",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S03-11": {
+      "input_requirement": "Unassigned, unenrolled product remains pending planning",
+      "required_result": "PASS planning; separate execution attempt REFUSE",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S04-01": {
+      "input_requirement": "Skip review or complete review without its record, separately",
+      "required_result": "REFUSE",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S04-02": {
+      "input_requirement": "Reviewer equals an implementation session or original producer, separately",
+      "required_result": "REFUSE self-review",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S04-03": {
+      "input_requirement": "Copy producer events into purported replay",
+      "required_result": "REFUSE reused observations",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S04-04": {
+      "input_requirement": "Replay changes fixture, source/input or executable identity, separately",
+      "required_result": "REFUSE changed replay",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S04-05": {
+      "input_requirement": "Omit a producer or replay defect from review findings, separately",
+      "required_result": "REFUSE missing accounting",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S04-06": {
+      "input_requirement": "Required normal product observations are unavailable-only",
+      "required_result": "REFUSE producer and replay variants",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S04-07": {
+      "input_requirement": "Valid independent review with owner disposition still pending",
+      "required_result": "PASS review only; acceptance REFUSE",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S04-08": {
+      "input_requirement": "Acceptance receipt absent, wrong or candidate-only, separately",
+      "required_result": "REFUSE acceptance",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S04-09": {
+      "input_requirement": "Unresolved blocking defect at acceptance",
+      "required_result": "REFUSE",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S04-10": {
+      "input_requirement": "Exact authorized nonblocking deferral with otherwise valid acceptance",
+      "required_result": "PASS without deleting the finding",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S04-11": {
+      "input_requirement": "Legacy accepted pilot mapping and evidence unchanged",
+      "required_result": "PASS; no retroactive new mapping obligation",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S04-12": {
+      "input_requirement": "Valid infrastructure review with null activate/accept mapping",
+      "required_result": "PASS review, never product acceptance",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S05-01": {
+      "input_requirement": "Bad staged record repaired only in worktree",
+      "required_result": "C/H REFUSE; S judges its actual worktree",
+      "surfaces": [
+        "C",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S05-02": {
+      "input_requirement": "Valid staged record with bad unstaged worktree version",
+      "required_result": "C/H PASS; S REFUSE the worktree defect",
+      "surfaces": [
+        "C",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S05-03": {
+      "input_requirement": "Explicit candidate differs from both index and worktree",
+      "required_result": "R judges only requested commit and required history",
+      "surfaces": [
+        "R"
+      ]
+    },
+    "INFRA-S05-04": {
+      "input_requirement": "Missing or nonancestor candidate base, separately",
+      "required_result": "REFUSE ambiguous history",
+      "surfaces": [
+        "R"
+      ]
+    },
+    "INFRA-S05-05": {
+      "input_requirement": "Ignored/untracked production input",
+      "required_result": "S REFUSE uncovered worktree input; C/H exclude unstaged input",
+      "surfaces": [
+        "C",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S05-06": {
+      "input_requirement": "Delete or rename an input across allowed/unallowed boundaries, separately",
+      "required_result": "REFUSE escape and retain deletion/rename identity",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S05-07": {
+      "input_requirement": "Intermediate unscoped add/delete or change/revert, separately",
+      "required_result": "REFUSE history even if final bytes match",
+      "surfaces": [
+        "R"
+      ]
+    },
+    "INFRA-S05-08": {
+      "input_requirement": "Unpermitted source change reachable through a merge parent",
+      "required_result": "REFUSE hidden parent history",
+      "surfaces": [
+        "R"
+      ]
+    },
+    "INFRA-S05-09": {
+      "input_requirement": "Empty new transaction after historical change",
+      "required_result": "PASS only the new transaction; no historical certification",
+      "surfaces": [
+        "C",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-01": {
+      "input_requirement": "Missing or moving authority/base references, separately",
+      "required_result": "REFUSE missing/ambiguous trust",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-02": {
+      "input_requirement": "Changed gate/runner bytes or missing selected runner, separately",
+      "required_result": "REFUSE; no candidate fallback",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-03": {
+      "input_requirement": "Changed governing authority or relevant source input, separately",
+      "required_result": "REFUSE stale proof",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-04": {
+      "input_requirement": "Wrong fixture, binary, build receipt or registry identity, separately",
+      "required_result": "REFUSE each stale identity",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-05": {
+      "input_requirement": "Event input, dispatch, visible/state or artifact correlation differs, separately",
+      "required_result": "REFUSE each mismatch",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-06": {
+      "input_requirement": "Interrupt this run's observed live child; then invoke a fresh valid case",
+      "required_result": "Termination recorded, no success claim; state preserved; fresh PASS",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-07": {
+      "input_requirement": "Fresh valid invocation after an ordinary refusal",
+      "required_result": "PASS; no automatic repair or authority refresh",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-08": {
+      "input_requirement": "Legacy pilot plus distinct headless infrastructure environments",
+      "required_result": "PASS exact per-enrollment selection",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-09": {
+      "input_requirement": "Environment selection missing/duplicate/unknown enrolled key, separately",
+      "required_result": "REFUSE every selection defect",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-10": {
+      "input_requirement": "Swap environments between two enrolled identities",
+      "required_result": "REFUSE; no inferred equivalence",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-11": {
+      "input_requirement": "Change selected document, selected Blob or authority membership, separately",
+      "required_result": "REFUSE candidate-selected request",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-12": {
+      "input_requirement": "Malformed selection/environment version, kind or fields, separately",
+      "required_result": "REFUSE closed-shape violation",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-13": {
+      "input_requirement": "Changed recorded toolchain or interpreter digest, separately",
+      "required_result": "REFUSE mismatch with selected environment/build",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-14": {
+      "input_requirement": "Invent terminal dimensions for pipes; omit actual PTY dimensions, separately",
+      "required_result": "REFUSE headless record inconsistency",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    },
+    "INFRA-S06-15": {
+      "input_requirement": "Product tries to use headless environment shape",
+      "required_result": "REFUSE; native GUI evidence still required",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ]
+    }
+  },
+  "case_recipes": [
+    {
+      "case_id": "INFRA-S01-01",
+      "matrix_row": "INFRA-S01-01",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S01-02.conflicting-views",
+      "matrix_row": "INFRA-S01-02",
+      "surfaces": [
+        "C",
+        "R"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S01-02.invalid-argument",
+      "matrix_row": "INFRA-S01-02",
+      "surfaces": [
+        "C",
+        "R"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S01-03.enforce",
+      "matrix_row": "INFRA-S01-03",
+      "surfaces": [
+        "C",
+        "R"
+      ],
+      "fixture_variant": "INFRA-S06-05.visible",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S01-03.report-only",
+      "matrix_row": "INFRA-S01-03",
+      "surfaces": [
+        "C",
+        "R"
+      ],
+      "fixture_variant": "INFRA-S06-05.visible",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "matrix_row": "INFRA-S01-04",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "matrix_row": "INFRA-S01-04",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-01.duplicate-classification",
+      "matrix_row": "INFRA-S02-01",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-01.duplicate-classification",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-01.missing-classification",
+      "matrix_row": "INFRA-S02-01",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-01.missing-classification",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-01.newly-unclassified",
+      "matrix_row": "INFRA-S02-01",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-01.newly-unclassified",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-02.add-execution",
+      "matrix_row": "INFRA-S02-02",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-02.add-execution",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-02.reopen",
+      "matrix_row": "INFRA-S02-02",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-02.reopen",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-03.execution-authorized",
+      "matrix_row": "INFRA-S02-03",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-03.execution-authorized",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-03.execution-step-without-authorization",
+      "matrix_row": "INFRA-S02-03",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-03.execution-step-without-authorization",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-04.reactivate",
+      "matrix_row": "INFRA-S02-04",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-04.reactivate",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-04.retained-history",
+      "matrix_row": "INFRA-S02-04",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-04.retained-history",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-04.rewrite-history",
+      "matrix_row": "INFRA-S02-04",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-04.rewrite-history",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-05.authorization",
+      "matrix_row": "INFRA-S02-05",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-05.authorization",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-05.future-requirement",
+      "matrix_row": "INFRA-S02-05",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-05.future-requirement",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-05.requirement",
+      "matrix_row": "INFRA-S02-05",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-05.requirement",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-05.selected-step",
+      "matrix_row": "INFRA-S02-05",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-05.selected-step",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-06.authorized",
+      "matrix_row": "INFRA-S02-06",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-06.authorized",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-06.unpermitted",
+      "matrix_row": "INFRA-S02-06",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-06.unpermitted",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-07.infrastructure",
+      "matrix_row": "INFRA-S02-07",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-07.infrastructure",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-07.product",
+      "matrix_row": "INFRA-S02-07",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-07.product",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-08.absent",
+      "matrix_row": "INFRA-S02-08",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-08.absent",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-08.expired",
+      "matrix_row": "INFRA-S02-08",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-08.expired",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-08.mismatched",
+      "matrix_row": "INFRA-S02-08",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-08.mismatched",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-09.outside-scope",
+      "matrix_row": "INFRA-S02-09",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-09.prefix-lookalike",
+      "matrix_row": "INFRA-S02-09",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-09.prefix-lookalike",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-10.category",
+      "matrix_row": "INFRA-S02-10",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-10.enrollment-sessions",
+      "matrix_row": "INFRA-S02-10",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-10.scope",
+      "matrix_row": "INFRA-S02-10",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-11.mcp",
+      "matrix_row": "INFRA-S02-11",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-11.mcp",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-11.rust",
+      "matrix_row": "INFRA-S02-11",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-11.rust",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S02-11.workflow",
+      "matrix_row": "INFRA-S02-11",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S02-11.workflow",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-01.no-declaration",
+      "matrix_row": "INFRA-S03-01",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-01.no-declaration",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-01.ready-valid",
+      "matrix_row": "INFRA-S03-01",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-01.ready-valid",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-02.missing-marker",
+      "matrix_row": "INFRA-S03-02",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-02.missing-marker",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-02.stale-route",
+      "matrix_row": "INFRA-S03-02",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-02.stale-route",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-03.foundation-answer",
+      "matrix_row": "INFRA-S03-03",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-03.foundation-answer",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-03.owner-question",
+      "matrix_row": "INFRA-S03-03",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-03.owner-question",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-04.missing-handler",
+      "matrix_row": "INFRA-S03-04",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-04.missing-handler",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-04.product-valid",
+      "matrix_row": "INFRA-S03-04",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-04.product-valid",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-05.all-normal-na",
+      "matrix_row": "INFRA-S03-05",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-05.all-normal-na",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-06.non-inventory-boundary",
+      "matrix_row": "INFRA-S03-06",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-06.non-inventory-boundary",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-07.complete-matrix",
+      "matrix_row": "INFRA-S03-07",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-07.complete-matrix",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-07.duplicate-disposition",
+      "matrix_row": "INFRA-S03-07",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-07.duplicate-disposition",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-07.omitted-clause",
+      "matrix_row": "INFRA-S03-07",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-07.omitted-clause",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-08.unratified-proposal",
+      "matrix_row": "INFRA-S03-08",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-08.unratified-proposal",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-09.absent-owner",
+      "matrix_row": "INFRA-S03-09",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-09.absent-owner",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-09.completed-owner",
+      "matrix_row": "INFRA-S03-09",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-09.completed-owner",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-09.non-dependent-owner",
+      "matrix_row": "INFRA-S03-09",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-09.non-dependent-owner",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-09.pending-owner-valid",
+      "matrix_row": "INFRA-S03-09",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-09.pending-owner-valid",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-09.planning-owner",
+      "matrix_row": "INFRA-S03-09",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-09.planning-owner",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-10.pending-authorship",
+      "matrix_row": "INFRA-S03-10",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-10.pending-authorship",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-11.pending-infrastructure",
+      "matrix_row": "INFRA-S03-11",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-11.pending-infrastructure",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S03-11.pending-product",
+      "matrix_row": "INFRA-S03-11",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S03-11.pending-product",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-01.missing-record",
+      "matrix_row": "INFRA-S04-01",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-01.missing-record",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-01.skipped-review",
+      "matrix_row": "INFRA-S04-01",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-01.skipped-review",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-02.implementation-session",
+      "matrix_row": "INFRA-S04-02",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-02.implementation-session",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-02.producer-session",
+      "matrix_row": "INFRA-S04-02",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-02.producer-session",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-03.copied-events",
+      "matrix_row": "INFRA-S04-03",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-03.copied-events",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-04.executable",
+      "matrix_row": "INFRA-S04-04",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-04.executable",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-04.fixture",
+      "matrix_row": "INFRA-S04-04",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-04.fixture",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-04.inputs",
+      "matrix_row": "INFRA-S04-04",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-04.inputs",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-05.producer-defect",
+      "matrix_row": "INFRA-S04-05",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-05.producer-defect",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-05.replay-defect",
+      "matrix_row": "INFRA-S04-05",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-05.replay-defect",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-06.producer-unavailable",
+      "matrix_row": "INFRA-S04-06",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-06.producer-unavailable",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-06.reviewer-unavailable",
+      "matrix_row": "INFRA-S04-06",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-06.reviewer-unavailable",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-07.owner-pending",
+      "matrix_row": "INFRA-S04-07",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-07.owner-pending",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-08.absent-receipt",
+      "matrix_row": "INFRA-S04-08",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-08.absent-receipt",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-08.candidate-only-receipt",
+      "matrix_row": "INFRA-S04-08",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-08.wrong-receipt",
+      "matrix_row": "INFRA-S04-08",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-08.wrong-receipt",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-09.pending-disposition",
+      "matrix_row": "INFRA-S04-09",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-09.pending-disposition",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-10.authorized-nonblocking-deferral",
+      "matrix_row": "INFRA-S04-10",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-10.authorized-nonblocking-deferral",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-11",
+      "matrix_row": "INFRA-S04-11",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "real-roadmap",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S04-12.infrastructure-review",
+      "matrix_row": "INFRA-S04-12",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S04-12.infrastructure-review",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S05-01.staged-bad",
+      "matrix_row": "INFRA-S05-01",
+      "surfaces": [
+        "C",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S05-02.worktree-bad",
+      "matrix_row": "INFRA-S05-02",
+      "surfaces": [
+        "C",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S05-03.candidate-isolation",
+      "matrix_row": "INFRA-S05-03",
+      "surfaces": [
+        "R"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S05-04.missing-base",
+      "matrix_row": "INFRA-S05-04",
+      "surfaces": [
+        "R"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S05-04.nonancestor-base",
+      "matrix_row": "INFRA-S05-04",
+      "surfaces": [
+        "R"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S05-05.ignored",
+      "matrix_row": "INFRA-S05-05",
+      "surfaces": [
+        "C",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S05-05.untracked",
+      "matrix_row": "INFRA-S05-05",
+      "surfaces": [
+        "C",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S05-06.delete-unpermitted",
+      "matrix_row": "INFRA-S05-06",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S05-06.delete-unpermitted",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S05-06.rename-escape",
+      "matrix_row": "INFRA-S05-06",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S05-06.rename-escape",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S05-07.add-delete",
+      "matrix_row": "INFRA-S05-07",
+      "surfaces": [
+        "R"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S05-07.change-revert",
+      "matrix_row": "INFRA-S05-07",
+      "surfaces": [
+        "R"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S05-08.merge-parent",
+      "matrix_row": "INFRA-S05-08",
+      "surfaces": [
+        "R"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S05-09.empty-current-transaction",
+      "matrix_row": "INFRA-S05-09",
+      "surfaces": [
+        "C",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-01.missing-authority",
+      "matrix_row": "INFRA-S06-01",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-01.missing-base",
+      "matrix_row": "INFRA-S06-01",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-01.moving-authority",
+      "matrix_row": "INFRA-S06-01",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-01.moving-base",
+      "matrix_row": "INFRA-S06-01",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-02.changed-bootstrap",
+      "matrix_row": "INFRA-S06-02",
+      "surfaces": [
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured",
+      "surface_limit": "Selected owner-hook runner/bootstrap support has no corresponding local-support selection in direct CLI or selector entrypoints; their gate-byte cases remain separate."
+    },
+    {
+      "case_id": "INFRA-S06-02.changed-runner",
+      "matrix_row": "INFRA-S06-02",
+      "surfaces": [
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured",
+      "surface_limit": "Selected owner-hook runner/bootstrap support has no corresponding local-support selection in direct CLI or selector entrypoints; their gate-byte cases remain separate."
+    },
+    {
+      "case_id": "INFRA-S06-02.cli-gate",
+      "matrix_row": "INFRA-S06-02",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-02.missing-runner-file",
+      "matrix_row": "INFRA-S06-02",
+      "surfaces": [
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured",
+      "surface_limit": "Selected owner-hook runner/bootstrap support has no corresponding local-support selection in direct CLI or selector entrypoints; their gate-byte cases remain separate."
+    },
+    {
+      "case_id": "INFRA-S06-02.missing-runner-selection",
+      "matrix_row": "INFRA-S06-02",
+      "surfaces": [
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured",
+      "surface_limit": "Selected owner-hook runner/bootstrap support has no corresponding local-support selection in direct CLI or selector entrypoints; their gate-byte cases remain separate."
+    },
+    {
+      "case_id": "INFRA-S06-02.selector-gate",
+      "matrix_row": "INFRA-S06-02",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-03.authority",
+      "matrix_row": "INFRA-S06-03",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-03.authority",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-03.source",
+      "matrix_row": "INFRA-S06-03",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-03.source",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-04.binary",
+      "matrix_row": "INFRA-S06-04",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-04.binary",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-04.build",
+      "matrix_row": "INFRA-S06-04",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-04.build",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-04.fixture",
+      "matrix_row": "INFRA-S06-04",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-04.fixture",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-04.registry",
+      "matrix_row": "INFRA-S06-04",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-04.registry",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-05.artifact",
+      "matrix_row": "INFRA-S06-05",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-05.artifact",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-05.dispatch",
+      "matrix_row": "INFRA-S06-05",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-05.dispatch",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-05.inputs",
+      "matrix_row": "INFRA-S06-05",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-05.inputs",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-05.state",
+      "matrix_row": "INFRA-S06-05",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-05.state",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-05.visible",
+      "matrix_row": "INFRA-S06-05",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-05.visible",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-06.observed-call",
+      "matrix_row": "INFRA-S06-06",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-07.fresh-after-refusal",
+      "matrix_row": "INFRA-S06-07",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-08.mixed",
+      "matrix_row": "INFRA-S06-08",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-08.mixed",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-09.duplicate-key",
+      "matrix_row": "INFRA-S06-09",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-09.duplicate-key",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-09.missing-key",
+      "matrix_row": "INFRA-S06-09",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-09.missing-key",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-09.unknown-key",
+      "matrix_row": "INFRA-S06-09",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-09.unknown-key",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-10.swapped",
+      "matrix_row": "INFRA-S06-10",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-10.swapped",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-11.authority-membership",
+      "matrix_row": "INFRA-S06-11",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-11.blob",
+      "matrix_row": "INFRA-S06-11",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-11.selection",
+      "matrix_row": "INFRA-S06-11",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": null,
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-12.environment-fields",
+      "matrix_row": "INFRA-S06-12",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-12.environment-fields",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-12.environment-kind",
+      "matrix_row": "INFRA-S06-12",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-12.environment-kind",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-12.environment-version",
+      "matrix_row": "INFRA-S06-12",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-12.environment-version",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-12.selection-fields",
+      "matrix_row": "INFRA-S06-12",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-12.selection-fields",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-12.selection-kind",
+      "matrix_row": "INFRA-S06-12",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-12.selection-kind",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-12.selection-version",
+      "matrix_row": "INFRA-S06-12",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-12.selection-version",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-13.interpreter",
+      "matrix_row": "INFRA-S06-13",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-13.interpreter",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-13.toolchain",
+      "matrix_row": "INFRA-S06-13",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-13.toolchain",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-14.pipes-dimensions",
+      "matrix_row": "INFRA-S06-14",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-14.pipes-dimensions",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-14.pty-dimensions",
+      "matrix_row": "INFRA-S06-14",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-14.pty-dimensions",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    },
+    {
+      "case_id": "INFRA-S06-15.product-headless",
+      "matrix_row": "INFRA-S06-15",
+      "surfaces": [
+        "C",
+        "R",
+        "S-check",
+        "S-details",
+        "H"
+      ],
+      "fixture_variant": "INFRA-S06-15.product-headless",
+      "fixture_family": "synthetic-input",
+      "result_status": "not_captured"
+    }
+  ],
+  "recipe_count": 133,
+  "primary_invocation_count": 608,
+  "recovery_policy": "Every refusal/termination also requires a separately retained fresh valid invocation. Primary invocation count excludes recoveries. Record both refused and valid packet identities, actual lease parameters and deliberate prerequisite differences; never claim identical inputs when a malformed prepared fixture requires a distinct valid baseline. Independent replay must restore the exact reviewed input for each individual case.",
+  "cross_row_obligations": {
+    "INFRA-S03-11": "Pending product/infrastructure variants must be paired with the separate INFRA-S02-07 product/infrastructure execution-refusal captures; row registration alone is insufficient."
+  },
+  "retention_policy": "Prepare fresh exact fixture packets and raw observations under resolved Git-common datum-wdq proposals. Retain actual argv, source and fixture identity, stdout/stderr, exit/termination status, handler trace and before/after state. Synthetic fixture events and receipts are inputs only.",
+  "limits": [
+    "This is a prepared execution inventory, not captured results or complete producer proof.",
+    "Normative matrix prose controls over this generated inventory. No surface or variant is waived.",
+    "Final scenario result and role/event/registry records must derive from real observed calls and raw results; no success fabricated from this inventory.",
+    "Fresh fixture leases must remain valid for producer and independent replay; changed fixture/time inputs require a newly identified run.",
+    "I04 live activation and product cohort acceptance remain outside this record."
+  ],
+  "complete_matrix": false,
+  "independent_review_complete": false,
+  "activation_asserted": false,
+  "acceptance_asserted": false
+}

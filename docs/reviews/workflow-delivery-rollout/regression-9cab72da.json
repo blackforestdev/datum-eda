@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "record_type": "candidate_regression_observation",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-I03",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "source_commit": "9cab72daab46122da6d2c45ab7f972814f702880",
+  "command": ["python3", "-B", "-m", "unittest", "discover", "-s", "scripts", "-p", "test_workflow_delivery*.py"],
+  "working_directory": "Git-common/datum-wdq/proposals/wdq-i02-assembled-20260908/candidate",
+  "observation_session": 69164,
+  "tests_run": 432,
+  "elapsed_seconds": 1816.697,
+  "exit_code": 0,
+  "terminal_result": "OK",
+  "limits": [
+    "This records the observed full regression result, not the separately retained producer matrix or independent replay.",
+    "Temporary unittest fixtures are not retained producer evidence.",
+    "No product acceptance or runtime publication is asserted."
+  ],
+  "complete_matrix": false,
+  "acceptance_asserted": false
+}
