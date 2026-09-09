@@ -110,15 +110,22 @@ class WorkspaceInputs:
         self.local = {row["path"]: row for row in self.policy["local_files"]}
         self.cache_isolated = cache_isolated is True
 
-    def input_paths(self, names, *, root, tracked_paths, explicit_paths=(), captured_files=None):
+    def input_paths(self, names, *, root, tracked_paths, explicit_paths=(), captured_files=None,
+                    proof=False):
         """Filter indirect enumeration only, against the caller's captured view."""
         require(Path(root).resolve(strict=True) == self.root
                 and set(tracked_paths) <= self.tracked,
                 "workspace", "classifier must cover this root and every tracked input", "WDQ-WORKSPACE")
         self.require_pinned_presence(captured_files=captured_files)
+        names = set(names)
         explicit = set(explicit_paths)
-        return {name for name in names if name in explicit
-                or self.classify(name, captured_files=captured_files) == "input"}
+        inputs = set()
+        for name in names:
+            category = self.classify(name, captured_files=captured_files)
+            if (name in explicit or category == "input" or (proof and (
+                    category != "python_cache" or cache_source_name(name) not in names))):
+                inputs.add(name)
+        return inputs
 
     def require_pinned_presence(self, *, captured_files=None):
         # Enumeration omits deleted files. An exact local baseline must not

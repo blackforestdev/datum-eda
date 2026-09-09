@@ -139,5 +139,5 @@ class Tree:
                                      for name in files)
         if workspace is not None and not (self.staged or self.revision):
             paths = workspace.input_paths(paths, root=self.root, tracked_paths=self.entries,
-                                          explicit_paths=roots)
+                                          explicit_paths=roots, proof=True)
         return [{"path": p, "sha256": sha256(self.read(p))} for p in sorted(paths)]

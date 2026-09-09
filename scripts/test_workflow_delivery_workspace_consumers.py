@@ -2,6 +2,7 @@
 
 import hashlib
 import importlib.util
+from pathlib import Path
 import py_compile
 import stat
 import unittest
@@ -58,8 +59,9 @@ class WorkspaceConsumersTest(unittest.TestCase):
     def test_shared_classification_accepts_preserved_workspace_and_retains_capture(self):
         before = protected_state(self.f.root, ["src", ".beads"])
         self.assertEqual([], self.changes())
-        self.assertEqual(Tree(self.f.root, revision=self.f.head).manifest(["src", ".beads"]),
-                         self.tree.manifest(["src", ".beads"], workspace=self.workspace))
+        baseline = {row["path"] for row in Tree(self.f.root, revision=self.f.head).manifest(["src", ".beads"])}
+        self.assertEqual(baseline | {"src/local.sh", ".beads/beads.db"},
+                         {row["path"] for row in self.tree.manifest(["src", ".beads"], workspace=self.workspace)})
         result = self.inspect()
         self.assertEqual(before, result["protected_state"])
         self.assertIn(".beads/beads.db", result["protected_state"]["files"])
@@ -153,6 +155,22 @@ class WorkspaceConsumersTest(unittest.TestCase):
         Path(self.cache).unlink()
         self.assertEqual([], self.changes())
         self.assertFalse(self.inspect()["publication_authorized"])
+
+    def test_proof_retains_legacy_cache_even_when_workspace_pin_matches(self):
+        from pathlib import Path
+        cache = Path(self.cache)
+        cache.write_bytes(cache.read_bytes()[:16] + b"legacy executable payload")
+        name = cache.relative_to(self.f.root).as_posix()
+        self.policy["local_files"].append({"path": name, "category": "legacy_python_cache",
+            "sha256": hashlib.sha256(cache.read_bytes()).hexdigest(),
+            "size": cache.stat().st_size, "mode": stat.S_IMODE(cache.stat().st_mode)})
+        self.workspace = WorkspaceInputs(self.f.root, self.policy, self.tree.entries, cache_isolated=True)
+        self.assertEqual([], self.changes())
+        self.assertIn(name, {row["path"] for row in self.tree.manifest(["src"], workspace=self.workspace)})
+
+    def test_proof_retains_derived_cache_if_source_is_outside_declared_roots(self):
+        names = {row["path"] for row in self.tree.manifest(["src/__pycache__"], workspace=self.workspace)}
+        self.assertEqual({"src/__pycache__/" + Path(self.cache).name}, names)
 
 
 if __name__ == "__main__":

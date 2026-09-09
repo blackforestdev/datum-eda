@@ -10,6 +10,7 @@ import sys
 import unittest
 
 import test_workflow_delivery_coverage_entrypoints as coverage_fixture
+from workflow_delivery_tree import Tree
 from workflow_delivery_workspace_authority import WORKSPACE_POLICY_PATH
 
 
@@ -19,16 +20,20 @@ class WorkspaceEntrypointsTest(unittest.TestCase):
         fixture.setUp()
         self.addCleanup(fixture.doCleanups)
         self.f = fixture.f
-        self.f.write(".git/info/exclude", b"src/__pycache__/\nsrc/local.sh\n")
+        self.f.write(".git/info/exclude", b"src/__pycache__/\ntools/local.sh\n")
         raw = b"#!/bin/sh\nexit 0\n"
-        self.f.write("src/local.sh", raw)
-        (self.f.root / "src/local.sh").chmod(0o775)
+        self.f.write("tools/local.sh", raw)
+        (self.f.root / "tools/local.sh").chmod(0o775)
+        policy_path = "specs/workflow_delivery_policy.json"
+        coverage_policy = Tree(self.f.root).json(policy_path)
+        coverage_policy["coverage"]["production_roots"].append("tools")
+        self.f.save(policy_path, coverage_policy)
         self.f.save(WORKSPACE_POLICY_PATH, {
             "schema_version": 1, "kind": "datum.workflow-delivery.workspace-inputs",
             "python_caches": "verified-source-v1", "beads_runtime": "standard-v1",
-            "local_files": [{"path": "src/local.sh", "category": "owner_local",
+            "local_files": [{"path": "tools/local.sh", "category": "owner_local",
                              "sha256": hashlib.sha256(raw).hexdigest(), "size": len(raw), "mode": 0o775}]})
-        self.f.git("add", WORKSPACE_POLICY_PATH)
+        self.f.git("add", WORKSPACE_POLICY_PATH, policy_path)
         self.f.git("commit", "-qm", "fixture exact workspace authority")
         self.authority = self.f.git("rev-parse", "HEAD").decode().strip()
         self.f.git("config", "datum.workflowDeliveryAuthorityRef", self.authority)
@@ -63,7 +68,7 @@ class WorkspaceEntrypointsTest(unittest.TestCase):
         self.f.write("src/__pycache__/unknown.py", b"value = 1\n")
         self.check_commands(False, "WDQ-COVERAGE")
         (self.f.root / "src/__pycache__/unknown.py").unlink()
-        self.f.write("src/local.sh", b"changed")
+        self.f.write("tools/local.sh", b"changed")
         self.check_commands(False, "WDQ-COVERAGE")
 
     def test_actual_entrypoints_refuse_changed_policy_and_deleted_pin(self):
@@ -72,8 +77,26 @@ class WorkspaceEntrypointsTest(unittest.TestCase):
         policy.write_bytes(original + b"\n")
         self.check_commands(False, "WDQ-POLICY")
         policy.write_bytes(original)
-        (self.f.root / "src/local.sh").unlink()
+        (self.f.root / "tools/local.sh").unlink()
         self.check_commands(False, "required pinned local file is missing")
+
+    def test_pinned_owner_file_inside_proof_roots_still_invalidates_old_proof(self):
+        name = "src/runtime-script.sh"
+        raw = b"#!/bin/sh\nexit 0\n"
+        self.f.write(name, raw)
+        (self.f.root / name).chmod(0o775)
+        exclusion = self.f.root / ".git/info/exclude"
+        exclusion.write_bytes(exclusion.read_bytes() + (name + "\n").encode())
+        policy = Tree(self.f.root).json(WORKSPACE_POLICY_PATH)
+        policy["local_files"].append({"path": name, "category": "owner_local",
+            "sha256": hashlib.sha256(raw).hexdigest(), "size": len(raw), "mode": 0o775})
+        self.f.save(WORKSPACE_POLICY_PATH, policy)
+        self.f.git("add", WORKSPACE_POLICY_PATH)
+        self.f.git("commit", "-qm", "fixture pinned runtime input")
+        self.authority = self.f.git("rev-parse", "HEAD").decode().strip()
+        self.f.git("config", "datum.workflowDeliveryAuthorityRef", self.authority)
+        self.f.git("config", "datum.workflowDeliveryBaseRef", self.authority)
+        self.check_commands(False, "WDQ-STALE")
 
     def test_actual_preflight_cli_uses_pinned_policy_and_preserves_runtime(self):
         from workflow_delivery_capture_state import protected_state
@@ -86,7 +109,7 @@ class WorkspaceEntrypointsTest(unittest.TestCase):
         tree_id = self.f.git("rev-parse", "HEAD^{tree}").decode().strip()
         candidate = self.f.git("commit-tree", tree_id, "-p", self.authority,
                                "-m", "fixture prospective publication").decode().strip()
-        roots = ["src", ".beads"]
+        roots = ["src", ".beads", "tools"]
         before = protected_state(self.f.root, roots)
         delta = publication_delta(self.f.root, base=self.authority, candidate=candidate)
         request = {"schema_version": 1, "kind": "datum.workflow-delivery.preflight-request",
