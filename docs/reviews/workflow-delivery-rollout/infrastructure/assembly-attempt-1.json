@@ -1,0 +1,1 @@
+{"acceptance_asserted":false,"correction":"Use the actual registered primary text cases and their retained text_evidence; ordinary recovery cases are not text-specific evidence.","error":"Text case selection incorrectly searched .text- rather than INFRA-S01-04. No proof.json was produced."}
