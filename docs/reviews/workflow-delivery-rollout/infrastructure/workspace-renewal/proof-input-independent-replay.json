@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "archive": "proof-input-independent-replay.tar.xz",
+  "archive_sha256": "8bc41b7c8c79108bcdb7f8cd92851d6a16fafe2efd0ad300e385f3ff32125dca",
+  "archive_bytes": 400964,
+  "process": {
+    "pid": 2681658,
+    "exit_code": 0,
+    "command_sha256": "27ab0348d393dbac99b646a2b1048a105dd58df16ea546120bca10bf4e48504a",
+    "started_ns": "1788982085238944406",
+    "finished_ns": "1788982138889187257"
+  },
+  "independent_replay": true,
+  "only_recipe_change": "output store path",
+  "invocations": 45,
+  "zero_exit_invocations": 33,
+  "expected_refusals": {
+    "WDQ-STALE": 8,
+    "WDQ-COVERAGE": 4
+  },
+  "artifact_hashes_checked": 315,
+  "source_hashes_checked": 1674,
+  "unique_source_files": 33,
+  "unique_trace_events": 180,
+  "producer_outer_invocation_overlap": 0,
+  "all_before_after_equal": true,
+  "scope": "Actual independent execution of proof-input subset only. Not complete compatibility, real-roadmap mixed-state verification, publication inspection or acceptance.",
+  "compatibility_complete": false,
+  "activation_performed": false
+}
