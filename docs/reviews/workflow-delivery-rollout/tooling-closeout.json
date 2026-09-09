@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "record_type": "workflow_tooling_construction_closeout",
+  "marker": "WDQ-TOOLS-CONSTRUCTION-COMPLETE",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-TOOLS",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "observed_at": "2026-09-09T02:45:29Z",
+  "source_commit": "f2e28a572b09296986d4748d456ef8bf5bd4c568",
+  "retained_ref": "refs/datum/workflow-delivery-candidates/f2e28a572b09296986d4748d456ef8bf5bd4c568",
+  "candidate_location": ".git/datum-wdq/proposals/wdq-i02-assembled-20260908/candidate",
+  "requirements": {
+    "environment_selection": "Implemented per-enrollment owner-pinned selection, headless infrastructure evidence, product-native separation and immutable hook support.",
+    "fixture_and_capture": "Retained synthetic fixture recipes, real-process C/R/S-check/S-details/H capture, exact refusal diagnostics, protected-state comparison and fresh recovery; 133 registered recipes including the real-roadmap capture.",
+    "controlled_promotion": "Implemented separate inspection and owner-selected activation, exact pins and clean-state checks, durable diagnostics, lock lifetime, bounded child cleanup and refusal of unapproved promotion.",
+    "legacy_pilot_preservation": "All five actual real-roadmap entrypoints passed at retained f3cb3649 source; current exact-candidate diagnostic still reports pilot accept with no findings.",
+    "source_and_permissions": "At source_commit all 152 declared input paths exist and are tracked; all 141 proposed exact write paths are included in those inputs. Contract/mapping regression validates local imports, handlers, hook dependencies and phase boundaries.",
+    "toolchain": "Rechecked recorded hashes for interpreter, Git, bash, realpath, env and the actual installed rustfmt binary; all match. No tool installation, Cargo build or host configuration mutation was performed."
+  },
+  "retained_evidence": [
+    {"commit": "6368be91c8bb1ab31e2cf7821d80ab7202764b20", "purpose": "Activation child lifetime, interruption, lock and cleanup; 94 affected tests passed."},
+    {"commit": "87ec92be13e8877ce7bd88dcacf54b7b791de636", "purpose": "Text-only capture, linked recovery and product headless refusal; 7 capture and 35 shared tests passed."},
+    {"commit": "00714fa3468e69b1a30680e3d4131a7e153bd09d", "purpose": "Missing/moving authority and base references, separately, across all five entrypoints."},
+    {"commit": "824cab1666b8e87bebe175177422bd5deaaae0e8", "purpose": "Retained actual five-surface real-roadmap pilot preservation evidence, not synthetic pilot replacement."},
+    {"commit": "1278be01f4dc383e38fe5642229e7b796f62cb43", "purpose": "Exact owner-approved bounded verification disposition; not activation ratification."},
+    {"commit": "87b4f1822eccfe728fa49f0f18882bf2946fafd2", "purpose": "Missing/changed selected hook support refusal and recovery."},
+    {"commit": "131d6a12b8dacbdaf22d0922afbde009dd27a353", "purpose": "Stale readiness route; full readiness family passed 110 invocations in 117.423 seconds."},
+    {"commit": "f2e28a572b09296986d4748d456ef8bf5bd4c568", "purpose": "Newly unclassified item, wrong/candidate-only receipts and membership change; final 3 tests passed 40 invocations in 49.893 seconds."}
+  ],
+  "closeout_checks": {
+    "contract_mapping_command": "python3 -B -m unittest test_workflow_rollout_contract test_workflow_rollout_mapping -v (from candidate/scripts)",
+    "contract_mapping_result": "23 tests passed in 0.927 seconds",
+    "candidate_diagnostic": {
+      "authority_ref": "f2e28a572b09296986d4748d456ef8bf5bd4c568",
+      "base_ref": "f2e28a572b09296986d4748d456ef8bf5bd4c568",
+      "candidate_ref": "f2e28a572b09296986d4748d456ef8bf5bd4c568",
+      "environment_path": "specs/workflow_delivery/rollout.environments.json",
+      "exit_code": 0,
+      "checks": ["WORKFLOW-DELIVERY-GATE-PILOT: accept", "WORKFLOW-DELIVERY-IMPLEMENTATION: ready"],
+      "findings": [],
+      "limitation": "Prospective read-only diagnostic with equal pins and ordinary Python script loading, not isolated producer capture, publication-delta verification or completed readiness."
+    },
+    "source_health": "PASS: 1911 files",
+    "evidence_traceability": "PASS: 25 routes, 119 artifacts",
+    "whitespace": "PASS",
+    "candidate_worktree": "clean"
+  },
+  "remaining_boundaries": [
+    "WDQ-READY must review the exact assembled candidate and bounded input/tool evidence; construction evidence does not complete readiness.",
+    "WDQ-I03 must produce the complete final same-candidate matrix, regression and promotion evidence; historical runs are not relabeled as final producer proof.",
+    "WDQ-REVIEW requires distinct independent replay; no self-review acceptance.",
+    "WDQ-I04 requires the owner's exact ratification/activation transaction before installing candidate code or replacing live support.",
+    "WDQ-I05 requires three genuine product adoption cohorts, and WDQ-I06 requires owner acceptance of the full reform.",
+    "Preferences, Claude visual truth, dependencies and all other product ownership remain unchanged."
+  ],
+  "construction_complete": true,
+  "readiness_asserted": false,
+  "activation_asserted": false,
+  "product_acceptance_asserted": false,
+  "full_goal_complete": false
+}

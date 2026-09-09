@@ -54,6 +54,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/tooling-closeout.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-TOOLS construction evidence for the exact retained candidate. Not readiness, producer verification, independent review, live activation or product acceptance."
+    },
     "docs/reviews/workflow-delivery-rollout/toolchain-preflight.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",

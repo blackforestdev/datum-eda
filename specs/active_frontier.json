@@ -9649,19 +9649,19 @@
         "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md"
       ],
       "state": "in_progress",
-      "authorization": "execution",
+      "authorization": "planning",
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
         "session": "codex-wdq-rollout-implementation-20260908",
         "claimed_at": "2026-09-08T06:39:04Z",
-        "heartbeat_at": "2026-09-08T22:48:22Z",
-        "expires_at": "2026-09-09T06:48:22Z",
+        "heartbeat_at": "2026-09-09T02:45:29Z",
+        "expires_at": "2026-09-09T10:45:29Z",
         "scope": [
           "WDQ-R03 approved workflow implementation only: coverage, independent-review transitions, candidate preparation and tests in the repository-local isolated candidate workflow. Preserve installed trust until exact promotion; no product implementation, GP-CM05V takeover, prototype edit, dependency or product acceptance."
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "3c3867d720fb4e48991cd537abbc71f16308341f"
+        "head": "7a77e40a850172b50e2251132d171d55a8adfb37"
       },
       "canonical_next": false,
       "parallel": true,
@@ -9670,7 +9670,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
-        "canonical_next_step_id": "WDQ-TOOLS",
+        "canonical_next_step_id": "WDQ-READY",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -9737,7 +9737,7 @@
           {
             "id": "WDQ-TOOLS",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Build bounded environment, capture and promotion tooling before final readiness review.",
             "depends_on": ["WDQ-I02"],
             "requirement_refs": [
@@ -9746,12 +9746,22 @@
                 "marker": "WDQ-TOOLS"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/reviews/workflow-delivery-rollout/tooling-closeout.json",
+                "marker": "WDQ-TOOLS-CONSTRUCTION-COMPLETE"
+              },
+              {
+                "kind": "commit",
+                "revision": "f2e28a572b09296986d4748d456ef8bf5bd4c568"
+              }
+            ]
           },
           {
             "id": "WDQ-READY",
             "kind": "governance",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Establish actual rollout infrastructure readiness from the exact prepared contract and assembled candidate.",
             "depends_on": [
               "WDQ-TOOLS"
