@@ -73,6 +73,29 @@
       "scope": "Completes the required-pin presence implementation above, not owner-pinned policy loading, supported CLI integration or compatibility acceptance."
     }
   },
+  "authority_entrypoint_followup": {
+    "candidate": "de69345c0a162144ee348b4ff90cbaf41d80f622",
+    "retained_ref": "refs/datum/workflow-delivery-candidates/de69345c0a162144ee348b4ff90cbaf41d80f622",
+    "change": "Optional fixed-path workspace policy loads from explicit immutable authority, requires exact candidate bytes and regular data modes, and refuses candidate-only changes. Existing Trust authenticates source before attachment; cache policy requires observed source-only import loader/finder. Shared classification now reaches coverage, proof manifests, selector/CLI and prospective promotion preflight.",
+    "verification": [
+      {"command": "python3 -B -m unittest discover -s scripts -p 'test_workflow_delivery_workspace*.py' -q", "tests": 40, "exit_code": 0},
+      {"command": "python3 -B -m unittest discover -s scripts -p test_workflow_delivery_trust.py -q", "tests": 20, "exit_code": 0},
+      {"command": "python3 -B -m unittest discover -s scripts -p test_workflow_delivery_preflight_cli.py -q", "tests": 22, "exit_code": 0},
+      {"command": "python3 -B -m unittest discover -s scripts -p test_workflow_delivery_activation.py -q", "tests": 12, "exit_code": 0},
+      {"command": "python3 scripts/check_source_health.py", "source_files": 1919, "exit_code": 0}
+    ],
+    "subprocess_scope": "Actual delivery CLI, project-status check and preflight CLI in isolated Git fixtures accept pinned local files and derived caches. Negative CLI/selector cases refuse changed policy, changed or deleted local pins and unknown ignored source. Preflight retains exact protected state; no actual Datum publication is performed.",
+    "independent_review": "Read-only inspection found no additional self-authorization or index-substitution defect in the bounded loader/Trust attachment. This does not certify arbitrary embedding hosts, the later complete activation wiring, the final real policy or compatibility acceptance.",
+    "remaining": [
+      "Reconcile the proposed fixed policy path and classification semantics through complete owning evidence routes and the activation-conditional numbered decision.",
+      "Prepare the exact reviewed Datum local baseline without changing or deleting owner files or Beads runtime.",
+      "Reconcile changed source/input permissions, renew affected producer proof and obtain distinct final compatibility/publication reinspection.",
+      "Obtain separate WDQ-I04 ratification and activation, then complete the original installed verification and three actual adoption cohorts."
+    ],
+    "real_policy_created": false,
+    "installed_runtime_changed": false,
+    "compatibility_accepted": false
+  },
   "compatibility_complete": false,
   "activation_authorized": false,
   "activation_performed": false,
