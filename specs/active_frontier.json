@@ -9649,7 +9649,7 @@
         "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md"
       ],
       "state": "in_progress",
-      "authorization": "planning",
+      "authorization": "execution",
       "claim": {
         "agent": "codex",
         "harness": "codex-cli",
@@ -9670,7 +9670,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
-        "canonical_next_step_id": "WDQ-READY",
+        "canonical_next_step_id": "WDQ-I03",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -9761,7 +9761,7 @@
           {
             "id": "WDQ-READY",
             "kind": "governance",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Establish actual rollout infrastructure readiness from the exact prepared contract and assembled candidate.",
             "depends_on": [
               "WDQ-TOOLS"
@@ -9772,12 +9772,18 @@
                 "marker": "WDQ-READY"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/reviews/workflow-delivery-rollout/readiness-review.json",
+                "marker": "WDQ-READY-COMPLETE"
+              }
+            ]
           },
           {
             "id": "WDQ-I03",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Verify the prepared promotion tooling and produce exact candidate evidence for independent replay.",
             "depends_on": [
               "WDQ-READY"
