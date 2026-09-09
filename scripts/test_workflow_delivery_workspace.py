@@ -131,6 +131,18 @@ class WorkspaceInputsTest(unittest.TestCase):
         path.write_bytes(path.read_bytes() + b"changed")
         self.assertEqual("input", reader.classify(name))
 
+    def test_pinned_identity_requires_exact_size_not_only_an_upper_bound(self):
+        _, cache_name = self.cache()
+        self.write("scripts/local.sh", b"value")
+        self.pin("scripts/local.sh")
+        self.pin(cache_name, "legacy_python_cache")
+        self.policy["python_caches"] = "none"
+        for row in self.policy["local_files"]:
+            row["size"] += 1
+        reader = self.reader()
+        self.assertEqual("input", reader.classify("scripts/local.sh"))
+        self.assertEqual("input", reader.classify(cache_name))
+
     def test_legacy_pin_may_transition_only_to_fully_verified_derived_cache(self):
         path, name = self.cache()
         self.pin(name, "legacy_python_cache")

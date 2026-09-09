@@ -178,7 +178,7 @@ class WorkspaceInputs:
             if row["category"] == "legacy_python_cache" and not self.cache_isolated:
                 return "input"
             raw = read_stable(file, limit=row["size"])
-            if (raw is not None and mode == row["mode"]
+            if (raw is not None and len(raw) == row["size"] and mode == row["mode"]
                     and self._captured(name, file, raw, captured_files)
                     and hashlib.sha256(raw).hexdigest() == row["sha256"]):
                 return row["category"]
