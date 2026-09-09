@@ -9649,19 +9649,32 @@
         "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md",
         "docs/reviews/workflow-delivery-rollout/infrastructure/independent/review-completion.json",
         "docs/reviews/workflow-delivery-rollout/infrastructure/owner-dispositions.md",
-        "docs/reviews/workflow-delivery-rollout/infrastructure/final-publication/producer-inspection.json"
+        "docs/reviews/workflow-delivery-rollout/infrastructure/final-publication/producer-inspection.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-repair-authorization.json"
       ],
-      "state": "specified",
-      "authorization": "owner_decision",
-      "claim": null,
+      "state": "in_progress",
+      "authorization": "execution",
+      "claim": {
+        "agent": "codex",
+        "harness": "codex-cli",
+        "session": "codex-wdq-workspace-repair-20260909",
+        "claimed_at": "2026-09-09T17:08:50Z",
+        "heartbeat_at": "2026-09-09T17:08:50Z",
+        "expires_at": "2026-09-09T21:08:50Z",
+        "scope": [
+          "WDQ-COMPAT isolated candidate repair and proof; workflow-only governance and Beads transaction; no product or live trust changes"
+        ],
+        "worktree": "/home/bfadmin/Documents/datum-eda",
+        "head": "96d1c582493d771d15b936c10267533602dea35d"
+      },
       "canonical_next": false,
       "parallel": true,
-      "summary": "Five owner-disposed findings are closed. Final candidate inspection passed in isolation, but dat-wdq-workspace-inputs-zmt identifies an actual ignored-workspace compatibility blocker before activation. WDQ-I04 remains pending; preserve Beads data, owner files, product ownership, live trust and all three adoption cohorts.",
+      "summary": "Owner-authorized bounded WDQ-COMPAT repair of dat-wdq-workspace-inputs-zmt and independent reinspection is active. Preserve Beads and owner-local files, undeclared-source detection, all product ownership, pending exact I04 activation and all three adoption cohorts.",
       "dependencies": [],
       "unblocks": [],
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
-        "canonical_next_step_id": "WDQ-I04",
+        "canonical_next_step_id": "WDQ-COMPAT",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -9822,12 +9835,28 @@
             ]
           },
           {
+            "id": "WDQ-COMPAT",
+            "kind": "execution",
+            "status": "in_progress",
+            "action": "Repair ignored-workspace compatibility and obtain independent reinspection without weakening source authority or activating.",
+            "depends_on": [
+              "WDQ-REVIEW"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-repair-authorization.json",
+                "marker": "WDQ-COMPAT"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
             "id": "WDQ-I04",
             "kind": "owner_decision",
             "status": "pending",
             "action": "Obtain owner mechanism ratification and exact activation; verify installed main and safely retire unreferenced support.",
             "depends_on": [
-              "WDQ-REVIEW"
+              "WDQ-COMPAT"
             ],
             "requirement_refs": [
               {
@@ -9839,15 +9868,6 @@
             "owner_input": {
               "response_format": "Reply `WORKFLOW-DELIVERY-IMPLEMENTATION: approve ACTIVATE — <exact reviewed packet>`, `WORKFLOW-DELIVERY-IMPLEMENTATION: revise — <correction>`, or `WORKFLOW-DELIVERY-IMPLEMENTATION: defer — <reason>`.",
               "requests": [
-                {
-                  "id": "WORKSPACE-COMPATIBILITY",
-                  "question": "Final preparation found that normal ignored workspace files can block the proposed installed selector (dat-wdq-workspace-inputs-zmt). Authorize a bounded compatibility repair and independent reinspection before activation, or direct a different explicit remedy; do not delete Beads state or owner-local files merely to obtain a passing check.",
-                  "recommended_response": "WORKFLOW-DELIVERY-IMPLEMENTATION: revise — authorize bounded workspace-input compatibility repair and independent reinspection, preserving detection of undeclared executable/source inputs, Beads operation, owner-local files and all product ownership; no activation is authorized.",
-                  "source_ref": {
-                    "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
-                    "marker": "ACTIVATE"
-                  }
-                },
                 {
                   "id": "ACTIVATE",
                   "question": "After resolving dat-wdq-workspace-inputs-zmt and reinspecting the resulting exact publication-base/candidate, obtain separate owner mechanism ratification and exact activation; verify installed main and safely retire unreferenced support. Five prior dispositions are approved, but the isolated passing candidate is not an activation-ready live packet.",
