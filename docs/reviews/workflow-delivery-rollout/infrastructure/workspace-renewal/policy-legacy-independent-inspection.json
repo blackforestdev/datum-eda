@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "archive_sha256": "ee4b60f3e748d8eefc652a0b8a6d434b68c3e16f0fe66d32ca9398523986fdf5",
+  "archive_bytes": 411792,
+  "method": "Distinct independent streaming inspection; no extraction, execution or edits.",
+  "result": "No inconsistency found in the 75-command subset.",
+  "verified": {
+    "indexed_capture_artifact_hashes": 525,
+    "outer_invocations_distinct": 75,
+    "observer_invocations_distinct": 75,
+    "unique_trace_events": 300,
+    "source_hash_comparisons": 2780,
+    "distinct_source_files": 33,
+    "restored_fixture_regular_files": 117,
+    "before_after_bytes_identical": true,
+    "pid_time_bindings_consistent": true
+  },
+  "observed_behavior": "Legacy presence, absence, verified regeneration and restorations pass. Forgery, redirects and policy mutations refuse both selectors; staged/revision/hook semantics remain isolated.",
+  "scope": "Legacy files reside under tools while proof roots remain src. Does not establish exclusion of legacy files inside proof roots, malformed promoted-authority rejection, independent replay or real-roadmap/promotion acceptance.",
+  "compatibility_complete": false,
+  "activation_performed": false
+}
