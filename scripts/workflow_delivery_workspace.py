@@ -110,15 +110,23 @@ class WorkspaceInputs:
         self.local = {row["path"]: row for row in self.policy["local_files"]}
         self.cache_isolated = cache_isolated is True
 
-    def input_paths(self, names, *, root, tracked_paths, explicit_paths=()):
+    def input_paths(self, names, *, root, tracked_paths, explicit_paths=(), captured_files=None):
         """Filter indirect enumeration only, against the caller's captured view."""
         require(Path(root).resolve(strict=True) == self.root
                 and set(tracked_paths) <= self.tracked,
                 "workspace", "classifier must cover this root and every tracked input", "WDQ-WORKSPACE")
         explicit = set(explicit_paths)
-        return {name for name in names if name in explicit or self.classify(name) == "input"}
+        return {name for name in names if name in explicit
+                or self.classify(name, captured_files=captured_files) == "input"}
 
-    def classify(self, name):
+    def _captured(self, name, file, raw, captured_files):
+        if captured_files is None:
+            return True
+        return raw is not None and captured_files.get(name) == {
+            "kind": "file", "mode": stat.S_IMODE(file[1].st_mode),
+            "size": len(raw), "sha256": hashlib.sha256(raw).hexdigest()}
+
+    def classify(self, name, *, captured_files=None):
         """Return input/runtime category; never grant mutation or suppress capture."""
         if name in self.tracked:
             return "input"
@@ -128,22 +136,25 @@ class WorkspaceInputs:
         mode = stat.S_IMODE(file[1].st_mode)
         if self.policy["beads_runtime"] == "standard-v1" and (
                 name in BEADS_FILES or HISTORY.fullmatch(name)):
-            return "beads_runtime" if not mode & 0o111 else "input"
+            matches = captured_files is None or self._captured(
+                name, file, read_stable(file, limit=file[1].st_size), captured_files)
+            return "beads_runtime" if not mode & 0o111 and matches else "input"
         row = self.local.get(name)
         if row is not None:
             if row["category"] == "legacy_python_cache" and not self.cache_isolated:
                 return "input"
             raw = read_stable(file, limit=row["size"])
             if (raw is not None and mode == row["mode"]
+                    and self._captured(name, file, raw, captured_files)
                     and hashlib.sha256(raw).hexdigest() == row["sha256"]):
                 return row["category"]
             return "input"  # Changed pinned files cannot fall through to an exemption.
         if (self.cache_isolated and self.policy["python_caches"] == "verified-source-v1"
-                and not mode & 0o111 and self._verified_cache(name, file)):
+                and not mode & 0o111 and self._verified_cache(name, file, captured_files)):
             return "python_cache"
         return "input"
 
-    def _verified_cache(self, name, file):
+    def _verified_cache(self, name, file, captured_files):
         source_name = cache_source_name(name)
         if source_name is None or source_name not in self.tracked:
             return False
@@ -156,6 +167,8 @@ class WorkspaceInputs:
         raw = read_stable(file, limit=MAX_CACHE_BYTES)
         content = read_stable(source, limit=MAX_CACHE_BYTES)
         if (raw is None or content is None or len(raw) < 16
+                or not self._captured(name, file, raw, captured_files)
+                or not self._captured(source_name, source, content, captured_files)
                 or raw[:4] != importlib.util.MAGIC_NUMBER
                 or int.from_bytes(raw[4:8], "little") not in (0, 1, 3)):
             return False

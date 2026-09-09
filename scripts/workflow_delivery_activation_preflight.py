@@ -118,7 +118,7 @@ def clean_inputs(root, snapshot, base, *, workspace=None, explicit_paths=()):
     inputs = set(snapshot["files"])
     if workspace is not None:
         inputs = workspace.input_paths(inputs, root=root, tracked_paths=entries,
-                                       explicit_paths=explicit_paths)
+                                       explicit_paths=explicit_paths, captured_files=snapshot["files"])
     for path in inputs:
         state = snapshot["files"][path]
         require(path in entries or state["kind"] == "directory",

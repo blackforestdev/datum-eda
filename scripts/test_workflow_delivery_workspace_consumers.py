@@ -6,7 +6,7 @@ import py_compile
 import stat
 import unittest
 
-from workflow_delivery_activation_preflight import preflight
+from workflow_delivery_activation_preflight import clean_inputs, preflight
 from workflow_delivery_capture_state import protected_state
 from workflow_delivery_io import canonical_json, sha256
 from workflow_delivery_publication_delta import publication_delta
@@ -112,6 +112,25 @@ class WorkspaceConsumersTest(unittest.TestCase):
         with patch("workflow_delivery_activation_preflight.publication_delta", side_effect=change_runtime):
             with self.assertRaisesRegex(ValueError, "state changed"):
                 self.inspect()
+
+    def test_captured_bad_local_file_cannot_borrow_live_good_identity(self):
+        path = self.f.root / "src/local.sh"
+        original = path.read_bytes()
+        path.write_bytes(b"bad local file")
+        captured = protected_state(self.f.root, ["src", ".beads"])
+        path.write_bytes(original)
+        with self.assertRaisesRegex(ValueError, "untracked, ignored"):
+            clean_inputs(self.f.root, captured, self.f.head, workspace=self.workspace)
+
+    def test_captured_forged_cache_cannot_borrow_live_derived_bytes(self):
+        from pathlib import Path
+        path = Path(self.cache)
+        original = path.read_bytes()
+        path.write_bytes(original[:16] + b"forged payload")
+        captured = protected_state(self.f.root, ["src", ".beads"])
+        path.write_bytes(original)
+        with self.assertRaisesRegex(ValueError, "untracked, ignored"):
+            clean_inputs(self.f.root, captured, self.f.head, workspace=self.workspace)
 
 
 if __name__ == "__main__":
