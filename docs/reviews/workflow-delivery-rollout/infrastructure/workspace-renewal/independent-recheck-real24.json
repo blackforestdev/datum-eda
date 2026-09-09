@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "review_session": "/root/wdq_independent_review",
+  "runtime_source": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "reviewed_packet": "678daa96208fb7a372962c383832a099f90ccc1bd63d76c091fee9b4d3fb84f9",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-recheck-real24.tar.xz",
+    "sha256": "8b9b589d04a88e6ff223ca1b3f135be0950988a02a00e027c14a29a1359fbfa9",
+    "raw_report": "real24-independent-verification.json",
+    "tar_compare_exit_code": 0,
+    "exclusion": "Only duplicated fixture directories are omitted. Full fixture Git repositories and original source bundle remain required at the recorded local paths; no standalone portable replay claim."
+  },
+  "raw_root": ".git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/independent-recheck-workspace-20260909",
+  "results": {
+    "real_roadmap_invocations": 15,
+    "current_inventory_invocations": 9,
+    "positive_exits": 20,
+    "expected_coverage_refusals": 4,
+    "distinct_outer_ids": 24,
+    "distinct_observer_ids": 24,
+    "events": 104,
+    "artifact_hashes_verified": 168,
+    "source_hash_checks": 900,
+    "source_files": 33,
+    "protected_states_unchanged": true,
+    "other_frontier_items_preserved": 55
+  },
+  "fixture_adaptations": {
+    "claim_transaction": "21b3330f6192cfcaea071e6cab05dbf4785164ca",
+    "fetched_existing_claim_head": "07a1146c5ce234a8acb907da3a73de16f66721ab",
+    "fixture_commit": "1a46372cd3c1ac624d7a4dd6c395162dc3da675d",
+    "fixture_tree": "3c30806878040607e02c96b5abfd07c5643169e5",
+    "unchanged_input_roots": 161,
+    "authority_unchanged": true,
+    "clock_spoofed": false,
+    "scope": "Existing synchronized claim transaction and its exact missing history object imported into fresh private fixtures. No new owner authority, source change or live Beads mutation."
+  },
+  "inventory": {
+    "entries": 456,
+    "beads": 205,
+    "derived_caches": 227,
+    "legacy_caches": 23,
+    "owner_files": 1,
+    "history_entries_removed_since_producer_observation": 26,
+    "history_entries_added_since_producer_observation": 26,
+    "changed_beads_runtime_files": 3,
+    "scope": "Fresh read-only observation of current population, not a claim of original inventory byte identity. Historical removed paths were not silently recreated."
+  },
+  "preserved_failed_attempts": [
+    "Exact original fixture refused its expired claim.",
+    "Fresh-claim real-roadmap fixture refused missing recorded claim-head history.",
+    "Fresh-claim inventory fixture refused missing recorded claim-head history."
+  ],
+  "remaining": "Remaining original scenario replay, complete typed independent review and defect accounting, and exact publication inspection.",
+  "independent_recheck_complete": false,
+  "publication_verified": false,
+  "activation_performed": false
+}
