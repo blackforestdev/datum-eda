@@ -67,16 +67,17 @@ scripts, CI and MCP code so non-Rust production changes cannot escape merely
 because the native Cargo closure omitted them. This broader explicit root list
 requires owner review at promotion; it is not an already-approved permission.
 
-The sole proposed source scope contains 139 explicit file paths, tied to WDQ-I03
+The sole proposed source scope contains 141 explicit file paths, tied to WDQ-I03
 and WDQ-REVIEW. WDQ-TOOLS reconciles the original 69 paths with the implemented
 capture, environment, support and promotion modules and their tests. Review used
 the complete parent-edge history from main `7a77e40a850172b50e2251132d171d55a8adfb37`
 to candidate `701c3b82363973857c47d16f46a8baa0a597c008`, not only the final tree
 diff: the rollout mapping test also changed in that history. The coverage test
-itself is included explicitly. The assembled candidate policy matches this
+itself is included explicitly. The subsequent bounded activation implementation
+and its integration tests add two separately reviewed files. The assembled candidate policy matches this
 proposal; neither copy is installed or owner-promoted authority.
 
-The contract has 150 read inputs. Hook checks, their exemption manifest,
+The contract has 152 read inputs. Hook checks, their exemption manifest,
 referenced Rust files and environment data remain proof dependencies, not write
 permission. A read dependency must never automatically become a source scope.
 The existing execution checkpoints cannot skip prerequisites or use stale claims.

@@ -79,12 +79,8 @@ def validate_independent_review(tree, contract, proof, authority_digest, trust, 
     return review
 
 
-def validate_review(tree, contract, proof, authority_digest, trust, item, environment):
-    """Legacy acceptance wrapper: independent replay plus exact owner authority."""
-    review = validate_independent_review(
-        tree, contract, proof, authority_digest, trust, item, environment)
-    path = contract["review_path"]
-    packet = packet_sha256(contract, proof, authority_digest)
+def validate_defect_dispositions(tree, review, path, trust):
+    """Require exact dispositions after independent review, before acceptance/publication."""
     findings = {f["issue_id"]: f for f in review["findings"]}
     issues = _issues(tree)
     for issue_id, finding in findings.items():
@@ -102,6 +98,15 @@ def validate_review(tree, contract, proof, authority_digest, trust, item, enviro
                     f"blocking defect still open: {issue_id}", "WDQ-DEFECT")
             require(f"REPLAY {review['replay']['sha256']}" in disposition.splitlines(),
                     reference["path"], "resolution must bind this exact passing replay", "WDQ-DEFECT")
+
+
+def validate_review(tree, contract, proof, authority_digest, trust, item, environment):
+    """Legacy acceptance wrapper: independent replay plus exact owner authority."""
+    review = validate_independent_review(
+        tree, contract, proof, authority_digest, trust, item, environment)
+    path = contract["review_path"]
+    packet = packet_sha256(contract, proof, authority_digest)
+    validate_defect_dispositions(tree, review, path, trust)
     receipt = review["owner_receipt"]
     require(receipt is not None, path, "exact owner receipt required", "WDQ-RECEIPT")
     approved = resolve_ref(trust.authority, receipt)

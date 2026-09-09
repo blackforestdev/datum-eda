@@ -318,13 +318,14 @@ inapplicability per entry point with a concrete reason: for example, a selector
 cannot certify intermediate candidate history, but the candidate CLI must test
 it. Do not mark whole scenario groups inapplicable to avoid missing coverage.
 
-The 150-file input proposal retains the previous 76 paths and adds the 66
+The 152-file input proposal retains the previous 76 paths and adds the 66
 implemented workflow/capture/promotion Python modules and tests omitted from that
 baseline, plus three rollout contract/mapping/proposal tests. The prepared owner
 hook shell source, explicit environment-selection document and its two selected
-environment Blobs and the coverage reconciliation test are also included. Their
+environment Blobs, coverage reconciliation test, activation implementation and
+activation integration test are also included. Their
 local Python import graph is included. These are read dependencies only. The
-separately reviewed coverage proposal names 139 explicit permission paths;
+separately reviewed coverage proposal names 141 explicit permission paths;
 read-input membership does not grant write or owner-publication authority.
 This is not complete dynamic or external-tool closure. Final closure must include
 any subsequent capture/fixture modules and imports, shell subprocess inputs and
@@ -373,3 +374,19 @@ unfinished predecessors, claim-bearing owner steps, changed external records,
 out-of-scope full-history paths, missing/stale proof and a distinct authority
 candidate. The successful full-candidate path also needs actual producer and
 independent observations before this tooling can be declared ready.
+
+The separate `--activate` mode requires exact `activation-request` bytes, an
+external matching response and the PM042 writer-pause acknowledgement. It may
+run only from its authenticated, prepared Git-common runtime. It takes the
+cooperative activation lock, repeats full publication inspection, requires exact
+defect dispositions, writes durable JSONL progress before mutations, fast-forwards
+the exact candidate, installs the four Datum settings and then hooksPath, and
+runs the installed hook and project-status check. Success does not complete the
+roadmap owner step or accept the full reform. Failed/interrupted transactions
+retain their journal and observed partial state; stale retries refuse, with no
+automatic reset, repair, hook bypass or support deletion. The owner coordinates
+all writers: a cooperative lock cannot stop an unrelated editor or Git client.
+Refuse enabled worktree-specific configuration, and verify effective trust values
+as well as the local configuration written. Current synthetic interruption tests
+raise between actual mutations; they do not establish signal handling during a
+live Git child. Real process-interruption and recovery proof remain mandatory.

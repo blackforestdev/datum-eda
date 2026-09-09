@@ -3159,12 +3159,12 @@ Status: [x] Closed for scoped M4 slice
 
 ## Infrastructure
 
-WDQ-TOOLS candidate preparation: the rollout contract now includes 150 explicit
+WDQ-TOOLS candidate preparation: the rollout contract now includes 152 explicit
 repository inputs, reconciling 66 implemented Python capture/environment/promotion
 files, three rollout tests, the prepared hook shell source, and the explicit
 environment selection with both referenced Blobs missing from its prior baseline. This is
 input coverage, not complete runtime closure, readiness or installed enforcement.
-Separate full-history scope reconciliation proposes 139 exact workflow paths,
+Separate full-history scope reconciliation proposes 141 exact workflow paths,
 including the coverage regression itself; read-only hook/Rust dependencies remain
 excluded. Candidate policy and proposal agree, but I04 publication authorization
 and controlled activation remain unfinished. No live trust or other agent lane
@@ -3176,6 +3176,13 @@ other Frontier lanes, full-history scope and actual enrolled delivery/review
 evidence. Ordinary transactions retain live execution-claim checks. The new
 inspection is non-operative; successful full-packet proof and actual controlled
 activation remain incomplete, and PM042 remains a proposal awaiting I04.
+
+Bounded activation is now implemented and exercised only in synthetic Git
+repositories: authenticated runtime, exact owner inputs, cooperative lock,
+durable progress, forward publication/configuration, installed gate checks and
+partial-state refusal. Real rollout readiness, independent proof, owner
+ratification/activation and adoption remain incomplete. No Datum main trust or
+other lane changed.
 
 | Item | Status | Notes |
 |------|--------|-------|

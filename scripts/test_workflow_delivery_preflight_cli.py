@@ -261,10 +261,10 @@ class PreflightCliTest(unittest.TestCase):
                 self.assertFalse(json.loads(result.stdout)["ok"])
                 self.assertFalse(self.output.exists())
 
-    def test_activation_option_is_not_supported(self):
+    def test_activation_cannot_be_combined_with_inspection(self):
         result = self.run_cli(extra=["--activate"])
         self.assertEqual(2, result.returncode)
-        self.assertIn(b"unrecognized arguments", result.stderr)
+        self.assertIn(b"not allowed with argument --inspect", result.stderr)
         self.assertFalse(self.output.exists())
 
     def test_missing_or_changed_proposed_runner_is_logged_without_repair(self):

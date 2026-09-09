@@ -224,3 +224,22 @@ An input regression follows these exact selected data references and checks thei
 hashes; it does not select environments from proof or widen source permissions.
 Observed executable versions remain distinct from actual hook/child invocation
 and shared-library closure. Readiness and producer verification remain incomplete.
+
+## WDQ-TOOLS — bounded activation construction
+
+The prepared runtime now has a separate owner-invoked activation command. Its
+implementation and synthetic integration test are two explicit additions to
+both read inputs (152) and proposed permissions (141), not a broad root grant.
+It authenticates startup before adjacent implementation imports, requires the
+exact response and writer-pause acknowledgement, serializes cooperating
+activators, and reruns full promotion and defect-disposition validation before
+publication. Existing final-acceptance defect checks are shared without changing
+ordinary review's ability to report findings awaiting owner disposition.
+
+The command journals each boundary, fast-forwards, installs hooks last and runs
+actual installed gates. Synthetic repositories exercise success, unchanged-state
+refusals, a live competing lock and interruption after an actual config write.
+No such command has been run on Datum main. Those observations are development
+regressions, not actual I03/reviewer evidence, owner ratification, installed
+rollout or adoption. Full runtime closure and real interruption/recovery review
+remain outstanding; retained partial state is never silently repaired.

@@ -245,6 +245,28 @@ owner invocation, coordinated mutation, partial-state recovery and installed
 verification remain required. Neither an empty source transaction nor equal
 base/candidate pins can substitute for the complete publication-history check.
 
+Actual publication is a distinct owner invocation, not an inspection flag's side
+effect. Its exact activation-request includes this acknowledgement:
+`All writers to this checkout and its Git-common trust configuration are paused for this exact activation.`
+The owner coordinates that pause; the Git-common activation lock serializes only
+cooperating activators. Authenticate the prepared runtime against the externally
+selected candidate before importing mutation code. Require reviewed defect
+dispositions (closed blocking findings bound to the exact replay; explicit
+nonblocking deferrals) in addition to independent review.
+
+Durably journal the request and each mutation boundary without overwriting old
+logs. After repeated clean-state and evidence checks, fast-forward only the exact
+candidate, install the four Datum trust settings, install hooksPath last, then
+verify the exact state/support and execute the installed hook and selector check.
+Recheck state after verification. A successful installation is not completion of
+I04's canonical owner record, three adoption cohorts or final acceptance. Failure
+or interruption preserves observed partial state and all support; stale retries
+refuse. Any repair requires a separately reviewed explicit forward action.
+This initial activator refuses worktree-specific Git configuration and checks
+effective trust values against its installed local values; an override cannot
+silently select a different hook. Supporting such configuration requires separate
+review. The observed Datum checkout does not enable that extension.
+
 Use the resolved Git-common `.git/datum-wdq` support store for proposals,
 immutable trusted runners and logs. Keep any currently referenced external
 support until its replacement is installed and verified. Remove only positively
