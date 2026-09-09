@@ -102,6 +102,26 @@ class CoverageProposalTest(unittest.TestCase):
         policy = self.tree.json("specs/workflow_delivery_policy.json")
         self.assertEqual(self.coverage, policy["coverage"])
 
+    def test_compatibility_history_adds_only_eight_reviewed_source_paths(self):
+        base = "2d60cd05dca71727ba28b1355b988de653eed82f"
+        candidate = "afc3caa14ce253725c26fc9f8125f54eccdad309"
+        old = json.loads(subprocess.check_output(
+            ["git", "show", base + ":" + PATH], cwd=ROOT))
+        expected = {"scripts/" + name + ".py" for name in (
+            "workflow_delivery_source_only", "test_workflow_delivery_source_only",
+            "workflow_delivery_workspace", "test_workflow_delivery_workspace",
+            "test_workflow_delivery_workspace_consumers",
+            "workflow_delivery_workspace_authority",
+            "test_workflow_delivery_workspace_authority",
+            "test_workflow_delivery_workspace_entrypoints")}
+        paths = set(self.coverage["source_scopes"][0]["paths"])
+        self.assertEqual(set(old["source_scopes"][0]["paths"]) | expected, paths)
+        self.assertEqual(old["production_roots"], self.coverage["production_roots"])
+        delta = publication_delta(ROOT, base=base, candidate=candidate)
+        required = {p for p in delta["touched_paths"] if any(
+            p == r or p.startswith(r + "/") for r in self.coverage["production_roots"])}
+        self.assertEqual([], sorted(required - paths))
+
     def test_production_roots_cover_non_rust_code_without_git_metadata(self):
         roots = self.coverage["production_roots"]
         self.assertTrue({"crates", "mcp-server", "scripts", ".github"} <= set(roots))

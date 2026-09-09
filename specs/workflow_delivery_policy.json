@@ -660,6 +660,7 @@
           "scripts/test_workflow_delivery_review_phase_capture.py",
           "scripts/test_workflow_delivery_roadmap_snapshot.py",
           "scripts/test_workflow_delivery_snapshot_capture.py",
+          "scripts/test_workflow_delivery_source_only.py",
           "scripts/test_workflow_delivery_source_scopes.py",
           "scripts/test_workflow_delivery_specification.py",
           "scripts/test_workflow_delivery_specification_capture.py",
@@ -668,6 +669,10 @@
           "scripts/test_workflow_delivery_transaction.py",
           "scripts/test_workflow_delivery_trust.py",
           "scripts/test_workflow_delivery_untracked_capture.py",
+          "scripts/test_workflow_delivery_workspace.py",
+          "scripts/test_workflow_delivery_workspace_authority.py",
+          "scripts/test_workflow_delivery_workspace_consumers.py",
+          "scripts/test_workflow_delivery_workspace_entrypoints.py",
           "scripts/test_workflow_rollout_contract.py",
           "scripts/test_workflow_rollout_mapping.py",
           "scripts/workflow_delivery_activation.py",
@@ -733,6 +738,7 @@
           "scripts/workflow_delivery_roadmap_snapshot.py",
           "scripts/workflow_delivery_selector.py",
           "scripts/workflow_delivery_shapes.py",
+          "scripts/workflow_delivery_source_only.py",
           "scripts/workflow_delivery_source_scopes.py",
           "scripts/workflow_delivery_specification.py",
           "scripts/workflow_delivery_specification_input.py",
@@ -742,7 +748,9 @@
           "scripts/workflow_delivery_transaction.py",
           "scripts/workflow_delivery_tree.py",
           "scripts/workflow_delivery_trust.py",
-          "scripts/workflow_delivery_trust_test_support.py"
+          "scripts/workflow_delivery_trust_test_support.py",
+          "scripts/workflow_delivery_workspace.py",
+          "scripts/workflow_delivery_workspace_authority.py"
         ],
         "boundary_ref": {
           "path": "specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md",

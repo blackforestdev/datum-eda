@@ -198,8 +198,10 @@ shape and explicit INFRA-S05 compatibility observations, preserving actual proof
 inputs and normal derived-cache lifecycle. The read inventory now includes 161
 implemented source/data inputs, including the proposed exact workspace policy.
 The policy pins one owner script and 23 legacy caches from read-only main
-inventory at `7e23e172`; full publication/source-permission reconciliation remains
-due. Regression evidence is not renewed producer replay,
+inventory at `7e23e172`. The proposed source scope now names 149 exact paths,
+adding only eight compatibility modules/tests and covering their complete repair
+history through `afc3caa1`; final publication against current main still needs
+inspection. Regression evidence is not renewed producer replay,
 compatibility acceptance, ratification or installed enforcement. The canonical
 Frontier, not this preparation note, controls current task selection.
 
