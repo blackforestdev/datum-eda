@@ -16,6 +16,7 @@ READINESS_CASES = {
     READY_VALID: (None, None, None),
     "INFRA-S03-01.no-declaration": ("NEXT", "WDQ-COVERAGE", "requires a delivery declaration"),
     "INFRA-S03-02.missing-marker": ("docs/authority.md", "WDQ-AUTHORITY", "marker must occur exactly once: missing-reference"),
+    "INFRA-S03-02.stale-route": ("next-readiness-input", "WDQ-AUTHORITY", "owning route review is stale; return to owning lane"),
     "INFRA-S03-03.owner-question": ("MISSING", "WDQ-AUTHORITY", "mandatory owner question unresolved"),
     "INFRA-S03-03.foundation-answer": ("next.contract.json.foundation_answers", "WDQ-COVERAGE", "missing=['units_precision']"),
 }
@@ -64,6 +65,16 @@ def prepare_readiness(f, manifest, policy, variant):
         del item["completion"]["delivery"]
     elif variant.endswith(".missing-marker"):
         contract["authority_refs"][0]["marker"] = "missing-reference"
+    elif variant.endswith(".stale-route"):
+        # Keep accepted TASK evidence intact. Only NEXT's readiness consumes
+        # this deliberately stale synthetic route; never refresh its digest.
+        source = "research/next-readiness-input.md"
+        f.write(source, b"Unreconciled synthetic readiness source.\n")
+        routes = json.loads((f.root / "specs/evidence_traceability_manifest.json").read_bytes())
+        routes["routes"].append({"id": "next-readiness-input", "sources": [source],
+                                 "consumers": [], "reviewed_digest": "0" * 64})
+        f.save("specs/evidence_traceability_manifest.json", routes)
+        contract["route_ids"].append("next-readiness-input")
     elif variant.endswith(".owner-question"):
         contract["open_decisions"] = [{"id": "MISSING", "question": "Unresolved authority",
             "required_for_scenarios": [contract["scenarios"][0]["id"]], "disposition_ref": None}]

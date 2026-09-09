@@ -54,7 +54,7 @@ class ReadinessCaptureTest(unittest.TestCase):
                             identities.add(result["invocation_id"])
                             self.assertFalse((destination / "fixture/missing-future-proof.json").exists())
                             self.assertFalse((destination / "fixture/missing-future-review.json").exists())
-            self.assertEqual(100, len(identities))
+            self.assertEqual(110, len(identities))
 
 
 if __name__ == "__main__":
