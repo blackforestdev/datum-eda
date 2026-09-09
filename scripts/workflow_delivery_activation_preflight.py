@@ -100,7 +100,7 @@ def require(condition, message):
         raise ValueError("WDQ-PREFLIGHT: " + message)
 
 
-def clean_inputs(root, snapshot, base):
+def clean_inputs(root, snapshot, base, *, workspace=None, explicit_paths=()):
     entries = tree_entries(root, base)
     for path, entry in entries.items():
         state = snapshot["files"].get(path, {"kind": "missing"})
@@ -115,12 +115,18 @@ def clean_inputs(root, snapshot, base):
             actual = state["sha256"]
         require(actual == sha256(git(root, "cat-file", "blob", entry["oid"])),
                 "tracked bytes differ from base: " + path)
-    for path, state in snapshot["files"].items():
+    inputs = set(snapshot["files"])
+    if workspace is not None:
+        inputs = workspace.input_paths(inputs, root=root, tracked_paths=entries,
+                                       explicit_paths=explicit_paths)
+    for path in inputs:
+        state = snapshot["files"][path]
         require(path in entries or state["kind"] == "directory",
                 "untracked, ignored or missing reviewed input: " + path)
 
 
-def preflight(root, *, base, candidate, input_roots, expected_local_trust, publication_review):
+def preflight(root, *, base, candidate, input_roots, expected_local_trust, publication_review,
+              workspace=None):
     require(not any(name in os.environ for name in REDIRECTS), "repository/index/config overrides are not activation inputs")
     require(type(input_roots) is list and bool(input_roots) and len(set(input_roots)) == len(input_roots),
             "explicit unique reviewed input roots required")
@@ -137,7 +143,7 @@ def preflight(root, *, base, candidate, input_roots, expected_local_trust, publi
             "dirty index/worktree or untracked files; no publication performed")
     staged = git(root, "diff", "--cached", "--raw", "--no-ext-diff", "--no-textconv", base, "--")
     require(staged == b"", "index differs from pinned publication base")
-    clean_inputs(root, before, base)
+    clean_inputs(root, before, base, workspace=workspace, explicit_paths=input_roots)
     delta = publication_delta(root, base=base, candidate=candidate)
     reviewed = verify_publication_review(delta, publication_review)
     after = protected_state(root, input_roots)

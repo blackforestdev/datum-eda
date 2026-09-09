@@ -28,7 +28,7 @@ def committed_production_paths(tree, roots, base_ref):
     return names
 
 
-def changed_production_paths(tree, roots, *, base_ref):
+def changed_production_paths(tree, roots, *, base_ref, workspace=None):
     paths(roots, "production_roots")
     tree.has_commit(base_ref)
     base = Tree(tree.root, revision=base_ref)
@@ -50,4 +50,8 @@ def changed_production_paths(tree, roots, *, base_ref):
     names = {raw.decode("utf-8") for raw in (changed + new).split(b"\0") if raw}
     require(all(contains(roots, path) for path in names), "transaction",
             "Git returned a path outside literal production roots", "WDQ-COVERAGE")
+    if workspace is not None:
+        names = workspace.input_paths(names, root=tree.root,
+                                      tracked_paths=set(base.entries) | set(tree.entries),
+                                      explicit_paths=roots)
     return sorted(names)

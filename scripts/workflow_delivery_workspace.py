@@ -110,6 +110,14 @@ class WorkspaceInputs:
         self.local = {row["path"]: row for row in self.policy["local_files"]}
         self.cache_isolated = cache_isolated is True
 
+    def input_paths(self, names, *, root, tracked_paths, explicit_paths=()):
+        """Filter indirect enumeration only, against the caller's captured view."""
+        require(Path(root).resolve(strict=True) == self.root
+                and set(tracked_paths) <= self.tracked,
+                "workspace", "classifier must cover this root and every tracked input", "WDQ-WORKSPACE")
+        explicit = set(explicit_paths)
+        return {name for name in names if name in explicit or self.classify(name) == "input"}
+
     def classify(self, name):
         """Return input/runtime category; never grant mutation or suppress capture."""
         if name in self.tracked:

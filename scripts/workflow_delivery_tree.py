@@ -109,7 +109,7 @@ class Tree:
     def json(self, path, *, committed=False):
         return parse_json(self.read(path, committed=committed), path)
 
-    def manifest(self, roots):
+    def manifest(self, roots, *, workspace=None):
         paths = set()
         for root in roots:
             normalized_path(root)
@@ -135,4 +135,7 @@ class Tree:
                                     "WDQ-ARTIFACT")
                         paths.update((Path(directory) / name).relative_to(self.root).as_posix()
                                      for name in files)
+        if workspace is not None and not (self.staged or self.revision):
+            paths = workspace.input_paths(paths, root=self.root, tracked_paths=self.entries,
+                                          explicit_paths=roots)
         return [{"path": p, "sha256": sha256(self.read(p))} for p in sorted(paths)]
