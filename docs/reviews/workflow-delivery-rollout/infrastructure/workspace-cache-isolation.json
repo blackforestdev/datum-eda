@@ -58,7 +58,20 @@
     ],
     "cli_classification_enabled": false,
     "installed_runtime_changed": false,
-    "independent_correction_accepted": false
+    "independent_correction_accepted": true,
+    "independent_correction_scope": "Distinct read-only reinspection of fb1be028 confirmed the captured-state substitution blocker resolved. The reviewer did not execute tests or certify policy authority, CLI integration or required-pin presence.",
+    "required_pin_followup": {
+      "candidate": "bb1701b97a586e1765b32867254eafb77303db0b",
+      "retained_ref": "refs/datum/workflow-delivery-candidates/bb1701b97a586e1765b32867254eafb77303db0b",
+      "change": "All shared worktree consumers require explicit local pins to remain regular, nonredirected files; preflight also requires their presence in captured state. Ordinary unpinned derived caches may be absent.",
+      "command": "python3 -B -m unittest discover -s scripts -p 'test_workflow_delivery_workspace*.py' -q",
+      "tests": 28,
+      "exit_code": 0,
+      "source_health_files": 1916,
+      "source_health_exit_code": 0,
+      "independently_reviewed": false,
+      "scope": "Completes the required-pin presence implementation above, not owner-pinned policy loading, supported CLI integration or compatibility acceptance."
+    }
   },
   "compatibility_complete": false,
   "activation_authorized": false,
