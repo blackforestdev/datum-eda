@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "candidate": "22192085c55ec654eb209deccc0450afd53b2c65",
+  "archive_sha256": "55ee94671096643df199c012e83e926d8cbd329868b911e0ea6a2d8db6592682",
+  "archive_bytes": 1009900,
+  "method": "Distinct independent streaming inspection; no extraction, execution or edits.",
+  "result": "No inconsistency found in the bounded 34-capture subset.",
+  "verified": {
+    "assessments_and_raw_results": 34,
+    "indexed_capture_artifact_hashes": 238,
+    "history_bundle_hashes": 9,
+    "outer_invocations_distinct": 34,
+    "observer_invocations_distinct": 34,
+    "unique_trace_events": 132,
+    "source_hash_comparisons": 1258,
+    "distinct_source_files": 33,
+    "before_after_bytes_identical": true,
+    "pid_time_bindings_consistent": true,
+    "fresh_recoveries_exit_zero": 17
+  },
+  "observed_behavior": "Missing/nonancestor bases and hidden full history refuse. Ignored/untracked inputs refuse selectors but do not contaminate staged checks. Empty current transactions pass without certifying prior history.",
+  "scope": "Producer-artifact verification only; not additional workspace coverage, independent execution replay, publication review or acceptance.",
+  "compatibility_complete": false,
+  "activation_performed": false
+}
