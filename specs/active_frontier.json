@@ -9659,13 +9659,13 @@
         "harness": "codex-cli",
         "session": "codex-wdq-workspace-repair-20260909",
         "claimed_at": "2026-09-09T17:08:50Z",
-        "heartbeat_at": "2026-09-09T17:08:50Z",
-        "expires_at": "2026-09-09T21:08:50Z",
+        "heartbeat_at": "2026-09-09T21:04:52Z",
+        "expires_at": "2026-09-10T01:04:52Z",
         "scope": [
           "WDQ-COMPAT isolated candidate repair and proof; workflow-only governance and Beads transaction; no product or live trust changes"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "96d1c582493d771d15b936c10267533602dea35d"
+        "head": "07a1146c5ce234a8acb907da3a73de16f66721ab"
       },
       "canonical_next": false,
       "parallel": true,
