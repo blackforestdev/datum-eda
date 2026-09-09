@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "record_type": "infrastructure_producer_s02_coverage_observations",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-I03",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "source_commit": "9cab72daab46122da6d2c45ab7f972814f702880",
+  "producer_session": "wdq-i03-producer-20260909",
+  "raw_storage": "Git-common/datum-wdq/proposals/wdq-i03-9cab72da-s02-coverage",
+  "index_file": "observations-final.json",
+  "index_sha256": "670cfba538e2ba79e61dde42fc6eb5168de0f92982ef0a3014004eda87180c63",
+  "primary_invocations": 55,
+  "fresh_recovery_invocations": 55,
+  "cases": [
+    "INFRA-S02-01.duplicate-classification",
+    "INFRA-S02-01.missing-classification",
+    "INFRA-S02-01.newly-unclassified",
+    "INFRA-S02-03.execution-authorized",
+    "INFRA-S02-03.execution-step-without-authorization",
+    "INFRA-S02-07.infrastructure",
+    "INFRA-S02-07.product",
+    "INFRA-S02-09.outside-scope",
+    "INFRA-S02-10.category",
+    "INFRA-S02-10.enrollment-sessions",
+    "INFRA-S02-10.scope"
+  ],
+  "raw_capture_integrity_rechecked": true,
+  "protected_state_unchanged": true,
+  "all_expected_diagnostics_matched": true,
+  "limits": [
+    "Live-ownership boundary cases remain outstanding; S03-11 execution-refusal counterparts are included here.",
+    "These actual entrypoint observations use synthetic inputs, not product adoption evidence.",
+    "Typed proof, independent replay, promotion verification and owner activation remain required."
+  ],
+  "scenario_proof_complete": false,
+  "complete_matrix": false,
+  "acceptance_asserted": false
+}
