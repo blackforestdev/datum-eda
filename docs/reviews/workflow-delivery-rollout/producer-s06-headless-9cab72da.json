@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "record_type": "infrastructure_producer_s06_headless_observations",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-I03",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "source_commit": "9cab72daab46122da6d2c45ab7f972814f702880",
+  "producer_session": "wdq-i03-producer-20260909",
+  "raw_storage": "Git-common/datum-wdq/proposals/wdq-i03-9cab72da-s06-headless",
+  "index_file": "observations-final.json",
+  "index_sha256": "98af779a21da65b75f71ce0d1510e9cb343371df187507971161a610e9018378",
+  "primary_invocations": 50,
+  "fresh_recovery_invocations": 45,
+  "cases": [
+    "INFRA-S06-08.mixed",
+    "INFRA-S06-10.swapped",
+    "INFRA-S06-12.environment-fields",
+    "INFRA-S06-12.environment-kind",
+    "INFRA-S06-12.environment-version",
+    "INFRA-S06-13.interpreter",
+    "INFRA-S06-13.toolchain",
+    "INFRA-S06-14.pipes-dimensions",
+    "INFRA-S06-14.pty-dimensions",
+    "INFRA-S06-15.product-headless"
+  ],
+  "raw_capture_integrity_rechecked": true,
+  "protected_state_unchanged": true,
+  "all_expected_diagnostics_matched": true,
+  "limits": [
+    "Other S06 trust, interruption and proof-correlation cases remain separate required observations.",
+    "These actual entrypoint observations use synthetic inputs, not product adoption evidence.",
+    "Typed proof, independent replay, promotion verification and owner activation remain required."
+  ],
+  "scenario_proof_complete": false,
+  "complete_matrix": false,
+  "acceptance_asserted": false
+}
