@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "review_session": "/root/wdq_independent_review",
+  "method": "Independent raw artifact inspection, not execution replay.",
+  "verified": {
+    "ordered_original_observations": 95,
+    "primary": 50,
+    "recovery": 45,
+    "distinct_outer_and_observer_ids": 95,
+    "events": 397,
+    "artifact_hashes": 665,
+    "source_hash_checks": 3551,
+    "distinct_source_files": 33,
+    "all_before_after_identical": true,
+    "archive_hash_and_size": true,
+    "archive_members_compared": false
+  },
+  "outcomes": {
+    "negative_primary_exit_1": 45,
+    "primary_diagnostic": "WDQ-ENVIRONMENT",
+    "positive_primary_exit_0": 5,
+    "recovery_exit_0": 45
+  },
+  "inventory_correction": "The original 1123-call inventory includes 20 S05-06 deletion/rename observations within the ownership batch; those were already independently verified. Prior omission inference based on store grouping was incorrect; no duplicate renewal required.",
+  "independent_replay_performed": false,
+  "complete_matrix": false,
+  "activation_performed": false
+}
