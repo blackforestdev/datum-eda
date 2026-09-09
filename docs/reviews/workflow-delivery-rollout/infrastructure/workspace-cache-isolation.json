@@ -164,6 +164,18 @@
     "compatibility_accepted": false,
     "activation_performed": false
   },
+  "renewed_source_build": {
+    "source_commit": "22192085c55ec654eb209deccc0450afd53b2c65",
+    "input_count": 161,
+    "input_manifest_sha256": "9ad1d25841b05445db930c45036082c17912e1c241af1eaf80620062a89843fc",
+    "python_modules_compiled_in_memory": 148,
+    "toolchain": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+    "procedure": "Python -I -S -B: assert exact clean candidate HEAD; enumerate contract inputs from its Git revision; require equality with the worktree manifest and exactly 161 inputs; compile each of the 148 Python inputs in memory; recheck exact HEAD and clean state. No policy classification or installed authority is inferred by this source-only construction check.",
+    "exit_code": 0,
+    "compilation_output_written": false,
+    "compatibility_complete": false,
+    "remaining": "Renewed full regressions and actual matrix/compatibility captures, distinct independent replay and final publication inspection. Original 152-input proof is historical, not evidence for this candidate."
+  },
   "compatibility_complete": false,
   "activation_authorized": false,
   "activation_performed": false,
