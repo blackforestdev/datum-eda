@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "base_candidate": "94dc7b352285dc8db1413f794c10b51b66ffdd1c",
+  "main_transaction": "70a457fb",
+  "candidate": "a5122a9430bff2e86cfb90c8e56f72c7aa92d8f4",
+  "candidate_ref": "refs/datum-wdq/candidates/compat-closed-recheck-20260909",
+  "tree": "e0c32982a029b16e380ca6141e938481a0eba0cd",
+  "command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/synchronize_candidate_claim.py --base 94dc7b352285dc8db1413f794c10b51b66ffdd1c --transaction 70a457fb --ref refs/datum-wdq/candidates/compat-closed-recheck-20260909 --allowed-path .beads/issues.jsonl --allowed-path specs/active_frontier.json --allowed-path specs/PROGRESS.md --allowed-path specs/spec_governance_manifest.json --allowed-path docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/committed-independent-inspection.json --allowed-path docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/producer-closeout.json --closeout-view",
+  "exit_code": 0,
+  "failed_attempt": {
+    "command_difference": "Same arguments without --closeout-view; all files attempted through exact git apply --cached --check.",
+    "exit_code": 1,
+    "stderr": ["error: patch failed: specs/PROGRESS.md:185", "error: specs/PROGRESS.md: patch does not apply", "error: patch failed: specs/active_frontier.json:9650", "error: specs/active_frontier.json: patch does not apply"],
+    "cause": "Main governing-document list includes historical final-publication/producer-inspection.json; candidate deliberately omits it. Exact patch context therefore differs.",
+    "mutation": "Private-index check refused before patch application or candidate ref creation. Main remained unchanged."
+  },
+  "correction": "Transfer only the exact changed claim, summary, canonical selected step, COMPAT/RECHECK step records and new closeout document from the committed transaction, with old-value preconditions. Preserve candidate governing-list differences and delivery mapping. Regenerate the projection with the frozen candidate renderer. Apply remaining four files as exact patches, including the actual Beads export.",
+  "main_unchanged": true,
+  "verification": {
+    "command": "python3 -S -B .git/datum-wdq/proposals/wdq-final-owner-disposed-producer-20260909/scripts/check_workflow_delivery.py --root /home/bfadmin/Documents/datum-eda --candidate-ref a5122a9430bff2e86cfb90c8e56f72c7aa92d8f4 --enforce --authority-ref 0e5b8064a9faca407fac43bd2b362ba4d7200327 --base-ref 0e5b8064a9faca407fac43bd2b362ba4d7200327 --environment-path specs/workflow_delivery/rollout.environments.json",
+    "exit_code": 0,
+    "stdout": {"acceptance_asserted": false, "checks": ["WORKFLOW-DELIVERY-GATE-PILOT: accept", "WORKFLOW-DELIVERY-IMPLEMENTATION: verify"], "findings": [], "mode": "enforce", "readiness_asserted": false},
+    "separate_preservation_check": "Tree manifests over all 161 input roots equal runtime0e; authority hashes equal; validate_proof passes; all55 unrelated Frontier items equal."
+  },
+  "activation_performed": false,
+  "independent_replay_complete": false,
+  "publication_verified": false
+}
