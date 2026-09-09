@@ -132,6 +132,27 @@
     "activation_performed": false,
     "compatibility_accepted": false
   },
+  "workspace_baseline_followup": {
+    "candidate": "afc3caa14ce253725c26fc9f8125f54eccdad309",
+    "retained_ref": "refs/datum/workflow-delivery-candidates/afc3caa14ce253725c26fc9f8125f54eccdad309",
+    "policy_path": "specs/workflow_delivery/workspace-inputs.json",
+    "policy_sha256": "07f4efe440f40e395adcda116e2d38240863ba58159a1b5fee48817ea702d6c1",
+    "observed_main": "7e23e17269769d3708fb2b3d7b30ba5294b3d809",
+    "scope": "Proposed exact identities for one owner GUI script and 23 legacy caches; governed authority member, one parity instance and 161st proof input. No installed policy or source permission follows.",
+    "verification": [
+      {"command": "python3 -m unittest discover -s scripts -p test_workflow_rollout_contract.py", "tests": 17, "exit_code": 0},
+      {"command": "python3 -m unittest discover -s scripts -p 'test_workflow_delivery_workspace*.py'", "tests": 45, "exit_code": 0},
+      {"command": "python3 scripts/check_evidence_traceability.py", "routes": 25, "artifacts": 119, "exit_code": 0},
+      {"command": "python3 scripts/check_spec_governance.py", "classified": 247, "exit_code": 0},
+      {"command": "python3 scripts/check_spec_parity.py", "inventories": 18, "exit_code": 0},
+      {"command": "python3 scripts/check_source_health.py", "source_files": 1919, "exit_code": 0},
+      {"command": "git diff --cached --check", "exit_code": 0}
+    ],
+    "preserved_preparation_failures": "The previous exact authority assertion omitted the added policy. After extending that assertion, a new regression initially imported a nonexistent validator name; it now uses the actual workspace_policy_shape API. Final runs above passed and also verify policy-byte drift invalidates reviewed authority.",
+    "remaining": "The existing 141-path source proposal still needs exact reconciliation with eight added source/test files. Renewed producer compatibility observations, independent replay, publication inspection, separate owner activation and all three actual adoption cohorts remain required.",
+    "compatibility_accepted": false,
+    "activation_performed": false
+  },
   "compatibility_complete": false,
   "activation_authorized": false,
   "activation_performed": false,
