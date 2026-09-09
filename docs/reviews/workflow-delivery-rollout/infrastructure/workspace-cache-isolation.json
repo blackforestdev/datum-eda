@@ -96,6 +96,21 @@
     "installed_runtime_changed": false,
     "compatibility_accepted": false
   },
+  "proof_closure_followup": {
+    "candidate": "3ef485c561bda1318cd9e33d206798af682a2463",
+    "retained_ref": "refs/datum/workflow-delivery-candidates/3ef485c561bda1318cd9e33d206798af682a2463",
+    "finding": "Workspace eligibility alone did not establish proof irrelevance. A pinned owner file or legacy cache could be consumed by a product subprocess outside the gate's source-only import boundary.",
+    "correction": "Proof manifests retain owner-local files, legacy caches and Beads runtime. Only verified-source caches whose source is also enumerated may be filtered; explicitly named files remain inputs. Coverage/preflight retain their separate unchanged-workspace classification and complete state capture.",
+    "verification": [
+      {"command": "python3 -B -m unittest discover -s scripts -p 'test_workflow_delivery_workspace*.py' -q", "tests": 43, "exit_code": 0},
+      {"command": "python3 -B -m unittest discover -s scripts -p test_workflow_delivery_workspace_entrypoints.py -q", "tests": 5, "exit_code": 0},
+      {"command": "python3 scripts/check_source_health.py", "source_files": 1919, "exit_code": 0}
+    ],
+    "independent_review": "Distinct read-only inspection confirmed the reported proof-exclusion gap resolved, including actual CLI/selector WDQ-STALE regression for a pinned runtime script inside unchanged proof roots. No tests were executed by the reviewer and no full compatibility acceptance was given.",
+    "earlier_coverage_regression": {"candidate": "de69345c0a162144ee348b4ff90cbaf41d80f622", "command": "python3 -B -m unittest discover -s scripts -p 'test_workflow_delivery_coverage*.py' -q", "tests": 20, "seconds": 270.163, "exit_code": 0},
+    "real_inventory_observation": {"main_head": "b726cb6972148a6727971eed3e38066af543d4b3", "beads_runtime_files": 205, "verified_source_caches": 227, "unclassified_caches": 23, "unchanged_owner_scripts": 1, "scope": "Read-only classifier inventory under proposed source-only premise, not observed installed startup, reviewed pin authority or exemption approval. No files removed or altered."},
+    "compatibility_accepted": false
+  },
   "compatibility_complete": false,
   "activation_authorized": false,
   "activation_performed": false,
