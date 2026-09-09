@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "source_commit": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "packet_sha256": "678daa96208fb7a372962c383832a099f90ccc1bd63d76c091fee9b4d3fb84f9",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-packet-overlay.tar.xz",
+    "sha256": "80eca9f6e13870cc9b86d2855741979061f72e8986ed2f4bd8d4d2d2858b08ed",
+    "producer_tar_compare_exit_code": 0
+  },
+  "contents": "Generated proof and typed side artifacts only. Existing workspace-renewal evidence and frozen candidate files remain separately required; this archive is not a standalone replay package.",
+  "producer_command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/build_typed_packet.py --root /home/bfadmin/Documents/datum-eda --runtime /home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-final-owner-disposed-producer-20260909 --observations /home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/typed-observations-complete-0e5b8064 --output /home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/typed-packet-selected-environment-0e5b8064",
+  "producer_exit_code": 0,
+  "independent_inspection": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/typed-packet-independent-inspection.json",
+  "committed_candidate_verified": false,
+  "independent_replay_complete": false,
+  "activation_performed": false
+}

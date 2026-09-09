@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "review_session": "/root/wdq_independent_review",
+  "packet_sha256": "678daa96208fb7a372962c383832a099f90ccc1bd63d76c091fee9b4d3fb84f9",
+  "authority_sha256": "84c7c292bc93a857ddf2ea6d413ac0c78c9da9edcf6f15385a92c5d296577807",
+  "verified": {
+    "proof_validation": true,
+    "exact_candidate_selected_environment_validation": true,
+    "artifact_correlations": true,
+    "correlated_event_blobs": 6,
+    "input_manifest_entries": 161,
+    "build_fixture_and_archive_bindings": true
+  },
+  "review_result": "Environment correction independently verified. No further concrete packaging blocker found in the bounded read-only review.",
+  "preserved_corrections": "The first attempt used noncanonical manifest bytes. The second used a supplemental environment instead of the exact candidate-selected environment. Both attempts and source versions remain recorded in typed-packet-attempts.json; neither is the final packet.",
+  "limitation": "Prospective overlay validation only. Independent entrypoint repetition and exact publication inspection remain WDQ-RECHECK. This does not establish committed-candidate verification, independent replay, owner acceptance or activation.",
+  "committed_candidate_verified": false,
+  "independent_replay_complete": false,
+  "activation_performed": false
+}
