@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "command": "python3 -S -B .git/datum-wdq/proposals/wdq-final-owner-disposed-producer-20260909/scripts/check_workflow_delivery.py --root /home/bfadmin/Documents/datum-eda --candidate-ref 94dc7b352285dc8db1413f794c10b51b66ffdd1c --enforce --authority-ref 0e5b8064a9faca407fac43bd2b362ba4d7200327 --base-ref 0e5b8064a9faca407fac43bd2b362ba4d7200327 --environment-path specs/workflow_delivery/rollout.environments.json",
+  "exit_code": 0,
+  "stdout": {
+    "acceptance_asserted": false,
+    "checks": ["WORKFLOW-DELIVERY-GATE-PILOT: accept", "WORKFLOW-DELIVERY-IMPLEMENTATION: ready"],
+    "findings": [],
+    "mode": "enforce",
+    "readiness_asserted": false
+  },
+  "scope": "Read-only explicit candidate authority/base validation. The selected lifecycle is still WDQ-COMPAT in progress, so the entrypoint reports ready rather than producer completion. Committed proof validation is separately retained. This command does not prove final-main publication or install trust.",
+  "claim_import": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/candidate-claim-import.json",
+  "committed_proof": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/committed-packet-verification.json",
+  "independent_replay_complete": false,
+  "publication_verified": false,
+  "activation_performed": false
+}
