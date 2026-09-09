@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "failed_attempt": {
+    "command": "python3 -I -S -B -c 'import os,sys,json,uuid,subprocess,hashlib,py_compile\nfrom pathlib import Path\nsys.path.insert(0,\"scripts\")\nfrom workflow_delivery_capture_command import capture_command,save\nfrom workflow_delivery_capture_state import git\nfrom workflow_delivery_support_bundle import prepare_bundle\nfrom workflow_delivery_support_store import support_locations\nruntime=Path.cwd()\npin=\"0e5b8064a9faca407fac43bd2b362ba4d7200327\"\npacket=support_locations(runtime,pin)[\"proposals\"]/\"renewed-real-roadmap-0e5b8064\"\nstore=packet.parent/\"renewed-real-roadmap-inventory-0e5b8064\"\nstore.mkdir(exist_ok=False)\nroot=store/\"fixture\"\nroot.mkdir()\ngit(root,\"clone\",\"--quiet\",\"--shared\",\"--no-checkout\",str(packet/\"snapshot\"),str(root))\ngit(root,\"checkout\",\"--quiet\",\"--detach\",pin)\npolicy=json.loads((root/\"specs/workflow_delivery/workspace-inputs.json\").read_text())\nowner=next(x for x in policy[\"local_files\"] if x[\"path\"]==\"scripts/run_gui_doa2526.sh\")\nraw=(Path(\"/home/bfadmin/Documents/datum-eda\")/owner[\"path\"]).read_bytes()\nassert len(raw)==owner[\"size\"] and hashlib.sha256(raw).hexdigest()==owner[\"sha256\"]\n(root/owner[\"path\"]).write_bytes(raw)\n(root/owner[\"path\"]).chmod(owner[\"mode\"])\nfrom workflow_delivery_workspace import WorkspaceInputs,regular_file,read_stable,cache_source_name\nfrom workflow_delivery_capture_state import file_state\nmain=Path(\"/home/bfadmin/Documents/datum-eda\")\ninventory=json.loads((main/\"docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/current-main-workspace-inventory.json\").read_text())\nmaterialized=[]\nfor row in inventory[\"files\"]:\n path=row[\"path\"]\n target=root/path\n target.parent.mkdir(parents=True,exist_ok=True)\n if row[\"category\"]==\"python_cache\":\n  source=cache_source_name(path)\n  level=2 if \".opt-2.\" in path else 1 if \".opt-1.\" in path else 0\n  py_compile.compile(str(root/source),cfile=str(target),optimize=level,doraise=True)\n  target.chmod(row[\"state\"][\"mode\"])\n  method=\"Regenerated from exact candidate source; not copied observed cache bytes.\"\n else:\n  assert file_state(main/path)==row[\"state\"],path\n  payload=read_stable(regular_file(main,path),limit=row[\"state\"][\"size\"])\n  assert payload is not None,path\n  target.write_bytes(payload)\n  target.chmod(row[\"state\"][\"mode\"])\n  assert file_state(main/path)==row[\"state\"] and file_state(target)==row[\"state\"],path\n  method=\"Exact stable bytes and mode copied from observed main.\"\n materialized.append({\"path\":path,\"category\":row[\"category\"],\"observed_main\":row[\"state\"],\"fixture_state\":file_state(target),\"method\":method})\ntracked=set(git(root,\"ls-files\",\"-z\").decode().split(\"\\\\0\"))-{\"\"}\nclassifier=WorkspaceInputs(root,policy,tracked,cache_isolated=True)\nfor row in materialized:\n assert classifier.classify(row[\"path\"])==row[\"category\"],row\nsave(store/\"materialized-inventory.json\",{\"candidate\":pin,\"main_head\":inventory[\"main_head\"],\"counts\":inventory[\"counts\"],\"files\":materialized})\n\nnonce=str(uuid.uuid4())\n(root/\".git/datum-wdq-capture-owner\").write_text(nonce+\"\\n\")\nfor key,value in ((\"AuthorityRef\",pin),(\"BaseRef\",pin),(\"EnvironmentPath\",\"specs/workflow_delivery/rollout.environments.json\")):\n git(root,\"config\",\"--local\",\"datum.workflowDelivery\"+key,value)\nprepare_bundle(root,pin)\nlocations=support_locations(root,pin)\ngit(root,\"config\",\"--local\",\"core.hooksPath\",str(locations[\"hooks\"]))\ngit(root,\"config\",\"--local\",\"datum.workflowDeliveryRunnerPath\",str(locations[\"runner\"]))\nroots=json.loads((root/\"specs/workflow_delivery_policy.json\").read_text())[\"coverage\"][\"production_roots\"]+[\".beads\"]\nenv={\"PATH\":os.environ[\"PATH\"],\"HOME\":str(store),\"XDG_CONFIG_HOME\":str(store),\"GIT_CONFIG_NOSYSTEM\":\"1\",\"GIT_CONFIG_GLOBAL\":os.devnull,\"LANG\":\"C\"}\nresults=[]\ndef observe(label,refusal=False,surfaces=(\"C\",\"R\",\"S-check\",\"S-details\",\"H\")):\n for surface in surfaces:\n  output=store/(label+\"-\"+surface)\n  environment=dict(env)\n  selector=surface.startswith(\"S-\")\n  if surface==\"H\":\n   command=[str(locations[\"hook\"])]\n   environment[\"DATUM_WDQ_OBSERVE_PATH\"]=str(output/\"calls.jsonl\")\n  else:\n   script=runtime/\"scripts\"/(\"project_status.py\" if selector else \"check_workflow_delivery.py\")\n   args=[\"--root\",str(root)]\n   if selector:\n    args+=[\"--json\",surface.removeprefix(\"S-\")]\n    if surface==\"S-details\": args+=[\"WORKFLOW-DELIVERY-IMPLEMENTATION\"]\n   else:\n    args+=[\"--enforce\",\"--authority-ref\",pin,\"--base-ref\",pin,\"--environment-path\",\"specs/workflow_delivery/rollout.environments.json\"]\n    args+=([\"--staged\"] if surface==\"C\" else [\"--candidate-ref\",pin])\n   command=[sys.executable,\"-I\",\"-S\",\"-B\",str(runtime/\"scripts/workflow_delivery_observe_python.py\"),\"--script\",str(script),\"--source-root\",str(runtime),\"--output\",str(output/\"calls.jsonl\"),\"--function\",\"main\",\"--function\",\"selector_failures\",\"--\",*args]\n  result=capture_command(root,output,command,environment,fixture_nonce=nonce,case_id=\"WORKSPACE-REAL-\"+label,surface=\"S\" if selector else surface,untracked_roots=roots,timeout=180)\n  stdout=(output/\"stdout.bin\").read_text()\n  stderr=(output/\"stderr.bin\").read_text()\n  expected=refusal and selector\n  assessment={\"case\":label,\"surface\":surface,\"expected_refusal\":expected,\"invocation_id\":result[\"invocation_id\"],\"returncode\":result[\"returncode\"],\"state_unchanged\":not result[\"changed_state_fields\"] and not result[\"changed_files\"],\"capture_directory\":output.name}\n  results.append(assessment)\n  print(json.dumps(assessment),flush=True)\n  assert result[\"kind\"]==\"exited\" and (result[\"returncode\"]!=0)==expected,(stdout,stderr)\n  assert assessment[\"state_unchanged\"],result\n  if expected: assert \"WDQ-COVERAGE\" in stdout+stderr\nobserve(\"observed-workspace-inventory\")\nunknown=root/\"scripts/__pycache__/wdq_undeclared_source.py\"\nunknown.write_bytes(b\"undeclared_source = True\\n\")\nobserve(\"inventory-plus-unknown-source\",True,(\"S-check\",\"S-details\"))\nunknown.unlink()\nobserve(\"restored-workspace-inventory\",False,(\"S-check\",\"S-details\"))\nsave(store/\"observations.json\",{\"candidate\":pin,\"invocations\":results,\"snapshot_bundle_sha256\":hashlib.sha256((packet/\"source.bundle\").read_bytes()).hexdigest(),\"scope\":\"Exact real-roadmap fixture reproducing all456 observed workspace paths: stable Beads/pinned bytes and candidate-regenerated source caches. Five positive surfaces plus both selector refusal/restoration paths. Not all workspace groups or independent replay.\",\"compatibility_complete\":False,\"activation_performed\":False})\nassert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\")\nprint(json.dumps({\"completed\":len(results),\"store\":str(store)}),flush=True)\n'",
+    "exit_code": 1,
+    "phase": "Fixture construction, before nonce or gate invocation.",
+    "cause": "Recipe split Git output on literal backslash-zero rather than NUL, so tracked-path membership was incorrect.",
+    "observed_error": "AssertionError classifying mcp-server/__pycache__/agent_audit.cpython-313.pyc",
+    "recovery": "Corrected splitting and resumed the same confirmed-terminal, pre-capture fixture. Did not change gate code or policy."
+  },
+  "command": "python3 -I -S -B -c 'import os,sys,json,uuid,subprocess,hashlib,py_compile\nfrom pathlib import Path\nsys.path.insert(0,\"scripts\")\nfrom workflow_delivery_capture_command import capture_command,save\nfrom workflow_delivery_capture_state import git\nfrom workflow_delivery_support_bundle import prepare_bundle\nfrom workflow_delivery_support_store import support_locations\nruntime=Path.cwd()\npin=\"0e5b8064a9faca407fac43bd2b362ba4d7200327\"\npacket=support_locations(runtime,pin)[\"proposals\"]/\"renewed-real-roadmap-0e5b8064\"\nstore=packet.parent/\"renewed-real-roadmap-inventory-0e5b8064\"\nassert store.is_dir()\nroot=store/\"fixture\"\nassert root.is_dir()\nassert git(root,\"rev-parse\",\"HEAD\").decode().strip()==pin\nassert not (root/\".git/datum-wdq-capture-owner\").exists()\npolicy=json.loads((root/\"specs/workflow_delivery/workspace-inputs.json\").read_text())\nowner=next(x for x in policy[\"local_files\"] if x[\"path\"]==\"scripts/run_gui_doa2526.sh\")\nraw=(Path(\"/home/bfadmin/Documents/datum-eda\")/owner[\"path\"]).read_bytes()\nassert len(raw)==owner[\"size\"] and hashlib.sha256(raw).hexdigest()==owner[\"sha256\"]\n(root/owner[\"path\"]).write_bytes(raw)\n(root/owner[\"path\"]).chmod(owner[\"mode\"])\nfrom workflow_delivery_workspace import WorkspaceInputs,regular_file,read_stable,cache_source_name\nfrom workflow_delivery_capture_state import file_state\nmain=Path(\"/home/bfadmin/Documents/datum-eda\")\ninventory=json.loads((main/\"docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/current-main-workspace-inventory.json\").read_text())\nmaterialized=[]\nfor row in inventory[\"files\"]:\n path=row[\"path\"]\n target=root/path\n target.parent.mkdir(parents=True,exist_ok=True)\n if row[\"category\"]==\"python_cache\":\n  source=cache_source_name(path)\n  level=2 if \".opt-2.\" in path else 1 if \".opt-1.\" in path else 0\n  py_compile.compile(str(root/source),cfile=str(target),optimize=level,doraise=True)\n  target.chmod(row[\"state\"][\"mode\"])\n  method=\"Regenerated from exact candidate source; not copied observed cache bytes.\"\n else:\n  assert file_state(main/path)==row[\"state\"],path\n  payload=read_stable(regular_file(main,path),limit=row[\"state\"][\"size\"])\n  assert payload is not None,path\n  target.write_bytes(payload)\n  target.chmod(row[\"state\"][\"mode\"])\n  assert file_state(main/path)==row[\"state\"] and file_state(target)==row[\"state\"],path\n  method=\"Exact stable bytes and mode copied from observed main.\"\n materialized.append({\"path\":path,\"category\":row[\"category\"],\"observed_main\":row[\"state\"],\"fixture_state\":file_state(target),\"method\":method})\ntracked=set(git(root,\"ls-files\",\"-z\").decode().split(\"\\0\"))-{\"\"}\nclassifier=WorkspaceInputs(root,policy,tracked,cache_isolated=True)\nfor row in materialized:\n assert classifier.classify(row[\"path\"])==row[\"category\"],row\nsave(store/\"materialized-inventory.json\",{\"candidate\":pin,\"main_head\":inventory[\"main_head\"],\"counts\":inventory[\"counts\"],\"files\":materialized})\n\nnonce=str(uuid.uuid4())\n(root/\".git/datum-wdq-capture-owner\").write_text(nonce+\"\\n\")\nfor key,value in ((\"AuthorityRef\",pin),(\"BaseRef\",pin),(\"EnvironmentPath\",\"specs/workflow_delivery/rollout.environments.json\")):\n git(root,\"config\",\"--local\",\"datum.workflowDelivery\"+key,value)\nprepare_bundle(root,pin)\nlocations=support_locations(root,pin)\ngit(root,\"config\",\"--local\",\"core.hooksPath\",str(locations[\"hooks\"]))\ngit(root,\"config\",\"--local\",\"datum.workflowDeliveryRunnerPath\",str(locations[\"runner\"]))\nroots=json.loads((root/\"specs/workflow_delivery_policy.json\").read_text())[\"coverage\"][\"production_roots\"]+[\".beads\"]\nenv={\"PATH\":os.environ[\"PATH\"],\"HOME\":str(store),\"XDG_CONFIG_HOME\":str(store),\"GIT_CONFIG_NOSYSTEM\":\"1\",\"GIT_CONFIG_GLOBAL\":os.devnull,\"LANG\":\"C\"}\nresults=[]\ndef observe(label,refusal=False,surfaces=(\"C\",\"R\",\"S-check\",\"S-details\",\"H\")):\n for surface in surfaces:\n  output=store/(label+\"-\"+surface)\n  environment=dict(env)\n  selector=surface.startswith(\"S-\")\n  if surface==\"H\":\n   command=[str(locations[\"hook\"])]\n   environment[\"DATUM_WDQ_OBSERVE_PATH\"]=str(output/\"calls.jsonl\")\n  else:\n   script=runtime/\"scripts\"/(\"project_status.py\" if selector else \"check_workflow_delivery.py\")\n   args=[\"--root\",str(root)]\n   if selector:\n    args+=[\"--json\",surface.removeprefix(\"S-\")]\n    if surface==\"S-details\": args+=[\"WORKFLOW-DELIVERY-IMPLEMENTATION\"]\n   else:\n    args+=[\"--enforce\",\"--authority-ref\",pin,\"--base-ref\",pin,\"--environment-path\",\"specs/workflow_delivery/rollout.environments.json\"]\n    args+=([\"--staged\"] if surface==\"C\" else [\"--candidate-ref\",pin])\n   command=[sys.executable,\"-I\",\"-S\",\"-B\",str(runtime/\"scripts/workflow_delivery_observe_python.py\"),\"--script\",str(script),\"--source-root\",str(runtime),\"--output\",str(output/\"calls.jsonl\"),\"--function\",\"main\",\"--function\",\"selector_failures\",\"--\",*args]\n  result=capture_command(root,output,command,environment,fixture_nonce=nonce,case_id=\"WORKSPACE-REAL-\"+label,surface=\"S\" if selector else surface,untracked_roots=roots,timeout=180)\n  stdout=(output/\"stdout.bin\").read_text()\n  stderr=(output/\"stderr.bin\").read_text()\n  expected=refusal and selector\n  assessment={\"case\":label,\"surface\":surface,\"expected_refusal\":expected,\"invocation_id\":result[\"invocation_id\"],\"returncode\":result[\"returncode\"],\"state_unchanged\":not result[\"changed_state_fields\"] and not result[\"changed_files\"],\"capture_directory\":output.name}\n  results.append(assessment)\n  print(json.dumps(assessment),flush=True)\n  assert result[\"kind\"]==\"exited\" and (result[\"returncode\"]!=0)==expected,(stdout,stderr)\n  assert assessment[\"state_unchanged\"],result\n  if expected: assert \"WDQ-COVERAGE\" in stdout+stderr\nobserve(\"observed-workspace-inventory\")\nunknown=root/\"scripts/__pycache__/wdq_undeclared_source.py\"\nunknown.write_bytes(b\"undeclared_source = True\\n\")\nobserve(\"inventory-plus-unknown-source\",True,(\"S-check\",\"S-details\"))\nunknown.unlink()\nobserve(\"restored-workspace-inventory\",False,(\"S-check\",\"S-details\"))\nsave(store/\"observations.json\",{\"candidate\":pin,\"invocations\":results,\"snapshot_bundle_sha256\":hashlib.sha256((packet/\"source.bundle\").read_bytes()).hexdigest(),\"scope\":\"Exact real-roadmap fixture reproducing all456 observed workspace paths: stable Beads/pinned bytes and candidate-regenerated source caches. Five positive surfaces plus both selector refusal/restoration paths. Not all workspace groups or independent replay.\",\"compatibility_complete\":False,\"activation_performed\":False})\nassert git(runtime,\"rev-parse\",\"HEAD\").decode().strip()==pin and not git(runtime,\"status\",\"--porcelain\")\nprint(json.dumps({\"completed\":len(results),\"store\":str(store)}),flush=True)\n'",
+  "exit_code": 0,
+  "observations": {
+    "activation_performed": false,
+    "candidate": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+    "compatibility_complete": false,
+    "invocations": [
+      {
+        "capture_directory": "observed-workspace-inventory-C",
+        "case": "observed-workspace-inventory",
+        "expected_refusal": false,
+        "invocation_id": "ff3255ee-9b89-4293-bbaa-cf0fb6cf8b5c",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "C"
+      },
+      {
+        "capture_directory": "observed-workspace-inventory-R",
+        "case": "observed-workspace-inventory",
+        "expected_refusal": false,
+        "invocation_id": "003270d8-3dd1-4799-8ca1-1c856c7d7ffa",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "R"
+      },
+      {
+        "capture_directory": "observed-workspace-inventory-S-check",
+        "case": "observed-workspace-inventory",
+        "expected_refusal": false,
+        "invocation_id": "7000114e-0ec3-4df3-9ef6-c75b94fc961b",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "S-check"
+      },
+      {
+        "capture_directory": "observed-workspace-inventory-S-details",
+        "case": "observed-workspace-inventory",
+        "expected_refusal": false,
+        "invocation_id": "dc66ea85-9433-45d2-a3a2-46b9330e235b",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "S-details"
+      },
+      {
+        "capture_directory": "observed-workspace-inventory-H",
+        "case": "observed-workspace-inventory",
+        "expected_refusal": false,
+        "invocation_id": "a567c843-b53c-45cf-ade6-4578c8325218",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "H"
+      },
+      {
+        "capture_directory": "inventory-plus-unknown-source-S-check",
+        "case": "inventory-plus-unknown-source",
+        "expected_refusal": true,
+        "invocation_id": "787dd4c2-9c5f-4fa0-8bc8-9fd5f7007922",
+        "returncode": 1,
+        "state_unchanged": true,
+        "surface": "S-check"
+      },
+      {
+        "capture_directory": "inventory-plus-unknown-source-S-details",
+        "case": "inventory-plus-unknown-source",
+        "expected_refusal": true,
+        "invocation_id": "458040bc-5534-459c-8292-4b985737e287",
+        "returncode": 1,
+        "state_unchanged": true,
+        "surface": "S-details"
+      },
+      {
+        "capture_directory": "restored-workspace-inventory-S-check",
+        "case": "restored-workspace-inventory",
+        "expected_refusal": false,
+        "invocation_id": "c222c9ba-8b79-4809-9a6a-1ffa1adb7208",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "S-check"
+      },
+      {
+        "capture_directory": "restored-workspace-inventory-S-details",
+        "case": "restored-workspace-inventory",
+        "expected_refusal": false,
+        "invocation_id": "9f2b4d67-3e13-4fb5-baf7-0852afa3918a",
+        "returncode": 0,
+        "state_unchanged": true,
+        "surface": "S-details"
+      }
+    ],
+    "scope": "Exact real-roadmap fixture reproducing all456 observed workspace paths: stable Beads/pinned bytes and candidate-regenerated source caches. Five positive surfaces plus both selector refusal/restoration paths. Not all workspace groups or independent replay.",
+    "snapshot_bundle_sha256": "568325e3d25f5ebf5d1ca03f9d22afd89e39758dd81dc581ec7b6c75ca808b74"
+  },
+  "inventory": {
+    "observed_paths": 456,
+    "beads_runtime": 205,
+    "source_caches": 227,
+    "legacy_caches": 23,
+    "owner_local": 1,
+    "exact_byte_and_mode_copies": 229,
+    "regenerated_candidate_source_caches": 227,
+    "source": "current-main-workspace-inventory.json",
+    "scope": "All current observed paths reproduced; derived caches deliberately rebuilt for candidate paths/source, not represented as byte-identical."
+  },
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/full-workspace-inventory-captures.tar.xz",
+    "sha256": "8e74faaca4a1c62f242d6847740886715fc7cb0327e993fd7178fd4816d3ffa8",
+    "bytes": 6399024,
+    "contents": "Nine complete raw capture directories, materialized inventory and observations; no duplicated Git history/checkout.",
+    "fixture_retained_local": ".git/datum-wdq/proposals/wdq-final-owner-disposed-producer-20260909/.git/datum-wdq/proposals/renewed-real-roadmap-inventory-0e5b8064/fixture",
+    "source_ref": "refs/datum-wdq/candidates/workspace-renewal-20260909"
+  },
+  "limitations": [
+    "Actual br execution inside the fixture is not asserted; br rejects .git-located stores by design.",
+    "Distinct independent execution replay, remaining original/additional cases, typed producer packaging and exact publication inspection remain due.",
+    "Main trust, owner files and Beads runtime were not modified by the reproduction."
+  ],
+  "compatibility_complete": false,
+  "activation_performed": false
+}
