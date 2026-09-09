@@ -54,6 +54,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/readiness-review.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-READY exact-candidate bounded readiness review and input/tool identities. Not producer proof, independent review, owner activation or product acceptance."
+    },
     "docs/reviews/workflow-delivery-rollout/tooling-closeout.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
