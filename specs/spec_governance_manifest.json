@@ -54,15 +54,20 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
-    "docs/reviews/workflow-delivery-rollout/tooling-closeout.json": {
+    "docs/reviews/workflow-delivery-rollout/i03-closeout.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
-      "notes": "WDQ-TOOLS construction evidence for the exact retained candidate. Not readiness, producer verification, independent review, live activation or product acceptance."
+      "notes": "WDQ-I03 exact producer candidate and verification handoff. Not independent review, owner activation or product acceptance."
     },
     "docs/reviews/workflow-delivery-rollout/readiness-review.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
       "notes": "WDQ-READY exact-candidate bounded readiness review and input/tool identities. Not producer proof, independent review, owner activation or product acceptance."
+    },
+    "docs/reviews/workflow-delivery-rollout/tooling-closeout.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "WDQ-TOOLS construction evidence for the exact retained candidate. Not readiness, producer verification, independent review, live activation or product acceptance."
     },
     "docs/reviews/workflow-delivery-rollout/toolchain-preflight.json": {
       "class": "governed",
