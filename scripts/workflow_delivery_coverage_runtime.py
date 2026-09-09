@@ -20,7 +20,8 @@ def validate_coverage(tree, manifest, trust, *, environments=None):
     # Ordinary transactions always require current execution claims. Promotion
     # inspection separately validates its complete history and owner boundary.
     base = trust.base.revision if tree.revision else tree.resolve("HEAD")
-    changed = changed_production_paths(tree, coverage["production_roots"], base_ref=base)
+    changed = changed_production_paths(tree, coverage["production_roots"], base_ref=base,
+                                      workspace=tree.workspace)
     return authorize_source_paths(changed, coverage, manifest, _issues(tree), trust.enrolled)
 
 

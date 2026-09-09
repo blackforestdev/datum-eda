@@ -11,6 +11,7 @@ from workflow_delivery_shapes import (
     array, closed, commit_id, ids, identifier, ref, require, unique,
 )
 from workflow_delivery_tree import Tree
+from workflow_delivery_workspace_authority import load_workspace
 
 
 POLICY_PATH = "specs/workflow_delivery_policy.json"
@@ -92,6 +93,9 @@ class Trust:
                 require(running.is_file() and running.read_bytes() == approved, path,
                         "execute the trusted revision's gate, not candidate code", "WDQ-TRUST")
         self.enrolled = {r["frontier_key"]: r for r in self.policy["enrolled"]}
+        self.workspace = load_workspace(candidate, self.authority,
+                                        policy_schema=self.policy["schema_version"])
+        candidate.workspace = self.workspace
 
     def contract(self, candidate, item, contract):
         key = item["key"]

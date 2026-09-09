@@ -23,6 +23,7 @@ class Tree:
             require(bool(selected_index), "GIT_INDEX_FILE", "empty selected index path", "WDQ-INDEX")
             self.index_path = str((self.root / selected_index).resolve())
         self.entries = self._entries()
+        self.workspace = None
 
     def git(self, *args, index_path=None):
         environment = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
@@ -110,6 +111,7 @@ class Tree:
         return parse_json(self.read(path, committed=committed), path)
 
     def manifest(self, roots, *, workspace=None):
+        workspace = self.workspace if workspace is None else workspace
         paths = set()
         for root in roots:
             normalized_path(root)

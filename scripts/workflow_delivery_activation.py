@@ -19,6 +19,7 @@ from workflow_delivery_bootstrap import git
 from workflow_delivery_capture_state import protected_state
 from workflow_delivery_support_bundle import verify_bundle
 from workflow_delivery_support_store import support_locations, proposed_local_trust
+from workflow_delivery_workspace_authority import promotion_workspace
 
 COORDINATION = "All writers to this checkout and its Git-common trust configuration are paused for this exact activation."
 
@@ -131,7 +132,8 @@ def _activate(root, request, *, record, signals):
         bundle = verify_bundle(root, request["authority"])
         options = dict(base=request["base"], candidate=request["candidate"],
             input_roots=request["input_roots"], expected_local_trust=prior,
-            publication_review=request["publication_review"])
+            publication_review=request["publication_review"], workspace=promotion_workspace(
+                root, candidate=request["candidate"], authority=request["authority"]))
         before = preflight(root, **options)
         evidence = inspect_promotion_candidate(root, base=request["base"], candidate=request["candidate"],
             authority=request["authority"], environment_path=request["environment_path"],

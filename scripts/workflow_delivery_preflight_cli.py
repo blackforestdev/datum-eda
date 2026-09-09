@@ -89,6 +89,7 @@ def main(argv=None):
         from workflow_delivery_tree import Tree
         from workflow_delivery_trust import POLICY_PATH, policy_shape
         from workflow_delivery_publication_delta import inspect_activation_response
+        from workflow_delivery_workspace_authority import promotion_workspace
 
         if bool(args.owner_response) != bool(args.owner_response_sha256):
             raise ValueError("owner response path and externally selected digest are required together")
@@ -163,10 +164,12 @@ def main(argv=None):
                     payload["environment_selection"] = {"path": environment_path,
                         "sha256": sha256(authority_tree.read(environment_path, committed=True)),
                         "enrolled_keys": sorted(environments)}
+                    workspace = promotion_workspace(args.root, candidate=request["candidate"],
+                                                    authority=request["authority"])
                     payload["preflight"] = preflight(args.root, base=request["base"],
                         candidate=request["candidate"], input_roots=request["input_roots"],
                         expected_local_trust=request["prior_local_trust"],
-                        publication_review=request["publication_review"])
+                        publication_review=request["publication_review"], workspace=workspace)
                     if args.inspect_promotion:
                         payload["promotion_inspection"] = inspect_promotion_candidate(args.root,
                             base=request["base"], candidate=request["candidate"], authority=request["authority"],
@@ -174,7 +177,7 @@ def main(argv=None):
                         repeated = preflight(args.root, base=request["base"],
                             candidate=request["candidate"], input_roots=request["input_roots"],
                             expected_local_trust=request["prior_local_trust"],
-                            publication_review=request["publication_review"])
+                            publication_review=request["publication_review"], workspace=workspace)
                         if canonical_json(repeated) != canonical_json(payload["preflight"]):
                             raise ValueError("publication state changed during delivery evidence inspection")
                     if verify_bundle(args.root, request["authority"]) != support:
