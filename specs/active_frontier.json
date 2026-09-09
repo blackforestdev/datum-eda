@@ -107,7 +107,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve all recommended`, or list exceptions as `OPEN-n: revise — <replacement>` or `OPEN-n: defer — <reason>`.",
+              "response_format": "Reply `approve all recommended`, or list exceptions as `OPEN-n: revise \u2014 <replacement>` or `OPEN-n: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "OPEN-1",
@@ -468,7 +468,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve final S5 contract`, or `revise — <required correction>`.",
+              "response_format": "Reply `approve final S5 contract`, or `revise \u2014 <required correction>`.",
               "requests": [
                 {
                   "id": "S5-FINAL-REVIEW",
@@ -504,7 +504,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply `ratify`, or `revise — <required decision correction>`.",
+              "response_format": "Reply `ratify`, or `revise \u2014 <required decision correction>`.",
               "requests": [
                 {
                   "id": "S5-RATIFICATION",
@@ -1077,7 +1077,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Run the stated production-terminal check, then reply `approve T0 shell truth`, or `reject T0 shell truth — <observed failure>`.",
+              "response_format": "Run the stated production-terminal check, then reply `approve T0 shell truth`, or `reject T0 shell truth \u2014 <observed failure>`.",
               "requests": [
                 {
                   "id": "T0-ACCEPT",
@@ -1448,7 +1448,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve P04-L4`, or `P04-L4: revise — <replacement>` or `P04-L4: defer — <reason>`.",
+              "response_format": "Reply `approve P04-L4`, or `P04-L4: revise \u2014 <replacement>` or `P04-L4: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "P04-L4",
@@ -1505,7 +1505,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve P05-O6`, or `P05-O6: revise — <replacement>` or `P05-O6: defer — <reason>`.",
+              "response_format": "Reply `approve P05-O6`, or `P05-O6: revise \u2014 <replacement>` or `P05-O6: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "P05-O6",
@@ -1629,7 +1629,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve DTC-P05D`, or `DTC-P05D: revise — <observed defect>`.",
+              "response_format": "Reply `approve DTC-P05D`, or `DTC-P05D: revise \u2014 <observed defect>`.",
               "requests": [
                 {
                   "id": "DTC-P05D",
@@ -1837,7 +1837,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve P06-O9`, or `P06-O9: revise — <replacement>` or `P06-O9: defer — <reason>`.",
+              "response_format": "Reply `approve P06-O9`, or `P06-O9: revise \u2014 <replacement>` or `P06-O9: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "P06-O9",
@@ -2013,7 +2013,12 @@
             "status": "complete",
             "action": "Create the std-only first-party core and define closed cells, screen state, limits, replies, events, damage, and snapshot types.",
             "depends_on": [],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P07"}],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P07"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2031,8 +2036,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement the bounded incremental UTF-8 and ECMA-48 parser with typed actions and chunk-invariant recovery.",
-            "depends_on": ["DTC-P07"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P08"}],
+            "depends_on": [
+              "DTC-P07"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P08"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2050,8 +2062,16 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement the primary/alternate screen, cursor, margins, modes, edit/erase/scroll reducer, and cell-continuation invariants.",
-            "depends_on": ["DTC-P07", "DTC-P08"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P09"}],
+            "depends_on": [
+              "DTC-P07",
+              "DTC-P08"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P09"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2069,8 +2089,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Complete DEC/xterm SGR, colors, charsets, tabs, reports, private modes, palettes, metadata, and synchronized-output semantics.",
-            "depends_on": ["DTC-P09"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P10"}],
+            "depends_on": [
+              "DTC-P09"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P10"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2088,8 +2115,15 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Ratify the exact Unicode version, ambiguous-width tailoring, and BiDi posture before Unicode data generation or text implementation begins.",
-            "depends_on": ["DTC-P10"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P11A"}],
+            "depends_on": [
+              "DTC-P10"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P11A"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "review",
@@ -2145,8 +2179,17 @@
             "kind": "execution",
             "status": "complete",
             "action": "Generate governed Unicode tables and implement grapheme, emoji, combining, width, wide-cell, shaping-boundary, and declared BiDi behavior.",
-            "depends_on": ["DTC-P07", "DTC-P09", "DTC-P11A"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P11"}],
+            "depends_on": [
+              "DTC-P07",
+              "DTC-P09",
+              "DTC-P11A"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P11"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2164,8 +2207,16 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement bounded logical history, stable anchors, deterministic trimming, and resize reflow.",
-            "depends_on": ["DTC-P09", "DTC-P11"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P12"}],
+            "depends_on": [
+              "DTC-P09",
+              "DTC-P11"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P12"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2183,8 +2234,16 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement grapheme, word, logical/wrapped-line, block and all selection plus deterministic copy extraction.",
-            "depends_on": ["DTC-P11", "DTC-P12"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P13"}],
+            "depends_on": [
+              "DTC-P11",
+              "DTC-P12"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P13"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2202,8 +2261,16 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement incremental literal search and a bounded Datum-owned non-backtracking regex engine with stable matches.",
-            "depends_on": ["DTC-P11", "DTC-P12"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P14"}],
+            "depends_on": [
+              "DTC-P11",
+              "DTC-P12"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P14"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2221,8 +2288,16 @@
             "kind": "execution",
             "status": "complete",
             "action": "Complete legacy, application, kitty keyboard, mouse, focus, paste, IME-commit, reply, and coordinate-clipping protocols.",
-            "depends_on": ["DTC-P10", "DTC-P11"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P15"}],
+            "depends_on": [
+              "DTC-P10",
+              "DTC-P11"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P15"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2240,8 +2315,15 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Ratify terminal clipboard, URI activation, paste confirmation, and notification/rate security policy before metadata implementation.",
-            "depends_on": ["DTC-P15"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P16A"}],
+            "depends_on": [
+              "DTC-P15"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P16A"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "review",
@@ -2316,8 +2398,16 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement bounded OSC link, clipboard, shell-mark, palette, title, CWD, notification, progress, URI and paste-security events.",
-            "depends_on": ["DTC-P10", "DTC-P16A"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P16"}],
+            "depends_on": [
+              "DTC-P10",
+              "DTC-P16A"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P16"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2335,8 +2425,16 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement bounded Datum-owned Base64, checksums, Adler-32, zlib/DEFLATE, and PNG decoding.",
-            "depends_on": ["DTC-P07", "DTC-P08"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P17"}],
+            "depends_on": [
+              "DTC-P07",
+              "DTC-P08"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P17"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2354,8 +2452,16 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement bounded sixel grammar, raster/color semantics, placement, clipping, history, and teardown.",
-            "depends_on": ["DTC-P10", "DTC-P11"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P18"}],
+            "depends_on": [
+              "DTC-P10",
+              "DTC-P11"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P18"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2373,8 +2479,18 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement full bounded kitty graphics transfer, image, placement, animation, composition, deletion, history, and reply semantics.",
-            "depends_on": ["DTC-P10", "DTC-P11", "DTC-P16", "DTC-P17"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P19"}],
+            "depends_on": [
+              "DTC-P10",
+              "DTC-P11",
+              "DTC-P16",
+              "DTC-P17"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P19"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2392,8 +2508,20 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement complete damage events and immutable renderer-independent snapshots for text, cursor, palette, history, and graphics.",
-            "depends_on": ["DTC-P09", "DTC-P10", "DTC-P12", "DTC-P16", "DTC-P18", "DTC-P19"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P20"}],
+            "depends_on": [
+              "DTC-P09",
+              "DTC-P10",
+              "DTC-P12",
+              "DTC-P16",
+              "DTC-P18",
+              "DTC-P19"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P20"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2411,8 +2539,27 @@
             "kind": "execution",
             "status": "complete",
             "action": "Close the core with normative snapshots, chunk invariance, deterministic mutation/replay, hostile-input, resource, performance, offline, dependency, and source-health proof.",
-            "depends_on": ["DTC-P08", "DTC-P09", "DTC-P10", "DTC-P11", "DTC-P12", "DTC-P13", "DTC-P14", "DTC-P15", "DTC-P16", "DTC-P17", "DTC-P18", "DTC-P19", "DTC-P20"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P21"}],
+            "depends_on": [
+              "DTC-P08",
+              "DTC-P09",
+              "DTC-P10",
+              "DTC-P11",
+              "DTC-P12",
+              "DTC-P13",
+              "DTC-P14",
+              "DTC-P15",
+              "DTC-P16",
+              "DTC-P17",
+              "DTC-P18",
+              "DTC-P19",
+              "DTC-P20"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P21"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2487,7 +2634,12 @@
             "status": "complete",
             "action": "Ratify the exact per-session TerminalCore memory and work profile before the production adapter supplies numerical limits.",
             "depends_on": [],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P22A"}],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P22A"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "review",
@@ -2496,7 +2648,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve DTC-P22 recommended production limits`, or `P22-L1: revise — <replacement>`.",
+              "response_format": "Reply `approve DTC-P22 recommended production limits`, or `P22-L1: revise \u2014 <replacement>`.",
               "requests": [
                 {
                   "id": "P22-L1",
@@ -2515,8 +2667,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Connect PTY bytes, replies, resize, lifecycle, context association, bounded scheduling, and every-session draining to TerminalCore through one session adapter using the ratified profile.",
-            "depends_on": ["DTC-P22A"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P22B"}],
+            "depends_on": [
+              "DTC-P22A"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P22B"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2534,8 +2693,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Render immutable TerminalCore snapshots through Datum GPU/text primitives with complete attributes, shaping, clipping, damage, images, DPI, and visual proof.",
-            "depends_on": ["DTC-P22B"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P23"}],
+            "depends_on": [
+              "DTC-P22B"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P23"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2557,8 +2723,16 @@
             "kind": "execution",
             "status": "complete",
             "action": "Route native focus, keyboard, IME, mouse, paste, selection, clipboard, search, links, and immutable accessibility semantics through the sole TerminalCore authority.",
-            "depends_on": ["DTC-P22B", "DTC-P23"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P24"}],
+            "depends_on": [
+              "DTC-P22B",
+              "DTC-P23"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P24"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2576,8 +2750,15 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Decide whether Datum should implement a std-only Datum-authored Linux AT-SPI bridge after rejecting the Apache-2.0-only AccessKit adapter.",
-            "depends_on": ["DTC-P24"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P24A"}],
+            "depends_on": [
+              "DTC-P24"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P24A"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "decision",
@@ -2591,7 +2772,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve DTC-P24 Datum-owned AT-SPI bridge`, or `P24-A2: revise — <replacement>`.",
+              "response_format": "Reply `approve DTC-P24 Datum-owned AT-SPI bridge`, or `P24-A2: revise \u2014 <replacement>`.",
               "requests": [
                 {
                   "id": "P24-A2",
@@ -2610,8 +2791,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Publish the immutable TerminalCore semantic snapshot through the approved Linux AT-SPI bridge and prove text, caret, selection, focus, title, links, and events with a real screen reader.",
-            "depends_on": ["DTC-P24A"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P24B"}],
+            "depends_on": [
+              "DTC-P24A"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P24B"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2629,8 +2817,17 @@
             "kind": "execution",
             "status": "complete",
             "action": "Run bounded test/debug-only shadow comparison between the provisional path and TerminalCore over their declared overlap without creating a production selector or fallback.",
-            "depends_on": ["DTC-P22B", "DTC-P23", "DTC-P24B"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P25"}],
+            "depends_on": [
+              "DTC-P22B",
+              "DTC-P23",
+              "DTC-P24B"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P25"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -2648,8 +2845,18 @@
             "kind": "execution",
             "status": "complete",
             "action": "Atomically select TerminalCore as sole production authority and delete the provisional screen, parser, string/style grid, lossy renderer, shadow path, and TERM overclaim.",
-            "depends_on": ["DTC-P22B", "DTC-P23", "DTC-P24B", "DTC-P25"],
-            "requirement_refs": [{"path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md", "marker": "DTC-P26"}],
+            "depends_on": [
+              "DTC-P22B",
+              "DTC-P23",
+              "DTC-P24B",
+              "DTC-P25"
+            ],
+            "requirement_refs": [
+              {
+                "path": "docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md",
+                "marker": "DTC-P26"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -3141,8 +3348,7 @@
         "dat-terminal-emulator-epic-jzv.8",
         "dat-terminal-emulator-epic-jzv.9"
       ],
-      "unblocks": [
-      ],
+      "unblocks": [],
       "completion": {
         "outcome": "Datum agents operate against immutable pinned work context with explicit revision fences, session-scoped capability grants, revocation, and complete audit provenance.",
         "canonical_next_step_id": null,
@@ -3267,8 +3473,7 @@
           "effects": [
             "The workflow-parity package loses the context-authority prerequisite while retaining its own explicit selection and acceptance boundary."
           ],
-          "unblocks_issue_ids": [
-          ],
+          "unblocks_issue_ids": [],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -3539,7 +3744,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply `approve T4V-03 production acceptance`, or `T4V-03: reject — <blocking observation>`.",
+              "response_format": "Reply `approve T4V-03 production acceptance`, or `T4V-03: reject \u2014 <blocking observation>`.",
               "requests": [
                 {
                   "id": "T4V-FINAL-ACCEPTANCE",
@@ -4040,7 +4245,9 @@
       "canonical_next": false,
       "parallel": true,
       "summary": "Turn the schematic editor and library browser into buildable governed surface specifications without competing with the canonical roadmap.",
-      "dependencies": ["dat-manual-foundation-contracts-fsw"],
+      "dependencies": [
+        "dat-manual-foundation-contracts-fsw"
+      ],
       "unblocks": [
         "dat-native-authoring-depth-sf9",
         "dat-sheet-interaction-reentry-9ee"
@@ -4129,8 +4336,15 @@
             "kind": "planning",
             "status": "pending",
             "action": "Obtain independent review of the complete schematic and library specifications, visual authority and clause dispositions.",
-            "depends_on": ["SURFACE-S04"],
-            "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md", "marker": "SURFACE-REVIEW"}],
+            "depends_on": [
+              "SURFACE-S04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+                "marker": "SURFACE-REVIEW"
+              }
+            ],
             "completion_evidence": []
           },
           {
@@ -4196,7 +4410,9 @@
       "dependencies": [
         "dat-s5-selection-visual-contract-zid"
       ],
-      "unblocks": ["dat-gui-p2-cross-probe-27z"],
+      "unblocks": [
+        "dat-gui-p2-cross-probe-27z"
+      ],
       "completion": {
         "outcome": "Ratified read-only S5A selection, marquee, lifecycle, compound subjects and inspection work natively across board and schematic, with complete proof, independent replay and exact owner acceptance.",
         "canonical_next_step_id": "S5A-C01",
@@ -4243,7 +4459,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `UVT-S5A-BUILD: authorize execution — <exact reviewed candidate and evidence>`, `UVT-S5A-BUILD: revise — <correction>`, or `UVT-S5A-BUILD: defer — <reason>`.",
+              "response_format": "Reply `UVT-S5A-BUILD: authorize execution \u2014 <exact reviewed candidate and evidence>`, `UVT-S5A-BUILD: revise \u2014 <correction>`, or `UVT-S5A-BUILD: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "AUTHORIZE",
@@ -4321,7 +4537,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `UVT-S5A-BUILD: accept delivery — <exact reviewed candidate and evidence>`, `UVT-S5A-BUILD: revise — <correction>`, or `UVT-S5A-BUILD: defer — <reason>`.",
+              "response_format": "Reply `UVT-S5A-BUILD: accept delivery \u2014 <exact reviewed candidate and evidence>`, `UVT-S5A-BUILD: revise \u2014 <correction>`, or `UVT-S5A-BUILD: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "ACCEPT",
@@ -4417,7 +4633,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `GUI-P2-CROSSPROBE: authorize execution — <exact reviewed candidate and evidence>`, `GUI-P2-CROSSPROBE: revise — <correction>`, or `GUI-P2-CROSSPROBE: defer — <reason>`.",
+              "response_format": "Reply `GUI-P2-CROSSPROBE: authorize execution \u2014 <exact reviewed candidate and evidence>`, `GUI-P2-CROSSPROBE: revise \u2014 <correction>`, or `GUI-P2-CROSSPROBE: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "AUTHORIZE",
@@ -4495,7 +4711,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `GUI-P2-CROSSPROBE: accept delivery — <exact reviewed candidate and evidence>`, `GUI-P2-CROSSPROBE: revise — <correction>`, or `GUI-P2-CROSSPROBE: defer — <reason>`.",
+              "response_format": "Reply `GUI-P2-CROSSPROBE: accept delivery \u2014 <exact reviewed candidate and evidence>`, `GUI-P2-CROSSPROBE: revise \u2014 <correction>`, or `GUI-P2-CROSSPROBE: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "ACCEPT",
@@ -4589,7 +4805,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `GUI-P2-INSPECTOR: authorize execution — <exact reviewed candidate and evidence>`, `GUI-P2-INSPECTOR: revise — <correction>`, or `GUI-P2-INSPECTOR: defer — <reason>`.",
+              "response_format": "Reply `GUI-P2-INSPECTOR: authorize execution \u2014 <exact reviewed candidate and evidence>`, `GUI-P2-INSPECTOR: revise \u2014 <correction>`, or `GUI-P2-INSPECTOR: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "STATUS_AUTHORITY",
@@ -4676,7 +4892,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `GUI-P2-INSPECTOR: accept delivery — <exact reviewed candidate and evidence>`, `GUI-P2-INSPECTOR: revise — <correction>`, or `GUI-P2-INSPECTOR: defer — <reason>`.",
+              "response_format": "Reply `GUI-P2-INSPECTOR: accept delivery \u2014 <exact reviewed candidate and evidence>`, `GUI-P2-INSPECTOR: revise \u2014 <correction>`, or `GUI-P2-INSPECTOR: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "ACCEPT",
@@ -4767,7 +4983,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `GUI-MARKING-MENU: authorize execution — <exact reviewed candidate and evidence>`, `GUI-MARKING-MENU: revise — <correction>`, or `GUI-MARKING-MENU: defer — <reason>`.",
+              "response_format": "Reply `GUI-MARKING-MENU: authorize execution \u2014 <exact reviewed candidate and evidence>`, `GUI-MARKING-MENU: revise \u2014 <correction>`, or `GUI-MARKING-MENU: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "AUTHORIZE",
@@ -4845,7 +5061,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `GUI-MARKING-MENU: accept delivery — <exact reviewed candidate and evidence>`, `GUI-MARKING-MENU: revise — <correction>`, or `GUI-MARKING-MENU: defer — <reason>`.",
+              "response_format": "Reply `GUI-MARKING-MENU: accept delivery \u2014 <exact reviewed candidate and evidence>`, `GUI-MARKING-MENU: revise \u2014 <correction>`, or `GUI-MARKING-MENU: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "ACCEPT",
@@ -4894,7 +5110,9 @@
         "dat-project-write-ownership-lock-0ne",
         "dat-manual-foundation-contracts-fsw"
       ],
-      "unblocks": ["dat-native-authoring-depth-sf9"],
+      "unblocks": [
+        "dat-native-authoring-depth-sf9"
+      ],
       "completion": {
         "outcome": "The governed P0/W1/W2/W3 GUI typed-dispatch path is complete with journal, provenance, diff, durable undo and failure proof, independent replay and owner acceptance; full editor delivery is not implied.",
         "canonical_next_step_id": "GWP-C01",
@@ -4941,7 +5159,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `GUI-WRITE-PATH: authorize execution — <exact reviewed candidate and evidence>`, `GUI-WRITE-PATH: revise — <correction>`, or `GUI-WRITE-PATH: defer — <reason>`.",
+              "response_format": "Reply `GUI-WRITE-PATH: authorize execution \u2014 <exact reviewed candidate and evidence>`, `GUI-WRITE-PATH: revise \u2014 <correction>`, or `GUI-WRITE-PATH: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "AUTHORIZE",
@@ -5019,7 +5237,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `GUI-WRITE-PATH: accept delivery — <exact reviewed candidate and evidence>`, `GUI-WRITE-PATH: revise — <correction>`, or `GUI-WRITE-PATH: defer — <reason>`.",
+              "response_format": "Reply `GUI-WRITE-PATH: accept delivery \u2014 <exact reviewed candidate and evidence>`, `GUI-WRITE-PATH: revise \u2014 <correction>`, or `GUI-WRITE-PATH: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "ACCEPT",
@@ -5115,7 +5333,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `NATIVE-AUTHORING: authorize execution — <exact reviewed candidate and evidence>`, `NATIVE-AUTHORING: revise — <correction>`, or `NATIVE-AUTHORING: defer — <reason>`.",
+              "response_format": "Reply `NATIVE-AUTHORING: authorize execution \u2014 <exact reviewed candidate and evidence>`, `NATIVE-AUTHORING: revise \u2014 <correction>`, or `NATIVE-AUTHORING: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "AUTHORIZE",
@@ -5193,7 +5411,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `NATIVE-AUTHORING: accept delivery — <exact reviewed candidate and evidence>`, `NATIVE-AUTHORING: revise — <correction>`, or `NATIVE-AUTHORING: defer — <reason>`.",
+              "response_format": "Reply `NATIVE-AUTHORING: accept delivery \u2014 <exact reviewed candidate and evidence>`, `NATIVE-AUTHORING: revise \u2014 <correction>`, or `NATIVE-AUTHORING: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "ACCEPT",
@@ -5362,11 +5580,11 @@
               }
             ],
             "owner_input": {
-              "response_format": "OR-1 through OR-8 and the Design-pane title are settled or carried forward. Complete DOC-C05 by replying `PUBLISH-PANE-TITLE: approve` or `PUBLISH-PANE-TITLE: revise — <requested wording>`.",
+              "response_format": "OR-1 through OR-8 and the Design-pane title are settled or carried forward. Complete DOC-C05 by replying `PUBLISH-PANE-TITLE: approve` or `PUBLISH-PANE-TITLE: revise \u2014 <requested wording>`.",
               "requests": [
                 {
                   "id": "PUBLISH-PANE-TITLE",
-                  "question": "Approve or revise the Publish pane title pattern shown as `Publish · FAB-01 Assembly Top`?",
+                  "question": "Approve or revise the Publish pane title pattern shown as `Publish \u00b7 FAB-01 Assembly Top`?",
                   "recommended_response": "Approve Publish followed by the Sheet number and title.",
                   "source_ref": {
                     "path": "docs/decisions/PRODUCT_MECHANICS_020_PAPER_SPACE_AND_VIEWPORTS.md",
@@ -5857,7 +6075,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `DISTRIBUTED-COLLAB-SPEC: ratify mechanisms — <exact numbered decision and reviewed evidence>`, `DISTRIBUTED-COLLAB-SPEC: revise — <correction>`, or `DISTRIBUTED-COLLAB-SPEC: defer — <reason>`.",
+              "response_format": "Reply `DISTRIBUTED-COLLAB-SPEC: ratify mechanisms \u2014 <exact numbered decision and reviewed evidence>`, `DISTRIBUTED-COLLAB-SPEC: revise \u2014 <correction>`, or `DISTRIBUTED-COLLAB-SPEC: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "RATIFY",
@@ -5981,7 +6199,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "After reviewing the committed proof packet, reply `REV-C01-BASELINE: approve` or `REV-C01-BASELINE: revise — <missing, incorrect, or unsupported finding>`.",
+              "response_format": "After reviewing the committed proof packet, reply `REV-C01-BASELINE: approve` or `REV-C01-BASELINE: revise \u2014 <missing, incorrect, or unsupported finding>`.",
               "requests": [
                 {
                   "id": "REV-C01A",
@@ -6142,7 +6360,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "After Claude's findings-first adversarial review, reply exactly `REV-C07-RATIFICATION: approve` or `REV-C07-RATIFICATION: revise — <specific contradiction, omission, or boundary correction>`.",
+              "response_format": "After Claude's findings-first adversarial review, reply exactly `REV-C07-RATIFICATION: approve` or `REV-C07-RATIFICATION: revise \u2014 <specific contradiction, omission, or boundary correction>`.",
               "requests": [
                 {
                   "id": "REV-C07-RATIFICATION",
@@ -6258,7 +6476,12 @@
             "status": "complete",
             "action": "Inventory every current setting, preference, environment/configuration input, Project policy, session option, GUI control, persistence path, default, precedence rule, migration, recovery behavior, contradiction, missing authority, managed revision-visibility mechanism, and first-release onboarding state with exact internal evidence.",
             "depends_on": [],
-            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C01"}],
+            "requirement_refs": [
+              {
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "GP-C01"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -6276,8 +6499,15 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Present the committed internal proof packet and obtain owner approval or revision of the factual baseline before external research and architecture decisions.",
-            "depends_on": ["GP-C01"],
-            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C01A"}],
+            "depends_on": [
+              "GP-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "GP-C01A"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "review",
@@ -6286,13 +6516,18 @@
               }
             ],
             "owner_input": {
-              "response_format": "After reviewing the committed proof packet, reply exactly `GP-C01-BASELINE: approve` or `GP-C01-BASELINE: revise — <missing, incorrect, or unsupported finding>`.",
-              "requests": [{
-                "id": "GP-C01A",
-                "question": "Does the cited proof packet accurately and completely establish Datum's current preference/configuration authorities, contradictions, and missing capabilities as the factual baseline for GP-C02?",
-                "recommended_response": "Approve only after each material finding has exact code/spec/prototype evidence and implemented facts are separated from assumptions and recommendations.",
-                "source_ref": {"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C01A"}
-              }]
+              "response_format": "After reviewing the committed proof packet, reply exactly `GP-C01-BASELINE: approve` or `GP-C01-BASELINE: revise \u2014 <missing, incorrect, or unsupported finding>`.",
+              "requests": [
+                {
+                  "id": "GP-C01A",
+                  "question": "Does the cited proof packet accurately and completely establish Datum's current preference/configuration authorities, contradictions, and missing capabilities as the factual baseline for GP-C02?",
+                  "recommended_response": "Approve only after each material finding has exact code/spec/prototype evidence and implemented facts are separated from assumptions and recommendations.",
+                  "source_ref": {
+                    "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                    "marker": "GP-C01A"
+                  }
+                }
+              ]
             }
           },
           {
@@ -6300,8 +6535,15 @@
             "kind": "planning",
             "status": "complete",
             "action": "Research primary and authoritative sources for typed preference scope and precedence, managed policy, local persistence, schema evolution, migration, recovery, exchange, synchronization, accessibility, and regulated configuration.",
-            "depends_on": ["GP-C01A"],
-            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C02"}],
+            "depends_on": [
+              "GP-C01A"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "GP-C02"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -6319,8 +6561,15 @@
             "kind": "planning",
             "status": "complete",
             "action": "Survey domain-peer preference architecture for organization-managed distribution, standards-profile configuration, portability, offline behavior, and bounded Q3/Q4/GP-C05 requirements.",
-            "depends_on": ["GP-C02"],
-            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C02B"}],
+            "depends_on": [
+              "GP-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "GP-C02B"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -6338,8 +6587,16 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Complete the Q1-Q10 plus Q11 typed authority and resolution sequence, including approved Q10-A/S2/R1 machine-local ordinary completion and eligible, non-gating managed per-Project teaching replay, without choosing persistence or implementation mechanisms.",
-            "depends_on": ["GP-C02", "GP-C02B"],
-            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C03"}],
+            "depends_on": [
+              "GP-C02",
+              "GP-C02B"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "GP-C03"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "review",
@@ -6454,7 +6711,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "After reviewing revision-carryforward-study.html at 7089ee8, the real Preferences #revision row, the approved Release #ux-v9 arm bar, PM-034, PM-036, archival PX-V12, all five genuine alternatives, and the bounded clauses, reply exactly `GP-C03-Q10: approve Q10-A/S2/R1` with one selected scope (`S1`, `S2`, or `S3`) and one selected replay law (`R1` or `R2`), or `GP-C03-Q10: revise — <required visibility, scope, completion, reset/replay, managed-replay, guidance, issuance, or accessibility correction>`.",
+              "response_format": "After reviewing revision-carryforward-study.html at 7089ee8, the real Preferences #revision row, the approved Release #ux-v9 arm bar, PM-034, PM-036, archival PX-V12, all five genuine alternatives, and the bounded clauses, reply exactly `GP-C03-Q10: approve Q10-A/S2/R1` with one selected scope (`S1`, `S2`, or `S3`) and one selected replay law (`R1` or `R2`), or `GP-C03-Q10: revise \u2014 <required visibility, scope, completion, reset/replay, managed-replay, guidance, issuance, or accessibility correction>`.",
               "requests": [
                 {
                   "id": "GP-C03-Q10",
@@ -6473,8 +6730,15 @@
             "kind": "planning",
             "status": "complete",
             "action": "Reconcile Claude-rendered corrupt-store recovery, portable-import/synchronization collision, migration-result, and backup/restore states into the drafted canonical local persistence, exchange, audit, and Project-policy-seam contract without authoring visible behavior ahead of the real Preferences window.",
-            "depends_on": ["GP-C03"],
-            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C04"}],
+            "depends_on": [
+              "GP-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "GP-C04"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "document",
@@ -6500,8 +6764,16 @@
             "kind": "planning",
             "status": "complete",
             "action": "Define accessible discovery, search, editing, provenance, reset/override/refusal, managed-state presentation, organization-pinned Revision visibility, designed first-release onboarding, all other Revision carry-forwards, and reconcile the separately settled initial-setup and Start-page surfaces across required accessibility and context states.",
-            "depends_on": ["GP-C03", "GP-C04"],
-            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C05"}],
+            "depends_on": [
+              "GP-C03",
+              "GP-C04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "GP-C05"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "document",
@@ -6535,11 +6807,27 @@
             "kind": "planning",
             "status": "complete",
             "action": "Publish the governed V1 Preference Descriptor Catalog covering every subsystem key, negative classification, scope and policy eligibility, accessibility, portability, migration, and implementation disposition before ratification. Historical alias: GP-C05A.",
-            "depends_on": ["GP-C03", "GP-C04", "GP-C05"],
-            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C08"}],
+            "depends_on": [
+              "GP-C03",
+              "GP-C04",
+              "GP-C05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "GP-C08"
+              }
+            ],
             "completion_evidence": [
-              {"kind": "commit", "revision": "96579c5"},
-              {"kind": "document", "path": "specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C08-V1-DESCRIPTOR-CATALOG"}
+              {
+                "kind": "commit",
+                "revision": "96579c5"
+              },
+              {
+                "kind": "document",
+                "path": "specs/GLOBAL_PREFERENCES_V1_DESCRIPTOR_CATALOG.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C08-V1-DESCRIPTOR-CATALOG"
+              }
             ]
           },
           {
@@ -6547,11 +6835,30 @@
             "kind": "planning",
             "status": "complete",
             "action": "Produce and adversarially review the single consolidated GP-C06 ratification packet, tracing all settled authority, storage, interaction, catalog, units, visual, and PM-034/035/036 boundaries before reopening owner review.",
-            "depends_on": ["GP-C02", "GP-C02B", "GP-C03", "GP-C04", "GP-C05", "GP-C08"],
-            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C09"}],
+            "depends_on": [
+              "GP-C02",
+              "GP-C02B",
+              "GP-C03",
+              "GP-C04",
+              "GP-C05",
+              "GP-C08"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "GP-C09"
+              }
+            ],
             "completion_evidence": [
-              {"kind": "commit", "revision": "0af591e"},
-              {"kind": "document", "path": "research/preferences-system/GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C09-CONSOLIDATED-RATIFICATION-PACKET"}
+              {
+                "kind": "commit",
+                "revision": "0af591e"
+              },
+              {
+                "kind": "document",
+                "path": "research/preferences-system/GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C09-CONSOLIDATED-RATIFICATION-PACKET"
+              }
             ]
           },
           {
@@ -6559,11 +6866,31 @@
             "kind": "planning",
             "status": "complete",
             "action": "Correct the GP-C06 ratification set as one governed transaction: restore ProjectPolicySeed and owner-forced law, resolve unit-seed and catalog conflicts, repair citations/counts/review limits, reconcile Claude visual evidence, and draft the numbered mechanism decision before reopening owner review.",
-            "depends_on": ["GP-C02", "GP-C02B", "GP-C03", "GP-C04", "GP-C05", "GP-C08", "GP-C09"],
-            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C10"}],
+            "depends_on": [
+              "GP-C02",
+              "GP-C02B",
+              "GP-C03",
+              "GP-C04",
+              "GP-C05",
+              "GP-C08",
+              "GP-C09"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "GP-C10"
+              }
+            ],
             "completion_evidence": [
-              {"kind": "commit", "revision": "2045de0"},
-              {"kind": "document", "path": "research/preferences-system/GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C10-CORRECTED-RATIFICATION-PACKET"}
+              {
+                "kind": "commit",
+                "revision": "2045de0"
+              },
+              {
+                "kind": "document",
+                "path": "research/preferences-system/GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C10-CORRECTED-RATIFICATION-PACKET"
+              }
             ]
           },
           {
@@ -6571,20 +6898,47 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Adversarially review and obtain owner ratification of the complete Preferences authority, integration, standards/source-strength, dependency, migration, accessibility, and visual contract.",
-            "depends_on": ["GP-C02", "GP-C02B", "GP-C03", "GP-C04", "GP-C05", "GP-C08", "GP-C09", "GP-C10"],
-            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C06"}],
+            "depends_on": [
+              "GP-C02",
+              "GP-C02B",
+              "GP-C03",
+              "GP-C04",
+              "GP-C05",
+              "GP-C08",
+              "GP-C09",
+              "GP-C10"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "GP-C06"
+              }
+            ],
             "completion_evidence": [
-              {"kind": "review", "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C06-APPROVED"},
-              {"kind": "review", "path": "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:PM-037-OWNER-APPROVED"}
+              {
+                "kind": "review",
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C06-APPROVED"
+              },
+              {
+                "kind": "review",
+                "path": "docs/decisions/PRODUCT_MECHANICS_037_GLOBAL_PREFERENCES_ENGINE.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:PM-037-OWNER-APPROVED"
+              }
             ],
             "owner_input": {
-              "response_format": "After the findings-first review, reply exactly `GP-C06-RATIFICATION: approve` or `GP-C06-RATIFICATION: revise — <specific contradiction, omission, or boundary correction>`.",
-              "requests": [{
-                "id": "GP-C06",
-                "question": "Does GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md faithfully consolidate Datum's Global Preferences authority and its Project-policy boundary without authorizing implementation, adding dependencies, or weakening Product Mechanics 034, 035, or 036?",
-                "recommended_response": "Approve only after every claim is traceable to the factual audit, external evidence, owner dispositions, and any required visual source of truth.",
-                "source_ref": {"path": "research/preferences-system/GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md", "marker": "GP-C06-CONSOLIDATED-PACKET"}
-              }]
+              "response_format": "After the findings-first review, reply exactly `GP-C06-RATIFICATION: approve` or `GP-C06-RATIFICATION: revise \u2014 <specific contradiction, omission, or boundary correction>`.",
+              "requests": [
+                {
+                  "id": "GP-C06",
+                  "question": "Does GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md faithfully consolidate Datum's Global Preferences authority and its Project-policy boundary without authorizing implementation, adding dependencies, or weakening Product Mechanics 034, 035, or 036?",
+                  "recommended_response": "Approve only after every claim is traceable to the factual audit, external evidence, owner dispositions, and any required visual source of truth.",
+                  "source_ref": {
+                    "path": "research/preferences-system/GP_C06_CONSOLIDATED_RATIFICATION_PACKET.md",
+                    "marker": "GP-C06-CONSOLIDATED-PACKET"
+                  }
+                }
+              ]
             }
           },
           {
@@ -6592,12 +6946,30 @@
             "kind": "planning",
             "status": "complete",
             "action": "Place bounded implementation, migration, conformance, recovery, accessibility, real-project, and production-acceptance slices on the Frontier without implicit execution or dependency authorization.",
-            "depends_on": ["GP-C06"],
-            "requirement_refs": [{"path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "GP-C07"}],
+            "depends_on": [
+              "GP-C06"
+            ],
+            "requirement_refs": [
+              {
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "GP-C07"
+              }
+            ],
             "completion_evidence": [
-              {"kind": "commit", "revision": "b48d979"},
-              {"kind": "document", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C07-IMPLEMENTATION-PLAN"},
-              {"kind": "review", "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C07-COMPLETED"}
+              {
+                "kind": "commit",
+                "revision": "b48d979"
+              },
+              {
+                "kind": "document",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C07-IMPLEMENTATION-PLAN"
+              },
+              {
+                "kind": "review",
+                "path": "research/preferences-system/GLOBAL_PREFERENCES_ENGINE_RESEARCH.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-SPEC:GP-C07-COMPLETED"
+              }
             ]
           }
         ],
@@ -6659,7 +7031,12 @@
             "status": "complete",
             "action": "Review module ownership, exact-value law, refusal cases, no-new-dependency posture, and focused proof scope before authorizing UNIT-I01 only.",
             "depends_on": [],
-            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I00"}],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "UNIT-I00"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "review",
@@ -6668,13 +7045,18 @@
               }
             ],
             "owner_input": {
-              "response_format": "After reviewing the committed Units baseline packet, reply exactly `UNITS-ENGINE-EXECUTION: approve UNIT-I01` or `UNITS-ENGINE-EXECUTION: revise — <specific scope, ownership, dependency, or proof correction>`.",
-              "requests": [{
-                "id": "UNIT-I00",
-                "question": "Does the bounded exact-value core preserve integer-nanometer design truth and cross-cutting ownership closely enough to authorize UNIT-I01 only?",
-                "recommended_response": "Approve only when the slice adds no rival storage authority or dependency and keeps GUI, CLI, MCP, and Preferences as consumers.",
-                "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I00"}
-              }]
+              "response_format": "After reviewing the committed Units baseline packet, reply exactly `UNITS-ENGINE-EXECUTION: approve UNIT-I01` or `UNITS-ENGINE-EXECUTION: revise \u2014 <specific scope, ownership, dependency, or proof correction>`.",
+              "requests": [
+                {
+                  "id": "UNIT-I00",
+                  "question": "Does the bounded exact-value core preserve integer-nanometer design truth and cross-cutting ownership closely enough to authorize UNIT-I01 only?",
+                  "recommended_response": "Approve only when the slice adds no rival storage authority or dependency and keeps GUI, CLI, MCP, and Preferences as consumers.",
+                  "source_ref": {
+                    "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "UNIT-I00"
+                  }
+                }
+              ]
             }
           },
           {
@@ -6682,8 +7064,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement checked integer-nanometer quantity authority plus one typed parse/format service with explicit cross-system overrides and exact refusal provenance.",
-            "depends_on": ["UNIT-I00"],
-            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I01"}],
+            "depends_on": [
+              "UNIT-I00"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "UNIT-I01"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -6756,38 +7145,219 @@
         },
         "steps": [
           {
-            "id": "GP-F00", "kind": "owner_decision", "status": "complete",
+            "id": "GP-F00",
+            "kind": "owner_decision",
+            "status": "complete",
             "action": "Review the exact Units core, module ownership, active catalog digest, dependency posture, and focused resolver proof before authorizing GP-F01 only.",
             "depends_on": [],
-            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F00"}], "completion_evidence": [{"kind": "review", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F00-OWNER-APPROVED"}],
-            "owner_input": {"response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F01` or `PREFERENCES-FOUNDATION: revise — <specific scope, ownership, dependency, exclusion, or proof correction>`.", "requests": [{"id": "GP-F00", "question": "May Datum execute the bounded typed Global Preferences foundation in GP-F01 only?", "recommended_response": "Approve only after the exact Units core lands with no new dependency and no UI, Project, or Revision behavior is smuggled into the resolver slice.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F00"}}]}
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-F00"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F00-OWNER-APPROVED"
+              }
+            ],
+            "owner_input": {
+              "response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F01` or `PREFERENCES-FOUNDATION: revise \u2014 <specific scope, ownership, dependency, exclusion, or proof correction>`.",
+              "requests": [
+                {
+                  "id": "GP-F00",
+                  "question": "May Datum execute the bounded typed Global Preferences foundation in GP-F01 only?",
+                  "recommended_response": "Approve only after the exact Units core lands with no new dependency and no UI, Project, or Revision behavior is smuggled into the resolver slice.",
+                  "source_ref": {
+                    "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "GP-F00"
+                  }
+                }
+              ]
+            }
           },
           {
-            "id": "GP-F01", "kind": "execution", "status": "complete",
+            "id": "GP-F01",
+            "kind": "execution",
+            "status": "complete",
             "action": "Correct the active descriptors to the exact catalog contract, resolve dat-vuh, make Context authority descriptor-specific, complete source/directive refusals and conflicts, expand explanation provenance/state, and prove catalog-wide semantic goldens without persistence, GUI, Project, or Revision mutation.",
-            "depends_on": ["GP-F00"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F01"}], "completion_evidence": [{"kind": "commit", "revision": "22b8613"}, {"kind": "commit", "revision": "12ff4c4"}, {"kind": "document", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F01-TYPED-FOUNDATION"}]
+            "depends_on": [
+              "GP-F00"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-F01"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "22b8613"
+              },
+              {
+                "kind": "commit",
+                "revision": "12ff4c4"
+              },
+              {
+                "kind": "document",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F01-TYPED-FOUNDATION"
+              }
+            ]
           },
           {
-            "id": "GP-F02", "kind": "owner_decision", "status": "complete",
+            "id": "GP-F02",
+            "kind": "owner_decision",
+            "status": "complete",
             "action": "Review GP-F01 evidence before separately authorizing the minimal durable repository in GP-F03.",
-            "depends_on": ["GP-F01"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F02"}], "completion_evidence": [{"kind": "review", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F02-OWNER-APPROVED"}],
-            "owner_input": {"response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F03` or `PREFERENCES-FOUNDATION: revise — <specific storage, preservation, migration, recovery, dependency, or proof correction>`.", "requests": [{"id": "GP-F02", "question": "Does GP-F01 prove the typed resolver closely enough to authorize the minimal durable repository in GP-F03 only?", "recommended_response": "Approve only with complete class/source refusal and explanation goldens and no Project or GUI mutation.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F02"}}]}
+            "depends_on": [
+              "GP-F01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-F02"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F02-OWNER-APPROVED"
+              }
+            ],
+            "owner_input": {
+              "response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F03` or `PREFERENCES-FOUNDATION: revise \u2014 <specific storage, preservation, migration, recovery, dependency, or proof correction>`.",
+              "requests": [
+                {
+                  "id": "GP-F02",
+                  "question": "Does GP-F01 prove the typed resolver closely enough to authorize the minimal durable repository in GP-F03 only?",
+                  "recommended_response": "Approve only with complete class/source refusal and explanation goldens and no Project or GUI mutation.",
+                  "source_ref": {
+                    "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "GP-F02"
+                  }
+                }
+              ]
+            }
           },
           {
-            "id": "GP-F03", "kind": "execution", "status": "complete",
+            "id": "GP-F03",
+            "kind": "execution",
+            "status": "complete",
             "action": "Implement expected-generation durable storage, exact unknown preservation, typed migration, backup, reversible restore, and preserved-unreadable recovery sufficient for real visible rows.",
-            "depends_on": ["GP-F02"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F03"}], "completion_evidence": [{"kind": "commit", "revision": "fab5100"}, {"kind": "document", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F03-DURABLE-REPOSITORY"}]
+            "depends_on": [
+              "GP-F02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-F03"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "fab5100"
+              },
+              {
+                "kind": "document",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F03-DURABLE-REPOSITORY"
+              }
+            ]
           },
           {
-            "id": "GP-F04", "kind": "owner_decision", "status": "complete",
+            "id": "GP-F04",
+            "kind": "owner_decision",
+            "status": "complete",
             "action": "Review GP-F03 durability, the corrected production-grade GP-F05 contract, and the reconciled Claude-owned exact three-row protected target before separately authorizing GP-F05.",
-            "depends_on": ["GP-F03"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F04"}], "completion_evidence": [{"kind": "review", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F04-OWNER-APPROVED"}, {"kind": "commit", "revision": "62e263b"}],
-            "owner_input": {"response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F05` or `PREFERENCES-FOUNDATION: revise — <specific menu, visual, accessibility, lifecycle, row, dependency, or proof correction>`.", "requests": [{"id": "GP-F04", "question": "May Datum implement the corrected production-grade three-row Global Preferences wgpu slice in GP-F05 only?", "recommended_response": "Approve only after the Claude-owned target shows exactly Appearance with Console feedback duration, Reduced motion, and High contrast/non-color cues; the typed presentation/menu/lifecycle/accessibility/recovery contract is complete; and every forbidden or unimplemented surface remains absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F04"}}]}
+            "depends_on": [
+              "GP-F03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-F04"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-ENGINE:GP-F04-OWNER-APPROVED"
+              },
+              {
+                "kind": "commit",
+                "revision": "62e263b"
+              }
+            ],
+            "owner_input": {
+              "response_format": "Reply exactly `PREFERENCES-FOUNDATION: approve GP-F05` or `PREFERENCES-FOUNDATION: revise \u2014 <specific menu, visual, accessibility, lifecycle, row, dependency, or proof correction>`.",
+              "requests": [
+                {
+                  "id": "GP-F04",
+                  "question": "May Datum implement the corrected production-grade three-row Global Preferences wgpu slice in GP-F05 only?",
+                  "recommended_response": "Approve only after the Claude-owned target shows exactly Appearance with Console feedback duration, Reduced motion, and High contrast/non-color cues; the typed presentation/menu/lifecycle/accessibility/recovery contract is complete; and every forbidden or unimplemented surface remains absent.",
+                  "source_ref": {
+                    "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "GP-F04"
+                  }
+                }
+              ]
+            }
           },
           {
-            "id": "GP-F05", "kind": "execution", "status": "complete",
+            "id": "GP-F05",
+            "kind": "execution",
+            "status": "complete",
             "action": "Implement the real nested Edit > Preferences > Global Preferences doorway and production-grade Appearance slice with exactly three typed rows, descriptor-driven section/order/control metadata, one repository/resolver/consumer lifecycle, legacy Console migration, search/explanation, ordinary/narrow keyboard and accessibility behavior, preserved-unreadable honesty, and zero Project mutation.",
-            "depends_on": ["GP-F04"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-F05"}], "completion_evidence": [{"kind": "commit", "revision": "6b2d58b"}, {"kind": "commit", "revision": "f0d058d"}, {"kind": "commit", "revision": "2df4b6a"}, {"kind": "commit", "revision": "33f23f6"}, {"kind": "commit", "revision": "0a18739"}, {"kind": "commit", "revision": "3ff9d2c"}, {"kind": "commit", "revision": "3a0fc92"}, {"kind": "commit", "revision": "d489f53"}]
+            "depends_on": [
+              "GP-F04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-F05"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "6b2d58b"
+              },
+              {
+                "kind": "commit",
+                "revision": "f0d058d"
+              },
+              {
+                "kind": "commit",
+                "revision": "2df4b6a"
+              },
+              {
+                "kind": "commit",
+                "revision": "33f23f6"
+              },
+              {
+                "kind": "commit",
+                "revision": "0a18739"
+              },
+              {
+                "kind": "commit",
+                "revision": "3ff9d2c"
+              },
+              {
+                "kind": "commit",
+                "revision": "3a0fc92"
+              },
+              {
+                "kind": "commit",
+                "revision": "d489f53"
+              }
+            ]
           }
         ],
         "post_completion": {
@@ -6828,7 +7398,7 @@
       "canonical_next": false,
       "parallel": false,
       "claim": null,
-    "summary": "Reconcile the shared Units requirement around eight typed Global defaults, Project Working Units, per-quantity precision, lossless editing, exact scientific notation, decimal-degree V1 behavior, deterministic migration, and separate Publish/document authority; obtain approved Global and Project targets before staged execution and owner acceptance.",
+      "summary": "Reconcile the shared Units requirement around eight typed Global defaults, Project Working Units, per-quantity precision, lossless editing, exact scientific notation, decimal-degree V1 behavior, deterministic migration, and separate Publish/document authority; obtain approved Global and Project targets before staged execution and owner acceptance.",
       "dependencies": [
         "dat-global-preferences-engine-build-vge"
       ],
@@ -6857,31 +7427,51 @@
             "status": "complete",
             "action": "Review the exact Units core and first real Global Preferences slice before authorizing surface parity and production acceptance in UNIT-I03 only.",
             "depends_on": [],
-            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02"}],
-            "completion_evidence": [{
-              "kind": "review",
-              "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
-              "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02-OWNER-REVISION"
-            }],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "UNIT-I02"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02-OWNER-REVISION"
+              }
+            ],
             "owner_input": {
-              "response_format": "Reply exactly `UNITS-SURFACE-PARITY: approve UNIT-I03` or `UNITS-SURFACE-PARITY: revise — <specific parity, accessibility, real-project, dependency, or proof correction>`.",
-              "requests": [{
-                "id": "UNIT-I02",
-                "question": "May Datum prove the exact Units core across the real Preferences GUI, CLI, MCP, import/export, and real Projects in UNIT-I03 only?",
-                "recommended_response": "Approve only when GP-F05 is real, no temporary settings surface exists, and Preferences retains descriptor ownership.",
-                "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02"}
-              }]
+              "response_format": "Reply exactly `UNITS-SURFACE-PARITY: approve UNIT-I03` or `UNITS-SURFACE-PARITY: revise \u2014 <specific parity, accessibility, real-project, dependency, or proof correction>`.",
+              "requests": [
+                {
+                  "id": "UNIT-I02",
+                  "question": "May Datum prove the exact Units core across the real Preferences GUI, CLI, MCP, import/export, and real Projects in UNIT-I03 only?",
+                  "recommended_response": "Approve only when GP-F05 is real, no temporary settings surface exists, and Preferences retains descriptor ownership.",
+                  "source_ref": {
+                    "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "UNIT-I02"
+                  }
+                }
+              ]
             }
           },
           {
             "id": "UNIT-I02R",
             "kind": "planning",
             "status": "complete",
-        "action": "Preserve GP_SHARED_UNITS_ENGINE_REQUIREMENT.md as controlling and reconcile all six industrial-readiness gaps: a writable Units-only Project Preferences doorway, per-quantity precision, lossless editing, honest decimal-degree V1 input/display, exact scientific notation with a future expression seam, deterministic legacy/Project migration, and removal of conflicting runtime semantics; prepare bounded Claude-owned Global and Project target corrections.",
-            "depends_on": ["UNIT-I02"],
+            "action": "Preserve GP_SHARED_UNITS_ENGINE_REQUIREMENT.md as controlling and reconcile all six industrial-readiness gaps: a writable Units-only Project Preferences doorway, per-quantity precision, lossless editing, honest decimal-degree V1 input/display, exact scientific notation with a future expression seam, deterministic legacy/Project migration, and removal of conflicting runtime semantics; prepare bounded Claude-owned Global and Project target corrections.",
+            "depends_on": [
+              "UNIT-I02"
+            ],
             "requirement_refs": [
-              {"path": "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md", "marker": "UNIT-I02R"},
-              {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02R"}
+              {
+                "path": "research/preferences-system/GP_SHARED_UNITS_ENGINE_REQUIREMENT.md",
+                "marker": "UNIT-I02R"
+              },
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "UNIT-I02R"
+              }
             ],
             "completion_evidence": [
               {
@@ -6897,7 +7487,7 @@
               {
                 "kind": "review",
                 "path": "docs/gui/prototypes/preferences-window.html",
-                "marker": "UNIT-I02R — ACCEPTED UNITS EVIDENCE"
+                "marker": "UNIT-I02R \u2014 ACCEPTED UNITS EVIDENCE"
               },
               {
                 "kind": "commit",
@@ -6909,22 +7499,36 @@
             "id": "UNIT-I02V",
             "kind": "owner_decision",
             "status": "complete",
-        "action": "Review the reconciled eight-descriptor Units contract, per-quantity precision, lossless editing, decimal-degree V1, exact expression grammar, Global-default and Project Working Units ownership, migration rules, acceptance matrix, and both corrected Claude-owned targets before authorizing UNIT-I03A only.",
-            "depends_on": ["UNIT-I02R"],
-            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02V"}],
-            "completion_evidence": [{
-              "kind": "review",
-              "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
-              "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02V-OWNER-REVISION-20260903"
-            }],
+            "action": "Review the reconciled eight-descriptor Units contract, per-quantity precision, lossless editing, decimal-degree V1, exact expression grammar, Global-default and Project Working Units ownership, migration rules, acceptance matrix, and both corrected Claude-owned targets before authorizing UNIT-I03A only.",
+            "depends_on": [
+              "UNIT-I02R"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "UNIT-I02V"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I02V-OWNER-REVISION-20260903"
+              }
+            ],
             "owner_input": {
-          "response_format": "Reply exactly `UNITS-SURFACE-PARITY: approve UNIT-I03A` or `UNITS-SURFACE-PARITY: revise — <specific profile, precision, editing, angle, expression, Project doorway, migration, adapter, accessibility, or proof correction>`.",
-              "requests": [{
-                "id": "UNIT-I02V",
-              "question": "Do the controlling requirement, descriptor catalog, protected Global and Project Units targets, implementation contract, and proof matrix now close all six industrial-readiness gaps closely enough to authorize UNIT-I03A only?",
-              "recommended_response": "Approve only when the eight-field model, per-quantity precision, lossless editing, decimal-degree input, scientific notation, Project doorway/migration, and runtime correction boundary agree and both protected targets are owner-approved.",
-                "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I02V"}
-              }]
+              "response_format": "Reply exactly `UNITS-SURFACE-PARITY: approve UNIT-I03A` or `UNITS-SURFACE-PARITY: revise \u2014 <specific profile, precision, editing, angle, expression, Project doorway, migration, adapter, accessibility, or proof correction>`.",
+              "requests": [
+                {
+                  "id": "UNIT-I02V",
+                  "question": "Do the controlling requirement, descriptor catalog, protected Global and Project Units targets, implementation contract, and proof matrix now close all six industrial-readiness gaps closely enough to authorize UNIT-I03A only?",
+                  "recommended_response": "Approve only when the eight-field model, per-quantity precision, lossless editing, decimal-degree input, scientific notation, Project doorway/migration, and runtime correction boundary agree and both protected targets are owner-approved.",
+                  "source_ref": {
+                    "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "UNIT-I02V"
+                  }
+                }
+              ]
             }
           },
           {
@@ -6932,13 +7536,32 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement the exact eight-field engine/profile, per-quantity precision, lossless edit primitives, decimal-degree input/display, scientific notation, migrations, adapter seams, and rival-conversion removal without claiming GUI production acceptance.",
-            "depends_on": ["UNIT-I02V"],
-            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03A"}],
+            "depends_on": [
+              "UNIT-I02V"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "UNIT-I03A"
+              }
+            ],
             "completion_evidence": [
-              {"kind": "commit", "revision": "7972fbd"},
-              {"kind": "commit", "revision": "add4e98"},
-              {"kind": "commit", "revision": "4403dae"},
-              {"kind": "commit", "revision": "4665c8c"},
+              {
+                "kind": "commit",
+                "revision": "7972fbd"
+              },
+              {
+                "kind": "commit",
+                "revision": "add4e98"
+              },
+              {
+                "kind": "commit",
+                "revision": "4403dae"
+              },
+              {
+                "kind": "commit",
+                "revision": "4665c8c"
+              },
               {
                 "kind": "document",
                 "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
@@ -6951,15 +7574,40 @@
             "kind": "execution",
             "status": "complete",
             "action": "Integrate the Global-default and Units-only Project Preferences windows, New-Project seed/receipt, legacy-Project migration, GUI/CLI/MCP/interchange adapters, accessibility, and real-Project proofs as a production candidate.",
-            "depends_on": ["UNIT-I03A"],
-            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03B"}],
+            "depends_on": [
+              "UNIT-I03A"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "UNIT-I03B"
+              }
+            ],
             "completion_evidence": [
-              {"kind": "commit", "revision": "e87932c"},
-              {"kind": "commit", "revision": "24541d2"},
-              {"kind": "commit", "revision": "bc7bd17"},
-              {"kind": "commit", "revision": "e149e8d"},
-              {"kind": "commit", "revision": "92caa68"},
-              {"kind": "commit", "revision": "2ae0eb8"},
+              {
+                "kind": "commit",
+                "revision": "e87932c"
+              },
+              {
+                "kind": "commit",
+                "revision": "24541d2"
+              },
+              {
+                "kind": "commit",
+                "revision": "bc7bd17"
+              },
+              {
+                "kind": "commit",
+                "revision": "e149e8d"
+              },
+              {
+                "kind": "commit",
+                "revision": "92caa68"
+              },
+              {
+                "kind": "commit",
+                "revision": "2ae0eb8"
+              },
               {
                 "kind": "document",
                 "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
@@ -6972,21 +7620,35 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Review both native Units windows and real-Project exactness, migration, editing, authority-isolation, accessibility, and failure behavior before authorizing final proof closure.",
-            "depends_on": ["UNIT-I03B"],
-            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03V"}],
-            "completion_evidence": [{
-              "kind": "review",
-              "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
-              "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I03V-OWNER-APPROVAL-20260904"
-            }],
+            "depends_on": [
+              "UNIT-I03B"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "UNIT-I03V"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:SHARED-UNITS-SURFACE-PARITY:UNIT-I03V-OWNER-APPROVAL-20260904"
+              }
+            ],
             "owner_input": {
-              "response_format": "Reply exactly `UNITS-PRODUCTION-CANDIDATE: approve UNIT-I03C` or `UNITS-PRODUCTION-CANDIDATE: revise — <specific runtime, Project, precision, editing, input, migration, accessibility, or proof correction>`.",
-              "requests": [{
-                "id": "UNIT-I03V",
-                "question": "Does the running Units candidate behave accurately and intuitively across Global defaults, Project Working Units, numeric editing, automation, migration, and failure states?",
-                "recommended_response": "Approve only after direct running-app QA of both native windows and real Project files confirms the complete contract.",
-                "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03V"}
-              }]
+              "response_format": "Reply exactly `UNITS-PRODUCTION-CANDIDATE: approve UNIT-I03C` or `UNITS-PRODUCTION-CANDIDATE: revise \u2014 <specific runtime, Project, precision, editing, input, migration, accessibility, or proof correction>`.",
+              "requests": [
+                {
+                  "id": "UNIT-I03V",
+                  "question": "Does the running Units candidate behave accurately and intuitively across Global defaults, Project Working Units, numeric editing, automation, migration, and failure states?",
+                  "recommended_response": "Approve only after direct running-app QA of both native windows and real Project files confirms the complete contract.",
+                  "source_ref": {
+                    "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "UNIT-I03V"
+                  }
+                }
+              ]
             }
           },
           {
@@ -6994,12 +7656,28 @@
             "kind": "governance",
             "status": "complete",
             "action": "Re-run the complete governed proof matrix against the owner-approved candidate and only then record Units production acceptance and close the tracker.",
-            "depends_on": ["UNIT-I03V"],
-            "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "UNIT-I03C"}],
+            "depends_on": [
+              "UNIT-I03V"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "UNIT-I03C"
+              }
+            ],
             "completion_evidence": [
-              {"kind": "commit", "revision": "662dcdb"},
-              {"kind": "commit", "revision": "57baf17"},
-              {"kind": "commit", "revision": "7331467"},
+              {
+                "kind": "commit",
+                "revision": "662dcdb"
+              },
+              {
+                "kind": "commit",
+                "revision": "57baf17"
+              },
+              {
+                "kind": "commit",
+                "revision": "7331467"
+              },
               {
                 "kind": "document",
                 "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
@@ -7013,7 +7691,9 @@
             "Global Preferences completion loses its Units-parity blocker but remains behind its own owner gate.",
             "No non-Units Project Preferences category, Revision, dependency, or successor execution is implied."
           ],
-          "unblocks_issue_ids": ["dat-global-preferences-completion-f84"],
+          "unblocks_issue_ids": [
+            "dat-global-preferences-completion-f84"
+          ],
           "selection": "explicit_frontier_update",
           "authorizes_successor": false,
           "selects_successor": false
@@ -7058,91 +7738,312 @@
       "completion": {
         "outcome": "Global Preferences is a production-accepted manual-first product surface with complete typed authority, durability, parity, accessibility, and real-Project evidence and no active Revision descriptors.",
         "canonical_next_step_id": "GP-CM05V",
-        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
-        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
         "steps": [
           {
-            "id": "GP-CM00", "kind": "owner_decision", "status": "complete",
+            "id": "GP-CM00",
+            "kind": "owner_decision",
+            "status": "complete",
             "action": "Review the real Global vertical slice and Units parity before authorizing Global surface completion in GP-CM01 only.",
-            "depends_on": [], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM00"}], "completion_evidence": [{"kind": "review", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM00-OWNER-APPROVED-20260904"}],
-            "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM01` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific catalog, GUI, recovery, accessibility, or proof correction>`.", "requests": [{"id": "GP-CM00", "question": "May Datum complete and stabilize the ratified active Global Preferences GUI and repository behavior in GP-CM01 only?", "recommended_response": "Approve only when GP-F05 and UNIT-I03C are accepted and Revision descriptors and empty categories remain absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM00"}}]}
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-CM00"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM00-OWNER-APPROVED-20260904"
+              }
+            ],
+            "owner_input": {
+              "response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM01` or `GLOBAL-PREFERENCES-COMPLETION: revise \u2014 <specific catalog, GUI, recovery, accessibility, or proof correction>`.",
+              "requests": [
+                {
+                  "id": "GP-CM00",
+                  "question": "May Datum complete and stabilize the ratified active Global Preferences GUI and repository behavior in GP-CM01 only?",
+                  "recommended_response": "Approve only when GP-F05 and UNIT-I03C are accepted and Revision descriptors and empty categories remain absent.",
+                  "source_ref": {
+                    "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "GP-CM00"
+                  }
+                }
+              ]
+            }
           },
           {
-            "id": "GP-CM01", "kind": "execution", "status": "complete",
+            "id": "GP-CM01",
+            "kind": "execution",
+            "status": "complete",
             "action": "Stabilize the exact 11-descriptor consumer-ready Global surface and repository; keep 45 reserved candidates, empty sections, and the aggregate Units seed absent; add management only with implemented operations; and reconcile setup and Start-page evidence before resuming expansion.",
-            "depends_on": ["GP-CM00"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM01"}], "completion_evidence": [
-              {"kind": "commit", "revision": "5f3add1"},
-              {"kind": "commit", "revision": "71c8d7e"},
-              {"kind": "commit", "revision": "349c505"},
-              {"kind": "document", "path": "specs/evidence_traceability_manifest.json", "marker": "review_note_addendum_73"}
+            "depends_on": [
+              "GP-CM00"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-CM01"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "5f3add1"
+              },
+              {
+                "kind": "commit",
+                "revision": "71c8d7e"
+              },
+              {
+                "kind": "commit",
+                "revision": "349c505"
+              },
+              {
+                "kind": "document",
+                "path": "specs/evidence_traceability_manifest.json",
+                "marker": "review_note_addendum_73"
+              }
             ]
           },
           {
-            "id": "GP-CM02", "kind": "owner_decision", "status": "complete",
+            "id": "GP-CM02",
+            "kind": "owner_decision",
+            "status": "complete",
             "action": "Review GP-CM01 before authorizing engine, CLI, MCP, and ProjectPolicySeed parity in GP-CM03 only.",
-            "depends_on": ["GP-CM01"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02"}], "completion_evidence": [
-              {"kind": "review", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM02-OWNER-REVISION-20260905"}
+            "depends_on": [
+              "GP-CM01"
             ],
-            "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM03` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific API, parity, seed, receipt, or private-writer correction>`.", "requests": [{"id": "GP-CM02", "question": "May Datum implement product-surface and existing ratified ProjectPolicySeed parity in GP-CM03 only?", "recommended_response": "Approve only with one resolver answer, no private store parser, no live Project following, and every excluded seed schema absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02"}}]}
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-CM02"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM02-OWNER-REVISION-20260905"
+              }
+            ],
+            "owner_input": {
+              "response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM03` or `GLOBAL-PREFERENCES-COMPLETION: revise \u2014 <specific API, parity, seed, receipt, or private-writer correction>`.",
+              "requests": [
+                {
+                  "id": "GP-CM02",
+                  "question": "May Datum implement product-surface and existing ratified ProjectPolicySeed parity in GP-CM03 only?",
+                  "recommended_response": "Approve only with one resolver answer, no private store parser, no live Project following, and every excluded seed schema absent.",
+                  "source_ref": {
+                    "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "GP-CM02"
+                  }
+                }
+              ]
+            }
           },
           {
-            "id": "GP-CM02R", "kind": "planning", "status": "complete",
+            "id": "GP-CM02R",
+            "kind": "planning",
+            "status": "complete",
             "action": "Reconcile all nine owner-required GP-CM03 build-readiness gaps across exact typed operations, CLI/MCP contracts, proposal security, active seed scope, Project-creation modes, genesis atomicity, typed failures, PM-037 search authority, and the cross-surface acceptance matrix without implementation.",
-            "depends_on": ["GP-CM02"], "requirement_refs": [
-              {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02R"},
-              {"path": "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md", "marker": "GP-CM02R"}
-            ], "completion_evidence": [
-              {"kind": "commit", "revision": "f54a6262"},
-              {"kind": "document", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM02R-COMPLETE"}
+            "depends_on": [
+              "GP-CM02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-CM02R"
+              },
+              {
+                "path": "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md",
+                "marker": "GP-CM02R"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "f54a6262"
+              },
+              {
+                "kind": "document",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM02R-COMPLETE"
+              }
             ]
           },
           {
-            "id": "GP-CM02V", "kind": "owner_decision", "status": "complete",
+            "id": "GP-CM02V",
+            "kind": "owner_decision",
+            "status": "complete",
             "action": "Review the committed GP-CM02R contract and evidence before authorizing GP-CM03 implementation.",
-            "depends_on": ["GP-CM02R"], "requirement_refs": [
-              {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02V"},
-              {"path": "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md", "marker": "GP-CM02V"}
-            ], "completion_evidence": [
-              {"kind": "review", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM02V-OWNER-APPROVED-20260905"}
+            "depends_on": [
+              "GP-CM02R"
             ],
-            "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM03` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific API, parity, seed, receipt, concurrency, security, or proof correction>`.", "requests": [{"id": "GP-CM02V", "question": "Does the reconciled GP-CM03 contract fully specify an enterprise-worthy engine, CLI, MCP, daemon, and Project-genesis implementation without leaving product or authority decisions to the implementer?", "recommended_response": "Approve only when all nine findings have exact typed inventories, ownership, failure, concurrency, security, and clause-by-clause proof with the 11-active/45-reserved and eight-seed boundaries intact.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM02V"}}]}
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-CM02V"
+              },
+              {
+                "path": "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md",
+                "marker": "GP-CM02V"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM02V-OWNER-APPROVED-20260905"
+              }
+            ],
+            "owner_input": {
+              "response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM03` or `GLOBAL-PREFERENCES-COMPLETION: revise \u2014 <specific API, parity, seed, receipt, concurrency, security, or proof correction>`.",
+              "requests": [
+                {
+                  "id": "GP-CM02V",
+                  "question": "Does the reconciled GP-CM03 contract fully specify an enterprise-worthy engine, CLI, MCP, daemon, and Project-genesis implementation without leaving product or authority decisions to the implementer?",
+                  "recommended_response": "Approve only when all nine findings have exact typed inventories, ownership, failure, concurrency, security, and clause-by-clause proof with the 11-active/45-reserved and eight-seed boundaries intact.",
+                  "source_ref": {
+                    "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "GP-CM02V"
+                  }
+                }
+              ]
+            }
           },
           {
-            "id": "GP-CM03", "kind": "execution", "status": "complete",
+            "id": "GP-CM03",
+            "kind": "execution",
+            "status": "complete",
             "action": "Implement the exact Global Preferences product service, human/agent authority, CLI/MCP parity, daemon/writer model, and eight-key atomic Project Units genesis contract.",
-            "depends_on": ["GP-CM02V"], "requirement_refs": [
-              {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM03"},
-              {"path": "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md", "marker": "GP-CM03"}
-            ], "completion_evidence": [
-              {"kind": "commit", "revision": "f3038a97"}
-            ]
-          },
-          {
-            "id": "GP-CM04", "kind": "owner_decision", "status": "complete",
-            "action": "Review all committed evidence and approve the durable real-Project corpus and resource budgets before GP-CM05 only.",
-            "depends_on": ["GP-CM03"], "requirement_refs": [{"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM04"}], "completion_evidence": [
-              {"kind": "review", "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM04-OWNER-APPROVED-20260907"}
+            "depends_on": [
+              "GP-CM02V"
             ],
-            "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM05` or `GLOBAL-PREFERENCES-COMPLETION: revise — <specific migration, fixture, performance, accessibility, exclusion, or proof correction>`.", "requests": [{"id": "GP-CM04", "question": "May Datum run the bounded Global Preferences production-acceptance slice GP-CM05 only?", "recommended_response": "Approve only when all earlier evidence is committed, the corpus is durable, and PM-037/PM-039 exclusions remain absent.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM04"}}]}
-          },
-          {
-            "id": "GP-CM05", "kind": "execution", "status": "complete",
-            "action": "Complete the exact durable real-project, migration, recovery, managed/offline, visual, accessibility, performance, resource, and negative production-candidate matrix without claiming final owner acceptance.",
-            "depends_on": ["GP-CM04"], "requirement_refs": [
-              {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM05"},
-              {"path": "specs/global_preferences_production_acceptance_matrix.json", "marker": "GP-CM05"}
-            ], "completion_evidence": [
-              {"kind": "commit", "revision": "59aa448d"}
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-CM03"
+              },
+              {
+                "path": "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md",
+                "marker": "GP-CM03"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "f3038a97"
+              }
             ]
           },
           {
-            "id": "GP-CM05V", "kind": "owner_decision", "status": "pending",
+            "id": "GP-CM04",
+            "kind": "owner_decision",
+            "status": "complete",
+            "action": "Review all committed evidence and approve the durable real-Project corpus and resource budgets before GP-CM05 only.",
+            "depends_on": [
+              "GP-CM03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-CM04"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "EVIDENCE:GLOBAL-PREFERENCES-COMPLETION:GP-CM04-OWNER-APPROVED-20260907"
+              }
+            ],
+            "owner_input": {
+              "response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: approve GP-CM05` or `GLOBAL-PREFERENCES-COMPLETION: revise \u2014 <specific migration, fixture, performance, accessibility, exclusion, or proof correction>`.",
+              "requests": [
+                {
+                  "id": "GP-CM04",
+                  "question": "May Datum run the bounded Global Preferences production-acceptance slice GP-CM05 only?",
+                  "recommended_response": "Approve only when all earlier evidence is committed, the corpus is durable, and PM-037/PM-039 exclusions remain absent.",
+                  "source_ref": {
+                    "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "GP-CM04"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "GP-CM05",
+            "kind": "execution",
+            "status": "complete",
+            "action": "Complete the exact durable real-project, migration, recovery, managed/offline, visual, accessibility, performance, resource, and negative production-candidate matrix without claiming final owner acceptance.",
+            "depends_on": [
+              "GP-CM04"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-CM05"
+              },
+              {
+                "path": "specs/global_preferences_production_acceptance_matrix.json",
+                "marker": "GP-CM05"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "59aa448d"
+              }
+            ]
+          },
+          {
+            "id": "GP-CM05V",
+            "kind": "owner_decision",
+            "status": "pending",
             "action": "Review the same-revision GP-CM05 report, exact corpus, eight numeric budgets, running native behavior, and exclusions before recording production acceptance.",
-            "depends_on": ["GP-CM05"], "requirement_refs": [
-              {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM05V"},
-              {"path": "specs/global_preferences_production_acceptance_matrix.json", "marker": "GP-CM05V"}
-            ], "completion_evidence": [],
-            "owner_input": {"response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: accept GP-CM05` or `GLOBAL-PREFERENCES-COMPLETION: revise GP-CM05 — <specific corpus, budget, behavior, accessibility, parity, or exclusion correction>`.", "requests": [{"id": "GP-CM05V", "question": "Does the completed same-revision evidence satisfy the exact Global Preferences production corpus and all eight numeric budgets without weakening the 11-active/45-reserved, eight-seed, no-live-following, and no-private-writer boundaries?", "recommended_response": "Accept only when every matrix row and running-app check passes with no waiver or unexplained delta.", "source_ref": {"path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "GP-CM05V"}}]}
+            "depends_on": [
+              "GP-CM05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "GP-CM05V"
+              },
+              {
+                "path": "specs/global_preferences_production_acceptance_matrix.json",
+                "marker": "GP-CM05V"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply exactly `GLOBAL-PREFERENCES-COMPLETION: accept GP-CM05` or `GLOBAL-PREFERENCES-COMPLETION: revise GP-CM05 \u2014 <specific corpus, budget, behavior, accessibility, parity, or exclusion correction>`.",
+              "requests": [
+                {
+                  "id": "GP-CM05V",
+                  "question": "Does the completed same-revision evidence satisfy the exact Global Preferences production corpus and all eight numeric budgets without weakening the 11-active/45-reserved, eight-seed, no-live-following, and no-private-writer boundaries?",
+                  "recommended_response": "Accept only when every matrix row and running-app check passes with no waiver or unexplained delta.",
+                  "source_ref": {
+                    "path": "specs/GLOBAL_PREFERENCES_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "GP-CM05V"
+                  }
+                }
+              ]
+            }
           }
         ],
         "post_completion": {
@@ -7150,8 +8051,12 @@
             "The Project Preferences specification loses its Global Preferences blocker but remains planning-only.",
             "Revision descriptors and runtime surfaces remain deferred."
           ],
-          "unblocks_issue_ids": ["dat-project-preferences-spec-kiw"],
-          "selection": "explicit_frontier_update", "authorizes_successor": false, "selects_successor": false
+          "unblocks_issue_ids": [
+            "dat-project-preferences-spec-kiw"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
         }
       }
     },
@@ -7174,31 +8079,131 @@
       "canonical_next": false,
       "parallel": false,
       "summary": "Complete the exact Project-owned settings inventory, canonical query/mutation contract, conventional menu doorway, interaction/accessibility specification, and protected visual truth after Global Preferences is stable.",
-      "dependencies": ["dat-global-preferences-completion-f84"],
-      "unblocks": ["dat-project-preferences-build-tlq"],
+      "dependencies": [
+        "dat-global-preferences-completion-f84"
+      ],
+      "unblocks": [
+        "dat-project-preferences-build-tlq"
+      ],
       "completion": {
         "outcome": "Datum has an owner-ratified buildable Project Preferences contract with explicit scope, real Project authority, canonical mutations, accessible visual truth, and Revision excluded from the initial build.",
         "canonical_next_step_id": "PPS-C01",
-        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
-        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
         "steps": [
-          {"id": "PPS-C01", "kind": "planning", "status": "pending", "action": "Inventory exact Project-owned settings, authorities, query/mutation paths, seed relationships, and exclusions.", "depends_on": [], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C01"}], "completion_evidence": []},
-          {"id": "PPS-C02", "kind": "planning", "status": "pending", "action": "Reconcile the two-command menu doorway and Project Preferences primary visual truth through the Claude-owned protected lane.", "depends_on": ["PPS-C01"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C02"}], "completion_evidence": []},
-          {"id": "PPS-C03", "kind": "planning", "status": "pending", "action": "Publish the buildable Project Preferences authority, interaction, accessibility, and conformance specification.", "depends_on": ["PPS-C02"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C03"}], "completion_evidence": []},
           {
-            "id": "PPS-REVIEW", "kind": "planning", "status": "pending", "action": "Obtain independent review of the complete Project Preferences specification, visual authority and clause dispositions.",
-            "depends_on": ["PPS-C03"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md", "marker": "PPS-REVIEW"}], "completion_evidence": []
+            "id": "PPS-C01",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Inventory exact Project-owned settings, authorities, query/mutation paths, seed relationships, and exclusions.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+                "marker": "PPS-C01"
+              }
+            ],
+            "completion_evidence": []
           },
           {
-            "id": "PPS-C04", "kind": "owner_decision", "status": "pending", "action": "Review and ratify or revise the complete Project Preferences specification and bounded build placement.",
-            "depends_on": ["PPS-REVIEW"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C04"}], "completion_evidence": [],
-            "owner_input": {"response_format": "Reply exactly `PROJECT-PREFERENCES-SPEC: approve` or `PROJECT-PREFERENCES-SPEC: revise — <specific authority, menu, interaction, accessibility, visual, or proof correction>`.", "requests": [{"id": "PPS-C04", "question": "Does the complete Project Preferences contract faithfully implement PM-039 without exposing Revision or mixing machine and Project authority?", "recommended_response": "Approve only after the exact inventory, protected renders, canonical mutation paths, and accessibility proof are complete.", "source_ref": {"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PPS-C04"}}]}
+            "id": "PPS-C02",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Reconcile the two-command menu doorway and Project Preferences primary visual truth through the Claude-owned protected lane.",
+            "depends_on": [
+              "PPS-C01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+                "marker": "PPS-C02"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "PPS-C03",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Publish the buildable Project Preferences authority, interaction, accessibility, and conformance specification.",
+            "depends_on": [
+              "PPS-C02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+                "marker": "PPS-C03"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "PPS-REVIEW",
+            "kind": "planning",
+            "status": "pending",
+            "action": "Obtain independent review of the complete Project Preferences specification, visual authority and clause dispositions.",
+            "depends_on": [
+              "PPS-C03"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_SURFACE_SPECIFICATION_REVIEW.md",
+                "marker": "PPS-REVIEW"
+              }
+            ],
+            "completion_evidence": []
+          },
+          {
+            "id": "PPS-C04",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Review and ratify or revise the complete Project Preferences specification and bounded build placement.",
+            "depends_on": [
+              "PPS-REVIEW"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+                "marker": "PPS-C04"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply exactly `PROJECT-PREFERENCES-SPEC: approve` or `PROJECT-PREFERENCES-SPEC: revise \u2014 <specific authority, menu, interaction, accessibility, visual, or proof correction>`.",
+              "requests": [
+                {
+                  "id": "PPS-C04",
+                  "question": "Does the complete Project Preferences contract faithfully implement PM-039 without exposing Revision or mixing machine and Project authority?",
+                  "recommended_response": "Approve only after the exact inventory, protected renders, canonical mutation paths, and accessibility proof are complete.",
+                  "source_ref": {
+                    "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+                    "marker": "PPS-C04"
+                  }
+                }
+              ]
+            }
           }
         ],
         "post_completion": {
-          "effects": ["The bounded Project Preferences build becomes eligible for its own owner execution gate; Revision integration remains excluded."],
-          "unblocks_issue_ids": ["dat-project-preferences-build-tlq"],
-          "selection": "explicit_frontier_update", "authorizes_successor": false, "selects_successor": false
+          "effects": [
+            "The bounded Project Preferences build becomes eligible for its own owner execution gate; Revision integration remains excluded."
+          ],
+          "unblocks_issue_ids": [
+            "dat-project-preferences-build-tlq"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
         }
       }
     },
@@ -7218,31 +8223,125 @@
       "canonical_next": false,
       "parallel": false,
       "summary": "Implement Project Preferences through real Project queries and canonical journaled mutations after specification and protected visual ratification; Revision configuration remains a separate later decision.",
-      "dependencies": ["dat-project-preferences-spec-kiw"],
+      "dependencies": [
+        "dat-project-preferences-spec-kiw"
+      ],
       "unblocks": [],
       "completion": {
         "outcome": "Project Preferences is a stable, accessible, production-accepted settings surface for ratified Project-owned configuration with no machine-store writes, private Project writers, Navigator settings, or Revision integration.",
         "canonical_next_step_id": "PP-I00",
-        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
-        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
         "steps": [
           {
-            "id": "PP-I00", "kind": "owner_decision", "status": "pending", "action": "Review the ratified Project Preferences contract before authorizing one real vertical slice in PP-I01 only.",
-            "depends_on": [], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PP-I00"}], "completion_evidence": [],
-            "owner_input": {"response_format": "Reply exactly `PROJECT-PREFERENCES-EXECUTION: approve PP-I01` or `PROJECT-PREFERENCES-EXECUTION: revise — <specific scope, mutation, visual, accessibility, dependency, or proof correction>`.", "requests": [{"id": "PP-I00", "question": "May Datum implement one real Project Preferences vertical slice in PP-I01 only?", "recommended_response": "Approve only with a ratified real Project row, canonical journaled mutation, and no Revision or machine-store behavior.", "source_ref": {"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PP-I00"}}]}
+            "id": "PP-I00",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Review the ratified Project Preferences contract before authorizing one real vertical slice in PP-I01 only.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+                "marker": "PP-I00"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply exactly `PROJECT-PREFERENCES-EXECUTION: approve PP-I01` or `PROJECT-PREFERENCES-EXECUTION: revise \u2014 <specific scope, mutation, visual, accessibility, dependency, or proof correction>`.",
+              "requests": [
+                {
+                  "id": "PP-I00",
+                  "question": "May Datum implement one real Project Preferences vertical slice in PP-I01 only?",
+                  "recommended_response": "Approve only with a ratified real Project row, canonical journaled mutation, and no Revision or machine-store behavior.",
+                  "source_ref": {
+                    "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+                    "marker": "PP-I00"
+                  }
+                }
+              ]
+            }
           },
-          {"id": "PP-I01", "kind": "execution", "status": "pending", "action": "Implement the menu route, scope-safe read model, and first real journaled Project setting.", "depends_on": ["PP-I00"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PP-I01"}], "completion_evidence": []},
           {
-            "id": "PP-I02", "kind": "owner_decision", "status": "pending", "action": "Review PP-I01 before authorizing complete ratified Project-settings coverage in PP-I03 only.",
-            "depends_on": ["PP-I01"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PP-I02"}], "completion_evidence": [],
-            "owner_input": {"response_format": "Reply exactly `PROJECT-PREFERENCES-EXECUTION: approve PP-I03` or `PROJECT-PREFERENCES-EXECUTION: revise — <specific category, conflict, accessibility, real-project, or proof correction>`.", "requests": [{"id": "PP-I02", "question": "May Datum complete and production-accept the ratified non-Revision Project Preferences categories in PP-I03 only?", "recommended_response": "Approve only after the vertical slice proves scope, mutation, undo, refusal, and accessibility behavior in a real Project.", "source_ref": {"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PP-I02"}}]}
+            "id": "PP-I01",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Implement the menu route, scope-safe read model, and first real journaled Project setting.",
+            "depends_on": [
+              "PP-I00"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+                "marker": "PP-I01"
+              }
+            ],
+            "completion_evidence": []
           },
-          {"id": "PP-I03", "kind": "execution", "status": "pending", "action": "Complete and stabilize ratified Project categories, conflicts/refusals, accessibility, real Projects, and production acceptance without Revision integration.", "depends_on": ["PP-I02"], "requirement_refs": [{"path": "specs/PROJECT_PREFERENCES_SPEC.md", "marker": "PP-I03"}], "completion_evidence": []}
+          {
+            "id": "PP-I02",
+            "kind": "owner_decision",
+            "status": "pending",
+            "action": "Review PP-I01 before authorizing complete ratified Project-settings coverage in PP-I03 only.",
+            "depends_on": [
+              "PP-I01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+                "marker": "PP-I02"
+              }
+            ],
+            "completion_evidence": [],
+            "owner_input": {
+              "response_format": "Reply exactly `PROJECT-PREFERENCES-EXECUTION: approve PP-I03` or `PROJECT-PREFERENCES-EXECUTION: revise \u2014 <specific category, conflict, accessibility, real-project, or proof correction>`.",
+              "requests": [
+                {
+                  "id": "PP-I02",
+                  "question": "May Datum complete and production-accept the ratified non-Revision Project Preferences categories in PP-I03 only?",
+                  "recommended_response": "Approve only after the vertical slice proves scope, mutation, undo, refusal, and accessibility behavior in a real Project.",
+                  "source_ref": {
+                    "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+                    "marker": "PP-I02"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "id": "PP-I03",
+            "kind": "execution",
+            "status": "pending",
+            "action": "Complete and stabilize ratified Project categories, conflicts/refusals, accessibility, real Projects, and production acceptance without Revision integration.",
+            "depends_on": [
+              "PP-I02"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PROJECT_PREFERENCES_SPEC.md",
+                "marker": "PP-I03"
+              }
+            ],
+            "completion_evidence": []
+          }
         ],
         "post_completion": {
-          "effects": ["Project Preferences is stable; any Revision category or operational Revision surface still requires a fresh owner decision."],
+          "effects": [
+            "Project Preferences is stable; any Revision category or operational Revision surface still requires a fresh owner decision."
+          ],
           "unblocks_issue_ids": [],
-          "selection": "explicit_frontier_update", "authorizes_successor": false, "selects_successor": false
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
         }
       }
     },
@@ -7314,7 +8413,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "After reviewing the committed REV-I00 baseline packet, reply exactly `REVISION-ENGINE-EXECUTION: approve` or `REVISION-ENGINE-EXECUTION: revise — <specific scope, dependency, migration, ownership, or proof correction>`.",
+              "response_format": "After reviewing the committed REV-I00 baseline packet, reply exactly `REVISION-ENGINE-EXECUTION: approve` or `REVISION-ENGINE-EXECUTION: revise \u2014 <specific scope, dependency, migration, ownership, or proof correction>`.",
               "requests": [
                 {
                   "id": "REVISION-ENGINE-EXECUTION",
@@ -7333,8 +8432,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Harden transaction-tip identity, journal/integrity records, atomic authority writes, crash recovery, backup/restore, and per-Project write safety without conflating technical and engineering revision.",
-            "depends_on": ["REV-I00"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I01"}],
+            "depends_on": [
+              "REV-I00"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I01"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -7356,9 +8462,14 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Review the bounded REV-I02 typed-authority-core execution packet and decide whether that slice alone may begin.",
-            "depends_on": ["REV-I01"],
+            "depends_on": [
+              "REV-I01"
+            ],
             "requirement_refs": [
-              {"path": "research/documentation-system/REV_I02_EXECUTION_AUTHORIZATION_PACKET.md", "marker": "REV-I13"}
+              {
+                "path": "research/documentation-system/REV_I02_EXECUTION_AUTHORIZATION_PACKET.md",
+                "marker": "REV-I13"
+              }
             ],
             "completion_evidence": [
               {
@@ -7368,7 +8479,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "After reviewing the committed REV-I02 packet, reply exactly `REV-I02-EXECUTION: approve` or `REV-I02-EXECUTION: revise — <specific scope, type, invariant, proof, dependency, migration, or visual correction>`.",
+              "response_format": "After reviewing the committed REV-I02 packet, reply exactly `REV-I02-EXECUTION: approve` or `REV-I02-EXECUTION: revise \u2014 <specific scope, type, invariant, proof, dependency, migration, or visual correction>`.",
               "requests": [
                 {
                   "id": "REV-I02-EXECUTION",
@@ -7387,8 +8498,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement versioned typed revision-authority identities, records, events, canonical persistence, integrity, and exact local resolution.",
-            "depends_on": ["REV-I13"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I02"}],
+            "depends_on": [
+              "REV-I13"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I02"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -7401,9 +8519,14 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Review the bounded REV-I03 Project-policy and authority-evaluation execution packet and decide whether that slice alone may begin.",
-            "depends_on": ["REV-I02"],
+            "depends_on": [
+              "REV-I02"
+            ],
             "requirement_refs": [
-              {"path": "research/documentation-system/REV_I03_EXECUTION_AUTHORIZATION_PACKET.md", "marker": "REV-I14"}
+              {
+                "path": "research/documentation-system/REV_I03_EXECUTION_AUTHORIZATION_PACKET.md",
+                "marker": "REV-I14"
+              }
             ],
             "completion_evidence": [
               {
@@ -7413,7 +8536,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "After reviewing the committed REV-I03 packet, reply exactly `REV-I03-EXECUTION: approve` or `REV-I03-EXECUTION: revise — <specific scope, enumeration, policy, authority, never-blocks, proof, dependency, migration, or visual correction>`.",
+              "response_format": "After reviewing the committed REV-I03 packet, reply exactly `REV-I03-EXECUTION: approve` or `REV-I03-EXECUTION: revise \u2014 <specific scope, enumeration, policy, authority, never-blocks, proof, dependency, migration, or visual correction>`.",
               "requests": [
                 {
                   "id": "REV-I03-EXECUTION",
@@ -7432,8 +8555,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement Project revision policy, scheme registry, scoped roles, approval attestations, effectivity, and the specified Global Preferences seeding seam.",
-            "depends_on": ["REV-I14"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I03"}],
+            "depends_on": [
+              "REV-I14"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I03"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -7446,9 +8576,14 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Review the bounded REV-I04 EngineeringChange, bounded-departure, reservation, and Design-gate execution packet and decide whether that slice alone may begin.",
-            "depends_on": ["REV-I03"],
+            "depends_on": [
+              "REV-I03"
+            ],
             "requirement_refs": [
-              {"path": "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md", "marker": "REV-I15"}
+              {
+                "path": "research/documentation-system/REV_I04_EXECUTION_AUTHORIZATION_PACKET.md",
+                "marker": "REV-I15"
+              }
             ],
             "completion_evidence": [
               {
@@ -7458,7 +8593,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "After reviewing the committed REV-I04 packet, reply exactly `REV-I04-EXECUTION: approve` or `REV-I04-EXECUTION: revise — <specific scope, enumeration, lifecycle, integration, never-blocks, reservation, migration, proof, dependency, or visual correction>`.",
+              "response_format": "After reviewing the committed REV-I04 packet, reply exactly `REV-I04-EXECUTION: approve` or `REV-I04-EXECUTION: revise \u2014 <specific scope, enumeration, lifecycle, integration, never-blocks, reservation, migration, proof, dependency, or visual correction>`.",
               "requests": [
                 {
                   "id": "REV-I04-EXECUTION",
@@ -7477,8 +8612,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Implement the append-only EngineeringChange lifecycle, identity-free successor collection, revision reservation, verification, and explicit mapping of proposals, reviews, waivers, and deviations.",
-            "depends_on": ["REV-I15"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I04"}],
+            "depends_on": [
+              "REV-I15"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I04"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -7495,9 +8637,14 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Ratify one serial direct-execution authorization model for REV-I05 through REV-I12 against their already-ratified implementation-plan sections and Exit evidence, replacing unreached per-slice authorization packets. Every slice carries three standing constraints: each authorized record-family, capability, state, and event inventory is complete, exclusive, and bidirectionally proven; Design authoring may refuse only through prepare_revision_design_commit and only under explicitly adopted AuthorizedChangeRequired while Unmanaged and NoEarlierControl remain prompt-free and ungated; and every new dependency stops before any code or manifest change for an exact numbered Product Mechanics 029 owner decision. This ratification does not claim or execute REV-I05.",
-            "depends_on": ["REV-I04"],
+            "depends_on": [
+              "REV-I04"
+            ],
             "requirement_refs": [
-              {"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I16"}
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I16"
+              }
             ],
             "completion_evidence": [
               {
@@ -7507,13 +8654,16 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply exactly `REV-FRONTIER-DIRECT: approve` or `REV-FRONTIER-DIRECT: revise — <specific authorization-model, inventory, acceptance, visual-boundary, production-boundary, never-blocks, or dependency correction>`.",
+              "response_format": "Reply exactly `REV-FRONTIER-DIRECT: approve` or `REV-FRONTIER-DIRECT: revise \u2014 <specific authorization-model, inventory, acceptance, visual-boundary, production-boundary, never-blocks, or dependency correction>`.",
               "requests": [
                 {
                   "id": "REV-FRONTIER-DIRECT",
                   "question": "May the remaining Product Revision Engine slices execute serially and directly against their ratified plan sections and Exit evidence, with only the plan-mandated visual and production owner reviews plus event-triggered PM-029 or genuine-gap stops?",
                   "recommended_response": "Approve only if the closed-inventory proof, sole-authorized Design coordinator, prompt-free Unmanaged and NoEarlierControl workflows, and PM-029 dependency stop remain acceptance conditions in every slice.",
-                  "source_ref": {"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I16"}
+                  "source_ref": {
+                    "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "REV-I16"
+                  }
                 }
               ]
             }
@@ -7523,8 +8673,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Execute only REV-I05 against its ratified plan section. The complete and exclusive added record-family inventory is ConfigurationBaseline, DependencySnapshot, SemanticDelta, ImpactEvaluation, EvidenceInputContext, EvidenceFreshness, LibraryUptakeCandidate, BaselineComparison, and RegenerationPlan; the complete outcome inventories are Affected, Unaffected, and ImpactUnknown plus Added, Removed, Modified, Retargeted, and Unchanged. Bidirectional inventory proof and every REV-I05 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
-            "depends_on": ["REV-I16"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I05"}],
+            "depends_on": [
+              "REV-I16"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I05"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -7537,8 +8694,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Execute only REV-I06 against its ratified plan section. The complete and exclusive added record-family inventory is EngineeringRevision, ReleaseCandidate, Release, SupersessionEstablished, AuthorizationWithdrawn, ObsolescenceDeclared, ControlledDocument, DocumentIssue, ReleasePackage, and Transmittal; readiness, invalidation, issuance, supersession, withdrawal, obsolescence, and transmittal meanings are limited to those the plan and normative specification assign these named families. Bidirectional inventory proof and every REV-I06 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
-            "depends_on": ["REV-I05"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I06"}],
+            "depends_on": [
+              "REV-I05"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I06"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -7551,8 +8715,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Execute only REV-I07 against its ratified plan section. The complete and exclusive added record-family inventory is ReproductionManifest and ReproductionAttempt; the complete and exclusive reproduction-result inventory is ByteIdentical, OutputMismatch, Unavailable, and ExecutionFailed. Bidirectional inventory proof and every REV-I07 Exit-evidence item gate closure; RegenerationPlan is consumed from REV-I05, not redefined. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
-            "depends_on": ["REV-I06"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I07"}],
+            "depends_on": [
+              "REV-I06"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I07"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -7565,8 +8736,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Execute only REV-I08 against its ratified plan section. The complete and exclusive added record-family inventory is ExternalMappingReceipt, AdapterDivergenceObservation, ReleaseMirrorRequest, ReleaseMirrorResult, AuthorityExchangeEnvelope, AuthorityExchangeReceipt, ExternalChangeCandidate, CredentialOrTrustEvent, and TrustedTimestampEvidence; no simultaneous multi-writer family or production trust/signature/time algorithm is authorized. Bidirectional inventory proof and every REV-I08 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new crate, executable, helper, provider, or other dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
-            "depends_on": ["REV-I07"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I08"}],
+            "depends_on": [
+              "REV-I07"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I08"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -7579,8 +8757,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Execute only REV-I09 against its ratified plan section. It adds zero authority-record families, capabilities, states, or events; its complete and exclusive public inventory is the ratified, implemented REV-I03-through-REV-I08 operation, query, refusal, proposal, and evidence catalog, with proposal twins for every appropriate authorable operation and no proposal shortcut for approval or release authority. Bidirectional engine/native-write/daemon/CLI/MCP inventory proof and every REV-I09 Exit-evidence item gate closure. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
-            "depends_on": ["REV-I08"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I09"}],
+            "depends_on": [
+              "REV-I08"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I09"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -7593,8 +8778,15 @@
             "kind": "execution",
             "status": "complete",
             "action": "Execute only REV-I10 against its ratified plan section. It adds zero authority-record families, capabilities, states, or events; its complete and exclusive visible inventory is the six owner-approved dispositions numbered 1 through 6 in REV-I10. Bidirectional UI-versus-inventory proof and every REV-I10 Exit-evidence item gate closure, except that the required running-app owner visual review is the following REV-I17 boundary. Unmanaged and NoEarlierControl Design authoring must remain prompt-free and ungated, with refusal possible only through prepare_revision_design_commit under explicitly adopted AuthorizedChangeRequired. No new dependency is authorized; PM-029 stops any proposal before code or manifest changes.",
-            "depends_on": ["REV-I09"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I10"}],
+            "depends_on": [
+              "REV-I09"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I10"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "commit",
@@ -7619,8 +8811,15 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Record the owner's rejection of the running REV-I10 result and replace this acceptance boundary with Product Mechanics 038 recovery authority.",
-            "depends_on": ["REV-I10"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I17"}],
+            "depends_on": [
+              "REV-I10"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I17"
+              }
+            ],
             "completion_evidence": [
               {
                 "kind": "review",
@@ -7629,13 +8828,16 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply exactly `REV-I10-VISUAL: approve` or `REV-I10-VISUAL: revise — <specific running-app conformance correction>`.",
+              "response_format": "Reply exactly `REV-I10-VISUAL: approve` or `REV-I10-VISUAL: revise \u2014 <specific running-app conformance correction>`.",
               "requests": [
                 {
                   "id": "REV-I10-VISUAL",
                   "question": "Does the running REV-I10 GUI conform to the six owner-approved dispositions and their accessibility, layout, and never-blocks evidence?",
                   "recommended_response": "Approve only after reviewing the running application and committed visual/accessibility proofs against the ratified GUI contract.",
-                  "source_ref": {"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I17"}
+                  "source_ref": {
+                    "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "REV-I17"
+                  }
                 }
               ]
             }
@@ -7645,19 +8847,33 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Suspend the unapproved enterprise role-workflow visual design under Product Mechanics 038; no disposition or implementation is authorized.",
-            "depends_on": ["REV-I17"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I18"}],
+            "depends_on": [
+              "REV-I17"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I18"
+              }
+            ],
             "completion_evidence": [
-              {"kind": "review", "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md", "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"}
+              {
+                "kind": "review",
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"
+              }
             ],
             "owner_input": {
-              "response_format": "After the Claude-owned REV-I10A visual study is committed and reviewed, reply exactly `REV-I10A-VISUAL: approve <candidate>` or `REV-I10A-VISUAL: revise — <specific visual-contract correction>`.",
+              "response_format": "After the Claude-owned REV-I10A visual study is committed and reviewed, reply exactly `REV-I10A-VISUAL: approve <candidate>` or `REV-I10A-VISUAL: revise \u2014 <specific visual-contract correction>`.",
               "requests": [
                 {
                   "id": "REV-I10A-VISUAL",
                   "question": "Which rendered enterprise role-workflow candidate governs REV-I10A implementation while preserving Datum authority, canonical mutation, accessibility, and adapter subordination?",
                   "recommended_response": "Approve only a rendered candidate that covers every REV-I10A workflow state and exclusion without assigning revision authority to PLM/PDM or adapter state.",
-                  "source_ref": {"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I18"}
+                  "source_ref": {
+                    "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "REV-I18"
+                  }
                 }
               ]
             }
@@ -7667,10 +8883,21 @@
             "kind": "execution",
             "status": "complete",
             "action": "Suspend REV-I10A under Product Mechanics 038 and quarantine enterprise role, queue, delegation, and adapter workflow scope pending fresh justification and authorization.",
-            "depends_on": ["REV-I18"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I10A"}],
+            "depends_on": [
+              "REV-I18"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I10A"
+              }
+            ],
             "completion_evidence": [
-              {"kind": "review", "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md", "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"}
+              {
+                "kind": "review",
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"
+              }
             ]
           },
           {
@@ -7678,19 +8905,33 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Cancel the REV-I10A running-app acceptance boundary because its implementation is suspended under Product Mechanics 038.",
-            "depends_on": ["REV-I10A"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I19"}],
+            "depends_on": [
+              "REV-I10A"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I19"
+              }
+            ],
             "completion_evidence": [
-              {"kind": "review", "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md", "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"}
+              {
+                "kind": "review",
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"
+              }
             ],
             "owner_input": {
-              "response_format": "Reply exactly `REV-I10A-RUNNING-APP: approve` or `REV-I10A-RUNNING-APP: revise — <specific workflow, authority, accessibility, or visual-conformance correction>`.",
+              "response_format": "Reply exactly `REV-I10A-RUNNING-APP: approve` or `REV-I10A-RUNNING-APP: revise \u2014 <specific workflow, authority, accessibility, or visual-conformance correction>`.",
               "requests": [
                 {
                   "id": "REV-I10A-RUNNING-APP",
                   "question": "Does the running REV-I10A workflow conform to its owner-approved render, preserve Datum as sole authority, and satisfy its accessibility and failure-isolation evidence?",
                   "recommended_response": "Approve only after the running application and committed conformance evidence demonstrate the entire ratified workflow inventory.",
-                  "source_ref": {"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I19"}
+                  "source_ref": {
+                    "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "REV-I19"
+                  }
                 }
               ]
             }
@@ -7700,10 +8941,21 @@
             "kind": "execution",
             "status": "complete",
             "action": "Suspend REV-I11 standards, retention, audit, and migration execution under Product Mechanics 038 pending recovery and fresh authorization.",
-            "depends_on": ["REV-I19"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I11"}],
+            "depends_on": [
+              "REV-I19"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I11"
+              }
+            ],
             "completion_evidence": [
-              {"kind": "review", "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md", "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"}
+              {
+                "kind": "review",
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"
+              }
             ]
           },
           {
@@ -7711,10 +8963,21 @@
             "kind": "execution",
             "status": "complete",
             "action": "Cancel the old REV-I12 production-acceptance program under Product Mechanics 038; recovery requires a new bounded acceptance plan.",
-            "depends_on": ["REV-I11"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I12"}],
+            "depends_on": [
+              "REV-I11"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I12"
+              }
+            ],
             "completion_evidence": [
-              {"kind": "review", "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md", "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"}
+              {
+                "kind": "review",
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"
+              }
             ]
           },
           {
@@ -7722,19 +8985,33 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Cancel the old production-acceptance decision boundary; Product Mechanics 038 explicitly withholds production acceptance.",
-            "depends_on": ["REV-I12"],
-            "requirement_refs": [{"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I20"}],
+            "depends_on": [
+              "REV-I12"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                "marker": "REV-I20"
+              }
+            ],
             "completion_evidence": [
-              {"kind": "review", "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md", "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"}
+              {
+                "kind": "review",
+                "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
+                "marker": "EVIDENCE:REVISION-RECOVERY:PM-038-OWNER-APPROVED"
+              }
             ],
             "owner_input": {
-              "response_format": "Reply exactly `REVISION-ENGINE-PRODUCTION: approve` or `REVISION-ENGINE-PRODUCTION: revise — <specific evidence, budget, audit, running-app, migration, accessibility, or acceptance correction>`.",
+              "response_format": "Reply exactly `REVISION-ENGINE-PRODUCTION: approve` or `REVISION-ENGINE-PRODUCTION: revise \u2014 <specific evidence, budget, audit, running-app, migration, accessibility, or acceptance correction>`.",
               "requests": [
                 {
                   "id": "REVISION-ENGINE-PRODUCTION",
                   "question": "Do the complete REV-I01-through-REV-I12 evidence set, measured budgets, independent audit, and running application satisfy Product Revision Engine production acceptance?",
                   "recommended_response": "Approve only when all nine REV-I12 requirements are committed and addressable and the measured budgets have been explicitly dispositioned.",
-                  "source_ref": {"path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md", "marker": "REV-I20"}
+                  "source_ref": {
+                    "path": "specs/PRODUCT_REVISION_ENGINE_IMPLEMENTATION_PLAN.md",
+                    "marker": "REV-I20"
+                  }
                 }
               ]
             }
@@ -7769,8 +9046,7 @@
       "canonical_next": false,
       "parallel": false,
       "summary": "Scheduled placeholder for three-rung native ECAD-MCAD interoperability: STEP assembly export, mechanical outline/constraint import, and IDX-class proposal/quarantine/evidence exchange. Datum never embeds a mechanical modeling kernel or permits an external MCAD master. Geometry/STEP-import dependencies require exact Product Mechanics 029 owner approval. Sequence only after Revision Engine production acceptance and Global Preferences, approximately with future 3D-viewer work; no research, specification, dependency, or implementation is authorized.",
-      "dependencies": [
-      ],
+      "dependencies": [],
       "unblocks": []
     },
     {
@@ -7923,7 +9199,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `ADOPTED-DRAFTING-STANDARD-SPEC: ratify specification — <exact numbered decision and reviewed evidence>`, `ADOPTED-DRAFTING-STANDARD-SPEC: revise — <correction>`, or `ADOPTED-DRAFTING-STANDARD-SPEC: defer — <reason>`.",
+              "response_format": "Reply `ADOPTED-DRAFTING-STANDARD-SPEC: ratify specification \u2014 <exact numbered decision and reviewed evidence>`, `ADOPTED-DRAFTING-STANDARD-SPEC: revise \u2014 <correction>`, or `ADOPTED-DRAFTING-STANDARD-SPEC: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "RATIFY",
@@ -8038,7 +9314,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "After reviewing the packet, reply exactly `VISUAL-TRUTH-LANE-DESIGN: approve` or `VISUAL-TRUTH-LANE-DESIGN: revise — <specific correction>`.",
+              "response_format": "After reviewing the packet, reply exactly `VISUAL-TRUTH-LANE-DESIGN: approve` or `VISUAL-TRUTH-LANE-DESIGN: revise \u2014 <specific correction>`.",
               "requests": [
                 {
                   "id": "LANE-C02",
@@ -8158,7 +9434,9 @@
             "kind": "planning",
             "status": "complete",
             "action": "Have the Claude-owned visual-truth lane mark the permanent-Q1/default-visibility contract superseded and render contextual opt-in Revision behavior while preserving the manual Design workspace.",
-            "depends_on": ["RVR-A01"],
+            "depends_on": [
+              "RVR-A01"
+            ],
             "requirement_refs": [
               {
                 "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
@@ -8181,7 +9459,9 @@
             "kind": "planning",
             "status": "complete",
             "action": "Inventory every Revision runtime and engine path as retain, rework, quarantine, or remove, including hard-coded GUI data, journal integration, public catalog/query semantics, Project policy gates, and enterprise adapters.",
-            "depends_on": ["RVR-A02"],
+            "depends_on": [
+              "RVR-A02"
+            ],
             "requirement_refs": [
               {
                 "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
@@ -8205,7 +9485,9 @@
             "kind": "execution",
             "status": "complete",
             "action": "Remove fictional runtime Revision records and unmanaged default Revision surfaces, with bounded regression proof that real unmanaged library, schematic, and PCB authoring remains readable and prompt-free.",
-            "depends_on": ["RVR-A03"],
+            "depends_on": [
+              "RVR-A03"
+            ],
             "requirement_refs": [
               {
                 "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
@@ -8224,7 +9506,9 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Review one small running-app packet proving the corrected unmanaged Project baseline before any broader Revision scope or production-acceptance sequence is proposed.",
-            "depends_on": ["RVR-I01"],
+            "depends_on": [
+              "RVR-I01"
+            ],
             "requirement_refs": [
               {
                 "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
@@ -8239,7 +9523,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "After reviewing the bounded running-app packet, reply exactly `REVISION-RECOVERY-BASELINE: approve` or `REVISION-RECOVERY-BASELINE: revise — <specific correction>`.",
+              "response_format": "After reviewing the bounded running-app packet, reply exactly `REVISION-RECOVERY-BASELINE: approve` or `REVISION-RECOVERY-BASELINE: revise \u2014 <specific correction>`.",
               "requests": [
                 {
                   "id": "REVISION-RECOVERY-BASELINE",
@@ -8258,7 +9542,9 @@
             "kind": "planning",
             "status": "complete",
             "action": "Prepare a short post-recovery roadmap re-entry packet that reports the governed and authorized state of queued work without inventing product mechanisms, reactivating suspended scope, or selecting a successor.",
-            "depends_on": ["RVR-O01"],
+            "depends_on": [
+              "RVR-O01"
+            ],
             "requirement_refs": [
               {
                 "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
@@ -8278,7 +9564,9 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Review the bounded roadmap re-entry packet and explicitly select the next canonical Frontier item or direct a further audit, without implicitly authorizing product execution.",
-            "depends_on": ["RVR-A04"],
+            "depends_on": [
+              "RVR-A04"
+            ],
             "requirement_refs": [
               {
                 "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
@@ -8293,7 +9581,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "After reviewing the bounded roadmap re-entry packet, reply exactly `REVISION-RECOVERY-NEXT: <Frontier key>` or `REVISION-RECOVERY-NEXT: audit — <specific uncertainty>`.",
+              "response_format": "After reviewing the bounded roadmap re-entry packet, reply exactly `REVISION-RECOVERY-NEXT: <Frontier key>` or `REVISION-RECOVERY-NEXT: audit \u2014 <specific uncertainty>`.",
               "requests": [
                 {
                   "id": "REVISION-RECOVERY-NEXT",
@@ -8312,7 +9600,9 @@
             "kind": "planning",
             "status": "complete",
             "action": "Audit and reconcile the exact Preferences-first implementation sequence and the Global/Project settings doorway, including shared Units and Revision exposure gates, without runtime implementation or protected-prototype edits.",
-            "depends_on": ["RVR-O02"],
+            "depends_on": [
+              "RVR-O02"
+            ],
             "requirement_refs": [
               {
                 "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
@@ -8332,7 +9622,9 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Review and approve or revise the Preferences-first sequencing and settings-doorway packet before any successor implementation item is created or authorized.",
-            "depends_on": ["RVR-A05"],
+            "depends_on": [
+              "RVR-A05"
+            ],
             "requirement_refs": [
               {
                 "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
@@ -8347,7 +9639,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "After reviewing the bounded packet, reply exactly `PREFERENCES-FIRST-REENTRY: approve` or `PREFERENCES-FIRST-REENTRY: revise — <specific correction>`.",
+              "response_format": "After reviewing the bounded packet, reply exactly `PREFERENCES-FIRST-REENTRY: approve` or `PREFERENCES-FIRST-REENTRY: revise \u2014 <specific correction>`.",
               "requests": [
                 {
                   "id": "PREFERENCES-FIRST-REENTRY",
@@ -8366,7 +9658,9 @@
             "kind": "governance",
             "status": "complete",
             "action": "Apply the approved Preferences-first sequence to numbered doctrine, Global Preferences and shared Units plans, the missing Project Preferences specification and Frontier placement, menu contracts, and a bounded protected visual-truth handoff without runtime or prototype edits.",
-            "depends_on": ["RVR-O03"],
+            "depends_on": [
+              "RVR-O03"
+            ],
             "requirement_refs": [
               {
                 "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
@@ -8391,7 +9685,9 @@
             "kind": "owner_decision",
             "status": "complete",
             "action": "Review the repaired Preferences-first governance, protected-lane handoff, and resulting canonical sequence before any implementation claim.",
-            "depends_on": ["RVR-G01"],
+            "depends_on": [
+              "RVR-G01"
+            ],
             "requirement_refs": [
               {
                 "path": "docs/decisions/PRODUCT_MECHANICS_038_REVISION_RECOVERY_AND_PRODUCT_BASELINE.md",
@@ -8406,7 +9702,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "After reviewing the governance repair, reply exactly `PREFERENCES-FIRST-GOVERNANCE: approve` or `PREFERENCES-FIRST-GOVERNANCE: revise — <specific correction>`.",
+              "response_format": "After reviewing the governance repair, reply exactly `PREFERENCES-FIRST-GOVERNANCE: approve` or `PREFERENCES-FIRST-GOVERNANCE: revise \u2014 <specific correction>`.",
               "requests": [
                 {
                   "id": "PREFERENCES-FIRST-GOVERNANCE",
@@ -8574,7 +9870,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply `WORKFLOW-DELIVERY-QUALITY: approve adoption packet`, `WORKFLOW-DELIVERY-QUALITY: revise — <specific correction>`, or `WORKFLOW-DELIVERY-QUALITY: defer — <reason>`.",
+              "response_format": "Reply `WORKFLOW-DELIVERY-QUALITY: approve adoption packet`, `WORKFLOW-DELIVERY-QUALITY: revise \u2014 <specific correction>`, or `WORKFLOW-DELIVERY-QUALITY: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "WDQ-ADOPTION",
@@ -8606,23 +9902,86 @@
       "order": 48,
       "title": "Specify the first manual workflow foundation contracts",
       "issue_id": "dat-manual-foundation-contracts-fsw",
-      "governing_docs": ["specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "docs/reviews/workflow-foundation/authority-review.md", "docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md", "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md", "docs/reviews/workflow-foundation/handoff.md"],
+      "governing_docs": [
+        "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md",
+        "docs/reviews/workflow-foundation/authority-review.md",
+        "docs/decisions/PRODUCT_MECHANICS_012_APPLICATION_QUALITY_BAR.md",
+        "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+        "docs/reviews/workflow-foundation/handoff.md"
+      ],
       "state": "landed",
       "authorization": "none",
       "landing_commit": "b5a05a70edeb119c30bac414563a12c7c07d8a26",
       "canonical_next": false,
       "parallel": true,
       "summary": "Resolve the bounded F1-F8 consumer questions and authority ambiguities before promoting the native project doorway and proposing changes to existing authoring prerequisites; no product implementation or automatic successor selection.",
-      "dependencies": ["dat-workflow-delivery-quality-xgj"],
-      "unblocks": ["dat-native-project-startup-vrf", "dat-gui-surface-specs-usb", "dat-gui-write-path-qiu", "dat-native-authoring-depth-sf9"],
+      "dependencies": [
+        "dat-workflow-delivery-quality-xgj"
+      ],
+      "unblocks": [
+        "dat-native-project-startup-vrf",
+        "dat-gui-surface-specs-usb",
+        "dat-gui-write-path-qiu",
+        "dat-native-authoring-depth-sf9"
+      ],
       "completion": {
         "outcome": "A reviewed clause-level foundation contract covers one ordinary native project doorway and exact board-edit/reopen workflow, with explicit consuming-owner handoffs and unresolved decisions left blocking.",
         "canonical_next_step_id": null,
-        "execution_policy": {"max_in_progress_steps": 1, "dependency_independence_authorizes_parallelism": false},
-        "presentation_policy": {"mode": "stdout_verbatim", "preserve_step_order": true, "preserve_step_numbering": true, "allow_regrouping": false, "allow_supplementation": false, "allow_inferred_concurrency": false},
+        "execution_policy": {
+          "max_in_progress_steps": 1,
+          "dependency_independence_authorizes_parallelism": false
+        },
+        "presentation_policy": {
+          "mode": "stdout_verbatim",
+          "preserve_step_order": true,
+          "preserve_step_numbering": true,
+          "allow_regrouping": false,
+          "allow_supplementation": false,
+          "allow_inferred_concurrency": false
+        },
         "steps": [
-          {"id": "WDQ-F01", "kind": "planning", "status": "complete", "action": "Review complete foundation evidence routes, reconcile clause authority and confirm F1-F8 consumers with their existing owners.", "depends_on": [], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F01"}], "completion_evidence": [{"kind": "document", "path": "docs/reviews/workflow-foundation/authority-review.md", "marker": "<!-- EVIDENCE:FOUNDATION-WORKFLOW-SPEC:WDQ-F01-COMPLETE -->"}]},
-          {"id": "WDQ-F02", "kind": "planning", "status": "complete", "action": "Specify concrete foundation behavior and failure examples for the bounded manual workflow; return visual changes to Claude and leave implementation unauthorized.", "depends_on": ["WDQ-F01"], "requirement_refs": [{"path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md", "marker": "WDQ-F02"}], "completion_evidence": [{"kind": "document", "path": "docs/reviews/workflow-foundation/handoff.md", "marker": "<!-- EVIDENCE:FOUNDATION-WORKFLOW-SPEC:WDQ-F02-COMPLETE -->"}]},
+          {
+            "id": "WDQ-F01",
+            "kind": "planning",
+            "status": "complete",
+            "action": "Review complete foundation evidence routes, reconcile clause authority and confirm F1-F8 consumers with their existing owners.",
+            "depends_on": [],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md",
+                "marker": "WDQ-F01"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/reviews/workflow-foundation/authority-review.md",
+                "marker": "<!-- EVIDENCE:FOUNDATION-WORKFLOW-SPEC:WDQ-F01-COMPLETE -->"
+              }
+            ]
+          },
+          {
+            "id": "WDQ-F02",
+            "kind": "planning",
+            "status": "complete",
+            "action": "Specify concrete foundation behavior and failure examples for the bounded manual workflow; return visual changes to Claude and leave implementation unauthorized.",
+            "depends_on": [
+              "WDQ-F01"
+            ],
+            "requirement_refs": [
+              {
+                "path": "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md",
+                "marker": "WDQ-F02"
+              }
+            ],
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/reviews/workflow-foundation/handoff.md",
+                "marker": "<!-- EVIDENCE:FOUNDATION-WORKFLOW-SPEC:WDQ-F02-COMPLETE -->"
+              }
+            ]
+          },
           {
             "id": "WDQ-F03",
             "kind": "owner_decision",
@@ -8637,7 +9996,13 @@
                 "marker": "WDQ-F03"
               }
             ],
-            "completion_evidence": [{"kind": "review", "path": "docs/reviews/workflow-foundation/handoff.md", "marker": "<!-- EVIDENCE:FOUNDATION-WORKFLOW-SPEC:WDQ-F03-APPROVED -->"}],
+            "completion_evidence": [
+              {
+                "kind": "review",
+                "path": "docs/reviews/workflow-foundation/handoff.md",
+                "marker": "<!-- EVIDENCE:FOUNDATION-WORKFLOW-SPEC:WDQ-F03-APPROVED -->"
+              }
+            ],
             "owner_input": {
               "response_format": "Reply `FOUNDATION-WORKFLOW-SPEC/WDQ-F03: CONTRACT=<approve|revise|defer>; OPEN-CHOICES=<approve|revise|defer>; PREREQUISITES=<approve|revise|defer>; ROLLOUT=<approve|revise|defer>`. Include the correction or reason for each revise/defer. OPEN-CHOICES approves scheduling specification work only, not its unresolved mechanisms; ROLLOUT approves packet preparation only, not enrollment or trusted execution.",
               "requests": [
@@ -8681,7 +10046,21 @@
             }
           }
         ],
-        "post_completion": {"effects": ["Owner approved the bounded contract, specification follow-ups, three exact prerequisite additions and broader rollout packet preparation; unresolved mechanisms and product implementation remain unauthorized.", "Record the separate rollout planning successor without changing Preferences canonical selection or implicitly authorizing a product consumer."], "unblocks_issue_ids": ["dat-native-project-startup-vrf", "dat-gui-surface-specs-usb", "dat-gui-write-path-qiu", "dat-native-authoring-depth-sf9"], "selection": "explicit_frontier_update", "authorizes_successor": false, "selects_successor": false}
+        "post_completion": {
+          "effects": [
+            "Owner approved the bounded contract, specification follow-ups, three exact prerequisite additions and broader rollout packet preparation; unresolved mechanisms and product implementation remain unauthorized.",
+            "Record the separate rollout planning successor without changing Preferences canonical selection or implicitly authorizing a product consumer."
+          ],
+          "unblocks_issue_ids": [
+            "dat-native-project-startup-vrf",
+            "dat-gui-surface-specs-usb",
+            "dat-gui-write-path-qiu",
+            "dat-native-authoring-depth-sf9"
+          ],
+          "selection": "explicit_frontier_update",
+          "authorizes_successor": false,
+          "selects_successor": false
+        }
       }
     },
     {
@@ -8762,7 +10141,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply `WORKFLOW-DELIVERY-GATE-PILOT: authorize bounded implementation`, `WORKFLOW-DELIVERY-GATE-PILOT: revise — <specific correction>`, or `WORKFLOW-DELIVERY-GATE-PILOT: defer — <reason>`.",
+              "response_format": "Reply `WORKFLOW-DELIVERY-GATE-PILOT: authorize bounded implementation`, `WORKFLOW-DELIVERY-GATE-PILOT: revise \u2014 <specific correction>`, or `WORKFLOW-DELIVERY-GATE-PILOT: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "GATE-IMPLEMENTATION",
@@ -8876,7 +10255,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply exactly: ACCEPT WORKFLOW-DELIVERY-GATE-PILOT/WDQ-G06 ab71468a0acd0e845f5e7cd5e2b21aae5121a85dfd5c2d72fa2f5f372c5745a0 9a90b1703fa2041c8ccd0d4584c8b856c1d64e120318da8d754716a998ba7443. Both existing DEFER responses are retained. Alternatively reply `WORKFLOW-DELIVERY-GATE-PILOT: revise — <specific review correction>`.",
+              "response_format": "Reply exactly: ACCEPT WORKFLOW-DELIVERY-GATE-PILOT/WDQ-G06 ab71468a0acd0e845f5e7cd5e2b21aae5121a85dfd5c2d72fa2f5f372c5745a0 9a90b1703fa2041c8ccd0d4584c8b856c1d64e120318da8d754716a998ba7443. Both existing DEFER responses are retained. Alternatively reply `WORKFLOW-DELIVERY-GATE-PILOT: revise \u2014 <specific review correction>`.",
               "requests": [
                 {
                   "id": "CORRECTED-REVIEW",
@@ -8939,7 +10318,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "After the corrected review is accepted in WDQ-G06R and the candidate is regenerated in WDQ-G06P, provide the full owner-promoted authority commit, trusted comparison-base commit, owner-controlled runner location and verification result. Alternatively reply `WORKFLOW-DELIVERY-GATE-PILOT: revise — <specific activation correction>`.",
+              "response_format": "After the corrected review is accepted in WDQ-G06R and the candidate is regenerated in WDQ-G06P, provide the full owner-promoted authority commit, trusted comparison-base commit, owner-controlled runner location and verification result. Alternatively reply `WORKFLOW-DELIVERY-GATE-PILOT: revise \u2014 <specific activation correction>`.",
               "requests": [
                 {
                   "id": "EXTERNAL-PROMOTION",
@@ -9073,7 +10452,7 @@
               }
             ],
             "owner_input": {
-              "response_format": "Reply `WORKFLOW-DELIVERY-ROLLOUT: authorize bounded implementation — 5f0b71f67adb3f48394e764de6d8dc3b924832dc5c6997a2ed7c5de326568265 2efee64b7205d173bdcc5e0b5e86cd98a772056a65f1a2be0f3dd23d5b3b604d`, `WORKFLOW-DELIVERY-ROLLOUT: revise — <correction>`, or `WORKFLOW-DELIVERY-ROLLOUT: defer — <reason>`.",
+              "response_format": "Reply `WORKFLOW-DELIVERY-ROLLOUT: authorize bounded implementation \u2014 5f0b71f67adb3f48394e764de6d8dc3b924832dc5c6997a2ed7c5de326568265 2efee64b7205d173bdcc5e0b5e86cd98a772056a65f1a2be0f3dd23d5b3b604d`, `WORKFLOW-DELIVERY-ROLLOUT: revise \u2014 <correction>`, or `WORKFLOW-DELIVERY-ROLLOUT: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "ROLLOUT-IMPLEMENTATION",
@@ -9195,7 +10574,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `PROJECT-WRITER-OWNERSHIP: approve WRITER-RATIFICATION — <reviewed packet>`, `PROJECT-WRITER-OWNERSHIP: revise — <correction>`, or `PROJECT-WRITER-OWNERSHIP: defer — <reason>`.",
+              "response_format": "Reply `PROJECT-WRITER-OWNERSHIP: approve WRITER-RATIFICATION \u2014 <reviewed packet>`, `PROJECT-WRITER-OWNERSHIP: revise \u2014 <correction>`, or `PROJECT-WRITER-OWNERSHIP: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "WRITER-RATIFICATION",
@@ -9317,7 +10696,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `NATIVE-CONNECTIVITY-CONTRACT: approve CONNECTIVITY-RATIFICATION — <reviewed packet>`, `NATIVE-CONNECTIVITY-CONTRACT: revise — <correction>`, or `NATIVE-CONNECTIVITY-CONTRACT: defer — <reason>`.",
+              "response_format": "Reply `NATIVE-CONNECTIVITY-CONTRACT: approve CONNECTIVITY-RATIFICATION \u2014 <reviewed packet>`, `NATIVE-CONNECTIVITY-CONTRACT: revise \u2014 <correction>`, or `NATIVE-CONNECTIVITY-CONTRACT: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "CONNECTIVITY-RATIFICATION",
@@ -9406,7 +10785,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `NATIVE-PROJECT-DOORWAY: approve DOORWAY-IMPLEMENTATION — <reviewed packet>`, `NATIVE-PROJECT-DOORWAY: revise — <correction>`, or `NATIVE-PROJECT-DOORWAY: defer — <reason>`.",
+              "response_format": "Reply `NATIVE-PROJECT-DOORWAY: approve DOORWAY-IMPLEMENTATION \u2014 <reviewed packet>`, `NATIVE-PROJECT-DOORWAY: revise \u2014 <correction>`, or `NATIVE-PROJECT-DOORWAY: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "DOORWAY-IMPLEMENTATION",
@@ -9484,7 +10863,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `NATIVE-PROJECT-DOORWAY: approve DOORWAY-ACCEPTANCE — <reviewed packet>`, `NATIVE-PROJECT-DOORWAY: revise — <correction>`, or `NATIVE-PROJECT-DOORWAY: defer — <reason>`.",
+              "response_format": "Reply `NATIVE-PROJECT-DOORWAY: approve DOORWAY-ACCEPTANCE \u2014 <reviewed packet>`, `NATIVE-PROJECT-DOORWAY: revise \u2014 <correction>`, or `NATIVE-PROJECT-DOORWAY: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "DOORWAY-ACCEPTANCE",
@@ -9603,7 +10982,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `NATIVE-WORKFLOW-BUDGETS: approve BUDGET-RATIFICATION — <reviewed packet>`, `NATIVE-WORKFLOW-BUDGETS: revise — <correction>`, or `NATIVE-WORKFLOW-BUDGETS: defer — <reason>`.",
+              "response_format": "Reply `NATIVE-WORKFLOW-BUDGETS: approve BUDGET-RATIFICATION \u2014 <reviewed packet>`, `NATIVE-WORKFLOW-BUDGETS: revise \u2014 <correction>`, or `NATIVE-WORKFLOW-BUDGETS: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "BUDGET-RATIFICATION",
@@ -9648,21 +11027,9 @@
         "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md",
         "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-wdq-rollout-implementation-20260908",
-        "claimed_at": "2026-09-08T06:39:04Z",
-        "heartbeat_at": "2026-09-09T02:45:29Z",
-        "expires_at": "2026-09-09T10:45:29Z",
-        "scope": [
-          "WDQ-R03 approved workflow only: coordinate WDQ-REVIEW independent replay of candidate 69583d27a092465eddc34c77677d1c044fb2c28a and retain review evidence. Producer must not author independent approval. Preserve installed trust until exact I04 promotion; no product implementation, GP-CM05V takeover, prototype edit, dependency or product acceptance."
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "7a77e40a850172b50e2251132d171d55a8adfb37"
-      },
+      "state": "specified",
+      "authorization": "owner_decision",
+      "claim": null,
       "canonical_next": false,
       "parallel": true,
       "summary": "Owner-authorized full workflow rollout: implement and activate real-roadmap tripwires, then verify three genuine adoption cohorts without taking over product owners or treating installation as completion.",
@@ -9670,7 +11037,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
-        "canonical_next_step_id": "WDQ-REVIEW",
+        "canonical_next_step_id": "WDQ-I04",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -9811,7 +11178,7 @@
           {
             "id": "WDQ-REVIEW",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Obtain independent replay and review of the exact candidate, promotion packet and every finding.",
             "depends_on": [
               "WDQ-I03"
@@ -9822,7 +11189,13 @@
                 "marker": "WDQ-REVIEW"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/reviews/workflow-delivery-rollout/infrastructure/proposed-inspection-state.json",
+                "marker": "WDQ-REVIEW-PROPOSED-COMPLETE-FOR-INSPECTION"
+              }
+            ]
           },
           {
             "id": "WDQ-I04",
@@ -9840,7 +11213,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `WORKFLOW-DELIVERY-IMPLEMENTATION: approve ACTIVATE — <exact reviewed packet>`, `WORKFLOW-DELIVERY-IMPLEMENTATION: revise — <correction>`, or `WORKFLOW-DELIVERY-IMPLEMENTATION: defer — <reason>`.",
+              "response_format": "Reply `WORKFLOW-DELIVERY-IMPLEMENTATION: approve ACTIVATE \u2014 <exact reviewed packet>`, `WORKFLOW-DELIVERY-IMPLEMENTATION: revise \u2014 <correction>`, or `WORKFLOW-DELIVERY-IMPLEMENTATION: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "ACTIVATE",
@@ -9886,7 +11259,7 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `WORKFLOW-DELIVERY-IMPLEMENTATION: approve ROLLOUT-ACCEPTANCE — <exact reviewed packet>`, `WORKFLOW-DELIVERY-IMPLEMENTATION: revise — <correction>`, or `WORKFLOW-DELIVERY-IMPLEMENTATION: defer — <reason>`.",
+              "response_format": "Reply `WORKFLOW-DELIVERY-IMPLEMENTATION: approve ROLLOUT-ACCEPTANCE \u2014 <exact reviewed packet>`, `WORKFLOW-DELIVERY-IMPLEMENTATION: revise \u2014 <correction>`, or `WORKFLOW-DELIVERY-IMPLEMENTATION: defer \u2014 <reason>`.",
               "requests": [
                 {
                   "id": "ROLLOUT-ACCEPTANCE",
