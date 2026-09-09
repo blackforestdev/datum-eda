@@ -9658,7 +9658,7 @@
         "heartbeat_at": "2026-09-09T02:45:29Z",
         "expires_at": "2026-09-09T10:45:29Z",
         "scope": [
-          "WDQ-R03 approved workflow implementation only: coverage, independent-review transitions, candidate preparation and tests in the repository-local isolated candidate workflow. Preserve installed trust until exact promotion; no product implementation, GP-CM05V takeover, prototype edit, dependency or product acceptance."
+          "WDQ-R03 approved workflow only: coordinate WDQ-REVIEW independent replay of candidate 69583d27a092465eddc34c77677d1c044fb2c28a and retain review evidence. Producer must not author independent approval. Preserve installed trust until exact I04 promotion; no product implementation, GP-CM05V takeover, prototype edit, dependency or product acceptance."
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
         "head": "7a77e40a850172b50e2251132d171d55a8adfb37"
@@ -9670,7 +9670,7 @@
       "unblocks": [],
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
-        "canonical_next_step_id": "WDQ-I03",
+        "canonical_next_step_id": "WDQ-REVIEW",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -9739,7 +9739,9 @@
             "kind": "execution",
             "status": "complete",
             "action": "Build bounded environment, capture and promotion tooling before final readiness review.",
-            "depends_on": ["WDQ-I02"],
+            "depends_on": [
+              "WDQ-I02"
+            ],
             "requirement_refs": [
               {
                 "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
@@ -9783,7 +9785,7 @@
           {
             "id": "WDQ-I03",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Verify the prepared promotion tooling and produce exact candidate evidence for independent replay.",
             "depends_on": [
               "WDQ-READY"
@@ -9794,12 +9796,22 @@
                 "marker": "WDQ-I03"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "commit",
+                "revision": "69583d27a092465eddc34c77677d1c044fb2c28a"
+              },
+              {
+                "kind": "document",
+                "path": "docs/reviews/workflow-delivery-rollout/i03-closeout.json",
+                "marker": "WDQ-I03-PRODUCER-VERIFICATION-COMPLETE"
+              }
+            ]
           },
           {
             "id": "WDQ-REVIEW",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Obtain independent replay and review of the exact candidate, promotion packet and every finding.",
             "depends_on": [
               "WDQ-I03"
