@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "record_type": "candidate_enforcement_diagnostic",
+  "source_commit": "0c0e8d9ef0b97f292ae249a4af6aa1db84a93ba7",
+  "command": [
+    "python3",
+    "scripts/check_workflow_delivery.py",
+    "--root",
+    "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-i02-assembled-20260908/candidate",
+    "--enforce",
+    "--authority-ref",
+    "0c0e8d9ef0b97f292ae249a4af6aa1db84a93ba7",
+    "--base-ref",
+    "0c0e8d9ef0b97f292ae249a4af6aa1db84a93ba7",
+    "--environment-path",
+    "specs/workflow_delivery/rollout.environments.json",
+    "--candidate-ref",
+    "0c0e8d9ef0b97f292ae249a4af6aa1db84a93ba7"
+  ],
+  "exit_code": 0,
+  "stdout": {
+    "acceptance_asserted": false,
+    "checks": [
+      "WORKFLOW-DELIVERY-GATE-PILOT: accept",
+      "WORKFLOW-DELIVERY-IMPLEMENTATION: ready"
+    ],
+    "findings": [],
+    "mode": "enforce",
+    "readiness_asserted": false
+  },
+  "limitations": [
+    "One actual exact-candidate CLI diagnostic, not the complete required entry-surface matrix.",
+    "Authority, base and candidate intentionally equal the prospective source commit; this does not certify the publication delta or authorize activation.",
+    "The ready diagnostic does not complete WDQ-TOOLS or WDQ-READY: fixture/case coverage and final input review remain required.",
+    "This manually retained command result is not typed producer proof, independent replay or owner acceptance.",
+    "Main and its installed local trust were not modified."
+  ],
+  "readiness_asserted": false,
+  "activation_asserted": false,
+  "acceptance_asserted": false
+}

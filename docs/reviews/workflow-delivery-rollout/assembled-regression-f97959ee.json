@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "kind": "datum.workflow-delivery.assembled-regression-record",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-TOOLS",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "source_commit": "f97959ee85a01581074b1fb416309d71cbc8b09c",
+  "command": ["python3", "-m", "unittest", "discover", "-s", "scripts", "-p", "test_workflow_delivery*.py"],
+  "result": {
+    "tests": 381,
+    "elapsed_seconds": 943.876,
+    "exit_code": 0,
+    "verdict": "OK",
+    "session_id": 49857,
+    "pid": 727618,
+    "source_unchanged_during_run": true,
+    "worktree_clean_after_run": true,
+    "restarted": false
+  },
+  "observation_source": "Operator transcription of the original execution session and its terminal result; not a raw capture artifact, producer proof packet or independent replay.",
+  "capture_registry_audit": {
+    "required_case_rows": 62,
+    "registered_variants": 62,
+    "rows_with_any_registered_variant": 35,
+    "rows_without_registered_variant": [
+      "INFRA-S01-02", "INFRA-S01-03", "INFRA-S01-04",
+      "INFRA-S02-02", "INFRA-S02-03", "INFRA-S02-04", "INFRA-S02-05",
+      "INFRA-S02-06", "INFRA-S02-07", "INFRA-S02-08", "INFRA-S02-11",
+      "INFRA-S03-08", "INFRA-S03-10", "INFRA-S03-11",
+      "INFRA-S04-01", "INFRA-S04-06", "INFRA-S04-10", "INFRA-S04-11",
+      "INFRA-S05-04", "INFRA-S05-06", "INFRA-S05-09",
+      "INFRA-S06-01", "INFRA-S06-03", "INFRA-S06-04", "INFRA-S06-05",
+      "INFRA-S06-07", "INFRA-S06-15"
+    ],
+    "method": "Compare normative Markdown case-row IDs with workflow_delivery_capture_mutations.CASES keys grouped before their first dot.",
+    "limits": "Registration is not complete variant/surface coverage or passing proof. Shared setup, recovery or helper tests may exercise behavior without satisfying the required individually identified capture. Rows with any registration may still lack required variants. No matrix completion follows from equal counts of rows and variants."
+  },
+  "remaining": [
+    "Complete missing case variants and all required entry-surface captures, including genuine real-roadmap integration.",
+    "Reconcile complete runtime/child-tool inputs and exact publication source permissions without weakening ordinary execution claims.",
+    "Complete bounded promotion tooling, actual readiness, producer proof and independent replay before owner activation.",
+    "Install and verify owner-approved enforcement, resolve external-lane migration and demonstrate three real adoption cohorts before final acceptance."
+  ],
+  "readiness_asserted": false,
+  "complete_matrix_asserted": false,
+  "independent_review_asserted": false,
+  "publication_authorized": false,
+  "activation_asserted": false,
+  "product_adoption_asserted": false,
+  "acceptance_asserted": false
+}

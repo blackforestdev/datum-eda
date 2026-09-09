@@ -114,7 +114,7 @@ The contract now binds those 76 inputs conservatively. The Rust paths are checke
 for existence and can be examined as staged formatting inputs; including their
 bytes avoids an understated proof boundary. No Rust source was changed.
 
-The permission proposal stays at its original 69 paths. A test previously
+At that readiness snapshot the permission proposal stayed at 69 paths. A test previously
 required equality between read inputs and write scope; it now checks the proper
 subset relationship, and a negative scope test prevents these seven dependencies
 from becoming workflow write permissions. Separate input coverage tests derive
@@ -160,3 +160,121 @@ The existing 62-row matrix, exact input reconciliation, independent replay and
 owner activation remain required. The 76-file inventory remains a preparation
 baseline, not the final capture-source closure. No installed hook is changed by
 this reconciliation, and no readiness or delivery result is asserted.
+
+## WDQ-TOOLS — implemented Python input reconciliation
+
+Inspection at candidate `e96b0985c6fef52d133a3b6f6f037942f5b07e99`
+found 66 implemented workflow Python modules/tests missing from the 76-path
+input baseline. They cover capture, environment selection, authenticated startup,
+support storage, snapshot history and promotion diagnostics. The machine input
+list now includes them and the three existing rollout contract/mapping/proposal
+tests: 145 explicit paths. A recursive local Python import check guards this
+bounded inventory against recurrence; static imports cannot establish dynamic
+loads, shell children, external runtime libraries or complete observed closure.
+
+That input-only increment deliberately left source permission unchanged. Reading/hashing these
+inputs does not authorize publishing them under a stale scope or an owner-decision
+step. The separate publication-delta obligation remains open. Existing scenario,
+foundation, consumer, independent-review and owner-activation requirements are
+unchanged; PM042 is not ratified by this input reconciliation. Older snapshots
+and failed captures retain their old identities rather than being refreshed.
+
+## WDQ-TOOLS — separate source-permission reconciliation
+
+Review of the complete parent-edge history from main `7a77e40a850172b50e2251132d171d55a8adfb37`
+to candidate `701c3b82363973857c47d16f46a8baa0a597c008` identifies implemented
+workflow files omitted from the old scope. The reviewed proposal now retains
+the original 69 permissions and adds 68 final-diff script paths, the historical
+rollout mapping test change and the coverage test: 139 exact files, not roots.
+The coverage test is also an explicit read input, bringing that inventory to 150.
+The original seven hook/formatting read-only dependencies remain outside scope.
+Environment data and unrelated product/prototype files receive no permission.
+
+The candidate policy and proposal must agree. A fixed-history regression checks
+all production paths from every parent edge, including the mapping-test change
+absent from the net diff. This records preparation consistency, not owner
+ratification, current execution authorization or permission for future history.
+The I04 owner-decision/current-execution-claim mismatch remains a separate
+controlled-promotion obligation; no claim exemption or live trust is introduced.
+
+### Initial owner-publication inspection boundary
+
+Inspection of the actual source gate confirms that pending owner decisions
+cannot hold ordinary execution permission. The proposed PM042 reconciliation
+therefore separates read-only publication inspection from current transactions:
+both base and candidate await claim-free I04, every prior tooling/readiness/
+producer/reviewer checkpoint is complete, other Frontier items are unchanged,
+and the complete history fits the one exact workflow scope. Shared coverage
+state validation retains ordinary source-claim enforcement in its original
+caller. Publication inspection additionally demands actual rollout review
+evidence rather than relying on completed labels or a path-list comparison.
+
+The explicit stronger inspection mode still cannot activate anything. A separately
+selected response digest establishes exact-byte consistency, not owner identity.
+Successful complete-packet observation, actual coordinated publication, recovery
+and installed verification remain due; development boundary fixtures do not
+satisfy these requirements or close dat-wdq-promotion-delta-mb9.
+
+The subsequent shell/data review at `e16f3f0fea546a13922d72313f2ffc779fc5c392`
+adds four concrete inputs beyond that Python inventory: the authenticated owner
+hook shell source, explicit selection document, and both environment Blobs named
+by that document. The resulting 149-path inventory preserves accepted pilot bytes
+and keeps environment evidence outside its own normative authority route.
+An input regression follows these exact selected data references and checks their
+hashes; it does not select environments from proof or widen source permissions.
+Observed executable versions remain distinct from actual hook/child invocation
+and shared-library closure. Readiness and producer verification remain incomplete.
+
+## WDQ-TOOLS — bounded activation construction
+
+The prepared runtime now has a separate owner-invoked activation command. Its
+implementation and synthetic integration test are two explicit additions to
+both read inputs (152) and proposed permissions (141), not a broad root grant.
+It authenticates startup before adjacent implementation imports, requires the
+exact response and writer-pause acknowledgement, serializes cooperating
+activators, and reruns full promotion and defect-disposition validation before
+publication. Existing final-acceptance defect checks are shared without changing
+ordinary review's ability to report findings awaiting owner disposition.
+
+The command journals each boundary, fast-forwards, installs hooks last and runs
+actual installed gates. Synthetic repositories exercise success, unchanged-state
+refusals, a live competing lock and interruption after an actual config write.
+No such command has been run on Datum main. Those observations are development
+regressions, not actual I03/reviewer evidence, owner ratification, installed
+rollout or adoption. Full runtime closure and real interruption/recovery review
+remain outstanding; retained partial state is never silently repaired.
+
+### Observed live-child interruption handling
+
+The activation child runner now defers handled SIGINT/SIGTERM, retains the lock,
+records actual child identities/results and stops before any subsequent mutation.
+Real synthetic Git/post-merge children demonstrate both signal cases: the child
+is confirmed live when signalled, the lock is still held, and releasing that
+child leads to a terminal result and honest partial publication with old trust.
+A bounded-timeout test kills and reaps only the owned process group. A separate
+parent-SIGKILL test observes inherited lock retention until its child exits.
+
+These tests do not claim actual Datum activation or the complete crash/recovery
+matrix. They replace the earlier unproven handled-signal construction gap, not
+the required final runtime closure, exact full producer run, distinct replay,
+owner decision or three native adoption outcomes. No new permission/input path,
+dependency, prototype or other product lane is changed.
+
+## Owner-approved bounded verification — 2026-09-08
+
+The owner approved replacing exhaustive runtime tracing with pinned tool/source
+identities, state-preservation checks, behavioral tests and independent review,
+without weakening product-evidence requirements. The exact question and response
+are retained outside proof authority in
+`docs/reviews/workflow-delivery-rollout/verification-boundary-owner-20260908.json`.
+
+The infrastructure specification and PM042 now define input completeness within
+that bound. Historical references above to full descendant/shared-library closure
+do not create an additional requirement beyond the revised normative boundary.
+Existing interpreter module/maps and child observations are preserved as
+supplemental evidence, with unobserved closure still honestly unclaimed. The
+tradeoff is explicit: this is not hermetic runtime verification or detection of
+arbitrary host-library substitution. Source/data/fixture inventory, every named
+tool actually used, the case matrix, independent replay, product/native evidence,
+and exact I04 owner activation remain required. This approval does not ratify
+the complete PM042 activation packet, complete a checkpoint or approve a product.
