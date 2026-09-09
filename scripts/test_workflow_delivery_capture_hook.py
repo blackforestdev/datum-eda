@@ -6,7 +6,7 @@ import tempfile
 import unittest
 
 from workflow_delivery_capture_fixture import prepare_fixture
-from workflow_delivery_capture_hook import evaluate_hook, run_hook_case
+from workflow_delivery_capture_hook import HOOK_TRUST_CASES, evaluate_hook, run_hook_case
 from workflow_delivery_capture_mutations import CASES, CLI_ERROR_CASES
 from workflow_delivery_capture_mutations import TEXT_CASES, RECOVERY_CASE
 from workflow_delivery_capture_mutations import TRUST_CASES
@@ -18,6 +18,33 @@ from workflow_delivery_review_input import REPORT_CASES
 
 
 class HookCaptureTest(unittest.TestCase):
+    def test_selected_support_refusals_preserve_invalid_input_and_fresh_recovery(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            store = Path(temporary)
+            packet = store / "packet"
+            prepare_fixture(store / "baseline", packet)
+            environment = {"PATH": os.defpath, "HOME": str(store), "XDG_CONFIG_HOME": str(store),
+                           "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": os.devnull, "LANG": "C"}
+            identities = set()
+            for case in HOOK_TRUST_CASES:
+                with self.subTest(case=case):
+                    output = store / case
+                    refused = run_hook_case(packet, output, environment, case_id=case)
+                    self.assertFalse(refused["validator_entrypoint_observed"])
+                    self.assertEqual((output / "support-input-state.json").read_bytes(),
+                                     (output / "support-output-state.json").read_bytes())
+                    self.assertEqual(refused["support_input_sha256"], refused["support_output_sha256"])
+                    self.assertNotIn(b"UNTRUSTED SUPPORT EXECUTED", (output / "capture/stdout.bin").read_bytes())
+                    recovered = run_hook_case(packet, store / (case + "-recovery"), environment,
+                                              case_id="INFRA-S01-01")
+                    for result in (refused, recovered):
+                        self.assertTrue(result["observation_matches_expected"])
+                        self.assertFalse(result["complete_matrix"])
+                        self.assertFalse(result["acceptance_asserted"])
+                        self.assertNotIn(result["invocation_id"], identities)
+                        identities.add(result["invocation_id"])
+            self.assertEqual(8, len(identities))
+
     def test_all_implemented_cases_and_fresh_recoveries_use_real_hook(self):
         with tempfile.TemporaryDirectory() as temporary:
             store = Path(temporary)
