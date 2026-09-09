@@ -111,6 +111,27 @@
     "real_inventory_observation": {"main_head": "b726cb6972148a6727971eed3e38066af543d4b3", "beads_runtime_files": 205, "verified_source_caches": 227, "unclassified_caches": 23, "unchanged_owner_scripts": 1, "scope": "Read-only classifier inventory under proposed source-only premise, not observed installed startup, reviewed pin authority or exemption approval. No files removed or altered."},
     "compatibility_accepted": false
   },
+  "normative_followup": {
+    "candidate": "067e3e1a949d4df55e2e0d471452ccf89c00dcba",
+    "retained_ref": "refs/datum/workflow-delivery-candidates/067e3e1a949d4df55e2e0d471452ccf89c00dcba",
+    "amendment_commit": "04acc28c5f541c9c19b7d06031d6d719f1907ad7",
+    "scope": "Activation-conditional PM042 workspace rules, eight additional INFRA-S05 compatibility observation groups, reviewed infrastructure source and both affected routes, 160 implemented read inputs and zero-instance fixed-policy parity registration. No real policy instance or source-permission expansion.",
+    "lifecycle": "Required owner files remain distinct from derived legacy caches. Genuine legacy-cache absence and replacement by fully verified current-source output are allowed; redirects and other changed payloads remain inputs. This authorizes no real deletion or regeneration.",
+    "independent_finding": "Normative review found recorded pin size was only a read upper bound. Candidate 067e3e1 requires exact length in the pinned-identity branch and adds owner-local/legacy oversized-size regression. Other reviewed additions preserved original matrix and product obligations; full compatibility was not certified.",
+    "verification": [
+      {"command": "python3 -B -m unittest discover -s scripts -p 'test_workflow_delivery_workspace*.py' -q", "tests": 45, "exit_code": 0},
+      {"command": "python3 -B -m unittest discover -s scripts -p test_workflow_rollout_contract.py -q", "tests": 16, "exit_code": 0},
+      {"command": "python3 scripts/check_evidence_traceability.py", "routes": 25, "artifacts": 119, "exit_code": 0},
+      {"command": "python3 scripts/check_spec_governance.py", "classified": 246, "exit_code": 0},
+      {"command": "python3 scripts/check_spec_parity.py", "inventories": 18, "exit_code": 0},
+      {"command": "python3 scripts/check_source_health.py", "source_files": 1919, "exit_code": 0}
+    ],
+    "preserved_preparation_failures": "Before route reconciliation, three contract tests refused stale authority as expected. The parity updater initially refused its newly registered inventory until its missing documentation row was added; all listed checks then passed. No failed attempt was relabeled proof.",
+    "remaining": "Exact reviewed Datum workspace policy, complete-history permission/data reconciliation, renewed actual producer and independent compatibility/publication proof, separate owner activation and original full adoption outcomes.",
+    "ratified": false,
+    "activation_performed": false,
+    "compatibility_accepted": false
+  },
   "compatibility_complete": false,
   "activation_authorized": false,
   "activation_performed": false,
