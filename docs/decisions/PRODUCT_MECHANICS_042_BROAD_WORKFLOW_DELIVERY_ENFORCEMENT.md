@@ -204,7 +204,32 @@ proof build toolchain. These paths describe observed tools; the validator never
 executes them. Reproduction commands remain a nonempty string array describing
 the actual invocation recipe. Producer tooling must capture these values from
 the run, not generate plausible evidence from this schema. Script, data, fixture
-and runtime-library closure still need their separate input/toolchain accounting.
+and named-tool inputs still need their separate input/toolchain accounting.
+
+<!-- WDQ-042-BOUNDED-INFRA-VERIFICATION -->
+### Bounded infrastructure verification
+
+For this workflow infrastructure, input completeness means reviewed, pinned
+repository source/data/fixture inputs and identified interpreter and named tools,
+not exhaustive tracing of every descendant process or runtime/shared-library
+load. Record executable paths, hashes and versions for the interpreter, Git,
+shell, env, realpath and rustfmt when invoked. Review the actual script/import,
+hook and subprocess command paths; an additional named tool or repository input
+must be accounted for before claiming bounded input completeness.
+
+Retain actual handler and entry-point observations, exact source/fixture/
+environment identity, raw success/refusal results, state-preservation and
+interruption/recovery checks, and independent replay. Disable unreviewed Python
+startup/user-site injection. Existing module/maps observations remain useful
+supplemental evidence, but absent exhaustive descendant/library tracing is not
+an infrastructure readiness or delivery blocker. Do not label that unperformed
+tracing complete or rewrite older observations to say it occurred.
+
+This bound does not establish a hermetic runtime or detect arbitrary host-library
+substitution. Report that residual limit in producer and independent review.
+It changes no product-native evidence, accepted pilot bytes, scenario matrix,
+dependency authority, source permission, owner receipt or activation boundary.
+The exact complete PM042 activation packet still requires WDQ-I04 ratification.
 
 Required refusal proof includes malformed versions/shapes, missing/duplicate/
 unknown keys, swapped workflow environments, changed selection or Blob bytes,

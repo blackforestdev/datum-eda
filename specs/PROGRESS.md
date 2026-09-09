@@ -195,7 +195,7 @@
 
 | Governed documents | Current evidence | Remaining boundary |
 | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json` | WDQ-TOOLS reconciles the matrix's owner-hook surface with the existing validator handler; early hook refusal remains distinct from observed dispatch. Prepared hook source: `d56e113deea8b39600509285e392cdce1a3ddda4`. | `dat-wdq-rollout-implementation-ffy` remains open. Final input closure, complete matrix, readiness, producer proof, independent replay and exact owner activation remain due; no installed enforcement or product acceptance is claimed. |
+| `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json` | WDQ-TOOLS has real-roadmap pilot-preservation captures on all five entry operations (`824cab16`). Owner approved bounded source/named-tool verification on 2026-09-08; exhaustive descendant/runtime-library tracing is no longer required. | `dat-wdq-rollout-implementation-ffy` remains open. Bounded input review, complete matrix, readiness, producer proof, independent replay and exact owner activation remain due; product-native evidence is unchanged and no installed enforcement or acceptance is claimed. |
 
 | Governed document | Current evidence | Target | Tracking |
 | --- | --- | --- | --- |

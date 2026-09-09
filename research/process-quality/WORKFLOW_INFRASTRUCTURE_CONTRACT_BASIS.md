@@ -259,3 +259,22 @@ matrix. They replace the earlier unproven handled-signal construction gap, not
 the required final runtime closure, exact full producer run, distinct replay,
 owner decision or three native adoption outcomes. No new permission/input path,
 dependency, prototype or other product lane is changed.
+
+## Owner-approved bounded verification — 2026-09-08
+
+The owner approved replacing exhaustive runtime tracing with pinned tool/source
+identities, state-preservation checks, behavioral tests and independent review,
+without weakening product-evidence requirements. The exact question and response
+are retained outside proof authority in
+`docs/reviews/workflow-delivery-rollout/verification-boundary-owner-20260908.json`.
+
+The infrastructure specification and PM042 now define input completeness within
+that bound. Historical references above to full descendant/shared-library closure
+do not create an additional requirement beyond the revised normative boundary.
+Existing interpreter module/maps and child observations are preserved as
+supplemental evidence, with unobserved closure still honestly unclaimed. The
+tradeoff is explicit: this is not hermetic runtime verification or detection of
+arbitrary host-library substitution. Source/data/fixture inventory, every named
+tool actually used, the case matrix, independent replay, product/native evidence,
+and exact I04 owner activation remain required. This approval does not ratify
+the complete PM042 activation packet, complete a checkpoint or approve a product.

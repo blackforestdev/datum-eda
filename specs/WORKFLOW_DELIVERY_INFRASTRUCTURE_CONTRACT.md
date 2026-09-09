@@ -31,7 +31,9 @@ enforcement path and authenticate its observer before execution. Early trust or
 prerequisite refusal can legitimately precede the validator: retain that actual
 diagnostic and record the handler as uninvoked, not as a successful dispatch.
 Neither an observer event nor the declared surface proves complete child-tool
-input closure, installed activation or promotion authorization.
+tracing, installed activation or promotion authorization. Infrastructure input
+review uses the bounded verification definition below, not an exhaustive
+descendant/runtime-library tracing requirement.
 
 Readiness binds the assembled candidate's exact source inventory, fixture recipe,
 authority closure and environment. Proof records source commit, input hashes,
@@ -327,7 +329,7 @@ activation integration test are also included. Their
 local Python import graph is included. These are read dependencies only. The
 separately reviewed coverage proposal names 141 explicit permission paths;
 read-input membership does not grant write or owner-publication authority.
-This is not complete dynamic or external-tool closure. Final closure must include
+Final bounded input review must include
 any subsequent capture/fixture modules and imports, shell subprocess inputs and
 changed environment selections or hook implementation. Hook proof also consumes
 `scripts/check_file_lane_ownership.py`, `scripts/check_rustfmt.py`,
@@ -337,13 +339,30 @@ Do not introduce Cargo compilation merely to exercise the read-only hook; if
 compilation becomes necessary, the guarded resource policy remains mandatory.
 No broad permission for scripts, crates or prototype edits follows from this list.
 
-For the external toolchain, record interpreter/Git/shell/realpath and any invoked
-rustfmt executable identity separately from repository input hashes. Python
-capture must also inventory actual loaded standard-library/extension modules
-and shared-library inputs; hashing only the interpreter is insufficient. Disable
-unreviewed Python startup/user-site injection in the controlled capture process
-and record the exact flags/environment. Do not fetch a dependency to perform this
-audit. A supplemental full drift/CI run has its own much wider build/input scope;
+<!-- WDQ-INFRA-BOUNDED-VERIFICATION -->
+### Bounded source and tool verification
+
+For this infrastructure contract, record interpreter/Git/shell/env/realpath and
+any invoked rustfmt paths, hashes and versions separately from repository input
+hashes. Review the actual script/import, hook and subprocess command paths.
+Include every named tool and relevant repository/data/fixture input used by the
+reviewed cases; an interpreter hash alone is insufficient. Disable unreviewed
+Python startup/user-site injection and record the actual flags/environment.
+
+Exhaustive descendant-process and runtime/shared-library tracing is not required.
+Existing Python module/maps observations remain supplemental and retain their
+honest limits; never change an unperformed-tracing flag to true to pass review.
+Bounded input completeness is not hermetic runtime completeness and does not
+detect arbitrary host-library substitution. Record that residual limitation in
+producer proof and independent review. This definition also governs references
+to final infrastructure input/toolchain closure in the execution plan and older
+preparation notes; those notes remain historical observations, not new blockers.
+
+Pinned sources and named tools, real handler/entry-point observations, all
+required success/refusal and state-preservation/recovery cases, independent
+replay and exact owner activation remain mandatory. Product-native evidence and
+the accepted pilot are unchanged. No new tracing subsystem or dependency is
+required. A supplemental full drift/CI run has its own much wider build/input scope;
 the presence of its wiring in this contract is not evidence that all its Rust
 and GUI gates ran in the bounded infrastructure capture.
 
