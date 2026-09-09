@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "record_type": "real_roadmap_preparation_capture",
+  "case_id": "INFRA-S04-11",
+  "source_commit": "f3cb36492bbd69e15014429e02f61985bc2ea545",
+  "snapshot_result_sha256": "ebc8c0cd6cbb94bb66f454d8eee001f4c003b88f0bf7a5e81933dedd7d0b6079",
+  "frontier_count": 56,
+  "compared_pilot_authority": "4ccac933e9ca2b049ea68daf50de16fafe375fd8",
+  "pilot_mapping_contract_proof_review_unchanged": true,
+  "captures": [
+    {
+      "surface": "C",
+      "invocation_id": "16a51461-2cdb-45c5-a281-4ccdfb0f42d4",
+      "capture_path": "proposals/wdq-pilot-preservation-f3cb3649-C/case/capture",
+      "result_sha256": "86ed409a47d2560794702bb0e5c18314e2494859e79af37392980e36529865cc",
+      "driver_result_sha256": "f386e486988eb7adadf96cacfd1abca3deef07b359bb63d17b561f454c91de8c",
+      "exit_code": 0,
+      "protected_state_unchanged": true
+    },
+    {
+      "surface": "R",
+      "invocation_id": "5f937da3-10fb-40ef-ad54-2e7995cc96d1",
+      "capture_path": "proposals/wdq-pilot-preservation-f3cb3649-R/case/capture",
+      "result_sha256": "e0a35a4a08423f6bc20a220dac81b3ad218b8e6fd0d49007a73cf685aed8c58c",
+      "driver_result_sha256": "033a001bf816cdd2068f731f6efd87e418be156c8a40c2e29298a1be20533590",
+      "exit_code": 0,
+      "protected_state_unchanged": true
+    },
+    {
+      "surface": "S-check",
+      "invocation_id": "2822e9e9-8344-431e-b254-29455a78923f",
+      "capture_path": "proposals/wdq-pilot-preservation-f3cb3649-S-check/case/capture",
+      "result_sha256": "7a6cbd113bc5dcc9a28699bc5210b6e454a40b4c34ed429d739a61d56709d029",
+      "driver_result_sha256": "4cd915e8d8bf27c2e97c61d38538939a31c2d65ed82a7438baecbe62a70a63f8",
+      "exit_code": 0,
+      "protected_state_unchanged": true
+    },
+    {
+      "surface": "S-details",
+      "invocation_id": "393d96d3-cecd-45f0-89a7-14fada15963d",
+      "capture_path": "proposals/wdq-pilot-preservation-f3cb3649-S-details/case/capture",
+      "result_sha256": "77f037fa7345c241e9f2fa8952e4e1df1b49cd28d36e2c52c63f4ed4615fa336",
+      "driver_result_sha256": "4b8b5b630d64a5f8cca0cef3a45180d030081d3cd2d2378f536e5852408102f1",
+      "exit_code": 0,
+      "protected_state_unchanged": true
+    },
+    {
+      "surface": "H",
+      "invocation_id": "7c31c9f1-dd58-4318-b61a-319685350e2e",
+      "capture_path": "proposals/wdq-pilot-preservation-f3cb3649-H/case/capture",
+      "result_sha256": "7b44d9081ec0dd6e988702c9e8762da10ef348d75ac571d6a00023d949e8759e",
+      "driver_result_sha256": "1b17e5851e914861defb4e8a7d8f5ee65762e1bf550952f945cc52d9cf5ea3fd",
+      "exit_code": 0,
+      "protected_state_unchanged": true
+    }
+  ],
+  "limitations": [
+    "Preparation-stage captures, not the complete INFRA matrix or typed I03 producer proof.",
+    "Prospective fixture pins equal source; no publication-delta or installed-main claim.",
+    "Full dynamic input closure and independent replay remain outstanding."
+  ],
+  "readiness_asserted": false,
+  "activation_asserted": false,
+  "acceptance_asserted": false
+}
