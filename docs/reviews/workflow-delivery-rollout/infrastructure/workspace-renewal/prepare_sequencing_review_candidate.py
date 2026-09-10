@@ -1,6 +1,7 @@
 """Prepare a bounded descendant of real main; never publish or install trust."""
 
 from copy import deepcopy
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -12,11 +13,56 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from freeze_sequencing_source import PIN
 
 
-def main(*, expected_step="WDQ-COMPAT"):
+EVIDENCE = "docs/reviews/workflow-delivery-rollout/infrastructure/"
+PRODUCER = "06bafeb9979dce91ab710bfaaff7f8f9ca3e72f2"
+PACKET = "fa0b802e11d5dc266f7f3e78bde8a1ac91ac6c1ae4165df8858b56b94c158fee"
+
+
+def reviewed_payloads(git, overlay, review_digest, inventory_digest):
+    """Import only the pinned producer and separately hashed review evidence."""
+    from workflow_delivery_io import canonical_json, sha256
+    overlay = Path(overlay)
+    assert overlay.is_absolute() and overlay.is_dir() and not overlay.is_symlink()
+    payloads = {}
+    producer_prefix = EVIDENCE + "workspace-renewal/paired-real-typed/"
+    entries = git("ls-tree", "-rz", PRODUCER, "--", EVIDENCE + "proof.json", producer_prefix)
+    for entry in filter(None, entries.split(b"\0")):
+        meta, raw_path = entry.split(b"\t", 1)
+        mode, kind, oid = meta.split()
+        path = raw_path.decode()
+        assert mode == b"100644" and kind == b"blob"
+        assert path == EVIDENCE + "proof.json" or path.startswith(producer_prefix)
+        payloads[path] = git("cat-file", "blob", oid.decode())
+    assert EVIDENCE + "proof.json" in payloads
+    review_prefix = EVIDENCE + "workspace-renewal/independent-sequencing-typed/"
+    review_files = {}
+    for path in sorted(overlay.rglob("*")):
+        assert not path.is_symlink(), str(path)
+        if path.is_dir():
+            continue
+        assert path.is_file(), str(path)
+        relative = path.relative_to(overlay).as_posix()
+        assert relative == EVIDENCE + "review.json" or relative.startswith(review_prefix), relative
+        review_files[relative] = path.read_bytes()
+    assert sha256(review_files[EVIDENCE + "review.json"]) == review_digest
+    inventory = [{"path": path, "sha256": sha256(raw), "size": len(raw)}
+                 for path, raw in sorted(review_files.items())]
+    assert sha256(canonical_json(inventory)) == inventory_digest
+    assert not payloads.keys() & review_files.keys()
+    payloads.update(review_files)
+    return payloads, inventory
+
+
+def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
+         review_digest=None, review_inventory_digest=None):
     if not (sys.flags.isolated and sys.flags.no_site and sys.flags.dont_write_bytecode):
         raise ValueError("candidate preparation requires Python -I -S -B")
     if expected_step not in ("WDQ-COMPAT", "WDQ-RECHECK"):
         raise ValueError("candidate preparation requires an authorized review execution step")
+    evidence_args = (review_overlay, review_digest, review_inventory_digest)
+    if any(value is not None for value in evidence_args):
+        if expected_step != "WDQ-RECHECK" or not all(evidence_args):
+            raise ValueError("review evidence requires RECHECK and all three exact overlay pins")
     root = Path(__file__).resolve().parents[5]
     runtime = root / ".git/datum-wdq/proposals/sequencing-repair-20260910"
     store = root / ".git/datum-wdq/proposals/sequencing-evidence-20260910"
@@ -59,6 +105,12 @@ def main(*, expected_step="WDQ-COMPAT"):
     for path in set(contract["input_roots"]) - scoped - explicit:
         assert live.read(path) == source.read(path), path
     payloads = {path: source.read(path) for path in scoped | explicit}
+    review_inventory = None
+    if review_overlay is not None:
+        evidence_payloads, review_inventory = reviewed_payloads(
+            git, review_overlay, review_digest, review_inventory_digest)
+        assert not payloads.keys() & evidence_payloads.keys()
+        payloads.update(evidence_payloads)
     frontier = live.json("specs/active_frontier.json")
     key = "WORKFLOW-DELIVERY-IMPLEMENTATION"
     item = next(i for i in frontier["frontier"] if i["key"] == key)
@@ -85,7 +137,8 @@ def main(*, expected_step="WDQ-COMPAT"):
         git("read-tree", base, env=env)
         for path, raw in sorted(payloads.items()):
             oid = git("hash-object", "-w", "--stdin", data=raw).decode().strip()
-            mode = git("ls-tree", PIN, "--", path).decode().split()[0]
+            mode = ("100644" if path in (evidence_payloads if review_overlay is not None else {})
+                    else git("ls-tree", PIN, "--", path).decode().split()[0])
             git("update-index", "--add", "--cacheinfo", mode, oid, path, env=env)
         tree_id = git("write-tree", env=env).decode().strip()
     message = ("test(workflow): prepare exact live-base review candidate\n\n"
@@ -100,6 +153,17 @@ def main(*, expected_step="WDQ-COMPAT"):
     assert source.manifest(contract["input_roots"]) == prepared.manifest(contract["input_roots"])
     assert authority_sha256(source, contract) == authority_sha256(prepared, contract)
     assert prepared.read(".beads/issues.jsonl") == live.read(".beads/issues.jsonl")
+    if review_overlay is not None:
+        from workflow_delivery_proof import packet_sha256, validate_proof
+        from workflow_delivery_native import validate_correlations, validate_environment
+        proof = validate_proof(prepared, contract)
+        assert packet_sha256(contract, proof, authority_sha256(prepared, contract)) == PACKET
+        assert hashlib.sha256(prepared.read(contract["review_path"])).hexdigest() == review_digest
+        for path, raw in evidence_payloads.items():
+            assert prepared.read(path) == raw, path
+        environment = prepared.json(proof["environment"]["path"])
+        validate_environment(prepared, proof, environment, contract=contract)
+        validate_correlations(prepared, contract, proof)
     validate_frontier(prepared)
     delta = publication_delta(root, base=base, candidate=candidate)
     review = {"delta_sha256": sha256(canonical_json(delta)), "paths": delta["touched_paths"]}
@@ -108,6 +172,11 @@ def main(*, expected_step="WDQ-COMPAT"):
     assert git("rev-parse", "HEAD").decode().strip() == base and not git("status", "--porcelain")
     print(json.dumps({"base": base, "candidate": candidate, "ref": ref,
         "publication_review": review, "inspection": result,
+        "reviewed_evidence": None if review_overlay is None else {
+            "producer_candidate": PRODUCER, "packet_sha256": PACKET,
+            "review_sha256": review_digest, "review_inventory_sha256": review_inventory_digest,
+            "review_inventory": review_inventory,
+            "scope": "Exact evidence import and producer validation; independent final-delta review still required."},
         "activation_performed": False, "scope": "Preparation and library inspection only; supported CLI/preflight capture still required."}, indent=2))
 
 
