@@ -1,4 +1,4 @@
-"""Run a reviewed capture recipe with only explicit source/store substitutions."""
+"""Run reviewed capture recipes with recorded source, store and setup changes."""
 
 import argparse
 import hashlib
@@ -15,6 +15,11 @@ BATCHES = {
     "s02-coverage": ("renewed-s02-coverage-observation.json", "command"),
     "s02-ownership": ("renewed-s02-ownership-observation.json", "initial_command"),
     "s03": ("renewed-s03-observation.json", "command"),
+    "s04": ("renewed-s04-observation.json", "command"),
+    "s05-snapshots": ("renewed-s05-snapshots-observation.json", "command"),
+    "s06-selection": ("renewed-s06-selection-observation.json", "command"),
+    "s06-headless": ("renewed-s06-headless-observation.json", "command"),
+    "s06-trust": ("renewed-s06-trust-observation.json", "command"),
 }
 
 
