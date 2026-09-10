@@ -431,3 +431,33 @@ DEFER dat-wdq-test-default-branch-apx
 
 The previously approved deferral remains explicit and unfixed. Retained tests
 use the pinned main-branch profile; runtime attached-main requirements remain.
+
+<!-- WDQ-I04-INSTALLED-REVIEW -->
+## I04 installed result under standing authorization
+
+Standing owner authorization is applied to exact candidate
+`1644e2129f4ff83cec1cdf0e6e13534c3b258e8e` over
+`d45d1a3e30d6af4ab752dd19a7dbe45157df50d4`. The reviewed PM042 mechanism,
+56-row coverage and terminal-owner boundary are installed in main. No
+Preferences behavior, prototype, dependency or product acceptance is granted.
+
+The original installer exited 2 after publication because its final observer
+omitted the approved workspace policy and rejected ignored Beads history.
+That failure remains unchanged, tracked by
+`dat-wdq-activation-workspace-observer-42n`; automated activation must not be
+reused until its observer is repaired. Separate authenticated read-only
+verification passed the installed hook and 56-item selector, exact pins,
+workspace-aware source integrity, and unchanged full protected state/support.
+The failed run is not retrospectively declared successful. The installed
+result is established by those subsequent checks, not by ignoring its error.
+
+Exact commands, failures, digests, independent real-roadmap integration and
+permanent removal/recovery details are indexed in
+`docs/reviews/workflow-delivery-rollout/i04-installed-closeout.json`.
+Evidence commit `39c3122dc2db1cab84f87d5b93c62f38af5651ff` retains all activation
+and recovery logs, including the old pilot activation's unique records.
+
+I04 completes; WDQ-I05 becomes the selected execution step under the existing
+standing authorization. Product development must not remain paused for cohort
+measurement. All three real adoption outcomes and I06 final acceptance remain
+incomplete, with existing prerequisites and product ownership unchanged.
