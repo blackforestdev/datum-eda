@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-COMPAT-SEQUENCING-PRODUCER-VERIFICATION-COMPLETE",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "owner_authorization": "sequencing-repair-authorization.json",
+  "runtime_source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "prospective_baseline": "377323b29705ccccd6f8fa91f663d7d91c6d03c4",
+  "evidence_candidate": "b704b3ef69636b3c9020585cb6f1bd00ec62f6aa",
+  "candidate_ref": "refs/datum-wdq/candidates/sequencing-typed-packet-20260910",
+  "packet_sha256": "12afccdfb09c7aa8b60376b740eebc3385f5d5a15d5c205121341f43425eb626",
+  "authority_sha256": "b3130c9322932a9d26e967d6ecb55c8b1591892636d26ac3cdd98e175475ee39",
+  "verification_commit": "97df62d9",
+  "producer_requirements": [
+    {
+      "requirement": "Repair review/publication sequencing and initial legacy mapping migration without weakening strict final activation.",
+      "evidence": ["sequencing-migration-increment.json", "sequencing-live-candidate.json"],
+      "result": "Separate non-authorizing review inspector and bounded schema-1 initial migration are committed. Reconciled source has 152 exact production scope paths and 164 read inputs, preserving production roots. Focused regression suites passed; source review findings and corrected attempts remain recorded. Strict final promotion still requires completed independent review and claim-free owner activation state."
+    },
+    {
+      "requirement": "Freeze actual source construction, input identity and current readiness.",
+      "evidence": ["sequencing-source-freeze.json", "sequencing-live-review-observation.json", "sequencing-committed-verification.json"],
+      "result": "164 exact input entries and 151 Python modules compiled in memory; input digest 468e860972610aca1b57e152e34f2ca817a74b7412cbd25e0492e362ae771857. Interpreter identity is separate from validator source. Actual supported pre-review inspection validated source/history, readiness and environment prerequisites, preserving actual main and installed trust."
+    },
+    {
+      "requirement": "Preserve every original scenario variant and renew all additional workspace observations.",
+      "evidence": ["sequencing-typed-packet.json", "sequencing-s06-workspace-observation.json", "sequencing-policy-observation.json", "sequencing-proof-real-observation.json"],
+      "result": "1314 fresh observations: 1123 exact original case/surface/phase identities plus 191 workspace cases. Assembly verifies raw artifact and handler hashes, unique invocation identities, expected outcomes and protected state equality. Cache optimization, owner-local pins, malformed/redirected policy, legacy lifecycle, captured-state isolation and proof-input staleness retain separate cases."
+    },
+    {
+      "requirement": "Preserve real-roadmap and actual mixed-workspace coverage without taking another lane or deleting real files.",
+      "evidence": ["sequencing-roadmap-snapshot.json", "sequencing-typed-packet.json", "sequencing-proof-real-observation.json"],
+      "result": "Verified source snapshot preserves all 56 Frontier items and resolves all 40 referenced commits. Fifteen clean/mixed/restoration and nine observed-inventory invocations pass their expected outcomes. Full real fixture and bundle remain retained under Git-common storage; no real owner-local or product file was altered to make a check pass."
+    },
+    {
+      "requirement": "Retain actual producer pre-review inspection in the producer proof without requiring future independent evidence.",
+      "evidence": ["sequencing-live-review-observation.json", "sequencing-typed-packet.json"],
+      "result": "Supported inspect-review invocation 5e45d110-b7f2-4997-acda-b87402fbb216 passed for exact base f608addca9dfae24c5d6255838d745bf6d96af4a and candidate 377323b29705ccccd6f8fa91f663d7d91c6d03c4. Raw request, calls and repeated protected-state inspection are retained; exact log is included in typed proof. Evidence/publication/activation authorization flags remain false."
+    },
+    {
+      "requirement": "Validate exact committed proof, selected environment, correlations and supported candidate entrypoint.",
+      "evidence": ["sequencing-committed-verification.json"],
+      "result": "Candidate b704b3ef passes committed proof freshness/shape, selected headless environment and six correlated event blobs with unchanged source manifest and authority. Full enforce entrypoint exits zero with no findings. Its ready result reflects COMPAT-in-progress; it is not independent acceptance, final publication inspection or activation."
+    },
+    {
+      "requirement": "Preserve historical evidence, defects, bounded accounting and downstream acceptance obligations.",
+      "evidence": ["sequencing-migration-increment.json", "sequencing-typed-packet.json", "sequencing-repair-authorization.json"],
+      "result": "Historical source4e and earlier captures retain original identities and failures. Named tool hashes are verified separately; no exhaustive descendant/shared-library tracing is claimed. Four repair findings remain open for independent disposition. Existing eleven steps and all product/owner boundaries are unchanged."
+    }
+  ],
+  "next_step": "WDQ-RECHECK",
+  "open_defects": ["dat-wdq-workspace-inputs-zmt", "dat-wdq-index-refresh-ogw", "dat-wdq-proof-renewal-cycle-qgb", "dat-wdq-review-publication-cycle-a1y"],
+  "preserved_limits": [
+    "Producer verification only; independent replay must use fresh observations and exact candidate review.",
+    "Later evidence/governance commits require explicit delta reconciliation and strict full-evidence inspection at claim-free I04 before activation.",
+    "Archives omit duplicate full fixtures; exact retained source bundle and local fixtures remain required.",
+    "No installed broad enforcement, native adoption, defect closure, owner acceptance or new dependency/license authority is asserted."
+  ],
+  "independent_replay_complete": false,
+  "publication_verified": false,
+  "activation_performed": false
+}
