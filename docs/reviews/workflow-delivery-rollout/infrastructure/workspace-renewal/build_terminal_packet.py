@@ -37,12 +37,15 @@ def main():
     assert sys.flags.isolated and sys.flags.no_site and sys.flags.dont_write_bytecode
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--packet-name", required=True)
+    parser.add_argument("--construction-name", default="terminal-final-assessment-01")
     args = parser.parse_args()
     assert Path(args.packet_name).name == args.packet_name and args.packet_name.startswith("typed-packet-")
+    assert Path(args.construction_name).name == args.construction_name and args.construction_name.startswith("terminal-")
     here = Path(__file__).resolve().parent
     root = here.parents[4]
     proposals = root / ".git/datum-wdq/proposals"
     assessment = proposals / "terminal-final-assessment-01"
+    construction_directory = proposals / args.construction_name
     output = assessment / args.packet_name
     assert not output.exists()
     runtime = proposals / "terminal-owner-20260910"
@@ -66,11 +69,14 @@ def main():
     base = Tree(root, revision=FINAL)
     contract = base.json("specs/workflow_delivery/rollout.contract.json")
     read = lambda path: json.loads(path.read_bytes())
-    construction = read(assessment / "construction.json")
+    construction = read(construction_directory / "construction.json")
+    original_construction = read(assessment / "construction.json")
     assembled = read(assessment / "observations/dispatch-observations.json")
     assert construction["source_commit"] == assembled["source_commit"] == FINAL
     assert assembled["observed_source_commit"] == OBSERVED and len(assembled["observations"]) == 1400
     assert assembled["construction_sha256"] == sha256((assessment / "construction.json").read_bytes())
+    for key in ("source_commit", "observed_source_commit", "input_manifest", "authority_sha256", "interpreter", "toolchain"):
+        assert construction[key] == original_construction[key], key
     assert construction["input_manifest"] == base.manifest(contract["input_roots"])
     archive_commit = read(proposals / "terminal-packet-retention-01/retention.json")["commit"]
     assert archive_commit == "57879644be22eaae3570528473a5005640500d4a"
@@ -100,13 +106,14 @@ def main():
         assert path not in payloads
         payloads[path] = canonical_json(value)
         return blob(path)
-    receipt = read(assessment / "build-receipt.json")
+    receipt = read(construction_directory / "build-receipt.json")
     binary = receipt["binary_sha256"]
     assert sha256(Path(construction["interpreter"]["path"]).read_bytes()) == binary
     receipt_blob = write(typed + "build-receipt.json", receipt)
     manifest = write(typed + "input-manifest.json", construction["input_manifest"])
     assert manifest["sha256"] == receipt["input_manifest_sha256"]
     construction_blob = write(typed + "construction.json", construction)
+    original_construction_blob = write(typed + "observation-construction.json", original_construction)
     observations_blob = write(typed + "observations.json", assembled)
     authority = authority_sha256(base, contract)
     assert authority == construction["authority_sha256"]
@@ -130,7 +137,7 @@ def main():
         "entries": read(assessment / "observations/registry-entries.json")})
     dispatches = read(assessment / "observations/scenario-dispatches.json")
     session = "codex-wdq-rollout-implementation-20260908"
-    common = [fixture, limits, construction_blob, observations_blob, environment_blob,
+    common = [fixture, limits, construction_blob, original_construction_blob, observations_blob, environment_blob,
               blob(prefix + "raw.tar.xz"), blob(prefix + "inventory.json"), blob(terminal_prefix + "inventory.json")]
     results = []
     for scenario in contract["scenarios"]:

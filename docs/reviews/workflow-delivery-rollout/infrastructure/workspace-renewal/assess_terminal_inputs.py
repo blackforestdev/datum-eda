@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -15,7 +16,10 @@ def main():
     assert sys.flags.isolated and sys.flags.no_site and sys.flags.dont_write_bytecode
     root = Path(__file__).resolve().parents[5]
     runtime = root / ".git/datum-wdq/proposals/terminal-owner-20260910"
-    destination = root / ".git/datum-wdq/proposals/terminal-final-assessment-01"
+    output_name = os.environ.get("DATUM_WDQ_ASSESSMENT_NAME", "terminal-final-assessment-01")
+    assert Path(output_name).name == output_name and output_name.startswith("terminal-")
+    destination = root / ".git/datum-wdq/proposals" / output_name
+    assert destination.parent.resolve() == destination.parent
     assert not destination.exists()
     def git(*args):
         return subprocess.check_output(["git", "--no-replace-objects", "--no-optional-locks", *args], cwd=runtime)
@@ -65,6 +69,8 @@ def main():
     result = {"source_commit": FINAL, "observed_source_commit": OBSERVED,
         "started_ns": started, "finished_ns": time.time_ns(), "command": command,
         "script_sha256": sha256(Path(__file__).read_bytes()), "input_manifest": after,
+        "output_environment": {"DATUM_WDQ_ASSESSMENT_NAME": os.environ.get("DATUM_WDQ_ASSESSMENT_NAME")},
+        "output_directory": str(destination),
         "input_manifest_sha256": receipt["input_manifest_sha256"], "input_count": len(after),
         "modules_compiled_in_memory": len(modules), "authority_sha256": authority_sha256(current, contract),
         "observed_authority_sha256": authority_sha256(old, prior_contract),
