@@ -12,9 +12,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from freeze_sequencing_source import PIN
 
 
-def main():
+def main(*, expected_step="WDQ-COMPAT"):
     if not (sys.flags.isolated and sys.flags.no_site and sys.flags.dont_write_bytecode):
         raise ValueError("candidate preparation requires Python -I -S -B")
+    if expected_step not in ("WDQ-COMPAT", "WDQ-RECHECK"):
+        raise ValueError("candidate preparation requires an authorized review execution step")
     root = Path(__file__).resolve().parents[5]
     runtime = root / ".git/datum-wdq/proposals/sequencing-repair-20260910"
     store = root / ".git/datum-wdq/proposals/sequencing-evidence-20260910"
@@ -60,7 +62,7 @@ def main():
     frontier = live.json("specs/active_frontier.json")
     key = "WORKFLOW-DELIVERY-IMPLEMENTATION"
     item = next(i for i in frontier["frontier"] if i["key"] == key)
-    assert item["completion"]["canonical_next_step_id"] == "WDQ-COMPAT"
+    assert item["completion"]["canonical_next_step_id"] == expected_step
     assert "delivery" not in item["completion"]
     source_item = next(i for i in source.json("specs/active_frontier.json")["frontier"] if i["key"] == key)
     item["completion"]["delivery"] = deepcopy(source_item["completion"]["delivery"])
@@ -90,7 +92,7 @@ def main():
         "Problem: Renewed inspection requires a descendant of actual main, not invented lifecycle state.\n"
         "Change: Overlay reviewed workflow source and contracts only; preserve main claims, tracker and other lanes.\n"
         "Proof: Exact input/authority equality, Frontier validation and read-only review inspection follow.\n"
-        "Roadmap: WDQ-COMPAT, dat-wdq-review-publication-cycle-a1y; preparation only, no activation, dependency or licensing change.\n")
+        f"Roadmap: {expected_step}, dat-wdq-review-publication-cycle-a1y; preparation only, no activation, dependency or licensing change.\n")
     candidate = git("commit-tree", tree_id, "-p", base, data=message.encode()).decode().strip()
     ref = "refs/datum-wdq/candidates/sequencing-live-review-" + candidate
     git("update-ref", ref, candidate, "0" * 40)
