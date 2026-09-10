@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-index-refresh-ogw",
+  "runtime_source": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "fixture_commit": "1e9c74a383040cc839f60457e1c62cd448368a74",
+  "retained_ref": "refs/datum-wdq/candidates/index-repair-current-roadmap-20260910",
+  "recorded_transaction": "7c36cbb6dc4015b9f62bad15c49b9809ae8b87a2",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-roadmap-preparation.tar.xz",
+    "sha256": "e9aef216ab79b84751a5a039738a07db1b525df9b9c3e44b384aaba4655c4b0e",
+    "scope": "Snapshot request, before/after and restored state, result and preparation metadata. The full bundle and restored fixture remain required at the recorded local packet path; no standalone portable replay claim."
+  },
+  "command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/prepare_index_repair_roadmap.py",
+  "original_exit_code": 1,
+  "failure": "AssertionError in the final comparison of main HEAD and full porcelain status, after snapshot/result files were successfully written. Concurrent additions of owned untracked evidence files changed porcelain output. Original before-status bytes were not retained; no exact retrospective before-status claim is made.",
+  "correction": "Future runs compare main HEAD, tracked status and binary tracked diff; concurrent untracked evidence additions are not claimed immutable. Existing preparation was not rerun or relabeled as a successful helper exit.",
+  "separate_verification": {
+    "exit_code": 0,
+    "snapshot_bundle_sha256": "b104dd6bb739024ec812eb91e365790d3685b6d4fd794a2b5e124f63866ab32a",
+    "source_before_after_bytes_equal": true,
+    "restored_fixture_head_exact": true,
+    "runtime_head_and_clean_worktree_verified": true,
+    "all_161_runtime_inputs_and_authority_equal": true
+  },
+  "adaptation": "Only the recorded WDQ claim, exact canonical Beads export and regenerated projection. All other 55 Frontier rows and non-owned tracker line bytes checked unchanged. No clock spoofing, new claim or owner decision.",
+  "gate_captures_performed": false,
+  "publication_verified": false,
+  "activation_performed": false
+}
