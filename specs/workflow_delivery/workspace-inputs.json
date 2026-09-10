@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "kind": "datum.workflow-delivery.workspace-inputs",
+  "local_files": [
+    {
+      "path": "mcp-server/__pycache__/daemon_client_manufacturing_proposals_request_tests.cpython-313.pyc",
+      "sha256": "4e5e7cb087c3a607e9800133198665d9fc4e2e6253332b623e414af0a61296a4",
+      "size": 7374,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "mcp-server/__pycache__/streamable_http.cpython-313.pyc",
+      "sha256": "129d14b454fc0ba845cdf4dfe2d091b411bc443f2b300fc3e6479dce9d911aa5",
+      "size": 10569,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "mcp-server/__pycache__/test_support_base.cpython-313.pyc",
+      "sha256": "f820abd9dd338d34d4bd3e8df0ba30e63940bbce7b0cf77252d47276bc86b536",
+      "size": 6164,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "mcp-server/__pycache__/test_support_mutations.cpython-313.pyc",
+      "sha256": "57140a5269875f0a9094fd363edd6fbc679403446f2f0c37d40c0c4eb3ad6aa2",
+      "size": 9070,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "mcp-server/__pycache__/test_support_queries.cpython-313.pyc",
+      "sha256": "dacfb83bbf77054515d03fee751f75721ffea164877ded84bbe918e825d9bc7b",
+      "size": 8102,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "mcp-server/__pycache__/test_support_replacements.cpython-313.pyc",
+      "sha256": "6ad752a7780aadfdf26a7f95379f2e8405b7aa6fee9bab7df6656f2300276bdb",
+      "size": 4568,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "mcp-server/__pycache__/test_terminal_command_catalog_parity.cpython-313.pyc",
+      "sha256": "41b5a6294c0ad25f2f54a2a4d3e99680b7d6baa5d50991b153702249178dd41e",
+      "size": 4730,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/build_libghostty_vt.cpython-313.pyc",
+      "sha256": "dd4754cb26b34b75b4b6d6710a9ab07c7024bd8a3e04c49ba11d16121fdf8a9f",
+      "size": 19359,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/check_alignment.cpython-313.pyc",
+      "sha256": "d6819cbe1846e597ef2a6a86a13826941acde978183ebb287b1318f7c57a04f0",
+      "size": 10602,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/check_datum_console_boundary.cpython-313.pyc",
+      "sha256": "8531b7a135cf541f53d324c64c7eb716a25ff04f8ad6d6ed62b84140b24c30da",
+      "size": 7256,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/check_file_size_budgets.cpython-313.pyc",
+      "sha256": "40dfa54fd4a408ca3ca959864807844d207a0531932591c7cb25e228c798fd4b",
+      "size": 3585,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/check_gui_visual_parity.cpython-313.pyc",
+      "sha256": "0226c93569465dcfcaeb53aa167dc06e3279b7f97f996fa96a4a5d63fa3476c2",
+      "size": 12875,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/check_mcp_public_taxonomy.cpython-313.pyc",
+      "sha256": "e1acc88f3a6c781c42552a8e3ca91695530325e587f9d36cfa24fdbc13ba736e",
+      "size": 17673,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/check_source_module_size.cpython-313.pyc",
+      "sha256": "5b8de6fbf502cb672f52d9d5ceed525d89354c789da6d37cbdfbb8440e13bda5",
+      "size": 8327,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/check_spec_parity.cpython-313.pyc",
+      "sha256": "1f0f28717065791a6dc6fecb02510592ff8f3bd2663ace02c9f9b12ea347429e",
+      "size": 26067,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_shadow_boundary.cpython-313.pyc",
+      "sha256": "f1f745568208096e1e44391be30a78d37266f091b540177c8b348059cd3d8367",
+      "size": 4571,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/check_test_file_sizes.cpython-313.pyc",
+      "sha256": "5c7d9487f03a7ee220c9c04ebd9da42550b3fcbf445a1a88adc88a8a5a86d681",
+      "size": 2247,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/check_touched_monolith_growth.cpython-313.pyc",
+      "sha256": "49679811c637c15e21d294f0bc8e4b0b0023c7e15711835fe050d0f3529747e9",
+      "size": 10217,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/run_global_preferences_production_acceptance.cpython-313.pyc",
+      "sha256": "a4ca2860f5ddc12d968236ff6824f78a62a79120d941be8b007cf347c7a1fcf5",
+      "size": 3766,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/test_build_libghostty_vt.cpython-313.pyc",
+      "sha256": "b54e247e2641d0d970ee12c0f2fafd813a9f9cb60a1d547949a5e20eb0918c1f",
+      "size": 7178,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_core_adapter_boundary.cpython-313.pyc",
+      "sha256": "6dd112a52d0ab347c337b53208e8451aec0c7c8e3d119ec13b80d3b6408dd138",
+      "size": 12933,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_core_boundary.cpython-313.pyc",
+      "sha256": "c0ee664cedd6d2f6362269f277a9e7c2b8590a3ceeb1aaa060d12c4b1efb4210",
+      "size": 45810,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_production_verification_matrix.cpython-313.pyc",
+      "sha256": "35ce6bf2f70b584c7eefa5d7cd421647a48d547053903a0a1ebbd9aeb639d963",
+      "size": 7227,
+      "mode": 436,
+      "category": "legacy_python_cache"
+    },
+    {
+      "path": "scripts/run_gui_doa2526.sh",
+      "sha256": "7171e4812c1b7b150adf1be6d84b76897f72c52fbb2be054e1e3c62aff883cbd",
+      "size": 3416,
+      "mode": 509,
+      "category": "owner_local"
+    }
+  ],
+  "python_caches": "verified-source-v1",
+  "beads_runtime": "standard-v1"
+}

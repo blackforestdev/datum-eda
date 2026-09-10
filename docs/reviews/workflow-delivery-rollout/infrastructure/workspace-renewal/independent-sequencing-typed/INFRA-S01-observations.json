@@ -1,0 +1,2449 @@
+{
+  "scenario_id": "INFRA-S01",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "observations": [
+    {
+      "case_id": "INFRA-S01-02.conflicting-views",
+      "captured_case_id": "INFRA-S01-02.conflicting-views",
+      "surface": "C",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-02.conflicting-views-C-primary/capture",
+      "invocation_id": "c8be76ec-7ab4-4447-8a76-06abe52fb850",
+      "result_sha256": "bdc56026a2572618ec435ddc339864cd62a87d6716946973dd45ecc113fd6782",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "a2bcd2a22c0277ec5b6be7f217a75647d332fd8ae078bf8284adb5211bb1f692"
+        },
+        {
+          "path": "before.json",
+          "sha256": "a2bcd2a22c0277ec5b6be7f217a75647d332fd8ae078bf8284adb5211bb1f692"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "c88bc54ffeb595dd3b70c19c65e35699e6129b66490e34db27f83049a369ce55"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "2b5fee4a23052ed21525b9b1b2379bfbffad7f7bbb538d23e93710d12909210c"
+        },
+        {
+          "path": "started.json",
+          "sha256": "a23835ae335281211513bb33862a1a3fe1730858d28535b57ccd089d8874c817"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e16d73d723cfdf3be4e2147362301378cb3f8b31ca3884b0abfd87ef0e6e4cef"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "started_ns": 1789032500725513457,
+      "finished_ns": 1789032501341320217,
+      "pid": 3098384,
+      "observer_invocation_ids": [
+        "300ac192-751d-4ef5-9e82-c7da7a6dae58"
+      ],
+      "observer_event_ids": [
+        "72a4b79c-6816-478d-a185-e142bba64d77",
+        "10af04a2-ed18-4876-919c-973e51756c1d",
+        "b16f6af5-c1bb-4497-955f-6fab1c7b54ee"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 2,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-02.conflicting-views",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "C",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-02.conflicting-views-C-recovery/capture",
+      "invocation_id": "1afbb899-01f4-4239-b801-848d2a554c62",
+      "result_sha256": "80ced836493932e058e93da56aa0c8ed82d0ae7038295c8d5f7cfa4976a6b7fd",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "c04f57497a32c2ecea59b60e00c63dc705a86e30ded140457c0be16a508ac809"
+        },
+        {
+          "path": "before.json",
+          "sha256": "c04f57497a32c2ecea59b60e00c63dc705a86e30ded140457c0be16a508ac809"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "09391c5ccace380bcc23ec4244c76b7b9e2279315df27aeb12da9f9a5a895e63"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "6b071ca08e1a7f517ba111b36af57ff5288e68d2f800532526a0a145d9918825"
+        },
+        {
+          "path": "started.json",
+          "sha256": "171c3209a1825a0b3f2d884364a3d9dc36fbfb9a3d56f27bf07e243f02bc7e86"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789032501497581888,
+      "finished_ns": 1789032503768308340,
+      "pid": 3098831,
+      "observer_invocation_ids": [
+        "c53d1b82-63f5-4541-a713-696d752fd65a"
+      ],
+      "observer_event_ids": [
+        "fca8c16a-50cf-4cd0-84bb-4085659d1ce4",
+        "d78f57ca-6d44-4ba2-8ade-246a3803aa21",
+        "3da793f7-b660-4f4b-99fd-6e3923db6cad"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-02.conflicting-views",
+      "captured_case_id": "INFRA-S01-02.conflicting-views",
+      "surface": "R",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-02.conflicting-views-R-primary/capture",
+      "invocation_id": "e974dbd6-b014-42a3-b4bf-87a4c4c9bc7b",
+      "result_sha256": "027a8cd5b09f12df237187b4b93d7f652fd932b137d56d994287b6835af49581",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "22bb3868b5911073baf2a02fbe0acd321f3649a67ff60d0ac7a04ca55d073a28"
+        },
+        {
+          "path": "before.json",
+          "sha256": "22bb3868b5911073baf2a02fbe0acd321f3649a67ff60d0ac7a04ca55d073a28"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "a569984580715d3dabebeb6503a3be5d640541e2731126af6f8dca5170ea1307"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "2b89fb00c0f5ab1ea2344dc06b29937e08e913831ec0f2affc8122d8b454134c"
+        },
+        {
+          "path": "started.json",
+          "sha256": "230f7cd5c63e874eedf71a88f3b07c57a9e92964a072ed1aab857024fc55ace4"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "9e80af5d586dbf629b1a797f8eca20373a86f18d734062daa05b3209e5c7b321"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "started_ns": 1789032503916270752,
+      "finished_ns": 1789032504435572640,
+      "pid": 3100428,
+      "observer_invocation_ids": [
+        "7dfd7462-2a0f-43ad-ac25-55c6a511fcc5"
+      ],
+      "observer_event_ids": [
+        "5c554f9d-2dc5-44e2-8804-6e891b69af8d",
+        "1f2d5cfa-d037-44b6-8f54-b55965d51e86",
+        "e2d4af61-8c29-49e7-a512-34b881d44c18"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 2,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-02.conflicting-views",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "R",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-02.conflicting-views-R-recovery/capture",
+      "invocation_id": "39354227-dbce-4f7e-8404-f1ef63514c8b",
+      "result_sha256": "ac7db8f14fa30fffad1220e7682fd9d7550246d135ba0ba27879b34cd0713446",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "5a5fc8f2129974d624dc9bac2be1e91d9cbc156ee2270ca83726c03fd16a4673"
+        },
+        {
+          "path": "before.json",
+          "sha256": "5a5fc8f2129974d624dc9bac2be1e91d9cbc156ee2270ca83726c03fd16a4673"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "159331daa066a819dfea76161b86469101692ecb39e6a337772da053f2d63ac4"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "d0a761549f4b92241cbb1f6b57a8de3d534eff977196ed30378b8fa2a8a3f0a7"
+        },
+        {
+          "path": "started.json",
+          "sha256": "aacf1e2abe8c1480c1078eef55d6974c4d1b93235c3b2dc506f6dcd43a442769"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789032504604025424,
+      "finished_ns": 1789032506880715969,
+      "pid": 3100788,
+      "observer_invocation_ids": [
+        "0a14c045-a3ff-44d6-9888-2682d2177b18"
+      ],
+      "observer_event_ids": [
+        "9d1493e4-4245-4ec8-967d-f771d72a757b",
+        "12d0a1f2-400f-416c-a11b-ab21a24d37ca",
+        "11ccc26d-9ced-4c08-9111-d26d8bfd7834"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-02.invalid-argument",
+      "captured_case_id": "INFRA-S01-02.invalid-argument",
+      "surface": "C",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-02.invalid-argument-C-primary/capture",
+      "invocation_id": "c42632bc-605a-40a3-b45c-3bb113ae2a71",
+      "result_sha256": "38261b8cae7a16beeedb32f5e50f725c8178654a4e8f172298b78cafdc1261db",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "abed39b4ff92ecb1fd99198e44249733e80615a690c51117f7e6fc66d59757b2"
+        },
+        {
+          "path": "before.json",
+          "sha256": "abed39b4ff92ecb1fd99198e44249733e80615a690c51117f7e6fc66d59757b2"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "12fdf6115873a7be2303a2b113ce3de7105c7d48e5a758cb6bda84e26feab94a"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "4f5aa907d1f0a16634ac9dc5bcfd66c6cd363cd2dca0ceb7c8b7bcfd048ad421"
+        },
+        {
+          "path": "started.json",
+          "sha256": "2199fbb2db41c0c7758004a3ad6ae6e06e40558ac1e78947fe6a9cfe33a43c48"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "4ca58f4c471f2de5118408612ea1978cb39c3f631f2205d720d1b9b13b1d479e"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "started_ns": 1789032507050685760,
+      "finished_ns": 1789032507669295304,
+      "pid": 3102477,
+      "observer_invocation_ids": [
+        "3757fd85-21bd-4d0c-9879-8b8056bb1af1"
+      ],
+      "observer_event_ids": [
+        "726e00e6-dab4-42f0-8abc-f8db3fb48a0d",
+        "09c674dc-703f-4690-8272-5efb320f0aae",
+        "dd00d344-8589-4b74-8587-24c21559fac7"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 2,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-02.invalid-argument",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "C",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-02.invalid-argument-C-recovery/capture",
+      "invocation_id": "7ac535a8-ae5b-427c-9dae-49e60bbc2ad4",
+      "result_sha256": "80efd73eaaa46c5b09071d03d4487789be88af889c4c5cdd4db19ec0ee63619e",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "939da7fb9cc12382fb977813a5f950ef3e1f01ac7ce9dc0e2dbf08dfb94c3f5b"
+        },
+        {
+          "path": "before.json",
+          "sha256": "939da7fb9cc12382fb977813a5f950ef3e1f01ac7ce9dc0e2dbf08dfb94c3f5b"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "b37294a3fe140a30538fec5684e812bea9157124f1895845dec521b904567535"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "23947de9296936946ab09c3f14168654071f0b2cb5ad6b69298be079d72d5b56"
+        },
+        {
+          "path": "started.json",
+          "sha256": "a429731bfe38c37df6e2fbf541523fc5891a07bb5a69e79bb2c9d9782ef95c35"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789032507821616336,
+      "finished_ns": 1789032510038123106,
+      "pid": 3102873,
+      "observer_invocation_ids": [
+        "44879ccf-8e4d-42b0-a9b2-0e9815d01ee3"
+      ],
+      "observer_event_ids": [
+        "4f31fdfd-681e-40f7-a071-1da2357e33c1",
+        "9ee0c6d4-2f2a-4db6-bce7-9fe62e94fdca",
+        "7901957e-ba79-434b-b5bb-98b62c85191b"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-02.invalid-argument",
+      "captured_case_id": "INFRA-S01-02.invalid-argument",
+      "surface": "R",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-02.invalid-argument-R-primary/capture",
+      "invocation_id": "5197fdcb-d72e-40ae-9df2-991841c1aa99",
+      "result_sha256": "6336d5f075fa9a45b1257fc0979e0b89e1f11b4805b14921bf04647426d7c881",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "21e8b2699da1cb649c8cebce5cd85f02d4de5c5b8d3f4644f69666e0a1d536c4"
+        },
+        {
+          "path": "before.json",
+          "sha256": "21e8b2699da1cb649c8cebce5cd85f02d4de5c5b8d3f4644f69666e0a1d536c4"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "a1098de640c271b3fad88e7fd31dc3bd1a1ef1ccf3134cdaab0832f5fa755633"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "066ad84983d2babbc234a539e6ecc386f7e57f81e65359ce9f82b89c928bf9ee"
+        },
+        {
+          "path": "started.json",
+          "sha256": "0e1a160f6094fba08343204d33b034279daf4a8ee895f2d6fdb5871fa0f78951"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "4ca58f4c471f2de5118408612ea1978cb39c3f631f2205d720d1b9b13b1d479e"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      ],
+      "started_ns": 1789032510199058147,
+      "finished_ns": 1789032510765357544,
+      "pid": 3104559,
+      "observer_invocation_ids": [
+        "1aa5d307-a0dc-40c7-9c60-ab799eff3da9"
+      ],
+      "observer_event_ids": [
+        "b32591e4-59d8-4995-9f6e-25bc92c41a10",
+        "d4315392-9b64-4adb-a737-1d8c008aca07",
+        "df18c411-d8bc-4142-9513-83076402639c"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 2,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-02.invalid-argument",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "R",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-02.invalid-argument-R-recovery/capture",
+      "invocation_id": "52cc428e-24e9-40dd-b092-571701666705",
+      "result_sha256": "d62842a00400292fe156daa6ced2b2687981adc3539183feadfafcf62b69b889",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "e380f36d52c3c509de451320021d6c4521b86a9054589b5d2d0de41672689dce"
+        },
+        {
+          "path": "before.json",
+          "sha256": "e380f36d52c3c509de451320021d6c4521b86a9054589b5d2d0de41672689dce"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "2cacd2cc92b1038635cb2e3be910771ef0b94f7b695ff7e09fef7891ee730f56"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "cef165a9207036060e2782a2e6f94397078fa09aac92c56856f21b64332a51ad"
+        },
+        {
+          "path": "started.json",
+          "sha256": "f2825f97653bd5208f9a70585fa972ee36708c389b1ea45843d80a20def9b70c"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789032510928734159,
+      "finished_ns": 1789032513404142979,
+      "pid": 3104878,
+      "observer_invocation_ids": [
+        "d5d0d47c-51c1-480e-a556-79cc6a1cada7"
+      ],
+      "observer_event_ids": [
+        "421512db-fe65-4eb8-8ae0-2f08828f61be",
+        "8a9a44b8-bfc8-441a-a5ca-8f095f4bdddb",
+        "5829918b-3ba9-44bd-b689-23dacc8ab91f"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-03.enforce",
+      "captured_case_id": "INFRA-S01-03.enforce",
+      "surface": "C",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-03.enforce-C-primary/capture",
+      "invocation_id": "24c68557-f823-4c73-af01-71c7810db3d7",
+      "result_sha256": "ad62a28a6c80dc044f62dc39fd715d67fced839708ffa149c76258ac84ad33a2",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "e8d19b4205825effefdb1ed831fcfb1551a6cd3a165e10419691ec06c20d525e"
+        },
+        {
+          "path": "before.json",
+          "sha256": "e8d19b4205825effefdb1ed831fcfb1551a6cd3a165e10419691ec06c20d525e"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "9646c7d00608414c94fbe7753f98119449e0a74d5be8a3e7b532597cdc69b0ed"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "b04a8b57428bfbd8aa906a73f60719fccb63fc570e0a98c2f514f81078e70bb8"
+        },
+        {
+          "path": "started.json",
+          "sha256": "bbb6f22ba7f67df7dcc70e9294c0f18e0f22adf5319a84d431dcfbb32a4dc9e3"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "04dc009e74110f8ddd6aeebfdb2abe6d71875597ef14ea11fc401cd7f08dc4f6"
+        }
+      ],
+      "started_ns": 1789032513586566418,
+      "finished_ns": 1789032515567359655,
+      "pid": 3106620,
+      "observer_invocation_ids": [
+        "93621670-56bb-489e-a877-cfb632ff506c"
+      ],
+      "observer_event_ids": [
+        "b6cd36f5-4b4a-49f8-8752-8db31bed6c3d",
+        "2ea4a6e0-85bd-422e-b1ec-eef28c1e869d",
+        "269d39fa-e788-42fc-b5b0-986b79638bd6"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 1,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-03.enforce",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "C",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-03.enforce-C-recovery/capture",
+      "invocation_id": "bcb6e721-b1b5-444b-b232-85b99945f74e",
+      "result_sha256": "f2dd192db7ed0064a8819943be1d0fe38b9a4ad8d2a66d8c99801685830165a5",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "401e3d0432070560afbfe34349d5b285c5e6f508ae29b5ab39670548dcdf9785"
+        },
+        {
+          "path": "before.json",
+          "sha256": "401e3d0432070560afbfe34349d5b285c5e6f508ae29b5ab39670548dcdf9785"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "c83ab2d1922984bbbfdc18473a8e751a4af6867f1af3e2371a93d390473e2179"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "7fd61d4161b515adfc59e940cc864f7707313833772eb8286212e8535623697e"
+        },
+        {
+          "path": "started.json",
+          "sha256": "e34875d3941bf198cfa6ca52b1dedee25e6f633156d6cdb56e9360b11369c9e0"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789032515742170821,
+      "finished_ns": 1789032518274505195,
+      "pid": 3108108,
+      "observer_invocation_ids": [
+        "cdb92ec0-ce57-4ab0-a3d0-3bc1a1d6e062"
+      ],
+      "observer_event_ids": [
+        "9418e21e-f896-41bd-9a4f-19fd2c97cc9a",
+        "9ee5136a-d296-4999-a085-28ccfdd91e5b",
+        "5cb71dc4-ebb0-42a8-bd87-e895f2470889"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-03.enforce",
+      "captured_case_id": "INFRA-S01-03.enforce",
+      "surface": "R",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-03.enforce-R-primary/capture",
+      "invocation_id": "78301f14-fa08-41b4-bb8d-167af100775e",
+      "result_sha256": "814ad5aeaaf3a805c4403202acab77bd7ddc94e78642d423f3c55a735dc735e5",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "093f839285c59a0c5cf6fa24a53d9b2c994feb5d3737ad63606fdd29158fce4c"
+        },
+        {
+          "path": "before.json",
+          "sha256": "093f839285c59a0c5cf6fa24a53d9b2c994feb5d3737ad63606fdd29158fce4c"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "6bf643703a63fe32e491268c9d82505a9e647ff6597978c91a55e11f71adac0d"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "004a6ddf703362b16b7416ad9d561a7097847fe2f6e728572d5657d42c7783c3"
+        },
+        {
+          "path": "started.json",
+          "sha256": "f34ca6ddb0c4f72bac9b2dca83128b13f68b9ff7d1d54d143064547effeb9bed"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "04dc009e74110f8ddd6aeebfdb2abe6d71875597ef14ea11fc401cd7f08dc4f6"
+        }
+      ],
+      "started_ns": 1789032518461442885,
+      "finished_ns": 1789032520450283310,
+      "pid": 3110083,
+      "observer_invocation_ids": [
+        "b9a1d691-8fa2-4a56-ae50-cc3bbc0dfeea"
+      ],
+      "observer_event_ids": [
+        "5fc40063-b4a8-4973-915a-82854cef0e7c",
+        "d5de5cee-85c3-4cf6-91c1-9184b64a69d4",
+        "5d10b4c7-9d5a-4ef9-9d9b-d577709a4582"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 1,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-03.enforce",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "R",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-03.enforce-R-recovery/capture",
+      "invocation_id": "bf85eac0-aecc-4255-a856-4609d29daddc",
+      "result_sha256": "b7d44561e5b797a9310533e7942c7fd37a46212a1b0bfdfafab6f7ab274e5099",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "87767ee1c0897fc9bdf4d27749ac402122aa24de1baf238ee4d152774867f24c"
+        },
+        {
+          "path": "before.json",
+          "sha256": "87767ee1c0897fc9bdf4d27749ac402122aa24de1baf238ee4d152774867f24c"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "1b94bb8e907e401e28cb54703030106a53191ec7574fc50250c876337a984f16"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "c5c54002ec2f4b9e6cd3614e427987f69cd90d508aba9f842cafb4fe5cd1e976"
+        },
+        {
+          "path": "started.json",
+          "sha256": "3de2c7d508de6d33f2985d56d3fdff60130d648ab500aface3fe6d7ca8fa311f"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789032520666771283,
+      "finished_ns": 1789032523202125694,
+      "pid": 3111633,
+      "observer_invocation_ids": [
+        "09c8cba9-3344-4b0b-9eb7-ce9552428fe2"
+      ],
+      "observer_event_ids": [
+        "9b91e333-636c-432d-b4ef-904c6198627b",
+        "dab10e26-fda9-4d10-9644-0abf91834584",
+        "dc837383-f5ee-4638-9464-9dcaa782bf27"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-03.report-only",
+      "captured_case_id": "INFRA-S01-03.report-only",
+      "surface": "C",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-03.report-only-C-primary/capture",
+      "invocation_id": "55a6b8ff-68df-4aef-975b-ebd7853bfe09",
+      "result_sha256": "5f3a1ef661e26b724a1cbf600cf885386acded54e881de10d6a8de7f0ac02f0f",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "d789dd911180870513a17c886cb6268c47d18b7bd33b77288bb66b803ef79dda"
+        },
+        {
+          "path": "before.json",
+          "sha256": "d789dd911180870513a17c886cb6268c47d18b7bd33b77288bb66b803ef79dda"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "108bbfe710bc966fa81007002fe306215142695dd90251b947f8bb9986663963"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "51e76c66f73f4e2579b9073bc8620e3e0ca9c07887bd716233fdd90e2a8ab0ca"
+        },
+        {
+          "path": "started.json",
+          "sha256": "ea419a1736c0bd7dcc14b2ba30f55e3b2b2ee38141e9ffe285839c08685963cf"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "aacc7b149ead16c4c7d2ff9819e36cd54d0d3e92b628f04b16b6930136167152"
+        }
+      ],
+      "started_ns": 1789032523390787316,
+      "finished_ns": 1789032524067728486,
+      "pid": 3113477,
+      "observer_invocation_ids": [
+        "0f10d53e-b665-467f-9d26-9f81fb8e6765"
+      ],
+      "observer_event_ids": [
+        "b3a4b2aa-64a8-4bf5-bf16-71779c9be25b",
+        "4ff2c4d2-6578-4607-b94f-45976dc35f13",
+        "a6a810af-0759-4861-a37f-e2688a0ca072"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-03.report-only",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "C",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-03.report-only-C-recovery/capture",
+      "invocation_id": "ea4ef7eb-fe93-4ce4-9cb4-600b6452794e",
+      "result_sha256": "8170e82c63f1eeddf8727b5664d28cad70d38b6bbed2ba74e3514090a9bf20ca",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "bb9005531a7575d61f726e1bd7c5a73cbab34d4b52e5eea94112154bebe520ec"
+        },
+        {
+          "path": "before.json",
+          "sha256": "bb9005531a7575d61f726e1bd7c5a73cbab34d4b52e5eea94112154bebe520ec"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "0ba5c9a862872a898b542bee0dc684ed642f0ee6f0129c77b66afe095050ad07"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "6d5f97b52ab86ea0de7e2613eed5db22fb5ccebbdbc45d301029d9b32b551691"
+        },
+        {
+          "path": "started.json",
+          "sha256": "90273e0384326a2e88bc04507b28c60d990908a1fba2a22ad589011ca970c38d"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789032524250927625,
+      "finished_ns": 1789032526374798812,
+      "pid": 3113938,
+      "observer_invocation_ids": [
+        "80c079ec-3bd5-4224-8147-643057ce5d90"
+      ],
+      "observer_event_ids": [
+        "33f3652b-39df-429d-a55c-078bad0a7572",
+        "0b24cfd3-db62-41d8-88a3-1c6b84128cf9",
+        "e0cbaecc-32b6-4b29-bb2a-5eefb3012df0"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-03.report-only",
+      "captured_case_id": "INFRA-S01-03.report-only",
+      "surface": "R",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-03.report-only-R-primary/capture",
+      "invocation_id": "2b9d5769-0a07-42a5-a71b-32c990ef0db0",
+      "result_sha256": "e1d828f031fb67132bc4ac955eff4a48de9af2d50701eba571e1a35465bc0b8c",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "ee8967e101bc53efc0165a4825b1df46d2912e6b9c3fe153173361799e0e3bbf"
+        },
+        {
+          "path": "before.json",
+          "sha256": "ee8967e101bc53efc0165a4825b1df46d2912e6b9c3fe153173361799e0e3bbf"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "1811756b4d88f7beb9571c79ebc1a0fce686f2287f82f1104bd42d661732706e"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "230c0d09ce40433ae8197b5b80a686194e8948d1691967d1fece570828e33e7a"
+        },
+        {
+          "path": "started.json",
+          "sha256": "6f60ab4812aacd2c1353efadc294bef88d539ad61d013022d047b27a67357b29"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "aacc7b149ead16c4c7d2ff9819e36cd54d0d3e92b628f04b16b6930136167152"
+        }
+      ],
+      "started_ns": 1789032526533490411,
+      "finished_ns": 1789032527147099383,
+      "pid": 3115138,
+      "observer_invocation_ids": [
+        "e4cdfe0a-df6b-4fe4-810a-a171b05c3eec"
+      ],
+      "observer_event_ids": [
+        "515e54e9-38e1-4682-8f62-021d075e8f98",
+        "b419404a-94aa-440f-8e26-f966d78bc826",
+        "07625ef8-94db-46dd-b7bd-33f8ce354ddf"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-03.report-only",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "R",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-03.report-only-R-recovery/capture",
+      "invocation_id": "0cf4a769-644a-4625-895e-4957708e1b4f",
+      "result_sha256": "82312312200a041193274a07007fffda7e6e67ad699554d46faf7bcaf0037503",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "92ec13a28864ac5071219d60db69a61aa05feb39070dd6174d02e31f61537827"
+        },
+        {
+          "path": "before.json",
+          "sha256": "92ec13a28864ac5071219d60db69a61aa05feb39070dd6174d02e31f61537827"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "094d59065861bf1392970ba65e5a12fa03470f3a52ccb4e5a915abc2120330a3"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "18eb5076d76cf57d7c9adefea17c034ba1c35cd3f83e119f62e6a8175c4e8360"
+        },
+        {
+          "path": "started.json",
+          "sha256": "ce71e735db29a1a25a5267f5b9f829b7cfa4782a8cff17115bb1e96b89cce84a"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789032527318429068,
+      "finished_ns": 1789032529584669841,
+      "pid": 3115592,
+      "observer_invocation_ids": [
+        "8dc95e99-2a50-402a-abb7-2a9995520a5a"
+      ],
+      "observer_event_ids": [
+        "85b2a215-0d63-4653-8793-e3c556c47952",
+        "ca8205b1-0940-407c-b6a9-452157726d9c",
+        "0f308489-e6a5-4467-8b7b-871a02f424bf"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "captured_case_id": "INFRA-S01-04.refused",
+      "surface": "C",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.refused-C-primary/capture",
+      "invocation_id": "88500b3b-c55e-473f-a9d3-7367b601753d",
+      "result_sha256": "43d69af9cda5650227eeed8ad0f8333a49d8b55bbd79660945428ba859b81582",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "9046f6415adabb5b8f53d89925d81b9056824d31732de0e49515a6fe117b135b"
+        },
+        {
+          "path": "before.json",
+          "sha256": "9046f6415adabb5b8f53d89925d81b9056824d31732de0e49515a6fe117b135b"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "4941fd6c55fdb9b579aeba553c811ad10dcb9dedd8d41531f90901f94b342730"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "7a1495c8b78f31c9b67fc341909a60e174766f283a5988d0026daf483f950f86"
+        },
+        {
+          "path": "started.json",
+          "sha256": "83e4403f50d52208a8e13ff06305b060b4d829254b1a7f07e905b87b056e2b64"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "ac07986abedbf43681b2102b26686fa1c8729e5290cbf9692efd963be0247caf"
+        }
+      ],
+      "started_ns": 1789032529743981527,
+      "finished_ns": 1789032531056368056,
+      "pid": 3117068,
+      "observer_invocation_ids": [
+        "abb1e481-8d66-4bc7-9c4c-d542fbaa8834"
+      ],
+      "observer_event_ids": [
+        "4467fc2c-2f8d-4125-8669-8fe1581565c7",
+        "875a3f20-b883-4033-9ffd-95121757161c",
+        "4fc0ebfa-fc0b-40be-a78d-c0433787ce94"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 1,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "C",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.refused-C-recovery/capture",
+      "invocation_id": "ace3f598-1557-4c3d-929b-50023d8db938",
+      "result_sha256": "e6f770d0752a46f16a990daf3ff7f60792a6efd5cccfbab5e47faaf398167363",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "79adf5c3b07236d43f0edf89c4787b4863244490a26dd7ad7d4cb53e2f4d96dd"
+        },
+        {
+          "path": "before.json",
+          "sha256": "79adf5c3b07236d43f0edf89c4787b4863244490a26dd7ad7d4cb53e2f4d96dd"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "8665d2b88d2d05ef120749849fbc4212358f19886e530edf18c65bfbf4330571"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "efeb4bb3ba47998cb41287071a5bb58d6f4734c89e07328e70f0c075a62bf367"
+        },
+        {
+          "path": "started.json",
+          "sha256": "2c3efcb859e5359a83a89130a9a4989fb27067f779f0f9decdee929891c57666"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789032531219339901,
+      "finished_ns": 1789032533393231790,
+      "pid": 3117834,
+      "observer_invocation_ids": [
+        "79b2c9c2-3f11-499b-89de-49d616ad987f"
+      ],
+      "observer_event_ids": [
+        "9347ac12-69b2-4c75-b744-5025480a30d2",
+        "6fe1ed31-5ae5-4434-990f-c3b381edaba6",
+        "caacd9c0-5b67-4d32-b3e5-d0e42db4bb2e"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "captured_case_id": "INFRA-S01-04.refused",
+      "surface": "R",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.refused-R-primary/capture",
+      "invocation_id": "6e2a877c-6c33-477a-83dc-1ab2c7970885",
+      "result_sha256": "3b88ec9d288048e04d0a3b406bd029febf688d87e687d151ff19611f0d9befdf",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "b4bb1a6886be55294cf7c8dfaf2e338b5d29bcdc1e239c09fcb8a771497b9dbe"
+        },
+        {
+          "path": "before.json",
+          "sha256": "b4bb1a6886be55294cf7c8dfaf2e338b5d29bcdc1e239c09fcb8a771497b9dbe"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "fb98b6018eb73919fb0dbace127a9017b08459fcab1a3e66d753a7507aad725a"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "f5c398be7c280ec964ec1008169221e93a559a357728274b4a3e69ac399ca880"
+        },
+        {
+          "path": "started.json",
+          "sha256": "3239a11f5c98696c805daa208d429756926a56f1ef4225054c6d933b9526ea85"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "ac07986abedbf43681b2102b26686fa1c8729e5290cbf9692efd963be0247caf"
+        }
+      ],
+      "started_ns": 1789032533554743695,
+      "finished_ns": 1789032534916079853,
+      "pid": 3119238,
+      "observer_invocation_ids": [
+        "541b25d5-1b66-4000-8400-4c33f4ef9b55"
+      ],
+      "observer_event_ids": [
+        "f6132897-a2fc-49b6-a208-5d8bcf564953",
+        "402d8671-e431-49a9-885b-62647b53a77a",
+        "52b36cca-c294-490f-bcc1-ed7c2b47b87f"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 1,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "R",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.refused-R-recovery/capture",
+      "invocation_id": "f3e484e6-a733-407a-9339-b5238d30e323",
+      "result_sha256": "c6ed3faff8e5915802b490f50890c25a62e2d17366147eb9a451802e7a97a830",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "22dccca56453f31d41d4631cfa82a3e65d2042a895721f9e04046d6db70a5531"
+        },
+        {
+          "path": "before.json",
+          "sha256": "22dccca56453f31d41d4631cfa82a3e65d2042a895721f9e04046d6db70a5531"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "54423eab7f464c1ac331b9cb9a3253ca105440261026282e3c862d0ba050a214"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "0ae543f56c152ab2a5c809f8f95a17fa7a58bb0c8e027e3013e674283765fe7e"
+        },
+        {
+          "path": "started.json",
+          "sha256": "140ad4586fb72f12a6577039b6a0c1a4cbf1031c2e906aff7f7699f3ef66bacc"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789032535096371287,
+      "finished_ns": 1789032537428499759,
+      "pid": 3119965,
+      "observer_invocation_ids": [
+        "c6bbffcf-465e-4e37-82e9-039672edbc69"
+      ],
+      "observer_event_ids": [
+        "c820e6f2-e09e-41bf-b45d-891e7ea70a72",
+        "411423f9-6e21-4851-a2a6-1c51058d9d2d",
+        "22ff2114-00a8-4f56-96c9-1d925cadb07a"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "captured_case_id": "INFRA-S01-04.refused",
+      "surface": "S-check",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.refused-S-check-primary/capture",
+      "invocation_id": "47449c02-71fe-476d-88ba-9c00336a73fb",
+      "result_sha256": "0745c1d0a0fd285bec0ae9ae366493fbfda7308d5b57b95e97465f26527b8e93",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "3d0fa73d024cdc9bd38c1ae75d3d5e433a9cbc2d464330f8237baa63c34b0968"
+        },
+        {
+          "path": "before.json",
+          "sha256": "3d0fa73d024cdc9bd38c1ae75d3d5e433a9cbc2d464330f8237baa63c34b0968"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "0d0efc66a2a0e5af5a2c4a01664a2a1cc4bcba374d22ef8d63dd5807f57ed65b"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "ac67c982bc2f4d8aca6e667b0e1d416d6744ba6c81a44a5f35b7c3ba8e53def3"
+        },
+        {
+          "path": "started.json",
+          "sha256": "7ae5844da293e3f59f192905084b7191a2d3ce8f41794ef582554af98861be76"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "32ca592f753a2f9c900eb94091df07e2d4f8ac5f72a4d406f13fba5d849deed8"
+        }
+      ],
+      "started_ns": 1789032537595190049,
+      "finished_ns": 1789032538866948763,
+      "pid": 3121256,
+      "observer_invocation_ids": [
+        "7c85c662-4e56-4755-a818-5a30f079201c"
+      ],
+      "observer_event_ids": [
+        "93b83fda-6808-4499-937d-e5cba19fabf5",
+        "4a634809-ba6e-4b14-9233-741155cc7672",
+        "b5dffea9-fccc-4d47-9ea6-403fb2e1a52b",
+        "0014c106-146c-4ff5-a10c-fd408f6be487"
+      ],
+      "consumer": "selector",
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "handler_invoked": true,
+      "returncode": 1,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "S-check",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.refused-S-check-recovery/capture",
+      "invocation_id": "bff6c2cd-63f5-4160-9e35-7a76446477a2",
+      "result_sha256": "675605520daa063033022b7b89cc4db7824875c4c4bcf419fcbdebec453b46df",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "ddd6c56adedad9e86756edeb21b4995b2f540a0e172c815faa4136f7bb6954af"
+        },
+        {
+          "path": "before.json",
+          "sha256": "ddd6c56adedad9e86756edeb21b4995b2f540a0e172c815faa4136f7bb6954af"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "f970d973b49c1a7e25894cf76b6eed08a84bea3afd10ac276bb0c79a8d45fede"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "2ebd5a5ed896ce270d866ce9b7e3ab70f943f63511666e00fca702e65e34caea"
+        },
+        {
+          "path": "started.json",
+          "sha256": "6e825c5634dcbbf1c623ef6cc72a54a89c360ac173524cd7357c682f35c6eddf"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "6b17244b570db23b03cb261527574dc337ce0d1128ab7aa628aa21114739e43a"
+        }
+      ],
+      "started_ns": 1789032539034485665,
+      "finished_ns": 1789032540552227715,
+      "pid": 3122037,
+      "observer_invocation_ids": [
+        "c36d03a6-4a48-413d-b38d-b63162a9fc1f"
+      ],
+      "observer_event_ids": [
+        "31db6b2f-db06-44eb-906b-498441fed1e7",
+        "5f7451c7-2a84-446f-a487-10c71bdcd6c3",
+        "d1d59b3f-7c85-4eab-a14d-6dba3dabaebd",
+        "7b25b8f4-5ba1-4fbc-ae96-39389bd848eb"
+      ],
+      "consumer": "selector",
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "captured_case_id": "INFRA-S01-04.refused",
+      "surface": "S-details",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.refused-S-details-primary/capture",
+      "invocation_id": "dacb7611-f55e-484c-a383-7b9ecb4f9c0e",
+      "result_sha256": "6d325dcba26e7b957f52f85e2196669d27104ba6d246171a515d72eed0ea265f",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "3d4b5acb8ad7b256df335a94d3a51c6744765eaf4215e008040c62980cbead98"
+        },
+        {
+          "path": "before.json",
+          "sha256": "3d4b5acb8ad7b256df335a94d3a51c6744765eaf4215e008040c62980cbead98"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "3af7d741fc1780810aa9750da9f8eb5483ba5b0bd3a2114082298354a2b02f4e"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "8a3eae79681c26accedd51bb15e42c331c8696c6447fc3acc92c736797e237c7"
+        },
+        {
+          "path": "started.json",
+          "sha256": "dfdd46c29e05a0db3256489b58606ca25537af41dae1804720c1be196371c58e"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "32ca592f753a2f9c900eb94091df07e2d4f8ac5f72a4d406f13fba5d849deed8"
+        }
+      ],
+      "started_ns": 1789032540734997129,
+      "finished_ns": 1789032541969683628,
+      "pid": 3123039,
+      "observer_invocation_ids": [
+        "d2688a8a-f6dd-42b9-b3c5-cda26010ffed"
+      ],
+      "observer_event_ids": [
+        "a0425a1f-2648-4328-b7cc-55bea6598090",
+        "41c75116-1c23-4332-ae07-db3cf242ec52",
+        "ff387e51-f555-4ed7-9937-5a8861944cf5",
+        "42a78666-4c72-4195-ae46-9a74496b7d69"
+      ],
+      "consumer": "selector",
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "handler_invoked": true,
+      "returncode": 1,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "S-details",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.refused-S-details-recovery/capture",
+      "invocation_id": "dfac73ff-eaaf-4369-a1fe-4f52e6d44e2a",
+      "result_sha256": "cfccaff826d3310cbeeb59ca6bb1743e77de7760d0685bad4ede663b41043ee9",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "414e358392d2d7032aed6ecbd33e8bffd26dc639bfb8d3f71f6757f74c845885"
+        },
+        {
+          "path": "before.json",
+          "sha256": "414e358392d2d7032aed6ecbd33e8bffd26dc639bfb8d3f71f6757f74c845885"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "544208a346531b365a6c718dc0964a691dbbd46cad36cbb4593af6f0e3ef0c3b"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "5703f122df13003d518f5e23b6af2a42ccec679bf1a1323df5305a202fb60353"
+        },
+        {
+          "path": "started.json",
+          "sha256": "a9f114fd336147a9f4d1d6b38e06d7350a7c04b97c03282c161c199387c437c7"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "cf045a9bfb50a97ab0a0d45efec51ebd87d4f275676e8d91578179897efbfb94"
+        }
+      ],
+      "started_ns": 1789032542169470376,
+      "finished_ns": 1789032544032851073,
+      "pid": 3123801,
+      "observer_invocation_ids": [
+        "af6dc84d-7aa8-4d31-8baa-396553c62878"
+      ],
+      "observer_event_ids": [
+        "e6511a85-16a7-46bf-8cff-6b9e0c9e3509",
+        "7d1d76cc-7267-4953-8d8d-d45cb1198b8c",
+        "c3842069-7b77-4e9f-ae34-dcb1d61aac16",
+        "4a92815f-3a71-4c70-a0bc-930b6dc00be6"
+      ],
+      "consumer": "selector",
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "captured_case_id": "INFRA-S01-04.refused",
+      "surface": "H",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.refused-H-primary/capture",
+      "invocation_id": "4cd25e2e-3b50-4def-9213-e3d9f3cce629",
+      "result_sha256": "f443238dd7b8663009a2b3f05d7840a38792d05a62a2ae08f838e9b44b999571",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "ef865f89ffeb62ce62f027f39be54b84efbeaba24d046e8beee9f0208b885237"
+        },
+        {
+          "path": "before.json",
+          "sha256": "ef865f89ffeb62ce62f027f39be54b84efbeaba24d046e8beee9f0208b885237"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "d626a7474c072d053eef9636c5f395300c5a30a39c27df774e7ae4a8d7183d91"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "e6f71d4af0140ad51cafffea23f654830db93706a932f1a74dcbb334c50da33c"
+        },
+        {
+          "path": "started.json",
+          "sha256": "d14957cfc52cc941c516f74fc156775a3ff0fba79c47efbfddc4ac25e807d83b"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "977d1613c938c8121878f41c68e09b44cdb3f9f7715846d88a1bf6afe4707363"
+        }
+      ],
+      "started_ns": 1789032544288857387,
+      "finished_ns": 1789032546785827961,
+      "pid": 3125117,
+      "observer_invocation_ids": [
+        "7a08321f-1dfc-470c-8598-29dd8be20c65"
+      ],
+      "observer_event_ids": [
+        "79e4fb54-5e7a-4285-b9a6-7c98a40d395f",
+        "a943f4d6-a5d9-44e6-84a0-e113d0627741",
+        "07b19208-c4c7-4631-b165-027c4d365803",
+        "0aadb958-e8b5-4618-a2dd-18fb1e25900b",
+        "689df4d8-698f-4e00-a9f1-8151f1160dd8"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 1,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.refused",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "H",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.refused-H-recovery/capture",
+      "invocation_id": "a3dd5ba9-f75f-4543-81c8-0470e90ae839",
+      "result_sha256": "ccd25ae1496fb0494e3f50814d6441fec7430522b440790213e42c37e1723de7",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "c50d2913a034602ef476cf8a85807a8e2a288beba4cbe5cf9e2882a129873587"
+        },
+        {
+          "path": "before.json",
+          "sha256": "c50d2913a034602ef476cf8a85807a8e2a288beba4cbe5cf9e2882a129873587"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "3df6914e89572bd3f98d9f84f196c4d587a406b8e221c3fcdf920895ce7cf590"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "5cef7da368e8af283f74e72d8ea232d2aa1059bc1034caa4659a8e0becdbb4b4"
+        },
+        {
+          "path": "started.json",
+          "sha256": "e208d872f46e28482f665a171d255dca306b0f62eef729490f170df967b50c10"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "dd6df606bf13b77c6d810fd5e7ba552a1f5b77db6afd285fda5570a5c96e8e56"
+        }
+      ],
+      "started_ns": 1789032547040474450,
+      "finished_ns": 1789032550794271903,
+      "pid": 3127226,
+      "observer_invocation_ids": [
+        "bcd99ad1-6685-4f5b-84b8-58d64fe3d5e7"
+      ],
+      "observer_event_ids": [
+        "c55c8f2f-9f89-4765-816b-b734a5551927",
+        "8275e919-a7ad-4a62-8a56-db7de7db5f2e",
+        "91a08265-3f49-4e67-a7bd-e953c008997f",
+        "c7d604a5-49c2-4959-8211-2db7c1f7c2bd",
+        "f87eeb42-6ac2-42b3-8c42-ccbbbd0f8778",
+        "f9b6a3d2-4f92-42fd-bf44-01e844e420b9"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "captured_case_id": "INFRA-S01-04.valid",
+      "surface": "C",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.valid-C-primary/capture",
+      "invocation_id": "af35c826-d45f-499f-9ab9-de89ebd22477",
+      "result_sha256": "0e2d12b90ad229709422cd6ffa45c2a1aecd62dcf2a550ccd1da18480a1bc14e",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "3a76e6139e7198f9a641d8db9007a06d2eb0febf19402cb8c21d47e51359fc4b"
+        },
+        {
+          "path": "before.json",
+          "sha256": "3a76e6139e7198f9a641d8db9007a06d2eb0febf19402cb8c21d47e51359fc4b"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "cda43ea9ac66e47e246194734e5bb08433830d2789b10d30ddf684f55832a538"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "e7f41076f6ae72ff6723b2f6ad831672d09132c826bdf782bab2836c153df9e7"
+        },
+        {
+          "path": "started.json",
+          "sha256": "76130becd67566c356c194acb54e4ff87144db72c9d74e674f40052367d7b1d9"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789032551008584942,
+      "finished_ns": 1789032553994614306,
+      "pid": 3129935,
+      "observer_invocation_ids": [
+        "357a2c48-e49d-4637-9639-8beb9446558f"
+      ],
+      "observer_event_ids": [
+        "386d1358-6696-4f3d-89e5-b66b19a4eb85",
+        "6d7438f3-365a-49a1-a70d-e6de5d9aa5c0",
+        "677d5f3d-c66f-4e11-9d9f-a6fee9e8fd64"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "C",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.valid-C-recovery/capture",
+      "invocation_id": "5fee40a5-2cc2-48c4-93ba-9f7d2ed9afee",
+      "result_sha256": "ea30db0e8cd7b1039cf56246802baee842cea4a2023ff8e0cf21b22453622332",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "4bd2acfbed4ddf62bd6db71d8fc581d87a12466789b8a3b9200b4d60b31dcfec"
+        },
+        {
+          "path": "before.json",
+          "sha256": "4bd2acfbed4ddf62bd6db71d8fc581d87a12466789b8a3b9200b4d60b31dcfec"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "c6c17347e459344cbe78f133ca3f03fbd05921565b290c76b0955dbaeace8201"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "a8ecea226ed3e1c7055cf17d57875089aebc04ea25c808551c41693403650ae8"
+        },
+        {
+          "path": "started.json",
+          "sha256": "6cf176b36abad069136c2b2cbbacebc5d149ab4883a51240c883b7b95e4859de"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789032554184376107,
+      "finished_ns": 1789032557075902559,
+      "pid": 3132151,
+      "observer_invocation_ids": [
+        "460fbcf2-80dc-404f-9a2b-eb2041d76649"
+      ],
+      "observer_event_ids": [
+        "b5dd7700-f49b-4d7f-bb29-460ef4421d44",
+        "4cda3cc2-4e8f-4699-8019-33555d729da2",
+        "732170c6-aef3-4d9f-886b-3cb399fe1bfd"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "captured_case_id": "INFRA-S01-04.valid",
+      "surface": "R",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.valid-R-primary/capture",
+      "invocation_id": "235e4a66-979e-43f4-9de9-544c10334a43",
+      "result_sha256": "5175c8bf9c10524618c837f625bb5fbf7321db159126ce0ba1a0ac0c12886ba8",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "ff80a2c1f5f623fe296bb503eae9d10213243c52c00974c6bde99183fa8ddf95"
+        },
+        {
+          "path": "before.json",
+          "sha256": "ff80a2c1f5f623fe296bb503eae9d10213243c52c00974c6bde99183fa8ddf95"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "e80a149d8e9451add0f4b3c47df9290d0b88c0ab0805eeb0ebcc1ca4703522fb"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "5cb82ddb7f026ca1fbf3f8509b96fa9e395db3c6c4e3360734dc310f2ed4f155"
+        },
+        {
+          "path": "started.json",
+          "sha256": "9ac0acb4df935bee4624b8ee3d153e7cf9b6a1a80c3e77e1e2626ab49d6bf130"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789032557301401106,
+      "finished_ns": 1789032560196750234,
+      "pid": 3134541,
+      "observer_invocation_ids": [
+        "86663144-aa0f-4c39-a840-cfdef3688e49"
+      ],
+      "observer_event_ids": [
+        "ce0227b0-374e-4c1d-9ff0-cfbe425569b8",
+        "bdd1acda-c6a2-435c-b561-cf62cc47f750",
+        "6b0803ae-cd8e-4b50-a6be-7e67cbf4e1b9"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "R",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.valid-R-recovery/capture",
+      "invocation_id": "2bc56a44-cfc3-40a8-9147-bb696080d93b",
+      "result_sha256": "a3b6d923cfd84907c871509a621348348b61cc2b5adad78dc7826f0a183bb31e",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "fe097525d16e486e10c05d0d6162be4a68391b8725da97e64702fe66c41244ea"
+        },
+        {
+          "path": "before.json",
+          "sha256": "fe097525d16e486e10c05d0d6162be4a68391b8725da97e64702fe66c41244ea"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "b23a4b144fcbe008df8bce72771d63661f2676e0f039b6832ffb13176b119664"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "3ae3c0e0b5770d1dfb069ddc6e77e463560cc9373e297aa5adc9d29a6bdbf2c2"
+        },
+        {
+          "path": "started.json",
+          "sha256": "1b3c5aa1450a81d44335c05186900125073de01ed1b0a9889fab812f1b17ac26"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789032560406053152,
+      "finished_ns": 1789032563198328656,
+      "pid": 3136793,
+      "observer_invocation_ids": [
+        "0a85c411-342b-49fd-99a1-344046315d17"
+      ],
+      "observer_event_ids": [
+        "09c44a74-a4aa-4f02-8adc-a96107629ce5",
+        "dad8e2d2-5183-45ce-9c4b-502f9e7b99fe",
+        "c6a866f4-a52e-4ead-8bfc-086aa378ba05"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "captured_case_id": "INFRA-S01-04.valid",
+      "surface": "S-check",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.valid-S-check-primary/capture",
+      "invocation_id": "74e02172-b5a3-41a3-90ac-6ab8dee9a6ec",
+      "result_sha256": "297d5ac967e4086ad7873035494ab3b77d10e4f76d647175db04517cf329f2d4",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "22da36f0036ec69c98c670ac9a1ec161db033e0dc50d05749e07417ca7007b58"
+        },
+        {
+          "path": "before.json",
+          "sha256": "22da36f0036ec69c98c670ac9a1ec161db033e0dc50d05749e07417ca7007b58"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "e21b169b1d2004c90d8019d47d0529b6c05df2d9f84da7e286db42772ec7dee1"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "e0962f9d40b4206e5d05e5e81bc2aee834a097b73407cb2ac2971de3f8d4c8b7"
+        },
+        {
+          "path": "started.json",
+          "sha256": "8244a23d144de76f10d89a8e67888f3da935c2d8dbf56966b4c7a3175cfbdbce"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "6b17244b570db23b03cb261527574dc337ce0d1128ab7aa628aa21114739e43a"
+        }
+      ],
+      "started_ns": 1789032563417829063,
+      "finished_ns": 1789032565105246161,
+      "pid": 3138706,
+      "observer_invocation_ids": [
+        "7ff577a8-722d-4de8-b54f-f2376e48ad6f"
+      ],
+      "observer_event_ids": [
+        "4cd9a5b0-8e74-4214-9386-1794396dd2c2",
+        "7d63b404-d9a7-4142-9eef-504993d49f61",
+        "4bd94978-3e12-436c-aa60-4b6aaf22d043",
+        "76c47029-b043-4d7c-afe0-c8b5e1c14ff0"
+      ],
+      "consumer": "selector",
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "S-check",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.valid-S-check-recovery/capture",
+      "invocation_id": "e66499af-c6cb-433e-8e07-bf6ba03eb498",
+      "result_sha256": "4add1e3169fd44ad663db5631b15225e5f59957a8cd8989fe125bb43e99c0cc6",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "b96bb7a881e6241c7f25adcf1aef30125d0716e87263af7e7ab9c8eddc260e17"
+        },
+        {
+          "path": "before.json",
+          "sha256": "b96bb7a881e6241c7f25adcf1aef30125d0716e87263af7e7ab9c8eddc260e17"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "4476fa2a24485e620214b36dd161c170551c5ee67b333b0e35409d97b2cb2b05"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "34ecc314f2b776de29026de5a5bab6e5821619ee2c8713dc876f37a50df55ad4"
+        },
+        {
+          "path": "started.json",
+          "sha256": "77e85afd14acef21db7b4bc76cad007ba5b20db17573c0a3a615be3dd56211e3"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "6b17244b570db23b03cb261527574dc337ce0d1128ab7aa628aa21114739e43a"
+        }
+      ],
+      "started_ns": 1789032565342304083,
+      "finished_ns": 1789032567130083363,
+      "pid": 3140006,
+      "observer_invocation_ids": [
+        "8312e349-de3b-4f0e-8159-1717af15b195"
+      ],
+      "observer_event_ids": [
+        "2b0e229f-34e5-4284-9d31-331d46817ae4",
+        "a3bd8197-e3ed-43b9-8480-8c45d74bb1e4",
+        "d864f8bb-1efe-42a4-a83e-a8e45c625f76",
+        "ce3203b7-d17a-409b-9393-c86968dd218e"
+      ],
+      "consumer": "selector",
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "captured_case_id": "INFRA-S01-04.valid",
+      "surface": "S-details",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.valid-S-details-primary/capture",
+      "invocation_id": "3c3a51df-10c7-4099-8d80-88a84e106ae1",
+      "result_sha256": "bff1f947943ca7f982b59595006be6a26a210d2e0e4a84ef48347b9890c24d76",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "37ef2c5e66b397bee325d0bf206364bfd10e8efdfd9c569dda91ea31bf702f36"
+        },
+        {
+          "path": "before.json",
+          "sha256": "37ef2c5e66b397bee325d0bf206364bfd10e8efdfd9c569dda91ea31bf702f36"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "74fe61fc06ffceeeac21c5af38a25edd86a1c30d6b0d4dc613e9b4040b6fb74a"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "76f1189dedefee8c63d62d17fd551e833ac7919fab02018c1c9f2fb8bddaa26a"
+        },
+        {
+          "path": "started.json",
+          "sha256": "6ab89bde451904a0d725637840e9202d7347f0b05c8ce0eda54f7ed961998459"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "cf045a9bfb50a97ab0a0d45efec51ebd87d4f275676e8d91578179897efbfb94"
+        }
+      ],
+      "started_ns": 1789032567361821790,
+      "finished_ns": 1789032569094037498,
+      "pid": 3141468,
+      "observer_invocation_ids": [
+        "2f1bf1bf-65aa-4213-a33e-2676269e976a"
+      ],
+      "observer_event_ids": [
+        "ea227b46-ccf9-4354-8ced-e38d647ff9aa",
+        "2eb9a49b-80bd-418b-85bb-49388a7921ec",
+        "7cd6825f-29ee-493f-8e6f-8d374c4e46eb",
+        "22bc076f-ca41-4f1c-88b4-9c73dac1d654"
+      ],
+      "consumer": "selector",
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "S-details",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.valid-S-details-recovery/capture",
+      "invocation_id": "84b23e15-0031-4ca5-89d7-5291b929f154",
+      "result_sha256": "a69936a6d60283e2ca8b078fcd4fa7441e73ebf05fd9115b912923cdf2ad901f",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "0627345a9ba725926b25893ab52e5338061ecd5724cc9ac80e5d7502325d95d4"
+        },
+        {
+          "path": "before.json",
+          "sha256": "0627345a9ba725926b25893ab52e5338061ecd5724cc9ac80e5d7502325d95d4"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "0f43534db933770c8c81801298161c6b2f1c768b5b9117b6642fb94071c0613f"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "521160860754b8934af84ca52930a840689be44d2b528816946a5be60fd11630"
+        },
+        {
+          "path": "started.json",
+          "sha256": "10977045f0de6a6cc2cec66e6f1953190d250cb40dbb90cd2c4c42776cc8f899"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "cf045a9bfb50a97ab0a0d45efec51ebd87d4f275676e8d91578179897efbfb94"
+        }
+      ],
+      "started_ns": 1789032569318824420,
+      "finished_ns": 1789032571059679772,
+      "pid": 3142867,
+      "observer_invocation_ids": [
+        "5ad56217-db13-4924-865d-10b82b451644"
+      ],
+      "observer_event_ids": [
+        "066e147f-4bcc-4f94-93ba-476b5043d8d2",
+        "dc70877f-94c3-42d6-8eb5-5f584f6fa5a9",
+        "9c3629c0-eb58-4304-92ad-3c15c8ac0a86",
+        "d8880ee1-1f61-4bf3-8118-9f2098485604"
+      ],
+      "consumer": "selector",
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "captured_case_id": "INFRA-S01-04.valid",
+      "surface": "H",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.valid-H-primary/capture",
+      "invocation_id": "7277a4ff-7238-478e-bede-440f2234cddb",
+      "result_sha256": "6a8bdb99238dca1b4e4f99be6bd16c08bae0d7519191c0750a2954619d9587af",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "8482713cd6846861b0b25bc264e68dc6ec815d00659b8462926058ee080a2a79"
+        },
+        {
+          "path": "before.json",
+          "sha256": "8482713cd6846861b0b25bc264e68dc6ec815d00659b8462926058ee080a2a79"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "6378e68f3e299d442d496e7a842c16a7ec324c8cc3a72a54a7a40d2132f9ce34"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "a766e05b0c776fbd6ec18ca201c5649aa2467de3c2f73bbaf1a30f4eb3c80c3c"
+        },
+        {
+          "path": "started.json",
+          "sha256": "84325b0ba709872de605a141138f316ba6254eb0d539f7a0d1331b314891e819"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "dd6df606bf13b77c6d810fd5e7ba552a1f5b77db6afd285fda5570a5c96e8e56"
+        }
+      ],
+      "started_ns": 1789032571326894501,
+      "finished_ns": 1789032575229274804,
+      "pid": 3144285,
+      "observer_invocation_ids": [
+        "768c77dd-8cf7-41fb-aa3e-9951c9ddca8b"
+      ],
+      "observer_event_ids": [
+        "6c2c6014-1514-4c1b-86d0-2ad0ab54c795",
+        "72662096-e69e-4835-9097-82fde5f98346",
+        "6ab6a1ec-0b14-4165-a1d6-ca630af06b52",
+        "6809d6c9-be3d-428f-83dd-66fb1e77877a",
+        "eef61663-d576-4507-8f1d-407d63d05fde",
+        "9c414216-d6af-48ca-a934-91e33c00b657"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-04.valid",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "H",
+      "phase": "recovery",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/s01/s01-INFRA-S01-04.valid-H-recovery/capture",
+      "invocation_id": "93575db7-32cd-4002-a025-eef6e23b817f",
+      "result_sha256": "8db0739594cb676ed8c1c5cd10938ccd1d3341e322bc067ec508fee15f63f29b",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "98aa2ec6db07947aa134e546986be523e63fd84f9d5ad8ab8016978388d5ef43"
+        },
+        {
+          "path": "before.json",
+          "sha256": "98aa2ec6db07947aa134e546986be523e63fd84f9d5ad8ab8016978388d5ef43"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "0074d8f3bf71e4b707cecb3803ce3fec15f752a9f2ae8835f8ff09a4e9fe8770"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "1eb60199cdd39b6301ce2f1c5ac38876ec27de882d65d69fe7909f795a6fda4a"
+        },
+        {
+          "path": "started.json",
+          "sha256": "832e5fc55a058a899df89824c7f86c282b81f06760de784ce3de891e8cd4cf47"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "dd6df606bf13b77c6d810fd5e7ba552a1f5b77db6afd285fda5570a5c96e8e56"
+        }
+      ],
+      "started_ns": 1789032575505823616,
+      "finished_ns": 1789032579162484941,
+      "pid": 3147470,
+      "observer_invocation_ids": [
+        "a9488b72-96dc-4d84-a394-21fe1ceed363"
+      ],
+      "observer_event_ids": [
+        "ff25e8db-e9e6-4b81-9791-201a01886b02",
+        "8fae0acf-aa93-44d8-bf6c-879313b0cbe7",
+        "1234c692-67a0-4091-b57a-cf90aefeade9",
+        "9dbe3d5b-a4a0-45a2-8350-a9915ee6857f",
+        "38bcf375-aff4-482c-8f1f-cbae87b943e3",
+        "580a5781-4c26-413e-a9e9-8133301cf6cb"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-01",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "C",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/baseline/baseline-C/capture",
+      "invocation_id": "6dd7fceb-e46d-4d5f-9027-ec01bcbb3740",
+      "result_sha256": "3826cfb298e6aee436bd2672f5f7f939d04d807e2f29cbd0efd05984b9389198",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "717f1c37b6b49d063383e90ff13815e9a6b560a2cbdbf14caad55335ffde84e0"
+        },
+        {
+          "path": "before.json",
+          "sha256": "717f1c37b6b49d063383e90ff13815e9a6b560a2cbdbf14caad55335ffde84e0"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "b55ef7468a2a54b2ebe8e7da70ed7e29cc11c22f0abf39eb24a0773d7ade140d"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "2fad274c381ee0ca292c802d2c1007db6d8e35bd54bd583b2e577c4d498704f1"
+        },
+        {
+          "path": "started.json",
+          "sha256": "90f53d08e31d9ac8ef84f4bdf34ee7a4ef22e8fee6d33fa31b15bb01ced66f93"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789035097608972043,
+      "finished_ns": 1789035102189934220,
+      "pid": 3900152,
+      "observer_invocation_ids": [
+        "71b16243-258e-48ce-8417-f56d5b554d1d"
+      ],
+      "observer_event_ids": [
+        "8bbd62f8-aefa-4e0d-9ffe-b273e3f08e0a",
+        "57f8253a-1ebc-45e4-b3e9-e51562460ed4",
+        "801e08b9-2eae-420a-83b1-ca6c00a8e106"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-01",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "R",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/baseline/baseline-R/capture",
+      "invocation_id": "219b9db6-ec88-424a-b0dd-9a9e5d50532d",
+      "result_sha256": "37e13b9236aa866b0ac0e297bce059b7ec706dede8ba5134992d6f145466ab4a",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "38ee200793e0341980651c581e04153c978ca88d702e75c1c8059c2b1a1940b9"
+        },
+        {
+          "path": "before.json",
+          "sha256": "38ee200793e0341980651c581e04153c978ca88d702e75c1c8059c2b1a1940b9"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "fcc723a25f64b356a942509bee8fa2cdd922274fe1972b52e90bde24b5e50a0c"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "c2464989e8024044d72d04e5269062cc22a53f7ec08aeb048221166648699f4f"
+        },
+        {
+          "path": "started.json",
+          "sha256": "416a04f66cc4d21ad4ba3f4eabc9406e12d85fce4c51206362f88914c76a01a7"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "f533760ae29715c1d0cff3ddcea13a88b0dbdcc78fca703845503d87187f69c6"
+        }
+      ],
+      "started_ns": 1789035102510786846,
+      "finished_ns": 1789035107305479524,
+      "pid": 3901206,
+      "observer_invocation_ids": [
+        "61bfcf01-f0a6-41b8-a449-672dae5dda45"
+      ],
+      "observer_event_ids": [
+        "cffe9f62-848c-4851-9ff7-5b04530d83a9",
+        "e53d197b-dad4-4abb-91a0-8ba55de03c89",
+        "49ea389c-a0d3-4628-b4a3-74a83f56ebb0"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-01",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "S-check",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/baseline/baseline-S-check/capture",
+      "invocation_id": "6e159281-2485-44b9-95a3-7d1da8f59bbb",
+      "result_sha256": "a38a5c8f686dc094711a391f307364d6bf5e9d8148948fc644ba9bacfa1a37c0",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "7141f24c8df8d7338d722cb99eab7c6abf907791ff94614ae617b619b525458c"
+        },
+        {
+          "path": "before.json",
+          "sha256": "7141f24c8df8d7338d722cb99eab7c6abf907791ff94614ae617b619b525458c"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "69647cc9444259cc5d3e98f80e374af93ea542b0f56aaa6d2ee2e4f74d9ffdae"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "f57a9a5ab1f3ec3e0c34a6a1d5c282ef263713e165a846caa7a92f4696a684a5"
+        },
+        {
+          "path": "started.json",
+          "sha256": "b646b6f8c521fcb1bc2da1d649256326633c24155ce2180aa4593b6ded53687a"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "6b17244b570db23b03cb261527574dc337ce0d1128ab7aa628aa21114739e43a"
+        }
+      ],
+      "started_ns": 1789035107633277365,
+      "finished_ns": 1789035110415965720,
+      "pid": 3902080,
+      "observer_invocation_ids": [
+        "93b3995d-c010-45f5-803d-8212595ad49a"
+      ],
+      "observer_event_ids": [
+        "eb037803-7133-4e0b-b753-98cb42ccb4eb",
+        "0ce3aa6a-0f65-4365-9f06-0b61b3f48381",
+        "0978ec39-8bc1-42e5-8fb5-4913e7264de3",
+        "caef5f88-1d0d-4346-aa04-c28085232828"
+      ],
+      "consumer": "selector",
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-01",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "S-details",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/baseline/baseline-S-details/capture",
+      "invocation_id": "9455520e-56da-4505-b46c-9af37cb55f63",
+      "result_sha256": "6123e82d57439a18a0e816356dca2dc51df1c317b565bb19f20d2648b2f148a2",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "17fc2f2671a71e5a390f44fed7ad307d72f6dfc743967336e926d68cb0575ee9"
+        },
+        {
+          "path": "before.json",
+          "sha256": "17fc2f2671a71e5a390f44fed7ad307d72f6dfc743967336e926d68cb0575ee9"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "f7909e49e04556c0630c8bac41db241650c3dfb23e706a9e676c9336570da1e2"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "ae55db492777619b297f369d7e15309723dec6712564972344ee15da93efde59"
+        },
+        {
+          "path": "started.json",
+          "sha256": "c65f9324b41a878f89cf0a87ffc9d96549e30aa7e3b283bde8b8131385084e87"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "cf045a9bfb50a97ab0a0d45efec51ebd87d4f275676e8d91578179897efbfb94"
+        }
+      ],
+      "started_ns": 1789035110746297904,
+      "finished_ns": 1789035113735099616,
+      "pid": 3902505,
+      "observer_invocation_ids": [
+        "d407422a-59bf-4171-9a52-b34c34901287"
+      ],
+      "observer_event_ids": [
+        "b8bb50b3-b9a7-469f-9021-ae66e2a6f1de",
+        "b9ecc967-848a-4569-95dd-cde30658e77b",
+        "d1256eea-0030-465a-a087-326a7e564293",
+        "24db9f4b-1c85-4123-91bd-6b01bdc1d099"
+      ],
+      "consumer": "selector",
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    },
+    {
+      "case_id": "INFRA-S01-01",
+      "captured_case_id": "INFRA-S01-01",
+      "surface": "H",
+      "phase": "primary",
+      "capture_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/baseline/baseline-H/capture",
+      "invocation_id": "9eb89203-4d83-425e-aa4e-2fad491f324e",
+      "result_sha256": "e1742ec8a62a047ef3036bc43817395459f14389b6ca742b67823fb7a135af69",
+      "artifacts": [
+        {
+          "path": "after.json",
+          "sha256": "e013b8918810511e61a5c27c01ba59a3887c295051c5980d0b035523ea6913bb"
+        },
+        {
+          "path": "before.json",
+          "sha256": "e013b8918810511e61a5c27c01ba59a3887c295051c5980d0b035523ea6913bb"
+        },
+        {
+          "path": "calls.jsonl",
+          "sha256": "e8c505a80c394c1823d29c52d90302ea8a27b07f9f0a464bb974deb67954a9e7"
+        },
+        {
+          "path": "invocation.json",
+          "sha256": "47dc9b13cc05c05da731bb4f629f70d87b79bfc4333fb73f9488be3e09da48e3"
+        },
+        {
+          "path": "started.json",
+          "sha256": "917029d7c7e3e7384540185d1822686b1620cb2409d4f74a9252479db5be5953"
+        },
+        {
+          "path": "stderr.bin",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "stdout.bin",
+          "sha256": "dd6df606bf13b77c6d810fd5e7ba552a1f5b77db6afd285fda5570a5c96e8e56"
+        }
+      ],
+      "started_ns": 1789035114151335999,
+      "finished_ns": 1789035120511404119,
+      "pid": 3902989,
+      "observer_invocation_ids": [
+        "1ce78f78-1876-4de2-af4e-332866c2a980"
+      ],
+      "observer_event_ids": [
+        "cebc3bd6-fba1-4494-91e3-29e6d66cea72",
+        "29bfc022-b0ec-4a4a-bc7e-afdfbdc69599",
+        "4ed186d4-bcb0-4b30-8823-21083ea8ffda",
+        "c8bc6854-260b-4119-9288-f691fd01def0",
+        "fe91ece0-396e-4593-86b3-19bfa4ec0bb7",
+        "04f96488-1d26-4fe2-a0fe-6c3414d6091f"
+      ],
+      "consumer": "validator",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "handler_invoked": true,
+      "returncode": 0,
+      "result_kind": "exited",
+      "unavailable_reason": null
+    }
+  ]
+}

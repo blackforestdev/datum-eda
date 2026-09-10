@@ -1,0 +1,30 @@
+{
+  "candidate": "06bafeb9979dce91ab710bfaaff7f8f9ca3e72f2",
+  "producer_packet_sha256": "fa0b802e11d5dc266f7f3e78bde8a1ac91ac6c1ae4165df8858b56b94c158fee",
+  "replay": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/replay.json",
+    "sha256": "bbfdcf2ae7a2a107ba3cbdb3aa2358ec85afec072323ecb9fd5348f83f151f83"
+  },
+  "review": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/review.json",
+    "sha256": "b352f9b2fe495ba95f46f468f3ca3c2e34b15cb1464857e2ee339ce1b70d5789"
+  },
+  "review_sha256": "10f3ffee6c48d247bb88ecf1a4124b293daeb2b3f8e5a4bb651bbca28dae843b",
+  "proof_environment_correlations_independent_review": "pass",
+  "correlated_event_blobs": 6,
+  "expected_owner_disposition_refusal": {
+    "code": "WDQ-DEFECT",
+    "detail": "undisposed defect dat-wdq-index-refresh-ogw",
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/review.json"
+  },
+  "observations": 1314,
+  "pid": 204631,
+  "started_ns": 1789039761888882546,
+  "finished_ns": 1789039785355284607,
+  "helper_sha256": "d7cde59e510c3661dd0fe0ca0c2ad96961dedbfd62a18d575ea18448494a25b8",
+  "technical_scope": "Independent review of exact producer packet and frozen runtime. Not final candidate publication or installed activation.",
+  "remaining": "Later exact candidate delta/source-history inspection before RECHECK closeout and I04 presentation; five owner dispositions and strict full-evidence I04 inspection.",
+  "independent_recheck_complete": false,
+  "publication_authorized": false,
+  "activation_performed": false
+}
