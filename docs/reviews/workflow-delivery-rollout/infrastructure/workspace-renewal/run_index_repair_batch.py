@@ -33,13 +33,18 @@ def save(path, value):
         stream.write("\n")
 
 
-def main():
+def main(*, pin=PIN, runtime_name="index-preservation-repair-20260910",
+         store_name="index-repair-evidence-20260910"):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("batch", choices=sorted(BATCHES))
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[5]
-    runtime = root / ".git/datum-wdq/proposals/index-preservation-repair-20260910"
-    store = root / ".git/datum-wdq/proposals/index-repair-evidence-20260910"
+    assert len(pin) == 40 and all(c in "0123456789abcdef" for c in pin)
+    for name in (runtime_name, store_name):
+        assert name and name not in (".", "..") and Path(name).name == name
+    runtime = root / ".git/datum-wdq/proposals" / runtime_name
+    store = root / ".git/datum-wdq/proposals" / store_name
+    assert runtime.resolve() == runtime and store.resolve() == store and store.is_dir()
     record_name, field = BATCHES[args.batch]
     record = Path(__file__).with_name(record_name)
     original_bytes = record.read_bytes()
@@ -47,7 +52,7 @@ def main():
     assert len(original) == 6 and original[:5] == ["python3", "-I", "-S", "-B", "-c"]
     old_suffix = args.batch + ("-entrypoints" if args.batch.startswith("workspace-") else "")
     old_store = ".git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/renewed-" + old_suffix + "-0e5b8064"
-    new_store = ".git/datum-wdq/proposals/index-repair-evidence-20260910/" + args.batch
+    new_store = str(store.relative_to(root) / args.batch)
     code = original[5]
     assert code.count(OLD) == 1 and code.count(old_store) == 1
     recipe_changes = {}
@@ -61,13 +66,13 @@ def main():
         for before, after in recipe_changes.items():
             assert code.count(before) == 1
             code = code.replace(before, after)
-    command = original[:5] + [code.replace(OLD, PIN).replace(old_store, new_store)]
+    command = original[:5] + [code.replace(OLD, pin).replace(old_store, new_store)]
     git = lambda *words: subprocess.check_output(["git", "--no-optional-locks", *words], cwd=runtime)
-    assert git("rev-parse", "HEAD").decode().strip() == PIN
+    assert git("rev-parse", "HEAD").decode().strip() == pin
     assert not git("status", "--porcelain") and not (store / args.batch).exists()
     save(store / (args.batch + "-command.json"), {"command": command, "cwd": str(runtime),
         "source_record": str(record), "source_record_sha256": hashlib.sha256(original_bytes).hexdigest(),
-        "substitutions": {OLD: PIN, old_store: new_store}, "fresh_setup_changes": recipe_changes})
+        "substitutions": {OLD: pin, old_store: new_store}, "fresh_setup_changes": recipe_changes})
     out_path, err_path = (store / (args.batch + "-" + name + ".bin") for name in ("stdout", "stderr"))
     environment = None
     if args.batch == "s02-ownership":
@@ -87,7 +92,7 @@ def main():
         "ended_ns": time.time_ns(), "exit_code": status,
         "stdout_sha256": hashlib.sha256(out_path.read_bytes()).hexdigest(),
         "stderr_sha256": hashlib.sha256(err_path.read_bytes()).hexdigest()})
-    assert git("rev-parse", "HEAD").decode().strip() == PIN and not git("status", "--porcelain")
+    assert git("rev-parse", "HEAD").decode().strip() == pin and not git("status", "--porcelain")
     print(json.dumps({"batch": args.batch, "exit_code": status}), flush=True)
     raise SystemExit(status)
 
