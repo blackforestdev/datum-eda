@@ -9657,14 +9657,15 @@
         "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-producer-closeout.json",
         "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-repair-authorization.json",
         "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-producer-closeout.json",
-        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-independent-closeout.json"
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-independent-closeout.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-owner-dispositions.md"
       ],
       "state": "specified",
       "authorization": "owner_decision",
       "claim": null,
       "canonical_next": false,
       "parallel": true,
-      "summary": "WDQ-RECHECK is technically complete: 1314 exact independent observations, 45 current-source focused tests, typed review of packet fa0b802e and renewed supported inspection of real-main descendant 992ce4f4 passed. Eight of eleven steps are complete. Claim-free WDQ-I04 now requires owner disposition of five findings and bounded preparation of a separate exact mechanism/activation packet; 992ce is not activation-ready. Product ownership, installed trust, three actual adoption cohorts and final acceptance remain unchanged.",
+      "summary": "Eight of eleven steps are complete. The owner approved I04-PREPARATION: four reviewed repair findings are resolved and the unfixed nonblocking test-portability issue is deferred. Claim-free I04 preparation may reuse the exact fa0b802e proof and independent replay; PM042 ratification, strict final candidate inspection, exact activation and installed verification remain pending. No repeated replay matrix or broad workspace builds are authorized by this preparation. Preferences ownership, three actual adoption cohorts and final acceptance remain unchanged.",
       "dependencies": [],
       "unblocks": [],
       "completion": {
@@ -9903,15 +9904,15 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `WORKFLOW-DELIVERY-IMPLEMENTATION: approve I04-PREPARATION fa0b802e11d5dc266f7f3e78bde8a1ac91ac6c1ae4165df8858b56b94c158fee 10f3ffee6c48d247bb88ecf1a4124b293daeb2b3f8e5a4bb651bbca28dae843b`, `WORKFLOW-DELIVERY-IMPLEMENTATION: revise — <correction>`, or `WORKFLOW-DELIVERY-IMPLEMENTATION: defer — <reason>`. Approval covers the listed proposed dispositions and bounded preparation only, not mechanism ratification or activation.",
+              "response_format": "Preparation is already approved. Once the exact inspected activation packet is presented, reply `WORKFLOW-DELIVERY-IMPLEMENTATION: approve ACTIVATE — <exact inspected packet>`, `WORKFLOW-DELIVERY-IMPLEMENTATION: revise — <correction>`, or `WORKFLOW-DELIVERY-IMPLEMENTATION: defer — <reason>`. No activation approval is requested for the historical RECHECK candidate.",
               "requests": [
                 {
-                  "id": "I04-PREPARATION",
-                  "question": "For the exact independently reviewed packet fa0b802e and review 10f3ffee, approve resolving dat-wdq-workspace-inputs-zmt, dat-wdq-index-refresh-ogw, dat-wdq-proof-renewal-cycle-qgb and dat-wdq-review-publication-cycle-a1y from their recorded repair/replay evidence, defer the unfixed nonblocking dat-wdq-test-default-branch-apx, and authorize recording those dispositions and preparing the separate claim-free I04 mechanism/activation packet? Candidate 992ce4f4 is a RECHECK review target, not activation-ready; PM042 ratification, strict final inspection and exact activation remain separate owner-controlled requirements.",
-                  "recommended_response": "Approve the four proposed repair resolutions, defer the explicitly retained test-portability debt, and authorize bounded preparation only. Keep I04 pending, all eleven milestones intact, and product lanes and installed trust unchanged until separate exact owner ratification and activation.",
+                  "id": "ACTIVATE",
+                  "question": "The owner approved and the repository recorded the five finding dispositions and bounded I04 preparation. The remaining owner decision is PM042 ratification and activation of the separate exact claim-free packet after strict inspection; that packet is being prepared using existing verified evidence. Do not activate historical candidate 992ce4f4 or treat preparation approval as activation approval.",
+                  "recommended_response": "Review the completed exact activation packet when presented; preserve product ownership and require installed verification before I04 completion. Do not repeat the already-approved preparation decision.",
                   "source_ref": {
-                    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-independent-closeout.json",
-                    "marker": "WDQ-I04-PREPARATION"
+                    "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                    "marker": "ACTIVATE"
                   }
                 }
               ]

@@ -57,12 +57,14 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
          review_digest=None, review_inventory_digest=None):
     if not (sys.flags.isolated and sys.flags.no_site and sys.flags.dont_write_bytecode):
         raise ValueError("candidate preparation requires Python -I -S -B")
-    if expected_step not in ("WDQ-COMPAT", "WDQ-RECHECK"):
+    if expected_step not in ("WDQ-COMPAT", "WDQ-RECHECK", "WDQ-I04"):
         raise ValueError("candidate preparation requires an authorized review execution step")
     evidence_args = (review_overlay, review_digest, review_inventory_digest)
     if any(value is not None for value in evidence_args):
-        if expected_step != "WDQ-RECHECK" or not all(evidence_args):
+        if expected_step not in ("WDQ-RECHECK", "WDQ-I04") or not all(evidence_args):
             raise ValueError("review evidence requires RECHECK and all three exact overlay pins")
+    if expected_step == "WDQ-I04" and not all(evidence_args):
+        raise ValueError("I04 preparation requires the exact reviewed evidence")
     root = Path(__file__).resolve().parents[5]
     runtime = root / ".git/datum-wdq/proposals/sequencing-repair-20260910"
     store = root / ".git/datum-wdq/proposals/sequencing-evidence-20260910"
@@ -106,9 +108,29 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
         assert live.read(path) == source.read(path), path
     payloads = {path: source.read(path) for path in scoped | explicit}
     review_inventory = None
+    parent_review_digest = review_digest
     if review_overlay is not None:
         evidence_payloads, review_inventory = reviewed_payloads(
             git, review_overlay, review_digest, review_inventory_digest)
+        if expected_step == "WDQ-I04":
+            disposition_path = EVIDENCE + "workspace-renewal/sequencing-owner-dispositions.md"
+            dispositions = {
+                "dat-wdq-workspace-inputs-zmt": "I04-OWNER-WORKSPACE",
+                "dat-wdq-index-refresh-ogw": "I04-OWNER-INDEX",
+                "dat-wdq-proof-renewal-cycle-qgb": "I04-OWNER-RENEWAL",
+                "dat-wdq-review-publication-cycle-a1y": "I04-OWNER-PUBLICATION",
+                "dat-wdq-test-default-branch-apx": "I04-OWNER-TEST-PROFILE",
+            }
+            assert live.read(disposition_path)
+            approved_review = json.loads(evidence_payloads[EVIDENCE + "review.json"])
+            assert approved_review["owner_receipt"] is None
+            assert {f["issue_id"] for f in approved_review["findings"]} == set(dispositions)
+            for finding in approved_review["findings"]:
+                assert finding["disposition_ref"] is None
+                finding["disposition_ref"] = {"path": disposition_path,
+                    "marker": dispositions[finding["issue_id"]]}
+            evidence_payloads[EVIDENCE + "review.json"] = canonical_json(approved_review)
+            review_digest = sha256(evidence_payloads[EVIDENCE + "review.json"])
         assert not payloads.keys() & evidence_payloads.keys()
         payloads.update(evidence_payloads)
     frontier = live.json("specs/active_frontier.json")
@@ -167,7 +189,11 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
     validate_frontier(prepared)
     delta = publication_delta(root, base=base, candidate=candidate)
     review = {"delta_sha256": sha256(canonical_json(delta)), "paths": delta["touched_paths"]}
-    result = inspect_review_candidate(root, base=base, candidate=candidate, authority=candidate,
+    inspector = inspect_review_candidate
+    if expected_step == "WDQ-I04":
+        from workflow_delivery_activation_preflight import inspect_promotion_candidate
+        inspector = inspect_promotion_candidate
+    result = inspector(root, base=base, candidate=candidate, authority=candidate,
         environment_path="specs/workflow_delivery/rollout.environments.json", publication_review=review)
     if review_overlay is not None:
         from workflow_delivery_review import validate_independent_review
@@ -179,6 +205,7 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
         "publication_review": review, "inspection": result,
         "reviewed_evidence": None if review_overlay is None else {
             "producer_candidate": PRODUCER, "packet_sha256": PACKET,
+            "parent_review_file_sha256": parent_review_digest,
             "review_sha256": review_digest, "review_inventory_sha256": review_inventory_digest,
             "review_inventory": review_inventory,
             "independent_review_validation": "pass",
