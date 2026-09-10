@@ -317,3 +317,29 @@ running; do not claim that initial hash identifies every later driver launch.
 Both versions remain in Git. Validator source, contract inputs, the standard
 batch recipe code and its captured commands are unchanged by this driver-only
 addition. Workspace observations are not yet claimed complete.
+
+### Noncircular source construction and retained execution
+
+The seven standard batches, baseline, coverage and ownership batches completed
+with their expected outcomes against source `9924678c`. All three paired
+workspace batches also completed: runtime 52, policy/legacy 75 and proof-input
+45 observations. Independent exact replay has begun; its completion is not
+asserted here. No live ownership or installed trust changed.
+
+The normative-only source is `0abb325d9f06e7c8e4ea7b36e3a7ea2d8cd6f45c`,
+retained under `refs/datum-wdq/candidates/noncircular-source-0abb325d9f06e7c8e4ea7b36e3a7ea2d8cd6f45c`.
+It changes five normative/route files and no runtime files. Superseded source
+`597a129a` must not be promoted: diff inspection found its assembler copied a
+main paragraph over more explicit source verification prerequisites. The
+corrected assembler preserves those prerequisites exactly.
+
+`assess_terminal_inputs.py` distinguishes normative authority from build inputs.
+All 164 declared inputs and all 151 Python modules match the observed source;
+the modules compile in memory. Its first attempt incorrectly expected three
+changed build inputs and stopped before writing results. Direct Git-object
+comparison established that those normative files are outside build inputs;
+the corrected comparison requires zero changed build inputs. Fresh construction
+records are retained at `.git/datum-wdq/proposals/terminal-final-assessment-01`.
+This establishes source equivalence, not blanket observation reuse: fixture,
+policy/environment, tools, trace/state and scenario applicability still require
+assessment, and final real-roadmap/installed proof remains mandatory.
