@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-review-publication-cycle-a1y",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "capture_store": ".git/datum-wdq/proposals/sequencing-evidence-20260910",
+  "batches": [
+  {
+    "batch": "s03",
+    "count": 185,
+    "phases": {
+      "primary": 110,
+      "recovery": 75
+    },
+    "observations_sha256": "ee7f4ab2cdb0a5bb5c292bbd21d93019137ab8e5bcf32f5621bb753ef194b670",
+    "process": {
+      "pid": 2335592,
+      "started_ns": 1789029472447394666,
+      "ended_ns": 1789029863632046225,
+      "exit_code": 0,
+      "stdout_sha256": "c78d8b080ddabfb07ccebff0f8f08afb1cb71e0c4db49652d792ab00d1eb9574",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ordered_case_surface_phase_inventory_preserved": true,
+    "all_expected_outcomes": true
+  },
+  {
+    "batch": "s04",
+    "count": 175,
+    "phases": {
+      "primary": 95,
+      "recovery": 80
+    },
+    "observations_sha256": "334eb67cac1418de017ac5fa02fec6106171e22b6f2134ca0528a50489765f13",
+    "process": {
+      "pid": 2335768,
+      "started_ns": 1789029473626119253,
+      "ended_ns": 1789029868001935276,
+      "exit_code": 0,
+      "stdout_sha256": "817433d81f2e7f904083cd5fc042b23b311eb42c9df206199f9d2aa58baf1dac",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ordered_case_surface_phase_inventory_preserved": true,
+    "all_expected_outcomes": true
+  },
+  {
+    "batch": "s05-snapshots",
+    "count": 39,
+    "phases": {
+      "primary": 26,
+      "recovery": 13
+    },
+    "observations_sha256": "05b34878558f926386c991dcef07f0d9b246a7f9eefcb80b045aff6b8e0e59f8",
+    "process": {
+      "pid": 2408347,
+      "started_ns": 1789029623767589175,
+      "ended_ns": 1789029706548915398,
+      "exit_code": 0,
+      "stdout_sha256": "94dd04532b78268675126f7e2ea002124172dcd9a09ebbc637d5af0dedcc27f6",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ordered_case_surface_phase_inventory_preserved": true,
+    "all_expected_outcomes": true
+  }
+],
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-s03-s05-captures.tar.xz",
+    "sha256": "c39b30d9b0d6540ea6ee0ef5540551477aeb19c1fd7303fa0cc6ca98e96a4abe",
+    "tar_compare_exit_code": 0,
+    "scope": "Raw captures, assessments, ordered observations and exact command/process records for readiness, proof validation and snapshots. Duplicate fixture/prepared-packet trees omitted; source commit and local fixtures remain retained."
+  },
+  "renewal_total_so_far": {
+    "original_inventory_observations": 740,
+    "components": {"baseline": 5, "s01": 36, "s02_coverage": 110, "s02_ownership": 190, "s03": 185, "s04": 175, "s05_snapshots": 39},
+    "additional_real_main_pre_review_inspection": "sequencing-live-review-observation.json",
+    "scope": "Observation accounting only, not milestone or effort percentage. Remaining S06, workspace and real-roadmap renewal obligations are not counted as completed."
+  },
+  "limits": "399 new infrastructure observations in this record, preserving all original ordered cases and expected outcomes. No full matrix, independent replay, native adoption, final publication inspection or owner acceptance.",
+  "complete_matrix": false,
+  "activation_performed": false
+}
