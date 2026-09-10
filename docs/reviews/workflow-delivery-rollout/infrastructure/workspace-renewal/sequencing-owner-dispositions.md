@@ -195,3 +195,30 @@ normative/assembler change. This technical review is not fresh subprocess replay
 
 The repaired-source identity must precede matching real observations and exact
 activation inspection. No live support is retired before installation succeeds.
+
+The source assembler completed successfully from main `8b876e60`, retaining
+`9924678c39fe5d176e58ebfd8e25ab6feb213f35` beneath
+`refs/datum-wdq/candidates/terminal-owner-source-9924678c39fe5d176e58ebfd8e25ab6feb213f35`.
+Exactly six files differ from source `1d48f249`: the category module, PM042,
+coverage prose, infrastructure prose, machine contract and reviewed route digests.
+The 152 source permissions and all other source bytes remain unchanged.
+
+The repaired source passes its 19 existing category tests directly, without
+validator replacement. `verify_terminal_owner_processes.py` also passes 16
+actual child-process regressions: pending and terminal-closeout success, source
+permission refusal and document-only owner-evidence refusal, each through staged
+CLI, candidate CLI, selector check and selector details. Refusal reasons and
+actual main-handler invocation are checked; fixture snapshots remain unchanged.
+The synthetic recipes are not real Preferences evidence, the full S02 matrix,
+owner-hook capture, typed producer proof, independent replay or installation.
+
+Retained setup failures: the initial scripts-only sparse checkout omitted its
+CI input, causing 19 fixture setup errors; an unsupported sparse-add option then
+left that omission unchanged. Including the input allowed all 19 tests to pass.
+Direct isolated script execution initially lacked its module search path; using
+the existing reviewed observer entrypoint resolved that invocation failure.
+Sparse checkout also enabled Git's shared worktree-config extension; that
+unintended setting was removed, along with this checkout's unused generated
+config. Installed hook and four trust values remain unchanged. The new checkout
+is a 2.2 MB source-only preparation under Git-common storage, not Documents;
+no Cargo artifacts or product files were changed.
