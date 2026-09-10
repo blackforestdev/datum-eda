@@ -54,6 +54,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-repair-authorization.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "Records explicit owner authorization for bounded review/publication sequencing and initial mapping migration repair within reopened WDQ-COMPAT, followed by WDQ-RECHECK. Preserves historical proof, all eleven steps and owner activation boundaries; no mechanism ratification."
+    },
     "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-producer-closeout.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",

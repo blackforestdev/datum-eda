@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-COMPAT-SEQUENCING-REPAIR-OWNER-AUTHORIZATION",
+  "requirement_marker": "<!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-COMPAT -->",
+  "owner_response_verbatim": "approved",
+  "approved_request": "Approve repairing the review/publication sequencing and migration prerequisites within the existing steps, renewing affected evidence, without activation or Preferences changes?",
+  "recorded_at": "2026-09-10T07:35:55Z",
+  "main_before_transaction": "7a17cfe5",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "related_issue_ids": ["dat-wdq-review-publication-cycle-a1y"],
+  "selected_step": "WDQ-COMPAT",
+  "successor_step": "WDQ-RECHECK",
+  "disposition": "Reopen existing WDQ-COMPAT for the approved bounded repair and affected producer evidence renewal; return WDQ-RECHECK to pending for distinct independent review. Preserve all eleven existing steps. This records execution authorization, not ratification of an unspecified mechanism or approval of incomplete evidence.",
+  "required_repair": [
+    "Reconcile the requirement for exact-publication inspection during independent review with the inspector's prerequisite that independent review already be complete.",
+    "Reconcile initial publication from actual legacy main without requiring the legacy baseline to already contain the new delivery mapping.",
+    "Review the governing evidence route before normative changes; assess changed source and authority identities and renew affected evidence without relabeling historical executions."
+  ],
+  "historical_completion": {
+    "document": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-producer-closeout.json",
+    "marker": "WDQ-COMPAT-REPAIRED-SOURCE-PRODUCER-VERIFICATION-COMPLETE",
+    "evidence_commit": "c9d3d5c350a38a2c01aa71d37ec1fa4cc31bcc8e",
+    "runtime_source_commit": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+    "packet_sha256": "02ce61ee28c450776a575330ce17aca93f2a8e4edc7e4c704cf299efd69cc8ce",
+    "scope": "Retained unchanged for its original source and authority inputs. The 1314 producer and 1314 independent observations remain historical execution evidence, not automatic proof for changed inputs. The independent typed draft remains revise with INFRA-S05 unverified."
+  },
+  "boundaries": [
+    "Independent exact-publication inspection remains mandatory before activation; no fabricated completion, approving review, synthetic actual-main substitution or gate bypass.",
+    "No Preferences, other product ownership, Claude prototype, dependency, installed-hook, local-trust or owner-local file changes.",
+    "No defect closure, source proof acceptance, new milestone or mechanism ratification is asserted by this authorization record.",
+    "WDQ-I04 exact owner ratification and activation, WDQ-I05 three actual adoption cohorts, and WDQ-I06 owner acceptance remain required."
+  ],
+  "activation_authorized": false,
+  "completion_asserted": false
+}
