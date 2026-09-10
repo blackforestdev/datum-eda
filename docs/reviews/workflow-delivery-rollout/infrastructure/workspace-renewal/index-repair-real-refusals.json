@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-proof-renewal-cycle-qgb",
+  "runtime_source": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "fixture_commit": "1e9c74a383040cc839f60457e1c62cd448368a74",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-real-refusals.tar.xz",
+    "sha256": "1eaeb6a08a84f7f3341abef2a419336718aaf025c92da01849181b59b81c948c",
+    "tar_compare_exit_code": 0,
+    "scope": "Both actual failed staged captures, exact command/recipe substitutions, process/raw outputs and current materialized inventory. Duplicate full fixture checkouts are omitted and remain required locally."
+  },
+  "commands": [
+    "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/run_index_repair_real.py",
+    "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/run_index_repair_real.py current-inventory"
+  ],
+  "failed_invocations": ["b7c9c7c0-2c4f-4195-83a5-8b0314d573f8", "ecdd241d-80dd-41ae-a2eb-340b292b7981"],
+  "collector_exit_codes": [1, 1],
+  "protected_states_unchanged": true,
+  "finding": "WDQ-INDEX: changed relevant inputs scripts/test_workflow_delivery_transaction.py and scripts/workflow_delivery_transaction.py against historical typed/input-manifest.json.",
+  "cause": "Historical COMPAT remains complete, so required_phase selects verify. validate_proof correctly rejects the old input manifest. A complete replacement producer packet also needs the not-yet-captured real-roadmap cases. Current bounded repair approval explicitly retains RECHECK and forbids another step; validate_transition forbids discarding completed verification without owner rollback.",
+  "disposition": "Retain failures and request independent lifecycle assessment. Do not refresh old proof, disable checks, replace real inputs with synthetic rows or roll back historical completion without owner authority.",
+  "successful_real_captures": 0,
+  "remaining_real_captures": 24,
+  "publication_verified": false,
+  "activation_performed": false
+}
