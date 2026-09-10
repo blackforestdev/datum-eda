@@ -1,0 +1,449 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "reviewer_session": "wdq-independent-review-20260906",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "producer_candidate": "06bafeb9979dce91ab710bfaaff7f8f9ca3e72f2",
+  "producer_packet_sha256": "fa0b802e11d5dc266f7f3e78bde8a1ac91ac6c1ae4165df8858b56b94c158fee",
+  "authority_sha256": "b3130c9322932a9d26e967d6ecb55c8b1591892636d26ac3cdd98e175475ee39",
+  "input_manifest_sha256": "468e860972610aca1b57e152e34f2ca817a74b7412cbd25e0492e362ae771857",
+  "technical_disposition": "approve",
+  "validation": {
+    "candidate": "06bafeb9979dce91ab710bfaaff7f8f9ca3e72f2",
+    "producer_packet_sha256": "fa0b802e11d5dc266f7f3e78bde8a1ac91ac6c1ae4165df8858b56b94c158fee",
+    "replay": {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/replay.json",
+      "sha256": "bbfdcf2ae7a2a107ba3cbdb3aa2358ec85afec072323ecb9fd5348f83f151f83"
+    },
+    "review": {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/review.json",
+      "sha256": "b352f9b2fe495ba95f46f468f3ca3c2e34b15cb1464857e2ee339ce1b70d5789"
+    },
+    "review_sha256": "10f3ffee6c48d247bb88ecf1a4124b293daeb2b3f8e5a4bb651bbca28dae843b",
+    "proof_environment_correlations_independent_review": "pass",
+    "correlated_event_blobs": 6,
+    "expected_owner_disposition_refusal": {
+      "code": "WDQ-DEFECT",
+      "detail": "undisposed defect dat-wdq-index-refresh-ogw",
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/review.json"
+    },
+    "observations": 1314,
+    "pid": 204631,
+    "started_ns": 1789039761888882546,
+    "finished_ns": 1789039785355284607,
+    "helper_sha256": "d7cde59e510c3661dd0fe0ca0c2ad96961dedbfd62a18d575ea18448494a25b8",
+    "technical_scope": "Independent review of exact producer packet and frozen runtime. Not final candidate publication or installed activation.",
+    "remaining": "Later exact candidate delta/source-history inspection before RECHECK closeout and I04 presentation; five owner dispositions and strict full-evidence I04 inspection.",
+    "independent_recheck_complete": false,
+    "publication_authorized": false,
+    "activation_performed": false
+  },
+  "overlay": {
+    "output": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/typed-review-attempt-02",
+    "review": {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/review.json",
+      "sha256": "b352f9b2fe495ba95f46f468f3ca3c2e34b15cb1464857e2ee339ce1b70d5789"
+    },
+    "replay": {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/replay.json",
+      "sha256": "bbfdcf2ae7a2a107ba3cbdb3aa2358ec85afec072323ecb9fd5348f83f151f83"
+    },
+    "review_sha256": "10f3ffee6c48d247bb88ecf1a4124b293daeb2b3f8e5a4bb651bbca28dae843b",
+    "inventory": [
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/review.json",
+        "sha256": "b352f9b2fe495ba95f46f468f3ca3c2e34b15cb1464857e2ee339ce1b70d5789",
+        "size": 1227
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-events.json",
+        "sha256": "8b8dc60234119bea7e816ee7c5b62780e02214c5626d69bf4404f9c3b263d33b",
+        "size": 18283
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-observations.json",
+        "sha256": "ddc48dece7d72f31cc8fa88fa5709785d79468e0a342c50afccf281964de9251",
+        "size": 88584
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-roles.json",
+        "sha256": "de336052922183cb6544754dfe1565c83eaeb46cadca34dc090001dd081f2563",
+        "size": 3603
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-events.json",
+        "sha256": "0be321cbc6391e325e0608fca4e26043540db136568a20568a06bacb1e4f8769",
+        "size": 120797
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-observations.json",
+        "sha256": "104d7908a5364251d2db441cf0b509590525321480c2ffc62ea12cac3862d19e",
+        "size": 619831
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-roles.json",
+        "sha256": "ddeee3b6a01e20c909bfd703563220da2ca78b69a3b77d1bbcd1ece0079e28ba",
+        "size": 3603
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-events.json",
+        "sha256": "679b7e58af6c87624768799af17eb2d31bf02a5a21b35d96847c36c05f3f63ab",
+        "size": 80133
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-observations.json",
+        "sha256": "58eb60309539315df0776e558b9422ff6fdcd09e8797a19bd92a6d79fb8fad26",
+        "size": 409138
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-roles.json",
+        "sha256": "1303ef3bf478791caa1ed7ba52828c139ef38fdce6d2669a53a09d69ba4c61d8",
+        "size": 3603
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-events.json",
+        "sha256": "beb1726d8fb4a9a19052e38fdf396f3210bffcd23257cf92e0716484448b9b9a",
+        "size": 78013
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-observations.json",
+        "sha256": "b608273914d5d5cf53e9dd1437b3bd41d6f1d48b12d7ab671e034900db355612",
+        "size": 397361
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-roles.json",
+        "sha256": "00b4531fac6075dfb8685977338042840774fee6e1d78a3d8b1769f8a67020ae",
+        "size": 3603
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-events.json",
+        "sha256": "c19412e197b37e045445335a6fd9cce269d834b8e61740c18d1101d7eff671fc",
+        "size": 108583
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-observations.json",
+        "sha256": "9e4ff917076ce0935f40c323b213e077e0e49b39372868007236f221fdc4897d",
+        "size": 556631
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-roles.json",
+        "sha256": "08194b40fe83142ea41609cc9eda08ad6818c09d40fe90cc5b333fe7f71c3969",
+        "size": 3603
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-events.json",
+        "sha256": "e0a097f0cd0f433543dc67f070594ea6e51816cb63dfad03b878c7c387b51372",
+        "size": 163036
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-observations.json",
+        "sha256": "168bce542bce6803452c3efb099da8d810f470df315fea05532208162460ea75",
+        "size": 833301
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-roles.json",
+        "sha256": "3d769e4dc0d5c4cf6b735fb8206fbb2d8d163a093aba42ce7128c5bd49c7b2b7",
+        "size": 3603
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-observation.json",
+        "sha256": "28dbc699ea159593bda55248d9489f537b21be27389c7c3fdf83fdee41752585",
+        "size": 27320
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-receipt.json",
+        "sha256": "030ba75b6e3595e3f1316af6b16c8da95dc19a9f83027fd5afe1928b1c7cee7f",
+        "size": 482
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/focused-workspace.json",
+        "sha256": "9a81e6bca14151a7b7bdacc455f19fab49b72fe63b7e131fbd5ae67a65458a8f",
+        "size": 11499
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/pre-review-inspection.json",
+        "sha256": "549ce4cd678e625ccc02e2d6e66c754dfd2702b740d374b200a08897d7ef490a",
+        "size": 2566196
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/provenance.json",
+        "sha256": "a14305a56e65c84d228be2c7383881f499124c151ce3336c157a058814ca0ae8",
+        "size": 36341
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/registry.json",
+        "sha256": "0743565da471f0a5cdf8b601826eadf65c5bde2bd531342f9981c0d825252811",
+        "size": 205854
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/replay.json",
+        "sha256": "bbfdcf2ae7a2a107ba3cbdb3aa2358ec85afec072323ecb9fd5348f83f151f83",
+        "size": 38055
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/validation.json",
+        "sha256": "d9f8e0a49847f23c0e3caab570230f2be94741f39770f593c02e544f12d4d9d6",
+        "size": 1602
+      }
+    ],
+    "inventory_sha256": "50269f52e06a1ad462555ba524708242b16760a8b52612e7ae8ec908e03f40e0",
+    "main_artifact_commit": "186475d83e967926e6f7b333ff9d200f96bdb5c2",
+    "observations": 1314,
+    "technical_review": "approve",
+    "independent_recheck_complete": false
+  },
+  "evidence_accounting": {
+    "required_fresh_observations": 1314,
+    "original": 1123,
+    "additional_workspace": 191,
+    "focused_tests": 45,
+    "focused_matrix_credit": 0,
+    "actual_main_pre_review_inspection": 1,
+    "source_modules_built_in_memory": 151,
+    "source_inputs": 164,
+    "binding": "Same exact producer input-manifest/fixture/environment Blob hashes and build command/toolchain/interpreter identity; independent session and all raw event/invocation IDs disjoint. All required scenario assertions pass. Contract N/A dimensions and reasons explicitly enumerated in provenance."
+  },
+  "independence": "This reviewer did not implement production source or create producer proof. Only independently executed captures, construction and read-only inspection observations supply the verdict. Original timestamps are preserved, including captures before formal closeout.",
+  "findings": [
+    {
+      "issue_id": "dat-wdq-workspace-inputs-zmt",
+      "severity": "blocking",
+      "technical_assessment": "Owner-pinned classification and source-only startup were independently exercised across exact172 workspace cases, mixed real24, and current-source focused45. Unknown/changed source, forged caches, policy drift and explicit proof inputs continue to refuse. No blanket ignore filtering or owner-file deletion was used. Installed verification and exact owner resolution remain pending."
+    },
+    {
+      "issue_id": "dat-wdq-index-refresh-ogw",
+      "severity": "blocking",
+      "technical_assessment": "Exact post-setup replay includes stale index/cache inputs and divergent staged/history surfaces. All1314 required before/after protected states match; the original selector index-byte mutation failure remains historical. Repair uses isolated temporary index and selected-index untracked enumeration; no GIT_OPTIONAL_LOCKS workaround counts as repair proof. Exact owner resolution remains pending."
+    },
+    {
+      "issue_id": "dat-wdq-proof-renewal-cycle-qgb",
+      "severity": "blocking",
+      "technical_assessment": "Explicit owner-approved reopening, identified prospective baseline and exact paired real fixtures allowed honest producer then independent proof renewal. Historical failed old-manifest captures and prior approvals remain intact. This verifies the authorized sequencing, not an autonomous right to reopen checkpoints; exact owner resolution remains pending."
+    },
+    {
+      "issue_id": "dat-wdq-review-publication-cycle-a1y",
+      "severity": "blocking",
+      "technical_assessment": "Actual supported --inspect-review ran against clean real main e54fe and candidate ee342 with unchanged protected state and evidence/publication/activation flags false. Producer and independent packets no longer depend on their own later full-evidence inspection. Later candidate delta reconciliation and renewed exact-publication inspection are still required before RECHECK closeout/I04 presentation; strict owner-only I04 checks remain. Exact owner resolution remains pending."
+    },
+    {
+      "issue_id": "dat-wdq-test-default-branch-apx",
+      "severity": "nonblocking",
+      "technical_assessment": "The first isolated45 run passed44 and correctly refused attached-main preflight because plain git init defaulted to master. A distinct45 run passed with only a pinned reviewer-owned init.defaultBranch=main profile; no runtime/test source changed. This is retained non-hermetic test-setup debt, not a fixed defect. Owner DEFER or other explicit disposition remains required."
+    }
+  ],
+  "owner_receipt": null,
+  "owner_disposition_refs": [
+    null,
+    null,
+    null,
+    null,
+    null
+  ],
+  "prior_dispositions": "Five earlier owner resolutions remain historical and scoped to their earlier packet/replay; they do not resolve these five findings or accept this review.",
+  "failures_preserved": "Expired original ownership lease; original bundle-ref seed failure; actual180s hook timeout of undetermined cause; first44/45 default-branch test result. The first typed assembly also failed before artifacts/verdict on a producer-row schema assumption; v2 reads actual hash-bound raw trace identities. No runtime/source/clock/timeout was changed and no successful capture was rerun to conceal failure.",
+  "helper_review": {
+    "commit": "186475d83e967926e6f7b333ff9d200f96bdb5c2",
+    "assessment": "No blocking issue found in bounded exact producer/review import. Fixed Git producer pin, complete hashed overlay inventory, lane checks and symlink refusal preserve payload identity. Six tests exercise import only, not independent review or publication; final prepared candidate must separately validate the exact review and undergo independent delta inspection."
+  },
+  "publication_handoff": {
+    "payload": "Import proof.json and paired-real-typed/ only from exact06ba. Import canonical review.json and independent-sequencing-typed/ only from this exact overlay inventory. Four previously committed independent archives are referenced from main; do not replace them with different bytes.",
+    "reviewed_earlier_base": "e54fe5562174ef3f3c6748bb2c9c649626e2f652",
+    "reviewed_earlier_candidate": "ee3425a23d3c220b9303d26ebfa89f0ae6f1b19d",
+    "remaining_before_i04": "Prepare an actual-main descendant preserving all other55 Frontier lanes and canonical tracker changes. Independently reconcile every later evidence/helper/intake/review delta against the inspected identities and run the exact renewed supported source/history inspection. No current-source matrix rerun is implied unless relevant source/input/authority actually changes.",
+    "owner_boundary": "Five exact owner dispositions, final full-evidence I04 inspection and owner-controlled promotion/installed verification remain required. This report does not authorize activation or mark RECHECK complete."
+  },
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-review.tar.xz",
+    "sha256": "e249eb82d86fb98c5804147f216f1b09ec527b68797ff4732b848f07c11f7868",
+    "size": 793896,
+    "member_count": 36,
+    "every_member_rehashed": true
+  },
+  "archive_members": [
+    {
+      "path": "construction/assemble-typed-review-v2.py",
+      "sha256": "ebefe77f4e79bbd4752ed0ae99e2631f6a86ac85e0a736c52256cece6a795b30",
+      "size": 977
+    },
+    {
+      "path": "construction/assemble-typed-review.py",
+      "sha256": "d7cde59e510c3661dd0fe0ca0c2ad96961dedbfd62a18d575ea18448494a25b8",
+      "size": 18829
+    },
+    {
+      "path": "construction/typed-review-attempt-01-process.json",
+      "sha256": "4b570eef6b9adeda8ae9b5e9af618706157c1c52d100c2a5d798efa1a530c92d",
+      "size": 434
+    },
+    {
+      "path": "construction/typed-review-attempt-01-stderr.bin",
+      "sha256": "75521e9cce4dac247e10a63b00b604143d83fe3d9a562aa41eecbac414721b5c",
+      "size": 584
+    },
+    {
+      "path": "construction/typed-review-attempt-01-stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "construction/typed-review-attempt-02-process.json",
+      "sha256": "b10b17fd6d72cdfc805ea592eb594e12ce52ec082345d6a1ade7c33835cbdcac",
+      "size": 427
+    },
+    {
+      "path": "construction/typed-review-attempt-02-result.json",
+      "sha256": "cb304fdf3df99c99e9748dd75d87a8cee34b3b720f804b8e32a6b366e7fc35a3",
+      "size": 7795
+    },
+    {
+      "path": "construction/typed-review-attempt-02-stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "construction/typed-review-attempt-02-stdout.bin",
+      "sha256": "6cc44350df5203153ad7594548cea0dc707d12d2fb59e0fe6dc51608bbc6b94c",
+      "size": 6989
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/review.json",
+      "sha256": "b352f9b2fe495ba95f46f468f3ca3c2e34b15cb1464857e2ee339ce1b70d5789",
+      "size": 1227
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-events.json",
+      "sha256": "8b8dc60234119bea7e816ee7c5b62780e02214c5626d69bf4404f9c3b263d33b",
+      "size": 18283
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-observations.json",
+      "sha256": "ddc48dece7d72f31cc8fa88fa5709785d79468e0a342c50afccf281964de9251",
+      "size": 88584
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-roles.json",
+      "sha256": "de336052922183cb6544754dfe1565c83eaeb46cadca34dc090001dd081f2563",
+      "size": 3603
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-events.json",
+      "sha256": "0be321cbc6391e325e0608fca4e26043540db136568a20568a06bacb1e4f8769",
+      "size": 120797
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-observations.json",
+      "sha256": "104d7908a5364251d2db441cf0b509590525321480c2ffc62ea12cac3862d19e",
+      "size": 619831
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-roles.json",
+      "sha256": "ddeee3b6a01e20c909bfd703563220da2ca78b69a3b77d1bbcd1ece0079e28ba",
+      "size": 3603
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-events.json",
+      "sha256": "679b7e58af6c87624768799af17eb2d31bf02a5a21b35d96847c36c05f3f63ab",
+      "size": 80133
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-observations.json",
+      "sha256": "58eb60309539315df0776e558b9422ff6fdcd09e8797a19bd92a6d79fb8fad26",
+      "size": 409138
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-roles.json",
+      "sha256": "1303ef3bf478791caa1ed7ba52828c139ef38fdce6d2669a53a09d69ba4c61d8",
+      "size": 3603
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-events.json",
+      "sha256": "beb1726d8fb4a9a19052e38fdf396f3210bffcd23257cf92e0716484448b9b9a",
+      "size": 78013
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-observations.json",
+      "sha256": "b608273914d5d5cf53e9dd1437b3bd41d6f1d48b12d7ab671e034900db355612",
+      "size": 397361
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-roles.json",
+      "sha256": "00b4531fac6075dfb8685977338042840774fee6e1d78a3d8b1769f8a67020ae",
+      "size": 3603
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-events.json",
+      "sha256": "c19412e197b37e045445335a6fd9cce269d834b8e61740c18d1101d7eff671fc",
+      "size": 108583
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-observations.json",
+      "sha256": "9e4ff917076ce0935f40c323b213e077e0e49b39372868007236f221fdc4897d",
+      "size": 556631
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-roles.json",
+      "sha256": "08194b40fe83142ea41609cc9eda08ad6818c09d40fe90cc5b333fe7f71c3969",
+      "size": 3603
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-events.json",
+      "sha256": "e0a097f0cd0f433543dc67f070594ea6e51816cb63dfad03b878c7c387b51372",
+      "size": 163036
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-observations.json",
+      "sha256": "168bce542bce6803452c3efb099da8d810f470df315fea05532208162460ea75",
+      "size": 833301
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-roles.json",
+      "sha256": "3d769e4dc0d5c4cf6b735fb8206fbb2d8d163a093aba42ce7128c5bd49c7b2b7",
+      "size": 3603
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-observation.json",
+      "sha256": "28dbc699ea159593bda55248d9489f537b21be27389c7c3fdf83fdee41752585",
+      "size": 27320
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-receipt.json",
+      "sha256": "030ba75b6e3595e3f1316af6b16c8da95dc19a9f83027fd5afe1928b1c7cee7f",
+      "size": 482
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/focused-workspace.json",
+      "sha256": "9a81e6bca14151a7b7bdacc455f19fab49b72fe63b7e131fbd5ae67a65458a8f",
+      "size": 11499
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/pre-review-inspection.json",
+      "sha256": "549ce4cd678e625ccc02e2d6e66c754dfd2702b740d374b200a08897d7ef490a",
+      "size": 2566196
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/provenance.json",
+      "sha256": "a14305a56e65c84d228be2c7383881f499124c151ce3336c157a058814ca0ae8",
+      "size": 36341
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/registry.json",
+      "sha256": "0743565da471f0a5cdf8b601826eadf65c5bde2bd531342f9981c0d825252811",
+      "size": 205854
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/replay.json",
+      "sha256": "bbfdcf2ae7a2a107ba3cbdb3aa2358ec85afec072323ecb9fd5348f83f151f83",
+      "size": 38055
+    },
+    {
+      "path": "overlay/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/validation.json",
+      "sha256": "d9f8e0a49847f23c0e3caab570230f2be94741f39770f593c02e544f12d4d9d6",
+      "size": 1602
+    }
+  ],
+  "scope_limits": "Infrastructure pipes/protocol and governed snapshot tests only, not native product/GUI acceptance. Raw fixture/object prerequisites remain in retained Git-common stores and producer archives; no standalone portable replay claim.",
+  "independent_recheck_complete": false,
+  "publication_authorized": false,
+  "activation_performed": false
+}
