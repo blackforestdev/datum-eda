@@ -9908,8 +9908,8 @@
               "requests": [
                 {
                   "id": "ACTIVATE",
-                  "question": "The owner approved the coordination revision: reconcile the Preferences handoff with its existing session before freezing replacement activation authority. The reviewed 4ddfe412 packet is not selected for activation because it would preserve the old Preferences hold. The outgoing Beads handoff is awaiting the existing session's exact boundary and owner-review evidence; no product acceptance is implied. PM042 ratification and exact replacement activation remain separate owner decisions.",
-                  "recommended_response": "Do not repeat preparation or coordination approval. Obtain the existing Preferences session's handoff under current installed authority, reconcile the exact product-authorized transition without taking its ownership, then present the replacement activation packet. Require installed verification before I04 completion; do not keep development paused for the later adoption cohorts.",
+                  "question": "Standing owner authorization through all eleven milestones is recorded. I04 is correcting the workflow-imposed external terminal-owner freeze; Preferences GUI measurements and acceptance are not prerequisites for this infrastructure repair. The bounded replacement has eleven focused CLI/selector/predicate regressions and nineteen existing boundary tests but is not installed. Exact normative reconciliation, candidate evidence and installed verification remain required; no product acceptance or completed I04 is asserted.",
+                  "recommended_response": "Use the recorded standing authorization instead of requesting routine approval again. Finish the terminal-owner repair and exact promotion checks while preserving Preferences ownership, source permissions and its own acceptance requirements. Do not activate the superseded 4ddfe412 packet or label old proof as validation of modified runtime bytes.",
                   "source_ref": {
                     "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
                     "marker": "ACTIVATE"
