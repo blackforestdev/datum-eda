@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "reviewer_session": "wdq-independent-review-20260906",
+  "runtime_source": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "candidate": "facf48f8617546c7a711d3b45be0700979a36df6",
+  "producer_packet_sha256": "02ce61ee28c450776a575330ce17aca93f2a8e4edc7e4c704cf299efd69cc8ce",
+  "independent_replay_sha256": "63b1128290ea452dd5333ffac0caf7b0ab09855667dbda2fe314133ca9d231cf",
+  "independent_review_file_sha256": "a949aeb8d5052231f27bc3a0041cf693d1c7736109c2bde931a0933a8e044c2d",
+  "disposition": "revise",
+  "S05_outcome_and_scope": "unverified",
+  "observations": 1314,
+  "original_inventory": 1123,
+  "additional_workspace_observations": 191,
+  "correlated_event_blobs": 6,
+  "not_applicable_dispositions_preserved": 27,
+  "validation": {
+    "shape_environment_correlations": "pass",
+    "full_proof": "Expected WDQ-RESULT refusal: INFRA-S05 required scenario not passing.",
+    "independent_approval": "Expected WDQ-REVIEW refusal: independent review has not approved.",
+    "scope": "Actual source-bound reviewer observations/build and disjoint identities; original execution timestamps retained, not reinterpreted as executions after closeout. Exact final-publication inspection remains missing."
+  },
+  "blocking_findings": ["dat-wdq-index-refresh-ogw", "dat-wdq-proof-renewal-cycle-qgb", "dat-wdq-workspace-inputs-zmt", "dat-wdq-review-publication-cycle-a1y"],
+  "owner_disposition_refs": null,
+  "owner_receipt": null,
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-index-repair-draft.tar.xz",
+    "sha256": "aa9366ff94acab03c86cc00e1fa0c6c5f2b3e3e3a5676906d3cc642447d9d32b",
+    "tar_compare_exit_code": 0,
+    "freeze_manifest_sha256": "c5e7eefb31bc569450539d9c59ddfd304e192681f9cdae02c330bdf61f02b2c6",
+    "frozen_files_verified": 47,
+    "scope": "Both virtual drafts, both helper sources, v2 process/raw output, independent report and freeze manifest. Embedded duplicate capture archives are omitted: eight v2 archive blobs were verified byte-identical to already committed repository artifacts. Those referenced archives and original raw fixtures remain separately required."
+  },
+  "preserved_failure": "V1 correctly failed WDQ-TRUST because its packaging harness lacked verified source-only startup. V2 installs the unchanged source-only bootstrap before repository imports; the successful packaging exit does not convert intended full-proof/review refusals into approval.",
+  "tracker_limit": "Candidate facf predates the new a1y intake export; eventual complete validation also needs that exact recorded issue imported. The provisional draft does not claim unknown-defect validation passed.",
+  "full_review_complete": false,
+  "publication_verified": false,
+  "activation_performed": false
+}

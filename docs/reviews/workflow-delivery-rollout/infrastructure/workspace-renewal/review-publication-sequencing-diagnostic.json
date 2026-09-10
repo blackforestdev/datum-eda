@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-review-publication-cycle-a1y",
+  "runtime_source": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "actual_main": "8a5beeea6024297b49a887ad45e5b4a486c8161e",
+  "candidate": "facf48f8617546c7a711d3b45be0700979a36df6",
+  "requirements_observed": [
+    "Execution-plan WDQ-RECHECK requires renewed exact-publication inspection before presenting WDQ-I04.",
+    "Candidate infrastructure contract WDQ-INFRA-WORKSPACE group 8 includes independent exact-publication inspection in INFRA-S05.",
+    "inspect_promotion_candidate calls promotion_boundary, which requires both views to select claim-free owner-decision WDQ-I04 with WDQ-RECHECK already complete; then validates an approving independent review.",
+    "The same boundary also requires both baseline and candidate to carry the new schema-2 verification/review mapping. Actual main has no rollout delivery mapping; its existing checker accepts only legacy contract_path/checkpoints fields. Initial old-to-new mapping handoff must be reconciled explicitly."
+  ],
+  "read_only_reproduction": {
+    "function": "workflow_delivery_activation_preflight.promotion_boundary",
+    "inputs": "Tree(candidate).active_frontier, Tree(actual_main).active_frontier, exact candidate coverage policy, empty touched-path list to isolate lifecycle prerequisites.",
+    "diagnostics": [
+      {
+        "case": "actual_committed_lifecycle",
+        "refusal": "WDQ-PREFLIGHT: publication base and candidate must select claim-free WDQ-I04"
+      },
+      {
+        "case": "in_memory_owner_boundary_only_diagnostic",
+        "scope": "Change only authorization, claim and selected owner step in disposable in-memory dictionaries; no candidate or actual status changed.",
+        "refusal": "WDQ-PREFLIGHT: publication requires completed WDQ-RECHECK"
+      },
+      {
+        "case": "in_memory_predecessor_only_diagnostic",
+        "scope": "Additionally set RECHECK complete only in disposable in-memory dictionaries to expose the next prerequisite; not a passing inspection or real completion claim.",
+        "refusal": "WDQ-PREFLIGHT: publication requires the renewed verification and independent-review mapping"
+      }
+    ],
+    "diagnostic_program_exit_codes": [0, 0],
+    "meaning": "The programs successfully asserted the expected refusals. They did not pass promotion inspection.",
+    "candidate_written": false,
+    "main_mutated": false
+  },
+  "independent_conclusion": "The pending INFRA-S05 inspection prevents an honest unqualified review approval. The independent reviewer is retaining the actual 1314 replay observations with explicitly incomplete S05/full-review status, not inventing approval to satisfy the inspector.",
+  "required_owner_boundary": "Explicitly reconcile review/inspection ordering and the initial legacy-to-new mapping handoff while preserving independent inspection as mandatory before activation, exact current-main publication checks, all 11 existing steps and all product/trust boundaries. No mechanism amendment, source repair or completion waiver is enacted by this diagnostic.",
+  "runtime_changed": false,
+  "evidence_digests_refreshed": false,
+  "publication_verified": false,
+  "activation_performed": false
+}
