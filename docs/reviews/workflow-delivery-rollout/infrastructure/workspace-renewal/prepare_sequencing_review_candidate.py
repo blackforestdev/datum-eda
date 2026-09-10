@@ -169,6 +169,11 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
     review = {"delta_sha256": sha256(canonical_json(delta)), "paths": delta["touched_paths"]}
     result = inspect_review_candidate(root, base=base, candidate=candidate, authority=candidate,
         environment_path="specs/workflow_delivery/rollout.environments.json", publication_review=review)
+    if review_overlay is not None:
+        from workflow_delivery_review import validate_independent_review
+        from workflow_delivery_trust import Trust
+        validate_independent_review(prepared, contract, proof,
+            authority_sha256(prepared, contract), Trust(prepared, candidate, base), item, environment)
     assert git("rev-parse", "HEAD").decode().strip() == base and not git("status", "--porcelain")
     print(json.dumps({"base": base, "candidate": candidate, "ref": ref,
         "publication_review": review, "inspection": result,
@@ -176,7 +181,8 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
             "producer_candidate": PRODUCER, "packet_sha256": PACKET,
             "review_sha256": review_digest, "review_inventory_sha256": review_inventory_digest,
             "review_inventory": review_inventory,
-            "scope": "Exact evidence import and producer validation; independent final-delta review still required."},
+            "independent_review_validation": "pass",
+            "scope": "Exact evidence import and producer/review validation; independent final-delta review still required."},
         "activation_performed": False, "scope": "Preparation and library inspection only; supported CLI/preflight capture still required."}, indent=2))
 
 
