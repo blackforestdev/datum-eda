@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-review-publication-cycle-a1y",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "capture_store": ".git/datum-wdq/proposals/sequencing-evidence-20260910/s01",
+  "recipe": {
+    "helper": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renew_index_repair_evidence.py",
+    "function": "run_s01",
+    "pin": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+    "runtime": ".git/datum-wdq/proposals/sequencing-repair-20260910",
+    "store": ".git/datum-wdq/proposals/sequencing-evidence-20260910",
+    "resume": false,
+    "interpreter_flags": ["-I", "-S", "-B"],
+    "source_only_bootstrap_sha256": "605476331bc4e9a3146f8d3376ee5b8d4f14d3057c5e0023294c4c653f40f5cf",
+    "scope": "Original run_s01 recipe with explicit frozen source pin and separate destination; capture functions and report-case inventory imported from verified source-only runtime. Existing default pin and historical captures unchanged."
+  },
+  "exit_code": 0,
+  "observations": 36,
+  "ordered_case_surface_phase_inventory_preserved": true,
+  "all_expected_outcomes": true,
+  "observations_sha256": "d17ea172ab4f63a6b439f01c1c27a66e98a296c42c03d2c79f41d282a3a1a07c",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-s01-captures.tar.xz",
+    "sha256": "ddc7bb19c573c1158e14b1074b7cff89af03eca05c97b25cc5de694467a44b93",
+    "tar_compare_exit_code": 0,
+    "scope": "Raw case captures, assessments and complete observations. Duplicate fixture and prepared packet directories omitted; exact source and local fixtures remain retained."
+  },
+  "limits": "Original 36 mode/refusal and recovery observations only. The separate five primary baseline observations remain in sequencing-baseline-observation.json. No duplicate count, full matrix completion, independent replay, product evidence or activation.",
+  "complete_matrix": false,
+  "activation_performed": false
+}

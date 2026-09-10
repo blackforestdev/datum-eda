@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-review-publication-cycle-a1y",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "batch": "workspace-policy-legacy",
+  "count": 75,
+  "observations_sha256": "4f4294501dcef22272982cb8726b5ac9038684d6c2dcceaf8b97dedcd4f7f1f5",
+  "process_exit_code": 0,
+  "expected_outcomes_verified": true,
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-policy-captures.tar.xz",
+    "sha256": "96b73f04e54df730f1f3466b8d678be4e1911c88cb22a73ce1b8fd3706d99ff9",
+    "tar_compare_exit_code": 0,
+    "scope": "Raw capture and command/process records; duplicate fixture directories omitted."
+  },
+  "limits": "Producer policy and legacy-cache lifecycle observations, not independent replay or complete rollout acceptance.",
+  "activation_performed": false
+}

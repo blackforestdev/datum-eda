@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-review-publication-cycle-a1y",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "capture_store": ".git/datum-wdq/proposals/sequencing-evidence-20260910",
+  "batches": [
+    {
+      "batch": "workspace-proof-input",
+      "count": 45,
+      "observations_sha256": "017dba61b090d2a5638bfefde47429423ffb4c78d2b747158c06c7e04c784254",
+      "process_exit_code": 0,
+      "expected_outcomes_verified": true,
+      "stdout_sha256": "48ef3b40ffc99231d361e271fe277d32ae36087c351bbd93e83a7275829e421a"
+    },
+    {
+      "batch": "owner-reopened/real-roadmap",
+      "count": 15,
+      "observations_sha256": "c3918118aa58a2c282818298b032321d4598efc5af65a13f63133c7aadc21619",
+      "process_exit_code": 0,
+      "expected_outcomes_verified": true,
+      "stdout_sha256": "a9ea9859a80d0aa86a5b8b4163ac6db2e0f5d57939cf9c7300d57fec3f8caede",
+      "fixture_commit": "377323b29705ccccd6f8fa91f663d7d91c6d03c4"
+    }
+  ],
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-proof-real-captures.tar.xz",
+    "sha256": "cf1ebbbb581d8d8b1ea36666f16cec3926c97ef85b2ded96eb4f7ac3a68e1f04",
+    "tar_compare_exit_code": 0,
+    "scope": "Raw captures, inventories and exact command/process records, omitting duplicate fixture directories.",
+    "observation_retry": "An early comparison encountered the archive while its writer was still live and failed with an incomplete-format error. After the same writer exited zero, comparison passed; only the completed archive hash is recorded."
+  },
+  "limits": "Producer evidence only. Policy/legacy and current-inventory batches and full typed assembly remain separate obligations. No installed-main, independent replay, activation or native-adoption claim.",
+  "complete_matrix": false,
+  "activation_performed": false
+}
