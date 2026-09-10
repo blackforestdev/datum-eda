@@ -1,6 +1,9 @@
 """Real index/revision/worktree diff capture, never product proof."""
 
+import os
+import shutil
 import unittest
+from unittest.mock import patch
 
 from workflow_delivery_io import DeliveryInputError
 from workflow_delivery_test_support import Fixture
@@ -28,6 +31,70 @@ class TransactionPathsTest(unittest.TestCase):
         self.f.write(".gitignore", b"src/generated.py\n")
         self.f.write("src/generated.py", b"generated\n")
         self.assertEqual(["src/generated.py", "src/new.py", "src/read.py"], self.changed())
+
+    def stale_stat_cache(self):
+        source = self.f.root / "src/read.py"
+        copy = source.with_suffix(".copy")
+        shutil.copy2(source, copy)
+        copy.replace(source)
+
+    def test_stale_stat_cache_does_not_write_index_or_report_unchanged_file(self):
+        self.stale_stat_cache()
+        index = self.f.root / ".git/index"
+        before = index.read_bytes()
+        self.assertEqual([], self.changed())
+        self.assertEqual(before, index.read_bytes())
+
+    def test_stale_stat_cache_keeps_real_changes_and_index_bytes(self):
+        self.stale_stat_cache()
+        self.f.write("src/unscoped.py", b"real new input\n")
+        index = self.f.root / ".git/index"
+        before = index.read_bytes()
+        self.assertEqual(["src/unscoped.py"], self.changed())
+        self.assertEqual(before, index.read_bytes())
+
+    def test_worktree_diff_preserves_selected_and_default_indexes(self):
+        selected = self.f.root / ".git/selected-index"
+        default = self.f.root / ".git/index"
+        shutil.copyfile(default, selected)
+        self.stale_stat_cache()
+        before = (selected.read_bytes(), default.read_bytes())
+        with patch.dict(os.environ, {"GIT_INDEX_FILE": str(selected)}):
+            self.assertEqual([], self.changed())
+        self.assertEqual(before, (selected.read_bytes(), default.read_bytes()))
+
+    def test_split_index_and_shared_indexes_stay_unchanged(self):
+        self.f.git("update-index", "--split-index")
+        self.stale_stat_cache()
+        gitdir = self.f.root / ".git"
+        names = [gitdir / "index", *gitdir.glob("sharedindex.*")]
+        before = {str(p): p.read_bytes() for p in names}
+        self.assertEqual([], self.changed())
+        self.assertEqual(before, {str(p): p.read_bytes() for p in names})
+        self.assertEqual(set(before), {str(gitdir / "index"), *map(str, gitdir.glob("sharedindex.*"))})
+
+    def test_diff_failure_cleans_private_index_without_changing_original(self):
+        self.stale_stat_cache()
+        tree = Tree(self.f.root)
+        original = tree.git
+        index = self.f.root / ".git/index"
+        before = index.read_bytes()
+        def refuse(*args, **kwargs):
+            if "diff" in args:
+                raise RuntimeError("diagnostic diff failure")
+            return original(*args, **kwargs)
+        with patch.object(tree, "git", side_effect=refuse):
+            with self.assertRaisesRegex(RuntimeError, "diagnostic diff failure"):
+                self.changed(tree)
+        self.assertEqual(before, index.read_bytes())
+        self.assertEqual([], list(index.parent.glob(".datum-wdq-index-*")))
+
+    def test_missing_index_is_not_created_by_worktree_inspection(self):
+        index = self.f.root / ".git/index"
+        index.unlink()
+        self.assertEqual(["src/read.py"], self.changed())
+        self.assertFalse(index.exists())
+        self.assertEqual([], list(index.parent.glob(".datum-wdq-index-*")))
 
     def test_index_ignores_unstaged_repair_and_untracked_inputs(self):
         self.f.write("src/read.py", b"staged change\n")

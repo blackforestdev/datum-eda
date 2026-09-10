@@ -4,6 +4,10 @@ The caller owns baseline selection and trust. This module never substitutes
 HEAD for a missing baseline, chooses a task, or grants mutation permission.
 """
 
+import os
+from pathlib import Path
+import tempfile
+
 from workflow_delivery_coverage_shapes import paths
 from workflow_delivery_shapes import require
 from workflow_delivery_source_scopes import contains
@@ -28,6 +32,30 @@ def committed_production_paths(tree, roots, base_ref):
     return names
 
 
+def worktree_diff(tree, roots, base_ref):
+    # Git diff may refresh stat-cache bytes even with --no-optional-locks.
+    # Keep normal content comparison, but allow refresh only in our copy.
+    index = Path(tree.index_path) if tree.index_path else Path(tree.git(
+        "rev-parse", "--path-format=absolute", "--git-path", "index").decode().strip())
+    data = index.read_bytes() if index.exists() else None
+    descriptor, name = tempfile.mkstemp(prefix=".datum-wdq-index-", dir=index.parent)
+    private = Path(name)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            if data is not None:
+                stream.write(data)
+        if data is None:
+            private.unlink()
+        # Same directory resolves existing split-index links; disable splitting
+        # for this command so refresh cannot write shared-index state.
+        return tree.git("-c", "core.splitIndex=false", "--literal-pathspecs", "diff",
+                        "--no-ext-diff", "--no-textconv", "--no-renames", "--name-only",
+                        "-z", base_ref, "--", *roots, index_path=name)
+    finally:
+        private.unlink(missing_ok=True)
+        Path(name + ".lock").unlink(missing_ok=True)
+
+
 def changed_production_paths(tree, roots, *, base_ref, workspace=None):
     paths(roots, "production_roots")
     tree.has_commit(base_ref)
@@ -41,9 +69,7 @@ def changed_production_paths(tree, roots, *, base_ref, workspace=None):
         if tree.revision:
             changed.update(committed_production_paths(tree, roots, base_ref))
         return sorted(changed)
-    changed = tree.git("--literal-pathspecs", "diff", "--no-ext-diff",
-                       "--no-textconv", "--no-renames", "--name-only", "-z",
-                       base_ref, "--", *roots)
+    changed = worktree_diff(tree, roots, base_ref)
     # Ignored generated files can still be real build inputs. Deliberately do
     # not use --exclude-standard; the reviewed roots bound this enumeration.
     new = tree.git("--literal-pathspecs", "ls-files", "--others", "-z", "--", *roots)
