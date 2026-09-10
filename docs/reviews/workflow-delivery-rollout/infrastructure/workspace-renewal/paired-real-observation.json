@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "fixture_commit": "377323b29705ccccd6f8fa91f663d7d91c6d03c4",
+  "observations": 24,
+  "batches": {
+    "real-roadmap": {
+      "observations": 15,
+      "observations_sha256": "d82df79f130c5d139912c5088b94a8973f0b31f51163fbabb74d20394703acd2",
+      "command_sha256": "9ee3143fa33ceae3b6b63ca1728b5f27be0beb06c75ebe93bf6a5631340133e1",
+      "process_sha256": "a686f1d0b3caf39ffb5fa6e291213891f4a06328e2dea3701712b6ef5ada57e8",
+      "handoff_sha256": "1e1591783eb228f59dc42b07fa4ae57c0f8aa67b903c56918596acdf03f3c1b0",
+      "producer_exit_code": 0,
+      "all_result_and_archive_hashes_verified": true,
+      "protected_before_after_equal": true,
+      "retired_fixture": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/sequencing-paired-evidence-20260910/owner-reopened/real-roadmap/fixture-retired-after-producer",
+      "released_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/sequencing-paired-evidence-20260910/owner-reopened/real-roadmap/fixture"
+    },
+    "current-inventory": {
+      "observations": 9,
+      "observations_sha256": "25185b7895183ebc87ec17dc82a71ec906c1f5dc7890a43f3a3f5bedaad08821",
+      "command_sha256": "bafe3002aa16bead65e82fcd49b0be28901b89d7db1e88d99ab4982f08fe7a60",
+      "process_sha256": "4a037b8778bd14c45fd2ff9623d6360613b4ec31c983d31ae20de2dccc8939fe",
+      "handoff_sha256": "3e7e161311c7859e151840f9cf3c4520541003550686b75282f5112f4966f5fc",
+      "producer_exit_code": 0,
+      "all_result_and_archive_hashes_verified": true,
+      "protected_before_after_equal": true,
+      "retired_fixture": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/sequencing-paired-evidence-20260910/owner-reopened/current-inventory/fixture-retired-after-producer",
+      "released_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/sequencing-paired-evidence-20260910/owner-reopened/current-inventory/fixture"
+    }
+  },
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-captures.tar.xz",
+    "sha256": "98fb3f8b8f5a59e271709e4605304a2b946302873c19b9422953be854bd15b24",
+    "size": 16613504,
+    "file_members_verified": 257
+  },
+  "retention_scope": "Exact command records retain the older helper used by real-roadmap and the strengthened literal-blob checker used by current-inventory. Per-case archives retain mutable Git metadata, ignored payloads and filesystem modes, with source objects supplied by the separately pinned bundle. Full independent before-state equality remains required; no retroactive stronger-check claim for the first batch.",
+  "fixture_custody": "Only terminal producer-owned fixtures moved recoverably within the existing retained store. Original paths released exclusively to independent replay; no main, historical capture, Preferences or installed-trust mutation.",
+  "assembly": {
+    "observations": 1314,
+    "ordered_case_identities_unchanged": true,
+    "replaced_real_rows": 24,
+    "other_observations_unchanged": 1290,
+    "dispatch_sha256": "112fd904f8ea5864c17a2a06480a4690b45ca8ea3a28aa2d0620ded2473fffe4",
+    "archive": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-assembled-observations.tar.xz",
+    "archive_sha256": "8d353ef0396d3ecd9e9be4743f0ada262e78d12e8926485d996499ae84b1e20b",
+    "archive_compare_exit_code": 0
+  },
+  "independent_replay_complete": false,
+  "activation_performed": false
+}
