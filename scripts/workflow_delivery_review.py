@@ -8,6 +8,7 @@ from workflow_delivery_evidence_shapes import review_sha256, review_shape
 from workflow_delivery_native import event_identities, validate_correlations, validate_environment
 from workflow_delivery_proof import _issues, packet_sha256, read_blob, validate_proof
 from workflow_delivery_shapes import require
+from workflow_delivery_enabled import validate_required_activation
 
 
 def receipt_section(raw, marker, path):
@@ -32,7 +33,12 @@ def receipt_section(raw, marker, path):
     return "\n".join(selected)
 
 
-def validate_review(tree, contract, proof, authority_digest, trust, item, environment):
+def validate_independent_review(tree, contract, proof, authority_digest, trust, item, environment):
+    """Validate replay and defect accounting, without asserting owner disposition.
+
+    The caller supplies validated producer proof and owner-selected enrollment.
+    Findings may await owner disposition; acceptance must use validate_review.
+    """
     path = contract["review_path"]
     review = review_shape(tree.json(path, committed=True), path)
     packet = packet_sha256(contract, proof, authority_digest)
@@ -55,18 +61,29 @@ def validate_review(tree, contract, proof, authority_digest, trust, item, enviro
             and proof["build"]["command"] == replay["build"]["command"]
             and proof["build"]["toolchain"] == replay["build"]["toolchain"], path,
             "independent replay must exercise the reviewed executable/build identity", "WDQ-REVIEW")
-    validate_environment(tree, replay, environment)
+    validate_environment(tree, replay, environment, contract=contract)
     original_events = validate_correlations(tree, contract, proof)
     replay_events = event_identities(tree, replay)
     require(not original_events & replay_events, path, "copied event artifact is not independent replay",
             "WDQ-REVIEW")
     validate_correlations(tree, contract, replay)
+    if item["completion"]["delivery"].get("schema_version") == 2:
+        validate_required_activation(tree, contract, proof)
+        validate_required_activation(tree, contract, replay)
     findings = {f["issue_id"]: f for f in review["findings"]}
     defects = {d for p in (proof, replay) for r in p["results"] for d in r["defects"]}
     require(defects <= set(findings), path, "every proof defect requires review disposition", "WDQ-DEFECT")
     issues = _issues(tree)
-    for issue_id, finding in findings.items():
+    for issue_id in findings:
         require(issue_id in issues, path, f"unknown defect {issue_id}", "WDQ-DEFECT")
+    return review
+
+
+def validate_defect_dispositions(tree, review, path, trust):
+    """Require exact dispositions after independent review, before acceptance/publication."""
+    findings = {f["issue_id"]: f for f in review["findings"]}
+    issues = _issues(tree)
+    for issue_id, finding in findings.items():
         reference = finding["disposition_ref"]
         require(reference is not None, path, f"undisposed defect {issue_id}", "WDQ-DEFECT")
         approved = resolve_ref(trust.authority, reference)
@@ -81,6 +98,15 @@ def validate_review(tree, contract, proof, authority_digest, trust, item, enviro
                     f"blocking defect still open: {issue_id}", "WDQ-DEFECT")
             require(f"REPLAY {review['replay']['sha256']}" in disposition.splitlines(),
                     reference["path"], "resolution must bind this exact passing replay", "WDQ-DEFECT")
+
+
+def validate_review(tree, contract, proof, authority_digest, trust, item, environment):
+    """Legacy acceptance wrapper: independent replay plus exact owner authority."""
+    review = validate_independent_review(
+        tree, contract, proof, authority_digest, trust, item, environment)
+    path = contract["review_path"]
+    packet = packet_sha256(contract, proof, authority_digest)
+    validate_defect_dispositions(tree, review, path, trust)
     receipt = review["owner_receipt"]
     require(receipt is not None, path, "exact owner receipt required", "WDQ-RECEIPT")
     approved = resolve_ref(trust.authority, receipt)

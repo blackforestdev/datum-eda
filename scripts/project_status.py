@@ -18,6 +18,13 @@ from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from typing import Any
 
+# Read the bootstrap as source: importing it could consume its own cached code.
+_source_bootstrap = Path(__file__).with_name("workflow_delivery_source_only.py")
+_source_namespace = {"__name__": "_datum_source_bootstrap"}
+exec(compile(_source_bootstrap.read_bytes(), str(_source_bootstrap), "exec"), _source_namespace)
+_source_namespace["install"](_source_bootstrap.parent)
+del _source_namespace, _source_bootstrap
+
 from project_task_details import (
     completion_view, render_completion, resolve_claim_state,
     selected_completion_step, validate_completion,
