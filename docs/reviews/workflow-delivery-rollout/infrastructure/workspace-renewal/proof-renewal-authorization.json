@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-COMPAT-PROOF-RENEWAL-OWNER-AUTHORIZATION",
+  "owner_response_verbatim": "approved",
+  "approved_request": "Approve reopening WDQ-COMPAT for proof renewal, then return to WDQ-RECHECK; preserve historical evidence and installed trust.",
+  "recorded_at": "2026-09-10T02:00:27Z",
+  "main_before_transaction": "eb904a1b8e7b3beafdc2b0405e122951ef4d631c",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "related_issue_ids": ["dat-wdq-proof-renewal-cycle-qgb", "dat-wdq-index-refresh-ogw", "dat-wdq-workspace-inputs-zmt"],
+  "selected_step": "WDQ-COMPAT",
+  "successor_step": "WDQ-RECHECK",
+  "disposition": "Reopen the existing producer verification step as in_progress and reset its dependent independent recheck to pending. Clear current COMPAT completion evidence; preserve its historical source-specific closeout unchanged. No completion step is added.",
+  "supersedes": "Only the instruction in index-repair-authorization.json to keep WDQ-RECHECK selected during affected producer evidence renewal.",
+  "historical_completion": {
+    "document": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/producer-closeout.json",
+    "marker": "WDQ-COMPAT-PRODUCER-VERIFICATION-COMPLETE",
+    "source_commit": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+    "evidence_commit": "94dc7b352285dc8db1413f794c10b51b66ffdd1c",
+    "packet_sha256": "678daa96208fb7a372962c383832a099f90ccc1bd63d76c091fee9b4d3fb84f9",
+    "scope": "Historical completion for its original inputs only; not proof of the repaired runtime."
+  },
+  "renewal": {
+    "runtime_source_commit": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+    "retained_producer_capture_count": 1290,
+    "retained_independent_capture_count": 1290,
+    "remaining_real_roadmap_capture_count_per_lane": 24,
+    "scope": "Retain actual source-bound captures without relabeling them as new executions. Prepare an isolated prospective authority and base that both honestly reflect this owner-approved lifecycle reopening, retaining the repaired runtime input identity. Capture the remaining actual roadmap cases, assemble typed proof, and then obtain distinct independent review and exact publication inspection."
+  },
+  "boundaries": [
+    "No gate bypass, fabricated provisional proof, historical digest refresh, clock spoofing or hidden transition rollback.",
+    "No Preferences, product lane, prototype, dependency, installed-hook, local-trust or owner-local file changes.",
+    "Approval alone closes no defect and establishes neither producer completion nor independent review.",
+    "WDQ-I04 exact owner ratification/activation, WDQ-I05 three real adoption cohorts and WDQ-I06 owner acceptance remain required."
+  ],
+  "activation_authorized": false,
+  "completion_asserted": false
+}

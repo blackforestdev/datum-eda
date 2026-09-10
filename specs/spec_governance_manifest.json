@@ -1,5 +1,5 @@
 {
-  "description": "Governance coverage ledger for every specification that steers Datum development. Enforced by scripts/check_spec_governance.py (wired into scripts/run_drift_gates.sh). Every .md under enforced_globs plus every tracked_doc and authority_doc MUST have an entry. Each entry needs only a 'class' — 'governed' (active spec), 'doctrine' (ratified decision record, controlling), 'pending' (known orphan awaiting disposition), 'historical' (superseded/frozen) — plus optional reason/notes fields. Behavioral enforcement lives in the proof gates and write-fence gates, not in per-doc ledger prose. See CLAUDE.md -> 'Specification Governance (controlling)'.",
+  "description": "Governance coverage ledger for every specification that steers Datum development. Enforced by scripts/check_spec_governance.py (wired into scripts/run_drift_gates.sh). Every .md under enforced_globs plus every tracked_doc and authority_doc MUST have an entry. Each entry needs only a 'class' \u2014 'governed' (active spec), 'doctrine' (ratified decision record, controlling), 'pending' (known orphan awaiting disposition), 'historical' (superseded/frozen) \u2014 plus optional reason/notes fields. Behavioral enforcement lives in the proof gates and write-fence gates, not in per-doc ledger prose. See CLAUDE.md -> 'Specification Governance (controlling)'.",
   "enforced_globs": [
     "specs/*.md",
     "docs/contracts/*.md",
@@ -216,31 +216,38 @@
       "notes": "WDQ-COMPAT exact proposed main-workspace baseline: one required owner script and 23 legacy caches observed read-only. Not owner-promoted authority or permission to delete, regenerate or relocate files. Exact I04 review and renewed compatibility proof remain required."
     },
     "docs/reviews/workflow-delivery-rollout/rollout-mapping.json": {
-      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
       "notes": "WDQ-I02 exact infrastructure checkpoint proposal against actual pending readiness/review steps. Not a contract, installed policy, enrollment, readiness result or owner acceptance."
     },
     "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md": {
-      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
       "notes": "Proposed numbered amendment for broader coverage, clause accounting, separate review, exact promotion and WDQ-COMPAT owner-pinned workspace classification. Not ratified or controlling; renewed exact producer/reviewer evidence and I04 owner disposition remain required."
     },
     "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md": {
-      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
       "notes": "WDQ-R03 owner-authorized I01-I06 implementation/adoption stages, with explicit pending WDQ-READY and WDQ-REVIEW checkpoints refining readiness and I3 independent review. Exact ratification/promotion and final acceptance remain owner steps; installation alone cannot close the full goal."
     },
     "specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md": {
-      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
       "notes": "WDQ-R02 bounded implementation proposal, not installed policy: roadmap/source coverage, separate review phase, exact promotion, local support storage and three real adoption cohorts. R03 owner authorization and later exact promotion remain required."
     },
     "docs/reviews/workflow-delivery-rollout/proposal.json": {
-      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
       "notes": "Non-operative exact-baseline classification and checkpoint/enrollment-intent inventory for R02 review. Null candidate/owner/reviewer and empty adoption events are honest absence, not runtime policy or evidence."
     },
     "specs/FOUNDATION_FOLLOWUP_PLANS.md": {
-      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
       "notes": "WDQ-R01 schedules four owner-approved foundation follow-ups with explicit planning, ratification and doorway delivery boundaries. No product claim, hard-edge amendment, mechanism ratification or execution authorization."
     },
     "specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md": {
-      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-ROLLOUT",
       "notes": "WDQ-F03 owner-authorized R01-R03 planning successor for scheduled specification gaps, broader executable enrollment/trust proposals and three-slice adoption. Product implementation and exact PM041 promotion remain separate owner boundaries."
     },
     "docs/reviews/workflow-foundation/handoff.md": {
@@ -259,32 +266,44 @@
       "notes": "WDQ-F01 consumer contract repair: pending preflight, owner authorization, implementation, native proof, independent replay and owner acceptance for existing selection, GUI write-path and native-authoring lanes. No product scope reduction, prerequisite amendment, execution authorization or delivery enrollment."
     },
     "docs/reviews/workflow-foundation/authority-review.md": {
-      "class": "governed", "progress_anchor": "FOUNDATION-WORKFLOW-SPEC",
+      "class": "governed",
+      "progress_anchor": "FOUNDATION-WORKFLOW-SPEC",
       "notes": "WDQ-F01 partial operational review evidence, not amended CAD authority or completion. Records explicit baseline clauses and remaining complete-route review; separate from accepted pilot authority closure."
     },
-    "specs/workflow_delivery_policy.json": {"class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING", "notes": "Exact owner-local activation proposal; active only after external promotion."},
+    "specs/workflow_delivery_policy.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
+      "notes": "Exact owner-local activation proposal; active only after external promotion."
+    },
     "docs/reviews/workflow-delivery-pilot/independent-review.md": {
-      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
       "notes": "Independent native review and replay-bound defect-resolution evidence, reconciled in WDQ-G06P after the owner's WDQ-DEFECT refusal. Operational evidence outside its own contract authority closure; no new product requirement, owner acceptance or trust promotion."
     },
     "docs/reviews/workflow-delivery-pilot/handoff.md": {
-      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
       "notes": "Completed WDQ-G01-G05 operational evidence under PM041, outside the pilot authority route to avoid receipt cycles. Records identified native producer proof, independent replay, 98 delivery tests, recoverable archival, the exact G06 owner ACCEPT response and two explicit nonblocking deferrals. G06 remains incomplete pending activation preparation, external promotion and passing scoped enforcement; no live enrollment, trusted promotion or Preferences approval."
     },
     "specs/workflow_delivery/pilot.contract.json": {
-      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-GATE-PILOT:TRACKING",
       "notes": "WDQ-G01 candidate instance of the PM041 Contract shape: four production action keys and PILOT-S01-S05. G03 executable validation and hermetic refusal mechanics landed in 9cb42473; candidate structure/readiness references pass report-only inspection. No production registry, enrollment, native proof, independent replay or product acceptance is claimed by this candidate."
     },
     "specs/WORKFLOW_DELIVERY_ADOPTION_PACKET.md": {
-      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
       "notes": "WDQ-C05 owner-approved adoption packet: concrete pilot, G01-G06 completion contract, budgets and independent activation/resume boundary. No implementation, enforcement or product acceptance authorization."
     },
     "docs/decisions/PRODUCT_MECHANICS_041_WORKFLOW_DELIVERY_QUALITY.md": {
-      "class": "doctrine", "controlling": true, "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
+      "class": "doctrine",
+      "controlling": true,
+      "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
       "notes": "WDQ-C05 explicit owner adoption ratifies the unchanged delivery mechanism and reviewed contract. Four boundaries, scoped enrollment, independent replay and owner-controlled trust. Implementation and activation still require G02/G06 authorization."
     },
     "specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md": {
-      "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-QUALITY",
       "notes": "WDQ-C05 owner-adopted schema-6 contract, delivery shapes, consumer activation, freshness, independent replay and trusted receipt boundaries. G02 authorized G03 implementation, landed in 9cb42473; live Frontier migrated to schema 6 with no enrollment or historical acceptance claims. Enforcement activation remains G06 owner-controlled."
     },
     "specs/WORKFLOW_DELIVERY_QUALITY_PLAN.md": {
@@ -323,7 +342,7 @@
     "specs/PROGRAM_SPEC.md": {
       "class": "governed",
       "progress_anchor": "PROGRAM_SPEC",
-      "notes": "Reconciled 2026-07-06: legacy milestone master. M0–M4 exit criteria + v1 scope ('no GUI/create/edit/export') are HISTORICAL (original plan, not current scope); still-live governed content is the subordinate-spec ownership map + Standards Integration Gate. Not in the CLAUDE.md authority ordering; current sequencing is the PROGRESS Active Frontier + decisions."
+      "notes": "Reconciled 2026-07-06: legacy milestone master. M0\u2013M4 exit criteria + v1 scope ('no GUI/create/edit/export') are HISTORICAL (original plan, not current scope); still-live governed content is the subordinate-spec ownership map + Standards Integration Gate. Not in the CLAUDE.md authority ordering; current sequencing is the PROGRESS Active Frontier + decisions."
     },
     "specs/INTEGRATED_PROGRAM_SPEC.md": {
       "class": "governed",
@@ -672,7 +691,7 @@
     },
     "docs/ALTIUM_LESSONS.md": {
       "class": "governed",
-      "notes": "Competitive UX research — the professional-PCB UX benchmark (Properties Panel, keyboard routing, granular ECO, rule-query-as-command) feeding decision 019 / DATUM_GUI_PRODUCT_SPEC. Reference research; architectural lineage per CLAUDE.md."
+      "notes": "Competitive UX research \u2014 the professional-PCB UX benchmark (Properties Panel, keyboard routing, granular ECO, rule-query-as-command) feeding decision 019 / DATUM_GUI_PRODUCT_SPEC. Reference research; architectural lineage per CLAUDE.md."
     },
     "docs/DATUM_SHARED_TOOLING_TAXONOMY.md": {
       "class": "governed",
@@ -690,7 +709,7 @@
     },
     "docs/COMPETITIVE_ANALYSIS.md": {
       "class": "governed",
-      "notes": "Competitive EDA landscape/positioning (KiCad/Altium/Horizon/OrCAD/PADS) — UX justification and what-to-avoid. Reference research."
+      "notes": "Competitive EDA landscape/positioning (KiCad/Altium/Horizon/OrCAD/PADS) \u2014 UX justification and what-to-avoid. Reference research."
     },
     "docs/USER_WORKFLOWS.md": {
       "class": "governed",
@@ -698,7 +717,7 @@
     },
     "docs/AUTHORING_TOOLS.md": {
       "class": "governed",
-      "notes": "Authoring-action tool semantics (place/wire/move/route/delete) — the interaction grammar behind GUI edit tools."
+      "notes": "Authoring-action tool semantics (place/wire/move/route/delete) \u2014 the interaction grammar behind GUI edit tools."
     },
     "docs/COMMERCIAL_INTEROP_STRATEGY.md": {
       "class": "governed",
@@ -1161,6 +1180,11 @@
     "scripts/test_project_status_claim.py": {
       "class": "doctrine",
       "remediation": "Claim-state reporting tests for the roadmap selector, extracted from test_project_status.py under decision 022 when that file exceeded its 700-line ceiling."
+    },
+    "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/proof-renewal-authorization.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "Explicit owner reopening of existing WDQ-COMPAT for repaired-source producer proof renewal, then WDQ-RECHECK. Preserves historical closeout and installed trust; no added milestone, product authority or activation."
     }
   }
 }
