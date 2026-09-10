@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "prospective_baseline": "377323b29705ccccd6f8fa91f663d7d91c6d03c4",
+  "packet_sha256": "fa0b802e11d5dc266f7f3e78bde8a1ac91ac6c1ae4165df8858b56b94c158fee",
+  "authority_sha256": "b3130c9322932a9d26e967d6ecb55c8b1591892636d26ac3cdd98e175475ee39",
+  "previous_paired_packet_sha256": "0cf25d8c0ead13e3171d370040c15240715ff807edcc856f5eb4f5a35d600b15",
+  "observations": 1314,
+  "correlated_event_blobs": 6,
+  "validation": "Prospective overlay proof freshness and shape, selected headless environment, and artifact-role/dispatch correlations passed.",
+  "input_reconciliation": "Only the 24 identified real-roadmap rows replace the prior paired assembly; all 1290 other observations and ordered case identities remain unchanged. Historical packets and failed attempts are retained, not relabeled.",
+  "overlay": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/sequencing-evidence-20260910/paired-real-typed-packet-attempt-01",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed-packet.tar.xz",
+    "sha256": "12d2a4582da481632eb73ddeb644447c30e5a474d9d15676a10f8544f551a134",
+    "compare_exit_code": 0
+  },
+  "command": [
+    "python3", "-I", "-S", "-B",
+    "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/build_typed_packet.py",
+    "--root", "/home/bfadmin/Documents/datum-eda",
+    "--runtime", "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/sequencing-repair-20260910",
+    "--observations", "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/sequencing-evidence-20260910/assembled-paired-real-observations",
+    "--output", "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/sequencing-evidence-20260910/paired-real-typed-packet-attempt-01",
+    "--sequencing-repair", "--paired-workspace", "--paired-real"
+  ],
+  "producer_exit_code": 0,
+  "committed_candidate_verified": false,
+  "independent_replay_complete": false,
+  "activation_performed": false
+}
