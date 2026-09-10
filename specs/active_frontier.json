@@ -9655,7 +9655,8 @@
         "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-authorization.json",
         "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/proof-renewal-authorization.json",
         "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-producer-closeout.json",
-        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-repair-authorization.json"
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-repair-authorization.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-producer-closeout.json"
       ],
       "state": "in_progress",
       "authorization": "execution",
@@ -9674,12 +9675,12 @@
       },
       "canonical_next": false,
       "parallel": true,
-      "summary": "Owner reopened existing WDQ-COMPAT for review/publication sequencing and initial mapping migration repair with affected evidence renewal; WDQ-RECHECK is pending distinct independent review. All 11 steps and historical source-specific proof are preserved, including candidate c9d3d5c3 and packet 02ce61ee. Defects remain open; product ownership, installed trust, exact owner activation, three actual adoption cohorts and final acceptance are unchanged.",
+      "summary": "WDQ-COMPAT producer renewal is complete for source 1d48f249, exact candidate b704b3ef and packet 12afccdf: 1314 fresh observations plus supported producer pre-review inspection, committed proof and full candidate checks passed. WDQ-RECHECK now selects distinct independent replay and exact candidate reconciliation. All 11 steps and historical evidence remain; defects, product ownership, installed trust, owner activation, three actual adoption cohorts and final acceptance are unchanged.",
       "dependencies": [],
       "unblocks": [],
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
-        "canonical_next_step_id": "WDQ-COMPAT",
+        "canonical_next_step_id": "WDQ-RECHECK",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -9842,7 +9843,7 @@
           {
             "id": "WDQ-COMPAT",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Repair ignored-workspace compatibility and renew exact producer evidence without weakening source authority or activating.",
             "depends_on": [
               "WDQ-REVIEW"
@@ -9861,12 +9862,22 @@
                 "marker": "WDQ-COMPAT"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-producer-closeout.json",
+                "marker": "WDQ-COMPAT-SEQUENCING-PRODUCER-VERIFICATION-COMPLETE"
+              },
+              {
+                "kind": "commit",
+                "revision": "b704b3ef69636b3c9020585cb6f1bd00ec62f6aa"
+              }
+            ]
           },
           {
             "id": "WDQ-RECHECK",
             "kind": "execution",
-            "status": "pending",
+            "status": "in_progress",
             "action": "Independently replay and inspect the renewed exact compatibility and publication evidence.",
             "depends_on": ["WDQ-COMPAT"],
             "requirement_refs": [
