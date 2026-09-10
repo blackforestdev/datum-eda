@@ -5,27 +5,29 @@ from workflow_delivery_contract import load_contract, validate_handler_files
 from workflow_delivery_io import DeliveryInputError, normalized_path
 from workflow_delivery_native import validate_correlations, validate_environment
 from workflow_delivery_proof import _issues, validate_proof
-from workflow_delivery_review import validate_review
+from workflow_delivery_review import validate_independent_review, validate_review
+from workflow_delivery_mapping import LEGACY_PHASES, mapping_phases
+from workflow_delivery_enabled import required_normal_consumers, validate_required_activation
 from workflow_delivery_shapes import closed, require
 
 
-PHASES = ("ready", "activate", "verify", "accept")
+PHASES = LEGACY_PHASES
 
 
 def delivery_shape(item, contract):
     delivery = item["completion"]["delivery"]
-    closed(delivery, "contract_path checkpoints", item["key"], "WDQ-TRANSITION")
+    phases = mapping_phases(delivery, item["key"])
     normalized_path(delivery["contract_path"])
-    points = closed(delivery["checkpoints"], PHASES, item["key"], "WDQ-TRANSITION")
+    points = closed(delivery["checkpoints"], phases, item["key"], "WDQ-TRANSITION")
     steps = {s["id"]: s for s in item["completion"]["steps"]}
     nonnull = [s for s in points.values() if s is not None]
     require(all(type(s) is str for s in nonnull) and len(set(nonnull)) == len(nonnull),
             item["key"], "checkpoints must name distinct steps", "WDQ-TRANSITION")
     kinds = {"ready": {"planning", "governance"}, "activate": {"execution"},
-             "verify": {"execution"}, "accept": {"owner_decision"}}
+             "verify": {"execution"}, "review": {"execution"}, "accept": {"owner_decision"}}
     previous = None
     # JSON object insertion order is not completion order.
-    for phase in PHASES:
+    for phase in phases:
         sid = points[phase]
         optional = contract["category"] == "infrastructure" and phase in ("activate", "accept")
         require((sid is None) == optional, item["key"],
@@ -52,7 +54,7 @@ def required_phase(item):
     points = item["completion"]["delivery"]["checkpoints"]
     steps = {s["id"]: s for s in item["completion"]["steps"]}
     phase = "structure"
-    for name in PHASES:
+    for name in mapping_phases(item["completion"]["delivery"], item["key"]):
         sid = points[name]
         if sid is not None and steps[sid]["status"] == "complete":
             phase = name
@@ -87,6 +89,10 @@ def validate_transition(item, base):
         if accept and steps[accept]["status"] == "complete" and old.get(accept, {}).get("status") != "complete":
             require(old.get(verify, {}).get("status") == "complete", item["key"],
                     "cannot accept directly from pending/unverified baseline", "WDQ-TRANSITION")
+            review = item["completion"]["delivery"]["checkpoints"].get("review")
+            if review is not None:
+                require(old.get(review, {}).get("status") == "complete", item["key"],
+                        "cannot accept directly from pending/unreviewed baseline", "WDQ-TRANSITION")
 
 
 def validate_delivery(tree, item, *, phase=None, trust=None, environment=None):
@@ -120,7 +126,7 @@ def validate_delivery(tree, item, *, phase=None, trust=None, environment=None):
 
 def _validate_delivery(tree, item, *, phase=None, trust=None, environment=None):
     value = item["completion"]["delivery"]
-    closed(value, "contract_path checkpoints", item["key"], "WDQ-TRANSITION")
+    phases = mapping_phases(value, item["key"])
     path = value["contract_path"]
     contract = load_contract(tree, path, frontier_key=item["key"], issue_id=item["issue_id"])
     require(item["issue_id"] in _issues(tree), item["key"],
@@ -128,7 +134,7 @@ def _validate_delivery(tree, item, *, phase=None, trust=None, environment=None):
     validate_handler_files(tree, contract)
     delivery_shape(item, contract)
     phase = phase or required_phase(item)
-    require(phase in ("structure", *PHASES), item["key"], "unknown checkpoint", "WDQ-TRANSITION")
+    require(phase in ("structure", *phases), item["key"], "unknown checkpoint", "WDQ-TRANSITION")
     base_item = None
     if trust:
         trust.contract(tree, item, contract)
@@ -152,11 +158,18 @@ def _validate_delivery(tree, item, *, phase=None, trust=None, environment=None):
         if current_inputs != previous_inputs:
             phase = "activate" if contract["category"] == "product" else "verify"
     authority = authority_sha256(tree, contract, ready=phase != "structure")
-    if phase in ("activate", "verify", "accept"):
+    if "review" in phases and phase != "structure":
+        required_normal_consumers(contract)
+    if phase in ("activate", "verify", "review", "accept"):
         proof = validate_proof(tree, contract)
-        validate_environment(tree, proof, environment)
+        validate_environment(tree, proof, environment, contract=contract)
         validate_correlations(tree, contract, proof)
-        if phase == "accept":
+        if "review" in phases:
+            validate_required_activation(tree, contract, proof)
+        if phase == "review":
+            require(trust is not None, item["key"], "review needs promoted enrollment", "WDQ-TRUST")
+            validate_independent_review(tree, contract, proof, authority, trust, item, environment)
+        elif phase == "accept":
             require(trust is not None, item["key"], "acceptance needs promoted authority", "WDQ-TRUST")
             validate_review(tree, contract, proof, authority, trust, item, environment)
     return phase
