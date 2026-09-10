@@ -35,7 +35,9 @@ def main():
     marker = "## Ratification evidence boundary"
     old, current = read(SOURCE, PM).decode(), read(base, PM).decode()
     assert old.count(marker) == current.count(marker) == 1
-    payloads = {PM: (old.split(marker)[0] + marker + current.split(marker)[1]).encode()}
+    boundary = "WDQ-I04 must review the final complete amendment"
+    payloads = {PM: old.replace(block(old.encode(), marker, boundary),
+                               block(current.encode(), marker, boundary), 1).encode()}
     old, current = read(SOURCE, INFRA).decode(), read(base, INFRA).decode()
     start, end = "<!-- WDQ-INFRA-NONCIRCULAR-RENEWAL -->", "<!-- WDQ-INFRA-NONCIRCULAR-RENEWAL-END -->"
     assert start not in old
