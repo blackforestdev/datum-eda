@@ -174,3 +174,24 @@ evidence, then perform the authorized installation
 and installed verification. The frozen reviewed source and its historical proof
 remain unchanged; do not reuse their hashes to certify the modified runtime.
 Do not wait for Preferences production acceptance to implement this correction.
+
+### Terminal-owner authority and source assembly reconciliation
+
+The proposed PM042, coverage handoff and infrastructure S02 contract now describe
+the same narrow terminal closeout. Both complete owning routes were reviewed;
+their digests were deliberately reconciled without refreshing historical proof.
+The other 55 Frontier items and all other tracker records remain unchanged.
+The eleven-milestone sequence is unchanged, with eight complete and I04 pending.
+
+`prepare_terminal_owner_source.py` freezes only the repaired category module and
+bounded authority amendments atop the retained source. It preserves source scopes
+and historical evidence, uses a temporary private index under Git-common storage,
+and does not publish main, install trust or assert renewed proof. Five anchor and
+replacement checks pass; 14 contract and seven coverage-proposal tests pass.
+Traceability (25 routes/119 artifacts), governance (256 classifications), source
+health (1845 files), project state (56 items) and whitespace checks pass.
+The existing independent reviewer found no concrete blocker in this bounded
+normative/assembler change. This technical review is not fresh subprocess replay.
+
+The repaired-source identity must precede matching real observations and exact
+activation inspection. No live support is retired before installation succeeds.

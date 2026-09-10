@@ -101,6 +101,20 @@ uncovered files and prefix-lookalike scope escapes. Each actual entry point must
 refuse the relevant fixture, preserve owning-lane context and pass a restored
 authorized fixture. Do not change the real Preferences item to construct a case.
 
+<!-- WDQ-INFRA-TERMINAL-OWNER -->
+Within INFRA-S02-05, distinguish unauthorized boundary changes from PM042's
+permitted last-owner-step closeout. Through C/R/S/H, retain separately identified
+unchanged-pending and valid terminal-closeout successes. Refuse rewritten selected
+requirements, changed other steps, an unfinished predecessor, execution authority,
+missing completion evidence, document-only evidence without review/decision,
+unclosed tracker, and missing/invalid landing commit. INFRA-S02-06 must still
+refuse production edits accompanying closeout. Use isolated input fixtures, never
+fabricated real Preferences acceptance. Retain actual subprocess observations;
+in-process validator substitution is regression evidence, not renewed delivery
+proof. This refines the existing case, adds no milestone, and waives no original
+case or product evidence requirement.
+<!-- WDQ-INFRA-TERMINAL-OWNER:END -->
+
 <!-- WDQ-INFRA-S03 -->
 ## INFRA-S03 — readiness and specification truth
 
