@@ -1,0 +1,1 @@
+{"case":"INFRA-S02-05.terminal-invalid-landing","expected_reason":"landing commit","expected_status":1,"result_sha256":"850a8f5e2d1c1e0dfe5e7d775b315e949bb83510bec0ecf7cca1a06a9fbe9740","returncode":1,"surface":"H"}

@@ -1,0 +1,1 @@
+{"case":"INFRA-S02-05.terminal-missing-landing","expected_reason":"landing_commit","expected_status":1,"result_sha256":"9832f6f14a2d554eb14f1812851b7d12ca6173330e124851c54c34eb832c1342","returncode":1,"surface":"S-details"}

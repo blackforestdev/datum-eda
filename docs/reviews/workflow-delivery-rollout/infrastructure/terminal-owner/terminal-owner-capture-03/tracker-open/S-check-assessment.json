@@ -1,0 +1,1 @@
+{"case":"INFRA-S02-05.terminal-tracker-open","expected_reason":"closed","expected_status":1,"result_sha256":"fc62997c12b2e6ab5c0645e3b7fef330e4e1b53896c3cc0e61d582001e415eea","returncode":1,"surface":"S-check"}

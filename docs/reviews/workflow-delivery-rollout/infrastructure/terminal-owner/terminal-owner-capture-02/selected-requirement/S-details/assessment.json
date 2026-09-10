@@ -1,0 +1,1 @@
+{"case":"INFRA-S02-05.terminal-selected-requirement","expected_reason":"selected requirement/authority changed","expected_status":1,"result_sha256":"30274af6aa6123397d0e36f42fd4ae4bf4e888a0d01bfb7b8c0041f1e77a142e","returncode":1,"surface":"S-details"}

@@ -1,0 +1,1 @@
+{"case":"INFRA-S02-05.terminal-missing-evidence","expected_reason":"completion evidence","expected_status":1,"result_sha256":"23594d1fc00493f193dc04091587cd4fb665b7c9fab2fc2593ca18029f67f617","returncode":1,"surface":"C"}

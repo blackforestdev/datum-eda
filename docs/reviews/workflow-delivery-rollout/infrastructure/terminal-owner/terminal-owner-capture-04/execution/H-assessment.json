@@ -1,0 +1,1 @@
+{"case":"INFRA-S02-05.terminal-execution","expected_reason":"authorization","expected_status":1,"result_sha256":"83c6206a82045cde87de2e567ab2319f3177e79ce2d8ae098bea40c8e6493f20","returncode":1,"surface":"H"}

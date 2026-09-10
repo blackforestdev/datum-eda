@@ -1,0 +1,1 @@
+{"case":"INFRA-S02-05.terminal-document-only","expected_reason":"review/decision evidence","expected_status":1,"result_sha256":"ecb643e02bee7b20d37cec8517824b404bf6363e4993531e2a1c20cf82e314c5","returncode":1,"surface":"S-check"}

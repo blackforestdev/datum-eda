@@ -1,0 +1,1 @@
+{"case":"INFRA-S02-05.terminal-other-step","expected_reason":"work crossed the promoted boundary","expected_status":1,"result_sha256":"9bea85b890d7c7d36e2ea2a134d466517b3ac43a664eb62eaf26e278355746c1","returncode":1,"surface":"C"}

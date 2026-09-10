@@ -1,0 +1,1 @@
+{"case":"INFRA-S02-05.terminal-unfinished-predecessor","expected_reason":"landed item requires every completion step to be complete","expected_status":1,"result_sha256":"b4f437081050916a30f77f369e5cd37d445cae355a009757951d0eca686fdf04","returncode":1,"surface":"S-details"}

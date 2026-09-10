@@ -1,0 +1,3 @@
+visual-truth file-lane gate passed (no protected staged paths).
+rustfmt gate passed for staged files (0 ceiling-bound exemption(s) in specs/rustfmt_exemption_manifest.json).
+{"acceptance_asserted": false, "checks": [], "findings": [{"code": "WDQ-COVERAGE", "detail": "external-lane work crossed the promoted boundary", "key": null, "owning_lane": "delivery contract/evidence owner", "path": "NEXT", "scenario": null, "step": null}], "mode": "enforce", "readiness_asserted": false}

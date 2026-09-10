@@ -1,0 +1,1 @@
+{"acceptance_asserted": false, "checks": [], "findings": [{"code": "WDQ-COVERAGE", "detail": "external-lane authorization changed; coordinated promotion required", "key": null, "owning_lane": "delivery contract/evidence owner", "path": "NEXT", "scenario": null, "step": null}], "mode": "enforce", "readiness_asserted": false}

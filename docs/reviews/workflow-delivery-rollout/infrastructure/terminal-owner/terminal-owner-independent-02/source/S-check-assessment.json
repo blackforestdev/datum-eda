@@ -1,0 +1,1 @@
+{"case":"INFRA-S02-05.terminal-source","invocation":"d9a4490b-d7ff-4e65-8160-72da41804b45","observer_invocation":"f13aa595-e81b-4672-afbd-dffdaa4ef94c","original_result_sha256":"6cc44ffd8fe72a116ce073b26851bfd3761c72ba6900075ffc4804271ac7f972","result_sha256":"44d525d6939819732b249a12c5ce73454b2b880fd46e974b7edb1c421c8552f5","returncode":1,"surface":"S-check","variant":"source"}

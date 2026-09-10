@@ -1,0 +1,1 @@
+{"case":"INFRA-S02-05.terminal-execution","invocation":"267914de-5be4-40e2-99e9-7236e7f608ec","observer_invocation":"c95bb9f0-9d1c-448f-add9-dc0c1b153174","original_result_sha256":"9a024dcb47360a12bc1d73cd816c2f9a9c34286a582847ef0080379591aa9579","result_sha256":"cf652cc619f7ba689689681e945417c433806e9a1346749f2234f50cfb97f756","returncode":1,"surface":"R","variant":"execution"}

@@ -1,0 +1,1 @@
+{"acceptance_asserted": false, "checks": [], "findings": [{"code": "WDQ-COVERAGE", "detail": "production change has no promoted scope with synchronized live execution claim and required enrollment", "key": null, "owning_lane": "delivery contract/evidence owner", "path": "external/owned/input.py", "scenario": null, "step": null}], "mode": "enforce", "readiness_asserted": false}

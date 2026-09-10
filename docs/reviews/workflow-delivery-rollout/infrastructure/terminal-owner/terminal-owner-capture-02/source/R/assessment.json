@@ -1,0 +1,1 @@
+{"case":"INFRA-S02-05.terminal-source","expected_reason":"no promoted scope","expected_status":1,"result_sha256":"6507a459c51a54b4eeedb915e75e038dc31a03c6b3e1db01880a24e3573c5ec3","returncode":1,"surface":"R"}

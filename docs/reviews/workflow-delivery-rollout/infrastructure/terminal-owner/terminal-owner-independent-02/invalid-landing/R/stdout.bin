@@ -1,0 +1,1 @@
+{"acceptance_asserted": false, "checks": [], "findings": [{"code": "WDQ-TRANSITION", "detail": "NEXT: landing commit does not resolve: 0000000000000000000000000000000000000000", "key": null, "owning_lane": "delivery contract/evidence owner", "path": "specs/active_frontier.json", "scenario": null, "step": null}], "mode": "enforce", "readiness_asserted": false}

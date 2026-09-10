@@ -1,0 +1,1 @@
+{"case":"INFRA-S02-05.terminal-unfinished-predecessor","expected_reason":"pending","expected_status":1,"result_sha256":"3d8e5c3b23158aedae11d02dc4e93df78eb6de063db4166082312664616c22bd","returncode":1,"surface":"C"}

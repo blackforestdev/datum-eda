@@ -1,0 +1,1 @@
+{"acceptance_asserted": false, "checks": [], "findings": [{"code": "WDQ-TRANSITION", "detail": "NEXT-C02: completed owner decision requires review/decision evidence", "key": null, "owning_lane": "delivery contract/evidence owner", "path": "specs/active_frontier.json", "scenario": null, "step": null}], "mode": "enforce", "readiness_asserted": false}
