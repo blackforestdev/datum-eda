@@ -8,249 +8,1518 @@
   "intent": "Deliver the complete authorized native cohort with actual input/state proof, independent replay and exact owner acceptance.",
   "scope": "Complete read-only board and schematic shared selection, marquee, stable identity/lifecycle, pane projection and compound Common/Mixed/Unavailable inspection. Draft preparation only; complete consumer/fixture expansion remains C01 work.",
   "exclusions": "No scope reduction, runtime execution authorization, native proof, owner acceptance, Global Preferences takeover or prototype edit. No disabled-only substitute for required enabled behavior.",
-  "authority_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}],
-  "route_ids": ["foundation-consumer-completion","workflow-delivery-cohort-preparation"],
+  "authority_refs": [
+    {
+      "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+      "marker": "<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"
+    },
+    {
+      "path": "research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md",
+      "marker": "## Preparation boundary"
+    },
+    {
+      "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+      "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+    },
+    {
+      "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+      "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+    },
+    {
+      "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+      "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+    },
+    {
+      "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+      "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+    },
+    {
+      "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+      "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+    },
+    {
+      "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+      "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C08-OVERLAY -->"
+    },
+    {
+      "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+      "marker": "## Exact quantities and entry — F1/F2 (inherited)"
+    },
+    {
+      "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+      "marker": "## Settings isolation and timing — F8 (inherited)"
+    }
+  ],
+  "route_ids": [
+    "foundation-consumer-completion",
+    "workflow-delivery-cohort-preparation",
+    "foundation-manual-workflow",
+    "gui-selection",
+    "prototype-selection"
+  ],
   "foundation_answers": {
-    "units_precision": {"disposition":"required","reason":"C01 must resolve units_precision applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]},
-    "numeric_entry": {"disposition":"required","reason":"C01 must resolve numeric_entry applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]},
-    "selection_identity": {"disposition":"required","reason":"C01 must resolve selection_identity applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]},
-    "grid_snap": {"disposition":"required","reason":"C01 must resolve grid_snap applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]},
-    "undo_cancel": {"disposition":"required","reason":"C01 must resolve undo_cancel applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]},
-    "persistence_recovery": {"disposition":"required","reason":"C01 must resolve persistence_recovery applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]},
-    "library_connectivity": {"disposition":"required","reason":"C01 must resolve library_connectivity applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]},
-    "settings_scope": {"disposition":"required","reason":"C01 must resolve settings_scope applicability and exact behavior for the complete cohort without copying pilot waivers or introducing unapproved capability.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Foundations and input closure"}]}
+    "units_precision": {
+      "disposition": "required",
+      "reason": "Required in S5A-S01/S03/S04/S06: preserve signed canonical nm and typed quantity identity independently of display unit/precision, pan/zoom and device scale. Inspector values and Common/Mixed comparisons use the shared quantity/context service, never hardcoded mm or rounded labels as canonical input. Include the inherited 5080001 nm rounded-display example and distinct exact values that display identically. Exact consumer/fixture binding remains required; this does not activate Project or Global settings.",
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+          "marker": "## Exact quantities and entry — F1/F2 (inherited)"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+        },
+        {
+          "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+          "marker": "## Selection, coordinate frames and snap — F3/F4 (inherited)"
+        }
+      ]
+    },
+    "numeric_entry": {
+      "disposition": "required",
+      "reason": "Required as a read-only boundary in S5A-S04/S05/S06: selection and Inspector surfaces expose no editable numeric commit path. Existing S5B seams remain visible, disabled and explained; keyboard activation and typing cannot emit design Operations. Preserve exact values behind formatted labels. Numeric parsing/edit commit/no-op behavior belongs to later authorized authoring, not new S5A functionality.",
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+        },
+        {
+          "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+          "marker": "## Exact quantities and entry — F1/F2 (inherited)"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+        }
+      ]
+    },
+    "selection_identity": {
+      "disposition": "required",
+      "reason": "Required across all six groups: the nine PM026 subjects map one-to-one; Object/Compound enumerate stable authored identities, Run retains typed origin and derives membership per revision, and Global Net/Bus remain semantic identities. Proposal and Review stay distinct. Verify focus membership, no auto-promotion, stale drop/report, no substitution/resurrection, exact same-identity projection and related-only baseline. The 256-id envelope cap never truncates subject identity or membership truth.",
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+        }
+      ]
+    },
+    "grid_snap": {
+      "disposition": "required",
+      "reason": "Required in S5A-S01/S03/S06: final world-space rectangle/lasso geometry and authored qualification anchors determine exact membership. Camera path, zoom, device scale, grid visibility and display precision cannot quantize or move authored geometry. Snap and quantize authoring remain outside S5A; reuse shared camera/hit infrastructure without treating point-hit tests as bounded region proof.",
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+        },
+        {
+          "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+          "marker": "## Selection, coordinate frames and snap — F3/F4 (inherited)"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+        }
+      ]
+    },
+    "undo_cancel": {
+      "disposition": "required",
+      "reason": "Required in S5A-S01/S02/S05: Escape or focus/capture loss cancels an active region/evaluation atomically and preserves the prior selection; idle Escape clears selection under the ratified grammar. Selection adds no journal entry or private undo stack. Authorized fixture revision/undo transitions preserve surviving identities, drop missing members with notice, never substitute recreated ids and never resurrect dropped selections.",
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+        }
+      ]
+    },
+    "persistence_recovery": {
+      "disposition": "required",
+      "reason": "Required in S5A-S02/S05: capture exact source/journal/model identities before and after read-only interactions and reopen. Selection/inspection cannot mutate authored files or history; project replacement clears project-scoped selection and stale restored identities drop/report. Fixture setup transactions and recovery evidence must be distinguished from selection effects. No new Project writer protocol, recovery engine or claim of writer-authority completion is introduced.",
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+        },
+        {
+          "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+          "marker": "## Persistence and write ownership — F6"
+        }
+      ]
+    },
+    "library_connectivity": {
+      "disposition": "required",
+      "reason": "Required in S5A-S01/S02/S03/S04: preserve ratified parent/child granularity, including board pad-to-footprint acquisition; verify typed Run/Global Net/Bus derivation and semantic membership from resolved connectivity, not names or geometric coincidence. Component-symbol and definition-instance relations are not same-identity selection. Fixtures must bind exact identities/revisions; no library placement, binding mutation or wire-formation mechanism is added.",
+      "authority_refs": [
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+        },
+        {
+          "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+          "marker": "## Selection, coordinate frames and snap — F3/F4 (inherited)"
+        }
+      ]
+    },
+    "settings_scope": {
+      "disposition": "required",
+      "reason": "Required in S5A-S03/S04/S05: selection is Project-workspace consumer state, not per-pane authority or Global preference state. Focus, visibility and Inspector scope changes preserve shared membership except explicit selection actions and lifecycle rules. In preconfigured Project contexts, unit presentation cannot rescale geometry or mutate other Projects/Global defaults. Setup of differing contexts uses its own authorized path; S5A does not add settings controls or activate reserved preferences.",
+      "authority_refs": [
+        {
+          "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+          "marker": "## Settings isolation and timing — F8 (inherited)"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+        }
+      ]
+    }
   },
   "open_decisions": [
     {
       "id": "S5A.complete-scope-and-product-routes",
       "question": "The actual S5A-C01 owner must resolve and record exact reviewed complete-scope-and-product-routes before readiness; no result is supplied by this draft.",
-      "required_for_scenarios": ["S5A-S01","S5A-S02","S5A-S03","S5A-S04","S5A-S05","S5A-S06"],
+      "required_for_scenarios": [
+        "S5A-S01",
+        "S5A-S02",
+        "S5A-S03",
+        "S5A-S04",
+        "S5A-S05",
+        "S5A-S06"
+      ],
       "disposition_ref": null
     },
     {
       "id": "S5A.production-consumers-and-dispatch",
       "question": "The actual S5A-C01 owner must resolve and record exact reviewed production-consumers-and-dispatch before readiness; no result is supplied by this draft.",
-      "required_for_scenarios": ["S5A-S01","S5A-S02","S5A-S03","S5A-S04","S5A-S05","S5A-S06"],
+      "required_for_scenarios": [
+        "S5A-S01",
+        "S5A-S02",
+        "S5A-S03",
+        "S5A-S04",
+        "S5A-S05",
+        "S5A-S06"
+      ],
       "disposition_ref": null
     },
     {
       "id": "S5A.native-fixture-and-input-closure",
       "question": "The actual S5A-C01 owner must resolve and record exact reviewed native-fixture-and-input-closure before readiness; no result is supplied by this draft.",
-      "required_for_scenarios": ["S5A-S01","S5A-S02","S5A-S03","S5A-S04","S5A-S05","S5A-S06"],
+      "required_for_scenarios": [
+        "S5A-S01",
+        "S5A-S02",
+        "S5A-S03",
+        "S5A-S04",
+        "S5A-S05",
+        "S5A-S06"
+      ],
       "disposition_ref": null
     },
     {
       "id": "S5A.foundation-and-dimension-dispositions",
-      "question": "The actual S5A-C01 owner must resolve and record exact reviewed foundation-and-dimension-dispositions before readiness; no result is supplied by this draft.",
-      "required_for_scenarios": ["S5A-S01","S5A-S02","S5A-S03","S5A-S04","S5A-S05","S5A-S06"],
+      "question": "Behavioral dispositions now cover all eight foundations and all nine dimensions of each six-scenario group. Complete the exact native per-class/fixture/input matrix and review applicability against its full product authority before readiness; no required dimension is waived and no implementation result is implied.",
+      "required_for_scenarios": [
+        "S5A-S01",
+        "S5A-S02",
+        "S5A-S03",
+        "S5A-S04",
+        "S5A-S05",
+        "S5A-S06"
+      ],
       "disposition_ref": null
     },
     {
       "id": "S5A.mechanism-and-prerequisite-authority",
       "question": "The actual S5A-C01 owner must resolve and record exact reviewed mechanism-and-prerequisite-authority before readiness; no result is supplied by this draft.",
-      "required_for_scenarios": ["S5A-S01","S5A-S02","S5A-S03","S5A-S04","S5A-S05","S5A-S06"],
+      "required_for_scenarios": [
+        "S5A-S01",
+        "S5A-S02",
+        "S5A-S03",
+        "S5A-S04",
+        "S5A-S05",
+        "S5A-S06"
+      ],
       "disposition_ref": null
     },
     {
       "id": "S5A.independent-review-provision",
       "question": "The actual S5A-C01 owner must resolve and record exact reviewed independent-review-provision before readiness; no result is supplied by this draft.",
-      "required_for_scenarios": ["S5A-S01","S5A-S02","S5A-S03","S5A-S04","S5A-S05","S5A-S06"],
+      "required_for_scenarios": [
+        "S5A-S01",
+        "S5A-S02",
+        "S5A-S03",
+        "S5A-S04",
+        "S5A-S05",
+        "S5A-S06"
+      ],
       "disposition_ref": null
     }
   ],
-  "input_roots": [".cargo","Cargo.toml","Cargo.lock","crates","docs/gui/icon_set.json","docs/gui/menu_model.csv","docs/gui/menu_model.json","scripts/cargo_resource_policy.json","scripts/run_cargo_guarded.py"],
+  "input_roots": [
+    ".cargo",
+    "Cargo.toml",
+    "Cargo.lock",
+    "crates",
+    "docs/gui/icon_set.json",
+    "docs/gui/menu_model.csv",
+    "docs/gui/menu_model.json",
+    "scripts/cargo_resource_policy.json",
+    "scripts/run_cargo_guarded.py"
+  ],
   "consumers": [
     {
       "id": "S5A-S01.consumer",
-      "entry_surfaces": ["native-pointer","native-keyboard"],
+      "entry_surfaces": [
+        "native-pointer",
+        "native-keyboard"
+      ],
       "dispatch_key": "pending.S5A-S01",
       "handler_ref": null,
       "scope": "Complete read-only board and schematic shared selection, marquee, stable identity/lifecycle, pane projection and compound Common/Mixed/Unavailable inspection.",
       "timing": "Unresolved C01 production timing and exact native input/event correlation; no runtime behavior claimed.",
       "persistence": "C01 must bind exact before/after identities and journal/persistence expectations, including no authored mutation for read-only actions.",
       "unavailable_reason": "Not ready: actual C01 production handler, dispatch and full entry-surface matrix are not yet reviewed. This is not accepted unavailable behavior.",
-      "scenario_ids": ["S5A-S01"]
+      "scenario_ids": [
+        "S5A-S01"
+      ]
     },
     {
       "id": "S5A-S02.consumer",
-      "entry_surfaces": ["native-pointer","native-keyboard"],
+      "entry_surfaces": [
+        "native-pointer",
+        "native-keyboard"
+      ],
       "dispatch_key": "pending.S5A-S02",
       "handler_ref": null,
       "scope": "Complete read-only board and schematic shared selection, marquee, stable identity/lifecycle, pane projection and compound Common/Mixed/Unavailable inspection.",
       "timing": "Unresolved C01 production timing and exact native input/event correlation; no runtime behavior claimed.",
       "persistence": "C01 must bind exact before/after identities and journal/persistence expectations, including no authored mutation for read-only actions.",
       "unavailable_reason": "Not ready: actual C01 production handler, dispatch and full entry-surface matrix are not yet reviewed. This is not accepted unavailable behavior.",
-      "scenario_ids": ["S5A-S02"]
+      "scenario_ids": [
+        "S5A-S02"
+      ]
     },
     {
       "id": "S5A-S03.consumer",
-      "entry_surfaces": ["native-pointer","native-keyboard"],
+      "entry_surfaces": [
+        "native-pointer",
+        "native-keyboard"
+      ],
       "dispatch_key": "pending.S5A-S03",
       "handler_ref": null,
       "scope": "Complete read-only board and schematic shared selection, marquee, stable identity/lifecycle, pane projection and compound Common/Mixed/Unavailable inspection.",
       "timing": "Unresolved C01 production timing and exact native input/event correlation; no runtime behavior claimed.",
       "persistence": "C01 must bind exact before/after identities and journal/persistence expectations, including no authored mutation for read-only actions.",
       "unavailable_reason": "Not ready: actual C01 production handler, dispatch and full entry-surface matrix are not yet reviewed. This is not accepted unavailable behavior.",
-      "scenario_ids": ["S5A-S03"]
+      "scenario_ids": [
+        "S5A-S03"
+      ]
     },
     {
       "id": "S5A-S04.consumer",
-      "entry_surfaces": ["native-pointer","native-keyboard"],
+      "entry_surfaces": [
+        "native-pointer",
+        "native-keyboard"
+      ],
       "dispatch_key": "pending.S5A-S04",
       "handler_ref": null,
       "scope": "Complete read-only board and schematic shared selection, marquee, stable identity/lifecycle, pane projection and compound Common/Mixed/Unavailable inspection.",
       "timing": "Unresolved C01 production timing and exact native input/event correlation; no runtime behavior claimed.",
       "persistence": "C01 must bind exact before/after identities and journal/persistence expectations, including no authored mutation for read-only actions.",
       "unavailable_reason": "Not ready: actual C01 production handler, dispatch and full entry-surface matrix are not yet reviewed. This is not accepted unavailable behavior.",
-      "scenario_ids": ["S5A-S04"]
+      "scenario_ids": [
+        "S5A-S04"
+      ]
     },
     {
       "id": "S5A-S05.consumer",
-      "entry_surfaces": ["native-pointer","native-keyboard"],
+      "entry_surfaces": [
+        "native-pointer",
+        "native-keyboard"
+      ],
       "dispatch_key": "pending.S5A-S05",
       "handler_ref": null,
       "scope": "Complete read-only board and schematic shared selection, marquee, stable identity/lifecycle, pane projection and compound Common/Mixed/Unavailable inspection.",
       "timing": "Unresolved C01 production timing and exact native input/event correlation; no runtime behavior claimed.",
       "persistence": "C01 must bind exact before/after identities and journal/persistence expectations, including no authored mutation for read-only actions.",
       "unavailable_reason": "Not ready: actual C01 production handler, dispatch and full entry-surface matrix are not yet reviewed. This is not accepted unavailable behavior.",
-      "scenario_ids": ["S5A-S05"]
+      "scenario_ids": [
+        "S5A-S05"
+      ]
     },
     {
       "id": "S5A-S06.consumer",
-      "entry_surfaces": ["native-pointer","native-keyboard"],
+      "entry_surfaces": [
+        "native-pointer",
+        "native-keyboard"
+      ],
       "dispatch_key": "pending.S5A-S06",
       "handler_ref": null,
       "scope": "Complete read-only board and schematic shared selection, marquee, stable identity/lifecycle, pane projection and compound Common/Mixed/Unavailable inspection.",
       "timing": "Unresolved C01 production timing and exact native input/event correlation; no runtime behavior claimed.",
       "persistence": "C01 must bind exact before/after identities and journal/persistence expectations, including no authored mutation for read-only actions.",
       "unavailable_reason": "Not ready: actual C01 production handler, dispatch and full entry-surface matrix are not yet reviewed. This is not accepted unavailable behavior.",
-      "scenario_ids": ["S5A-S06"]
+      "scenario_ids": [
+        "S5A-S06"
+      ]
     }
   ],
   "scenarios": [
     {
       "id": "S5A-S01",
-      "consumer_ids": ["S5A-S01.consumer"],
-      "requirement_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"}],
+      "consumer_ids": [
+        "S5A-S01.consumer"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+          "marker": "<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+        }
+      ],
       "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Native pointer, keyboard and marquee selection. This draft is not ready.",
-      "inputs": ["Select and extend/reduce selections with pointer and keyboard; exercise all approved marquee qualification variants."],
+      "inputs": [
+        "Select and extend/reduce selections with pointer and keyboard; exercise all approved marquee qualification variants."
+      ],
       "expected_visible": "Exact selected membership and visual qualification agree across native board and schematic.",
-      "expected_state": "Exact expected identities, topology, values and journal deltas must be bound by C01 before readiness; retain all original scope. Exact selected membership and visual qualification agree across native board and schematic.",
+      "expected_state": "Exact membership follows the ratified per-class predicates over the final world region and revision: no partial set under query pressure, no non-authored region acquisition, correct parent collapse and distinct bus Object/Run/Bus tiers. Shift adds, Ctrl removes, and cancellation preserves prior membership. Bind actual fixture ids and every required class subcase before readiness.",
       "dimensions": {
-        "normal": {"disposition":"required","reason":"Reserve normal coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "invalid": {"disposition":"required","reason":"Reserve invalid coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "cancel": {"disposition":"required","reason":"Reserve cancel coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "scope": {"disposition":"required","reason":"Reserve scope coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "precision": {"disposition":"required","reason":"Reserve precision coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "undo_redo": {"disposition":"required","reason":"Reserve undo_redo coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "save_reopen": {"disposition":"required","reason":"Reserve save_reopen coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "accessibility": {"disposition":"required","reason":"Reserve accessibility coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "failure_recovery": {"disposition":"required","reason":"Reserve failure_recovery coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]}
+        "normal": {
+          "disposition": "required",
+          "reason": "Acquire each ratified class and ladder tier with exact expected ids. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Point at empty/ineligible geometry and use zero-area regions; preserve selection or return the ratified empty query result. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Cancel before threshold and during time-sliced evaluation; preserve prior membership. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Exercise add/remove, hidden-class eligibility and parent collapse; regions exclude non-authored subjects. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "required",
+          "reason": "Test >50% versus exactly 50%, all-island enclosure and world-space equivalence across zoom/pan. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "required",
+          "reason": "Selection creates no undo entry; setup revision changes obey lifetime rather than selection resurrection. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Reopen the exact model baseline and repeat acquisition; do not assume persisted consumer selection. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Exercise required keyboard entry/focus and non-color marquee/selection states. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Exhaust preview/query budgets; feedback may degrade but committed membership is exact or canceled wholly. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        }
       },
       "method": "native_input"
     },
     {
       "id": "S5A-S02",
-      "consumer_ids": ["S5A-S02.consumer"],
-      "requirement_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"}],
+      "consumer_ids": [
+        "S5A-S02.consumer"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+          "marker": "<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+        }
+      ],
       "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Stable identity and stale subjects. This draft is not ready.",
-      "inputs": ["Change context or delete/stale a selected subject through the authorized fixture setup, then inspect selection resolution."],
-      "expected_visible": "Stable identity is retained where valid; stale or deleted subjects are refused or cleared per controlling authority.",
-      "expected_state": "Exact expected identities, topology, values and journal deltas must be bound by C01 before readiness; retain all original scope. Stable identity is retained where valid; stale or deleted subjects are refused or cleared per controlling authority.",
+      "inputs": [
+        "Change context or delete/stale a selected subject through the authorized fixture setup, then inspect selection resolution."
+      ],
+      "expected_visible": "Surviving identities remain selected; missing identities drop with notice, without substitution or resurrection. Derived subjects re-resolve at the current revision.",
+      "expected_state": "Surviving enumerated identities remain selected; missing identities drop with reported counts; recreated ids never substitute and undo never resurrects dropped selection. Derived Run/Net/Bus membership re-derives per revision and dissolves when its identity no longer resolves. Dropped focus clears with no auto-promotion. Bind exact before/after ids and revisions before readiness.",
       "dimensions": {
-        "normal": {"disposition":"required","reason":"Reserve normal coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "invalid": {"disposition":"required","reason":"Reserve invalid coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "cancel": {"disposition":"required","reason":"Reserve cancel coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "scope": {"disposition":"required","reason":"Reserve scope coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "precision": {"disposition":"required","reason":"Reserve precision coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "undo_redo": {"disposition":"required","reason":"Reserve undo_redo coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "save_reopen": {"disposition":"required","reason":"Reserve save_reopen coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "accessibility": {"disposition":"required","reason":"Reserve accessibility coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "failure_recovery": {"disposition":"required","reason":"Reserve failure_recovery coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]}
+        "normal": {
+          "disposition": "required",
+          "reason": "Advance a revision with surviving ids; selection projects new geometry. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Delete/recreate ids and provide stale incoming identities; drop/report without fuzzy substitution. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Cancel an active gesture on lifecycle interruption without undoing committed source changes. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Close/change pane content versus replace Project; distinguish projection loss from identity loss. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "required",
+          "reason": "Compare exact ids/revisions and full derived sets, never rounded positions or labels. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "required",
+          "reason": "Undo restores model identity but never auto-selects a previously dropped member. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Reopen and re-resolve project-scoped identities; stale restored ids drop/report. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Expose dropped-member counts and cleared focus without color-only cues. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Lose Run/Net/Bus origin/identity or invalidate non-authored lifecycle; dissolve/report lawfully. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            }
+          ]
+        }
       },
       "method": "native_input"
     },
     {
       "id": "S5A-S03",
-      "consumer_ids": ["S5A-S03.consumer"],
-      "requirement_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"}],
+      "consumer_ids": [
+        "S5A-S03.consumer"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+          "marker": "<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+        }
+      ],
       "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Pane, focus and filter scope. This draft is not ready.",
-      "inputs": ["Change focus, pane and visible/selectable filter state through normal native inputs."],
+      "inputs": [
+        "Change focus, pane and visible/selectable filter state through normal native inputs."
+      ],
       "expected_visible": "Selection and inspector scope follow the approved pane/focus/filter contract without cross-pane authority leakage.",
-      "expected_state": "Exact expected identities, topology, values and journal deltas must be bound by C01 before readiness; retain all original scope. Selection and inspector scope follow the approved pane/focus/filter contract without cross-pane authority leakage.",
+      "expected_state": "Shared Project selection survives pane focus/closure and content replacement; replacement cancels that pane's gesture, while Project replacement clears selection. Hidden committed members stay selected and counted; per-type Inspector scope is view-only. Same identities project fully in resolving panes, related identities retain authored baseline. Bind exact pane/member/visibility states before readiness.",
       "dimensions": {
-        "normal": {"disposition":"required","reason":"Reserve normal coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "invalid": {"disposition":"required","reason":"Reserve invalid coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "cancel": {"disposition":"required","reason":"Reserve cancel coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "scope": {"disposition":"required","reason":"Reserve scope coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "precision": {"disposition":"required","reason":"Reserve precision coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "undo_redo": {"disposition":"required","reason":"Reserve undo_redo coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "save_reopen": {"disposition":"required","reason":"Reserve save_reopen coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "accessibility": {"disposition":"required","reason":"Reserve accessibility coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "failure_recovery": {"disposition":"required","reason":"Reserve failure_recovery coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]}
+        "normal": {
+          "disposition": "required",
+          "reason": "Change pane focus and Inspector type scope without changing shared membership. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Use a pane resolving none of the selected ids; show no projection, not a guessed replacement. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Cancel pane-local gestures on focus/capture/content loss; preserve committed global selection. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Exercise hidden members, duplicate panes, same-identity and all ratified merely-related mappings. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "required",
+          "reason": "Compare global totals with exact per-pane resolution independent of units/zoom. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "required",
+          "reason": "Focus/visibility/scope changes add no authored history; revision effects remain lifetime-owned. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Reopen with source unchanged; restored pane state grants no edit or identity-substitution authority. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Verify keyboard focus ownership and non-color hidden/member/related distinctions. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Close a selected pane or replace content mid-gesture without losing surviving project selection. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C07-IDENTITY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        }
       },
       "method": "native_input"
     },
     {
       "id": "S5A-S04",
-      "consumer_ids": ["S5A-S04.consumer"],
-      "requirement_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"}],
+      "consumer_ids": [
+        "S5A-S04.consumer"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+          "marker": "<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+        },
+        {
+          "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+          "marker": "## Exact quantities and entry — F1/F2 (inherited)"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+        }
+      ],
       "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Complete compound inspection. This draft is not ready.",
-      "inputs": ["Inspect single and compound subjects with common, mixed and unavailable values and complete member sets."],
+      "inputs": [
+        "Inspect single and compound subjects with common, mixed and unavailable values and complete member sets."
+      ],
       "expected_visible": "Common/Mixed/Unavailable values and complete aggregate membership are truthful; inspection never authors values.",
-      "expected_state": "Exact expected identities, topology, values and journal deltas must be bound by C01 before readiness; retain all original scope. Common/Mixed/Unavailable values and complete aggregate membership are truthful; inspection never authors values.",
+      "expected_state": "One typed projection supplies Inspector, Console and terminal/AI: exact Common/Mixed/Unavailable values, total/per-type/hidden/locked counts, blocker explanations and optional focus agree. All nine subject kinds round-trip; 256 ids serialize deterministically and 257 omits only the list with truncated metadata. Read-only fields and disabled seams emit no design Operation. Bind exact quantity values/contexts and member ids before readiness.",
       "dimensions": {
-        "normal": {"disposition":"required","reason":"Reserve normal coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "invalid": {"disposition":"required","reason":"Reserve invalid coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "cancel": {"disposition":"required","reason":"Reserve cancel coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "scope": {"disposition":"required","reason":"Reserve scope coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "precision": {"disposition":"required","reason":"Reserve precision coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "undo_redo": {"disposition":"required","reason":"Reserve undo_redo coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "save_reopen": {"disposition":"required","reason":"Reserve save_reopen coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "accessibility": {"disposition":"required","reason":"Reserve accessibility coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "failure_recovery": {"disposition":"required","reason":"Reserve failure_recovery coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]}
+        "normal": {
+          "disposition": "required",
+          "reason": "Inspect each subject kind and Common/Mixed/Unavailable compound values from one projection. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Exact quantities and entry — F1/F2 (inherited)"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Use incompatible fields and missing typed properties; disclose Unavailable with reason, not invented values. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Exact quantities and entry — F1/F2 (inherited)"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Escape and disabled-seam activation never commit inspected values. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Exact quantities and entry — F1/F2 (inherited)"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Switch All N/per-type scopes and focus while preserving full membership and global counts. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Exact quantities and entry — F1/F2 (inherited)"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "required",
+          "reason": "Compare exact canonical values that round to equal labels; verify 256/257 envelope limits. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Exact quantities and entry — F1/F2 (inherited)"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "required",
+          "reason": "Inspector/envelope/Console observations and disabled seams add no journal or private undo entry. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Exact quantities and entry — F1/F2 (inherited)"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Reopen exact canonical source values; never parse rounded display labels back into the model. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Exact quantities and entry — F1/F2 (inherited)"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Verify names, focus, value states and blocker explanations without color alone. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Exact quantities and entry — F1/F2 (inherited)"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Re-resolve deleted focus/members and transient artifacts; all consumers agree on current identities/counts. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Exact quantities and entry — F1/F2 (inherited)"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            }
+          ]
+        }
       },
       "method": "native_input"
     },
     {
       "id": "S5A-S05",
-      "consumer_ids": ["S5A-S05.consumer"],
-      "requirement_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"}],
+      "consumer_ids": [
+        "S5A-S05.consumer"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+          "marker": "<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+        },
+        {
+          "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+          "marker": "## Persistence and write ownership — F6"
+        }
+      ],
       "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: No authored writes through cancel and reopen. This draft is not ready.",
-      "inputs": ["Cancel interactions, exercise applicable undo/redo and reopen the exact fixture."],
+      "inputs": [
+        "Cancel interactions, exercise applicable undo/redo and reopen the exact fixture."
+      ],
       "expected_visible": "Design identity, authored state and journal remain unchanged by read-only selection and inspection.",
-      "expected_state": "Exact expected identities, topology, values and journal deltas must be bound by C01 before readiness; retain all original scope. Design identity, authored state and journal remain unchanged by read-only selection and inspection.",
+      "expected_state": "Selection, inspection, scope and cancel actions leave authored shards and journal unchanged. Any fixture setup/edit/undo transactions are separately identified; their revision changes obey selection lifetime rather than restoring consumer selection from history. Reopen resolves exact committed model identity without a selection-generated transaction. Bind fixture/source/journal hashes and lifecycle states before readiness.",
       "dimensions": {
-        "normal": {"disposition":"required","reason":"Reserve normal coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "invalid": {"disposition":"required","reason":"Reserve invalid coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "cancel": {"disposition":"required","reason":"Reserve cancel coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "scope": {"disposition":"required","reason":"Reserve scope coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "precision": {"disposition":"required","reason":"Reserve precision coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "undo_redo": {"disposition":"required","reason":"Reserve undo_redo coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "save_reopen": {"disposition":"required","reason":"Reserve save_reopen coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "accessibility": {"disposition":"required","reason":"Reserve accessibility coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "failure_recovery": {"disposition":"required","reason":"Reserve failure_recovery coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]}
+        "normal": {
+          "disposition": "required",
+          "reason": "Record source hashes and journal tip around read-only native interactions. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Persistence and write ownership — F6"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Attempt unavailable mutation seams; no design operation or source write is permitted. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Persistence and write ownership — F6"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Cancel every active selection/evaluation state; preserve valid committed source and prior selection. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Persistence and write ownership — F6"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Observe Project isolation and no cross-Project selection identity leakage. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Persistence and write ownership — F6"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "required",
+          "reason": "Assert exact source/canonical values rather than screenshot equality or rounded readouts. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Persistence and write ownership — F6"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "required",
+          "reason": "Separate authorized fixture edit/undo transactions from zero-write selection effects; no resurrection. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Persistence and write ownership — F6"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Close/reopen after read-only interactions and recover exact committed identities/history. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Persistence and write ownership — F6"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Cancel/reopen paths retain truthful accessible feedback and valid focus ownership. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Persistence and write ownership — F6"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Interrupt consumer state/restore and resolve stale ids without replaying edits or inventing writer recovery. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C03-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C05-BOUNDARY -->"
+            },
+            {
+              "path": "specs/FOUNDATION_MANUAL_WORKFLOW_CONTRACT.md",
+              "marker": "## Persistence and write ownership — F6"
+            }
+          ]
+        }
       },
       "method": "native_input"
     },
     {
       "id": "S5A-S06",
-      "consumer_ids": ["S5A-S06.consumer"],
-      "requirement_refs": [{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"}],
+      "consumer_ids": [
+        "S5A-S06.consumer"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md",
+          "marker": "<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C08-OVERLAY -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+        },
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+        }
+      ],
       "preconditions": "C01 must supply the exact native fixture, complete domain subcases, build/environment and reviewed production consumers for: Accessibility and realistic performance. This draft is not ready.",
-      "inputs": ["Replay keyboard-only and non-color states and realistic dense-selection populations under the owner-ratified measurement method."],
+      "inputs": [
+        "Replay keyboard-only and non-color states and realistic dense-selection populations under the owner-ratified measurement method."
+      ],
       "expected_visible": "Accessible focus/value/identity information matches native behavior; actual latency and resource evidence use approved budgets.",
-      "expected_state": "Exact expected identities, topology, values and journal deltas must be bound by C01 before readiness; retain all original scope. Accessible focus/value/identity information matches native behavior; actual latency and resource evidence use approved budgets.",
+      "expected_state": "Native keyboard/focus and non-color states convey the same subject, counts and reasons as pointer/visual behavior. Dense selection follows the 65536 primitive cap and exact union-mask fallback with channel identity preserved; 100k maximal-collision cases keep exact membership. Retained-buffer and CAM invariance and 2-physical-pixel cue hold across zoom/device scale. Bind exact fixture, environment and owner-approved measurement budgets before readiness.",
       "dimensions": {
-        "normal": {"disposition":"required","reason":"Reserve normal coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "invalid": {"disposition":"required","reason":"Reserve invalid coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "cancel": {"disposition":"required","reason":"Reserve cancel coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "scope": {"disposition":"required","reason":"Reserve scope coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "precision": {"disposition":"required","reason":"Reserve precision coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "undo_redo": {"disposition":"required","reason":"Reserve undo_redo coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "save_reopen": {"disposition":"required","reason":"Reserve save_reopen coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "accessibility": {"disposition":"required","reason":"Reserve accessibility coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]},
-        "failure_recovery": {"disposition":"required","reason":"Reserve failure_recovery coverage within this group; C01 must expand exact cases and justify any scoped non-applicability before readiness.","authority_refs":[{"path":"specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md","marker":"<!-- REQ:UVT-S5A-BUILD:S5A-C01 -->"},{"path":"research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md","marker":"## Preparation boundary"}]}
+        "normal": {
+          "disposition": "required",
+          "reason": "Exercise native keyboard/non-color cases and complete dense population, not a small proxy. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C08-OVERLAY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Include unresolved/ineligible members in the approved matrix without fabricated visual identity. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C08-OVERLAY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Cancel dense evaluations and focus-loss cases atomically under pressure. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C08-OVERLAY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Include multi-pane maximal channel collision and hidden counts with one selection cue budget. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C08-OVERLAY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "required",
+          "reason": "Measure 2 physical px across scale/zoom, exact membership, buffer/CAM bytes and governed primitive cap. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C08-OVERLAY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "required",
+          "reason": "Performance/accessibility interactions remain consumer state; no design history side effects. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C08-OVERLAY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Reopen exact fixture and bind cold/warm conditions separately; no inferred latency from prior evidence. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C08-OVERLAY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Replay keyboard-only, focus, reduced-motion and non-color information with exact subject/value parity. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C08-OVERLAY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "On budget exhaustion preserve exact membership and channel identity; report measurements against ratified bounds. Exact fixture/input bindings and observed proof remain required before readiness/acceptance.",
+          "authority_refs": [
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C08-OVERLAY -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C02-CONTRACT -->"
+            },
+            {
+              "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+              "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+            }
+          ]
+        }
       },
       "method": "native_input"
     }
