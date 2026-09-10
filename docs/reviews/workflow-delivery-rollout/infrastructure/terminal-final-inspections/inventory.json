@@ -1,0 +1,182 @@
+[
+  {
+    "path": "logs/terminal-1644-preflight-01.json",
+    "size": 2231965,
+    "sha256": "f1ec7328a9e57f6a3c9556ec39f9cb6be7ade15d1b05dffd6fd3820bd0700c2c"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/construction-command.json",
+    "size": 911,
+    "sha256": "659f381bc6a05152598b6a93d42b540508632d74ca54c9f50a6c96fe0a7a6d03"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/construction-process.json",
+    "size": 288,
+    "sha256": "7664342e6b8d4bb32dace3446bb02eaf48de37017cf59edfc3f3c53585a63c71"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/construction-started.json",
+    "size": 58,
+    "sha256": "cb77e270eed10a3546aaf4b743594292e38c89fb1ea0a25831abeb58962de554"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/construction-stderr.bin",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/construction-stdout.bin",
+    "size": 253,
+    "sha256": "57f401f756cf8f1e543e42405b3ac6bf3b399122304a8c8c4d736263b89dcc70"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-candidate-inspection-01/after-failure.json",
+    "size": 2279510,
+    "sha256": "e7b007d639d0f3cf353f1e145b14ffdd76e80d85d58550d6f9320d9b36188cb7"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-candidate-inspection-01/before.json",
+    "size": 2279369,
+    "sha256": "9d4b8672191a5307273902424f32269364c6fc4f9a517e28d09f3bf24757ed2f"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-candidate-inspection-01/coordination-drift.json",
+    "size": 1114,
+    "sha256": "f70660fcb36953ed26b1505644e8b8facd5825eec233475bc14d7787ab96f897"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-candidate-inspection-01/failure-analysis.json",
+    "size": 2233,
+    "sha256": "cd8b6f05fb07fca680137c9212bba51270ac4f82fbc37d0a54c5510edb6f2e59"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-candidate-inspection-01/publication-delta.json",
+    "size": 122406,
+    "sha256": "f7f68dfb42dbd63d16d3c2a1364e30114ecc6cd312d42327937bbd6d04cb2e95"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-candidate-inspection-02/after.json",
+    "size": 2279939,
+    "sha256": "1314ca835911514008037253662328bf2c8fd58a49d7e3f6af293cd55334ab3a"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-candidate-inspection-02/before.json",
+    "size": 2279939,
+    "sha256": "1314ca835911514008037253662328bf2c8fd58a49d7e3f6af293cd55334ab3a"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-candidate-inspection-02/publication-delta.json",
+    "size": 122406,
+    "sha256": "d9e2b0f9e4dff4b248d07c4548c980b37922de2622271ae06c417bd88569412b"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-candidate-inspection-02/result.json",
+    "size": 9423,
+    "sha256": "8f8c42993f82612df39dba59fb2e3a17b7fe909ab2c10f3483a34a691aaf26ff"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-inspection-01-command.json",
+    "size": 696,
+    "sha256": "52cc03f07d1e70a502859ac9b4e8a304f934b8924afce92e8ebadc8059c2c76d"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-inspection-01-process.json",
+    "size": 288,
+    "sha256": "babaedfcc6ee6c85f4a935271d32ac1b9ad10277ecbf0873deeaa7558bc3a377"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-inspection-01-started.json",
+    "size": 58,
+    "sha256": "397801978718db5f706bcccc80ee7d1a61afb3b5acb4f2a338d6bee557d61247"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-inspection-01-stderr.bin",
+    "size": 1473,
+    "sha256": "182dad51c26ee0bfa3f0293278e4cead9f633726c89732ff8a9c92ae0fa7299a"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-inspection-01-stdout.bin",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-inspection-02-command.json",
+    "size": 699,
+    "sha256": "21f2dc6628f729910d34373346785b2451d02b2ad2ae888274f0462f524d71cb"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-inspection-02-process.json",
+    "size": 288,
+    "sha256": "3277d23815c202e0c0e0db593d3eaf8fbd5c524b16c97bd397508bc5ab892e10"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-inspection-02-started.json",
+    "size": 58,
+    "sha256": "c807e14b8a94e321a7f18dd128bb04b8049cf5924175b293b65a7164bf78ce1b"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-inspection-02-stderr.bin",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/final-inspection-02-stdout.bin",
+    "size": 6230,
+    "sha256": "2cc3017ac8206ee689a23f47f9e386024910bf9f44b8cd88d20d80a7d3852d93"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/inspect-final-candidate-02.py",
+    "size": 968,
+    "sha256": "1178b6e5a75e2f9225e1f5a610b406cd580266443de7c37b4179b8f5f76052b9"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/inspect-final-candidate.py",
+    "size": 7841,
+    "sha256": "82e3e52ac0d90479cb64d1e7f18e30a258aead2871c9ea24c677e7b14f7e6616"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/retain-final-failure.py",
+    "size": 2523,
+    "sha256": "5452ed47968924282ad26cb48397253cda2fb17b169485264466552db9fcb4b9"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/typed-review-01-command.json",
+    "size": 1012,
+    "sha256": "3bc326ce00f70bfd6477bea7191130ad1a09b73366b13b7b9380259dfca3a094"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/typed-review-01-process.json",
+    "size": 288,
+    "sha256": "2078f9c5700893f251383a8cac6344aa13b7839e8ca01c2dccf56cd324a130cd"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/typed-review-01-result.json",
+    "size": 7350,
+    "sha256": "31a3ad0b9ef82561309f8822b1e1f4602ac675301733e6d161ca27aae434d044"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/typed-review-01-started.json",
+    "size": 58,
+    "sha256": "1ad92db8db93063e2df5ed655f3accc30ccdfddf741076bdcc2f0b39054bd79f"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/typed-review-01-stderr.bin",
+    "size": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/typed-review-01-stdout.bin",
+    "size": 6543,
+    "sha256": "e5020ecbf053a449ea9a6a630675ca1a78b963a94f54ffd9bf0893de1d3b950b"
+  },
+  {
+    "path": "proposals/independent-terminal-rollout-20260910/typed-review-handoff.json",
+    "size": 2399,
+    "sha256": "bc489eaf2796246b74f0c6187c24030f00882c6bf486cbc111f7282f275387a1"
+  },
+  {
+    "path": "proposals/terminal-integration-1644/retain_final_inspections.py",
+    "size": 5007,
+    "sha256": "7600607daf06eca6c71043d68758e606f7b963ff7a1efb059da34d0c116b54ec"
+  }
+]
