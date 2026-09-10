@@ -1,0 +1,40 @@
+{
+  "reviewer_session": "wdq-independent-review-20260906",
+  "candidate": "9924678c39fe5d176e58ebfd8e25ab6feb213f35",
+  "integration_candidate": "1644e2129f4ff83cec1cdf0e6e13534c3b258e8e",
+  "stats": {
+    "producer": {
+      "observations": 15,
+      "artifact_hashes": 105,
+      "source_hash_checks": 564,
+      "source_paths": 33,
+      "events": 66,
+      "observer_ids": 15,
+      "return_codes": {
+        "0": 13,
+        "1": 2
+      },
+      "protected_state_unchanged": true
+    },
+    "independent": {
+      "observations": 15,
+      "artifact_hashes": 105,
+      "source_hash_checks": 564,
+      "source_paths": 33,
+      "events": 66,
+      "observer_ids": 15,
+      "return_codes": {
+        "0": 13,
+        "1": 2
+      },
+      "protected_state_unchanged": true
+    }
+  },
+  "independent_ids_disjoint_from_producer": true,
+  "ordered_inventory_match": true,
+  "all_expected_outcomes_checked": true,
+  "fixture_basis": "Exact archived pre-state restored at original absolute fixture pathname under transferred custody; all protected fields matched, fresh nonce only. Fixture cleanup retained and archives preserved.",
+  "scope": "real-roadmap fresh independent captures only; expected refusal/recovery assertions passed, no retries. Separate exact I04 integration only; prerequisite typed packet unchanged. Not installed verification, product acceptance or activation.",
+  "activation_performed": false,
+  "full_review_complete": false
+}

@@ -1,0 +1,13 @@
+{
+  "capture_directory": "restored-workspace-inventory-S-details",
+  "case": "restored-workspace-inventory",
+  "expected_refusal": false,
+  "invocation_id": "7bda0d85-1a7d-4961-8d03-b5528076adf8",
+  "returncode": 0,
+  "state_unchanged": true,
+  "surface": "S-details",
+  "directory": "restored-workspace-inventory-S-details",
+  "result_sha256": "3cba7ae68d1f8ac43a238d711616eb899e59f68c3f5274fc8fe5f046c356086e",
+  "exact_before_state_equal": true,
+  "states_unchanged": true
+}

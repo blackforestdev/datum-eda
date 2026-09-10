@@ -1,0 +1,1584 @@
+{
+  "files": [
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-sequencing-20260910/replay-real-prestates.py",
+      "sha256": "6d9ea1750c7e48ee4b5996d893192aee2fd0b2052ccfc4cccc138585ab12578b",
+      "size": 8597
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-sequencing-20260910/verify-workspace-exact.py",
+      "sha256": "cbb840bd015d93fc8fbead58bb737851800e617d1e6c75dfb9fe61d5958f5f28",
+      "size": 3711
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/consolidate-integration.py",
+      "sha256": "f74aab93ceb671d9700b3681438479d813f727abe8ad00780d39f541faa6ea48",
+      "size": 3586
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/bundle-seed.json",
+      "sha256": "5a62f058e13a7578577500ce9716002d9756c4e1de211a4e6e3bb9ee551d89d0",
+      "size": 471
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/explicit-bundle-fetch.json",
+      "sha256": "c8c839fbc3c70b91792e2530ce60fd79cac7d49b3dcbbde0f420aa2e276c3a7c",
+      "size": 14605
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/independent-verification.json",
+      "sha256": "0273c0f37606fdbd92a728883a2328b75a132029502ad22771572321e941cc1c",
+      "size": 1452
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-check/capture/after.json",
+      "sha256": "f082de6a862fb5881ccac7bb5d8be0de7791e55eefe6355defae17c39981dbd6",
+      "size": 2143001
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-check/capture/before.json",
+      "sha256": "f082de6a862fb5881ccac7bb5d8be0de7791e55eefe6355defae17c39981dbd6",
+      "size": 2143001
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-check/capture/calls.jsonl",
+      "sha256": "84bbad1a1734fc9189b172a0046182fe18673c46045e170aaf142558185385d8",
+      "size": 62614
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-check/capture/invocation.json",
+      "sha256": "c1e5fbfa5d1501bc9bf34a02e3eaa858061fb566e3a05472ee250b46fd469a41",
+      "size": 1751
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-check/capture/result.json",
+      "sha256": "2899ec24223b3f61ade616bc14bf77f9c11943d18c19463db54fcf611575364b",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-check/capture/started.json",
+      "sha256": "841e4e9a082bb7d1b2fe036a410efa85b49ab7bc8362b3cb434d96f6b1b3eb25",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-check/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-check/capture/stdout.bin",
+      "sha256": "97953a37f08035dd45e3845ea195eac78f37e92676c78d4da60eab00aecbffa5",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-check/cleanup.json",
+      "sha256": "3c6a8dc8d3a24627e029bcb19f853ed15440c3227cb57e52a6e6b0fd69be7b7b",
+      "size": 466786
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-check/independent-assessment.json",
+      "sha256": "1409cb83ade4a2be4b0fdf6c9993e7204d43136d4ae0c468b430dc972d53f7d2",
+      "size": 474
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-check/input-identity.json",
+      "sha256": "16e4748b708546da7e4f1eb1411a4083a3f3136b0df1b20310e50c18bb1f2a9c",
+      "size": 466994
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-check/restored-before.json",
+      "sha256": "64969da40d05924183c5957030dd31a2237f43c67c20da38ba9daa7ebbe50099",
+      "size": 2368333
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-details/capture/after.json",
+      "sha256": "f082de6a862fb5881ccac7bb5d8be0de7791e55eefe6355defae17c39981dbd6",
+      "size": 2143001
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-details/capture/before.json",
+      "sha256": "f082de6a862fb5881ccac7bb5d8be0de7791e55eefe6355defae17c39981dbd6",
+      "size": 2143001
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-details/capture/calls.jsonl",
+      "sha256": "6f0b3e8058c12e85866fd42c8b05a4ee382f5a41e27dff7400174ff055093c35",
+      "size": 62652
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-details/capture/invocation.json",
+      "sha256": "f223b3fdfb902c123c06beebfaa95bc95f47953d7e8e1c8bc0a61a1aa775a773",
+      "size": 1790
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-details/capture/result.json",
+      "sha256": "7a87fa7ac66e483f826b8b581274f6bf9ff1122ae5319e9b99bb410441100a42",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-details/capture/started.json",
+      "sha256": "53c848caeacce319d4d17cf81bcb8e60364f811df985cf42564b4b925f2a8250",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-details/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-details/capture/stdout.bin",
+      "sha256": "97953a37f08035dd45e3845ea195eac78f37e92676c78d4da60eab00aecbffa5",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-details/cleanup.json",
+      "sha256": "850956bffc87521f3b91b307f1a2e118cfc7194659ed24d6dc0b8f57ca603717",
+      "size": 466788
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-details/independent-assessment.json",
+      "sha256": "c0fb7ab4af23efe43e22bb73bed98d81d1d472886cb0593c4cef430375639772",
+      "size": 480
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-details/input-identity.json",
+      "sha256": "faa196ba8b45e40bf98286c57078248955aa0a58f7525ea3a2a9b911e9b42742",
+      "size": 466998
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/inventory-plus-unknown-source-S-details/restored-before.json",
+      "sha256": "64969da40d05924183c5957030dd31a2237f43c67c20da38ba9daa7ebbe50099",
+      "size": 2368333
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observations.json",
+      "sha256": "c2782a065526aa77ce800ef45538321f1f0caa56f6ead1545202eca5a77dd6a4",
+      "size": 5204
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-C/capture/after.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-C/capture/before.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-C/capture/calls.jsonl",
+      "sha256": "0403a6f404176236eb2845311c84b945b3775703e5e66793d8fbbcd189d77481",
+      "size": 62269
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-C/capture/invocation.json",
+      "sha256": "3f8f61945538c016bc51678797a429b1e20b8fe056aa195e27f81404287902d4",
+      "size": 1948
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-C/capture/result.json",
+      "sha256": "0273440d676e4c8f8739b4d88f8c681c23fa2fccfc76a81ddaecc47d1a86e7ba",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-C/capture/started.json",
+      "sha256": "ef93dfc9bc23ac603cb1bd59adf35cbfa57cae8613ab23849a22b8ec3e9fa1ec",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-C/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-C/capture/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-C/cleanup.json",
+      "sha256": "2e02657ba33f416c84b493cb3adb0656c00421610c2a5df1a3e344d3d8b40a8e",
+      "size": 466720
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-C/independent-assessment.json",
+      "sha256": "56ce62d41abc6df1cf7a13ed80a44c855d72a32175acd8990bba2f745cc2903e",
+      "size": 454
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-C/input-identity.json",
+      "sha256": "62fb96722cf362b857eea9112eb937b16fcd9c9248d421867be4acda789b3d02",
+      "size": 466921
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-C/restored-before.json",
+      "sha256": "f4058e6032448eef056f4ad046667130d00462434415cd7658a4578c46a9f7d3",
+      "size": 2368130
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-H/capture/after.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-H/capture/before.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-H/capture/calls.jsonl",
+      "sha256": "06b4b7ad5b4f3859853613514f12a013f880555e737461bf2b09f2178903f613",
+      "size": 72758
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-H/capture/invocation.json",
+      "sha256": "e4f7d19d74d1f51df946452ac5188f96d98118cfab08782c1f079e9a7763a371",
+      "size": 1374
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-H/capture/result.json",
+      "sha256": "e1eefe5b04fe5bb13f51c9f6abdc813cce9ea4d8da30ab6793beb0e21ee2608a",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-H/capture/started.json",
+      "sha256": "66be1e2764023f85f9ae4f3a0f2e9ed472938a548210feae5715d05bb0ba2567",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-H/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-H/capture/stdout.bin",
+      "sha256": "f0d0ee87bf357acd84df5a2e252bd27091dd7c564c954e44b6d6250b4d549fe1",
+      "size": 365
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-H/cleanup.json",
+      "sha256": "caf0fbbb7b5dd64612dd7c0ce690b8c317c96b34de4b816db49cc58ca697789c",
+      "size": 466720
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-H/independent-assessment.json",
+      "sha256": "991fbc19fd9c9e8c9dd3e946a940ce0324da9fa6be3ac94fb51ef0f57c7b1971",
+      "size": 454
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-H/input-identity.json",
+      "sha256": "95b172a91c8ae2f983d0a37b439d4907ad28e57ed1668f13c2298ac3282f80f1",
+      "size": 466921
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-H/restored-before.json",
+      "sha256": "f4058e6032448eef056f4ad046667130d00462434415cd7658a4578c46a9f7d3",
+      "size": 2368130
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-R/capture/after.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-R/capture/before.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-R/capture/calls.jsonl",
+      "sha256": "8bbfbe5e3bdefd8f572b8edb6cb6788d60f19471017b86f8a7edb23e7ce2ae86",
+      "size": 62320
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-R/capture/invocation.json",
+      "sha256": "7236c88f0fe2337f16d89db452d3104ee65571d057a833b1e79967f2f2e94e4e",
+      "size": 1998
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-R/capture/result.json",
+      "sha256": "a702a4adaf099bb060731b7bc9e58fb60a03333a18b34012c83f4496955eaddc",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-R/capture/started.json",
+      "sha256": "7e5e73ab7ba08836b7ee4d93c2637fd411ff457c29f980fb1f8fc0799d65c4ca",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-R/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-R/capture/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-R/cleanup.json",
+      "sha256": "1978b4559f40dfdeae72bea033cac1c03cad6f25f899597ceab27a1f22e21a7e",
+      "size": 466720
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-R/independent-assessment.json",
+      "sha256": "2282d873fa1481f53b88c5d240478b0586a490cc4da5e268d0d100cc88cffa89",
+      "size": 454
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-R/input-identity.json",
+      "sha256": "a2aa5d15f315dbcbedef46dc30c380b25123a53f14baf66d336603a0e3eda767",
+      "size": 466921
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-R/restored-before.json",
+      "sha256": "f4058e6032448eef056f4ad046667130d00462434415cd7658a4578c46a9f7d3",
+      "size": 2368130
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-check/capture/after.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-check/capture/before.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-check/capture/calls.jsonl",
+      "sha256": "c8b667b0f69960bc89e82c74642e0a6e8bf553d44b8481ca320a6c896c39d7f0",
+      "size": 62614
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-check/capture/invocation.json",
+      "sha256": "292ed9f2870f1f4b317f73778522e00bd6987d355a40af2cb24a653a589d95cb",
+      "size": 1749
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-check/capture/result.json",
+      "sha256": "1ef320e2c765fee3708ea6f5f2449be3297a353b69591512a143febcb973a4e2",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-check/capture/started.json",
+      "sha256": "8c898bb186553cbe9e20b599acb33fc47313563af0d468e279d1beb835678893",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-check/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-check/capture/stdout.bin",
+      "sha256": "c51a76111b59dfba3ecd3a97079d25fff3de21a5195c5c0b90cec162b1540ca9",
+      "size": 32
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-check/cleanup.json",
+      "sha256": "3123bffb90b93b45d294257e6e4155ba91d3270688efe95624d3dacf69446543",
+      "size": 466726
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-check/independent-assessment.json",
+      "sha256": "6d9906cbdc3f127db54c909f67901a085087d9dc79157a4e21b763ffc26640d7",
+      "size": 472
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-check/input-identity.json",
+      "sha256": "e1ab90cafd894f79ca7c90d828e79738030bae249bb703082828d64f9a585444",
+      "size": 466933
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-check/restored-before.json",
+      "sha256": "f4058e6032448eef056f4ad046667130d00462434415cd7658a4578c46a9f7d3",
+      "size": 2368130
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-details/capture/after.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-details/capture/before.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-details/capture/calls.jsonl",
+      "sha256": "6a0c8b6bfb7b65349ad9f86493cfaf43d41e6af8f0f94605dacdf729bf398852",
+      "size": 62652
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-details/capture/invocation.json",
+      "sha256": "4bddae4a1f39c974d1a27357a83805414b9ccd7aa197107d523360abff2bbd64",
+      "size": 1788
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-details/capture/result.json",
+      "sha256": "5ff00a6fdbf387ff76e0ee6436132aefcfe31b65fc9321e2e5371a1e000f77ef",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-details/capture/started.json",
+      "sha256": "1fc4e54d749bd53cd0e54879ff630e9bcbf19e06bdebe80fc31585ab43d0b414",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-details/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-details/capture/stdout.bin",
+      "sha256": "52cc5d0bc323fbba4a25c83100054d44bb1a03e44b560cdda3e0898b6954d74e",
+      "size": 10456
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-details/cleanup.json",
+      "sha256": "9569e9580391ef38f6ceb56b6a9742a3abf492a2bcf6910371372177f9fed54b",
+      "size": 466728
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-details/independent-assessment.json",
+      "sha256": "3edcd2384c6e294d64e9db893fd301542cacd0e3feb96ea15db44d24ad7031f2",
+      "size": 478
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-details/input-identity.json",
+      "sha256": "b5b040c4fb6890f321f00beb6be1407c4fa3b2c3b80e4c1b79da3e1464ada0af",
+      "size": 466937
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/observed-workspace-inventory-S-details/restored-before.json",
+      "sha256": "f4058e6032448eef056f4ad046667130d00462434415cd7658a4578c46a9f7d3",
+      "size": 2368130
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-check/capture/after.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-check/capture/before.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-check/capture/calls.jsonl",
+      "sha256": "a32c5cb0ac4eef8b6e23d485e26883ea0dceaea56d4c312a312024cddf71b268",
+      "size": 62614
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-check/capture/invocation.json",
+      "sha256": "af157fa7b7bea7247338d90bfc01dbe1c6e5ca2fccb82c101f6189a82c212633",
+      "size": 1749
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-check/capture/result.json",
+      "sha256": "d136ef004a87564a7e9b34f74750adb0996216901e6b4b695d0d8398eea37754",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-check/capture/started.json",
+      "sha256": "99ac0e98226307b27a1fce375bc9d9a0dc82feb6380b2c40b40a459779647e17",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-check/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-check/capture/stdout.bin",
+      "sha256": "c51a76111b59dfba3ecd3a97079d25fff3de21a5195c5c0b90cec162b1540ca9",
+      "size": 32
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-check/cleanup.json",
+      "sha256": "581cf7750b0d74201ae12e71b70ab7058939d3f2a345681d3f4ca7e6f594ddc0",
+      "size": 466726
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-check/independent-assessment.json",
+      "sha256": "90ec4ea07032cefffe748da3fde87b91973dcb6f2a12f12c5b911acbd7fd773a",
+      "size": 472
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-check/input-identity.json",
+      "sha256": "dd4f9c10daeac37ad358cccb80ae763078e599f69f5efbea432edf33b646ae51",
+      "size": 466933
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-check/restored-before.json",
+      "sha256": "f4058e6032448eef056f4ad046667130d00462434415cd7658a4578c46a9f7d3",
+      "size": 2368130
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-details/capture/after.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-details/capture/before.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-details/capture/calls.jsonl",
+      "sha256": "7765338d1891b4791de2e91b3106e257ab634f65438961781f3ce65342c614c4",
+      "size": 62652
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-details/capture/invocation.json",
+      "sha256": "9c55558421e5f52b1197d62b00bac58213730a1c9698ce4ec669165f69c4540a",
+      "size": 1788
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-details/capture/result.json",
+      "sha256": "3cba7ae68d1f8ac43a238d711616eb899e59f68c3f5274fc8fe5f046c356086e",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-details/capture/started.json",
+      "sha256": "dc56d6743bfe413f460f028f85842829053518bedbc8874267cedd82680b9d71",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-details/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-details/capture/stdout.bin",
+      "sha256": "52cc5d0bc323fbba4a25c83100054d44bb1a03e44b560cdda3e0898b6954d74e",
+      "size": 10456
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-details/cleanup.json",
+      "sha256": "5096437e747e47775cbe7f6359484036a768366718b58e5436881465d34af40b",
+      "size": 466728
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-details/independent-assessment.json",
+      "sha256": "4e9cd4e92b43d395a26d8ce4fd43cae9a4bd57ed4019529e216e58dcb83aa676",
+      "size": 478
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-details/input-identity.json",
+      "sha256": "587940aeff8dc10a4271eb40d8b4eade6c91cb150894ffc179234fa97dccd1d7",
+      "size": 466937
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/current-inventory-exact/restored-workspace-inventory-S-details/restored-before.json",
+      "sha256": "f4058e6032448eef056f4ad046667130d00462434415cd7658a4578c46a9f7d3",
+      "size": 2368130
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/integration-24-complete.json",
+      "sha256": "33e4b7567a2d0316892243dbadb03bb8ce0bf628ad61a8fb707c4b951b3e8dbf",
+      "size": 17990
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/integration-current-inventory-adapter.json",
+      "sha256": "0f10d470d25e5b4ba5a5c4fb3bae83a30633cde61c5166d77dd9a051f892fa4c",
+      "size": 1067
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/integration-inventory9-command.json",
+      "sha256": "c4a50649ca23fe65a48f1f0b8d3a34fda375ab072cadd2026ff60240bf6f9bc7",
+      "size": 716
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/integration-inventory9-process.json",
+      "sha256": "65a5845245a848711b914add8dbd8310204d83cdd0521178d4bcfaaea07d2874",
+      "size": 288
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/integration-inventory9-started.json",
+      "sha256": "d2b87451bae8e16ab2d0f996b49620959d76ca805bd90d9a33c17d37264b037b",
+      "size": 58
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/integration-inventory9-stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/integration-inventory9-stdout.bin",
+      "sha256": "fd45a6ed20107c5093ac0a59ed83d1e0ff8d154ff12d6396e5d235da5fcdfd0e",
+      "size": 936
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/integration-real-roadmap-adapter.json",
+      "sha256": "0f10d470d25e5b4ba5a5c4fb3bae83a30633cde61c5166d77dd9a051f892fa4c",
+      "size": 1067
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/integration-real15-command.json",
+      "sha256": "48a4097c98ffef5ac2b17243ea1fa7fc6fda2b502b53c14fba3f263dee36bf5d",
+      "size": 711
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/integration-real15-process.json",
+      "sha256": "ed88beb41ec850a55e3e35738eb86fee93d5777b0f1e0015498381d740a8195b",
+      "size": 288
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/integration-real15-started.json",
+      "sha256": "89be26db45bf3693ac4003a5bb24800877418e51434e7c1b355f9beafba15100",
+      "size": 58
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/integration-real15-stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/integration-real15-stdout.bin",
+      "sha256": "c3c77188ab585ca4cb817ca27ee2b12f218567406fab87ca06dc655a2f54418f",
+      "size": 1491
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/bundle-seed.json",
+      "sha256": "5a62f058e13a7578577500ce9716002d9756c4e1de211a4e6e3bb9ee551d89d0",
+      "size": 471
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-C/capture/after.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-C/capture/before.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-C/capture/calls.jsonl",
+      "sha256": "3cab7ea567bafe783809caae9a1cddf55de284c0c623faec036115ee0e3c8acf",
+      "size": 62259
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-C/capture/invocation.json",
+      "sha256": "dbba805256e0d23904dadf593baf77c87606e7d389c1802aba9472a8c76f0912",
+      "size": 1877
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-C/capture/result.json",
+      "sha256": "68ef4af981306fa6eee7ac9840ed023e3e68f430536604c05aab8bb71ff40ae0",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-C/capture/started.json",
+      "sha256": "21291d673a6ccad92c14a1c7fb2d821b6f7866648ac9962440ae56fba99148ed",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-C/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-C/capture/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-C/cleanup.json",
+      "sha256": "05a928a970c970c6fbb1c831680cbf0f4112653eb65b46676276f174d12ef4f4",
+      "size": 430962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-C/independent-assessment.json",
+      "sha256": "51e6a0ae4257de8edb42e9b599c64eeb0ad06c18f404979b7d715cfc23a04241",
+      "size": 385
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-C/input-identity.json",
+      "sha256": "5953eaf068023501622f18cedd37a124adb7d74165aa31f43bf5d44ccb49e644",
+      "size": 431140
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-C/restored-before.json",
+      "sha256": "4d2e4ff1ee2af21b02d9dfc6e9d9fc74784df954816aa5039d2425aa94cfe43d",
+      "size": 2265747
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-H/capture/after.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-H/capture/before.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-H/capture/calls.jsonl",
+      "sha256": "7dda5122e033b8044e04de3bd5753095f6660e3ed370ebf44f01222ba14a2b85",
+      "size": 72368
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-H/capture/invocation.json",
+      "sha256": "9ac3f8172f4c89f0ba13d86faa1d4f39362e80059522b94ff30261ee66b95941",
+      "size": 1303
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-H/capture/result.json",
+      "sha256": "6c8369ecadb53be1b2f4922811cab262e9a7a772aef616911ee9a780b770139a",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-H/capture/started.json",
+      "sha256": "dfb6c5083e862ec86ae6fea7c46249e6a629b4d1baf31419a927e6c743c9d633",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-H/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-H/capture/stdout.bin",
+      "sha256": "f0d0ee87bf357acd84df5a2e252bd27091dd7c564c954e44b6d6250b4d549fe1",
+      "size": 365
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-H/cleanup.json",
+      "sha256": "c56003a30c154de451a98cd05c6cb686e1029c50f97360de2f6a7e3ec5bf532f",
+      "size": 430962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-H/independent-assessment.json",
+      "sha256": "9d106162cd26d965c7c35670dae9b3ac7a13427dbede3a4ee0ef41f67168c662",
+      "size": 385
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-H/input-identity.json",
+      "sha256": "b7d8e639d25914f47fdbde9103556dab2da1eccb6e7dc6c5bf6a541783cbab90",
+      "size": 431140
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-H/restored-before.json",
+      "sha256": "4d2e4ff1ee2af21b02d9dfc6e9d9fc74784df954816aa5039d2425aa94cfe43d",
+      "size": 2265747
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-R/capture/after.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-R/capture/before.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-R/capture/calls.jsonl",
+      "sha256": "9130f7d3cf2d985ae724a9849ed5dea6c54c698c527993dc35dbd40a5124ceec",
+      "size": 62310
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-R/capture/invocation.json",
+      "sha256": "1546283eab9d1c38c7256d37fc1b35f519cc9e89db802248874b231d883c2687",
+      "size": 1927
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-R/capture/result.json",
+      "sha256": "be9d83a52894029ba2d635491623e0898bcf4d0dae982d30d9aa15d0063d9e1a",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-R/capture/started.json",
+      "sha256": "3e4ed34dd73a038cfe84d76933064634862adb02e2543cfb95db21df71716842",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-R/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-R/capture/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-R/cleanup.json",
+      "sha256": "f96c7476bba0d6202a65b1c934929604779bb0c4d1732d12d51022c80c86f227",
+      "size": 430962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-R/independent-assessment.json",
+      "sha256": "99be75c7426d53ab4fc6e8d9448b8f12d50c1509a87fb78d83454418faf14492",
+      "size": 385
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-R/input-identity.json",
+      "sha256": "9831bb4e511d3df733862430060cab0d349b518359894a3b0f14143f55118ee9",
+      "size": 431140
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-R/restored-before.json",
+      "sha256": "4d2e4ff1ee2af21b02d9dfc6e9d9fc74784df954816aa5039d2425aa94cfe43d",
+      "size": 2265747
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-check/capture/after.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-check/capture/before.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-check/capture/calls.jsonl",
+      "sha256": "59e0ff9f9c27763b2c625eb6ca8a1483c81baea1a48541a2240f30b9859e8e01",
+      "size": 62604
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-check/capture/invocation.json",
+      "sha256": "dd59b90c937c505712a078c88fb3c142774105e68c432fd7ed4b8608b2e79a29",
+      "size": 1678
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-check/capture/result.json",
+      "sha256": "3b468c07cb120cce6a91aa9b83b1db5afeca509fdab7b0b5e044e6ceb533efba",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-check/capture/started.json",
+      "sha256": "ed6578fee0ec7bd3053e83a03b01d9d8870106ab49bf0ca89a20b66029fb25f6",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-check/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-check/capture/stdout.bin",
+      "sha256": "c51a76111b59dfba3ecd3a97079d25fff3de21a5195c5c0b90cec162b1540ca9",
+      "size": 32
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-check/cleanup.json",
+      "sha256": "c1ef21ed8e79eeecfc014b76a18b1100ea3a2161e9b06332f1a9eba35d09d846",
+      "size": 430968
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-check/independent-assessment.json",
+      "sha256": "a66e4f3551b5208f3f823f3e6b8cdf67f8ac7ecf7b8447a60913999b33562018",
+      "size": 403
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-check/input-identity.json",
+      "sha256": "55c5a9a31980c02d7c2a3d3b50d63f717c059f3fb8882cbddd9ee9a71d1a75bf",
+      "size": 431152
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-check/restored-before.json",
+      "sha256": "4d2e4ff1ee2af21b02d9dfc6e9d9fc74784df954816aa5039d2425aa94cfe43d",
+      "size": 2265747
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-details/capture/after.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-details/capture/before.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-details/capture/calls.jsonl",
+      "sha256": "454a352cac35ce7a2699578d5822aa285f08540abaacaba98fbbfff3c6e694d2",
+      "size": 62642
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-details/capture/invocation.json",
+      "sha256": "2476ab7f3fb18af915fb88e865a278d051c49c9fc1615c504cc6cf73e6289520",
+      "size": 1717
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-details/capture/result.json",
+      "sha256": "5079639551c82d1c4548d8b1bbdf3f8ac65e922943871982923a9b6ef76876e0",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-details/capture/started.json",
+      "sha256": "acccd4500c85ea3467342517f14023316646480ae10f51ff812594e443c1f34e",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-details/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-details/capture/stdout.bin",
+      "sha256": "52cc5d0bc323fbba4a25c83100054d44bb1a03e44b560cdda3e0898b6954d74e",
+      "size": 10456
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-details/cleanup.json",
+      "sha256": "2859e1c16a19a5fcd51450f540daf409be6a3f6a29cfb1081b7de47a48150c10",
+      "size": 430970
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-details/independent-assessment.json",
+      "sha256": "a979deed1cdb12cdc91e4ccd3bae53874b60c321d01735290ce2951ce6bddac4",
+      "size": 409
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-details/input-identity.json",
+      "sha256": "b5b27035597866e04108b958b6fc0c1d5ff53de632b2d60cdc833cef260cc48b",
+      "size": 431156
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/clean-S-details/restored-before.json",
+      "sha256": "4d2e4ff1ee2af21b02d9dfc6e9d9fc74784df954816aa5039d2425aa94cfe43d",
+      "size": 2265747
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/explicit-bundle-fetch.json",
+      "sha256": "c8c839fbc3c70b91792e2530ce60fd79cac7d49b3dcbbde0f420aa2e276c3a7c",
+      "size": 14605
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/independent-verification.json",
+      "sha256": "309158b4d27614f701cbef5ea500a49286a8e786ed00fc129baeddecadfdf187",
+      "size": 1455
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-C/capture/after.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-C/capture/before.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-C/capture/calls.jsonl",
+      "sha256": "bf5556926dfbbcf4672fd7de46eb0c3cc2574bfb652c04e5bac4bc2a727548e2",
+      "size": 62259
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-C/capture/invocation.json",
+      "sha256": "cdb713131d9bf1dcccf162361ad752b60307b0443fe5713b0df11b669db33c1a",
+      "size": 1907
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-C/capture/result.json",
+      "sha256": "9f802ada18bb91b1a0e3272b030b32b9fb30a634dd9c564d95d55794d185b594",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-C/capture/started.json",
+      "sha256": "b1812b4fddd44ab25184995658664ad6759e618f57972aa35850f9918f4276ee",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-C/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-C/capture/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-C/cleanup.json",
+      "sha256": "1f5c3c309617f7702d4664824c9bbf9ab9465bb890f62df99146484febad9a59",
+      "size": 431295
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-C/independent-assessment.json",
+      "sha256": "5e33c50141eb4594779c97321a270edbb9f7d11ab3b4f6a117931e2d59dbbbae",
+      "size": 430
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-C/input-identity.json",
+      "sha256": "2d856c0ffd89cd41ad6d826b838ab5ac7b5bd86f3eeb9ad7c7bab5c3f583fd1b",
+      "size": 431488
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-C/restored-before.json",
+      "sha256": "857a484ee815637fd4995493fd269c465a79978ab5470ce3819bcc4aaeecd092",
+      "size": 2266694
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-H/capture/after.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-H/capture/before.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-H/capture/calls.jsonl",
+      "sha256": "bbf95f71367fe61f7e7d06526af28a3f7f0d1598e54fb3adb50e4e4be38e9199",
+      "size": 72368
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-H/capture/invocation.json",
+      "sha256": "2f3ed386504d515407f2aea4f075b615a5c0679f3c4e5c4e71cfc33f49061e66",
+      "size": 1333
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-H/capture/result.json",
+      "sha256": "d09896e729519a5153a3cb0449d25fd522bfab549a9ed5209d0aa9ebc941e068",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-H/capture/started.json",
+      "sha256": "d801f197b1081345048c3e8cd569903bb1812059091427eb2436930dbf6abb9e",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-H/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-H/capture/stdout.bin",
+      "sha256": "f0d0ee87bf357acd84df5a2e252bd27091dd7c564c954e44b6d6250b4d549fe1",
+      "size": 365
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-H/cleanup.json",
+      "sha256": "df878a083a52c2ea79c10cb7a27126e5010638208d1b5d857e9a4d9c5df5e7c0",
+      "size": 431295
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-H/independent-assessment.json",
+      "sha256": "5f20f327f4f7106730c914ec3277091bd908b862fc449d97787b0eae3755fdac",
+      "size": 430
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-H/input-identity.json",
+      "sha256": "0d93cdfeec0c6521bbd58412c51290a744874dff76dd18c891ef49808833ad46",
+      "size": 431488
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-H/restored-before.json",
+      "sha256": "857a484ee815637fd4995493fd269c465a79978ab5470ce3819bcc4aaeecd092",
+      "size": 2266694
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-R/capture/after.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-R/capture/before.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-R/capture/calls.jsonl",
+      "sha256": "51557290a1c1cfd73b3662ad20fd6e19ebaf2d88a1b348cb1028b71d19199e39",
+      "size": 62310
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-R/capture/invocation.json",
+      "sha256": "8d2e8111da75c2ba03270e5b3eb12ee355a7c45398f2c72df026754c7eb53c55",
+      "size": 1957
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-R/capture/result.json",
+      "sha256": "51e4f179735e27cb2d6ff708de092c42937ac46a30594dc26f5667cfe79658e8",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-R/capture/started.json",
+      "sha256": "133c10955dea76052156be542f103bb9ce282b6c5986d2c9f94dc0f34b389667",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-R/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-R/capture/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-R/cleanup.json",
+      "sha256": "2b039da665a0f0bbbb709b905ee9cfd83ce68a235f9b34a0e61d877e2732ece5",
+      "size": 431295
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-R/independent-assessment.json",
+      "sha256": "2f334e0a8b6a11df61f9f6a1334ddff0956f03a45eb4e6647d24cd25a096f002",
+      "size": 430
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-R/input-identity.json",
+      "sha256": "f1cabc36ba7ebab68cd915b75f9d34b15b2c4ee1d2953a3b657859b9e35acd5d",
+      "size": 431488
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-R/restored-before.json",
+      "sha256": "857a484ee815637fd4995493fd269c465a79978ab5470ce3819bcc4aaeecd092",
+      "size": 2266694
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-check/capture/after.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-check/capture/before.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-check/capture/calls.jsonl",
+      "sha256": "320a401954ca8f6a45c01164e44aa06ea984efcb08becb561e5c68de91b35055",
+      "size": 62604
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-check/capture/invocation.json",
+      "sha256": "55c3a1e7bbefc4bf5145ba95ab58965cb64b953cc04031c967fbf43483cd74c8",
+      "size": 1708
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-check/capture/result.json",
+      "sha256": "002adff3e97bbf9dad9accbf0ed917281ecb0259098acc9e28febb7e58c6cbb6",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-check/capture/started.json",
+      "sha256": "d0a9a5974cd4bc2ea6a8b6ce27a3ca84a9d90ebcbae7bc2715fc58f2d9ff060a",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-check/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-check/capture/stdout.bin",
+      "sha256": "97953a37f08035dd45e3845ea195eac78f37e92676c78d4da60eab00aecbffa5",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-check/cleanup.json",
+      "sha256": "cb2f62767077172fc0a04d04b9652dc74d0fec8526b6c9798e60ea0caf0e876a",
+      "size": 431301
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-check/independent-assessment.json",
+      "sha256": "b79552c1f12e4141c71657be3301b5db57d9a1603b2b6d726c7b9c6f0bc4fe65",
+      "size": 447
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-check/input-identity.json",
+      "sha256": "44919d8f722eec35618d2506a2d5129b5fe556cfd60cd218ff16bd48ec6f218e",
+      "size": 431500
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-check/restored-before.json",
+      "sha256": "857a484ee815637fd4995493fd269c465a79978ab5470ce3819bcc4aaeecd092",
+      "size": 2266694
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-details/capture/after.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-details/capture/before.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-details/capture/calls.jsonl",
+      "sha256": "2627360556a1c50daa93da661842ea0c6c9c08cb51bec441137970a1fffcdc9f",
+      "size": 62642
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-details/capture/invocation.json",
+      "sha256": "fe3c4f41a99c3c96f896074663e6ba817209c28e51f052468881fd374800d9f7",
+      "size": 1747
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-details/capture/result.json",
+      "sha256": "0d1396d768a7994c7dfa578cfcb3fcc4ba52803b9560f2e82d1fed78686ac539",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-details/capture/started.json",
+      "sha256": "3bdd3256175965a47c1bb7750eb440c36942bd4e6ef4a2b21c7fb9fec1861053",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-details/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-details/capture/stdout.bin",
+      "sha256": "97953a37f08035dd45e3845ea195eac78f37e92676c78d4da60eab00aecbffa5",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-details/cleanup.json",
+      "sha256": "ddb153281e007b90ec9fa5c90d958943ec7a81a43f07090a2c06329339f14a76",
+      "size": 431303
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-details/independent-assessment.json",
+      "sha256": "b0647e57f1861f4fe1a0e391f99daa4bb0d6f7965a46c5dfaf69224a597e00c5",
+      "size": 453
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-details/input-identity.json",
+      "sha256": "bebbc03fef8f6f237fe374992331abba59bb90114afc279b0a28644e4be027d1",
+      "size": 431504
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/mixed-unknown-source-S-details/restored-before.json",
+      "sha256": "857a484ee815637fd4995493fd269c465a79978ab5470ce3819bcc4aaeecd092",
+      "size": 2266694
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/observations.json",
+      "sha256": "27ea6558525c683479bc14e7c46b6affae237b8e8cd67d15e181494f556d5dd8",
+      "size": 7790
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-C/capture/after.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-C/capture/before.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-C/capture/calls.jsonl",
+      "sha256": "5c3ef32f1077d5599dd31c2b843650d73052e884c5cda7520d0b13a8f85893ff",
+      "size": 62259
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-C/capture/invocation.json",
+      "sha256": "a7e6631b61ecad2a11efe64f912d3c7c15969542433844132b3357057a1188a4",
+      "size": 1925
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-C/capture/result.json",
+      "sha256": "eaae80d8355f4144de289ed9c04cddc74653d0609b1bd3848e901756145b242f",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-C/capture/started.json",
+      "sha256": "3a40072148651a3bc934149cd7182c8e641a00f4bfdd2765eff452a5cbdfb1fe",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-C/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-C/capture/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-C/cleanup.json",
+      "sha256": "aba4d00b39737a01a93c36bf46c82c03d5623a05f057420da3edb27a2b019b90",
+      "size": 431245
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-C/independent-assessment.json",
+      "sha256": "ae46476eb15cfddd39b1be46a490aebc62bf6fd7c24f5f31504c69cf2823f1f8",
+      "size": 457
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-C/input-identity.json",
+      "sha256": "458395ddc6aa66c289cbd41226d70ef92dd44669cc697badfd98b9563a671f80",
+      "size": 431447
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-C/restored-before.json",
+      "sha256": "ec69c45e5380b4ba9a2f093fb0ff8241f18b1486b6d43174872711f63bdeff1c",
+      "size": 2266491
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-H/capture/after.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-H/capture/before.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-H/capture/calls.jsonl",
+      "sha256": "0e02d1a9e48637a7457a038f1d182e1cf499d38642f6fa01b0484540c3462b9c",
+      "size": 72368
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-H/capture/invocation.json",
+      "sha256": "b0798a72b754cdab14dba3c758db8d753fa98008b2004399f33e3bb55ffd242c",
+      "size": 1351
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-H/capture/result.json",
+      "sha256": "a7063333dddb5c279b817a64d7b7a90665d59e99d8d429581a4d31c1ccc09092",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-H/capture/started.json",
+      "sha256": "0e27fe361ff354f75c70d3db7183e4e620ee5a43030f9c5f4f42d84a80cb5df1",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-H/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-H/capture/stdout.bin",
+      "sha256": "f0d0ee87bf357acd84df5a2e252bd27091dd7c564c954e44b6d6250b4d549fe1",
+      "size": 365
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-H/cleanup.json",
+      "sha256": "da48ed20d07cd8361e8be50573bb317154773f7d23081ed91ae6fe35e73dcae6",
+      "size": 431245
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-H/independent-assessment.json",
+      "sha256": "c967120512435f35070cf751e0dc9fce50bb3f487e045cdfac310506fc772157",
+      "size": 457
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-H/input-identity.json",
+      "sha256": "3d8f91ede8850baf467b86aab31c3706743db04dc6ad1483205a4f79ca92cf2c",
+      "size": 431447
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-H/restored-before.json",
+      "sha256": "ec69c45e5380b4ba9a2f093fb0ff8241f18b1486b6d43174872711f63bdeff1c",
+      "size": 2266491
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-R/capture/after.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-R/capture/before.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-R/capture/calls.jsonl",
+      "sha256": "81b60bcce73532d31033185d98519cad448866006de8480867e2db50b18192fa",
+      "size": 62310
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-R/capture/invocation.json",
+      "sha256": "3a5bc7ecaf4937378974f5e418cb2c383f85b8ee2254f3a10b60891650cce441",
+      "size": 1975
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-R/capture/result.json",
+      "sha256": "1d494d2ba76f91d4f50f8dd6f3c8e5825a2851e8582d34e62d29322546b86127",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-R/capture/started.json",
+      "sha256": "ebc7d714d1b3dc849795bdcb2dda27801a8e519bfec8b689cdbf735ef876e406",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-R/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-R/capture/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-R/cleanup.json",
+      "sha256": "31e848ecc10fc51ee81228df2863a0ef28ac0ef721d717907b1f0a17829db252",
+      "size": 431245
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-R/independent-assessment.json",
+      "sha256": "b0302c934b5f49e6fc281e071152fdaf93289b2a5de03139042398733db08a3b",
+      "size": 457
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-R/input-identity.json",
+      "sha256": "307873f3738d9612fb6e3209b5f886b891eff974490261613132cb908269f7c2",
+      "size": 431447
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-R/restored-before.json",
+      "sha256": "ec69c45e5380b4ba9a2f093fb0ff8241f18b1486b6d43174872711f63bdeff1c",
+      "size": 2266491
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-check/capture/after.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-check/capture/before.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-check/capture/calls.jsonl",
+      "sha256": "1f386a3cb292dc51e8303d05b84e3114fef2ffbfdeccf611485b09e45128ef40",
+      "size": 62604
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-check/capture/invocation.json",
+      "sha256": "105dc40414dbc6a41c4a13372c6d1276dd0effaa113f57a60a90e99dc02cacd2",
+      "size": 1726
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-check/capture/result.json",
+      "sha256": "48559fd747dafb43cb3f289712beebee190d39ebea7603bf1d1d67994260e0bc",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-check/capture/started.json",
+      "sha256": "6677cf38daed8103db03be8f3da8907c43242d6576777559e2a68ca9f5628fd2",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-check/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-check/capture/stdout.bin",
+      "sha256": "c51a76111b59dfba3ecd3a97079d25fff3de21a5195c5c0b90cec162b1540ca9",
+      "size": 32
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-check/cleanup.json",
+      "sha256": "ad08213525e2523bf79eb0e3e2feba5ef0e4cfb3781ccb25c754e1a8aade5edf",
+      "size": 431251
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-check/independent-assessment.json",
+      "sha256": "f0d1f2086edc5ad8976cb21137a15680cf06c83178dcd4a785bbe42c94f6fced",
+      "size": 475
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-check/input-identity.json",
+      "sha256": "caacdc63e85a54aee4637b2520ec63fc55213545e19bf612d6d4d8ad572e18d8",
+      "size": 431459
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-check/restored-before.json",
+      "sha256": "ec69c45e5380b4ba9a2f093fb0ff8241f18b1486b6d43174872711f63bdeff1c",
+      "size": 2266491
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-details/capture/after.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-details/capture/before.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-details/capture/calls.jsonl",
+      "sha256": "a9f05c8628ebcc96c4f6d956f8727537217c5ea3e1a00229953ff3208221d38c",
+      "size": 62642
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-details/capture/invocation.json",
+      "sha256": "650124b17a8590f377351c9aab71353adead44d49f93d1f7cb81ce6d025e004f",
+      "size": 1765
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-details/capture/result.json",
+      "sha256": "ca9cb35960b7a76270fd7f6d1932a191c1efbf2c698cb01785aecf8819a8b5d1",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-details/capture/started.json",
+      "sha256": "8837511bf36945920ae2eb25d10e0c52b400cfcb8894ba218e904cd34124f7c6",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-details/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-details/capture/stdout.bin",
+      "sha256": "52cc5d0bc323fbba4a25c83100054d44bb1a03e44b560cdda3e0898b6954d74e",
+      "size": 10456
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-details/cleanup.json",
+      "sha256": "5659dd3e77186b4ce51fb6b43a34e1eb48a80f682d5e1d7dc39e3487e520fe13",
+      "size": 431253
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-details/independent-assessment.json",
+      "sha256": "71165fd5ade8781d444284bd27183516b7bb720977d57961fcb111a14bf28add",
+      "size": 481
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-details/input-identity.json",
+      "sha256": "b40de063c9a2417ed5a90acf3f99aba0c8b41915f7464446b8c7e56e1f771ca5",
+      "size": 431463
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/real-roadmap-exact/restored-with-verified-caches-S-details/restored-before.json",
+      "sha256": "ec69c45e5380b4ba9a2f093fb0ff8241f18b1486b6d43174872711f63bdeff1c",
+      "size": 2266491
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/replay-integration.py",
+      "sha256": "443ce299cd6624b2c4adbf19dc9634fb60f8dae8b0914b0926f60c5a2ac6a7b8",
+      "size": 3369
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-independent24/independent-terminal-rollout-20260910/verify-integration.py",
+      "sha256": "80eb9f5ddebc8d07a4816de8aee8a2adb11caf76018709a6f7d6118728f80b5b",
+      "size": 1302
+    }
+  ],
+  "producer_evidence_refs": [
+    "44fe89141de4df55a6e545c33383dfaff8f9a637",
+    "92cb1054268b1ff047706f7ea6372ed044d9cb80"
+  ],
+  "source_bundle": {
+    "path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/terminal-real-roadmap-1644/source.bundle",
+    "sha256": "f6912f89b8bb078b619b85292e5fa1415916eec065c8d45dcce942874f432b78",
+    "retained_separately": true
+  },
+  "scope": "Complete independent24 integration and cleanup evidence; separately retained bundle and producer prestates remain required. Not installed verification or product acceptance."
+}

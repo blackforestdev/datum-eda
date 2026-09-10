@@ -1,0 +1,13 @@
+{
+  "capture_directory": "clean-H",
+  "case": "clean",
+  "expected_refusal": false,
+  "invocation_id": "95f6e002-83e6-44da-943b-8b4ef36e9136",
+  "returncode": 0,
+  "state_unchanged": true,
+  "surface": "H",
+  "directory": "clean-H",
+  "result_sha256": "6c8369ecadb53be1b2f4922811cab262e9a7a772aef616911ee9a780b770139a",
+  "exact_before_state_equal": true,
+  "states_unchanged": true
+}

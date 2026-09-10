@@ -1,0 +1,14 @@
+{
+  "template": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910/replay-real-prestates.py",
+  "template_sha256": "6d9ea1750c7e48ee4b5996d893192aee2fd0b2052ccfc4cccc138585ab12578b",
+  "changes": {
+    "sequencing-repair-20260910": "terminal-owner-20260910",
+    "1d48f249dc7071fc3718b345a4ab16b366af43be": "9924678c39fe5d176e58ebfd8e25ab6feb213f35",
+    "sequencing-roadmap-377323b2": "terminal-real-roadmap-1644",
+    "8b9f667fe2d8f406edf2e790060b7329393c2acc939723c69f6954ee4f072f6b": "f6912f89b8bb078b619b85292e5fa1415916eec065c8d45dcce942874f432b78",
+    "sequencing-paired-evidence-20260910/owner-reopened": "terminal-integration-1644"
+  },
+  "executed_source_sha256": "d0a4c1cae46c6fa134968e62803884de45501db915bf1bf307434170b409e67e",
+  "bundle_binding": "Exact externally pinned snapshot request/result and bundle hash; missing per-case hash field is not manufactured.",
+  "scope": "Only after terminal producer custody release; same-path exact restoration, original timeout and no source/claim/cache regeneration."
+}

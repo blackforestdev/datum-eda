@@ -1,0 +1,13 @@
+{
+  "capture_directory": "observed-workspace-inventory-R",
+  "case": "observed-workspace-inventory",
+  "expected_refusal": false,
+  "invocation_id": "b51e5c1b-0451-44d5-98e5-f955340341bb",
+  "returncode": 0,
+  "state_unchanged": true,
+  "surface": "R",
+  "directory": "observed-workspace-inventory-R",
+  "result_sha256": "a702a4adaf099bb060731b7bc9e58fb60a03333a18b34012c83f4496955eaddc",
+  "exact_before_state_equal": true,
+  "states_unchanged": true
+}

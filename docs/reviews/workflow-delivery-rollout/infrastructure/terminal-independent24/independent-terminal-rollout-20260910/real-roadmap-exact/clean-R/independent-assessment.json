@@ -1,0 +1,13 @@
+{
+  "capture_directory": "clean-R",
+  "case": "clean",
+  "expected_refusal": false,
+  "invocation_id": "00f49678-98f2-434a-ade3-97e160d67de6",
+  "returncode": 0,
+  "state_unchanged": true,
+  "surface": "R",
+  "directory": "clean-R",
+  "result_sha256": "be9d83a52894029ba2d635491623e0898bcf4d0dae982d30d9aa15d0063d9e1a",
+  "exact_before_state_equal": true,
+  "states_unchanged": true
+}

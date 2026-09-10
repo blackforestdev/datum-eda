@@ -1,0 +1,8 @@
+{
+  "pid": 2462640,
+  "started_ns": 1789078895299216326,
+  "finished_ns": 1789079258360492101,
+  "exit_code": 0,
+  "stdout_sha256": "fd45a6ed20107c5093ac0a59ed83d1e0ff8d154ff12d6396e5d235da5fcdfd0e",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+}

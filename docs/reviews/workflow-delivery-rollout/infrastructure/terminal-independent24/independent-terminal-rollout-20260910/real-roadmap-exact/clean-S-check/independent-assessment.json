@@ -1,0 +1,13 @@
+{
+  "capture_directory": "clean-S-check",
+  "case": "clean",
+  "expected_refusal": false,
+  "invocation_id": "e41dfb28-5682-4987-922c-c13308165916",
+  "returncode": 0,
+  "state_unchanged": true,
+  "surface": "S-check",
+  "directory": "clean-S-check",
+  "result_sha256": "3b468c07cb120cce6a91aa9b83b1db5afeca509fdab7b0b5e044e6ceb533efba",
+  "exact_before_state_equal": true,
+  "states_unchanged": true
+}

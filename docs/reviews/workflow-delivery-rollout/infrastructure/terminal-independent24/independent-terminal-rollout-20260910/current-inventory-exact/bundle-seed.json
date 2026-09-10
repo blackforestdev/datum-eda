@@ -1,0 +1,7 @@
+{
+  "bundle": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/terminal-real-roadmap-1644/source.bundle",
+  "sha256": "f6912f89b8bb078b619b85292e5fa1415916eec065c8d45dcce942874f432b78",
+  "head": "1644e2129f4ff83cec1cdf0e6e13534c3b258e8e",
+  "tree": "e604e8e3ee19fa725b1f57a1ecd004ee3d44a550",
+  "scope": "Private immutable bundle seed. Only Git object files are hardlinked into fresh restored fixtures; tracked worktree files are copied, never hardlinked."
+}

@@ -1,0 +1,13 @@
+{
+  "capture_directory": "inventory-plus-unknown-source-S-details",
+  "case": "inventory-plus-unknown-source",
+  "expected_refusal": true,
+  "invocation_id": "eb36aa02-aff4-4901-9253-fab426acf4b0",
+  "returncode": 1,
+  "state_unchanged": true,
+  "surface": "S-details",
+  "directory": "inventory-plus-unknown-source-S-details",
+  "result_sha256": "7a87fa7ac66e483f826b8b581274f6bf9ff1122ae5319e9b99bb410441100a42",
+  "exact_before_state_equal": true,
+  "states_unchanged": true
+}

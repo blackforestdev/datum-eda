@@ -1,0 +1,13 @@
+{
+  "capture_directory": "mixed-unknown-source-R",
+  "case": "mixed-unknown-source",
+  "expected_refusal": false,
+  "invocation_id": "2ee1bfdb-873b-4d2d-83ba-efc61498bc70",
+  "returncode": 0,
+  "state_unchanged": true,
+  "surface": "R",
+  "directory": "mixed-unknown-source-R",
+  "result_sha256": "51e4f179735e27cb2d6ff708de092c42937ac46a30594dc26f5667cfe79658e8",
+  "exact_before_state_equal": true,
+  "states_unchanged": true
+}

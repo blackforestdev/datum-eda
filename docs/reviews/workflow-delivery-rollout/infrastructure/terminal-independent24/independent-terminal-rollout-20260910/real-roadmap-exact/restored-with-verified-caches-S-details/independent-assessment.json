@@ -1,0 +1,13 @@
+{
+  "capture_directory": "restored-with-verified-caches-S-details",
+  "case": "restored-with-verified-caches",
+  "expected_refusal": false,
+  "invocation_id": "305fe30b-0cfc-4ac8-9b2b-b7199f4fcf99",
+  "returncode": 0,
+  "state_unchanged": true,
+  "surface": "S-details",
+  "directory": "restored-with-verified-caches-S-details",
+  "result_sha256": "ca9cb35960b7a76270fd7f6d1932a191c1efbf2c698cb01785aecf8819a8b5d1",
+  "exact_before_state_equal": true,
+  "states_unchanged": true
+}

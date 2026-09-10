@@ -1,0 +1,13 @@
+{
+  "capture_directory": "mixed-unknown-source-S-check",
+  "case": "mixed-unknown-source",
+  "expected_refusal": true,
+  "invocation_id": "23cc7d3a-7fae-45c2-9f1f-c48b48097cdc",
+  "returncode": 1,
+  "state_unchanged": true,
+  "surface": "S-check",
+  "directory": "mixed-unknown-source-S-check",
+  "result_sha256": "002adff3e97bbf9dad9accbf0ed917281ecb0259098acc9e28febb7e58c6cbb6",
+  "exact_before_state_equal": true,
+  "states_unchanged": true
+}

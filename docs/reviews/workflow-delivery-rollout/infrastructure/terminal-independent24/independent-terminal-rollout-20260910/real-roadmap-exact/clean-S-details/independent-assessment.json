@@ -1,0 +1,13 @@
+{
+  "capture_directory": "clean-S-details",
+  "case": "clean",
+  "expected_refusal": false,
+  "invocation_id": "fd4b2b05-8407-498b-8aad-5828469299f6",
+  "returncode": 0,
+  "state_unchanged": true,
+  "surface": "S-details",
+  "directory": "clean-S-details",
+  "result_sha256": "5079639551c82d1c4548d8b1bbdf3f8ac65e922943871982923a9b6ef76876e0",
+  "exact_before_state_equal": true,
+  "states_unchanged": true
+}
