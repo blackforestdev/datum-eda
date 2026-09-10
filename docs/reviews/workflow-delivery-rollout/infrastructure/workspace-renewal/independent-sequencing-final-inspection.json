@@ -1,0 +1,4430 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "reviewer_session": "wdq-independent-review-20260906",
+  "verification": {
+    "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+    "base": "8423a5f7311529d625cf7009d3321bfe973436e9",
+    "candidate": "992ce4f41da6bdeadc9526cceba3c79e819fa3da",
+    "request_sha256": "58ea61bf12776d98e9257e62f3983af18a51393e9184bb7bddc046567b64a60e",
+    "log_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/logs/independent-sequencing-final-recheck-20260910.json",
+    "log_sha256": "bd2423fa58ef7cd7200f69d56205def53c074b0c8892a8f1156aecc33667d02e",
+    "exit_code": 0,
+    "input_count": 164,
+    "authority_sha256": "b3130c9322932a9d26e967d6ecb55c8b1591892636d26ac3cdd98e175475ee39",
+    "protected_state_unchanged": true,
+    "actual_main_clean_before_after": true,
+    "evidence_validated": false,
+    "activation_asserted": false,
+    "publication_authorized": false,
+    "review_complete": false,
+    "scope": "Actual supported final RECHECK source/history inspection with explicit prior-to-current delta reconciliation. Strict I04 full-evidence inspection and owner dispositions remain required; later changed candidates require their own reconciliation."
+  },
+  "trace_verification": {
+    "candidate": "992ce4f41da6bdeadc9526cceba3c79e819fa3da",
+    "process": {
+      "pid": 251500,
+      "started_ns": 1789040242280005966,
+      "finished_ns": 1789040332111657347,
+      "exit_code": 0
+    },
+    "observer_events": 4,
+    "observer_invocation_ids": [
+      "ed9a5f69-caa5-4c24-b40f-39a346084b94"
+    ],
+    "event_ids_disjoint_from_prior_inspection": true,
+    "source_bindings": [
+      {
+        "path": "scripts/workflow_delivery_observe_python.py",
+        "sha256": "92b430ad6e7087a9b8ba59628bee497f0d6aa426ac2d3021e8f2a6ed590f3af2"
+      },
+      {
+        "path": "scripts/workflow_delivery_observe_python.py",
+        "sha256": "92b430ad6e7087a9b8ba59628bee497f0d6aa426ac2d3021e8f2a6ed590f3af2"
+      },
+      {
+        "path": "scripts/workflow_delivery_preflight_cli.py",
+        "sha256": "e20080c6f87067fccaac671a9d963308f620c7b44c0f2859a36de43e801a504c"
+      },
+      {
+        "path": "scripts/workflow_delivery_preflight_cli.py",
+        "sha256": "e20080c6f87067fccaac671a9d963308f620c7b44c0f2859a36de43e801a504c"
+      },
+      {
+        "path": "scripts/workflow_delivery_review_inspection.py",
+        "sha256": "67b54cfa667b3da65a9b2d3fd5980fa60c21d2bd531952425ec5753ff5e10e97"
+      },
+      {
+        "path": "scripts/workflow_delivery_observe_python.py",
+        "sha256": "92b430ad6e7087a9b8ba59628bee497f0d6aa426ac2d3021e8f2a6ed590f3af2"
+      },
+      {
+        "path": "scripts/project_status.py",
+        "sha256": "5df30076d9e92b9d9b619052b879d5ab2a28fb5682611b892aa7976c4e61572a"
+      },
+      {
+        "path": "scripts/project_task_details.py",
+        "sha256": "5ff867b78e2ec54873328904cb94d34f15656e66c39e4e7b012e0ec0dc82725d"
+      },
+      {
+        "path": "scripts/workflow_delivery_activation_preflight.py",
+        "sha256": "238eb3b6bd547bbdc5ae45d53ced7639a938ffa1ab42936caad28f71a545aeb6"
+      },
+      {
+        "path": "scripts/workflow_delivery_activation_state.py",
+        "sha256": "acdd8be207364a6e182a73a0590ff229f7c5c0c865618cd1635dc4da070f38b9"
+      },
+      {
+        "path": "scripts/workflow_delivery_authority.py",
+        "sha256": "a943ea2f2440bdf7a9c940aa4f7aa124c6e04265e4d8f60bec235ac4786a83f5"
+      },
+      {
+        "path": "scripts/workflow_delivery_bootstrap.py",
+        "sha256": "4a6a4af189bbb82bb1f875bf4883941ec48bbae303d46ee75c9b139d0d9bdfc1"
+      },
+      {
+        "path": "scripts/workflow_delivery_capture_state.py",
+        "sha256": "085fb2992c8a527df3cf8a2073b8eed5a77a0bf55922f276ddb51f9144e6381b"
+      },
+      {
+        "path": "scripts/workflow_delivery_categories.py",
+        "sha256": "c667587882f2021cd0016b7ad45cdc046f2a051f00fcb8699c54889095446b4e"
+      },
+      {
+        "path": "scripts/workflow_delivery_checkpoints.py",
+        "sha256": "b5f010f771691bab9cfa0b40dfe75acf8fac7bf2bb6b7eefbc96c529b226345c"
+      },
+      {
+        "path": "scripts/workflow_delivery_clause_dispositions.py",
+        "sha256": "02328892ecfff8ad651bc3f4243a876b3b789c3cea19e09231ee8e2aefbafe6d"
+      },
+      {
+        "path": "scripts/workflow_delivery_clause_inventory.py",
+        "sha256": "97d8ab12703a5b4b01a2b6c30c4b3eaefc08b88002aa0db2d9ae8253d4aac847"
+      },
+      {
+        "path": "scripts/workflow_delivery_contract.py",
+        "sha256": "0ddea8bcea9872b41e3daea982909905c41f209a4763aba9984b196f582547b7"
+      },
+      {
+        "path": "scripts/workflow_delivery_coverage.py",
+        "sha256": "dde579ca44d9221adcfb7c0bceed057a11af43ebbbdfe4846c80e594545bb56d"
+      },
+      {
+        "path": "scripts/workflow_delivery_coverage_runtime.py",
+        "sha256": "4c11ade39d9a9dd49acc25027c658fee9997c8436803a8f0f165e1d5df36f0cb"
+      },
+      {
+        "path": "scripts/workflow_delivery_coverage_shapes.py",
+        "sha256": "0224b7dc30416266d0dd1edced62fefc7bc6c420d8f077d26a80c133363ba87f"
+      },
+      {
+        "path": "scripts/workflow_delivery_enabled.py",
+        "sha256": "edfcdcd8806a190ecf6851bd200d22fa2656772dccf33bff43dcc0f7472bc424"
+      },
+      {
+        "path": "scripts/workflow_delivery_environments.py",
+        "sha256": "00a803444145c9452998b73cddff678beffede5d6097d709c6283c36140718a8"
+      },
+      {
+        "path": "scripts/workflow_delivery_evidence_shapes.py",
+        "sha256": "b9846a8bd71d2b004bf5d97fe03eab0295ef0a032080285ddb1e6dd1a7b39971"
+      },
+      {
+        "path": "scripts/workflow_delivery_frontier.py",
+        "sha256": "e7980224361a7c45f1b740d7216d746659a2e02cfa4cc08e66f65c9046cecfb7"
+      },
+      {
+        "path": "scripts/workflow_delivery_headless.py",
+        "sha256": "ac7872c8f0d9cc27cd96ab6523e062517d7cc6ec1a039a11c978acf97f6aa2ed"
+      },
+      {
+        "path": "scripts/workflow_delivery_io.py",
+        "sha256": "87d9f10386edb2de646f949a9cc299646644a9e41efb536701db0c6912b17e2b"
+      },
+      {
+        "path": "scripts/workflow_delivery_mapping.py",
+        "sha256": "d5f649a701fe5857ff59b3a6088f304ade82f59164ea0912af3c28cb8eed112d"
+      },
+      {
+        "path": "scripts/workflow_delivery_native.py",
+        "sha256": "6c6dd4aea5e7c26c2acb5eb5ee4f4ea04b5ae7d73c50f9718cb8e5a29703e65e"
+      },
+      {
+        "path": "scripts/workflow_delivery_proof.py",
+        "sha256": "38f57d87115eb2647d592ad23fa99021b3cbed8c6de46c718f820d8f3d43c23f"
+      },
+      {
+        "path": "scripts/workflow_delivery_publication_delta.py",
+        "sha256": "ca8b6f699ce3335f7b0d48913d1b58b7d0f3c6ebd884b8b891f23c356007bbce"
+      },
+      {
+        "path": "scripts/workflow_delivery_review.py",
+        "sha256": "8267a366d30c06e1afce08f2950ae03e0782924cd642773872ba96455d32ef28"
+      },
+      {
+        "path": "scripts/workflow_delivery_review_inspection.py",
+        "sha256": "67b54cfa667b3da65a9b2d3fd5980fa60c21d2bd531952425ec5753ff5e10e97"
+      },
+      {
+        "path": "scripts/workflow_delivery_shapes.py",
+        "sha256": "4bf9f883203649a8ef9a5d665832b0db83450055ca836eb6a799acb643f15414"
+      },
+      {
+        "path": "scripts/workflow_delivery_source_scopes.py",
+        "sha256": "087a8caa875fbc6956d750e731e98492abb3eb6258fa4ad0f61001eb1da6d37c"
+      },
+      {
+        "path": "scripts/workflow_delivery_specification.py",
+        "sha256": "b343407a8164810bc1f3cf29344681088419c8d72081140c1f182920b76760a7"
+      },
+      {
+        "path": "scripts/workflow_delivery_support_bundle.py",
+        "sha256": "56e0b8e4dfc1c1642cd6d991fc66031a8cb6df27fd9f2d2139eca4ecca92eb83"
+      },
+      {
+        "path": "scripts/workflow_delivery_support_store.py",
+        "sha256": "67582a2781400ac70de2456c9b8390c175026605a88fa4aab369ca8d907fcb25"
+      },
+      {
+        "path": "scripts/workflow_delivery_transaction.py",
+        "sha256": "77446b2026047be436378879f6e0897765d7b657f71074a7fff20280c2202bc3"
+      },
+      {
+        "path": "scripts/workflow_delivery_tree.py",
+        "sha256": "86d8fa5ec4f98c0d9296146ad1c4bc46c1f3a634e43625ba63f21d154c92e07f"
+      },
+      {
+        "path": "scripts/workflow_delivery_trust.py",
+        "sha256": "cd1b2afa70304bb4d39ba6f0c0d182d6b624419c6dcf7115777d315ff44c7095"
+      },
+      {
+        "path": "scripts/workflow_delivery_workspace.py",
+        "sha256": "4a1d16451285f3d3904f21ef7ceaf3302956024f2508215bfbe5f6279a3d10cb"
+      },
+      {
+        "path": "scripts/workflow_delivery_workspace_authority.py",
+        "sha256": "ccf33918dc14d7f692e004a6ed08e0741db5f9e813d12d8a7ac844f61671e7f0"
+      },
+      {
+        "path": "scripts/workflow_delivery_preflight_cli.py",
+        "sha256": "e20080c6f87067fccaac671a9d963308f620c7b44c0f2859a36de43e801a504c"
+      }
+    ],
+    "calls_sha256": "4f66adaea2ea0cffef674f07c9524e0168a6ab7a5b689c47c1d670a58644fc08",
+    "request_sha256": "58ea61bf12776d98e9257e62f3983af18a51393e9184bb7bddc046567b64a60e",
+    "log_sha256": "bd2423fa58ef7cd7200f69d56205def53c074b0c8892a8f1156aecc33667d02e",
+    "protected_state_equal": true,
+    "technical_recommendation": "Required independent replay, focused scope and later exact source/history inspection are satisfied for992ce/FA. Root may record RECHECK technical closeout and present I04; this is not owner disposition, final strict I04 inspection or activation.",
+    "boundary": "992ce selects RECHECK, not claim-free I04. A later I04 candidate must preserve these exact source/proof/review bytes and reconcile only authorized governance/owner evidence changes; strict final full-evidence inspection remains mandatory.",
+    "activation_performed": false
+  },
+  "delta_reconciliation": {
+    "earlier_base": "e54fe5562174ef3f3c6748bb2c9c649626e2f652",
+    "earlier_candidate": "ee3425a23d3c220b9303d26ebfa89f0ae6f1b19d",
+    "base": "8423a5f7311529d625cf7009d3321bfe973436e9",
+    "candidate": "992ce4f41da6bdeadc9526cceba3c79e819fa3da",
+    "main_paths": [
+      ".beads/issues.jsonl",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/assemble_observations.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/build_typed_packet.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-retain-first.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-retain-fourth.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-retain-review.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-retain-second.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-retain-third.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-review.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-review.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-assembled-observations.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-ownership-proof-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-ownership-proof-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-policy-runtime-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-policy-runtime-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-assembled-observations.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-committed-verification.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed-packet.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed-packet.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-typed-packet.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-typed-packet.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/prepare_sequencing_review_candidate.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/recheck-live-candidate.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/retain_real_prestate.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/run_paired_real.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/run_paired_workspace.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/test_prepare_sequencing_review_candidate.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/verify_committed_packet.py"
+    ],
+    "candidate_paths": [
+      ".beads/issues.jsonl",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/proof.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/review.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/assemble_observations.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/build_typed_packet.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-retain-first.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-retain-fourth.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-retain-review.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-retain-second.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-retain-third.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-review.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-review.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-receipt.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/focused-workspace.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/pre-review-inspection.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/provenance.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/registry.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/replay.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/validation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-assembled-observations.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-ownership-proof-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-ownership-proof-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-policy-runtime-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-policy-runtime-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-assembled-observations.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-committed-verification.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed-packet.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed-packet.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/build-receipt.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/fixtures.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/input-manifest.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/limits.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/observed-tools.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/producer-review-inspection.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/registry.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/verification.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-typed-packet.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-typed-packet.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/prepare_sequencing_review_candidate.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/recheck-live-candidate.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/retain_real_prestate.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/run_paired_real.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/run_paired_workspace.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/test_prepare_sequencing_review_candidate.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/verify_committed_packet.py"
+    ],
+    "actual_publication_delta": {
+      "schema_version": 1,
+      "kind": "datum.workflow-delivery.publication-delta",
+      "base": "8423a5f7311529d625cf7009d3321bfe973436e9",
+      "candidate": "992ce4f41da6bdeadc9526cceba3c79e819fa3da",
+      "commits": [
+        {
+          "commit": "992ce4f41da6bdeadc9526cceba3c79e819fa3da",
+          "commit_sha256": "71745607bf3ab170ade0fc4066108531be3f95590981f89b95cc30eb71b3c709",
+          "tree": "f909bf263d943a9552e29ee5cac9a8cf3389ba4d",
+          "parents": [
+            "8423a5f7311529d625cf7009d3321bfe973436e9"
+          ],
+          "edges": [
+            {
+              "parent": "8423a5f7311529d625cf7009d3321bfe973436e9",
+              "changes": [
+                {
+                  "path": "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "232960573c8715f846b15d7ee48684f534ee13e3"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "f96315fb88cd5d669eb9a98bf3fabd67d55f95b4"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/coverage-proposal.json",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "ebf4d91e7d689f19abf3a496565ba1cef960eeb7"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "1cd7a2337052a6220b7771078e6a6107dc72fd69"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "cdf76cd542352e2cff694cf06ead3ecd58dcb959"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/proof.json",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "dac29a8f7298c05964dc4bb1824bff9fcc7e7d38"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "70cd66722443e7d15858f3143ad1e528cafc085b"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/review.json",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "08e7c40c28b8eb8a7d1eb35e79195d6cc7561016"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "51d4591928aa861170f7203b50d8d06eb3cc19af"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-events.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "6049a652cbd1dd0be3779d7db7c714c28947ebce"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-observations.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "84b926c45c6de7e998111e0e5e800897d58f9468"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-roles.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "952d668ab3bf2fb9c4f6add2e55d25b8d319ab48"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-events.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "6f70d59fba86eea6dcd0191f2cb47739bfa1fc2d"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-observations.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "47ea1d28d51d9f1ebbd10d1871e05354c942c824"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-roles.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "2fa16d5c90a8dc86a42ec1b87655a0d5763f5d67"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-events.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "7c5432880b0e53856801c9d8e3a26a8adde907cc"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-observations.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "27a293fa484a77e7d89c39d5e71725217c3e8404"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-roles.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "e4af05cab854f65d5607d36025fff231f266e8d5"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-events.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "9ca0f94090c921238a263f53a7ccada205377ae6"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-observations.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "dbe96491b2253ebb30f7baea4203e5939a0591ed"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-roles.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "2f3ec80ca431681a2906c4d0b2a8df5a338b87ae"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-events.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "e59cdb1822dd428a5f8c8cd31a8f59e39b8a19a2"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-observations.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "8d719213edf7b519d7e9442225cefb9c682d2c84"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-roles.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "d804fa621a97741e86e22c528d5ca8fa88034b60"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-events.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "dc05398a0774a4ecb2aad432a1367b25f9d80cd3"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-observations.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "904623da9fa756eb3410b6c8d2a3870916aa3aa4"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-roles.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "bd4665d85b1476bc6f0d44c735ade4c28cebef27"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-observation.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "32630c035530af2fab479338e33fe9e3a897f867"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-receipt.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "0c2bdde0a6fe7e38e91da1c65dd69cd875918dbf"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/focused-workspace.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "8dc076a86907c349befbae49fc0827bdd91a4f14"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/pre-review-inspection.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "50a145eef9c5ec8dc6c6840c8a6a3b51f3a697c7"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/provenance.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "1042282bc79e1d5e1964d055dd299bff8fde12ee"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/registry.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "28c505fffe511b5fd98dd79fc2c20103da029959"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/replay.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "da0e55c9ab1ce0116a70f2675f67a3d3aa662a05"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/validation.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "13b53df7ed3cfed2f5d781207593d70e8dc8d449"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-events.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "6addc2934913d7efdfaf22d75f62d3946b1fedba"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-observations.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "79b5b4f878bc875577ef6940f3925efbbc3b9e92"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-roles.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "171243c728414c2691c46cf7087b7e87f6335b1f"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-events.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "928d1710855774d7c294234d024b7518389451ab"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-observations.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "21b11acd5e909ce2bc4ff2165d403ab6dd042263"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-roles.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "163732c026fd6f5568908bff836f95cde255bf4f"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-events.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "ef85c158946d2794d57ad8958f908d36770afca5"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-observations.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "378b843b557b820e9eb531aa12c54584b4335dea"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-roles.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "5def04bef1eea8a594ec8061fa08497f337bd11a"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-events.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "c0944dc94f1101a423f55677d8f42525076c54e0"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-observations.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "6d0e97fa76f69f829ec2d2ec7c061e31e296f82f"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-roles.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "44171701eccb94f2f32416895cc52526cb03564f"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-events.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "91ed6992eb7f6a10c2602fb4ec09a34259249433"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-observations.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "0c069f43b0644df4bbf3b24efea372c49d612844"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-roles.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "0b7e9c3b8400f3ee59fb27cdb083d769a88fd890"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-events.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "23a1b23684580a8a43e0e5508698bb21941f6db5"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-observations.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "31dc23fc369bfba0a7ecb7651f6b5e28948f58b7"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-roles.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "c24e5b0cd47c080d7c5b34ecfc4542db4a3aa51c"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/build-receipt.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "a669bdeab525e4fdc550591115c770ee9b676339"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/fixtures.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "6fc3ab27bd22d166cfa15d257c174f2a00f3855b"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/input-manifest.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "744669f92aaf0e708950b616f4f83067c1df4e52"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/limits.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "f931f3c7f2fddd2429b724beba5605379d16bae0"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/observed-tools.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "5266032053d9948ac85b0a23dd7f41830d1308ed"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/producer-review-inspection.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "6590730516ac77179eaa2eada24c099b71c174d5"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/registry.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "4bcbcccba82db60c7f6ee0be0f823402ed9077bb"
+                  }
+                },
+                {
+                  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/verification.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "03d8809bef968a96eb2dfa21964d8fa2bfd6a69e"
+                  }
+                },
+                {
+                  "path": "research/process-quality/WORKFLOW_INFRASTRUCTURE_CONTRACT_BASIS.md",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "b80e190b99177870a087751985800ee02305a42d"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "15f9a3c035bfe924aa729e8a59cfe3737d700328"
+                  }
+                },
+                {
+                  "path": "scripts/check_workflow_delivery.py",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "4b9e4b05a52475ef44a769ef69a1e015b3f5857c"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "44c29ed69ef06428066b2db02cc0a6d6497fe76b"
+                  }
+                },
+                {
+                  "path": "scripts/project_status.py",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "6df2b94e4319bab33fe796f2c638b4a652551769"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "471c978e790cb68450ee2153026fc4f1783be666"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_coverage_proposal.py",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "77f66146e01bdd803df0e0575e5465510eace26e"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "0a676845eea888a079088ba0587fd5f743457a0f"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_activation.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "97f40c42da35cfd173a13031ab18b00cf45fa6c1"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_activation_preflight.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "c8e9a30759acef79cfaca700865e7d43336132fa"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_activation_state.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "dbe08f7ca5dae385d878a5e7de2338dba520295e"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_capture_cases.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "7f94aa52a4f9cb1dc3e1f6d3b517d6005cd44092"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_capture_cli.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "198f266ed2ccb8c3b78ad9c0b7a0ba0657281d8a"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_capture_command.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "2144263038456ae36e1373870cbc309bbf9d9379"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_capture_fixture.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "67625754f0796101ef15386bee9d8efdf7edaac7"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_capture_hook.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "e98f7dff0e1de089809e78837f9d563f66419fef"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_capture_interrupt.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "93b713613db3bffb8b76c895f9652ec83788bf42"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_capture_state.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "373d9bbc9d94738d04a7b6bc80603888b3345d85"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_category_boundaries.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "4812702f4dea50a3776abca60fb998f659e9bb4f"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_coverage.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "9faae925659329537d1b0e508cac940895f133da"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_coverage_capture.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "9c1438770631f375acf85739fbd3b930ab83ad12"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_coverage_entrypoints.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "b315ce996c56770a76b31984add1629def06e65b"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_enabled.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "cb2a1685910615645e1b9a0715eb77c58040b638"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_environment_capture.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "b0e479f02c6201b32bc65acaba74b762ef1d06b6"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_environment_selection_prepare.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "58d02fa998b7de4d762acd9d1db729063c262e76"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_environments.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "3d91bcf01a668e970a97df1db506eaac7dc606c0"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_headless.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "e6d4f87e2d65b6301a881a0b4544e635dd6e6b64"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_headless_capture.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "ccd356cf72ffc7bb8d468dc6c7cb882a91627481"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_headless_observation.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "bf8a571f390647998ef41b2e579b7e6da9989cc7"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_history_capture.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "c8da4b0a74038284442d6198ba85ebbf752047d5"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_independent_review.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "707ff9bc426f096293ed588b8429e0be1c7a7647"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_index_environment.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "b61c93ccc203cdc6040e527300c7a42e22951aec"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_initial_migration.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "b13c5b65aad2f9895ad75b8bccf1c93f54adf2c5"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_interruption_case.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "76f181f3aa2b891dbd4a0cc758d7d1326426f890"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_mixed_capture.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "e24350a0455fae7f920fec8083ccb49dfb0e61c9"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_observe_python.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "ef6df0fef7355a322d22e971bcb7f9220b0f6b0f"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_owner_hook.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "52ef893a52e675f87cfa3c935881abe352a619b6"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_preflight_cli.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "fb9b86e3149d94df5ca1c965b0049387f99369ab"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_publication_delta.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "ce35434988d3f8d15a24938e6a1bf32e7d84936f"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_readiness_boundary.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "7878f82b7e843d4f78fca9ee3835d3a92a176b05"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_readiness_capture.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "730d62d21f2e1221ba91e8cd07228af542049c56"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_review_capture.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "27146fe816c7f5760b8f4de1cbd466cf0cad714b"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_review_checkpoint.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "02341332b18bb8d1ff6e6185952b4b6984d3fbb3"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_review_inspection.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "a12227d31b78438cd7f5e4d4a047348515e99f50"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_review_phase_capture.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "a6420cecefc8d87ae673d5f4adc51f5df8214ce8"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_roadmap_snapshot.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "bd84aa588c933d6ce43a8169914aa2e6830b4da8"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_snapshot_capture.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "e99306c2d0b32f442cccdb5487608932bd33225f"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_source_only.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "3f33e53f4fbdd8e2e1d9a0b4b62945b701eaa244"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_source_scopes.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "ee41bd8f1f4c629060b1e4d21086b3338fb6936c"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_specification.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "a2d8910bf4a7160d00ee6c922b8df0e95c771228"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_specification_capture.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "c48dba7c99986f783499e2e66093f59603163223"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_support_bundle.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "0c51c51dcef0e216d2fa10051b6c69b1b586e200"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_support_store.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "6bc2610b29b12d7e6158d5652df583fdafea0820"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_transaction.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "052113012b2464c9de1d5e9a57584fe5bc69b0c2"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_untracked_capture.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "882c79b0fe9d1951612b612cf121f62843623625"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_workspace.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "df4c5151f4636c1bbda114663f93b0a7b6091366"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_workspace_authority.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "4a3a7874a9bf92e309edba67e7815b572c9ac25d"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_workspace_consumers.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "ace8f8b790a139f8c7a40d1ca4ee8c7d1ab7cee6"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_delivery_workspace_entrypoints.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "0077c05fe460f58c9fc0914531d6e4c62119776d"
+                  }
+                },
+                {
+                  "path": "scripts/test_workflow_rollout_contract.py",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "09b607a6e7a92cc00331bd76d9f43e521b95aa61"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "d2857a3093d373b324f7bb887f39d16099271b80"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_activation.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "88ace4ba77ceaebd0788462b64afb56ab88e500e"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_activation_preflight.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "00577111709c80a90d7adb40c82ed010dbe1f61e"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_activation_state.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "5f8b1089548449f31506f8b792152da8357bccde"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_authority.py",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "4635cf7f5c9043f9b2c16228a5ca69978d89c617"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "11d171f4ce64178848c6321bcb08867e6a104afe"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_bootstrap.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "86a7c965ac01ed11d30355efe46387d2870134fb"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_capture_assertions.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "2863eb751fd7c3f87a59ad61d34e44b85bdc3119"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_capture_cases.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "8f3d71802bbbca81206607cb63d2c9207edb917f"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_capture_cli.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "108a9864c277869d3be4f1ee461d8d88a3cc5cd5"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_capture_command.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "2e2d141568c59243398b8f4fa1c3d67ab279607c"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_capture_fixture.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "ff14897391c81f81786920353bfc86630454bd61"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_capture_history.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "7a02398293cb61cd769c8c00ac1e6fa58eac57c5"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_capture_hook.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "d4be23c520ccd72dc1da73d3cbff44cf78d50edb"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_capture_interrupt.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "dfadd6f9ffbf6fe6c5a867df797c9feee7c3eab2"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_capture_mutations.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "342c92dfc1a604030d00aa34479d2ebb1f2e4770"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_capture_snapshots.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "34ef5caaf4780d60e30a61ed25d2098bb7af91a5"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_capture_state.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "c7c6502c6510273f29f8b7260366f255f294684d"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_categories.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "7035104af67f37db876d19cadcea84542f031063"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_checkpoints.py",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "948bb09825669c4d5d585a73550741bcaa785ec9"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "182a09046cef2b68a1e285a2cda557a220423e5e"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_clause_dispositions.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "2090abb2e6fbd04ed38d8103473d935798393aec"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_clause_inventory.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "37d02815c15f06126fdc8aaf43c4da323eaa3234"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_clause_test_support.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "09a7313e588c077cf8ca794cc56de064d51011f8"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_coverage.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "70b63d96b9a2a4756189f2c30501430ff4603753"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_coverage_input.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "0c3d8f9b079512da60db244dc22318e0f83b82f8"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_coverage_runtime.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "100af8a4a3b5bcabc605dd65c3bd4b59b8b09c77"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_coverage_shapes.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "9f8a3dfc70f5f84b30230c8d593620bb9aae0400"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_enabled.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "256dd5f02e2f959fd30eb2fe8438ea954cd9e0ac"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_environment_cases.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "02c777606a9f27428c1316c7979857590d0c93f4"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_environment_selection_prepare.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "428e02935b23833fa48bcb4e1b1c4640969e3b3e"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_environments.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "bc23befe55d556984c2905edca7b57e5705d99d3"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_headless.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "c8a3ea3c539b185fa07deb703b33fa171d9af4b4"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_headless_observation.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "8616f205f07207a8e2134faf9527152ac70b2079"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_interruption_case.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "767f72053e237e50d085c8b9d6bb180904e378fe"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_mapping.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "498c12276a95554d4e4e2c866791515d8b1ae174"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_mixed_test_support.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "8ea206d507d49ee17eca04c1e47cea87c7816b39"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_native.py",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "726c76c7ae07a8021282936467de0d0a0693a50f"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "557c78c12ee204fcc0ae76c4cec9c8c7ad3b10d4"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_observe_python.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "22269ad9cb5d7c212cd6dd7d5ece151a80b9cd2c"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_owner_hook.sh",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "37edf2d43a94386962c99c762ea4d049f045d503"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_preflight_cli.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "5aa5ae9e61c0399e4704283ec449a5a7e59a5ea6"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_product_readiness_input.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "3b982b337cd7d064ef1a00077dc50c611a74cd94"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_publication_delta.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "19175e7a46e30784cde0e8689d422f56efe275a0"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_readiness_input.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "aa250435c9bb888786895deb965d2d42817f24bb"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_review.py",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "2c76cffd3b710dd90b63742be3cd17798e9302d7"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "ad5f832cc0e939db204c4a87c69788e6f511520d"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_review_input.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "a802eedfcd182ea8b878809a14db3e5acb3f91ff"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_review_inspection.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "ed9977483fb4d0d47f275d0620c81cffd15241d8"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_review_phase_input.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "d2322ffc679bbb9a7bcd5ed8c8709249ec4adbbf"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_roadmap_snapshot.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "d0a9024ae5753893ea1332dcb82a062d8c9c8e5d"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_selector.py",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "52c1fdc9cdfa6288d282f810a4f7cd6bf8db8b3c"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "fef83e7f27f4a822d417f0901b5b1cfa9df66a9b"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_source_only.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "cc7d84e37628c3e438fdfc2099e31a179b9a81a9"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_source_scopes.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "c901c6b31604bc818e056aa60c8ef3eb68cf4734"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_specification.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "e0a8007ac14cd557c852280cc426ea2dcbc7af10"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_specification_input.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "7fa6fd3f48fe1f523fe14d8e78baf23f5bdd1269"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_support_bundle.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "eb5fb90d2f30b3d8aee45ebc892d133f215ec2d1"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_support_store.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "3c67b7fd6bba0a2c529774267da8aff300e10367"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_test_support.py",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "30a8db67cf91c0c7900a61bcd1bfa97098814be5"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "e55684e44e50d6c5f0602b180546f4279c71f6c4"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_transaction.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "447d7d3c7f4cefc7aa14a3a1679fadc7bb97a821"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_tree.py",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "fbd577308ff5c555eca2f1ad35d1db1336920feb"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "5400b5eaabc3aafd863f12ff1a6af298fd5cf1a9"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_trust.py",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "e7908fba331185cca5636309a0864212dd9e8641"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "29df6532155a9597dfe3cdd0bbd48af572356a65"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_trust_test_support.py",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "8fedbbeb3561e150b3e7b77139a5989c8e2fc6ea"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "cef5e39fefcbd8d89931f1d081e07c48c30d30f0"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_workspace.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "20ab32f9cfa1a5f67c078f43ad95d3dce6b02aac"
+                  }
+                },
+                {
+                  "path": "scripts/workflow_delivery_workspace_authority.py",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "2945fdbc95c74a63ac78c2b13b5d6a56bcf9c0fe"
+                  }
+                },
+                {
+                  "path": "specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "0bfcec750c2dc19b30cc8263016d580f3726e6ca"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "4d3007871a8c4cee2b99d8d652c2f1b5553d7250"
+                  }
+                },
+                {
+                  "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "bdb0e5519eea082c8ccd8f253255636a908accc6"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "1cf7ddbb0e1c740d0c667e87d68a7c9384bf303d"
+                  }
+                },
+                {
+                  "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "8d330576d20bcdd2475572d63df7018cfe26a247"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "7d7901846dd45ed8a48f567a73d3d3b64f54cce0"
+                  }
+                },
+                {
+                  "path": "specs/active_frontier.json",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "118359a2e6410a3615d7b3c6be8ebfcd48b319b4"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "3f221ad88f25bc6b4197926945cc38c94b379cf1"
+                  }
+                },
+                {
+                  "path": "specs/evidence_traceability_manifest.json",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "d7ebc7201e81091b6604355bf1a50939258c2d30"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "74d52d4bf90c7377ae0c9f389bb2f9d45e461578"
+                  }
+                },
+                {
+                  "path": "specs/spec_governance_manifest.json",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "714293ebc0827cfbe56df38e9407375d345ad9f1"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "423bdb16bb6be31b4b2b13a428f4621aa3c0b145"
+                  }
+                },
+                {
+                  "path": "specs/workflow_delivery/rollout.contract.json",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "3f1c9f51b1cc49271f20172e28d7d1b6771f39ed"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "f66bfc0699004854a54b79739f0476d910e27a95"
+                  }
+                },
+                {
+                  "path": "specs/workflow_delivery/rollout.environments.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "87613f7840637fdb0a66f82a262df5754186c307"
+                  }
+                },
+                {
+                  "path": "specs/workflow_delivery/workspace-inputs.json",
+                  "before": null,
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "d7d67ce52d1d00d5c2e19722b4716dcdf2e9fef1"
+                  }
+                },
+                {
+                  "path": "specs/workflow_delivery_policy.json",
+                  "before": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "72093a2bc5eb7d8cef4df16bef96fc44de8cd291"
+                  },
+                  "after": {
+                    "mode": "100644",
+                    "kind": "blob",
+                    "oid": "dc469ab3c2fc780884f74704256f39fd000de797"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "touched_paths": [
+        "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md",
+        "docs/reviews/workflow-delivery-rollout/coverage-proposal.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/proof.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/review.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-events.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-observations.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-roles.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-events.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-observations.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-roles.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-events.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-observations.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-roles.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-events.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-observations.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-roles.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-events.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-observations.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-roles.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-events.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-observations.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-roles.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-observation.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-receipt.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/focused-workspace.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/pre-review-inspection.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/provenance.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/registry.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/replay.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/validation.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-events.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-observations.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-roles.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-events.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-observations.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-roles.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-events.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-observations.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-roles.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-events.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-observations.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-roles.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-events.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-observations.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-roles.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-events.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-observations.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-roles.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/build-receipt.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/fixtures.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/input-manifest.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/limits.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/observed-tools.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/producer-review-inspection.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/registry.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/verification.json",
+        "research/process-quality/WORKFLOW_INFRASTRUCTURE_CONTRACT_BASIS.md",
+        "scripts/check_workflow_delivery.py",
+        "scripts/project_status.py",
+        "scripts/test_workflow_coverage_proposal.py",
+        "scripts/test_workflow_delivery_activation.py",
+        "scripts/test_workflow_delivery_activation_preflight.py",
+        "scripts/test_workflow_delivery_activation_state.py",
+        "scripts/test_workflow_delivery_capture_cases.py",
+        "scripts/test_workflow_delivery_capture_cli.py",
+        "scripts/test_workflow_delivery_capture_command.py",
+        "scripts/test_workflow_delivery_capture_fixture.py",
+        "scripts/test_workflow_delivery_capture_hook.py",
+        "scripts/test_workflow_delivery_capture_interrupt.py",
+        "scripts/test_workflow_delivery_capture_state.py",
+        "scripts/test_workflow_delivery_category_boundaries.py",
+        "scripts/test_workflow_delivery_coverage.py",
+        "scripts/test_workflow_delivery_coverage_capture.py",
+        "scripts/test_workflow_delivery_coverage_entrypoints.py",
+        "scripts/test_workflow_delivery_enabled.py",
+        "scripts/test_workflow_delivery_environment_capture.py",
+        "scripts/test_workflow_delivery_environment_selection_prepare.py",
+        "scripts/test_workflow_delivery_environments.py",
+        "scripts/test_workflow_delivery_headless.py",
+        "scripts/test_workflow_delivery_headless_capture.py",
+        "scripts/test_workflow_delivery_headless_observation.py",
+        "scripts/test_workflow_delivery_history_capture.py",
+        "scripts/test_workflow_delivery_independent_review.py",
+        "scripts/test_workflow_delivery_index_environment.py",
+        "scripts/test_workflow_delivery_initial_migration.py",
+        "scripts/test_workflow_delivery_interruption_case.py",
+        "scripts/test_workflow_delivery_mixed_capture.py",
+        "scripts/test_workflow_delivery_observe_python.py",
+        "scripts/test_workflow_delivery_owner_hook.py",
+        "scripts/test_workflow_delivery_preflight_cli.py",
+        "scripts/test_workflow_delivery_publication_delta.py",
+        "scripts/test_workflow_delivery_readiness_boundary.py",
+        "scripts/test_workflow_delivery_readiness_capture.py",
+        "scripts/test_workflow_delivery_review_capture.py",
+        "scripts/test_workflow_delivery_review_checkpoint.py",
+        "scripts/test_workflow_delivery_review_inspection.py",
+        "scripts/test_workflow_delivery_review_phase_capture.py",
+        "scripts/test_workflow_delivery_roadmap_snapshot.py",
+        "scripts/test_workflow_delivery_snapshot_capture.py",
+        "scripts/test_workflow_delivery_source_only.py",
+        "scripts/test_workflow_delivery_source_scopes.py",
+        "scripts/test_workflow_delivery_specification.py",
+        "scripts/test_workflow_delivery_specification_capture.py",
+        "scripts/test_workflow_delivery_support_bundle.py",
+        "scripts/test_workflow_delivery_support_store.py",
+        "scripts/test_workflow_delivery_transaction.py",
+        "scripts/test_workflow_delivery_untracked_capture.py",
+        "scripts/test_workflow_delivery_workspace.py",
+        "scripts/test_workflow_delivery_workspace_authority.py",
+        "scripts/test_workflow_delivery_workspace_consumers.py",
+        "scripts/test_workflow_delivery_workspace_entrypoints.py",
+        "scripts/test_workflow_rollout_contract.py",
+        "scripts/workflow_delivery_activation.py",
+        "scripts/workflow_delivery_activation_preflight.py",
+        "scripts/workflow_delivery_activation_state.py",
+        "scripts/workflow_delivery_authority.py",
+        "scripts/workflow_delivery_bootstrap.py",
+        "scripts/workflow_delivery_capture_assertions.py",
+        "scripts/workflow_delivery_capture_cases.py",
+        "scripts/workflow_delivery_capture_cli.py",
+        "scripts/workflow_delivery_capture_command.py",
+        "scripts/workflow_delivery_capture_fixture.py",
+        "scripts/workflow_delivery_capture_history.py",
+        "scripts/workflow_delivery_capture_hook.py",
+        "scripts/workflow_delivery_capture_interrupt.py",
+        "scripts/workflow_delivery_capture_mutations.py",
+        "scripts/workflow_delivery_capture_snapshots.py",
+        "scripts/workflow_delivery_capture_state.py",
+        "scripts/workflow_delivery_categories.py",
+        "scripts/workflow_delivery_checkpoints.py",
+        "scripts/workflow_delivery_clause_dispositions.py",
+        "scripts/workflow_delivery_clause_inventory.py",
+        "scripts/workflow_delivery_clause_test_support.py",
+        "scripts/workflow_delivery_coverage.py",
+        "scripts/workflow_delivery_coverage_input.py",
+        "scripts/workflow_delivery_coverage_runtime.py",
+        "scripts/workflow_delivery_coverage_shapes.py",
+        "scripts/workflow_delivery_enabled.py",
+        "scripts/workflow_delivery_environment_cases.py",
+        "scripts/workflow_delivery_environment_selection_prepare.py",
+        "scripts/workflow_delivery_environments.py",
+        "scripts/workflow_delivery_headless.py",
+        "scripts/workflow_delivery_headless_observation.py",
+        "scripts/workflow_delivery_interruption_case.py",
+        "scripts/workflow_delivery_mapping.py",
+        "scripts/workflow_delivery_mixed_test_support.py",
+        "scripts/workflow_delivery_native.py",
+        "scripts/workflow_delivery_observe_python.py",
+        "scripts/workflow_delivery_owner_hook.sh",
+        "scripts/workflow_delivery_preflight_cli.py",
+        "scripts/workflow_delivery_product_readiness_input.py",
+        "scripts/workflow_delivery_publication_delta.py",
+        "scripts/workflow_delivery_readiness_input.py",
+        "scripts/workflow_delivery_review.py",
+        "scripts/workflow_delivery_review_input.py",
+        "scripts/workflow_delivery_review_inspection.py",
+        "scripts/workflow_delivery_review_phase_input.py",
+        "scripts/workflow_delivery_roadmap_snapshot.py",
+        "scripts/workflow_delivery_selector.py",
+        "scripts/workflow_delivery_source_only.py",
+        "scripts/workflow_delivery_source_scopes.py",
+        "scripts/workflow_delivery_specification.py",
+        "scripts/workflow_delivery_specification_input.py",
+        "scripts/workflow_delivery_support_bundle.py",
+        "scripts/workflow_delivery_support_store.py",
+        "scripts/workflow_delivery_test_support.py",
+        "scripts/workflow_delivery_transaction.py",
+        "scripts/workflow_delivery_tree.py",
+        "scripts/workflow_delivery_trust.py",
+        "scripts/workflow_delivery_trust_test_support.py",
+        "scripts/workflow_delivery_workspace.py",
+        "scripts/workflow_delivery_workspace_authority.py",
+        "specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md",
+        "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+        "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+        "specs/active_frontier.json",
+        "specs/evidence_traceability_manifest.json",
+        "specs/spec_governance_manifest.json",
+        "specs/workflow_delivery/rollout.contract.json",
+        "specs/workflow_delivery/rollout.environments.json",
+        "specs/workflow_delivery/workspace-inputs.json",
+        "specs/workflow_delivery_policy.json"
+      ],
+      "net_changes": [
+        {
+          "path": "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "232960573c8715f846b15d7ee48684f534ee13e3"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "f96315fb88cd5d669eb9a98bf3fabd67d55f95b4"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/coverage-proposal.json",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "ebf4d91e7d689f19abf3a496565ba1cef960eeb7"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "1cd7a2337052a6220b7771078e6a6107dc72fd69"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "cdf76cd542352e2cff694cf06ead3ecd58dcb959"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/proof.json",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "dac29a8f7298c05964dc4bb1824bff9fcc7e7d38"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "70cd66722443e7d15858f3143ad1e528cafc085b"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/review.json",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "08e7c40c28b8eb8a7d1eb35e79195d6cc7561016"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "51d4591928aa861170f7203b50d8d06eb3cc19af"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-events.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "6049a652cbd1dd0be3779d7db7c714c28947ebce"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-observations.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "84b926c45c6de7e998111e0e5e800897d58f9468"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-roles.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "952d668ab3bf2fb9c4f6add2e55d25b8d319ab48"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-events.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "6f70d59fba86eea6dcd0191f2cb47739bfa1fc2d"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-observations.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "47ea1d28d51d9f1ebbd10d1871e05354c942c824"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-roles.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "2fa16d5c90a8dc86a42ec1b87655a0d5763f5d67"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-events.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "7c5432880b0e53856801c9d8e3a26a8adde907cc"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-observations.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "27a293fa484a77e7d89c39d5e71725217c3e8404"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-roles.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "e4af05cab854f65d5607d36025fff231f266e8d5"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-events.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "9ca0f94090c921238a263f53a7ccada205377ae6"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-observations.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "dbe96491b2253ebb30f7baea4203e5939a0591ed"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-roles.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "2f3ec80ca431681a2906c4d0b2a8df5a338b87ae"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-events.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "e59cdb1822dd428a5f8c8cd31a8f59e39b8a19a2"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-observations.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "8d719213edf7b519d7e9442225cefb9c682d2c84"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-roles.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "d804fa621a97741e86e22c528d5ca8fa88034b60"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-events.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "dc05398a0774a4ecb2aad432a1367b25f9d80cd3"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-observations.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "904623da9fa756eb3410b6c8d2a3870916aa3aa4"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-roles.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "bd4665d85b1476bc6f0d44c735ade4c28cebef27"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-observation.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "32630c035530af2fab479338e33fe9e3a897f867"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-receipt.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "0c2bdde0a6fe7e38e91da1c65dd69cd875918dbf"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/focused-workspace.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "8dc076a86907c349befbae49fc0827bdd91a4f14"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/pre-review-inspection.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "50a145eef9c5ec8dc6c6840c8a6a3b51f3a697c7"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/provenance.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "1042282bc79e1d5e1964d055dd299bff8fde12ee"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/registry.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "28c505fffe511b5fd98dd79fc2c20103da029959"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/replay.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "da0e55c9ab1ce0116a70f2675f67a3d3aa662a05"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/validation.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "13b53df7ed3cfed2f5d781207593d70e8dc8d449"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-events.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "6addc2934913d7efdfaf22d75f62d3946b1fedba"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-observations.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "79b5b4f878bc875577ef6940f3925efbbc3b9e92"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-roles.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "171243c728414c2691c46cf7087b7e87f6335b1f"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-events.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "928d1710855774d7c294234d024b7518389451ab"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-observations.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "21b11acd5e909ce2bc4ff2165d403ab6dd042263"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-roles.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "163732c026fd6f5568908bff836f95cde255bf4f"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-events.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "ef85c158946d2794d57ad8958f908d36770afca5"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-observations.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "378b843b557b820e9eb531aa12c54584b4335dea"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-roles.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "5def04bef1eea8a594ec8061fa08497f337bd11a"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-events.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "c0944dc94f1101a423f55677d8f42525076c54e0"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-observations.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "6d0e97fa76f69f829ec2d2ec7c061e31e296f82f"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-roles.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "44171701eccb94f2f32416895cc52526cb03564f"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-events.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "91ed6992eb7f6a10c2602fb4ec09a34259249433"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-observations.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "0c069f43b0644df4bbf3b24efea372c49d612844"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-roles.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "0b7e9c3b8400f3ee59fb27cdb083d769a88fd890"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-events.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "23a1b23684580a8a43e0e5508698bb21941f6db5"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-observations.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "31dc23fc369bfba0a7ecb7651f6b5e28948f58b7"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-roles.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "c24e5b0cd47c080d7c5b34ecfc4542db4a3aa51c"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/build-receipt.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "a669bdeab525e4fdc550591115c770ee9b676339"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/fixtures.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "6fc3ab27bd22d166cfa15d257c174f2a00f3855b"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/input-manifest.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "744669f92aaf0e708950b616f4f83067c1df4e52"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/limits.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "f931f3c7f2fddd2429b724beba5605379d16bae0"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/observed-tools.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "5266032053d9948ac85b0a23dd7f41830d1308ed"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/producer-review-inspection.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "6590730516ac77179eaa2eada24c099b71c174d5"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/registry.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "4bcbcccba82db60c7f6ee0be0f823402ed9077bb"
+          }
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/verification.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "03d8809bef968a96eb2dfa21964d8fa2bfd6a69e"
+          }
+        },
+        {
+          "path": "research/process-quality/WORKFLOW_INFRASTRUCTURE_CONTRACT_BASIS.md",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "b80e190b99177870a087751985800ee02305a42d"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "15f9a3c035bfe924aa729e8a59cfe3737d700328"
+          }
+        },
+        {
+          "path": "scripts/check_workflow_delivery.py",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "4b9e4b05a52475ef44a769ef69a1e015b3f5857c"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "44c29ed69ef06428066b2db02cc0a6d6497fe76b"
+          }
+        },
+        {
+          "path": "scripts/project_status.py",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "6df2b94e4319bab33fe796f2c638b4a652551769"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "471c978e790cb68450ee2153026fc4f1783be666"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_coverage_proposal.py",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "77f66146e01bdd803df0e0575e5465510eace26e"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "0a676845eea888a079088ba0587fd5f743457a0f"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_activation.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "97f40c42da35cfd173a13031ab18b00cf45fa6c1"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_activation_preflight.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "c8e9a30759acef79cfaca700865e7d43336132fa"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_activation_state.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "dbe08f7ca5dae385d878a5e7de2338dba520295e"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_capture_cases.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "7f94aa52a4f9cb1dc3e1f6d3b517d6005cd44092"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_capture_cli.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "198f266ed2ccb8c3b78ad9c0b7a0ba0657281d8a"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_capture_command.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "2144263038456ae36e1373870cbc309bbf9d9379"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_capture_fixture.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "67625754f0796101ef15386bee9d8efdf7edaac7"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_capture_hook.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "e98f7dff0e1de089809e78837f9d563f66419fef"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_capture_interrupt.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "93b713613db3bffb8b76c895f9652ec83788bf42"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_capture_state.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "373d9bbc9d94738d04a7b6bc80603888b3345d85"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_category_boundaries.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "4812702f4dea50a3776abca60fb998f659e9bb4f"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_coverage.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "9faae925659329537d1b0e508cac940895f133da"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_coverage_capture.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "9c1438770631f375acf85739fbd3b930ab83ad12"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_coverage_entrypoints.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "b315ce996c56770a76b31984add1629def06e65b"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_enabled.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "cb2a1685910615645e1b9a0715eb77c58040b638"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_environment_capture.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "b0e479f02c6201b32bc65acaba74b762ef1d06b6"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_environment_selection_prepare.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "58d02fa998b7de4d762acd9d1db729063c262e76"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_environments.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "3d91bcf01a668e970a97df1db506eaac7dc606c0"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_headless.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "e6d4f87e2d65b6301a881a0b4544e635dd6e6b64"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_headless_capture.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "ccd356cf72ffc7bb8d468dc6c7cb882a91627481"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_headless_observation.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "bf8a571f390647998ef41b2e579b7e6da9989cc7"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_history_capture.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "c8da4b0a74038284442d6198ba85ebbf752047d5"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_independent_review.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "707ff9bc426f096293ed588b8429e0be1c7a7647"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_index_environment.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "b61c93ccc203cdc6040e527300c7a42e22951aec"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_initial_migration.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "b13c5b65aad2f9895ad75b8bccf1c93f54adf2c5"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_interruption_case.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "76f181f3aa2b891dbd4a0cc758d7d1326426f890"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_mixed_capture.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "e24350a0455fae7f920fec8083ccb49dfb0e61c9"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_observe_python.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "ef6df0fef7355a322d22e971bcb7f9220b0f6b0f"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_owner_hook.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "52ef893a52e675f87cfa3c935881abe352a619b6"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_preflight_cli.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "fb9b86e3149d94df5ca1c965b0049387f99369ab"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_publication_delta.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "ce35434988d3f8d15a24938e6a1bf32e7d84936f"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_readiness_boundary.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "7878f82b7e843d4f78fca9ee3835d3a92a176b05"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_readiness_capture.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "730d62d21f2e1221ba91e8cd07228af542049c56"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_review_capture.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "27146fe816c7f5760b8f4de1cbd466cf0cad714b"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_review_checkpoint.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "02341332b18bb8d1ff6e6185952b4b6984d3fbb3"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_review_inspection.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "a12227d31b78438cd7f5e4d4a047348515e99f50"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_review_phase_capture.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "a6420cecefc8d87ae673d5f4adc51f5df8214ce8"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_roadmap_snapshot.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "bd84aa588c933d6ce43a8169914aa2e6830b4da8"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_snapshot_capture.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "e99306c2d0b32f442cccdb5487608932bd33225f"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_source_only.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "3f33e53f4fbdd8e2e1d9a0b4b62945b701eaa244"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_source_scopes.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "ee41bd8f1f4c629060b1e4d21086b3338fb6936c"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_specification.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "a2d8910bf4a7160d00ee6c922b8df0e95c771228"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_specification_capture.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "c48dba7c99986f783499e2e66093f59603163223"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_support_bundle.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "0c51c51dcef0e216d2fa10051b6c69b1b586e200"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_support_store.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "6bc2610b29b12d7e6158d5652df583fdafea0820"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_transaction.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "052113012b2464c9de1d5e9a57584fe5bc69b0c2"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_untracked_capture.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "882c79b0fe9d1951612b612cf121f62843623625"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_workspace.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "df4c5151f4636c1bbda114663f93b0a7b6091366"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_workspace_authority.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "4a3a7874a9bf92e309edba67e7815b572c9ac25d"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_workspace_consumers.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "ace8f8b790a139f8c7a40d1ca4ee8c7d1ab7cee6"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_delivery_workspace_entrypoints.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "0077c05fe460f58c9fc0914531d6e4c62119776d"
+          }
+        },
+        {
+          "path": "scripts/test_workflow_rollout_contract.py",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "09b607a6e7a92cc00331bd76d9f43e521b95aa61"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "d2857a3093d373b324f7bb887f39d16099271b80"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_activation.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "88ace4ba77ceaebd0788462b64afb56ab88e500e"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_activation_preflight.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "00577111709c80a90d7adb40c82ed010dbe1f61e"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_activation_state.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "5f8b1089548449f31506f8b792152da8357bccde"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_authority.py",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "4635cf7f5c9043f9b2c16228a5ca69978d89c617"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "11d171f4ce64178848c6321bcb08867e6a104afe"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_bootstrap.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "86a7c965ac01ed11d30355efe46387d2870134fb"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_capture_assertions.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "2863eb751fd7c3f87a59ad61d34e44b85bdc3119"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_capture_cases.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "8f3d71802bbbca81206607cb63d2c9207edb917f"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_capture_cli.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "108a9864c277869d3be4f1ee461d8d88a3cc5cd5"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_capture_command.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "2e2d141568c59243398b8f4fa1c3d67ab279607c"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_capture_fixture.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "ff14897391c81f81786920353bfc86630454bd61"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_capture_history.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "7a02398293cb61cd769c8c00ac1e6fa58eac57c5"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_capture_hook.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "d4be23c520ccd72dc1da73d3cbff44cf78d50edb"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_capture_interrupt.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "dfadd6f9ffbf6fe6c5a867df797c9feee7c3eab2"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_capture_mutations.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "342c92dfc1a604030d00aa34479d2ebb1f2e4770"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_capture_snapshots.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "34ef5caaf4780d60e30a61ed25d2098bb7af91a5"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_capture_state.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "c7c6502c6510273f29f8b7260366f255f294684d"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_categories.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "7035104af67f37db876d19cadcea84542f031063"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_checkpoints.py",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "948bb09825669c4d5d585a73550741bcaa785ec9"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "182a09046cef2b68a1e285a2cda557a220423e5e"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_clause_dispositions.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "2090abb2e6fbd04ed38d8103473d935798393aec"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_clause_inventory.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "37d02815c15f06126fdc8aaf43c4da323eaa3234"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_clause_test_support.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "09a7313e588c077cf8ca794cc56de064d51011f8"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_coverage.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "70b63d96b9a2a4756189f2c30501430ff4603753"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_coverage_input.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "0c3d8f9b079512da60db244dc22318e0f83b82f8"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_coverage_runtime.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "100af8a4a3b5bcabc605dd65c3bd4b59b8b09c77"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_coverage_shapes.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "9f8a3dfc70f5f84b30230c8d593620bb9aae0400"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_enabled.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "256dd5f02e2f959fd30eb2fe8438ea954cd9e0ac"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_environment_cases.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "02c777606a9f27428c1316c7979857590d0c93f4"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_environment_selection_prepare.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "428e02935b23833fa48bcb4e1b1c4640969e3b3e"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_environments.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "bc23befe55d556984c2905edca7b57e5705d99d3"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_headless.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "c8a3ea3c539b185fa07deb703b33fa171d9af4b4"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_headless_observation.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "8616f205f07207a8e2134faf9527152ac70b2079"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_interruption_case.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "767f72053e237e50d085c8b9d6bb180904e378fe"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_mapping.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "498c12276a95554d4e4e2c866791515d8b1ae174"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_mixed_test_support.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "8ea206d507d49ee17eca04c1e47cea87c7816b39"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_native.py",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "726c76c7ae07a8021282936467de0d0a0693a50f"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "557c78c12ee204fcc0ae76c4cec9c8c7ad3b10d4"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_observe_python.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "22269ad9cb5d7c212cd6dd7d5ece151a80b9cd2c"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_owner_hook.sh",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "37edf2d43a94386962c99c762ea4d049f045d503"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_preflight_cli.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "5aa5ae9e61c0399e4704283ec449a5a7e59a5ea6"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_product_readiness_input.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "3b982b337cd7d064ef1a00077dc50c611a74cd94"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_publication_delta.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "19175e7a46e30784cde0e8689d422f56efe275a0"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_readiness_input.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "aa250435c9bb888786895deb965d2d42817f24bb"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_review.py",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "2c76cffd3b710dd90b63742be3cd17798e9302d7"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "ad5f832cc0e939db204c4a87c69788e6f511520d"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_review_input.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "a802eedfcd182ea8b878809a14db3e5acb3f91ff"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_review_inspection.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "ed9977483fb4d0d47f275d0620c81cffd15241d8"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_review_phase_input.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "d2322ffc679bbb9a7bcd5ed8c8709249ec4adbbf"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_roadmap_snapshot.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "d0a9024ae5753893ea1332dcb82a062d8c9c8e5d"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_selector.py",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "52c1fdc9cdfa6288d282f810a4f7cd6bf8db8b3c"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "fef83e7f27f4a822d417f0901b5b1cfa9df66a9b"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_source_only.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "cc7d84e37628c3e438fdfc2099e31a179b9a81a9"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_source_scopes.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "c901c6b31604bc818e056aa60c8ef3eb68cf4734"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_specification.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "e0a8007ac14cd557c852280cc426ea2dcbc7af10"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_specification_input.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "7fa6fd3f48fe1f523fe14d8e78baf23f5bdd1269"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_support_bundle.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "eb5fb90d2f30b3d8aee45ebc892d133f215ec2d1"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_support_store.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "3c67b7fd6bba0a2c529774267da8aff300e10367"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_test_support.py",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "30a8db67cf91c0c7900a61bcd1bfa97098814be5"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "e55684e44e50d6c5f0602b180546f4279c71f6c4"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_transaction.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "447d7d3c7f4cefc7aa14a3a1679fadc7bb97a821"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_tree.py",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "fbd577308ff5c555eca2f1ad35d1db1336920feb"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "5400b5eaabc3aafd863f12ff1a6af298fd5cf1a9"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_trust.py",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "e7908fba331185cca5636309a0864212dd9e8641"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "29df6532155a9597dfe3cdd0bbd48af572356a65"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_trust_test_support.py",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "8fedbbeb3561e150b3e7b77139a5989c8e2fc6ea"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "cef5e39fefcbd8d89931f1d081e07c48c30d30f0"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_workspace.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "20ab32f9cfa1a5f67c078f43ad95d3dce6b02aac"
+          }
+        },
+        {
+          "path": "scripts/workflow_delivery_workspace_authority.py",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "2945fdbc95c74a63ac78c2b13b5d6a56bcf9c0fe"
+          }
+        },
+        {
+          "path": "specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "0bfcec750c2dc19b30cc8263016d580f3726e6ca"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "4d3007871a8c4cee2b99d8d652c2f1b5553d7250"
+          }
+        },
+        {
+          "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "bdb0e5519eea082c8ccd8f253255636a908accc6"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "1cf7ddbb0e1c740d0c667e87d68a7c9384bf303d"
+          }
+        },
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "8d330576d20bcdd2475572d63df7018cfe26a247"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "7d7901846dd45ed8a48f567a73d3d3b64f54cce0"
+          }
+        },
+        {
+          "path": "specs/active_frontier.json",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "118359a2e6410a3615d7b3c6be8ebfcd48b319b4"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "3f221ad88f25bc6b4197926945cc38c94b379cf1"
+          }
+        },
+        {
+          "path": "specs/evidence_traceability_manifest.json",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "d7ebc7201e81091b6604355bf1a50939258c2d30"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "74d52d4bf90c7377ae0c9f389bb2f9d45e461578"
+          }
+        },
+        {
+          "path": "specs/spec_governance_manifest.json",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "714293ebc0827cfbe56df38e9407375d345ad9f1"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "423bdb16bb6be31b4b2b13a428f4621aa3c0b145"
+          }
+        },
+        {
+          "path": "specs/workflow_delivery/rollout.contract.json",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "3f1c9f51b1cc49271f20172e28d7d1b6771f39ed"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "f66bfc0699004854a54b79739f0476d910e27a95"
+          }
+        },
+        {
+          "path": "specs/workflow_delivery/rollout.environments.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "87613f7840637fdb0a66f82a262df5754186c307"
+          }
+        },
+        {
+          "path": "specs/workflow_delivery/workspace-inputs.json",
+          "before": null,
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "d7d67ce52d1d00d5c2e19722b4716dcdf2e9fef1"
+          }
+        },
+        {
+          "path": "specs/workflow_delivery_policy.json",
+          "before": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "72093a2bc5eb7d8cef4df16bef96fc44de8cd291"
+          },
+          "after": {
+            "mode": "100644",
+            "kind": "blob",
+            "oid": "dc469ab3c2fc780884f74704256f39fd000de797"
+          }
+        }
+      ],
+      "publication_authorized": false,
+      "activation_asserted": false,
+      "scope": "original Git commit history and tree entries; not permission, review or acceptance"
+    },
+    "publication_delta_sha256": "62ae9ed72e6c712a1f6770ace3fb5ac4da69cfc96e7f854185567cd39765f73c",
+    "exact_evidence_payloads": [
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/proof.json",
+        "sha256": "6e4f511fe96e2d089bec77a4439910f45d7a1d190dc22e4a4369c73d25d3bd50"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-events.json",
+        "sha256": "65a387af50dfd1c17db719d17471db6205faf9f522ed4cb82726a2e6ce96a2fd"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-observations.json",
+        "sha256": "13cb63d45659c4348cd28791d08231f9119f4c1944ede9efbed2c4cbd16cc2e5"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-roles.json",
+        "sha256": "1ae1c8630d00f4fb60ad67fde4c2cd082a6ca122959b965e8e71cffdedbcad10"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-events.json",
+        "sha256": "3dcb9c8a2fb1c205c5f5e4097eca93f835fbd02307715b4b08b98f208cd63b20"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-observations.json",
+        "sha256": "26133bdfec33e88d66bec67fbb04f65f3aa235fc0eda7d2451f8dbde478bd72b"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-roles.json",
+        "sha256": "e57c1ad737db0cd84a12745f92f3aed8b35ddcb6b43110d5925a09dfdc29f442"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-events.json",
+        "sha256": "5d678e9222e9fffab6e0b0399f2c2bf1120bcfb4e59d61a032460fd754efa9e6"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-observations.json",
+        "sha256": "6072ce773cb70d7a482564b909f5831639e85ae5081033b6dc4965466198c166"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-roles.json",
+        "sha256": "d8ae95b1d211850b2d9c06b41c926e939accb483643ec3ab76fa9c035a6edf12"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-events.json",
+        "sha256": "692cbda056f1a67a121745e608e53db4ffaf372776a1dff2115fe3a0663fe7f9"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-observations.json",
+        "sha256": "ce1490c669057db04f9cad0d8036d94323ac12ae7409ebfb38c0effab83637a7"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-roles.json",
+        "sha256": "90a7eb5b03d9571a4a128b470dbe03d7c8ea3dfcfd3050501efe05cac5858249"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-events.json",
+        "sha256": "fbee16dc5c0710ecb4d5c31e7f0ec7c23ef8d1171326acb9a21c5db343b011fa"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-observations.json",
+        "sha256": "369aa18d0eece09b0c267e8bd4a5169e7afdf1e527bf1b3f0875148bc85c9ba0"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-roles.json",
+        "sha256": "77dbdd48a571718f5fd321e3910bbc7f097b55e898a57e9a54a23c7915aff2c8"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-events.json",
+        "sha256": "0f1000b41bc094db2664727c794e93f40474154a3562f96c588e456bcac5381f"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-observations.json",
+        "sha256": "7fc94793413d21c449be7e21577b8bd7a8bd3bc72b9018c77bfafca37f9fb40e"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-roles.json",
+        "sha256": "13c08b4598be50ca9d9b54e9956288f34851fa0b702d0d855da674a81cbab843"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/build-receipt.json",
+        "sha256": "ed1b6c02117e6fa12d9dd1360685789246400fe65187ef5ff9e6fb1f8dcaa01d"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/fixtures.json",
+        "sha256": "7b107c041fe6474d64087d9d260c7d40242e643db528a2a12ee76f37b868cb3e"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/input-manifest.json",
+        "sha256": "468e860972610aca1b57e152e34f2ca817a74b7412cbd25e0492e362ae771857"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/limits.json",
+        "sha256": "d22d2de0bafd85e3dd16ec67623b7b051ebc5dc4c06524f204c0981c6267d1f5"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/observed-tools.json",
+        "sha256": "4f619c3810f8fdcf2305dd663d7e73e9957fbd61dbcf61fc51c1876130840515"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/producer-review-inspection.json",
+        "sha256": "144bb08356112a6326b498a16b279f686973932f78e777417e029109beb6d543"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/registry.json",
+        "sha256": "1eb429f43b11daad73f671ca39769e9f7afbe2e5323bbadd5f8135e54f6cf74f"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/verification.json",
+        "sha256": "80aeaaf4cda6e44d60fbb4174db5fc4a3d7c049b444cafe7a194cae86b36df49"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/review.json",
+        "sha256": "b352f9b2fe495ba95f46f468f3ca3c2e34b15cb1464857e2ee339ce1b70d5789"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-events.json",
+        "sha256": "8b8dc60234119bea7e816ee7c5b62780e02214c5626d69bf4404f9c3b263d33b"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-observations.json",
+        "sha256": "ddc48dece7d72f31cc8fa88fa5709785d79468e0a342c50afccf281964de9251"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-roles.json",
+        "sha256": "de336052922183cb6544754dfe1565c83eaeb46cadca34dc090001dd081f2563"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-events.json",
+        "sha256": "0be321cbc6391e325e0608fca4e26043540db136568a20568a06bacb1e4f8769"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-observations.json",
+        "sha256": "104d7908a5364251d2db441cf0b509590525321480c2ffc62ea12cac3862d19e"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-roles.json",
+        "sha256": "ddeee3b6a01e20c909bfd703563220da2ca78b69a3b77d1bbcd1ece0079e28ba"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-events.json",
+        "sha256": "679b7e58af6c87624768799af17eb2d31bf02a5a21b35d96847c36c05f3f63ab"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-observations.json",
+        "sha256": "58eb60309539315df0776e558b9422ff6fdcd09e8797a19bd92a6d79fb8fad26"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-roles.json",
+        "sha256": "1303ef3bf478791caa1ed7ba52828c139ef38fdce6d2669a53a09d69ba4c61d8"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-events.json",
+        "sha256": "beb1726d8fb4a9a19052e38fdf396f3210bffcd23257cf92e0716484448b9b9a"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-observations.json",
+        "sha256": "b608273914d5d5cf53e9dd1437b3bd41d6f1d48b12d7ab671e034900db355612"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-roles.json",
+        "sha256": "00b4531fac6075dfb8685977338042840774fee6e1d78a3d8b1769f8a67020ae"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-events.json",
+        "sha256": "c19412e197b37e045445335a6fd9cce269d834b8e61740c18d1101d7eff671fc"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-observations.json",
+        "sha256": "9e4ff917076ce0935f40c323b213e077e0e49b39372868007236f221fdc4897d"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-roles.json",
+        "sha256": "08194b40fe83142ea41609cc9eda08ad6818c09d40fe90cc5b333fe7f71c3969"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-events.json",
+        "sha256": "e0a097f0cd0f433543dc67f070594ea6e51816cb63dfad03b878c7c387b51372"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-observations.json",
+        "sha256": "168bce542bce6803452c3efb099da8d810f470df315fea05532208162460ea75"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-roles.json",
+        "sha256": "3d769e4dc0d5c4cf6b735fb8206fbb2d8d163a093aba42ce7128c5bd49c7b2b7"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-observation.json",
+        "sha256": "28dbc699ea159593bda55248d9489f537b21be27389c7c3fdf83fdee41752585"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-receipt.json",
+        "sha256": "030ba75b6e3595e3f1316af6b16c8da95dc19a9f83027fd5afe1928b1c7cee7f"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/focused-workspace.json",
+        "sha256": "9a81e6bca14151a7b7bdacc455f19fab49b72fe63b7e131fbd5ae67a65458a8f"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/pre-review-inspection.json",
+        "sha256": "549ce4cd678e625ccc02e2d6e66c754dfd2702b740d374b200a08897d7ef490a"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/provenance.json",
+        "sha256": "a14305a56e65c84d228be2c7383881f499124c151ce3336c157a058814ca0ae8"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/registry.json",
+        "sha256": "0743565da471f0a5cdf8b601826eadf65c5bde2bd531342f9981c0d825252811"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/replay.json",
+        "sha256": "bbfdcf2ae7a2a107ba3cbdb3aa2358ec85afec072323ecb9fd5348f83f151f83"
+      },
+      {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/validation.json",
+        "sha256": "d9f8e0a49847f23c0e3caab570230f2be94741f39770f593c02e544f12d4d9d6"
+      }
+    ],
+    "other_frontier_lanes_unchanged": 55,
+    "runtime_inputs_unchanged": 164,
+    "beads_delta": "Exact single open apx intake row; every earlier byte retained. No issue closure.",
+    "semantic_reconciliation": "Later changes consist of reviewed paired fixture retention, assembler/builder/verifier helpers, exact producer/independent evidence and one test-portability intake. Historical attempts remain; no source/authority/prototype change since prior inspection. Exact54 imported bytes match06ba and own validated overlay; all four raw archives unchanged.",
+    "owner_boundary": "No dispositions or activation authorized. Strict final I04 full-evidence validation/owner-controlled promotion remain required."
+  },
+  "producer_packet_sha256": "fa0b802e11d5dc266f7f3e78bde8a1ac91ac6c1ae4165df8858b56b94c158fee",
+  "review_sha256": "10f3ffee6c48d247bb88ecf1a4124b293daeb2b3f8e5a4bb651bbca28dae843b",
+  "review_file_sha256": "b352f9b2fe495ba95f46f468f3ca3c2e34b15cb1464857e2ee339ce1b70d5789",
+  "replay_sha256": "bbfdcf2ae7a2a107ba3cbdb3aa2358ec85afec072323ecb9fd5348f83f151f83",
+  "technical_review_recommendation": "RECHECK technical criteria are satisfied for exact992ce/FA:1314 fresh exact observations, current-source focused45, independent build, validated typed replay/review, and renewed actual-main source/history inspection with later-delta reconciliation. The coordinating lane may record technical closeout and present the owner-only I04 boundary.",
+  "ordering": "This later receipt does not alter the earlier typed replay or pretend its inspection happened earlier. It explicitly reconciles the distinct final evidence candidate. No self-referential proof dependency was introduced.",
+  "owner_obligations": {
+    "blocking": [
+      "dat-wdq-workspace-inputs-zmt",
+      "dat-wdq-index-refresh-ogw",
+      "dat-wdq-proof-renewal-cycle-qgb",
+      "dat-wdq-review-publication-cycle-a1y"
+    ],
+    "nonblocking": [
+      "dat-wdq-test-default-branch-apx"
+    ],
+    "disposition_refs": "All remain null in reviewed review.json. No owner choice or issue closure is inferred.",
+    "strict_i04": "992ce selects RECHECK, not claim-free I04, and is not activation-ready. A later real I04 base/candidate must preserve exact reviewed source/proof/replay, explicitly reconcile governance/owner receipt changes, and pass strict full-evidence inspection before any separately authorized promotion/installed verification."
+  },
+  "preservation": "Actual main remained clean at8423 throughout supported capture. All55 other Frontier rows, canonical Beads bytes,164 source inputs and54 imported producer/reviewer payloads were checked. New support bytes are uninstalled at the exact Git-common992ce location; installed legacy hooks/config remained identical.",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-final-inspection.tar.xz",
+    "sha256": "494f9ee2c907a439f829bebc2520d1a047b26b72c23e37d9eebf1bfe744e4bb5",
+    "size": 386168,
+    "member_count": 19,
+    "every_member_hash_and_size_checked": true
+  },
+  "members": [
+    {
+      "path": "final-delta-reconciliation.json",
+      "sha256": "669a7c7571b7361ffa94c6bc1994c7cbbf78d730dd7b930b4a486cbeab4051e1",
+      "size": 162727
+    },
+    {
+      "path": "final-live-request.json",
+      "sha256": "58ea61bf12776d98e9257e62f3983af18a51393e9184bb7bddc046567b64a60e",
+      "size": 15962
+    },
+    {
+      "path": "final-live-review/after.json",
+      "sha256": "301c402e11c82ad0e51db2c92c49d3e9602cae83ef2819f5954d515f90246e90",
+      "size": 2257935
+    },
+    {
+      "path": "final-live-review/before.json",
+      "sha256": "301c402e11c82ad0e51db2c92c49d3e9602cae83ef2819f5954d515f90246e90",
+      "size": 2257935
+    },
+    {
+      "path": "final-live-review/calls.jsonl",
+      "sha256": "4f66adaea2ea0cffef674f07c9524e0168a6ab7a5b689c47c1d670a58644fc08",
+      "size": 67492
+    },
+    {
+      "path": "final-live-review/command.json",
+      "sha256": "783ed88b5b4e9d1d3e6f383eca2e26fab0a304e08f3d188979561a9944c37e3d",
+      "size": 1321
+    },
+    {
+      "path": "final-live-review/independent-verification.json",
+      "sha256": "2bb0dc1f33dfd8177149b499fb55cca18eeb2a96d43d575d81f486462bfc2d66",
+      "size": 1067
+    },
+    {
+      "path": "final-live-review/process.json",
+      "sha256": "7a59e10510918aeeafa88ab971d3218b9350ea06855858a970af7fa9afe27c49",
+      "size": 113
+    },
+    {
+      "path": "final-live-review/publication-delta.json",
+      "sha256": "a57005e4d9505f5ea58a10b178f7bafded5c606b1d299fdb601b0d59264ba67b",
+      "size": 126659
+    },
+    {
+      "path": "final-live-review/request.json",
+      "sha256": "58ea61bf12776d98e9257e62f3983af18a51393e9184bb7bddc046567b64a60e",
+      "size": 15962
+    },
+    {
+      "path": "final-live-review/started.json",
+      "sha256": "b9b7f0c5074ffeb8dac9d6983bd312efccd18707a93cc8642cd02845063f68f7",
+      "size": 57
+    },
+    {
+      "path": "final-live-review/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "final-live-review/stdout.bin",
+      "sha256": "dc3ecd0d642288edb768e90b2ae783473eee1e8991ae209b6d8eb78c60874838",
+      "size": 460
+    },
+    {
+      "path": "final-live-trace-verification.json",
+      "sha256": "20ac16dbbcdcd9ed45e8a4895a43a4f9942d159885c01877d5d756f6837acce1",
+      "size": 8015
+    },
+    {
+      "path": "final-uninstalled-support.json",
+      "sha256": "6253457a0c5cecb69b4eca594b46845bd912641d3c5f12b93e5dc1cb30ace876",
+      "size": 24288
+    },
+    {
+      "path": "inspect-final-live.py",
+      "sha256": "a779ca325b5fe60dbea5ea4587ce4a35f46ae7b76ed5c9275a6517685bc13897",
+      "size": 7342
+    },
+    {
+      "path": "inspect-live.py",
+      "sha256": "e7de6c9af2897696122ccb63244c7811bab63d87526df9ae534ec807b2c551de",
+      "size": 4836
+    },
+    {
+      "path": "supported-cli-log.json",
+      "sha256": "bd2423fa58ef7cd7200f69d56205def53c074b0c8892a8f1156aecc33667d02e",
+      "size": 2186548
+    },
+    {
+      "path": "verify-final-live.py",
+      "sha256": "0fed8986550ed3138c161736152385ad5c117bf350eac16e86ea775f0fc29769",
+      "size": 3077
+    }
+  ],
+  "main_roadmap_changed_by_reviewer": false,
+  "owner_acceptance_asserted": false,
+  "publication_authorized": false,
+  "activation_performed": false
+}
