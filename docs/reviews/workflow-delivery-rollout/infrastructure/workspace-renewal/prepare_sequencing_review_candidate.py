@@ -54,7 +54,7 @@ def reviewed_payloads(git, overlay, review_digest, inventory_digest):
 
 
 def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
-         review_digest=None, review_inventory_digest=None):
+         review_digest=None, review_inventory_digest=None, profile=None):
     if not (sys.flags.isolated and sys.flags.no_site and sys.flags.dont_write_bytecode):
         raise ValueError("candidate preparation requires Python -I -S -B")
     if expected_step not in ("WDQ-COMPAT", "WDQ-RECHECK", "WDQ-I04"):
@@ -68,6 +68,17 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
     root = Path(__file__).resolve().parents[5]
     runtime = root / ".git/datum-wdq/proposals/sequencing-repair-20260910"
     store = root / ".git/datum-wdq/proposals/sequencing-evidence-20260910"
+    source_pin, producer_pin, packet_pin = PIN, PRODUCER, PACKET
+    load_payloads = reviewed_payloads
+    if profile is not None:
+        if profile != "terminal" or expected_step != "WDQ-I04":
+            raise ValueError("terminal profile requires the actual I04 boundary")
+        from terminal_activation_profile import SOURCE, PRODUCER as terminal_producer, PACKET as terminal_packet
+        from terminal_activation_profile import reviewed_payloads as terminal_payloads
+        source_pin, producer_pin, packet_pin = SOURCE, terminal_producer, terminal_packet
+        load_payloads = terminal_payloads
+        runtime = root / ".git/datum-wdq/proposals/terminal-owner-20260910"
+        store = root / ".git/datum-wdq/proposals/terminal-final-assessment-01"
     def git(*args, data=None, env=None):
         return subprocess.check_output(["git", "--no-replace-objects", "--no-optional-locks", *args],
                                        cwd=root, input=data, env=env)
@@ -76,7 +87,7 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
     assert not git("status", "--porcelain")
     bootstrap = runtime / "scripts/workflow_delivery_source_only.py"
     raw = bootstrap.read_bytes()
-    assert raw == git("show", PIN + ":scripts/workflow_delivery_source_only.py")
+    assert raw == git("show", source_pin + ":scripts/workflow_delivery_source_only.py")
     namespace = {"__name__": "_sequencing_source_only"}
     exec(compile(raw, str(bootstrap), "exec"), namespace)
     namespace["install"](runtime / "scripts")
@@ -88,7 +99,7 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
     from workflow_delivery_frontier import validate_frontier
     from workflow_delivery_review_inspection import inspect_review_candidate
     from workflow_delivery_publication_delta import publication_delta
-    source, live = Tree(root, revision=PIN), Tree(root, revision=base)
+    source, live = Tree(root, revision=source_pin), Tree(root, revision=base)
     contract = source.json("specs/workflow_delivery/rollout.contract.json")
     policy = source.json("specs/workflow_delivery_policy.json")
     scoped = set(policy["coverage"]["source_scopes"][0]["paths"])
@@ -110,7 +121,7 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
     review_inventory = None
     parent_review_digest = review_digest
     if review_overlay is not None:
-        evidence_payloads, review_inventory = reviewed_payloads(
+        evidence_payloads, review_inventory = load_payloads(
             git, review_overlay, review_digest, review_inventory_digest)
         if expected_step == "WDQ-I04":
             disposition_path = EVIDENCE + "workspace-renewal/sequencing-owner-dispositions.md"
@@ -121,6 +132,10 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
                 "dat-wdq-review-publication-cycle-a1y": "I04-OWNER-PUBLICATION",
                 "dat-wdq-test-default-branch-apx": "I04-OWNER-TEST-PROFILE",
             }
+            if profile == "terminal":
+                dispositions = {key: marker.replace("I04-OWNER-", "I04-TERMINAL-")
+                                for key, marker in dispositions.items()}
+                dispositions["dat-wdq-terminal-owner-closeout-a7h"] = "I04-TERMINAL-OWNER-CLOSEOUT"
             assert live.read(disposition_path)
             approved_review = json.loads(evidence_payloads[EVIDENCE + "review.json"])
             assert approved_review["owner_receipt"] is None
@@ -160,7 +175,7 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
         for path, raw in sorted(payloads.items()):
             oid = git("hash-object", "-w", "--stdin", data=raw).decode().strip()
             mode = ("100644" if path in (evidence_payloads if review_overlay is not None else {})
-                    else git("ls-tree", PIN, "--", path).decode().split()[0])
+                    else git("ls-tree", source_pin, "--", path).decode().split()[0])
             git("update-index", "--add", "--cacheinfo", mode, oid, path, env=env)
         tree_id = git("write-tree", env=env).decode().strip()
     message = ("test(workflow): prepare exact live-base review candidate\n\n"
@@ -179,7 +194,7 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
         from workflow_delivery_proof import packet_sha256, validate_proof
         from workflow_delivery_native import validate_correlations, validate_environment
         proof = validate_proof(prepared, contract)
-        assert packet_sha256(contract, proof, authority_sha256(prepared, contract)) == PACKET
+        assert packet_sha256(contract, proof, authority_sha256(prepared, contract)) == packet_pin
         assert hashlib.sha256(prepared.read(contract["review_path"])).hexdigest() == review_digest
         for path, raw in evidence_payloads.items():
             assert prepared.read(path) == raw, path
@@ -204,7 +219,7 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
     print(json.dumps({"base": base, "candidate": candidate, "ref": ref,
         "publication_review": review, "inspection": result,
         "reviewed_evidence": None if review_overlay is None else {
-            "producer_candidate": PRODUCER, "packet_sha256": PACKET,
+            "producer_candidate": producer_pin, "packet_sha256": packet_pin,
             "parent_review_file_sha256": parent_review_digest,
             "review_sha256": review_digest, "review_inventory_sha256": review_inventory_digest,
             "review_inventory": review_inventory,
