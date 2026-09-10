@@ -98,7 +98,11 @@ def main():
     else:
         receipt = json.loads((STORE / "source-freeze.json").read_bytes())
         assert receipt["source_commit"] == PIN
-        batches.main(pin=PIN, runtime_name=RUNTIME_NAME, store_name=STORE_NAME)
+        if args.action.startswith("workspace-"):
+            from run_paired_workspace import main as paired_workspace
+            paired_workspace(pin=PIN, runtime=RUNTIME, store=STORE)
+        else:
+            batches.main(pin=PIN, runtime_name=RUNTIME_NAME, store_name=STORE_NAME)
 
 
 if __name__ == "__main__":

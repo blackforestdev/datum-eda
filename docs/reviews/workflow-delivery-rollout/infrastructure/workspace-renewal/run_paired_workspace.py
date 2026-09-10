@@ -20,7 +20,7 @@ def save(path, value):
         stream.write("\n")
 
 
-def main():
+def main(*, pin=PIN, runtime=RUNTIME, store=STORE):
     assert sys.flags.isolated and sys.flags.no_site and sys.flags.dont_write_bytecode
     batch = sys.argv[1]
     assert batch in ("workspace-runtime", "workspace-policy-legacy", "workspace-proof-input")
@@ -31,9 +31,13 @@ def main():
     command = prior["command"]
     assert command[:5] == ["python3", "-I", "-S", "-B", "-c"] and len(command) == 6
     old_store = str((ORIGINAL / batch).relative_to(ROOT))
-    new_store = str((STORE / capture_name).relative_to(ROOT))
+    new_store = str((store / capture_name).relative_to(ROOT))
     assert command[5].count(old_store) == 1
     code = command[5].replace(old_store, new_store)
+    if pin != PIN:
+        assert len(pin) == 40 and all(c in "0123456789abcdef" for c in pin)
+        assert code.count(PIN) == 1
+        code = code.replace(PIN, pin)
     injection = '''
 import hashlib
 _capture_command = capture_command
@@ -55,25 +59,27 @@ def capture_command(root, output, command, environment, **kwargs):
     code = code.replace(needle, needle + injection)
     command = command[:5] + [code]
     compile(code, "paired-workspace-recipe", "exec")
-    git = lambda *args: subprocess.check_output(["git", "--no-optional-locks", *args], cwd=RUNTIME)
-    assert git("rev-parse", "HEAD").decode().strip() == PIN and not git("status", "--porcelain")
-    assert not (STORE / capture_name).exists()
-    save(STORE / (capture_name+"-command.json"), {"command":command,"cwd":str(RUNTIME),
+    git = lambda *args: subprocess.check_output(["git", "--no-optional-locks", *args], cwd=runtime)
+    assert git("rev-parse", "HEAD").decode().strip() == pin and not git("status", "--porcelain")
+    assert store.resolve() == store and store.is_relative_to(ROOT / ".git/datum-wdq/proposals")
+    assert not (store / capture_name).exists()
+    save(store / (capture_name+"-command.json"), {"command":command,"cwd":str(runtime),
         "source_record":str(ORIGINAL/(batch+"-command.json")),
         "source_record_sha256":hashlib.sha256(raw).hexdigest(),
+        "source_substitution": {PIN: pin},
         "scope":"New identified producer fixtures with per-invocation exact pre-state retention; historical inputs are untouched."})
-    out, err = STORE/(capture_name+"-stdout.bin"), STORE/(capture_name+"-stderr.bin")
+    out, err = store/(capture_name+"-stdout.bin"), store/(capture_name+"-stderr.bin")
     with out.open("xb") as stdout, err.open("xb") as stderr:
         started = time.time_ns()
-        process = subprocess.Popen(command,cwd=RUNTIME,stdout=stdout,stderr=stderr)
-        save(STORE/(capture_name+"-started.json"),{"pid":process.pid,"started_ns":started})
+        process = subprocess.Popen(command,cwd=runtime,stdout=stdout,stderr=stderr)
+        save(store/(capture_name+"-started.json"),{"pid":process.pid,"started_ns":started})
         print(json.dumps({"batch":batch,"pid":process.pid}),flush=True)
         status = process.wait()
-    save(STORE/(capture_name+"-process.json"),{"pid":process.pid,"started_ns":started,
+    save(store/(capture_name+"-process.json"),{"pid":process.pid,"started_ns":started,
         "ended_ns":time.time_ns(),"exit_code":status,
         "stdout_sha256":hashlib.sha256(out.read_bytes()).hexdigest(),
         "stderr_sha256":hashlib.sha256(err.read_bytes()).hexdigest()})
-    assert git("rev-parse", "HEAD").decode().strip() == PIN and not git("status", "--porcelain")
+    assert git("rev-parse", "HEAD").decode().strip() == pin and not git("status", "--porcelain")
     print(json.dumps({"batch":batch,"exit_code":status}),flush=True)
     raise SystemExit(status)
 
