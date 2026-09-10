@@ -31,7 +31,9 @@ enforcement path and authenticate its observer before execution. Early trust or
 prerequisite refusal can legitimately precede the validator: retain that actual
 diagnostic and record the handler as uninvoked, not as a successful dispatch.
 Neither an observer event nor the declared surface proves complete child-tool
-input closure, installed activation or promotion authorization.
+tracing, installed activation or promotion authorization. Infrastructure input
+review uses the bounded verification definition below, not an exhaustive
+descendant/runtime-library tracing requirement.
 
 Readiness binds the assembled candidate's exact source inventory, fixture recipe,
 authority closure and environment. Proof records source commit, input hashes,
@@ -145,6 +147,52 @@ add/delete/revert and merge-parent path changes in an exact candidate. History
 cannot erase a permission violation. The selector remains a current-worktree
 diagnostic, not a certificate for historical commits. Never mutate a captured
 snapshot as an automatic repair.
+
+<!-- WDQ-INFRA-WORKSPACE -->
+### Workspace compatibility proof within INFRA-S05
+
+Apply proposed PM042's `WDQ-042-WORKSPACE` boundary without weakening any original
+matrix case. In addition to uncovered ignored source, retain separately named
+compatibility observations for each of the following conditions:
+
+1. Clean strict-policy checkout, recurring verified caches at all supported
+   optimization levels, standard Beads runtime, and exact owner-local baseline.
+   Run actual CLI, selector and preflight; keep selected-index/history isolation.
+2. Candidate-only, changed, removed, malformed, executable or redirected workspace
+   policy refuses. Cache policy without verified fresh source-only startup refuses.
+3. Changed or deleted owner-local pins, unknown ignored source, cache lookalikes,
+   forged payloads and redirects refuse; restored reviewed inputs succeed.
+4. Legacy caches may be genuinely absent or regenerate into fully verified
+   current tracked-source output. Changed unverified bytes and false absence
+   through redirects refuse. Do not delete or regenerate real owner caches to
+   construct these cases; use owned isolated fixtures.
+5. Captured bad local/cache bytes cannot borrow temporarily qualifying live
+   bytes, and captured missing owner files cannot borrow later restoration.
+   Preserve the complete before/after state and cache-source identity.
+6. Proof roots retain owner-local files, legacy payloads and Beads data. A cache
+   whose source is outside the proof closure stays an input. A pinned runtime
+   file inside existing proof roots must stale older proof through the actual
+   CLI and selector; workspace eligibility is not product input irrelevance.
+7. Observe the actual Datum ignored-workspace inventory read-only; distinguish
+   derived files from the exact proposed legacy/local pins. Reproduce that mixed
+   state in the real-roadmap fixture without changing another lane or deleting
+   files to recover a passing check. Preserve both clean and mixed-state results.
+8. During COMPAT, retain producer observations of the supported entrypoints and
+   exact pre-review source/history inspection (`--inspect-review`) against the
+   reviewed policy, source and input identities in the producer proof. After
+   producer verification, RECHECK independently repeats those observations and
+   inspection, incorporating them into its independent replay and review.
+   Producer proof does not require the later independent observations. Each
+   inspection validates prerequisites, not its own future evidence.
+   Retain refusals and corrected attempts; no old proof certifies changed
+   requirements. Subsequent evidence/governance commits create a distinct final
+   candidate requiring explicit delta reconciliation and strict full-evidence
+   `--inspect-promotion` at claim-free I04 before activation; that future final
+   inspection is not an input to either earlier S05 packet.
+
+These additional observations belong to INFRA-S05, not a substitute scenario or
+product cohort. Existing 62 matrix identities and all their surfaces remain
+required. Activation, installed verification and native adoption remain separate.
 
 <!-- WDQ-INFRA-S06 -->
 ## INFRA-S06 — trust, correlation and recovery
@@ -381,13 +429,18 @@ inapplicability per entry point with a concrete reason: for example, a selector
 cannot certify intermediate candidate history, but the candidate CLI must test
 it. Do not mark whole scenario groups inapplicable to avoid missing coverage.
 
-The 76-file input proposal includes the original 69 paths plus the two hook
-checks, exemption manifest and four referenced Rust files. Those seven additions
-are read dependencies only; the 69-path source-permission proposal is unchanged.
-This covers the inspected local imports and concrete repository hook inputs,
-not the complete future capture toolchain. Final closure must add actual capture/fixture
-modules and their imports, shell subprocess inputs, environment selection files,
-and the owner's hook implementation. Hook proof also consumes
+The 152-file input proposal retains the previous 76 paths and adds the 66
+implemented workflow/capture/promotion Python modules and tests omitted from that
+baseline, plus three rollout contract/mapping/proposal tests. The prepared owner
+hook shell source, explicit environment-selection document and its two selected
+environment Blobs, coverage reconciliation test, activation implementation and
+activation integration test are also included. Their
+local Python import graph is included. These are read dependencies only. The
+separately reviewed coverage proposal names 141 explicit permission paths;
+read-input membership does not grant write or owner-publication authority.
+Final bounded input review must include
+any subsequent capture/fixture modules and imports, shell subprocess inputs and
+changed environment selections or hook implementation. Hook proof also consumes
 `scripts/check_file_lane_ownership.py`, `scripts/check_rustfmt.py`,
 `specs/rustfmt_exemption_manifest.json`, and staged-file inputs those checks read.
 Record external interpreter, Git, shell, realpath and any invoked rustfmt identity.
@@ -395,13 +448,30 @@ Do not introduce Cargo compilation merely to exercise the read-only hook; if
 compilation becomes necessary, the guarded resource policy remains mandatory.
 No broad permission for scripts, crates or prototype edits follows from this list.
 
-For the external toolchain, record interpreter/Git/shell/realpath and any invoked
-rustfmt executable identity separately from repository input hashes. Python
-capture must also inventory actual loaded standard-library/extension modules
-and shared-library inputs; hashing only the interpreter is insufficient. Disable
-unreviewed Python startup/user-site injection in the controlled capture process
-and record the exact flags/environment. Do not fetch a dependency to perform this
-audit. A supplemental full drift/CI run has its own much wider build/input scope;
+<!-- WDQ-INFRA-BOUNDED-VERIFICATION -->
+### Bounded source and tool verification
+
+For this infrastructure contract, record interpreter/Git/shell/env/realpath and
+any invoked rustfmt paths, hashes and versions separately from repository input
+hashes. Review the actual script/import, hook and subprocess command paths.
+Include every named tool and relevant repository/data/fixture input used by the
+reviewed cases; an interpreter hash alone is insufficient. Disable unreviewed
+Python startup/user-site injection and record the actual flags/environment.
+
+Exhaustive descendant-process and runtime/shared-library tracing is not required.
+Existing Python module/maps observations remain supplemental and retain their
+honest limits; never change an unperformed-tracing flag to true to pass review.
+Bounded input completeness is not hermetic runtime completeness and does not
+detect arbitrary host-library substitution. Record that residual limitation in
+producer proof and independent review. This definition also governs references
+to final infrastructure input/toolchain closure in the execution plan and older
+preparation notes; those notes remain historical observations, not new blockers.
+
+Pinned sources and named tools, real handler/entry-point observations, all
+required success/refusal and state-preservation/recovery cases, independent
+replay and exact owner activation remain mandatory. Product-native evidence and
+the accepted pilot are unchanged. No new tracing subsystem or dependency is
+required. A supplemental full drift/CI run has its own much wider build/input scope;
 the presence of its wiring in this contract is not evidence that all its Rust
 and GUI gates ran in the bounded infrastructure capture.
 
@@ -420,3 +490,55 @@ the complete coverage/enrollment and external-lane packet, not only these core
 validator scenarios. I04 owner ratification/activation, installed-main validation,
 three full native adoption cohorts and I06 acceptance remain separate obligations.
 No product ownership, GUI prototype, licensing or dependency boundary changes.
+
+The separate `--inspect-review` mode uses closed `review-inspection-request`
+bytes and refuses owner-response arguments. It requires matching valid live
+COMPAT/RECHECK execution state in base and candidate, permitting only the exact
+initial mapping addition, and preserves every other Frontier item. Prove
+missing future rollout proof can pass only this non-authorizing inspection,
+while strict promotion/activation refuses. Prove stale claims, lifecycle or
+other-lane changes, unscoped history, malformed mapping, changed prior enrollment,
+support/environment mismatch and protected-state changes refuse. Other enrolled
+items still need their ordinary evidence; ordinary changed-input readiness still
+escalates to proof. The result explicitly sets `evidence_validated:false` and
+cannot be consumed as an activation request or owner receipt.
+
+The prepared `--inspect-promotion` mode additionally requires a separately
+selected response matching the exact `promotion-inspection-request` bytes.
+It checks the PM042 initial-publication boundary and all enrolled delivery
+evidence, including rollout independent replay, between repeated clean-state
+inspections. Ordinary `--inspect` remains a preparation diagnostic; its success
+cannot stand for this stronger check. Neither mode mutates main or local trust,
+authenticates an owner, or completes controlled activation. Prove refusal for
+unfinished predecessors, claim-bearing owner steps, changed external records,
+out-of-scope full-history paths, missing/stale proof and a distinct authority
+candidate. The successful full-candidate path also needs actual producer and
+independent observations before this tooling can be declared ready.
+
+The separate `--activate` mode requires exact `activation-request` bytes, an
+external matching response and the PM042 writer-pause acknowledgement. It may
+run only from its authenticated, prepared Git-common runtime. It takes the
+cooperative activation lock, repeats full publication inspection, requires exact
+defect dispositions, writes durable JSONL progress before mutations, fast-forwards
+the exact candidate, installs the four Datum settings and then hooksPath, and
+runs the installed hook and project-status check. Success does not complete the
+roadmap owner step or accept the full reform. Failed/interrupted transactions
+retain their journal and observed partial state; stale retries refuse, with no
+automatic reset, repair, hook bypass or support deletion. The owner coordinates
+all writers: a cooperative lock cannot stop an unrelated editor or Git client.
+Refuse enabled worktree-specific configuration, and verify effective trust values
+as well as the local configuration written. During an owned mutation or installed
+verification child, handled SIGINT/SIGTERM records a pending stop and retains the
+lock until that child finishes. Do not start another mutation after the signal.
+Observe child PID, command, terminal result and output; the child inherits the
+lock and runs in its own process group. The 120-second child deadline kills only
+that owned group and reaps the child before reporting failure. SIGKILL cannot be
+handled: retain the pre-mutation journal, and keep the inherited lock until the
+surviving child exits. No unverified or interrupted run asserts activation.
+
+Development tests now send actual SIGINT/SIGTERM during a live Git/post-merge
+child and observe lock retention, no subsequent config write, child termination
+and partial publication. A separate child-lifetime test kills its parent and
+observes inherited-lock retention/release; it is not full Git-publication crash
+recovery proof. Actual rollout producer/reviewer observations and complete
+recovery-case coverage remain mandatory.
