@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "packet_sha256": "12afccdfb09c7aa8b60376b740eebc3385f5d5a15d5c205121341f43425eb626",
+  "authority_sha256": "b3130c9322932a9d26e967d6ecb55c8b1591892636d26ac3cdd98e175475ee39",
+  "correlated_event_blobs": 6,
+  "observations": 1314,
+  "validation": "Prospective overlay: proof freshness/shape, headless environment and artifact-role/dispatch correlations passed.",
+  "committed_candidate_verified": false,
+  "independent_replay_complete": false,
+  "activation_performed": false
+}

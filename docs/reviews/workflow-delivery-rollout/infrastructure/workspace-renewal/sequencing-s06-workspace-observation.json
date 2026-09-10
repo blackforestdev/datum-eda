@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-review-publication-cycle-a1y",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "capture_store": ".git/datum-wdq/proposals/sequencing-evidence-20260910",
+  "batches": [
+  {
+    "batch": "s06-selection",
+    "count": 60,
+    "observations_sha256": "26b6bc3e271051440ce61088f727ab17b8fa63b4a937cf63c818717b84cb1833",
+    "process": {
+      "pid": 2548147,
+      "started_ns": 1789030065435799017,
+      "ended_ns": 1789030187662149136,
+      "exit_code": 0,
+      "stdout_sha256": "7ea2d2b5bd98af72cc6dbbe38bcbe4ce9c772186b0fac0188a8f221cf07a4bee",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ordered_inventory_preserved": true,
+    "all_expected_outcomes": true
+  },
+  {
+    "batch": "s06-headless",
+    "count": 95,
+    "observations_sha256": "0f1a773cb422e07b5ae29210660a61f4e45e7c30d0d11c5593d1e1fd05c195ef",
+    "process": {
+      "pid": 2548319,
+      "started_ns": 1789030066625802562,
+      "ended_ns": 1789030429892192870,
+      "exit_code": 0,
+      "stdout_sha256": "909dbd52ccf8049d1c336aada2a1ff6a763db1774bc00eef4e9f79ff4a0721ed",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ordered_inventory_preserved": true,
+    "all_expected_outcomes": true
+  },
+  {
+    "batch": "s06-trust",
+    "count": 223,
+    "observations_sha256": "0c266211036a7d6eccba1b78434fed673e89303521d7a37cc7eaf892d6b3a533",
+    "process": {
+      "pid": 2548609,
+      "started_ns": 1789030067872334946,
+      "ended_ns": 1789030708277335061,
+      "exit_code": 0,
+      "stdout_sha256": "de8d974b66b77da549127e912b0a51588a2c4255c2f022ff1b40da26b4f8b2f5",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ordered_inventory_preserved": true,
+    "all_expected_outcomes": true
+  },
+  {
+    "batch": "workspace-runtime",
+    "count": 52,
+    "observations_sha256": "8de7e87165a161bcb1a925b59c260853a7a0b1c2bf5928c3e201552c18ef0873",
+    "process": {
+      "pid": 2685504,
+      "started_ns": 1789030495680166867,
+      "ended_ns": 1789030609524729209,
+      "exit_code": 0,
+      "stdout_sha256": "57b6f628d92120ecee51b770110703dea09babd964af4ba239fca5aefe5a8910",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ordered_inventory_preserved": true,
+    "all_expected_outcomes": true
+  }
+],
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-s06-workspace-captures.tar.xz",
+    "sha256": "a90feadd1f7757af0be726abf66595433e55babf95fae9cc8a5b40f72b6bb380",
+    "tar_compare_exit_code": 0,
+    "scope": "Raw captures and command/process records; duplicate fixture and prepared packet directories omitted."
+  },
+  "new_observations": 430,
+  "limits": "Producer observations only. Remaining workspace and real-roadmap batches, full packet assembly and independent replay are not completed by this record.",
+  "complete_matrix": false,
+  "activation_performed": false
+}
