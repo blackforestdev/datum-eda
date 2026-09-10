@@ -63,6 +63,17 @@ class TransactionPathsTest(unittest.TestCase):
             self.assertEqual([], self.changed())
         self.assertEqual(before, (selected.read_bytes(), default.read_bytes()))
 
+    def test_untracked_enumeration_uses_the_same_selected_index(self):
+        selected = self.f.root / ".git/selected-index"
+        default = self.f.root / ".git/index"
+        shutil.copyfile(default, selected)
+        self.f.write("src/new.py", b"new source\n")
+        self.f.git("add", "src/new.py")
+        before = (selected.read_bytes(), default.read_bytes())
+        with patch.dict(os.environ, {"GIT_INDEX_FILE": str(selected)}):
+            self.assertEqual(["src/new.py"], self.changed())
+        self.assertEqual(before, (selected.read_bytes(), default.read_bytes()))
+
     def test_split_index_and_shared_indexes_stay_unchanged(self):
         self.f.git("update-index", "--split-index")
         self.stale_stat_cache()

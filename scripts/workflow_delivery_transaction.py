@@ -72,7 +72,8 @@ def changed_production_paths(tree, roots, *, base_ref, workspace=None):
     changed = worktree_diff(tree, roots, base_ref)
     # Ignored generated files can still be real build inputs. Deliberately do
     # not use --exclude-standard; the reviewed roots bound this enumeration.
-    new = tree.git("--literal-pathspecs", "ls-files", "--others", "-z", "--", *roots)
+    new = tree.git("--literal-pathspecs", "ls-files", "--others", "-z", "--", *roots,
+                   index_path=tree.index_path)
     names = {raw.decode("utf-8") for raw in (changed + new).split(b"\0") if raw}
     require(all(contains(roots, path) for path in names), "transaction",
             "Git returned a path outside literal production roots", "WDQ-COVERAGE")
