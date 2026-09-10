@@ -54,6 +54,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-owner-dispositions.md": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "Records explicit owner approval of four exact repair resolutions, one nonblocking deferral and bounded I04 preparation. Not PM042 ratification, activation or I04 completion; preserves all eleven steps and existing product lanes."
+    },
     "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-independent-closeout.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
