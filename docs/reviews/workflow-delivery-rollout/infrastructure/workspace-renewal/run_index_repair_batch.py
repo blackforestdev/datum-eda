@@ -12,6 +12,7 @@ import time
 PIN = "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf"
 OLD = "0e5b8064a9faca407fac43bd2b362ba4d7200327"
 BATCHES = {
+    "baseline": ("renewed-baseline-observation.json", "command"),
     "s02-coverage": ("renewed-s02-coverage-observation.json", "command"),
     "s02-ownership": ("renewed-s02-ownership-observation.json", "initial_command"),
     "s03": ("renewed-s03-observation.json", "command"),
