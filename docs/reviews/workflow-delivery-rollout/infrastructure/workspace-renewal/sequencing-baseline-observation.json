@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-review-publication-cycle-a1y",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "construction": "sequencing-source-freeze.json",
+  "capture_store": ".git/datum-wdq/proposals/sequencing-evidence-20260910",
+  "command": "python3 -I -S -B -c 'import sys; sys.path.insert(0,\"docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal\"); from run_index_repair_batch import main; main(pin=\"1d48f249dc7071fc3718b345a4ab16b366af43be\", runtime_name=\"sequencing-repair-20260910\", store_name=\"sequencing-evidence-20260910\")' baseline",
+  "process": {
+  "pid": 2126810,
+  "started_ns": 1789028407366759948,
+  "ended_ns": 1789028416075886079,
+  "exit_code": 0,
+  "stdout_sha256": "422a384100b278c5b24cfab318ce7b085cc57e5f4c8fbc85ea976ba6a6b4438c",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+},
+  "observations": {"activation_performed":false,"candidate":"1d48f249dc7071fc3718b345a4ab16b366af43be","complete_matrix":false,"observations":[{"assessment":{"acceptance_asserted":false,"case_id":"INFRA-S01-01","complete_matrix":false,"expected_code":null,"expected_detail":null,"expected_diagnostics":[],"expected_path":null,"invocation_id":"e9d9e5a1-0c00-4353-b87a-ffdd1a778d2e","observation_matches_expected":true,"report_only":false,"result_sha256":"7610acf9a80be07bd2e715958b20968907e3d4b5d2df904e0159e87d2f8895e5","selector_operation":null,"surface":"C"},"captured_case_id":"INFRA-S01-01","case_id":"INFRA-S01-01","directory":"C","packet":"packet","phase":"primary","surface":"C"},{"assessment":{"acceptance_asserted":false,"case_id":"INFRA-S01-01","complete_matrix":false,"expected_code":null,"expected_detail":null,"expected_diagnostics":[],"expected_path":null,"invocation_id":"d1133d50-1f8c-4a06-b7b9-25fed0cfc6ec","observation_matches_expected":true,"report_only":false,"result_sha256":"4be6d8f1140a2769a4023f3c549eb5104d2ed8340be6b429d0f91898b677e05f","selector_operation":null,"surface":"R"},"captured_case_id":"INFRA-S01-01","case_id":"INFRA-S01-01","directory":"R","packet":"packet","phase":"primary","surface":"R"},{"assessment":{"acceptance_asserted":false,"case_id":"INFRA-S01-01","complete_matrix":false,"expected_code":null,"expected_detail":null,"expected_diagnostics":[],"expected_path":null,"invocation_id":"b9b73916-4b5b-4b60-866c-c391ebbef877","observation_matches_expected":true,"report_only":false,"result_sha256":"cf3df2fb7f05856e18ac1c2b3e3f5d91fbf60a81a2fcbe47d320fca5d18dc2eb","selector_operation":"S-check","surface":"S"},"captured_case_id":"INFRA-S01-01","case_id":"INFRA-S01-01","directory":"S-check","packet":"packet","phase":"primary","surface":"S-check"},{"assessment":{"acceptance_asserted":false,"case_id":"INFRA-S01-01","complete_matrix":false,"expected_code":null,"expected_detail":null,"expected_diagnostics":[],"expected_path":null,"invocation_id":"238ec42d-12f2-4e93-ba19-8585f263d2d5","observation_matches_expected":true,"report_only":false,"result_sha256":"95edf022211d6a8a5803c0bace21a369b2715102cfa5e2381e84ee93f5c7d847","selector_operation":"S-details","surface":"S"},"captured_case_id":"INFRA-S01-01","case_id":"INFRA-S01-01","directory":"S-details","packet":"packet","phase":"primary","surface":"S-details"},{"assessment":{"acceptance_asserted":false,"case_id":"INFRA-S01-01","child_tool_closure_complete":false,"complete_matrix":false,"handler_trace_complete":false,"invocation_id":"cadfd6b9-d374-4087-9255-ceba1c2fedfc","observation_matches_expected":true,"result_sha256":"3a89bb37bf3b86aee9d57fc9fcf9b15a754c7c9853869472722b431458b36cdf","support_input_sha256":"581210451339cc6d2151ec154cbe256804eae6929bee8a29298f0f25442874a2","support_manifest_sha256":"5d2a9d89fbabeabec15d12448d67b263f172468ec6baef6b52e44e17b0b6590e","support_output_sha256":"581210451339cc6d2151ec154cbe256804eae6929bee8a29298f0f25442874a2","surface":"H","validator_entrypoint_observed":true},"captured_case_id":"INFRA-S01-01","case_id":"INFRA-S01-01","directory":"H","packet":"packet","phase":"primary","surface":"H"}],"scope":"Explicit original INFRA-S01-01 five primary baseline surfaces; not substituted recovery invocations."},
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-baseline-captures.tar.xz",
+    "sha256": "9400556bc6aea6a1b97fccdc9642d01b4ade742869c5042dc2eba8d47f2fb729",
+    "tar_compare_exit_code": 0,
+    "scope": "Raw baseline case captures, assessments, command/process records and stdout/stderr. Duplicate fixture/prepared-fixture/packet directories omitted; exact source commit and live local fixtures remain retained."
+  },
+  "limits": "Five original baseline observations only. Remaining original matrix, workspace variants, real-roadmap pre-review inspection, independent replay, final publication and three product adoption cohorts remain outstanding.",
+  "repair_complete": false,
+  "activation_performed": false
+}
