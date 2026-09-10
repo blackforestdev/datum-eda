@@ -76,9 +76,12 @@ def main():
     variants.add_argument("--index-repair", action="store_true")
     variants.add_argument("--sequencing-repair", action="store_true")
     parser.add_argument("--paired-workspace", action="store_true")
+    parser.add_argument("--paired-real", action="store_true")
     args = parser.parse_args()
     if args.paired_workspace and not args.sequencing_repair:
         parser.error("--paired-workspace requires --sequencing-repair")
+    if args.paired_real and not args.paired_workspace:
+        parser.error("--paired-real requires --paired-workspace")
     pin = "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf" if args.index_repair else PIN
     if args.sequencing_repair:
         pin = "1d48f249dc7071fc3718b345a4ab16b366af43be"
@@ -118,6 +121,8 @@ def main():
     real = runtime / ".git/datum-wdq/proposals/renewed-real-roadmap-captures-0e5b8064"
     if repaired_mode:
         real = repaired / real_subdir / "real-roadmap"
+    if args.paired_real:
+        real = paired / real_subdir / "real-roadmap"
     inventory = read(real / "observations.json")
     assert inventory["candidate"] == pin
     real_binding = None
@@ -154,7 +159,7 @@ def main():
             extra = [(paired / name, "renewal-result.json", None) for name in
                      ("workspace-runtime-retry-01", "workspace-policy-legacy", "workspace-proof-input")]
         extra.extend([(real, "observations.json", "clean"),
-                      (repaired / real_subdir / "current-inventory", "observations.json", None)])
+                      ((paired if args.paired_real else repaired) / real_subdir / "current-inventory", "observations.json", None)])
     for batch, inventory_name, excluded in extra:
         inventory = read(batch / inventory_name)
         assert inventory["candidate"] == pin
@@ -203,6 +208,7 @@ def main():
         "additional_workspace_evidence_included": True, "independent_replay_complete": False,
         "real_roadmap_binding": real_binding,
         "paired_capture_store": str(paired) if args.paired_workspace else None,
+        "paired_real_captures_included": args.paired_real,
         "acceptance_asserted": False}, "registry-entries.json": list(registry.values()),
         "scenario-dispatches.json": dispatches}
     for name, value in products.items():
