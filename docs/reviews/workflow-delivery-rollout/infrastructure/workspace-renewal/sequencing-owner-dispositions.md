@@ -361,3 +361,73 @@ environment and six event/registry correlation checks. Its packet SHA-256 is
 `01e5f3f9e431414192adbd070f9d78b17af504d448a416a1f61a4f062afcba54`;
 this is not independent review, strict promotion, installed verification or
 product acceptance. Final applicability and defect-accounting review remain due.
+
+### Terminal renewal: reviewed finding dispositions
+
+Under `WDQ-STANDING-WORKFLOW-AUTHORIZATION`, the following dispositions carry
+forward the already authorized workflow repair resolutions and portability
+deferral onto the completed exact terminal renewal review. They do not claim a
+new interactive owner response, installed verification, product acceptance or
+completion of the rollout parent. Earlier receipts retain their original scope.
+
+The producer is `d88b2ee082effa4566e6d69b265f01df98d69390`, packet
+`d7cef828f7b8a7bbf72ca488b666b14249816b317d4edd1761956ddc3779b5ce`.
+The independent review file SHA-256 is
+`90ab404dcc559ba5f684475d2d754e3188ddda46896de6efec992cf6a6e0547e`;
+its canonical review digest is
+`571e3ec80f5649b5c2f6e13e61f1627408ad17da9540287e0c6009a41c70ba3d`.
+It verifies 1,290 independent standard/workspace observations plus 110 earlier
+independent terminal-owner observations, with honest historical execution
+identities and a fresh independent 151-module construction. It is not new
+execution of the historical cases. Final full-roadmap integration and installed
+verification remain mandatory separate I04 work.
+
+<!-- I04-TERMINAL-WORKSPACE -->
+## Renewed workspace input repair
+
+RESOLVED dat-wdq-workspace-inputs-zmt
+REPLAY 9649f57f54e8c1d9f0b8261d66201b9b2a0bcfba3ccd483c3a36964db06c72c4
+
+Resolution covers the prepared S05 workspace classification repair, not installation.
+
+<!-- I04-TERMINAL-INDEX -->
+## Renewed index preservation repair
+
+RESOLVED dat-wdq-index-refresh-ogw
+REPLAY 9649f57f54e8c1d9f0b8261d66201b9b2a0bcfba3ccd483c3a36964db06c72c4
+
+Resolution covers the reviewed index-preservation behavior across all six scenarios.
+
+<!-- I04-TERMINAL-RENEWAL -->
+## Renewed proof sequencing repair
+
+RESOLVED dat-wdq-proof-renewal-cycle-qgb
+REPLAY 9649f57f54e8c1d9f0b8261d66201b9b2a0bcfba3ccd483c3a36964db06c72c4
+
+Resolution covers S04/S05 renewal sequencing; it never grants autonomous reopening.
+
+<!-- I04-TERMINAL-PUBLICATION -->
+## Renewed publication sequencing repair
+
+RESOLVED dat-wdq-review-publication-cycle-a1y
+REPLAY 9649f57f54e8c1d9f0b8261d66201b9b2a0bcfba3ccd483c3a36964db06c72c4
+
+Resolution covers S05 review/publication sequencing. Strict final inspection remains due.
+
+<!-- I04-TERMINAL-OWNER-CLOSEOUT -->
+## Prepared terminal-owner closeout repair
+
+RESOLVED dat-wdq-terminal-owner-closeout-a7h
+REPLAY 9649f57f54e8c1d9f0b8261d66201b9b2a0bcfba3ccd483c3a36964db06c72c4
+
+Resolution covers only the S02 terminal-owner predicate: valid final owner
+closeout passes, while source edits, reopening and invalid completion refuse.
+Preferences retains its own owner review, source lane and product acceptance.
+
+<!-- I04-TERMINAL-TEST-PROFILE -->
+## Retained nonblocking test portability debt
+
+DEFER dat-wdq-test-default-branch-apx
+
+The previously approved deferral remains explicit and unfixed. Retained tests
+use the pinned main-branch profile; runtime attached-main requirements remain.
