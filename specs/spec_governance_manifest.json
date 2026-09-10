@@ -54,6 +54,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/proof-renewal-authorization.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "Explicit owner reopening of existing WDQ-COMPAT for repaired-source producer proof renewal, then WDQ-RECHECK. Preserves historical closeout and installed trust; no added milestone, product authority or activation."
+    },
     "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-authorization.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
