@@ -54,6 +54,7 @@ def main(argv=None):
     mode.add_argument("--inspect", action="store_true")
     mode.add_argument("--inspect-state", action="store_true")
     mode.add_argument("--inspect-promotion", action="store_true")
+    mode.add_argument("--inspect-review", action="store_true")
     mode.add_argument("--activate", action="store_true")
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--request", type=Path, required=True)
@@ -64,6 +65,8 @@ def main(argv=None):
     args = parser.parse_args(argv)
     report = {"kind": "datum.workflow-delivery.preflight-diagnostic", "ok": False,
               "activation_asserted": False, "publication_authorized": False, "findings": []}
+    if args.inspect_review:
+        report["evidence_validated"] = False
     output = None
     try:
         if not (sys.flags.isolated and sys.flags.no_site and sys.flags.dont_write_bytecode):
@@ -95,6 +98,8 @@ def main(argv=None):
             raise ValueError("owner response path and externally selected digest are required together")
         if args.inspect_state and args.owner_response:
             raise ValueError("state observation does not inspect owner responses")
+        if args.inspect_review and args.owner_response:
+            raise ValueError("review inspection does not consume owner activation responses")
         if (args.inspect_promotion or args.activate) and not args.owner_response:
             raise ValueError("promotion inspection requires separately selected exact owner response")
 
@@ -111,6 +116,8 @@ def main(argv=None):
             fields += " publication_review proposed_local_trust environment_path"
             if args.inspect_promotion:
                 expected_kind = "datum.workflow-delivery.promotion-inspection-request"
+            if args.inspect_review:
+                expected_kind = "datum.workflow-delivery.review-inspection-request"
             if args.activate:
                 fields += " coordination"
                 expected_kind = "datum.workflow-delivery.activation-request"
@@ -134,6 +141,8 @@ def main(argv=None):
             payload = {"schema_version": 1, "request_sha256": args.request_sha256,
                        "request": request, "activation_asserted": False,
                        "publication_authorized": False}
+            if args.inspect_review:
+                payload["evidence_validated"] = False
             try:
                 if args.inspect_state:
                     payload["activation_state"] = inspect_activation_state(args.root,
@@ -170,8 +179,14 @@ def main(argv=None):
                         candidate=request["candidate"], input_roots=request["input_roots"],
                         expected_local_trust=request["prior_local_trust"],
                         publication_review=request["publication_review"], workspace=workspace)
-                    if args.inspect_promotion:
-                        payload["promotion_inspection"] = inspect_promotion_candidate(args.root,
+                    if args.inspect_promotion or args.inspect_review:
+                        inspector = inspect_promotion_candidate
+                        inspection_key = "promotion_inspection"
+                        if args.inspect_review:
+                            from workflow_delivery_review_inspection import inspect_review_candidate
+                            inspector = inspect_review_candidate
+                            inspection_key = "review_inspection"
+                        payload[inspection_key] = inspector(args.root,
                             base=request["base"], candidate=request["candidate"], authority=request["authority"],
                             environment_path=environment_path, publication_review=request["publication_review"])
                         repeated = preflight(args.root, base=request["base"],

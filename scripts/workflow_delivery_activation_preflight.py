@@ -52,8 +52,6 @@ def promotion_boundary(manifest, baseline, coverage, changed_paths, *, legacy_mi
     """Check bounded rollout publication, not an ordinary execution permission."""
     from workflow_delivery_coverage import index_items
     from workflow_delivery_coverage_shapes import coverage_shape
-    from workflow_delivery_source_scopes import contains
-
     coverage_shape(coverage)
     current, old = index_items(manifest), index_items(baseline)
     require(set(current) == set(old), "promotion cannot add or remove Frontier identities")
@@ -86,6 +84,15 @@ def promotion_boundary(manifest, baseline, coverage, changed_paths, *, legacy_mi
             "ready": "WDQ-READY", "activate": None, "verify": "WDQ-COMPAT",
             "review": "WDQ-RECHECK", "accept": None},
             "publication requires the renewed verification and independent-review mapping")
+    return publication_scope(coverage, changed_paths)
+
+
+def publication_scope(coverage, changed_paths):
+    """Exact bounded path inventory shared by review and final inspection."""
+    from workflow_delivery_coverage_shapes import coverage_shape
+    from workflow_delivery_source_scopes import contains
+
+    coverage_shape(coverage)
     scopes = coverage["source_scopes"]
     require(len(scopes) == 1 and scopes[0]["frontier_key"] == ROLLOUT
             and scopes[0]["step_ids"] == ["WDQ-I03", "WDQ-REVIEW"],

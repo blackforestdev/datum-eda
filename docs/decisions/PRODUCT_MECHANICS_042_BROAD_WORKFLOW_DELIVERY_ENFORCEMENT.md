@@ -342,7 +342,29 @@ accept. This exception changes no lifecycle, completed-review, owner-decision,
 source-history, proof or defect-disposition prerequisite. A schema-2 baseline
 retains the existing mapping requirements; this is not a general migration mode.
 
-Promotion inspection reuses full Frontier, classification, specification,
+Pre-review source/history inspection is a separate, non-authorizing operation
+(`--inspect-review`, closed `review-inspection-request`), not a weaker activation
+mode. Both exact base and candidate must retain the same live, synchronized
+WDQ-COMPAT or WDQ-RECHECK execution state and claim; only the validated initial
+mapping addition may differ in the rollout item. Preserve every other Frontier
+item. Check full parent-edge history, exact source scope, classifications,
+specification obligations, trusted contract/readiness prerequisites, selected
+environment, prepared support and repeated protected-state equality. Other
+enrollments retain their ordinary proof obligations. This operation rejects
+owner activation responses and reports `evidence_validated:false`,
+`publication_authorized:false` and `activation_asserted:false`; it does not
+require the future rollout proof/review packet it helps produce. Ordinary
+trusted readiness still requires proof when reviewed inputs change.
+
+COMPAT producer proof retains producer inspection against its exact source/history
+candidate. After producer verification, RECHECK independently repeats inspection
+and incorporates it into independent replay/review. Producer proof does not
+depend on the later independent observations. Later evidence or governance
+commits create a distinct candidate: reconcile their complete delta explicitly,
+then perform strict full-evidence inspection at claim-free I04 before activation.
+Do not relabel the pre-review result as inspection of the later final candidate.
+
+Final promotion inspection reuses full Frontier, classification, specification,
 readiness, environment and enrolled delivery checks, explicitly demanding the
 rollout's independent-review phase. Sharing state checks must not remove source
 claim enforcement from ordinary CLI, selector or hook transactions. Exact owner

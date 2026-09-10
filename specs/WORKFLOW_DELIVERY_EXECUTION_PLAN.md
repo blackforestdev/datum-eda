@@ -119,7 +119,9 @@ original scenario variants, additional workspace observations, source scopes,
 bounded tool/input accounting, real-roadmap coverage and failure records.
 
 Complete the authorized repair, reconcile current readiness and exact inputs,
-and produce replacement evidence from actual invocations. Prepare the candidate
+and produce replacement evidence from actual invocations. Include producer
+pre-review source/history inspection in COMPAT proof; do not require RECHECK's
+later independent observations to assemble producer proof. Prepare the candidate
 mapping with WDQ-COMPAT as verification and WDQ-RECHECK as independent review,
 retaining WDQ-READY and null infrastructure activate/accept. Reconcile the
 activation-conditional PM042 text, candidate mapping and publication checks
@@ -139,7 +141,12 @@ After renewed producer verification, a distinct eligible session independently
 replays the exact repaired candidate and reviews all original and additional
 compatibility requirements, real-roadmap clean/mixed state, typed proof and
 defect accounting. Retain actual fresh invocation identities and failed attempts.
-Perform renewed exact-publication inspection before presenting WDQ-I04. Preserve
+Independently repeat exact pre-review source/history inspection and incorporate
+it into the independent replay/review packet, after COMPAT producer proof exists.
+Retain its exact candidate identity; evidence and governance
+appends create a distinct final candidate whose full delta must be reconciled.
+Strict full-evidence inspection occurs at claim-free WDQ-I04 before activation,
+not as a prerequisite to producing the very evidence it validates. Preserve
 historical I03/REVIEW evidence and all five prior finding dispositions within
 their original scope; close the workspace finding only with its own complete
 repair and independent evidence. No copied logs or archive inspection alone

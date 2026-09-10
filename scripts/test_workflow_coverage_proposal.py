@@ -114,13 +114,27 @@ class CoverageProposalTest(unittest.TestCase):
             "workflow_delivery_workspace_authority",
             "test_workflow_delivery_workspace_authority",
             "test_workflow_delivery_workspace_entrypoints")}
-        paths = set(self.coverage["source_scopes"][0]["paths"])
+        historical = json.loads(subprocess.check_output(
+            ["git", "show", "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf:" + PATH], cwd=ROOT))
+        paths = set(historical["source_scopes"][0]["paths"])
         self.assertEqual(set(old["source_scopes"][0]["paths"]) | expected, paths)
         self.assertEqual(old["production_roots"], self.coverage["production_roots"])
         delta = publication_delta(ROOT, base=base, candidate=candidate)
         required = {p for p in delta["touched_paths"] if any(
             p == r or p.startswith(r + "/") for r in self.coverage["production_roots"])}
         self.assertEqual([], sorted(required - paths))
+
+    def test_sequencing_repair_adds_only_three_exact_source_paths(self):
+        old = json.loads(subprocess.check_output(["git", "show",
+            "f19391af59f623ae762d28566f8279232a75d6a2:" + PATH], cwd=ROOT))
+        expected = {"scripts/" + name + ".py" for name in (
+            "test_workflow_delivery_initial_migration", "test_workflow_delivery_review_inspection",
+            "workflow_delivery_review_inspection")}
+        paths = set(self.coverage["source_scopes"][0]["paths"])
+        self.assertEqual(set(old["source_scopes"][0]["paths"]) | expected, paths)
+        self.assertEqual(old["production_roots"], self.coverage["production_roots"])
+        self.assertEqual(152, len(paths))
+        self.assertEqual(164, len(self.tree.json("specs/workflow_delivery/rollout.contract.json")["input_roots"]))
 
     def test_production_roots_cover_non_rust_code_without_git_metadata(self):
         roots = self.coverage["production_roots"]

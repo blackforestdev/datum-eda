@@ -163,9 +163,18 @@ compatibility observations for each of the following conditions:
    derived files from the exact proposed legacy/local pins. Reproduce that mixed
    state in the real-roadmap fixture without changing another lane or deleting
    files to recover a passing check. Preserve both clean and mixed-state results.
-8. Independently repeat the supported entrypoints and renewed exact publication
-   inspection against the reviewed policy, source and input identities. Retain
-   refusals and corrected attempts; no old proof certifies changed requirements.
+8. During COMPAT, retain producer observations of the supported entrypoints and
+   exact pre-review source/history inspection (`--inspect-review`) against the
+   reviewed policy, source and input identities in the producer proof. After
+   producer verification, RECHECK independently repeats those observations and
+   inspection, incorporating them into its independent replay and review.
+   Producer proof does not require the later independent observations. Each
+   inspection validates prerequisites, not its own future evidence.
+   Retain refusals and corrected attempts; no old proof certifies changed
+   requirements. Subsequent evidence/governance commits create a distinct final
+   candidate requiring explicit delta reconciliation and strict full-evidence
+   `--inspect-promotion` at claim-free I04 before activation; that future final
+   inspection is not an input to either earlier S05 packet.
 
 These additional observations belong to INFRA-S05, not a substitute scenario or
 product cohort. Existing 62 matrix identities and all their surfaces remain
@@ -418,6 +427,18 @@ the complete coverage/enrollment and external-lane packet, not only these core
 validator scenarios. I04 owner ratification/activation, installed-main validation,
 three full native adoption cohorts and I06 acceptance remain separate obligations.
 No product ownership, GUI prototype, licensing or dependency boundary changes.
+
+The separate `--inspect-review` mode uses closed `review-inspection-request`
+bytes and refuses owner-response arguments. It requires matching valid live
+COMPAT/RECHECK execution state in base and candidate, permitting only the exact
+initial mapping addition, and preserves every other Frontier item. Prove
+missing future rollout proof can pass only this non-authorizing inspection,
+while strict promotion/activation refuses. Prove stale claims, lifecycle or
+other-lane changes, unscoped history, malformed mapping, changed prior enrollment,
+support/environment mismatch and protected-state changes refuse. Other enrolled
+items still need their ordinary evidence; ordinary changed-input readiness still
+escalates to proof. The result explicitly sets `evidence_validated:false` and
+cannot be consumed as an activation request or owner receipt.
 
 The prepared `--inspect-promotion` mode additionally requires a separately
 selected response matching the exact `promotion-inspection-request` bytes.

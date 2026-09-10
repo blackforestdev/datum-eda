@@ -29,6 +29,18 @@ def validate_coverage_state(tree, manifest, trust, *, environments=None):
     """Shared classification/readiness checks; never source authorization."""
     if trust.policy["schema_version"] == 1:
         return []
+    items, readiness = validate_coverage_structure(tree, manifest, trust)
+    for key in readiness:
+        # Ordinary readiness continues to escalate changed enrolled inputs to
+        # proof. Source-history review uses a separate non-authorizing caller.
+        validate_delivery(tree, items[key], phase="ready",
+                          trust=trust if key in trust.enrolled else None,
+                          environment=(environments or {}).get(key))
+    return items
+
+
+def validate_coverage_structure(tree, manifest, trust):
+    """Classification and contract structure only; not readiness or permission."""
     coverage = trust.policy["coverage"]
     items = validate_classifications(tree, coverage, manifest, authority=trust.authority)
     readiness = validate_categories(items, coverage, trust.enrolled, trust.authority)
@@ -49,11 +61,4 @@ def validate_coverage_state(tree, manifest, trust, *, environments=None):
                 error.key = item["key"]
                 error.step = item["completion"]["canonical_next_step_id"]
                 raise
-    for key in readiness:
-        # Unenrolled declarations normally receive structure-only diagnostics.
-        # Completing a covered preflight must also resolve its actual authority
-        # and mandatory decisions, without demanding future activation proof.
-        validate_delivery(tree, items[key], phase="ready",
-                          trust=trust if key in trust.enrolled else None,
-                          environment=(environments or {}).get(key))
-    return items
+    return items, readiness

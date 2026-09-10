@@ -195,19 +195,21 @@
 
 WDQ-COMPAT candidate preparation adds the proposed PM042 fixed workspace-policy
 shape and explicit INFRA-S05 compatibility observations, preserving actual proof
-inputs and normal derived-cache lifecycle. The read inventory now includes 161
+inputs and normal derived-cache lifecycle. The read inventory now includes 164
 implemented source/data inputs, including the proposed exact workspace policy.
 The policy pins one owner script and 23 legacy caches from read-only main
-inventory at `7e23e172`. The proposed source scope now names 149 exact paths,
+inventory at `7e23e172`. The proposed source scope now names 152 exact paths,
 adding only eight compatibility modules/tests and covering their complete repair
 history through `afc3caa1`; final publication against current main still needs
-inspection. Regression evidence is not renewed producer replay,
+inspection. The sequencing repair adds three exact source/test paths and a
+separate non-authorizing pre-review inspector; strict final inspection remains
+mandatory after evidence/governance delta reconciliation. Regression evidence is not renewed producer replay,
 compatibility acceptance, ratification or installed enforcement. The canonical
 Frontier, not this preparation note, controls current task selection.
 
 | Governed documents | Current evidence | Remaining boundary |
 | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json`, proposed PM042 | Historical source4e proof remains retained. Under main approval `2793959c`, the isolated candidate now corrects the initial legacy mapping prerequisite while preserving strict review and activation requirements. This is repair construction, not renewed proof. | `dat-wdq-rollout-implementation-ffy` and `dat-wdq-review-publication-cycle-a1y` remain open. Separate review-time inspection, affected evidence renewal, independent review and exact owner activation remain due; product-native evidence and all three actual adoption cohorts are unchanged. |
+| `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json`, proposed PM042 | Historical source4e proof remains retained. Under main approval `2793959c`, the isolated candidate corrects the initial legacy mapping prerequisite and separates pre-review source/history inspection from strict final evidence inspection. This is repair construction, not renewed proof. | `dat-wdq-rollout-implementation-ffy` and `dat-wdq-review-publication-cycle-a1y` remain open. Affected evidence renewal, independent replay, final delta reconciliation and exact owner activation remain due; product-native evidence and all three actual adoption cohorts are unchanged. |
 
 | Governed document | Current evidence | Target | Tracking |
 | --- | --- | --- | --- |

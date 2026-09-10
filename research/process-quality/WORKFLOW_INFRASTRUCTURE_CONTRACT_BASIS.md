@@ -322,3 +322,30 @@ mapping. Present null/malformed mappings and removed or changed enrollments
 remain refusals. Both views still require completed predecessors and claim-free
 I04 for strict inspection/activation. This correction alone does not resolve
 review-time inspection sequencing, complete proof renewal or activate anything.
+
+## WDQ-COMPAT — break the review/publication evidence cycle
+
+Inspection of the prepared call graph showed two circular prerequisites:
+strict promotion demanded completed RECHECK and its independent-review packet,
+while RECHECK and INFRA-S05 group 8 required that inspection as input. Merely
+requesting ready instead of review was insufficient: trusted readiness escalates
+changed inputs to proof. The bounded correction therefore separates source/history
+and readiness-prerequisite inspection from final evidence inspection, not merely
+the requested phase inside the activation path.
+
+The separate review inspector preserves matching live COMPAT/RECHECK lifecycle
+and claims, all other lanes, exact history/scope, contract authority, selected
+environment, support integrity and protected-state equality. It does not demand
+future rollout proof, but other enrollments and ordinary trusted readiness keep
+their existing proof requirements. A distinct closed request and explicit false
+evidence/activation/publication flags prevent its result from being an activation
+receipt. Final strict inspection remains mandatory after review completion and
+explicit reconciliation of the later evidence/governance delta. Independent
+source review found no concrete blocker in this separation; synthetic tests are
+development evidence only, not fresh producer or independent replay of the real
+rollout. Follow-up review identified ambiguous producer/independent packet timing:
+COMPAT records producer inspection first; RECHECK later repeats it independently
+for its own replay/review. Neither requires the later I04 inspection as input.
+This distinction preserves producer-before-review ordering and avoids replacing
+the original cycle with a cross-phase one. No installed trust, product authority
+or adoption obligation changes.

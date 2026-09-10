@@ -149,6 +149,7 @@
     "scripts/test_workflow_delivery_hook.py",
     "scripts/test_workflow_delivery_independent_review.py",
     "scripts/test_workflow_delivery_index_environment.py",
+    "scripts/test_workflow_delivery_initial_migration.py",
     "scripts/test_workflow_delivery_interruption_case.py",
     "scripts/test_workflow_delivery_io.py",
     "scripts/test_workflow_delivery_mixed_capture.py",
@@ -168,6 +169,7 @@
     "scripts/test_workflow_delivery_rehearsal.py",
     "scripts/test_workflow_delivery_review_capture.py",
     "scripts/test_workflow_delivery_review_checkpoint.py",
+    "scripts/test_workflow_delivery_review_inspection.py",
     "scripts/test_workflow_delivery_review_phase_capture.py",
     "scripts/test_workflow_delivery_roadmap_snapshot.py",
     "scripts/test_workflow_delivery_snapshot_capture.py",
@@ -246,6 +248,7 @@
     "scripts/workflow_delivery_readiness_input.py",
     "scripts/workflow_delivery_review.py",
     "scripts/workflow_delivery_review_input.py",
+    "scripts/workflow_delivery_review_inspection.py",
     "scripts/workflow_delivery_review_phase_input.py",
     "scripts/workflow_delivery_roadmap_snapshot.py",
     "scripts/workflow_delivery_selector.py",
@@ -790,7 +793,7 @@
       "inputs": [
         "Stage a bad record and repair only the worktree; reverse the setup and compare requested snapshot behavior.",
         "Exercise missing/nonancestor base, ignored input, deletion/rename, intervening add/delete/revert and merge-parent changes; compare current selector diagnostics separately.",
-        "Execute every additional workspace compatibility condition in WDQ-INFRA-WORKSPACE, including proof-closure preservation, genuine legacy-cache lifecycle and renewed independent real-workspace publication inspection."
+        "Execute every additional workspace compatibility condition in WDQ-INFRA-WORKSPACE, including proof-closure preservation, genuine legacy-cache lifecycle and real-workspace pre-review source/history inspection. COMPAT producer proof retains producer observations and inspection; subsequent RECHECK independently repeats them into independent replay/review. Neither earlier packet requires future final inspection. Retain each exact candidate identity, explicitly reconcile later evidence/governance deltas and require strict full-evidence inspection at claim-free I04 before activation."
       ],
       "expected_visible": "Staged validation uses staged bytes; exact candidate validation accounts for every intervening protected path. Worktree diagnostics do not certify prior commits.",
       "expected_state": "No index repair, silent base fallback, history laundering or live shared-repository mutation.",
