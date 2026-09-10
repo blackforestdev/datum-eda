@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "candidate": "b704b3ef69636b3c9020585cb6f1bd00ec62f6aa",
+  "candidate_ref": "refs/datum-wdq/candidates/sequencing-typed-packet-20260910",
+  "tree": "55102b827eac90cf96b63e2463a3d10b53130578",
+  "evidence_source_commit": "f9dc6ab73d274157d6e537661ce736638f618640",
+  "runtime_source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "prospective_baseline": "377323b29705ccccd6f8fa91f663d7d91c6d03c4",
+  "packet_sha256": "12afccdfb09c7aa8b60376b740eebc3385f5d5a15d5c205121341f43425eb626",
+  "authority_sha256": "b3130c9322932a9d26e967d6ecb55c8b1591892636d26ac3cdd98e175475ee39",
+  "input_manifest_unchanged": true,
+  "correlated_event_blobs": 6,
+  "committed_tree_proof_validation": "pass",
+  "selected_environment_validation": "pass",
+  "correlation_validation": "pass",
+  "main_head_and_worktree_unchanged": true,
+  "full_entrypoint_verification": true,
+  "independent_replay_complete": false,
+  "publication_verified": false,
+  "activation_performed": false,
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/verify_committed_packet.py --sequencing-repair",
+  "exit_code": 0,
+  "entrypoint": {
+    "command": "python3 -S -B .git/datum-wdq/proposals/sequencing-repair-20260910/scripts/check_workflow_delivery.py --root /home/bfadmin/Documents/datum-eda --candidate-ref b704b3ef69636b3c9020585cb6f1bd00ec62f6aa --enforce --authority-ref 377323b29705ccccd6f8fa91f663d7d91c6d03c4 --base-ref 377323b29705ccccd6f8fa91f663d7d91c6d03c4 --environment-path specs/workflow_delivery/rollout.environments.json",
+    "exit_code": 0,
+    "stdout": {
+      "acceptance_asserted": false,
+      "checks": [
+        "WORKFLOW-DELIVERY-GATE-PILOT: accept",
+        "WORKFLOW-DELIVERY-IMPLEMENTATION: ready"
+      ],
+      "findings": [],
+      "mode": "enforce",
+      "readiness_asserted": false
+    },
+    "scope": "Explicit prospective candidate validation, not installed-main enforcement. COMPAT remains in_progress, so this entrypoint reports ready; typed producer proof was separately validated against the exact Git tree."
+  }
+}
