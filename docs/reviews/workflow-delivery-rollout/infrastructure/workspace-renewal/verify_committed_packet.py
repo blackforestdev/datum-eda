@@ -22,12 +22,19 @@ def git(*args, data=None, env=None):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--index-repair", action="store_true")
+    variants = parser.add_mutually_exclusive_group()
+    variants.add_argument("--index-repair", action="store_true")
+    variants.add_argument("--sequencing-repair", action="store_true")
     args = parser.parse_args()
     pin = "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf" if args.index_repair else PIN
     baseline = "ba318df013ca5c0263c489a9c77187dc4057a7be" if args.index_repair else pin
     ref = "refs/datum-wdq/candidates/index-repair-typed-packet-20260910" if args.index_repair else REF
     expected_packet = "02ce61ee28c450776a575330ce17aca93f2a8e4edc7e4c704cf299efd69cc8ce" if args.index_repair else "678daa96208fb7a372962c383832a099f90ccc1bd63d76c091fee9b4d3fb84f9"
+    if args.sequencing_repair:
+        pin = "1d48f249dc7071fc3718b345a4ab16b366af43be"
+        baseline = "377323b29705ccccd6f8fa91f663d7d91c6d03c4"
+        ref = "refs/datum-wdq/candidates/sequencing-typed-packet-20260910"
+        expected_packet = "12afccdfb09c7aa8b60376b740eebc3385f5d5a15d5c205121341f43425eb626"
     original_head = git("rev-parse", "HEAD").decode().strip()
     original_status = git("status", "--porcelain")
     runtime = ROOT / ".git/datum-wdq/proposals/wdq-final-owner-disposed-producer-20260909"
@@ -36,6 +43,10 @@ def main():
     if args.index_repair:
         runtime = ROOT / ".git/datum-wdq/proposals/index-preservation-repair-20260910"
         overlay = retained / "index-repair-typed-producer-20260910"
+    if args.sequencing_repair:
+        runtime = ROOT / ".git/datum-wdq/proposals/sequencing-repair-20260910"
+        retained = ROOT / ".git/datum-wdq/proposals/sequencing-evidence-20260910"
+        overlay = retained / "typed-packet-attempt-01"
     assert subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=runtime).decode().strip() == pin
     assert not subprocess.check_output(["git", "--no-optional-locks", "status", "--porcelain"], cwd=runtime)
     sys.path.insert(0, str(runtime / "scripts"))
@@ -60,6 +71,8 @@ def main():
                 continue
             relative = path.relative_to(overlay).as_posix()
             typed_prefix = "index-repair-typed/" if args.index_repair else "typed/"
+            if args.sequencing_repair:
+                typed_prefix = "sequencing-typed/"
             assert relative == "docs/reviews/workflow-delivery-rollout/infrastructure/proof.json" or relative.startswith(PREFIX + typed_prefix)
             oid = git("hash-object", "-w", "--stdin", data=path.read_bytes()).decode().strip()
             git("update-index", "--add", "--cacheinfo", "100644", oid, relative, env=env)

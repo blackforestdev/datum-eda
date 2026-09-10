@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-review-publication-cycle-a1y",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "prospective_baseline": "377323b29705ccccd6f8fa91f663d7d91c6d03c4",
+  "assembly": {
+    "exit_code": 0,
+    "observations": 1314,
+    "original_inventory_observations": 1123,
+    "additional_workspace_observations": 191,
+    "scenario_counts": {"INFRA-S01": 41, "INFRA-S02": 280, "INFRA-S03": 185, "INFRA-S04": 180, "INFRA-S05": 250, "INFRA-S06": 378},
+    "dispatch_observations_sha256": "5f8ceb6be988a23eef0d9301360c5a8d459586b698d7b702921f6433df4ab116",
+    "checks": ["original case/surface/phase inventory equality", "unique fresh invocation IDs", "raw artifact hashes", "protected before/after equality", "observed handler source hashes", "case-specific expected outcomes", "exact prospective real-roadmap binding"]
+  },
+  "typed_validation": {
+    "exit_code": 0,
+    "packet_sha256": "12afccdfb09c7aa8b60376b740eebc3385f5d5a15d5c205121341f43425eb626",
+    "authority_sha256": "b3130c9322932a9d26e967d6ecb55c8b1591892636d26ac3cdd98e175475ee39",
+    "correlated_event_blobs": 6,
+    "checks": ["proof shape and freshness", "selected headless environment", "artifact roles and dispatch correlations"],
+    "additional_inspection": "Exact supported producer pre-review log retained separately from the 1314 dispatch observations; candidate identity verified, publication and activation authorization remain false."
+  },
+  "archives": [
+    {"path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-inventory-captures.tar.xz", "sha256": "500058a6f531232c856f63daace0882a2b591844f9ba1e9acda7e771a02cf88f", "tar_compare_exit_code": 0},
+    {"path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-assembled-observations.tar.xz", "sha256": "282b43c67510ade72b32abaa7c0fe2d338e26817f3d8a032a8cd082ebd9b0f9e", "tar_compare_exit_code": 0},
+    {"path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-typed-packet.tar.xz", "sha256": "20be5049ec703b117ae6247c72f2067d0e7df0e3261c682f8a507ae2b23eb12d", "tar_compare_exit_code": 0}
+  ],
+  "current_inventory": {
+    "process_exit_code": 0,
+    "count": 9,
+    "observations_sha256": "1a74150bd2253f103c14e88febb5837b2efc417496e1257800a8cd7f5db60900",
+    "expected_outcomes_verified_by_assembly": true
+  },
+  "limits": "Prospective producer overlay validation only. Committed candidate validation, independent RECHECK, strict final I04 inspection and activation, real product adoption cohorts and owner acceptance remain distinct obligations.",
+  "committed_candidate_verified": false,
+  "independent_replay_complete": false,
+  "activation_performed": false
+}
