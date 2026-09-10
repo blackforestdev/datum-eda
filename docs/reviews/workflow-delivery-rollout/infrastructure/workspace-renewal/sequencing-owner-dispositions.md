@@ -230,3 +230,31 @@ state, and fixture traces are cleaned on exit. The runner's result label and
 scope now state that precisely. This is independent development verification,
 not retained typed replay or full state-preservation proof. No outcome changes
 or further routine owner approval are implied.
+
+### Retained terminal-owner supplement
+
+The frozen repaired source now has 60 retained producer observations and 60
+fresh independent observations across staged CLI, candidate CLI, selector check,
+selector details and the authenticated owner hook. Each set contains ten
+successful pending/terminal cases and fifty expected refusals. Each of the fifty
+refusals also has a successful restored-valid observation in each session:
+220 observations total. No production Preferences receipt was synthesized.
+
+Independent verification passed 1,540 raw artifact hashes, 8,132 source bindings
+against the 164-input manifest, distinct invocation identities and 110 logical
+pre-state restoration comparisons. Every observed invocation preserved its full
+before/after state. Cross-run index stat-cache bytes differ in 100 comparisons;
+those differences remain recorded, not described as byte-identical restoration.
+
+The retained failed attempts are excluded from passing counts: two producer
+fixture setup defects and the first independent replay's tuple serialization
+error. Exact executed helper versions are hash-checked for retention alongside
+the raw observations and fixture bundles. `capture_terminal_owner.py` and
+`replay_terminal_owner.py` implement these captures; the archive helper retains
+them under a Git evidence ref without publishing a candidate or changing trust.
+All working evidence stays under `.git/datum-wdq`, not new Documents directories.
+
+This completes the bounded terminal-owner supplement, not the complete renewed
+rollout packet, installation or product adoption. Eight of eleven milestones
+remain complete; I04 continues under standing authorization. No product lane,
+source-permission scope, dependency or licensing boundary changed.
