@@ -63,6 +63,24 @@
       "readiness_submission": false,
       "enrollment_asserted": false,
       "acceptance_asserted": false
+    },
+    {
+      "id": "WDQ-I05-s5a-0002",
+      "observed_at": "2026-09-10T23:12:34Z",
+      "type": "owner_assigned_readiness_planning",
+      "basis_ref": "7dcf357ce5b703567ec2d205876bb4e4b184cae7",
+      "planning_session": "codex-s5a-c01-planning-20260910",
+      "owner_instruction": "Owner approved this session taking S5A-C01 readiness planning in response to the outstanding lane-assignment question.",
+      "evidence_refs": [
+        {"path": ".beads/issues.jsonl", "issue_id": "dat-uvt-s5a-build-1wv"},
+        {"path": "specs/active_frontier.json", "frontier_key": "UVT-S5A-BUILD"}
+      ],
+      "requirement_ref": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md#S5A-C01",
+      "known_reconciliation_issue": "dat-selection-envelope-run-flr",
+      "boundary": "Planning claim only. Preferences and Claude prototypes remain untouched. No implementation authorization, reviewer assignment, product enrollment, readiness submission or acceptance is implied.",
+      "readiness_submission": false,
+      "enrollment_asserted": false,
+      "acceptance_asserted": false
     }
   ],
   "append_policy": "Append observations with evidence and exact times; corrections supersede prior events rather than deleting them. Measurement begins only at the first actual readiness submission after enrollment."
