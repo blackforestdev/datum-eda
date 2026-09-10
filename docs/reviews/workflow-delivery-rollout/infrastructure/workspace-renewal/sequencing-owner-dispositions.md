@@ -258,3 +258,19 @@ This completes the bounded terminal-owner supplement, not the complete renewed
 rollout packet, installation or product adoption. Eight of eleven milestones
 remain complete; I04 continues under standing authorization. No product lane,
 source-permission scope, dependency or licensing boundary changed.
+
+The supplement is retained in Git commit
+`79fe4cd84174b8b31c224fe74346c23ba7ee48d5`, reachable through
+`refs/datum-wdq/evidence/terminal-owner-79fe4cd84174b8b31c224fe74346c23ba7ee48d5`.
+Its inventory and 2,173 payloads total 38,874,109 bytes. Reading each payload
+back from Git independently confirmed every recorded size and SHA-256. Working
+fixture repositories are excluded; their bundles and observed states are retained.
+Main tooling landed in `8474ce3d`; project state passed for 56 Frontier items
+and the installed legacy commit hook passed without trust changes.
+
+Integration inspection confirms that `prepare_sequencing_review_candidate.py`
+still pins source `1d48f249`, producer `06bafeb9` and the historical packet.
+`build_typed_packet.py` likewise selects that source and its original 1,314
+observations. These must not be relabeled as evidence for source `9924678c`.
+Renewal and typed packaging remain I04 work, followed by exact candidate and
+installed checks; the terminal supplement is retained input to that work.
