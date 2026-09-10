@@ -72,9 +72,14 @@ def main():
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--runtime", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--index-repair", action="store_true")
+    variants = parser.add_mutually_exclusive_group()
+    variants.add_argument("--index-repair", action="store_true")
+    variants.add_argument("--sequencing-repair", action="store_true")
     args = parser.parse_args()
     pin = "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf" if args.index_repair else PIN
+    if args.sequencing_repair:
+        pin = "1d48f249dc7071fc3718b345a4ab16b366af43be"
+    repaired_mode = args.index_repair or args.sequencing_repair
     root, runtime, output = (p.resolve() for p in (args.root, args.runtime, args.output))
     git = lambda *words: subprocess.check_output(["git", "--no-optional-locks", *words], cwd=runtime)
     assert git("rev-parse", "HEAD").decode().strip() == pin
@@ -82,14 +87,20 @@ def main():
     proposals = root / ".git/datum-wdq/proposals"
     retained = proposals / "wdq-full-candidate-inspection-20260909"
     repaired = proposals / "index-repair-evidence-20260910"
-    assert output.is_relative_to(retained) and not output.exists()
+    real_subdir = "owner-reopened-reconciled"
+    preparation_name = "owner-reopened-roadmap-preparation-reconciled.json"
+    if args.sequencing_repair:
+        repaired = proposals / "sequencing-evidence-20260910"
+        real_subdir = "owner-reopened"
+        preparation_name = "owner-reopened-roadmap-preparation.json"
+    assert output.is_relative_to(repaired if args.sequencing_repair else retained) and not output.exists()
     original = read(proposals / "wdq-i03-9cab72da-retained-package/dispatch-observations-complete.json")
     rows = []
     for name, count in BATCHES.items():
         batch = retained / ("renewed-" + name + "-0e5b8064")
-        if args.index_repair:
+        if repaired_mode:
             batch = repaired / name
-        inventory_name = "observations-complete.json" if args.index_repair and name == "s01" else "observations.json"
+        inventory_name = "observations-complete.json" if repaired_mode and name == "s01" else "observations.json"
         inventory = read(batch / inventory_name)
         assert inventory["candidate"] == pin and len(inventory["observations"]) == count
         for row in inventory["observations"]:
@@ -99,13 +110,13 @@ def main():
             assert assessment["result_sha256"] == digest(capture / "result.json")
             rows.append(observe(runtime, capture, row))
     real = runtime / ".git/datum-wdq/proposals/renewed-real-roadmap-captures-0e5b8064"
-    if args.index_repair:
-        real = repaired / "owner-reopened-reconciled/real-roadmap"
+    if repaired_mode:
+        real = repaired / real_subdir / "real-roadmap"
     inventory = read(real / "observations.json")
     assert inventory["candidate"] == pin
     real_binding = None
-    if args.index_repair:
-        preparation = read(repaired / "owner-reopened-roadmap-preparation-reconciled.json")
+    if repaired_mode:
+        preparation = read(repaired / preparation_name)
         fixture = preparation["fixture_commit"]
         assert all(inventory[key] == fixture for key in ("fixture_commit", "authority_ref", "base_ref"))
         assert inventory["owner_renewal_transaction"] == preparation["transaction"]
@@ -130,15 +141,15 @@ def main():
     extra.extend([(real, "observations.json", "clean"),
         (runtime / ".git/datum-wdq/proposals/renewed-real-roadmap-inventory-0e5b8064",
          "observations.json", None)])
-    if args.index_repair:
+    if repaired_mode:
         extra = [(repaired / ("workspace-" + name), "renewal-result.json", None)
                  for name in ("runtime", "policy-legacy", "proof-input")]
         extra.extend([(real, "observations.json", "clean"),
-                      (repaired / "owner-reopened-reconciled/current-inventory", "observations.json", None)])
+                      (repaired / real_subdir / "current-inventory", "observations.json", None)])
     for batch, inventory_name, excluded in extra:
         inventory = read(batch / inventory_name)
         assert inventory["candidate"] == pin
-        if args.index_repair and "fixture_commit" in inventory:
+        if repaired_mode and "fixture_commit" in inventory:
             assert all(inventory[key] == real_binding[key]
                        for key in ("fixture_commit", "authority_ref", "base_ref", "owner_renewal_transaction"))
         for saved in inventory["invocations"]:
