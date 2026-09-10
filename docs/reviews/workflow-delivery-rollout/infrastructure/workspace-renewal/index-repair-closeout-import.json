@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "base_candidate": "c9d3d5c350a38a2c01aa71d37ec1fa4cc31bcc8e",
+  "imported_main_transaction": "8a5beeea6024297b49a887ad45e5b4a486c8161e",
+  "candidate": "facf48f8617546c7a711d3b45be0700979a36df6",
+  "candidate_ref": "refs/datum-wdq/candidates/index-repair-closeout-20260910",
+  "tree": "dab6722f1b4037e5f717faff6aa75873715fddce",
+  "command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/synchronize_candidate_claim.py --base c9d3d5c350a38a2c01aa71d37ec1fa4cc31bcc8e --transaction 8a5beeea --ref refs/datum-wdq/candidates/index-repair-closeout-20260910 --index-repair-closeout --allowed-path .beads/issues.jsonl --allowed-path specs/PROGRESS.md --allowed-path specs/active_frontier.json --allowed-path specs/spec_governance_manifest.json --allowed-path docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/verify_committed_packet.py --allowed-path docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-index-repair-real24.json --allowed-path docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-index-repair-real24.tar.xz --allowed-path docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-committed-verification.json --allowed-path docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-producer-closeout.json",
+  "exit_code": 0,
+  "scope": "Import only the nine explicitly listed paths from the committed producer closeout. Transfer exact changed WDQ fields, retain candidate-only governing references/mapping and all 55 other rows, merge only the new ledger entry, and import the exact canonical Beads export after checking unrelated tracker lines unchanged. Remaining evidence uses exact binary-capable Git patches. No live claim fabrication or publication.",
+  "main_unchanged_during_import": true,
+  "entrypoint": {
+    "command": "python3 -S -B .git/datum-wdq/proposals/index-preservation-repair-20260910/scripts/check_workflow_delivery.py --root /home/bfadmin/Documents/datum-eda --candidate-ref facf48f8617546c7a711d3b45be0700979a36df6 --enforce --authority-ref ba318df013ca5c0263c489a9c77187dc4057a7be --base-ref ba318df013ca5c0263c489a9c77187dc4057a7be --environment-path specs/workflow_delivery/rollout.environments.json",
+    "exit_code": 0,
+    "stdout": {
+      "acceptance_asserted": false,
+      "checks": ["WORKFLOW-DELIVERY-GATE-PILOT: accept", "WORKFLOW-DELIVERY-IMPLEMENTATION: verify"],
+      "findings": [],
+      "mode": "enforce",
+      "readiness_asserted": false
+    },
+    "scope": "Actual producer verify phase after closeout import. Does not certify independent review or exact final publication."
+  },
+  "publication_verified": false,
+  "activation_performed": false
+}
