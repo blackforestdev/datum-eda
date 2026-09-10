@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "review_session": "/root/wdq_independent_review",
+  "candidate": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-index-repair-s04-snapshots-selection.tar.xz",
+    "sha256": "e5dbb541352f6252a4b8818c31fedaabb8db906dd9d865ba2e1e3f6f6cb5398c",
+    "tar_compare_exit_code": 0,
+    "scope": "Complete frozen S04, S05 snapshot and S06 selector independent directories, including all 274 fixture repositories/captures and per-batch raw process and verification records."
+  },
+  "batches": {
+    "s04": {"observations": 175, "artifact_hashes_per_set": 1225, "source_checks_per_set": 6517, "events_per_set": 709},
+    "s05-snapshots": {"observations": 39, "artifact_hashes_per_set": 273, "source_checks_per_set": 1434, "events_per_set": 149},
+    "s06-selection": {"observations": 60, "artifact_hashes_per_set": 420, "source_checks_per_set": 2214, "events_per_set": 234}
+  },
+  "all_expected_outcomes": true,
+  "all_collector_exit_codes": 0,
+  "retries": 0,
+  "protected_states_unchanged": true,
+  "ordered_inventories_exact": true,
+  "independent_ids_disjoint_from_producer": true,
+  "full_review_complete": false,
+  "activation_performed": false
+}
