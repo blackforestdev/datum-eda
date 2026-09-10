@@ -9663,13 +9663,13 @@
         "harness": "codex-cli",
         "session": "codex-wdq-workspace-repair-20260909",
         "claimed_at": "2026-09-09T17:08:50Z",
-        "heartbeat_at": "2026-09-10T02:31:00Z",
-        "expires_at": "2026-09-10T06:31:00Z",
+        "heartbeat_at": "2026-09-10T07:33:42Z",
+        "expires_at": "2026-09-10T15:33:42Z",
         "scope": [
           "WDQ-RECHECK formal independent typed review and exact publication inspection after repaired-source producer closeout; workflow-only governance and Beads transaction; preserve historical evidence, product ownership and installed trust; no activation"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "3d06b1eab035b65cca598e4885438f0598390860"
+        "head": "5d507af27394285e68eac09d41137766dfa685c0"
       },
       "canonical_next": false,
       "parallel": true,
