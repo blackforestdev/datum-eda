@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "runtime_source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "scope": "Producer corrections during independent review, preserving all old captures and the same source/authority. These records do not assert independent acceptance.",
+  "reason": [
+    "The independent exact-object ownership replay encountered a genuinely expired NEXT lease. Infrastructure contract recipe step 4 requires a new identified fixture with both producer and independent observations; no clock change or silent renewal.",
+    "Final workspace fixture archives omitted raw pre-state index/cache bytes for some cases. Per-invocation full fixture archives now retain exact bytes and original path identity, without regenerating them as purported replay."
+  ],
+  "completed_batches": [
+    {"batch": "s02-ownership", "count": 190, "process_exit_code": 0, "observations_sha256": "b6778c75b80e45c0bc3b48a5b29d63d50e2edc3f6a24bb760dd18b4f48ff38ff"},
+    {"batch": "workspace-proof-input", "count": 45, "process_exit_code": 0, "observations_sha256": "98306a9938dab52d6b70457f05db7a4cb0ad8eb6c82d4689d4496195440049b8", "all_prestate_archive_hashes_verified": true}
+  ],
+  "custody": {
+    "workspace-proof-input": "/tmp/tmpmulf3m7z",
+    "producer_terminal_and_original_path_absent_verified_before_transfer": true,
+    "scope": "Exclusive temporary-fixture restoration transferred to independent reviewer after producer cleanup. Require absent path and atomic creation, archive/hash/nonce verification and exact before-state equality; no collision overwrite. Runtime evidence stays under Git-common storage."
+  },
+  "retained_failure": {
+    "batch": "workspace-runtime",
+    "process_exit_code": 1,
+    "reason": "Archive metadata wrapper relied on hashlib imported by some recipes; runtime recipe did not import it. NameError occurred after its first actual capture, before recording a successful observation.",
+    "correction": "Wrapper now imports hashlib explicitly and accepts a separately named retry store. workspace-runtime-retry-01 is a fresh attempt; old capture/archive/stderr/process records remain unchanged.",
+    "validator_changed": false
+  },
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-ownership-proof-captures.tar.xz",
+    "sha256": "b84d28fd602329b6e201288f305671ec961969a15b7d5d527ebb39e526102da8",
+    "tar_compare_exit_code": 0,
+    "scope": "Completed ownership190 and proof45 raw captures, proof pre-state archives, and failed first runtime capture with exact command/process records. Duplicate fixture directories omitted; retained source objects remain required."
+  },
+  "remaining": ["policy75 and runtime52 paired producer results", "independent exact replay and typed packet reconciliation", "distinct final I04 inspection and owner activation", "three actual adoption cohorts and final owner acceptance"],
+  "independent_replay_complete": false,
+  "activation_performed": false
+}
