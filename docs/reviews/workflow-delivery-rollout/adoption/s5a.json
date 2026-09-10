@@ -124,6 +124,22 @@
       "readiness_submission": false,
       "enrollment_asserted": false,
       "acceptance_asserted": false
+    },
+    {
+      "id": "WDQ-I05-s5a-0004",
+      "observed_at": "2026-09-10T23:26:17Z",
+      "type": "pre_enrollment_production_source_audit",
+      "candidate_ref": "7ab093c22cf177b626f66b2fb9d91b92be8a4a09",
+      "evidence_refs": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/s5a/runtime-readiness-audit.json"
+        }
+      ],
+      "outcome": "Fifteen pinned inputs and eight anchored findings cover all six draft scenarios. Actual singleton selection, schematic no-dispatch, board membership checks, Inspector units/shared-output gaps, retained invalidation, keyboard/cancel reuse, hit-index reuse and incomplete fixture binding are distinguished from delivered behavior.",
+      "verification": "All source hashes and anchors checked; scenario coverage equals the draft contract. Spec governance and evidence traceability pass. No Cargo or native runtime test run for this audit.",
+      "readiness_submission": false,
+      "enrollment_asserted": false,
+      "acceptance_asserted": false
     }
   ],
   "append_policy": "Append observations with evidence and exact times; corrections supersede prior events rather than deleting them. Measurement begins only at the first actual readiness submission after enrollment."

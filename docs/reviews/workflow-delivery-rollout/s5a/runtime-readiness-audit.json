@@ -1,0 +1,269 @@
+{
+  "schema_version": 1,
+  "record_type": "s5a_readiness_source_inspection",
+  "frontier_key": "UVT-S5A-BUILD",
+  "completion_step": "S5A-C01",
+  "issue_id": "dat-uvt-s5a-build-1wv",
+  "inspected_ref": "7ab093c22cf177b626f66b2fb9d91b92be8a4a09",
+  "observed_at": "2026-09-10T23:26:17Z",
+  "method": "Read-only production source and fixture-manifest inspection; no build, native execution, fixture generation or runtime test.",
+  "authority_boundary": "Operational findings against the existing ratified S5A requirements, not a replacement specification or execution authorization. PM023/026, UVT and the complete C01 contract remain controlling. Other product lanes and Claude prototypes are untouched.",
+  "source_inputs": [
+    {
+      "path": "crates/gui-app/src/runtime_primary_pointer.rs",
+      "sha256": "e987b2db4ed12a253b1da4b42c1748f4a860c7f3c13b3291311e070afeb47192"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_camera_pane.rs",
+      "sha256": "6c8e7576ad9588df9e5972214b089b0c6042f018a5713ccae80860edb22b807a"
+    },
+    {
+      "path": "crates/gui-app/src/main.rs",
+      "sha256": "d0eeab81c312d829f0d7aca5a8810dcdfe9b10f39754a6f8afbb071ae3a10ba7"
+    },
+    {
+      "path": "crates/gui-app/src/keyboard_focus.rs",
+      "sha256": "c2c18135c1ad221edd86cbcd8575b263266ce34454573ed1da7afbc87066e98e"
+    },
+    {
+      "path": "crates/gui-app/src/workspace_keyboard.rs",
+      "sha256": "6d92999b0e40066d19e74d20f9f9890978a8a12ff7bfb37e9b0f536771e06df5"
+    },
+    {
+      "path": "crates/gui-app/src/retained_scene_cache_key.rs",
+      "sha256": "0509969810ab56287203f5ef13a2a57c51fe613e71d63c7ad6a0f3aa9bd486d3"
+    },
+    {
+      "path": "crates/gui-app/src/terminal_session.rs",
+      "sha256": "f694b7a74b240bbb3da5d73facb556987c0ef28e7aaab328a4f59b62e263a874"
+    },
+    {
+      "path": "crates/gui-protocol/src/lib.rs",
+      "sha256": "9d1f28a406df0903c42d278492c749973658419427f49f6cc4d87aeb0e695031"
+    },
+    {
+      "path": "crates/gui-protocol/src/context_envelope.rs",
+      "sha256": "1b099944fa10bd9c410b54fb0fa81d032993593feca50ad467b99287ad1ac133"
+    },
+    {
+      "path": "crates/gui-viewport/src/lib.rs",
+      "sha256": "c9f052e24bedac4566d607fbb87647545b65c50629b8806296856683da1639ce"
+    },
+    {
+      "path": "crates/gui-viewport/src/hit.rs",
+      "sha256": "264824f316c6187c2778cdb3688c062f3820005d922402adea1ab6b015c92d44"
+    },
+    {
+      "path": "crates/gui-render/src/side_panels/render_inspector.rs",
+      "sha256": "a4143378c0fac6a06f8b423d37782f8a154d3c39b50de00ddadc6fce1a5359e4"
+    },
+    {
+      "path": "crates/test-harness/testdata/quality/native_project_validation_manifest_v1.json",
+      "sha256": "2f04284e0cc52e4571432a2ee7cc6e6377f7df74ea4d9916be1ccbe5f23af596"
+    },
+    {
+      "path": "specs/workflow_delivery/s5a.contract.json",
+      "sha256": "033b5f8c10d41b45e6702c0950c4f2990c0288f9454e2ab365b7b69c1ce2577d"
+    },
+    {
+      "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+      "sha256": "a16dcf3c91f8f4043f7bab99d9256a83ceaa725112dfc349b1fa9436323428d7"
+    }
+  ],
+  "findings": [
+    {
+      "id": "S5A-AUDIT-01",
+      "scenario_ids": [
+        "S5A-S01",
+        "S5A-S02",
+        "S5A-S04"
+      ],
+      "source_refs": [
+        {
+          "path": "crates/gui-protocol/src/lib.rs",
+          "anchor": "pub enum SelectionTarget"
+        },
+        {
+          "path": "crates/gui-protocol/src/context_envelope.rs",
+          "anchor": "pub struct DatumSelectionContext"
+        }
+      ],
+      "observed": "SelectionTarget has four variants: None, ReviewAction(String), AuthoredObject(String), CheckFinding(String). DatumSelectionContext has only kind:String and id:Option<String> and maps those four variants.",
+      "gap": "The ratified nine-kind model, typed Object classes, Compound/focus, Run origin, semantic Net/Bus and revision-derived membership are not represented by these types. The committed specification repair does not implement them.",
+      "existing_authority": "UVT 2.2.19 and 2.2.20; PM026",
+      "readiness": "missing_required_behavior"
+    },
+    {
+      "id": "S5A-AUDIT-02",
+      "scenario_ids": [
+        "S5A-S01",
+        "S5A-S03"
+      ],
+      "source_refs": [
+        {
+          "path": "crates/gui-app/src/runtime_primary_pointer.rs",
+          "anchor": "pub(super) fn handle_primary_click"
+        },
+        {
+          "path": "crates/gui-app/src/runtime_camera_pane.rs",
+          "anchor": "pub(super) fn resolve_schematic_primary_click"
+        }
+      ],
+      "observed": "Primary pointer dispatch routes schematic world coordinates to resolve_schematic_primary_click. That function performs schematic_world_hit, logs a trace and returns false without selection dispatch. Board retained hits reach select_hit_target.",
+      "gap": "Schematic coordinate/hit infrastructure is reusable, but this production branch cannot count as native schematic selection. C01 must bind both surface paths to the same successor model, not report board-only execution as complete.",
+      "existing_authority": "S5A-C01 complete board/schematic scope; UVT shared-backbone law",
+      "readiness": "missing_required_behavior"
+    },
+    {
+      "id": "S5A-AUDIT-03",
+      "scenario_ids": [
+        "S5A-S01",
+        "S5A-S02"
+      ],
+      "source_refs": [
+        {
+          "path": "crates/gui-protocol/src/lib.rs",
+          "anchor": "pub fn select_authored_object"
+        }
+      ],
+      "observed": "select_authored_object checks board scene collections and writes one AuthoredObject string; a missing id returns false. This function does not implement compound membership or derived-subject re-resolution.",
+      "gap": "The successor needs ratified acquisition and lifetime semantics. Incoming stale identities and per-revision drop/report/no-resurrection must not be inferred from the singleton function returning false.",
+      "existing_authority": "UVT 2.2.4, 2.2.18 and 2.2.20",
+      "readiness": "missing_required_behavior"
+    },
+    {
+      "id": "S5A-AUDIT-04",
+      "scenario_ids": [
+        "S5A-S03",
+        "S5A-S04",
+        "S5A-S06"
+      ],
+      "source_refs": [
+        {
+          "path": "crates/gui-render/src/side_panels/render_inspector.rs",
+          "anchor": "fn render_inspector_panel"
+        },
+        {
+          "path": "crates/gui-app/src/terminal_session.rs",
+          "anchor": "pub(super) fn terminal_launch_context_from_state"
+        },
+        {
+          "path": "crates/gui-app/src/main.rs",
+          "anchor": "fn select_hit_target_inner"
+        }
+      ],
+      "observed": "Inspector dispatch matches singleton SelectionTarget and its component branch formats coordinates using {:.2}, {:.2} mm and division by 1_000_000. Terminal launch context uses DatumSelectionContext::from_selection; click handlers emit separate textual console echoes.",
+      "gap": "These inspected paths do not provide the required shared compound projection or unit-aware typed Common/Mixed/Unavailable aggregates. The hardcoded component position presentation is a concrete integration site, not authorization to change Global Preferences.",
+      "existing_authority": "UVT 2.2.19; S5A-C01 foundation/inspection requirements",
+      "readiness": "missing_required_behavior"
+    },
+    {
+      "id": "S5A-AUDIT-05",
+      "scenario_ids": [
+        "S5A-S03",
+        "S5A-S06"
+      ],
+      "source_refs": [
+        {
+          "path": "crates/gui-app/src/retained_scene_cache_key.rs",
+          "anchor": "pub(super) fn retained_selection_cache_key"
+        },
+        {
+          "path": "crates/gui-app/src/main.rs",
+          "anchor": "fn apply_session_result"
+        }
+      ],
+      "observed": "The selection cache key varies by selected object except specified lightweight cases. SelectionChanged can call invalidate_scene_for_session_change or invalidate_scene rather than only invalidate_frame.",
+      "gap": "This is a remaining retained-scene invalidation path. It is not proof of the ratified zero-retained-resolve/reupload invariant; runtime buffer and CAM measurements remain required. The inspection alone does not quantify actual GPU uploads.",
+      "existing_authority": "UVT 4.4 selection immediate-overlay law V1-V5",
+      "readiness": "missing_required_proof_and_migration"
+    },
+    {
+      "id": "S5A-AUDIT-06",
+      "scenario_ids": [
+        "S5A-S01",
+        "S5A-S05",
+        "S5A-S06"
+      ],
+      "source_refs": [
+        {
+          "path": "crates/gui-app/src/keyboard_focus.rs",
+          "anchor": "SessionCommand::CancelAuthoringGesture"
+        },
+        {
+          "path": "crates/gui-app/src/workspace_keyboard.rs",
+          "anchor": "pub(super) fn character_action"
+        }
+      ],
+      "observed": "Editor Escape first dispatches CancelAuthoringGesture, then ClearSelection. The workspace character dispatcher supplies tool/focus/review actions but no Ctrl+A action in this table.",
+      "gap": "Existing focus and cancellation dispatch are reuse points, not proof of ratified marquee cancellation, additive/subtractive membership, keyboard-only acquisition or selection-specific accessibility. A global absence of Ctrl+A is not inferred from one table.",
+      "existing_authority": "UVT 2.2.2, 2.2.9, 2.2.18; S5A-C01 keyboard/focus proof",
+      "readiness": "partial_substrate_only"
+    },
+    {
+      "id": "S5A-AUDIT-07",
+      "scenario_ids": [
+        "S5A-S01",
+        "S5A-S06"
+      ],
+      "source_refs": [
+        {
+          "path": "crates/gui-viewport/src/lib.rs",
+          "anchor": "pub mod hit;"
+        },
+        {
+          "path": "crates/gui-viewport/src/hit.rs",
+          "anchor": "pub struct SpatialHitIndex"
+        }
+      ],
+      "observed": "The shared viewport exports camera, grid, hit index and interaction infrastructure. Its module inventory does not expose a selection or region module; the inspected hit API exposes point hit_test.",
+      "gap": "Reuse the existing shared infrastructure where applicable, but do not equate a point hit index with complete bounded exact rectangle/lasso qualification. Full A1-A7 and class-matrix evidence remains unestablished.",
+      "existing_authority": "UVT 2.2.16 and 2.2.17",
+      "readiness": "partial_substrate_only"
+    },
+    {
+      "id": "S5A-AUDIT-08",
+      "scenario_ids": [
+        "S5A-S01",
+        "S5A-S02",
+        "S5A-S03",
+        "S5A-S04",
+        "S5A-S05",
+        "S5A-S06"
+      ],
+      "source_refs": [
+        {
+          "path": "crates/test-harness/testdata/quality/native_project_validation_manifest_v1.json",
+          "anchor": "native_project_validation_manifest"
+        },
+        {
+          "path": "specs/workflow_delivery/s5a.contract.json",
+          "anchor": "S5A.native-fixture-and-input-closure"
+        }
+      ],
+      "observed": "The inspected native validation manifest lists seven project-validation fixtures, including intentionally invalid projects. The draft S5A contract still has unresolved fixture/input closure, pending dispatch keys and null handlers.",
+      "gap": "These are not yet an approved complete selection fixture corpus. Exact per-class native identities, 100k maximal-collision population, input/state capture, environment and measurement budgets are not established by this manifest. No fixture absence elsewhere in the repository is asserted.",
+      "existing_authority": "S5A-C01; UVT region/dense/overlay contracts",
+      "readiness": "missing_required_evidence_binding"
+    }
+  ],
+  "scenario_disposition": {
+    "S5A-S01": "Not ready: native schematic dispatch, typed acquisition and full exact marquee/class cases need implementation and evidence bindings.",
+    "S5A-S02": "Not ready: complete typed revision/lifecycle cases and identity observations need binding; do not substitute generic refused-or-cleared behavior for the ratified drop/report law.",
+    "S5A-S03": "Not ready: pane focus exists, but complete identity/projection/filter cases and overlay invariants remain unproven.",
+    "S5A-S04": "Not ready: singleton Inspector/context paths do not satisfy shared compound output or units-aware fields.",
+    "S5A-S05": "Not ready: inspected selection handlers are consumer-state paths, but complete source/journal/undo/reopen native evidence is still missing.",
+    "S5A-S06": "Not ready: complete keyboard/non-color/native accessibility and approved dense performance evidence are not established."
+  },
+  "preserved_scope": [
+    "All required board and schematic classes and the nine PM026 subject kinds remain required.",
+    "Definition-editor obligations in the UVT class matrix are not silently deleted by this inspection; exact consumer timing must be reconciled in the full packet.",
+    "Board dimensions and hierarchical sheets retain their ratified deferrals and tracked re-entry conditions.",
+    "Selection/inspection stays read-only; movement, placement, property mutation and GUI write-path delivery are not added.",
+    "No product enrollment, reviewer reservation or owner acceptance is manufactured."
+  ],
+  "runtime_tests_run": [],
+  "readiness_asserted": false,
+  "acceptance_asserted": false,
+  "conclusion": "C01 is still in progress. This audit supplies exact current production reuse/gap evidence for replacing placeholder consumer bindings; it does not complete the six unresolved C01 questions."
+}
