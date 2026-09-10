@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "record_type": "actual_cohort_adoption_ledger",
+  "frontier_key": "GUI-WRITE-PATH",
+  "issue_id": "dat-gui-write-path-qiu",
+  "contract": {
+    "path": "specs/workflow_delivery/gui-write-path.contract.json",
+    "sha256": "815e127dca1b12b63ae72b011121d89d1276f105cfa9338331799822ca0eee94",
+    "status": "draft; six unresolved C01 questions"
+  },
+  "installed_coverage_authority": "1644e2129f4ff83cec1cdf0e6e13534c3b258e8e",
+  "enrollment_authority": null,
+  "producer_session": null,
+  "reviewer_session": null,
+  "measurement_started_at": null,
+  "accepted_at": null,
+  "metrics": {
+    "specification_gaps_before_execution": null,
+    "specification_gaps_after_execution": null,
+    "corrective_commits": null,
+    "gate_refusals_by_reason": null,
+    "handoffs": null,
+    "owner_correction_rounds": null,
+    "unresolved_defects": null
+  },
+  "missing_data": "No real readiness submission after enrollment or complete adoption outcome exists in the inspected record. Null is unmeasured, not zero. No inferred performance improvement.",
+  "events": [
+    {
+      "id": "WDQ-I05-gui-write-path-0001",
+      "observed_at": "2026-09-10T22:52:54Z",
+      "type": "pre_enrollment_status_observation",
+      "candidate_ref": "44aa5152d90e00d659be4fa4e14d66182f18f701",
+      "evidence_refs": [
+        {
+          "path": "specs/active_frontier.json",
+          "frontier_key": "GUI-WRITE-PATH"
+        },
+        {
+          "path": ".beads/issues.jsonl",
+          "issue_id": "dat-gui-write-path-qiu"
+        },
+        {
+          "path": "specs/workflow_delivery_policy.json"
+        },
+        {
+          "path": "specs/workflow_delivery/gui-write-path.contract.json",
+          "sha256": "815e127dca1b12b63ae72b011121d89d1276f105cfa9338331799822ca0eee94"
+        }
+      ],
+      "requirement_ref": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md#WDQ-I05",
+      "observed_state": {
+        "key": "GUI-WRITE-PATH",
+        "issue_id": "dat-gui-write-path-qiu",
+        "state": "blocked",
+        "authorization": "planning",
+        "dependencies": [
+          "dat-marking-menu-shell-g0w",
+          "dat-project-write-ownership-lock-0ne",
+          "dat-manual-foundation-contracts-fsw"
+        ],
+        "claim": null,
+        "next": "GWP-C01"
+      },
+      "open_prerequisites": [
+        "dat-marking-menu-shell-g0w",
+        "dat-project-write-ownership-lock-0ne"
+      ],
+      "readiness_submission": false,
+      "enrollment_asserted": false,
+      "acceptance_asserted": false
+    }
+  ],
+  "append_policy": "Append observations with evidence and exact times; corrections supersede prior events rather than deleting them. Measurement begins only at the first actual readiness submission after enrollment."
+}

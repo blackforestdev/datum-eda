@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "record_type": "actual_cohort_adoption_ledger",
+  "frontier_key": "UVT-S5A-BUILD",
+  "issue_id": "dat-uvt-s5a-build-1wv",
+  "contract": {
+    "path": "specs/workflow_delivery/s5a.contract.json",
+    "sha256": "033b5f8c10d41b45e6702c0950c4f2990c0288f9454e2ab365b7b69c1ce2577d",
+    "status": "draft; six unresolved C01 questions"
+  },
+  "installed_coverage_authority": "1644e2129f4ff83cec1cdf0e6e13534c3b258e8e",
+  "enrollment_authority": null,
+  "producer_session": null,
+  "reviewer_session": null,
+  "measurement_started_at": null,
+  "accepted_at": null,
+  "metrics": {
+    "specification_gaps_before_execution": null,
+    "specification_gaps_after_execution": null,
+    "corrective_commits": null,
+    "gate_refusals_by_reason": null,
+    "handoffs": null,
+    "owner_correction_rounds": null,
+    "unresolved_defects": null
+  },
+  "missing_data": "No real readiness submission after enrollment or complete adoption outcome exists in the inspected record. Null is unmeasured, not zero. No inferred performance improvement.",
+  "events": [
+    {
+      "id": "WDQ-I05-s5a-0001",
+      "observed_at": "2026-09-10T22:52:54Z",
+      "type": "pre_enrollment_status_observation",
+      "candidate_ref": "44aa5152d90e00d659be4fa4e14d66182f18f701",
+      "evidence_refs": [
+        {
+          "path": "specs/active_frontier.json",
+          "frontier_key": "UVT-S5A-BUILD"
+        },
+        {
+          "path": ".beads/issues.jsonl",
+          "issue_id": "dat-uvt-s5a-build-1wv"
+        },
+        {
+          "path": "specs/workflow_delivery_policy.json"
+        },
+        {
+          "path": "specs/workflow_delivery/s5a.contract.json",
+          "sha256": "033b5f8c10d41b45e6702c0950c4f2990c0288f9454e2ab365b7b69c1ce2577d"
+        }
+      ],
+      "requirement_ref": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md#WDQ-I05",
+      "observed_state": {
+        "key": "UVT-S5A-BUILD",
+        "issue_id": "dat-uvt-s5a-build-1wv",
+        "state": "specified",
+        "authorization": "planning",
+        "dependencies": [
+          "dat-s5-selection-visual-contract-zid"
+        ],
+        "claim": null,
+        "next": "S5A-C01"
+      },
+      "open_prerequisites": [],
+      "readiness_submission": false,
+      "enrollment_asserted": false,
+      "acceptance_asserted": false
+    }
+  ],
+  "append_policy": "Append observations with evidence and exact times; corrections supersede prior events rather than deleting them. Measurement begins only at the first actual readiness submission after enrollment."
+}
