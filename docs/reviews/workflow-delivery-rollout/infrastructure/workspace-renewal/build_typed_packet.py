@@ -32,9 +32,12 @@ def main():
     variants.add_argument("--index-repair", action="store_true")
     variants.add_argument("--sequencing-repair", action="store_true")
     parser.add_argument("--paired-workspace", action="store_true")
+    parser.add_argument("--paired-real", action="store_true")
     args = parser.parse_args()
     if args.paired_workspace and not args.sequencing_repair:
         parser.error("--paired-workspace requires --sequencing-repair")
+    if args.paired_real and not args.paired_workspace:
+        parser.error("--paired-real requires --paired-workspace")
     pin = "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf" if args.index_repair else PIN
     typed = WORKSPACE + "index-repair-typed/" if args.index_repair else TYPED
     if args.sequencing_repair:
@@ -42,6 +45,8 @@ def main():
         typed = WORKSPACE + "sequencing-typed/"
         if args.paired_workspace:
             typed = WORKSPACE + "paired-typed/"
+        if args.paired_real:
+            typed = WORKSPACE + "paired-real-typed/"
     root, runtime, observations, output = (getattr(args, key).resolve()
         for key in ("root", "runtime", "observations", "output"))
     retained = root / ".git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909"
@@ -70,6 +75,7 @@ def main():
     assert assembled["source_commit"] == pin and len(assembled["observations"]) == 1314
     if args.paired_workspace:
         assert assembled["paired_capture_store"] == str(root / ".git/datum-wdq/proposals/sequencing-paired-evidence-20260910")
+    assert bool(assembled.get("paired_real_captures_included")) == args.paired_real
     output.mkdir()
 
     class Overlay:
@@ -199,6 +205,8 @@ def main():
             common += [blob(path.relative_to(root).as_posix())
                        for path in sorted((root / WORKSPACE).glob("paired-*.json"))]
             common.append(blob(WORKSPACE + "run_paired_workspace.py"))
+        if args.paired_real:
+            common += [blob(WORKSPACE + name) for name in ("run_paired_real.py", "retain_real_prestate.py")]
         common += [blob(WORKSPACE + name) for name in
                    ("assemble_observations.py", "build_typed_packet.py", "freeze_sequencing_source.py")]
         review_record = tree.json(WORKSPACE + "sequencing-live-review-observation.json")
@@ -225,6 +233,8 @@ def main():
         session = "wdq-sequencing-repair-producer-20260910"
         if args.paired_workspace:
             session = "wdq-sequencing-paired-producer-20260910"
+        if args.paired_real:
+            session = "wdq-sequencing-paired-real-producer-20260910"
     for scenario in contract["scenarios"]:
         sid = scenario["id"]
         rows = [row for row in assembled["observations"] if row["case_id"].startswith(sid)]
