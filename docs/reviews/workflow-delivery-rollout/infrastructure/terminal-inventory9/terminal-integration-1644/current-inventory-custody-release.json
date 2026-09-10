@@ -1,0 +1,23 @@
+{
+  "candidate": "1644e2129f4ff83cec1cdf0e6e13534c3b258e8e",
+  "batch": "current-inventory",
+  "observations": 9,
+  "artifact_hashes_verified": 63,
+  "full_states_unchanged": true,
+  "terminal_processes_verified_absent": [
+    2301473,
+    2309213,
+    2332128,
+    2359101,
+    2364144,
+    2382159,
+    2410517,
+    2415198,
+    2420436,
+    2437788
+  ],
+  "released_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/terminal-integration-1644/current-inventory/fixture",
+  "recoverable_retired_fixture": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/terminal-integration-1644/current-inventory/fixture-retired-after-producer",
+  "activation_performed": false,
+  "scope": "Producer complete; original pathname released only for independently restored exact replay."
+}

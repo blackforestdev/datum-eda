@@ -1,0 +1,510 @@
+{
+  "files": [
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/current-inventory.json",
+      "sha256": "236d943ce41450e4ee4886c5b875af5eaee201a59c2c207d90a3a50b8d1b6c62",
+      "size": 102885
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-comparison.json",
+      "sha256": "36669f8c1ec9c615891e666f833e90b7a20bad865c161758cc19afdfe4ab4031",
+      "size": 13086
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-check/after.json",
+      "sha256": "f082de6a862fb5881ccac7bb5d8be0de7791e55eefe6355defae17c39981dbd6",
+      "size": 2143001
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-check/before.json",
+      "sha256": "f082de6a862fb5881ccac7bb5d8be0de7791e55eefe6355defae17c39981dbd6",
+      "size": 2143001
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-check/calls.jsonl",
+      "sha256": "ab580a6909b508c6e9a9f9c8f0d436a9d59c38b9d6997e9a3c8b621ddb7f1108",
+      "size": 62614
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-check/invocation.json",
+      "sha256": "fe0b3c193066d1820992f127db6ea4fcbba4e8237d1b0f2afc5c39da62b581ae",
+      "size": 1689
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-check/prestate-archive.json",
+      "sha256": "db627511c70fdcc15dd4c65bce2d4537b5ddeac0fa605d8e8a194fd7eb3e94c6",
+      "size": 423111
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-check/result.json",
+      "sha256": "740c94d1da90679dac914d12403cac8747f08dddd3056a48cd632cfe9753f5c8",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-check/started.json",
+      "sha256": "b44650ffd250f8d41b691954cebf27f39b7bf1a2290384b22387715cadf4f23e",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-check/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-check/stdout.bin",
+      "sha256": "97953a37f08035dd45e3845ea195eac78f37e92676c78d4da60eab00aecbffa5",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-check-prestate.tar.xz",
+      "sha256": "b2f66cba3a0f5f2f9e4b389b4c0d0de8cc6c5b2fb536aead97e993c63ae5d611",
+      "size": 1285532
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-details/after.json",
+      "sha256": "f082de6a862fb5881ccac7bb5d8be0de7791e55eefe6355defae17c39981dbd6",
+      "size": 2143001
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-details/before.json",
+      "sha256": "f082de6a862fb5881ccac7bb5d8be0de7791e55eefe6355defae17c39981dbd6",
+      "size": 2143001
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-details/calls.jsonl",
+      "sha256": "495f83c2b8c5108146a998ee46cd28039497e742f29c8003ca454b87b6daf85d",
+      "size": 62652
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-details/invocation.json",
+      "sha256": "afc82d30962f881731edb4da5899ab09f2a84ddd9664a71c997b1e4bf62c3d9b",
+      "size": 1728
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-details/prestate-archive.json",
+      "sha256": "fd9274733720f19b41473ecf6dfd97a40caae8b5f24d27b107fc2f66e3de9ba8",
+      "size": 423113
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-details/result.json",
+      "sha256": "721ab83fb9e1d57b080c90974552946e2fcd1bb9aa3c751b3ac34349578b18c4",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-details/started.json",
+      "sha256": "094c4d1972c592350c9a42dcd79f873e4fd36ea2e6fa7edf35c63a0a327e8a2b",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-details/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-details/stdout.bin",
+      "sha256": "97953a37f08035dd45e3845ea195eac78f37e92676c78d4da60eab00aecbffa5",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/inventory-plus-unknown-source-S-details-prestate.tar.xz",
+      "sha256": "c53722eacbb6cd429cf14c31797b31eeca9f971820ecc988049e9ea2fa14a7fc",
+      "size": 1285780
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/materialized-inventory.json",
+      "sha256": "0d657c7afb05d2bc124411b52dc6f29a66240a9d2defe416d53d246dc611f4e1",
+      "size": 200755
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observations.json",
+      "sha256": "33e2f44f049a0aa080f1c7d2ffb2fd5adeaf62f981f8d9bb62d7048d8f599a59",
+      "size": 2615
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-C/after.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-C/before.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-C/calls.jsonl",
+      "sha256": "dcad7c5031f185369ef2b9935142d87cf5ea2b0c965b9799032ac060b4c71be9",
+      "size": 62269
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-C/invocation.json",
+      "sha256": "d42b3fb9c04cf3d8eb216eed01d2f79d4feb9f426e2e215c1d1dfca8ac3378ba",
+      "size": 1886
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-C/prestate-archive.json",
+      "sha256": "bae4496e0636afd0ac5a5925415110f9a8b690b89061866ae133cc92b8bf7aea",
+      "size": 423053
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-C/result.json",
+      "sha256": "2d39c445f0555b61170760ce51e2ea7b785f3fe912729f499bcc00df1f08df92",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-C/started.json",
+      "sha256": "04d035978f8a0e2604da6702b5ee70d0d4b753b2397455c675ffd4ca7d6ca4a2",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-C/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-C/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-C-prestate.tar.xz",
+      "sha256": "41b4171c330a802ef8937f30cf136b61eb7a7438641185ebdb3794c548fbcd71",
+      "size": 1285600
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-H/after.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-H/before.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-H/calls.jsonl",
+      "sha256": "e9c67e1d8f1bb1b60ab8708c18eeb7bf66b3ad1ddd2c9811b759a20f367e538e",
+      "size": 72758
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-H/invocation.json",
+      "sha256": "d564650e4fb284a294ed63446332fde572ece26ac9812df35286f7d34f682dad",
+      "size": 1312
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-H/prestate-archive.json",
+      "sha256": "69751ca69f4df3feb8327fced11db0d43f2ad7cfb2dd8808a43d509708e0499e",
+      "size": 423053
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-H/result.json",
+      "sha256": "ce05edf3be03415b763a7c1abc9813ab7e6c6c991021c80064a268d9b5c372b5",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-H/started.json",
+      "sha256": "5bdbcf64c36ea4f6d5f625eea3c02ef543e2fe156e4a31096e937ab321fd10a8",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-H/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-H/stdout.bin",
+      "sha256": "f0d0ee87bf357acd84df5a2e252bd27091dd7c564c954e44b6d6250b4d549fe1",
+      "size": 365
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-H-prestate.tar.xz",
+      "sha256": "2cab8d5d14d3682f86522849a46e0756702c76d1ecae35667629580b0f0bc63f",
+      "size": 1285712
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-R/after.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-R/before.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-R/calls.jsonl",
+      "sha256": "1faa3d85e0451985d9453cec4eedf905253798c56ec5fc9245f7951ba836c236",
+      "size": 62320
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-R/invocation.json",
+      "sha256": "0ca298674634600aa71da70bc0ca95db67353aebe70d264a98b0a821abbc326c",
+      "size": 1936
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-R/prestate-archive.json",
+      "sha256": "eabe936d4eee2c68ed553091efbfd16ce4d4f5efd31903d67ae0a05ea51db5df",
+      "size": 423053
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-R/result.json",
+      "sha256": "1b1fa5aa87a2a9ba5702f87c9aca62c2149ccf0c788e13cfc332980e39c1289f",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-R/started.json",
+      "sha256": "de99ad868b9a4d00f489276ed1b6078be5698bc858c778c197d1571693a3a20d",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-R/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-R/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-R-prestate.tar.xz",
+      "sha256": "41b4171c330a802ef8937f30cf136b61eb7a7438641185ebdb3794c548fbcd71",
+      "size": 1285600
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-check/after.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-check/before.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-check/calls.jsonl",
+      "sha256": "0483d441b4270a8492ae0e84f3b23814a3b01822ceabcc5781e4d1a4afcda3d3",
+      "size": 62614
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-check/invocation.json",
+      "sha256": "9fd60cdd873621bb80784bd5b3d1cd04ed921267f82de5b302adac31978de880",
+      "size": 1687
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-check/prestate-archive.json",
+      "sha256": "975f6e23efc7463d2d0bab080d07652653fb1825b71c084899ce58dc77c7f3ab",
+      "size": 423059
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-check/result.json",
+      "sha256": "b5d2629a8955566bdeb5febdd91276e06747ba364e3e50de44f48b60d584a9cb",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-check/started.json",
+      "sha256": "887d446066ec19ebca93af7df43b6ad7f5a93367b239dfca83a5ec3a00212a1f",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-check/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-check/stdout.bin",
+      "sha256": "c51a76111b59dfba3ecd3a97079d25fff3de21a5195c5c0b90cec162b1540ca9",
+      "size": 32
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-check-prestate.tar.xz",
+      "sha256": "41b4171c330a802ef8937f30cf136b61eb7a7438641185ebdb3794c548fbcd71",
+      "size": 1285600
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-details/after.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-details/before.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-details/calls.jsonl",
+      "sha256": "2b12f7bd2a735b2c037823cc76454bacfffc45f82646e5fede6bd78e5b52b565",
+      "size": 62652
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-details/invocation.json",
+      "sha256": "fd603040e2290afaec0d3b1df24aa53ce17bf36e8e213917d38bcfc716fed844",
+      "size": 1726
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-details/prestate-archive.json",
+      "sha256": "fc57d9a090eae4d3e843a05171e953087676522a70f7af1824c5a4c40422ec86",
+      "size": 423061
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-details/result.json",
+      "sha256": "1a23ef5735ecff8fcfa50db6fa871fc959bb257e8ff8eb10b430cade46362bae",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-details/started.json",
+      "sha256": "41103b55b1e5039a933870b56a81093f6f4e17dbeb6a0e408c67ae0b7e6470db",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-details/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-details/stdout.bin",
+      "sha256": "52cc5d0bc323fbba4a25c83100054d44bb1a03e44b560cdda3e0898b6954d74e",
+      "size": 10456
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/observed-workspace-inventory-S-details-prestate.tar.xz",
+      "sha256": "84875e31083b9328b15e26020dfbcec3c81b484758aef334fc3c6ab97ba6e0aa",
+      "size": 1285820
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-check/after.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-check/before.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-check/calls.jsonl",
+      "sha256": "27ee9eec831436babd37a39160272bf5794dd54f685a13509ad6ea7149c3fb70",
+      "size": 62614
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-check/invocation.json",
+      "sha256": "991cf8ae4dbdcc3e9e9ae98da4718ce1c2970a8a993e3e67eb4405537e22685f",
+      "size": 1687
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-check/prestate-archive.json",
+      "sha256": "db21a80db6857e4677eaaf327fa243fc3c7a3c3bd734aae383527faef32d275a",
+      "size": 423059
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-check/result.json",
+      "sha256": "1841e2a7d96491432d0d00aa997cd7dd31c9fb7480ee0bb3bd24511a5f155229",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-check/started.json",
+      "sha256": "2b5430ea85b6db6d8dde24352c67e012d8c0318d41886cc52c9ff94570e429f3",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-check/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-check/stdout.bin",
+      "sha256": "c51a76111b59dfba3ecd3a97079d25fff3de21a5195c5c0b90cec162b1540ca9",
+      "size": 32
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-check-prestate.tar.xz",
+      "sha256": "8c8c7e8f4e1742bad53bbe353e2781a6622b4f96ede32d883c1634216a16076f",
+      "size": 1285992
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-details/after.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-details/before.json",
+      "sha256": "b4490768387c064997825ebb2bb42d20c38efdc2210a17d2e359b8e146dceea4",
+      "size": 2142841
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-details/calls.jsonl",
+      "sha256": "9b4e3ee0b896cdf87eb18fcf1ff461fac2186aaf075aa3a13c565aa0724856b2",
+      "size": 62652
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-details/invocation.json",
+      "sha256": "aa86694d5b4685426346f2a7a014efd3b81e0d5080cabdfb63803f0e27f22149",
+      "size": 1726
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-details/prestate-archive.json",
+      "sha256": "69fd1240ec6d86d797050ea64bf55eb1e74d7adac7fcec86f90a860d7a66c184",
+      "size": 423061
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-details/result.json",
+      "sha256": "5b1f442d93ed8cc9a6b5998c06abdc19103bbb839acff94957043ac4179a2708",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-details/started.json",
+      "sha256": "8f36e7ea2de212f0161b78d64afb941edf8d61727b2726933806e8d52de9a449",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-details/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-details/stdout.bin",
+      "sha256": "52cc5d0bc323fbba4a25c83100054d44bb1a03e44b560cdda3e0898b6954d74e",
+      "size": 10456
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory/restored-workspace-inventory-S-details-prestate.tar.xz",
+      "sha256": "fd0d19166d9dcaa14c89ab54244a965848260f7b9e6a8bc473d1d9205ddf07f9",
+      "size": 1285892
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory-command.json",
+      "sha256": "7037cea1985e8ee65e4722e71256bf16ee2e42b0b1c3f0be27649cb54be2797d",
+      "size": 23894
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory-custody-release.json",
+      "sha256": "4fc44dba1b5f5dfdb07cd9581f24e6cbf625c783bc9985d545312552bae44a84",
+      "size": 800
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory-process.json",
+      "sha256": "b674f01775c95468ee3db35b8362e7d5482047b29a5573db11e8c8a050d28c46",
+      "size": 288
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory-started.json",
+      "sha256": "accddd8b7b590465378dd00194428e8cd0c6b3435ac09addac32a010eb50cfe3",
+      "size": 58
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory-stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-inventory9/terminal-integration-1644/current-inventory-stdout.bin",
+      "sha256": "78b8ac88afc4e3504a79617bc7a1550b18c90bbaa7100c220856dbf82c0bd736",
+      "size": 2360
+    }
+  ],
+  "source_bundle": {
+    "path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/terminal-real-roadmap-1644/source.bundle",
+    "sha256": "f6912f89b8bb078b619b85292e5fa1415916eec065c8d45dcce942874f432b78",
+    "retained_separately": true
+  },
+  "scope": "Nine producer inventory observations, all456actual ignored/local paths and exact restoration metadata; separately retained sourcebundle required, not standalone portable or independent completion."
+}
