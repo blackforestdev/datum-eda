@@ -41,8 +41,24 @@
     "gates": ["source health: pass (1922 source files)", "staged diff check: pass"],
     "limits": "Synthetic development regression only. The new test must join final input/scope inventories before renewed source freeze. No refreshed producer proof, actual-main publication, completed independent replay, or activation is asserted."
   },
+  "review_inspector_construction": {
+    "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+    "retained_ref": "refs/datum-wdq/candidates/sequencing-review-inspector-20260910",
+    "implementation": "Separate --inspect-review with closed review-inspection-request, matching live COMPAT/RECHECK state and claims, unchanged other lanes, full history and exact scope, contract/readiness prerequisites, environment/support checks and repeated protected-state equality. Explicit false evidence/publication/activation flags; other enrolled proof and ordinary changed-input escalation remain enforced. Activation still calls only strict final inspection.",
+    "normative_reconciliation": "Producer inspection feeds COMPAT proof first. Subsequent RECHECK independently repeats inspection into its replay/review. Neither earlier packet depends on future final inspection. Later evidence/governance commits require explicit delta reconciliation and strict full-evidence inspection at claim-free I04 before activation.",
+    "inventory": {"source_scope_paths": 152, "read_inputs": 164, "added_paths": ["scripts/test_workflow_delivery_initial_migration.py", "scripts/test_workflow_delivery_review_inspection.py", "scripts/workflow_delivery_review_inspection.py"], "production_roots_changed": false},
+    "verification": [
+      {"modules": ["test_workflow_delivery_activation_preflight", "test_workflow_delivery_activation", "test_workflow_delivery_initial_migration", "test_workflow_delivery_review_inspection", "test_workflow_delivery_coverage", "test_workflow_delivery_coverage_entrypoints", "test_workflow_delivery_preflight_cli"], "tests": 89, "exit_code": 0, "elapsed_seconds": 112.429},
+      {"modules": ["test_workflow_coverage_proposal", "test_workflow_delivery_review_inspection", "test_workflow_delivery_contract"], "tests": 32, "exit_code": 0, "elapsed_seconds": 21.841},
+      {"modules": ["test_workflow_delivery_review_inspection", "test_workflow_delivery_preflight_cli"], "tests": 31, "exit_code": 0, "elapsed_seconds": 40.814}
+    ],
+    "corrected_failures": ["Synthetic RECHECK fixture initially lacked completion evidence for its completed COMPAT step; added its existing fixture evidence marker.", "Historical eight-path regression initially selected a snapshot preceding reconciliation; pinned the retained reconciled source4e snapshot, preserving the original eight-path assertion.", "Inserted review-inspection inventory path was out of lexical order; sorted exact entries without expanding scope."],
+    "independent_source_review": "wdq-independent-review-20260906 found no concrete implementation blocker. Follow-up normative review identified producer/independent packet timing ambiguity; corrected all controlling affected sections to preserve producer-before-review sequencing. Reviewer performed no tests or captures.",
+    "gates": ["evidence traceability: pass (25 routes, 119 artifacts)", "spec governance: pass (249 candidate documents)", "source health: pass (1924 files)", "staged diff check: pass"],
+    "limits": "Committed construction and synthetic regression only. No renewed real producer proof, independent replay, live publication, activation or milestone completion. Historical packets retain original identities."
+  },
   "remaining": [
-    "Implement and reconcile the distinct non-authorizing review-time inspection path and its regression cases.",
+    "Freeze the reconciled source/authority identities and assemble the honest exact real-roadmap pre-review candidate for renewed observations.",
     "Assess changed source and authority identities, then renew affected producer evidence and obtain independent review.",
     "Complete exact owner activation, installed verification, three actual adoption cohorts and final acceptance."
   ],
