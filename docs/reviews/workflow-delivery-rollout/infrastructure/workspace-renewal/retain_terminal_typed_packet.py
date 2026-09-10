@@ -19,6 +19,7 @@ def main():
     root = here.parents[4]
     sys.path.insert(0, str(here))
     from assess_terminal_inputs import FINAL
+    from build_terminal_packet import finding_overlay
     proposals = root / ".git/datum-wdq/proposals"
     runtime = proposals / "terminal-owner-20260910"
     assessment = proposals / "terminal-final-assessment-01"
@@ -55,16 +56,19 @@ def main():
             if path.is_dir():
                 continue
             relative = path.relative_to(overlay).as_posix()
-            assert (relative == prefix + "proof.json" or relative.startswith(prefix + "terminal-renewal/")
+            assert (relative in {prefix + "proof.json", ".beads/issues.jsonl"} or relative.startswith(prefix + "terminal-renewal/")
                     or relative == prefix + "terminal-owner/inventory.json"), relative
             raw = path.read_bytes()
+            if relative == ".beads/issues.jsonl":
+                assert raw == finding_overlay(git("show", FINAL + ":" + relative),
+                                              git("show", main_head + ":" + relative))
             inventory.append({"path": relative, "size": len(raw), "sha256": sha256(raw)})
             oid = git("hash-object", "-w", "--stdin", data=raw).decode().strip()
             git("update-index", "--add", "--cacheinfo", "100644", oid, relative, env=env)
         tree_id = git("write-tree", env=env).decode().strip()
     message = ("test(workflow): retain exact terminal assessment packet\n\n"
         "Problem: Prospective overlay checks do not establish committed-tree evidence integrity.\n"
-        "Change: Overlay only exact producer packet artifacts on normative source0abb; preserve source and tracker.\n"
+        "Change: Overlay exact producer artifacts and six concrete finding rows on source0abb; preserve runtime and every other tracker row.\n"
         "Proof: Committed input/authority, proof, environment, correlations and inventory checks follow; no independent completion asserted.\n"
         "Roadmap: WDQ-I04, dat-wdq-rollout-implementation-ffy; no main publication, product, dependency or licensing changes.\n")
     candidate = git("commit-tree", tree_id, "-p", FINAL, data=message.encode()).decode().strip()
