@@ -31,12 +31,17 @@ def main():
     variants = parser.add_mutually_exclusive_group()
     variants.add_argument("--index-repair", action="store_true")
     variants.add_argument("--sequencing-repair", action="store_true")
+    parser.add_argument("--paired-workspace", action="store_true")
     args = parser.parse_args()
+    if args.paired_workspace and not args.sequencing_repair:
+        parser.error("--paired-workspace requires --sequencing-repair")
     pin = "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf" if args.index_repair else PIN
     typed = WORKSPACE + "index-repair-typed/" if args.index_repair else TYPED
     if args.sequencing_repair:
         pin = "1d48f249dc7071fc3718b345a4ab16b366af43be"
         typed = WORKSPACE + "sequencing-typed/"
+        if args.paired_workspace:
+            typed = WORKSPACE + "paired-typed/"
     root, runtime, observations, output = (getattr(args, key).resolve()
         for key in ("root", "runtime", "observations", "output"))
     retained = root / ".git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909"
@@ -63,6 +68,8 @@ def main():
     assert contract["proof_path"] == INFRA + "proof.json"
     assembled = read(observations / "dispatch-observations.json")
     assert assembled["source_commit"] == pin and len(assembled["observations"]) == 1314
+    if args.paired_workspace:
+        assert assembled["paired_capture_store"] == str(root / ".git/datum-wdq/proposals/sequencing-paired-evidence-20260910")
     output.mkdir()
 
     class Overlay:
@@ -159,6 +166,8 @@ def main():
         archives = sorted(set(archives))
     if args.sequencing_repair:
         archives = sorted((root / WORKSPACE).glob("sequencing-*.tar.xz"))
+        if args.paired_workspace:
+            archives += sorted((root / WORKSPACE).glob("paired-*.tar.xz"))
     archive_blobs = [blob(path.relative_to(root).as_posix()) for path in archives]
     fixture = write(typed + "fixtures.json", {"schema_version": 1, "source_commit": pin,
         "capture_archives": archive_blobs, "raw_capture_paths": sorted({str(Path(row["capture_path"]).parent)
@@ -186,6 +195,10 @@ def main():
     if args.sequencing_repair:
         common = [blob(path.relative_to(root).as_posix())
                   for path in sorted((root / WORKSPACE).glob("sequencing-*.json"))]
+        if args.paired_workspace:
+            common += [blob(path.relative_to(root).as_posix())
+                       for path in sorted((root / WORKSPACE).glob("paired-*.json"))]
+            common.append(blob(WORKSPACE + "run_paired_workspace.py"))
         common += [blob(WORKSPACE + name) for name in
                    ("assemble_observations.py", "build_typed_packet.py", "freeze_sequencing_source.py")]
         review_record = tree.json(WORKSPACE + "sequencing-live-review-observation.json")
@@ -210,6 +223,8 @@ def main():
     session = "wdq-index-repair-producer-20260910" if args.index_repair else "wdq-compat-producer-20260909"
     if args.sequencing_repair:
         session = "wdq-sequencing-repair-producer-20260910"
+        if args.paired_workspace:
+            session = "wdq-sequencing-paired-producer-20260910"
     for scenario in contract["scenarios"]:
         sid = scenario["id"]
         rows = [row for row in assembled["observations"] if row["case_id"].startswith(sid)]

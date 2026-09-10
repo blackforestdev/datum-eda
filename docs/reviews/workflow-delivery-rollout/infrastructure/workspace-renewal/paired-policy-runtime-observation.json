@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "runtime_source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "completed_batches": [
+    {"batch": "workspace-policy-legacy", "count": 75, "process_exit_code": 0, "observations_sha256": "1ed95fc6c993dbb343a308f70b4e0c9bcc626ac7da06b7f7227d80e3171dab3f", "original_fixture_path": "/tmp/tmpd20fvjpz"},
+    {"batch": "workspace-runtime-retry-01", "count": 52, "process_exit_code": 0, "observations_sha256": "c1e46313cc6b8428a6fb56c5e8d58b1096197a87c9b2d853306c18367d939005", "original_fixture_path": "/tmp/tmp1044_7x2"}
+  ],
+  "all_expected_outcomes_verified": true,
+  "all_127_prestate_archive_hashes_verified": true,
+  "custody": "Both producer processes finished successfully and removed their owned temporary fixtures. Original paths were checked absent, including symlink checks, before explicit exclusive transfer to the independent reviewer for atomic exact-path restoration and sequential replay. Cache filename binding is preserved; no regeneration or clock modification.",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-policy-runtime-captures.tar.xz",
+    "sha256": "4b0efc2cdf4eb8cbb62d6a842340d417371b3224a3715e2aa091f0a19e383d06",
+    "tar_compare_exit_code": 0,
+    "scope": "127 raw captures, per-case full pre-state archives and exact command/process records. Duplicate final fixture directories omitted."
+  },
+  "assembly_reconciliation": {
+    "observations": 1314,
+    "paired_replacements": 362,
+    "unchanged_observations": 952,
+    "ordered_case_surface_phase_identities_unchanged": true,
+    "replacement_invocation_ids_are_fresh": true
+  },
+  "historical_attempts": "The earlier ownership lease expiry and first runtime wrapper NameError remain retained. Old producer packets are not silently updated or relabeled.",
+  "limits": "Producer corrections only; exact independent replay, revised typed packet review, final publication/owner activation and native adoption remain separate obligations.",
+  "independent_replay_complete": false,
+  "activation_performed": false
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "runtime_source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "prospective_baseline": "377323b29705ccccd6f8fa91f663d7d91c6d03c4",
+  "assembly": {
+    "mode": "--sequencing-repair --paired-workspace",
+    "exit_code": 0,
+    "observations": 1314,
+    "paired_replacements": 362,
+    "unchanged_observations": 952,
+    "ordered_case_surface_phase_identities_unchanged": true,
+    "dispatch_observations_sha256": "c78ce6952afa0aaabbe13a21839bf9f97a7b0a0b47c5cf10e751ace63f48d070",
+    "archive": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-assembled-observations.tar.xz",
+    "archive_sha256": "3b233bcc4c7b89ea35315a9aa6aad776a488cc887c816f426239c617862d842b",
+    "tar_compare_exit_code": 0
+  },
+  "typed_validation": {
+    "mode": "--sequencing-repair --paired-workspace",
+    "exit_code": 0,
+    "packet_sha256": "0cf25d8c0ead13e3171d370040c15240715ff807edcc856f5eb4f5a35d600b15",
+    "authority_sha256": "b3130c9322932a9d26e967d6ecb55c8b1591892636d26ac3cdd98e175475ee39",
+    "correlated_event_blobs": 6,
+    "checks": ["proof shape/freshness", "selected headless environment", "artifact roles and dispatch correlations"],
+    "archive": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-typed-packet.tar.xz",
+    "archive_sha256": "833054716d0fbcb32936060954c39fe003939c82065b852fc59a9cd0cd592312",
+    "tar_compare_exit_code": 0
+  },
+  "historical_packet": "sequencing-typed-packet.json retains 12afccdf and its exact candidate; neither record nor raw captures are rewritten.",
+  "limits": "Prospective revised producer packet only. Independent exact replay and remaining real-roadmap replay feasibility, committed candidate reconciliation, independent typed review, final I04 inspection/activation and actual product adoption remain distinct obligations.",
+  "committed_candidate_verified": false,
+  "independent_replay_complete": false,
+  "activation_performed": false
+}
