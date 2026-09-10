@@ -1,19 +1,49 @@
 """Build explicitly reassessed producer evidence; never publish or accept it."""
 
 from collections import Counter
+import argparse
 import json
 from pathlib import Path
 import subprocess
 import sys
 
 
+FINDING_IDS = frozenset({
+    "dat-wdq-workspace-inputs-zmt", "dat-wdq-index-refresh-ogw",
+    "dat-wdq-proof-renewal-cycle-qgb", "dat-wdq-review-publication-cycle-a1y",
+    "dat-wdq-test-default-branch-apx", "dat-wdq-terminal-owner-closeout-a7h",
+})
+
+
+def finding_overlay(original, current):
+    """Import only concrete finding records; preserve every other frozen row."""
+    selected = {json.loads(line)["id"]: line for line in current.splitlines(keepends=True)
+                if json.loads(line)["id"] in FINDING_IDS}
+    assert selected.keys() == FINDING_IDS
+    for key, line in selected.items():
+        assert json.loads(line)["status"] == ("deferred" if key.endswith("-apx") else "closed")
+    result = []
+    seen = set()
+    for line in original.splitlines(keepends=True):
+        key = json.loads(line)["id"]
+        assert key not in seen
+        seen.add(key)
+        result.append(selected[key] if key in selected else line)
+    result.extend(selected[key] for key in sorted(FINDING_IDS - seen))
+    return b"".join(result)
+
+
 def main():
     assert sys.flags.isolated and sys.flags.no_site and sys.flags.dont_write_bytecode
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--packet-name", required=True)
+    args = parser.parse_args()
+    assert Path(args.packet_name).name == args.packet_name and args.packet_name.startswith("typed-packet-")
     here = Path(__file__).resolve().parent
     root = here.parents[4]
     proposals = root / ".git/datum-wdq/proposals"
     assessment = proposals / "terminal-final-assessment-01"
-    output = assessment / "typed-packet-01"
+    output = assessment / args.packet_name
     assert not output.exists()
     runtime = proposals / "terminal-owner-20260910"
     sys.path.insert(0, str(here))
@@ -48,6 +78,8 @@ def main():
     typed = prefix + "typed/"
     payloads = {prefix + name: git("show", archive_commit + ":" + prefix + name)
                 for name in ("raw.tar.xz", "inventory.json")}
+    payloads[".beads/issues.jsonl"] = finding_overlay(
+        base.read(".beads/issues.jsonl"), git("show", "HEAD:.beads/issues.jsonl"))
     terminal_prefix = "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-owner/"
     supplement_commit = "79fe4cd84174b8b31c224fe74346c23ba7ee48d5"
     # The supplement inventory binds exact original helpers, fixture bundles and
@@ -124,9 +156,16 @@ def main():
             "save_reopen": "Retained fresh-process recovery is included; no native Save/reopen assertion."}
         assertions = [{"dimension": name, "expected": value["reason"], "observed": evidence[name], "outcome": "pass"}
                       for name, value in scenario["dimensions"].items() if value["disposition"] == "required"]
+        defects = ["dat-wdq-index-refresh-ogw"]
+        if sid in {"INFRA-S04", "INFRA-S05"}:
+            defects.append("dat-wdq-proof-renewal-cycle-qgb")
+        if sid == "INFRA-S05":
+            defects.extend(["dat-wdq-workspace-inputs-zmt", "dat-wdq-review-publication-cycle-a1y"])
+        if sid == "INFRA-S02":
+            defects.append("dat-wdq-terminal-owner-closeout-a7h")
         results.append({"scenario_id": sid, "outcome": "pass", "actual_visible": visible, "actual_state": state,
             "assertions": assertions, "artifacts": [roles, event, registry, *common],
-            "defects": ["dat-wdq-rollout-implementation-ffy"]})
+            "defects": defects})
     proof = {"schema_version": 1, "contract_sha256": contract_sha256(contract), "producer_session": session,
         "source_commit": FINAL, "input_manifest": manifest,
         "build": {"command": receipt["build_command"], "receipt": receipt_blob, "toolchain": receipt["toolchain"], "source_clean": True},
