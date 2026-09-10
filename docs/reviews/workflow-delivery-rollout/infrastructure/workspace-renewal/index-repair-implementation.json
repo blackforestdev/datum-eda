@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-index-refresh-ogw",
+  "owner_authorization": "index-repair-authorization.json",
+  "candidate": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "candidate_ref": "refs/datum-wdq/candidates/index-preservation-repair-20260910",
+  "candidate_path": ".git/datum-wdq/proposals/index-preservation-repair-20260910",
+  "prior_candidate": "a5122a9430bff2e86cfb90c8e56f72c7aa92d8f4",
+  "source_paths": ["scripts/workflow_delivery_transaction.py", "scripts/test_workflow_delivery_transaction.py"],
+  "change": "Use a disposable sibling copy of the selected Git index for worktree diff, preserving normal accurate stat/content comparison without touching caller index bytes. Disable split-index writes only for the command, clean private index/lock on success or failure, and use the same selected index for untracked enumeration.",
+  "tests": {
+    "command": "python3 -B -m unittest test_workflow_delivery_transaction test_workflow_delivery_source_scopes test_workflow_delivery_workspace test_workflow_delivery_workspace_authority test_workflow_delivery_workspace_consumers test_workflow_delivery_workspace_entrypoints",
+    "cwd": ".git/datum-wdq/proposals/index-preservation-repair-20260910/scripts",
+    "passed": 70,
+    "exit_code": 0,
+    "candidate_source_health_files": 1921,
+    "candidate_diff_check": "pass"
+  },
+  "preserved_red_tests": [
+    "Stale-stat-cache unchanged-file test failed before the repair because index bytes changed.",
+    "Independent review found divergent selected/default index membership could hide src/new.py. Added regression failed with [] before passing selected index to untracked enumeration. First17-test pass and first repair705b0624 are not represented as the final result."
+  ],
+  "retained_failure_fixture_check": {
+    "command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/check_index_repair.py",
+    "exit_code": 0,
+    "changed_paths": ["src/unscoped.py"],
+    "protected_state_unchanged": true,
+    "index_sha256": "b24f6c2077ff85e35398ab10eb7ce85877fe2ee3e62f46ee603f56b9bc20433a",
+    "temporary_indexes_remaining": 0,
+    "scope": "Direct repaired-function check on exact retained failure inputs, not full selector replay."
+  },
+  "remaining": "Reconcile changed source/input construction, renew affected producer evidence and perform distinct independent reinspection/replay before review or publication completion. Historical0e proof keeps its original pins and is not refreshed into validity for this source.",
+  "full_evidence_renewed": false,
+  "independent_review_complete": false,
+  "issue_closed": false,
+  "activation_performed": false,
+  "product_lanes_changed": false,
+  "installed_trust_changed": false
+}

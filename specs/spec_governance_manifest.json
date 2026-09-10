@@ -54,6 +54,11 @@
     "docs/DATUM_PRODUCT_MECHANICS.md"
   ],
   "entries": {
+    "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-authorization.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "Explicit owner approval for isolated index-preservation repair and affected evidence renewal within WDQ-RECHECK, followed by independent review. No additional completion step, product or dependency authority, installed trust change or activation."
+    },
     "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/producer-closeout.json": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",

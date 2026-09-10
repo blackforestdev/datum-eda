@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-INDEX-REPAIR-OWNER-AUTHORIZATION",
+  "owner_response_verbatim": "approved",
+  "recorded_at": "2026-09-10T00:06:59Z",
+  "approved_request": "Repair dat-wdq-index-refresh-ogw in the isolated candidate and renew the affected evidence, without changing product lanes or installed trust.",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-index-refresh-ogw",
+  "scope": "Bounded correction of the independently reproduced Git-index mutation, targeted regression and affected producer/evidence renewal, then distinct independent reinspection. Keep the existing selected review step; no additional roadmap step is created.",
+  "boundaries": [
+    "No product lane, Preferences, prototype, dependency, installed-hook or local-trust changes.",
+    "No waiver of byte preservation or source-path accuracy; the rejected auto-refresh override is not an approved fix.",
+    "Retain historical proof with its original pins. Changed runtime inputs require fresh identified evidence, not relabeling old captures.",
+    "Independent review, exact publication inspection, owner activation, three real cohorts and final acceptance remain required."
+  ],
+  "activation_authorized": false,
+  "repair_complete": false
+}

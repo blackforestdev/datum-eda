@@ -9651,7 +9651,8 @@
         "docs/reviews/workflow-delivery-rollout/infrastructure/owner-dispositions.md",
         "docs/reviews/workflow-delivery-rollout/infrastructure/final-publication/producer-inspection.json",
         "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-repair-authorization.json",
-        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/producer-closeout.json"
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/producer-closeout.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-authorization.json"
       ],
       "state": "in_progress",
       "authorization": "execution",
@@ -9660,13 +9661,13 @@
         "harness": "codex-cli",
         "session": "codex-wdq-workspace-repair-20260909",
         "claimed_at": "2026-09-09T17:08:50Z",
-        "heartbeat_at": "2026-09-09T21:04:52Z",
-        "expires_at": "2026-09-10T01:04:52Z",
+        "heartbeat_at": "2026-09-10T00:06:59Z",
+        "expires_at": "2026-09-10T04:06:59Z",
         "scope": [
-          "WDQ-RECHECK coordination and distinct independent candidate replay/publication inspection; workflow-only governance and Beads transaction; no product or live trust changes"
+          "WDQ-RECHECK owner-approved dat-wdq-index-refresh-ogw isolated repair and affected evidence renewal, then distinct independent replay/publication inspection; workflow-only governance and Beads transaction; no product or live trust changes"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "07a1146c5ce234a8acb907da3a73de16f66721ab"
+        "head": "e9117a7055dd835b344f3d8f3efa0b5e65e560ad"
       },
       "canonical_next": false,
       "parallel": true,
