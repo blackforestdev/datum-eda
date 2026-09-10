@@ -9656,31 +9656,20 @@
         "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/proof-renewal-authorization.json",
         "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-producer-closeout.json",
         "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-repair-authorization.json",
-        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-producer-closeout.json"
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-producer-closeout.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-independent-closeout.json"
       ],
-      "state": "in_progress",
-      "authorization": "execution",
-      "claim": {
-        "agent": "codex",
-        "harness": "codex-cli",
-        "session": "codex-wdq-workspace-repair-20260909",
-        "claimed_at": "2026-09-09T17:08:50Z",
-        "heartbeat_at": "2026-09-10T07:33:42Z",
-        "expires_at": "2026-09-10T15:33:42Z",
-        "scope": [
-          "Owner-authorized WDQ-COMPAT review/publication sequencing and initial mapping migration repair, with affected producer evidence renewal followed by distinct WDQ-RECHECK; workflow-only governance and Beads transaction; preserve historical evidence, product ownership and installed trust; no activation"
-        ],
-        "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "5d507af27394285e68eac09d41137766dfa685c0"
-      },
+      "state": "specified",
+      "authorization": "owner_decision",
+      "claim": null,
       "canonical_next": false,
       "parallel": true,
-      "summary": "WDQ-COMPAT producer renewal is complete for source 1d48f249, exact candidate b704b3ef and packet 12afccdf: 1314 fresh observations plus supported producer pre-review inspection, committed proof and full candidate checks passed. WDQ-RECHECK now selects distinct independent replay and exact candidate reconciliation. All 11 steps and historical evidence remain; defects, product ownership, installed trust, owner activation, three actual adoption cohorts and final acceptance are unchanged.",
+      "summary": "WDQ-RECHECK is technically complete: 1314 exact independent observations, 45 current-source focused tests, typed review of packet fa0b802e and renewed supported inspection of real-main descendant 992ce4f4 passed. Eight of eleven steps are complete. Claim-free WDQ-I04 now requires owner disposition of five findings and bounded preparation of a separate exact mechanism/activation packet; 992ce is not activation-ready. Product ownership, installed trust, three actual adoption cohorts and final acceptance remain unchanged.",
       "dependencies": [],
       "unblocks": [],
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
-        "canonical_next_step_id": "WDQ-RECHECK",
+        "canonical_next_step_id": "WDQ-I04",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -9877,7 +9866,7 @@
           {
             "id": "WDQ-RECHECK",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "complete",
             "action": "Independently replay and inspect the renewed exact compatibility and publication evidence.",
             "depends_on": ["WDQ-COMPAT"],
             "requirement_refs": [
@@ -9886,7 +9875,17 @@
                 "marker": "WDQ-RECHECK"
               }
             ],
-            "completion_evidence": []
+            "completion_evidence": [
+              {
+                "kind": "document",
+                "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-independent-closeout.json",
+                "marker": "WDQ-RECHECK-TECHNICAL-COMPLETE"
+              },
+              {
+                "kind": "commit",
+                "revision": "201b834a51a52aefcffe79164432868c684fbe27"
+              }
+            ]
           },
           {
             "id": "WDQ-I04",
@@ -9904,15 +9903,15 @@
             ],
             "completion_evidence": [],
             "owner_input": {
-              "response_format": "Reply `WORKFLOW-DELIVERY-IMPLEMENTATION: approve ACTIVATE — <exact reviewed packet>`, `WORKFLOW-DELIVERY-IMPLEMENTATION: revise — <correction>`, or `WORKFLOW-DELIVERY-IMPLEMENTATION: defer — <reason>`.",
+              "response_format": "Reply `WORKFLOW-DELIVERY-IMPLEMENTATION: approve I04-PREPARATION fa0b802e11d5dc266f7f3e78bde8a1ac91ac6c1ae4165df8858b56b94c158fee 10f3ffee6c48d247bb88ecf1a4124b293daeb2b3f8e5a4bb651bbca28dae843b`, `WORKFLOW-DELIVERY-IMPLEMENTATION: revise — <correction>`, or `WORKFLOW-DELIVERY-IMPLEMENTATION: defer — <reason>`. Approval covers the listed proposed dispositions and bounded preparation only, not mechanism ratification or activation.",
               "requests": [
                 {
-                  "id": "ACTIVATE",
-                  "question": "After resolving dat-wdq-workspace-inputs-zmt and reinspecting the resulting exact publication-base/candidate, obtain separate owner mechanism ratification and exact activation; verify installed main and safely retire unreferenced support. Five prior dispositions are approved, but the isolated passing candidate is not an activation-ready live packet.",
-                  "recommended_response": "Approve only the exact completed evidence and reviewed scope; preserve all product ownership, trust and independent-review boundaries.",
+                  "id": "I04-PREPARATION",
+                  "question": "For the exact independently reviewed packet fa0b802e and review 10f3ffee, approve resolving dat-wdq-workspace-inputs-zmt, dat-wdq-index-refresh-ogw, dat-wdq-proof-renewal-cycle-qgb and dat-wdq-review-publication-cycle-a1y from their recorded repair/replay evidence, defer the unfixed nonblocking dat-wdq-test-default-branch-apx, and authorize recording those dispositions and preparing the separate claim-free I04 mechanism/activation packet? Candidate 992ce4f4 is a RECHECK review target, not activation-ready; PM042 ratification, strict final inspection and exact activation remain separate owner-controlled requirements.",
+                  "recommended_response": "Approve the four proposed repair resolutions, defer the explicitly retained test-portability debt, and authorize bounded preparation only. Keep I04 pending, all eleven milestones intact, and product lanes and installed trust unchanged until separate exact owner ratification and activation.",
                   "source_ref": {
-                    "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
-                    "marker": "ACTIVATE"
+                    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-independent-closeout.json",
+                    "marker": "WDQ-I04-PREPARATION"
                   }
                 }
               ]

@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-RECHECK-TECHNICAL-COMPLETE",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "runtime_source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "producer_candidate": "06bafeb9979dce91ab710bfaaff7f8f9ca3e72f2",
+  "packet_sha256": "fa0b802e11d5dc266f7f3e78bde8a1ac91ac6c1ae4165df8858b56b94c158fee",
+  "review_sha256": "10f3ffee6c48d247bb88ecf1a4124b293daeb2b3f8e5a4bb651bbca28dae843b",
+  "review_file_sha256": "b352f9b2fe495ba95f46f468f3ca3c2e34b15cb1464857e2ee339ce1b70d5789",
+  "replay_sha256": "bbfdcf2ae7a2a107ba3cbdb3aa2358ec85afec072323ecb9fd5348f83f151f83",
+  "reviewed_base": "8423a5f7311529d625cf7009d3321bfe973436e9",
+  "reviewed_candidate": "992ce4f41da6bdeadc9526cceba3c79e819fa3da",
+  "independent_review_commit": "8423a5f7311529d625cf7009d3321bfe973436e9",
+  "independent_inspection_commit": "201b834a51a52aefcffe79164432868c684fbe27",
+  "requirements": [
+    {
+      "requirement": "Distinct exact replay of all original and added compatibility cases",
+      "evidence": [
+        "independent-sequencing-first-batch.json",
+        "independent-sequencing-second-batch.json",
+        "independent-sequencing-third-batch.json",
+        "independent-sequencing-fourth-batch.json"
+      ],
+      "result": "1314 required fresh observations: 1123 original variants and 191 additions. Expected successes, refusals and interruptions retain their distinct outcomes and disjoint invocation identities; protected states and loaded source bindings verified."
+    },
+    {
+      "requirement": "Current-source workspace groups and real-roadmap clean/mixed state",
+      "evidence": [
+        "independent-sequencing-fourth-batch.json",
+        "independent-sequencing-review.json"
+      ],
+      "result": "172 workspace cases, 15 real-roadmap and 9 observed-inventory cases retain exact restored pre-states. All 45 focused workspace tests pass under the explicitly pinned main-branch test profile; initial 44/45 failure remains recorded and unfixed test-portability debt is tracked. No focused test is double-counted as a matrix observation."
+    },
+    {
+      "requirement": "Exact typed proof, independent session, environment and defect accounting",
+      "evidence": [
+        "paired-real-committed-verification.json",
+        "independent-sequencing-review.json",
+        "recheck-final-candidate.json"
+      ],
+      "result": "Exact FA producer packet and separate replay validate against unchanged 164 inputs and source authority; six correlated event blobs, build/interpreter/fixture identities and independent event identities pass. Technical review approves; all five owner disposition references and owner receipt remain null."
+    },
+    {
+      "requirement": "Renewed exact-publication inspection and subsequent evidence delta reconciliation",
+      "evidence": [
+        "recheck-final-candidate.json",
+        "independent-sequencing-final-inspection.json"
+      ],
+      "result": "Actual supported --inspect-review exits zero for real main 8423a5f7 and descendant 992ce4f4. Independent review checks all 54 imported payloads, 164 inputs, 55 unchanged other Frontier items and exact tracker intake delta. Main and protected state remain unchanged. Final request SHA 58ea61bf12776d98e9257e62f3983af18a51393e9184bb7bddc046567b64a60e; log SHA bd2423fa58ef7cd7200f69d56205def53c074b0c8892a8f1156aecc33667d02e."
+    },
+    {
+      "requirement": "Preserve failed attempts, earlier dispositions and authority boundaries",
+      "evidence": [
+        "independent-sequencing-review.json",
+        "independent-sequencing-final-inspection.json"
+      ],
+      "result": "Original lease/index/fixture failures, bundle-ref setup failure, actual 180-second hook timeout of undetermined cause, default-branch failure and corrected typed assembly attempt remain retained. Earlier owner dispositions remain scoped to earlier packets; none resolves current findings. No product ownership, source permission, prototype, dependency, installed hook or local trust change."
+    }
+  ],
+  "verification_retention": "Coordinating lane independently rehashed final raw archive (363 members), typed review archive (36 members), and final inspection archive (19 members), including descriptor pins where supplied. Typed overlay inventory and all 54 import paths passed the bounded loader. This is additional custody verification, not a substitute for the separate session's actual replay.",
+  "closeout_validation": {
+    "project_status": "PASS, 56 Frontier items; initial render/check refusal for the missing full OWNER marker was corrected in the owned closeout record before successful render/check.",
+    "spec_governance": "PASS, 255 classified specifications.",
+    "evidence_traceability": "PASS, 25 routes and 119 research/prototype artifacts; no authority digest refreshed.",
+    "source_health": "PASS, 1842 source files.",
+    "progress_coverage": "PASS.",
+    "spec_parity": "PASS, 17 inventories.",
+    "diff_whitespace": "PASS.",
+    "independent_closeout_review": "Separate reviewer found no blocking mismatch in exact hashes, 8/11 status, unchanged 55 other lanes, open findings and preparation-only owner boundary.",
+    "standard_drift": {
+      "command": "bash scripts/run_drift_gates.sh",
+      "result": "INCOMPLETE; intentionally terminated for observed resource pressure, exit 143. No full-workspace pass is claimed.",
+      "completed": ["125 workflow tests passed", "3 Cargo resource tests passed", "Cargo resource policy passed", "8 rustfmt tests passed", "Workspace rustfmt check passed with 4 governed ceiling exemptions"],
+      "report_only_diagnostic": "WDQ-ENVIRONMENT: explicit requested environment required. Report-only invocation supplied no environment; it did not assert acceptance or block the script.",
+      "stopped_phase": "Guarded cargo clippy --workspace --all-targets -- -D warnings. No Clippy error is inferred; Clippy and all later battery checks remain incomplete.",
+      "resource_observation": "free -h: 31 GiB RAM total, 29 GiB used, 2 GiB available; 1 GiB swap exhausted. Initial disk preflight passed: shared target 19.8 GiB, target filesystem free 147.4 GiB, tmp free 9.9 GiB.",
+      "termination": "Verified owned bash/guard/Cargo/Clippy group 293716, sent SIGTERM only to that group, collected exit143 and confirmed group absent. Available memory subsequently 9 GiB. No other agent process or shared target was removed.",
+      "followup_intake": "dat-verification-memory-pressure-j1z",
+      "scope": "Separate resource-followup intake, not a new milestone, typed-proof defect disposition, or change to frozen runtime. Workflow-specific replay and governance checks remain separately evidenced."
+    }
+  },
+  "next_step": "WDQ-I04",
+  "milestones_complete": 8,
+  "milestones_total": 11,
+  "owner_packet_marker": "<!-- OWNER:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I04:WDQ-I04-PREPARATION -->",
+  "owner_packet": {
+    "scope": "Request owner review of the exact current evidence and authority for bounded I04 preparation. No choice is recorded here.",
+    "recommended_findings": {
+      "resolve": [
+        "dat-wdq-workspace-inputs-zmt",
+        "dat-wdq-index-refresh-ogw",
+        "dat-wdq-proof-renewal-cycle-qgb",
+        "dat-wdq-review-publication-cycle-a1y"
+      ],
+      "defer": [
+        "dat-wdq-test-default-branch-apx"
+      ]
+    },
+    "requested_authority": "Explicitly approve the four proposed repair resolutions and bounded test-debt deferral, and authorize recording those exact owner dispositions and preparing the separate claim-free I04 mechanism/activation packet. This preparation grant does not ratify PM042, complete I04, activate 992ce or authorize installed changes. I04 remains pending until exact mechanism ratification, separately approved activation and installed verification actually finish.",
+    "activation_boundary": "992ce selects RECHECK and cannot be used as an activation candidate. Both the later real publication base and candidate must be claim-free I04; preserve reviewed source/proof/replay, reconcile authorized governance and owner evidence, then pass strict full-evidence inspection. Present the resulting exact mechanism/candidate/request for separate owner ratification and activation.",
+    "no_new_milestones": "All eleven completion steps are preserved. No product adoption is asserted and none of the three required cohorts is replaced by infrastructure tests."
+  },
+  "independent_recheck_complete": true,
+  "owner_dispositions_recorded": false,
+  "mechanism_ratified": false,
+  "publication_authorized": false,
+  "activation_performed": false,
+  "goal_complete": false
+}
