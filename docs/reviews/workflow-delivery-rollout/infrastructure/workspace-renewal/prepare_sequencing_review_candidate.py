@@ -136,6 +136,7 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
                 dispositions = {key: marker.replace("I04-OWNER-", "I04-TERMINAL-")
                                 for key, marker in dispositions.items()}
                 dispositions["dat-wdq-terminal-owner-closeout-a7h"] = "I04-TERMINAL-OWNER-CLOSEOUT"
+                dispositions = {key: "<!-- " + marker + " -->" for key, marker in dispositions.items()}
             assert live.read(disposition_path)
             approved_review = json.loads(evidence_payloads[EVIDENCE + "review.json"])
             assert approved_review["owner_receipt"] is None
@@ -211,10 +212,13 @@ def main(*, expected_step="WDQ-COMPAT", review_overlay=None,
     result = inspector(root, base=base, candidate=candidate, authority=candidate,
         environment_path="specs/workflow_delivery/rollout.environments.json", publication_review=review)
     if review_overlay is not None:
-        from workflow_delivery_review import validate_independent_review
+        from workflow_delivery_review import validate_independent_review, validate_defect_dispositions
         from workflow_delivery_trust import Trust
-        validate_independent_review(prepared, contract, proof,
+        validated_review = validate_independent_review(prepared, contract, proof,
             authority_sha256(prepared, contract), Trust(prepared, candidate, base), item, environment)
+        if expected_step == "WDQ-I04":
+            validate_defect_dispositions(prepared, validated_review, contract["review_path"],
+                                        Trust(prepared, candidate, base))
     assert git("rev-parse", "HEAD").decode().strip() == base and not git("status", "--porcelain")
     print(json.dumps({"base": base, "candidate": candidate, "ref": ref,
         "publication_review": review, "inspection": result,
