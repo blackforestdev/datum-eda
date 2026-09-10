@@ -9665,7 +9665,7 @@
       "claim": null,
       "canonical_next": false,
       "parallel": true,
-      "summary": "Eight of eleven steps are complete. The owner approved I04-PREPARATION: four reviewed repair findings are resolved and the unfixed nonblocking test-portability issue is deferred. Claim-free I04 preparation may reuse the exact fa0b802e proof and independent replay; PM042 ratification, strict final candidate inspection, exact activation and installed verification remain pending. No repeated replay matrix or broad workspace builds are authorized by this preparation. Preferences ownership, three actual adoption cohorts and final acceptance remain unchanged.",
+      "summary": "Eight of eleven steps are complete. Standing owner authorization covers the remaining workflow. I04 reconciles the tested terminal-owner repair into proposed PM042, coverage and the existing S02 case. Historical proof remains bound to its old inputs; repaired-source evidence, exact activation and installed verification remain due. Preferences acceptance is not an infrastructure prerequisite. Preserve product ownership, three actual adoption cohorts and final acceptance; no broad workspace builds are needed for this repair.",
       "dependencies": [],
       "unblocks": [],
       "completion": {

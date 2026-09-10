@@ -142,7 +142,7 @@
     "specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md": {
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
-      "notes": "WDQ-I02 proposed complete classifications, bounded source permissions and explicit Preferences owner-boundary hold; not installed authority or coordinated handoff approval."
+      "notes": "Proposed complete classifications and bounded source permissions. I04 reconciles terminal external-owner closeout with PM025 without requiring prior Preferences acceptance; not installed authority or an invented product handoff."
     },
     "docs/reviews/workflow-delivery-rollout/coverage-proposal.json": {
       "class": "governed",
@@ -255,7 +255,7 @@
     },
     "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
-      "notes": "WDQ-I02 proposed numbered amendment for broader coverage, clause accounting, separate review and exact promotion. Not ratified or controlling; I03 producer verification, WDQ-REVIEW independent replay and I04 owner disposition remain required."
+      "notes": "Proposed numbered amendment for broader coverage, clause accounting, separate review and exact promotion, including bounded terminal external-owner closeout. Activation-conditional: changed inputs require renewed exact evidence, not relabeling historical proof."
     },
     "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md": {
       "class": "governed", "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",

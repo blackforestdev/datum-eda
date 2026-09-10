@@ -361,6 +361,7 @@
       "preconditions": "Isolated fixture variants for each coverage, category, enrollment, scope and claim case in the normative scenario.",
       "inputs": [
         "Execute each missing/duplicate/new classification, historical/specification/deferred/external boundary and enrollment refusal.",
+        "Exercise the unchanged pending and PM042-valid terminal external-owner closeout successes, and every closeout refusal in WDQ-INFRA-TERMINAL-OWNER through the actual applicable entry points; no product acceptance or source permission follows.",
         "Execute absent/expired/mismatched claim and uncovered/prefix-lookalike path cases through each applicable real entry point; restore valid inputs and repeat."
       ],
       "expected_visible": "Each prohibited transaction is refused with its owning path/lane context; the restored authorized fixture succeeds.",

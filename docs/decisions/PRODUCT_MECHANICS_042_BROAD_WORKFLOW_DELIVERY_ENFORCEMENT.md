@@ -69,9 +69,29 @@ Categories:
   current execution. In-progress execution, new completions or changed completion
   requirements still refuse. Reactivation requires reviewed reclassification.
 - `external_lane`: a non-null coordinated handoff reference and exact preserved
-  authorization, governing documents, prerequisites, completion scope and selected
+  authorization (except terminal owner closeout below), governing documents,
+  prerequisites, completion scope and selected
   step boundary. This is not a session-name exemption. Other steps and selected
   requirement/action authority cannot be rewritten under the exception.
+
+<!-- WDQ-042-TERMINAL-OWNER -->
+An external lane may close its last already-promoted owner decision without a
+second workflow promotion. The promoted item must have owner_decision authority,
+no claim, a selected pending owner-decision step, and every other step complete.
+The resulting item must be landed with none authorization, no claim, no selected
+step, and that same owner step complete with completion evidence. Only that
+step's status/evidence and the terminal authorization/selection may change in
+the otherwise preserved completion contract. Governing documents, dependencies,
+all other steps and selected requirement/action/owner-input fields remain exact.
+
+PM025 still validates the review/decision evidence, closed tracker record and
+valid landing commit. This exception neither authenticates an owner nor supplies
+product acceptance; the owning lane must satisfy its own acceptance requirements.
+It grants no production source permission, successor execution, reopening or
+scope expansion. Those changes retain their coordinated authority requirements.
+An unchanged pending owner decision remains valid; its product acceptance is not
+a prerequisite for installing this workflow rule.
+<!-- WDQ-042-TERMINAL-OWNER:END -->
 
 Only external rows carry `external_handoff_ref`; others use null. No row stores
 a second status, owner, assignee, lease or next-step selection.

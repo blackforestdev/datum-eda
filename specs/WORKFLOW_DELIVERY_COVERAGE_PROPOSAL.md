@@ -44,22 +44,29 @@ do not discard it or reactivate either task under a coverage update.
 
 <!-- WDQ-COVERAGE:EXTERNAL -->
 GLOBAL-PREFERENCES-COMPLETION remains in its externally owned lane. Coverage is
-not permission to change its governing documents, authorization or selected
-boundary. Existing delivery evidence still applies where enrolled input roots
+not permission to change its governing documents or expand its selected
+boundary. Only PM042's terminal-owner closeout exception permits the last
+promoted owner step to clear authorization and selection without a new promotion.
+Existing delivery evidence still applies where enrolled input roots
 overlap this lane. There is no agent-name or Preferences-wide exemption.
 
 <!-- WDQ-COVERAGE:PREFERENCES-HANDOFF-PROPOSAL -->
 At this proposal's baseline the actual Preferences record is specified, with
 owner_decision authorization, no Frontier claim, and GP-CM05V selected. This is
 a read-only observation, not a claim that another terminal session was inspected
-or that its operator agreed to migration. Propose retaining exactly that owner
-boundary with no production source permission. The candidate's external-lane
-rules permit only selected-step status/evidence updates consistent with PM025;
-they refuse authorization, selection, governing-boundary or other-step changes.
-Before activation the owner must explicitly approve this continuing bounded
-hold or coordinate a replacement with the responsible session. Future GP-CM05V
-approval/transition requires coordinated promotion; it must not be blocked
-unexpectedly by silently installing this draft. No handoff approval is recorded.
+or that its operator agreed to migration. Preserve its requirements and grant no
+production source permission. The proposed rule permits PM025-valid terminal
+closeout of GP-CM05V when the owning lane records its actual acceptance evidence,
+closes its tracker record and provides valid landing evidence. It preserves all
+other steps, requirements and dependencies. It does not approve Preferences,
+waive its missing GUI measurements or let this workflow lane supply its receipt.
+
+Under the owner's recorded standing workflow authorization, install this bounded
+terminal-closeout behavior without waiting for Preferences product acceptance.
+Leaving GP-CM05V pending is valid; later legitimate terminal closeout does not
+require a second workflow promotion. New execution, reopening, scope expansion
+or production edits still require separately coordinated authority. No response
+from the other session or completed handoff is invented by this proposal.
 
 <!-- WDQ-COVERAGE:SOURCE-PERMISSIONS -->
 Proposed production roots cover native build/source and GUI resources, plus
