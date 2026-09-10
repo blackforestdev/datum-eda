@@ -279,6 +279,23 @@ future task names, hermetic fixtures or this amendment as completed adoption.
 
 ## Ratification evidence boundary
 
+For renewed evidence at an already completed review boundary, the infrastructure
+procedure separates prerequisite scenario proof from the full-real-roadmap
+integration commands that consume it. Source/history assessment is not full gate
+success. Strict candidate inspection and fresh 56-row C/R/S/H integration receipts
+follow the assembled producer/reviewer packet; installed verification follows
+activation. All remain mandatory for I04, without reopening completed roadmap
+steps or inventing ownership. Integration receipts stay outside the packet they
+consume, not outside the completion obligation.
+
+Normative-only renewal may independently reassess immutable raw observations
+whose executed modules, inputs, selected policy/environment and scenario meaning
+are demonstrated unchanged. It may not relabel old typed events with new authority
+or call reassessment new execution/replay. A new exact construction/authority
+binding, explicit applicability comparison and honest assessment provenance are
+required. Any changed or unproven applicability requires new observations.
+This provision does not waive fresh final integration or product acceptance.
+
 WDQ-I04 must review the final complete amendment and exact activation packet
 after WDQ-I03 producer proof and WDQ-REVIEW independent verification. Record
 the owner disposition in the operational activation packet, outside the

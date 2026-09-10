@@ -223,7 +223,7 @@ with the row ID plus a stable variant suffix; none may be sampled away.
 | INFRA-S04-08 | Acceptance receipt absent, wrong or candidate-only, separately | REFUSE acceptance | C R S H |
 | INFRA-S04-09 | Unresolved blocking defect at acceptance | REFUSE | C R S H |
 | INFRA-S04-10 | Exact authorized nonblocking deferral with otherwise valid acceptance | PASS without deleting the finding | C R S H |
-| INFRA-S04-11 | Legacy accepted pilot mapping and evidence unchanged | PASS; no retroactive new mapping obligation | C R S H |
+| INFRA-S04-11 | Legacy accepted pilot mapping and evidence unchanged; full real-roadmap instance at I04 after packet assembly | PASS; no retroactive new mapping obligation; retain separate I04 integration receipts | C R S H |
 | INFRA-S04-12 | Valid infrastructure review with null activate/accept mapping | PASS review, never product acceptance | C R S H |
 | INFRA-S05-01 | Bad staged record repaired only in worktree | C/H REFUSE; S judges its actual worktree | C S H |
 | INFRA-S05-02 | Valid staged record with bad unstaged worktree version | C/H PASS; S REFUSE the worktree defect | C S H |
@@ -260,6 +260,55 @@ reach WDQ: construct valid non-prototype fixture paths for those cases.
 
 <!-- WDQ-INFRA-FIXTURE -->
 ## Fixture recipe and observation procedure
+
+<!-- WDQ-INFRA-NONCIRCULAR-RENEWAL -->
+### Renewal at a completed review boundary
+
+When the real roadmap has reached pending WDQ-I04, its completed review
+checkpoint requires the assembled producer/reviewer packet. That packet cannot
+contain the success of a command whose prerequisite is that same packet.
+Preserve the actual lifecycle, claims, tracker and completed evidence. Do not
+reopen COMPAT/RECHECK or manufacture a live lease to obtain an earlier phase.
+
+For this renewal, separate the obligations in this order:
+
+1. Inspect exact committed source, history, scope, complete 56-row coverage,
+   accepted pilot and bounded external-lane state without asserting a full gate
+   success. This is a read-only assessment, not a supported `--inspect-review`
+   success at I04 and not a substitute for the following integration runs.
+2. Assemble and independently review the bounded scenario proof. Its assertions
+   cover the synthetic refusal/success cases and observed workspace behavior;
+   explicitly exclude the pending full-real-roadmap instance of INFRA-S04-11
+   and related current-inventory/clean/mixed integration observations.
+3. Run strict exact promotion inspection against the assembled packet. Then
+   run fresh C/R/S/H checks, including selector check and details, on the exact
+   complete real-roadmap snapshot against that packet. Preserve all 56 rows and
+   the actual ownership and pilot evidence. Preserve all required clean, mixed,
+   refused/restored and full observed-inventory variants, with fresh independent
+   execution against the retained inputs; generic success is insufficient.
+   Retain these separate I04 integration
+   receipts outside the prerequisite proof, followed by actual installed checks.
+   No I04 completion is possible without both sets of successful observations.
+
+A normative amendment invalidates the old typed packet. It need not discard
+raw observations of byte-identical executed code, but reuse requires a fresh,
+independently reviewed applicability assessment: compare all executed modules,
+fixture/input and selected policy/environment bytes, tools, scenario requirements
+and protected-state evidence. A change only to the placement of an unchanged
+obligation in this sequence is not a change to its tested runtime assertion;
+explicitly document that distinction in the applicability assessment.
+Keep original source IDs, timestamps, authority,
+invocation IDs and failures immutable. Changed behavior, inputs or scenario
+requirements require new observations; unresolved equivalence is not a pass.
+
+Any new assessment events must identify themselves as current assessments of
+referenced historical observations, not new subprocess executions or independent
+replay. They bind the final contract, authority and fresh construction manifest;
+they cannot relabel old typed events, manufacture dispatch, supply missing cases,
+or substitute for actual independent replay or fresh final integration. Retain
+the original raw records and the explicit comparison alongside the new packet.
+Product acceptance and installed-trust requirements are unchanged.
+<!-- WDQ-INFRA-NONCIRCULAR-RENEWAL-END -->
 
 WDQ-TOOLS must turn this reviewed procedure into retained, replayable inputs and
 capture tooling before final WDQ-READY review; I03 then produces the required
