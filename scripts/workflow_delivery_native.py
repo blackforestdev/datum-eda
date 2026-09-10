@@ -7,6 +7,7 @@ but cannot establish the production origin of an export or a user's experience.
 """
 
 from workflow_delivery_authority import authority_sha256
+from workflow_delivery_headless import validate_headless
 from workflow_delivery_io import parse_json
 from workflow_delivery_proof import read_blob
 from workflow_delivery_shapes import (
@@ -17,11 +18,19 @@ from workflow_delivery_shapes import (
 ARTIFACT_KIND = "datum.workflow-delivery.artifacts/v1"
 
 
-def validate_environment(tree, proof, requested):
+def validate_environment(tree, proof, requested, *, contract=None):
     require(requested is not None, "environment", "explicit requested environment required",
             "WDQ-ENVIRONMENT")
     recorded = parse_json(read_blob(tree, proof["environment"], code="WDQ-ENVIRONMENT"),
                           proof["environment"]["path"])
+    if any(type(v) is dict and "schema_version" in v for v in (recorded, requested)):
+        receipt = parse_json(read_blob(tree, proof["build"]["receipt"], code="WDQ-ENVIRONMENT"),
+                             proof["build"]["receipt"]["path"])
+        validate_headless(recorded, requested,
+                          category=contract.get("category") if contract else None,
+                          toolchain=proof["build"]["toolchain"],
+                          binary_sha256=receipt["binary_sha256"])
+        return
     for value in (recorded, requested):
         closed(value, "os backend toolchain scale input_method window_size reproduction_commands",
                "environment", "WDQ-ENVIRONMENT")

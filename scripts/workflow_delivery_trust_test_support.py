@@ -57,6 +57,9 @@ def accepted_fixture(f):
         if not p.name.endswith("_test_support.py")}
     for path in paths:
         f.write(path, (source.root / path).read_bytes())
+    # Synthetic input only: real-roadmap captures must retain the actual
+    # exemption manifest and its referenced source files.
+    f.save("specs/rustfmt_exemption_manifest.json", {"schema_version": 1, "exemptions": {}})
     f.stage()
     f.git("commit", "-qm", "synthetic trusted authority")
     authority_ref = f.git("rev-parse", "HEAD").decode().strip()

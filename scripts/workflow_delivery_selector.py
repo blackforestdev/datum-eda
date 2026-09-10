@@ -4,6 +4,8 @@ from pathlib import Path
 import subprocess
 
 from workflow_delivery_checkpoints import validate_delivery
+from workflow_delivery_coverage_runtime import validate_coverage
+from workflow_delivery_environments import load_environments
 from workflow_delivery_io import DeliveryInputError
 from workflow_delivery_shapes import require
 from workflow_delivery_tree import Tree
@@ -40,11 +42,14 @@ def selector_failures(root, manifest):
             require(set(trust.enrolled) <= {i["key"] for i in declared}, POLICY_PATH,
                     "trusted enrollment cannot disappear from candidate", "WDQ-POLICY")
             enrolled = trust.enrolled
-        environment = tree.json(env_path) if env_path else None
+        environments = load_environments(tree, env_path, trust.policy if trust else policy,
+            authority=trust.authority if trust else None) if has_policy or trust else {}
+        if trust:
+            validate_coverage(tree, manifest, trust, environments=environments)
         for item in declared:
             validate_delivery(tree, item, phase=None if item["key"] in enrolled else "structure",
                               trust=trust if item["key"] in enrolled else None,
-                              environment=environment)
+                              environment=environments.get(item["key"]))
         return []
     except DeliveryInputError as error:
         return [str(error)]

@@ -112,6 +112,77 @@ changes. Current permissions apply to that path union. This does not authenticat
 past authors or infer expired claims from timestamps, and a clean new transaction
 does not certify earlier bypassed commits.
 
+<!-- WDQ-042-WORKSPACE -->
+### Preserved workspace state is not source permission
+
+Schema-2 installations may carry the fixed data file
+`specs/workflow_delivery/workspace-inputs.json` in the externally selected
+authority commit. Its absence retains strict enumeration; candidate-only
+addition, removal, changed bytes, executable mode or redirection refuses.
+Do not infer this policy from Git ignores, proof content, environment variables
+or an automatic inventory. It is part of the exact owner-reviewed promotion
+packet, not an independently writable source of exemptions. Schema 1 is unchanged.
+
+The closed shape is `{schema_version: 1,
+kind: "datum.workflow-delivery.workspace-inputs", local_files, python_caches,
+beads_runtime}`. `python_caches` is `none` or `verified-source-v1`;
+`beads_runtime` is `none` or `standard-v1`. Each local-file record has exactly
+`path`, lowercase SHA-256 `sha256`, nonnegative integer `size`, integer permission
+`mode` in 0..0777, and `category` (`owner_local` or `legacy_python_cache`). Boolean
+integers, duplicate/non-normalized paths, Git metadata and local pins under
+`.beads/` refuse. Legacy pins name non-executable CPython `__pycache__` files.
+An inventory observation is not approval of those identities.
+
+An `owner_local` pin remains a required regular, nonredirected file with exact
+bytes, size and mode; missing files must not escape detection through enumeration.
+A legacy cache may retain its exact reviewed identity, genuinely be absent, or
+become fully verified current-source cache output when that policy is enabled.
+Absence through a symlink, broken redirect, special file or read error is not
+genuine absence. Any other changed cache remains an input. This rule authorizes
+no deletion, regeneration or relocation of owner files or runtime data.
+
+Verified cache output requires the current interpreter's standard cache tag,
+magic and supported header flags, a tracked regular source, and exact payload
+bytes equal to newly compiled source at the stated optimization level. The
+comparison never executes or deserializes a cache payload. Bound cache/source
+reads to 8 MiB; other files remain inputs rather than acquiring an exception.
+Unknown files, payloads and redirects do not qualify by extension or filename.
+
+Cache classification requires verified source-only startup of the supported
+fresh gate process before repository imports. Authenticate the running gate
+source through existing owner-selected trust; observe its actual source loader
+and matching finder, not a candidate-provided Boolean. This does not certify
+arbitrary embedding hosts or product subprocess imports. Explicit loader calls,
+already imported modules and independent product execution need their own input
+review; gate-process cache isolation is not universal runtime isolation.
+
+Standard Beads runtime comprises only regular non-executable `.beads/beads.db`,
+its `-wal`/`-shm` files, `.sync.lock`, `.write.lock`, `last-touched`, and anchored
+`.br_history/issues.YYYYMMDD_HHMMSS_<digits>.jsonl` names with optional
+`.meta.json`. Canonical `issues.jsonl`, configuration and unknown files remain
+inputs. These classifications never delete data, grant a claim or bypass Beads.
+
+Coverage and preflight may recognize this unchanged owner-pinned workspace state.
+Tracked paths and explicitly named file inputs always take precedence. Index and
+commit/history checks never use local worktree exemptions. Preflight retains the
+complete protected-state capture; every exemption must match the exact captured
+bytes, mode, size and kind used for classification, including the source of a
+verified cache. Repeated state checks and owner-coordinated writer pause remain
+mandatory; a captured bad file cannot borrow temporarily qualifying live bytes.
+
+Proof manifests have a stricter boundary: retain owner-local files, legacy cache
+payloads and Beads runtime whenever declared input roots include them. Only a
+verified-source cache whose source is also in that proof closure may be omitted;
+an explicitly named cache remains an input. Pinning workspace bytes does not
+prove that a product process cannot consume them. Do not narrow proof roots to
+hide a freshness refusal. Actual product-native proof obligations are unchanged.
+
+The real installation's reviewed baseline and these rules must receive renewed
+producer and distinct independent compatibility evidence before I04. Prepared
+code, a local-state inventory or a passing unit test neither ratifies this
+amendment nor activates it. Preserve all prior failed inspections and original
+proof identities; changed source and requirements need newly identified evidence.
+
 <!-- WDQ-042-AUTHORSHIP -->
 ## Specification completion and unresolved choices
 
@@ -224,7 +295,32 @@ proof build toolchain. These paths describe observed tools; the validator never
 executes them. Reproduction commands remain a nonempty string array describing
 the actual invocation recipe. Producer tooling must capture these values from
 the run, not generate plausible evidence from this schema. Script, data, fixture
-and runtime-library closure still need their separate input/toolchain accounting.
+and named-tool inputs still need their separate input/toolchain accounting.
+
+<!-- WDQ-042-BOUNDED-INFRA-VERIFICATION -->
+### Bounded infrastructure verification
+
+For this workflow infrastructure, input completeness means reviewed, pinned
+repository source/data/fixture inputs and identified interpreter and named tools,
+not exhaustive tracing of every descendant process or runtime/shared-library
+load. Record executable paths, hashes and versions for the interpreter, Git,
+shell, env, realpath and rustfmt when invoked. Review the actual script/import,
+hook and subprocess command paths; an additional named tool or repository input
+must be accounted for before claiming bounded input completeness.
+
+Retain actual handler and entry-point observations, exact source/fixture/
+environment identity, raw success/refusal results, state-preservation and
+interruption/recovery checks, and independent replay. Disable unreviewed Python
+startup/user-site injection. Existing module/maps observations remain useful
+supplemental evidence, but absent exhaustive descendant/library tracing is not
+an infrastructure readiness or delivery blocker. Do not label that unperformed
+tracing complete or rewrite older observations to say it occurred.
+
+This bound does not establish a hermetic runtime or detect arbitrary host-library
+substitution. Report that residual limit in producer and independent review.
+It changes no product-native evidence, accepted pilot bytes, scenario matrix,
+dependency authority, source permission, owner receipt or activation boundary.
+The exact complete PM042 activation packet still requires WDQ-I04 ratification.
 
 Required refusal proof includes malformed versions/shapes, missing/duplicate/
 unknown keys, swapped workflow environments, changed selection or Blob bytes,
@@ -244,12 +340,97 @@ ambiguous mode or incomplete evidence must fail visibly before publication.
 Partial activation must be reported as partial; repair is explicit and forward,
 not an automatic destructive reset or silent hook bypass.
 
+Initial rollout promotion has a separate owner boundary, not an ordinary source
+transaction with an invented execution claim. Both exact publication base and
+candidate must select pending, claim-free WDQ-I04 after completed TOOLS, READY,
+I03 and REVIEW, plus completed COMPAT and RECHECK for the authorized workspace
+renewal. Preserve every other Frontier item exactly. Require the complete
+candidate as prospective authority, schema-2 coverage and rollout enrollment;
+check every production path on every intervening parent edge against the sole
+explicit rollout scope for I03/REVIEW, including reverted and merge-side changes.
+No prototype path or additional product-lane scope is permitted by this initial
+rollout protocol. Subsequent unrelated promotions need their own reviewed scope.
+
+The initial legacy-to-schema-2 publication does not require its legacy base to
+already contain the new rollout mapping. Permit that absence only when the
+exact base has a valid schema-1 policy, no rollout enrollment and no rollout
+delivery field (a present null or malformed field is not absence). The candidate
+must preserve every prior enrollment record and the legacy-baseline identity,
+add only the rollout enrollment, and carry the exact schema-2 rollout contract
+mapping: WDQ-READY, null activate, WDQ-COMPAT verify, WDQ-RECHECK review and null
+accept. This exception changes no lifecycle, completed-review, owner-decision,
+source-history, proof or defect-disposition prerequisite. A schema-2 baseline
+retains the existing mapping requirements; this is not a general migration mode.
+
+Pre-review source/history inspection is a separate, non-authorizing operation
+(`--inspect-review`, closed `review-inspection-request`), not a weaker activation
+mode. Both exact base and candidate must retain the same live, synchronized
+WDQ-COMPAT or WDQ-RECHECK execution state and claim; only the validated initial
+mapping addition may differ in the rollout item. Preserve every other Frontier
+item. Check full parent-edge history, exact source scope, classifications,
+specification obligations, trusted contract/readiness prerequisites, selected
+environment, prepared support and repeated protected-state equality. Other
+enrollments retain their ordinary proof obligations. This operation rejects
+owner activation responses and reports `evidence_validated:false`,
+`publication_authorized:false` and `activation_asserted:false`; it does not
+require the future rollout proof/review packet it helps produce. Ordinary
+trusted readiness still requires proof when reviewed inputs change.
+
+COMPAT producer proof retains producer inspection against its exact source/history
+candidate. After producer verification, RECHECK independently repeats inspection
+and incorporates it into independent replay/review. Producer proof does not
+depend on the later independent observations. Later evidence or governance
+commits create a distinct candidate: reconcile their complete delta explicitly,
+then perform strict full-evidence inspection at claim-free I04 before activation.
+Do not relabel the pre-review result as inspection of the later final candidate.
+
+Final promotion inspection reuses full Frontier, classification, specification,
+readiness, environment and enrolled delivery checks, explicitly demanding the
+rollout's independent-review phase. Sharing state checks must not remove source
+claim enforcement from ordinary CLI, selector or hook transactions. Exact owner
+response bytes are selected separately from candidate content and bound to the
+request digest. A matching response string is not authentication of its author.
+Inspection must remain read-only and report no publication authority; final
+owner invocation, coordinated mutation, partial-state recovery and installed
+verification remain required. Neither an empty source transaction nor equal
+base/candidate pins can substitute for the complete publication-history check.
+
+Actual publication is a distinct owner invocation, not an inspection flag's side
+effect. Its exact activation-request includes this acknowledgement:
+`All writers to this checkout and its Git-common trust configuration are paused for this exact activation.`
+The owner coordinates that pause; the Git-common activation lock serializes only
+cooperating activators. Authenticate the prepared runtime against the externally
+selected candidate before importing mutation code. Require reviewed defect
+dispositions (closed blocking findings bound to the exact replay; explicit
+nonblocking deferrals) in addition to independent review.
+
+Durably journal the request and each mutation boundary without overwriting old
+logs. After repeated clean-state and evidence checks, fast-forward only the exact
+candidate, install the four Datum trust settings, install hooksPath last, then
+verify the exact state/support and execute the installed hook and selector check.
+Recheck state after verification. A successful installation is not completion of
+I04's canonical owner record, three adoption cohorts or final acceptance. Failure
+or interruption preserves observed partial state and all support; stale retries
+refuse. Any repair requires a separately reviewed explicit forward action.
+This initial activator refuses worktree-specific Git configuration and checks
+effective trust values against its installed local values; an override cannot
+silently select a different hook. Supporting such configuration requires separate
+review. The observed Datum checkout does not enable that extension.
+
+An interrupt during an owned publication or verification child must not release
+the coordination lock or start another mutation while that child is live.
+Defer handled SIGINT/SIGTERM until the child finishes, logging the pending stop
+and exact child identity/result. The child inherits the lock to cover abrupt
+parent death. Bound child execution to 120 seconds; on timeout stop only its
+owned process group and reap the child before reporting failure. Preserve
+partial state and journals; neither interruption nor timeout authorizes repair.
+
 Use the resolved Git-common `.git/datum-wdq` support store for proposals,
 immutable trusted runners and logs. Keep any currently referenced external
 support until its replacement is installed and verified. Remove only positively
 unreferenced owned artifacts; no broad sweep of Documents or shared build output.
 
-Self-enrollment maps actual completion kinds: WDQ-READY (governance) is readiness,
+Initial self-enrollment mapped actual completion kinds: WDQ-READY (governance) is readiness,
 WDQ-I03 (execution) is producer verification, and WDQ-REVIEW (execution) is
 independent replay. Infrastructure activate/accept are null. The added READY and
 REVIEW checkpoints refine the original I3 stage without removing any obligation
@@ -257,6 +438,16 @@ before I04. They start pending with no invented evidence. I01/I02 remain prior
 candidate preparation; neither they nor R03 approval are relabeled readiness.
 The exact mapping proposal is recorded separately and is not installed enrollment.
 Actual contract readiness, independent replay and I04 owner approval remain due.
+
+The authorized workspace compatibility renewal preserves I03 and REVIEW as
+completed historical evidence for their exact candidates. Its prepared mapping
+retains WDQ-READY and null infrastructure activate/accept, but maps verification
+to WDQ-COMPAT and independent replay to WDQ-RECHECK. Both renewal checkpoints
+require fresh evidence before I04; historical proof cannot certify changed
+normative inputs. This does not reopen completed steps, waive any original
+scenario or change the historical I03/REVIEW publication source scope. Full
+promotion validation must enforce the current mapped independent-review phase
+and the Frontier dependency on completed RECHECK, not only historical completion.
 
 WDQ-TOOLS separates the already-authorized preparatory implementation portion of
 original I3 from producer verification: I02 -> TOOLS -> READY -> I03 -> REVIEW
@@ -297,7 +488,8 @@ required. Any changed or unproven applicability requires new observations.
 This provision does not waive fresh final integration or product acceptance.
 
 WDQ-I04 must review the final complete amendment and exact activation packet
-after WDQ-I03 producer proof and WDQ-REVIEW independent verification. Record
+after the historical WDQ-I03/WDQ-REVIEW evidence and renewed WDQ-COMPAT producer
+proof and WDQ-RECHECK independent verification. Record
 the owner disposition in the operational activation packet, outside the
 infrastructure contract's own authority closure. Pin this exact normative text
 in that packet; do not rewrite it to embed its own proof or acceptance receipt.

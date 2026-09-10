@@ -6,9 +6,18 @@ import json
 from pathlib import Path
 import sys
 
+# This must precede every repository import, including the bootstrap itself.
+_source_bootstrap = Path(__file__).with_name("workflow_delivery_source_only.py")
+_source_namespace = {"__name__": "_datum_source_bootstrap"}
+exec(compile(_source_bootstrap.read_bytes(), str(_source_bootstrap), "exec"), _source_namespace)
+_source_namespace["install"](_source_bootstrap.parent)
+del _source_namespace, _source_bootstrap
+
 from workflow_delivery_authority import authority_sha256
 from workflow_delivery_checkpoints import validate_delivery
 from workflow_delivery_contract import load_contract, validate_handler_files
+from workflow_delivery_coverage_runtime import validate_coverage
+from workflow_delivery_environments import load_environments
 from workflow_delivery_frontier import validate_frontier
 from workflow_delivery_io import DeliveryInputError
 from workflow_delivery_shapes import require
@@ -23,7 +32,6 @@ def run(args):
         trust = Trust(tree, args.authority_ref, args.base_ref)
     require(not args.enforce or args.contract is None, "contract",
             "enforcement uses trusted enrollment, not an ad-hoc contract", "WDQ-TRUST")
-    environment = tree.json(args.environment_path) if args.environment_path else None
     if args.contract:
         contract = load_contract(tree, args.contract)
         validate_handler_files(tree, contract)
@@ -32,17 +40,23 @@ def run(args):
     manifest = validate_frontier(tree) if args.enforce else tree.json(FRONTIER_PATH)
     if trust:
         enrolled = trust.enrolled
+        policy = trust.policy
     elif POLICY_PATH in tree.entries:
-        enrolled = {r["frontier_key"]: r for r in policy_shape(tree.json(POLICY_PATH))["enrolled"]}
+        policy = policy_shape(tree.json(POLICY_PATH))
+        enrolled = {r["frontier_key"]: r for r in policy["enrolled"]}
     else:
         return ["no enrolled delivery obligations; no readiness or acceptance asserted"]
+    environments = load_environments(tree, args.environment_path, policy,
+                                     authority=trust.authority if trust else None)
+    if trust:
+        validate_coverage(tree, manifest, trust, environments=environments)
     items = {i["key"]: i for i in manifest["frontier"]}
     checked = []
     for key in enrolled:
         require(key in items, key, "enrolled Frontier item absent", "WDQ-POLICY")
         require("delivery" in items[key].get("completion", {}), key,
                 "enrolled completion.delivery missing", "WDQ-CONTRACT")
-        phase = validate_delivery(tree, items[key], trust=trust, environment=environment)
+        phase = validate_delivery(tree, items[key], trust=trust, environment=environments.get(key))
         checked.append(f"{key}: {phase}")
     return checked
 

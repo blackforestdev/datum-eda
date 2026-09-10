@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = "specs/workflow_delivery/rollout.contract.json"
 SPEC = "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md"
 MECHANISM = "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md"
+WORKSPACE = "specs/workflow_delivery/workspace-inputs.json"
 
 
 class RepositoryView:
@@ -72,19 +73,29 @@ class RolloutContractTest(unittest.TestCase):
 
     def test_authority_is_complete_but_not_its_own_progress_or_receipts(self):
         members = {p["path"] for p in authority_manifest(self.tree, self.contract, ready=False)}
-        self.assertEqual({SPEC, CONTRACT, MECHANISM,
+        self.assertEqual({SPEC, CONTRACT, MECHANISM, WORKSPACE,
             "research/process-quality/WORKFLOW_INFRASTRUCTURE_CONTRACT_BASIS.md"}, members)
         self.assertNotIn(self.contract["proof_path"], members)
         self.assertNotIn(self.contract["review_path"], members)
         self.assertNotIn("specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md", members)
 
     def test_changed_mechanism_or_contract_requires_fresh_route_review(self):
-        for path in (MECHANISM, CONTRACT, SPEC):
+        for path in (MECHANISM, CONTRACT, SPEC, WORKSPACE):
             with self.subTest(path=path):
                 tree = RepositoryView({path: self.tree.read(path) + b"\n"})
                 with self.assertRaises(DeliveryInputError) as raised:
                     authority_manifest(tree, self.contract, ready=False)
                 self.assertEqual("WDQ-AUTHORITY", raised.exception.code)
+
+    def test_workspace_policy_is_an_explicit_validated_proof_input(self):
+        from workflow_delivery_workspace import workspace_policy_shape
+        policy = self.tree.json(WORKSPACE)
+        workspace_policy_shape(policy)
+        self.assertIn(WORKSPACE, self.contract["input_roots"])
+        self.assertEqual(24, len(policy["local_files"]))
+        owners = [row["path"] for row in policy["local_files"]
+                  if row["category"] == "owner_local"]
+        self.assertEqual(["scripts/run_gui_doa2526.sh"], owners)
 
     def test_operational_progress_does_not_rewrite_proof_authority(self):
         path = "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md"
@@ -127,6 +138,41 @@ class RolloutContractTest(unittest.TestCase):
             "scripts/check_rustfmt.py", "specs/rustfmt_exemption_manifest.json"}
         self.assertTrue(required <= set(self.contract["input_roots"]))
         self.assertTrue(all((ROOT / path).is_file() for path in required))
+
+    def test_implemented_workflow_python_and_local_imports_are_explicit_inputs(self):
+        import ast
+        required = {p.relative_to(ROOT).as_posix() for pattern in
+                    ("workflow_delivery_*.py", "test_workflow_delivery_*.py", "test_workflow_rollout_*.py")
+                    for p in (ROOT / "scripts").glob(pattern)}
+        queue = list(required | {p for p in self.contract["input_roots"] if p.endswith(".py")})
+        visited = set()
+        while queue:
+            path = queue.pop()
+            if path in visited:
+                continue
+            visited.add(path)
+            for node in ast.walk(ast.parse((ROOT / path).read_bytes(), filename=path)):
+                modules = ([a.name for a in node.names] if isinstance(node, ast.Import) else
+                           [node.module] if isinstance(node, ast.ImportFrom) and node.module else [])
+                for module in modules:
+                    local = "scripts/" + module.split(".")[0] + ".py"
+                    if (ROOT / local).is_file():
+                        required.add(local)
+                        queue.append(local)
+        self.assertEqual([], sorted(required - set(self.contract["input_roots"])),
+                         "Reconcile new inputs explicitly; this test must not update authority")
+
+    def test_prepared_hook_and_selected_environment_bytes_are_inputs(self):
+        import hashlib
+        from workflow_delivery_bootstrap import HOOK_SOURCE
+        selection_path = "specs/workflow_delivery/rollout.environments.json"
+        required = {HOOK_SOURCE, selection_path}
+        selection = self.tree.json(selection_path)
+        for row in selection["environments"]:
+            blob = row["environment"]
+            required.add(blob["path"])
+            self.assertEqual(blob["sha256"], hashlib.sha256(self.tree.read(blob["path"])).hexdigest())
+        self.assertEqual([], sorted(required - set(self.contract["input_roots"])))
 
     def test_case_inventory_has_unique_ids_and_known_scenarios_and_surfaces(self):
         rows = self.case_rows()

@@ -7,6 +7,7 @@ import unittest
 
 from workflow_delivery_authority import resolve_ref
 from workflow_delivery_io import parse_json
+from workflow_delivery_publication_delta import publication_delta
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -79,6 +80,61 @@ class CoverageProposalTest(unittest.TestCase):
             for dependency in read_only:
                 self.assertFalse(any(dependency == p or dependency.startswith(p + "/")
                                      for p in scope["paths"]))
+
+    def test_reconciled_scope_covers_reviewed_history_not_only_final_diff(self):
+        # Fixed preparation snapshot, never an authorization of subsequent history.
+        delta = publication_delta(ROOT,
+            base="7a77e40a850172b50e2251132d171d55a8adfb37",
+            candidate="701c3b82363973857c47d16f46a8baa0a597c008")
+        roots = self.coverage["production_roots"]
+        required = {p for p in delta["touched_paths"]
+                    if any(p == r or p.startswith(r + "/") for r in roots)}
+        required.add("scripts/test_workflow_coverage_proposal.py")
+        paths = self.coverage["source_scopes"][0]["paths"]
+        self.assertEqual(sorted(set(paths)), paths)
+        self.assertEqual([], sorted(required - set(paths)))
+        # The mapping test changed in history but not in the final tree diff.
+        self.assertIn("scripts/test_workflow_rollout_mapping.py", required)
+        for path in paths:
+            self.assertTrue((ROOT / path).is_file(), path)
+
+    def test_assembled_policy_contains_exact_reviewed_scope_proposal(self):
+        policy = self.tree.json("specs/workflow_delivery_policy.json")
+        self.assertEqual(self.coverage, policy["coverage"])
+
+    def test_compatibility_history_adds_only_eight_reviewed_source_paths(self):
+        base = "2d60cd05dca71727ba28b1355b988de653eed82f"
+        candidate = "afc3caa14ce253725c26fc9f8125f54eccdad309"
+        old = json.loads(subprocess.check_output(
+            ["git", "show", base + ":" + PATH], cwd=ROOT))
+        expected = {"scripts/" + name + ".py" for name in (
+            "workflow_delivery_source_only", "test_workflow_delivery_source_only",
+            "workflow_delivery_workspace", "test_workflow_delivery_workspace",
+            "test_workflow_delivery_workspace_consumers",
+            "workflow_delivery_workspace_authority",
+            "test_workflow_delivery_workspace_authority",
+            "test_workflow_delivery_workspace_entrypoints")}
+        historical = json.loads(subprocess.check_output(
+            ["git", "show", "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf:" + PATH], cwd=ROOT))
+        paths = set(historical["source_scopes"][0]["paths"])
+        self.assertEqual(set(old["source_scopes"][0]["paths"]) | expected, paths)
+        self.assertEqual(old["production_roots"], self.coverage["production_roots"])
+        delta = publication_delta(ROOT, base=base, candidate=candidate)
+        required = {p for p in delta["touched_paths"] if any(
+            p == r or p.startswith(r + "/") for r in self.coverage["production_roots"])}
+        self.assertEqual([], sorted(required - paths))
+
+    def test_sequencing_repair_adds_only_three_exact_source_paths(self):
+        old = json.loads(subprocess.check_output(["git", "show",
+            "f19391af59f623ae762d28566f8279232a75d6a2:" + PATH], cwd=ROOT))
+        expected = {"scripts/" + name + ".py" for name in (
+            "test_workflow_delivery_initial_migration", "test_workflow_delivery_review_inspection",
+            "workflow_delivery_review_inspection")}
+        paths = set(self.coverage["source_scopes"][0]["paths"])
+        self.assertEqual(set(old["source_scopes"][0]["paths"]) | expected, paths)
+        self.assertEqual(old["production_roots"], self.coverage["production_roots"])
+        self.assertEqual(152, len(paths))
+        self.assertEqual(164, len(self.tree.json("specs/workflow_delivery/rollout.contract.json")["input_roots"]))
 
     def test_production_roots_cover_non_rust_code_without_git_metadata(self):
         roots = self.coverage["production_roots"]

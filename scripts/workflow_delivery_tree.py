@@ -17,11 +17,22 @@ class Tree:
         require(not (staged and revision), "candidate", "choose index or revision", "WDQ-TRUST")
         self.staged = staged
         self.revision = self.resolve(revision) if revision else None
+        selected_index = os.environ.get("GIT_INDEX_FILE")
+        self.index_path = None
+        if self.revision is None and selected_index is not None:
+            require(bool(selected_index), "GIT_INDEX_FILE", "empty selected index path", "WDQ-INDEX")
+            self.index_path = str((self.root / selected_index).resolve())
         self.entries = self._entries()
+        self.workspace = None
 
-    def git(self, *args):
-        result = subprocess.run(["git", "--no-optional-locks", *args], cwd=self.root,
-                                capture_output=True, check=False)
+    def git(self, *args, index_path=None):
+        environment = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
+        environment.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull,
+                           GIT_GRAFT_FILE=os.devnull)
+        if index_path is not None:
+            environment["GIT_INDEX_FILE"] = index_path
+        result = subprocess.run(["git", "--no-replace-objects", "--no-optional-locks", *args],
+                                cwd=self.root, env=environment, capture_output=True, check=False)
         require(result.returncode == 0, "git", result.stderr.decode("utf-8", "replace").strip(),
                 "WDQ-TRUST")
         return result.stdout
@@ -47,7 +58,10 @@ class Tree:
                     mode, kind, oid = meta.decode().split()
                     entries[path.decode("utf-8")] = (mode, oid)
         else:
-            for record in self.git("ls-files", "--stage", "-z").split(b"\0"):
+            # Honor the actual selected index only for index enumeration. It
+            # cannot redirect pinned authority/history reads or later replace
+            # the already captured entry-to-blob mapping.
+            for record in self.git("ls-files", "--stage", "-z", index_path=self.index_path).split(b"\0"):
                 if record:
                     meta, path = record.split(b"\t", 1)
                     mode, oid, stage = meta.decode().split()
@@ -96,7 +110,8 @@ class Tree:
     def json(self, path, *, committed=False):
         return parse_json(self.read(path, committed=committed), path)
 
-    def manifest(self, roots):
+    def manifest(self, roots, *, workspace=None):
+        workspace = self.workspace if workspace is None else workspace
         paths = set()
         for root in roots:
             normalized_path(root)
@@ -122,4 +137,7 @@ class Tree:
                                     "WDQ-ARTIFACT")
                         paths.update((Path(directory) / name).relative_to(self.root).as_posix()
                                      for name in files)
+        if workspace is not None and not (self.staged or self.revision):
+            paths = workspace.input_paths(paths, root=self.root, tracked_paths=self.entries,
+                                          explicit_paths=roots, proof=True)
         return [{"path": p, "sha256": sha256(self.read(p))} for p in sorted(paths)]

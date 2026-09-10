@@ -1,0 +1,20 @@
+{
+  "schema_version": 2,
+  "kind": "datum.workflow-delivery.environments",
+  "environments": [
+    {
+      "frontier_key": "WORKFLOW-DELIVERY-GATE-PILOT",
+      "environment": {
+        "path": "docs/reviews/workflow-delivery-pilot/proof-artifacts/environment.json",
+        "sha256": "66988c15921b55ba292b2156723cbfbeec6685ddaeb4fec0ab8f4e624df52b40"
+      }
+    },
+    {
+      "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "environment": {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+        "sha256": "a1c33121f265812cba27e1bd7867061b9d82d4e8111012ae8cbfa3e1c20c3fca"
+      }
+    }
+  ]
+}
