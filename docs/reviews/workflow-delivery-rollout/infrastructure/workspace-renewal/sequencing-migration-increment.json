@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-review-publication-cycle-a1y",
+  "authorization_commit": "2793959cecd02a20037e87f8c3f63aa7e340a899",
+  "source_parent": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "candidate": "77f8a25600c65453e13aba00f4519d6f598abcc1",
+  "retained_ref": "refs/datum-wdq/candidates/sequencing-repair-migration-20260910",
+  "checkout": ".git/datum-wdq/proposals/sequencing-repair-20260910",
+  "change": "Permit only the exact initial valid schema-1/no-rollout-mapping baseline to migrate to the renewed schema-2 rollout mapping, preserving prior enrollments and legacy-baseline identity. Strict publication still requires completed review and claim-free owner activation state.",
+  "verification": {
+    "command": "python3 -I -S -B -c 'import sys, unittest; sys.path.insert(0, \"scripts\"); suite = unittest.defaultTestLoader.loadTestsFromNames([\"test_workflow_delivery_activation_preflight\", \"test_workflow_delivery_activation\"]); result = unittest.TextTestRunner(verbosity=1).run(suite); raise SystemExit(not result.wasSuccessful())'",
+    "test_count": 38,
+    "exit_code": 0,
+    "elapsed_seconds": 55.883,
+    "gates": ["evidence traceability: pass", "spec governance: pass", "source health: pass (1921 source files)", "git diff --check: pass"],
+    "initial_failure": "One negative test initially shared the same enrollment object between prior and candidate policies; mutating the candidate changed both fixtures. Independent copies corrected that test input; the production validator was unchanged by the correction.",
+    "scope": "Development regression tests only, not actual-main publication, renewed producer proof or independent replay."
+  },
+  "independent_design_review": {
+    "session": "wdq-independent-review-20260906",
+    "scope": "Read-only design review, no implementation approval or actual execution.",
+    "findings": [
+      "Use a separate review-time source/history inspector, never an activation-selectable proof bypass.",
+      "Changing phase from review to ready is insufficient: ordinary ready checks escalate to verify on changed inputs.",
+      "Keep pre-completion inspection outside the proof packet it will help produce; final distinct candidate requires explicit delta reconciliation and full I04 inspection."
+    ]
+  },
+  "remaining": [
+    "Implement and reconcile the distinct non-authorizing review-time inspection path and its regression cases.",
+    "Assess changed source and authority identities, then renew affected producer evidence and obtain independent review.",
+    "Complete exact owner activation, installed verification, three actual adoption cohorts and final acceptance."
+  ],
+  "historical_evidence_refreshed": false,
+  "repair_complete": false,
+  "activation_performed": false
+}
