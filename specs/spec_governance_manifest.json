@@ -1185,6 +1185,11 @@
       "class": "governed",
       "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
       "notes": "Explicit owner reopening of existing WDQ-COMPAT for repaired-source producer proof renewal, then WDQ-RECHECK. Preserves historical closeout and installed trust; no added milestone, product authority or activation."
+    },
+    "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-producer-closeout.json": {
+      "class": "governed",
+      "progress_anchor": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+      "notes": "Completes owner-reopened WDQ-COMPAT producer renewal for repaired source4e and exact evidence candidatec9d3; selects WDQ-RECHECK. Historical closeout unchanged. Formal review, publication, owner activation, real cohorts and final acceptance remain separate."
     }
   }
 }
