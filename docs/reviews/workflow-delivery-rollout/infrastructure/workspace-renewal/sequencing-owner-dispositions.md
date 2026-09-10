@@ -343,3 +343,21 @@ records are retained at `.git/datum-wdq/proposals/terminal-final-assessment-01`.
 This establishes source equivalence, not blanket observation reuse: fixture,
 policy/environment, tools, trace/state and scenario applicability still require
 assessment, and final real-roadmap/installed proof remains mandatory.
+
+The compact producer archive is retained in Git commit
+`57879644be22eaae3570528473a5005640500d4a` under its matching
+`refs/datum-wdq/evidence/terminal-renewal-57879644be22eaae3570528473a5005640500d4a`
+ref. All 13,089 selected members were read back and their sizes/hashes matched;
+the archive is 25,609,944 bytes with SHA-256
+`30a5ccdf0fd6cd234584d67eb47e0f5b9e7073ca13d63d4251149f7d1460704f`.
+It excludes duplicated working repositories and retains deterministic packets
+and exact workspace pre-state archives. Terminal supplement history remains in
+its separate immutable ref; no standalone portable restoration claim is made.
+
+`build_terminal_packet.py` produced a prospective assessment packet for source
+`0abb325d`, explicitly describing the 1,400 executions as historical source
+`9924678c` observations. It passed exact proof/input freshness, selected headless
+environment and six event/registry correlation checks. Its packet SHA-256 is
+`01e5f3f9e431414192adbd070f9d78b17af504d448a416a1f61a4f062afcba54`;
+this is not independent review, strict promotion, installed verification or
+product acceptance. Final applicability and defect-accounting review remain due.
