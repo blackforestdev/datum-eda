@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-index-refresh-ogw",
+  "review_session": "/root/wdq_independent_review",
+  "candidate": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-index-repair-s02-ownership.tar.xz",
+    "sha256": "52d112a7992d721f163d6be2491e1207c466eec69a50e32d59b3254e693cd2fe",
+    "tar_compare_exit_code": 0,
+    "scope": "Complete frozen independent ownership directory: all 190 fixture repositories/captures, ordered observations, verification report, exact replay process records and formatter observations."
+  },
+  "observations": 190,
+  "positive_exits": 100,
+  "expected_refusals": 90,
+  "protected_states_unchanged": true,
+  "independent_ids_disjoint_from_producer": true,
+  "ordered_inventory_match": true,
+  "artifact_hashes_verified_per_set": 1330,
+  "source_hash_checks_per_set": 7031,
+  "source_paths": 33,
+  "events_per_set": 739,
+  "fixture_basis": "Exact retained new-source post-setup inputs; local absolute trust paths and capture ownership nonce relocated and checked before each execution. No old-source captures counted.",
+  "formatter_before_after_equal": true,
+  "retries": 0,
+  "independent_recheck_complete": false,
+  "publication_verified": false,
+  "activation_performed": false
+}

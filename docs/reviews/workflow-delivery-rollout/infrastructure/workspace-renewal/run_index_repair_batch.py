@@ -21,6 +21,9 @@ BATCHES = {
     "s06-selection": ("renewed-s06-selection-observation.json", "command"),
     "s06-headless": ("renewed-s06-headless-observation.json", "command"),
     "s06-trust": ("renewed-s06-trust-observation.json", "command"),
+    "workspace-runtime": ("renewed-workspace-runtime-observation.json", "command"),
+    "workspace-policy-legacy": ("renewed-workspace-policy-legacy-observation.json", "command"),
+    "workspace-proof-input": ("renewed-workspace-proof-input-observation.json", "command"),
 }
 
 
@@ -42,7 +45,8 @@ def main():
     original_bytes = record.read_bytes()
     original = shlex.split(json.loads(original_bytes)[field])
     assert len(original) == 6 and original[:5] == ["python3", "-I", "-S", "-B", "-c"]
-    old_store = ".git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/renewed-" + args.batch + "-0e5b8064"
+    old_suffix = args.batch + ("-entrypoints" if args.batch.startswith("workspace-") else "")
+    old_store = ".git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/renewed-" + old_suffix + "-0e5b8064"
     new_store = ".git/datum-wdq/proposals/index-repair-evidence-20260910/" + args.batch
     code = original[5]
     assert code.count(OLD) == 1 and code.count(old_store) == 1
