@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-index-refresh-ogw",
+  "review_session": "/root/wdq_independent_review",
+  "candidate": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-index-repair-s02-coverage.tar.xz",
+    "sha256": "b5c316068d4471ad1b089e3686cb25f3214fc71f68b2bf953ca791dc43c85b91",
+    "tar_compare_exit_code": 0,
+    "scope": "Complete frozen independent S02 coverage directory: all 110 fixture repositories/captures, verification report, exact replay process records, and independent build command, raw outputs, process and receipt."
+  },
+  "observations": 110,
+  "positive_exits": 55,
+  "expected_refusals": 52,
+  "expected_trust_errors": 3,
+  "protected_states_unchanged": true,
+  "independent_ids_disjoint_from_producer": true,
+  "ordered_inventory_match": true,
+  "artifact_hashes_verified_per_set": 770,
+  "source_hash_checks_per_set": 4033,
+  "source_paths": 33,
+  "events_per_set": 425,
+  "fixture_basis": "Exact retained new-source post-setup inputs; local absolute trust paths and capture ownership nonce relocated and checked before each execution. No old-source captures counted.",
+  "independent_build": {
+    "exit_code": 0,
+    "modules": 148,
+    "inputs": 161,
+    "producer_command_toolchain_binary_manifest_exact": true,
+    "input_manifest_sha256": "d1a61a7f58be83c037a9a70590c1a9e5c5d82f95e7d3b08b41d3c693223f27df"
+  },
+  "retries": 0,
+  "independent_recheck_complete": false,
+  "publication_verified": false,
+  "activation_performed": false
+}
