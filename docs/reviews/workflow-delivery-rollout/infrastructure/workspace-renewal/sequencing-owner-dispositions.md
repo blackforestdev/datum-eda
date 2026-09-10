@@ -274,3 +274,22 @@ still pins source `1d48f249`, producer `06bafeb9` and the historical packet.
 observations. These must not be relabeled as evidence for source `9924678c`.
 Renewal and typed packaging remain I04 work, followed by exact candidate and
 installed checks; the terminal supplement is retained input to that work.
+
+### Repaired-source rollout renewal
+
+`renew_terminal_rollout.py` invokes the retained batch recipes with exact source
+`9924678c` and a fresh Git-common evidence store. The construction receipt resolves
+164 committed inputs and compiles 151 Python modules in memory, checking their
+checked-out bytes against Git. The input-manifest SHA-256 is
+`f1d06f13eba526882b0bb68a355fbf9eb59ed139d616b2a1d0b2a8bee15022ff`;
+the authority SHA-256 is
+`e5acdb45980581353dd4da3a00f5acbd170686e6941dd2ea2dd48fba222830fc`.
+It does not claim full sparse-checkout equality or alter historical proof.
+
+The baseline renewal completed with exit zero and five matching observations:
+staged CLI, candidate CLI, selector check, selector details and authenticated
+hook. Raw command, process, output, fixture and observation records remain at
+`.git/datum-wdq/proposals/terminal-rollout-evidence-20260910` for subsequent
+complete-packet retention. This is the start of full renewal, not its completion.
+Source health passes for 1,850 files; no compiler artifacts, product changes or
+installed-trust changes are involved.
