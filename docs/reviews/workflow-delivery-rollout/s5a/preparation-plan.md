@@ -1,6 +1,6 @@
 # S5A fixture and dispatch preparation proposal
 
-Status: pending bounded execution authorization; planning only.
+Status: bounded preparation approved; installed preparation/landing path unresolved.
 Frontier: UVT-S5A-BUILD / S5A-C01; `dat-uvt-s5a-build-1wv`.
 Owning route: `workflow-delivery-cohort-preparation`.
 Basis: `runtime-readiness-audit.json` at `7ab093c2` and
@@ -12,9 +12,13 @@ native proof. The current delivery contract supplies the inherited behavior.
 Produce actual, reviewable inputs for S5A readiness. This is not permission to
 enable selection capabilities, amend PM026, build an editor, change Preferences,
 modify a Claude prototype, add dependencies or install/promote delivery trust.
-Current S5A authority is planning. Fixture construction and production-source
-registration require a separately recorded, bounded execution authorization.
-Standing WDQ process approval is not silently reused as that product permission.
+The owner approved this bounded preparation at commit `6ece73ed`; the exact
+response and approved document hash are retained in
+`preparation-owner-20260910.json`. Do not request this approval again.
+The live Frontier remains planning until the installed gate's preparation path
+is reconciled: it currently requires enrollment/readiness before execution and
+has no promoted S5A source scope. Approval is recorded, not silently converted
+into readiness, full product permission or permission to bypass local trust.
 
 Do not mark S5A-C01 complete because this proposal exists. Its complete domain
 matrix, actual fixture identities, production bindings, applicable budgets and
@@ -129,6 +133,6 @@ native acceptance, a new dependency, a numerical performance budget or promotion
    S5A execution packet. A successful fixture validator is neither native GUI
    proof nor completion of S5A-C01's entire contract or WDQ adoption.
 
-Unresolved fixture construction authority, registration path, measurement limits
-and reviewer provision remain explicit. No readiness, enrollment or acceptance
-is asserted by this plan.
+Fixture construction and dispatch-evidence preparation have owner approval.
+The installed preparation/landing path, measurement limits and reviewer provision
+remain unresolved. No readiness, enrollment or acceptance is asserted by this plan.

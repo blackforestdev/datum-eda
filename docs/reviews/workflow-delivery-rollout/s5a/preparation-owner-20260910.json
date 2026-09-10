@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "kind": "datum.s5a.bounded-preparation-owner-input",
+  "frontier_key": "UVT-S5A-BUILD",
+  "issue_id": "dat-uvt-s5a-build-1wv",
+  "source": "owner message in this session",
+  "response": "approved yet again....",
+  "resolves_request": "Authorize S5A fixture and dispatch-evidence preparation under 6ece73ed.",
+  "base_commit": "6ece73ed2236b38d6ae8a11df94913b8bdbe87b8",
+  "approved_plan_path": "docs/reviews/workflow-delivery-rollout/s5a/preparation-plan.md",
+  "approved_plan_sha256": "d300d2e2fd6bc0380350d011c83bdef41362789f7e56e4450c051e61fce2ee83",
+  "recorded_at": "2026-09-10T23:56:39Z",
+  "disposition": "bounded fixture and dispatch-evidence preparation approved; do not request this approval again",
+  "excluded": [
+    "full S5A capability activation or acceptance",
+    "Preferences or Claude-owned prototypes",
+    "new third-party dependencies",
+    "numerical performance-budget ratification",
+    "independent-review completion",
+    "installation or promotion of local delivery trust"
+  ],
+  "execution_state": "not started: installed policy has no usable pre-readiness preparation path for this product lane",
+  "installed_authority": "1644e2129f4ff83cec1cdf0e6e13534c3b258e8e",
+  "diagnostic": {
+    "method": "Call the installed immutable workflow_delivery_categories.validate_categories with the real HEAD manifest, promoted policy and authority; vary only an in-memory S5A authorization and declaration. No worktree, index or trust mutation.",
+    "scope": "category admission only, not end-to-end native or gate proof",
+    "results": [
+      {
+        "case": "execution_without_declaration",
+        "code": "WDQ-COVERAGE",
+        "detail": "readiness/execution requires a delivery declaration"
+      },
+      {
+        "case": "execution_without_enrollment",
+        "code": "WDQ-COVERAGE",
+        "detail": "execution requires owner-promoted enrollment"
+      }
+    ],
+    "promoted_s5a_source_scopes": [],
+    "consequence": "A Frontier authorization change alone cannot permit preparation. Candidate-only enrollment or moving source outside guarded roots is not an acceptable repair. The preparation/landing mechanism must be reconciled in the workflow infrastructure lane before source construction."
+  },
+  "readiness_asserted": false,
+  "acceptance_asserted": false
+}
