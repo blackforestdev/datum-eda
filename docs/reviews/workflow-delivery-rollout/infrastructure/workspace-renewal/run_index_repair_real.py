@@ -13,7 +13,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from run_index_repair_batch import PIN, OLD, save
 
 
-def main():
+def main(*, pin=PIN, runtime_name="index-preservation-repair-20260910",
+         store_name="index-repair-evidence-20260910"):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("batch", choices=("real-roadmap", "current-inventory"), nargs="?", default="real-roadmap")
     parser.add_argument("--owner-reopened", action="store_true")
@@ -21,8 +22,12 @@ def main():
     args = parser.parse_args()
     batch = args.batch
     root = Path(__file__).resolve().parents[5]
-    runtime = root / ".git/datum-wdq/proposals/index-preservation-repair-20260910"
-    store = root / ".git/datum-wdq/proposals/index-repair-evidence-20260910"
+    assert len(pin) == 40 and all(c in "0123456789abcdef" for c in pin)
+    for name in (runtime_name, store_name):
+        assert name and name not in (".", "..") and Path(name).name == name
+    runtime = root / ".git/datum-wdq/proposals" / runtime_name
+    store = root / ".git/datum-wdq/proposals" / store_name
+    assert runtime.resolve() == runtime and store.resolve() == store and store.is_dir()
     preparation_path = store / ("owner-reopened-roadmap-preparation.json" if args.owner_reopened else "roadmap-preparation.json")
     if args.reconciled:
         assert args.owner_reopened
@@ -31,7 +36,7 @@ def main():
     if args.owner_reopened:
         store = store / ("owner-reopened-reconciled" if args.reconciled else "owner-reopened")
         store.mkdir(exist_ok=True)
-    assert preparation["runtime_source"] == PIN
+    assert preparation["runtime_source"] == pin
     fixture = preparation["fixture_commit"]
     packet = Path(preparation["packet"])
     assert hashlib.sha256((packet / "source.bundle").read_bytes()).hexdigest() == preparation["snapshot"]["bundle_sha256"]
@@ -44,7 +49,7 @@ def main():
         original = json.loads(raw)["argv"]
     assert original[:5] == ["python3", "-I", "-S", "-B", "-c"] and len(original) == 6
     changes = {
-        OLD: PIN,
+        OLD: pin,
         'packet=support_locations(runtime,pin)["proposals"]/"renewed-real-roadmap-0e5b8064"':
             "fixture_ref=" + repr(fixture) + "\npacket=Path(" + repr(str(packet)) + ")",
         'store=packet.parent/"renewed-real-roadmap-captures-0e5b8064"':
@@ -85,7 +90,7 @@ def main():
     command = original[:5] + [code]
     compile(code, "recorded-real-roadmap-recipe", "exec")
     git = lambda *args: subprocess.check_output(["git", "--no-optional-locks", *args], cwd=runtime)
-    assert git("rev-parse", "HEAD").decode().strip() == PIN and not git("status", "--porcelain")
+    assert git("rev-parse", "HEAD").decode().strip() == pin and not git("status", "--porcelain")
     assert not (store / batch).exists()
     save(store / (batch + "-command.json"), {"command": command, "cwd": str(runtime),
         "source_record": str(record), "source_record_sha256": hashlib.sha256(raw).hexdigest(), "changes": changes,
@@ -102,7 +107,7 @@ def main():
         "ended_ns": time.time_ns(), "exit_code": status,
         "stdout_sha256": hashlib.sha256(out_path.read_bytes()).hexdigest(),
         "stderr_sha256": hashlib.sha256(err_path.read_bytes()).hexdigest()})
-    assert git("rev-parse", "HEAD").decode().strip() == PIN and not git("status", "--porcelain")
+    assert git("rev-parse", "HEAD").decode().strip() == pin and not git("status", "--porcelain")
     print(json.dumps({"exit_code": status}), flush=True)
     raise SystemExit(status)
 

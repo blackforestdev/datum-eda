@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-review-publication-cycle-a1y",
+  "runtime_source": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "snapshot_source": "377323b29705ccccd6f8fa91f663d7d91c6d03c4",
+  "source_tree": "eb1b73cb6fbaba7e34a20d8babbebf6e5dc33b1c",
+  "bundle_sha256": "8b9f667fe2d8f406edf2e790060b7329393c2acc939723c69f6954ee4f072f6b",
+  "local_packet": ".git/datum-wdq/proposals/sequencing-roadmap-377323b2",
+  "frontier_items_preserved": 56,
+  "frontier_commits_resolved": 40,
+  "source_unchanged": true,
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-roadmap-snapshot.tar.xz",
+    "sha256": "77a431bb72d15f94dc3a72f1fcc52224de819a636b531ce6e3b822e2f7d0ac0e",
+    "tar_compare_exit_code": 0,
+    "scope": "request, result, source-before, source-after and restored-state JSON; full bundle and restored repository retained locally without duplicate committed copies."
+  },
+  "setup_correction": "Initial reference-existence probe stopped before export because show-ref returned 128 rather than the assumed 1 for an absent reference. Retry used rev-parse --verify --quiet, verified existing exact identities and created absent refs with zero-old-value protection. No validator or authority change.",
+  "limits": "Verified snapshot preparation, not completed gate execution, independent replay, publication or adoption.",
+  "restored_trust_installed": false,
+  "activation_performed": false
+}
