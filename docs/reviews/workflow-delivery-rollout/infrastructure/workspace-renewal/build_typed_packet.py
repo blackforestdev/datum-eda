@@ -28,13 +28,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("root", "runtime", "observations", "output"):
         parser.add_argument("--" + name, type=Path, required=True)
+    parser.add_argument("--index-repair", action="store_true")
     args = parser.parse_args()
+    pin = "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf" if args.index_repair else PIN
+    typed = WORKSPACE + "index-repair-typed/" if args.index_repair else TYPED
     root, runtime, observations, output = (getattr(args, key).resolve()
         for key in ("root", "runtime", "observations", "output"))
     retained = root / ".git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909"
+    repaired = root / ".git/datum-wdq/proposals/index-repair-evidence-20260910"
     assert output.is_relative_to(retained) and not output.exists()
     git = lambda *words: subprocess.check_output(["git", "--no-optional-locks", *words], cwd=runtime)
-    assert git("rev-parse", "HEAD").decode().strip() == PIN and not git("status", "--porcelain")
+    assert git("rev-parse", "HEAD").decode().strip() == pin and not git("status", "--porcelain")
     sys.path.insert(0, str(runtime / "scripts"))
     from workflow_delivery_authority import authority_sha256
     from workflow_delivery_contract import contract_sha256
@@ -43,11 +47,13 @@ def main():
     from workflow_delivery_proof import packet_sha256, validate_proof
     from workflow_delivery_tree import Tree
 
-    base = Tree(runtime, revision=PIN)
+    baseline = read(repaired / "owner-reopened-roadmap-preparation-reconciled.json")["fixture_commit"] if args.index_repair else pin
+    base = Tree(runtime, revision=baseline)
     contract = base.json("specs/workflow_delivery/rollout.contract.json")
+    assert base.manifest(contract["input_roots"]) == Tree(runtime, revision=pin).manifest(contract["input_roots"])
     assert contract["proof_path"] == INFRA + "proof.json"
     assembled = read(observations / "dispatch-observations.json")
-    assert assembled["source_commit"] == PIN and len(assembled["observations"]) == 1314
+    assert assembled["source_commit"] == pin and len(assembled["observations"]) == 1314
     output.mkdir()
 
     class Overlay:
@@ -81,9 +87,14 @@ def main():
         return blob(path)
 
     authority = authority_sha256(tree, contract)
-    receipt = tree.json(WORKSPACE + "typed-build-receipt.json")
+    receipt_path = WORKSPACE + "typed-build-receipt.json"
+    if args.index_repair:
+        receipt_path = typed + "build-receipt.json"
+        write(receipt_path, read(repaired / "build-receipt.json"))
+        write(typed + "build-process.json", read(repaired / "build-process.json"))
+    receipt = tree.json(receipt_path)
     binary = receipt["binary_sha256"]
-    registry = write(TYPED + "registry.json", {"schema_version": 1, "binary_sha256": binary,
+    registry = write(typed + "registry.json", {"schema_version": 1, "binary_sha256": binary,
         "entries": read(observations / "registry-entries.json")})
     dispatches = read(observations / "scenario-dispatches.json")
     regression = tree.json(WORKSPACE + "renewed-workspace-regression.json")
@@ -99,7 +110,7 @@ def main():
     bash = Path("/usr/bin/bash")
     tools.append({"name": "bash", "path": str(bash), "sha256": sha(bash),
         "version": subprocess.check_output([str(bash), "--version"], text=True).strip()})
-    tool_observation = write(TYPED + "observed-tools.json", {"schema_version": 1,
+    tool_observation = write(typed + "observed-tools.json", {"schema_version": 1,
         "os": platform.platform(), "tools": tools,
         "scope": "Supplemental observed tool identities, not replacement environment authority.",
         "regression_receipt": blob(WORKSPACE + "renewed-workspace-regression.json")})
@@ -110,19 +121,26 @@ def main():
     environment_blob = selected[0]
     assert blob(environment_blob["path"]) == environment_blob
     environment = base.json(environment_blob["path"])
-    manifest = tree.json(WORKSPACE + "renewed-input-manifest.json")
+    manifest = read(repaired / "input-manifest.json") if args.index_repair else tree.json(WORKSPACE + "renewed-input-manifest.json")
     assert manifest == base.manifest(contract["input_roots"])
-    manifest_path = TYPED + "input-manifest.json"
+    manifest_path = typed + "input-manifest.json"
     (output / manifest_path).write_bytes(canonical_json(manifest))
     assert blob(manifest_path)["sha256"] == receipt["input_manifest_sha256"]
     archives = sorted((root / WORKSPACE).glob("renewed-*-captures.tar.xz"))
     archives += [root / WORKSPACE / "full-workspace-inventory-captures.tar.xz",
                  root / WORKSPACE / "typed-observations.tar.xz"]
+    if args.index_repair:
+        archives = sorted((root / WORKSPACE).glob("index-repair-*.tar.xz"))
+        archives += [root / WORKSPACE / name for name in (
+            "owner-reopened-preparation.tar.xz", "owner-reopened-real-captures.tar.xz",
+            "index-repair-typed-observations.tar.xz")]
+        archives = sorted(set(archives))
     archive_blobs = [blob(path.relative_to(root).as_posix()) for path in archives]
-    fixture = write(TYPED + "fixtures.json", {"schema_version": 1, "source_commit": PIN,
+    fixture = write(typed + "fixtures.json", {"schema_version": 1, "source_commit": pin,
         "capture_archives": archive_blobs, "raw_capture_paths": sorted({str(Path(row["capture_path"]).parent)
             for row in assembled["observations"]}), "real_roadmap_snapshot":
-        tree.json(WORKSPACE + "renewed-roadmap-snapshot.json"),
+        read(repaired / "owner-reopened-roadmap-preparation-reconciled.json") if args.index_repair else tree.json(WORKSPACE + "renewed-roadmap-snapshot.json"),
+        "real_roadmap_binding": assembled.get("real_roadmap_binding"),
         "limitation": "Real-roadmap archives omit duplicated full checkouts; exact retained source bundle and raw fixtures remain at the recorded local paths. No standalone portable replay claim."})
     common = [blob(WORKSPACE + name) for name in ("typed-build-observation.json",
         "typed-assembly-independent-inspection.json", "renewed-workspace-regression.json",
@@ -133,15 +151,22 @@ def main():
         "full-workspace-inventory-observation.json")]
     common += [blob(path.relative_to(root).as_posix())
                for path in sorted((root / WORKSPACE).glob("renewed-*-observation.json"))]
+    if args.index_repair:
+        common = [blob(path.relative_to(root).as_posix())
+                  for path in sorted((root / WORKSPACE).glob("index-repair-*.json"))]
+        common += [blob(WORKSPACE + name) for name in (
+            "proof-renewal-authorization.json", "owner-reopened-preparation.json",
+            "owner-reopened-real-captures.json", "assemble_observations.py", "build_typed_packet.py")]
+        common += [blob(typed + "build-process.json")]
     common = list({item["path"]: item for item in common}.values())
     common.append(tool_observation)
-    limits = write(TYPED + "limits.json", {"schema_version": 1,
+    limits = write(typed + "limits.json", {"schema_version": 1,
         "producer_scope": "Current-source producer observations; no independent execution, publication inspection, activation or product acceptance.",
         "runtime_scope": "Bounded repository, fixture and named-tool accounting, not exhaustive descendant/shared-library tracing. Existing tracing flags are not upgraded.",
         "pending": ["WDQ-RECHECK independently repeats entrypoints and exact publication inspection",
                     "WDQ-I04 owner ratification/activation", "WDQ-I05 three real cohorts", "WDQ-I06 owner acceptance"]})
     results = []
-    session = "wdq-compat-producer-20260909"
+    session = "wdq-index-repair-producer-20260910" if args.index_repair else "wdq-compat-producer-20260909"
     for scenario in contract["scenarios"]:
         sid = scenario["id"]
         rows = [row for row in assembled["observations"] if row["case_id"].startswith(sid)]
@@ -149,14 +174,14 @@ def main():
         exits = Counter(str(row["returncode"]) for row in rows)
         visible = f"Observed {len(rows)} invocations: phases {dict(counts)}, return codes {dict(exits)}. Case-specific expected outcomes passed; interruptions and uninvoked hooks remain explicit."
         state = f"All {len(rows)} recorded protected before/after states matched. Producer evidence only; independent repetition/publication remains under WDQ-RECHECK. No activation or product acceptance."
-        observation = write(TYPED + sid + "-observations.json", {"schema_version": 1,
-            "scenario_id": sid, "source_commit": PIN, "observations": rows})
-        event = write(TYPED + sid + "-events.json", {"schema_version": 1,
+        observation = write(typed + sid + "-observations.json", {"schema_version": 1,
+            "scenario_id": sid, "source_commit": pin, "observations": rows})
+        event = write(typed + sid + "-events.json", {"schema_version": 1,
             "scenario_id": sid, "producer_session": session, "method": scenario["method"],
             "binary_sha256": binary, "authority_sha256": authority, "inputs": scenario["inputs"],
             "dispatches": dispatches[sid], "actual_visible": visible, "actual_state": state})
         state_blobs = [observation, limits, fixture, environment_blob, *common, *archive_blobs]
-        roles = write(TYPED + sid + "-roles.json", {"kind": "datum.workflow-delivery.artifacts/v1",
+        roles = write(typed + sid + "-roles.json", {"kind": "datum.workflow-delivery.artifacts/v1",
             "scenario_id": sid, "events": [event], "captures": [], "state": state_blobs,
             "registry": registry})
         evidence = {"normal": visible, "invalid": visible, "scope": state,
@@ -167,25 +192,30 @@ def main():
         assertions = [{"dimension": key, "expected": value["reason"], "observed": evidence[key],
             "outcome": "pass"} for key, value in scenario["dimensions"].items()
             if value["disposition"] == "required"]
+        defects = ["dat-wdq-workspace-inputs-zmt"] if sid == "INFRA-S05" else []
+        if args.index_repair:
+            defects.append("dat-wdq-index-refresh-ogw")
+            if sid in ("INFRA-S04", "INFRA-S05"):
+                defects.append("dat-wdq-proof-renewal-cycle-qgb")
         results.append({"scenario_id": sid, "outcome": "pass", "actual_visible": visible,
             "actual_state": state, "assertions": assertions, "artifacts": [roles, event, registry, *state_blobs],
-            "defects": ["dat-wdq-workspace-inputs-zmt"] if sid == "INFRA-S05" else []})
+            "defects": defects})
     proof = {"schema_version": 1, "contract_sha256": contract_sha256(contract),
-        "producer_session": session, "source_commit": PIN,
+        "producer_session": session, "source_commit": pin,
         "input_manifest": blob(manifest_path),
-        "build": {"command": receipt["build_command"], "receipt": blob(WORKSPACE + "typed-build-receipt.json"),
+        "build": {"command": receipt["build_command"], "receipt": blob(receipt_path),
                   "toolchain": receipt["toolchain"], "source_clean": True},
         "fixture": fixture, "environment": environment_blob, "results": results}
     write(contract["proof_path"], proof)
     validate_proof(tree, contract)
     validate_environment(tree, proof, environment, contract=contract)
     events = validate_correlations(tree, contract, proof)
-    assert git("rev-parse", "HEAD").decode().strip() == PIN and not git("status", "--porcelain")
+    assert git("rev-parse", "HEAD").decode().strip() == pin and not git("status", "--porcelain")
     result = {"schema_version": 1, "packet_sha256": packet_sha256(contract, proof, authority),
         "authority_sha256": authority, "correlated_event_blobs": len(events), "observations": 1314,
         "validation": "Prospective overlay: proof freshness/shape, headless environment and artifact-role/dispatch correlations passed.",
         "committed_candidate_verified": False, "independent_replay_complete": False, "activation_performed": False}
-    write(TYPED + "verification.json", result)
+    write(typed + "verification.json", result)
     print(json.dumps(result))
 
 

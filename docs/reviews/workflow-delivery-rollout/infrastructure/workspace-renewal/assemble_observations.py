@@ -72,20 +72,26 @@ def main():
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--runtime", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--index-repair", action="store_true")
     args = parser.parse_args()
+    pin = "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf" if args.index_repair else PIN
     root, runtime, output = (p.resolve() for p in (args.root, args.runtime, args.output))
     git = lambda *words: subprocess.check_output(["git", "--no-optional-locks", *words], cwd=runtime)
-    assert git("rev-parse", "HEAD").decode().strip() == PIN
+    assert git("rev-parse", "HEAD").decode().strip() == pin
     assert not git("status", "--porcelain")
     proposals = root / ".git/datum-wdq/proposals"
     retained = proposals / "wdq-full-candidate-inspection-20260909"
+    repaired = proposals / "index-repair-evidence-20260910"
     assert output.is_relative_to(retained) and not output.exists()
     original = read(proposals / "wdq-i03-9cab72da-retained-package/dispatch-observations-complete.json")
     rows = []
     for name, count in BATCHES.items():
         batch = retained / ("renewed-" + name + "-0e5b8064")
-        inventory = read(batch / "observations.json")
-        assert inventory["candidate"] == PIN and len(inventory["observations"]) == count
+        if args.index_repair:
+            batch = repaired / name
+        inventory_name = "observations-complete.json" if args.index_repair and name == "s01" else "observations.json"
+        inventory = read(batch / inventory_name)
+        assert inventory["candidate"] == pin and len(inventory["observations"]) == count
         for row in inventory["observations"]:
             capture = batch / row["directory"] / "capture"
             assessment = read(capture.parent / "assessment.json")
@@ -93,8 +99,20 @@ def main():
             assert assessment["result_sha256"] == digest(capture / "result.json")
             rows.append(observe(runtime, capture, row))
     real = runtime / ".git/datum-wdq/proposals/renewed-real-roadmap-captures-0e5b8064"
+    if args.index_repair:
+        real = repaired / "owner-reopened-reconciled/real-roadmap"
     inventory = read(real / "observations.json")
-    assert inventory["candidate"] == PIN
+    assert inventory["candidate"] == pin
+    real_binding = None
+    if args.index_repair:
+        preparation = read(repaired / "owner-reopened-roadmap-preparation-reconciled.json")
+        fixture = preparation["fixture_commit"]
+        assert all(inventory[key] == fixture for key in ("fixture_commit", "authority_ref", "base_ref"))
+        assert inventory["owner_renewal_transaction"] == preparation["transaction"]
+        real_binding = {"fixture_commit": fixture, "authority_ref": fixture, "base_ref": fixture,
+                        "owner_renewal_transaction": preparation["transaction"],
+                        "snapshot_bundle_sha256": inventory["snapshot_bundle_sha256"],
+                        "scope": "Owner-authorized prospective reopened lifecycle; not installed-main proof."}
     for original_row in inventory["invocations"]:
         if original_row["case"] != "clean":
             continue
@@ -112,9 +130,17 @@ def main():
     extra.extend([(real, "observations.json", "clean"),
         (runtime / ".git/datum-wdq/proposals/renewed-real-roadmap-inventory-0e5b8064",
          "observations.json", None)])
+    if args.index_repair:
+        extra = [(repaired / ("workspace-" + name), "renewal-result.json", None)
+                 for name in ("runtime", "policy-legacy", "proof-input")]
+        extra.extend([(real, "observations.json", "clean"),
+                      (repaired / "owner-reopened-reconciled/current-inventory", "observations.json", None)])
     for batch, inventory_name, excluded in extra:
         inventory = read(batch / inventory_name)
-        assert inventory["candidate"] == PIN
+        assert inventory["candidate"] == pin
+        if args.index_repair and "fixture_commit" in inventory:
+            assert all(inventory[key] == real_binding[key]
+                       for key in ("fixture_commit", "authority_ref", "base_ref", "owner_renewal_transaction"))
         for saved in inventory["invocations"]:
             if saved["case"] == excluded:
                 continue
@@ -151,15 +177,16 @@ def main():
             "handler_ref": entry["handler_ref"], "unavailable_reason": None if enabled else reason,
             "mutation_count": 0})
     output.mkdir()
-    products = {"dispatch-observations.json": {"schema_version": 1, "source_commit": PIN,
+    products = {"dispatch-observations.json": {"schema_version": 1, "source_commit": pin,
         "observations": rows, "original_inventory_exactly_covered": True,
         "original_inventory_observations": original_count, "additional_workspace_observations": 191,
         "additional_workspace_evidence_included": True, "independent_replay_complete": False,
+        "real_roadmap_binding": real_binding,
         "acceptance_asserted": False}, "registry-entries.json": list(registry.values()),
         "scenario-dispatches.json": dispatches}
     for name, value in products.items():
         (output / name).write_text(json.dumps(value, indent=2) + "\n")
-    assert git("rev-parse", "HEAD").decode().strip() == PIN and not git("status", "--porcelain")
+    assert git("rev-parse", "HEAD").decode().strip() == pin and not git("status", "--porcelain")
     print(json.dumps({"observations": len(rows), "scenarios": {key: len(value) for key, value
         in dispatches.items()}, "output": str(output), "complete_proof": False}))
 

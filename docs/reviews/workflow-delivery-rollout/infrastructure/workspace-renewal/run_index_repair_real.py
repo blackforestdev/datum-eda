@@ -16,11 +16,21 @@ from run_index_repair_batch import PIN, OLD, save
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("batch", choices=("real-roadmap", "current-inventory"), nargs="?", default="real-roadmap")
-    batch = parser.parse_args().batch
+    parser.add_argument("--owner-reopened", action="store_true")
+    parser.add_argument("--reconciled", action="store_true")
+    args = parser.parse_args()
+    batch = args.batch
     root = Path(__file__).resolve().parents[5]
     runtime = root / ".git/datum-wdq/proposals/index-preservation-repair-20260910"
     store = root / ".git/datum-wdq/proposals/index-repair-evidence-20260910"
-    preparation = json.loads((store / "roadmap-preparation.json").read_bytes())
+    preparation_path = store / ("owner-reopened-roadmap-preparation.json" if args.owner_reopened else "roadmap-preparation.json")
+    if args.reconciled:
+        assert args.owner_reopened
+        preparation_path = store / "owner-reopened-roadmap-preparation-reconciled.json"
+    preparation = json.loads(preparation_path.read_bytes())
+    if args.owner_reopened:
+        store = store / ("owner-reopened-reconciled" if args.reconciled else "owner-reopened")
+        store.mkdir(exist_ok=True)
     assert preparation["runtime_source"] == PIN
     fixture = preparation["fixture_commit"]
     packet = Path(preparation["packet"])
@@ -57,6 +67,17 @@ def main():
         end = original[5].index('\npolicy=json.loads(', start)
         changes[original[5][start:end]] = "\n"
         changes["independently observed current workspace paths"] = "freshly observed current workspace paths"
+    if args.owner_reopened:
+        changes.update({
+            '(("AuthorityRef",pin),("BaseRef",pin),':
+                '(("AuthorityRef",fixture_ref),("BaseRef",fixture_ref),',
+            'prepare_bundle(root,pin)': 'prepare_bundle(root,fixture_ref)',
+            'locations=support_locations(root,pin)': 'locations=support_locations(root,fixture_ref)',
+            '["--enforce","--authority-ref",pin,"--base-ref",pin,':
+                '["--enforce","--authority-ref",fixture_ref,"--base-ref",fixture_ref,',
+            '"candidate":pin,"invocations":results':
+                '"candidate":pin,"fixture_commit":fixture_ref,"authority_ref":fixture_ref,"base_ref":fixture_ref,"owner_renewal_transaction":' + repr(preparation["transaction"]) + ',"invocations":results',
+        })
     code = original[5]
     for before, after in changes.items():
         assert code.count(before) == 1, before
@@ -68,7 +89,8 @@ def main():
     assert not (store / batch).exists()
     save(store / (batch + "-command.json"), {"command": command, "cwd": str(runtime),
         "source_record": str(record), "source_record_sha256": hashlib.sha256(raw).hexdigest(), "changes": changes,
-        "fixture_commit": fixture, "preparation": str(store / "roadmap-preparation.json")})
+        "fixture_commit": fixture, "preparation": str(preparation_path),
+        "scope": "Owner-authorized reopened prospective fixture, not installed authority." if args.owner_reopened else "Historical current-claim fixture."})
     out_path, err_path = store / (batch + "-stdout.bin"), store / (batch + "-stderr.bin")
     with out_path.open("xb") as out, err_path.open("xb") as err:
         start = time.time_ns()
