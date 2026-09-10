@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-index-refresh-ogw",
+  "candidate": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s02-ownership.tar.xz",
+    "sha256": "6a6f2a25661f2b9f2fffb177c679a9249bf434f2c89dd9952aca2d1d5f465592",
+    "tar_compare_exit_code": 0,
+    "scope": "All 190 fresh producer fixtures and captures, prepared packets, aggregate observations, exact command, formatter environment, raw process times/PID and stdout/stderr."
+  },
+  "command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/run_index_repair_batch.py s02-ownership",
+  "exit_code": 0,
+  "observations": 190,
+  "all_expected_outcomes": true,
+  "retries": 0,
+  "recipe_changes": "Original fresh-setup recipe with explicit source/store substitutions. Actual previously recorded stable rustfmt selected through PATH before the first invocation, avoiding the historical isolated-HOME rustup proxy failure. Formatter hash verified; no installation, download or gate change.",
+  "candidate_head_and_worktree_unchanged": true,
+  "scope": "Original ordered S02 ownership/external-boundary inventory, including S05 deletion/rename. Synthetic external-lane fixtures only; no Preferences edits or product acceptance.",
+  "full_matrix_renewed": false,
+  "independent_replay_complete": false,
+  "activation_performed": false
+}
