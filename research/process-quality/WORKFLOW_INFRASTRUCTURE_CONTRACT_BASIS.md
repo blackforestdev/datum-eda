@@ -308,3 +308,17 @@ the newly required actual compatibility observations, final input/permission
 reconciliation, distinct replay or exact I04 owner ratification. No owner cache,
 local script, Beads runtime, prototype or Preferences record was changed to
 manufacture compatibility. All native adoption obligations remain intact.
+
+## WDQ-COMPAT — initial mapping prerequisite correction
+
+The owner-approved sequencing repair also covers the initial mapping handoff.
+At main `2793959cecd02a20037e87f8c3f63aa7e340a899`, the installed schema-1 policy
+enrolls only the accepted pilot and the rollout Frontier has no delivery field.
+Requiring that baseline to already contain the candidate's schema-2 mapping is
+an invalid initial-publication prerequisite. The prepared correction permits
+only genuine absence on that valid legacy boundary, preserves prior enrollment
+records and legacy-baseline identity, and requires the exact renewed candidate
+mapping. Present null/malformed mappings and removed or changed enrollments
+remain refusals. Both views still require completed predecessors and claim-free
+I04 for strict inspection/activation. This correction alone does not resolve
+review-time inspection sequencing, complete proof renewal or activate anything.

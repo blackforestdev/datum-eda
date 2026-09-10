@@ -207,7 +207,7 @@ Frontier, not this preparation note, controls current task selection.
 
 | Governed documents | Current evidence | Remaining boundary |
 | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json` | WDQ-TOOLS has real-roadmap pilot-preservation captures on all five entry operations (`824cab16`). Owner approved bounded source/named-tool verification on 2026-09-08; exhaustive descendant/runtime-library tracing is no longer required. | `dat-wdq-rollout-implementation-ffy` remains open. Bounded input review, complete matrix, readiness, producer proof, independent replay and exact owner activation remain due; product-native evidence is unchanged and no installed enforcement or acceptance is claimed. |
+| `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json`, proposed PM042 | Historical source4e proof remains retained. Under main approval `2793959c`, the isolated candidate now corrects the initial legacy mapping prerequisite while preserving strict review and activation requirements. This is repair construction, not renewed proof. | `dat-wdq-rollout-implementation-ffy` and `dat-wdq-review-publication-cycle-a1y` remain open. Separate review-time inspection, affected evidence renewal, independent review and exact owner activation remain due; product-native evidence and all three actual adoption cohorts are unchanged. |
 
 | Governed document | Current evidence | Target | Tracking |
 | --- | --- | --- | --- |

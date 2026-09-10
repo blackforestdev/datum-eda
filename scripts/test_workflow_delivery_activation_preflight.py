@@ -9,7 +9,9 @@ from copy import deepcopy
 import unittest
 from unittest.mock import patch
 
-from workflow_delivery_activation_preflight import preflight, promotion_boundary, ROLLOUT
+from workflow_delivery_activation_preflight import (
+    preflight, promotion_boundary, initial_mapping_migration, ROLLOUT,
+)
 from workflow_delivery_capture_state import protected_state
 from workflow_delivery_publication_delta import publication_delta
 from workflow_delivery_io import canonical_json, sha256
@@ -232,6 +234,40 @@ class PromotionBoundaryTest(unittest.TestCase):
         self.coverage["source_scopes"][0]["step_ids"] = ["WDQ-I04"]
         with self.assertRaisesRegex(ValueError, "sole bounded"):
             self.check()
+
+    def test_initial_legacy_mapping_migration_is_narrow_and_nonmutating(self):
+        self.item["completion"]["delivery"]["contract_path"] = "specs/workflow_delivery/rollout.contract.json"
+        del self.baseline["frontier"][0]["completion"]["delivery"]
+        ref = {"path": "docs/policy.md", "marker": "policy"}
+        pilot = {"frontier_key": "PILOT", "implementation_sessions": ["writer"], "activation_ref": ref}
+        prior = {"schema_version": 1, "decision_ref": ref, "legacy_baseline": "1" * 40,
+                 "enrolled": [pilot]}
+        policy = dict(prior, schema_version=2, coverage=self.coverage,
+                      enrolled=[deepcopy(pilot), dict(pilot, frontier_key=ROLLOUT)])
+        before = deepcopy((self.manifest, self.baseline, policy, prior))
+        self.assertTrue(initial_mapping_migration(self.manifest, self.baseline, policy, prior))
+        self.assertEqual(before, (self.manifest, self.baseline, policy, prior))
+        with self.assertRaisesRegex(ValueError, "independent-review mapping"):
+            self.check()
+        self.assertEqual(["scripts/owned.py"], promotion_boundary(self.manifest, self.baseline,
+            self.coverage, ["scripts/owned.py"], legacy_migration=True))
+        for mutate in (
+            lambda m, b, p, o: b["frontier"][0]["completion"].update(delivery=None),
+            lambda m, b, p, o: o.update(schema_version=True),
+            lambda m, b, p, o: o["enrolled"].append(dict(pilot, frontier_key=ROLLOUT)),
+            lambda m, b, p, o: p["enrolled"].pop(0),
+            lambda m, b, p, o: p["enrolled"][0].update(implementation_sessions=["other"]),
+            lambda m, b, p, o: p.update(legacy_baseline="2" * 40),
+            lambda m, b, p, o: m["frontier"][0]["completion"]["delivery"].update(contract_path="other.json"),
+        ):
+            values = deepcopy(before)
+            mutate(*values)
+            with self.subTest(mutation=mutate), self.assertRaises(ValueError):
+                initial_mapping_migration(*values)
+        self.baseline["frontier"][0]["completion"]["steps"][-2]["status"] = "pending"
+        with self.assertRaisesRegex(ValueError, "requires completed WDQ-RECHECK"):
+            promotion_boundary(self.manifest, self.baseline, self.coverage,
+                               ["scripts/owned.py"], legacy_migration=True)
 
 
 class PromotionCandidateTest(unittest.TestCase):

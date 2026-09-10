@@ -331,6 +331,17 @@ explicit rollout scope for I03/REVIEW, including reverted and merge-side changes
 No prototype path or additional product-lane scope is permitted by this initial
 rollout protocol. Subsequent unrelated promotions need their own reviewed scope.
 
+The initial legacy-to-schema-2 publication does not require its legacy base to
+already contain the new rollout mapping. Permit that absence only when the
+exact base has a valid schema-1 policy, no rollout enrollment and no rollout
+delivery field (a present null or malformed field is not absence). The candidate
+must preserve every prior enrollment record and the legacy-baseline identity,
+add only the rollout enrollment, and carry the exact schema-2 rollout contract
+mapping: WDQ-READY, null activate, WDQ-COMPAT verify, WDQ-RECHECK review and null
+accept. This exception changes no lifecycle, completed-review, owner-decision,
+source-history, proof or defect-disposition prerequisite. A schema-2 baseline
+retains the existing mapping requirements; this is not a general migration mode.
+
 Promotion inspection reuses full Frontier, classification, specification,
 readiness, environment and enrolled delivery checks, explicitly demanding the
 rollout's independent-review phase. Sharing state checks must not remove source

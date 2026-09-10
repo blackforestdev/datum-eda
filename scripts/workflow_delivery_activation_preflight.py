@@ -19,7 +19,36 @@ REDIRECTS = ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE", "GI
 ROLLOUT = "WORKFLOW-DELIVERY-IMPLEMENTATION"
 
 
-def promotion_boundary(manifest, baseline, coverage, changed_paths):
+def initial_mapping_migration(manifest, baseline, policy, prior_policy):
+    """Recognize only the initial legacy-to-rollout mapping transition."""
+    from workflow_delivery_coverage import index_items
+    from workflow_delivery_trust import policy_shape
+
+    policy_shape(prior_policy)
+    policy_shape(policy)
+    if prior_policy["schema_version"] != 1:
+        return False
+    current, old = index_items(manifest), index_items(baseline)
+    require(ROLLOUT in current and ROLLOUT in old, "migration requires existing rollout identity")
+    require("delivery" not in old[ROLLOUT].get("completion", {}),
+            "legacy publication baseline must have no rollout mapping")
+    prior = {row["frontier_key"]: row for row in prior_policy["enrolled"]}
+    proposed = {row["frontier_key"]: row for row in policy["enrolled"]}
+    require(ROLLOUT not in prior and set(proposed) == set(prior) | {ROLLOUT}
+            and all(proposed[key] == row for key, row in prior.items()),
+            "initial migration must preserve prior enrollments and add only rollout")
+    require(policy["schema_version"] == 2
+            and policy["legacy_baseline"] == prior_policy["legacy_baseline"],
+            "initial migration requires schema-2 policy with unchanged legacy baseline")
+    require(current[ROLLOUT].get("completion", {}).get("delivery") == {
+        "schema_version": 2, "contract_path": "specs/workflow_delivery/rollout.contract.json",
+        "checkpoints": {"ready": "WDQ-READY", "activate": None, "verify": "WDQ-COMPAT",
+                        "review": "WDQ-RECHECK", "accept": None}},
+        "initial migration requires the exact renewed rollout mapping")
+    return True
+
+
+def promotion_boundary(manifest, baseline, coverage, changed_paths, *, legacy_migration=False):
     """Check bounded rollout publication, not an ordinary execution permission."""
     from workflow_delivery_coverage import index_items
     from workflow_delivery_coverage_shapes import coverage_shape
@@ -32,7 +61,7 @@ def promotion_boundary(manifest, baseline, coverage, changed_paths):
     for key in current:
         if key != ROLLOUT:
             require(current[key] == old[key], "promotion changes another Frontier lane: " + key)
-    for item in (old[ROLLOUT], current[ROLLOUT]):
+    for is_baseline, item in ((True, old[ROLLOUT]), (False, current[ROLLOUT])):
         completion = item.get("completion", {})
         steps = {s["id"]: s for s in completion.get("steps", [])}
         require(item.get("issue_id") == "dat-wdq-rollout-implementation-ffy"
@@ -51,6 +80,8 @@ def promotion_boundary(manifest, baseline, coverage, changed_paths):
                 and steps["WDQ-COMPAT"].get("depends_on") == ["WDQ-REVIEW"],
                 "publication requires the exact renewal dependency chain")
         delivery = completion.get("delivery", {})
+        if is_baseline and legacy_migration and "delivery" not in completion:
+            continue  # Only the separately validated initial migration permits absence.
         require(delivery.get("schema_version") == 2 and delivery.get("checkpoints") == {
             "ready": "WDQ-READY", "activate": None, "verify": "WDQ-COMPAT",
             "review": "WDQ-RECHECK", "accept": None},
@@ -79,7 +110,7 @@ def inspect_promotion_candidate(root, *, base, candidate, authority, environment
     from workflow_delivery_coverage_runtime import validate_coverage_state
     from workflow_delivery_environments import load_environments
     from workflow_delivery_frontier import validate_frontier
-    from workflow_delivery_trust import Trust, FRONTIER_PATH
+    from workflow_delivery_trust import Trust, FRONTIER_PATH, POLICY_PATH
     from workflow_delivery_tree import Tree
 
     require(authority == candidate, "initial promotion authority must be the exact complete candidate")
@@ -89,8 +120,11 @@ def inspect_promotion_candidate(root, *, base, candidate, authority, environment
     manifest = validate_frontier(tree)
     trust = Trust(tree, authority, base)
     require(trust.policy["schema_version"] == 2, "broad promotion requires schema-2 coverage")
-    paths = promotion_boundary(manifest, trust.base.json(FRONTIER_PATH),
-                               trust.policy["coverage"], delta["touched_paths"])
+    baseline = trust.base.json(FRONTIER_PATH)
+    migration = initial_mapping_migration(manifest, baseline, trust.policy,
+                                          trust.base.json(POLICY_PATH))
+    paths = promotion_boundary(manifest, baseline, trust.policy["coverage"],
+                               delta["touched_paths"], legacy_migration=migration)
     require(ROLLOUT in trust.enrolled, "rollout must be enrolled before publication")
     environments = load_environments(tree, environment_path, trust.policy, authority=trust.authority)
     items = validate_coverage_state(tree, manifest, trust, environments=environments)
