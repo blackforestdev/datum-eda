@@ -3,12 +3,15 @@
 from pathlib import Path
 
 from workflow_delivery_authority import resolve_ref
+from workflow_delivery_bootstrap import HOOK_SOURCE, runtime_paths
 from workflow_delivery_contract import canonical_contract, validate_contract
+from workflow_delivery_coverage_shapes import coverage_shape
 from workflow_delivery_io import DeliveryInputError, canonical_json
 from workflow_delivery_shapes import (
-    array, closed, commit_id, ids, identifier, ref, require, unique, version,
+    array, closed, commit_id, ids, identifier, ref, require, unique,
 )
 from workflow_delivery_tree import Tree
+from workflow_delivery_workspace_authority import load_workspace
 
 
 POLICY_PATH = "specs/workflow_delivery_policy.json"
@@ -23,8 +26,14 @@ def policy_shape(value):
 
 
 def _policy_shape(value):
-    closed(value, "schema_version decision_ref enrolled legacy_baseline", POLICY_PATH, "WDQ-POLICY")
-    version(value["schema_version"], POLICY_PATH)
+    require(type(value) is dict, POLICY_PATH, "policy object required", "WDQ-POLICY")
+    schema = value.get("schema_version")
+    require(type(schema) is int and schema in (1, 2), POLICY_PATH,
+            "integer policy schema 1 or 2 required", "WDQ-POLICY")
+    fields = "schema_version decision_ref enrolled legacy_baseline"
+    closed(value, fields + (" coverage" if schema == 2 else ""), POLICY_PATH, "WDQ-POLICY")
+    if schema == 2:
+        coverage_shape(value["coverage"])
     ref(value["decision_ref"], POLICY_PATH)
     commit_id(value["legacy_baseline"], POLICY_PATH)
     array(value["enrolled"], POLICY_PATH)
@@ -38,12 +47,9 @@ def _policy_shape(value):
 
 
 def _gate_paths(tree):
-    fixed = {"scripts/check_workflow_delivery.py", "scripts/project_status.py",
-             "scripts/project_task_details.py", "scripts/check_evidence_traceability.py",
-             "scripts/git-hooks/pre-commit", "scripts/run_drift_gates.sh",
+    fixed = {HOOK_SOURCE, "scripts/git-hooks/pre-commit", "scripts/run_drift_gates.sh",
              ".github/workflows/alignment.yml"}
-    return fixed | {p for p in tree.entries if p.startswith("scripts/workflow_delivery_")
-                    and p.endswith(".py") and not p.endswith("_test_support.py")}
+    return fixed | runtime_paths(tree.entries)
 
 
 class Trust:
@@ -87,6 +93,9 @@ class Trust:
                 require(running.is_file() and running.read_bytes() == approved, path,
                         "execute the trusted revision's gate, not candidate code", "WDQ-TRUST")
         self.enrolled = {r["frontier_key"]: r for r in self.policy["enrolled"]}
+        self.workspace = load_workspace(candidate, self.authority,
+                                        policy_schema=self.policy["schema_version"])
+        candidate.workspace = self.workspace
 
     def contract(self, candidate, item, contract):
         key = item["key"]

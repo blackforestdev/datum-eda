@@ -1,0 +1,265 @@
+{
+  "first_failure": {
+    "tests_run": 45,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "success": false,
+    "loaded_repository_sources": [
+      {
+        "module": "check_workflow_delivery",
+        "path": "scripts/check_workflow_delivery.py",
+        "sha256": "58bb1b4a0cd78da5c6b1854bb1fdd6462f32978c510f9b23c2789c8d0d65719e"
+      },
+      {
+        "module": "project_status",
+        "path": "scripts/project_status.py",
+        "sha256": "5df30076d9e92b9d9b619052b879d5ab2a28fb5682611b892aa7976c4e61572a"
+      },
+      {
+        "module": "project_task_details",
+        "path": "scripts/project_task_details.py",
+        "sha256": "5ff867b78e2ec54873328904cb94d34f15656e66c39e4e7b012e0ec0dc82725d"
+      },
+      {
+        "module": "test_project_status",
+        "path": "scripts/test_project_status.py",
+        "sha256": "10fab350cd831bd130c619d0db91a2fc5021f9ff95f25e17e5ee252ab0b71fdf"
+      },
+      {
+        "module": "test_workflow_delivery_coverage_entrypoints",
+        "path": "scripts/test_workflow_delivery_coverage_entrypoints.py",
+        "sha256": "cd1b0f79f981673a402c0be74201e2aadbe3364f90a2f075ece2b9e49e7e5238"
+      },
+      {
+        "module": "test_workflow_delivery_workspace",
+        "path": "scripts/test_workflow_delivery_workspace.py",
+        "sha256": "bc984f3b52abf52f699b5e697b3ea1e64abcdf0d5c8db8341b717a2d43df7c72"
+      },
+      {
+        "module": "test_workflow_delivery_workspace_authority",
+        "path": "scripts/test_workflow_delivery_workspace_authority.py",
+        "sha256": "54155d17454bce01157f14a7dbf6027f0e09ca95a9324694b77a8017919db3e9"
+      },
+      {
+        "module": "test_workflow_delivery_workspace_consumers",
+        "path": "scripts/test_workflow_delivery_workspace_consumers.py",
+        "sha256": "17ccbed3c2c9747c77b6835a2ccf7f893b691ca9e096f75e4154ddf2ac1d4b41"
+      },
+      {
+        "module": "test_workflow_delivery_workspace_entrypoints",
+        "path": "scripts/test_workflow_delivery_workspace_entrypoints.py",
+        "sha256": "cca7aa970a08222037045cd2ccfea0bff129aea17ece188da596db2a65f7309a"
+      },
+      {
+        "module": "workflow_delivery_activation_preflight",
+        "path": "scripts/workflow_delivery_activation_preflight.py",
+        "sha256": "238eb3b6bd547bbdc5ae45d53ced7639a938ffa1ab42936caad28f71a545aeb6"
+      },
+      {
+        "module": "workflow_delivery_authority",
+        "path": "scripts/workflow_delivery_authority.py",
+        "sha256": "a943ea2f2440bdf7a9c940aa4f7aa124c6e04265e4d8f60bec235ac4786a83f5"
+      },
+      {
+        "module": "workflow_delivery_bootstrap",
+        "path": "scripts/workflow_delivery_bootstrap.py",
+        "sha256": "4a6a4af189bbb82bb1f875bf4883941ec48bbae303d46ee75c9b139d0d9bdfc1"
+      },
+      {
+        "module": "workflow_delivery_capture_state",
+        "path": "scripts/workflow_delivery_capture_state.py",
+        "sha256": "085fb2992c8a527df3cf8a2073b8eed5a77a0bf55922f276ddb51f9144e6381b"
+      },
+      {
+        "module": "workflow_delivery_categories",
+        "path": "scripts/workflow_delivery_categories.py",
+        "sha256": "c667587882f2021cd0016b7ad45cdc046f2a051f00fcb8699c54889095446b4e"
+      },
+      {
+        "module": "workflow_delivery_checkpoints",
+        "path": "scripts/workflow_delivery_checkpoints.py",
+        "sha256": "b5f010f771691bab9cfa0b40dfe75acf8fac7bf2bb6b7eefbc96c529b226345c"
+      },
+      {
+        "module": "workflow_delivery_clause_dispositions",
+        "path": "scripts/workflow_delivery_clause_dispositions.py",
+        "sha256": "02328892ecfff8ad651bc3f4243a876b3b789c3cea19e09231ee8e2aefbafe6d"
+      },
+      {
+        "module": "workflow_delivery_clause_inventory",
+        "path": "scripts/workflow_delivery_clause_inventory.py",
+        "sha256": "97d8ab12703a5b4b01a2b6c30c4b3eaefc08b88002aa0db2d9ae8253d4aac847"
+      },
+      {
+        "module": "workflow_delivery_clause_test_support",
+        "path": "scripts/workflow_delivery_clause_test_support.py",
+        "sha256": "38642bb47c907b83c60ed94817d9241fd671eb1b6fccd9da040dd3dbd771f9bd"
+      },
+      {
+        "module": "workflow_delivery_contract",
+        "path": "scripts/workflow_delivery_contract.py",
+        "sha256": "0ddea8bcea9872b41e3daea982909905c41f209a4763aba9984b196f582547b7"
+      },
+      {
+        "module": "workflow_delivery_coverage",
+        "path": "scripts/workflow_delivery_coverage.py",
+        "sha256": "dde579ca44d9221adcfb7c0bceed057a11af43ebbbdfe4846c80e594545bb56d"
+      },
+      {
+        "module": "workflow_delivery_coverage_runtime",
+        "path": "scripts/workflow_delivery_coverage_runtime.py",
+        "sha256": "4c11ade39d9a9dd49acc25027c658fee9997c8436803a8f0f165e1d5df36f0cb"
+      },
+      {
+        "module": "workflow_delivery_coverage_shapes",
+        "path": "scripts/workflow_delivery_coverage_shapes.py",
+        "sha256": "0224b7dc30416266d0dd1edced62fefc7bc6c420d8f077d26a80c133363ba87f"
+      },
+      {
+        "module": "workflow_delivery_enabled",
+        "path": "scripts/workflow_delivery_enabled.py",
+        "sha256": "edfcdcd8806a190ecf6851bd200d22fa2656772dccf33bff43dcc0f7472bc424"
+      },
+      {
+        "module": "workflow_delivery_environments",
+        "path": "scripts/workflow_delivery_environments.py",
+        "sha256": "00a803444145c9452998b73cddff678beffede5d6097d709c6283c36140718a8"
+      },
+      {
+        "module": "workflow_delivery_evidence_shapes",
+        "path": "scripts/workflow_delivery_evidence_shapes.py",
+        "sha256": "b9846a8bd71d2b004bf5d97fe03eab0295ef0a032080285ddb1e6dd1a7b39971"
+      },
+      {
+        "module": "workflow_delivery_frontier",
+        "path": "scripts/workflow_delivery_frontier.py",
+        "sha256": "e7980224361a7c45f1b740d7216d746659a2e02cfa4cc08e66f65c9046cecfb7"
+      },
+      {
+        "module": "workflow_delivery_headless",
+        "path": "scripts/workflow_delivery_headless.py",
+        "sha256": "ac7872c8f0d9cc27cd96ab6523e062517d7cc6ec1a039a11c978acf97f6aa2ed"
+      },
+      {
+        "module": "workflow_delivery_io",
+        "path": "scripts/workflow_delivery_io.py",
+        "sha256": "87d9f10386edb2de646f949a9cc299646644a9e41efb536701db0c6912b17e2b"
+      },
+      {
+        "module": "workflow_delivery_mapping",
+        "path": "scripts/workflow_delivery_mapping.py",
+        "sha256": "d5f649a701fe5857ff59b3a6088f304ade82f59164ea0912af3c28cb8eed112d"
+      },
+      {
+        "module": "workflow_delivery_native",
+        "path": "scripts/workflow_delivery_native.py",
+        "sha256": "6c6dd4aea5e7c26c2acb5eb5ee4f4ea04b5ae7d73c50f9718cb8e5a29703e65e"
+      },
+      {
+        "module": "workflow_delivery_native_test_support",
+        "path": "scripts/workflow_delivery_native_test_support.py",
+        "sha256": "a1baf17f3332b329656f94cd57cd2a3cf38910c63467ec4ae9860d3a24b59f6d"
+      },
+      {
+        "module": "workflow_delivery_proof",
+        "path": "scripts/workflow_delivery_proof.py",
+        "sha256": "38f57d87115eb2647d592ad23fa99021b3cbed8c6de46c718f820d8f3d43c23f"
+      },
+      {
+        "module": "workflow_delivery_publication_delta",
+        "path": "scripts/workflow_delivery_publication_delta.py",
+        "sha256": "ca8b6f699ce3335f7b0d48913d1b58b7d0f3c6ebd884b8b891f23c356007bbce"
+      },
+      {
+        "module": "workflow_delivery_review",
+        "path": "scripts/workflow_delivery_review.py",
+        "sha256": "8267a366d30c06e1afce08f2950ae03e0782924cd642773872ba96455d32ef28"
+      },
+      {
+        "module": "workflow_delivery_selector",
+        "path": "scripts/workflow_delivery_selector.py",
+        "sha256": "c3c3d59d59616bdf62029f9382e58af83de912c61c63f46cc2adc19d1ba40195"
+      },
+      {
+        "module": "workflow_delivery_shapes",
+        "path": "scripts/workflow_delivery_shapes.py",
+        "sha256": "4bf9f883203649a8ef9a5d665832b0db83450055ca836eb6a799acb643f15414"
+      },
+      {
+        "module": "workflow_delivery_source_scopes",
+        "path": "scripts/workflow_delivery_source_scopes.py",
+        "sha256": "087a8caa875fbc6956d750e731e98492abb3eb6258fa4ad0f61001eb1da6d37c"
+      },
+      {
+        "module": "workflow_delivery_specification",
+        "path": "scripts/workflow_delivery_specification.py",
+        "sha256": "b343407a8164810bc1f3cf29344681088419c8d72081140c1f182920b76760a7"
+      },
+      {
+        "module": "workflow_delivery_support_bundle",
+        "path": "scripts/workflow_delivery_support_bundle.py",
+        "sha256": "56e0b8e4dfc1c1642cd6d991fc66031a8cb6df27fd9f2d2139eca4ecca92eb83"
+      },
+      {
+        "module": "workflow_delivery_support_store",
+        "path": "scripts/workflow_delivery_support_store.py",
+        "sha256": "67582a2781400ac70de2456c9b8390c175026605a88fa4aab369ca8d907fcb25"
+      },
+      {
+        "module": "workflow_delivery_test_support",
+        "path": "scripts/workflow_delivery_test_support.py",
+        "sha256": "7bcdc25c4d494a2a6a3293c7af6ddeb48fb556398c03c29ef76231b135966b93"
+      },
+      {
+        "module": "workflow_delivery_transaction",
+        "path": "scripts/workflow_delivery_transaction.py",
+        "sha256": "77446b2026047be436378879f6e0897765d7b657f71074a7fff20280c2202bc3"
+      },
+      {
+        "module": "workflow_delivery_tree",
+        "path": "scripts/workflow_delivery_tree.py",
+        "sha256": "86d8fa5ec4f98c0d9296146ad1c4bc46c1f3a634e43625ba63f21d154c92e07f"
+      },
+      {
+        "module": "workflow_delivery_trust",
+        "path": "scripts/workflow_delivery_trust.py",
+        "sha256": "cd1b2afa70304bb4d39ba6f0c0d182d6b624419c6dcf7115777d315ff44c7095"
+      },
+      {
+        "module": "workflow_delivery_trust_test_support",
+        "path": "scripts/workflow_delivery_trust_test_support.py",
+        "sha256": "9baad88ea004fcb6a38b317624925b69fe51c564f4f0b27270d095872104c44a"
+      },
+      {
+        "module": "workflow_delivery_workspace",
+        "path": "scripts/workflow_delivery_workspace.py",
+        "sha256": "4a1d16451285f3d3904f21ef7ceaf3302956024f2508215bfbe5f6279a3d10cb"
+      },
+      {
+        "module": "workflow_delivery_workspace_authority",
+        "path": "scripts/workflow_delivery_workspace_authority.py",
+        "sha256": "ccf33918dc14d7f692e004a6ed08e0741db5f9e813d12d8a7ac844f61671e7f0"
+      }
+    ],
+    "source_only_bootstrap_sha256": "605476331bc4e9a3146f8d3376ee5b8d4f14d3057c5e0023294c4c653f40f5cf",
+    "scope": "Loaded repository Python modules observed after focused tests. Not exhaustive stdlib/shared-library or descendant tracing."
+  },
+  "passing_explicit_profile": {
+    "reviewer_session": "wdq-independent-review-20260906",
+    "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+    "tests": 45,
+    "source_inputs": 164,
+    "input_and_interpreter_before_after_equal": true,
+    "loaded_source_hashes_match_revision": true,
+    "groups": "Focused supplement for workspace authority/startup, captured bad/missing state, proof retention and actual preflight CLI.",
+    "prior_attempt": "focused-workspace retained 44 passes and one attached-main refusal; default-branch fixture portability defect is not fixed by this explicit environment.",
+    "fixture_environment": "Only reviewer-owned pinned init.defaultBranch=main; no inherited owner config or GIT_CONFIG_COUNT. Runtime Git reads retain their own sanitized environment.",
+    "matrix_observation_credit": 0,
+    "independent_recheck_complete": false,
+    "activation_performed": false
+  },
+  "issue_id": "dat-wdq-test-default-branch-apx",
+  "source_fixed": false,
+  "matrix_credit": 0
+}

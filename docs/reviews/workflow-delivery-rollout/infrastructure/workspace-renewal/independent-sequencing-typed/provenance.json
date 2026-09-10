@@ -1,0 +1,946 @@
+{
+  "reviewer_session": "wdq-independent-review-20260906",
+  "producer_packet_sha256": "fa0b802e11d5dc266f7f3e78bde8a1ac91ac6c1ae4165df8858b56b94c158fee",
+  "runtime": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "producer_candidate": "06bafeb9979dce91ab710bfaaff7f8f9ca3e72f2",
+  "artifact_main_commit": "186475d83e967926e6f7b333ff9d200f96bdb5c2",
+  "observations": 1314,
+  "original_inventory": 1123,
+  "additional_workspace": 191,
+  "batch_reports": [
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 36,
+          "artifact_hashes": 252,
+          "source_hash_checks": 1307,
+          "source_paths": 33,
+          "events": 127,
+          "observer_ids": 36,
+          "return_codes": {
+            "2": 4,
+            "0": 25,
+            "1": 7
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 36,
+          "artifact_hashes": 252,
+          "source_hash_checks": 1307,
+          "source_paths": 33,
+          "events": 127,
+          "observer_ids": 36,
+          "return_codes": {
+            "2": 4,
+            "0": 25,
+            "1": 7
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "collector_exit_code": 0,
+      "fixture_basis": "Exact retained new-source post-setup Git objects/index/files; only local absolute trust paths and capture ownership nonce relocated and checked before execution. No old source captures counted.",
+      "scope": "s01 fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 110,
+          "artifact_hashes": 770,
+          "source_hash_checks": 4033,
+          "source_paths": 33,
+          "events": 425,
+          "observer_ids": 110,
+          "return_codes": {
+            "2": 3,
+            "0": 55,
+            "1": 52
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 110,
+          "artifact_hashes": 770,
+          "source_hash_checks": 4033,
+          "source_paths": 33,
+          "events": 425,
+          "observer_ids": 110,
+          "return_codes": {
+            "2": 3,
+            "0": 55,
+            "1": 52
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "collector_exit_code": 0,
+      "fixture_basis": "Exact retained new-source post-setup Git objects/index/files; only local absolute trust paths and capture ownership nonce relocated and checked before execution. No old source captures counted.",
+      "scope": "s02-coverage fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 190,
+          "artifact_hashes": 1330,
+          "source_hash_checks": 7031,
+          "source_paths": 33,
+          "events": 739,
+          "observer_ids": 190,
+          "return_codes": {
+            "1": 90,
+            "0": 100
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 190,
+          "artifact_hashes": 1330,
+          "source_hash_checks": 7031,
+          "source_paths": 33,
+          "events": 739,
+          "observer_ids": 190,
+          "return_codes": {
+            "1": 90,
+            "0": 100
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "collector_exit_code": 0,
+      "fixture_basis": "Exact retained new-source post-setup Git objects/index/files; only local absolute trust paths and capture ownership nonce relocated and checked before execution. No old source captures counted.",
+      "scope": "s02-ownership fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 185,
+          "artifact_hashes": 1295,
+          "source_hash_checks": 6851,
+          "source_paths": 33,
+          "events": 739,
+          "observer_ids": 185,
+          "return_codes": {
+            "1": 75,
+            "0": 110
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 185,
+          "artifact_hashes": 1295,
+          "source_hash_checks": 6851,
+          "source_paths": 33,
+          "events": 739,
+          "observer_ids": 185,
+          "return_codes": {
+            "1": 75,
+            "0": 110
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "collector_exit_code": 0,
+      "fixture_basis": "Exact retained new-source post-setup Git objects/index/files; only local absolute trust paths and capture ownership nonce relocated and checked before execution. No old source captures counted.",
+      "scope": "s03 fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 175,
+          "artifact_hashes": 1225,
+          "source_hash_checks": 6517,
+          "source_paths": 33,
+          "events": 709,
+          "observer_ids": 175,
+          "return_codes": {
+            "1": 80,
+            "0": 95
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 175,
+          "artifact_hashes": 1225,
+          "source_hash_checks": 6517,
+          "source_paths": 33,
+          "events": 709,
+          "observer_ids": 175,
+          "return_codes": {
+            "1": 80,
+            "0": 95
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "collector_exit_code": 0,
+      "fixture_basis": "Exact retained new-source post-setup Git objects/index/files; only local absolute trust paths and capture ownership nonce relocated and checked before execution. No old source captures counted.",
+      "scope": "s04 fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 39,
+          "artifact_hashes": 273,
+          "source_hash_checks": 1434,
+          "source_paths": 33,
+          "events": 149,
+          "observer_ids": 39,
+          "return_codes": {
+            "1": 12,
+            "0": 26,
+            "2": 1
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 39,
+          "artifact_hashes": 273,
+          "source_hash_checks": 1434,
+          "source_paths": 33,
+          "events": 149,
+          "observer_ids": 39,
+          "return_codes": {
+            "1": 12,
+            "0": 26,
+            "2": 1
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "collector_exit_code": 0,
+      "fixture_basis": "Exact retained new-source post-setup Git objects/index/files; only local absolute trust paths and capture ownership nonce relocated and checked before execution. No old source captures counted.",
+      "scope": "s05-snapshots fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 60,
+          "artifact_hashes": 420,
+          "source_hash_checks": 2214,
+          "source_paths": 33,
+          "events": 234,
+          "observer_ids": 60,
+          "return_codes": {
+            "1": 30,
+            "0": 30
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 60,
+          "artifact_hashes": 420,
+          "source_hash_checks": 2214,
+          "source_paths": 33,
+          "events": 234,
+          "observer_ids": 60,
+          "return_codes": {
+            "1": 30,
+            "0": 30
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "collector_exit_code": 0,
+      "fixture_basis": "Exact retained new-source post-setup Git objects/index/files; only local absolute trust paths and capture ownership nonce relocated and checked before execution. No old source captures counted.",
+      "scope": "s06-selection fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 95,
+          "artifact_hashes": 665,
+          "source_hash_checks": 3551,
+          "source_paths": 33,
+          "events": 397,
+          "observer_ids": 95,
+          "return_codes": {
+            "0": 50,
+            "1": 45
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 95,
+          "artifact_hashes": 665,
+          "source_hash_checks": 3551,
+          "source_paths": 33,
+          "events": 397,
+          "observer_ids": 95,
+          "return_codes": {
+            "0": 50,
+            "1": 45
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "collector_exit_code": 0,
+      "fixture_basis": "Exact retained new-source post-setup Git objects/index/files; only local absolute trust paths and capture ownership nonce relocated and checked before execution. No old source captures counted.",
+      "scope": "s06-headless fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 223,
+          "artifact_hashes": 1560,
+          "source_hash_checks": 7787,
+          "source_paths": 33,
+          "events": 851,
+          "observer_ids": 217,
+          "return_codes": {
+            "2": 16,
+            "0": 114,
+            "1": 88,
+            "-15": 5
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 223,
+          "artifact_hashes": 1560,
+          "source_hash_checks": 7787,
+          "source_paths": 33,
+          "events": 851,
+          "observer_ids": 217,
+          "return_codes": {
+            "2": 16,
+            "0": 114,
+            "1": 88,
+            "-15": 5
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "collector_exit_code": 0,
+      "fixture_basis": "Exact retained new-source post-setup Git objects/index/files; only local absolute trust paths and capture ownership nonce relocated and checked before execution. No old source captures counted.",
+      "scope": "s06-trust fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 5,
+          "artifact_hashes": 35,
+          "source_hash_checks": 186,
+          "source_paths": 33,
+          "events": 20,
+          "observer_ids": 5,
+          "return_codes": {
+            "0": 5
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 5,
+          "artifact_hashes": 35,
+          "source_hash_checks": 186,
+          "source_paths": 33,
+          "events": 20,
+          "observer_ids": 5,
+          "return_codes": {
+            "0": 5
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "collector_exit_code": 0,
+      "fixture_basis": "Exact retained new-source post-setup Git objects/index/files; only local absolute trust paths and capture ownership nonce relocated and checked before execution. No old source captures counted.",
+      "scope": "baseline fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 52,
+          "artifact_hashes": 364,
+          "source_hash_checks": 1935,
+          "source_paths": 33,
+          "events": 208,
+          "observer_ids": 52,
+          "return_codes": {
+            "0": 47,
+            "1": 5
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 52,
+          "artifact_hashes": 364,
+          "source_hash_checks": 1935,
+          "source_paths": 33,
+          "events": 208,
+          "observer_ids": 52,
+          "return_codes": {
+            "0": 47,
+            "1": 5
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "all_expected_outcomes_checked": true,
+      "fixture_basis": "Exact archived pre-state restored at original absolute fixture pathname under transferred custody; all protected fields matched, fresh nonce only. Fixture cleanup retained and archives preserved.",
+      "scope": "workspace-runtime fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 75,
+          "artifact_hashes": 525,
+          "source_hash_checks": 2780,
+          "source_paths": 33,
+          "events": 300,
+          "observer_ids": 75,
+          "return_codes": {
+            "0": 63,
+            "1": 12
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 75,
+          "artifact_hashes": 525,
+          "source_hash_checks": 2780,
+          "source_paths": 33,
+          "events": 300,
+          "observer_ids": 75,
+          "return_codes": {
+            "0": 63,
+            "1": 12
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "all_expected_outcomes_checked": true,
+      "fixture_basis": "Exact archived pre-state restored at original absolute fixture pathname under transferred custody; all protected fields matched, fresh nonce only. Fixture cleanup retained and archives preserved.",
+      "scope": "workspace-policy-legacy fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 45,
+          "artifact_hashes": 315,
+          "source_hash_checks": 1674,
+          "source_paths": 33,
+          "events": 180,
+          "observer_ids": 45,
+          "return_codes": {
+            "0": 33,
+            "1": 12
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 45,
+          "artifact_hashes": 315,
+          "source_hash_checks": 1674,
+          "source_paths": 33,
+          "events": 180,
+          "observer_ids": 45,
+          "return_codes": {
+            "0": 33,
+            "1": 12
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "all_expected_outcomes_checked": true,
+      "fixture_basis": "Exact archived pre-state restored at original absolute fixture pathname under transferred custody; all protected fields matched, fresh nonce only. Fixture cleanup retained and archives preserved.",
+      "scope": "workspace-proof-input fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 15,
+          "artifact_hashes": 105,
+          "source_hash_checks": 564,
+          "source_paths": 33,
+          "events": 66,
+          "observer_ids": 15,
+          "return_codes": {
+            "0": 13,
+            "1": 2
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 15,
+          "artifact_hashes": 105,
+          "source_hash_checks": 564,
+          "source_paths": 33,
+          "events": 66,
+          "observer_ids": 15,
+          "return_codes": {
+            "0": 13,
+            "1": 2
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "all_expected_outcomes_checked": true,
+      "fixture_basis": "Exact archived pre-state restored at original absolute fixture pathname under transferred custody; all protected fields matched, fresh nonce only. Fixture cleanup retained and archives preserved.",
+      "scope": "real-roadmap fresh independent captures only; expected refusal/recovery assertions passed: nine original successes plus six exact-input retry results; the first180s hook timeout is preserved separately. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 9,
+          "artifact_hashes": 63,
+          "source_hash_checks": 336,
+          "source_paths": 33,
+          "events": 38,
+          "observer_ids": 9,
+          "return_codes": {
+            "0": 7,
+            "1": 2
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 9,
+          "artifact_hashes": 63,
+          "source_hash_checks": 336,
+          "source_paths": 33,
+          "events": 38,
+          "observer_ids": 9,
+          "return_codes": {
+            "0": 7,
+            "1": 2
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "all_expected_outcomes_checked": true,
+      "fixture_basis": "Exact archived pre-state restored at original absolute fixture pathname under transferred custody; all protected fields matched, fresh nonce only. Fixture cleanup retained and archives preserved.",
+      "scope": "current-inventory fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    }
+  ],
+  "raw_archives": [
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.json",
+      "sha256": "f3e8c0d95688a450abdf8171f706561ffcb4cd847b039c0277da92a0d8093555"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.tar.xz",
+      "sha256": "d84b50a9d6c91abe22fcd87f053bab782d48867381dbe08d4253a6ab38461b9f"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.json",
+      "sha256": "6bfad8b3e8b73a727f8eda1b72b5ab35529be2828e43fc7ec2e6d2a000e276b0"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.tar.xz",
+      "sha256": "49a5f241a7e495a315e312ba53dbe39f42251bea02db4bd8ac6419fe1f580751"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.json",
+      "sha256": "19f0546057cdc13beaa385102de6a1a0496e1ee64069d3641f0fc2686019b8d6"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.tar.xz",
+      "sha256": "94db8de9d74f53970004dd6fcc1805a3d31cf1576e2e7256d2d08961e1c9a679"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.json",
+      "sha256": "c19d754bad3d72fe6c0fb8fd380498df7aa7a7e6b5b3d9b73da968513855c574"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.tar.xz",
+      "sha256": "6a7ed0bfd16d481387ce3b14cd58c34c8a8754d8eb2e9178178d19b247be1812"
+    }
+  ],
+  "fixture_identity": "Same producer fixture Blob is the reviewed common basis. Original cases replay exact retained post-setup objects; workspace and real cases restore full exact pre-state bytes at original absolute paths. Local capture nonce changes occur only after exact input comparison. No regenerated history/cache is counted.",
+  "timestamps": "Actual raw start/finish timestamps retained; earlier captures are not represented as occurring after closeout.",
+  "failed_attempts": "Expired lease, missing bundle-ref seed, original180s hook timeout and default-branch regression retained. Remaining-six exact retry succeeded with unchanged timeout/source. Timeout cause undetermined. Supplemental regenerated172 have zero exact replay credit.",
+  "not_applicable_dispositions": [
+    {
+      "scenario_id": "INFRA-S01",
+      "dimension": "cancel",
+      "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S06 -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S01",
+      "dimension": "precision",
+      "reason": "No CAD numeric/geometry precision claim; exact control types and hashes are validation requirements.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S01",
+      "dimension": "undo_redo",
+      "reason": "Read-only validator has no design edit to undo or redo; protected-state preservation is required.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S01",
+      "dimension": "save_reopen",
+      "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S06 -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S02",
+      "dimension": "cancel",
+      "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S06 -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S02",
+      "dimension": "precision",
+      "reason": "No CAD numeric/geometry precision claim; exact control types and hashes are validation requirements.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S02",
+      "dimension": "undo_redo",
+      "reason": "Read-only validator has no design edit to undo or redo; protected-state preservation is required.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S02",
+      "dimension": "save_reopen",
+      "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S06 -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S02",
+      "dimension": "accessibility",
+      "reason": "INFRA-S01 separately requires text-only usable diagnostics; no GUI accessibility claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S01 -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S03",
+      "dimension": "cancel",
+      "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S06 -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S03",
+      "dimension": "precision",
+      "reason": "No CAD numeric/geometry precision claim; exact control types and hashes are validation requirements.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S03",
+      "dimension": "undo_redo",
+      "reason": "Read-only validator has no design edit to undo or redo; protected-state preservation is required.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S03",
+      "dimension": "save_reopen",
+      "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S06 -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S03",
+      "dimension": "accessibility",
+      "reason": "INFRA-S01 separately requires text-only usable diagnostics; no GUI accessibility claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S01 -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S04",
+      "dimension": "cancel",
+      "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S06 -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S04",
+      "dimension": "precision",
+      "reason": "No CAD numeric/geometry precision claim; exact control types and hashes are validation requirements.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S04",
+      "dimension": "undo_redo",
+      "reason": "Read-only validator has no design edit to undo or redo; protected-state preservation is required.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S04",
+      "dimension": "save_reopen",
+      "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S06 -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S04",
+      "dimension": "accessibility",
+      "reason": "INFRA-S01 separately requires text-only usable diagnostics; no GUI accessibility claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S01 -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S05",
+      "dimension": "cancel",
+      "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S06 -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S05",
+      "dimension": "precision",
+      "reason": "No CAD numeric/geometry precision claim; exact control types and hashes are validation requirements.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S05",
+      "dimension": "undo_redo",
+      "reason": "Read-only validator has no design edit to undo or redo; protected-state preservation is required.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S05",
+      "dimension": "save_reopen",
+      "reason": "INFRA-S06 separately tests interruption and fresh-process recovery; no native Save claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S06 -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S05",
+      "dimension": "accessibility",
+      "reason": "INFRA-S01 separately requires text-only usable diagnostics; no GUI accessibility claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S01 -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S06",
+      "dimension": "precision",
+      "reason": "No CAD numeric/geometry precision claim; exact control types and hashes are validation requirements.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S06",
+      "dimension": "undo_redo",
+      "reason": "Read-only validator has no design edit to undo or redo; protected-state preservation is required.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-FOUNDATIONS -->"
+        }
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S06",
+      "dimension": "accessibility",
+      "reason": "INFRA-S01 separately requires text-only usable diagnostics; no GUI accessibility claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+          "marker": "<!-- WDQ-INFRA-S01 -->"
+        }
+      ]
+    }
+  ],
+  "independence": "Reviewer did not produce runtime implementation or original producer proof. These artifacts derive only actual reviewer executions and independent inspections.",
+  "prior_owner_dispositions": "Five prior owner dispositions remain bound only to their historical source/replay scope; none accepts this review or resolves its five current findings.",
+  "publication_boundary": "Earlier actual-main e54fe/ee342 source-history inspection is included. Later evidence/intake/review candidates require explicit distinct delta reconciliation and renewed exact-publication inspection before I04 presentation. Strict final full-evidence I04 inspection/owner dispositions remain mandatory; no earlier packet depends on its own later receipt.",
+  "independent_recheck_complete": false,
+  "activation_performed": false
+}

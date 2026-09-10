@@ -13,9 +13,11 @@ from workflow_delivery_tree import Tree
 
 
 class Fixture:
-    def __init__(self):
-        self.temp = tempfile.TemporaryDirectory()
-        self.root = Path(self.temp.name)
+    def __init__(self, root=None):
+        self.temp = tempfile.TemporaryDirectory() if root is None else None
+        self.root = Path(self.temp.name) if self.temp else Path(root)
+        if self.temp is None:
+            self.root.mkdir(parents=False, exist_ok=False)
         self.git("init", "-q")
         self.git("config", "user.name", "Fixture")
         self.git("config", "user.email", "fixture@example.invalid")
@@ -64,7 +66,8 @@ class Fixture:
         self.head = self.git("rev-parse", "HEAD").decode().strip()
 
     def close(self):
-        self.temp.cleanup()
+        if self.temp is not None:
+            self.temp.cleanup()
 
     def git(self, *args):
         return subprocess.run(["git", *args], cwd=self.root, check=True,

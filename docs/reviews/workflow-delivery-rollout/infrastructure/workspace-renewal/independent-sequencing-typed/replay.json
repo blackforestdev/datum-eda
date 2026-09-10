@@ -1,0 +1,664 @@
+{
+  "schema_version": 1,
+  "contract_sha256": "456f32e4f3d5fcc7e07d3ece97f333b634711b1856d957896c248f34fd3c4773",
+  "producer_session": "wdq-independent-review-20260906",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "input_manifest": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/input-manifest.json",
+    "sha256": "468e860972610aca1b57e152e34f2ca817a74b7412cbd25e0492e362ae771857"
+  },
+  "fixture": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/fixtures.json",
+    "sha256": "7b107c041fe6474d64087d9d260c7d40242e643db528a2a12ee76f37b868cb3e"
+  },
+  "environment": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+    "sha256": "a1c33121f265812cba27e1bd7867061b9d82d4e8111012ae8cbfa3e1c20c3fca"
+  },
+  "build": {
+    "command": [
+      "python3",
+      "-I",
+      "-S",
+      "-B",
+      "/home/bfadmin/Documents/datum-eda/docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/freeze_sequencing_source.py"
+    ],
+    "receipt": {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-receipt.json",
+      "sha256": "030ba75b6e3595e3f1316af6b16c8da95dc19a9f83027fd5afe1928b1c7cee7f"
+    },
+    "toolchain": "3.13.5 (main, Jul 15 2026, 20:25:40) [GCC 14.2.0]",
+    "source_clean": true
+  },
+  "results": [
+    {
+      "scenario_id": "INFRA-S01",
+      "outcome": "pass",
+      "actual_visible": "Independent actual 41 invocations; return codes {'2': 4, '0': 30, '1': 7}; exact case-specific expected outcomes verified.",
+      "actual_state": "All required captures preserved exact protected before/after state and used fresh identities; no main/installed trust mutation.",
+      "assertions": [
+        {
+          "dimension": "normal",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Independent actual 41 invocations; return codes {'2': 4, '0': 30, '1': 7}; exact case-specific expected outcomes verified.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "invalid",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Independent actual 41 invocations; return codes {'2': 4, '0': 30, '1': 7}; exact case-specific expected outcomes verified.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "scope",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "All required captures preserved exact protected before/after state and used fresh identities; no main/installed trust mutation.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "accessibility",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Required valid/refused text-pipe cases executed with actual raw diagnostics; no native GUI accessibility claim.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "failure_recovery",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Distinct valid recoveries and exact restorations passed. Failed attempts are separately retained, not overwritten.",
+          "outcome": "pass"
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-roles.json",
+          "sha256": "de336052922183cb6544754dfe1565c83eaeb46cadca34dc090001dd081f2563"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-events.json",
+          "sha256": "8b8dc60234119bea7e816ee7c5b62780e02214c5626d69bf4404f9c3b263d33b"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/registry.json",
+          "sha256": "0743565da471f0a5cdf8b601826eadf65c5bde2bd531342f9981c0d825252811"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S01-observations.json",
+          "sha256": "ddc48dece7d72f31cc8fa88fa5709785d79468e0a342c50afccf281964de9251"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/provenance.json",
+          "sha256": "a14305a56e65c84d228be2c7383881f499124c151ce3336c157a058814ca0ae8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-observation.json",
+          "sha256": "28dbc699ea159593bda55248d9489f537b21be27389c7c3fdf83fdee41752585"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/pre-review-inspection.json",
+          "sha256": "549ce4cd678e625ccc02e2d6e66c754dfd2702b740d374b200a08897d7ef490a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/focused-workspace.json",
+          "sha256": "9a81e6bca14151a7b7bdacc455f19fab49b72fe63b7e131fbd5ae67a65458a8f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.json",
+          "sha256": "f3e8c0d95688a450abdf8171f706561ffcb4cd847b039c0277da92a0d8093555"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.tar.xz",
+          "sha256": "d84b50a9d6c91abe22fcd87f053bab782d48867381dbe08d4253a6ab38461b9f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.json",
+          "sha256": "6bfad8b3e8b73a727f8eda1b72b5ab35529be2828e43fc7ec2e6d2a000e276b0"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.tar.xz",
+          "sha256": "49a5f241a7e495a315e312ba53dbe39f42251bea02db4bd8ac6419fe1f580751"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.json",
+          "sha256": "19f0546057cdc13beaa385102de6a1a0496e1ee64069d3641f0fc2686019b8d6"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.tar.xz",
+          "sha256": "94db8de9d74f53970004dd6fcc1805a3d31cf1576e2e7256d2d08961e1c9a679"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.json",
+          "sha256": "c19d754bad3d72fe6c0fb8fd380498df7aa7a7e6b5b3d9b73da968513855c574"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.tar.xz",
+          "sha256": "6a7ed0bfd16d481387ce3b14cd58c34c8a8754d8eb2e9178178d19b247be1812"
+        }
+      ],
+      "defects": [
+        "dat-wdq-index-refresh-ogw"
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S02",
+      "outcome": "pass",
+      "actual_visible": "Independent actual 280 invocations; return codes {'2': 3, '0': 145, '1': 132}; exact case-specific expected outcomes verified.",
+      "actual_state": "All required captures preserved exact protected before/after state and used fresh identities; no main/installed trust mutation.",
+      "assertions": [
+        {
+          "dimension": "normal",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Independent actual 280 invocations; return codes {'2': 3, '0': 145, '1': 132}; exact case-specific expected outcomes verified.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "invalid",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Independent actual 280 invocations; return codes {'2': 3, '0': 145, '1': 132}; exact case-specific expected outcomes verified.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "scope",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "All required captures preserved exact protected before/after state and used fresh identities; no main/installed trust mutation.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "failure_recovery",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Distinct valid recoveries and exact restorations passed. Failed attempts are separately retained, not overwritten.",
+          "outcome": "pass"
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-roles.json",
+          "sha256": "ddeee3b6a01e20c909bfd703563220da2ca78b69a3b77d1bbcd1ece0079e28ba"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-events.json",
+          "sha256": "0be321cbc6391e325e0608fca4e26043540db136568a20568a06bacb1e4f8769"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/registry.json",
+          "sha256": "0743565da471f0a5cdf8b601826eadf65c5bde2bd531342f9981c0d825252811"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S02-observations.json",
+          "sha256": "104d7908a5364251d2db441cf0b509590525321480c2ffc62ea12cac3862d19e"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/provenance.json",
+          "sha256": "a14305a56e65c84d228be2c7383881f499124c151ce3336c157a058814ca0ae8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-observation.json",
+          "sha256": "28dbc699ea159593bda55248d9489f537b21be27389c7c3fdf83fdee41752585"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/pre-review-inspection.json",
+          "sha256": "549ce4cd678e625ccc02e2d6e66c754dfd2702b740d374b200a08897d7ef490a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/focused-workspace.json",
+          "sha256": "9a81e6bca14151a7b7bdacc455f19fab49b72fe63b7e131fbd5ae67a65458a8f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.json",
+          "sha256": "f3e8c0d95688a450abdf8171f706561ffcb4cd847b039c0277da92a0d8093555"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.tar.xz",
+          "sha256": "d84b50a9d6c91abe22fcd87f053bab782d48867381dbe08d4253a6ab38461b9f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.json",
+          "sha256": "6bfad8b3e8b73a727f8eda1b72b5ab35529be2828e43fc7ec2e6d2a000e276b0"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.tar.xz",
+          "sha256": "49a5f241a7e495a315e312ba53dbe39f42251bea02db4bd8ac6419fe1f580751"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.json",
+          "sha256": "19f0546057cdc13beaa385102de6a1a0496e1ee64069d3641f0fc2686019b8d6"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.tar.xz",
+          "sha256": "94db8de9d74f53970004dd6fcc1805a3d31cf1576e2e7256d2d08961e1c9a679"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.json",
+          "sha256": "c19d754bad3d72fe6c0fb8fd380498df7aa7a7e6b5b3d9b73da968513855c574"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.tar.xz",
+          "sha256": "6a7ed0bfd16d481387ce3b14cd58c34c8a8754d8eb2e9178178d19b247be1812"
+        }
+      ],
+      "defects": [
+        "dat-wdq-index-refresh-ogw"
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S03",
+      "outcome": "pass",
+      "actual_visible": "Independent actual 185 invocations; return codes {'1': 75, '0': 110}; exact case-specific expected outcomes verified.",
+      "actual_state": "All required captures preserved exact protected before/after state and used fresh identities; no main/installed trust mutation.",
+      "assertions": [
+        {
+          "dimension": "normal",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Independent actual 185 invocations; return codes {'1': 75, '0': 110}; exact case-specific expected outcomes verified.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "invalid",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Independent actual 185 invocations; return codes {'1': 75, '0': 110}; exact case-specific expected outcomes verified.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "scope",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "All required captures preserved exact protected before/after state and used fresh identities; no main/installed trust mutation.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "failure_recovery",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Distinct valid recoveries and exact restorations passed. Failed attempts are separately retained, not overwritten.",
+          "outcome": "pass"
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-roles.json",
+          "sha256": "1303ef3bf478791caa1ed7ba52828c139ef38fdce6d2669a53a09d69ba4c61d8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-events.json",
+          "sha256": "679b7e58af6c87624768799af17eb2d31bf02a5a21b35d96847c36c05f3f63ab"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/registry.json",
+          "sha256": "0743565da471f0a5cdf8b601826eadf65c5bde2bd531342f9981c0d825252811"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S03-observations.json",
+          "sha256": "58eb60309539315df0776e558b9422ff6fdcd09e8797a19bd92a6d79fb8fad26"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/provenance.json",
+          "sha256": "a14305a56e65c84d228be2c7383881f499124c151ce3336c157a058814ca0ae8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-observation.json",
+          "sha256": "28dbc699ea159593bda55248d9489f537b21be27389c7c3fdf83fdee41752585"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/pre-review-inspection.json",
+          "sha256": "549ce4cd678e625ccc02e2d6e66c754dfd2702b740d374b200a08897d7ef490a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/focused-workspace.json",
+          "sha256": "9a81e6bca14151a7b7bdacc455f19fab49b72fe63b7e131fbd5ae67a65458a8f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.json",
+          "sha256": "f3e8c0d95688a450abdf8171f706561ffcb4cd847b039c0277da92a0d8093555"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.tar.xz",
+          "sha256": "d84b50a9d6c91abe22fcd87f053bab782d48867381dbe08d4253a6ab38461b9f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.json",
+          "sha256": "6bfad8b3e8b73a727f8eda1b72b5ab35529be2828e43fc7ec2e6d2a000e276b0"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.tar.xz",
+          "sha256": "49a5f241a7e495a315e312ba53dbe39f42251bea02db4bd8ac6419fe1f580751"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.json",
+          "sha256": "19f0546057cdc13beaa385102de6a1a0496e1ee64069d3641f0fc2686019b8d6"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.tar.xz",
+          "sha256": "94db8de9d74f53970004dd6fcc1805a3d31cf1576e2e7256d2d08961e1c9a679"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.json",
+          "sha256": "c19d754bad3d72fe6c0fb8fd380498df7aa7a7e6b5b3d9b73da968513855c574"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.tar.xz",
+          "sha256": "6a7ed0bfd16d481387ce3b14cd58c34c8a8754d8eb2e9178178d19b247be1812"
+        }
+      ],
+      "defects": [
+        "dat-wdq-index-refresh-ogw"
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S04",
+      "outcome": "pass",
+      "actual_visible": "Independent actual 180 invocations; return codes {'1': 80, '0': 100}; exact case-specific expected outcomes verified.",
+      "actual_state": "All required captures preserved exact protected before/after state and used fresh identities; no main/installed trust mutation.",
+      "assertions": [
+        {
+          "dimension": "normal",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Independent actual 180 invocations; return codes {'1': 80, '0': 100}; exact case-specific expected outcomes verified.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "invalid",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Independent actual 180 invocations; return codes {'1': 80, '0': 100}; exact case-specific expected outcomes verified.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "scope",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "All required captures preserved exact protected before/after state and used fresh identities; no main/installed trust mutation.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "failure_recovery",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Distinct valid recoveries and exact restorations passed. Failed attempts are separately retained, not overwritten.",
+          "outcome": "pass"
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-roles.json",
+          "sha256": "00b4531fac6075dfb8685977338042840774fee6e1d78a3d8b1769f8a67020ae"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-events.json",
+          "sha256": "beb1726d8fb4a9a19052e38fdf396f3210bffcd23257cf92e0716484448b9b9a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/registry.json",
+          "sha256": "0743565da471f0a5cdf8b601826eadf65c5bde2bd531342f9981c0d825252811"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-observations.json",
+          "sha256": "b608273914d5d5cf53e9dd1437b3bd41d6f1d48b12d7ab671e034900db355612"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/provenance.json",
+          "sha256": "a14305a56e65c84d228be2c7383881f499124c151ce3336c157a058814ca0ae8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-observation.json",
+          "sha256": "28dbc699ea159593bda55248d9489f537b21be27389c7c3fdf83fdee41752585"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/pre-review-inspection.json",
+          "sha256": "549ce4cd678e625ccc02e2d6e66c754dfd2702b740d374b200a08897d7ef490a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/focused-workspace.json",
+          "sha256": "9a81e6bca14151a7b7bdacc455f19fab49b72fe63b7e131fbd5ae67a65458a8f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.json",
+          "sha256": "f3e8c0d95688a450abdf8171f706561ffcb4cd847b039c0277da92a0d8093555"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.tar.xz",
+          "sha256": "d84b50a9d6c91abe22fcd87f053bab782d48867381dbe08d4253a6ab38461b9f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.json",
+          "sha256": "6bfad8b3e8b73a727f8eda1b72b5ab35529be2828e43fc7ec2e6d2a000e276b0"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.tar.xz",
+          "sha256": "49a5f241a7e495a315e312ba53dbe39f42251bea02db4bd8ac6419fe1f580751"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.json",
+          "sha256": "19f0546057cdc13beaa385102de6a1a0496e1ee64069d3641f0fc2686019b8d6"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.tar.xz",
+          "sha256": "94db8de9d74f53970004dd6fcc1805a3d31cf1576e2e7256d2d08961e1c9a679"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.json",
+          "sha256": "c19d754bad3d72fe6c0fb8fd380498df7aa7a7e6b5b3d9b73da968513855c574"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.tar.xz",
+          "sha256": "6a7ed0bfd16d481387ce3b14cd58c34c8a8754d8eb2e9178178d19b247be1812"
+        }
+      ],
+      "defects": [
+        "dat-wdq-index-refresh-ogw",
+        "dat-wdq-proof-renewal-cycle-qgb"
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S05",
+      "outcome": "pass",
+      "actual_visible": "Independent actual 250 invocations; return codes {'1': 55, '0': 194, '2': 1}; exact case-specific expected outcomes verified.",
+      "actual_state": "All required captures preserved exact protected before/after state and used fresh identities; no main/installed trust mutation. Eight workspace groups include exact172, real24/inventory, current-source focused45 and actual-main non-authorizing pre-review inspection. Later distinct publication delta and strict I04 remain separate.",
+      "assertions": [
+        {
+          "dimension": "normal",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Independent actual 250 invocations; return codes {'1': 55, '0': 194, '2': 1}; exact case-specific expected outcomes verified.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "invalid",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Independent actual 250 invocations; return codes {'1': 55, '0': 194, '2': 1}; exact case-specific expected outcomes verified.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "scope",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "All required captures preserved exact protected before/after state and used fresh identities; no main/installed trust mutation. Eight workspace groups include exact172, real24/inventory, current-source focused45 and actual-main non-authorizing pre-review inspection. Later distinct publication delta and strict I04 remain separate.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "failure_recovery",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Distinct valid recoveries and exact restorations passed. Failed attempts are separately retained, not overwritten.",
+          "outcome": "pass"
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-roles.json",
+          "sha256": "08194b40fe83142ea41609cc9eda08ad6818c09d40fe90cc5b333fe7f71c3969"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-events.json",
+          "sha256": "c19412e197b37e045445335a6fd9cce269d834b8e61740c18d1101d7eff671fc"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/registry.json",
+          "sha256": "0743565da471f0a5cdf8b601826eadf65c5bde2bd531342f9981c0d825252811"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S05-observations.json",
+          "sha256": "9e4ff917076ce0935f40c323b213e077e0e49b39372868007236f221fdc4897d"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/provenance.json",
+          "sha256": "a14305a56e65c84d228be2c7383881f499124c151ce3336c157a058814ca0ae8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-observation.json",
+          "sha256": "28dbc699ea159593bda55248d9489f537b21be27389c7c3fdf83fdee41752585"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/pre-review-inspection.json",
+          "sha256": "549ce4cd678e625ccc02e2d6e66c754dfd2702b740d374b200a08897d7ef490a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/focused-workspace.json",
+          "sha256": "9a81e6bca14151a7b7bdacc455f19fab49b72fe63b7e131fbd5ae67a65458a8f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.json",
+          "sha256": "f3e8c0d95688a450abdf8171f706561ffcb4cd847b039c0277da92a0d8093555"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.tar.xz",
+          "sha256": "d84b50a9d6c91abe22fcd87f053bab782d48867381dbe08d4253a6ab38461b9f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.json",
+          "sha256": "6bfad8b3e8b73a727f8eda1b72b5ab35529be2828e43fc7ec2e6d2a000e276b0"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.tar.xz",
+          "sha256": "49a5f241a7e495a315e312ba53dbe39f42251bea02db4bd8ac6419fe1f580751"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.json",
+          "sha256": "19f0546057cdc13beaa385102de6a1a0496e1ee64069d3641f0fc2686019b8d6"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.tar.xz",
+          "sha256": "94db8de9d74f53970004dd6fcc1805a3d31cf1576e2e7256d2d08961e1c9a679"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.json",
+          "sha256": "c19d754bad3d72fe6c0fb8fd380498df7aa7a7e6b5b3d9b73da968513855c574"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.tar.xz",
+          "sha256": "6a7ed0bfd16d481387ce3b14cd58c34c8a8754d8eb2e9178178d19b247be1812"
+        }
+      ],
+      "defects": [
+        "dat-wdq-index-refresh-ogw",
+        "dat-wdq-proof-renewal-cycle-qgb",
+        "dat-wdq-workspace-inputs-zmt",
+        "dat-wdq-review-publication-cycle-a1y",
+        "dat-wdq-test-default-branch-apx"
+      ]
+    },
+    {
+      "scenario_id": "INFRA-S06",
+      "outcome": "pass",
+      "actual_visible": "Independent actual 378 invocations; return codes {'1': 163, '0': 194, '2': 16, '-15': 5}; exact case-specific expected outcomes verified.",
+      "actual_state": "All required captures preserved exact protected before/after state and used fresh identities; no main/installed trust mutation.",
+      "assertions": [
+        {
+          "dimension": "normal",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Independent actual 378 invocations; return codes {'1': 163, '0': 194, '2': 16, '-15': 5}; exact case-specific expected outcomes verified.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "invalid",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Independent actual 378 invocations; return codes {'1': 163, '0': 194, '2': 16, '-15': 5}; exact case-specific expected outcomes verified.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "cancel",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Five actual observer-triggered interrupted processes returned -15 without protected-state changes, with valid recoveries.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "scope",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "All required captures preserved exact protected before/after state and used fresh identities; no main/installed trust mutation.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "save_reopen",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Actual fresh-process recovery after refusals/interruption; no native design Save/reopen claim.",
+          "outcome": "pass"
+        },
+        {
+          "dimension": "failure_recovery",
+          "expected": "Exercise the normative success/refusal and protected-state result for this scenario.",
+          "observed": "Distinct valid recoveries and exact restorations passed. Failed attempts are separately retained, not overwritten.",
+          "outcome": "pass"
+        }
+      ],
+      "artifacts": [
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-roles.json",
+          "sha256": "3d769e4dc0d5c4cf6b735fb8206fbb2d8d163a093aba42ce7128c5bd49c7b2b7"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-events.json",
+          "sha256": "e0a097f0cd0f433543dc67f070594ea6e51816cb63dfad03b878c7c387b51372"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/registry.json",
+          "sha256": "0743565da471f0a5cdf8b601826eadf65c5bde2bd531342f9981c0d825252811"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S06-observations.json",
+          "sha256": "168bce542bce6803452c3efb099da8d810f470df315fea05532208162460ea75"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/provenance.json",
+          "sha256": "a14305a56e65c84d228be2c7383881f499124c151ce3336c157a058814ca0ae8"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-observation.json",
+          "sha256": "28dbc699ea159593bda55248d9489f537b21be27389c7c3fdf83fdee41752585"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/pre-review-inspection.json",
+          "sha256": "549ce4cd678e625ccc02e2d6e66c754dfd2702b740d374b200a08897d7ef490a"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/focused-workspace.json",
+          "sha256": "9a81e6bca14151a7b7bdacc455f19fab49b72fe63b7e131fbd5ae67a65458a8f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.json",
+          "sha256": "f3e8c0d95688a450abdf8171f706561ffcb4cd847b039c0277da92a0d8093555"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.tar.xz",
+          "sha256": "d84b50a9d6c91abe22fcd87f053bab782d48867381dbe08d4253a6ab38461b9f"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.json",
+          "sha256": "6bfad8b3e8b73a727f8eda1b72b5ab35529be2828e43fc7ec2e6d2a000e276b0"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.tar.xz",
+          "sha256": "49a5f241a7e495a315e312ba53dbe39f42251bea02db4bd8ac6419fe1f580751"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.json",
+          "sha256": "19f0546057cdc13beaa385102de6a1a0496e1ee64069d3641f0fc2686019b8d6"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.tar.xz",
+          "sha256": "94db8de9d74f53970004dd6fcc1805a3d31cf1576e2e7256d2d08961e1c9a679"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.json",
+          "sha256": "c19d754bad3d72fe6c0fb8fd380498df7aa7a7e6b5b3d9b73da968513855c574"
+        },
+        {
+          "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.tar.xz",
+          "sha256": "6a7ed0bfd16d481387ce3b14cd58c34c8a8754d8eb2e9178178d19b247be1812"
+        }
+      ],
+      "defects": [
+        "dat-wdq-index-refresh-ogw"
+      ]
+    }
+  ]
+}

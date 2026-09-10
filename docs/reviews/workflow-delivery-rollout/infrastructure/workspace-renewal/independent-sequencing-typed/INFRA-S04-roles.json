@@ -1,0 +1,69 @@
+{
+  "kind": "datum.workflow-delivery.artifacts/v1",
+  "scenario_id": "INFRA-S04",
+  "events": [
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-events.json",
+      "sha256": "beb1726d8fb4a9a19052e38fdf396f3210bffcd23257cf92e0716484448b9b9a"
+    }
+  ],
+  "captures": [],
+  "state": [
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/INFRA-S04-observations.json",
+      "sha256": "b608273914d5d5cf53e9dd1437b3bd41d6f1d48b12d7ab671e034900db355612"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/provenance.json",
+      "sha256": "a14305a56e65c84d228be2c7383881f499124c151ce3336c157a058814ca0ae8"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/build-observation.json",
+      "sha256": "28dbc699ea159593bda55248d9489f537b21be27389c7c3fdf83fdee41752585"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/pre-review-inspection.json",
+      "sha256": "549ce4cd678e625ccc02e2d6e66c754dfd2702b740d374b200a08897d7ef490a"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/focused-workspace.json",
+      "sha256": "9a81e6bca14151a7b7bdacc455f19fab49b72fe63b7e131fbd5ae67a65458a8f"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.json",
+      "sha256": "f3e8c0d95688a450abdf8171f706561ffcb4cd847b039c0277da92a0d8093555"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.tar.xz",
+      "sha256": "d84b50a9d6c91abe22fcd87f053bab782d48867381dbe08d4253a6ab38461b9f"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.json",
+      "sha256": "6bfad8b3e8b73a727f8eda1b72b5ab35529be2828e43fc7ec2e6d2a000e276b0"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.tar.xz",
+      "sha256": "49a5f241a7e495a315e312ba53dbe39f42251bea02db4bd8ac6419fe1f580751"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.json",
+      "sha256": "19f0546057cdc13beaa385102de6a1a0496e1ee64069d3641f0fc2686019b8d6"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.tar.xz",
+      "sha256": "94db8de9d74f53970004dd6fcc1805a3d31cf1576e2e7256d2d08961e1c9a679"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.json",
+      "sha256": "c19d754bad3d72fe6c0fb8fd380498df7aa7a7e6b5b3d9b73da968513855c574"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.tar.xz",
+      "sha256": "6a7ed0bfd16d481387ce3b14cd58c34c8a8754d8eb2e9178178d19b247be1812"
+    }
+  ],
+  "registry": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-typed/registry.json",
+    "sha256": "0743565da471f0a5cdf8b601826eadf65c5bde2bd531342f9981c0d825252811"
+  }
+}
