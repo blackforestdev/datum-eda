@@ -9908,8 +9908,8 @@
               "requests": [
                 {
                   "id": "ACTIVATE",
-                  "question": "The owner approved and the repository recorded the five finding dispositions and bounded I04 preparation. The remaining owner decision is PM042 ratification and activation of the separate exact claim-free packet after strict inspection; that packet is being prepared using existing verified evidence. Do not activate historical candidate 992ce4f4 or treat preparation approval as activation approval.",
-                  "recommended_response": "Review the completed exact activation packet when presented; preserve product ownership and require installed verification before I04 completion. Do not repeat the already-approved preparation decision.",
+                  "question": "The owner approved the coordination revision: reconcile the Preferences handoff with its existing session before freezing replacement activation authority. The reviewed 4ddfe412 packet is not selected for activation because it would preserve the old Preferences hold. The outgoing Beads handoff is awaiting the existing session's exact boundary and owner-review evidence; no product acceptance is implied. PM042 ratification and exact replacement activation remain separate owner decisions.",
+                  "recommended_response": "Do not repeat preparation or coordination approval. Obtain the existing Preferences session's handoff under current installed authority, reconcile the exact product-authorized transition without taking its ownership, then present the replacement activation packet. Require installed verification before I04 completion; do not keep development paused for the later adoption cohorts.",
                   "source_ref": {
                     "path": "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
                     "marker": "ACTIVATE"
