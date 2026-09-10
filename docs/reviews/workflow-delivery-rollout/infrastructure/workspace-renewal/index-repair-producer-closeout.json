@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-COMPAT-REPAIRED-SOURCE-PRODUCER-VERIFICATION-COMPLETE",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "owner_authorization": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/proof-renewal-authorization.json",
+  "runtime_source_commit": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "prospective_baseline": "ba318df013ca5c0263c489a9c77187dc4057a7be",
+  "evidence_candidate": "c9d3d5c350a38a2c01aa71d37ec1fa4cc31bcc8e",
+  "candidate_ref": "refs/datum-wdq/candidates/index-repair-typed-packet-20260910",
+  "packet_sha256": "02ce61ee28c450776a575330ce17aca93f2a8e4edc7e4c704cf299efd69cc8ce",
+  "authority_sha256": "84c7c292bc93a857ddf2ea6d413ac0c78c9da9edcf6f15385a92c5d296577807",
+  "producer_requirements": [
+    {
+      "requirement": "Repair index preservation without weakening source detection; retain exact current readiness, mapping and bounded authority.",
+      "evidence": ["index-repair-implementation.json", "owner-reopened-preparation.json", "proof-renewal-authorization.json"],
+      "result": "Repaired source uses an isolated selected-index copy. Targeted regressions and independent inspection passed. Explicit owner reopening yields an honest prospective authority/base with unchanged 161 runtime inputs, policy, mapping, all 55 other rows and 11 existing steps. Prior failed setup and capture attempts remain recorded."
+    },
+    {
+      "requirement": "Renew actual construction and exact source/input identity.",
+      "evidence": ["index-repair-construction-s01.json", "independent-index-repair-s01.json"],
+      "result": "Actual repaired-source build: 161 input entries, 148 Python modules compiled in memory, interpreter binary distinguished from validator source, canonical input digest d1a61a7f58be83c037a9a70590c1a9e5c5d82f95e7d3b08b41d3c693223f27df. Independent build and source checks retained."
+    },
+    {
+      "requirement": "Preserve original scenarios, additional workspace cases and actual real-roadmap refusal/recovery evidence.",
+      "evidence": ["owner-reopened-real-captures.json", "index-repair-typed-packet.json", "independent-index-repair-real24.json"],
+      "result": "All 1314 producer observations assembled: original 1123 exact case/surface/phase multiset plus 191 workspace observations. Fresh real24 produced 20 passes and four intended refusals with unchanged protected state. Actual 456-path workspace inventory distinguishes 229 exact stable copies from 227 explicitly regenerated derived caches. Independent real24 and bounded artifact checks also passed; failed historical attempts remain visible."
+    },
+    {
+      "requirement": "Validate the replacement typed proof and selected environment against the exact committed candidate.",
+      "evidence": ["index-repair-committed-verification.json", "independent-index-repair-real24.json"],
+      "result": "Producer and independent actual Git-tree proof, exact selected environment and six artifact correlations pass for c9d3d5c3. Full explicit candidate entrypoint exits zero with no findings; it reports ready because the source fixture remains COMPAT in_progress. This separate closeout advances main lifecycle; exact publication remains unverified."
+    }
+  ],
+  "historical_evidence": "producer-closeout.json and its original 0e5b8064/678daa96 identities remain unchanged. New typed artifacts use a separate namespace and actual current-source receipts. This closeout does not relabel earlier captures or claim formal review occurred after it.",
+  "open_defects": ["dat-wdq-workspace-inputs-zmt", "dat-wdq-index-refresh-ogw", "dat-wdq-proof-renewal-cycle-qgb"],
+  "next_step": "WDQ-RECHECK",
+  "preserved_limits": [
+    "Completes producer renewal only, not the overall defects or rollout goal.",
+    "Formal independent typed review and exact publication inspection remain required; prior independent captures/artifact inspection alone do not close WDQ-RECHECK.",
+    "Runtime accounting remains bounded repository/fixture/named-tool evidence, not exhaustive descendant/shared-library tracing.",
+    "Capture archives omit duplicate full fixtures; retained exact source bundles and local fixtures remain required.",
+    "No live Beads workaround, product-lane changes, installed trust change, activation or product acceptance."
+  ],
+  "publication_verified": false,
+  "activation_performed": false,
+  "remaining_owner_and_product_outcomes": ["WDQ-I04", "WDQ-I05", "WDQ-I06"]
+}
