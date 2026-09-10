@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "candidate": "06bafeb9979dce91ab710bfaaff7f8f9ca3e72f2",
+  "candidate_ref": "refs/datum-wdq/candidates/sequencing-paired-real-fa0b802e11d5dc266f7f3e78bde8a1ac91ac6c1ae4165df8858b56b94c158fee",
+  "tree": "9f35e2a4a55bf9a60cf5076af66f16479369d1b3",
+  "evidence_source_commit": "27df01fa6167d42f5b57cb67924a3d0d5a75af03",
+  "runtime_source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "prospective_baseline": "377323b29705ccccd6f8fa91f663d7d91c6d03c4",
+  "additional_review_intake": [
+    "dat-wdq-test-default-branch-apx"
+  ],
+  "packet_sha256": "fa0b802e11d5dc266f7f3e78bde8a1ac91ac6c1ae4165df8858b56b94c158fee",
+  "authority_sha256": "b3130c9322932a9d26e967d6ecb55c8b1591892636d26ac3cdd98e175475ee39",
+  "input_manifest_unchanged": true,
+  "correlated_event_blobs": 6,
+  "committed_tree_proof_validation": "pass",
+  "selected_environment_validation": "pass",
+  "correlation_validation": "pass",
+  "main_head_and_worktree_unchanged": true,
+  "full_entrypoint_verification": true,
+  "independent_replay_complete": false,
+  "publication_verified": false,
+  "activation_performed": false,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/verify_committed_packet.py --sequencing-repair --paired-real --packet-sha256 fa0b802e11d5dc266f7f3e78bde8a1ac91ac6c1ae4165df8858b56b94c158fee",
+  "exit_code": 0,
+  "entrypoint": {
+    "command": "python3 -S -B .git/datum-wdq/proposals/sequencing-repair-20260910/scripts/check_workflow_delivery.py --root /home/bfadmin/Documents/datum-eda --candidate-ref 06bafeb9979dce91ab710bfaaff7f8f9ca3e72f2 --enforce --authority-ref 377323b29705ccccd6f8fa91f663d7d91c6d03c4 --base-ref 377323b29705ccccd6f8fa91f663d7d91c6d03c4 --environment-path specs/workflow_delivery/rollout.environments.json",
+    "exit_code": 0,
+    "stdout": {
+      "acceptance_asserted": false,
+      "checks": [
+        "WORKFLOW-DELIVERY-GATE-PILOT: accept",
+        "WORKFLOW-DELIVERY-IMPLEMENTATION: ready"
+      ],
+      "findings": [],
+      "mode": "enforce",
+      "readiness_asserted": false
+    },
+    "scope": "Explicit prospective candidate validation, not installed-main enforcement. The retained COMPAT baseline selects ready; exact committed producer proof was separately validated. No independent completion, readiness, publication or acceptance assertion."
+  }
+}
