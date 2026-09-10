@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tempfile
@@ -25,7 +26,14 @@ def main():
     variants = parser.add_mutually_exclusive_group()
     variants.add_argument("--index-repair", action="store_true")
     variants.add_argument("--sequencing-repair", action="store_true")
+    parser.add_argument("--paired-real", action="store_true")
+    parser.add_argument("--packet-sha256")
     args = parser.parse_args()
+    if args.paired_real:
+        if not args.sequencing_repair or not re.fullmatch(r"[0-9a-f]{64}", args.packet_sha256 or ""):
+            parser.error("--paired-real requires --sequencing-repair and exact --packet-sha256")
+    elif args.packet_sha256 is not None:
+        parser.error("--packet-sha256 is restricted to --paired-real")
     pin = "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf" if args.index_repair else PIN
     baseline = "ba318df013ca5c0263c489a9c77187dc4057a7be" if args.index_repair else pin
     ref = "refs/datum-wdq/candidates/index-repair-typed-packet-20260910" if args.index_repair else REF
@@ -35,6 +43,9 @@ def main():
         baseline = "377323b29705ccccd6f8fa91f663d7d91c6d03c4"
         ref = "refs/datum-wdq/candidates/sequencing-typed-packet-20260910"
         expected_packet = "12afccdfb09c7aa8b60376b740eebc3385f5d5a15d5c205121341f43425eb626"
+    if args.paired_real:
+        expected_packet = args.packet_sha256
+        ref = "refs/datum-wdq/candidates/sequencing-paired-real-" + expected_packet
     original_head = git("rev-parse", "HEAD").decode().strip()
     original_status = git("status", "--porcelain")
     runtime = ROOT / ".git/datum-wdq/proposals/wdq-final-owner-disposed-producer-20260909"
@@ -47,6 +58,8 @@ def main():
         runtime = ROOT / ".git/datum-wdq/proposals/sequencing-repair-20260910"
         retained = ROOT / ".git/datum-wdq/proposals/sequencing-evidence-20260910"
         overlay = retained / "typed-packet-attempt-01"
+    if args.paired_real:
+        overlay = retained / "paired-real-typed-packet-attempt-01"
     assert subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=runtime).decode().strip() == pin
     assert not subprocess.check_output(["git", "--no-optional-locks", "status", "--porcelain"], cwd=runtime)
     sys.path.insert(0, str(runtime / "scripts"))
@@ -73,6 +86,8 @@ def main():
             typed_prefix = "index-repair-typed/" if args.index_repair else "typed/"
             if args.sequencing_repair:
                 typed_prefix = "sequencing-typed/"
+            if args.paired_real:
+                typed_prefix = "paired-real-typed/"
             assert relative == "docs/reviews/workflow-delivery-rollout/infrastructure/proof.json" or relative.startswith(PREFIX + typed_prefix)
             oid = git("hash-object", "-w", "--stdin", data=path.read_bytes()).decode().strip()
             git("update-index", "--add", "--cacheinfo", "100644", oid, relative, env=env)
@@ -85,7 +100,7 @@ unchanged {pin} runtime through an isolated candidate ref, not main publication.
 Prospective baseline: {baseline}; evidence source: {original_head}.
 Proof: Runtime inputs and authority must remain identical; the producer performs
 proof, selected-environment and correlation validation against this exact commit.
-Roadmap: WDQ-COMPAT, dat-wdq-rollout-implementation-ffy and
+Roadmap: {'WDQ-RECHECK' if args.paired_real else 'WDQ-COMPAT'}, dat-wdq-rollout-implementation-ffy and
 dat-wdq-workspace-inputs-zmt advance without closure. Index-repair mode also
 retains dat-wdq-index-refresh-ogw and dat-wdq-proof-renewal-cycle-qgb as open
 proof findings. Historical typed artifacts remain unchanged. Independent WDQ-RECHECK,
