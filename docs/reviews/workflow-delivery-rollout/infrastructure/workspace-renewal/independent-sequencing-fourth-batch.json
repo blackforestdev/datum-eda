@@ -1,0 +1,2330 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "reviewer_session": "wdq-independent-review-20260906",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "source_input_manifest_sha256": "468e860972610aca1b57e152e34f2ca817a74b7412cbd25e0492e362ae771857",
+  "authority_sha256": "b3130c9322932a9d26e967d6ecb55c8b1591892636d26ac3cdd98e175475ee39",
+  "verifications": {
+    "real-roadmap-exact-complete": {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 15,
+          "artifact_hashes": 105,
+          "source_hash_checks": 564,
+          "source_paths": 33,
+          "events": 66,
+          "observer_ids": 15,
+          "return_codes": {
+            "0": 13,
+            "1": 2
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 15,
+          "artifact_hashes": 105,
+          "source_hash_checks": 564,
+          "source_paths": 33,
+          "events": 66,
+          "observer_ids": 15,
+          "return_codes": {
+            "0": 13,
+            "1": 2
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "all_expected_outcomes_checked": true,
+      "fixture_basis": "Exact archived pre-state restored at original absolute fixture pathname under transferred custody; all protected fields matched, fresh nonce only. Fixture cleanup retained and archives preserved.",
+      "scope": "real-roadmap fresh independent captures only; expected refusal/recovery assertions passed: nine original successes plus six exact-input retry results; the first180s hook timeout is preserved separately. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    },
+    "current-inventory-exact-v2": {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "candidate": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "stats": {
+        "producer": {
+          "observations": 9,
+          "artifact_hashes": 63,
+          "source_hash_checks": 336,
+          "source_paths": 33,
+          "events": 38,
+          "observer_ids": 9,
+          "return_codes": {
+            "0": 7,
+            "1": 2
+          },
+          "protected_state_unchanged": true
+        },
+        "independent": {
+          "observations": 9,
+          "artifact_hashes": 63,
+          "source_hash_checks": 336,
+          "source_paths": 33,
+          "events": 38,
+          "observer_ids": 9,
+          "return_codes": {
+            "0": 7,
+            "1": 2
+          },
+          "protected_state_unchanged": true
+        }
+      },
+      "independent_ids_disjoint_from_producer": true,
+      "ordered_inventory_match": true,
+      "all_expected_outcomes_checked": true,
+      "fixture_basis": "Exact archived pre-state restored at original absolute fixture pathname under transferred custody; all protected fields matched, fresh nonce only. Fixture cleanup retained and archives preserved.",
+      "scope": "current-inventory fresh independent captures only; expected refusal/recovery assertions passed, no retries. Not full matrix, renewed typed packet, RECHECK completion, approval or activation.",
+      "activation_performed": false,
+      "full_review_complete": false
+    }
+  },
+  "required_exact_observations_this_archive": 24,
+  "required_exact_observations_across_four_archives": 1314,
+  "original_matrix_observations": 1123,
+  "additional_workspace_observations": 191,
+  "real_replay_accounting": {
+    "inventory": 9,
+    "original_real_successes": 9,
+    "remaining_real_retry_successes": 6,
+    "preserved_failed_timeout_invocation": "1331918b-8f21-444e-894a-3b4dcde1f5b1",
+    "timeout_seconds": 180,
+    "timeout_cause": "Undetermined"
+  },
+  "setup_failure": "First inventory seed used plain clone, which omitted non-head bundle refs; checkout refused before fixture restoration or capture. V2 fetches only the original explicit refs from the same hashed bundle. Failed command/process/seed remain retained; no source/claim/history regeneration.",
+  "focused_regression": {
+    "initial": {
+      "tests_run": 45,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "success": false,
+      "loaded_repository_sources": [
+        {
+          "module": "check_workflow_delivery",
+          "path": "scripts/check_workflow_delivery.py",
+          "sha256": "58bb1b4a0cd78da5c6b1854bb1fdd6462f32978c510f9b23c2789c8d0d65719e"
+        },
+        {
+          "module": "project_status",
+          "path": "scripts/project_status.py",
+          "sha256": "5df30076d9e92b9d9b619052b879d5ab2a28fb5682611b892aa7976c4e61572a"
+        },
+        {
+          "module": "project_task_details",
+          "path": "scripts/project_task_details.py",
+          "sha256": "5ff867b78e2ec54873328904cb94d34f15656e66c39e4e7b012e0ec0dc82725d"
+        },
+        {
+          "module": "test_project_status",
+          "path": "scripts/test_project_status.py",
+          "sha256": "10fab350cd831bd130c619d0db91a2fc5021f9ff95f25e17e5ee252ab0b71fdf"
+        },
+        {
+          "module": "test_workflow_delivery_coverage_entrypoints",
+          "path": "scripts/test_workflow_delivery_coverage_entrypoints.py",
+          "sha256": "cd1b0f79f981673a402c0be74201e2aadbe3364f90a2f075ece2b9e49e7e5238"
+        },
+        {
+          "module": "test_workflow_delivery_workspace",
+          "path": "scripts/test_workflow_delivery_workspace.py",
+          "sha256": "bc984f3b52abf52f699b5e697b3ea1e64abcdf0d5c8db8341b717a2d43df7c72"
+        },
+        {
+          "module": "test_workflow_delivery_workspace_authority",
+          "path": "scripts/test_workflow_delivery_workspace_authority.py",
+          "sha256": "54155d17454bce01157f14a7dbf6027f0e09ca95a9324694b77a8017919db3e9"
+        },
+        {
+          "module": "test_workflow_delivery_workspace_consumers",
+          "path": "scripts/test_workflow_delivery_workspace_consumers.py",
+          "sha256": "17ccbed3c2c9747c77b6835a2ccf7f893b691ca9e096f75e4154ddf2ac1d4b41"
+        },
+        {
+          "module": "test_workflow_delivery_workspace_entrypoints",
+          "path": "scripts/test_workflow_delivery_workspace_entrypoints.py",
+          "sha256": "cca7aa970a08222037045cd2ccfea0bff129aea17ece188da596db2a65f7309a"
+        },
+        {
+          "module": "workflow_delivery_activation_preflight",
+          "path": "scripts/workflow_delivery_activation_preflight.py",
+          "sha256": "238eb3b6bd547bbdc5ae45d53ced7639a938ffa1ab42936caad28f71a545aeb6"
+        },
+        {
+          "module": "workflow_delivery_authority",
+          "path": "scripts/workflow_delivery_authority.py",
+          "sha256": "a943ea2f2440bdf7a9c940aa4f7aa124c6e04265e4d8f60bec235ac4786a83f5"
+        },
+        {
+          "module": "workflow_delivery_bootstrap",
+          "path": "scripts/workflow_delivery_bootstrap.py",
+          "sha256": "4a6a4af189bbb82bb1f875bf4883941ec48bbae303d46ee75c9b139d0d9bdfc1"
+        },
+        {
+          "module": "workflow_delivery_capture_state",
+          "path": "scripts/workflow_delivery_capture_state.py",
+          "sha256": "085fb2992c8a527df3cf8a2073b8eed5a77a0bf55922f276ddb51f9144e6381b"
+        },
+        {
+          "module": "workflow_delivery_categories",
+          "path": "scripts/workflow_delivery_categories.py",
+          "sha256": "c667587882f2021cd0016b7ad45cdc046f2a051f00fcb8699c54889095446b4e"
+        },
+        {
+          "module": "workflow_delivery_checkpoints",
+          "path": "scripts/workflow_delivery_checkpoints.py",
+          "sha256": "b5f010f771691bab9cfa0b40dfe75acf8fac7bf2bb6b7eefbc96c529b226345c"
+        },
+        {
+          "module": "workflow_delivery_clause_dispositions",
+          "path": "scripts/workflow_delivery_clause_dispositions.py",
+          "sha256": "02328892ecfff8ad651bc3f4243a876b3b789c3cea19e09231ee8e2aefbafe6d"
+        },
+        {
+          "module": "workflow_delivery_clause_inventory",
+          "path": "scripts/workflow_delivery_clause_inventory.py",
+          "sha256": "97d8ab12703a5b4b01a2b6c30c4b3eaefc08b88002aa0db2d9ae8253d4aac847"
+        },
+        {
+          "module": "workflow_delivery_clause_test_support",
+          "path": "scripts/workflow_delivery_clause_test_support.py",
+          "sha256": "38642bb47c907b83c60ed94817d9241fd671eb1b6fccd9da040dd3dbd771f9bd"
+        },
+        {
+          "module": "workflow_delivery_contract",
+          "path": "scripts/workflow_delivery_contract.py",
+          "sha256": "0ddea8bcea9872b41e3daea982909905c41f209a4763aba9984b196f582547b7"
+        },
+        {
+          "module": "workflow_delivery_coverage",
+          "path": "scripts/workflow_delivery_coverage.py",
+          "sha256": "dde579ca44d9221adcfb7c0bceed057a11af43ebbbdfe4846c80e594545bb56d"
+        },
+        {
+          "module": "workflow_delivery_coverage_runtime",
+          "path": "scripts/workflow_delivery_coverage_runtime.py",
+          "sha256": "4c11ade39d9a9dd49acc25027c658fee9997c8436803a8f0f165e1d5df36f0cb"
+        },
+        {
+          "module": "workflow_delivery_coverage_shapes",
+          "path": "scripts/workflow_delivery_coverage_shapes.py",
+          "sha256": "0224b7dc30416266d0dd1edced62fefc7bc6c420d8f077d26a80c133363ba87f"
+        },
+        {
+          "module": "workflow_delivery_enabled",
+          "path": "scripts/workflow_delivery_enabled.py",
+          "sha256": "edfcdcd8806a190ecf6851bd200d22fa2656772dccf33bff43dcc0f7472bc424"
+        },
+        {
+          "module": "workflow_delivery_environments",
+          "path": "scripts/workflow_delivery_environments.py",
+          "sha256": "00a803444145c9452998b73cddff678beffede5d6097d709c6283c36140718a8"
+        },
+        {
+          "module": "workflow_delivery_evidence_shapes",
+          "path": "scripts/workflow_delivery_evidence_shapes.py",
+          "sha256": "b9846a8bd71d2b004bf5d97fe03eab0295ef0a032080285ddb1e6dd1a7b39971"
+        },
+        {
+          "module": "workflow_delivery_frontier",
+          "path": "scripts/workflow_delivery_frontier.py",
+          "sha256": "e7980224361a7c45f1b740d7216d746659a2e02cfa4cc08e66f65c9046cecfb7"
+        },
+        {
+          "module": "workflow_delivery_headless",
+          "path": "scripts/workflow_delivery_headless.py",
+          "sha256": "ac7872c8f0d9cc27cd96ab6523e062517d7cc6ec1a039a11c978acf97f6aa2ed"
+        },
+        {
+          "module": "workflow_delivery_io",
+          "path": "scripts/workflow_delivery_io.py",
+          "sha256": "87d9f10386edb2de646f949a9cc299646644a9e41efb536701db0c6912b17e2b"
+        },
+        {
+          "module": "workflow_delivery_mapping",
+          "path": "scripts/workflow_delivery_mapping.py",
+          "sha256": "d5f649a701fe5857ff59b3a6088f304ade82f59164ea0912af3c28cb8eed112d"
+        },
+        {
+          "module": "workflow_delivery_native",
+          "path": "scripts/workflow_delivery_native.py",
+          "sha256": "6c6dd4aea5e7c26c2acb5eb5ee4f4ea04b5ae7d73c50f9718cb8e5a29703e65e"
+        },
+        {
+          "module": "workflow_delivery_native_test_support",
+          "path": "scripts/workflow_delivery_native_test_support.py",
+          "sha256": "a1baf17f3332b329656f94cd57cd2a3cf38910c63467ec4ae9860d3a24b59f6d"
+        },
+        {
+          "module": "workflow_delivery_proof",
+          "path": "scripts/workflow_delivery_proof.py",
+          "sha256": "38f57d87115eb2647d592ad23fa99021b3cbed8c6de46c718f820d8f3d43c23f"
+        },
+        {
+          "module": "workflow_delivery_publication_delta",
+          "path": "scripts/workflow_delivery_publication_delta.py",
+          "sha256": "ca8b6f699ce3335f7b0d48913d1b58b7d0f3c6ebd884b8b891f23c356007bbce"
+        },
+        {
+          "module": "workflow_delivery_review",
+          "path": "scripts/workflow_delivery_review.py",
+          "sha256": "8267a366d30c06e1afce08f2950ae03e0782924cd642773872ba96455d32ef28"
+        },
+        {
+          "module": "workflow_delivery_selector",
+          "path": "scripts/workflow_delivery_selector.py",
+          "sha256": "c3c3d59d59616bdf62029f9382e58af83de912c61c63f46cc2adc19d1ba40195"
+        },
+        {
+          "module": "workflow_delivery_shapes",
+          "path": "scripts/workflow_delivery_shapes.py",
+          "sha256": "4bf9f883203649a8ef9a5d665832b0db83450055ca836eb6a799acb643f15414"
+        },
+        {
+          "module": "workflow_delivery_source_scopes",
+          "path": "scripts/workflow_delivery_source_scopes.py",
+          "sha256": "087a8caa875fbc6956d750e731e98492abb3eb6258fa4ad0f61001eb1da6d37c"
+        },
+        {
+          "module": "workflow_delivery_specification",
+          "path": "scripts/workflow_delivery_specification.py",
+          "sha256": "b343407a8164810bc1f3cf29344681088419c8d72081140c1f182920b76760a7"
+        },
+        {
+          "module": "workflow_delivery_support_bundle",
+          "path": "scripts/workflow_delivery_support_bundle.py",
+          "sha256": "56e0b8e4dfc1c1642cd6d991fc66031a8cb6df27fd9f2d2139eca4ecca92eb83"
+        },
+        {
+          "module": "workflow_delivery_support_store",
+          "path": "scripts/workflow_delivery_support_store.py",
+          "sha256": "67582a2781400ac70de2456c9b8390c175026605a88fa4aab369ca8d907fcb25"
+        },
+        {
+          "module": "workflow_delivery_test_support",
+          "path": "scripts/workflow_delivery_test_support.py",
+          "sha256": "7bcdc25c4d494a2a6a3293c7af6ddeb48fb556398c03c29ef76231b135966b93"
+        },
+        {
+          "module": "workflow_delivery_transaction",
+          "path": "scripts/workflow_delivery_transaction.py",
+          "sha256": "77446b2026047be436378879f6e0897765d7b657f71074a7fff20280c2202bc3"
+        },
+        {
+          "module": "workflow_delivery_tree",
+          "path": "scripts/workflow_delivery_tree.py",
+          "sha256": "86d8fa5ec4f98c0d9296146ad1c4bc46c1f3a634e43625ba63f21d154c92e07f"
+        },
+        {
+          "module": "workflow_delivery_trust",
+          "path": "scripts/workflow_delivery_trust.py",
+          "sha256": "cd1b2afa70304bb4d39ba6f0c0d182d6b624419c6dcf7115777d315ff44c7095"
+        },
+        {
+          "module": "workflow_delivery_trust_test_support",
+          "path": "scripts/workflow_delivery_trust_test_support.py",
+          "sha256": "9baad88ea004fcb6a38b317624925b69fe51c564f4f0b27270d095872104c44a"
+        },
+        {
+          "module": "workflow_delivery_workspace",
+          "path": "scripts/workflow_delivery_workspace.py",
+          "sha256": "4a1d16451285f3d3904f21ef7ceaf3302956024f2508215bfbe5f6279a3d10cb"
+        },
+        {
+          "module": "workflow_delivery_workspace_authority",
+          "path": "scripts/workflow_delivery_workspace_authority.py",
+          "sha256": "ccf33918dc14d7f692e004a6ed08e0741db5f9e813d12d8a7ac844f61671e7f0"
+        }
+      ],
+      "source_only_bootstrap_sha256": "605476331bc4e9a3146f8d3376ee5b8d4f14d3057c5e0023294c4c653f40f5cf",
+      "scope": "Loaded repository Python modules observed after focused tests. Not exhaustive stdlib/shared-library or descendant tracing."
+    },
+    "corrected_environment": {
+      "reviewer_session": "wdq-independent-review-20260906",
+      "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+      "tests": 45,
+      "source_inputs": 164,
+      "input_and_interpreter_before_after_equal": true,
+      "loaded_source_hashes_match_revision": true,
+      "groups": "Focused supplement for workspace authority/startup, captured bad/missing state, proof retention and actual preflight CLI.",
+      "prior_attempt": "focused-workspace retained 44 passes and one attached-main refusal; default-branch fixture portability defect is not fixed by this explicit environment.",
+      "fixture_environment": "Only reviewer-owned pinned init.defaultBranch=main; no inherited owner config or GIT_CONFIG_COUNT. Runtime Git reads retain their own sanitized environment.",
+      "matrix_observation_credit": 0,
+      "independent_recheck_complete": false,
+      "activation_performed": false
+    },
+    "open_finding": "dat-wdq-test-default-branch-apx",
+    "test_source_fixed": false,
+    "matrix_observation_credit": 0,
+    "precondition": "Explicit reviewer-owned mode0600 Git config contains only init.defaultBranch=main. Isolated HOME and no system config retained; runtime Git reads remain independently sanitized.",
+    "initial_fixture_limit": "The normal unittest cleanup removed the first failed synthetic fixture; its raw diagnostic/process/source receipts remain, not a claim of retained full fixture."
+  },
+  "producer_target": {
+    "reviewer_session": "wdq-independent-review-20260906",
+    "candidate": "06bafeb9979dce91ab710bfaaff7f8f9ca3e72f2",
+    "parent": "377323b29705ccccd6f8fa91f663d7d91c6d03c4",
+    "runtime": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+    "packet_sha256": "fa0b802e11d5dc266f7f3e78bde8a1ac91ac6c1ae4165df8858b56b94c158fee",
+    "authority_sha256": "b3130c9322932a9d26e967d6ecb55c8b1591892636d26ac3cdd98e175475ee39",
+    "input_count": 164,
+    "input_manifest_matches_frozen_source": true,
+    "proof_environment_correlations": "pass",
+    "correlated_event_blobs": 6,
+    "changed_paths": [
+      ".beads/issues.jsonl",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/proof.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/assemble_observations.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/build_typed_packet.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-first-batch.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-retain-first.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-retain-second.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-retain-third.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-second-batch.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-start.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-third-batch.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-assembled-observations.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-ownership-proof-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-ownership-proof-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-policy-runtime-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-policy-runtime-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-assembled-observations.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed-packet.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed-packet.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S01-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S02-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S03-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S04-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S05-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-events.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-observations.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/INFRA-S06-roles.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/build-receipt.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/fixtures.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/input-manifest.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/limits.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/observed-tools.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/producer-review-inspection.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/registry.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-real-typed/verification.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-typed-packet.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/paired-typed-packet.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/prepare_sequencing_review_candidate.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/recheck-live-candidate.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renew_index_repair_evidence.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/retain_real_prestate.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/run_index_repair_real.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/run_paired_real.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/run_paired_workspace.py",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-assembled-observations.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-committed-verification.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-inventory-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-live-candidate.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-live-review-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-live-review.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-policy-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-policy-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-producer-closeout.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-proof-real-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-proof-real-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-roadmap-snapshot.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-roadmap-snapshot.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-s01-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-s01-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-s03-s05-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-s03-s05-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-s06-workspace-captures.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-s06-workspace-observation.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-typed-packet.json",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-typed-packet.tar.xz",
+      "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/verify_committed_packet.py"
+    ],
+    "frontier_and_projection_unchanged_from_prospective_baseline": true,
+    "beads_delta": "Exact single committed open dat-wdq-test-default-branch-apx row; every baseline byte preserved.",
+    "pid": 107367,
+    "argv": [
+      ".git/datum-wdq/proposals/independent-sequencing-20260910/verify-producer-target.py"
+    ],
+    "python_flags": {
+      "isolated": 1,
+      "no_site": 1,
+      "dont_write_bytecode": 1
+    },
+    "started_ns": 1789038130218437439,
+    "finished_ns": 1789038175605923033,
+    "helper_sha256": "4e0b668b58e5bd14ac097f7b16e9641a13c5811f635a2f0977b06453e150087d",
+    "scope": "Read-only independent validation of evidence candidate. This is not an actual-main publication delta or installed startup/activation approval.",
+    "independent_recheck_complete": false,
+    "activation_performed": false
+  },
+  "helper_review": {
+    "commits": [
+      "b4a8469b",
+      "64d0230e"
+    ],
+    "finding": "No new paired-real binding blocker found. Both real groups switch together; original1123 multiset/191 additions, explicit mode, distinct namespace/session and packet-pinned committed overlay remain checked.",
+    "retention_precision": "First producer real command embeds the older stat-cache-based helper; inventory embeds strengthened literal blob/type/mode checks. No retroactive byte-check claim for the first batch. Independent full restored before-state equality passed for every actual replay."
+  },
+  "commit_message_correction": {
+    "commit": "c55fa057",
+    "incorrect_issue": "dat-workflow-gate-implementation-8mx",
+    "correct_issue": "dat-wdq-rollout-implementation-ffy",
+    "impact": "Commit-message transcription only; evidence/source/counts unchanged. History was not rewritten."
+  },
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-sequencing-fourth-batch.tar.xz",
+    "sha256": "6a7ed0bfd16d481387ce3b14cd58c34c8a8754d8eb2e9178178d19b247be1812",
+    "size": 479180,
+    "member_count": 363,
+    "all_member_hashes_verified": true
+  },
+  "inventory": [
+    {
+      "path": "current-inventory-exact-command.json",
+      "sha256": "43f5fdfd9693885cc3897765238d1695ecb3eb98397667a1e73c12270e4ddb9b",
+      "size": 470
+    },
+    {
+      "path": "current-inventory-exact-process.json",
+      "sha256": "0266efb2cf85b98c4d22af770d1d138fd01bf5046eab6602bd9c6a89ba85e345",
+      "size": 285
+    },
+    {
+      "path": "current-inventory-exact-started.json",
+      "sha256": "1c38ac067eb292f70fca28b046f961e0c7c7fc666afc120bbd4e99d6a9b16822",
+      "size": 58
+    },
+    {
+      "path": "current-inventory-exact-stderr.bin",
+      "sha256": "7185717c503389121259dbae38206f3f1e3b461397f8ae0a45bd2aeec9bc88e1",
+      "size": 843
+    },
+    {
+      "path": "current-inventory-exact-stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "current-inventory-exact-v2-command.json",
+      "sha256": "fb666292bf6f267165333fb86d9109d7f98ef4c768d9d2cdf8d2b6b7c9910557",
+      "size": 473
+    },
+    {
+      "path": "current-inventory-exact-v2-process.json",
+      "sha256": "656750cf3b85b326b336a582a05abc42ed0afcc9e2c153e686f97e39bfa6df32",
+      "size": 285
+    },
+    {
+      "path": "current-inventory-exact-v2-started.json",
+      "sha256": "de84b5ac3f6e889f29bfe09cb09f7b261188e8b7c0cbd31ed205bbe4701e0413",
+      "size": 58
+    },
+    {
+      "path": "current-inventory-exact-v2-stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "current-inventory-exact-v2-stdout.bin",
+      "sha256": "51cab3270da3887559a287965adda78c71fc11529b9387b1b16ae746a1b1d59c",
+      "size": 936
+    },
+    {
+      "path": "current-inventory-exact-v2/bundle-seed.json",
+      "sha256": "69193eaa3c48b14af8642e8fea5c975a9a2c6ac8d81f0283dccf15e01f988c35",
+      "size": 472
+    },
+    {
+      "path": "current-inventory-exact-v2/explicit-bundle-fetch.json",
+      "sha256": "f048c44f7eb28a1ff6613faca47fb852c775e5e821d26f11bd4bcacee22eace0",
+      "size": 1677
+    },
+    {
+      "path": "current-inventory-exact-v2/independent-verification.json",
+      "sha256": "745203d4fd233e2d72cf500595585ca7543c3d0880dccc08f697ca6330fc63aa",
+      "size": 1328
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-check/capture/after.json",
+      "sha256": "49c76b5a34a54118a6b4b902b7d9418611267864561eb390c6cbd6cf802b59f8",
+      "size": 2075199
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-check/capture/before.json",
+      "sha256": "49c76b5a34a54118a6b4b902b7d9418611267864561eb390c6cbd6cf802b59f8",
+      "size": 2075199
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-check/capture/calls.jsonl",
+      "sha256": "6a91a3f053ab0446b6fdd3909615ef602b8252b96e0c5b6b950e4802505aa01d",
+      "size": 62863
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-check/capture/invocation.json",
+      "sha256": "06dfb73b6790a93c0796155683e4efa4e7c2cd11c378bf295395368246a83b7b",
+      "size": 1801
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-check/capture/result.json",
+      "sha256": "dd595f44de573a83f39b7284a26ff963330be520e74bbcc55a5b097585a8ad21",
+      "size": 960
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-check/capture/started.json",
+      "sha256": "9afb77ef6b4c9fb501598e89afdf5a75f501cbbca36d7ec481adb7428ae020eb",
+      "size": 103
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-check/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-check/capture/stdout.bin",
+      "sha256": "97953a37f08035dd45e3845ea195eac78f37e92676c78d4da60eab00aecbffa5",
+      "size": 191
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-check/cleanup.json",
+      "sha256": "64ff000c5b418925002e3a2cc37d53626e2823de1342bb60549c056cb7c7f8fc",
+      "size": 451483
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-check/independent-assessment.json",
+      "sha256": "de76fc870eae7b5d4b288f90e0e68c10b6c176f2932ec35d58dfbc508811e922",
+      "size": 474
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-check/input-identity.json",
+      "sha256": "8ec1fa0803e09b6231c9e048b6593c1f079deeed0c1456a9ff884ab02667aaa3",
+      "size": 451691
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-check/restored-before.json",
+      "sha256": "240b078e10f6b19dfff9572617c7bc39f274e5a980ab7f9e056eb47a36b0c667",
+      "size": 2295027
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-details/capture/after.json",
+      "sha256": "49c76b5a34a54118a6b4b902b7d9418611267864561eb390c6cbd6cf802b59f8",
+      "size": 2075199
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-details/capture/before.json",
+      "sha256": "49c76b5a34a54118a6b4b902b7d9418611267864561eb390c6cbd6cf802b59f8",
+      "size": 2075199
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-details/capture/calls.jsonl",
+      "sha256": "ac6b43c3b71f759e69921d5dccc5675a15db97ee43df62c311c488a1370c6b7c",
+      "size": 62901
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-details/capture/invocation.json",
+      "sha256": "7e4116446e8dc9ab86a8bbe765546b13750b9c73cf90842e1e81a91221b083f7",
+      "size": 1840
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-details/capture/result.json",
+      "sha256": "016a257143a169ff389ecb224a2c50be9b6f015fdd387c986e246f3ad72cd24d",
+      "size": 960
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-details/capture/started.json",
+      "sha256": "6dfd1c80e177d28c15865163dccbcee9ce2ec0e3a8962d39a88401cbec2d5678",
+      "size": 103
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-details/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-details/capture/stdout.bin",
+      "sha256": "97953a37f08035dd45e3845ea195eac78f37e92676c78d4da60eab00aecbffa5",
+      "size": 191
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-details/cleanup.json",
+      "sha256": "21f3a008469545fb4a8bcceab92b784a30a08d5da0e3397c2e9b9c121df799c9",
+      "size": 451485
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-details/independent-assessment.json",
+      "sha256": "60a797d310ab0517657524e2b64a2ddefd0d86a38a1c07d4b654e671b2aa41e4",
+      "size": 480
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-details/input-identity.json",
+      "sha256": "bebb30979bd77450eea7d5efc105e6b40235b99a42be4375d465b72c7fa640c1",
+      "size": 451695
+    },
+    {
+      "path": "current-inventory-exact-v2/inventory-plus-unknown-source-S-details/restored-before.json",
+      "sha256": "240b078e10f6b19dfff9572617c7bc39f274e5a980ab7f9e056eb47a36b0c667",
+      "size": 2295027
+    },
+    {
+      "path": "current-inventory-exact-v2/observations.json",
+      "sha256": "70b9098ff2ec4bb8d42421109446c7c5f00528a7890569d6f0765050e51e5f62",
+      "size": 5069
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-C/capture/after.json",
+      "sha256": "05944711225b22e2afba23955453bb74a54e6c8787280cb51d7cf214bcf7ee77",
+      "size": 2075039
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-C/capture/before.json",
+      "sha256": "05944711225b22e2afba23955453bb74a54e6c8787280cb51d7cf214bcf7ee77",
+      "size": 2075039
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-C/capture/calls.jsonl",
+      "sha256": "f4f4570d721aebcc5c68f553ce2ec9897a1daf432bfc9644ae7406b4b88a0454",
+      "size": 62523
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-C/capture/invocation.json",
+      "sha256": "0d8cdf65f496ab8d54a5309204c3c95d34e9b27a60b8aa6b1a5681f59023f3ef",
+      "size": 1998
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-C/capture/result.json",
+      "sha256": "bf6c12cf2f25e4ce8cd9151083001c09b8c69b9d5961abb0a698bbb5de286291",
+      "size": 962
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-C/capture/started.json",
+      "sha256": "c1dafb6adee85cbf328b05273b918a756f2ebe3aa10a5fa87fc0d051ace92268",
+      "size": 105
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-C/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-C/capture/stdout.bin",
+      "sha256": "eb36099f092fde4313ac448c494fe36851e62fc2976c8ffeb2844b93a189f23f",
+      "size": 190
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-C/cleanup.json",
+      "sha256": "79ab40fc7459ca050b5de952cd1cfb0676f53716a8efa32e50d624fe8f153ca2",
+      "size": 451417
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-C/independent-assessment.json",
+      "sha256": "6d150ba101397093fd9a6a3668fafb2f686ae9acc68687d83b5fb50141b2572e",
+      "size": 454
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-C/input-identity.json",
+      "sha256": "b64370e9254052ee99750bc01acbdef834d5c0f4bf76be9aa38d7b60da05cc7c",
+      "size": 451618
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-C/restored-before.json",
+      "sha256": "5f08badcdec085ee4ae04c80f7ceb0df25163dd756dbbd649e70d4551cd6515b",
+      "size": 2294824
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-H/capture/after.json",
+      "sha256": "05944711225b22e2afba23955453bb74a54e6c8787280cb51d7cf214bcf7ee77",
+      "size": 2075039
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-H/capture/before.json",
+      "sha256": "05944711225b22e2afba23955453bb74a54e6c8787280cb51d7cf214bcf7ee77",
+      "size": 2075039
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-H/capture/calls.jsonl",
+      "sha256": "8722de2ce7c2fbaa41f2c16d009dece7410ae88c89ac72f7f7ae521e89df92b3",
+      "size": 74708
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-H/capture/invocation.json",
+      "sha256": "b8b3e6517f8de96a7247e78012a636d858595242d1d2b3a0c00a5490dfba2e67",
+      "size": 1415
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-H/capture/result.json",
+      "sha256": "893ee72e7e98fd0d92db493f1d25e357d1cfe29666bd86dba1c5a218dd0c5ceb",
+      "size": 962
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-H/capture/started.json",
+      "sha256": "d644cc2cac071100ed485f6ef14a0d6bc492c6f68a27318d896e8162c3c71c6c",
+      "size": 105
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-H/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-H/capture/stdout.bin",
+      "sha256": "6fe40e7fa52ea9c3f97968a63e2481e93f67bfc80d969f60f09e672d109d0f42",
+      "size": 364
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-H/cleanup.json",
+      "sha256": "9ded79c9df69a3769cf1a69698cd80e9313aee847b0fd6a33edaa5f49ba94318",
+      "size": 451417
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-H/independent-assessment.json",
+      "sha256": "832c6e707e29d70b6c54b3355d7244c4d0dd50a7952a604dbe9432f1c0a908fb",
+      "size": 454
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-H/input-identity.json",
+      "sha256": "54a4dabc19c59fdcd21ed331ef8b29704581a6ec15117c1b180cc6a9201f288e",
+      "size": 451618
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-H/restored-before.json",
+      "sha256": "5f08badcdec085ee4ae04c80f7ceb0df25163dd756dbbd649e70d4551cd6515b",
+      "size": 2294824
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-R/capture/after.json",
+      "sha256": "05944711225b22e2afba23955453bb74a54e6c8787280cb51d7cf214bcf7ee77",
+      "size": 2075039
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-R/capture/before.json",
+      "sha256": "05944711225b22e2afba23955453bb74a54e6c8787280cb51d7cf214bcf7ee77",
+      "size": 2075039
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-R/capture/calls.jsonl",
+      "sha256": "17bb34de64fb7363887f6bec226d385c38e44dfdc5a2ce2d4ff80cf95d1a7504",
+      "size": 62574
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-R/capture/invocation.json",
+      "sha256": "ee2ec5b9e2aff2c7bea23d8ddd2ee1accd0346987e15e94bbe2bf534b5c83606",
+      "size": 2048
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-R/capture/result.json",
+      "sha256": "2dffa88ddb968e74c7e48c44f575334d1c763fa0f52317d9c15228aad360af1a",
+      "size": 962
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-R/capture/started.json",
+      "sha256": "70ec9fbb8708c40852ea0273d3096ca259081b70b8818b6de087349affec7e8c",
+      "size": 105
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-R/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-R/capture/stdout.bin",
+      "sha256": "eb36099f092fde4313ac448c494fe36851e62fc2976c8ffeb2844b93a189f23f",
+      "size": 190
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-R/cleanup.json",
+      "sha256": "e7c7f855c7696c9be44ca80292cd7753f6afc18dc47d8175fc2f9581f302698a",
+      "size": 451417
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-R/independent-assessment.json",
+      "sha256": "138ee8b2a604d3725ed096e84a669c9b8901e205d139a360fcb915c5023a5d9a",
+      "size": 454
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-R/input-identity.json",
+      "sha256": "88d08a39f7d6a8149dde94ee3ef7bf4f68fc71bf2413ec5368ca7c5c988412c3",
+      "size": 451618
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-R/restored-before.json",
+      "sha256": "5f08badcdec085ee4ae04c80f7ceb0df25163dd756dbbd649e70d4551cd6515b",
+      "size": 2294824
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-check/capture/after.json",
+      "sha256": "05944711225b22e2afba23955453bb74a54e6c8787280cb51d7cf214bcf7ee77",
+      "size": 2075039
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-check/capture/before.json",
+      "sha256": "05944711225b22e2afba23955453bb74a54e6c8787280cb51d7cf214bcf7ee77",
+      "size": 2075039
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-check/capture/calls.jsonl",
+      "sha256": "09a6863f6d4e235b270ea88d5e49b6c6242a4fbbacec5bc8e860d6988e63ebf1",
+      "size": 62871
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-check/capture/invocation.json",
+      "sha256": "6626d47f7ae5f46b6b6371ff82961113894a56c34d848f85bded0ad207b2e953",
+      "size": 1799
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-check/capture/result.json",
+      "sha256": "8a77a1912e15fca444d9e607719e1beae22fbef1cd39ff173eefb2605714e7a8",
+      "size": 962
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-check/capture/started.json",
+      "sha256": "6b76d3560c2c211622aa7bb21bed3c84276e29605ce57ad5448025c46d487294",
+      "size": 105
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-check/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-check/capture/stdout.bin",
+      "sha256": "c51a76111b59dfba3ecd3a97079d25fff3de21a5195c5c0b90cec162b1540ca9",
+      "size": 32
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-check/cleanup.json",
+      "sha256": "0ce1cbde51b433b59427dc30756dd56f3402ab066428157a70b6cc352e0c1e78",
+      "size": 451423
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-check/independent-assessment.json",
+      "sha256": "7b61ed2836b616c4b3d7ef0c353c596ffe1e90facc9a0694b208d076948dbebf",
+      "size": 472
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-check/input-identity.json",
+      "sha256": "612ce1444d16b92319e189994acbee3d769e4630990ef82dd2760f3f5fd79aec",
+      "size": 451630
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-check/restored-before.json",
+      "sha256": "5f08badcdec085ee4ae04c80f7ceb0df25163dd756dbbd649e70d4551cd6515b",
+      "size": 2294824
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-details/capture/after.json",
+      "sha256": "05944711225b22e2afba23955453bb74a54e6c8787280cb51d7cf214bcf7ee77",
+      "size": 2075039
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-details/capture/before.json",
+      "sha256": "05944711225b22e2afba23955453bb74a54e6c8787280cb51d7cf214bcf7ee77",
+      "size": 2075039
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-details/capture/calls.jsonl",
+      "sha256": "c943b0aba55c959ed9764c1b63bddedbddca373d5cc0670df80c37b7e173d7c8",
+      "size": 62909
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-details/capture/invocation.json",
+      "sha256": "f51927e7b819b36204449e3845d9f386bf5cb78af47976987dc311eb61b1b5ba",
+      "size": 1838
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-details/capture/result.json",
+      "sha256": "2ca10f3480570eb788a6ca715c39600cfd88f34f6f35d8d66dacceabba7ce98f",
+      "size": 962
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-details/capture/started.json",
+      "sha256": "c216a47833b1ab8add2f2312ecf1093be96f843ec9148bdd1ed8e0ec78ce3e7f",
+      "size": 105
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-details/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-details/capture/stdout.bin",
+      "sha256": "642506035e7780da9293656f74fcbc9be2d4f37bddce65587008af0b373954c5",
+      "size": 7978
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-details/cleanup.json",
+      "sha256": "20f3e7659a9161a52df5fcf800d3a273a047c1cbee4833d59ef760abe1cd8891",
+      "size": 451425
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-details/independent-assessment.json",
+      "sha256": "3cbfd55acbfee5532ed6cf0da681625da8c594c1f66419814502e3e294eaef22",
+      "size": 478
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-details/input-identity.json",
+      "sha256": "6816f62b3f40f85c4d16a0a76030385b05f156e9a8f8725a46ff8fe584b66909",
+      "size": 451634
+    },
+    {
+      "path": "current-inventory-exact-v2/observed-workspace-inventory-S-details/restored-before.json",
+      "sha256": "5f08badcdec085ee4ae04c80f7ceb0df25163dd756dbbd649e70d4551cd6515b",
+      "size": 2294824
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-check/capture/after.json",
+      "sha256": "05944711225b22e2afba23955453bb74a54e6c8787280cb51d7cf214bcf7ee77",
+      "size": 2075039
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-check/capture/before.json",
+      "sha256": "05944711225b22e2afba23955453bb74a54e6c8787280cb51d7cf214bcf7ee77",
+      "size": 2075039
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-check/capture/calls.jsonl",
+      "sha256": "310b09f9384fed45c7f957affff46ef2e812b9ef52c3e9d394fd662475f4bb3b",
+      "size": 62863
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-check/capture/invocation.json",
+      "sha256": "f3d6abfcc850c183a06444101ad9b785dacd8be05895212de89e0e308457a746",
+      "size": 1799
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-check/capture/result.json",
+      "sha256": "9623d496155adcbc20c3b289463556c1f803aa30db667b41f35e09f64a41b541",
+      "size": 960
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-check/capture/started.json",
+      "sha256": "e899b831c6816cd7997753dddf7cbcb92ce3f157b4e4d36fa5e30781daf27405",
+      "size": 103
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-check/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-check/capture/stdout.bin",
+      "sha256": "c51a76111b59dfba3ecd3a97079d25fff3de21a5195c5c0b90cec162b1540ca9",
+      "size": 32
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-check/cleanup.json",
+      "sha256": "ca56b8b8b1333c6c0b024696d68309a79a93f6d8be3a84b9a619f0bfaadbcfd0",
+      "size": 451423
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-check/independent-assessment.json",
+      "sha256": "8be95f86fc1dc05aea33372711ba271bb838120ce0db801ced7570521459795c",
+      "size": 472
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-check/input-identity.json",
+      "sha256": "6c14dc893f4b1c7b4eebf7062abe161f51113cb4cb20d63ff43992e420aab2db",
+      "size": 451630
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-check/restored-before.json",
+      "sha256": "5f08badcdec085ee4ae04c80f7ceb0df25163dd756dbbd649e70d4551cd6515b",
+      "size": 2294824
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-details/capture/after.json",
+      "sha256": "05944711225b22e2afba23955453bb74a54e6c8787280cb51d7cf214bcf7ee77",
+      "size": 2075039
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-details/capture/before.json",
+      "sha256": "05944711225b22e2afba23955453bb74a54e6c8787280cb51d7cf214bcf7ee77",
+      "size": 2075039
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-details/capture/calls.jsonl",
+      "sha256": "86376dc7d98cf1a53ac11a61d35f6fa2e8c23fdad23dfde76081a1cbdd581e1c",
+      "size": 62901
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-details/capture/invocation.json",
+      "sha256": "5c360b0c2fdd676e5678620c5037f980472ff5a2de1edef5b759fa5e65ed4f5e",
+      "size": 1838
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-details/capture/result.json",
+      "sha256": "1ba9c6ca59ec7dcb9f6d9f363e6b9b6e31343ad294d06c239c31b3a7221ed059",
+      "size": 960
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-details/capture/started.json",
+      "sha256": "697bcc4809540c71e614e129f860700e637dfd1b5098189f14d26a210322ce0d",
+      "size": 103
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-details/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-details/capture/stdout.bin",
+      "sha256": "642506035e7780da9293656f74fcbc9be2d4f37bddce65587008af0b373954c5",
+      "size": 7978
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-details/cleanup.json",
+      "sha256": "090bb4f9fdc0d128b2174f07886f201a136e3d6b4fd41868c46c44a44bb86066",
+      "size": 451425
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-details/independent-assessment.json",
+      "sha256": "c13a763229b464f516e17a8fa9dea71bbe7817e7cc57c4b91dad283d186478b0",
+      "size": 478
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-details/input-identity.json",
+      "sha256": "a5eeaa649c81d75be8b58f282e24ec42f68b30e20dabcd0ce530f2249b7a85e8",
+      "size": 451634
+    },
+    {
+      "path": "current-inventory-exact-v2/restored-workspace-inventory-S-details/restored-before.json",
+      "sha256": "5f08badcdec085ee4ae04c80f7ceb0df25163dd756dbbd649e70d4551cd6515b",
+      "size": 2294824
+    },
+    {
+      "path": "focused-workspace-v2/after.json",
+      "sha256": "db5adc9651c8ff6c43df2f09d1374b3c7e7ae652990fd640554b73ee7f5f9957",
+      "size": 27284
+    },
+    {
+      "path": "focused-workspace-v2/before.json",
+      "sha256": "db5adc9651c8ff6c43df2f09d1374b3c7e7ae652990fd640554b73ee7f5f9957",
+      "size": 27284
+    },
+    {
+      "path": "focused-workspace-v2/child-observation.json",
+      "sha256": "f3277cb3176470f5c8a681c4e87e7089fd17599b0052f3c6984490133dbbf4ee",
+      "size": 9966
+    },
+    {
+      "path": "focused-workspace-v2/command.json",
+      "sha256": "93eb70469b20e0e3905c355a9f9cfa8c2cbe0763592a3170bf4cd5ddadf4ed04",
+      "size": 984
+    },
+    {
+      "path": "focused-workspace-v2/gitconfig",
+      "sha256": "f32e7cbf256906ce1720e2742d3cfa79271a7d69444bdaf23a64768c1d6b90b9",
+      "size": 29
+    },
+    {
+      "path": "focused-workspace-v2/process.json",
+      "sha256": "db2d81caa12989b8a60df264e74c5f6a688a02049963364e4c9823417fd035cb",
+      "size": 285
+    },
+    {
+      "path": "focused-workspace-v2/started.json",
+      "sha256": "932952fa619dfe1e27323718984defb750fc720b1c78e38c1b7cb0c6118445cd",
+      "size": 58
+    },
+    {
+      "path": "focused-workspace-v2/stderr.bin",
+      "sha256": "309574d7d7b67da8ee08fd88398c631d16e789aa08e5fa281e97bb6f24cd333b",
+      "size": 8658
+    },
+    {
+      "path": "focused-workspace-v2/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "focused-workspace-v2/verification.json",
+      "sha256": "52c38069835030cd25be128f0a7b9a5b360a07d1c76be7d235f864bc1643b7ff",
+      "size": 866
+    },
+    {
+      "path": "focused-workspace/after.json",
+      "sha256": "c11fe444878a3ac3e9ecac8d1096ba318d4c75b1a32ae985666b2fe124a9fe1d",
+      "size": 26799
+    },
+    {
+      "path": "focused-workspace/before.json",
+      "sha256": "c11fe444878a3ac3e9ecac8d1096ba318d4c75b1a32ae985666b2fe124a9fe1d",
+      "size": 26799
+    },
+    {
+      "path": "focused-workspace/child-observation.json",
+      "sha256": "cfec8da1a480616b8b4ef7d162e02c23e8a4d14b636490979f100234483fa95e",
+      "size": 9967
+    },
+    {
+      "path": "focused-workspace/command.json",
+      "sha256": "bc32c36249667b7c5f7573cbf7b1149cb0e5ebd3f77974a0b2bbffbd1be5409b",
+      "size": 863
+    },
+    {
+      "path": "focused-workspace/process.json",
+      "sha256": "0ee58cd057995030db02a07db47761f4e10e8963beca5d02252b26dd5987ebbf",
+      "size": 285
+    },
+    {
+      "path": "focused-workspace/started.json",
+      "sha256": "0c0b871aa09023b7258c4e9f09d28b863180e8e1f50350834d0b72f5cf647d18",
+      "size": 58
+    },
+    {
+      "path": "focused-workspace/stderr.bin",
+      "sha256": "200baf8fa2b8893d806ee3cf63a7be82d8046ca33871ca9ba76201ae71b602f0",
+      "size": 9987
+    },
+    {
+      "path": "focused-workspace/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "producer-target-independent-verification.json",
+      "sha256": "0125637f88139c31c7a2a04d901a6944d235a8010dbecdf90281f73764a0a8c5",
+      "size": 10567
+    },
+    {
+      "path": "real-roadmap-exact-complete/independent-verification.json",
+      "sha256": "b5ee50c805e99151a746fa6b3bb274bef146a8a56db7fdf53cdefeadc229a6bb",
+      "size": 1431
+    },
+    {
+      "path": "real-roadmap-exact-complete/observations.json",
+      "sha256": "a050971078d84cd72d312b6dcec863eb1bdd5e5638d9413f64dfefd04f86807f",
+      "size": 10080
+    },
+    {
+      "path": "real-roadmap-exact-v2-command.json",
+      "sha256": "9677fc0dc763b583f18ef6e2c130cafefe297471445dc0f4ccf803a8ae1b1e6f",
+      "size": 468
+    },
+    {
+      "path": "real-roadmap-exact-v2-process.json",
+      "sha256": "08b8c9af80e513d19286a90d9aef37708cdd72836560eac06763d6d52aa7ccda",
+      "size": 285
+    },
+    {
+      "path": "real-roadmap-exact-v2-started.json",
+      "sha256": "e261aff3ecf493550eaa74f555aaa4347a5604831a9bee354dbd9f9a47443e6f",
+      "size": 58
+    },
+    {
+      "path": "real-roadmap-exact-v2-stderr.bin",
+      "sha256": "37c00995e11ddec1df504f598409ec7539392de91dee4973240a63d2e84dca09",
+      "size": 1856
+    },
+    {
+      "path": "real-roadmap-exact-v2-stdout.bin",
+      "sha256": "8a0ed1bc2ea4d1fafed798e5abb247d9471317c4eefd56d031eca548c65c56f4",
+      "size": 891
+    },
+    {
+      "path": "real-roadmap-exact-v2/bundle-seed.json",
+      "sha256": "69193eaa3c48b14af8642e8fea5c975a9a2c6ac8d81f0283dccf15e01f988c35",
+      "size": 472
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-C/capture/after.json",
+      "sha256": "523e25856e24964c20bd372ab9d9ad725e151258864b65a02d6663af19570f39",
+      "size": 1992302
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-C/capture/before.json",
+      "sha256": "523e25856e24964c20bd372ab9d9ad725e151258864b65a02d6663af19570f39",
+      "size": 1992302
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-C/capture/calls.jsonl",
+      "sha256": "f411ee0a1af8f4ec855a4188ed5f132e6f6e47d40fdf6a2519b9c023d408c788",
+      "size": 62513
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-C/capture/invocation.json",
+      "sha256": "2de0e005a7bd214ce7fbe232cf5440e34dbaa825a772ff8cc87f4800237e2b68",
+      "size": 1927
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-C/capture/result.json",
+      "sha256": "c620bd714b6d496b3c02a29d6f43548fd2332d307183f5cc119f797d215c621e",
+      "size": 962
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-C/capture/started.json",
+      "sha256": "b72f0c9af861470665cafe5d11aae0a14e2e9de11b44f372adf9df7edbb1ddc1",
+      "size": 105
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-C/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-C/capture/stdout.bin",
+      "sha256": "eb36099f092fde4313ac448c494fe36851e62fc2976c8ffeb2844b93a189f23f",
+      "size": 190
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-C/cleanup.json",
+      "sha256": "6479d30058a8782682b1c57ef59a80880a0b77066dedb647c53334157fd33f52",
+      "size": 415659
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-C/independent-assessment.json",
+      "sha256": "0730c47619035328dc14d563edd316fc0350dfd26bf0d62ba94804a0decf878e",
+      "size": 385
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-C/input-identity.json",
+      "sha256": "16b52797e6143725ba4470ab6c8da76132e919d0e5a4c1e9eff0892dbfd6d45c",
+      "size": 415837
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-C/restored-before.json",
+      "sha256": "b524ef39b91a9dd2be58ea1f6a0bb0911c564030e955206e0794714472586cf6",
+      "size": 2192441
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-H/capture/after.json",
+      "sha256": "523e25856e24964c20bd372ab9d9ad725e151258864b65a02d6663af19570f39",
+      "size": 1992302
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-H/capture/before.json",
+      "sha256": "523e25856e24964c20bd372ab9d9ad725e151258864b65a02d6663af19570f39",
+      "size": 1992302
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-H/capture/calls.jsonl",
+      "sha256": "bab04098dfd3be109ef4f3241944eeeb2da1c5cb9bbfc8edd10966b7c82fa4b0",
+      "size": 74318
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-H/capture/invocation.json",
+      "sha256": "1da85a2e3c735fc2f1cbff6064d85ab167d0a5935989aa73effb04bc3f6ed347",
+      "size": 1344
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-H/capture/result.json",
+      "sha256": "8cd38340bcfd363a6750d164991bcd0ee0f74d24fba0260c51a683dc2d7b822f",
+      "size": 962
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-H/capture/started.json",
+      "sha256": "e3d889b69d2dc9ba88cfd5c9f732bd7f6d10a16d206172585d9ba7704d85e57c",
+      "size": 105
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-H/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-H/capture/stdout.bin",
+      "sha256": "6fe40e7fa52ea9c3f97968a63e2481e93f67bfc80d969f60f09e672d109d0f42",
+      "size": 364
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-H/cleanup.json",
+      "sha256": "c0af0d9b8cb5bbf8b890a558ed2cf44e390e9fa1eef36c200296be671eeb356d",
+      "size": 415659
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-H/independent-assessment.json",
+      "sha256": "6b3526d61c277e940d26ff9e1417ddcce777d0a02d904054c3a5d857f1037678",
+      "size": 385
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-H/input-identity.json",
+      "sha256": "0c986336632f2b63580e641382fe54a496c5dba9c8252784b9dc499be60468e5",
+      "size": 415837
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-H/restored-before.json",
+      "sha256": "b524ef39b91a9dd2be58ea1f6a0bb0911c564030e955206e0794714472586cf6",
+      "size": 2192441
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-R/capture/after.json",
+      "sha256": "523e25856e24964c20bd372ab9d9ad725e151258864b65a02d6663af19570f39",
+      "size": 1992302
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-R/capture/before.json",
+      "sha256": "523e25856e24964c20bd372ab9d9ad725e151258864b65a02d6663af19570f39",
+      "size": 1992302
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-R/capture/calls.jsonl",
+      "sha256": "7585802f20f8fb80af52194ae3b9dcf87a1dc3d9c33985dc222d49b08576017f",
+      "size": 62564
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-R/capture/invocation.json",
+      "sha256": "183457dd3e77ab6a708bd5392d85f5eff7a6c97359440cc78d72d786e7b34b42",
+      "size": 1977
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-R/capture/result.json",
+      "sha256": "bec264635e541bc99c7196c830e176979c3efe9d2c36808f8466a4f2d2ca6cf9",
+      "size": 962
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-R/capture/started.json",
+      "sha256": "c0240e15526ce418e00b83c6e5b548eaf89146c50a00013678ff20b9a2a1b9f8",
+      "size": 105
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-R/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-R/capture/stdout.bin",
+      "sha256": "eb36099f092fde4313ac448c494fe36851e62fc2976c8ffeb2844b93a189f23f",
+      "size": 190
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-R/cleanup.json",
+      "sha256": "dfb9be6c6329fa3e483e7927401b1cb083b2784ff04e6ff495758a974d300d12",
+      "size": 415659
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-R/independent-assessment.json",
+      "sha256": "59d630a5c464332ca66407c3f62d6d24a3b487b47e4e4e7e437a63a9bb9a1144",
+      "size": 385
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-R/input-identity.json",
+      "sha256": "80804ccf3dcfb63161d20aa33766971cf710cdad67d7de18eec3fa3f568f1b90",
+      "size": 415837
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-R/restored-before.json",
+      "sha256": "b524ef39b91a9dd2be58ea1f6a0bb0911c564030e955206e0794714472586cf6",
+      "size": 2192441
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-check/capture/after.json",
+      "sha256": "523e25856e24964c20bd372ab9d9ad725e151258864b65a02d6663af19570f39",
+      "size": 1992302
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-check/capture/before.json",
+      "sha256": "523e25856e24964c20bd372ab9d9ad725e151258864b65a02d6663af19570f39",
+      "size": 1992302
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-check/capture/calls.jsonl",
+      "sha256": "33e23bd926f0ef6d88b72736eb90441105786b0099805fcf79e4a51ee84181a1",
+      "size": 62861
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-check/capture/invocation.json",
+      "sha256": "cd9d1e8b7c117846fb07110d6f4bcedd0e4222e3435476739b10a3e5c08a2631",
+      "size": 1728
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-check/capture/result.json",
+      "sha256": "0c5dee697fee5b4f13acd3d1d1124c4217f8e4a69a1225972dd4e4abf1801829",
+      "size": 962
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-check/capture/started.json",
+      "sha256": "04971d6d3089e6059a9b7e831a89828996cf036142a9891129127a44a3f50d61",
+      "size": 105
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-check/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-check/capture/stdout.bin",
+      "sha256": "c51a76111b59dfba3ecd3a97079d25fff3de21a5195c5c0b90cec162b1540ca9",
+      "size": 32
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-check/cleanup.json",
+      "sha256": "bdaaeab01d7b7582043592292328cd8ddc2f5def2d3ac51169028f058bf76c50",
+      "size": 415665
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-check/independent-assessment.json",
+      "sha256": "16d430511dd1f6691109f7bd21526293b03256a321b3bfd37d8f0a0a58b98bad",
+      "size": 403
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-check/input-identity.json",
+      "sha256": "6963c35b62f62ab2f2699111e681202ff48eb5c9f9a9e790c7094c2bddf30556",
+      "size": 415849
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-check/restored-before.json",
+      "sha256": "b524ef39b91a9dd2be58ea1f6a0bb0911c564030e955206e0794714472586cf6",
+      "size": 2192441
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-details/capture/after.json",
+      "sha256": "523e25856e24964c20bd372ab9d9ad725e151258864b65a02d6663af19570f39",
+      "size": 1992302
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-details/capture/before.json",
+      "sha256": "523e25856e24964c20bd372ab9d9ad725e151258864b65a02d6663af19570f39",
+      "size": 1992302
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-details/capture/calls.jsonl",
+      "sha256": "69e8c5e651123f25d7e161bf04ece058713059186f5affd23d5dc4405380195e",
+      "size": 62899
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-details/capture/invocation.json",
+      "sha256": "afacf0cdb1c6d4ba389ac54677920b7c6fba06044a4a828dcebe2cd6739183f3",
+      "size": 1767
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-details/capture/result.json",
+      "sha256": "c0122b5597a4fbfc19f794591265d09e6d861af9221e704ba499639693aac9d7",
+      "size": 962
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-details/capture/started.json",
+      "sha256": "bca0a9245a9506428cdb63a3813e2bf560a2676843d6f33a72a26bb5df8d7dcc",
+      "size": 105
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-details/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-details/capture/stdout.bin",
+      "sha256": "642506035e7780da9293656f74fcbc9be2d4f37bddce65587008af0b373954c5",
+      "size": 7978
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-details/cleanup.json",
+      "sha256": "3fda0fcf705edd015f69769b684e41f9039d4fa5a416ab350c820a9a2ca8698b",
+      "size": 415667
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-details/independent-assessment.json",
+      "sha256": "090351474c4e5991e0cfd19c1db3b259bea7372ff7fc0d36e39244e0938b38ee",
+      "size": 409
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-details/input-identity.json",
+      "sha256": "7581d893cf47118b4dcc46ef7c6d1493b5195657ed4e29780ea0abb0aa599b1b",
+      "size": 415853
+    },
+    {
+      "path": "real-roadmap-exact-v2/clean-S-details/restored-before.json",
+      "sha256": "b524ef39b91a9dd2be58ea1f6a0bb0911c564030e955206e0794714472586cf6",
+      "size": 2192441
+    },
+    {
+      "path": "real-roadmap-exact-v2/explicit-bundle-fetch.json",
+      "sha256": "f048c44f7eb28a1ff6613faca47fb852c775e5e821d26f11bd4bcacee22eace0",
+      "size": 1677
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-C/capture/after.json",
+      "sha256": "ec77e57a286bec6aedfe2bdbf659acea5e9f4de63528785c216e56c1082d7bf0",
+      "size": 1993050
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-C/capture/before.json",
+      "sha256": "ec77e57a286bec6aedfe2bdbf659acea5e9f4de63528785c216e56c1082d7bf0",
+      "size": 1993050
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-C/capture/calls.jsonl",
+      "sha256": "3f8e8ff877e91a27836e0c73e3c7fe74ea23576fd990042e82ed5d36a4833705",
+      "size": 62507
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-C/capture/invocation.json",
+      "sha256": "623c7bfe6a42dd79a32f133602f59b0fdc1c1cc4a32d6ba6ae3d7bfc5031839f",
+      "size": 1957
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-C/capture/result.json",
+      "sha256": "85f172bcad11549f20ab676038584f42101a4385599bab29469de16262de845a",
+      "size": 960
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-C/capture/started.json",
+      "sha256": "ec089bb24f5105e4777178b7bfb7f71c92b52487d057e6d8a639b756635fb135",
+      "size": 103
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-C/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-C/capture/stdout.bin",
+      "sha256": "eb36099f092fde4313ac448c494fe36851e62fc2976c8ffeb2844b93a189f23f",
+      "size": 190
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-C/cleanup.json",
+      "sha256": "cb585114583d9c404fac1684a375461d2d4bd2b01f11aba4e7d84e9f74503e52",
+      "size": 415992
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-C/independent-assessment.json",
+      "sha256": "8de0430f137ad7f0f382b97751f381bc60fcd9e5ab95d6f0991968f083c435e6",
+      "size": 430
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-C/input-identity.json",
+      "sha256": "af6a75720f2b7fc280b002f6fabb5fed3733e0a3cc827967fcf662e6096c4cff",
+      "size": 416185
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-C/restored-before.json",
+      "sha256": "064d53cbbd3367955d74d459d6c208edfcdeb336ec58f121dff3d787124717cd",
+      "size": 2193388
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-H/capture/after.json",
+      "sha256": "ec77e57a286bec6aedfe2bdbf659acea5e9f4de63528785c216e56c1082d7bf0",
+      "size": 1993050
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-H/capture/before.json",
+      "sha256": "ec77e57a286bec6aedfe2bdbf659acea5e9f4de63528785c216e56c1082d7bf0",
+      "size": 1993050
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-H/capture/calls.jsonl",
+      "sha256": "e26154b28ae427572408a53012b5e87750afc85fee99b24ea2cd4c9753fa2b4e",
+      "size": 27079
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-H/capture/invocation.json",
+      "sha256": "167b657869b34b202556de6c0913198717e29064adb184f1a21a47f7b68aa1a0",
+      "size": 1374
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-H/capture/result.json",
+      "sha256": "f1759b1be578ca0f665eee4f0f2cae0d25d448a227130314e9f65b3310b85c8b",
+      "size": 963
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-H/capture/started.json",
+      "sha256": "e5711141b62ea1357e97d8545625fac81b0c850970e3803c307107ea390e430d",
+      "size": 103
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-H/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-H/capture/stdout.bin",
+      "sha256": "866854cefe5d4ea5e9c5bc4c72701031c9f871e4ef96a63cefa3f188e6ca68b7",
+      "size": 174
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-H/input-identity.json",
+      "sha256": "badf3776c5b2096be282e9333a1edfed45ee7301ba2c90d2c1442b5ebc52c4ef",
+      "size": 416185
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-H/restored-before.json",
+      "sha256": "064d53cbbd3367955d74d459d6c208edfcdeb336ec58f121dff3d787124717cd",
+      "size": 2193388
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-R/capture/after.json",
+      "sha256": "ec77e57a286bec6aedfe2bdbf659acea5e9f4de63528785c216e56c1082d7bf0",
+      "size": 1993050
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-R/capture/before.json",
+      "sha256": "ec77e57a286bec6aedfe2bdbf659acea5e9f4de63528785c216e56c1082d7bf0",
+      "size": 1993050
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-R/capture/calls.jsonl",
+      "sha256": "0945d447f08491fa34300ef10818743279173b14026c8be3e980ef7a850352b9",
+      "size": 62558
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-R/capture/invocation.json",
+      "sha256": "8e5863a941b8a4eea974f1042ed7b0ec4e9e90dfcdc0caa374280ca7ecd3c3be",
+      "size": 2007
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-R/capture/result.json",
+      "sha256": "4f646e24dbc650347abe0ba0d84fdc664053a9cc139e7d48103215069466af64",
+      "size": 960
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-R/capture/started.json",
+      "sha256": "f277a9c3dff2d44685b0cd778a99c84ce86c0e61d2264f62eae7030ee111642c",
+      "size": 103
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-R/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-R/capture/stdout.bin",
+      "sha256": "eb36099f092fde4313ac448c494fe36851e62fc2976c8ffeb2844b93a189f23f",
+      "size": 190
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-R/cleanup.json",
+      "sha256": "c68b39ba2de5d8443069b4cd7cf4f251ddbb014777be0f6a79c0ecdf2cc34f06",
+      "size": 415992
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-R/independent-assessment.json",
+      "sha256": "61875c84f42a3ffbc6f6aaa2b47e87ad6af6a0d864a6323b1de23129161bb6aa",
+      "size": 430
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-R/input-identity.json",
+      "sha256": "33d107d13c65bdcb4bb0ba952229c246c94191aa6472f29567ab61d793083b4b",
+      "size": 416185
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-R/restored-before.json",
+      "sha256": "064d53cbbd3367955d74d459d6c208edfcdeb336ec58f121dff3d787124717cd",
+      "size": 2193388
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-check/capture/after.json",
+      "sha256": "ec77e57a286bec6aedfe2bdbf659acea5e9f4de63528785c216e56c1082d7bf0",
+      "size": 1993050
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-check/capture/before.json",
+      "sha256": "ec77e57a286bec6aedfe2bdbf659acea5e9f4de63528785c216e56c1082d7bf0",
+      "size": 1993050
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-check/capture/calls.jsonl",
+      "sha256": "a96fb771c6e570a0815cc8f981be6bab9d48c76a4765e1625946084f8942c691",
+      "size": 62853
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-check/capture/invocation.json",
+      "sha256": "b0fdbc2987f1cf3f6c51924b2d6122ff6bd9731a8ecca5563df8d9f873e6bed0",
+      "size": 1758
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-check/capture/result.json",
+      "sha256": "fccfb986c1d2dfd3cccf343e67be2a0bfad69144bdeebaa691be866bf0e7be27",
+      "size": 960
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-check/capture/started.json",
+      "sha256": "0013af4c1c2353741f2e553030a9823202c4de95291c80e4bf790282be81fe18",
+      "size": 103
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-check/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-check/capture/stdout.bin",
+      "sha256": "97953a37f08035dd45e3845ea195eac78f37e92676c78d4da60eab00aecbffa5",
+      "size": 191
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-check/cleanup.json",
+      "sha256": "90b7594c1e10538788c3da4ab34ea3aa73d952bd6e66924446b7c23742b3ecf4",
+      "size": 415998
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-check/independent-assessment.json",
+      "sha256": "d0ffe7817115118fc0d6dec8e9add44661e172101fcc5748b92ba67197ccdd4f",
+      "size": 447
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-check/input-identity.json",
+      "sha256": "5ea4b7110902a8693b792c02a0643b6c1b9fe272bcfdc2bca101c88b987a86a9",
+      "size": 416197
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-check/restored-before.json",
+      "sha256": "064d53cbbd3367955d74d459d6c208edfcdeb336ec58f121dff3d787124717cd",
+      "size": 2193388
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-details/capture/after.json",
+      "sha256": "ec77e57a286bec6aedfe2bdbf659acea5e9f4de63528785c216e56c1082d7bf0",
+      "size": 1993050
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-details/capture/before.json",
+      "sha256": "ec77e57a286bec6aedfe2bdbf659acea5e9f4de63528785c216e56c1082d7bf0",
+      "size": 1993050
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-details/capture/calls.jsonl",
+      "sha256": "3c86fa073313d07052a8e5b7865fab7fe924a93ae7508814b9dde20d24126843",
+      "size": 62891
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-details/capture/invocation.json",
+      "sha256": "6fd07181ea4fd3d38d07a1b3ceb9189089d53ca9dc0285ee7332efd381a32270",
+      "size": 1797
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-details/capture/result.json",
+      "sha256": "40cfe8b7fc6df2e010a91a30c022b171b971e39cf473c4b14fa2499d4c379b8e",
+      "size": 960
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-details/capture/started.json",
+      "sha256": "2736d49a09d5b214d9d5789ad0c8c88f45958748ca7121cb27bd4cb3938065c6",
+      "size": 103
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-details/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-details/capture/stdout.bin",
+      "sha256": "97953a37f08035dd45e3845ea195eac78f37e92676c78d4da60eab00aecbffa5",
+      "size": 191
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-details/cleanup.json",
+      "sha256": "dbf6b5be95f524d7579edcabab88002c235d266e56435da6b86f16a9c1dd7b18",
+      "size": 416000
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-details/independent-assessment.json",
+      "sha256": "290ee46c612e556202cf52b60b45bad1ada2b32ba8e19ca6a44ec398917d95c9",
+      "size": 453
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-details/input-identity.json",
+      "sha256": "a3ad8bec07b41d32b4723ed339b7ebcaae1d4b0752555cf38c04fadf24f9da67",
+      "size": 416201
+    },
+    {
+      "path": "real-roadmap-exact-v2/mixed-unknown-source-S-details/restored-before.json",
+      "sha256": "064d53cbbd3367955d74d459d6c208edfcdeb336ec58f121dff3d787124717cd",
+      "size": 2193388
+    },
+    {
+      "path": "real-roadmap-exact-v3-command.json",
+      "sha256": "f540809798d7858df1838a9a147b1553e4995e4f0c82d1363206e4c9a2c9b8db",
+      "size": 468
+    },
+    {
+      "path": "real-roadmap-exact-v3-process.json",
+      "sha256": "67431faacf834aa9ddef7633d8e05e91cdeca34252cf2594f8e2a836e5d29bc1",
+      "size": 284
+    },
+    {
+      "path": "real-roadmap-exact-v3-started.json",
+      "sha256": "6ba04cf2119c07536539fa127aea1c88db55619756535fbf7c761358e6949e74",
+      "size": 57
+    },
+    {
+      "path": "real-roadmap-exact-v3-stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v3-stdout.bin",
+      "sha256": "f78ef827fce7a9bae7b3fc7ee55df67a9cecac3783b285333163570aea568b8d",
+      "size": 594
+    },
+    {
+      "path": "real-roadmap-exact-v3/bundle-seed.json",
+      "sha256": "69193eaa3c48b14af8642e8fea5c975a9a2c6ac8d81f0283dccf15e01f988c35",
+      "size": 472
+    },
+    {
+      "path": "real-roadmap-exact-v3/explicit-bundle-fetch.json",
+      "sha256": "f048c44f7eb28a1ff6613faca47fb852c775e5e821d26f11bd4bcacee22eace0",
+      "size": 1677
+    },
+    {
+      "path": "real-roadmap-exact-v3/mixed-unknown-source-H/capture/after.json",
+      "sha256": "ec77e57a286bec6aedfe2bdbf659acea5e9f4de63528785c216e56c1082d7bf0",
+      "size": 1993050
+    },
+    {
+      "path": "real-roadmap-exact-v3/mixed-unknown-source-H/capture/before.json",
+      "sha256": "ec77e57a286bec6aedfe2bdbf659acea5e9f4de63528785c216e56c1082d7bf0",
+      "size": 1993050
+    },
+    {
+      "path": "real-roadmap-exact-v3/mixed-unknown-source-H/capture/calls.jsonl",
+      "sha256": "5f4abfb1b14105344428cabeca00c8e62909df0faf84986af600707dec4d2d7a",
+      "size": 74310
+    },
+    {
+      "path": "real-roadmap-exact-v3/mixed-unknown-source-H/capture/invocation.json",
+      "sha256": "65bd8cbfd9d552732e6d37d32ef3937807ed41796adeeefcbc8d4b7c92310c7c",
+      "size": 1374
+    },
+    {
+      "path": "real-roadmap-exact-v3/mixed-unknown-source-H/capture/result.json",
+      "sha256": "8f583ef73801ed696c680f757328fb5229bc3ffc0de64d9e44733acca842c6ce",
+      "size": 961
+    },
+    {
+      "path": "real-roadmap-exact-v3/mixed-unknown-source-H/capture/started.json",
+      "sha256": "25496a088b9d0d4c58255ad35484f13e5a2ddd18de8ecfb95b1c842cf48bc2d7",
+      "size": 104
+    },
+    {
+      "path": "real-roadmap-exact-v3/mixed-unknown-source-H/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v3/mixed-unknown-source-H/capture/stdout.bin",
+      "sha256": "6fe40e7fa52ea9c3f97968a63e2481e93f67bfc80d969f60f09e672d109d0f42",
+      "size": 364
+    },
+    {
+      "path": "real-roadmap-exact-v3/mixed-unknown-source-H/cleanup.json",
+      "sha256": "618fb055a14f42a8795e17caaab20d1ca8e5743d097f9c061d7ec83bee74219d",
+      "size": 415992
+    },
+    {
+      "path": "real-roadmap-exact-v3/mixed-unknown-source-H/independent-assessment.json",
+      "sha256": "da546d538791bbecc86343b8d18191bf78b215077da616803610147ae42720a0",
+      "size": 430
+    },
+    {
+      "path": "real-roadmap-exact-v3/mixed-unknown-source-H/input-identity.json",
+      "sha256": "badf3776c5b2096be282e9333a1edfed45ee7301ba2c90d2c1442b5ebc52c4ef",
+      "size": 416185
+    },
+    {
+      "path": "real-roadmap-exact-v3/mixed-unknown-source-H/restored-before.json",
+      "sha256": "064d53cbbd3367955d74d459d6c208edfcdeb336ec58f121dff3d787124717cd",
+      "size": 2193388
+    },
+    {
+      "path": "real-roadmap-exact-v3/observations.json",
+      "sha256": "31464eb14ade0368469a297f8bde10a74e4e5c8a46a4175a9f146dd1f97345ca",
+      "size": 3451
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-C/capture/after.json",
+      "sha256": "97aed653bbd45183d8d432dcfc8b69b6d8c9c617522491f771f57ed353e84b68",
+      "size": 1992890
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-C/capture/before.json",
+      "sha256": "97aed653bbd45183d8d432dcfc8b69b6d8c9c617522491f771f57ed353e84b68",
+      "size": 1992890
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-C/capture/calls.jsonl",
+      "sha256": "3d0095620db11a9579cf9fbf65fe5c1ecfcdedefcc4f414f4b270cd233dfeada",
+      "size": 62510
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-C/capture/invocation.json",
+      "sha256": "a66e3651a046741a3eefad2a91debcc6e6ad246067f88eb81191b3f9863d165e",
+      "size": 1975
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-C/capture/result.json",
+      "sha256": "ca882d7d0d8c74e98efdb6f81226b1d5991d4ae6c9bf92f1e54df720cc82312f",
+      "size": 961
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-C/capture/started.json",
+      "sha256": "fc48d5815ae96e522b1ac3c1a95668c0ed54602582b0e8ac9027177a6e20d1ca",
+      "size": 104
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-C/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-C/capture/stdout.bin",
+      "sha256": "eb36099f092fde4313ac448c494fe36851e62fc2976c8ffeb2844b93a189f23f",
+      "size": 190
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-C/cleanup.json",
+      "sha256": "25f673dc0d06dcd5501524e71c659d2231c8beeb9b1fae7eea796d4be38158f8",
+      "size": 415942
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-C/independent-assessment.json",
+      "sha256": "25e4d15ffddcfdd377726f63150d9c53101df702f8a117d7106250a2d52632ca",
+      "size": 457
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-C/input-identity.json",
+      "sha256": "11fcd7098d63860898cd828267025e7f285fc3e17a782f24a1420b130e6ad9ac",
+      "size": 416144
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-C/restored-before.json",
+      "sha256": "e7f23c53c9aec098dc91275a9b24c310b90639e3bcc9504125a536c9fa4013e2",
+      "size": 2193185
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-H/capture/after.json",
+      "sha256": "97aed653bbd45183d8d432dcfc8b69b6d8c9c617522491f771f57ed353e84b68",
+      "size": 1992890
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-H/capture/before.json",
+      "sha256": "97aed653bbd45183d8d432dcfc8b69b6d8c9c617522491f771f57ed353e84b68",
+      "size": 1992890
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-H/capture/calls.jsonl",
+      "sha256": "5e4426f701f7b4ac6dccf4ccea43e6c30cffaf52d90a2d123f8b2ce4989687bc",
+      "size": 74310
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-H/capture/invocation.json",
+      "sha256": "7b342a8cab73ba608f6105509232353ef640de8451d375d58a42716bfb612114",
+      "size": 1392
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-H/capture/result.json",
+      "sha256": "e914eaca6f5726171765529a18757b8dddd610ed70ab62b7e423a4429eed35d5",
+      "size": 961
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-H/capture/started.json",
+      "sha256": "c64db9fe66cb415bf32c6e9fad527678f8b780e459c3c30652655cd7e2224477",
+      "size": 104
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-H/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-H/capture/stdout.bin",
+      "sha256": "6fe40e7fa52ea9c3f97968a63e2481e93f67bfc80d969f60f09e672d109d0f42",
+      "size": 364
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-H/cleanup.json",
+      "sha256": "4096e609603bda18db7185981a4e3606ea19d6cafa044dd7e4f0ba9de5ef3f6d",
+      "size": 415942
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-H/independent-assessment.json",
+      "sha256": "582b92b7bd8cbb3de2e3b9cdd983ad5557d293d8d02c0f7667345e4ffdb78e12",
+      "size": 457
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-H/input-identity.json",
+      "sha256": "8e028c0dfb97059990cfbbd854603886bd7468cb8d47bec644f325d8dfa5db94",
+      "size": 416144
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-H/restored-before.json",
+      "sha256": "e7f23c53c9aec098dc91275a9b24c310b90639e3bcc9504125a536c9fa4013e2",
+      "size": 2193185
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-R/capture/after.json",
+      "sha256": "97aed653bbd45183d8d432dcfc8b69b6d8c9c617522491f771f57ed353e84b68",
+      "size": 1992890
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-R/capture/before.json",
+      "sha256": "97aed653bbd45183d8d432dcfc8b69b6d8c9c617522491f771f57ed353e84b68",
+      "size": 1992890
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-R/capture/calls.jsonl",
+      "sha256": "1aa8126db3a8ac780a868e52bbf09b72f5dfeccb36ea32162063fe87d71fe0d0",
+      "size": 62561
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-R/capture/invocation.json",
+      "sha256": "bd61c3feb80bf037387ac47791fb67784f5847af31a670a6f8e79796a1abeb50",
+      "size": 2025
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-R/capture/result.json",
+      "sha256": "e5ab888fd5f5d348b7af95a16d7bb74085da3e1eba420cc39c975bbc1765de75",
+      "size": 961
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-R/capture/started.json",
+      "sha256": "e56c8701e441e36fe986749dedb4036c13de3122ba17b07848263bf0f943a4de",
+      "size": 104
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-R/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-R/capture/stdout.bin",
+      "sha256": "eb36099f092fde4313ac448c494fe36851e62fc2976c8ffeb2844b93a189f23f",
+      "size": 190
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-R/cleanup.json",
+      "sha256": "9bee36bfd9d70481facb5d95e6dfc228b81c7e72723f8a71a1a4a3d7f594b39d",
+      "size": 415942
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-R/independent-assessment.json",
+      "sha256": "98bcd6b69fde8a13a0f894720b68ec9234b83a76ddf3dfbc7e634693bef54acb",
+      "size": 457
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-R/input-identity.json",
+      "sha256": "eb55482d64061484c4d7af01919b88672dc233817064250e17e52bd3a9348378",
+      "size": 416144
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-R/restored-before.json",
+      "sha256": "e7f23c53c9aec098dc91275a9b24c310b90639e3bcc9504125a536c9fa4013e2",
+      "size": 2193185
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-check/capture/after.json",
+      "sha256": "97aed653bbd45183d8d432dcfc8b69b6d8c9c617522491f771f57ed353e84b68",
+      "size": 1992890
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-check/capture/before.json",
+      "sha256": "97aed653bbd45183d8d432dcfc8b69b6d8c9c617522491f771f57ed353e84b68",
+      "size": 1992890
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-check/capture/calls.jsonl",
+      "sha256": "144c5c28c914f4b7c8586fbd40a3dabf8e95aa254541986268bee418185f21e8",
+      "size": 62857
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-check/capture/invocation.json",
+      "sha256": "6c63e50151c401a227927e677d498bd3ed186f05bcc2002a72e9a31a83694c41",
+      "size": 1776
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-check/capture/result.json",
+      "sha256": "22c4f8ae578d1e041ab04ac50fbf7ca19b8bf4aa3247265610b9c12ad1d1bb56",
+      "size": 961
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-check/capture/started.json",
+      "sha256": "340aeaaed2b565f123b3fe978195bc72b6ddff90965501168d3238e929c9a652",
+      "size": 104
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-check/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-check/capture/stdout.bin",
+      "sha256": "c51a76111b59dfba3ecd3a97079d25fff3de21a5195c5c0b90cec162b1540ca9",
+      "size": 32
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-check/cleanup.json",
+      "sha256": "72bb3dbfd147883a52591f08fee4084e4416ff10f5b3c4088db4fced55caed09",
+      "size": 415948
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-check/independent-assessment.json",
+      "sha256": "bcf630d5fa3b103f25a7831f4ba31b9a50cd6c64d63ebb2d46acf93ad1bb9439",
+      "size": 475
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-check/input-identity.json",
+      "sha256": "d439bf1dc119b5cbeb0aa9b5ec078be9a31a400907f3b456d2e4a0cebe9aac40",
+      "size": 416156
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-check/restored-before.json",
+      "sha256": "e7f23c53c9aec098dc91275a9b24c310b90639e3bcc9504125a536c9fa4013e2",
+      "size": 2193185
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-details/capture/after.json",
+      "sha256": "97aed653bbd45183d8d432dcfc8b69b6d8c9c617522491f771f57ed353e84b68",
+      "size": 1992890
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-details/capture/before.json",
+      "sha256": "97aed653bbd45183d8d432dcfc8b69b6d8c9c617522491f771f57ed353e84b68",
+      "size": 1992890
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-details/capture/calls.jsonl",
+      "sha256": "951a5f3a1a0d51746604149d57e6926fdbc7f2c7f82be5bf0cbf3ef0ab49c631",
+      "size": 62895
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-details/capture/invocation.json",
+      "sha256": "68a04b41925aa2a7f8993930873d9f02693fb251d655bdb4df1960018b43cf57",
+      "size": 1815
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-details/capture/result.json",
+      "sha256": "61cdd6a335514a16a6a46be169e70a34996b69d13e0ff04bffbbb008432ed29c",
+      "size": 961
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-details/capture/started.json",
+      "sha256": "ea824fbf0ca6fa8b03e8ba8070718cd1df17e6fd884265650cb38166c732ce88",
+      "size": 104
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-details/capture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-details/capture/stdout.bin",
+      "sha256": "642506035e7780da9293656f74fcbc9be2d4f37bddce65587008af0b373954c5",
+      "size": 7978
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-details/cleanup.json",
+      "sha256": "110023a027c850c206d7ee8324697da9cda43136048c7824f452f2705614595d",
+      "size": 415950
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-details/independent-assessment.json",
+      "sha256": "dd1955b79220e535865b922448edaf304aef957cab92b8175f3b1f02bbfa6542",
+      "size": 481
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-details/input-identity.json",
+      "sha256": "bce1b9825cc21534e86693f0d8991cb18b65184c2025791205d47b80224f83f4",
+      "size": 416160
+    },
+    {
+      "path": "real-roadmap-exact-v3/restored-with-verified-caches-S-details/restored-before.json",
+      "sha256": "e7f23c53c9aec098dc91275a9b24c310b90639e3bcc9504125a536c9fa4013e2",
+      "size": 2193185
+    },
+    {
+      "path": "real-roadmap-timeout-retirement.json",
+      "sha256": "51075382d8a6c9a4a883b09b2e0d4dcb4692115334b24fabe1c95942708548d7",
+      "size": 1387
+    },
+    {
+      "path": "replay-real-prestates-v2.py",
+      "sha256": "a3e817e106dc249c75c23a002e0393e5e77650b4edfdd0bcb2be4b67e1592028",
+      "size": 1415
+    },
+    {
+      "path": "replay-real-prestates-v3.py",
+      "sha256": "4c317a1a01d77d9327a0ae6465c7d1de78edb155db65be1ee27c5333bab5e1df",
+      "size": 1471
+    },
+    {
+      "path": "replay-real-prestates.py",
+      "sha256": "6d9ea1750c7e48ee4b5996d893192aee2fd0b2052ccfc4cccc138585ab12578b",
+      "size": 8597
+    },
+    {
+      "path": "retire-timeout-restoration.py",
+      "sha256": "bdd06463c5f5a542028e66dadf42a95fb546352de2c26d2f5357ef2a5d9b1c3b",
+      "size": 2872
+    },
+    {
+      "path": "run-focused-workspace-v2.py",
+      "sha256": "54d642695729b525cb23df106bfbba0b32bda62b87e79f97bd6db29b6c93f423",
+      "size": 1600
+    },
+    {
+      "path": "run-focused-workspace.py",
+      "sha256": "b3cc317f6fdcf3fe248d05f384b2014c751272fced88c6744e3aa0813c471b6b",
+      "size": 4916
+    },
+    {
+      "path": "run-real-replay-v2.py",
+      "sha256": "73918482e1a4fe7f6ff055bade812ea17442f1ea6b0d288fefcc267b907d40a8",
+      "size": 484
+    },
+    {
+      "path": "run-real-replay-v3.py",
+      "sha256": "56aba33d8809e955dc427daa26fd2c7a38e859d6884ee5b485f0740fb1653f6f",
+      "size": 486
+    },
+    {
+      "path": "run-real-replay.py",
+      "sha256": "2cfd34048bd5396d0b6c88a207e2bca8d541d6c1324ee31a9ccf0739c1d0e241",
+      "size": 1501
+    },
+    {
+      "path": "verify-producer-target.py",
+      "sha256": "4e0b668b58e5bd14ac097f7b16e9641a13c5811f635a2f0977b06453e150087d",
+      "size": 4318
+    },
+    {
+      "path": "verify-real-complete.py",
+      "sha256": "6415451ec0d8bc38176c85d477f66389caf9b2a839f51b35f5f9e1db15efad8f",
+      "size": 2619
+    },
+    {
+      "path": "verify-real-exact-v2.py",
+      "sha256": "d5c386490e29d680096f7eb7dec43f1ce398f001c1182cc4d5115167ee3156a7",
+      "size": 649
+    },
+    {
+      "path": "verify-real-exact.py",
+      "sha256": "103174265225b0fcedc1ec12439154a254bd8842537a59864994f7586b73370c",
+      "size": 568
+    },
+    {
+      "path": "verify-workspace-exact.py",
+      "sha256": "cbb840bd015d93fc8fbead58bb737851800e617d1e6c75dfb9fe61d5958f5f28",
+      "size": 3711
+    }
+  ],
+  "retained_store": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/independent-sequencing-20260910",
+  "custody": "Original paired paths restored only after producer terminal custody transfer; pinned bundle plus metadata/payloads and complete pre-state equality. Successful own restorations removed recoverably; failed hook restoration moved intact to real-roadmap-failed-timeout-fixture after absent process-group/open-handle checks. Producer retired fixtures unchanged.",
+  "limits": "Duplicate bundle seeds and failed full fixture remain local prerequisites, omitted from this archive. Producer pre-state archives/bundle are separately pinned. No standalone portable replay, native product proof, exhaustive descendant closure or final publication claim.",
+  "remaining": [
+    "Formal typed independent replay/review",
+    "Explicit later final candidate delta reconciliation",
+    "Strict I04 inspection and owner dispositions/activation"
+  ],
+  "independent_recheck_complete": false,
+  "publication_authorized": false,
+  "activation_performed": false
+}
