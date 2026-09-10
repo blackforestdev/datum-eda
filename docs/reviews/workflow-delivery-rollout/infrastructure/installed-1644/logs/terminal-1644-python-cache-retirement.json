@@ -1,0 +1,582 @@
+{
+  "kind": "regenerable-python-cache-retirement",
+  "files": [
+    {
+      "path": "scripts/__pycache__/agent_mcp_adapter_probe.cpython-313.pyc",
+      "size": 18617,
+      "sha256": "22cc3f37f811e09bc3193a2c4782827a783cd1015199a184e55c68e352caca1c"
+    },
+    {
+      "path": "scripts/__pycache__/build_libghostty_vt.cpython-313.pyc",
+      "size": 19359,
+      "sha256": "dd4754cb26b34b75b4b6d6710a9ab07c7024bd8a3e04c49ba11d16121fdf8a9f"
+    },
+    {
+      "path": "scripts/__pycache__/check_agent_workflow_parity.cpython-313.pyc",
+      "size": 8159,
+      "sha256": "7d86c32af44654be9758816ffdc1280257ee70682b26b464dfc89d3d13d50106"
+    },
+    {
+      "path": "scripts/__pycache__/check_alignment.cpython-313.pyc",
+      "size": 10602,
+      "sha256": "d6819cbe1846e597ef2a6a86a13826941acde978183ebb287b1318f7c57a04f0"
+    },
+    {
+      "path": "scripts/__pycache__/check_cargo_resource_policy.cpython-313.pyc",
+      "size": 3384,
+      "sha256": "1c9029a14eec6e2dd83215f24d4bc291037da55654ee6188ad4f564cc83b5970"
+    },
+    {
+      "path": "scripts/__pycache__/check_datum_console_boundary.cpython-313.pyc",
+      "size": 7256,
+      "sha256": "8531b7a135cf541f53d324c64c7eb716a25ff04f8ad6d6ed62b84140b24c30da"
+    },
+    {
+      "path": "scripts/__pycache__/check_evidence_traceability.cpython-313.pyc",
+      "size": 7571,
+      "sha256": "e5713dd7a3c31a1c3d1f37f83153a974084785282b348ce2797ba88a7492cd5f"
+    },
+    {
+      "path": "scripts/__pycache__/check_file_lane_ownership.cpython-313.pyc",
+      "size": 7084,
+      "sha256": "97ad4d94d41b359abe50a36813ef115e84907d2dc2990f4992c3ba9f4b2b7125"
+    },
+    {
+      "path": "scripts/__pycache__/check_file_size_budgets.cpython-313.pyc",
+      "size": 3585,
+      "sha256": "40dfa54fd4a408ca3ca959864807844d207a0531932591c7cb25e228c798fd4b"
+    },
+    {
+      "path": "scripts/__pycache__/check_global_preferences_production_matrix.cpython-313.pyc",
+      "size": 6318,
+      "sha256": "3eb51e1ec05b0f831306c0240ea2e78af4c5031d606d6557cb676613e7e88e88"
+    },
+    {
+      "path": "scripts/__pycache__/check_gui_agent_terminal_convergence.cpython-313.pyc",
+      "size": 37089,
+      "sha256": "8140e8e31b476f669d462d4d9b57fa510c79f10791b222f6f698991079ffd57d"
+    },
+    {
+      "path": "scripts/__pycache__/check_gui_conformance.cpython-313.pyc",
+      "size": 2408,
+      "sha256": "c406d637d0be5335c22c60669151ced5a91a0400022fa7a478249601b8ba8392"
+    },
+    {
+      "path": "scripts/__pycache__/check_gui_reference_capture.cpython-313.pyc",
+      "size": 4861,
+      "sha256": "415d96347cb4ed4653f368e1e87a00eb062ad56491797230f1b68ba78e9bc1f1"
+    },
+    {
+      "path": "scripts/__pycache__/check_gui_visual_parity.cpython-313.pyc",
+      "size": 12875,
+      "sha256": "0226c93569465dcfcaeb53aa167dc06e3279b7f97f996fa96a4a5d63fa3476c2"
+    },
+    {
+      "path": "scripts/__pycache__/check_mcp_public_taxonomy.cpython-313.pyc",
+      "size": 17673,
+      "sha256": "e1acc88f3a6c781c42552a8e3ca91695530325e587f9d36cfa24fdbc13ba736e"
+    },
+    {
+      "path": "scripts/__pycache__/check_progress_coverage.cpython-313.pyc",
+      "size": 24907,
+      "sha256": "2ec18d36a84ebde39917adaa3529961e4c79e75e2ae44b5d64852b4e726272ea"
+    },
+    {
+      "path": "scripts/__pycache__/check_resolver_raw_loads.cpython-313.pyc",
+      "size": 3487,
+      "sha256": "63a52cba1a933eeb7ebe83a7cbbc0b0437d1186871a0977d2ef8c43b1ddd77e6"
+    },
+    {
+      "path": "scripts/__pycache__/check_rustfmt.cpython-313.pyc",
+      "size": 7262,
+      "sha256": "9e0b729988098d0495149bcc3452ea4bdee145a40d812695e40b93cc70625210"
+    },
+    {
+      "path": "scripts/__pycache__/check_source_health.cpython-313.pyc",
+      "size": 34307,
+      "sha256": "5883fcef2573c6ba918bc80708af1a2a515f5fedb24c6a79b9c7f297f03f9d4a"
+    },
+    {
+      "path": "scripts/__pycache__/check_source_module_size.cpython-313.pyc",
+      "size": 8327,
+      "sha256": "5b8de6fbf502cb672f52d9d5ceed525d89354c789da6d37cbdfbb8440e13bda5"
+    },
+    {
+      "path": "scripts/__pycache__/check_spec_parity.cpython-313.pyc",
+      "size": 26067,
+      "sha256": "1f0f28717065791a6dc6fecb02510592ff8f3bd2663ace02c9f9b12ea347429e"
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_compatibility_matrix.cpython-313.pyc",
+      "size": 6284,
+      "sha256": "3d4d6172753da17d634e571969e5158eb7016f6068e4af42b18bf0db4f766d84"
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_core_adapter_boundary.cpython-313.pyc",
+      "size": 11288,
+      "sha256": "0025cd01d7f531498912bc5ecae950b650498cb62c99646c6c3c00732e6b1189"
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_core_boundary.cpython-313.pyc",
+      "size": 34707,
+      "sha256": "aa1d21515fd81ec97297f70d735d2b579f07fdb5fb4dbc936c7d6bb5f37e97c9"
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_core_proof.cpython-313.pyc",
+      "size": 4711,
+      "sha256": "20a17ebbf7b2466ec8e805acc71ba3791143d9a7c64db3c0e9ba705f350de209"
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_core_renderer_boundary.cpython-313.pyc",
+      "size": 7351,
+      "sha256": "6e6627ea17ee1656dc8f55c5fe71b86504522454694ca2292843ebc9ac85d2f0"
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_kitty_boundary.cpython-313.pyc",
+      "size": 6296,
+      "sha256": "ccc1186e1a59eef36d1ce9f81c90c01b1d8c070b864dca6b8bf00cb0d753fb83"
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_native_interaction.cpython-313.pyc",
+      "size": 9696,
+      "sha256": "0eb7322267904c816f0e97d8de1223fbc2c8314dc00cd2fadcbf31e297e736fa"
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_production_verification_matrix.cpython-313.pyc",
+      "size": 6343,
+      "sha256": "66957551a6384f5b4a143d707d5c09541b9706faf3dbbeb88e958becd42ae362"
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_shadow_boundary.cpython-313.pyc",
+      "size": 4571,
+      "sha256": "f1f745568208096e1e44391be30a78d37266f091b540177c8b348059cd3d8367"
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_shell_metadata_boundary.cpython-313.pyc",
+      "size": 3231,
+      "sha256": "d327fda4c5e75e046adc8ac406d0634340bc623578ec4a80b79ed83bab765ee7"
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_snapshot_boundary.cpython-313.pyc",
+      "size": 4586,
+      "sha256": "4ff1700713f7a1ee5d011f88f4358e3a5f52c0a24ae538fab1c2bd83827bbcc8"
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_split_boundary.cpython-313.pyc",
+      "size": 6640,
+      "sha256": "d56b8cea66759050f4f3566855b4e557795805d502d30e5a634c65157e7861a5"
+    },
+    {
+      "path": "scripts/__pycache__/check_terminal_transport_boundary.cpython-313.pyc",
+      "size": 25713,
+      "sha256": "86724cb4e253f02ef8d153e9328c9a75cbac7432df61469479e27505a496abe2"
+    },
+    {
+      "path": "scripts/__pycache__/check_test_file_sizes.cpython-313.pyc",
+      "size": 2247,
+      "sha256": "5c7d9487f03a7ee220c9c04ebd9da42550b3fcbf445a1a88adc88a8a5a86d681"
+    },
+    {
+      "path": "scripts/__pycache__/check_touched_monolith_growth.cpython-313.pyc",
+      "size": 10217,
+      "sha256": "49679811c637c15e21d294f0bc8e4b0b0023c7e15711835fe050d0f3529747e9"
+    },
+    {
+      "path": "scripts/__pycache__/check_workflow_delivery.cpython-313.pyc",
+      "size": 6436,
+      "sha256": "109b5f2b19e56ff23e19938c4dd27d86a45a3e4a7e4e3283c31e9e61d783adb7"
+    },
+    {
+      "path": "scripts/__pycache__/format_rust.cpython-313.pyc",
+      "size": 5560,
+      "sha256": "0a523d10682f30fe06f2e7b5cf74c4ba60116749480199cf81eba5d3782a6820"
+    },
+    {
+      "path": "scripts/__pycache__/measure_global_preferences_release.cpython-313.pyc",
+      "size": 11909,
+      "sha256": "f295315d9c4890b5a8895a01cbb3e6a426ae5dace84ae506c2b1ac983b64d886"
+    },
+    {
+      "path": "scripts/__pycache__/menu_model_csv.cpython-313.pyc",
+      "size": 10441,
+      "sha256": "5710c606f22ef74a0503b1fad0fbfaf1e85e00d7ea69ab8716fde5d9518f3dfc"
+    },
+    {
+      "path": "scripts/__pycache__/project_status.cpython-313.pyc",
+      "size": 38144,
+      "sha256": "29b1366276d5afeae04014a003b89ee3e5165470ec76bdb445bd17d4878acca5"
+    },
+    {
+      "path": "scripts/__pycache__/project_task_details.cpython-313.pyc",
+      "size": 36633,
+      "sha256": "94a32eac99a812a6e1094d03165245d748fe7b3eeefca56f6513bec594b407b2"
+    },
+    {
+      "path": "scripts/__pycache__/run_cargo_guarded.cpython-313.pyc",
+      "size": 14655,
+      "sha256": "6704b23414160a88910ca841a8d8f1c1401f27edc25ca4dec76c79a8fc08c8cb"
+    },
+    {
+      "path": "scripts/__pycache__/run_global_preferences_production_acceptance.cpython-313.pyc",
+      "size": 3766,
+      "sha256": "a4ca2860f5ddc12d968236ff6824f78a62a79120d941be8b007cf347c7a1fcf5"
+    },
+    {
+      "path": "scripts/__pycache__/run_terminal_core_proof.cpython-313.pyc",
+      "size": 1762,
+      "sha256": "9e4ac1ed9f0389079f5fe960bf4b9e66f646f93e3bc57a48a78b108a8aa4d1e6"
+    },
+    {
+      "path": "scripts/__pycache__/test_agent_workflow_parity.cpython-313.pyc",
+      "size": 6631,
+      "sha256": "49b8f82906b5fb55168078555c4654d317aa67cd4ba555cfd69bf5fb7647738c"
+    },
+    {
+      "path": "scripts/__pycache__/test_build_libghostty_vt.cpython-313.pyc",
+      "size": 7178,
+      "sha256": "b54e247e2641d0d970ee12c0f2fafd813a9f9cb60a1d547949a5e20eb0918c1f"
+    },
+    {
+      "path": "scripts/__pycache__/test_cargo_resource_policy.cpython-313.pyc",
+      "size": 3723,
+      "sha256": "3b9f4069fcb269365ad6ae95dd8ea3dd523064e6c45091d96e0b523f02a17c5b"
+    },
+    {
+      "path": "scripts/__pycache__/test_cohort_contract_preparation.cpython-313.pyc",
+      "size": 9274,
+      "sha256": "74e8df3c474366229056caefdec8949ef88e39c37edb1a6313b33ad15b67e364"
+    },
+    {
+      "path": "scripts/__pycache__/test_collaboration_completion.cpython-313.pyc",
+      "size": 7173,
+      "sha256": "1226e8c3f214a9176033814666a789e4c33099ccf214c3f1169b6003b896f0cb"
+    },
+    {
+      "path": "scripts/__pycache__/test_drafting_standard_completion.cpython-313.pyc",
+      "size": 7789,
+      "sha256": "cf304ee3596bd1b5e55b5494e90fd1c9ddc7065b9459c29d8d5f6c09dfc7e063"
+    },
+    {
+      "path": "scripts/__pycache__/test_file_lane_ownership.cpython-313.pyc",
+      "size": 16328,
+      "sha256": "df41febc86375271de3ea5a7a5af6d129f3a56ce6a62b5c47a8cd0d51e9928f5"
+    },
+    {
+      "path": "scripts/__pycache__/test_format_rust.cpython-313.pyc",
+      "size": 5557,
+      "sha256": "9790ddf18dcf12c685d2622a652929a9975d34706c3cfa6fd07c04ba0160a7bf"
+    },
+    {
+      "path": "scripts/__pycache__/test_foundation_consumer_completion.cpython-313.pyc",
+      "size": 13546,
+      "sha256": "d611dcffa61a4d5a33b02a7a8af41aac5185c71a0457c5119c0dcb6c5053b18c"
+    },
+    {
+      "path": "scripts/__pycache__/test_foundation_specification_clauses.cpython-313.pyc",
+      "size": 9660,
+      "sha256": "78b5bb40730eecc7600cf6897ff45425b718968f72bf12f8969564dfed9e1001"
+    },
+    {
+      "path": "scripts/__pycache__/test_gui_agent_terminal_convergence.cpython-313.pyc",
+      "size": 31179,
+      "sha256": "d085bff5c1ab029e6ec1a47b93819f169d34c785a14bd9f8807799c555ae9fc9"
+    },
+    {
+      "path": "scripts/__pycache__/test_marking_menu_completion.cpython-313.pyc",
+      "size": 5526,
+      "sha256": "50e638cbc238e9538cf0937d3d47cd1d5bb32d717b98b5684d56ea50938b39fb"
+    },
+    {
+      "path": "scripts/__pycache__/test_phase2_completion.cpython-313.pyc",
+      "size": 8566,
+      "sha256": "ff0a9e200cd441b3e93198db9d7c43c93c9b515c89cfcac78514c999e4d57d65"
+    },
+    {
+      "path": "scripts/__pycache__/test_project_status.cpython-313.pyc",
+      "size": 56418,
+      "sha256": "f879ddd72706a63906bc34c7f97717324ad644a2af5adde6d5ae49a44ccb98c7"
+    },
+    {
+      "path": "scripts/__pycache__/test_project_status_claim.cpython-313.pyc",
+      "size": 4463,
+      "sha256": "e5cfd35cf258f76656e2e016803ce50da90b4c8f39f6550022bf5bf88d9b867c"
+    },
+    {
+      "path": "scripts/__pycache__/test_run_cargo_guarded.cpython-313.pyc",
+      "size": 8823,
+      "sha256": "f5872042229459704a4245e1cc4e77eaec8a7141bd7f4435f05569ef97f8b26b"
+    },
+    {
+      "path": "scripts/__pycache__/test_rustfmt_gate.cpython-313.pyc",
+      "size": 5453,
+      "sha256": "7b4ca3c3a75382fd92915f745f0fac1ec7f768529ebee823f46e65e26bd1b25f"
+    },
+    {
+      "path": "scripts/__pycache__/test_source_health_governance.cpython-313.pyc",
+      "size": 22421,
+      "sha256": "78e2e9a797f3ad70c4ecbffe8d5ef378423f414ac2e820386763773e2db5a32f"
+    },
+    {
+      "path": "scripts/__pycache__/test_surface_specification_clauses.cpython-313.pyc",
+      "size": 8338,
+      "sha256": "05f57ec26f73614f01445182abfcdf634937dca306c2732e114eb62d0898a220"
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_core_adapter_boundary.cpython-313.pyc",
+      "size": 12933,
+      "sha256": "6dd112a52d0ab347c337b53208e8451aec0c7c8e3d119ec13b80d3b6408dd138"
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_core_boundary.cpython-313.pyc",
+      "size": 45810,
+      "sha256": "c0ee664cedd6d2f6362269f277a9e7c2b8590a3ceeb1aaa060d12c4b1efb4210"
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_core_proof.cpython-313.pyc",
+      "size": 7557,
+      "sha256": "2e047a583abf3d4e09efc4b47083e3517f69d4c960cf31d11da0859f93eca3df"
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_production_verification_matrix.cpython-313.pyc",
+      "size": 7227,
+      "sha256": "35ce6bf2f70b584c7eefa5d7cd421647a48d547053903a0a1ebbd9aeb639d963"
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_shell_metadata_boundary.cpython-313.pyc",
+      "size": 3753,
+      "sha256": "78e37ee7ddf255d27e3e3c2aab71833800ff5b8dd1d0acfb70b27be41c43c8f5"
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_snapshot_boundary.cpython-313.pyc",
+      "size": 7704,
+      "sha256": "fb4a446673f0b34420636ac5075db8980b0a5addf9d66f76913e322a86079469"
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_split_boundary.cpython-313.pyc",
+      "size": 4771,
+      "sha256": "94620f8cfbfb64679dbb5a01c287a0b8e8dc07c677f55ae2fa3787033d77d6c7"
+    },
+    {
+      "path": "scripts/__pycache__/test_terminal_transport_boundary.cpython-313.pyc",
+      "size": 44739,
+      "sha256": "11927077b54bd57a34a4306ba918744e27b64a475d433f15cf1bffb5703ba29c"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_coverage_proposal.cpython-313.pyc",
+      "size": 10119,
+      "sha256": "0ae6587ab67e388beb5fc574488f18a65a15de4827c621e3bba7a838cd54a757"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_cli.cpython-313.pyc",
+      "size": 13698,
+      "sha256": "9a22d3a6ebdfc97fed8624b579cfdc7582ab102cd443ea058af74f5058a157a1"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_contract.cpython-313.pyc",
+      "size": 11613,
+      "sha256": "59b2c78a1843b9b378b2331e3b1bce225cd227d2f9df56037798cc3d92531d46"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_hook.cpython-313.pyc",
+      "size": 2899,
+      "sha256": "02a2065f4a3ab7401e1bb6c708eb2b21c75f8f2d31c7d6b9a9ccd951b1c0c18d"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_io.cpython-313.pyc",
+      "size": 11792,
+      "sha256": "891b92f9ff63069fa9ec2ed4481ba2c4d9f5580e3e663317e3328640f57bb777"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_native.cpython-313.pyc",
+      "size": 11336,
+      "sha256": "26cb9910b8588067fe6ff8673a96fab7c3211e9e2355b7641c0809f67851a901"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_pilot_capture.cpython-313.pyc",
+      "size": 10920,
+      "sha256": "13661163f1531b4ed1082bc125c19be092710feb152ecf60e0093fd1140bc7a4"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_pilot_package.cpython-313.pyc",
+      "size": 5299,
+      "sha256": "06a4cc60f1ee381921641b4906f0ddd7b232083352f860d1714e27f516fd8047"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_prepare.cpython-313.pyc",
+      "size": 21858,
+      "sha256": "b8a37c2d470d2bf252b7d63957999d19dc52ca2d69c00c8315edf2695eb5fa47"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_prepare_review.cpython-313.pyc",
+      "size": 11335,
+      "sha256": "dad9eadd766a55025a8ce88d55b934c1452cf722c97ac08b662b2633802ba343"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_prepare_script.cpython-313.pyc",
+      "size": 6569,
+      "sha256": "fab067875f9c492b535e6575ff402658de4bcf2fde3c0f3723655a86019b0ad6"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_proof.cpython-313.pyc",
+      "size": 11151,
+      "sha256": "4c96e70e3228935ba3762feb46c3b9d1308d5789c112d33f7471d5df44d19562"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_rehearsal.cpython-313.pyc",
+      "size": 6947,
+      "sha256": "e8b5d5a62abf826778b298a6f01e3553716434695bdd81316791953943ad90c2"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_delivery_trust.cpython-313.pyc",
+      "size": 23549,
+      "sha256": "952800aa3ce688bf27304888940e0ebacaaf76c58a694998cdb767247bebf859"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_rollout_contract.cpython-313.pyc",
+      "size": 18591,
+      "sha256": "e27292e872776f156bb1d9311f2ade87bc486e9ae5e330b938353a7d9a93baf3"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_rollout_mapping.cpython-313.pyc",
+      "size": 9936,
+      "sha256": "0330fcae7756d10f98bef47f73414689ae456f4eaa68e65d359e41c84a1e8ebc"
+    },
+    {
+      "path": "scripts/__pycache__/test_workflow_rollout_proposal.cpython-313.pyc",
+      "size": 8400,
+      "sha256": "fb1c51d5370b8f1d80e6b25990ea19e6ba6956369cf1d667791074afc7e8ee47"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_authority.cpython-313.pyc",
+      "size": 3956,
+      "sha256": "5628bd530da3b2babe250fb0545399454ba77f0b8b62778ab51b6e6e09f2e23b"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_checkpoints.cpython-313.pyc",
+      "size": 11661,
+      "sha256": "ddfb558467e672f8c9e5ef15ab4ec9776853c1a2e0ffe77e5ad5db3056a54af7"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_contract.cpython-313.pyc",
+      "size": 11564,
+      "sha256": "ad458cb4f789f847e64dfa2262b2c8bcb7c6b3144fbd00524654dc8a2c5674b1"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_evidence_shapes.cpython-313.pyc",
+      "size": 7176,
+      "sha256": "26650bc0cf57ff7e6b62e2a2cbc63c3dc2992bfc4d72150ba0239c4b4adeacd7"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_frontier.cpython-313.pyc",
+      "size": 4229,
+      "sha256": "255daaa285e38cb4162c1a6b020568afb033678633cbd79df12e0d01583799bc"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_io.cpython-313.pyc",
+      "size": 7769,
+      "sha256": "e148924e2076e7c7d8aa051233d29782599838f776c986e73518a7743aceaf56"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_native.cpython-313.pyc",
+      "size": 13843,
+      "sha256": "91d24fdb510457718e7e51439ca918e8350e1a94a1ba16c062f090e3d2d73f48"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_native_test_support.cpython-313.pyc",
+      "size": 4422,
+      "sha256": "21942932a90eade54f82ff9490af9282e4082dd1607b6f78d8b77157656ce6e8"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_pilot_build.cpython-313.pyc",
+      "size": 6465,
+      "sha256": "9dd3ef00d68f3813ebea33b8bb588e2e89a93bbfbdeed99b4faeef30304e8bd9"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_pilot_capture.cpython-313.pyc",
+      "size": 25235,
+      "sha256": "77f2c5fdf081fe8388bdf8e71f9462cff01307cc66eaf9b1b6fc6803c8fbcb79"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_pilot_observations.cpython-313.pyc",
+      "size": 21500,
+      "sha256": "2fa2c0ffcb07afcb465904d8ea5029bde1ff2410b43ec0dea2b57b019072bb9b"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_pilot_package.cpython-313.pyc",
+      "size": 12847,
+      "sha256": "3843dd89b11820a23dcd22014791f4e99c8f60ec4a13738df5afeefc1b2091e5"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_pilot_scenarios.cpython-313.pyc",
+      "size": 7791,
+      "sha256": "42a29412111e644c5a7ccfe3c15e041873feffc709e8e7751c4ebe7dcaa587ce"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_pilot_x11.cpython-313.pyc",
+      "size": 4270,
+      "sha256": "397c74098e5a5141a7afe1adea69b3247efe437015ee022092af75f940cbce75"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_prepare.cpython-313.pyc",
+      "size": 18472,
+      "sha256": "c16218473563860d09093686828678188c3b1e6c885438716476d3eeea379d12"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_prepare_handoff.cpython-313.pyc",
+      "size": 5108,
+      "sha256": "1d0078a13390a451148fa9cfe9e2729a7607253365d949cf30b02a4dd7d447a1"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_prepare_review.cpython-313.pyc",
+      "size": 4421,
+      "sha256": "f8df3928b90f32531a6805bf68bff41b4a92a5c945088800f364616f2e75e39b"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_prepare_script.cpython-313.pyc",
+      "size": 2468,
+      "sha256": "2f740124ac91986b4ea00b5c8c2ece15799e132500ebafca3d9d64fc275046f7"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_proof.cpython-313.pyc",
+      "size": 7197,
+      "sha256": "0e8d465cf9631e9f4f688c60a5380628dac82be9c09691dc16f4043135303834"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_review.cpython-313.pyc",
+      "size": 7465,
+      "sha256": "14781c9b17805587236c9bf79528bb4bd8fed757efca09744b27d474757f52e4"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_selector.cpython-313.pyc",
+      "size": 3841,
+      "sha256": "78bc91b21ea32c278bd331661213739a0919cd6410640d57444b9debebcf8ddc"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_shapes.cpython-313.pyc",
+      "size": 6842,
+      "sha256": "a487a5b8e063a5835d49da20c49747bab44056f5d126c464d59e71bac4ff5d2b"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_test_support.cpython-313.pyc",
+      "size": 9575,
+      "sha256": "3cac7609fd2fbc213dc956c6689517bf632292b79e5c559bc8f39291b60cfff0"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_tree.cpython-313.pyc",
+      "size": 9077,
+      "sha256": "f0aa28a46340bacc61d8947e4cd14f2d83fafb10fea53a29a7fb53efc8a3aece"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_trust.cpython-313.pyc",
+      "size": 9256,
+      "sha256": "76ec88d46255121b6757fe9d48cc5377b3a666263e4900bb1aea1606df87a1f3"
+    },
+    {
+      "path": "scripts/__pycache__/workflow_delivery_trust_test_support.cpython-313.pyc",
+      "size": 8172,
+      "sha256": "8545d7261c89d99fe5e80a5ffad1c0cdead3f808f2bd1c842509021419192820"
+    }
+  ],
+  "reason": "Published source superseded prior local bytecode. Source-only execution does not consume it.",
+  "recovery": "Bytecode deleted permanently; regenerate from retained Python source. No source or Beads records removed."
+}

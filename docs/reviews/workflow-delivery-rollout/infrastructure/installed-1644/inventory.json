@@ -1,0 +1,92 @@
+[
+  {
+    "path": "authorization/terminal-1644-standing-authorization.json",
+    "size": 854,
+    "sha256": "07b0973bbb631223ae7905c15863bd6102d2b3ee40fb56982983381fe90bf1f8"
+  },
+  {
+    "path": "logs/terminal-1644-activation-01.events.jsonl",
+    "size": 36551,
+    "sha256": "1fc891dcf62fd14b7dab564bf35dd893d2eb389a0d6a9e2742dcf64d0a243536"
+  },
+  {
+    "path": "logs/terminal-1644-activation-01.json",
+    "size": 6574838,
+    "sha256": "c6264e691d677f340b16ff2c24935ab9424ea88574e0b80d047511552d5f810a"
+  },
+  {
+    "path": "logs/terminal-1644-installed-recovery-01.json",
+    "size": 4393095,
+    "sha256": "0756997f853217f5c1218b496f38675af6f18e005a7b15a4db9ddd3318a69093"
+  },
+  {
+    "path": "logs/terminal-1644-installed-recovery-02.json",
+    "size": 4392927,
+    "sha256": "3f9c3f7ccf6105d24ed33ebf9dfe917af36182a39bbb480d29e622fe30309cfd"
+  },
+  {
+    "path": "logs/terminal-1644-preflight-01.json",
+    "size": 2231965,
+    "sha256": "f1ec7328a9e57f6a3c9556ec39f9cb6be7ade15d1b05dffd6fd3820bd0700c2c"
+  },
+  {
+    "path": "logs/terminal-1644-python-cache-retirement.json",
+    "size": 23114,
+    "sha256": "0e5ece4ffffd12a392c370e53a3eaf6de8be8a902758238ff1f9316b4fcfe21d"
+  },
+  {
+    "path": "preparation/activation-request-basis.json",
+    "size": 708,
+    "sha256": "090031f723b9a8afe9b3c7bad61068c54122035c344fbf421c3cfbcb85618ee8"
+  },
+  {
+    "path": "preparation/activation-request.json",
+    "size": 13384,
+    "sha256": "1f41e07df511e8aea4430951a7969b0f30ea151d1d131dfbba4343a80f239e2e"
+  },
+  {
+    "path": "preparation/prepare_activation_request.py",
+    "size": 3485,
+    "sha256": "d3963a5b2a9ddf7a447baca4664cccc8e443c682beb9748ce97a6acf2ba0ece5"
+  },
+  {
+    "path": "preparation/retain_activation.py",
+    "size": 3640,
+    "sha256": "dc66b2b4d09d26b526d357efb67d53f05060fde6db79ad43a8123faf3b9df370"
+  },
+  {
+    "path": "preparation/retire_python_caches.py",
+    "size": 1803,
+    "sha256": "fddc1a4160b07cb64c22ebabfd486d19721dc59f9efa301977d48ab35439a92f"
+  },
+  {
+    "path": "preparation/verify_installed_recovery.py",
+    "size": 4227,
+    "sha256": "e164fa02dd7cb69833bfb08500d067349ba5c97c989d19929c1fc5561ac058c0"
+  },
+  {
+    "path": "retired-pilot-support/activate.py",
+    "size": 3990,
+    "sha256": "6ba15b2ebc229eb194ea97a266f8fe300c8fcfd17be0c47b28eefb61e49732f8"
+  },
+  {
+    "path": "retired-pilot-support/activation-uov7bvnf.log",
+    "size": 1703,
+    "sha256": "580a646d84233b14710f22f6eac322c1e8d27eb35bb1c3d25573aa09bbbdc93b"
+  },
+  {
+    "path": "retired-pilot-support/pre-commit",
+    "size": 1628,
+    "sha256": "72f508011fb1a5be5ac91cbf1cfab0531b8f6463339d1ceac2f051445308b708"
+  },
+  {
+    "path": "retired-pilot-support/preparation.json",
+    "size": 618,
+    "sha256": "75d51e53d6df8d0e8b774235f1aee96a5bd3f28c1e26609d9be3d8ed8af41cf8"
+  },
+  {
+    "path": "retired-pilot-support/promotion.md",
+    "size": 4629,
+    "sha256": "cd49feb8f00380a704833f73a4d3dabb64e5c78a1cf46456045368502318813d"
+  }
+]
