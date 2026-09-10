@@ -78,7 +78,7 @@ def main():
                 expected = 1 if variant.endswith("refusal") else 0
                 observation = {"variant": variant, "surface": surface, "argv": command,
                                "returncode": result.returncode, "stdout": result.stdout,
-                               "stderr": result.stderr, "protected_snapshot_unchanged": True}
+                               "stderr": result.stderr, "fixture_file_bytes_unchanged": True}
                 observations.append(observation)
                 assert result.returncode == expected, observation
                 reason = {"source-refusal": "no promoted scope",
@@ -91,7 +91,7 @@ def main():
         finally:
             fixture.doCleanups()
     print(json.dumps({"source": PIN, "observations": observations,
-                      "scope": "Synthetic child-process regression; no hook, typed proof, independent replay or installation claim.",
+                      "scope": "Synthetic child-process regression; compares non-Git file bytes, not complete protected Git state. Fixture traces are cleaned afterward. No hook, typed proof, independent replay or installation claim.",
                       "activation_performed": False}, indent=2))
 
 

@@ -222,3 +222,11 @@ unintended setting was removed, along with this checkout's unused generated
 config. Installed hook and four trust values remain unchanged. The new checkout
 is a 2.2 MB source-only preparation under Git-common storage, not Documents;
 no Cargo artifacts or product files were changed.
+
+The independent reviewer reran the frozen-source process runner: exit zero,
+all 16 expected outcomes matched. The reviewer identified an important reporting
+limit: `Fixture.snapshot()` compares non-Git file bytes, not full protected Git
+state, and fixture traces are cleaned on exit. The runner's result label and
+scope now state that precisely. This is independent development verification,
+not retained typed replay or full state-preservation proof. No outcome changes
+or further routine owner approval are implied.
