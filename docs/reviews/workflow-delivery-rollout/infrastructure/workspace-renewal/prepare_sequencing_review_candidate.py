@@ -47,6 +47,7 @@ def main():
     explicit = {
         "specs/workflow_delivery/rollout.contract.json", "specs/workflow_delivery_policy.json",
         "specs/workflow_delivery/rollout.environments.json", "specs/workflow_delivery/workspace-inputs.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
         "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md", "specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md",
         "specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md",
         "docs/reviews/workflow-delivery-rollout/coverage-proposal.json",
