@@ -588,7 +588,8 @@
       "preconditions": "Separate producer/reviewer fixture identities with explicit valid and hostile review/acceptance records.",
       "inputs": [
         "Run skipped/self/copied-event review, changed replay, unaccounted defect and unavailable-only normal product cases.",
-        "Exercise valid independent review without receipt, then missing/wrong acceptance receipts, unresolved blockers and authorized nonblocking deferral; replay legacy and infrastructure boundaries."
+        "Exercise valid independent review without receipt, then missing/wrong acceptance receipts, unresolved blockers and authorized nonblocking deferral; replay legacy and infrastructure boundaries.",
+        "At renewed I04, retain full-real-roadmap INFRA-S04-11 and related current-inventory/clean/mixed integration as separate mandatory post-packet I04 receipts under WDQ-INFRA-NONCIRCULAR-RENEWAL; do not assert those pending runs in their prerequisite bounded proof."
       ],
       "expected_visible": "Invalid review is refused. Valid review can complete without owner acceptance; acceptance still requires its separate trusted evidence.",
       "expected_state": "No producer becomes its own reviewer, copied events become replay, or review becomes owner acceptance.",

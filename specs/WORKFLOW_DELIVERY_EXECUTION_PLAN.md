@@ -150,6 +150,14 @@ failed/partial installation stays incomplete. Preserve active external support
 until the replacement is verified; only then remove positively unreferenced
 owned scratch with exact path and recovery reporting.
 
+At renewed I04, follow `WDQ-INFRA-NONCIRCULAR-RENEWAL`: inspect source/history
+without inventing an earlier live execution state, assemble and independently
+review bounded proof, then perform strict candidate inspection and fresh full
+56-row real-roadmap C/R/S/H integration against that packet. Retain those
+integration receipts separately from their prerequisite proof. Installed checks
+remain additional mandatory I04 evidence; none of these obligations is deferred
+to product adoption or waived by standing workflow authorization.
+
 <!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I05 -->
 ## WDQ-I05 — verify three actual adoption cohorts
 

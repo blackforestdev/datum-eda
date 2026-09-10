@@ -195,7 +195,7 @@
 
 | Governed documents | Current evidence | Remaining boundary |
 | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json`, `specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md`, proposed PM042 | Eight of eleven milestones complete for their recorded candidates. I04 now reconciles the tested terminal-owner repair into the proposed authority and existing S02 case; old proof remains historical. | `dat-wdq-rollout-implementation-ffy` remains open at WDQ-I04. Freeze repaired inputs, obtain matching producer/independent evidence and verify actual installation. Standing workflow approval is recorded; Preferences acceptance is not an installation prerequisite. Three actual product cohorts and final acceptance remain due. |
+| `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json`, `specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md`, proposed PM042 | Eight of eleven milestones complete for their recorded candidates. I04 renewal separates prerequisite scenario proof from mandatory post-packet real-roadmap integration; terminal-owner evidence remains pinned and historical proof is not relabeled. | `dat-wdq-rollout-implementation-ffy` remains open at WDQ-I04. Reconcile exact evidence, verify the full 56-row roadmap against the assembled packet, then verify actual installation. Standing workflow approval is recorded; Preferences acceptance is not an installation prerequisite. Three actual product cohorts and final acceptance remain due. |
 
 | Governed document | Current evidence | Target | Tracking |
 | --- | --- | --- | --- |
