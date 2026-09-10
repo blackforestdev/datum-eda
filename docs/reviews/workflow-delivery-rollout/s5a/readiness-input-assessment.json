@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "record_type": "s5a_readiness_input_assessment",
+  "frontier_key": "UVT-S5A-BUILD",
+  "completion_step": "S5A-C01",
+  "issue_id": "dat-uvt-s5a-build-1wv",
+  "inspected_ref": "933a578237a4b7805b26b3d8730cdfcdec974896",
+  "source_inputs": [
+    {
+      "path": "crates/gui-protocol/src/gui_menu_model/action_registry.rs",
+      "sha256": "310909f07d5c71cba67a68759b1d1fa159052e3c145482d96a97a5c1384dc89e"
+    },
+    {
+      "path": "scripts/workflow_delivery_checkpoints.py",
+      "sha256": "b5f010f771691bab9cfa0b40dfe75acf8fac7bf2bb6b7eefbc96c529b226345c"
+    },
+    {
+      "path": "scripts/workflow_delivery_enabled.py",
+      "sha256": "edfcdcd8806a190ecf6851bd200d22fa2656772dccf33bff43dcc0f7472bc424"
+    },
+    {
+      "path": "specs/workflow_delivery/s5a.contract.json",
+      "sha256": "93fc53b869eb1a3542e5d66323540be25c24e7e4f4826352392e14dcde0e00b0"
+    },
+    {
+      "path": "crates/test-harness/testdata/library/native_authored_baseline_v1/board/board.json",
+      "sha256": "73782dd7bff1fb28b535e4e59c73aba83de7bf9b2aedef97ff428e186564996a"
+    },
+    {
+      "path": "crates/test-harness/testdata/library/native_authored_baseline_v1/pool/entities/40000000-0000-4000-8000-000000000001.json",
+      "sha256": "b4b2b05116f996ae2899643c47da460bfb5a15910ac43f1297281bc037f5d550"
+    },
+    {
+      "path": "crates/test-harness/testdata/library/native_authored_baseline_v1/pool/footprints/60000000-0000-4000-8000-000000000001.json",
+      "sha256": "6205472019e6d18053e1819a27e3dcfd227519598d8ca286662df11599d36690"
+    },
+    {
+      "path": "crates/test-harness/testdata/library/native_authored_baseline_v1/pool/packages/50000000-0000-4000-8000-000000000001.json",
+      "sha256": "9c552f8039168c75a5234ec51346451a938da763efc5eb500b8c7c8270431354"
+    },
+    {
+      "path": "crates/test-harness/testdata/library/native_authored_baseline_v1/pool/padstacks/70000000-0000-4000-8000-000000000001.json",
+      "sha256": "e2f4cee9b308a7da4fda63ad339978143b970f2eadc9bd8e92833e9b31830547"
+    },
+    {
+      "path": "crates/test-harness/testdata/library/native_authored_baseline_v1/pool/parts/90000000-0000-4000-8000-000000000001.json",
+      "sha256": "1ad5d5d8726b4e961a805f7a65bf623cf29ef91512fee4cea9804f8ff36fd882"
+    },
+    {
+      "path": "crates/test-harness/testdata/library/native_authored_baseline_v1/pool/pin_pad_maps/a0000000-0000-4000-8000-000000000001.json",
+      "sha256": "f512676e8796de42e18295fe9e6640ceab08869066a75a4ff1a96d7e26ec0ac7"
+    },
+    {
+      "path": "crates/test-harness/testdata/library/native_authored_baseline_v1/pool/symbols/30000000-0000-4000-8000-000000000001.json",
+      "sha256": "f5f7356b73630097edc8bd1fad1a10f6af9e12f554fc7fd045d6700bfeaaac70"
+    },
+    {
+      "path": "crates/test-harness/testdata/library/native_authored_baseline_v1/pool/units/20000000-0000-4000-8000-000000000001.json",
+      "sha256": "7127a26d19128b4491e7302fafbc821bb76307d7c8838624b0f54c110b811b27"
+    },
+    {
+      "path": "crates/test-harness/testdata/library/native_authored_baseline_v1/project.json",
+      "sha256": "94375b978182da24181de24750edd0483a0afd373f7557f4aa7db4d227622d20"
+    },
+    {
+      "path": "crates/test-harness/testdata/library/native_authored_baseline_v1/rules/rules.json",
+      "sha256": "16a7f3a3fc7b3a9e163e656ed4db884675d4d1564565c24a1cd164d9e33d9e76"
+    },
+    {
+      "path": "crates/test-harness/testdata/library/native_authored_baseline_v1/schematic/schematic.json",
+      "sha256": "e04fc9ee7b9621c1d98bdce7a3ee7b053dfb823867bf939b758f52c10c525dbf"
+    },
+    {
+      "path": "crates/test-harness/testdata/library/native_authored_baseline_v1/schematic/sheets/main.json",
+      "sha256": "4b97d060cb35df831fb71f13fd68ef1cdbc47f8db2f9d0724c374a28511add40"
+    },
+    {
+      "path": "research/process-quality/evidence/wdq-c01-current/native-fixture.tar.gz",
+      "sha256": "91198c1cca854debd9780510e4c4ce00048d1e8fc379402aaa8d6ce240087828"
+    }
+  ],
+  "pilot": {
+    "archive_path": "research/process-quality/evidence/wdq-c01-current/native-fixture.tar.gz",
+    "board_counts": {
+      "packages": 11,
+      "pads": 31,
+      "tracks": 32,
+      "vias": 0,
+      "zones": 0,
+      "texts": 0
+    },
+    "schematic_counts": {
+      "sheets": 0,
+      "instances": 0,
+      "definitions": 0
+    },
+    "contains_import_map": true
+  },
+  "native_library": {
+    "root": "crates/test-harness/testdata/library/native_authored_baseline_v1",
+    "json_file_count": 13,
+    "board_counts": {
+      "packages": 0,
+      "tracks": 0,
+      "vias": 0,
+      "zones": 0,
+      "nets": 0
+    },
+    "sheet_counts": {
+      "symbols": 0,
+      "wires": 0,
+      "junctions": 0,
+      "labels": 0,
+      "buses": 0,
+      "bus_entries": 0,
+      "ports": 0,
+      "noconnects": 0,
+      "texts": 0,
+      "drawings": 0
+    },
+    "pool_file_count": 8
+  },
+  "method": "Read-only source inspection and JSON/archive inventory. Archive members were read in memory, not extracted; no fixture generation, Cargo build, GUI run, enrollment or trust modification.",
+  "registry": {
+    "path": "crates/gui-protocol/src/gui_menu_model/action_registry.rs",
+    "observed_keys": [
+      "view.fit",
+      "view.layers",
+      "window.documents",
+      "help.about"
+    ],
+    "handler_kinds": [
+      "FitCamera"
+    ],
+    "selection_registration_observed": false,
+    "conclusion": "This inspected production registry has no selection action registration or selection handler export. Existing SessionCommand/pointer functions are reusable code paths, not evidence of a reviewed selection registry export. Do not replace pending S5A dispatch keys with invented production keys or claim normal delivery using the pilot's unavailable controls."
+  },
+  "stage_boundary": {
+    "ready": "The inspected checkpoint code resolves contract authority and requires non-null handlers for required normal product scenarios. It does not load native Proof at the ready phase solely because readiness is requested.",
+    "activation": "Native proof and environment validation begin for activate/verify/review/accept. With trusted comparison, changed enrolled input roots can promote a structure/ready check to activation. This is not permission to land unproved enabling changes.",
+    "conclusion": "No requirement for completed native results at the ordinary ready phase was found in this inspected code. Nevertheless, missing real handler/registry identities, fixture binding and owner decisions prevent the actual draft from becoming ready. Do not manufacture completed proof or treat a placeholder handler as an implemented feature."
+  },
+  "fixture_assessments": [
+    {
+      "id": "pilot-archive",
+      "result": "not_complete_s5a_fixture",
+      "reason": "The archive has board geometry but zero schematic sheets/instances/definitions, no vias/zones/texts, and includes an import-map artifact. It cannot establish the complete native board/schematic selection or dense-class matrix. Historical pilot acceptance remains valid only within its own scope."
+    },
+    {
+      "id": "native-library-baseline",
+      "result": "reusable_library_seed_not_populated_selection_fixture",
+      "reason": "The thirteen JSON files include eight local pool objects with explicit Part/Entity/Unit/Symbol/Package/Footprint/Padstack/PinPadMap identities. Board collections and all ten inspected main-sheet geometry collections are empty. This is actual local library data, not a placed, connected, selection-ready design. Its symbol/visual and binding suitability must be reviewed before reuse; this assessment grants no visual approval or bundled-library policy."
+    }
+  ],
+  "remaining_input_requirements": [
+    "Complete native populated board and schematic fixtures with exact persisted ids/revisions and per-class expected membership; empty source collections cannot stand for positive selection cases.",
+    "Ratified region thresholds, derived Run/Net/Bus membership, all nine subjects, compound quantity states, hidden/locked members and revision/cancel/reopen cases bound to actual fixture populations.",
+    "Separate 100k maximal-collision/dense fixture and approved environment/measurement budgets; neither inspected fixture demonstrates that population.",
+    "Actual selection entry-surface/dispatch/handler registry correlation before readiness; observed eligible/enabled invocation remains later native-proof work.",
+    "Explicit preparatory fixture/registration execution authority where construction is needed; the current S5A claim authorizes planning only. Do not silently build product code or fixtures under that claim.",
+    "Independent reviewer provision and exact enrollment/promotion remain unresolved; no synthetic reviewer or receipt."
+  ],
+  "limitations": "This inspects two named candidate fixture sources and one production registry, not an exhaustive absence proof across all archives, generated tests or possible dispatch systems. File counts do not establish resolver validity, native usability, performance or conformance. No native test result is asserted.",
+  "readiness_asserted": false,
+  "acceptance_asserted": false
+}
