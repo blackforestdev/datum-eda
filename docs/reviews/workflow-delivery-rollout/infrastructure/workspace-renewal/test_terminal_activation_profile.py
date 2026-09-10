@@ -60,6 +60,15 @@ class TerminalEvidenceImportTest(EvidenceImportTest):
         with self.assertRaises(AssertionError):
             self.load()
 
+    def test_full_comment_marker_binds_disposition_section(self):
+        from workflow_delivery_review import receipt_section
+        raw = b"<!-- I04-TERMINAL-INDEX -->\n## Index\n\nRESOLVED dat-wdq-index-refresh-ogw\nREPLAY example\n"
+        section = receipt_section(raw, "<!-- I04-TERMINAL-INDEX -->", "test-only.md")
+        self.assertIn("RESOLVED dat-wdq-index-refresh-ogw", section.splitlines())
+        self.assertIn("REPLAY example", section.splitlines())
+        bare = receipt_section(raw, "I04-TERMINAL-INDEX", "test-only.md")
+        self.assertNotIn("RESOLVED dat-wdq-index-refresh-ogw", bare.splitlines())
+
 
 if __name__ == "__main__":
     unittest.main()
