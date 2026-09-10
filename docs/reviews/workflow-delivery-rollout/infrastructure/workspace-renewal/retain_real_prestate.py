@@ -27,6 +27,17 @@ def retain(root, output, command, *, packet, nonce):
         meta, path = entry.split(b"\t", 1)
         mode, oid, stage = meta.split()
         assert stage == b"0"
+        actual = root / os.fsdecode(path)
+        info = actual.lstat()
+        if mode == b"120000":
+            assert stat.S_ISLNK(info.st_mode), path
+            payload = os.fsencode(os.readlink(actual))
+        else:
+            assert mode in (b"100644", b"100755") and stat.S_ISREG(info.st_mode), path
+            assert bool(info.st_mode & 0o111) == (mode == b"100755"), path
+            payload = actual.read_bytes()
+        blob = b"blob " + str(len(payload)).encode() + b"\0" + payload
+        assert hashlib.sha1(blob).hexdigest() == oid.decode(), path
         tracked.add(os.fsdecode(path))
         objects.add(oid.decode())
     head = git(root, "rev-parse", "HEAD").decode().strip()
