@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "review_session": "/root/wdq_independent_review",
+  "source_commit": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-recheck-build.tar.xz",
+    "sha256": "489939c955b74b777dca2a40c064b0afc47009530573091ebb491afe2840cc95",
+    "tar_compare_exit_code": 0,
+    "process_record": "independent-build-process.json",
+    "build_receipt": "independent-build-receipt.json"
+  },
+  "pid": 4176421,
+  "exit_code": 0,
+  "modules_compiled_in_memory": 148,
+  "input_manifest_entries": 161,
+  "input_manifest_sha256": "7ec747490e0046563ca561a87bad7113bb048cc2b261764c563258eb29c0674b",
+  "binary_sha256": "17b78e0a93175e86f9ac03141924fd7a7f0c0c52e66b34bfa0de20ffef989df1",
+  "source_clean": true,
+  "exact_producer_build_command_repeated": true,
+  "build_receipt_identity_matches_producer": true,
+  "raw_output_hashes_verified": true,
+  "scope": "Actual distinct-session in-memory Python build verification. Exact command and original nanosecond timestamps are retained without numeric transcription. Not a Rust build, complete scenario replay, product proof or publication verdict.",
+  "independent_recheck_complete": false,
+  "activation_performed": false
+}

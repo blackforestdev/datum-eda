@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-index-refresh-ogw",
+  "runtime_source": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "review_session": "/root/wdq_independent_review",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-s01-index-refusal.tar.xz",
+    "sha256": "3540da491baa456b6a70383961ff03464586d2405653ff51bf312578faf9eab9",
+    "tar_compare_exit_code": 0,
+    "scope": "Initial collector command/result,20 successful captures and failed21st capture with input identities, frozen partial-failure report, writer/override diagnostics and index-field comparison. Duplicated fixture directories omitted; exact local fixture repositories remain required."
+  },
+  "successful_captures_before_failure": 20,
+  "failed_case": "INFRA-S01-04.refused / S-check / primary",
+  "failed_invocation_id": "7b28902a-f0fe-4103-804d-7ef2b5638d02",
+  "failed_command_pid": 82790,
+  "collector_exit_code": 1,
+  "index_before_sha256": "b24f6c2077ff85e35398ab10eb7ce85877fe2ee3e62f46ee603f56b9bc20433a",
+  "index_after_sha256": "a9d883b0290f7a05ea90df92c3aae8c40c1ad0ef18740b0e1a3d527d97591d8d",
+  "diagnosis": "Direct isolated reproduction identifies changed_production_paths Git diff as writer. Relocated index ctime/inode stat-cache fields refresh despite --no-optional-locks. Blob IDs, modes, stage flags and extensions remain unchanged, but required index-byte preservation fails.",
+  "direct_diagnostic": {
+    "path": ".git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/independent-recheck-s01-index-diagnostic-20260909/diagnostic.json",
+    "command": ["git", "--no-replace-objects", "--no-optional-locks", "--literal-pathspecs", "diff", "--no-ext-diff", "--no-textconv", "--no-renames", "--name-only", "-z", "d5608aca39eb7e4d452ba8c64cd0b4e789edb75e", "--", "src"],
+    "exit_code": 0,
+    "before_index_sha256": "b24f6c2077ff85e35398ab10eb7ce85877fe2ee3e62f46ee603f56b9bc20433a",
+    "after_index_sha256": "c93ab33a74abcb30fba2ce5253d78e18ada849407d8c6d060e51ac9d37f23b25",
+    "stdout_hex": "7372632f756e73636f7065642e707900"
+  },
+  "disposition": "Open blocking technical finding for review. Do not refresh/filter index evidence or relabel failed replay. No runtime correction has been applied; diagnostic mitigation is not implementation proof.",
+  "rejected_diagnostic_override": "diff.autoRefreshIndex=false preserved index bytes but incorrectly added unchanged src/read.py to changed-path output. Not a valid repair; not applied to replay. Index comparison identifies113 entries with only ctime seconds/nanoseconds and inode changes, while tracked names, blob IDs, modes, stages and extensions match.",
+  "source_changed": false,
+  "installed_trust_changed": false,
+  "independent_recheck_complete": false,
+  "activation_performed": false
+}

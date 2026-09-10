@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "producer_scope": "Current-source producer observations; no independent execution, publication inspection, activation or product acceptance.",
+  "runtime_scope": "Bounded repository, fixture and named-tool accounting, not exhaustive descendant/shared-library tracing. Existing tracing flags are not upgraded.",
+  "pending": [
+    "WDQ-RECHECK independently repeats entrypoints and exact publication inspection",
+    "WDQ-I04 owner ratification/activation",
+    "WDQ-I05 three real cohorts",
+    "WDQ-I06 owner acceptance"
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-index-refresh-ogw",
+  "candidate": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s03.tar.xz",
+    "sha256": "e24fdb4f76e2a353e2a3744cab04d72335a7d5def355cf62ad1454402dd19a6c",
+    "tar_compare_exit_code": 0,
+    "scope": "All 185 fresh producer fixtures/captures, prepared packets, aggregate observations, exact command with source recipe digest and explicit setup substitutions, raw process record and stdout/stderr."
+  },
+  "command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/run_index_repair_batch.py s03",
+  "exit_code": 0,
+  "observations": 185,
+  "all_expected_outcomes": true,
+  "retries": 0,
+  "recipe_changes": "Explicit source/store substitutions and fresh fixture preparation replacing the historical successful command's resume-only setup. Case execution and original ordered inventory unchanged.",
+  "candidate_head_and_worktree_unchanged": true,
+  "scope": "Original S03 readiness, foundation answers, handler, clause disposition and owner-dependency inventory. Synthetic planning evidence does not establish product delivery.",
+  "full_matrix_renewed": false,
+  "independent_replay_complete": false,
+  "activation_performed": false
+}

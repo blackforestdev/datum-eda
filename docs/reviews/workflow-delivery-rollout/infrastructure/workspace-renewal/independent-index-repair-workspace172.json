@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "review_session": "/root/wdq_independent_review",
+  "candidate": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-index-repair-workspace172.tar.xz",
+    "sha256": "79c76fc9d786ef561543214382b36a335cb4a017ac0e1c0363fe5d5941be8286",
+    "tar_compare_exit_code": 0,
+    "scope": "Complete frozen independent workspace root: all three batches, actual commands/process outputs, captures, per-batch final fixture archives and individual/aggregate verification reports."
+  },
+  "observations": 172,
+  "positive_exits": 143,
+  "expected_refusals": 29,
+  "distinct_outer_ids": 172,
+  "distinct_observer_ids": 172,
+  "distinct_event_ids": 688,
+  "artifact_hashes_verified": 1204,
+  "source_hash_checks": 6389,
+  "all_collector_exit_codes": 0,
+  "retries": 0,
+  "protected_states_unchanged": true,
+  "independent_ids_disjoint_from_producer": true,
+  "fixture_scope": "Fresh synthetic setup histories, not original post-setup Git objects. Exact current recipes changed only owned output and temporary-fixture parent; final fixture archives retained.",
+  "cumulative_independent_non_real_captures": 1290,
+  "remaining_real_captures": 24,
+  "blocking_issue": "dat-wdq-proof-renewal-cycle-qgb",
+  "owner_sequence_change_authorized": false,
+  "full_review_complete": false,
+  "activation_performed": false
+}

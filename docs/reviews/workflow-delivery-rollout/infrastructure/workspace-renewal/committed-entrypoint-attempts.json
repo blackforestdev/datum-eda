@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "candidate": "e31e7a5c0c1140825d206e4fc1eed33006395f27",
+  "runner": ".git/datum-wdq/proposals/wdq-final-owner-disposed-producer-20260909/scripts/check_workflow_delivery.py",
+  "common_arguments": ["--root", "/home/bfadmin/Documents/datum-eda", "--candidate-ref", "e31e7a5c0c1140825d206e4fc1eed33006395f27"],
+  "attempts": [
+    {
+      "python_flags": ["-I", "-S", "-B"],
+      "arguments": ["--report-only"],
+      "exit_code": 1,
+      "result": "ModuleNotFoundError: No module named 'workflow_delivery_authority'",
+      "scope": "Invocation setup failed before validator execution: isolated Python removed the script directory from import lookup. No source was changed."
+    },
+    {
+      "python_flags": ["-S", "-B"],
+      "arguments": ["--report-only"],
+      "exit_code": 0,
+      "finding_code": "WDQ-ENVIRONMENT",
+      "finding_detail": "explicit environment selection path required"
+    },
+    {
+      "python_flags": ["-S", "-B"],
+      "arguments": ["--report-only", "--environment-path", "specs/workflow_delivery/rollout.environments.json"],
+      "exit_code": 0,
+      "finding_code": "WDQ-ENVIRONMENT",
+      "finding_detail": "owner-selected environment authority required"
+    },
+    {
+      "python_flags": ["-S", "-B"],
+      "arguments": ["--enforce", "--authority-ref", "0e5b8064a9faca407fac43bd2b362ba4d7200327", "--base-ref", "0e5b8064a9faca407fac43bd2b362ba4d7200327", "--environment-path", "specs/workflow_delivery/rollout.environments.json"],
+      "exit_code": 1,
+      "finding_code": "WDQ-TRANSITION",
+      "finding_detail": "WORKFLOW-DELIVERY-IMPLEMENTATION: claim expired at 2026-09-09T21:08:50Z",
+      "scope": "Candidate retains the earlier lease. This is not the live main lease and is not permission to skip claim validation."
+    }
+  ],
+  "limitation": "Report-only exit zero with findings is not a passing validation. Explicit isolated candidate authority/base checks do not install authority or constitute owner activation."
+}

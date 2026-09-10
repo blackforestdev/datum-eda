@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-index-refresh-ogw",
+  "candidate": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-construction-s01.tar.xz",
+    "sha256": "25cc7eeed337bc6b62f5c610007cf3abf1079416264583fc465df382efdea053",
+    "tar_compare_exit_code": 0,
+    "scope": "New-source construction, raw build process/receipt, canonical input manifest, both prepared fixture packets, all36 case fixtures/captures and original partial/final observation files."
+  },
+  "producer_command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renew_index_repair_evidence.py",
+  "initial_exit_code": 1,
+  "initial_failure": "Evidence helper attempted to save observations.json a second time through the append-only save API. FileExistsError occurred after two completed captures. The original one-row observation file and both case artifacts remain preserved.",
+  "correction": "Move aggregate save after completion to a new observations-complete.json path; explicit --resume verifies the same candidate/manifest and loads existing successful assessments. No runtime edits or successful-capture reruns.",
+  "resume_command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/renew_index_repair_evidence.py --resume",
+  "resume_exit_code": 0,
+  "construction": {
+    "input_manifest_entries": 161,
+    "modules_compiled_in_memory": 148,
+    "input_manifest_sha256": "d1a61a7f58be83c037a9a70590c1a9e5c5d82f95e7d3b08b41d3c693223f27df",
+    "authority_sha256": "84c7c292bc93a857ddf2ea6d413ac0c78c9da9edcf6f15385a92c5d296577807"
+  },
+  "s01": {"observations": 36, "all_expected_outcomes": true, "retained_successes_on_resume": 2},
+  "bounded_independent_code_review": {
+    "review_session": "/root/wdq_independent_review",
+    "transaction_tests_passed": 18,
+    "result": "Selected-index omission corrected and regression passed; no further blocker apparent within this bounded correction. Not full replay approval."
+  },
+  "full_matrix_renewed": false,
+  "typed_packet_complete": false,
+  "independent_replay_complete": false,
+  "activation_performed": false
+}

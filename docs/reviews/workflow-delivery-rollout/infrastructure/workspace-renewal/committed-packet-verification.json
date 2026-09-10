@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/verify_committed_packet.py",
+  "exit_code": 0,
+  "candidate": "e31e7a5c0c1140825d206e4fc1eed33006395f27",
+  "candidate_ref": "refs/datum-wdq/candidates/compat-typed-packet-20260909",
+  "tree": "54791a105f06069aadf58e3aec51ce431bd14b79",
+  "evidence_source_commit": "4945c7674f807861afda4c35510e6378a02f1c68",
+  "runtime_source_commit": "0e5b8064a9faca407fac43bd2b362ba4d7200327",
+  "packet_sha256": "678daa96208fb7a372962c383832a099f90ccc1bd63d76c091fee9b4d3fb84f9",
+  "authority_sha256": "84c7c292bc93a857ddf2ea6d413ac0c78c9da9edcf6f15385a92c5d296577807",
+  "input_manifest_unchanged": true,
+  "correlated_event_blobs": 6,
+  "committed_tree_proof_validation": "pass",
+  "selected_environment_validation": "pass",
+  "correlation_validation": "pass",
+  "main_head_and_worktree_unchanged": true,
+  "full_entrypoint_verification": false,
+  "independent_replay_complete": false,
+  "publication_verified": false,
+  "activation_performed": false
+}

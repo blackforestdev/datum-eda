@@ -1,0 +1,185 @@
+{
+  "kind": "datum.workflow-delivery.artifacts/v1",
+  "scenario_id": "INFRA-S02",
+  "events": [
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-typed/INFRA-S02-events.json",
+      "sha256": "9bf22d7f3c49cc73e78b8a59dca691226fa1a560f9884b413259e4889c1a3ba9"
+    }
+  ],
+  "captures": [],
+  "state": [
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-typed/INFRA-S02-observations.json",
+      "sha256": "405ebe075c7eb802183f6764f45640c60e247e2354784d7ca2ac4dc1457cc608"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-typed/limits.json",
+      "sha256": "aa3181d3f654867f4e780544d4f30ee8ecd12a2d7cc5904c9c212ed951934c76"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-typed/fixtures.json",
+      "sha256": "188906acf9f7e263cb956769afbe3f3b9f4a6de65f3bf26c78e1d71cddd86b9f"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+      "sha256": "a1c33121f265812cba27e1bd7867061b9d82d4e8111012ae8cbfa3e1c20c3fca"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-authorization.json",
+      "sha256": "e4bf9f074cb3454f457833e3e64c2b1bbc2e5c266e3f6687459041113ca826e9"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-baseline.json",
+      "sha256": "bad960aac4c7c5eb8301f8744eb6f0a999b5d5a245458955f531ec07e9554902"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-construction-s01.json",
+      "sha256": "381d7ad770e1b92ef8f98e4ea2e6fe91b9e647f59c50fa046bd1c07406360b4e"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-implementation.json",
+      "sha256": "504f4bac893ae4ce5c401ef39f9a0887b729bada0f26824c761dc340dcb98130"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-real-refusals.json",
+      "sha256": "3ae780f77292265edde2f1eaed3e7808598473924dc89722bcfa8435adfbef94"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-roadmap-preparation.json",
+      "sha256": "9b92f62e98b5481b9cd8d8fa6afc7d79e647846191368c448cfd39a4f9a515ff"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s02-coverage.json",
+      "sha256": "988def36505df27b701a4b1eb1f3cce39f9b20005e8ac6998135b7a32ae86ab2"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s02-ownership.json",
+      "sha256": "961ad81b40ca271c4ee5257a97c14f77fbac4245508bf8aa7d26298c16363d3b"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s03.json",
+      "sha256": "e64251aa0f9777ef204ceb291ac9ed9970fd3329b6c96f5d1e090aff6f7396b0"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s04.json",
+      "sha256": "fee31a8c09fd9edd2438e1c3e9876e04beba657d7bac67838a38c9dadb0209ea"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s05-snapshots.json",
+      "sha256": "88ccea495609b92eab4329d055d73ea0dade1f4423f08a3f49e3c1312851d565"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s06-headless.json",
+      "sha256": "44ae296f18b2b32ee23cc847d57a3f377cc59601ecff5ed43704839ceee81ce4"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s06-selection.json",
+      "sha256": "e23aee2a1d1187d82bfb0d4a49de2e6fd45cb322ecd69fecd6f835fecba0ab69"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s06-trust.json",
+      "sha256": "128b60f2fdb2325f9db9a3766e7c07962fa052dd310cdede4a86330b868c5b7d"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-workspace172.json",
+      "sha256": "0a9f5f8c94f8e603f619c3111a1df1b26ac3cabe2cb176b44128a59c87a82882"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/proof-renewal-authorization.json",
+      "sha256": "1381ff14535a36c87110815c6db56bc636706e696b944fdc86c66be0e14f08a3"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/owner-reopened-preparation.json",
+      "sha256": "ad20df749da43fd7cb8a740f031e52923fa432e7375899279f3e36c60272ea54"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/owner-reopened-real-captures.json",
+      "sha256": "ad8d35e9444b41601c6ecc19e5542fa718bf9b9624c02096d5cacdfb1d15a946"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/assemble_observations.py",
+      "sha256": "d12a85bb1726090fcae87c62730af8a643fd04ab9f6e09bd562b1541b5d84173"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/build_typed_packet.py",
+      "sha256": "09db85f20929cc888aaf7dd1b41acde2b729e7ff9538953bbde42c10de352a8b"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-typed/build-process.json",
+      "sha256": "a6097ba59d1149d3c79d1b5514611285e31a64b26f963f68cb150513b256a115"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-typed/observed-tools.json",
+      "sha256": "4f619c3810f8fdcf2305dd663d7e73e9957fbd61dbcf61fc51c1876130840515"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-baseline.tar.xz",
+      "sha256": "4979df5f4f877af4fa845fb409227783ffdb685a81ea5583a0f77ba2e684b38e"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-construction-s01.tar.xz",
+      "sha256": "25cc7eeed337bc6b62f5c610007cf3abf1079416264583fc465df382efdea053"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-real-refusals.tar.xz",
+      "sha256": "1eaeb6a08a84f7f3341abef2a419336718aaf025c92da01849181b59b81c948c"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-roadmap-preparation.tar.xz",
+      "sha256": "e9aef216ab79b84751a5a039738a07db1b525df9b9c3e44b384aaba4655c4b0e"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s02-coverage.tar.xz",
+      "sha256": "5698b01307dc2b36e5ce88c7c3f811b67747763322d1052f73e2b6fcabc81534"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s02-ownership.tar.xz",
+      "sha256": "6a6f2a25661f2b9f2fffb177c679a9249bf434f2c89dd9952aca2d1d5f465592"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s03.tar.xz",
+      "sha256": "e24fdb4f76e2a353e2a3744cab04d72335a7d5def355cf62ad1454402dd19a6c"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s04.tar.xz",
+      "sha256": "0434cc069b0dc64b99603dc4abb420981d603f428ccf56f05397c20bd8a6f13b"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s05-snapshots.tar.xz",
+      "sha256": "464fd3aacafa78db0fe466bebb22da9a060734179b18ae9403ac71ac67455349"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s06-headless.tar.xz",
+      "sha256": "04bfe5cd9cbf97b284f2a78b51fe769315427e2909ef3588173816ce4fecc71b"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s06-selection.tar.xz",
+      "sha256": "8a108f26ac988916bdc88f93fb3ef5c180656adc95d10d4269910ca1b0b4c38f"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s06-trust.tar.xz",
+      "sha256": "a310e536f2a991bf7e98d3df61ea00e35033e0e6041cd8fa59d734e8eba7731f"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-typed-observations.tar.xz",
+      "sha256": "3e48700c5640d1eaeda0126f0dfe890335eb895af823c538c11628af5d2b1604"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-workspace172.tar.xz",
+      "sha256": "f7f8b573b05a6407635c9c0b130e8ce7834340cf9f0b48343460cd9283c34f1a"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/owner-reopened-preparation.tar.xz",
+      "sha256": "aab6cb7f47b82843ebee12aab5f7181d3f29fb2565ae6c4ef24bee5176d77fb5"
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/owner-reopened-real-captures.tar.xz",
+      "sha256": "68af357645999e8694695de9f0aafa3e8e47b4c5e9cb2ed7dd6c07db55bf2b10"
+    }
+  ],
+  "registry": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-typed/registry.json",
+    "sha256": "3f1cc66879af7cb986fd9cf03f745b9e71c7d34200c3123354bffea0038fcbe2"
+  }
+}

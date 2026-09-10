@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-RECHECK",
+  "issue_id": "dat-wdq-index-refresh-ogw",
+  "candidate": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-s04.tar.xz",
+    "sha256": "0434cc069b0dc64b99603dc4abb420981d603f428ccf56f05397c20bd8a6f13b",
+    "tar_compare_exit_code": 0,
+    "scope": "All 175 fresh producer proof/review fixtures and captures, packets, ordered observations, exact command/recipe digest, process record and raw stdout/stderr."
+  },
+  "command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/run_index_repair_batch.py s04",
+  "exit_code": 0,
+  "observations": 175,
+  "all_expected_outcomes": true,
+  "retries": 0,
+  "recipe_changes": "Only explicit source/store substitutions; original ordered synthetic S04 proof/review inventory unchanged. S04-11 actual-roadmap captures remain separately required.",
+  "candidate_head_and_worktree_unchanged": true,
+  "full_matrix_renewed": false,
+  "independent_replay_complete": false,
+  "activation_performed": false
+}

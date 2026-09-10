@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "runtime_source": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "prospective_baseline": "ba318df013ca5c0263c489a9c77187dc4057a7be",
+  "command": "python3 docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/build_typed_packet.py --root /home/bfadmin/Documents/datum-eda --runtime /home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/index-preservation-repair-20260910 --observations /home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/index-repair-observations-20260910 --output /home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/index-repair-typed-producer-20260910 --index-repair",
+  "exit_code": 0,
+  "packet_sha256": "02ce61ee28c450776a575330ce17aca93f2a8e4edc7e4c704cf299efd69cc8ce",
+  "authority_sha256": "84c7c292bc93a857ddf2ea6d413ac0c78c9da9edcf6f15385a92c5d296577807",
+  "input_manifest_sha256": "d1a61a7f58be83c037a9a70590c1a9e5c5d82f95e7d3b08b41d3c693223f27df",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-typed-packet.tar.xz",
+    "sha256": "6b09e7da4b6f56538e2aab6adfab32f802a85e48a89341c17f74f51e663a3493",
+    "tar_compare_exit_code": 0,
+    "scope": "Exact prospective proof overlay, new index-repair-typed artifacts, copied current-source build process/receipt and validation result. Referenced archives and retained source bundles remain separately required."
+  },
+  "validation": {
+    "observations": 1314,
+    "correlated_event_blobs": 6,
+    "proof_freshness_shape": "pass",
+    "selected_headless_environment": "pass",
+    "artifact_role_dispatch_correlations": "pass",
+    "source_worktree_clean_and_exact": true,
+    "scope": "Prospective overlay validation only; no committed full-candidate or publication inspection."
+  },
+  "defects_explicitly_carried": ["dat-wdq-index-refresh-ogw", "dat-wdq-proof-renewal-cycle-qgb", "dat-wdq-workspace-inputs-zmt"],
+  "historical_evidence": "Original typed artifacts and source-specific closeout remain unchanged. Fresh evidence uses a separate index-repair-typed namespace; the actual source-bound build receipt is retained rather than relabeling the historical build.",
+  "independent_replay_complete": false,
+  "committed_candidate_verified": false,
+  "publication_verified": false,
+  "activation_performed": false,
+  "acceptance_asserted": false
+}
