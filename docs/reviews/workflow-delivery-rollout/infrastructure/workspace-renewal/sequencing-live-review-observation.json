@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "scenario": "INFRA-S05 workspace group 8 producer inspection",
+  "issue_id": "dat-wdq-review-publication-cycle-a1y",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "base": "f608addca9dfae24c5d6255838d745bf6d96af4a",
+  "candidate": "377323b29705ccccd6f8fa91f663d7d91c6d03c4",
+  "candidate_record": "sequencing-live-candidate.json",
+  "preparation_retry_exit_code": 0,
+  "verified_observation": {
+  "request_sha256": "268994d5db56d597a5119f7163612961cb90dfbe9b5012149697c2e2ad29a6be",
+  "log_sha256": "555758d5fc25c658f89399f4b420e093ff0cafa8a118d269a0dd4b167ce0940e",
+  "events_sha256": "863982b74708a3a70a8c87c4abd447a0ea50f9b37378361142f93e733e3d6249",
+  "invocation_id": "5e45d110-b7f2-4997-acda-b87402fbb216",
+  "calls": [
+    "main",
+    "preflight",
+    "inspect_review_candidate",
+    "preflight"
+  ],
+  "outcome": {
+    "exit_code": 0,
+    "kind": "system_exit"
+  },
+  "ok": true,
+  "evidence_validated": false,
+  "activation_asserted": false,
+  "publication_authorized": false
+},
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-live-review.tar.xz",
+    "sha256": "ac2be91946cf8fb9bbe6d9498bb4782e26ee08e7a14e93ee60804dfe2ab36054",
+    "tar_compare_exit_code": 0,
+    "contents": "Exact request, full supported CLI log with repeated preflight/protected-state checks, raw observed invocation events and verified prepared-support manifest. Source bytes remain retained by the exact candidate ref."
+  },
+  "preserved_boundaries": ["Actual attached main stayed at the pinned base during inspection.", "All 164 source inputs and authority digest match the frozen repair source.", "Current Beads bytes and all 55 other Frontier items preserved.", "Installed local trust and hooks unchanged; only uninstalled Git-common support was prepared.", "No owner activation response supplied or consumed."],
+  "historical_failure": "sequencing-s02-observation.json retains the initial missing-environment preparation failure. The retry includes only that exact reviewed environment Blob.",
+  "limits": "Producer pre-review observation only, not full rollout proof, independent replay, final evidence inspection, owner activation, installed broad enforcement or native adoption. Later evidence/governance commits create a distinct candidate requiring explicit delta reconciliation and strict final I04 inspection.",
+  "complete_matrix": false,
+  "repair_complete": false,
+  "activation_performed": false
+}
