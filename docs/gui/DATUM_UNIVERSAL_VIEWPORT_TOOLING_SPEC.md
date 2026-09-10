@@ -1834,8 +1834,8 @@ today a singleton `{kind, id}`) extends to the full subject vocabulary as
 **one serializable payload shared verbatim by the terminal back-door, the
 action console, and AI context**:
 
-- `subject_kind`: `none` | `authored_object` | `compound` | `global_net` |
-  `bus` | `review_action` | `check_finding`;
+- `subject_kind`: `none` | `authored_object` | `compound` | `run` |
+  `global_net` | `bus` | `proposal` | `review` | `check_finding`;
 - `subject_id`: the semantic/artifact identity where the kind has one;
 - `model_revision`: the revision the projection was resolved against
   (§2.2.18 anchoring);
@@ -1846,6 +1846,38 @@ action console, and AI context**:
   beyond the cap the list is omitted, `truncated: true` is set, and
   consumers rely on `summary` or query explicitly — the payload is bounded
   by contract, never by silent cutoff.
+
+The wire vocabulary maps one-to-one to the nine subjects ratified by
+Product Mechanics 026 and §2.2.20; shared backing identities do not merge
+subject kinds:
+
+| Ratified subject | `subject_kind` | Identity retained by the envelope |
+|---|---|---|
+| None | `none` | No subject identity or members |
+| Object | `authored_object` | Stable authored identity and typed object class |
+| Compound | `compound` | Enumerated authored identities and optional member focus |
+| Run | `run` | Typed stable origin identity and connectivity derivation at `model_revision` |
+| Global Net | `global_net` | Resolved net identity, with membership derived at `model_revision` |
+| Bus | `bus` | Semantic bus identity, with membership derived at `model_revision` |
+| Proposal | `proposal` | Review-action identity addressed as the proposal subject |
+| Review | `review` | Review-action identity addressed through its evidence surface |
+| Diagnostic | `check_finding` | Check-finding fingerprint |
+
+Run payloads retain the origin's stable identity **and typed origin kind**;
+the origin follows the ratified §2.2.5/OPEN-1 acquisition classes, including
+bus-section origins for bus runs. The consumer re-derives connectivity at
+each revision under §2.2.20 rather than treating the emitted `member_ids`
+as persistent membership. The same observation-only rule applies to Global
+Net and Bus member lists. The 256-id cap never removes the derived subject's
+identity or Run origin: an omitted member list cannot turn a Run into a
+Compound or an empty selection.
+
+Proposal and Review may carry the same action identity but retain distinct
+kind tags; the predecessor `review_action` tag is not a tenth kind or an
+alias that silently collapses them. Likewise an Object bus section, a Run
+with a bus origin, and a semantic Bus remain three distinct subjects.
+This is the S5A successor contract, not a claim that the current singleton
+runtime envelope already implements these fields or a wire migration.
 
 The payload is a read-only observation: carrying it grants no mutation
 authority; any consumer acting on its identities goes through typed
@@ -1868,7 +1900,13 @@ indicative:
   member/reason explanations consistent with later whole-refusal
   (`outputs_blocker_reporting`).
 - **O5 envelope bound + determinism** — stable ordering, 256-id cap with
-  `truncated` marker, serialization round-trip
+  `truncated` marker, serialization round-trip for all nine table rows;
+  preserve typed Object identity, Compound focus, Run origin/kind/revision,
+  semantic identities and non-authored fingerprints. Exercise 256 and 257
+  members for enumerated and derived subjects; only the member list is
+  omitted above the cap. Distinguish Proposal and Review even when their
+  action id is equal, and distinguish bus Object/Run/Bus tiers. Inspector,
+  console and terminal/AI context must agree on kind, identity and counts
   (`outputs_envelope_bounded_deterministic`).
 - **O6 status-bar independence** — every output is complete with no status
   bar present (`outputs_no_status_bar_dependency`).

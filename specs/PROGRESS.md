@@ -221,6 +221,15 @@ Tracking remains FOUNDATION-WORKFLOW-SPEC / `dat-manual-foundation-contracts-fsw
 
 ## FOUNDATION-CONSUMER-COMPLETION — existing lane delivery contracts
 
+S5A-C01 planning reconciles the §2.2.19 context-envelope vocabulary with
+PM026's nine subjects (`dat-selection-envelope-run-flr`): Run retains its
+typed origin and revision-derived membership; Proposal and Review remain
+distinct despite a shared action identity. Both selection evidence routes
+were reviewed in full. The exact nine-row mapping and expanded O5 round-trip
+assertions are specification evidence only, not passing runtime tests or
+completion of S5A-C01. Native proof, enrollment and product acceptance remain
+outstanding; Preferences and prototype ownership are unchanged.
+
 | Governed document | Current evidence | Completion boundary | Tracking |
 | --- | --- | --- | --- |
 | `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md` | Structured pending completion plans added for UVT-S5A-BUILD, GUI-WRITE-PATH and NATIVE-AUTHORING; acceptance IDs and tracker-backed successor IDs reconciled | Each consumer retains preflight, explicit execution authorization, implementation, native proof, independent replay and exact owner acceptance; no readiness or product delivery asserted | `dat-foundation-consumer-plans-9at`, WDQ-F01; consumer ownership, existing dependencies and global selection unchanged |
