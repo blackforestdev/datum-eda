@@ -9652,7 +9652,8 @@
         "docs/reviews/workflow-delivery-rollout/infrastructure/final-publication/producer-inspection.json",
         "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-repair-authorization.json",
         "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/producer-closeout.json",
-        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-authorization.json"
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-authorization.json",
+        "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/proof-renewal-authorization.json"
       ],
       "state": "in_progress",
       "authorization": "execution",
@@ -9661,22 +9662,22 @@
         "harness": "codex-cli",
         "session": "codex-wdq-workspace-repair-20260909",
         "claimed_at": "2026-09-09T17:08:50Z",
-        "heartbeat_at": "2026-09-10T00:06:59Z",
-        "expires_at": "2026-09-10T04:06:59Z",
+        "heartbeat_at": "2026-09-10T02:00:27Z",
+        "expires_at": "2026-09-10T06:00:27Z",
         "scope": [
-          "WDQ-RECHECK owner-approved dat-wdq-index-refresh-ogw isolated repair and affected evidence renewal, then distinct independent replay/publication inspection; workflow-only governance and Beads transaction; no product or live trust changes"
+          "WDQ-COMPAT owner-approved reopening for repaired-source producer proof renewal, then WDQ-RECHECK distinct independent replay/publication inspection; workflow-only governance and Beads transaction; preserve historical evidence and installed trust; no product changes"
         ],
         "worktree": "/home/bfadmin/Documents/datum-eda",
-        "head": "e9117a7055dd835b344f3d8f3efa0b5e65e560ad"
+        "head": "eb904a1b8e7b3beafdc2b0405e122951ef4d631c"
       },
       "canonical_next": false,
       "parallel": true,
-      "summary": "WDQ-COMPAT renewed producer verification is complete; WDQ-RECHECK distinct independent replay and exact publication inspection is selected. Workspace defect remains open. Preserve historical evidence, Beads and owner-local files, source detection, all product ownership and three actual adoption cohorts; no activation authorized.",
+      "summary": "Owner approved reopening existing WDQ-COMPAT for repaired-source producer proof renewal; WDQ-RECHECK follows. Historical producer completion remains evidence only for its original inputs. Preserve all 11 steps, product ownership, Beads, owner-local files and installed trust. Defects remain open; exact activation, three actual adoption cohorts and final acceptance remain required.",
       "dependencies": [],
       "unblocks": [],
       "completion": {
         "outcome": "Real-roadmap coverage and behavior/readiness/native-proof/independent-review/owner-acceptance transitions are installed and independently verified, external-lane migration is resolved or explicitly bounded, and three real adoption cohorts demonstrate the complete reform with scheduled specification obligations and honest remaining product status.",
-        "canonical_next_step_id": "WDQ-RECHECK",
+        "canonical_next_step_id": "WDQ-COMPAT",
         "execution_policy": {
           "max_in_progress_steps": 1,
           "dependency_independence_authorizes_parallelism": false
@@ -9839,7 +9840,7 @@
           {
             "id": "WDQ-COMPAT",
             "kind": "execution",
-            "status": "complete",
+            "status": "in_progress",
             "action": "Repair ignored-workspace compatibility and renew exact producer evidence without weakening source authority or activating.",
             "depends_on": [
               "WDQ-REVIEW"
@@ -9854,22 +9855,12 @@
                 "marker": "WDQ-COMPAT"
               }
             ],
-            "completion_evidence": [
-              {
-                "kind": "document",
-                "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/producer-closeout.json",
-                "marker": "WDQ-COMPAT-PRODUCER-VERIFICATION-COMPLETE"
-              },
-              {
-                "kind": "commit",
-                "revision": "94dc7b352285dc8db1413f794c10b51b66ffdd1c"
-              }
-            ]
+            "completion_evidence": []
           },
           {
             "id": "WDQ-RECHECK",
             "kind": "execution",
-            "status": "in_progress",
+            "status": "pending",
             "action": "Independently replay and inspect the renewed exact compatibility and publication evidence.",
             "depends_on": ["WDQ-COMPAT"],
             "requirement_refs": [
