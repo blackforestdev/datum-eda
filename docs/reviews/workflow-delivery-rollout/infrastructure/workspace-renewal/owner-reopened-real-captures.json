@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-proof-renewal-cycle-qgb",
+  "runtime_source": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "fixture_commit": "ba318df013ca5c0263c489a9c77187dc4057a7be",
+  "owner_transaction": "202ec637c76a73714fc9554dd2f941a5f7579462",
+  "commands": [
+    "python3 docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/run_index_repair_real.py real-roadmap --owner-reopened --reconciled",
+    "python3 docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/run_index_repair_real.py current-inventory --owner-reopened --reconciled"
+  ],
+  "collector_exit_codes": [0, 0],
+  "captures": {
+    "real_roadmap": 15,
+    "current_inventory": 9,
+    "distinct_invocations": 24,
+    "expected_passes": 20,
+    "expected_refusals": 4,
+    "all_expected_outcomes": true,
+    "all_protected_states_unchanged": true,
+    "real_roadmap_observations_sha256": "e2a1f6a5921baea18c227e53f0149cfa3cfa1d244f00270c938f19b795c4fdf3",
+    "current_inventory_observations_sha256": "e5d1a6ecf48f4bdd58f8e49c15ad4c22da7af28e9e71772b0ef94eb88c829ff2"
+  },
+  "inventory": {
+    "observed_main_head": "202ec637c76a73714fc9554dd2f941a5f7579462",
+    "beads_runtime": 205,
+    "python_cache": 227,
+    "legacy_python_cache": 23,
+    "owner_local": 1,
+    "scope": "456 freshly observed ignored workspace paths. Stable nonderived bytes and modes were copied exactly; 227 Python caches were explicitly regenerated from candidate sources, not presented as original observed bytes. No live Beads operation or owner-local mutation by these collectors."
+  },
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/owner-reopened-real-captures.tar.xz",
+    "sha256": "68af357645999e8694695de9f0aafa3e8e47b4c5e9cb2ed7dd6c07db55bf2b10",
+    "tar_compare_exit_code": 0,
+    "scope": "Exact commands, substitutions, process records, all 24 captures and current/materialized inventory metadata. Duplicate fixture checkouts omitted; retained ba318 source bundle and local fixtures remain required."
+  },
+  "assembly": {
+    "command": "python3 docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/assemble_observations.py --root /home/bfadmin/Documents/datum-eda --runtime /home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/index-preservation-repair-20260910 --output /home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909/index-repair-observations-20260910 --index-repair",
+    "exit_code": 0,
+    "observations": 1314,
+    "original_case_surface_phase_multiset": 1123,
+    "additional_workspace_observations": 191,
+    "artifact_hashes_handler_traces_state_equality_and_unique_invocations_checked": true,
+    "archive": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-typed-observations.tar.xz",
+    "archive_sha256": "3e48700c5640d1eaeda0126f0dfe890335eb895af823c538c11628af5d2b1604",
+    "tar_compare_exit_code": 0
+  },
+  "scope": "Actual producer captures against the explicitly reopened prospective baseline, not installed-main or publication proof. Earlier failed attempts remain in owner-reopened-preparation.json and its archive. No historical capture was relabeled or counted as a new execution.",
+  "typed_packet_complete": false,
+  "independent_replay_complete": false,
+  "publication_verified": false,
+  "activation_performed": false
+}
