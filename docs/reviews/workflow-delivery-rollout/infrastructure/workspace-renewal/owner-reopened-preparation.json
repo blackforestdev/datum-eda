@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-proof-renewal-cycle-qgb",
+  "owner_transaction": "202ec637c76a73714fc9554dd2f941a5f7579462",
+  "runtime_source": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "fixture_commit": "ba318df013ca5c0263c489a9c77187dc4057a7be",
+  "retained_ref": "refs/datum-wdq/candidates/owner-reopened-roadmap-20260910",
+  "command": "python3 docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/prepare_index_repair_roadmap.py --owner-renewal-transaction 202ec637 --reconciled",
+  "exit_code": 0,
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/owner-reopened-preparation.tar.xz",
+    "sha256": "aab6cb7f47b82843ebee12aab5f7181d3f29fb2565ae6c4ef24bee5176d77fb5",
+    "tar_compare_exit_code": 0,
+    "scope": "Both preparation metadata records, failed first staged capture and raw collector records, independent original assessment, its correction and reconciled assessment. Full source bundles, snapshot states and duplicated checkouts remain at the recorded local paths; no standalone portable replay claim."
+  },
+  "prior_attempts": [
+    {
+      "exit_code": 1,
+      "failure": "Initial helper lacked git update-index --add for the new authorization file. No snapshot or gate capture was produced by this attempt.",
+      "correction": "Allow adding the explicitly named receipt in the disposable private index. Terminal failure is recorded here; no separate raw process archive was retained."
+    },
+    {
+      "fixture_commit": "0de6dec8a3afdc95cb4cd46bf59b73436bbcd7cc",
+      "exit_code": 1,
+      "failure": "Snapshot completed, but final main tracked-state comparison failed because the same session edited run_index_repair_real.py during preparation. Original main before-state bytes were not retained; no retrospective equality claim is made.",
+      "separate_snapshot_verification": "Bundle, source before/after bytes, restored HEAD and runtime manifest/authority equality passed separately; failed helper exit remains a failure."
+    },
+    {
+      "fixture_commit": "0de6dec8a3afdc95cb4cd46bf59b73436bbcd7cc",
+      "invocation_id": "8a6b50f1-10a1-4897-b6d9-74a4ffd61bc7",
+      "exit_code": 1,
+      "protected_state_unchanged": true,
+      "failure": "WDQ-INDEX reference absent: copying the entire main governing-documents list introduced producer-inspection.json and index-repair-authorization.json, neither present in the candidate.",
+      "correction": "Preserve the candidate governing-documents list and append only the exact new owner receipt. Retain the independent review correction acknowledging that its original launch recommendation missed this check."
+    }
+  ],
+  "reconciled_independent_verification": {
+    "report": "independent-owner-reopened-roadmap-reconciled-verification-20260910.json",
+    "sha256": "da04df46d247ba846b90a20718d2d08bbdf1cf53110c2ae5f2a20d217dcf8cf8",
+    "result": "Full Frontier validation, governing/requirement/evidence references, exact owner lifecycle and canonical Beads, other 55 rows, all 11 steps, policy/mapping, source manifest and authority, bundle/history and restored/source states passed.",
+    "input_manifest_sha256": "d1a61a7f58be83c037a9a70590c1a9e5c5d82f95e7d3b08b41d3c693223f27df",
+    "authority_sha256": "84c7c292bc93a857ddf2ea6d413ac0c78c9da9edcf6f15385a92c5d296577807"
+  },
+  "scope": "Owner-authorized prospective lifecycle baseline for real-roadmap proof renewal. Preparation is not completion of the 24 captures, typed proof, publication inspection or installed-main verification.",
+  "producer_proof_complete": false,
+  "publication_verified": false,
+  "activation_performed": false
+}
