@@ -72,12 +72,55 @@
       "planning_session": "codex-s5a-c01-planning-20260910",
       "owner_instruction": "Owner approved this session taking S5A-C01 readiness planning in response to the outstanding lane-assignment question.",
       "evidence_refs": [
-        {"path": ".beads/issues.jsonl", "issue_id": "dat-uvt-s5a-build-1wv"},
-        {"path": "specs/active_frontier.json", "frontier_key": "UVT-S5A-BUILD"}
+        {
+          "path": ".beads/issues.jsonl",
+          "issue_id": "dat-uvt-s5a-build-1wv"
+        },
+        {
+          "path": "specs/active_frontier.json",
+          "frontier_key": "UVT-S5A-BUILD"
+        }
       ],
       "requirement_ref": "specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md#S5A-C01",
       "known_reconciliation_issue": "dat-selection-envelope-run-flr",
       "boundary": "Planning claim only. Preferences and Claude prototypes remain untouched. No implementation authorization, reviewer assignment, product enrollment, readiness submission or acceptance is implied.",
+      "readiness_submission": false,
+      "enrollment_asserted": false,
+      "acceptance_asserted": false
+    },
+    {
+      "id": "WDQ-I05-s5a-0003",
+      "observed_at": "2026-09-10T23:23:40Z",
+      "type": "pre_enrollment_specification_defect_reconciled",
+      "candidate_ref": "a30cbcfedf7f0438b796cabb975628a967035aba",
+      "issue_id": "dat-selection-envelope-run-flr",
+      "planning_session": "codex-s5a-c01-planning-20260910",
+      "evidence_refs": [
+        {
+          "path": "docs/gui/DATUM_UNIVERSAL_VIEWPORT_TOOLING_SPEC.md",
+          "marker": "<!-- EVIDENCE:UVT-S5-SPEC:S5-C04-CONTRACT -->"
+        },
+        {
+          "path": "specs/evidence_traceability_manifest.json",
+          "route_ids": [
+            "gui-selection",
+            "prototype-selection"
+          ]
+        },
+        {
+          "path": ".beads/issues.jsonl",
+          "issue_id": "dat-selection-envelope-run-flr"
+        }
+      ],
+      "outcome": "Source contradiction repaired: all nine PM026 subject kinds map one-to-one; Run retains typed origin and revision-derived membership; Proposal and Review remain distinct. Exact O5 round-trip assertions are future implementation requirements, not executed runtime evidence.",
+      "verification": {
+        "evidence_traceability": "passed: 25 routes, 119 artifacts",
+        "spec_governance": "passed: 257 classified specs",
+        "source_health": "passed: 1961 files",
+        "installed_commit_gate": "passed: no findings; no readiness or acceptance asserted",
+        "gui_aggregate": "interrupted during guarded compilation; no aggregate pass claimed"
+      },
+      "boundary": "Pre-enrollment planning repair, not measured delivery improvement or C01 completion. No runtime, prototype, Preferences, dependency or enrollment changes.",
       "readiness_submission": false,
       "enrollment_asserted": false,
       "acceptance_asserted": false
