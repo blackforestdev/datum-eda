@@ -5,8 +5,8 @@
   "issue_id": "dat-uvt-s5a-build-1wv",
   "contract": {
     "path": "specs/workflow_delivery/s5a.contract.json",
-    "sha256": "033b5f8c10d41b45e6702c0950c4f2990c0288f9454e2ab365b7b69c1ce2577d",
-    "status": "draft; six unresolved C01 questions"
+    "sha256": "93fc53b869eb1a3542e5d66323540be25c24e7e4f4826352392e14dcde0e00b0",
+    "status": "draft; eight behavioral foundation answers and 54 required dimensions specified; six unresolved C01 completion questions"
   },
   "installed_coverage_authority": "1644e2129f4ff83cec1cdf0e6e13534c3b258e8e",
   "enrollment_authority": null,
@@ -137,6 +137,40 @@
       ],
       "outcome": "Fifteen pinned inputs and eight anchored findings cover all six draft scenarios. Actual singleton selection, schematic no-dispatch, board membership checks, Inspector units/shared-output gaps, retained invalidation, keyboard/cancel reuse, hit-index reuse and incomplete fixture binding are distinguished from delivered behavior.",
       "verification": "All source hashes and anchors checked; scenario coverage equals the draft contract. Spec governance and evidence traceability pass. No Cargo or native runtime test run for this audit.",
+      "readiness_submission": false,
+      "enrollment_asserted": false,
+      "acceptance_asserted": false
+    },
+    {
+      "id": "WDQ-I05-s5a-0005",
+      "observed_at": "2026-09-10T23:34:49Z",
+      "type": "pre_enrollment_behavior_contract_refinement",
+      "evidence_refs": [
+        {
+          "path": "specs/workflow_delivery/s5a.contract.json",
+          "sha256": "93fc53b869eb1a3542e5d66323540be25c24e7e4f4826352392e14dcde0e00b0"
+        },
+        {
+          "path": "specs/evidence_traceability_manifest.json",
+          "route_ids": [
+            "workflow-delivery-cohort-preparation",
+            "foundation-consumer-completion",
+            "foundation-manual-workflow",
+            "gui-selection",
+            "prototype-selection"
+          ]
+        }
+      ],
+      "outcome": "Replace eight generic foundation answers and 54 generic required-dimension entries with inherited S5A behavior; correct stale drop/report/no-resurrection expectations. All six scenario groups, open questions, null handlers and required dimensions remain. Exact class/fixture/input expansion and reviewer provision are still unresolved.",
+      "verification": {
+        "contract_structure": "passed: eight foundations, six groups, 54 required dimensions",
+        "authority_resolution": "passed: 16 input files; all referenced markers and selected route digests resolve",
+        "readiness_negative": "correctly refuses S5A.complete-scope-and-product-routes as unresolved",
+        "evidence_traceability": "passed: 25 routes, 119 artifacts",
+        "spec_governance": "passed: 257 classifications",
+        "source_health": "passed: 1961 files",
+        "spec_parity": "fails: pre-existing zero/one installed environment-selection inventory mismatch; tracked dat-wdq-environment-parity-jmo, owning inputs and filename inventory unchanged from HEAD"
+      },
       "readiness_submission": false,
       "enrollment_asserted": false,
       "acceptance_asserted": false

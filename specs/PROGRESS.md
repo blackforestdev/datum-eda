@@ -230,6 +230,16 @@ assertions are specification evidence only, not passing runtime tests or
 completion of S5A-C01. Native proof, enrollment and product acceptance remain
 outstanding; Preferences and prototype ownership are unchanged.
 
+The S5A delivery draft now maps all eight foundations and 54 required
+scenario-dimension entries to concrete inherited behavior: exact unit-aware
+readouts, no numeric edit authority, stable/derived identity, world-space
+qualification, cancellation without selection history, source/reopen isolation,
+connectivity granularity and Project/pane scope. Stale members drop with notice,
+never arbitrary refusal/substitution. Six readiness questions remain open;
+exact fixtures, class/input expansion, production handlers, environment/budgets
+and independent review still prevent a readiness claim. No cohort is enrolled
+by this specification refinement (`dat-uvt-s5a-build-1wv`, S5A-C01).
+
 | Governed document | Current evidence | Completion boundary | Tracking |
 | --- | --- | --- | --- |
 | `specs/FOUNDATION_CONSUMER_COMPLETION_PLAN.md` | Structured pending completion plans added for UVT-S5A-BUILD, GUI-WRITE-PATH and NATIVE-AUTHORING; acceptance IDs and tracker-backed successor IDs reconciled | Each consumer retains preflight, explicit execution authorization, implementation, native proof, independent replay and exact owner acceptance; no readiness or product delivery asserted | `dat-foundation-consumer-plans-9at`, WDQ-F01; consumer ownership, existing dependencies and global selection unchanged |
