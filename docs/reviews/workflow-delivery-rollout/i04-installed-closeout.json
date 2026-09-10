@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-I04-INSTALLED-COMPLETE",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-I04",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "candidate": "1644e2129f4ff83cec1cdf0e6e13534c3b258e8e",
+  "base": "d45d1a3e30d6af4ab752dd19a7dbe45157df50d4",
+  "authority": "1644e2129f4ff83cec1cdf0e6e13534c3b258e8e",
+  "owner_authority": "Standing authorization through all eleven milestones, recorded at WDQ-STANDING-WORKFLOW-AUTHORIZATION and reaffirmed by the owner; protocol encoding is explicitly not a newly typed hash approval.",
+  "activation_request_sha256": "1f41e07df511e8aea4430951a7969b0f30ea151d1d131dfbba4343a80f239e2e",
+  "activation_response_sha256": "07b0973bbb631223ae7905c15863bd6102d2b3ee40fb56982983381fe90bf1f8",
+  "publication_delta_sha256": "99b649877efb2505cb17de4e156ee511ec8f43acc8f97617450d037b6af27ace",
+  "installed_evidence_commit": "39c3122dc2db1cab84f87d5b93c62f38af5651ff",
+  "installed_evidence_ref": "refs/datum-wdq/evidence/installed-1644-39c3122dc2db1cab84f87d5b93c62f38af5651ff",
+  "installed_verification_sha256": "3f9c3f7ccf6105d24ed33ebf9dfe917af36182a39bbb480d29e622fe30309cfd",
+  "installed_checks": {
+    "authenticated_support_bundle": "pass",
+    "head_and_five_local_trust_settings": "match exact candidate and proposed trust",
+    "workspace_aware_tracked_input_integrity": "pass",
+    "installed_owner_hook": "exit 0; pilot acceptance and rollout independent-review checks pass",
+    "installed_project_status": "exit 0; 56 frontier items",
+    "full_protected_state_and_support_unchanged": true
+  },
+  "failed_attempts_preserved": {
+    "automated_activation": "Exit 2 after publishing correct pins: final observer omitted approved workspace policy and rejected allowed Beads history. Original run is not relabeled successful.",
+    "initial_selector_check": "Rejected obsolete pre-publication bytecode; removed 115 regenerable scripts/__pycache__ files totaling 1347559 bytes.",
+    "recovery_attempt_01": "Hook passed; direct isolated selector launch lacked its module search path. Exit 1 preserved. Recovery attempt 02 used the installed launch form and passed.",
+    "observer_issue": "dat-wdq-activation-workspace-observer-42n"
+  },
+  "independent_evidence": {
+    "final_candidate_inspection_sha256": "8f8c42993f82612df39dba59fb2e3a17b7fe909ab2c10f3483a34a691aaf26ff",
+    "producer_real_15_commit": "44fe89141de4df55a6e545c33383dfaff8f9a637",
+    "producer_inventory_9_commit": "92cb1054268b1ff047706f7ea6372ed044d9cb80",
+    "independent_real_24_commit": "d2b30c8c73a57c0b75af6bda848b31d904ec5f4d",
+    "independent_receipt_sha256": "33e4b7567a2d0316892243dbadb03bb8ce0bf628ad61a8fb707c4b951b3e8dbf",
+    "result": "All 24 expected real-roadmap outcomes on both sides, including four expected refusals; disjoint invocation IDs, exact restored prestate, unchanged protected state, 168 artifact hashes and 900 handler-source checks per side. Historical 1400-observation proof remains separately retained with honest runtime identity."
+  },
+  "external_lane": "Installed PM042/coverage boundary preserves GLOBAL-PREFERENCES-COMPLETION ownership, source scope, product prerequisites and acceptance. Terminal-owner transition repair is installed. No continuing shared-writer pause is needed for WDQ infrastructure verification.",
+  "cleanup": {
+    "removed_directory": "/home/bfadmin/Documents/datum-wdq-owner-activation-20260907",
+    "size_before": "97 MiB reported by du -sh",
+    "checks": "Replacement verified; no open handles; clean disposable candidate at retained commit 4ccac933; main has no alternate-object dependency; active local trust points only inside main .git/datum-wdq.",
+    "recovery": "Deletion permanent. Candidate source is retained in main Git; unique activation log, preparation, promotion and hook are retained in installed_evidence_commit.",
+    "retained": "Other Documents directories remain because historical exact source paths, private recovery material, or an open Kate process still require them. No broad sweep or new Documents archive."
+  },
+  "next_step": "WDQ-I05: real S5A, GUI-WRITE-PATH and NATIVE-AUTHORING adoption measurements, coordinated with product owners. No synthetic completion or ownership takeover.",
+  "product_acceptance_asserted": false,
+  "whole_goal_complete": false
+}

@@ -11,8 +11,8 @@
     "checkpoints": {
       "ready": "WDQ-READY",
       "activate": null,
-      "verify": "WDQ-I03",
-      "review": "WDQ-REVIEW",
+      "verify": "WDQ-COMPAT",
+      "review": "WDQ-RECHECK",
       "accept": null
     }
   },
