@@ -1,5 +1,6 @@
 """Retain and validate an evidence-only candidate ref; do not publish main."""
 
+import argparse
 import hashlib
 import json
 import os
@@ -20,12 +21,23 @@ def git(*args, data=None, env=None):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--index-repair", action="store_true")
+    args = parser.parse_args()
+    pin = "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf" if args.index_repair else PIN
+    baseline = "ba318df013ca5c0263c489a9c77187dc4057a7be" if args.index_repair else pin
+    ref = "refs/datum-wdq/candidates/index-repair-typed-packet-20260910" if args.index_repair else REF
+    expected_packet = "02ce61ee28c450776a575330ce17aca93f2a8e4edc7e4c704cf299efd69cc8ce" if args.index_repair else "678daa96208fb7a372962c383832a099f90ccc1bd63d76c091fee9b4d3fb84f9"
     original_head = git("rev-parse", "HEAD").decode().strip()
     original_status = git("status", "--porcelain")
     runtime = ROOT / ".git/datum-wdq/proposals/wdq-final-owner-disposed-producer-20260909"
     retained = ROOT / ".git/datum-wdq/proposals/wdq-full-candidate-inspection-20260909"
     overlay = retained / "typed-packet-selected-environment-0e5b8064"
-    assert subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=runtime).decode().strip() == PIN
+    if args.index_repair:
+        runtime = ROOT / ".git/datum-wdq/proposals/index-preservation-repair-20260910"
+        overlay = retained / "index-repair-typed-producer-20260910"
+    assert subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=runtime).decode().strip() == pin
+    assert not subprocess.check_output(["git", "--no-optional-locks", "status", "--porcelain"], cwd=runtime)
     sys.path.insert(0, str(runtime / "scripts"))
     from workflow_delivery_authority import authority_sha256
     from workflow_delivery_native import validate_correlations, validate_environment
@@ -35,7 +47,7 @@ def main():
     # A private index changes no worktree/index, branch, installed hook or trust.
     with tempfile.TemporaryDirectory(prefix="typed-index-", dir=retained) as temp:
         env = dict(os.environ, GIT_INDEX_FILE=str(Path(temp) / "index"))
-        git("read-tree", PIN, env=env)
+        git("read-tree", baseline, env=env)
         entries = git("ls-tree", "-rz", original_head, "--", PREFIX).split(b"\0")
         for entry in filter(None, entries):
             meta, path = entry.split(b"\t", 1)
@@ -47,25 +59,29 @@ def main():
             if not path.is_file():
                 continue
             relative = path.relative_to(overlay).as_posix()
-            assert relative == "docs/reviews/workflow-delivery-rollout/infrastructure/proof.json" or relative.startswith(PREFIX + "typed/")
+            typed_prefix = "index-repair-typed/" if args.index_repair else "typed/"
+            assert relative == "docs/reviews/workflow-delivery-rollout/infrastructure/proof.json" or relative.startswith(PREFIX + typed_prefix)
             oid = git("hash-object", "-w", "--stdin", data=path.read_bytes()).decode().strip()
             git("update-index", "--add", "--cacheinfo", "100644", oid, relative, env=env)
         tree_id = git("write-tree", env=env).decode().strip()
-    message = """test(workflow): assemble committed compatibility evidence candidate
+    message = f"""test(workflow): assemble committed compatibility evidence candidate
 
 Problem: Prospective overlay validation did not establish committed-tree proof.
 Change: Bind renewed main-committed evidence and generated typed proof to the
-unchanged 0e5b8064 runtime through an isolated candidate ref, not main publication.
+unchanged {pin} runtime through an isolated candidate ref, not main publication.
+Prospective baseline: {baseline}; evidence source: {original_head}.
 Proof: Runtime inputs and authority must remain identical; the producer performs
 proof, selected-environment and correlation validation against this exact commit.
 Roadmap: WDQ-COMPAT, dat-wdq-rollout-implementation-ffy and
-dat-wdq-workspace-inputs-zmt advance without closure. Independent WDQ-RECHECK,
+dat-wdq-workspace-inputs-zmt advance without closure. Index-repair mode also
+retains dat-wdq-index-refresh-ogw and dat-wdq-proof-renewal-cycle-qgb as open
+proof findings. Historical typed artifacts remain unchanged. Independent WDQ-RECHECK,
 owner activation and product cohorts remain required. No dependency/license,
 product-lane, installed-hook or local-trust changes.
 """
-    candidate = git("commit-tree", tree_id, "-p", PIN, data=message.encode()).decode().strip()
-    git("update-ref", REF, candidate, "0" * 40)
-    base, tree = Tree(ROOT, revision=PIN), Tree(ROOT, revision=candidate)
+    candidate = git("commit-tree", tree_id, "-p", baseline, data=message.encode()).decode().strip()
+    git("update-ref", ref, candidate, "0" * 40)
+    base, tree = Tree(ROOT, revision=pin), Tree(ROOT, revision=candidate)
     contract = tree.json("specs/workflow_delivery/rollout.contract.json")
     assert tree.manifest(contract["input_roots"]) == base.manifest(contract["input_roots"])
     authority = authority_sha256(tree, contract)
@@ -81,11 +97,12 @@ product-lane, installed-hook or local-trust changes.
     validate_environment(tree, proof, environment, contract=contract)
     events = validate_correlations(tree, contract, proof)
     packet = packet_sha256(contract, proof, authority)
-    assert packet == "678daa96208fb7a372962c383832a099f90ccc1bd63d76c091fee9b4d3fb84f9"
+    assert packet == expected_packet
     assert git("rev-parse", "HEAD").decode().strip() == original_head
     assert git("status", "--porcelain") == original_status
-    print(json.dumps({"schema_version": 1, "candidate": candidate, "candidate_ref": REF,
-        "tree": tree_id, "evidence_source_commit": original_head, "runtime_source_commit": PIN,
+    print(json.dumps({"schema_version": 1, "candidate": candidate, "candidate_ref": ref,
+        "tree": tree_id, "evidence_source_commit": original_head, "runtime_source_commit": pin,
+        "prospective_baseline": baseline,
         "packet_sha256": packet, "authority_sha256": authority,
         "input_manifest_unchanged": True, "correlated_event_blobs": len(events),
         "committed_tree_proof_validation": "pass", "selected_environment_validation": "pass",

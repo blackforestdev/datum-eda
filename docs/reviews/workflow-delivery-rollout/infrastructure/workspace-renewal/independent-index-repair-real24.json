@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "reviewer_session": "wdq-independent-review-20260906",
+  "runtime_source": "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf",
+  "fixture_authority_base": "ba318df013ca5c0263c489a9c77187dc4057a7be",
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/independent-index-repair-real24.tar.xz",
+    "sha256": "d94d14171b42265a24b0b9c2aac54604b5c3199b63c43d14b80901b9bbf0d061",
+    "tar_compare_exit_code": 0,
+    "scope": "Independent 24 raw captures, commands/process records, inventory metadata, report and archive input manifest, plus bounded exact-candidate inspection. Only two duplicate fixture repositories omitted; retained local fixtures and source bundle remain required."
+  },
+  "replay": {
+    "report": "real24-independent-verification.json",
+    "sha256": "62365dba77c403388a2921d30d9f120fa275992571944b942e9111ef0dbb69b1",
+    "collector_exit_codes": [0, 0],
+    "invocations": 24,
+    "expected_passes": 20,
+    "expected_refusals": 4,
+    "independent_observer_ids": 24,
+    "independent_event_ids": 104,
+    "artifact_hashes_checked": 168,
+    "source_hash_checks": 900,
+    "source_paths": 33,
+    "ids_disjoint_from_producer": true,
+    "protected_states_unchanged": true,
+    "inventory_paths": 456,
+    "nonderived_exact_stable_copies": 229,
+    "explicitly_regenerated_source_caches": 227,
+    "capture_retries": 0,
+    "audit_failures_preserved": "Two read-only audit schema assumptions were corrected: local-trust key casing and distinguishing observed cache candidates from tracked source. Neither changed captures nor yielded a passing report before correction."
+  },
+  "candidate_inspection": {
+    "report": "independent-index-repair-typed-candidate-inspection-20260910.json",
+    "sha256": "238585a024351d6976ad4384c7feefd8137e38f9aa2b48e79d27a344e949e571",
+    "candidate": "c9d3d5c350a38a2c01aa71d37ec1fa4cc31bcc8e",
+    "packet_sha256": "02ce61ee28c450776a575330ce17aca93f2a8e4edc7e4c704cf299efd69cc8ce",
+    "result": "Actual Git-tree proof, selected environment and six correlations independently passed. All 1314 producer rows matched assembly; 161 runtime inputs and authority unchanged. All 98 changed paths are workspace-renewal evidence or canonical proof; Frontier, Beads, policy and projection equal the approved fixture. New typed namespace, build/manifest, real-fixture binding and three defects checked. No concrete packaging blocker found."
+  },
+  "scope": "Actual independent captures and bounded producer-artifact inspection. Formal independent typed review, exact publication inspection and owner disposition remain separate; no retrospective step completion is asserted for when these captures ran.",
+  "full_review_complete": false,
+  "publication_verified": false,
+  "activation_performed": false
+}
