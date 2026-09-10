@@ -3,6 +3,33 @@
 from workflow_delivery_shapes import require
 
 
+def terminal_owner_closeout(item, prior):
+    """Permit only completion of the last already-promoted owner decision.
+
+    PM025 still validates owner evidence, tracker closure and landing commit.
+    This creates no execution, source permission or product acceptance itself.
+    """
+    old = prior.get("completion", {})
+    current = item.get("completion", {})
+    selected = old.get("canonical_next_step_id")
+    old_steps = old.get("steps", [])
+    old_step = next((s for s in old_steps if s.get("id") == selected), {})
+    step = next((s for s in current.get("steps", []) if s.get("id") == selected), {})
+    return (
+        prior.get("authorization") == "owner_decision"
+        and not prior.get("claim")
+        and old_step.get("kind") == "owner_decision"
+        and old_step.get("status") == "pending"
+        and all(s.get("status") == "complete" for s in old_steps if s.get("id") != selected)
+        and item.get("state") == "landed"
+        and item.get("authorization") == "none"
+        and not item.get("claim")
+        and current.get("canonical_next_step_id") is None
+        and step.get("status") == "complete"
+        and bool(step.get("completion_evidence"))
+    )
+
+
 def validate_categories(items, coverage, enrolled, authority):
     readiness = []
     promoted = {i["key"]: i for i in authority.json("specs/active_frontier.json")["frontier"]}
@@ -48,19 +75,21 @@ def validate_categories(items, coverage, enrolled, authority):
         elif category == "external_lane":
             prior = promoted.get(key, {})
             old = prior.get("completion", {})
-            require(item.get("authorization") == prior.get("authorization"), key,
+            terminal = terminal_owner_closeout(item, prior)
+            require(terminal or item.get("authorization") == prior.get("authorization"), key,
                     "external-lane authorization changed; coordinated promotion required",
                     "WDQ-COVERAGE")
             require(all(item.get(field) == prior.get(field)
                         for field in ("dependencies", "governing_docs")), key,
                     "external-lane governing boundary changed; coordinated promotion required",
                     "WDQ-COVERAGE")
-            require({k: v for k, v in completion.items() if k != "steps"} ==
-                    {k: v for k, v in old.items() if k != "steps"}, key,
+            mutable_fields = {"steps", "canonical_next_step_id"} if terminal else {"steps"}
+            require({k: v for k, v in completion.items() if k not in mutable_fields} ==
+                    {k: v for k, v in old.items() if k not in mutable_fields}, key,
                     "external-lane completion boundary changed; coordinated promotion required",
                     "WDQ-COVERAGE")
-            selected = completion.get("canonical_next_step_id")
-            require(selected == old.get("canonical_next_step_id"), key,
+            selected = old.get("canonical_next_step_id")
+            require(terminal or completion.get("canonical_next_step_id") == selected, key,
                     "external-lane selected boundary changed; coordinated promotion required",
                     "WDQ-COVERAGE")
             before = {s["id"]: s for s in old.get("steps", []) if s["id"] != selected}
