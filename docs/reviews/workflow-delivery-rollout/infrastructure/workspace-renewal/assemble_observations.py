@@ -75,7 +75,10 @@ def main():
     variants = parser.add_mutually_exclusive_group()
     variants.add_argument("--index-repair", action="store_true")
     variants.add_argument("--sequencing-repair", action="store_true")
+    parser.add_argument("--paired-workspace", action="store_true")
     args = parser.parse_args()
+    if args.paired_workspace and not args.sequencing_repair:
+        parser.error("--paired-workspace requires --sequencing-repair")
     pin = "4e11d60b6f0ec50aa391c68ed39a0df138adf8cf" if args.index_repair else PIN
     if args.sequencing_repair:
         pin = "1d48f249dc7071fc3718b345a4ab16b366af43be"
@@ -85,6 +88,7 @@ def main():
     assert git("rev-parse", "HEAD").decode().strip() == pin
     assert not git("status", "--porcelain")
     proposals = root / ".git/datum-wdq/proposals"
+    paired = proposals / "sequencing-paired-evidence-20260910"
     retained = proposals / "wdq-full-candidate-inspection-20260909"
     repaired = proposals / "index-repair-evidence-20260910"
     real_subdir = "owner-reopened-reconciled"
@@ -100,6 +104,8 @@ def main():
         batch = retained / ("renewed-" + name + "-0e5b8064")
         if repaired_mode:
             batch = repaired / name
+        if args.paired_workspace and name == "s02-ownership":
+            batch = paired / name
         inventory_name = "observations-complete.json" if repaired_mode and name == "s01" else "observations.json"
         inventory = read(batch / inventory_name)
         assert inventory["candidate"] == pin and len(inventory["observations"]) == count
@@ -144,6 +150,9 @@ def main():
     if repaired_mode:
         extra = [(repaired / ("workspace-" + name), "renewal-result.json", None)
                  for name in ("runtime", "policy-legacy", "proof-input")]
+        if args.paired_workspace:
+            extra = [(paired / name, "renewal-result.json", None) for name in
+                     ("workspace-runtime-retry-01", "workspace-policy-legacy", "workspace-proof-input")]
         extra.extend([(real, "observations.json", "clean"),
                       (repaired / real_subdir / "current-inventory", "observations.json", None)])
     for batch, inventory_name, excluded in extra:
@@ -193,6 +202,7 @@ def main():
         "original_inventory_observations": original_count, "additional_workspace_observations": 191,
         "additional_workspace_evidence_included": True, "independent_replay_complete": False,
         "real_roadmap_binding": real_binding,
+        "paired_capture_store": str(paired) if args.paired_workspace else None,
         "acceptance_asserted": False}, "registry-entries.json": list(registry.values()),
         "scenario-dispatches.json": dispatches}
     for name, value in products.items():
