@@ -26,6 +26,21 @@
       "Keep pre-completion inspection outside the proof packet it will help produce; final distinct candidate requires explicit delta reconciliation and full I04 inspection."
     ]
   },
+  "full_inspector_regression": {
+    "candidate": "f19391af59f623ae762d28566f8279232a75d6a2",
+    "retained_ref": "refs/datum-wdq/candidates/sequencing-migration-tests-20260910",
+    "path": "scripts/test_workflow_delivery_initial_migration.py",
+    "cases": [
+      "Full inspector accepts valid legacy policy with preserved prior enrollment and initial rollout mapping.",
+      "Full inspector refuses changed prior implementation sessions.",
+      "Success preserves non-Git files and protected tracked inputs, HEAD, index, refs, exclusions and named local trust."
+    ],
+    "suite": {"modules": ["test_workflow_delivery_activation_preflight", "test_workflow_delivery_activation", "test_workflow_delivery_initial_migration"], "test_count": 40, "exit_code": 0, "elapsed_seconds": 59.281},
+    "review_correction": "Independent source review found that the original fixture snapshot excluded Git metadata. Added the existing protected_state comparison, then reran both migration tests successfully in 4.127 seconds. Reviewer performed no execution or captures.",
+    "initial_failure": "The first full-inspector run rejected noncontiguous synthetic Frontier ordering before reaching migration validation. Corrected the fixture order to len(frontier); production validation remained unchanged.",
+    "gates": ["source health: pass (1922 source files)", "staged diff check: pass"],
+    "limits": "Synthetic development regression only. The new test must join final input/scope inventories before renewed source freeze. No refreshed producer proof, actual-main publication, completed independent replay, or activation is asserted."
+  },
   "remaining": [
     "Implement and reconcile the distinct non-authorizing review-time inspection path and its regression cases.",
     "Assess changed source and authority identities, then renew affected producer evidence and obtain independent review.",
