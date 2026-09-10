@@ -114,3 +114,28 @@ also recorded in Beads so the owning session can discover and answer it.
 Preferences status, ownership, requirements and production acceptance remain
 unchanged. I04 remains pending and claim-free; all three I05 cohorts and I06
 owner acceptance remain required.
+
+<!-- WDQ-STANDING-WORKFLOW-AUTHORIZATION -->
+## Standing authorization through all eleven milestones
+
+The owner instructed: "every step is approved untill this process is finished
+(all 11 milestones)" and directed completion instead of repeated process stalls.
+This supersedes requests to repeat routine workflow-step or coordination
+approval. Carry the full existing eleven-step objective forward under this
+standing authorization; do not add milestones or approval-only round trips.
+
+Authorization to perform the work is not evidence that the work succeeded.
+Retain failed observations, commit owned changes, verify actual installation,
+and obtain real adoption evidence rather than marking unperformed work complete.
+The authorization concerns this workflow reform; it does not fabricate the
+other session's acknowledgement, accept Preferences product behavior, grant a
+new third-party dependency, or transfer ownership of its source/prototypes.
+Actual unavailable external inputs must be identified precisely, not replaced
+with another request to approve already-authorized coordination.
+
+Product review/development must not remain paused for the duration of the three
+real adoption cohorts: those outcomes require product work. Limit any shared
+writer pause to a necessary exact activation transaction. Reuse unchanged
+verified evidence and avoid repeated broad builds or replay matrices. Report
+specific incomplete outcomes honestly without treating routine preparation or
+milestone progression as a new discretionary owner approval boundary.
