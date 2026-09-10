@@ -293,3 +293,12 @@ hook. Raw command, process, output, fixture and observation records remain at
 complete-packet retention. This is the start of full renewal, not its completion.
 Source health passes for 1,850 files; no compiler artifacts, product changes or
 installed-trust changes are involved.
+
+Coverage renewal subsequently completed with exit zero: all 110 recorded
+primary/refusal and restored-valid observations matched their expected outcomes.
+The seven standard remaining batches can run serially through
+`run_terminal_rollout_series.py`, with exclusive fresh destinations, exact
+driver hashes and per-process logs. It stops at the first failure and does not
+automatically retry or overwrite an attempt. This series excludes ownership,
+workspace and real-roadmap renewal, which need their retained pre-state recipes;
+its completion alone cannot be treated as full proof or activation.
