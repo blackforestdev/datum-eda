@@ -1,0 +1,1 @@
+{"acceptance_asserted": false, "checks": ["WORKFLOW-DELIVERY-GATE-PILOT: accept", "WORKFLOW-DELIVERY-IMPLEMENTATION: review"], "findings": [], "mode": "enforce", "readiness_asserted": false}

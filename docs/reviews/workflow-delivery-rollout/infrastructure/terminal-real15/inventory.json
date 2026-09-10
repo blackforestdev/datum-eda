@@ -1,0 +1,825 @@
+{
+  "files": [
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-C/after.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-C/before.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-C/calls.jsonl",
+      "sha256": "df741ae54e45ca28d8b6265abdecfd8ea04aac0223e54ab97a7fef436c69e29d",
+      "size": 62259
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-C/invocation.json",
+      "sha256": "14e7c57cfa19547ea002c7a836294479bbbc51618f746999a0b0baf112483cbe",
+      "size": 1815
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-C/prestate-archive.json",
+      "sha256": "e9601a28d95225efe0236e28109cbc4cb00d02034983ad1b1fc585646bab891f",
+      "size": 390964
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-C/result.json",
+      "sha256": "692e5409d265c7410199513f9bfdf237edb728e13f2a4d90a764d4689509f13c",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-C/started.json",
+      "sha256": "d3c6378a0607079576b1cab270792dbaa32ad15e1a7405a6d0356cb379b19e01",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-C/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-C/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-C-prestate.tar.xz",
+      "sha256": "004555205b7fb2638c323ff5d3897821cd6957c78e7075419a5c44cb11ab2a8f",
+      "size": 256728
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-H/after.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-H/before.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-H/calls.jsonl",
+      "sha256": "1815cf17338ad95c4cdbb18fa3e0a7ff3ba0d2fda2411c44bb0740b53b6f13fa",
+      "size": 72368
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-H/invocation.json",
+      "sha256": "03be0fecc125bdb52546b2db6c4cdd80dafce8021419cf223d9d4d6486a4773c",
+      "size": 1241
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-H/prestate-archive.json",
+      "sha256": "844968ba8cb746f938381915d5c0fcadcac2c4b5528ea206fa9cfa1405d42074",
+      "size": 390964
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-H/result.json",
+      "sha256": "3ee6cb8d580a66c86efcd197dc781f163a782b79e05cdac5a5628486c34e4a0d",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-H/started.json",
+      "sha256": "99610a5e7a16f1659501abb9bd485718fff90259420d9892753d9840a80bc393",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-H/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-H/stdout.bin",
+      "sha256": "f0d0ee87bf357acd84df5a2e252bd27091dd7c564c954e44b6d6250b4d549fe1",
+      "size": 365
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-H-prestate.tar.xz",
+      "sha256": "e9a6b1468b67f9d3a8e7fe50257f407b5b968aa1c2a00d5677686969b7949ec8",
+      "size": 256680
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-R/after.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-R/before.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-R/calls.jsonl",
+      "sha256": "0903447b9487dd84f4e1205e74a99ed7fdc4dd0b34ff5b4f52fff1d579b96ac0",
+      "size": 62310
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-R/invocation.json",
+      "sha256": "c79bfa6ab964df8b2a1da53eeb1948e34415330ea33236452fb4fc6173bfa5d1",
+      "size": 1865
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-R/prestate-archive.json",
+      "sha256": "7e28b5c0359f53ea01fb605bfaa77cb0cafe273ad97b67137e8b185784104a70",
+      "size": 390964
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-R/result.json",
+      "sha256": "8af7db787e273c56f38fb61ac89d55537fd3c75a8f84847fee6948d5549bc322",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-R/started.json",
+      "sha256": "9900ff57b9edbdf0a55dde7e062d8f19d94606eddabdd6ff9b6774a47f20b7ae",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-R/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-R/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-R-prestate.tar.xz",
+      "sha256": "004555205b7fb2638c323ff5d3897821cd6957c78e7075419a5c44cb11ab2a8f",
+      "size": 256728
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-check/after.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-check/before.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-check/calls.jsonl",
+      "sha256": "40953b66cf3d138456cb58360e9143da0783539f979c2ca69bf0b0f18350addb",
+      "size": 62604
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-check/invocation.json",
+      "sha256": "9ee0bc6454caab5062850b32d635ef01a8a98b190b7f70120ec3ab3451653a6b",
+      "size": 1616
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-check/prestate-archive.json",
+      "sha256": "b73a938ae3093db775e6a8d0d9d76701c3ca95a23896ea6f58b266a5644fad43",
+      "size": 390970
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-check/result.json",
+      "sha256": "9fc1936eac9a2887d1e272926b7ab6b143821ebfc1ee2f62abb39265129a525e",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-check/started.json",
+      "sha256": "9c4b5a7d1b985c540f7d96ce53bd49f1f088b68524da2686853d845dd02462a5",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-check/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-check/stdout.bin",
+      "sha256": "c51a76111b59dfba3ecd3a97079d25fff3de21a5195c5c0b90cec162b1540ca9",
+      "size": 32
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-check-prestate.tar.xz",
+      "sha256": "004555205b7fb2638c323ff5d3897821cd6957c78e7075419a5c44cb11ab2a8f",
+      "size": 256728
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-details/after.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-details/before.json",
+      "sha256": "fc85a5974832fcedd444d4e64f031adc57631e7f6bd4fb74f09af6fa6eca5073",
+      "size": 2060104
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-details/calls.jsonl",
+      "sha256": "85381f7b43173f8a009851a5e383cef75430c8a7acf94976d179a18705c4afff",
+      "size": 62642
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-details/invocation.json",
+      "sha256": "43c7add4ff90019d5b165887c542e75aad5499c8cd59d2bc14d3e5c91bdbb0a4",
+      "size": 1655
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-details/prestate-archive.json",
+      "sha256": "73399b466c30ba4939cf341dc9b6361325165574d933b206882190782c0fc659",
+      "size": 390972
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-details/result.json",
+      "sha256": "4c84b4b6d33c9de6e849dacebc3385de547c8b9a79aa18f4b5e75c0e56c80781",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-details/started.json",
+      "sha256": "c0a45133898a725c8f1c0f656855f29f3ffea574d149a83406ecc1efe60bbb43",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-details/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-details/stdout.bin",
+      "sha256": "52cc5d0bc323fbba4a25c83100054d44bb1a03e44b560cdda3e0898b6954d74e",
+      "size": 10456
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/clean-S-details-prestate.tar.xz",
+      "sha256": "bc0bfd75183a905407f6246c2292c08cbcb8cbc180e47ddff5cdfafb2526e77b",
+      "size": 256800
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-C/after.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-C/before.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-C/calls.jsonl",
+      "sha256": "dfbff086e37765b7fcd74e5f36c0683ad88eb9aac92d5edd67f186aa84583a95",
+      "size": 62259
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-C/invocation.json",
+      "sha256": "7de13fe4869db1674736089430ebf581583f697c1640d0539a13ac114ab9cdb7",
+      "size": 1845
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-C/prestate-archive.json",
+      "sha256": "a10dc31651f568e36c467335e3317af5249b9ce0d1fb115bbc65dfe5ff0929f3",
+      "size": 391257
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-C/result.json",
+      "sha256": "0f613ffb8f68d337c522d91af339a43a77674e51e6a7dccbef0ab0bfd421046f",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-C/started.json",
+      "sha256": "2bbe7a6d5d7e9a322f8b53b7d9867826d36cafc624919e3287c9d94865885a00",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-C/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-C/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-C-prestate.tar.xz",
+      "sha256": "58f7dd394b7c9cad99b150360e3bb43a20a2222e72b066f93f4a9018e8a723a8",
+      "size": 260364
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-H/after.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-H/before.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-H/calls.jsonl",
+      "sha256": "2f61e885df7450b38396c3d3905a94437200d918380c7f8dc8a6e0a2968903f3",
+      "size": 72368
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-H/invocation.json",
+      "sha256": "421be473a06f3a420ef9683a0d66be3821ac622f6b0a39b81f13bb23597ba765",
+      "size": 1271
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-H/prestate-archive.json",
+      "sha256": "8f771650822d761e1d544afdb20cb7bc309b7a1c0bcb42bc4dbe9a50f5ddb1cb",
+      "size": 391257
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-H/result.json",
+      "sha256": "18293c75b64225d1316db7d24293df5bd66aec117bc84d7578097d57f804eb8b",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-H/started.json",
+      "sha256": "8697780f67c597e1b33eb81c2df427f9f1e9b40ca73f021716cddbd6492c437e",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-H/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-H/stdout.bin",
+      "sha256": "f0d0ee87bf357acd84df5a2e252bd27091dd7c564c954e44b6d6250b4d549fe1",
+      "size": 365
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-H-prestate.tar.xz",
+      "sha256": "335b25ee21e86eab9a2fda077e5a52c060c6386f59f111be446cf828e5d66451",
+      "size": 260372
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-R/after.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-R/before.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-R/calls.jsonl",
+      "sha256": "6d275cf5f5e51805dec3ca2fc6af517a6aa39c076724b827b791f9b9c92e2069",
+      "size": 62310
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-R/invocation.json",
+      "sha256": "5a2a34390be8939d1f1491460eb1aaf1e96ec95483716a8d13956510620314e8",
+      "size": 1895
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-R/prestate-archive.json",
+      "sha256": "b8fea9db956b53cb8a9ff5bcd234e7b14467868cfd19158ce6a26d13f3a047ae",
+      "size": 391257
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-R/result.json",
+      "sha256": "3a4d40fa07ba5d8e9e6bb5c1e0be0205c4ce8a77cefe7d43be2c9b139d6e137d",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-R/started.json",
+      "sha256": "413dae01f7646c02a6dec52adc34fc06ff5c7cec3a646649cd14dacb07bbc5bd",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-R/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-R/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-R-prestate.tar.xz",
+      "sha256": "58f7dd394b7c9cad99b150360e3bb43a20a2222e72b066f93f4a9018e8a723a8",
+      "size": 260364
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-check/after.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-check/before.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-check/calls.jsonl",
+      "sha256": "9fd7233e7b3707e95292db5f508394ff15d1df50f4a55fab0e60bee26fad7e1e",
+      "size": 62604
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-check/invocation.json",
+      "sha256": "12cee6018c0173abd6de4507bc509caffb4e5bd1ed39ebf9dbf6e6c38509df8f",
+      "size": 1646
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-check/prestate-archive.json",
+      "sha256": "69f4eac31aaf400db7beee78e1eb76e4c9cbedc3c0f745ae93ed7d85a97cac40",
+      "size": 391263
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-check/result.json",
+      "sha256": "65adc8aa67e4c543a7b22a87fd99522e9001167957e3af5c0f1a86513a7f18db",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-check/started.json",
+      "sha256": "abfb7260f38a92c1a84d652c1b7a5425bf47f727db055173387f81fa3707036e",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-check/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-check/stdout.bin",
+      "sha256": "97953a37f08035dd45e3845ea195eac78f37e92676c78d4da60eab00aecbffa5",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-check-prestate.tar.xz",
+      "sha256": "58f7dd394b7c9cad99b150360e3bb43a20a2222e72b066f93f4a9018e8a723a8",
+      "size": 260364
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-details/after.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-details/before.json",
+      "sha256": "082f0444df7be1aa4dccb06e215b314e87cd798ac37270738fe22ade50c88721",
+      "size": 2060852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-details/calls.jsonl",
+      "sha256": "2461a374f85244b3073293ab09fdb467f996ed089cfbf8152ab9023795bd29e8",
+      "size": 62642
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-details/invocation.json",
+      "sha256": "a45b31a6c5621f7a1e341c2c87c7f753e03f16715777e6fc786f1742ae0a7f59",
+      "size": 1685
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-details/prestate-archive.json",
+      "sha256": "67714ec18fc6b6ae559219e0e2cd292cad551e8dd40fe680d914108920e0006a",
+      "size": 391265
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-details/result.json",
+      "sha256": "22c66bf67dbdb53ed9c49dfdd015b44e4c1403265580cd942f0309104fa4c87d",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-details/started.json",
+      "sha256": "4baca5d3a4e6ef68395abecb74709d698b01c821a37ac0494699b000ad7e31b5",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-details/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-details/stdout.bin",
+      "sha256": "97953a37f08035dd45e3845ea195eac78f37e92676c78d4da60eab00aecbffa5",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/mixed-unknown-source-S-details-prestate.tar.xz",
+      "sha256": "54e8e70728c4cabb720cc5d8b9e66e3157629dabda6bccc9a310bb29fae44e24",
+      "size": 260360
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/observations.json",
+      "sha256": "d0c085e1fa849f17b249cdf5c8ee17d33f68d6a87fa45f132c52cd3e4b247740",
+      "size": 3632
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-C/after.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-C/before.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-C/calls.jsonl",
+      "sha256": "176fe79110b4d008a20981d8ce7cb9fa4b2a5a8086f7ac1c45c14b2524f901ab",
+      "size": 62259
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-C/invocation.json",
+      "sha256": "70651f406de48328c903ddfa65e04c4938a9f014031842ae59caffabd15c8b0a",
+      "size": 1863
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-C/prestate-archive.json",
+      "sha256": "c14409f48f2dc5bee469fd6f7b2b2e0b6679c05335e2246ab0a7d65ed016a26f",
+      "size": 391215
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-C/result.json",
+      "sha256": "0e20d203ad7aae2b034cda074b0c912494b647055a5731d1697b9050ca6eb34d",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-C/started.json",
+      "sha256": "93a55d3d86621ff21ac03d6b8dc9afe4fd66b45e8319bfb8c327e2fec16050d9",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-C/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-C/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-C-prestate.tar.xz",
+      "sha256": "688f5b79dd925b32b73f8d4450a520a4d410edbbb2677d139bfa78dd4cd09c5d",
+      "size": 260332
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-H/after.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-H/before.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-H/calls.jsonl",
+      "sha256": "770736854ef44e37410b38f39d4efa67dadb24b03ecd5533830f966ef35e26d1",
+      "size": 72368
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-H/invocation.json",
+      "sha256": "0d087b47d0e1823c2b9850514d26b297f85c53b9e7c2d0537e43e360a4bc7417",
+      "size": 1289
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-H/prestate-archive.json",
+      "sha256": "80f1e360ea1bdd097cb8fdde9a226b80a9c08c3d21f681e545566896810caa29",
+      "size": 391215
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-H/result.json",
+      "sha256": "b75635980c055b391236c1014f84b122bd3d6c5b1cfdfb44381ac4f47a52fdea",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-H/started.json",
+      "sha256": "d7c1e02061b9a3780d977cbd9b57dbd9db68b27b2c52b0c870a6dd19b60030cb",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-H/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-H/stdout.bin",
+      "sha256": "f0d0ee87bf357acd84df5a2e252bd27091dd7c564c954e44b6d6250b4d549fe1",
+      "size": 365
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-H-prestate.tar.xz",
+      "sha256": "79004b9ea69faaf5a4b3b2f63cce7a83ceef2af62708c9dc4781b9040af87403",
+      "size": 260272
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-R/after.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-R/before.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-R/calls.jsonl",
+      "sha256": "4a88b2344afab6a56b0f8e46cb0c6ce8db1bc5437c328128b24debb8f6ac0a48",
+      "size": 62310
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-R/invocation.json",
+      "sha256": "63b04658767b2897a901fca19ad69a5b96c7eff982e01bd12d4db8c1c8aa2770",
+      "size": 1913
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-R/prestate-archive.json",
+      "sha256": "d9fed8e29830dbff21f9cc11646e74a2f3c2e42f5e2212c075cd373e24d2709b",
+      "size": 391215
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-R/result.json",
+      "sha256": "704fda3f3200fd56bf3fde7fc5b2dd7c118840cd40abed9e581639c491334b6c",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-R/started.json",
+      "sha256": "8758e6a6c9bd5988782b7db120db3d8195bbde2d523409f80b2cca9255334323",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-R/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-R/stdout.bin",
+      "sha256": "08c88b05ef37e573070e0fcdd9804953d6463048f8e0c672a47056f01d0d2bfb",
+      "size": 191
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-R-prestate.tar.xz",
+      "sha256": "688f5b79dd925b32b73f8d4450a520a4d410edbbb2677d139bfa78dd4cd09c5d",
+      "size": 260332
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-check/after.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-check/before.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-check/calls.jsonl",
+      "sha256": "eb7bdb5629f595f3c0a0e9e1d6a29b485295cb61a01bb3cfa65172cc885476d9",
+      "size": 62604
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-check/invocation.json",
+      "sha256": "14a1c9df2c4bd2eae20f8b5eb103fff96b819881ec049f7548ee143622504a45",
+      "size": 1664
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-check/prestate-archive.json",
+      "sha256": "e8f6528f22b95389f898fc31b1667f2381b8f6e7143d43d63ee265a53bdd97fb",
+      "size": 391221
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-check/result.json",
+      "sha256": "6106e62a371ce0e501fe2818febd02acc1436ade4fd5ea17f612e1aef6fec145",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-check/started.json",
+      "sha256": "6296cbfe5b8fde29aae1f1bafd965a1950f256ebb9e9c211070339677fa88354",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-check/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-check/stdout.bin",
+      "sha256": "c51a76111b59dfba3ecd3a97079d25fff3de21a5195c5c0b90cec162b1540ca9",
+      "size": 32
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-check-prestate.tar.xz",
+      "sha256": "688f5b79dd925b32b73f8d4450a520a4d410edbbb2677d139bfa78dd4cd09c5d",
+      "size": 260332
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-details/after.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-details/before.json",
+      "sha256": "02cd19b4890c0d1762d6f0f4b7de9baade908de415d1c5b8b3a52f5d516a8181",
+      "size": 2060692
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-details/calls.jsonl",
+      "sha256": "61d3abc26aca859ab55e3efa7ab5a561e41081c84dc2dfc1a3c61c7e284f99ed",
+      "size": 62642
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-details/invocation.json",
+      "sha256": "93f83e67609408ddd7c632189dfe5aeb8e500dca7ef5203681a9d3ba734d7613",
+      "size": 1703
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-details/prestate-archive.json",
+      "sha256": "ab421b3b8c1ec2cb605fad5adf814ad279e843828a05b579cac23a8726929008",
+      "size": 391223
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-details/result.json",
+      "sha256": "0b389d2e61e463e686400b2fc6b50a7f82524b8c5e088c112d64115e022d59f3",
+      "size": 962
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-details/started.json",
+      "sha256": "3135b94e40aac4415ea7611de58d7b531b6f1cc60fbf112b9d466fed9fdba68b",
+      "size": 105
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-details/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-details/stdout.bin",
+      "sha256": "52cc5d0bc323fbba4a25c83100054d44bb1a03e44b560cdda3e0898b6954d74e",
+      "size": 10456
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap/restored-with-verified-caches-S-details-prestate.tar.xz",
+      "sha256": "dd9c64a0dbcf6cc0f9fe83543a05091f4aba056993c4b09b4c64cd438df98587",
+      "size": 260332
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap-command.json",
+      "sha256": "be4121b13b203f5227c6a54a585f8bff3d9c164cd1a6bcd0d77920c413a9d40f",
+      "size": 17852
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap-custody-release.json",
+      "sha256": "452a42ede0c1cdf975a7a954a08e8af4dedc24d1ca87a5afa781e4fa406419fe",
+      "size": 865
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap-process.json",
+      "sha256": "f4769470be2571f2bc632bc16e5c8cddf6518d00fc62b0fd83f11e1ddb881840",
+      "size": 288
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap-started.json",
+      "sha256": "f178ff1cf4985af01a5508a8954c2c9920c71094ba7d4ac2cda0da2b3c8b69a9",
+      "size": 58
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap-stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "size": 0
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/real-roadmap-stdout.bin",
+      "sha256": "deda2e79ae81751debba378a11a00b826c9ea7af3c5363c257c9c42b97f88468",
+      "size": 3480
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-integration-1644/release_fixture.py",
+      "sha256": "3ebafbdcd6e8683962cd692c75b66bdc8869e2e2890da659c64826f1b2b09957",
+      "size": 3775
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-real-roadmap-1644/request.json",
+      "sha256": "4580d6151709be256527e72e303330224642aad4ffaa89960be18a75c50748b6",
+      "size": 8247
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-real-roadmap-1644/restored-state.json",
+      "sha256": "4925ba97f22586e55f67243421557efda864e158f8cbfdcab9482641d0903c2e",
+      "size": 2041001
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-real-roadmap-1644/result.json",
+      "sha256": "b5fbe92066c31400f72048163c071a49adc67053465c2e024d03388f244fed6a",
+      "size": 10394
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-real-roadmap-1644/source-after.json",
+      "sha256": "6b3de11c4afe8ddd0672b856b267cded97f96144187f8c3d52a851c8006648c3",
+      "size": 2004371
+    },
+    {
+      "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-real15/terminal-real-roadmap-1644/source-before.json",
+      "sha256": "6b3de11c4afe8ddd0672b856b267cded97f96144187f8c3d52a851c8006648c3",
+      "size": 2004371
+    }
+  ],
+  "source_bundle": {
+    "path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/terminal-real-roadmap-1644/source.bundle",
+    "sha256": "f6912f89b8bb078b619b85292e5fa1415916eec065c8d45dcce942874f432b78",
+    "retained_separately": true
+  },
+  "scope": "Fifteen producer observations and exact restoration metadata; referenced426MBsourcebundle remains separately retained and required. Not standalone portable, independent completion or activation."
+}

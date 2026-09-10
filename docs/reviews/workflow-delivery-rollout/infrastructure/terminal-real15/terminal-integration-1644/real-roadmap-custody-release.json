@@ -1,0 +1,29 @@
+{
+  "candidate": "1644e2129f4ff83cec1cdf0e6e13534c3b258e8e",
+  "batch": "real-roadmap",
+  "observations": 15,
+  "artifact_hashes_verified": 105,
+  "full_states_unchanged": true,
+  "terminal_processes_verified_absent": [
+    2117999,
+    2122957,
+    2162566,
+    2191213,
+    2199686,
+    2208905,
+    2235026,
+    2248505,
+    2266842,
+    2267582,
+    2268286,
+    2281899,
+    2295427,
+    2310033,
+    2326412,
+    2332856
+  ],
+  "released_path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/terminal-integration-1644/real-roadmap/fixture",
+  "recoverable_retired_fixture": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/terminal-integration-1644/real-roadmap/fixture-retired-after-producer",
+  "activation_performed": false,
+  "scope": "Producer complete; original pathname released only for independently restored exact replay."
+}
