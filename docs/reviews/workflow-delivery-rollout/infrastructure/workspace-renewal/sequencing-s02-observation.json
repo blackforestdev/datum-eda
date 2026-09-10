@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "step": "WDQ-COMPAT",
+  "issue_id": "dat-wdq-review-publication-cycle-a1y",
+  "source_commit": "1d48f249dc7071fc3718b345a4ab16b366af43be",
+  "capture_store": ".git/datum-wdq/proposals/sequencing-evidence-20260910",
+  "batches": [
+  {
+    "batch": "s02-coverage",
+    "count": 110,
+    "phases": {
+      "primary": 55,
+      "recovery": 55
+    },
+    "observations_sha256": "38c9c31aef1827cfcf7329c2248008469f6c78a6001fd94db836dd01735c0ebd",
+    "process": {
+      "pid": 2144940,
+      "started_ns": 1789028564538140688,
+      "ended_ns": 1789028729880034033,
+      "exit_code": 0,
+      "stdout_sha256": "e82036ff5e3f98a30cb39ff32ef1b1f9b1a894d140d4368da83c8714fc77bd22",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ordered_case_surface_phase_inventory_preserved": true,
+    "all_expected_outcomes": true
+  },
+  {
+    "batch": "s02-ownership",
+    "count": 190,
+    "phases": {
+      "primary": 100,
+      "recovery": 90
+    },
+    "observations_sha256": "9654a9c6640741d3230f380346cd13434922dc10066481306671b6db28d93a3f",
+    "process": {
+      "pid": 2149980,
+      "started_ns": 1789028585585583170,
+      "ended_ns": 1789028899561704694,
+      "exit_code": 0,
+      "stdout_sha256": "616022c379797149be3f4d82f36c9af29fa20affaa33cdda69776af5483af289",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ordered_case_surface_phase_inventory_preserved": true,
+    "all_expected_outcomes": true
+  }
+],
+  "archive": {
+    "path": "docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-s02-captures.tar.xz",
+    "sha256": "c49d64fa10de2cd7da5a1e71c8b6e04a03ca69777324686eca6f1bc295a88637",
+    "tar_compare_exit_code": 0,
+    "scope": "Raw captures, assessments, original ordered observations, command/process and formatter-environment records. Duplicate fixture/packet trees omitted; source commit and local fixtures remain retained."
+  },
+  "live_preparation_attempt": {
+    "command": "python3 -I -S -B docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/prepare_sequencing_review_candidate.py",
+    "helper_commit": "2796c3ef",
+    "exit_code": 1,
+    "failure": "WDQ-ARTIFACT: docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json: reference absent from candidate tree",
+    "candidate_created": false,
+    "correction": "Add that exact already-reviewed environment Blob to explicit preparation inputs. Keep read-only product dependency equality checks unchanged.",
+    "retry_verified": false
+  },
+  "limits": "300 fresh infrastructure observations only; complete original ordered S02 coverage and ownership inventories preserved. No product-native evidence, full matrix, real-main pre-review CLI inspection, independent replay or activation.",
+  "complete_matrix": false,
+  "activation_performed": false
+}
