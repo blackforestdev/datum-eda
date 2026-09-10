@@ -71,7 +71,9 @@ def main():
 
 
 def run_s01(root, runtime, store, save, prepare_fixture, run_case, run_hook_case,
-            report_cases, report_fixture, git, *, resume):
+            report_cases, report_fixture, git, *, resume, pin=PIN):
+    assert git(runtime, "rev-parse", "HEAD").decode().strip() == pin
+    assert not git(runtime, "status", "--porcelain")
     batch = store / "s01"
     packet, report = batch / "packet", batch / "report-packet"
     if not resume:
@@ -100,9 +102,9 @@ def run_s01(root, runtime, store, save, prepare_fixture, run_case, run_hook_case
             "assessment": assessment})
         print(json.dumps({"completed": len(observations), "case": case, "surface": surface}), flush=True)
     assert len(observations) == 36
-    save(batch / "observations-complete.json", {"candidate": PIN, "observations": observations,
+    save(batch / "observations-complete.json", {"candidate": pin, "observations": observations,
         "expected": 36, "complete": True, "activation_performed": False})
-    assert git(runtime, "rev-parse", "HEAD").decode().strip() == PIN
+    assert git(runtime, "rev-parse", "HEAD").decode().strip() == pin
     assert not git(runtime, "status", "--porcelain")
 
 
