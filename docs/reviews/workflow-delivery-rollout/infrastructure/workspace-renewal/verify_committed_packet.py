@@ -72,6 +72,20 @@ def main():
     with tempfile.TemporaryDirectory(prefix="typed-index-", dir=retained) as temp:
         env = dict(os.environ, GIT_INDEX_FILE=str(Path(temp) / "index"))
         git("read-tree", baseline, env=env)
+        if args.paired_real:
+            # Preserve the newly discovered review finding without importing
+            # unrelated live roadmap/tracker edits into the frozen baseline.
+            issue_id = "dat-wdq-test-default-branch-apx"
+            path = ".beads/issues.jsonl"
+            current = git("show", original_head + ":" + path).splitlines()
+            added = [row for row in current if json.loads(row)["id"] == issue_id]
+            prior_raw = git("show", baseline + ":" + path)
+            prior = prior_raw.splitlines()
+            assert prior_raw == b"\n".join(prior) + b"\n"
+            assert len(added) == 1 and json.loads(added[0])["status"] == "open"
+            assert all(json.loads(row)["id"] != issue_id for row in prior)
+            oid = git("hash-object", "-w", "--stdin", data=prior_raw + added[0] + b"\n").decode().strip()
+            git("update-index", "--add", "--cacheinfo", "100644", oid, path, env=env)
         entries = git("ls-tree", "-rz", original_head, "--", PREFIX).split(b"\0")
         for entry in filter(None, entries):
             meta, path = entry.split(b"\t", 1)
@@ -98,6 +112,8 @@ Problem: Prospective overlay validation did not establish committed-tree proof.
 Change: Bind renewed main-committed evidence and generated typed proof to the
 unchanged {pin} runtime through an isolated candidate ref, not main publication.
 Prospective baseline: {baseline}; evidence source: {original_head}.
+Paired-real mode also carries the exact open dat-wdq-test-default-branch-apx
+intake row from the evidence source, preserving every baseline tracker row.
 Proof: Runtime inputs and authority must remain identical; the producer performs
 proof, selected-environment and correlation validation against this exact commit.
 Roadmap: {'WDQ-RECHECK' if args.paired_real else 'WDQ-COMPAT'}, dat-wdq-rollout-implementation-ffy and
@@ -110,6 +126,8 @@ product-lane, installed-hook or local-trust changes.
     candidate = git("commit-tree", tree_id, "-p", baseline, data=message.encode()).decode().strip()
     git("update-ref", ref, candidate, "0" * 40)
     base, tree = Tree(ROOT, revision=pin), Tree(ROOT, revision=candidate)
+    if args.paired_real:
+        assert tree.read(".beads/issues.jsonl") == prior_raw + added[0] + b"\n"
     contract = tree.json("specs/workflow_delivery/rollout.contract.json")
     assert tree.manifest(contract["input_roots"]) == base.manifest(contract["input_roots"])
     authority = authority_sha256(tree, contract)
@@ -131,6 +149,7 @@ product-lane, installed-hook or local-trust changes.
     print(json.dumps({"schema_version": 1, "candidate": candidate, "candidate_ref": ref,
         "tree": tree_id, "evidence_source_commit": original_head, "runtime_source_commit": pin,
         "prospective_baseline": baseline,
+        "additional_review_intake": ["dat-wdq-test-default-branch-apx"] if args.paired_real else [],
         "packet_sha256": packet, "authority_sha256": authority,
         "input_manifest_unchanged": True, "correlated_event_blobs": len(events),
         "committed_tree_proof_validation": "pass", "selected_environment_validation": "pass",
