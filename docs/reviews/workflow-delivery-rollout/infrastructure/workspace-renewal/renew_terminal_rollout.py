@@ -72,10 +72,29 @@ def main():
     sys.path.insert(0, str(HERE))
     import run_index_repair_batch as batches
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action", choices=["freeze", *sorted(batches.BATCHES)])
+    parser.add_argument("action", choices=["freeze", "s01", *sorted(batches.BATCHES)])
     args = parser.parse_args()
     if args.action == "freeze":
         freeze()
+    elif args.action == "s01":
+        receipt = json.loads((STORE / "source-freeze.json").read_bytes())
+        assert receipt["source_commit"] == PIN
+        bootstrap = RUNTIME / "scripts/workflow_delivery_source_only.py"
+        raw = bootstrap.read_bytes()
+        assert hashlib.sha256(raw).hexdigest() == receipt["source_only_bootstrap_sha256"]
+        namespace = {"__name__": "_terminal_rollout_source_only"}
+        exec(compile(raw, str(bootstrap), "exec"), namespace)
+        namespace["install"](RUNTIME / "scripts")
+        sys.path.insert(0, str(RUNTIME / "scripts"))
+        from workflow_delivery_capture_command import save
+        from workflow_delivery_capture_state import git
+        from workflow_delivery_capture_fixture import prepare_fixture
+        from workflow_delivery_capture_cases import run_case
+        from workflow_delivery_capture_hook import run_hook_case
+        from workflow_delivery_review_input import REPORT_CASES, REPORT_FIXTURE
+        from renew_index_repair_evidence import run_s01
+        run_s01(ROOT, RUNTIME, STORE, save, prepare_fixture, run_case, run_hook_case,
+                REPORT_CASES, REPORT_FIXTURE, git, resume=False, pin=PIN)
     else:
         receipt = json.loads((STORE / "source-freeze.json").read_bytes())
         assert receipt["source_commit"] == PIN
