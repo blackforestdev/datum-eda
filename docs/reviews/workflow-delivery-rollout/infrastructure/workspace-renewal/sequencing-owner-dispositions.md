@@ -302,3 +302,18 @@ driver hashes and per-process logs. It stops at the first failure and does not
 automatically retry or overwrite an attempt. This series excludes ownership,
 workspace and real-roadmap renewal, which need their retained pre-state recipes;
 its completion alone cannot be treated as full proof or activation.
+
+The standard series completed S01 with 36 matching observations and advanced
+to S03. Workspace renewal now accepts an explicit frozen source/runtime/store
+in the existing paired-prestate runner; all three retained command recipes
+passed the single-source-substitution and Python syntax checks. Original
+defaults and historical captures remain unchanged. The terminal renewal driver
+routes only workspace actions through that paired runner, preserving the
+standard-series actions and their fully recorded child command recipes.
+
+The series request's driver hash describes its initial launch version at
+`dbc709b4`. The workspace dispatch addition was made while the series was
+running; do not claim that initial hash identifies every later driver launch.
+Both versions remain in Git. Validator source, contract inputs, the standard
+batch recipe code and its captured commands are unchanged by this driver-only
+addition. Workspace observations are not yet claimed complete.
