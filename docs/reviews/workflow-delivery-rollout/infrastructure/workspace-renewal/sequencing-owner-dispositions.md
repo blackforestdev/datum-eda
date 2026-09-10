@@ -139,3 +139,38 @@ writer pause to a necessary exact activation transaction. Reuse unchanged
 verified evidence and avoid repeated broad builds or replay matrices. Report
 specific incomplete outcomes honestly without treating routine preparation or
 milestone progression as a new discretionary owner approval boundary.
+
+<!-- I04-TERMINAL-OWNER-TRANSITION-REPAIR -->
+## Terminal-owner transition repair: candidate implementation
+
+The owner reaffirmed standing authorization and directed moving forward rather
+than waiting for Preferences. The workflow lane is correcting its own proposed
+external-lane freeze. Preferences GUI measurements remain product acceptance
+criteria; they are not themselves prerequisites for delivering WDQ infrastructure.
+
+`terminal_owner_categories.py` is the proposed replacement for the prepared
+runtime's `scripts/workflow_delivery_categories.py`, not an installed runner.
+It permits only closure of the last already-promoted pending owner decision:
+all other promoted steps complete, landed state, no execution authorization or
+claim, no next substep, and completion evidence present. Existing PM025 owner
+review/decision evidence, tracker closure and landing checks still apply.
+All governing requirements, other steps, dependencies and source permissions
+remain protected. No product acceptance is recorded by this implementation.
+
+Eleven focused tests cover real CLI/selector transitions and the terminal
+predicate, including reproduction of the old freeze. Nineteen existing
+external/deferred boundary tests pass with the proposed replacement. Independent
+technical review found no concrete bypass and requested explicit document-only
+evidence, unfinished-prerequisite and missing/invalid-landing refusals; these
+are included. Initial fixture attempts failed on incomplete synthetic PM025
+markers, review evidence and successor selection; correcting the fixture made
+it reach the actual old-code refusal. A later assertion spelling mismatch
+(`landing_commit` versus `landing commit`) was corrected without changing
+runtime behavior. These are development regressions, not
+renewed delivery proof, native evidence, policy ratification or activation.
+
+Next within I04: reconcile the proposed normative boundary and exact candidate
+evidence, then perform the authorized installation
+and installed verification. The frozen reviewed source and its historical proof
+remain unchanged; do not reuse their hashes to certify the modified runtime.
+Do not wait for Preferences production acceptance to implement this correction.
