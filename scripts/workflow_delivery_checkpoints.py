@@ -14,6 +14,33 @@ from workflow_delivery_shapes import closed, require
 PHASES = LEGACY_PHASES
 
 
+def preparation_bootstrap_structure(tree, item, trust, contract):
+    """Keep the installed rollout repair structural while its own inputs are exact.
+
+    The exception ends as soon as I05 ownership changes or any rollout input
+    differs from the installed authority. Product preparation paths remain
+    governed separately by their exact preparation scope.
+    """
+    coverage = trust.policy.get("coverage", {})
+    preparation = coverage.get("preparation_scopes", [])
+    rollout_scopes = [row for row in coverage.get("source_scopes", [])
+                      if row.get("frontier_key") == "WORKFLOW-DELIVERY-IMPLEMENTATION"]
+    selected = item.get("completion", {}).get("canonical_next_step_id")
+    claim = item.get("claim")
+    if not (item.get("key") == "WORKFLOW-DELIVERY-IMPLEMENTATION"
+            and item.get("state") == "in_progress"
+            and item.get("authorization") == "execution"
+            and selected == "WDQ-I05" and type(claim) is dict
+            and len(preparation) == 1
+            and preparation[0].get("frontier_key") == "UVT-S5A-BUILD"
+            and preparation[0].get("step_ids") == ["S5A-C01"]
+            and len(rollout_scopes) == 1
+            and "WDQ-I05" in rollout_scopes[0].get("step_ids", [])):
+        return False
+    return (tree.manifest(contract["input_roots"])
+            == trust.authority.manifest(contract["input_roots"]))
+
+
 def delivery_shape(item, contract):
     delivery = item["completion"]["delivery"]
     phases = mapping_phases(delivery, item["key"])
@@ -134,6 +161,8 @@ def _validate_delivery(tree, item, *, phase=None, trust=None, environment=None):
     validate_handler_files(tree, contract)
     delivery_shape(item, contract)
     phase = phase or required_phase(item)
+    if trust and preparation_bootstrap_structure(tree, item, trust, contract):
+        phase = "structure"
     require(phase in ("structure", *phases), item["key"], "unknown checkpoint", "WDQ-TRANSITION")
     base_item = None
     if trust:

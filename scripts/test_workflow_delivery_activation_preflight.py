@@ -6,6 +6,7 @@ from pathlib import Path
 import subprocess
 import sys
 from copy import deepcopy
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -16,6 +17,7 @@ from workflow_delivery_activation_preflight import (
     ROLLOUT, S5A, S5A_PREPARATION_SCOPE,
 )
 from workflow_delivery_capture_state import protected_state
+from workflow_delivery_checkpoints import preparation_bootstrap_structure
 from workflow_delivery_publication_delta import publication_delta
 from workflow_delivery_io import canonical_json, sha256
 from workflow_delivery_test_support import Fixture
@@ -344,6 +346,25 @@ class PreparationMigrationTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "outside the live I05 claim"):
             preparation_upgrade_boundary(self.manifest, self.baseline,
                 self.policy["coverage"], ["scripts/other.py"])
+
+    def test_installed_rollout_stays_structural_only_for_exact_authority_inputs(self):
+        class ManifestTree:
+            def __init__(self, value):
+                self.value = value
+
+            def manifest(self, roots):
+                return self.value
+
+        item = self.manifest["frontier"][0]
+        contract = {"input_roots": ["scripts/gate.py"]}
+        trust = SimpleNamespace(policy=self.policy, authority=ManifestTree({"gate": "exact"}))
+        tree = ManifestTree({"gate": "exact"})
+        self.assertTrue(preparation_bootstrap_structure(tree, item, trust, contract))
+        tree.value = {"gate": "changed"}
+        self.assertFalse(preparation_bootstrap_structure(tree, item, trust, contract))
+        tree.value = {"gate": "exact"}
+        item["completion"]["canonical_next_step_id"] = "WDQ-I06"
+        self.assertFalse(preparation_bootstrap_structure(tree, item, trust, contract))
 
 
 class PreparationReviewTest(unittest.TestCase):
