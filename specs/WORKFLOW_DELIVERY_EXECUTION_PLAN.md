@@ -187,6 +187,15 @@ and a partial native slice do not prove three completed adoption outcomes.
 Unavailable owners/reviewers or incomplete native work remain incomplete unless
 the owner explicitly reviews a replacement without dropping domain obligations.
 
+The owner-approved S5A preparation exposed a bootstrap refusal in the installed
+policy: product readiness inputs cannot be authored before readiness/enrollment.
+Within I05, prepare and independently review the narrow PM042
+`preparation_scopes` amendment and the exact S5A scope. This is enabling work for
+the first adoption cohort, not another milestone or completion evidence. Keep
+installation behind a separate exact-candidate owner decision. The amendment may
+permit only approved fixture/dispatch preparation under the selected C01 claim;
+it must not waive readiness, proof, independent product review or acceptance.
+
 <!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I06 -->
 <!-- OWNER:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I06:ROLLOUT-ACCEPTANCE -->
 ## WDQ-I06 — owner review of the completed reform

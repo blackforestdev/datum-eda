@@ -70,6 +70,18 @@ def validate_classifications(tree, coverage, manifest, *, authority):
         require(rows[key]["category"] in ("product", "infrastructure", "external_lane"),
                 key, "non-executing classification cannot hold source scope", "WDQ-COVERAGE")
         pinned_reference(tree, authority, scope["boundary_ref"])
+    for scope in coverage.get("preparation_scopes", []):
+        key = scope["frontier_key"]
+        steps = current[key].get("completion", {}).get("steps", [])
+        kinds = {s["id"]: s["kind"] for s in steps}
+        require(all(kinds.get(s) in ("planning", "governance") for s in scope["step_ids"]), key,
+                "preparation scopes require existing planning or governance steps",
+                "WDQ-COVERAGE")
+        require(rows[key]["category"] in ("product", "infrastructure"), key,
+                "preparation scope requires a product or infrastructure classification",
+                "WDQ-COVERAGE")
+        pinned_reference(tree, authority, scope["boundary_ref"])
+        pinned_reference(tree, authority, scope["approval_ref"])
     return current
 
 
