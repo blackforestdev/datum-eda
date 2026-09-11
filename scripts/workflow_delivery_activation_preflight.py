@@ -53,6 +53,27 @@ PREPARATION_REPLAY_COMMANDS = {
     "source-health": ["python3", "-B", "scripts/check_source_health.py"],
 }
 
+RECOVERY_REVIEW = (
+    "docs/reviews/workflow-delivery-rollout/infrastructure/"
+    "preparation-bootstrap/installed-recovery/independent-review.json"
+)
+RECOVERY_REPLAY_COMMANDS = {
+    "activation-focused": ["python3", "-B", "-m", "unittest", "discover",
+                           "-s", "scripts", "-p", "test_workflow_delivery_activation*.py"],
+    "workflow-suite": PREPARATION_REPLAY_COMMANDS["workflow-suite"],
+    "traceability": PREPARATION_REPLAY_COMMANDS["traceability"],
+    "governance": PREPARATION_REPLAY_COMMANDS["governance"],
+    "source-health": PREPARATION_REPLAY_COMMANDS["source-health"],
+}
+RECOVERY_IMPLEMENTATION_PATHS = {
+    "scripts/test_workflow_delivery_activation_preflight.py",
+    "scripts/test_workflow_delivery_activation_state.py",
+    "scripts/workflow_delivery_activation.py",
+    "scripts/workflow_delivery_activation_preflight.py",
+    "scripts/workflow_delivery_activation_state.py",
+    "scripts/workflow_delivery_checkpoints.py",
+}
+
 
 def initial_mapping_migration(manifest, baseline, policy, prior_policy):
     """Recognize only the initial legacy-to-rollout mapping transition."""
@@ -228,6 +249,115 @@ def validate_preparation_upgrade_review(tree, *, base):
     return review
 
 
+def installed_preparation_recovery(manifest, baseline, policy, prior_policy, changed_paths):
+    """Recognize only the exact I05 repair of the partially installed gate."""
+    from workflow_delivery_coverage import index_items
+    from workflow_delivery_io import canonical_json
+    from workflow_delivery_source_scopes import contains
+    from workflow_delivery_trust import policy_shape
+
+    policy_shape(policy)
+    policy_shape(prior_policy)
+    require(canonical_json(policy) == canonical_json(prior_policy),
+            "installed recovery cannot change owner policy")
+    current, old = index_items(manifest), index_items(baseline)
+    require(set(current) == set(old) and ROLLOUT in current,
+            "installed recovery must preserve every Frontier identity")
+    for key in current:
+        if key != ROLLOUT:
+            require(current[key] == old[key],
+                    "installed recovery changes another Frontier lane: " + key)
+    item, prior = deepcopy(current[ROLLOUT]), deepcopy(old[ROLLOUT])
+    require(item.get("state") == prior.get("state") == "in_progress"
+            and item.get("authorization") == prior.get("authorization") == "execution"
+            and item.get("completion", {}).get("canonical_next_step_id")
+                == prior.get("completion", {}).get("canonical_next_step_id") == "WDQ-I05",
+            "installed recovery requires the unchanged live I05 lifecycle")
+    claim, old_claim = item.get("claim"), prior.get("claim")
+    require(type(claim) is dict and type(old_claim) is dict,
+            "installed recovery requires the existing synchronized I05 claim")
+    scope, old_scope = set(claim["scope"]), set(old_claim["scope"])
+    require(scope - old_scope == RECOVERY_IMPLEMENTATION_PATHS - old_scope
+            and old_scope <= scope,
+            "installed recovery may add only its exact implementation paths to the I05 claim")
+    claim["scope"], old_claim["scope"] = sorted(scope), sorted(scope)
+    require(item == prior, "installed recovery changed I05 state outside its path scope")
+    rollout_scope = next(row for row in policy["coverage"]["source_scopes"]
+                         if row["frontier_key"] == ROLLOUT)
+    production = []
+    for path in changed_paths:
+        require(not path.startswith("docs/gui/prototypes/"),
+                "installed recovery touches the protected prototype lane")
+        if contains(policy["coverage"]["production_roots"], path):
+            require(path in RECOVERY_IMPLEMENTATION_PATHS
+                    and path in rollout_scope["paths"] and contains(claim["scope"], path),
+                    "installed recovery production path is outside its exact reviewed scope: " + path)
+            production.append(path)
+    require(set(production) == RECOVERY_IMPLEMENTATION_PATHS,
+            "installed recovery must contain its complete exact implementation set")
+    return sorted(production)
+
+
+def validate_installed_recovery_review(tree, *, base):
+    """Validate independent replay retained after the exact recovery producer."""
+    review = tree.json(RECOVERY_REVIEW)
+    require(type(review) is dict and set(review) == {
+        "schema_version", "kind", "base_commit", "producer_commit", "producer_session",
+        "reviewer_session", "independent_of", "disposition", "implementation_paths",
+        "failed_activation_log_sha256", "replay_checks", "findings", "activation_asserted"},
+        "closed installed-recovery review required")
+    require(review["schema_version"] == 1
+            and review["kind"] == "datum.workflow-delivery.installed-recovery-review",
+            "installed-recovery review version 1 required")
+    producer = review["producer_commit"]
+    require(review["base_commit"] == base and tree.resolve(producer) == producer,
+            "recovery review must pin the exact partial-install base and producer")
+    require(tree.git("merge-base", base, producer).decode().strip() == base
+            and tree.git("merge-base", producer, tree.revision).decode().strip() == producer,
+            "reviewed recovery producer must be between activation base and candidate")
+    delta = publication_delta(tree.root, base=base, candidate=producer)
+    require(review["implementation_paths"] == delta["touched_paths"],
+            "recovery review must enumerate the exact producer history")
+    require(review["producer_session"] == "codex-wdq-i05-preparation-repair-20260911"
+            and type(review["reviewer_session"]) is str and review["reviewer_session"]
+            and review["reviewer_session"] != review["producer_session"]
+            and review["independent_of"] == [review["producer_session"]],
+            "recovery reviewer must be explicitly independent of the producer")
+    require(review["disposition"] == "approve" and review["findings"] == []
+            and review["activation_asserted"] is False,
+            "installed recovery requires approved review without activation assertion")
+    require(type(review["failed_activation_log_sha256"]) is str
+            and len(review["failed_activation_log_sha256"]) == 64
+            and all(c in "0123456789abcdef" for c in review["failed_activation_log_sha256"]),
+            "recovery review must pin the failed activation log digest")
+    require(type(review["replay_checks"]) is list
+            and [row.get("id") for row in review["replay_checks"]]
+                == list(RECOVERY_REPLAY_COMMANDS),
+            "recovery review must retain every exact replay check in order")
+    retained = {RECOVERY_REVIEW}
+    root = RECOVERY_REVIEW.rsplit("/", 1)[0] + "/"
+    for row in review["replay_checks"]:
+        require(type(row) is dict and set(row) == {
+            "id", "command", "returncode", "stdout", "stderr"},
+            "closed recovery replay-check record required")
+        require(row["command"] == RECOVERY_REPLAY_COMMANDS[row["id"]]
+                and row["returncode"] == 0,
+                "recovery replay command or outcome differs")
+        for stream in ("stdout", "stderr"):
+            blob = row[stream]
+            require(type(blob) is dict and set(blob) == {"path", "sha256"},
+                    "recovery replay output Blob required")
+            raw = tree.read(blob["path"], committed=True)
+            require(blob["path"].startswith(root) and sha256(raw) == blob["sha256"]
+                    and blob["path"] not in retained,
+                    "recovery replay output path or hash differs: " + blob["path"])
+            retained.add(blob["path"])
+    review_delta = publication_delta(tree.root, base=producer, candidate=tree.revision)
+    require(review_delta["touched_paths"] == sorted(retained),
+            "recovery candidate changed bytes outside independent-review artifacts")
+    return review
+
+
 def promotion_boundary(manifest, baseline, coverage, changed_paths, *, legacy_migration=False):
     """Check bounded rollout publication, not an ordinary execution permission."""
     from workflow_delivery_coverage import index_items
@@ -309,20 +439,27 @@ def inspect_promotion_candidate(root, *, base, candidate, authority, environment
     require(trust.policy["schema_version"] == 2, "broad promotion requires schema-2 coverage")
     baseline = trust.base.json(FRONTIER_PATH)
     prior_policy = trust.base.json(POLICY_PATH)
-    preparation_migration = preparation_scope_migration(
+    recovery = (canonical_json(trust.policy) == canonical_json(prior_policy)
+                and canonical_json(manifest) != canonical_json(baseline))
+    preparation_migration = False if recovery else preparation_scope_migration(
         manifest, baseline, trust.policy, prior_policy)
     migration = False if preparation_migration else initial_mapping_migration(
-        manifest, baseline, trust.policy, prior_policy)
-    paths = (preparation_upgrade_boundary(manifest, baseline, trust.policy["coverage"],
-                                          delta["touched_paths"])
-             if preparation_migration else promotion_boundary(
-                 manifest, baseline, trust.policy["coverage"], delta["touched_paths"],
-                 legacy_migration=migration))
+        manifest, baseline, trust.policy, prior_policy) if not recovery else False
+    if recovery:
+        paths = installed_preparation_recovery(
+            manifest, baseline, trust.policy, prior_policy, delta["touched_paths"])
+        validate_installed_recovery_review(tree, base=base)
+    elif preparation_migration:
+        paths = preparation_upgrade_boundary(
+            manifest, baseline, trust.policy["coverage"], delta["touched_paths"])
+    else:
+        paths = promotion_boundary(manifest, baseline, trust.policy["coverage"],
+                                   delta["touched_paths"], legacy_migration=migration)
     if preparation_migration:
         validate_preparation_upgrade_review(tree, base=base)
     require(ROLLOUT in trust.enrolled, "rollout must be enrolled before publication")
     environments = load_environments(tree, environment_path, trust.policy, authority=trust.authority)
-    if preparation_migration:
+    if preparation_migration or recovery:
         from workflow_delivery_coverage_runtime import validate_coverage_structure
         items, readiness = validate_coverage_structure(tree, manifest, trust)
         for key in readiness:

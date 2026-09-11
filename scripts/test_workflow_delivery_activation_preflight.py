@@ -14,6 +14,8 @@ from workflow_delivery_activation_preflight import (
     preflight, promotion_boundary, initial_mapping_migration,
     preparation_scope_migration, preparation_upgrade_boundary,
     validate_preparation_upgrade_review, PREPARATION_REPLAY_COMMANDS, PREPARATION_REVIEW,
+    installed_preparation_recovery, validate_installed_recovery_review,
+    RECOVERY_IMPLEMENTATION_PATHS, RECOVERY_REPLAY_COMMANDS, RECOVERY_REVIEW,
     ROLLOUT, S5A, S5A_PREPARATION_SCOPE,
 )
 from workflow_delivery_capture_state import protected_state
@@ -425,8 +427,87 @@ class PreparationReviewTest(unittest.TestCase):
             validate_preparation_upgrade_review(
                 Tree(self.f.root, revision=self.f.git("rev-parse", "HEAD").decode().strip()),
                 base=self.base)
+class InstalledRecoveryTest(unittest.TestCase):
+    def setUp(self):
+        self.case = PreparationMigrationTest()
+        self.case.setUp()
+        self.addCleanup(self.case.doCleanups)
+        self.manifest = deepcopy(self.case.baseline)
+        self.baseline = deepcopy(self.case.baseline)
+        self.policy = deepcopy(self.case.policy)
+        self.prior = deepcopy(self.policy)
+        claim = self.manifest["frontier"][0]["claim"]
+        claim["scope"] = sorted(set(claim["scope"]) | RECOVERY_IMPLEMENTATION_PATHS)
+        paths = self.policy["coverage"]["source_scopes"][0]["paths"]
+        paths[:] = sorted(set(paths) | RECOVERY_IMPLEMENTATION_PATHS)
+        self.prior = deepcopy(self.policy)
 
+    def test_exact_recovery_scope_passes_without_mutation(self):
+        before = deepcopy((self.manifest, self.baseline, self.policy, self.prior))
+        self.assertEqual(sorted(RECOVERY_IMPLEMENTATION_PATHS),
+            installed_preparation_recovery(self.manifest, self.baseline,
+                self.policy, self.prior, sorted(RECOVERY_IMPLEMENTATION_PATHS)))
+        self.assertEqual(before, (self.manifest, self.baseline, self.policy, self.prior))
 
+    def test_policy_frontier_and_incomplete_source_sets_refuse(self):
+        cases = [
+            lambda: self.policy.update(legacy_baseline="2" * 40),
+            lambda: self.manifest["frontier"][1].update(state="in_progress"),
+            lambda: self.manifest["frontier"][0]["claim"]["scope"].append("scripts/other.py"),
+        ]
+        for mutate in cases:
+            values = deepcopy((self.manifest, self.policy))
+            mutate()
+            with self.assertRaises(ValueError):
+                installed_preparation_recovery(self.manifest, self.baseline,
+                    self.policy, self.prior, sorted(RECOVERY_IMPLEMENTATION_PATHS))
+            self.manifest, self.policy = values
+        with self.assertRaisesRegex(ValueError, "complete exact implementation"):
+            installed_preparation_recovery(self.manifest, self.baseline,
+                self.policy, self.prior, sorted(RECOVERY_IMPLEMENTATION_PATHS)[1:])
+class InstalledRecoveryReviewTest(unittest.TestCase):
+    def setUp(self):
+        from workflow_delivery_tree import Tree
+        self.f = Fixture()
+        self.addCleanup(self.f.close)
+        self.base = self.f.head
+        for path in sorted(RECOVERY_IMPLEMENTATION_PATHS):
+            self.f.write(path, (path + "\n").encode())
+        self.f.stage()
+        self.f.git("commit", "-qm", "Synthetic installed recovery producer")
+        self.producer = self.f.git("rev-parse", "HEAD").decode().strip()
+        root, checks = RECOVERY_REVIEW.rsplit("/", 1)[0], []
+        for index, (key, command) in enumerate(RECOVERY_REPLAY_COMMANDS.items()):
+            checks.append({"id": key, "command": command, "returncode": 0,
+                "stdout": self.f.blob(f"{root}/{index}.stdout", b"pass\n"),
+                "stderr": self.f.blob(f"{root}/{index}.stderr", b"")})
+        self.review = {"schema_version": 1,
+            "kind": "datum.workflow-delivery.installed-recovery-review",
+            "base_commit": self.base, "producer_commit": self.producer,
+            "producer_session": "codex-wdq-i05-preparation-repair-20260911",
+            "reviewer_session": "independent-reviewer",
+            "independent_of": ["codex-wdq-i05-preparation-repair-20260911"],
+            "disposition": "approve",
+            "implementation_paths": publication_delta(
+                self.f.root, base=self.base, candidate=self.producer)["touched_paths"],
+            "failed_activation_log_sha256": "a" * 64,
+            "replay_checks": checks, "findings": [], "activation_asserted": False}
+        self.f.save(RECOVERY_REVIEW, self.review)
+        self.f.stage()
+        self.f.git("commit", "-qm", "Synthetic installed recovery review")
+        self.candidate = self.f.git("rev-parse", "HEAD").decode().strip()
+        self.tree = Tree(self.f.root, revision=self.candidate)
+
+    def test_exact_review_passes_and_post_review_source_refuses(self):
+        self.assertEqual("approve", validate_installed_recovery_review(
+            self.tree, base=self.base)["disposition"])
+        self.f.write(next(iter(RECOVERY_IMPLEMENTATION_PATHS)), b"changed after review\n")
+        self.f.stage()
+        self.f.git("commit", "-qm", "Synthetic unreviewed recovery change")
+        from workflow_delivery_tree import Tree
+        with self.assertRaisesRegex(ValueError, "outside independent-review"):
+            validate_installed_recovery_review(Tree(self.f.root, revision=
+                self.f.git("rev-parse", "HEAD").decode().strip()), base=self.base)
 class PromotionCandidateTest(unittest.TestCase):
     """Real inspector on complete synthetic proof, never actual rollout evidence."""
 

@@ -1,6 +1,7 @@
 """Exercise partial publication observation in owned synthetic repositories."""
 
 from copy import deepcopy
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
@@ -62,6 +63,19 @@ class ActivationStateTest(unittest.TestCase):
         self.f.git("update-index", "--assume-unchanged", "src/read.py")
         self.f.write("src/read.py", b"hidden dirty bytes\n")
         self.assertEqual("diverged", self.observe()["state"])
+
+    def test_observer_applies_the_same_reviewed_workspace_classification(self):
+        cache = "src/__pycache__/read.cpython-313.pyc"
+        self.f.write(".git/info/exclude", (cache + "\n").encode())
+        self.f.write(cache, b"reviewed derived cache\n")
+        before = protected_state(self.f.root, ["src"])
+        workspace = SimpleNamespace(input_paths=lambda names, **kwargs:
+            {name for name in names if name != cache})
+        result = inspect_activation_state(self.f.root, base=self.base, candidate=self.candidate,
+            input_roots=["src"], prior_trust=self.prior, proposed_trust=self.proposed,
+            workspace=workspace)
+        self.assertEqual("not_started", result["state"])
+        self.assertEqual(before, protected_state(self.f.root, ["src"]))
 
     def test_detached_checkout_is_diverged(self):
         self.f.git("checkout", "--detach", "-q", self.base)
