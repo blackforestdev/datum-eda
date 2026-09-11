@@ -139,6 +139,16 @@ approval, stale claims, relabeled execution, unclassified lanes and paths outsid
 the claim refuse. Promotion of this mechanism and each exact preparation scope
 requires independent review and a separate owner-controlled installation.
 
+The first installation of this repair may structurally validate the unchanged
+rollout contract instead of relabeling its old native proof as evidence for new
+gate bytes. It must independently replay the exact preparation, migration,
+source-boundary, traceability, governance and source-health tests recorded by
+the repair validator. All other enrolled consumers retain their normal current
+readiness, proof, review or acceptance phase; shared changed inputs still
+escalate normally. The reviewed producer commit must be an ancestor of the final
+candidate, and every later changed path must be exactly the review record or one
+of its hashed replay-output Blobs. No post-review source change is permitted.
+
 <!-- WDQ-042-WORKSPACE -->
 ### Preserved workspace state is not source permission
 

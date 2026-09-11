@@ -357,9 +357,10 @@ class PreparationReviewTest(unittest.TestCase):
         self.f.git("commit", "-qm", "Synthetic preparation repair producer")
         self.producer = self.f.git("rev-parse", "HEAD").decode().strip()
         checks = []
+        review_root = PREPARATION_REVIEW.rsplit("/", 1)[0]
         for index, (key, command) in enumerate(PREPARATION_REPLAY_COMMANDS.items()):
-            stdout = self.f.blob(f"docs/reviews/replay/{index}.stdout", b"pass\n")
-            stderr = self.f.blob(f"docs/reviews/replay/{index}.stderr", b"")
+            stdout = self.f.blob(f"{review_root}/{index}.stdout", b"pass\n")
+            stderr = self.f.blob(f"{review_root}/{index}.stderr", b"")
             checks.append({"id": key, "command": command, "returncode": 0,
                            "stdout": stdout, "stderr": stderr})
         delta = publication_delta(self.f.root, base=self.base, candidate=self.producer)
@@ -390,6 +391,16 @@ class PreparationReviewTest(unittest.TestCase):
         self.f.git("commit", "-qm", "Synthetic invalid self review")
         from workflow_delivery_tree import Tree
         with self.assertRaisesRegex(ValueError, "independent"):
+            validate_preparation_upgrade_review(
+                Tree(self.f.root, revision=self.f.git("rev-parse", "HEAD").decode().strip()),
+                base=self.base)
+
+    def test_post_review_source_change_refuses(self):
+        self.f.write("scripts/repair.py", b"repair = 'changed after review'\n")
+        self.f.stage()
+        self.f.git("commit", "-qm", "Synthetic unreviewed descendant source")
+        from workflow_delivery_tree import Tree
+        with self.assertRaisesRegex(ValueError, "outside the exact independent-review artifacts"):
             validate_preparation_upgrade_review(
                 Tree(self.f.root, revision=self.f.git("rev-parse", "HEAD").decode().strip()),
                 base=self.base)
