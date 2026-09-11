@@ -348,27 +348,32 @@ class PreparationMigrationTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "outside the live I05 claim"):
             preparation_upgrade_boundary(self.manifest, self.baseline,
                 self.policy["coverage"], ["scripts/other.py"])
-
     def test_installed_rollout_stays_structural_only_for_exact_authority_inputs(self):
         class ManifestTree:
-            def __init__(self, value):
+            def __init__(self, value, frontier):
                 self.value = value
-
+                self.frontier = deepcopy(frontier)
             def manifest(self, roots):
                 return self.value
-
+            def json(self, path):
+                return {"frontier": self.frontier}
         item = self.manifest["frontier"][0]
         contract = {"input_roots": ["scripts/gate.py"]}
-        trust = SimpleNamespace(policy=self.policy, authority=ManifestTree({"gate": "exact"}))
-        tree = ManifestTree({"gate": "exact"})
+        authority = ManifestTree({"gate": "exact"}, self.manifest["frontier"])
+        trust = SimpleNamespace(policy=self.policy, authority=authority)
+        tree = ManifestTree({"gate": "exact"}, self.manifest["frontier"])
         self.assertTrue(preparation_bootstrap_structure(tree, item, trust, contract))
         tree.value = {"gate": "changed"}
         self.assertFalse(preparation_bootstrap_structure(tree, item, trust, contract))
         tree.value = {"gate": "exact"}
         item["completion"]["canonical_next_step_id"] = "WDQ-I06"
         self.assertFalse(preparation_bootstrap_structure(tree, item, trust, contract))
-
-
+        item["completion"]["canonical_next_step_id"] = "WDQ-I05"
+        item["claim"]["session"] = "changed"
+        self.assertFalse(preparation_bootstrap_structure(tree, item, trust, contract))
+        item["claim"] = deepcopy(authority.frontier[0]["claim"])
+        self.policy["coverage"]["preparation_scopes"][0]["paths"].append("crates/other")
+        self.assertFalse(preparation_bootstrap_structure(tree, item, trust, contract))
 class PreparationReviewTest(unittest.TestCase):
     def setUp(self):
         from workflow_delivery_tree import Tree
@@ -400,13 +405,11 @@ class PreparationReviewTest(unittest.TestCase):
         self.f.git("commit", "-qm", "Synthetic independent preparation review")
         self.candidate = self.f.git("rev-parse", "HEAD").decode().strip()
         self.tree = Tree(self.f.root, revision=self.candidate)
-
     def test_exact_review_passes_without_mutation(self):
         before = self.f.snapshot()
         result = validate_preparation_upgrade_review(self.tree, base=self.base)
         self.assertEqual("approve", result["disposition"])
         self.assertEqual(before, self.f.snapshot())
-
     def test_self_review_refuses(self):
         self.review["reviewer_session"] = self.review["producer_session"]
         self.f.save(PREPARATION_REVIEW, self.review)
@@ -417,7 +420,6 @@ class PreparationReviewTest(unittest.TestCase):
             validate_preparation_upgrade_review(
                 Tree(self.f.root, revision=self.f.git("rev-parse", "HEAD").decode().strip()),
                 base=self.base)
-
     def test_post_review_source_change_refuses(self):
         self.f.write("scripts/repair.py", b"repair = 'changed after review'\n")
         self.f.stage()
@@ -441,14 +443,12 @@ class InstalledRecoveryTest(unittest.TestCase):
         paths = self.policy["coverage"]["source_scopes"][0]["paths"]
         paths[:] = sorted(set(paths) | RECOVERY_IMPLEMENTATION_PATHS)
         self.prior = deepcopy(self.policy)
-
     def test_exact_recovery_scope_passes_without_mutation(self):
         before = deepcopy((self.manifest, self.baseline, self.policy, self.prior))
-        self.assertEqual(sorted(RECOVERY_IMPLEMENTATION_PATHS),
-            installed_preparation_recovery(self.manifest, self.baseline,
-                self.policy, self.prior, sorted(RECOVERY_IMPLEMENTATION_PATHS)))
+        result = installed_preparation_recovery(self.manifest, self.baseline, self.policy,
+                                                self.prior, sorted(RECOVERY_IMPLEMENTATION_PATHS))
+        self.assertEqual(sorted(RECOVERY_IMPLEMENTATION_PATHS), result)
         self.assertEqual(before, (self.manifest, self.baseline, self.policy, self.prior))
-
     def test_policy_frontier_and_incomplete_source_sets_refuse(self):
         cases = [
             lambda: self.policy.update(legacy_baseline="2" * 40),
@@ -459,12 +459,12 @@ class InstalledRecoveryTest(unittest.TestCase):
             values = deepcopy((self.manifest, self.policy))
             mutate()
             with self.assertRaises(ValueError):
-                installed_preparation_recovery(self.manifest, self.baseline,
-                    self.policy, self.prior, sorted(RECOVERY_IMPLEMENTATION_PATHS))
+                installed_preparation_recovery(self.manifest, self.baseline, self.policy,
+                    self.prior, sorted(RECOVERY_IMPLEMENTATION_PATHS))
             self.manifest, self.policy = values
         with self.assertRaisesRegex(ValueError, "complete exact implementation"):
-            installed_preparation_recovery(self.manifest, self.baseline,
-                self.policy, self.prior, sorted(RECOVERY_IMPLEMENTATION_PATHS)[1:])
+            installed_preparation_recovery(self.manifest, self.baseline, self.policy,
+                self.prior, sorted(RECOVERY_IMPLEMENTATION_PATHS)[1:])
 class InstalledRecoveryReviewTest(unittest.TestCase):
     def setUp(self):
         from workflow_delivery_tree import Tree
@@ -488,8 +488,8 @@ class InstalledRecoveryReviewTest(unittest.TestCase):
             "reviewer_session": "independent-reviewer",
             "independent_of": ["codex-wdq-i05-preparation-repair-20260911"],
             "disposition": "approve",
-            "implementation_paths": publication_delta(
-                self.f.root, base=self.base, candidate=self.producer)["touched_paths"],
+            "implementation_paths": publication_delta(self.f.root, base=self.base,
+                candidate=self.producer)["touched_paths"],
             "failed_activation_log_sha256": "a" * 64,
             "replay_checks": checks, "findings": [], "activation_asserted": False}
         self.f.save(RECOVERY_REVIEW, self.review)
@@ -499,8 +499,8 @@ class InstalledRecoveryReviewTest(unittest.TestCase):
         self.tree = Tree(self.f.root, revision=self.candidate)
 
     def test_exact_review_passes_and_post_review_source_refuses(self):
-        self.assertEqual("approve", validate_installed_recovery_review(
-            self.tree, base=self.base)["disposition"])
+        result = validate_installed_recovery_review(self.tree, base=self.base)
+        self.assertEqual("approve", result["disposition"])
         self.f.write(next(iter(RECOVERY_IMPLEMENTATION_PATHS)), b"changed after review\n")
         self.f.stage()
         self.f.git("commit", "-qm", "Synthetic unreviewed recovery change")
