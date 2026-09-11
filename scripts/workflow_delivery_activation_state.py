@@ -13,7 +13,8 @@ from workflow_delivery_capture_state import TRUST_KEYS, protected_state
 from workflow_delivery_io import canonical_json
 
 
-def inspect_activation_state(root, *, base, candidate, input_roots, prior_trust, proposed_trust):
+def inspect_activation_state(root, *, base, candidate, input_roots, prior_trust, proposed_trust,
+                             workspace=None):
     require(not any(name in os.environ for name in REDIRECTS), "repository overrides are not observation inputs")
     require(type(input_roots) is list and bool(input_roots)
             and all(type(path) is str for path in input_roots)
@@ -45,7 +46,7 @@ def inspect_activation_state(root, *, base, candidate, input_roots, prior_trust,
     if git(root, "status", "--porcelain=v1", "--untracked-files=all"):
         findings.append("index/worktree is dirty or contains untracked files")
     try:
-        clean_inputs(root, before, before["head"])
+        clean_inputs(root, before, before["head"], workspace=workspace)
     except ValueError as error:
         findings.append(str(error))
     after = protected_state(root, input_roots)

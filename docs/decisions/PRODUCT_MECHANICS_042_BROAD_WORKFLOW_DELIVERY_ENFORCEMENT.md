@@ -158,6 +158,19 @@ claim/step change, scope removal, or completion of I05 immediately restores the
 normal readiness/proof/review phase. Other enrolled consumers always retain
 their normal phase, and product preparation still requires its own exact scope.
 
+If that first installation stops after publishing and configuring the reviewed
+candidate, its forward recovery must remain an explicit candidate descending
+from the observed partial-install HEAD. It may preserve owner policy and add to
+the live I05 claim only the exact gate, observer and regression paths needed to
+repair the installed continuation. The activation-state observer must apply the
+same owner-pinned workspace classifier used by preflight; ignored derived cache
+bytes cannot be rejected by an unclassified second pass. Recovery requires an
+independent replay whose producer history and output Blobs are closed by the
+recovery validator, followed by a new exact owner activation. It cannot reuse
+the prior response, rewrite history, delete workspace bytes, touch a product or
+prototype lane, relabel prior proof, or assert activation before installed hook
+and selector verification succeeds.
+
 <!-- WDQ-042-WORKSPACE -->
 ### Preserved workspace state is not source permission
 

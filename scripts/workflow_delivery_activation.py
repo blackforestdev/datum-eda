@@ -130,10 +130,11 @@ def _activate(root, request, *, record, signals):
         require(proposed == request["proposed_local_trust"] and proposed != prior,
                 "exact distinct replacement trust map required")
         bundle = verify_bundle(root, request["authority"])
+        workspace = promotion_workspace(
+            root, candidate=request["candidate"], authority=request["authority"])
         options = dict(base=request["base"], candidate=request["candidate"],
             input_roots=request["input_roots"], expected_local_trust=prior,
-            publication_review=request["publication_review"], workspace=promotion_workspace(
-                root, candidate=request["candidate"], authority=request["authority"]))
+            publication_review=request["publication_review"], workspace=workspace)
         before = preflight(root, **options)
         evidence = inspect_promotion_candidate(root, base=request["base"], candidate=request["candidate"],
             authority=request["authority"], environment_path=request["environment_path"],
@@ -175,7 +176,8 @@ def _activate(root, request, *, record, signals):
             require(git(root, "config", "--get-all", key).decode().splitlines() == values,
                     "effective Git configuration differs from installed local trust: " + key)
         state_options = dict(base=request["base"], candidate=request["candidate"],
-            input_roots=request["input_roots"], prior_trust=prior, proposed_trust=proposed)
+            input_roots=request["input_roots"], prior_trust=prior, proposed_trust=proposed,
+            workspace=workspace)
         state = inspect_activation_state(root, **state_options)
         require(state["state"] == "candidate_and_configuration_match_unverified",
                 "publication/configuration do not match the reviewed candidate")
