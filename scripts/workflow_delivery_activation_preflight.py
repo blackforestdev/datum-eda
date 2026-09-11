@@ -72,6 +72,7 @@ RECOVERY_IMPLEMENTATION_PATHS = {
     "scripts/workflow_delivery_activation_preflight.py",
     "scripts/workflow_delivery_activation_state.py",
     "scripts/workflow_delivery_checkpoints.py",
+    "scripts/workflow_delivery_preflight_cli.py",
 }
 
 

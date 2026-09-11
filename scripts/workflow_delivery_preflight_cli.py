@@ -223,7 +223,8 @@ def main(argv=None):
                     try:
                         payload["observed_activation_state"] = inspect_activation_state(args.root,
                             base=request["base"], candidate=request["candidate"], input_roots=request["input_roots"],
-                            prior_trust=request["prior_local_trust"], proposed_trust=request["proposed_local_trust"])
+                            prior_trust=request["prior_local_trust"], proposed_trust=request["proposed_local_trust"],
+                            workspace=locals().get("workspace"))
                     except (ValueError, OSError, RuntimeError) as observation_error:
                         payload["state_observation_error"] = str(observation_error)
             encoded = canonical_json(payload)
