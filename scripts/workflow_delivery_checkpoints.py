@@ -161,7 +161,10 @@ def _validate_delivery(tree, item, *, phase=None, trust=None, environment=None):
     validate_handler_files(tree, contract)
     delivery_shape(item, contract)
     phase = phase or required_phase(item)
-    if trust and preparation_bootstrap_structure(tree, item, trust, contract):
+    bootstrap_structure = bool(
+        trust and preparation_bootstrap_structure(tree, item, trust, contract)
+    )
+    if bootstrap_structure:
         phase = "structure"
     require(phase in ("structure", *phases), item["key"], "unknown checkpoint", "WDQ-TRANSITION")
     base_item = None
@@ -173,7 +176,7 @@ def _validate_delivery(tree, item, *, phase=None, trust=None, environment=None):
         candidates = trust.base.json("specs/active_frontier.json")["frontier"]
         base_item = next((i for i in candidates if i["key"] == item["key"]), None)
     validate_transition(item, base_item)
-    if trust and phase in ("structure", "ready"):
+    if trust and phase in ("structure", "ready") and not bootstrap_structure:
         # Pending labels cannot let an enabling source edit land without proof.
         # A static checker cannot distinguish harmless implementation text from
         # activation, so changed reviewed build inputs require the bounded proof.
