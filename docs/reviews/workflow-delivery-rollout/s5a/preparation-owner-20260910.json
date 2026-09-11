@@ -39,6 +39,14 @@
     "promoted_s5a_source_scopes": [],
     "consequence": "A Frontier authorization change alone cannot permit preparation. Candidate-only enrollment or moving source outside guarded roots is not an acceptable repair. The preparation/landing mechanism must be reconciled in the workflow infrastructure lane before source construction."
   },
+  "recording_verification": {
+    "record_commit": "d3f7a2d7",
+    "commit_message_correction": "The recording commit accidentally reused the prior preparation-plan message after a failed hook. This follow-up supplies the actual approval/admission diagnostic annotation without rewriting history.",
+    "first_commit_attempt": "Rejected: the new intake defect lacked a roadmap label. Corrected to roadmap:intake and work:governance before retry.",
+    "committed_gate_result": "enforce: findings empty; WORKFLOW-DELIVERY-GATE-PILOT accept and WORKFLOW-DELIVERY-IMPLEMENTATION review checks passed",
+    "other_checks": ["evidence traceability: 25 routes, 119 artifacts", "specification governance: 258 classified", "git diff --check passed"],
+    "not_run": ["Cargo builds", "native fixture construction or GUI proof", "trust promotion"]
+  },
   "readiness_asserted": false,
   "acceptance_asserted": false
 }
