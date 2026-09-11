@@ -5,6 +5,7 @@ own coordination boundary. Successful preparation is not a lock or permission.
 """
 
 import os
+from copy import deepcopy
 from pathlib import Path
 
 from workflow_delivery_bootstrap import git
@@ -17,6 +18,40 @@ REDIRECTS = ("GIT_DIR", "GIT_WORK_TREE", "GIT_COMMON_DIR", "GIT_INDEX_FILE", "GI
              "GIT_CONFIG_COUNT", "GIT_CONFIG_PARAMETERS")
 
 ROLLOUT = "WORKFLOW-DELIVERY-IMPLEMENTATION"
+S5A = "UVT-S5A-BUILD"
+
+S5A_PREPARATION_SCOPE = {
+    "frontier_key": S5A,
+    "step_ids": ["S5A-C01"],
+    "paths": [
+        "crates/test-harness/Cargo.toml",
+        "crates/test-harness/testdata/selection/s5a_v1",
+        "crates/test-harness/tests/s5a_preparation.rs",
+    ],
+    "boundary_ref": {
+        "path": "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md",
+        "marker": "<!-- WDQ-042-PREPARATION -->",
+    },
+    "approval_ref": {
+        "path": "docs/reviews/workflow-delivery-rollout/s5a/preparation-owner-20260910.json",
+        "marker": "\"resolves_request\": \"Authorize S5A fixture and dispatch-evidence preparation under 6ece73ed.\"",
+    },
+}
+PREPARATION_REVIEW = (
+    "docs/reviews/workflow-delivery-rollout/infrastructure/"
+    "preparation-bootstrap/independent-review.json"
+)
+PREPARATION_REPLAY_COMMANDS = {
+    "targeted": ["python3", "-B", "-m", "unittest",
+                 "test_workflow_delivery_activation_preflight.PreparationMigrationTest",
+                 "test_workflow_delivery_source_scopes",
+                 "test_workflow_delivery_category_boundaries.PreparationBoundaryTest"],
+    "workflow-suite": ["python3", "-B", "-m", "unittest", "discover",
+                       "-s", "scripts", "-p", "test_workflow_delivery*.py"],
+    "traceability": ["python3", "-B", "scripts/check_evidence_traceability.py"],
+    "governance": ["python3", "-B", "scripts/check_spec_governance.py"],
+    "source-health": ["python3", "-B", "scripts/check_source_health.py"],
+}
 
 
 def initial_mapping_migration(manifest, baseline, policy, prior_policy):
@@ -46,6 +81,141 @@ def initial_mapping_migration(manifest, baseline, policy, prior_policy):
                         "review": "WDQ-RECHECK", "accept": None}},
         "initial migration requires the exact renewed rollout mapping")
     return True
+
+
+def preparation_scope_migration(manifest, baseline, policy, prior_policy):
+    """Recognize only the reviewed first S5A preparation-scope amendment."""
+    from workflow_delivery_coverage import index_items
+    from workflow_delivery_io import canonical_json
+    from workflow_delivery_trust import policy_shape
+
+    policy_shape(prior_policy)
+    policy_shape(policy)
+    old_coverage = prior_policy.get("coverage", {})
+    new_coverage = policy.get("coverage", {})
+    if (prior_policy.get("schema_version") != 2
+            or "preparation_scopes" in old_coverage
+            or "preparation_scopes" not in new_coverage):
+        return False
+    require(canonical_json(manifest) == canonical_json(baseline),
+            "preparation-scope promotion cannot change Frontier state")
+    current = index_items(manifest)
+    rollout = current.get(ROLLOUT, {})
+    step = next((s for s in rollout.get("completion", {}).get("steps", [])
+                 if s.get("id") == "WDQ-I05"), {})
+    require(rollout.get("state") == "in_progress"
+            and rollout.get("authorization") == "execution"
+            and rollout.get("completion", {}).get("canonical_next_step_id") == "WDQ-I05"
+            and step.get("kind") == "execution" and step.get("status") == "in_progress"
+            and bool(rollout.get("claim")),
+            "preparation-scope promotion requires the unchanged live WDQ-I05 boundary")
+    s5a = current.get(S5A, {})
+    s5a_step = next((s for s in s5a.get("completion", {}).get("steps", [])
+                    if s.get("id") == "S5A-C01"), {})
+    require(s5a.get("state") == "specified" and s5a.get("authorization") == "planning"
+            and not s5a.get("claim")
+            and s5a.get("completion", {}).get("canonical_next_step_id") == "S5A-C01"
+            and s5a_step.get("kind") == "planning" and s5a_step.get("status") == "pending",
+            "preparation-scope promotion must preserve the released S5A planning boundary")
+    require(new_coverage["preparation_scopes"] == [S5A_PREPARATION_SCOPE],
+            "preparation-scope promotion must add only the exact approved S5A scope")
+    normalized = deepcopy(policy)
+    normalized["coverage"].pop("preparation_scopes")
+    old_scopes = old_coverage["source_scopes"]
+    new_scopes = normalized["coverage"]["source_scopes"]
+    require(len(old_scopes) == len(new_scopes) == 1
+            and old_scopes[0]["frontier_key"] == new_scopes[0]["frontier_key"] == ROLLOUT
+            and old_scopes[0]["step_ids"] == ["WDQ-I03", "WDQ-REVIEW"]
+            and new_scopes[0]["step_ids"] == ["WDQ-I03", "WDQ-REVIEW", "WDQ-I05"],
+            "preparation-scope promotion may only extend the rollout scope to WDQ-I05")
+    normalized_scope = deepcopy(new_scopes[0])
+    normalized_scope["step_ids"] = ["WDQ-I03", "WDQ-REVIEW"]
+    require(normalized_scope == old_scopes[0],
+            "preparation-scope promotion changed the existing rollout scope")
+    normalized["coverage"]["source_scopes"] = deepcopy(old_scopes)
+    require(canonical_json(normalized) == canonical_json(prior_policy),
+            "preparation-scope promotion changed unrelated owner policy")
+    return True
+
+
+def preparation_upgrade_boundary(manifest, baseline, coverage, changed_paths):
+    """Bound the first preparation amendment to the unchanged live I05 claim."""
+    from workflow_delivery_coverage import index_items
+    from workflow_delivery_coverage_shapes import coverage_shape
+    from workflow_delivery_source_scopes import contains
+
+    coverage_shape(coverage)
+    require(manifest == baseline, "preparation upgrade cannot change Frontier state")
+    item = index_items(manifest)[ROLLOUT]
+    claim = item["claim"]
+    scopes = coverage["source_scopes"]
+    require(len(scopes) == 1 and scopes[0]["frontier_key"] == ROLLOUT
+            and scopes[0]["step_ids"] == ["WDQ-I03", "WDQ-REVIEW", "WDQ-I05"],
+            "preparation upgrade requires the exact extended rollout scope")
+    checked = []
+    for path in changed_paths:
+        require(not path.startswith("docs/gui/prototypes/"),
+                "preparation upgrade touches the protected prototype lane")
+        if contains(coverage["production_roots"], path):
+            require(path in scopes[0]["paths"],
+                    "preparation upgrade production path lacks exact reviewed scope: " + path)
+            require(contains(claim["scope"], path),
+                    "preparation upgrade production path lies outside the live I05 claim: " + path)
+            checked.append(path)
+    return sorted(set(checked))
+
+
+def validate_preparation_upgrade_review(tree, *, base):
+    """Validate retained independent replay for the exact producer commit."""
+    from workflow_delivery_io import sha256
+    from workflow_delivery_publication_delta import publication_delta
+
+    review = tree.json(PREPARATION_REVIEW)
+    require(type(review) is dict and set(review) == {
+        "schema_version", "kind", "base_commit", "producer_commit", "producer_session",
+        "reviewer_session", "independent_of", "disposition", "implementation_paths",
+        "replay_checks", "findings", "activation_asserted"},
+        "closed preparation-upgrade review required")
+    require(review["schema_version"] == 1
+            and review["kind"] == "datum.workflow-delivery.preparation-upgrade-review",
+            "preparation-upgrade review version 1 required")
+    producer = review["producer_commit"]
+    require(review["base_commit"] == base and tree.resolve(producer) == producer,
+            "review must pin the exact activation base and producer commit")
+    require(tree.git("merge-base", base, producer).decode().strip() == base
+            and tree.git("merge-base", producer, tree.revision).decode().strip() == producer,
+            "reviewed producer must be between activation base and candidate")
+    delta = publication_delta(tree.root, base=base, candidate=producer)
+    require(review["implementation_paths"] == delta["touched_paths"],
+            "review must enumerate the exact producer history")
+    require(review["producer_session"] == "codex-wdq-i05-preparation-repair-20260911"
+            and type(review["reviewer_session"]) is str and review["reviewer_session"]
+            and review["reviewer_session"] != review["producer_session"]
+            and review["independent_of"] == [review["producer_session"]],
+            "reviewer must be explicitly independent of the producer session")
+    require(review["disposition"] == "approve" and review["findings"] == [],
+            "preparation upgrade requires approved review with no undisposed findings")
+    require(review["activation_asserted"] is False,
+            "independent review cannot assert activation")
+    require(type(review["replay_checks"]) is list
+            and [row.get("id") for row in review["replay_checks"]]
+                == list(PREPARATION_REPLAY_COMMANDS),
+            "review must retain every exact replay check in order")
+    for row in review["replay_checks"]:
+        require(type(row) is dict and set(row) == {
+            "id", "command", "returncode", "stdout", "stderr"},
+            "closed replay-check record required")
+        require(row["command"] == PREPARATION_REPLAY_COMMANDS[row["id"]]
+                and row["returncode"] == 0,
+                "independent replay command or outcome differs")
+        for stream in ("stdout", "stderr"):
+            blob = row[stream]
+            require(type(blob) is dict and set(blob) == {"path", "sha256"},
+                    "replay output Blob required")
+            raw = tree.read(blob["path"], committed=True)
+            require(sha256(raw) == blob["sha256"],
+                    "replay output hash differs: " + blob["path"])
+    return review
 
 
 def promotion_boundary(manifest, baseline, coverage, changed_paths, *, legacy_migration=False):
@@ -128,18 +298,31 @@ def inspect_promotion_candidate(root, *, base, candidate, authority, environment
     trust = Trust(tree, authority, base)
     require(trust.policy["schema_version"] == 2, "broad promotion requires schema-2 coverage")
     baseline = trust.base.json(FRONTIER_PATH)
-    migration = initial_mapping_migration(manifest, baseline, trust.policy,
-                                          trust.base.json(POLICY_PATH))
-    paths = promotion_boundary(manifest, baseline, trust.policy["coverage"],
-                               delta["touched_paths"], legacy_migration=migration)
+    prior_policy = trust.base.json(POLICY_PATH)
+    preparation_migration = preparation_scope_migration(
+        manifest, baseline, trust.policy, prior_policy)
+    migration = False if preparation_migration else initial_mapping_migration(
+        manifest, baseline, trust.policy, prior_policy)
+    paths = (preparation_upgrade_boundary(manifest, baseline, trust.policy["coverage"],
+                                          delta["touched_paths"])
+             if preparation_migration else promotion_boundary(
+                 manifest, baseline, trust.policy["coverage"], delta["touched_paths"],
+                 legacy_migration=migration))
+    if preparation_migration:
+        validate_preparation_upgrade_review(tree, base=base)
     require(ROLLOUT in trust.enrolled, "rollout must be enrolled before publication")
     environments = load_environments(tree, environment_path, trust.policy, authority=trust.authority)
-    items = validate_coverage_state(tree, manifest, trust, environments=environments)
+    if preparation_migration:
+        from workflow_delivery_coverage_runtime import validate_coverage_structure
+        items, _ = validate_coverage_structure(tree, manifest, trust)
+    else:
+        items = validate_coverage_state(tree, manifest, trust, environments=environments)
     checked = []
     for key in trust.enrolled:
         require(key in items, "enrolled publication item missing: " + key)
         phase = validate_delivery(tree, items[key], trust=trust,
-            phase="review" if key == ROLLOUT else None, environment=environments.get(key))
+            phase="structure" if preparation_migration else "review" if key == ROLLOUT else None,
+            environment=environments.get(key))
         checked.append(f"{key}: {phase}")
     return {"checks": checked, "production_paths": paths,
             "publication_authorized": False, "activation_asserted": False,
