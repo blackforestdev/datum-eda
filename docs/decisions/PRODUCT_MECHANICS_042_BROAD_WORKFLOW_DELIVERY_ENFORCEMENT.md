@@ -149,6 +149,15 @@ escalate normally. The reviewed producer commit must be an ancestor of the final
 candidate, and every later changed path must be exactly the review record or one
 of its hashed replay-output Blobs. No post-review source change is permitted.
 
+While WDQ-I05 remains the selected, claimed rollout step, the installed gate may
+validate that rollout structurally only when its complete input manifest is
+byte-identical to the installed authority and the exact owner-approved S5A
+preparation scope remains present. This is the installed continuation of the
+same bootstrap boundary, not a reusable proof waiver. Any rollout-input change,
+claim/step change, scope removal, or completion of I05 immediately restores the
+normal readiness/proof/review phase. Other enrolled consumers always retain
+their normal phase, and product preparation still requires its own exact scope.
+
 <!-- WDQ-042-WORKSPACE -->
 ### Preserved workspace state is not source permission
 
