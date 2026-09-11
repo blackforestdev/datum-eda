@@ -21,7 +21,8 @@ def paths(value, label, *, nonempty=True):
 
 def coverage_shape(value):
     label = "coverage"
-    closed(value, "baseline_ref rows source_scopes production_roots new_item_rule",
+    optional = " preparation_scopes" if "preparation_scopes" in value else ""
+    closed(value, "baseline_ref rows source_scopes production_roots new_item_rule" + optional,
            label, "WDQ-COVERAGE")
     commit_id(value["baseline_ref"], label + ".baseline_ref")
     require(value["new_item_rule"] == "classification_required", label,
@@ -59,4 +60,20 @@ def coverage_shape(value):
             require(any(path == root or path.startswith(root + "/")
                         for root in value["production_roots"]), path,
                     "source scope must stay inside production roots", "WDQ-COVERAGE")
+    if "preparation_scopes" in value:
+        array(value["preparation_scopes"], label + ".preparation_scopes", nonempty=False,
+              code="WDQ-COVERAGE")
+        for scope in value["preparation_scopes"]:
+            closed(scope, "frontier_key step_ids paths boundary_ref approval_ref",
+                   label + ".preparation_scopes", "WDQ-COVERAGE")
+            require(scope["frontier_key"] in keys, label,
+                    "preparation scope requires a classified Frontier key", "WDQ-COVERAGE")
+            ids(scope["step_ids"], label)
+            paths(scope["paths"], label)
+            ref(scope["boundary_ref"], label)
+            ref(scope["approval_ref"], label)
+            for path in scope["paths"]:
+                require(any(path == root or path.startswith(root + "/")
+                            for root in value["production_roots"]), path,
+                        "preparation scope must stay inside production roots", "WDQ-COVERAGE")
     return value

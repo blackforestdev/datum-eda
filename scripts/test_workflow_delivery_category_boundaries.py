@@ -80,6 +80,7 @@ class ExternalBoundaryTest(unittest.TestCase):
 
     def test_external_permission_does_not_waive_affected_enrolled_proof(self):
         self.policy["coverage"]["source_scopes"][0]["paths"].append("src/read.py")
+        self.item["claim"]["scope"].append("src/read.py")
         self.promote()
         self.f.write("src/read.py", b"changed shared input\n")
         self.save()
@@ -181,6 +182,7 @@ class DeferredBoundaryTest(unittest.TestCase):
         self.e.save()
         self.e.refuse("deferred work requires reclassification")
 
+
     def test_deferred_completed_requirement_cannot_change(self):
         self.promote_completed_history()
         self.cold["completion"]["steps"][0]["action"] = "Expanded historical scope"
@@ -213,6 +215,53 @@ class DeferredBoundaryTest(unittest.TestCase):
         self.issue["labels"] = ["roadmap:frontier"]
         self.e.save()
         self.e.refuse("deferred work requires reclassification")
+
+
+class PreparationBoundaryTest(unittest.TestCase):
+    def setUp(self):
+        self.e = ExternalBoundaryTest()
+        self.e.setUp()
+        self.addCleanup(self.e.doCleanups)
+        item = self.e.item
+        step = item["completion"]["steps"][0]
+        step.update(kind="planning", status="in_progress", depends_on=[])
+        item["completion"]["canonical_next_step_id"] = step["id"]
+        item.update(state="in_progress", authorization="planning")
+        item["claim"]["scope"] = ["product/prepared"]
+        self.e.policy["coverage"]["rows"][1].update(
+            category="product", external_handoff_ref=None)
+        self.e.policy["coverage"]["source_scopes"] = []
+        self.e.policy["coverage"]["production_roots"].append("product")
+        self.e.policy["coverage"]["preparation_scopes"] = [{
+            "frontier_key": "NEXT", "step_ids": [step["id"]],
+            "paths": ["product/prepared"], "boundary_ref": self.e.f.ref,
+            "approval_ref": self.e.f.ref}]
+        self.e.promote()
+
+    def test_actual_cli_and_selector_allow_exact_approved_preparation(self):
+        self.e.f.write("product/prepared/fixture.json", b"{}\n")
+        self.e.save()
+        code, report = self.e.h.cli()
+        self.assertEqual(0, code, report)
+        self.assertEqual([], selector_failures(self.e.f.root, self.e.m))
+
+    def test_preparation_refuses_neighbor_and_execution_relabel(self):
+        self.e.f.write("product/prepared-elsewhere/fixture.json", b"{}\n")
+        self.e.save()
+        self.e.refuse("no promoted scope")
+        self.e.f.root.joinpath("product/prepared-elsewhere/fixture.json").unlink()
+        self.e.item["authorization"] = "execution"
+        self.e.item["completion"]["steps"][0]["kind"] = "execution"
+        self.e.f.write("product/prepared/fixture.json", b"{}\n")
+        self.e.save()
+        self.e.refuse("preparation scopes require existing planning or governance steps")
+
+    def test_changed_approval_bytes_refuse(self):
+        path = self.e.f.root / self.e.f.ref["path"]
+        path.write_bytes(path.read_bytes() + b"changed approval\n")
+        self.e.f.write("product/prepared/fixture.json", b"{}\n")
+        self.e.save()
+        self.e.refuse("boundary changed")
 
 
 if __name__ == "__main__":

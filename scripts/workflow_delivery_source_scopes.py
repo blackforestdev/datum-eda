@@ -60,12 +60,36 @@ def authorize_source_paths(changed_paths, coverage, manifest, issues, enrolled, 
         # External permission is bounded by its promoted scope/reference, not
         # an exemption for any code written by a named session.
         granted.append(scope)
+    for scope in coverage.get("preparation_scopes", []):
+        key = scope["frontier_key"]
+        item = items[key]
+        row = rows[key]
+        issue = issues.get(item.get("issue_id"), {})
+        selected = item.get("completion", {}).get("canonical_next_step_id")
+        steps = item.get("completion", {}).get("steps", [])
+        step = next((s for s in steps if s.get("id") == selected), {})
+        if not (row["issue_id"] == item.get("issue_id") and
+                row["category"] in ("product", "infrastructure") and
+                item.get("state") == "in_progress" and
+                item.get("authorization") == step.get("kind") and
+                item.get("authorization") in ("planning", "governance") and
+                issue.get("status") == "in_progress" and
+                selected in scope["step_ids"] and
+                step.get("status") == "in_progress"):
+            continue
+        failures = []
+        validate_claim(item, issue, ttl, moment, failures)
+        if failures:
+            continue
+        granted.append(scope)
     checked = []
     for path in sorted(set(changed_paths)):
         normalized_path(path)
         if not contains(coverage["production_roots"], path):
             continue
-        permitted = [s["frontier_key"] for s in granted if contains(s["paths"], path)]
+        permitted = [s["frontier_key"] for s in granted
+                     if contains(s["paths"], path)
+                     and contains(items[s["frontier_key"]]["claim"]["scope"], path)]
         require(bool(permitted), path,
                 "production change has no promoted scope with synchronized live "
                 "execution claim and required enrollment", "WDQ-COVERAGE")
