@@ -112,6 +112,33 @@ changes. Current permissions apply to that path union. This does not authenticat
 past authors or infer expired claims from timestamps, and a clean new transaction
 does not certify earlier bypassed commits.
 
+<!-- WDQ-042-PREPARATION -->
+### Owner-pinned pre-readiness preparation
+
+An amended schema-2 coverage object may add `preparation_scopes` alongside
+`source_scopes`. Absence preserves the original schema-2 behavior exactly. Each
+entry has exactly `frontier_key`, `step_ids`, `paths`, `boundary_ref` and
+`approval_ref`. The paths use the same normalized production roots and prefix
+rules as execution scopes. The boundary and approval references must resolve
+unchanged in owner-selected authority; candidate-authored approval is refused.
+
+A preparation scope applies only to a classified product or infrastructure item
+whose selected step is `planning` or `governance`, in progress under matching
+authorization, tracker status, assignee and an unexpired synchronized PM025
+claim. The changed path must be contained by both the promoted preparation scope
+and that live claim's own scope. It does not require delivery enrollment because
+its purpose is to construct the concrete fixtures and dispatch observations that
+readiness will judge. It cannot authorize an execution step, product behavior,
+dependency addition, prototype edit, trust installation or owner acceptance.
+
+Preparation does not complete the selected step or satisfy readiness. Completing
+planning still invokes the normal contract, route, input, handler and owner-choice
+requirements. Any changed input shared with an already enrolled consumer retains
+that consumer's normal proof escalation. Neighbor paths, missing or changed
+approval, stale claims, relabeled execution, unclassified lanes and paths outside
+the claim refuse. Promotion of this mechanism and each exact preparation scope
+requires independent review and a separate owner-controlled installation.
+
 <!-- WDQ-042-WORKSPACE -->
 ### Preserved workspace state is not source permission
 

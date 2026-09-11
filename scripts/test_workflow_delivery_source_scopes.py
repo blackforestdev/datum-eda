@@ -40,6 +40,39 @@ class SourceScopesTest(unittest.TestCase):
         self.assertEqual([{"path": "src/owned/a.py", "authorized_lanes": ["TASK"]}], self.check())
         self.assertEqual([], self.check(["docs/note.md"]))
 
+    def test_promoted_preparation_scope_allows_only_planning_claim(self):
+        ref = self.coverage["rows"][0]["boundary_ref"]
+        self.coverage["preparation_scopes"] = [{"frontier_key": "TASK",
+            "step_ids": ["I01"], "paths": ["src/owned"],
+            "boundary_ref": ref, "approval_ref": ref}]
+        self.coverage["source_scopes"] = []
+        self.item["authorization"] = "planning"
+        self.item["completion"].pop("delivery")
+        self.item["completion"]["steps"][0]["kind"] = "planning"
+        self.enrolled.clear()
+        self.assertEqual([{"path": "src/owned/a.py", "authorized_lanes": ["TASK"]}], self.check())
+
+    def test_preparation_scope_refuses_execution_or_missing_approval_shape(self):
+        ref = self.coverage["rows"][0]["boundary_ref"]
+        scope = {"frontier_key": "TASK", "step_ids": ["I01"],
+                 "paths": ["src/owned"], "boundary_ref": ref, "approval_ref": ref}
+        self.coverage.update(source_scopes=[], preparation_scopes=[scope])
+        self.item["authorization"] = "planning"
+        self.item["completion"]["steps"][0]["kind"] = "planning"
+        self.enrolled.clear()
+        self.item["authorization"] = "execution"
+        with self.assertRaises(DeliveryInputError):
+            self.check()
+        self.item["authorization"] = "planning"
+        del scope["approval_ref"]
+        with self.assertRaises(DeliveryInputError):
+            self.check()
+
+    def test_promoted_scope_cannot_exceed_frontier_claim_scope(self):
+        self.item["claim"]["scope"] = ["src/other"]
+        with self.assertRaisesRegex(DeliveryInputError, "no promoted scope"):
+            self.check()
+
     def test_prefix_lookalike_is_not_owned(self):
         with self.assertRaises(DeliveryInputError):
             self.check(["src/owned_elsewhere/a.py"])

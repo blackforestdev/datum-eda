@@ -10,7 +10,10 @@ import unittest
 from unittest.mock import patch
 
 from workflow_delivery_activation_preflight import (
-    preflight, promotion_boundary, initial_mapping_migration, ROLLOUT,
+    preflight, promotion_boundary, initial_mapping_migration,
+    preparation_scope_migration, preparation_upgrade_boundary,
+    validate_preparation_upgrade_review, PREPARATION_REPLAY_COMMANDS, PREPARATION_REVIEW,
+    ROLLOUT, S5A, S5A_PREPARATION_SCOPE,
 )
 from workflow_delivery_capture_state import protected_state
 from workflow_delivery_publication_delta import publication_delta
@@ -268,6 +271,128 @@ class PromotionBoundaryTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "requires completed WDQ-RECHECK"):
             promotion_boundary(self.manifest, self.baseline, self.coverage,
                                ["scripts/owned.py"], legacy_migration=True)
+
+
+class PreparationMigrationTest(unittest.TestCase):
+    def setUp(self):
+        ref = {"path": "docs/scope.md", "marker": "scope"}
+        claim = {"agent": "codex", "harness": "codex-cli", "session": "repair",
+                 "worktree": "/fixture", "head": "a" * 40,
+                 "scope": ["scripts/owned.py"], "claimed_at": "2026-09-11T00:00:00Z",
+                 "heartbeat_at": "2026-09-11T00:00:00Z",
+                 "expires_at": "2026-09-11T08:00:00Z"}
+        rollout = {"key": ROLLOUT, "issue_id": "dat-wdq-rollout-implementation-ffy",
+                   "state": "in_progress", "authorization": "execution", "claim": claim,
+                   "completion": {"canonical_next_step_id": "WDQ-I05", "steps": [
+                       {"id": "WDQ-I03", "kind": "execution", "status": "complete"},
+                       {"id": "WDQ-REVIEW", "kind": "execution", "status": "complete"},
+                       {"id": "WDQ-I05", "kind": "execution", "status": "in_progress"}]}}
+        s5a = {"key": S5A, "issue_id": "dat-uvt-s5a-build-1wv", "state": "specified",
+               "authorization": "planning", "completion": {
+                   "canonical_next_step_id": "S5A-C01", "steps": [
+                       {"id": "S5A-C01", "kind": "planning", "status": "pending"}]}}
+        self.manifest = {"frontier": [rollout, s5a]}
+        self.baseline = deepcopy(self.manifest)
+        coverage = {"baseline_ref": "1" * 40, "new_item_rule": "classification_required",
+                    "production_roots": ["scripts", "crates"], "rows": [
+                        {"frontier_key": ROLLOUT, "issue_id": rollout["issue_id"],
+                         "category": "infrastructure", "boundary_ref": ref,
+                         "external_handoff_ref": None},
+                        {"frontier_key": S5A, "issue_id": s5a["issue_id"],
+                         "category": "product", "boundary_ref": ref,
+                         "external_handoff_ref": None}],
+                    "source_scopes": [{"frontier_key": ROLLOUT,
+                        "step_ids": ["WDQ-I03", "WDQ-REVIEW"],
+                        "paths": ["scripts/owned.py"], "boundary_ref": ref}]}
+        self.prior = {"schema_version": 2, "decision_ref": ref,
+                      "legacy_baseline": "1" * 40, "enrolled": [{
+                          "frontier_key": "PILOT", "implementation_sessions": ["writer"],
+                          "activation_ref": ref}], "coverage": coverage}
+        self.policy = deepcopy(self.prior)
+        self.policy["coverage"]["source_scopes"][0]["step_ids"].append("WDQ-I05")
+        self.policy["coverage"]["preparation_scopes"] = [deepcopy(S5A_PREPARATION_SCOPE)]
+
+    def test_exact_amendment_and_path_boundary_pass_without_mutation(self):
+        before = deepcopy((self.manifest, self.baseline, self.policy, self.prior))
+        self.assertTrue(preparation_scope_migration(
+            self.manifest, self.baseline, self.policy, self.prior))
+        self.assertEqual(["scripts/owned.py"], preparation_upgrade_boundary(
+            self.manifest, self.baseline, self.policy["coverage"], ["scripts/owned.py"]))
+        self.assertEqual(before, (self.manifest, self.baseline, self.policy, self.prior))
+
+    def test_unrelated_policy_scope_or_frontier_change_refuses(self):
+        cases = [
+            ("legacy", lambda: self.policy.update(legacy_baseline="2" * 40)),
+            ("source", lambda: self.policy["coverage"]["source_scopes"][0]["paths"].append("scripts/other.py")),
+            ("preparation", lambda: self.policy["coverage"]["preparation_scopes"][0]["paths"].append("crates/other")),
+            ("frontier", lambda: self.manifest["frontier"][1].update(state="in_progress")),
+        ]
+        for label, mutate in cases:
+            with self.subTest(mutation=label):
+                snapshot = deepcopy((self.manifest, self.policy))
+                mutate()
+                with self.assertRaises(ValueError):
+                    preparation_scope_migration(self.manifest, self.baseline,
+                                                self.policy, self.prior)
+                self.manifest, self.policy = snapshot
+
+    def test_production_path_outside_policy_or_live_claim_refuses(self):
+        with self.assertRaisesRegex(ValueError, "exact reviewed scope"):
+            preparation_upgrade_boundary(self.manifest, self.baseline,
+                self.policy["coverage"], ["scripts/other.py"])
+        self.policy["coverage"]["source_scopes"][0]["paths"].append("scripts/other.py")
+        with self.assertRaisesRegex(ValueError, "outside the live I05 claim"):
+            preparation_upgrade_boundary(self.manifest, self.baseline,
+                self.policy["coverage"], ["scripts/other.py"])
+
+
+class PreparationReviewTest(unittest.TestCase):
+    def setUp(self):
+        from workflow_delivery_tree import Tree
+        self.f = Fixture()
+        self.addCleanup(self.f.close)
+        self.base = self.f.head
+        self.f.write("scripts/repair.py", b"repair = True\n")
+        self.f.stage()
+        self.f.git("commit", "-qm", "Synthetic preparation repair producer")
+        self.producer = self.f.git("rev-parse", "HEAD").decode().strip()
+        checks = []
+        for index, (key, command) in enumerate(PREPARATION_REPLAY_COMMANDS.items()):
+            stdout = self.f.blob(f"docs/reviews/replay/{index}.stdout", b"pass\n")
+            stderr = self.f.blob(f"docs/reviews/replay/{index}.stderr", b"")
+            checks.append({"id": key, "command": command, "returncode": 0,
+                           "stdout": stdout, "stderr": stderr})
+        delta = publication_delta(self.f.root, base=self.base, candidate=self.producer)
+        self.review = {"schema_version": 1,
+            "kind": "datum.workflow-delivery.preparation-upgrade-review",
+            "base_commit": self.base, "producer_commit": self.producer,
+            "producer_session": "codex-wdq-i05-preparation-repair-20260911",
+            "reviewer_session": "independent-reviewer",
+            "independent_of": ["codex-wdq-i05-preparation-repair-20260911"],
+            "disposition": "approve", "implementation_paths": delta["touched_paths"],
+            "replay_checks": checks, "findings": [], "activation_asserted": False}
+        self.f.save(PREPARATION_REVIEW, self.review)
+        self.f.stage()
+        self.f.git("commit", "-qm", "Synthetic independent preparation review")
+        self.candidate = self.f.git("rev-parse", "HEAD").decode().strip()
+        self.tree = Tree(self.f.root, revision=self.candidate)
+
+    def test_exact_review_passes_without_mutation(self):
+        before = self.f.snapshot()
+        result = validate_preparation_upgrade_review(self.tree, base=self.base)
+        self.assertEqual("approve", result["disposition"])
+        self.assertEqual(before, self.f.snapshot())
+
+    def test_self_review_refuses(self):
+        self.review["reviewer_session"] = self.review["producer_session"]
+        self.f.save(PREPARATION_REVIEW, self.review)
+        self.f.stage()
+        self.f.git("commit", "-qm", "Synthetic invalid self review")
+        from workflow_delivery_tree import Tree
+        with self.assertRaisesRegex(ValueError, "independent"):
+            validate_preparation_upgrade_review(
+                Tree(self.f.root, revision=self.f.git("rev-parse", "HEAD").decode().strip()),
+                base=self.base)
 
 
 class PromotionCandidateTest(unittest.TestCase):

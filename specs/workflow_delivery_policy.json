@@ -599,7 +599,8 @@
         "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
         "step_ids": [
           "WDQ-I03",
-          "WDQ-REVIEW"
+          "WDQ-REVIEW",
+          "WDQ-I05"
         ],
         "paths": [
           ".github/workflows/alignment.yml",
@@ -773,6 +774,27 @@
       "docs/gui/menu_model.csv",
       "docs/gui/menu_model.json"
     ],
-    "new_item_rule": "classification_required"
+    "new_item_rule": "classification_required",
+    "preparation_scopes": [
+      {
+        "frontier_key": "UVT-S5A-BUILD",
+        "step_ids": [
+          "S5A-C01"
+        ],
+        "paths": [
+          "crates/test-harness/Cargo.toml",
+          "crates/test-harness/testdata/selection/s5a_v1",
+          "crates/test-harness/tests/s5a_preparation.rs"
+        ],
+        "boundary_ref": {
+          "path": "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md",
+          "marker": "<!-- WDQ-042-PREPARATION -->"
+        },
+        "approval_ref": {
+          "path": "docs/reviews/workflow-delivery-rollout/s5a/preparation-owner-20260910.json",
+          "marker": "\"resolves_request\": \"Authorize S5A fixture and dispatch-evidence preparation under 6ece73ed.\""
+        }
+      }
+    ]
   }
 }
