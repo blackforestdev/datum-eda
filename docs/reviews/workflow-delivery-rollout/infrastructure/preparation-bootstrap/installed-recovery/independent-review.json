@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "kind": "datum.workflow-delivery.installed-recovery-review",
+  "base_commit": "0f232e1026497d4eb404a503ee7c7e3fb7bb6561",
+  "producer_commit": "edb053d5614064abedd26048ac33bf3c6b14aaa4",
+  "producer_session": "codex-wdq-i05-preparation-repair-20260911",
+  "reviewer_session": "wdq-independent-review-20260906",
+  "independent_of": [
+    "codex-wdq-i05-preparation-repair-20260911"
+  ],
+  "disposition": "approve",
+  "implementation_paths": [
+    "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md",
+    "scripts/test_workflow_delivery_activation_preflight.py",
+    "scripts/test_workflow_delivery_activation_state.py",
+    "scripts/workflow_delivery_activation.py",
+    "scripts/workflow_delivery_activation_preflight.py",
+    "scripts/workflow_delivery_activation_state.py",
+    "scripts/workflow_delivery_checkpoints.py",
+    "scripts/workflow_delivery_preflight_cli.py",
+    "specs/active_frontier.json",
+    "specs/evidence_traceability_manifest.json"
+  ],
+  "failed_activation_log_sha256": "e8f5931f586d2a38ace7c4bf5f812938e85df3107259b38802df926fcb4bbbd2",
+  "replay_checks": [
+    {
+      "id": "activation-focused",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_workflow_delivery_activation*.py"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/preparation-bootstrap/installed-recovery/activation-focused.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/preparation-bootstrap/installed-recovery/activation-focused.stderr",
+        "sha256": "d2706555b5722b67c28f7e65bba104b65c0e39d605202e905a9660b7cad8a6c4"
+      }
+    },
+    {
+      "id": "workflow-suite",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "scripts",
+        "-p",
+        "test_workflow_delivery*.py"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/preparation-bootstrap/installed-recovery/workflow-suite.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/preparation-bootstrap/installed-recovery/workflow-suite.stderr",
+        "sha256": "6bed32d6aaba41a9679037539387469f405c0b8c4f84b8d0b3ae4e24b8f80056"
+      }
+    },
+    {
+      "id": "traceability",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/check_evidence_traceability.py"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/preparation-bootstrap/installed-recovery/traceability.stdout",
+        "sha256": "04bf1cc96e2dd9b6feeb3a302707965da8028dd783c24afe01aa0e89f3aee050"
+      },
+      "stderr": {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/preparation-bootstrap/installed-recovery/traceability.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "id": "governance",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/check_spec_governance.py"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/preparation-bootstrap/installed-recovery/governance.stdout",
+        "sha256": "582ede238fa35e536ebc52c43fd98d724b6fcff98baad103b157c9ed6a1f3c55"
+      },
+      "stderr": {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/preparation-bootstrap/installed-recovery/governance.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "id": "source-health",
+      "command": [
+        "python3",
+        "-B",
+        "scripts/check_source_health.py"
+      ],
+      "returncode": 0,
+      "stdout": {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/preparation-bootstrap/installed-recovery/source-health.stdout",
+        "sha256": "b8a16223824bbfa8cfbd8ee29ac3a4409a6be02ad8ff452fd4b63da4cf36f9b6"
+      },
+      "stderr": {
+        "path": "docs/reviews/workflow-delivery-rollout/infrastructure/preparation-bootstrap/installed-recovery/source-health.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "findings": [],
+  "activation_asserted": false
+}
