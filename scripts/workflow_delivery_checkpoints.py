@@ -21,6 +21,8 @@ def preparation_bootstrap_structure(tree, item, trust, contract):
     differs from the installed authority. Product preparation paths remain
     governed separately by their exact preparation scope.
     """
+    from workflow_delivery_activation_preflight import S5A_PREPARATION_SCOPE
+
     coverage = trust.policy.get("coverage", {})
     preparation = coverage.get("preparation_scopes", [])
     rollout_scopes = [row for row in coverage.get("source_scopes", [])
@@ -31,11 +33,13 @@ def preparation_bootstrap_structure(tree, item, trust, contract):
             and item.get("state") == "in_progress"
             and item.get("authorization") == "execution"
             and selected == "WDQ-I05" and type(claim) is dict
-            and len(preparation) == 1
-            and preparation[0].get("frontier_key") == "UVT-S5A-BUILD"
-            and preparation[0].get("step_ids") == ["S5A-C01"]
+            and preparation == [S5A_PREPARATION_SCOPE]
             and len(rollout_scopes) == 1
             and "WDQ-I05" in rollout_scopes[0].get("step_ids", [])):
+        return False
+    authority_items = trust.authority.json("specs/active_frontier.json")["frontier"]
+    authority_item = next((row for row in authority_items if row.get("key") == item["key"]), None)
+    if authority_item is None or item.get("claim") != authority_item.get("claim"):
         return False
     return (tree.manifest(contract["input_roots"])
             == trust.authority.manifest(contract["input_roots"]))
