@@ -1,0 +1,27 @@
+[
+  {
+    "bytes": 2066,
+    "path": "activate.py",
+    "sha256": "28b588f39370f6960934f83ba1357dff7ce0638d8609c9c70c0f281d2e841332"
+  },
+  {
+    "bytes": 3546,
+    "path": "activation-request.json",
+    "sha256": "453f04ca94d5dfe9e3b86d2bf8b56c7acf597ba7572b15d182ef58a80182937b"
+  },
+  {
+    "bytes": 588,
+    "path": "packet.json",
+    "sha256": "93770ad629bc0c2a1b7db17c964e7656067428c0bb1f26e59ecb115d17e3ea32"
+  },
+  {
+    "bytes": 4643,
+    "path": "prepare.py",
+    "sha256": "b217811823ec6fb5c75541ccdc08b71979649ceb8d6b53eda0b3c46ebe69bcd8"
+  },
+  {
+    "bytes": 3159,
+    "path": "retain_preparation.py",
+    "sha256": "484882937ce65435fe7f1d45728e37b2dec020d212ac156f468f2231c1050acb"
+  }
+]
