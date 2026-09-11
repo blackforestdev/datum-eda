@@ -201,6 +201,8 @@ def validate_preparation_upgrade_review(tree, *, base):
             and [row.get("id") for row in review["replay_checks"]]
                 == list(PREPARATION_REPLAY_COMMANDS),
             "review must retain every exact replay check in order")
+    retained_paths = {PREPARATION_REVIEW}
+    review_root = PREPARATION_REVIEW.rsplit("/", 1)[0] + "/"
     for row in review["replay_checks"]:
         require(type(row) is dict and set(row) == {
             "id", "command", "returncode", "stdout", "stderr"},
@@ -215,6 +217,14 @@ def validate_preparation_upgrade_review(tree, *, base):
             raw = tree.read(blob["path"], committed=True)
             require(sha256(raw) == blob["sha256"],
                     "replay output hash differs: " + blob["path"])
+            require(blob["path"].startswith(review_root),
+                    "replay output must stay inside the bounded review directory")
+            require(blob["path"] not in retained_paths,
+                    "replay output paths must be unique")
+            retained_paths.add(blob["path"])
+    review_delta = publication_delta(tree.root, base=producer, candidate=tree.revision)
+    require(review_delta["touched_paths"] == sorted(retained_paths),
+            "candidate changed bytes outside the exact independent-review artifacts")
     return review
 
 
@@ -314,14 +324,19 @@ def inspect_promotion_candidate(root, *, base, candidate, authority, environment
     environments = load_environments(tree, environment_path, trust.policy, authority=trust.authority)
     if preparation_migration:
         from workflow_delivery_coverage_runtime import validate_coverage_structure
-        items, _ = validate_coverage_structure(tree, manifest, trust)
+        items, readiness = validate_coverage_structure(tree, manifest, trust)
+        for key in readiness:
+            if key != ROLLOUT and key not in trust.enrolled:
+                validate_delivery(tree, items[key], phase="ready",
+                                  environment=environments.get(key))
     else:
         items = validate_coverage_state(tree, manifest, trust, environments=environments)
     checked = []
     for key in trust.enrolled:
         require(key in items, "enrolled publication item missing: " + key)
-        phase = validate_delivery(tree, items[key], trust=trust,
-            phase="structure" if preparation_migration else "review" if key == ROLLOUT else None,
+        repair_structure = preparation_migration and key == ROLLOUT
+        phase = validate_delivery(tree, items[key], trust=None if repair_structure else trust,
+            phase="structure" if repair_structure else "review" if key == ROLLOUT else None,
             environment=environments.get(key))
         checked.append(f"{key}: {phase}")
     return {"checks": checked, "production_paths": paths,
