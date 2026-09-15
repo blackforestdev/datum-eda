@@ -75,6 +75,20 @@ RECOVERY_IMPLEMENTATION_PATHS = {
     "scripts/workflow_delivery_preflight_cli.py",
 }
 
+LEASE_REPAIR_PATHS = {
+    "scripts/workflow_delivery_checkpoints.py",
+    "scripts/workflow_delivery_activation_preflight.py",
+    "scripts/test_workflow_delivery_source_scopes.py",
+}
+LEASE_REVIEW = (
+    "docs/reviews/workflow-delivery-rollout/infrastructure/lease-renewal/independent-review.json"
+)
+LEASE_REPLAY_COMMANDS = {
+    "lease-focused": ["python3", "-B", "-m", "unittest", "discover",
+                      "-s", "scripts", "-p", "test_workflow_delivery_source_scopes.py"],
+    **RECOVERY_REPLAY_COMMANDS,
+}
+
 
 def initial_mapping_migration(manifest, baseline, policy, prior_policy):
     """Recognize only the initial legacy-to-rollout mapping transition."""
@@ -299,16 +313,58 @@ def installed_preparation_recovery(manifest, baseline, policy, prior_policy, cha
     return sorted(production)
 
 
-def validate_installed_recovery_review(tree, *, base):
+def installed_lease_repair(manifest, baseline, policy, prior_policy, changed_paths):
+    """Permit only the reviewed lease-identity repair, never a new work claim."""
+    from workflow_delivery_checkpoints import same_claim_identity
+    from workflow_delivery_coverage import index_items
+    from workflow_delivery_source_scopes import contains
+
+    require(canonical_json(policy) == canonical_json(prior_policy),
+            "lease repair cannot change owner policy")
+    current, old = deepcopy(manifest), deepcopy(baseline)
+    item, prior = index_items(current)[ROLLOUT], index_items(old)[ROLLOUT]
+    require(item.get("state") == prior.get("state") == "in_progress"
+            and item.get("authorization") == prior.get("authorization") == "execution"
+            and item["completion"]["canonical_next_step_id"]
+                == prior["completion"]["canonical_next_step_id"] == "WDQ-I05",
+            "lease repair requires the existing I05 execution lifecycle")
+    claim, approved = item.get("claim"), prior.get("claim")
+    require(same_claim_identity(claim, approved), "lease repair changes claim ownership")
+    item["claim"] = deepcopy(approved)
+    require(current == old, "lease repair changes roadmap beyond lease timestamps")
+    scope = next(row for row in policy["coverage"]["source_scopes"]
+                 if row["frontier_key"] == ROLLOUT)
+    production = {path for path in changed_paths
+                  if contains(policy["coverage"]["production_roots"], path)}
+    require(production == LEASE_REPAIR_PATHS,
+            "lease repair requires its exact three-file implementation")
+    require(all(contains(scope["paths"], path) and contains(claim["scope"], path)
+                for path in production), "lease repair exceeds installed scope")
+    allowed = LEASE_REPAIR_PATHS | {
+        "specs/active_frontier.json", ".beads/issues.jsonl",
+        "specs/evidence_traceability_manifest.json",
+        "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md",
+    }
+    review_root = LEASE_REVIEW.rsplit("/", 1)[0] + "/"
+    require(all(path in allowed or path.startswith(review_root) for path in changed_paths),
+            "lease repair touches an unrelated path")
+    return sorted(production)
+
+
+def validate_installed_recovery_review(tree, *, base, lease_repair=False):
     """Validate independent replay retained after the exact recovery producer."""
-    review = tree.json(RECOVERY_REVIEW)
+    review_path = LEASE_REVIEW if lease_repair else RECOVERY_REVIEW
+    commands = LEASE_REPLAY_COMMANDS if lease_repair else RECOVERY_REPLAY_COMMANDS
+    failure_key = "failed_renewal_sha256" if lease_repair else "failed_activation_log_sha256"
+    kind = "lease-renewal-review" if lease_repair else "installed-recovery-review"
+    review = tree.json(review_path)
     require(type(review) is dict and set(review) == {
         "schema_version", "kind", "base_commit", "producer_commit", "producer_session",
         "reviewer_session", "independent_of", "disposition", "implementation_paths",
-        "failed_activation_log_sha256", "replay_checks", "findings", "activation_asserted"},
+        failure_key, "replay_checks", "findings", "activation_asserted"},
         "closed installed-recovery review required")
     require(review["schema_version"] == 1
-            and review["kind"] == "datum.workflow-delivery.installed-recovery-review",
+            and review["kind"] == "datum.workflow-delivery." + kind,
             "installed-recovery review version 1 required")
     producer = review["producer_commit"]
     require(review["base_commit"] == base and tree.resolve(producer) == producer,
@@ -327,21 +383,21 @@ def validate_installed_recovery_review(tree, *, base):
     require(review["disposition"] == "approve" and review["findings"] == []
             and review["activation_asserted"] is False,
             "installed recovery requires approved review without activation assertion")
-    require(type(review["failed_activation_log_sha256"]) is str
-            and len(review["failed_activation_log_sha256"]) == 64
-            and all(c in "0123456789abcdef" for c in review["failed_activation_log_sha256"]),
+    require(type(review[failure_key]) is str
+            and len(review[failure_key]) == 64
+            and all(c in "0123456789abcdef" for c in review[failure_key]),
             "recovery review must pin the failed activation log digest")
     require(type(review["replay_checks"]) is list
             and [row.get("id") for row in review["replay_checks"]]
-                == list(RECOVERY_REPLAY_COMMANDS),
+                == list(commands),
             "recovery review must retain every exact replay check in order")
-    retained = {RECOVERY_REVIEW}
-    root = RECOVERY_REVIEW.rsplit("/", 1)[0] + "/"
+    retained = {review_path}
+    root = review_path.rsplit("/", 1)[0] + "/"
     for row in review["replay_checks"]:
         require(type(row) is dict and set(row) == {
             "id", "command", "returncode", "stdout", "stderr"},
             "closed recovery replay-check record required")
-        require(row["command"] == RECOVERY_REPLAY_COMMANDS[row["id"]]
+        require(row["command"] == commands[row["id"]]
                 and row["returncode"] == 0,
                 "recovery replay command or outcome differs")
         for stream in ("stdout", "stderr"):
@@ -446,7 +502,13 @@ def inspect_promotion_candidate(root, *, base, candidate, authority, environment
         manifest, baseline, trust.policy, prior_policy)
     migration = False if preparation_migration else initial_mapping_migration(
         manifest, baseline, trust.policy, prior_policy) if not recovery else False
-    if recovery:
+    lease_repair = (recovery and LEASE_REVIEW in tree.entries
+                    and LEASE_REVIEW not in trust.base.entries)
+    if lease_repair:
+        paths = installed_lease_repair(
+            manifest, baseline, trust.policy, prior_policy, delta["touched_paths"])
+        validate_installed_recovery_review(tree, base=base, lease_repair=True)
+    elif recovery:
         paths = installed_preparation_recovery(
             manifest, baseline, trust.policy, prior_policy, delta["touched_paths"])
         validate_installed_recovery_review(tree, base=base)

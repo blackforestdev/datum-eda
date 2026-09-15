@@ -1,0 +1,14 @@
+{
+  "step": "WDQ-I05",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "base_commit": "19e948ba913595ec3aeffb60660167e419642491",
+  "owner_instruction": "we need to correct this newly discovered issue.",
+  "problem": "Renewing heartbeat_at and expires_at incorrectly ended the installed bootstrap boundary and demanded stale proof for previously installed source.",
+  "correction": "Exclude only those two fields from closed claim identity comparison. PM025 still enforces lease validity and tracker agreement; input manifest equality remains exact.",
+  "publication": "The exact three-file maintenance branch preserves policy, all other Frontier items and claim identity. Fresh independent review and exact owner activation remain required.",
+  "proof": {"source_scope_tests": 15, "activation_tests": 57, "traceability": "pass: 25 routes, 119 artifacts", "governance": "pass: 259 specs", "source_health": "pass: 1961 source files", "diff_check": "pass"},
+  "initial_full_suite": {"tests": 526, "errors": 43, "failures": 1, "seconds": 1647.779, "usable_as_final_proof": false, "reason": "Source and Git HEAD changed during execution. Readiness-capture failures require replay on frozen source; this run is not successful verification."},
+  "candidate_runner_check": "WDQ-TRUST correctly refused execution of candidate code as installed authority. No bypass performed.",
+  "activation_asserted": false,
+  "milestone_completed": false
+}

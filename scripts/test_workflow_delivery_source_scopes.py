@@ -150,6 +150,44 @@ class SourceScopesTest(unittest.TestCase):
         with self.assertRaises(DeliveryInputError):
             self.check()
 
+    def test_lease_repair_promotion_preserves_other_lanes_and_owner_policy(self):
+        from workflow_delivery_activation_preflight import installed_lease_repair, LEASE_REPAIR_PATHS
+
+        manifest = deepcopy(self.manifest)
+        item = manifest["frontier"][0]
+        item["key"] = "WORKFLOW-DELIVERY-IMPLEMENTATION"
+        item["completion"]["canonical_next_step_id"] = "WDQ-I05"
+        item["claim"]["scope"] = sorted(LEASE_REPAIR_PATHS)
+        manifest["frontier"].append({"key": "OTHER", "state": "specified"})
+        policy = {"coverage": {"production_roots": ["scripts", "src"],
+            "source_scopes": [{"frontier_key": item["key"], "paths": sorted(LEASE_REPAIR_PATHS)}]}}
+        baseline, prior = deepcopy(manifest), deepcopy(policy)
+        item["claim"].update(heartbeat_at="2026-09-08T02:00:00Z",
+                             expires_at="2026-09-08T10:00:00Z")
+        changed = sorted(LEASE_REPAIR_PATHS) + ["specs/active_frontier.json"]
+        def check():
+            return installed_lease_repair(manifest, baseline, policy, prior, changed)
+        self.assertEqual(sorted(LEASE_REPAIR_PATHS), check())
+        snapshot = deepcopy((manifest, policy, changed))
+        mutations = [
+            lambda: manifest["frontier"][1].update(state="landed"),
+            lambda: manifest["frontier"][0]["claim"].update(session="other"),
+            lambda: manifest["frontier"][0]["claim"].update(scope=["scripts"]),
+            lambda: manifest["frontier"][0].update(authorization="owner_decision"),
+            lambda: manifest["frontier"][0]["completion"].update(canonical_next_step_id="WDQ-I06"),
+            lambda: policy.update(unreviewed=True),
+            lambda: changed.append("src/product.py"),
+            lambda: changed.append("docs/gui/prototypes/preferences-window.html"),
+            lambda: changed.append("docs/unrelated.md"),
+            lambda: changed.remove(sorted(LEASE_REPAIR_PATHS)[0]),
+        ]
+        for index, mutate in enumerate(mutations):
+            with self.subTest(case=index):
+                manifest, policy, changed = deepcopy(snapshot)
+                mutate()
+                with self.assertRaises(ValueError):
+                    check()
+
     def test_pending_label_and_planning_authorization_refuse(self):
         self.item["completion"]["steps"][0]["status"] = "pending"
         with self.assertRaises(DeliveryInputError):
