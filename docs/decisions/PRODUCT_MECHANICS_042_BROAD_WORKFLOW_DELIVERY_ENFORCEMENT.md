@@ -154,9 +154,30 @@ validate that rollout structurally only when its complete input manifest is
 byte-identical to the installed authority and the exact owner-approved S5A
 preparation scope remains present. This is the installed continuation of the
 same bootstrap boundary, not a reusable proof waiver. Any rollout-input change,
-claim/step change, scope removal, or completion of I05 immediately restores the
+claim identity/step change, scope removal, or completion of I05 immediately restores the
 normal readiness/proof/review phase. Other enrolled consumers always retain
 their normal phase, and product preparation still requires its own exact scope.
+
+A routine PM025 lease renewal changes only `heartbeat_at` and `expires_at`.
+It preserves the original `claimed_at`, agent, harness, session, scope, worktree
+and head, and therefore does not change claim identity. PM025 still validates
+the complete closed claim, tracker synchronization, expiry, heartbeat and maximum
+lease duration before delivery checks. An expired lease grants no permission;
+explicit renewal by its existing owner must satisfy those checks. Missing or
+unknown claim fields, a new session or a changed scope are not lease renewals.
+
+The lease-comparison repair may be installed through an exact reviewed maintenance
+packet while the existing I05 lifecycle remains unchanged. Its production delta
+is exactly `workflow_delivery_checkpoints.py`,
+`workflow_delivery_activation_preflight.py` and
+`test_workflow_delivery_source_scopes.py` under `scripts/`, already within the
+installed scope. The only roadmap change permitted is renewal of the two lease
+timestamps. Owner policy and every other lane remain exact. Associated changes
+are limited to this decision clarification, its traceability digests, the
+synchronized tracker and retained lease-repair review artifacts. Fresh independent
+replay, an exact owner response, the existing activation transaction and installed
+verification remain required. This maintenance path grants no general source
+exception and does not declare prior proof current for changed gate bytes.
 
 If that first installation stops after publishing and configuring the reviewed
 candidate, its forward recovery must remain an explicit candidate descending

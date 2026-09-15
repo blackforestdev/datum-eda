@@ -1,0 +1,11 @@
+{
+  "observed_on": "2026-09-15",
+  "source": "Installed pre-commit hook output during attempted two-file lease renewal; retained diagnostic summary, not a complete raw process capture.",
+  "exit_code": 1,
+  "code": "WDQ-INDEX",
+  "key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "step": "WDQ-I05",
+  "path": "docs/reviews/workflow-delivery-rollout/infrastructure/terminal-renewal/typed/input-manifest.json",
+  "detail": "changed relevant inputs: ['scripts/test_workflow_delivery_activation_preflight.py', 'scripts/test_workflow_delivery_activation_state.py', 'scripts/test_workflow_delivery_category_boundaries.py', 'scripts/test_workflow_delivery_source_scopes.py', 'scripts/workflow_delivery_activation.py', 'scripts/workflow_delivery_activation_preflight.py', 'scripts/workflow_delivery_activation_state.py', 'scripts/workflow_delivery_checkpoints.py', 'scripts/workflow_delivery_coverage.py', 'scripts/workflow_delivery_coverage_shapes.py', 'scripts/workflow_delivery_preflight_cli.py', 'scripts/workflow_delivery_source_scopes.py']",
+  "commit_created": false
+}
