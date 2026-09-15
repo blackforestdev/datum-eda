@@ -1,0 +1,31 @@
+[package]
+name = "datum-gui-app"
+version.workspace = true
+edition.workspace = true
+
+[features]
+visual = ["dep:image", "datum-gui-render/visual"]
+
+[[bin]]
+name = "datum-gui"
+path = "src/main.rs"
+
+[dependencies]
+eda-engine = { path = "../engine" }
+datum-gui-protocol = { path = "../gui-protocol" }
+datum-gui-render = { path = "../gui-render" }
+datum-gui-viewport = { path = "../gui-viewport" }
+datum-terminal-core = { path = "../terminal-core" }
+anyhow.workspace = true
+arboard.workspace = true
+clap.workspace = true
+image = { version = "0.25.10", optional = true }
+libc.workspace = true
+pollster.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+winit.workspace = true
+wgpu.workspace = true
+
+[dev-dependencies]
+uuid.workspace = true

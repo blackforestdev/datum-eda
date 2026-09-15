@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<eagle version="9.6.2">
+  <drawing>
+    <library name="demo-logic">
+      <packages>
+        <package name="DIP-4">
+          <wire x1="-0.12" y1="0.08" x2="0.12" y2="0.08" width="0.006" layer="21"/>
+          <pad name="1" x="-0.09" y="0.05" drill="0.03"/>
+          <pad name="2" x="-0.09" y="-0.05" drill="0.03"/>
+          <pad name="3" x="0.09" y="0.05" drill="0.03"/>
+          <pad name="4" x="0.09" y="-0.05" drill="0.03"/>
+        </package>
+      </packages>
+      <symbols>
+        <symbol name="NAND_GATE">
+          <pin name="A" x="-0.3" y="0.1" direction="in"/>
+          <pin name="B" x="-0.3" y="-0.1" direction="in"/>
+          <pin name="Y" x="0.3" y="0.0" direction="out"/>
+        </symbol>
+      </symbols>
+      <devicesets>
+        <deviceset name="74LVC2G00" prefix="U">
+          <gates>
+            <gate name="A" symbol="NAND_GATE" x="0" y="0"/>
+            <gate name="B" symbol="NAND_GATE" x="1" y="0"/>
+          </gates>
+          <devices>
+            <device name="" package="DIP-4">
+              <connects>
+                <connect gate="A" pin="A" pad="1"/>
+                <connect gate="A" pin="Y" pad="2"/>
+                <connect gate="B" pin="A" pad="3"/>
+                <connect gate="B" pin="Y" pad="4"/>
+              </connects>
+            </device>
+          </devices>
+        </deviceset>
+      </devicesets>
+    </library>
+  </drawing>
+</eagle>

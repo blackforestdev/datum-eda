@@ -1,0 +1,28 @@
+[fixture]
+name = "revision-release"
+lane = "A"
+suite = "revision-workspace"
+fixture_format_version = 1
+
+[input]
+project_path = "crates/engine/testdata/golden/text/native/text-density-repro"
+project_kind = "datum-native"
+revision_surface = "release"
+
+[viewport]
+width_px = 1280
+height_px = 768
+center_mm = [105.0, 75.0]
+zoom_mm_per_px = 0.16
+ui_scale_factors = [1.0]
+
+[golden]
+filename = "release.golden.png"
+diff_policy = "exact"
+diff_tolerance_per_pixel = 0
+diff_tolerance_total_px_pct = 0.0
+ssim_threshold = 0.0
+mask_filename = ""
+
+[blank_check]
+expect_non_blank_pct = 1.0

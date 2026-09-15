@@ -1,0 +1,1 @@
+[{"code":"input_without_explicit_driver","component":null,"message":"input pins on net IN_P have no explicit driver, but the net includes passive biasing/components: Q1.1","net_name":"IN_P","objects":[["pin","Q1.1"]],"pin":null,"severity":"Info","waived":false}]

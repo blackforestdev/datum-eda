@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "uuid": "90000000-0000-4000-8000-000000000001",
+  "entity": "40000000-0000-4000-8000-000000000001",
+  "package": "50000000-0000-4000-8000-000000000001",
+  "default_footprint": "60000000-0000-4000-8000-000000000001",
+  "default_pin_pad_map": "a0000000-0000-4000-8000-000000000001",
+  "pad_map": {},
+  "mpn": "DATUM-OPAMP-SOIC8",
+  "manufacturer": "Datum",
+  "manufacturer_jep106": null,
+  "value": "OPAMP",
+  "description": "Datum-authored native baseline single op amp in SOIC-8",
+  "datasheet": "",
+  "parametric": {
+    "channels": "1",
+    "package": "SOIC-8"
+  },
+  "orderable_mpns": [],
+  "packaging_options": [],
+  "tags": [
+    "datum-authored-baseline-v1",
+    "native-authored"
+  ],
+  "lifecycle": "Active",
+  "base": null,
+  "behavioural_models": []
+}

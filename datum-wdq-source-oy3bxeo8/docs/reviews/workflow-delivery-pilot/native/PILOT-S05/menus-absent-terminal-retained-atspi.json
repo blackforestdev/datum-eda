@@ -1,0 +1,16 @@
+[
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/root",
+    "properties": "({'Name': <'Datum EDA'>, 'Description': <'Datum EDA application'>, 'Parent': <(':1.2', objectpath '/org/a11y/atspi/accessible/root')>, 'ChildCount': <1>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'datum-eda'>, 'HelpText': <''>},)",
+    "states": "([uint32 1124073728, 0],)",
+    "children": "([(':1.1', objectpath '/org/a11y/atspi/accessible/terminal')],)"
+  },
+  {
+    "bus": ":1.1",
+    "path": "/org/a11y/atspi/accessible/terminal",
+    "properties": "({'Name': <'Terminal'>, 'Description': <'Native terminal session'>, 'Parent': <(':1.1', objectpath '/org/a11y/atspi/accessible/root')>, 'ChildCount': <0>, 'Locale': <'C.UTF-8'>, 'AccessibleId': <'terminal-3730677-1788727173948825533'>, 'HelpText': <''>},)",
+    "states": "([uint32 1124206976, 64],)",
+    "children": "(@a(so) [],)"
+  }
+]

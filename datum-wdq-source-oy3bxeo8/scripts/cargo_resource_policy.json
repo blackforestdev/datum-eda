@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "lock_path": "/tmp/datum-eda-cargo-resource.lock",
+  "lock_timeout_seconds": 1800,
+  "minimum_tmp_free_gib": 6,
+  "minimum_target_filesystem_free_gib": 20,
+  "target_soft_limit_gib": 20,
+  "target_hard_limit_gib": 40,
+  "forbid_tmp_target": true,
+  "proof_incremental": false
+}

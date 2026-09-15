@@ -1,0 +1,54 @@
+# Owner-only activation handoff
+
+Preparation succeeded; promotion has NOT been performed. This local candidate
+reference retains an object, not authority. Your existing ACCEPT and two DEFER
+responses remain valid. This transaction does not authorize Preferences GP-CM05.
+
+Candidate: `9564368735dccada966388e76f7adcc2380b83b8`
+Comparison base: `c386a801dfc70577f232719a360a15c11f48ea8e`
+Packet: `ab71468a0acd0e845f5e7cd5e2b21aae5121a85dfd5c2d72fa2f5f372c5745a0`
+Review: `b4c214907e43eb4ae7328a005c33e7558f215791928a77cc469edb167b7d1fba`
+
+Review first: inspect the six-file proposal and the external hook. The only
+predecessor change removes this pilot from its remaining-unblocks lists. Other
+work must stay paused during publication. Do not use an older preparation if
+HEAD moved; regenerate against a fresh coordinated base instead of forcing it.
+
+```bash
+git -C /home/bfadmin/Documents/datum-eda diff c386a801dfc70577f232719a360a15c11f48ea8e 9564368735dccada966388e76f7adcc2380b83b8 --stat
+git -C /home/bfadmin/Documents/datum-eda diff c386a801dfc70577f232719a360a15c11f48ea8e 9564368735dccada966388e76f7adcc2380b83b8
+```
+
+Only the project owner may select this candidate as trusted authority and run
+the following block after review. The first validator invocation is read-only.
+Publication/configuration happen only if it passes. Any failure stops the block;
+do not bypass a refusal or infer that a partially completed block activated the
+gate. Keep this external directory available: the hook depends on its pinned
+runner. Do not modify that runner or move/delete it after installation.
+
+```bash
+(
+set -euo pipefail
+cd /home/bfadmin/Documents/datum-eda
+test "$(git rev-parse HEAD)" = c386a801dfc70577f232719a360a15c11f48ea8e
+test -z "$(git status --porcelain)"
+python3 /home/bfadmin/Documents/datum-wdq-activation-final/candidate/scripts/check_workflow_delivery.py --root /home/bfadmin/Documents/datum-eda --enforce --authority-ref 9564368735dccada966388e76f7adcc2380b83b8 --base-ref c386a801dfc70577f232719a360a15c11f48ea8e --environment-path docs/reviews/workflow-delivery-pilot/proof-artifacts/environment.json --candidate-ref 9564368735dccada966388e76f7adcc2380b83b8
+test "$(git rev-parse HEAD)" = c386a801dfc70577f232719a360a15c11f48ea8e
+test -z "$(git status --porcelain)"
+git merge --ff-only 9564368735dccada966388e76f7adcc2380b83b8
+git config --local datum.workflowDeliveryAuthorityRef 9564368735dccada966388e76f7adcc2380b83b8
+git config --local datum.workflowDeliveryBaseRef c386a801dfc70577f232719a360a15c11f48ea8e
+git config --local datum.workflowDeliveryEnvironmentPath docs/reviews/workflow-delivery-pilot/proof-artifacts/environment.json
+git config --local datum.workflowDeliveryRunnerPath /home/bfadmin/Documents/datum-wdq-activation-final/candidate/scripts/check_workflow_delivery.py
+git config --local core.hooksPath /home/bfadmin/Documents/datum-wdq-activation-final/owner-hooks
+python3 /home/bfadmin/Documents/datum-wdq-activation-final/candidate/scripts/check_workflow_delivery.py --root /home/bfadmin/Documents/datum-eda --enforce --authority-ref 9564368735dccada966388e76f7adcc2380b83b8 --base-ref c386a801dfc70577f232719a360a15c11f48ea8e --environment-path docs/reviews/workflow-delivery-pilot/proof-artifacts/environment.json --staged
+/home/bfadmin/Documents/datum-wdq-activation-final/owner-hooks/pre-commit
+python3 scripts/project_status.py check
+)
+```
+
+Return the candidate/base IDs and the complete verification output, including
+any failure. G06 is not reported as operationally complete until publication,
+configuration and blocking verification all succeed. No further enrollment,
+product acceptance, or successor selection is implied. Earlier incomplete status
+notes in the handoff are historical only after this transaction succeeds.

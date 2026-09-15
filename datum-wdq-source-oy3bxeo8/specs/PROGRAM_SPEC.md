@@ -1,0 +1,343 @@
+# Program Specification
+
+> **RECONCILIATION (2026-07-06).** This file is the *legacy milestone master*
+> (M0–M4, R1) from **before** the product-mechanics course correction. It is
+> **not** the current roadmap authority and is **not** in the CLAUDE.md authority
+> ordering (CLAUDE.md → product-mechanics + `docs/decisions/` → `docs/contracts/`
+> → `specs/PROGRESS.md`); for scope and sequencing it is subordinate to all four.
+>
+> - **HISTORICAL (original plan, not current scope):** the "v1 Definition"
+>   (including *"v1 does not: create designs, edit designs, route, export
+>   manufacturing files, or provide a GUI"*) and the "Milestone Exit Criteria"
+>   (M0–M4). Native authoring, export, and the GUI are now **active** work — see
+>   `docs/decisions/` and the Active Frontier at the top of `specs/PROGRESS.md`.
+>   Do not cite these sections as current product limits.
+> - **STILL LIVE AND GOVERNED:** the *subordinate-spec ownership map* below (which
+>   formal spec owns which contract) and the *Standards And Compliance Governance*
+>   terms + the *Standards Integration Gate*. These remain in force.
+>
+> For "what is current" and "what is next," read the Active Frontier in
+> `specs/PROGRESS.md` and the decision records — never infer current scope from
+> the milestone/v1 sections here.
+
+## Ownership and Precedence
+
+This document is the master entry point for the formal specification set.
+It defines:
+- product scope
+- milestone sequencing
+- milestone exit criteria
+- non-goals
+- subordinate spec ownership
+
+The subordinate formal specifications own their respective contracts:
+- `specs/ENGINE_SPEC.md`: core types, invariants, operations, serialization,
+  and engine API
+- `specs/IMPORT_SPEC.md`: source-format mapping, import identity, `.ids.json`,
+  and fidelity/lossiness rules
+- `specs/STANDARDS_COMPLIANCE_SPEC.md`: standards coverage registry, footprint
+  and schematic convention policy, compliance metadata requirements, and
+  standards-traceability rules
+- `specs/SCHEMATIC_CONNECTIVITY_SPEC.md`: schematic net resolution, hierarchy,
+  buses, diagnostics, and deterministic connectivity recomputation
+- `specs/ERC_SPEC.md`: electrical semantics, ERC rule set, and ERC result model
+- `specs/CHECKING_ARCHITECTURE_SPEC.md`: shared checking domains, waiver model,
+  and shared reporting rules
+- `specs/SCHEMATIC_EDITOR_SPEC.md`: authored schematic model, editing semantics,
+  and schematic operation coverage
+- `specs/MCP_API_SPEC.md`: transport/session model, method catalog, payload
+  schemas, and error contracts
+- `specs/NATIVE_FORMAT_SPEC.md`: native project persistence, schema layout,
+  versioning, and migration rules
+
+Precedence rules:
+- If a contract appears in both `docs/` and `specs/`, `specs/` wins.
+- `docs/` exists to capture rationale, tradeoffs, and design context.
+- Current explicit exception: `docs/CANONICAL_IR.md` remains canonical until it
+  is promoted or subsumed by formal spec files.
+
+Status tracking rule:
+- `specs/PROGRESS.md` is the sole source of truth for implementation status.
+- This file defines milestone contracts and non-goals only.
+- `specs/PROGRESS.md` should remain a compact milestone/checkpoint/frontier
+  tracker; slice-by-slice ledgers and detailed adjacent-contract history belong
+  in milestone shard docs such as `specs/progress/*.md`.
+
+## Scope Integrity Terms
+
+The following terms are normative for scope framing across this repository:
+
+- **Product identity**: Datum EDA as an AI-native EDA platform.
+  This is cross-milestone and does not shrink to current feature coverage.
+- **Implementation slice**: the currently shipped capability subset at a given
+  milestone boundary (for example `M2` import/query/check, current `M3` write
+  subset).
+- **Execution strategy**: sequencing choices used to deliver the implementation
+  slice with low risk (for example KiCad-first interoperability).
+- **Non-goals**: explicit exclusions for a milestone, used to control delivery
+  scope. Non-goals for one milestone are not permanent product exclusions.
+
+Interpretation rule:
+- Do not infer product identity from implementation-slice limits.
+- Do not infer permanent product limits from milestone non-goals.
+
+## v1 Definition
+
+> **HISTORICAL** (see reconciliation banner at top): records the original v1
+> plan, not current scope. Native authoring/export/GUI are active per the Active
+> Frontier in `specs/PROGRESS.md`.
+
+v1 = PLAN.md milestone M2.
+v1 is the first public release.
+
+**Product identity (all milestones)**: Datum EDA is an AI-native EDA platform
+with a deterministic engine core and machine-native control surfaces.
+
+**v1 implementation slice**: the best AI/CLI design analysis and automation
+environment for Linux PCB projects.
+
+**v1 does**: import KiCad/Eagle designs, query all design data, run ERC/DRC,
+and expose that surface via MCP and CLI.
+
+**v1 does not**: create designs, edit designs, route, export manufacturing
+files, or provide a GUI.
+
+Note: KiCad/Eagle-first support in v1 is an execution strategy for rapid,
+verifiable delivery. It is not the long-term product boundary.
+
+## Standards And Compliance Governance
+
+Datum's research corpus includes standards findings that must not remain
+implicit. A researched standard is considered integrated only when a
+controlling spec assigns it one of the following dispositions:
+
+- implemented
+- planned
+- reference-only
+- deferred with explicit prerequisite
+- out of scope
+
+Silence is not an acceptable disposition.
+
+The controlling source for this policy is
+`specs/STANDARDS_COMPLIANCE_SPEC.md`. Research and guidance inputs feeding that
+spec currently include:
+
+- `research/standards-audit/STANDARDS_AUDIT.md`
+- `research/ipc-compliance/IPC_COMPLIANCE_RESEARCH.md`
+- `docs/STANDARDS_COMPLIANCE_INTEGRATION_GUIDANCE.md`
+- `docs/IPC_FOOTPRINT_SYSTEM.md`
+
+Minimum program-level requirement:
+- milestone planning and milestone closure must not introduce or preserve a
+  standards blind spot already identified in repository research without an
+  explicit disposition recorded in the controlling standards-compliance spec.
+
+---
+
+## Milestone Exit Criteria
+
+> **HISTORICAL** (see reconciliation banner at top): the M0–M4 milestone
+> contracts record the original delivery plan and remain truthful evidence of
+> what shipped. They are **not** the current roadmap; current sequencing is the
+> Active Frontier in `specs/PROGRESS.md` + `docs/decisions/`.
+
+### M0: Canonical IR + Foundation
+
+**Exit gate**: `cargo test` passes, all items below verified.
+
+| Criterion | Threshold |
+|-----------|-----------|
+| Pool types implemented | Unit, Pin, Entity, Gate, Package, Pad, Padstack, Part, Symbol |
+| Pool serialization | Round-trip: struct → JSON → struct == original, 100% of types |
+| Pool SQLite index | Create, insert, search by keyword, search by parametric value |
+| Deterministic serialization | Byte-identical output on 3 consecutive runs |
+| Eagle .lbr import | 20 libraries parse without error |
+| Eagle canonicalization | Import `.lbr` → canonical pool JSON → deserialize == original canonical pool, 20 libraries |
+| Eagle deterministic re-import | Same `.lbr` imported twice → identical canonical pool objects and UUIDs |
+| RuleScope IR | Expression tree enum compiles, serializes, leaf evaluator works |
+| UUID v5 import identity | Same .lbr imported twice → identical UUIDs |
+| .ids.json sidecar | Written on import, restored on re-import |
+
+**Non-goals for M0**: board data model, schematic data model, ERC/DRC, CLI,
+MCP, Eagle `.lbr` write-back.
+
+### M1: Design Ingestion + Query Engine
+
+**Exit gate**: DOA2526 imports and queries correctly. Golden tests pass.
+
+| Criterion | Threshold |
+|-----------|-----------|
+| KiCad .kicad_pcb import | DOA2526 + 4 additional designs, 0 import errors |
+| KiCad .kicad_sch import | DOA2526 + 2 additional schematics, 0 import errors |
+| Eagle .brd/.sch import | 3 designs, 0 import errors |
+| Schematic connectivity | Net resolution correct on imported schematics with hierarchy, labels, and power symbols |
+| Board connectivity | Net-to-pin resolution correct on all imported boards |
+| Airwire computation | Matches KiCad's unrouted count on DOA2526 |
+| Board diagnostics | `net_without_copper`, `via_only_net`, and `partially_routed_net` classified correctly on DOA2526 and companion fixtures |
+| Query API | get_netlist, get_components, get_nets, get_net_info, get_schematic_net_info, get_board_summary, get_schematic_summary, get_sheets, get_symbols, get_ports, get_labels, get_buses, get_bus_entries, get_noconnects, get_hierarchy, get_connectivity_diagnostics, get_unrouted — all return correct data on DOA2526 |
+| Golden tests | 8+ designs with checked-in golden files |
+| Deterministic import | Same file → byte-identical canonical JSON on 3 runs |
+| Import fidelity (KiCad) | ≥ 90% features passing on fidelity matrix |
+| Import fidelity (Eagle) | ≥ 85% features passing on fidelity matrix |
+
+**Non-goals for M1**: full ERC corpus signoff, full DRC engine, write
+operations, export, native format, GUI.
+
+### M2: ERC + DRC + Reporting + MCP/CLI (v1)
+
+**Exit gate**: An MCP-compatible AI client can open DOA2526 via MCP, query it,
+run ERC/DRC.
+`tool erc design.kicad_sch` and `tool drc board.kicad_pcb` work in CI.
+
+| Criterion | Threshold |
+|-----------|-----------|
+| ERC rules implemented | output_to_output_conflict, undriven_input, power_without_source, noconnect_connected, unconnected_required_pin, passive_only_net, hierarchical_connectivity_mismatch |
+| ERC correctness | 0% false negative rate on known ERC violations in test corpus |
+| ERC correctness | ≤ 5% false positive rate on vetted clean schematics in test corpus |
+| DRC rules implemented | clearance_copper, track_width, via_hole, via_annular, connectivity, unconnected_pins, silk_clearance |
+| DRC correctness | ≤ 5% false positive rate vs. KiCad DRC on DOA2526 |
+| DRC correctness | 0% false negative rate on known violations in test corpus |
+| MCP tools | open_project, close_project, search_pool, get_part, get_package, get_package_change_candidates, get_part_change_candidates, get_component_replacement_plan, get_scoped_component_replacement_plan, edit_scoped_component_replacement_plan, replace_components, apply_component_replacement_plan, apply_component_replacement_policy, apply_scoped_component_replacement_policy, apply_scoped_component_replacement_plan, get_board_summary, get_schematic_summary, get_sheets, get_symbols, get_ports, get_labels, get_buses, get_bus_entries, get_noconnects, get_symbol_fields, get_hierarchy, get_netlist, get_components, get_net_info, get_schematic_net_info, get_connectivity_diagnostics, get_design_rules, get_unrouted, run_erc, run_drc, explain_violation |
+| CLI commands | `tool import`, `tool query`, `tool plan`, `tool erc`, `tool drc`, `tool pool search`; native `project` production/check/output commands include `import-kicad-footprint`, `import-kicad-board`, `import-kicad-schematic`, `import-eagle-library`, `create-pool-library-object`, `create-pool-unit`, `set-pool-unit-pin`, `create-pool-symbol`, `add-pool-symbol-line`, `add-pool-symbol-rect`, `add-pool-symbol-circle`, `add-pool-symbol-polygon`, `add-pool-symbol-arc`, `add-pool-symbol-text`, `set-pool-symbol-pin-anchor`, `create-pool-entity`, `create-pool-padstack`, `create-pool-package`, `set-pool-package-pad`, `set-pool-package-courtyard-rect`, `set-pool-package-courtyard-polygon`, `add-pool-package-silkscreen-line`, `add-pool-package-silkscreen-rect`, `add-pool-package-silkscreen-circle`, `add-pool-package-silkscreen-polygon`, `add-pool-package-silkscreen-arc`, `add-pool-package-silkscreen-text`, `add-pool-package-model-3d`, `create-pool-part`, `set-pool-part-metadata`, `set-pool-part-parametric`, `set-pool-part-orderable-mpns`, `set-pool-part-tags`, `set-pool-part-pad-map-entry`, `set-pool-part-pad-map`, `attach-pool-part-model`, `detach-pool-part-model`, `gc-pool-models`, `generate-ipc7351b-two-terminal-chip`, `generate-ipc7351b-soic`, `set-pool-library-object`, `delete-pool-library-object`, `set-project-name`, `set-project-rules`, `create-project-rule`, `set-project-rule`, `delete-project-rule`, `create-sheet`, `delete-sheet`, `rename-sheet`, `create-sheet-definition`, `create-sheet-instance`, `delete-sheet-instance`, `move-sheet-instance`, `bind-sheet-instance-port`, `unbind-sheet-instance-port`, `set-board-name`, `generate-standards-repair-proposals`, `review-proposal`, `apply-proposal`, `create-panel-projection`, `create-manufacturing-plan`, `create-gerber-output-job`, `update-output-job`, `export-gerber-set`, `validate-gerber-set`, `query pool-library-objects`, `query pool-models`, `query panel-projections`, `query manufacturing-plans`, `query output-jobs`, `query import-map`, and `query proposals` |
+| MCP registration | Works in host MCP client config; tools callable via a standards-compliant MCP client |
+| Test corpus | 10+ designs with ERC/DRC golden files |
+| CLI exit codes | 0 = pass, 1 = violations, 2 = error |
+| Response time | DRC on DOA2526 < 5 seconds |
+| Response time | ERC on DOA2526 schematic < 3 seconds |
+
+**Non-goals for M2**: write operations, export, native format, GUI.
+
+### R1: Commercial Interop Research Track
+
+This is a post-`M2` research stream, not a delivery milestone and not a
+support commitment. Its purpose is to prepare future migration paths from
+commercial Windows-only EDA tools without distorting the `M0-M2` foundation.
+
+| Criterion | Threshold |
+|-----------|-----------|
+| Corpus gathered | Representative Altium, PADS, and OrCAD/Allegro sample set assembled |
+| Format analysis | Native, exported, and tool-assisted ingestion paths documented per target |
+| Legal posture | Licensing/reverse-engineering posture documented for each proposed path |
+| Migration rubric | Exact / approximated / preserved-as-metadata / unsupported categories defined |
+| Library extraction prototypes | At least one commercial target evaluated at library/component level |
+| Recommendation | First supported commercial target and ingestion strategy selected |
+
+**Non-goals for R1**: shipping commercial import support, write-back, fidelity guarantees, CLI or MCP surface changes.
+
+R1 foundation dependency:
+- `R1-G0` is the minimum history/context gate for downstream milestone closure.
+- `M3` and `M4` must not be marked complete in `specs/PROGRESS.md` until
+  `R1-G0 Foundation Gate` is `[x]`.
+- `docs/R1_G0_FOUNDATION.md` is the controlling foundation for downstream
+  interop-claim framing:
+  - tool lineage and ingestion-path assumptions
+  - migration pain taxonomy
+  - fidelity boundary policy (`exact` / `approximated` /
+    `preserved-as-metadata` / `unsupported`)
+
+### M3: Write Operations on Imported Designs
+
+**Exit gate**: AI agent can move components and save back to KiCad format.
+
+Imported schematic editing is intentionally deferred. `M3` remains board-side
+write-back on imported designs only. Schematic parity is achieved by making the
+native schematic editor in `M4` equally specified and equally scriptable, not
+by forcing fragile imported-schematic write-back into `M3`.
+
+`M3` closure must be interpreted through `R1-G0`:
+- `M3` write-back claims apply only to the implemented KiCad imported-board
+  slice, not to a generic "interop is solved" narrative.
+- Accepted `M3` lossiness must remain explicitly bounded and reportable.
+- `opens in KiCad without errors` is necessary but not sufficient; fidelity
+  claims must respect the exact/approximated/preserved-as-metadata/unsupported
+  categories defined by `R1-G0`.
+
+| Criterion | Threshold |
+|-----------|-----------|
+| Operations implemented | MoveComponent, RotateComponent, DeleteComponent, SetValue, SetReference, AssignPart, SetPackage, SetPackageWithPart, SetNetClass, SetDesignRule, DeleteTrack, DeleteVia |
+| Undo/redo | 100% of operations undoable |
+| Operation determinism | Same operation sequence → identical result |
+| KiCad write-back | Import → modify → export → opens in KiCad without errors |
+| Round-trip fidelity | Unmodified objects byte-identical after round-trip |
+| MCP write tools | move_component, rotate_component, flip_component, set_value, set_reference, assign_part, set_package, set_package_with_part, set_net_class, set_design_rule, delete_component, delete_track, delete_via, undo, redo, save |
+| Derived data update | Connectivity, airwires, DRC recompute after each operation |
+| CLI modify command | `tool modify <design> --move U1 50,30` works |
+
+**Non-goals for M3**: imported schematic editing, native format, routing, export.
+
+### M4: Native Project Creation + Export
+
+**Exit gate**: Create a design from schematic to Gerber without a GUI.
+
+`M4` must also consume `R1-G0`:
+- native-format and export claims must keep vendor-specific migration
+  semantics out of the canonical model unless they have a stable cross-tool
+  meaning
+- future migration/versioning rules must preserve provenance and explicit
+  loss reporting rather than silently flatten source semantics
+- milestone completion remains gated on `R1-G0` because native persistence is
+  one of the prerequisites for credible future commercial migration paths
+
+| Criterion | Threshold |
+|-----------|-----------|
+| Native format | JSON, schema documented, versioned |
+| Schematic operations | PlaceSymbol, MoveSymbol, RotateSymbol, MirrorSymbol, DeleteSymbol, DrawWire, DeleteWire, PlaceJunction, DeleteJunction, PlaceLabel, RenameLabel, DeleteLabel, PlacePowerSymbol, CreateBus, EditBusMembers, DeleteBus, PlaceBusEntry, DeleteBusEntry, CreateSheetInstance, MoveSheetInstance, DeleteSheetInstance, PlaceHierarchicalPort, EditHierarchicalPort, DeleteHierarchicalPort, PlaceNoConnect, DeleteNoConnect, SetFieldValue, MoveField, SetFieldVisibility, Annotate, AssignPart, AssignGate |
+| Board operations | PlaceComponent, Move/Rotate/FlipComponent, AlignComponents, AddTrack, AddVia, AddZone, EditZone, DeleteZone, PourCopper, AddKeepout |
+| Schematic query parity | Labels, buses, bus entries, no-connects, hierarchy, field queries available through engine API, CLI, and MCP |
+| Forward annotation | ECO with per-change accept/reject |
+| Gerber export | RS-274X, validates in gerbv without warnings |
+| Drill export | Excellon, validates in gerbv |
+| BOM export | CSV and JSON |
+| PnP export | CSV |
+| Gerber comparison | Matches KiCad Gerber output on DOA2526 (layer alignment, aperture correctness) |
+
+**Non-goals for M4**: placement solver, routing solver, GUI, 3D.
+
+Variants are deferred beyond `M4` except for canonical data-model ownership.
+The foundation freezes variants as project-level logical-component fit choices;
+editing, UI, and export behavior for variants are specified in a later
+milestone.
+
+### Standards Integration Gate (Cross-Milestone)
+
+This is a permanent governance gate, not a standalone delivery milestone.
+
+Required for any milestone that adds new library, schematic-authoring,
+manufacturing-export, compliance-metadata, or standards-facing capability:
+
+| Criterion | Threshold |
+|-----------|-----------|
+| Research disposition completeness | Every relevant researched standard family referenced by the change is classified in `specs/STANDARDS_COMPLIANCE_SPEC.md` as implemented, planned, reference-only, deferred with prerequisite, or out of scope |
+| Guidance intermediary | New standards research is lifted through a guidance doc in `docs/` before or with the controlling spec edit |
+| Cross-spec parity | If the change affects engine data, project persistence, import/export, checking, or MCP/CLI exposure, the relevant domain specs are updated in the same change |
+| No silent compliance claims | User-visible wording and milestone text must not imply support for a standard that is only vocabulary-level or partially scaffolded |
+| Deferment boundedness | Any deferred standard-facing capability must record the prerequisite that gates it |
+
+---
+
+## User Stories
+
+### M2 (v1) User Stories
+- As an EE, I run `tool erc design.kicad_sch` in CI and the build fails on electrical mistakes.
+- As an EE, I run `tool drc board.kicad_pcb` in CI and the build fails on clearance violations.
+- As an EE, I ask my MCP-compatible AI client "what nets are in this design?" and get a structured answer via MCP.
+- As an EE, I ask my MCP-compatible AI client "run ERC and tell me what is undriven" and get a human-readable explanation.
+- As an EE, I ask my MCP-compatible AI client "run DRC and explain the worst violation" and get a human-readable explanation.
+- As an EE, I search the pool for "100nF 0402" and get matching parts with MPNs.
+- As an EE, I import an Eagle design and query its component list.
+
+### M3 User Stories
+- As an EE, I ask my MCP-compatible AI client "move U1 to (25, 15) and rotate 90 degrees" and it modifies my KiCad design.
+- As an EE, I ask my MCP-compatible AI client "change all 10k resistors to 4.7k" and it does a batch modification.
+- As an EE, I undo the last change via CLI.
+- As an EE, I save modifications back to .kicad_pcb and open in KiCad.
+
+### M4 User Stories
+- As an EE, I create a new project from the command line.
+- As an EE, I build a schematic by placing symbols and wiring via CLI/MCP.
+- As an EE, I create multi-sheet hierarchy, ports, buses, and no-connect markers from CLI/MCP.
+- As an EE, I edit symbol fields, assign gates on multi-gate devices, and annotate deterministically.
+- As an EE, I inspect labels, buses, hierarchy links, symbol fields, and connectivity diagnostics through the same MCP surface I use for board data.
+- As an EE, I forward-annotate to create a board, review the ECO, and accept changes.
+- As an EE, I export Gerber files and submit to JLCPCB.

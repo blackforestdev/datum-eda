@@ -1,0 +1,27 @@
+(kicad_sch
+  (version 20230121)
+  (generator "datum-eda-test")
+  (uuid aaaa1111-1111-1111-1111-111111111111)
+  (paper "A4")
+  (hierarchical_label "SUB_IN"
+    (shape input)
+    (at 20 20 0)
+    (effects
+      (font (size 1.27 1.27)))
+    (uuid bbbb2222-2222-2222-2222-222222222222))
+  (sheet
+    (at 30 10)
+    (size 20 10)
+    (fields_autoplaced)
+    (stroke
+      (width 0)
+      (type default))
+    (fill
+      (color 0 0 0 0))
+    (uuid cccc3333-3333-3333-3333-333333333333)
+    (pin "SUB_OUT" input
+      (at 30 15 0)
+      (effects
+        (font (size 1.27 1.27))))
+    (property "Sheetname" "Sub" (at 30 10 0))
+    (property "Sheetfile" "sub.kicad_sch" (at 30 12 0))))

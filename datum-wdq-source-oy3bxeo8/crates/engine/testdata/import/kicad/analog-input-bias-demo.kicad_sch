@@ -1,0 +1,41 @@
+(kicad_sch
+  (version 20230121)
+  (generator "datum-eda-test")
+  (uuid 55555555-5555-5555-5555-555555555556)
+  (paper "A4")
+  (lib_symbols
+    (symbol "Device:QIN"
+      (pin input line
+        (at 0 0 0)
+        (length 2.54)
+        (name "B" (effects (font (size 1.27 1.27))))
+        (number "1" (effects (font (size 1.27 1.27))))))
+    (symbol "Device:RBIAS"
+      (pin passive line
+        (at 0 0 0)
+        (length 2.54)
+        (name "~" (effects (font (size 1.27 1.27))))
+        (number "1" (effects (font (size 1.27 1.27)))))))
+  (symbol
+    (lib_id "Device:QIN")
+    (at 20 20 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (uuid 66666666-6666-6666-6666-666666666667)
+    (property "Reference" "Q1" (at 20 18 0))
+    (property "Value" "QIN" (at 20 22 0)))
+  (symbol
+    (lib_id "Device:RBIAS")
+    (at 20 20 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (uuid 77777777-7777-7777-7777-777777777778)
+    (property "Reference" "R1" (at 24 18 0))
+    (property "Value" "10k" (at 24 22 0)))
+  (label "IN_P"
+    (at 20 20 0)
+    (effects
+      (font (size 1.27 1.27)))
+    (uuid 88888888-8888-8888-8888-888888888889)))

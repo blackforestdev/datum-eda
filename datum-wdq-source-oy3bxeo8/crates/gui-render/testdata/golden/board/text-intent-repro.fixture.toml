@@ -1,0 +1,29 @@
+# Fixture purpose:
+#   Verifies intent/family policy for native Datum board text.
+
+[fixture]
+name = "text-intent-repro"
+lane = "A"
+suite = "board-text"
+fixture_format_version = 1
+
+[input]
+project_path = "crates/engine/testdata/golden/text/native/text-intent-repro"
+project_kind = "datum-native"
+
+[viewport]
+width_px = 1024
+height_px = 768
+center_mm = [110.0, 75.0]
+zoom_mm_per_px = 0.16
+
+[golden]
+filename = "text-intent-repro.golden.png"
+diff_policy = "exact"
+diff_tolerance_per_pixel = 0
+diff_tolerance_total_px_pct = 0.0
+ssim_threshold = 0.0
+mask_filename = ""
+
+[blank_check]
+expect_non_blank_pct = 1.0

@@ -1,0 +1,10 @@
+---
+description: Use Datum's canonical portable workflow inventory
+alwaysApply: true
+---
+
+<!-- DATUM-WORKFLOW-CATALOG:datum://workflows -->
+
+Read `datum://workflows` through the project-scoped Datum MCP server. This rule
+is a discovery pointer only; it does not redefine capabilities, review gates,
+or mutation semantics for Cursor.

@@ -1,0 +1,290 @@
+{
+  "component_mechanical_arcs": {},
+  "component_mechanical_circles": {},
+  "component_mechanical_lines": {},
+  "component_mechanical_polygons": {},
+  "component_mechanical_polylines": {},
+  "component_mechanical_texts": {},
+  "component_models_3d": {},
+  "component_pads": {},
+  "component_silkscreen": {},
+  "component_silkscreen_arcs": {},
+  "component_silkscreen_circles": {},
+  "component_silkscreen_polygons": {},
+  "component_silkscreen_polylines": {},
+  "component_silkscreen_texts": {},
+  "dimensions": [],
+  "keepouts": [],
+  "name": "Text Density Repro Board",
+  "net_classes": {},
+  "nets": {},
+  "outline": {
+    "closed": true,
+    "vertices": [
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 210000000,
+        "y": 0
+      },
+      {
+        "x": 210000000,
+        "y": 150000000
+      },
+      {
+        "x": 0,
+        "y": 150000000
+      }
+    ]
+  },
+  "packages": {},
+  "pads": {},
+  "schema_version": 1,
+  "stackup": {
+    "layers": [
+      {
+        "id": 1,
+        "layer_type": "Copper",
+        "name": "Top Copper",
+        "thickness_nm": 35000
+      },
+      {
+        "id": 2,
+        "layer_type": "SolderMask",
+        "name": "Top Mask",
+        "thickness_nm": 10000
+      },
+      {
+        "id": 3,
+        "layer_type": "Silkscreen",
+        "name": "Top Silk",
+        "thickness_nm": 10000
+      },
+      {
+        "id": 4,
+        "layer_type": "Paste",
+        "name": "Top Paste",
+        "thickness_nm": 10000
+      },
+      {
+        "id": 41,
+        "layer_type": "Mechanical",
+        "name": "Mechanical 41",
+        "thickness_nm": 0
+      }
+    ]
+  },
+  "texts": [
+    {
+      "height_nm": 5200000,
+      "layer": 37,
+      "position": {
+        "x": 10000000,
+        "y": 18000000
+      },
+      "render_intent": "annotation",
+      "rotation": 0,
+      "stroke_width_nm": 790000,
+      "text": "GAIN STAGE A1",
+      "uuid": "94000000-0000-0000-0000-000000000101"
+    },
+    {
+      "height_nm": 5200000,
+      "layer": 37,
+      "position": {
+        "x": 10000000,
+        "y": 24200000
+      },
+      "render_intent": "annotation",
+      "rotation": 0,
+      "stroke_width_nm": 790000,
+      "text": "GAIN STAGE A2",
+      "uuid": "94000000-0000-0000-0000-000000000102"
+    },
+    {
+      "height_nm": 4600000,
+      "layer": 37,
+      "position": {
+        "x": 10000000,
+        "y": 30400000
+      },
+      "render_intent": "documentation",
+      "rotation": 0,
+      "stroke_width_nm": 700000,
+      "text": "BIAS REF V1.200",
+      "uuid": "94000000-0000-0000-0000-000000000103"
+    },
+    {
+      "h_align": "center",
+      "height_nm": 6000000,
+      "layer": 37,
+      "position": {
+        "x": 10000000,
+        "y": 36600000
+      },
+      "render_intent": "branding",
+      "rotation": 0,
+      "stroke_width_nm": 912000,
+      "text": "FEED-FWD TRIM",
+      "uuid": "94000000-0000-0000-0000-000000000104"
+    },
+    {
+      "height_nm": 3800000,
+      "layer": 37,
+      "position": {
+        "x": 10000000,
+        "y": 50800000
+      },
+      "render_intent": "manufacturing",
+      "rotation": 0,
+      "stroke_width_nm": 578000,
+      "text": "R101 10K 1%",
+      "uuid": "94000000-0000-0000-0000-000000000105"
+    },
+    {
+      "height_nm": 3800000,
+      "layer": 37,
+      "position": {
+        "x": 10000000,
+        "y": 55800000
+      },
+      "render_intent": "manufacturing",
+      "rotation": 0,
+      "stroke_width_nm": 578000,
+      "text": "R102 10K 1%",
+      "uuid": "94000000-0000-0000-0000-000000000106"
+    },
+    {
+      "height_nm": 3800000,
+      "layer": 37,
+      "position": {
+        "x": 10000000,
+        "y": 60800000
+      },
+      "render_intent": "annotation",
+      "rotation": 0,
+      "stroke_width_nm": 578000,
+      "text": "Q1 CASCODE",
+      "uuid": "94000000-0000-0000-0000-000000000107"
+    },
+    {
+      "height_nm": 3800000,
+      "layer": 37,
+      "position": {
+        "x": 10000000,
+        "y": 65800000
+      },
+      "render_intent": "annotation",
+      "rotation": 0,
+      "stroke_width_nm": 578000,
+      "text": "Q2 CASCODE",
+      "uuid": "94000000-0000-0000-0000-000000000108"
+    },
+    {
+      "height_nm": 4200000,
+      "layer": 37,
+      "position": {
+        "x": 10000000,
+        "y": 76000000
+      },
+      "render_intent": "branding",
+      "rotation": 0,
+      "stroke_width_nm": 638000,
+      "text": "I/O CAL 2026A",
+      "uuid": "94000000-0000-0000-0000-000000000109"
+    },
+    {
+      "height_nm": 3600000,
+      "layer": 37,
+      "position": {
+        "x": 10000000,
+        "y": 83600000
+      },
+      "render_intent": "annotation",
+      "rotation": 0,
+      "stroke_width_nm": 548000,
+      "text": "OQDS8 OQDS8 OQDS8",
+      "uuid": "94000000-0000-0000-0000-000000000110"
+    },
+    {
+      "family": "jetbrains_mono",
+      "height_nm": 3600000,
+      "layer": 37,
+      "position": {
+        "x": 10000000,
+        "y": 92600000
+      },
+      "render_intent": "annotation",
+      "rotation": 0,
+      "stroke_width_nm": 548000,
+      "text": "mono_bus[7:0]",
+      "uuid": "94000000-0000-0000-0000-000000000111"
+    },
+    {
+      "height_nm": 3200000,
+      "layer": 37,
+      "position": {
+        "x": 10000000,
+        "y": 101600000
+      },
+      "render_intent": "documentation",
+      "rotation": 0,
+      "stroke_width_nm": 486000,
+      "text": "x-talk keepout note",
+      "uuid": "94000000-0000-0000-0000-000000000112"
+    },
+    {
+      "bold": false,
+      "family": "ibm_plex_sans_condensed",
+      "family_source": "explicit",
+      "h_align": "right",
+      "height_nm": 8100000,
+      "layer": 37,
+      "position": {
+        "x": 104000000,
+        "y": 34000000
+      },
+      "render_intent": "annotation",
+      "rotation": 270,
+      "stroke_width_nm": 1231200,
+      "style": "regular",
+      "text": "hero label density",
+      "uuid": "94000000-0000-0000-0000-000000000113",
+      "v_align": "bottom"
+    },
+    {
+      "h_align": "right",
+      "height_nm": 3400000,
+      "layer": 37,
+      "position": {
+        "x": 200000000,
+        "y": 116000000
+      },
+      "render_intent": "documentation",
+      "rotation": 0,
+      "stroke_width_nm": 517000,
+      "text": "dense notes align-right",
+      "uuid": "94000000-0000-0000-0000-000000000114",
+      "v_align": "bottom"
+    },
+    {
+      "height_nm": 2300000,
+      "layer": 37,
+      "position": {
+        "x": 146000000,
+        "y": 132500000
+      },
+      "render_intent": "manufacturing",
+      "rotation": 0,
+      "stroke_width_nm": 350000,
+      "text": "tiny curve odsq8",
+      "uuid": "94000000-0000-0000-0000-000000000115"
+    }
+  ],
+  "tracks": {},
+  "uuid": "94000000-0000-0000-0000-000000000003",
+  "vias": {},
+  "zones": {}
+}

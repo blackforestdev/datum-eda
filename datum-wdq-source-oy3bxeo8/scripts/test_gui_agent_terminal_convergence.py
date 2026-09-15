@@ -1,0 +1,650 @@
+#!/usr/bin/env python3
+"""Hermetic regressions for the terminal convergence guard."""
+
+from __future__ import annotations
+
+import importlib.util
+import tempfile
+import unittest
+from pathlib import Path
+
+
+MODULE_PATH = Path(__file__).with_name("check_gui_agent_terminal_convergence.py")
+SPEC = importlib.util.spec_from_file_location("terminal_convergence", MODULE_PATH)
+assert SPEC and SPEC.loader
+guard = importlib.util.module_from_spec(SPEC)
+SPEC.loader.exec_module(guard)
+
+
+class TerminalGridWriterGuardTest(unittest.TestCase):
+    def test_authoring_handoff_refresh_follows_extracted_owner(self) -> None:
+        authoring_source = """
+    pub(super) fn queue_authoring_terminal_handoff(&mut self) {
+        self.set_active_dock(DockTab::Terminal);
+        self.mark_terminal_workspace_refresh_pending();
+        self.write_foreign_shell_bytes(&bytes);
+    }
+
+    pub(super) fn trace_click(&self) {}
+"""
+        failures: list[str] = []
+        guard.check_authoring_handoff_refresh(authoring_source, failures)
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_authoring_handoff_refresh(
+            authoring_source.replace(
+                "self.mark_terminal_workspace_refresh_pending();",
+                "self.invalidate_frame();",
+            ),
+            failures,
+        )
+        self.assertEqual(
+            ["typed authoring handoffs must explicitly schedule workspace refresh"],
+            failures,
+        )
+
+        failures = []
+        guard.check_authoring_handoff_refresh(
+            authoring_source.replace(
+                "self.mark_terminal_workspace_refresh_pending();",
+                "self.invalidate_frame();",
+            ).replace(
+                "pub(super) fn trace_click(&self) {}",
+                "pub(super) fn trace_click(&self) { "
+                "self.mark_terminal_workspace_refresh_pending(); }",
+            ),
+            failures,
+        )
+        self.assertEqual(
+            ["typed authoring handoffs must explicitly schedule workspace refresh"],
+            failures,
+        )
+
+    def test_terminal_session_tabs_must_append_in_projected_order(self) -> None:
+        tab_strip = """
+for tab in tabs {
+    target: HitTarget::TerminalSessionTab(tab.session_id.clone());
+    x += tab_width + TAB_GAP_PX;
+}
+target: HitTarget::TerminalSessionNew;
+target: HitTarget::TerminalSessionClose(tab.session_id.clone());
+hovered_terminal_close_session_id;
+terminal_tab_drag;
+grab_offset_x;
+target_session_id;
+TEXT_ACCENT;
+"""
+        tests = "fn new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last() {} fn dragged_tab_renders_lifted_ghost_dimmed_source_and_destination_marker() {} fn guarded_tab_close_uses_dedicated_strip_chrome_without_covering_terminal_text() {}"
+        bottom_dock = "render_terminal_tab_strip();"
+        geometry = "fn default_dock_has_no_header_and_uses_every_affordable_row() {}"
+        failures: list[str] = []
+        guard.check_terminal_tab_strip(tab_strip, tests, bottom_dock, geometry, failures)
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_terminal_tab_strip(
+            tab_strip.replace("for tab in tabs", "for tab in tabs.rev()")
+            .replace("x += tab_width + TAB_GAP_PX", "x = strip.x")
+            .replace("target: HitTarget::TerminalSessionNew", "removed")
+            .replace("target: HitTarget::TerminalSessionClose(tab.session_id.clone())", "removed")
+            .replace("terminal_tab_drag", "removed"),
+            tests.replace(
+                "new_terminal_tabs_append_left_to_right_with_close_targets_and_plus_after_last",
+                "removed",
+            ).replace("dragged_tab_renders_lifted_ghost_dimmed_source_and_destination_marker", "removed"),
+            bottom_dock + '\n"SESSIONS"\n"SHELL SESSION /"\n"PROJECT TERMINAL"\nCOPY SCROLLBACK\nrender_terminal_header();\nrender_terminal_lifecycle_overlay();',
+            geometry + "\nsessions_row\nSESSIONS_BAND_PX\nHEADER_BAND_PX\nheader: Option<ScreenRectPx>",
+            failures,
+        )
+        self.assertTrue(any("for tab in tabs {" in failure for failure in failures))
+        self.assertTrue(any("x += tab_width" in failure for failure in failures))
+        self.assertTrue(any("TerminalSessionNew" in failure for failure in failures))
+        self.assertTrue(any("TerminalSessionClose" in failure for failure in failures))
+        self.assertTrue(any("terminal_tab_drag" in failure for failure in failures))
+        self.assertIn("ordered terminal tab-strip production proof is missing", failures)
+        self.assertTrue(any("redundant terminal session menu" in failure for failure in failures))
+        self.assertTrue(any("still reserves space" in failure for failure in failures))
+
+    def test_new_session_shortcut_and_monotonic_labels_are_pinned(self) -> None:
+        main = "TerminalKeyAction::NewSession => self.spawn_terminal_session_tab();"
+        keyboard = "terminal_new_session_shortcut(); runtime.spawn_terminal_session_tab();"
+        controls = '''
+pub(super) fn spawn_terminal_session_tab() {
+    self.begin_spawn_and_activate();
+    self.sync_terminal_tabs();
+    self.invalidate_frame();
+}
+pub(super) fn close_active_terminal_session() {}
+'''
+        terminal_input = (
+            "TerminalKeyAction::NewSession; terminal_new_session_shortcut(); KeyCode::KeyT;"
+        )
+        terminal_session = '''
+next_session_ordinal: usize;
+'''
+        terminal_spawn = '''
+let label = format!("shell {}", self.next_session_ordinal);
+self.next_session_ordinal += 1;
+name(format!("terminal-spawn-{pending_id}"));
+status: "starting".to_string();
+active_pending_id;
+completion_wake.request();
+fn pending_tab_is_projected_before_spawn_work_finishes() {}
+'''
+        production_refresh = "complete_pending_spawns();"
+        production_sources = "if !registry.active_attached() { return Ok(false); }"
+        naming_tests = """
+fn default_session_labels_never_reuse_a_removed_ordinal() {}
+write_terminal_context_files_scoped(&terminal_context, context, false);
+fn bootstrap_publishes_only_child_discovery_until_pid_is_known() {}
+atomic_write_texts(&[]);
+"""
+        failures: list[str] = []
+        guard.check_terminal_session_creation(
+            main,
+            keyboard,
+            controls,
+            terminal_input,
+            terminal_session,
+            terminal_spawn,
+            production_refresh,
+            production_sources,
+            naming_tests,
+            failures,
+        )
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_terminal_session_creation(
+            main.replace("TerminalKeyAction::NewSession", "removed"),
+            keyboard.replace("runtime.spawn_terminal_session_tab()", "removed"),
+            controls.replace("self.invalidate_frame();", "removed"),
+            terminal_input.replace("KeyCode::KeyT", "KeyCode::KeyR"),
+            terminal_session.replace(
+                "next_session_ordinal: usize",
+                "removed",
+            ),
+            terminal_spawn.replace("completion_wake.request();", "removed").replace(
+                "pending_tab_is_projected_before_spawn_work_finishes", "removed"
+            ),
+            production_refresh.replace("complete_pending_spawns", "removed"),
+            production_sources.replace("active_attached", "removed"),
+            naming_tests.replace(
+                "default_session_labels_never_reuse_a_removed_ordinal", "removed"
+            ).replace(
+                "write_terminal_context_files_scoped(&terminal_context, context, false)",
+                "write_terminal_context_files(&terminal_context, context)",
+            ).replace(
+                "bootstrap_publishes_only_child_discovery_until_pid_is_known", "removed"
+            ),
+            failures,
+        )
+        self.assertGreaterEqual(len(failures), 9)
+
+        failures = []
+        guard.check_terminal_session_creation(
+            main + "\nfn activate_terminal_session() { refresh_terminal_session_context_from_state(); }\nfn copy_terminal_scrollback() {}",
+            keyboard,
+            controls,
+            terminal_input,
+            terminal_session,
+            terminal_spawn,
+            production_refresh,
+            production_sources,
+            naming_tests,
+            failures,
+        )
+        self.assertIn(
+            "terminal tab activation still performs durable context persistence",
+            failures,
+        )
+
+        failures = []
+        guard.check_terminal_session_creation(
+            main,
+            keyboard,
+            controls,
+            terminal_input,
+            terminal_session,
+            terminal_spawn,
+            production_refresh,
+            production_sources,
+            naming_tests + "\nfile.sync_all();",
+            failures,
+        )
+        self.assertIn("bounded concurrent terminal context publication is missing", failures)
+
+        failures = []
+        guard.check_terminal_session_creation(
+            main,
+            keyboard,
+            controls,
+            terminal_input,
+            terminal_session,
+            terminal_spawn,
+            production_refresh,
+            production_sources + "\nrefresh_accepted_transaction_tip();",
+            naming_tests,
+            failures,
+        )
+        self.assertIn(
+            "terminal tab activation still performs durable context persistence",
+            failures,
+        )
+
+        failures = []
+        guard.check_terminal_session_creation(
+            main,
+            keyboard,
+            controls,
+            terminal_input,
+            terminal_session,
+            terminal_spawn + "\nDatumToolSessionLifecycle::Attached;",
+            production_refresh,
+            production_sources,
+            naming_tests,
+            failures,
+        )
+        self.assertIn(
+            "terminal creation/switch still persists retired attach lifecycle",
+            failures,
+        )
+
+    def test_agent_tui_focus_batching_glyph_and_cache_contract_is_pinned(self) -> None:
+        main = """
+    fn window_event() {
+        NamedKey::Escape;
+        cancel_terminal_tab_drag();
+        cancel_terminal_text_selection_drag();
+        open_terminal_clipboard_menu_at_cursor();
+        !runtime.terminal_clipboard_menu_active();
+        TerminalKeyAction::CopyClipboard;
+        TerminalKeyAction::PasteClipboard;
+        self.handle_primary_button_press();
+        match event {
+            CursorMoved => { advance_terminal_tab_drag(); advance_terminal_text_selection(); },
+            MouseButton::Left, ElementState::Released => { finish_terminal_tab_drag(); finish_terminal_text_selection(); },
+        }
+    }
+fn terminal_mouse_reporting_active() {
+    terminal_mouse_report_allowed();
+    self.terminal_screen_cell_at(x, y);
+    CursorIcon::Grab;
+    CursorIcon::Grabbing;
+}
+"""
+        primary_button = """
+    pub(super) fn handle_primary_button_press() {
+        begin_terminal_tab_drag();
+        focus_terminal_screen_before_mouse_report();
+        begin_terminal_text_selection();
+        report_terminal_mouse_button();
+    }
+"""
+        runtime_dock = "focus_before_terminal_mouse_press(); terminal_screen_cell_at(); target_session_id(); reorder_session(); active_logical_point_at(); set_active_selection();"
+        drain = """
+flush_output_batch(); tiny_chunk_flood_is_applied_once_per_session_per_turn();
+slot.remove_when_closed = is_active;
+fn natural_shell_exit_removes_its_tab_without_second_close() {}
+"""
+        geometry = '''
+include_bytes!("JetBrainsMono-Regular.ttf");
+TextFace::Terminal;
+if run.face != TextFace::Terminal { run.size *= scale; }
+'''
+        cache = """
+fn begin_text_buffer_frame() { entry.last_used_frame = 1; }
+fn animated_agent_text_cache_retains_only_two_visible_generations() {}
+fn ensure_text_buffer() { buffer.set_rich_text(); }
+"""
+        render_gpu = """
+self.begin_text_buffer_frame();
+self.cached_text_buffer_indices();
+"""
+        bottom_dock = """
+TERMINAL_FONT_SIZE_PX: f32 = 12.0;
+TERMINAL_LETTER_SPACING_EM;
+draw_rich_text();
+render_terminal_selection_row();
+"""
+        terminal_font_tests = """
+fn terminal_font_advance_matches_shared_logical_cell_width() {}
+fn terminal_cell_advance_combines_smaller_ink_with_explicit_spacing() {}
+fn styled_terminal_colors_share_one_shaping_origin() {}
+fn colored_shell_prompt_preserves_dollar_space_command_and_cursor_cells() {}
+fn hidpi_keeps_terminal_glyphs_and_cursor_on_the_same_device_pixel_grid() {}
+fn prompt_style_boundaries_do_not_restart_glyph_positioning() {}
+fn terminal_rich_span_colors_participate_in_the_buffer_cache_key() {}
+"""
+        terminal_core_render = """
+const CURSOR_HORIZONTAL_INSET_PX: f32 = 1.0;
+fn draw_rich_text() {}
+fn selection_contains() {}
+fn render_cursor() {}
+"""
+        failures: list[str] = []
+        guard.check_agent_tui_runtime(
+            main,
+            primary_button,
+            runtime_dock,
+            drain,
+            geometry,
+            cache,
+            render_gpu,
+            bottom_dock,
+            terminal_font_tests,
+            terminal_core_render,
+            failures,
+        )
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_agent_tui_runtime(
+            main.replace(
+                "        match event {",
+                "        poll_terminal_output();\n        match event {",
+            ).replace("advance_terminal_tab_drag()", "removed").replace("cancel_terminal_tab_drag()", "removed").replace("advance_terminal_text_selection()", "removed").replace("cancel_terminal_text_selection_drag()", "removed").replace("TerminalKeyAction::PasteClipboard", "removed"),
+            primary_button.replace(
+                "focus_terminal_screen_before_mouse_report();\n"
+                "        begin_terminal_text_selection();\n"
+                "        report_terminal_mouse_button();",
+                "report_terminal_mouse_button();\n"
+                "        begin_terminal_text_selection();\n"
+                "        focus_terminal_screen_before_mouse_report();",
+            ),
+            runtime_dock.replace("target_session_id()", "removed")
+            .replace("reorder_session()", "removed")
+            .replace("active_logical_point_at()", "removed")
+            .replace("set_active_selection()", "removed"),
+            drain.replace("flush_output_batch", "apply_each_chunk")
+            .replace("slot.remove_when_closed = is_active", "removed")
+            .replace(
+                "natural_shell_exit_removes_its_tab_without_second_close",
+                "removed",
+            ),
+            geometry.replace("JetBrainsMono-Regular.ttf", "IBMPlexMono-Medium.ttf")
+            .replace("if run.face != TextFace::Terminal", "if true"),
+            cache.replace("last_used_frame", "unbounded_generation").replace(
+                "set_rich_text", "set_text"
+            ),
+            render_gpu.replace("self.begin_text_buffer_frame();\n", ""),
+            bottom_dock,
+            terminal_font_tests.replace(
+                "styled_terminal_colors_share_one_shaping_origin", "removed"
+            ).replace(
+                "prompt_style_boundaries_do_not_restart_glyph_positioning", "removed"
+            ),
+            terminal_core_render
+            .replace("CURSOR_HORIZONTAL_INSET_PX", "removed")
+            .replace("draw_rich_text", "draw_text")
+            .replace("selection_contains", "removed"),
+            failures,
+        )
+        self.assertIn(
+            "terminal output must not drain before window input dispatch", failures
+        )
+        self.assertIn(
+            "terminal focus must precede child mouse-report forwarding", failures
+        )
+        self.assertIn("terminal mouse routing is missing advance_terminal_tab_drag", failures)
+        self.assertIn("terminal mouse routing is missing cancel_terminal_tab_drag", failures)
+        self.assertIn("terminal mouse routing is missing advance_terminal_text_selection", failures)
+        self.assertIn("terminal mouse routing is missing cancel_terminal_text_selection_drag", failures)
+        self.assertIn("terminal mouse routing is missing TerminalKeyAction::PasteClipboard", failures)
+        self.assertIn("terminal focus-entry boundary is missing target_session_id", failures)
+        self.assertIn("terminal focus-entry boundary is missing reorder_session", failures)
+        self.assertIn("terminal focus-entry boundary is missing active_logical_point_at", failures)
+        self.assertIn("terminal focus-entry boundary is missing set_active_selection", failures)
+        self.assertIn(
+            "terminal tiny-output batching is missing flush_output_batch", failures
+        )
+        self.assertIn(
+            "terminal glyph face is missing JetBrainsMono-Regular.ttf", failures
+        )
+        self.assertIn(
+            "HiDPI text scaling must preserve the terminal device-pixel grid",
+            failures,
+        )
+        self.assertIn(
+            "terminal text-cache bound is missing last_used_frame", failures
+        )
+        self.assertTrue(any("draw_rich_text" in failure for failure in failures))
+        self.assertTrue(any("selection_contains" in failure for failure in failures))
+        self.assertTrue(any("rich-text shaping buffer" in failure for failure in failures))
+        self.assertTrue(any("slot.remove_when_closed" in failure for failure in failures))
+        self.assertTrue(any("natural_shell_exit" in failure for failure in failures))
+        self.assertTrue(any("prompt_style_boundaries" in failure for failure in failures))
+        self.assertTrue(
+            any("TerminalCore cursor-cell separation" in failure for failure in failures)
+        )
+        self.assertIn(
+            "renderer must begin exactly one text-cache generation per frame", failures
+        )
+
+    def test_terminal_transport_boundary_is_pinned_and_cell_free(self) -> None:
+        transport = """
+fn open_pty_pair() {
+    let _ = "/dev/ptmx"; grantpt(); unlockpt(); ptsname_r(); TIOCSCTTY(); TIOCSWINSZ();
+    configure_child_pty();
+}
+"""
+        failures: list[str] = []
+        guard.check_terminal_transport_boundary(transport, transport, failures)
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_terminal_transport_boundary(
+            transport + "\nfn rogue() { portable_pty(); TerminalScreen::default(); }",
+            transport + "\nTerminalScreen::default();",
+            failures,
+        )
+        self.assertIn(
+            "terminal transport must not own cell/core marker TerminalScreen",
+            failures,
+        )
+        self.assertIn(
+            "third-party terminal dependency must not remain: portable_pty", failures
+        )
+
+    def test_terminal_input_mode_is_exclusive_and_never_detached(self) -> None:
+        production = """
+enum TerminalInputOwner { AttachedPty, Unowned }
+pub(crate) fn terminal_input_owner() {
+    use TerminalInputOwner::{AttachedPty, Unowned};
+}
+fn handle_terminal_ime() {}
+fn write_attached_terminal_bytes() { write_bytes(); }
+"""
+        bottom_dock = ""
+        failures: list[str] = []
+        guard.check_terminal_input_mode(production, bottom_dock, failures)
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_terminal_input_mode(
+            production.replace("Unowned", "LegacyDockLineEdit")
+                + "\nDetachedReadOnly\n"
+                + "\nfn complete_terminal_rename_input() {}\n",
+            '("REATTACH", HitTarget::TerminalSessionReattachActive)',
+            failures,
+        )
+        self.assertIn(
+            "dead terminal line-edit marker must not remain: LegacyDockLineEdit",
+            failures,
+        )
+        self.assertIn(
+            "retired detached terminal mode remains: \"REATTACH\"", failures
+        )
+
+    def test_terminal_input_state_has_explicit_authorities(self) -> None:
+        terminal_lane = """
+pub rename_input: String,
+pub screen_cursor_row: usize,
+pub screen_cursor_col: usize,
+"""
+        terminal_lane = terminal_lane.replace("pub rename_input: String,\n", "")
+        production = "fn terminal_screen_input() {}"
+        failures: list[str] = []
+        guard.check_terminal_input_identity(terminal_lane, production, failures)
+        self.assertEqual([], failures)
+
+        failures = []
+        invalid_lane = terminal_lane + "pub input: String;\npub cursor: usize;\n"
+        invalid_production = production + "\nself.ui.terminal.input.push_str(text);\n" \
+            "fn append_dock_text() {}\nfn append_terminal_rename_text() {}\n"
+        guard.check_terminal_input_identity(
+            invalid_lane, invalid_production, failures
+        )
+        self.assertIn(
+            "terminal protocol must not expose generic input/cursor fields", failures
+        )
+        self.assertIn(
+            "terminal production code must not use generic .terminal.input", failures
+        )
+        self.assertIn(
+            "terminal chrome editor must not use generic marker fn append_dock_text",
+            failures,
+        )
+        self.assertIn("retired terminal rename chrome remains: append_terminal_rename_text", failures)
+
+    def test_workspace_hotkeys_are_press_timed_through_one_focus_predicate(self) -> None:
+        valid = """
+pub(crate) fn workspace_action_should_fire(focus: KeyboardFocus, visible: bool,
+    state: ElementState, repeat: bool) -> bool {
+    state == ElementState::Pressed && !repeat
+        && key_route(focus, KeyClass::WorkspaceHotkey, visible) == RouteDecision::Editor
+}
+let workspace_action_pressed =
+    workspace_action_should_fire(focus, dock_visible, event.state, event.repeat);
+// Pane focus cycling
+if tab && workspace_action_pressed { next(); }
+if character && workspace_action_pressed { apply(); }
+    if escape_released {}
+"""
+        failures: list[str] = []
+        guard.check_workspace_hotkey_timing(valid, failures)
+        self.assertEqual([], failures)
+
+        invalid = valid.replace("ElementState::Pressed", "ElementState::Released")
+        guard.check_workspace_hotkey_timing(invalid, failures)
+        self.assertIn(
+            "workspace hotkey timing predicate is missing ElementState::Pressed", failures
+        )
+
+        failures = []
+        invalid = valid.replace(
+            "if tab && workspace_action_pressed { next(); }",
+            "if tab && event.state == ElementState::Released "
+            "&& workspace_action_pressed { next(); }",
+        )
+        guard.check_workspace_hotkey_timing(invalid, failures)
+        self.assertIn("workspace hotkey dispatch must not fire on key release", failures)
+
+    def test_terminal_focus_reports_have_one_keyboard_owner(self) -> None:
+        valid = """
+            WindowEvent::Focused(focused) => { if !focused {} }
+            WindowEvent::CursorLeft { .. } => {}
+    pub(crate) fn set_application_focus(&mut self) {
+        let report = keyboard_focus::terminal_focus_report_transition(old, next);
+        self.workspace_mut().ui.focus = next;
+    }
+    fn initialize(state: &mut State) { state.ui.focus = ApplicationFocus::default(); }
+    fn after() {}
+"""
+        workspace_layout = """
+pub enum ApplicationFocus { Editor(PaneId), Terminal, Overlay }
+"""
+        window = """
+            WindowEvent::Focused(focused) => { if !focused {} }
+            WindowEvent::CursorLeft { .. } => {}
+"""
+        failures: list[str] = []
+        guard.check_terminal_focus_reporting(
+            window, valid, workspace_layout, "", valid, failures
+        )
+        self.assertEqual([], failures)
+        invalid_window = window.replace(
+            "if !focused {}", "self.report_terminal_focus_event(focused);"
+        )
+        invalid_authority = valid + "\nself.keyboard_focus = next;\n"
+        guard.check_terminal_focus_reporting(
+            invalid_window,
+            invalid_authority,
+            workspace_layout.replace("Terminal", "Shell"),
+            "pub has_keyboard_focus: bool,",
+            invalid_authority,
+            failures,
+        )
+        self.assertIn("OS window focus must not emit terminal focus-report bytes", failures)
+        self.assertIn(
+            "runtime must not retain a rival keyboard-focus field", failures
+        )
+        self.assertIn("terminal lane must not retain a rival focus projection", failures)
+
+    def test_editor_hits_are_clipped_and_terminal_focus_proofs_are_pinned(self) -> None:
+        layout = "pub fn intersect() { right > x; bottom > y; }"
+        scene = """
+let scene_hit_start = prepared.hit_regions.len();
+hit_clipping::clip_new_hit_regions();
+"""
+        clipping = ".drain(first_new_region..); region.rect.intersect(viewport);"
+        focus_tests = """
+fn non_mouse_child_click_selects_terminal_and_tab_never_cycles_editor_panes() {
+    workspace_action_should_fire(); terminal_tab_sequence();
+}
+fn mouse_reporting_press_selects_same_terminal_authority_before_forwarding() {}
+"""
+        hit_tests = "fn editor_scene_hits_cannot_shadow_terminal_screen_at_adversarial_cameras() {}"
+        failures: list[str] = []
+        guard.check_terminal_hit_ownership(
+            layout, scene, clipping, focus_tests, hit_tests, failures
+        )
+        self.assertEqual([], failures)
+
+        failures = []
+        guard.check_terminal_hit_ownership(
+            layout.replace("intersect", "overlap"),
+            scene.replace("hit_clipping::clip_new_hit_regions", "leave_unclipped"),
+            clipping.replace(".drain(first_new_region..)", ".iter()"),
+            focus_tests.replace("terminal_tab_sequence", "pane_focus_next"),
+            "",
+            failures,
+        )
+        self.assertIn("viewport hit clipping is missing pub fn intersect", failures)
+        self.assertIn(
+            "editor scene hit clipping is missing hit_clipping::clip_new_hit_regions",
+            failures,
+        )
+        self.assertIn(
+            "terminal focus convergence proof is missing terminal_tab_sequence", failures
+        )
+        self.assertIn("adversarial editor-hit ownership proof is missing", failures)
+
+    def test_deleted_provisional_grid_cannot_return_anywhere(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            files = {
+                "crates/gui-protocol/src/terminal_lane.rs": "fn pty_grid_mut() {}",
+                "crates/gui-app/src/terminal_screen.rs": "state.pty_grid_mut();",
+                "crates/gui-app/src/terminal_screen/parser.rs": "state.pty_grid_mut();",
+                "crates/gui-render/src/terminal_contract_tests.rs": "state.pty_grid_mut();",
+                "crates/gui-app/src/rogue_writer.rs": "state.pty_grid_mut();",
+            }
+            for relative, source in files.items():
+                path = root / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(source, encoding="utf-8")
+            previous_root = guard.ROOT
+            guard.ROOT = root
+            try:
+                failures: list[str] = []
+                guard.check_terminal_grid_writers(failures)
+            finally:
+                guard.ROOT = previous_root
+            self.assertEqual(5, len(failures))
+            self.assertTrue(all("deleted provisional terminal authority" in item for item in failures))
+
+
+if __name__ == "__main__":
+    unittest.main()

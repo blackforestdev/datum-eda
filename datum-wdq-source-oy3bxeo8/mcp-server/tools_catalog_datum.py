@@ -1,0 +1,574 @@
+"""Canonical datum.* MCP tool aliases."""
+
+from tools_catalog_checks import CHECK_TOOL_SCHEMAS
+from tools_catalog_generated import generated_specs_for_prefix, reject_hand_written_duplicates
+from tools_catalog_import_map import IMPORT_MAP_TOOL_SCHEMAS
+from tools_catalog_library import LIBRARY_TOOL_SCHEMAS
+from tools_catalog_output_jobs import OUTPUT_JOB_TOOL_SCHEMAS
+from tools_catalog_proposals import PROPOSAL_TOOL_SCHEMAS
+from tools_catalog_preferences import PREFERENCE_TOOL_SPECS
+from tools_catalog_project_genesis import PROJECT_GENESIS_TOOL_SPEC
+from tools_catalog_relationships import RELATIONSHIP_TOOL_SCHEMAS
+
+DATUM_EMPTY_QUERY_SCHEMA = {
+    "description": "Canonical Datum read-only query alias over the current open session.",
+    "inputSchema": {"type": "object", "properties": {}},
+}
+
+DATUM_SYMBOL_UUID_QUERY_SCHEMA = {
+    "description": "Canonical Datum read-only query alias for one schematic symbol object.",
+    "inputSchema": {
+        "type": "object",
+        "properties": {"symbol_uuid": {"type": "string"}},
+        "required": ["symbol_uuid"],
+    },
+}
+
+DATUM_HIERARCHY_QUERY_SCHEMA = {
+    "description": "Canonical Datum hierarchy query. With path, reads native project hierarchy; without path, uses legacy open-session hierarchy.",
+    "inputSchema": {
+        "type": "object",
+        "properties": {"path": {"type": ["string", "null"]}},
+    },
+}
+
+DATUM_PATH_QUERY_SCHEMA = {
+    "description": "Canonical Datum read-only query alias for one native project path.",
+    "inputSchema": {
+        "type": "object",
+        "properties": {"path": {"type": "string"}},
+        "required": ["path"],
+    },
+}
+
+DATUM_PLACE_COMPONENT_SCHEMA = {
+    "description": "Place one native-project board component through the journaled board-package creation path.",
+    "inputSchema": {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string"},
+            "part": {"type": "string"},
+            "package": {"type": "string"},
+            "reference": {"type": "string"},
+            "value": {"type": "string"},
+            "x_nm": {"type": "integer"},
+            "y_nm": {"type": "integer"},
+            "layer": {"type": "integer"},
+        },
+        "required": ["path", "part", "package", "reference", "value", "x_nm", "y_nm", "layer"],
+    },
+}
+
+DATUM_GENERATE_BOARD_COMPONENTS_SCHEMA = {
+    "description": "Generate initial native-project board components from schematic symbols with bound parts/packages; previews by default and journals only when apply is true.",
+    "inputSchema": {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string"},
+            "apply": {"type": ["boolean", "null"]},
+            "as_proposal": {"type": ["boolean", "null"]},
+            "proposal": {"type": ["string", "null"]},
+            "rationale": {"type": ["string", "null"]},
+            "origin_x_nm": {"type": ["integer", "null"]},
+            "origin_y_nm": {"type": ["integer", "null"]},
+            "pitch_nm": {"type": ["integer", "null"]},
+            "layer": {"type": ["integer", "null"]},
+        },
+        "required": ["path"],
+    },
+}
+
+DATUM_MOVE_COMPONENT_SCHEMA = {
+    "description": "Move one native-project board component through the journaled board-package position path.",
+    "inputSchema": {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string"},
+            "component": {"type": "string"},
+            "x_nm": {"type": "integer"},
+            "y_nm": {"type": "integer"},
+        },
+        "required": ["path", "component", "x_nm", "y_nm"],
+    },
+}
+
+DATUM_ROTATE_COMPONENT_SCHEMA = {
+    "description": "Rotate one native-project board component through the journaled board-package rotation path.",
+    "inputSchema": {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string"},
+            "component": {"type": "string"},
+            "rotation_deg": {"type": "integer"},
+        },
+        "required": ["path", "component", "rotation_deg"],
+    },
+}
+
+DATUM_FLIP_COMPONENT_SCHEMA = {
+    "description": "Flip one native-project board component to a target copper side/layer through the journaled SetComponentSide path.",
+    "inputSchema": {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string"},
+            "component": {"type": "string"},
+            "layer": {"type": "integer"},
+        },
+        "required": ["path", "component", "layer"],
+    },
+}
+
+DATUM_DELETE_COMPONENT_SCHEMA = {
+    "description": "Delete one native-project board component through the journaled board-package removal path.",
+    "inputSchema": {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string"},
+            "component": {"type": "string"},
+        },
+        "required": ["path", "component"],
+    },
+}
+
+DATUM_COMPONENT_PROPERTY_SCHEMAS = {
+    "datum.pcb.set_component_reference": {
+        "description": "Set one native-project board component reference through the journaled board-package property path.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "component": {"type": "string"},
+                "reference": {"type": "string"},
+            },
+            "required": ["path", "component", "reference"],
+        },
+    },
+    "datum.pcb.set_component_value": {
+        "description": "Set one native-project board component value through the journaled board-package property path.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "component": {"type": "string"},
+                "value": {"type": "string"},
+            },
+            "required": ["path", "component", "value"],
+        },
+    },
+    "datum.pcb.set_component_part": {
+        "description": "Set one native-project board component part UUID through the journaled board-package property path.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "component": {"type": "string"},
+                "part": {"type": "string"},
+            },
+            "required": ["path", "component", "part"],
+        },
+    },
+    "datum.pcb.set_component_package": {
+        "description": "Set one native-project board component package UUID through the journaled board-package property path.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {"type": "string"},
+                "component": {"type": "string"},
+                "package": {"type": "string"},
+            },
+            "required": ["path", "component", "package"],
+        },
+    },
+}
+
+DATUM_LOCK_COMPONENT_SCHEMA = {
+    "description": "Lock one native-project board component through the journaled board-package lock path.",
+    "inputSchema": {
+        "type": "object",
+        "properties": {
+            "path": {"type": "string"},
+            "component": {"type": "string"},
+        },
+        "required": ["path", "component"],
+    },
+}
+
+DATUM_PCB_PRIMITIVE_SCHEMAS = {
+    "datum.pcb.draw_track": {"description": "Draw one native-project board track.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "net": {"type": "string"}, "from_x_nm": {"type": "integer"}, "from_y_nm": {"type": "integer"}, "to_x_nm": {"type": "integer"}, "to_y_nm": {"type": "integer"}, "width_nm": {"type": "integer"}, "layer": {"type": "integer"}}, "required": ["path", "net", "from_x_nm", "from_y_nm", "to_x_nm", "to_y_nm", "width_nm", "layer"]}},
+    "datum.pcb.edit_track": {"description": "Edit one native-project board track.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "track": {"type": "string"}, "net": {"type": ["string", "null"]}, "from_x_nm": {"type": ["integer", "null"]}, "from_y_nm": {"type": ["integer", "null"]}, "to_x_nm": {"type": ["integer", "null"]}, "to_y_nm": {"type": ["integer", "null"]}, "width_nm": {"type": ["integer", "null"]}, "layer": {"type": ["integer", "null"]}}, "required": ["path", "track"]}},
+    "datum.pcb.delete_track": {"description": "Delete one native-project board track.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "track": {"type": "string"}}, "required": ["path", "track"]}},
+    "datum.pcb.place_via": {"description": "Place one native-project board via.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "net": {"type": "string"}, "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"}, "drill_nm": {"type": "integer"}, "diameter_nm": {"type": "integer"}, "from_layer": {"type": "integer"}, "to_layer": {"type": "integer"}}, "required": ["path", "net", "x_nm", "y_nm", "drill_nm", "diameter_nm", "from_layer", "to_layer"]}},
+    "datum.pcb.edit_via": {"description": "Edit one native-project board via.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "via": {"type": "string"}, "net": {"type": ["string", "null"]}, "x_nm": {"type": ["integer", "null"]}, "y_nm": {"type": ["integer", "null"]}, "drill_nm": {"type": ["integer", "null"]}, "diameter_nm": {"type": ["integer", "null"]}, "from_layer": {"type": ["integer", "null"]}, "to_layer": {"type": ["integer", "null"]}}, "required": ["path", "via"]}},
+    "datum.pcb.delete_via": {"description": "Delete one native-project board via.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "via": {"type": "string"}}, "required": ["path", "via"]}},
+    "datum.pcb.place_zone": {"description": "Place one native-project board copper zone boundary.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "net": {"type": "string"}, "vertices": {"type": "array", "items": {"type": "string"}}, "layer": {"type": "integer"}, "priority": {"type": ["integer", "null"]}, "thermal_relief": {"type": ["boolean", "null"]}, "thermal_gap_nm": {"type": "integer"}, "thermal_spoke_width_nm": {"type": "integer"}}, "required": ["path", "net", "vertices", "layer", "thermal_gap_nm", "thermal_spoke_width_nm"]}},
+    "datum.pcb.edit_zone": {"description": "Edit one native-project board copper zone boundary.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "zone": {"type": "string"}, "net": {"type": ["string", "null"]}, "vertices": {"type": ["array", "null"], "items": {"type": "string"}}, "layer": {"type": ["integer", "null"]}, "priority": {"type": ["integer", "null"]}, "thermal_relief": {"type": ["boolean", "null"]}, "thermal_gap_nm": {"type": ["integer", "null"]}, "thermal_spoke_width_nm": {"type": ["integer", "null"]}}, "required": ["path", "zone"]}},
+    "datum.pcb.delete_zone": {"description": "Delete one native-project board copper zone boundary.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "zone": {"type": "string"}}, "required": ["path", "zone"]}},
+    "datum.pcb.place_pad": {"description": "Place one native-project board pad.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "package": {"type": "string"}, "name": {"type": "string"}, "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"}, "layer": {"type": "integer"}, "shape": {"type": ["string", "null"]}, "diameter_nm": {"type": ["integer", "null"]}, "width_nm": {"type": ["integer", "null"]}, "height_nm": {"type": ["integer", "null"]}, "net": {"type": ["string", "null"]}}, "required": ["path", "package", "name", "x_nm", "y_nm", "layer"]}},
+    "datum.pcb.edit_pad": {"description": "Edit one native-project board pad.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "pad": {"type": "string"}, "x_nm": {"type": ["integer", "null"]}, "y_nm": {"type": ["integer", "null"]}, "layer": {"type": ["integer", "null"]}, "shape": {"type": ["string", "null"]}, "diameter_nm": {"type": ["integer", "null"]}, "width_nm": {"type": ["integer", "null"]}, "height_nm": {"type": ["integer", "null"]}}, "required": ["path", "pad"]}},
+    "datum.pcb.delete_pad": {"description": "Delete one native-project board pad.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "pad": {"type": "string"}}, "required": ["path", "pad"]}},
+    "datum.pcb.set_pad_net": {"description": "Set one native-project board pad net assignment.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "pad": {"type": "string"}, "net": {"type": "string"}}, "required": ["path", "pad", "net"]}},
+    "datum.pcb.clear_pad_net": {"description": "Clear one native-project board pad net assignment.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "pad": {"type": "string"}}, "required": ["path", "pad"]}},
+    "datum.pcb.place_net": {"description": "Place one native-project board net, optionally with controlled-impedance metadata.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "name": {"type": "string"}, "class": {"type": "string"}, "impedance_target_ohms": {"type": ["string", "null"]}, "impedance_tolerance_pct": {"type": ["string", "null"]}, "controlled_dielectric_layer": {"type": ["integer", "null"]}}, "required": ["path", "name", "class"]}},
+    "datum.pcb.edit_net": {"description": "Edit one native-project board net, including controlled-impedance metadata.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "net": {"type": "string"}, "name": {"type": ["string", "null"]}, "class": {"type": ["string", "null"]}, "impedance_target_ohms": {"type": ["string", "null"]}, "impedance_tolerance_pct": {"type": ["string", "null"]}, "controlled_dielectric_layer": {"type": ["integer", "null"]}, "clear_controlled_impedance": {"type": ["boolean", "null"]}}, "required": ["path", "net"]}},
+    "datum.pcb.delete_net": {"description": "Delete one native-project board net.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "net": {"type": "string"}}, "required": ["path", "net"]}},
+    "datum.pcb.set_board_name": {"description": "Set the native-project board name.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "name": {"type": "string"}}, "required": ["path", "name"]}},
+    "datum.pcb.set_outline": {"description": "Replace the native-project board outline polygon.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "vertices": {"type": "array", "items": {"type": "string"}}}, "required": ["path", "vertices"]}},
+    "datum.pcb.set_stackup": {"description": "Replace the native-project board stackup. Each layer is id:name:type:thickness_nm with optional material fields :dielectric_constant:loss_tangent:copper_weight_oz:roughness_um:material_name.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "layers": {"type": "array", "items": {"type": "string"}}}, "required": ["path", "layers"]}},
+    "datum.pcb.add_default_top_stackup": {"description": "Add the default top-side board stackup support layers (top copper, mask, silk, paste, and mechanical) without replacing compatible existing layers.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}}, "required": ["path"]}},
+    "datum.pcb.place_keepout": {"description": "Place one native-project board keepout polygon.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "vertices": {"type": "array", "items": {"type": "string"}}, "layers": {"type": "array", "items": {"type": "integer"}}, "kind": {"type": "string"}}, "required": ["path", "vertices", "layers", "kind"]}},
+    "datum.pcb.edit_keepout": {"description": "Edit one native-project board keepout polygon.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "keepout": {"type": "string"}, "vertices": {"type": ["array", "null"], "items": {"type": "string"}}, "layers": {"type": ["array", "null"], "items": {"type": "integer"}}, "kind": {"type": ["string", "null"]}}, "required": ["path", "keepout"]}},
+    "datum.pcb.delete_keepout": {"description": "Delete one native-project board keepout polygon.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "keepout": {"type": "string"}}, "required": ["path", "keepout"]}},
+    "datum.pcb.place_dimension": {"description": "Place one native-project board dimension.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "from_x_nm": {"type": "integer"}, "from_y_nm": {"type": "integer"}, "to_x_nm": {"type": "integer"}, "to_y_nm": {"type": "integer"}, "layer": {"type": "integer"}, "text": {"type": ["string", "null"]}}, "required": ["path", "from_x_nm", "from_y_nm", "to_x_nm", "to_y_nm", "layer"]}},
+    "datum.pcb.edit_dimension": {"description": "Edit one native-project board dimension.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "dimension": {"type": "string"}, "from_x_nm": {"type": ["integer", "null"]}, "from_y_nm": {"type": ["integer", "null"]}, "to_x_nm": {"type": ["integer", "null"]}, "to_y_nm": {"type": ["integer", "null"]}, "layer": {"type": ["integer", "null"]}, "text": {"type": ["string", "null"]}, "clear_text": {"type": ["boolean", "null"]}}, "required": ["path", "dimension"]}},
+    "datum.pcb.delete_dimension": {"description": "Delete one native-project board dimension.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "dimension": {"type": "string"}}, "required": ["path", "dimension"]}},
+    "datum.pcb.place_text": {"description": "Place one native-project board text object.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "text": {"type": "string"}, "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"}, "layer": {"type": "integer"}, "rotation_deg": {"type": ["integer", "null"]}, "height_nm": {"type": ["integer", "null"]}, "stroke_width_nm": {"type": ["integer", "null"]}, "render_intent": {"type": ["string", "null"]}, "family": {"type": ["string", "null"]}, "style": {"type": ["string", "null"]}, "style_class": {"type": ["string", "null"]}, "h_align": {"type": ["string", "null"]}, "v_align": {"type": ["string", "null"]}, "mirrored": {"type": ["boolean", "null"]}, "keep_upright": {"type": ["boolean", "null"]}, "line_spacing_ratio_ppm": {"type": ["integer", "null"]}, "bold": {"type": ["boolean", "null"]}, "italic": {"type": ["boolean", "null"]}}, "required": ["path", "text", "x_nm", "y_nm", "layer"]}},
+    "datum.pcb.edit_text": {"description": "Edit one native-project board text object.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "text": {"type": "string"}, "value": {"type": ["string", "null"]}, "x_nm": {"type": ["integer", "null"]}, "y_nm": {"type": ["integer", "null"]}, "layer": {"type": ["integer", "null"]}, "rotation_deg": {"type": ["integer", "null"]}, "height_nm": {"type": ["integer", "null"]}, "stroke_width_nm": {"type": ["integer", "null"]}, "render_intent": {"type": ["string", "null"]}, "family": {"type": ["string", "null"]}, "style": {"type": ["string", "null"]}, "style_class": {"type": ["string", "null"]}, "h_align": {"type": ["string", "null"]}, "v_align": {"type": ["string", "null"]}, "mirrored": {"type": ["boolean", "null"]}, "keep_upright": {"type": ["boolean", "null"]}, "line_spacing_ratio_ppm": {"type": ["integer", "null"]}, "bold": {"type": ["boolean", "null"]}, "italic": {"type": ["boolean", "null"]}}, "required": ["path", "text"]}},
+    "datum.pcb.delete_text": {"description": "Delete one native-project board text object.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "text": {"type": "string"}}, "required": ["path", "text"]}},
+    "datum.pcb.place_net_class": {"description": "Place one native-project board net class.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "name": {"type": "string"}, "clearance_nm": {"type": "integer"}, "track_width_nm": {"type": "integer"}, "via_drill_nm": {"type": "integer"}, "via_diameter_nm": {"type": "integer"}, "diffpair_width_nm": {"type": ["integer", "null"]}, "diffpair_gap_nm": {"type": ["integer", "null"]}}, "required": ["path", "name", "clearance_nm", "track_width_nm", "via_drill_nm", "via_diameter_nm"]}},
+    "datum.pcb.edit_net_class": {"description": "Edit one native-project board net class.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "net_class": {"type": "string"}, "name": {"type": ["string", "null"]}, "clearance_nm": {"type": ["integer", "null"]}, "track_width_nm": {"type": ["integer", "null"]}, "via_drill_nm": {"type": ["integer", "null"]}, "via_diameter_nm": {"type": ["integer", "null"]}, "diffpair_width_nm": {"type": ["integer", "null"]}, "diffpair_gap_nm": {"type": ["integer", "null"]}}, "required": ["path", "net_class"]}},
+    "datum.pcb.delete_net_class": {"description": "Delete one native-project board net class.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "net_class": {"type": "string"}}, "required": ["path", "net_class"]}},
+}
+
+
+def datum_alias(method: str, schema: dict[str, object]) -> dict[str, object]:
+    aliased = dict(schema)
+    aliased["x_dispatch_method"] = method
+    return aliased
+
+
+def proposal_write_alias(
+    method: str,
+    schema: dict[str, object],
+    write_surface_class: str,
+    evidence: str,
+) -> dict[str, object]:
+    aliased = datum_alias(method, schema)
+    aliased["x_public_write_surface_class"] = write_surface_class
+    aliased["x_write_surface_evidence"] = evidence
+    return aliased
+
+
+PROPOSAL_METADATA_EVIDENCE = (
+    "writes only persisted proposal metadata for later review; does not mutate design shards"
+)
+PROPOSAL_REVIEW_EVIDENCE = (
+    "updates persisted proposal review state without applying design mutations"
+)
+PROPOSAL_APPLY_EVIDENCE = (
+    "applies an accepted proposal through the generic proposal journal gateway"
+)
+
+
+DATUM_SCHEMATIC_PRIMITIVE_SCHEMAS = {
+    "datum.schematic.create_sheet": {"description": "Create one native-project schematic sheet.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "name": {"type": "string"}, "sheet": {"type": ["string", "null"]}}, "required": ["path", "name"]}},
+    "datum.schematic.delete_sheet": {"description": "Delete one native-project schematic sheet and its payload as one journaled operation.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}}, "required": ["path", "sheet"]}},
+    "datum.schematic.rename_sheet": {"description": "Rename one native-project schematic sheet through the journaled substrate path.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}, "name": {"type": "string"}}, "required": ["path", "sheet", "name"]}},
+    "datum.schematic.create_sheet_definition": {"description": "Create one native-project schematic sheet definition through the journaled substrate path.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "root_sheet": {"type": "string"}, "name": {"type": "string"}, "definition": {"type": ["string", "null"]}}, "required": ["path", "root_sheet", "name"]}},
+    "datum.schematic.create_sheet_instance": {"description": "Create one native-project schematic sheet instance through the journaled substrate path.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "definition": {"type": "string"}, "name": {"type": "string"}, "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"}, "parent_sheet": {"type": ["string", "null"]}, "instance": {"type": ["string", "null"]}}, "required": ["path", "definition", "name", "x_nm", "y_nm"]}},
+    "datum.schematic.delete_sheet_instance": {"description": "Delete one native-project schematic sheet instance through the journaled substrate path.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "instance": {"type": "string"}}, "required": ["path", "instance"]}},
+    "datum.schematic.move_sheet_instance": {"description": "Move one native-project schematic sheet instance through the journaled substrate path.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "instance": {"type": "string"}, "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"}}, "required": ["path", "instance", "x_nm", "y_nm"]}},
+    "datum.schematic.bind_sheet_instance_port": {"description": "Bind a parent-sheet hierarchical port to a sheet instance.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "instance": {"type": "string"}, "port": {"type": "string"}}, "required": ["path", "instance", "port"]}},
+    "datum.schematic.unbind_sheet_instance_port": {"description": "Remove a parent-sheet hierarchical port binding from a sheet instance.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "instance": {"type": "string"}, "port": {"type": "string"}}, "required": ["path", "instance", "port"]}},
+    "datum.schematic.draw_wire": {"description": "Draw one native-project schematic wire.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}, "from_x_nm": {"type": "integer"}, "from_y_nm": {"type": "integer"}, "to_x_nm": {"type": "integer"}, "to_y_nm": {"type": "integer"}}, "required": ["path", "sheet", "from_x_nm", "from_y_nm", "to_x_nm", "to_y_nm"]}},
+    "datum.schematic.delete_wire": {"description": "Delete one native-project schematic wire.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "wire": {"type": "string"}}, "required": ["path", "wire"]}},
+    "datum.schematic.place_junction": {"description": "Place one native-project schematic junction.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}, "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"}}, "required": ["path", "sheet", "x_nm", "y_nm"]}},
+    "datum.schematic.delete_junction": {"description": "Delete one native-project schematic junction.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "junction": {"type": "string"}}, "required": ["path", "junction"]}},
+    "datum.schematic.place_noconnect": {"description": "Place one native-project schematic no-connect marker.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}, "symbol": {"type": "string"}, "pin": {"type": "string"}, "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"}}, "required": ["path", "sheet", "symbol", "pin", "x_nm", "y_nm"]}},
+    "datum.schematic.delete_noconnect": {"description": "Delete one native-project schematic no-connect marker.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "noconnect": {"type": "string"}}, "required": ["path", "noconnect"]}},
+    "datum.schematic.place_label": {"description": "Place one native-project schematic label.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}, "name": {"type": "string"}, "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"}, "kind": {"type": ["string", "null"]}}, "required": ["path", "sheet", "name", "x_nm", "y_nm"]}},
+    "datum.schematic.rename_label": {"description": "Rename one native-project schematic label.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "label": {"type": "string"}, "name": {"type": "string"}}, "required": ["path", "label", "name"]}},
+    "datum.schematic.delete_label": {"description": "Delete one native-project schematic label.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "label": {"type": "string"}}, "required": ["path", "label"]}},
+    "datum.schematic.place_port": {"description": "Place one native-project schematic port.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}, "name": {"type": "string"}, "direction": {"type": "string"}, "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"}}, "required": ["path", "sheet", "name", "direction", "x_nm", "y_nm"]}},
+    "datum.schematic.edit_port": {"description": "Edit one native-project schematic port.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "port": {"type": "string"}, "name": {"type": ["string", "null"]}, "direction": {"type": ["string", "null"]}, "x_nm": {"type": ["integer", "null"]}, "y_nm": {"type": ["integer", "null"]}}, "required": ["path", "port"]}},
+    "datum.schematic.delete_port": {"description": "Delete one native-project schematic port.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "port": {"type": "string"}}, "required": ["path", "port"]}},
+    "datum.schematic.create_bus": {"description": "Create one native-project schematic bus.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}, "name": {"type": "string"}, "members": {"type": "array", "items": {"type": "string"}}}, "required": ["path", "sheet", "name", "members"]}},
+    "datum.schematic.edit_bus_members": {"description": "Replace native-project schematic bus members.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "bus": {"type": "string"}, "members": {"type": "array", "items": {"type": "string"}}}, "required": ["path", "bus", "members"]}},
+    "datum.schematic.delete_bus": {"description": "Delete one native-project schematic bus.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "bus": {"type": "string"}}, "required": ["path", "bus"]}},
+    "datum.schematic.place_bus_entry": {"description": "Place one native-project schematic bus entry.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}, "bus": {"type": "string"}, "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"}, "wire": {"type": ["string", "null"]}}, "required": ["path", "sheet", "bus", "x_nm", "y_nm"]}},
+    "datum.schematic.delete_bus_entry": {"description": "Delete one native-project schematic bus entry.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "bus_entry": {"type": "string"}}, "required": ["path", "bus_entry"]}},
+    "datum.schematic.place_text": {"description": "Place one native-project schematic text object.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}, "text": {"type": "string"}, "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"}, "rotation_deg": {"type": ["integer", "null"]}}, "required": ["path", "sheet", "text", "x_nm", "y_nm"]}},
+    "datum.schematic.edit_text": {"description": "Edit one native-project schematic text object.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "text": {"type": "string"}, "value": {"type": ["string", "null"]}, "x_nm": {"type": ["integer", "null"]}, "y_nm": {"type": ["integer", "null"]}, "rotation_deg": {"type": ["integer", "null"]}}, "required": ["path", "text"]}},
+    "datum.schematic.delete_text": {"description": "Delete one native-project schematic text object.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "text": {"type": "string"}}, "required": ["path", "text"]}},
+    "datum.schematic.place_drawing_line": {"description": "Place one schematic drawing line.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}, "from_x_nm": {"type": "integer"}, "from_y_nm": {"type": "integer"}, "to_x_nm": {"type": "integer"}, "to_y_nm": {"type": "integer"}}, "required": ["path", "sheet", "from_x_nm", "from_y_nm", "to_x_nm", "to_y_nm"]}},
+    "datum.schematic.place_drawing_rect": {"description": "Place one schematic drawing rectangle.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}, "min_x_nm": {"type": "integer"}, "min_y_nm": {"type": "integer"}, "max_x_nm": {"type": "integer"}, "max_y_nm": {"type": "integer"}}, "required": ["path", "sheet", "min_x_nm", "min_y_nm", "max_x_nm", "max_y_nm"]}},
+    "datum.schematic.place_drawing_circle": {"description": "Place one schematic drawing circle.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}, "center_x_nm": {"type": "integer"}, "center_y_nm": {"type": "integer"}, "radius_nm": {"type": "integer"}}, "required": ["path", "sheet", "center_x_nm", "center_y_nm", "radius_nm"]}},
+    "datum.schematic.place_drawing_arc": {"description": "Place one schematic drawing arc.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}, "center_x_nm": {"type": "integer"}, "center_y_nm": {"type": "integer"}, "radius_nm": {"type": "integer"}, "start_angle_mdeg": {"type": "integer"}, "end_angle_mdeg": {"type": "integer"}}, "required": ["path", "sheet", "center_x_nm", "center_y_nm", "radius_nm", "start_angle_mdeg", "end_angle_mdeg"]}},
+    "datum.schematic.edit_drawing_line": {"description": "Edit one schematic drawing line.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "drawing": {"type": "string"}, "from_x_nm": {"type": ["integer", "null"]}, "from_y_nm": {"type": ["integer", "null"]}, "to_x_nm": {"type": ["integer", "null"]}, "to_y_nm": {"type": ["integer", "null"]}}, "required": ["path", "drawing"]}},
+    "datum.schematic.edit_drawing_rect": {"description": "Edit one schematic drawing rectangle.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "drawing": {"type": "string"}, "min_x_nm": {"type": ["integer", "null"]}, "min_y_nm": {"type": ["integer", "null"]}, "max_x_nm": {"type": ["integer", "null"]}, "max_y_nm": {"type": ["integer", "null"]}}, "required": ["path", "drawing"]}},
+    "datum.schematic.edit_drawing_circle": {"description": "Edit one schematic drawing circle.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "drawing": {"type": "string"}, "center_x_nm": {"type": ["integer", "null"]}, "center_y_nm": {"type": ["integer", "null"]}, "radius_nm": {"type": ["integer", "null"]}}, "required": ["path", "drawing"]}},
+    "datum.schematic.edit_drawing_arc": {"description": "Edit one schematic drawing arc.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "drawing": {"type": "string"}, "center_x_nm": {"type": ["integer", "null"]}, "center_y_nm": {"type": ["integer", "null"]}, "radius_nm": {"type": ["integer", "null"]}, "start_angle_mdeg": {"type": ["integer", "null"]}, "end_angle_mdeg": {"type": ["integer", "null"]}}, "required": ["path", "drawing"]}},
+    "datum.schematic.delete_drawing": {"description": "Delete one schematic drawing object.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "drawing": {"type": "string"}}, "required": ["path", "drawing"]}},
+    "datum.schematic.place_symbol": {"description": "Place one native-project schematic symbol.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "sheet": {"type": "string"}, "reference": {"type": "string"}, "value": {"type": "string"}, "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"}, "lib_id": {"type": ["string", "null"]}, "rotation_deg": {"type": ["integer", "null"]}, "mirrored": {"type": ["boolean", "null"]}}, "required": ["path", "sheet", "reference", "value", "x_nm", "y_nm"]}},
+    "datum.schematic.move_symbol": {"description": "Move one native-project schematic symbol.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "symbol": {"type": "string"}, "x_nm": {"type": "integer"}, "y_nm": {"type": "integer"}}, "required": ["path", "symbol", "x_nm", "y_nm"]}},
+    "datum.schematic.rotate_symbol": {"description": "Rotate one native-project schematic symbol.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "symbol": {"type": "string"}, "rotation_deg": {"type": "integer"}}, "required": ["path", "symbol", "rotation_deg"]}},
+    "datum.schematic.mirror_symbol": {"description": "Mirror one native-project schematic symbol.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "symbol": {"type": "string"}}, "required": ["path", "symbol"]}},
+    "datum.schematic.delete_symbol": {"description": "Delete one native-project schematic symbol.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "symbol": {"type": "string"}}, "required": ["path", "symbol"]}},
+    "datum.schematic.set_symbol_reference": {"description": "Set one native-project schematic symbol reference.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "symbol": {"type": "string"}, "reference": {"type": "string"}}, "required": ["path", "symbol", "reference"]}},
+    "datum.schematic.set_symbol_value": {"description": "Set one native-project schematic symbol value.", "inputSchema": {"type": "object", "properties": {"path": {"type": "string"}, "symbol": {"type": "string"}, "value": {"type": "string"}}, "required": ["path", "symbol", "value"]}},
+}
+
+DATUM_SCHEMATIC_SYMBOL_METADATA_METHODS = "set_symbol_display_mode set_symbol_hidden_power_behavior set_symbol_unit clear_symbol_unit set_symbol_gate clear_symbol_gate set_symbol_entity clear_symbol_entity set_symbol_part clear_symbol_part set_symbol_lib_id clear_symbol_lib_id set_pin_override clear_pin_override add_symbol_field edit_symbol_field delete_symbol_field".split()
+
+def _symbol_schema(description: str, properties: dict, required: list[str]) -> dict:
+    return {"description": description, "inputSchema": {"type": "object", "properties": properties, "required": required}}
+
+_STR = {"type": "string"}; _BOOL_NULL = {"type": ["boolean", "null"]}; _INT_NULL = {"type": ["integer", "null"]}; _STR_NULL = {"type": ["string", "null"]}
+DATUM_SCHEMATIC_PRIMITIVE_SCHEMAS.update({
+    "datum.schematic.set_symbol_display_mode": _symbol_schema("Set one native-project schematic symbol display mode.", {"path": _STR, "symbol": _STR, "mode": _STR}, ["path", "symbol", "mode"]),
+    "datum.schematic.set_symbol_hidden_power_behavior": _symbol_schema("Set one native-project schematic symbol hidden-power behavior.", {"path": _STR, "symbol": _STR, "behavior": _STR}, ["path", "symbol", "behavior"]),
+    "datum.schematic.set_symbol_unit": _symbol_schema("Set one native-project schematic symbol unit selection.", {"path": _STR, "symbol": _STR, "unit": _STR}, ["path", "symbol", "unit"]),
+    "datum.schematic.clear_symbol_unit": _symbol_schema("Clear one native-project schematic symbol unit selection.", {"path": _STR, "symbol": _STR}, ["path", "symbol"]),
+    "datum.schematic.set_symbol_gate": _symbol_schema("Set one native-project schematic symbol gate UUID.", {"path": _STR, "symbol": _STR, "gate": _STR}, ["path", "symbol", "gate"]),
+    "datum.schematic.clear_symbol_gate": _symbol_schema("Clear one native-project schematic symbol gate UUID.", {"path": _STR, "symbol": _STR}, ["path", "symbol"]),
+    "datum.schematic.set_symbol_entity": _symbol_schema("Set one native-project schematic symbol entity UUID.", {"path": _STR, "symbol": _STR, "entity": _STR}, ["path", "symbol", "entity"]),
+    "datum.schematic.clear_symbol_entity": _symbol_schema("Clear one native-project schematic symbol entity UUID.", {"path": _STR, "symbol": _STR}, ["path", "symbol"]),
+    "datum.schematic.set_symbol_part": _symbol_schema("Set one native-project schematic symbol part UUID.", {"path": _STR, "symbol": _STR, "part": _STR}, ["path", "symbol", "part"]),
+    "datum.schematic.clear_symbol_part": _symbol_schema("Clear one native-project schematic symbol part UUID.", {"path": _STR, "symbol": _STR}, ["path", "symbol"]),
+    "datum.schematic.set_symbol_lib_id": _symbol_schema("Set one native-project schematic symbol library identifier.", {"path": _STR, "symbol": _STR, "lib_id": _STR}, ["path", "symbol", "lib_id"]),
+    "datum.schematic.clear_symbol_lib_id": _symbol_schema("Clear one native-project schematic symbol library identifier.", {"path": _STR, "symbol": _STR}, ["path", "symbol"]),
+    "datum.schematic.set_pin_override": _symbol_schema("Set one native-project schematic symbol pin display override.", {"path": _STR, "symbol": _STR, "pin": _STR, "visible": {"type": "boolean"}, "x_nm": _INT_NULL, "y_nm": _INT_NULL}, ["path", "symbol", "pin", "visible"]),
+    "datum.schematic.clear_pin_override": _symbol_schema("Clear one native-project schematic symbol pin display override.", {"path": _STR, "symbol": _STR, "pin": _STR}, ["path", "symbol", "pin"]),
+    "datum.schematic.add_symbol_field": _symbol_schema("Add one native-project schematic symbol field.", {"path": _STR, "symbol": _STR, "key": _STR, "value": _STR, "hidden": _BOOL_NULL, "x_nm": _INT_NULL, "y_nm": _INT_NULL}, ["path", "symbol", "key", "value"]),
+    "datum.schematic.edit_symbol_field": _symbol_schema("Edit one native-project schematic symbol field.", {"path": _STR, "field": _STR, "key": _STR_NULL, "value": _STR_NULL, "visible": _BOOL_NULL, "x_nm": _INT_NULL, "y_nm": _INT_NULL}, ["path", "field"]),
+    "datum.schematic.delete_symbol_field": _symbol_schema("Delete one native-project schematic symbol field.", {"path": _STR, "field": _STR}, ["path", "field"]),
+})
+
+# Verb families owned by the generated single-source verb registry
+# (crates/verb-registry -> mcp-server/datum_tool_catalog.json); hand-written
+# entries for migrated prefixes are forbidden (duplicate guard below).
+# datum.session.* last keeps its aliases the winning public replacement for
+# the hidden flat session tools (last-wins dispatch-method map in
+# tools_catalog_data retirement metadata), as before migration.
+_GENERATED_TOOL_SPECS = [
+    spec
+    for prefix in (
+        "datum.artifact",
+        "datum.check",
+        "datum.component_instance",
+        "datum.context",
+        "datum.journal",
+        "datum.manufacturing",
+        "datum.output_job",
+        "datum.pool",
+        "datum.project",
+        "datum.proposal",
+        "datum.query",
+        "datum.replacement",
+        "datum.route",
+        "datum.session",
+        "datum.units",
+    )
+    for spec in generated_specs_for_prefix(prefix)
+]
+_GENERATED_LIBRARY_TOOL_ORDER = [
+    "datum.library.list_objects",
+    "datum.library.show_object",
+    "datum.library.pool_models",
+    "datum.library.gc_pool_models",
+    "datum.library.create_object",
+    "datum.library.create_unit",
+    "datum.library.set_unit_pin",
+    "datum.library.create_symbol",
+    "datum.library.add_symbol_line",
+    "datum.library.add_symbol_rect",
+    "datum.library.add_symbol_circle",
+    "datum.library.add_symbol_arc",
+    "datum.library.add_symbol_polygon",
+    "datum.library.add_symbol_text",
+    "datum.library.set_symbol_pin_anchor",
+    "datum.library.create_entity",
+    "datum.library.create_padstack",
+    "datum.library.create_package",
+    "datum.library.create_footprint",
+    "datum.library.generate_ipc7351b_soic",
+    "datum.library.set_footprint_pad",
+    "datum.library.set_footprint_courtyard_rect",
+    "datum.library.set_footprint_courtyard_polygon",
+    "datum.library.add_footprint_silkscreen_line",
+    "datum.library.add_footprint_silkscreen_rect",
+    "datum.library.add_footprint_silkscreen_circle",
+    "datum.library.add_footprint_silkscreen_polygon",
+    "datum.library.set_package_pad",
+    "datum.library.set_package_courtyard_rect",
+    "datum.library.set_package_courtyard_polygon",
+    "datum.library.add_package_silkscreen_line",
+    "datum.library.add_package_silkscreen_rect",
+    "datum.library.add_package_silkscreen_polygon",
+    "datum.library.add_package_silkscreen_circle",
+    "datum.library.add_package_silkscreen_arc",
+    "datum.library.add_package_silkscreen_text",
+    "datum.library.add_package_model_3d",
+    "datum.library.set_package_body_heights",
+    "datum.library.create_part",
+    "datum.library.set_part_metadata",
+    "datum.library.set_part_parametric",
+    "datum.library.set_part_orderable_mpns",
+    "datum.library.set_part_tags",
+    "datum.library.set_part_packaging_options",
+    "datum.library.set_part_supply_chain",
+    "datum.library.set_part_behavioural_models",
+    "datum.library.attach_part_model",
+    "datum.library.detach_part_model",
+    "datum.library.set_part_thermal",
+    "datum.library.set_part_pad_map_entry",
+    "datum.library.set_part_pad_map",
+    "datum.library.create_pin_pad_map",
+    "datum.library.set_pin_pad_map",
+    "datum.library.set_object",
+    "datum.library.delete_object",
+]
+_GENERATED_LIBRARY_TOOL_BY_NAME = {
+    str(spec["name"]): spec for spec in generated_specs_for_prefix("datum.library")
+}
+_GENERATED_LIBRARY_TOOL_SPECS = [
+    _GENERATED_LIBRARY_TOOL_BY_NAME[name] for name in _GENERATED_LIBRARY_TOOL_ORDER
+]
+_GENERATED_PCB_TOOL_BY_NAME = {
+    str(spec["name"]): spec for spec in generated_specs_for_prefix("datum.pcb")
+}
+_GENERATED_PCB_TOOL_ORDER = [
+    "datum.pcb.place_component",
+    "datum.pcb.generate_board_components",
+    "datum.pcb.move_component",
+    "datum.pcb.rotate_component",
+    "datum.pcb.flip_component",
+    "datum.pcb.align_components",
+    "datum.pcb.delete_component",
+    "datum.pcb.set_component_reference",
+    "datum.pcb.set_component_value",
+    "datum.pcb.set_component_part",
+    "datum.pcb.set_component_package",
+    "datum.pcb.lock_component",
+    "datum.pcb.unlock_component",
+    "datum.pcb.draw_track",
+    "datum.pcb.edit_track",
+    "datum.pcb.delete_track",
+    "datum.pcb.place_via",
+    "datum.pcb.edit_via",
+    "datum.pcb.delete_via",
+    "datum.pcb.place_zone",
+    "datum.pcb.edit_zone",
+    "datum.pcb.delete_zone",
+    "datum.pcb.place_pad",
+    "datum.pcb.edit_pad",
+    "datum.pcb.delete_pad",
+    "datum.pcb.set_pad_net",
+    "datum.pcb.clear_pad_net",
+    "datum.pcb.place_net",
+    "datum.pcb.edit_net",
+    "datum.pcb.delete_net",
+    "datum.pcb.set_board_name",
+    "datum.pcb.set_outline",
+    "datum.pcb.set_stackup",
+    "datum.pcb.add_default_top_stackup",
+    "datum.pcb.place_keepout",
+    "datum.pcb.edit_keepout",
+    "datum.pcb.delete_keepout",
+    "datum.pcb.place_dimension",
+    "datum.pcb.edit_dimension",
+    "datum.pcb.delete_dimension",
+    "datum.pcb.place_text",
+    "datum.pcb.edit_text",
+    "datum.pcb.delete_text",
+    "datum.pcb.place_net_class",
+    "datum.pcb.edit_net_class",
+    "datum.pcb.delete_net_class",
+]
+_GENERATED_PCB_TOOL_SPECS = [
+    _GENERATED_PCB_TOOL_BY_NAME[name] for name in _GENERATED_PCB_TOOL_ORDER
+]
+
+_GENERATED_SCHEMATIC_TOOL_BY_NAME = {
+    str(spec["name"]): spec for spec in generated_specs_for_prefix("datum.schematic")
+}
+_GENERATED_SCHEMATIC_TOOL_ORDER = [
+    "datum.schematic.create_sheet",
+    "datum.schematic.delete_sheet",
+    "datum.schematic.rename_sheet",
+    "datum.schematic.create_sheet_definition",
+    "datum.schematic.create_sheet_instance",
+    "datum.schematic.delete_sheet_instance",
+    "datum.schematic.move_sheet_instance",
+    "datum.schematic.bind_sheet_instance_port",
+    "datum.schematic.unbind_sheet_instance_port",
+    "datum.schematic.draw_wire",
+    "datum.schematic.delete_wire",
+    "datum.schematic.place_junction",
+    "datum.schematic.delete_junction",
+    "datum.schematic.place_noconnect",
+    "datum.schematic.delete_noconnect",
+    "datum.schematic.place_label",
+    "datum.schematic.rename_label",
+    "datum.schematic.delete_label",
+    "datum.schematic.place_port",
+    "datum.schematic.edit_port",
+    "datum.schematic.delete_port",
+    "datum.schematic.create_bus",
+    "datum.schematic.edit_bus_members",
+    "datum.schematic.delete_bus",
+    "datum.schematic.place_bus_entry",
+    "datum.schematic.delete_bus_entry",
+    "datum.schematic.place_text",
+    "datum.schematic.edit_text",
+    "datum.schematic.delete_text",
+    "datum.schematic.place_drawing_line",
+    "datum.schematic.place_drawing_rect",
+    "datum.schematic.place_drawing_circle",
+    "datum.schematic.place_drawing_arc",
+    "datum.schematic.edit_drawing_line",
+    "datum.schematic.edit_drawing_rect",
+    "datum.schematic.edit_drawing_circle",
+    "datum.schematic.edit_drawing_arc",
+    "datum.schematic.delete_drawing",
+    "datum.schematic.place_symbol",
+    "datum.schematic.move_symbol",
+    "datum.schematic.rotate_symbol",
+    "datum.schematic.mirror_symbol",
+    "datum.schematic.delete_symbol",
+    "datum.schematic.set_symbol_reference",
+    "datum.schematic.set_symbol_value",
+    "datum.schematic.set_symbol_display_mode",
+    "datum.schematic.set_symbol_hidden_power_behavior",
+    "datum.schematic.set_symbol_unit",
+    "datum.schematic.clear_symbol_unit",
+    "datum.schematic.set_symbol_gate",
+    "datum.schematic.clear_symbol_gate",
+    "datum.schematic.set_symbol_entity",
+    "datum.schematic.clear_symbol_entity",
+    "datum.schematic.set_symbol_part",
+    "datum.schematic.clear_symbol_part",
+    "datum.schematic.set_symbol_lib_id",
+    "datum.schematic.clear_symbol_lib_id",
+    "datum.schematic.set_pin_override",
+    "datum.schematic.clear_pin_override",
+    "datum.schematic.add_symbol_field",
+    "datum.schematic.edit_symbol_field",
+    "datum.schematic.delete_symbol_field",
+]
+_GENERATED_SCHEMATIC_TOOL_SPECS = [
+    _GENERATED_SCHEMATIC_TOOL_BY_NAME[name] for name in _GENERATED_SCHEMATIC_TOOL_ORDER
+]
+
+DATUM_TOOL_SPECS = [
+    *_GENERATED_PCB_TOOL_SPECS,
+    *_GENERATED_LIBRARY_TOOL_SPECS,
+    *_GENERATED_SCHEMATIC_TOOL_SPECS,
+    *PREFERENCE_TOOL_SPECS,
+    PROJECT_GENESIS_TOOL_SPEC,
+    *_GENERATED_TOOL_SPECS,
+]
+
+# Import-time guard: a hand-written entry for a verb the generated catalog
+# already owns is a defect and must fail loudly (caught by server.py --self-test).
+_GENERATED_SPEC_IDS = {
+    id(spec)
+    for spec in [
+        *_GENERATED_TOOL_SPECS,
+        *_GENERATED_LIBRARY_TOOL_SPECS,
+        *_GENERATED_PCB_TOOL_SPECS,
+        *_GENERATED_SCHEMATIC_TOOL_SPECS,
+    ]
+}
+reject_hand_written_duplicates(
+    [str(spec["name"]) for spec in DATUM_TOOL_SPECS if id(spec) not in _GENERATED_SPEC_IDS]
+)

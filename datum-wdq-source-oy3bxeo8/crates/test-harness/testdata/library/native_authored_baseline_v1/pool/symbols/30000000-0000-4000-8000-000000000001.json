@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "uuid": "30000000-0000-4000-8000-000000000001",
+  "name": "Datum single op amp symbol",
+  "unit": "20000000-0000-4000-8000-000000000001",
+  "default_refdes_prefix": "U",
+  "standards_basis": "datum-native-symbol-baseline-v1",
+  "provenance": {
+    "source": "datum-authored-baseline-v1",
+    "source_hash": null,
+    "reviewed_by": "datum",
+    "reviewed_at": "2026-07-05"
+  },
+  "drawings": [
+    {
+      "Line": {
+        "from": {
+          "x": -1000000,
+          "y": -1000000
+        },
+        "to": {
+          "x": 1000000,
+          "y": 0
+        },
+        "width": 100000
+      }
+    },
+    {
+      "Line": {
+        "from": {
+          "x": 1000000,
+          "y": 0
+        },
+        "to": {
+          "x": -1000000,
+          "y": 1000000
+        },
+        "width": 100000
+      }
+    },
+    {
+      "Line": {
+        "from": {
+          "x": -1000000,
+          "y": 1000000
+        },
+        "to": {
+          "x": -1000000,
+          "y": -1000000
+        },
+        "width": 100000
+      }
+    }
+  ],
+  "pin_anchors": [
+    {
+      "pin": "20000000-0000-4000-8000-000000000101",
+      "position": {
+        "x": 1500000,
+        "y": 0
+      },
+      "style": {
+        "orientation": "Right",
+        "length_nm": 500000,
+        "decoration": "none"
+      }
+    },
+    {
+      "pin": "20000000-0000-4000-8000-000000000102",
+      "position": {
+        "x": -1500000,
+        "y": -500000
+      },
+      "style": {
+        "orientation": "Left",
+        "length_nm": 500000,
+        "decoration": "none"
+      }
+    },
+    {
+      "pin": "20000000-0000-4000-8000-000000000103",
+      "position": {
+        "x": -1500000,
+        "y": 500000
+      },
+      "style": {
+        "orientation": "Left",
+        "length_nm": 500000,
+        "decoration": "none"
+      }
+    },
+    {
+      "pin": "20000000-0000-4000-8000-000000000104",
+      "position": {
+        "x": 0,
+        "y": 1500000
+      },
+      "style": {
+        "orientation": "Down",
+        "length_nm": 500000,
+        "decoration": "none"
+      }
+    },
+    {
+      "pin": "20000000-0000-4000-8000-000000000106",
+      "position": {
+        "x": 0,
+        "y": -1500000
+      },
+      "style": {
+        "orientation": "Up",
+        "length_nm": 500000,
+        "decoration": "none"
+      }
+    }
+  ],
+  "tags": [
+    "datum-authored-baseline-v1"
+  ]
+}

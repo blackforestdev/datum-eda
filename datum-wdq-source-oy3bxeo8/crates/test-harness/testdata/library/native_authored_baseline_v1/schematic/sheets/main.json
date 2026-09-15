@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "uuid": "10000000-0000-4000-8000-000000000004",
+  "name": "Main",
+  "symbols": {},
+  "wires": {},
+  "junctions": {},
+  "labels": {},
+  "buses": {},
+  "bus_entries": {},
+  "ports": {},
+  "noconnects": {},
+  "texts": {},
+  "drawings": {}
+}

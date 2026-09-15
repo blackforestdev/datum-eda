@@ -1,0 +1,12 @@
+[package]
+name = "datum-verb-registry"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+
+[[bin]]
+name = "datum-verb-catalog"
+path = "src/bin/datum-verb-catalog.rs"

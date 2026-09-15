@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "uuid": "10000000-0000-4000-8000-000000000001",
+  "name": "Datum Authored Native Library Baseline",
+  "pools": [
+    {
+      "path": "pool",
+      "priority": 1
+    }
+  ],
+  "schematic": "schematic/schematic.json",
+  "board": "board/board.json",
+  "rules": "rules/rules.json"
+}

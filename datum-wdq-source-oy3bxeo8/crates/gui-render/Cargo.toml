@@ -1,0 +1,26 @@
+[package]
+name = "datum-gui-render"
+version.workspace = true
+edition.workspace = true
+
+[features]
+visual = ["dep:image", "dep:pollster"]
+
+[dependencies]
+datum-gui-protocol = { path = "../gui-protocol" }
+datum-gui-viewport = { path = "../gui-viewport" }
+datum-terminal-core = { path = "../terminal-core" }
+eda-engine = { path = "../engine" }
+bytemuck.workspace = true
+wgpu.workspace = true
+taffy.workspace = true
+glyphon = "0.10.0"
+anyhow.workspace = true
+uuid.workspace = true
+image = { version = "0.25.10", optional = true }
+pollster = { workspace = true, optional = true }
+
+[[bin]]
+name = "datum-visual-fixture"
+path = "src/bin/datum_visual_fixture.rs"
+required-features = ["visual"]

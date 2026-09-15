@@ -1,0 +1,46 @@
+# Rust build artifacts
+/target
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# SQLite runtime databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Claude Code (local session config and project instructions)
+.claude/
+CLAUDE.md
+
+# Research: Datum's own analysis writeups under /research are now TRACKED.
+# The two external source symlinks below point into /home/bfadmin/sandbox and must
+# NOT be committed: horizon-source is GPL and eagle-analysis is third-party source —
+# committing either into Datum's repo would violate the licensing posture
+# (engine never ships copyleft; subprocess/IPC only). Keep them ignored.
+/research/eagle-analysis
+/research/horizon-source
+# Third-party papers (copyrighted) kept locally for reference; never commit.
+/research/**/*.pdf
+
+# Codex
+.codex
+
+# Editor artifacts
+.~lock.*#
+/.idea
+/.vscode
+*.swp
+*.swo
+.DS_Store
+*~
+
+# Environment
+.env
+.env.*
+.datum/
+
+# Owner-local launcher (machine-specific paths)
+scripts/run_gui_doa2526.sh

@@ -1,0 +1,66 @@
+(kicad_pcb
+  (version 20221018)
+  (generator "datum-eda-test")
+  (general
+    (thickness 1.6))
+  (paper "A4")
+  (layers
+    (0 "F.Cu" signal)
+    (31 "B.Cu" signal)
+    (44 "Edge.Cuts" user))
+  (net 0 "")
+  (net 1 "GND")
+  (footprint "Resistor_SMD:R_0603_1608Metric"
+    (layer "F.Cu")
+    (uuid aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa)
+    (at 10 10 0)
+    (property "Reference" "R1" (at 10 8 0) (layer "F.SilkS"))
+    (property "Value" "10k" (at 10 12 0) (layer "F.Fab")))
+  (segment
+    (start 20 20)
+    (end 30 20)
+    (width 0.25)
+    (layer "F.Cu")
+    (net 1)
+    (uuid bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb))
+  (via
+    (at 30 20)
+    (size 0.8)
+    (drill 0.4)
+    (layers "F.Cu" "B.Cu")
+    (net 1)
+    (uuid cccccccc-cccc-cccc-cccc-cccccccccccc))
+  (zone
+    (net 1)
+    (net_name "GND")
+    (layer "F.Cu")
+    (uuid dddddddd-dddd-dddd-dddd-dddddddddddd)
+    (polygon
+      (pts
+        (xy 0 0)
+        (xy 40 0)
+        (xy 40 40)
+        (xy 0 40))))
+  (gr_line
+    (start 0 0)
+    (end 40 0)
+    (layer "Edge.Cuts")
+    (width 0.1)
+    (uuid eeeeeeee-eeee-eeee-eeee-eeeeeeeeeeee))
+  (gr_arc
+    (start 40 0)
+    (mid 45 5)
+    (end 40 10)
+    (layer "Edge.Cuts")
+    (width 0.1)
+    (uuid ffffffff-ffff-ffff-ffff-ffffffffffff))
+  (dimension
+    (type orthogonal)
+    (layer "Dwgs.User")
+    (pts (xy 0 0) (xy 40 0))
+    (height 5)
+    (uuid 11111111-2222-3333-4444-555555555555))
+  (gr_text "Demo"
+    (at 5 5 0)
+    (layer "F.SilkS")
+    (uuid 66666666-7777-8888-9999-000000000000)))

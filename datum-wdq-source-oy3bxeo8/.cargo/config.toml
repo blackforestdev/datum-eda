@@ -1,0 +1,4 @@
+[env]
+# The CLI test binary now carries a larger clap-derived command surface than the
+# default Rust test thread stack reliably tolerates in debug builds.
+RUST_MIN_STACK = "16777216"

@@ -1,0 +1,138 @@
+{
+  "component_mechanical_arcs": {},
+  "component_mechanical_circles": {},
+  "component_mechanical_lines": {},
+  "component_mechanical_polygons": {},
+  "component_mechanical_polylines": {},
+  "component_mechanical_texts": {},
+  "component_models_3d": {},
+  "component_pads": {},
+  "component_silkscreen": {},
+  "component_silkscreen_arcs": {},
+  "component_silkscreen_circles": {},
+  "component_silkscreen_polygons": {},
+  "component_silkscreen_polylines": {},
+  "component_silkscreen_texts": {},
+  "dimensions": [],
+  "keepouts": [],
+  "name": "Text Transform Repro Board",
+  "net_classes": {},
+  "nets": {},
+  "outline": {
+    "closed": true,
+    "vertices": [
+      { "x": 0, "y": 0 },
+      { "x": 240000000, "y": 0 },
+      { "x": 240000000, "y": 160000000 },
+      { "x": 0, "y": 160000000 }
+    ]
+  },
+  "packages": {},
+  "pads": {},
+  "schema_version": 1,
+  "stackup": {
+    "layers": [
+      { "id": 1, "layer_type": "Copper", "name": "Top Copper", "thickness_nm": 35000 },
+      { "id": 2, "layer_type": "SolderMask", "name": "Top Mask", "thickness_nm": 10000 },
+      { "id": 3, "layer_type": "Silkscreen", "name": "Top Silk", "thickness_nm": 10000 },
+      { "id": 4, "layer_type": "Paste", "name": "Top Paste", "thickness_nm": 10000 },
+      { "id": 41, "layer_type": "Mechanical", "name": "Mechanical 41", "thickness_nm": 0 }
+    ]
+  },
+  "texts": [
+    {
+      "uuid": "93000000-0000-0000-0000-000000000101",
+      "text": "ROT 0 ODSQ8",
+      "position": { "x": 12000000, "y": 22000000 },
+      "rotation": 0,
+      "layer": 37,
+      "render_intent": "manufacturing",
+      "height_nm": 12000000,
+      "stroke_width_nm": 1824000
+    },
+    {
+      "uuid": "93000000-0000-0000-0000-000000000102",
+      "text": "ROT 90 ODSQ8",
+      "position": { "x": 86000000, "y": 118000000 },
+      "rotation": 90,
+      "layer": 37,
+      "render_intent": "annotation",
+      "height_nm": 10000000,
+      "stroke_width_nm": 1520000
+    },
+    {
+      "uuid": "93000000-0000-0000-0000-000000000103",
+      "text": "ROT 180 ODSQ8",
+      "position": { "x": 228000000, "y": 52000000 },
+      "rotation": 180,
+      "layer": 37,
+      "render_intent": "branding",
+      "height_nm": 12000000,
+      "stroke_width_nm": 1824000,
+      "h_align": "right",
+      "v_align": "top"
+    },
+    {
+      "uuid": "93000000-0000-0000-0000-000000000104",
+      "text": "ROT 270 ODSQ8",
+      "position": { "x": 168000000, "y": 150000000 },
+      "rotation": 270,
+      "layer": 37,
+      "render_intent": "documentation",
+      "height_nm": 9000000,
+      "stroke_width_nm": 1368000
+    },
+    {
+      "uuid": "93000000-0000-0000-0000-000000000105",
+      "text": "MIRROR ODSQ8",
+      "position": { "x": 12000000, "y": 76000000 },
+      "rotation": 0,
+      "layer": 37,
+      "render_intent": "annotation",
+      "height_nm": 9000000,
+      "stroke_width_nm": 1368000,
+      "mirrored": true
+    },
+    {
+      "uuid": "93000000-0000-0000-0000-000000000106",
+      "text": "UPRIGHT 180",
+      "position": { "x": 12000000, "y": 102000000 },
+      "rotation": 180,
+      "layer": 37,
+      "render_intent": "manufacturing",
+      "height_nm": 9000000,
+      "stroke_width_nm": 1368000,
+      "keep_upright": true
+    },
+    {
+      "uuid": "93000000-0000-0000-0000-000000000107",
+      "text": "CENTER 90",
+      "position": { "x": 124000000, "y": 78000000 },
+      "rotation": 90,
+      "layer": 37,
+      "render_intent": "branding",
+      "height_nm": 11000000,
+      "stroke_width_nm": 1672000,
+      "h_align": "center",
+      "v_align": "center"
+    },
+    {
+      "uuid": "93000000-0000-0000-0000-000000000108",
+      "text": "MONO MIRROR 270",
+      "position": { "x": 228000000, "y": 146000000 },
+      "rotation": 270,
+      "layer": 37,
+      "render_intent": "annotation",
+      "family": "jetbrains_mono",
+      "height_nm": 7000000,
+      "stroke_width_nm": 1064000,
+      "mirrored": true,
+      "h_align": "right",
+      "v_align": "top"
+    }
+  ],
+  "tracks": {},
+  "uuid": "93000000-0000-0000-0000-000000000003",
+  "vias": {},
+  "zones": {}
+}

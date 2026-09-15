@@ -1,0 +1,83 @@
+(kicad_sch
+  (version 20230121)
+  (generator "datum-eda-test")
+  (uuid b1b1b1b1-1111-2222-3333-444444444444)
+  (paper "A4")
+  (lib_symbols
+    (symbol "Test:Port"
+      (pin passive line
+        (at -5 0 0)
+        (length 2.54)
+        (name "~" (effects (font (size 1.27 1.27))))
+        (number "1" (effects (font (size 1.27 1.27)))))))
+  (symbol
+    (lib_id "Test:Port")
+    (at 20 20 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (uuid b2b2b2b2-1111-2222-3333-444444444444)
+    (property "Reference" "TP1" (at 20 18 0))
+    (property "Value" "PORT" (at 20 22 0)))
+  (symbol
+    (lib_id "Test:Port")
+    (at 20 30 0)
+    (unit 1)
+    (in_bom yes)
+    (on_board yes)
+    (uuid b3b3b3b3-1111-2222-3333-444444444444)
+    (property "Reference" "TP2" (at 20 28 0))
+    (property "Value" "PORT" (at 20 32 0)))
+  (wire
+    (pts
+      (xy 15 20)
+      (xy 35 20))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b4b4b4b4-1111-2222-3333-444444444444))
+  (wire
+    (pts
+      (xy 15 30)
+      (xy 35 30))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b5b5b5b5-1111-2222-3333-444444444444))
+  (label "DATA[0]"
+    (at 25 20 0)
+    (effects
+      (font (size 1.27 1.27)))
+    (uuid b6b6b6b6-1111-2222-3333-444444444444))
+  (label "DATA[1]"
+    (at 25 30 0)
+    (effects
+      (font (size 1.27 1.27)))
+    (uuid b7b7b7b7-1111-2222-3333-444444444444))
+  (label "DATA[0..1]"
+    (at 40 15 0)
+    (effects
+      (font (size 1.27 1.27)))
+    (uuid b8b8b8b8-1111-2222-3333-444444444444))
+  (bus
+    (pts
+      (xy 40 15)
+      (xy 40 35))
+    (stroke
+      (width 0)
+      (type default))
+    (uuid b9b9b9b9-1111-2222-3333-444444444444))
+  (bus_entry
+    (at 35 20)
+    (size 5 5)
+    (stroke
+      (width 0)
+      (type default))
+    (uuid babababa-1111-2222-3333-444444444444))
+  (bus_entry
+    (at 35 30)
+    (size 5 -5)
+    (stroke
+      (width 0)
+      (type default))
+    (uuid bbbbbbbb-1111-2222-3333-444444444444)))

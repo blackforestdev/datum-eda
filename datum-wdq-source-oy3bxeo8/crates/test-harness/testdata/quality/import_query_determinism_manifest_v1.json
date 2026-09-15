@@ -1,0 +1,183 @@
+{
+  "kind": "native_import_query_determinism_manifest",
+  "version": 1,
+  "repeat_count": 3,
+  "query_cases": [
+    {
+      "case_id": "simple-demo-board-summary",
+      "fixture_path": "crates/engine/testdata/import/kicad/simple-demo.kicad_pcb",
+      "subcommand": "summary"
+    },
+    {
+      "case_id": "simple-demo-board-netlist",
+      "fixture_path": "crates/engine/testdata/import/kicad/simple-demo.kicad_pcb",
+      "subcommand": "netlist"
+    },
+    {
+      "case_id": "airwire-demo-board-unrouted",
+      "fixture_path": "crates/engine/testdata/import/kicad/airwire-demo.kicad_pcb",
+      "subcommand": "unrouted"
+    },
+    {
+      "case_id": "simple-demo-schematic-nets",
+      "fixture_path": "crates/engine/testdata/import/kicad/simple-demo.kicad_sch",
+      "subcommand": "nets"
+    },
+    {
+      "case_id": "simple-demo-schematic-nets-inventory",
+      "fixture_path": "crates/engine/testdata/import/kicad/simple-demo.kicad_sch",
+      "subcommand": "schematic-nets"
+    },
+    {
+      "case_id": "simple-demo-sheets",
+      "fixture_path": "crates/engine/testdata/import/kicad/simple-demo.kicad_sch",
+      "subcommand": "sheets"
+    },
+    {
+      "case_id": "simple-demo-symbols",
+      "fixture_path": "crates/engine/testdata/import/kicad/simple-demo.kicad_sch",
+      "subcommand": "symbols"
+    },
+    {
+      "case_id": "simple-demo-buses",
+      "fixture_path": "crates/engine/testdata/import/kicad/simple-demo.kicad_sch",
+      "subcommand": "buses"
+    },
+    {
+      "case_id": "simple-demo-bus-entries",
+      "fixture_path": "crates/engine/testdata/import/kicad/simple-demo.kicad_sch",
+      "subcommand": "bus-entries"
+    },
+    {
+      "case_id": "simple-demo-noconnects",
+      "fixture_path": "crates/engine/testdata/import/kicad/simple-demo.kicad_sch",
+      "subcommand": "noconnects"
+    },
+    {
+      "case_id": "simple-demo-labels",
+      "fixture_path": "crates/engine/testdata/import/kicad/simple-demo.kicad_sch",
+      "subcommand": "labels"
+    },
+    {
+      "case_id": "simple-demo-ports",
+      "fixture_path": "crates/engine/testdata/import/kicad/simple-demo.kicad_sch",
+      "subcommand": "ports"
+    },
+    {
+      "case_id": "simple-demo-hierarchy",
+      "fixture_path": "crates/engine/testdata/import/kicad/simple-demo.kicad_sch",
+      "subcommand": "hierarchy"
+    },
+    {
+      "case_id": "simple-demo-diagnostics",
+      "fixture_path": "crates/engine/testdata/import/kicad/simple-demo.kicad_sch",
+      "subcommand": "diagnostics"
+    },
+    {
+      "case_id": "bus-demo-schematic-nets",
+      "fixture_path": "crates/engine/testdata/import/kicad/bus-demo.kicad_sch",
+      "subcommand": "schematic-nets"
+    },
+    {
+      "case_id": "bus-demo-buses",
+      "fixture_path": "crates/engine/testdata/import/kicad/bus-demo.kicad_sch",
+      "subcommand": "buses"
+    },
+    {
+      "case_id": "bus-demo-bus-entries",
+      "fixture_path": "crates/engine/testdata/import/kicad/bus-demo.kicad_sch",
+      "subcommand": "bus-entries"
+    },
+    {
+      "case_id": "bus-demo-diagnostics",
+      "fixture_path": "crates/engine/testdata/import/kicad/bus-demo.kicad_sch",
+      "subcommand": "diagnostics"
+    },
+    {
+      "case_id": "hierarchy-mismatch-demo-schematic-nets",
+      "fixture_path": "crates/engine/testdata/import/kicad/hierarchy-mismatch-demo.kicad_sch",
+      "subcommand": "schematic-nets"
+    },
+    {
+      "case_id": "hierarchy-mismatch-demo-sheets",
+      "fixture_path": "crates/engine/testdata/import/kicad/hierarchy-mismatch-demo.kicad_sch",
+      "subcommand": "sheets"
+    },
+    {
+      "case_id": "hierarchy-mismatch-demo-symbols",
+      "fixture_path": "crates/engine/testdata/import/kicad/hierarchy-mismatch-demo.kicad_sch",
+      "subcommand": "symbols"
+    },
+    {
+      "case_id": "hierarchy-mismatch-demo-labels",
+      "fixture_path": "crates/engine/testdata/import/kicad/hierarchy-mismatch-demo.kicad_sch",
+      "subcommand": "labels"
+    },
+    {
+      "case_id": "hierarchy-mismatch-demo-ports",
+      "fixture_path": "crates/engine/testdata/import/kicad/hierarchy-mismatch-demo.kicad_sch",
+      "subcommand": "ports"
+    },
+    {
+      "case_id": "hierarchy-mismatch-demo-hierarchy",
+      "fixture_path": "crates/engine/testdata/import/kicad/hierarchy-mismatch-demo.kicad_sch",
+      "subcommand": "hierarchy"
+    },
+    {
+      "case_id": "hierarchy-mismatch-demo-diagnostics",
+      "fixture_path": "crates/engine/testdata/import/kicad/hierarchy-mismatch-demo.kicad_sch",
+      "subcommand": "diagnostics"
+    },
+    {
+      "case_id": "erc-coverage-demo-schematic-nets",
+      "fixture_path": "crates/engine/testdata/import/kicad/erc-coverage-demo.kicad_sch",
+      "subcommand": "schematic-nets"
+    },
+    {
+      "case_id": "erc-coverage-demo-symbols",
+      "fixture_path": "crates/engine/testdata/import/kicad/erc-coverage-demo.kicad_sch",
+      "subcommand": "symbols"
+    },
+    {
+      "case_id": "erc-coverage-demo-labels",
+      "fixture_path": "crates/engine/testdata/import/kicad/erc-coverage-demo.kicad_sch",
+      "subcommand": "labels"
+    },
+    {
+      "case_id": "erc-coverage-demo-noconnects",
+      "fixture_path": "crates/engine/testdata/import/kicad/erc-coverage-demo.kicad_sch",
+      "subcommand": "noconnects"
+    },
+    {
+      "case_id": "erc-coverage-demo-diagnostics",
+      "fixture_path": "crates/engine/testdata/import/kicad/erc-coverage-demo.kicad_sch",
+      "subcommand": "diagnostics"
+    }
+  ],
+  "check_cases": [
+    {
+      "case_id": "simple-demo-check",
+      "fixture_path": "crates/engine/testdata/import/kicad/simple-demo.kicad_sch"
+    },
+    {
+      "case_id": "analog-input-demo-check",
+      "fixture_path": "crates/engine/testdata/import/kicad/analog-input-demo.kicad_sch"
+    },
+    {
+      "case_id": "analog-input-bias-demo-check",
+      "fixture_path": "crates/engine/testdata/import/kicad/analog-input-bias-demo.kicad_sch"
+    },
+    {
+      "case_id": "erc-coverage-demo-check",
+      "fixture_path": "crates/engine/testdata/import/kicad/erc-coverage-demo.kicad_sch"
+    },
+    {
+      "case_id": "hierarchy-mismatch-demo-check",
+      "fixture_path": "crates/engine/testdata/import/kicad/hierarchy-mismatch-demo.kicad_sch"
+    },
+    {
+      "case_id": "bus-demo-check",
+      "fixture_path": "crates/engine/testdata/import/kicad/bus-demo.kicad_sch"
+    }
+  ]
+}

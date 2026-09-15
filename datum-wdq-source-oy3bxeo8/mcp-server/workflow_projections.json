@@ -1,0 +1,30 @@
+{
+  "projection_version": 1,
+  "workflow_catalog_uri": "datum://workflows",
+  "adapters": [
+    {
+      "adapter_id": "codex",
+      "adapter_instruction_files": ["AGENTS.md"],
+      "supplemental_instruction_files": [],
+      "delivery": "native-mcp"
+    },
+    {
+      "adapter_id": "claude-code",
+      "adapter_instruction_files": ["CLAUDE.md"],
+      "supplemental_instruction_files": [],
+      "delivery": "native-mcp"
+    },
+    {
+      "adapter_id": "cursor-cli",
+      "adapter_instruction_files": ["AGENTS.md", "CLAUDE.md"],
+      "supplemental_instruction_files": [".cursor/rules/datum-workflows.mdc"],
+      "delivery": "native-mcp"
+    },
+    {
+      "adapter_id": "local-generic",
+      "adapter_instruction_files": ["AGENTS.md", "CLAUDE.md"],
+      "supplemental_instruction_files": [],
+      "delivery": "printed-stdio-command"
+    }
+  ]
+}

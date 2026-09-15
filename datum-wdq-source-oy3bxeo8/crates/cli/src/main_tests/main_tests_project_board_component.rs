@@ -1,0 +1,832 @@
+use super::*;
+
+fn unique_project_root(label: &str) -> PathBuf {
+    std::env::temp_dir().join(format!("{}-{}", label, Uuid::new_v4()))
+}
+
+fn board_components_query_cli(root: &Path) -> Cli {
+    Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "board-components",
+    ])
+    .expect("CLI should parse")
+}
+
+fn board_pads_query_cli(root: &Path) -> Cli {
+    Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "query",
+        root.to_str().unwrap(),
+        "board-pads",
+    ])
+    .expect("CLI should parse")
+}
+
+fn place_board_component_for_alignment(root: &Path, reference: &str, x_nm: i64) -> String {
+    let part_uuid = Uuid::new_v4();
+    let package_uuid = Uuid::new_v4();
+    let output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "place-board-component",
+            root.to_str().unwrap(),
+            "--part",
+            &part_uuid.to_string(),
+            "--package",
+            &package_uuid.to_string(),
+            "--reference",
+            reference,
+            "--value",
+            "ALIGN",
+            "--x-nm",
+            &x_nm.to_string(),
+            "--y-nm",
+            "1000",
+            "--layer",
+            "1",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("place board component should succeed");
+    let report: serde_json::Value =
+        serde_json::from_str(&output).expect("place output should parse");
+    report["component_uuid"]
+        .as_str()
+        .expect("component uuid should be reported")
+        .to_string()
+}
+
+#[test]
+fn project_board_component_place_move_reassign_rotate_and_lock_round_trip_through_native_query() {
+    let root = unique_project_root("datum-eda-cli-project-board-component");
+    create_native_project(&root, Some("Board Component Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let part_uuid = Uuid::new_v4();
+    let package_uuid = Uuid::new_v4();
+
+    let place_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "place-board-component",
+        root.to_str().unwrap(),
+        "--part",
+        &part_uuid.to_string(),
+        "--package",
+        &package_uuid.to_string(),
+        "--reference",
+        "U1",
+        "--value",
+        "MCU",
+        "--x-nm",
+        "1000",
+        "--y-nm",
+        "2000",
+        "--layer",
+        "1",
+    ])
+    .expect("CLI should parse");
+
+    let placed_output = execute(place_cli).expect("place board component should succeed");
+    let placed: serde_json::Value =
+        serde_json::from_str(&placed_output).expect("place output should parse");
+    let component_uuid = placed["component_uuid"].as_str().unwrap().to_string();
+    assert_eq!(placed["has_persisted_component_silkscreen"], false);
+    assert_eq!(placed["has_persisted_component_mechanical"], false);
+    assert_eq!(placed["has_persisted_component_pads"], false);
+    assert_eq!(placed["has_persisted_component_models_3d"], false);
+    assert_eq!(placed["persisted_component_silkscreen_line_count"], 0);
+    assert_eq!(placed["persisted_component_mechanical_line_count"], 0);
+    assert_eq!(placed["persisted_component_pad_count"], 0);
+    assert_eq!(placed["persisted_component_model_3d_count"], 0);
+
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    assert_eq!(components.len(), 1);
+    assert_eq!(components[0]["uuid"], component_uuid);
+    assert_eq!(components[0]["part"], part_uuid.to_string());
+    assert_eq!(components[0]["package"], package_uuid.to_string());
+    assert_eq!(components[0]["reference"], "U1");
+    assert_eq!(components[0]["value"], "MCU");
+    assert_eq!(components[0]["position"]["x"], 1000);
+    assert_eq!(components[0]["position"]["y"], 2000);
+    assert_eq!(components[0]["rotation"], 0);
+    assert_eq!(components[0]["layer"], 1);
+    assert_eq!(components[0]["locked"], false);
+    assert_eq!(components[0]["has_persisted_component_silkscreen"], false);
+    assert_eq!(
+        components[0]["persisted_component_silkscreen_text_count"],
+        0
+    );
+    assert_eq!(
+        components[0]["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(components[0]["persisted_component_silkscreen_arc_count"], 0);
+    assert_eq!(
+        components[0]["persisted_component_silkscreen_circle_count"],
+        0
+    );
+    assert_eq!(
+        components[0]["persisted_component_silkscreen_polygon_count"],
+        0
+    );
+    assert_eq!(
+        components[0]["persisted_component_silkscreen_polyline_count"],
+        0
+    );
+    assert_eq!(components[0]["has_persisted_component_mechanical"], false);
+    assert_eq!(
+        components[0]["persisted_component_mechanical_text_count"],
+        0
+    );
+    assert_eq!(
+        components[0]["persisted_component_mechanical_line_count"],
+        0
+    );
+    assert_eq!(components[0]["persisted_component_mechanical_arc_count"], 0);
+    assert_eq!(
+        components[0]["persisted_component_mechanical_circle_count"],
+        0
+    );
+    assert_eq!(
+        components[0]["persisted_component_mechanical_polygon_count"],
+        0
+    );
+    assert_eq!(
+        components[0]["persisted_component_mechanical_polyline_count"],
+        0
+    );
+    assert_eq!(components[0]["has_persisted_component_pads"], false);
+    assert_eq!(components[0]["persisted_component_pad_count"], 0);
+    assert_eq!(components[0]["has_persisted_component_models_3d"], false);
+    assert_eq!(components[0]["persisted_component_model_3d_count"], 0);
+
+    let move_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "move-board-component",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+        "--x-nm",
+        "3000",
+        "--y-nm",
+        "4000",
+    ])
+    .expect("CLI should parse");
+    let move_output = execute(move_cli).expect("move board component should succeed");
+    let move_report: serde_json::Value =
+        serde_json::from_str(&move_output).expect("move output should parse");
+    assert_eq!(move_report["has_persisted_component_silkscreen"], false);
+    assert_eq!(move_report["has_persisted_component_mechanical"], false);
+    assert_eq!(move_report["persisted_component_silkscreen_line_count"], 0);
+    assert_eq!(move_report["persisted_component_mechanical_line_count"], 0);
+
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    assert_eq!(components.len(), 1);
+    assert_eq!(components[0]["position"]["x"], 3000);
+    assert_eq!(components[0]["position"]["y"], 4000);
+    assert_eq!(components[0]["rotation"], 0);
+    assert_eq!(components[0]["layer"], 1);
+    assert_eq!(components[0]["locked"], false);
+
+    let board_pads_output =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let board_pads: Vec<serde_json::Value> =
+        serde_json::from_str(&board_pads_output).expect("pad query output should parse");
+    assert!(
+        board_pads.is_empty(),
+        "minimal component fixture should not materialize absolute board pads"
+    );
+
+    let replacement_part_uuid = Uuid::new_v4();
+    let set_part_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-board-component-part",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+        "--part",
+        &replacement_part_uuid.to_string(),
+    ])
+    .expect("CLI should parse");
+    let set_part_output = execute(set_part_cli).expect("set board component part should succeed");
+    let set_part_report: serde_json::Value =
+        serde_json::from_str(&set_part_output).expect("set part output should parse");
+    assert_eq!(set_part_report["has_persisted_component_silkscreen"], false);
+    assert_eq!(set_part_report["has_persisted_component_mechanical"], false);
+    assert_eq!(
+        set_part_report["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(
+        set_part_report["persisted_component_mechanical_line_count"],
+        0
+    );
+
+    let replacement_package_uuid = Uuid::new_v4();
+    let set_package_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-board-component-package",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+        "--package",
+        &replacement_package_uuid.to_string(),
+    ])
+    .expect("CLI should parse");
+    let set_package_output =
+        execute(set_package_cli).expect("set board component package should succeed");
+    let set_package_report: serde_json::Value =
+        serde_json::from_str(&set_package_output).expect("set package output should parse");
+    assert_eq!(
+        set_package_report["has_persisted_component_silkscreen"],
+        false
+    );
+    assert_eq!(
+        set_package_report["has_persisted_component_mechanical"],
+        false
+    );
+    assert_eq!(
+        set_package_report["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(
+        set_package_report["persisted_component_mechanical_line_count"],
+        0
+    );
+
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    assert_eq!(components.len(), 1);
+    assert_eq!(components[0]["part"], replacement_part_uuid.to_string());
+    assert_eq!(
+        components[0]["package"],
+        replacement_package_uuid.to_string()
+    );
+    assert_eq!(components[0]["value"], "MCU");
+    assert_eq!(components[0]["reference"], "U1");
+    assert_eq!(components[0]["position"]["x"], 3000);
+    assert_eq!(components[0]["position"]["y"], 4000);
+
+    let set_reference_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-board-component-reference",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+        "--reference",
+        "U42",
+    ])
+    .expect("CLI should parse");
+    let set_reference_output =
+        execute(set_reference_cli).expect("set board component reference should succeed");
+    let set_reference_report: serde_json::Value =
+        serde_json::from_str(&set_reference_output).expect("set reference output should parse");
+    assert_eq!(set_reference_report["reference"], "U42");
+    assert_eq!(
+        set_reference_report["has_persisted_component_silkscreen"],
+        false
+    );
+    assert_eq!(
+        set_reference_report["has_persisted_component_mechanical"],
+        false
+    );
+    assert_eq!(
+        set_reference_report["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(
+        set_reference_report["persisted_component_mechanical_line_count"],
+        0
+    );
+
+    let set_value_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-board-component-value",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+        "--value",
+        "MCU-REV2",
+    ])
+    .expect("CLI should parse");
+    let set_value_output =
+        execute(set_value_cli).expect("set board component value should succeed");
+    let set_value_report: serde_json::Value =
+        serde_json::from_str(&set_value_output).expect("set value output should parse");
+    assert_eq!(set_value_report["value"], "MCU-REV2");
+    assert_eq!(
+        set_value_report["has_persisted_component_silkscreen"],
+        false
+    );
+    assert_eq!(
+        set_value_report["has_persisted_component_mechanical"],
+        false
+    );
+    assert_eq!(
+        set_value_report["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(
+        set_value_report["persisted_component_mechanical_line_count"],
+        0
+    );
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    assert_eq!(components.len(), 1);
+    assert_eq!(components[0]["reference"], "U42");
+    assert_eq!(components[0]["value"], "MCU-REV2");
+    assert_eq!(components[0]["part"], replacement_part_uuid.to_string());
+    assert_eq!(
+        components[0]["package"],
+        replacement_package_uuid.to_string()
+    );
+    assert_eq!(components[0]["layer"], 1);
+
+    let set_layer_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-board-component-layer",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+        "--layer",
+        "2",
+    ])
+    .expect("CLI should parse");
+    let set_layer_output =
+        execute(set_layer_cli).expect("set board component layer should succeed");
+    let set_layer_report: serde_json::Value =
+        serde_json::from_str(&set_layer_output).expect("set layer output should parse");
+    assert_eq!(set_layer_report["layer"], 2);
+    assert_eq!(
+        set_layer_report["has_persisted_component_silkscreen"],
+        false
+    );
+    assert_eq!(
+        set_layer_report["has_persisted_component_mechanical"],
+        false
+    );
+    assert_eq!(
+        set_layer_report["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(
+        set_layer_report["persisted_component_mechanical_line_count"],
+        0
+    );
+
+    let flip_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "flip-board-component",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+        "--layer",
+        "1",
+    ])
+    .expect("CLI should parse");
+    let flip_output = execute(flip_cli).expect("flip board component should succeed");
+    let flip_report: serde_json::Value =
+        serde_json::from_str(&flip_output).expect("flip output should parse");
+    assert_eq!(flip_report["layer"], 1);
+
+    let rotate_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "rotate-board-component",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+        "--rotation-deg",
+        "180",
+    ])
+    .expect("CLI should parse");
+    let rotate_output = execute(rotate_cli).expect("rotate board component should succeed");
+    let rotate_report: serde_json::Value =
+        serde_json::from_str(&rotate_output).expect("rotate output should parse");
+    assert_eq!(rotate_report["has_persisted_component_silkscreen"], false);
+    assert_eq!(rotate_report["has_persisted_component_mechanical"], false);
+    assert_eq!(
+        rotate_report["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(
+        rotate_report["persisted_component_mechanical_line_count"],
+        0
+    );
+
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    assert_eq!(components.len(), 1);
+    assert_eq!(components[0]["layer"], 1);
+    assert_eq!(components[0]["rotation"], 180);
+    assert_eq!(components[0]["locked"], false);
+
+    let lock_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "set-board-component-locked",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+    ])
+    .expect("CLI should parse");
+    let lock_output = execute(lock_cli).expect("lock board component should succeed");
+    let lock_report: serde_json::Value =
+        serde_json::from_str(&lock_output).expect("lock output should parse");
+    assert_eq!(lock_report["has_persisted_component_silkscreen"], false);
+    assert_eq!(lock_report["has_persisted_component_mechanical"], false);
+    assert_eq!(lock_report["persisted_component_silkscreen_line_count"], 0);
+    assert_eq!(lock_report["persisted_component_mechanical_line_count"], 0);
+
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    assert_eq!(components.len(), 1);
+    assert_eq!(components[0]["rotation"], 180);
+    assert_eq!(components[0]["locked"], true);
+
+    let unlock_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "clear-board-component-locked",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+    ])
+    .expect("CLI should parse");
+    let unlock_output = execute(unlock_cli).expect("unlock board component should succeed");
+    let unlock_report: serde_json::Value =
+        serde_json::from_str(&unlock_output).expect("unlock output should parse");
+    assert_eq!(unlock_report["has_persisted_component_silkscreen"], false);
+    assert_eq!(unlock_report["has_persisted_component_mechanical"], false);
+    assert_eq!(
+        unlock_report["persisted_component_silkscreen_line_count"],
+        0
+    );
+    assert_eq!(
+        unlock_report["persisted_component_mechanical_line_count"],
+        0
+    );
+
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    assert_eq!(components.len(), 1);
+    assert_eq!(components[0]["rotation"], 180);
+    assert_eq!(components[0]["locked"], false);
+
+    let delete_cli = Cli::try_parse_from([
+        "eda",
+        "--format",
+        "json",
+        "project",
+        "delete-board-component",
+        root.to_str().unwrap(),
+        "--component",
+        &component_uuid,
+    ])
+    .expect("CLI should parse");
+    let deleted_output = execute(delete_cli).expect("delete board component should succeed");
+    let deleted: serde_json::Value =
+        serde_json::from_str(&deleted_output).expect("delete output should parse");
+    assert_eq!(deleted["action"].as_str(), Some("delete_board_component"));
+    assert_eq!(
+        deleted["component_uuid"].as_str(),
+        Some(component_uuid.as_str())
+    );
+    assert_eq!(deleted["has_persisted_component_silkscreen"], false);
+    assert_eq!(deleted["has_persisted_component_mechanical"], false);
+    assert_eq!(deleted["persisted_component_silkscreen_line_count"], 0);
+    assert_eq!(deleted["persisted_component_mechanical_line_count"], 0);
+
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    assert!(components.is_empty());
+
+    let summary_cli =
+        Cli::try_parse_from(["eda", "project", "query", root.to_str().unwrap(), "summary"])
+            .expect("CLI should parse");
+    let summary_output = execute(summary_cli).expect("summary query should succeed");
+    assert!(summary_output.contains("board_components: 0"));
+
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+#[test]
+fn project_board_component_align_left_is_one_undoable_batch_and_skips_locked() {
+    let root = unique_project_root("datum-eda-cli-project-board-component-align");
+    create_native_project(&root, Some("Board Component Align Demo".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let first = place_board_component_for_alignment(&root, "U1", 1000);
+    let second = place_board_component_for_alignment(&root, "U2", 3000);
+    let locked = place_board_component_for_alignment(&root, "U3", 5000);
+
+    execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "set-board-component-locked",
+            root.to_str().unwrap(),
+            "--component",
+            &locked,
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("lock board component should succeed");
+
+    let align_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "align-board-components",
+            root.to_str().unwrap(),
+            "--component",
+            &first,
+            "--component",
+            &second,
+            "--component",
+            &locked,
+            "--mode",
+            "left",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("align board components should succeed");
+    let align: serde_json::Value =
+        serde_json::from_str(&align_output).expect("align output should parse");
+    assert_eq!(align["action"], "align_board_components");
+    assert_eq!(align["mode"], "left");
+    assert_eq!(align["requested_count"], 3);
+    assert_eq!(align["aligned_count"], 1);
+    assert_eq!(align["skipped_locked_count"], 1);
+    assert_eq!(align["unchanged_count"], 1);
+    assert_eq!(align["aligned_component_uuids"][0], second);
+    assert_eq!(align["skipped_locked_component_uuids"][0], locked);
+    assert_eq!(align["unchanged_component_uuids"][0], first);
+
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    let position_x = |component_id: &str| -> i64 {
+        components
+            .iter()
+            .find(|component| component["uuid"] == component_id)
+            .expect("component should exist")["position"]["x"]
+            .as_i64()
+            .expect("x should be an integer")
+    };
+    assert_eq!(position_x(&first), 1000);
+    assert_eq!(position_x(&second), 1000);
+    assert_eq!(position_x(&locked), 5000);
+
+    execute(
+        Cli::try_parse_from(["eda", "project", "undo", root.to_str().unwrap()])
+            .expect("CLI should parse"),
+    )
+    .expect("align undo should succeed");
+
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    let position_x = |component_id: &str| -> i64 {
+        components
+            .iter()
+            .find(|component| component["uuid"] == component_id)
+            .expect("component should exist")["position"]["x"]
+            .as_i64()
+            .expect("x should be an integer")
+    };
+    assert_eq!(position_x(&first), 1000);
+    assert_eq!(position_x(&second), 3000);
+    assert_eq!(position_x(&locked), 5000);
+}
+
+#[test]
+fn project_move_board_component_translates_package_owned_board_pads() {
+    let root = unique_project_root("datum-eda-cli-project-board-component-move-pads");
+    create_native_project(&root, Some("Board Component Move Pads".to_string()))
+        .expect("initial scaffold should succeed");
+
+    let component_uuid = Uuid::from_u128(0xd200);
+    let part_uuid = Uuid::from_u128(0xd201);
+    let package_uuid = Uuid::from_u128(0xd202);
+    let net_uuid = Uuid::from_u128(0xd203);
+    let class_uuid = Uuid::from_u128(0xd204);
+    let pad_uuid = Uuid::from_u128(0xd205);
+    let board_json = root.join("board/board.json");
+
+    std::fs::write(
+        &board_json,
+        format!(
+            "{}\n",
+            eda_engine::ir::serialization::to_json_deterministic(&serde_json::json!({
+                "schema_version": 1,
+                "uuid": Uuid::from_u128(0xd206),
+                "name": "Board Component Move Pads Demo",
+                "stackup": {
+                    "layers": [
+                        { "id": 1, "name": "Top Copper", "layer_type": "Copper", "thickness_nm": 35000 }
+                    ]
+                },
+                "outline": {
+                    "vertices": [
+                        { "x": 0, "y": 0 },
+                        { "x": 2000000, "y": 0 },
+                        { "x": 2000000, "y": 2000000 },
+                        { "x": 0, "y": 2000000 }
+                    ],
+                    "closed": true
+                },
+                "packages": {
+                    component_uuid.to_string(): {
+                        "uuid": component_uuid,
+                        "package": package_uuid,
+                        "part": part_uuid,
+                        "reference": "U1",
+                        "value": "MCU",
+                        "position": { "x": 1000000, "y": 1000000 },
+                        "rotation": 0,
+                        "layer": 1,
+                        "locked": false
+                    }
+                },
+                "pads": {
+                    pad_uuid.to_string(): {
+                        "uuid": pad_uuid,
+                        "package": component_uuid,
+                        "name": "1",
+                        "net": net_uuid,
+                        "position": { "x": 900000, "y": 1000000 },
+                        "layer": 1,
+                        "shape": "circle",
+                        "diameter": 300000,
+                        "width": 0,
+                        "height": 0
+                    }
+                },
+                "tracks": {},
+                "vias": {},
+                "zones": {},
+                "nets": {
+                    net_uuid.to_string(): {
+                        "uuid": net_uuid,
+                        "name": "SIG",
+                        "class": class_uuid
+                    }
+                },
+                "net_classes": {
+                    class_uuid.to_string(): {
+                        "uuid": class_uuid,
+                        "name": "Default",
+                        "clearance": 150000,
+                        "track_width": 150000,
+                        "via_drill": 300000,
+                        "via_diameter": 600000,
+                        "diffpair_width": 0,
+                        "diffpair_gap": 0
+                    }
+                },
+                "keepouts": [],
+                "dimensions": [],
+                "texts": []
+            }))
+            .expect("canonical serialization should succeed")
+        ),
+    )
+    .expect("board file should write");
+
+    let components_output =
+        execute(board_components_query_cli(&root)).expect("board components query should succeed");
+    let components: Vec<serde_json::Value> =
+        serde_json::from_str(&components_output).expect("query output should parse");
+    let component = components
+        .iter()
+        .find(|entry| entry["reference"] == "U1")
+        .expect("U1 should exist");
+    let component_uuid = component["uuid"]
+        .as_str()
+        .expect("component uuid should be a string");
+
+    let board_pads_before =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let board_pads_before: Vec<serde_json::Value> =
+        serde_json::from_str(&board_pads_before).expect("pad query should parse");
+    let first_pad_before = board_pads_before
+        .iter()
+        .find(|pad| pad["package"] == component_uuid)
+        .expect("U1 should own at least one absolute board pad");
+    let first_pad_uuid = first_pad_before["uuid"]
+        .as_str()
+        .expect("pad uuid should be a string")
+        .to_string();
+    let before_x = first_pad_before["position"]["x"]
+        .as_i64()
+        .expect("pad x should be an integer");
+    let before_y = first_pad_before["position"]["y"]
+        .as_i64()
+        .expect("pad y should be an integer");
+
+    let move_output = execute(
+        Cli::try_parse_from([
+            "eda",
+            "--format",
+            "json",
+            "project",
+            "move-board-component",
+            root.to_str().unwrap(),
+            "--component",
+            component_uuid.to_string().as_str(),
+            "--x-nm",
+            "2000000",
+            "--y-nm",
+            "2000000",
+        ])
+        .expect("CLI should parse"),
+    )
+    .expect("move board component should succeed");
+    let move_report: serde_json::Value =
+        serde_json::from_str(&move_output).expect("move output should parse");
+    assert_eq!(move_report["x_nm"], 2000000);
+    assert_eq!(move_report["y_nm"], 2000000);
+
+    let board_pads_after =
+        execute(board_pads_query_cli(&root)).expect("board pads query should succeed");
+    let board_pads_after: Vec<serde_json::Value> =
+        serde_json::from_str(&board_pads_after).expect("pad query should parse");
+    let first_pad_after = board_pads_after
+        .iter()
+        .find(|pad| pad["uuid"] == first_pad_uuid)
+        .expect("moved pad should still exist");
+    assert_eq!(
+        first_pad_after["position"]["x"].as_i64().unwrap() - before_x,
+        1_000_000
+    );
+    assert_eq!(
+        first_pad_after["position"]["y"].as_i64().unwrap() - before_y,
+        1_000_000
+    );
+}

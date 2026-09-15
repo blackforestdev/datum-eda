@@ -1,0 +1,10 @@
+{
+  "candidate": "9564368735dccada966388e76f7adcc2380b83b8",
+  "base": "c386a801dfc70577f232719a360a15c11f48ea8e",
+  "runner": "/home/bfadmin/Documents/datum-wdq-activation-final/candidate/scripts/check_workflow_delivery.py",
+  "hooks": "/home/bfadmin/Documents/datum-wdq-activation-final/owner-hooks",
+  "environment": "docs/reviews/workflow-delivery-pilot/proof-artifacts/environment.json",
+  "packet_sha256": "ab71468a0acd0e845f5e7cd5e2b21aae5121a85dfd5c2d72fa2f5f372c5745a0",
+  "review_sha256": "b4c214907e43eb4ae7328a005c33e7558f215791928a77cc469edb167b7d1fba",
+  "promotion_performed": false
+}

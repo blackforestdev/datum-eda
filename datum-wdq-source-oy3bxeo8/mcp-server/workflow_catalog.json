@@ -1,0 +1,231 @@
+{
+  "catalog_version": 1,
+  "workflows": [
+    {
+      "id": "inspect-current-design",
+      "intent": "Inspect the pinned design and current findings without mutation.",
+      "cli": [
+        "datum-eda context get --session <session-id> --project-root <project-root>",
+        "datum-eda check list <project-root>"
+      ],
+      "mcp_tools": [
+        "datum.context.get",
+        "datum.check.list"
+      ],
+      "mcp_resources": [
+        "datum://project/current",
+        "datum://context/pinned/{context_id}",
+        "datum://selection/{context_id}",
+        "datum://checks/current"
+      ],
+      "mcp_prompts": [
+        "datum.inspect-current-design"
+      ],
+      "required_capability": "inspect",
+      "context_inputs": [
+        "terminal_session_id",
+        "context_id",
+        "model_revision",
+        "stable_object_ids"
+      ],
+      "review_gate": "none",
+      "evidence": [
+        "pinned context identity",
+        "model revision",
+        "stable object IDs",
+        "finding fingerprints"
+      ]
+    },
+    {
+      "id": "review-active-findings",
+      "intent": "Explain current check findings and recommend a review action without mutation.",
+      "cli": [
+        "datum-eda check list <project-root>",
+        "datum-eda check show <project-root> --fingerprint <fingerprint>"
+      ],
+      "mcp_tools": [
+        "datum.check.list",
+        "datum.check.show"
+      ],
+      "mcp_resources": [
+        "datum://checks/current",
+        "datum://check/{fingerprint}"
+      ],
+      "mcp_prompts": [
+        "datum.review-active-findings"
+      ],
+      "required_capability": "inspect",
+      "context_inputs": [
+        "context_id",
+        "model_revision",
+        "finding_fingerprints"
+      ],
+      "review_gate": "human-decision-before-mutation",
+      "evidence": [
+        "check run ID",
+        "finding fingerprints",
+        "finding evidence"
+      ]
+    },
+    {
+      "id": "prepare-proposal",
+      "intent": "Create, preview, and validate a reviewable proposal without applying it.",
+      "cli": [
+        "datum-eda proposal create <project-root> --batch <batch-path> --rationale <rationale>",
+        "datum-eda proposal preview <project-root> --proposal <proposal-id>",
+        "datum-eda proposal validate <project-root> --proposal <proposal-id>"
+      ],
+      "mcp_tools": [
+        "datum.proposal.create",
+        "datum.proposal.preview",
+        "datum.proposal.validate"
+      ],
+      "mcp_resources": [
+        "datum://context/pinned/{context_id}",
+        "datum://proposal/{proposal_id}"
+      ],
+      "mcp_prompts": [
+        "datum.prepare-proposal"
+      ],
+      "required_capability": "propose",
+      "context_inputs": [
+        "agent_launch_id",
+        "terminal_session_id",
+        "context_id",
+        "expected_model_revision",
+        "stable_object_ids",
+        "objective"
+      ],
+      "review_gate": "proposal-remains-unapplied",
+      "evidence": [
+        "proposal ID",
+        "operation batch",
+        "deterministic preview",
+        "validation result"
+      ]
+    },
+    {
+      "id": "review-proposal",
+      "intent": "Inspect proposal evidence and record the owner's accept or reject decision.",
+      "cli": [
+        "datum-eda proposal show <project-root> --proposal <proposal-id>",
+        "datum-eda proposal preview <project-root> --proposal <proposal-id>",
+        "datum-eda proposal validate <project-root> --proposal <proposal-id>",
+        "datum-eda proposal review <project-root> --proposal <proposal-id> --status <accepted-or-rejected>"
+      ],
+      "mcp_tools": [
+        "datum.proposal.show",
+        "datum.proposal.preview",
+        "datum.proposal.validate"
+      ],
+      "mcp_resources": [
+        "datum://proposal/{proposal_id}",
+        "datum://model/revision/{revision}"
+      ],
+      "mcp_prompts": [],
+      "required_capability": "propose",
+      "context_inputs": [
+        "proposal_id",
+        "context_id",
+        "expected_model_revision"
+      ],
+      "review_gate": "owner-cli-records-decision",
+      "evidence": [
+        "proposal diff",
+        "validation result",
+        "owner review status"
+      ]
+    },
+    {
+      "id": "apply-approved-proposal",
+      "intent": "Apply only an owner-accepted proposal against its fenced model revision.",
+      "cli": [
+        "datum-eda proposal apply <project-root> --proposal <proposal-id>"
+      ],
+      "mcp_tools": [
+        "datum.proposal.apply"
+      ],
+      "mcp_resources": [
+        "datum://proposal/{proposal_id}",
+        "datum://model/revision/{revision}"
+      ],
+      "mcp_prompts": [],
+      "required_capability": "apply-approved",
+      "context_inputs": [
+        "agent_launch_id",
+        "terminal_session_id",
+        "context_id",
+        "expected_model_revision",
+        "proposal_id",
+        "approval_reference"
+      ],
+      "review_gate": "accepted-proposal-and-matching-revision",
+      "evidence": [
+        "approval provenance",
+        "operation batch",
+        "applied diff",
+        "journal transaction"
+      ]
+    },
+    {
+      "id": "refresh-stale-context",
+      "intent": "Refresh explicitly after a stale-context refusal without silently retargeting work.",
+      "cli": [
+        "datum-eda context refresh --session <session-id> --project-root <project-root>",
+        "datum-eda context get --session <session-id> --project-root <project-root>"
+      ],
+      "mcp_tools": [
+        "datum.context.refresh",
+        "datum.context.get"
+      ],
+      "mcp_resources": [
+        "datum://context/live",
+        "datum://context/pinned/{context_id}",
+        "datum://model/revision/{revision}"
+      ],
+      "mcp_prompts": [],
+      "required_capability": "inspect",
+      "context_inputs": [
+        "terminal_session_id",
+        "stale_context_id",
+        "stale_model_revision"
+      ],
+      "review_gate": "explicit-refresh-or-rebase",
+      "evidence": [
+        "stale-state refusal",
+        "old context and revision",
+        "new context and revision"
+      ]
+    },
+    {
+      "id": "resume-agent-work",
+      "intent": "Resume a supported native agent session while rediscovering the current Datum authority envelope.",
+      "cli": [
+        "datum-eda agent launch <adapter> <project-root> --resume"
+      ],
+      "mcp_tools": [
+        "datum.context.get",
+        "datum.context.session_activity"
+      ],
+      "mcp_resources": [
+        "datum://context/pinned/{context_id}",
+        "datum://project/current"
+      ],
+      "mcp_prompts": [],
+      "required_capability": "inspect",
+      "context_inputs": [
+        "adapter_id",
+        "agent_resume_identity",
+        "terminal_session_id",
+        "context_id"
+      ],
+      "review_gate": "valid-live-session-credential",
+      "evidence": [
+        "adapter identity",
+        "agent launch ID",
+        "terminal session ID",
+        "rediscovered context ID"
+      ]
+    }
+  ]
+}

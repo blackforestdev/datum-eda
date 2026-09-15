@@ -1,0 +1,7 @@
+[package]
+name = "datum-gui-viewport"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+datum-gui-protocol = { path = "../gui-protocol" }

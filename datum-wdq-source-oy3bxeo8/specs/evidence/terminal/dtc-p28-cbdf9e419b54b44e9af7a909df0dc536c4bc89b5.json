@@ -1,0 +1,22 @@
+{
+  "failures": [],
+  "platform": "linux-x86_64",
+  "results": [
+    {"exit":"code:0","name":"bash","rendered_nonempty":true,"status":"passed","version":"GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)"},
+    {"exit":"code:0","name":"zsh","rendered_nonempty":true,"status":"passed","version":"zsh 5.9 (x86_64-debian-linux-gnu)"},
+    {"exit":"code:0","name":"fish","rendered_nonempty":true,"status":"passed","version":"fish, version 4.0.2"},
+    {"exit":"code:255","name":"ssh","rendered_nonempty":true,"status":"passed","version":"OpenSSH_10.0p2 Debian-7+deb13u4, OpenSSL 3.5.6 7 Apr 2026"},
+    {"exit":"code:0","name":"vim","rendered_nonempty":true,"status":"passed","version":"VIM - Vi IMproved 9.1 (2024 Jan 02, compiled May 23 2025 00:48:59)"},
+    {"exit":"code:0","name":"neovim","rendered_nonempty":true,"status":"passed","version":"NVIM v0.10.4"},
+    {"exit":"code:0","name":"htop","rendered_nonempty":true,"status":"passed","version":"htop 3.4.1"},
+    {"exit":"code:0","name":"btop","rendered_nonempty":true,"status":"passed","version":"btop version: 1.3.2"},
+    {"exit":"code:0","name":"less","rendered_nonempty":true,"status":"passed","version":"less 668 (GNU regular expressions)"},
+    {"exit":"code:0","name":"python","rendered_nonempty":true,"status":"passed","version":"Python 3.13.5"},
+    {"exit":"code:0","name":"git","rendered_nonempty":true,"status":"passed","version":"git version 2.47.3"},
+    {"exit":"code:0","name":"cargo","rendered_nonempty":true,"status":"passed","version":"cargo 1.93.1 (083ac5135 2025-12-15)"},
+    {"exit":"code:0","name":"tmux","rendered_nonempty":true,"status":"passed","version":"tmux 3.5a"}
+  ],
+  "revision": "cbdf9e419b54b44e9af7a909df0dc536c4bc89b5",
+  "schema": "datum-terminal-compatibility-v1",
+  "transport": "production TerminalTransportSession + TerminalCoreSessionAdapter"
+}

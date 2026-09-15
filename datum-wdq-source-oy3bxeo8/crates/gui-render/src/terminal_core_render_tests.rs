@@ -1,0 +1,411 @@
+use super::*;
+use crate::TerminalRenderCache;
+use datum_gui_protocol::{ApplicationFocus, DockTab};
+use datum_gui_viewport::{ScreenRectPx, TERMINAL_CELL_WIDTH_PX};
+use datum_terminal_core::{
+    CoreLimitValues, CoreLimits, Damage, PaletteIndex, Rgb, Row, Rows, StreamingParser,
+    TerminalCore, TerminalSize,
+};
+
+fn limits() -> CoreLimits {
+    CoreLimits::try_from(CoreLimitValues {
+        parameter_count: 64,
+        parameter_digits: 16,
+        parameter_value: 1_000_000,
+        subparameter_count: 64,
+        intermediate_bytes: 16,
+        control_string_bytes: 1 << 20,
+        cluster_bytes: 4_096,
+        title_bytes: 4_096,
+        working_directory_bytes: 4_096,
+        clipboard_bytes: 1 << 20,
+        hyperlink_bytes: 1 << 20,
+        input_bytes: 1 << 20,
+        keyboard_stack: 32,
+        notification_bytes: 4_096,
+        reply_bytes: 4_096,
+        pending_events: 1_024,
+        pending_damage: 1_024,
+        history_lines: 64,
+        history_bytes: 1 << 20,
+        graphic_objects: 16,
+        graphic_pixels: 1 << 16,
+        graphic_decoded_bytes: 1 << 18,
+        graphic_frames: 16,
+        compression_ratio: 1_024,
+        parser_work: 1 << 20,
+        search_work: 1 << 20,
+        reflow_work: 1 << 20,
+        screen_cells: 1 << 20,
+        snapshot_cells: 1 << 20,
+    })
+    .unwrap()
+}
+
+fn snapshot(bytes: &[u8]) -> RenderSnapshot {
+    let limits = limits();
+    let mut core = TerminalCore::new(limits, TerminalSize::new(12, 3, 120, 48).unwrap()).unwrap();
+    let mut parser = StreamingParser::new(limits);
+    parser.feed(bytes, |action| {
+        core.apply(action).unwrap();
+    });
+    core.render_snapshot().unwrap()
+}
+
+fn geometry() -> TerminalScreenGeometry {
+    datum_gui_viewport::terminal_screen_geometry(ScreenRectPx {
+        x: 0.0,
+        y: 0.0,
+        width: 160.0,
+        height: 120.0,
+    })
+}
+
+#[test]
+fn scaled_geometry_drives_glyph_cursor_and_clip_dimensions_together() {
+    let snapshot = snapshot(b"ab");
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.focus = ApplicationFocus::Terminal;
+    let geometry = datum_gui_viewport::terminal_screen_geometry_with_scale(
+        ScreenRectPx {
+            x: 0.0,
+            y: 0.0,
+            width: 320.0,
+            height: 240.0,
+        },
+        1_500,
+    );
+    let mut quads = Vec::new();
+    let mut text = Vec::new();
+    render_terminal_core_snapshot(
+        &state,
+        &snapshot,
+        &geometry,
+        &mut quads,
+        &mut text,
+        &mut Vec::new(),
+    );
+
+    let a = text.iter().find(|run| run.text == "a").unwrap();
+    let b = text.iter().find(|run| run.text == "b").unwrap();
+    assert!((a.size - geometry.metrics.font_size).abs() < 0.001);
+    assert!((b.x - a.x - geometry.metrics.width).abs() < 0.001);
+    assert!((a.clip_bounds.unwrap().height - geometry.metrics.height).abs() < 0.001);
+    let cursor_x = geometry.screen.x + 2.0 * geometry.metrics.width + CURSOR_HORIZONTAL_INSET_PX;
+    assert!(quads.iter().any(|quad| quad.points[0].0 == cursor_x));
+}
+
+#[test]
+fn themes_change_only_fallback_colors_and_invalidate_retained_rows() {
+    let snapshot = snapshot(b"\x1b[31mR\x1b[38;2;9;8;7mT");
+    let palette = snapshot.palette();
+    let dark_background = resolve_background(Color::Default, palette, TerminalTheme::DatumDark);
+    let light_background = resolve_background(Color::Default, palette, TerminalTheme::Light);
+    assert_ne!(dark_background, light_background);
+    assert_ne!(
+        resolve_foreground(
+            Color::Indexed(PaletteIndex::new(1)),
+            palette,
+            TerminalTheme::DatumDark,
+        ),
+        resolve_foreground(
+            Color::Indexed(PaletteIndex::new(1)),
+            palette,
+            TerminalTheme::Light,
+        ),
+    );
+    let explicit = Color::Rgb(Rgb {
+        red: 9,
+        green: 8,
+        blue: 7,
+    });
+    assert_eq!(
+        resolve_foreground(explicit, palette, TerminalTheme::DatumDark),
+        resolve_foreground(explicit, palette, TerminalTheme::Light),
+        "child-program RGB colors remain authoritative",
+    );
+
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(DockTab::Terminal);
+    let mut cache = TerminalRenderCache::new();
+    cache.render(
+        &state,
+        &snapshot,
+        &[Damage::Full],
+        &geometry(),
+        (&mut Vec::new(), &mut Vec::new(), &mut Vec::new()),
+    );
+    let first = cache.rebuilt_rows();
+    state.ui.terminal.theme = TerminalTheme::Light;
+    cache.render(
+        &state,
+        &snapshot,
+        &[],
+        &geometry(),
+        (&mut Vec::new(), &mut Vec::new(), &mut Vec::new()),
+    );
+    assert!(cache.rebuilt_rows() > first);
+}
+
+#[test]
+fn immutable_core_snapshot_drives_complete_style_and_fixed_cluster_geometry() {
+    let snapshot = snapshot(b"\x1b[1;3;4;9;53;38;2;1;2;3;48;2;4;5;6;58;2;7;8;9mA\xe7\x95\x8c");
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(DockTab::Terminal);
+    let mut quads = Vec::new();
+    let mut text = Vec::new();
+    let mut hits = Vec::new();
+    render_terminal_core_snapshot(
+        &state,
+        &snapshot,
+        &geometry(),
+        &mut quads,
+        &mut text,
+        &mut hits,
+    );
+
+    let ascii = text.iter().find(|run| run.text == "A").unwrap();
+    assert_eq!(
+        ascii.rich_spans[0].color,
+        [1.0 / 255.0, 2.0 / 255.0, 3.0 / 255.0]
+    );
+    assert!(ascii.rich_spans[0].bold);
+    assert!(ascii.rich_spans[0].italic);
+    let wide = text.iter().find(|run| run.text == "界").unwrap();
+    assert_eq!(wide.x, ascii.x + TERMINAL_CELL_WIDTH_PX);
+    assert!((wide.clip_bounds.unwrap().width - 2.0 * TERMINAL_CELL_WIDTH_PX).abs() < 0.001);
+    assert!(
+        quads.len() >= 8,
+        "background and every decoration must be geometric"
+    );
+    assert!(
+        quads
+            .iter()
+            .any(|quad| { quad.color == [7.0 / 255.0, 8.0 / 255.0, 9.0 / 255.0,] })
+    );
+    assert!(
+        hits.iter()
+            .any(|hit| hit.target == HitTarget::TerminalScreen)
+    );
+}
+
+#[test]
+fn cursor_uses_core_row_column_shape_and_palette_without_lane_projection() {
+    let snapshot = snapshot(b"abc\x1b[6 q");
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.focus = ApplicationFocus::Terminal;
+    state.ui.terminal.screen_cursor_col = 0;
+    let geometry = geometry();
+    let mut quads = Vec::new();
+    render_terminal_core_snapshot(
+        &state,
+        &snapshot,
+        &geometry,
+        &mut quads,
+        &mut Vec::new(),
+        &mut Vec::new(),
+    );
+    let cursor_x = geometry.screen.x + 3.0 * TERMINAL_CELL_WIDTH_PX + CURSOR_HORIZONTAL_INSET_PX;
+    assert!(quads.iter().any(|quad| quad.points[0].0 == cursor_x));
+}
+
+#[test]
+fn ime_preedit_is_rendered_at_the_core_cursor_without_entering_cells() {
+    let snapshot = snapshot(b"abc");
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.focus = ApplicationFocus::Terminal;
+    state.ui.terminal.ime_preedit = Some("文".into());
+    let geometry = geometry();
+    let mut quads = Vec::new();
+    let mut text = Vec::new();
+    render_terminal_core_snapshot(
+        &state,
+        &snapshot,
+        &geometry,
+        &mut quads,
+        &mut text,
+        &mut Vec::new(),
+    );
+    let preedit = text.iter().find(|run| run.text == "文").unwrap();
+    assert_eq!(preedit.x, geometry.screen.x + 3.0 * TERMINAL_CELL_WIDTH_PX);
+    assert!(quads.iter().any(|quad| quad.color == TEXT_ACCENT));
+    assert_eq!(
+        snapshot.rows().next().unwrap().cells()[3].content,
+        datum_terminal_core::CellContent::Empty
+    );
+}
+
+#[test]
+fn retained_rows_rebuild_only_for_declared_damage_or_geometry_change() {
+    let snapshot = snapshot(b"first\r\nsecond");
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(DockTab::Terminal);
+    let geometry = geometry();
+    let mut cache = TerminalRenderCache::new();
+    cache.render(
+        &state,
+        &snapshot,
+        &[Damage::Full],
+        &geometry,
+        (&mut Vec::new(), &mut Vec::new(), &mut Vec::new()),
+    );
+    let initial = cache.rebuilt_rows();
+    assert!(initial > 0);
+
+    cache.render(
+        &state,
+        &snapshot,
+        &[Damage::Cursor],
+        &geometry,
+        (&mut Vec::new(), &mut Vec::new(), &mut Vec::new()),
+    );
+    assert_eq!(cache.rebuilt_rows(), initial);
+
+    cache.render(
+        &state,
+        &snapshot,
+        &[Damage::Row(Row::new(1, Rows::new(3).unwrap()).unwrap())],
+        &geometry,
+        (&mut Vec::new(), &mut Vec::new(), &mut Vec::new()),
+    );
+    assert_eq!(cache.rebuilt_rows(), initial + 1);
+}
+
+#[test]
+fn split_panes_retain_independent_rows_geometry_and_hit_identity() {
+    let left_snapshot = snapshot(b"left-pane");
+    let right_snapshot = snapshot(b"right-pane");
+    let lane = datum_gui_protocol::TerminalLaneState::default();
+    let mut cache = TerminalRenderCache::new();
+    let left = datum_gui_viewport::terminal_screen_geometry(ScreenRectPx {
+        x: 0.0,
+        y: 0.0,
+        width: 160.0,
+        height: 120.0,
+    });
+    let right = datum_gui_viewport::terminal_screen_geometry(ScreenRectPx {
+        x: 166.0,
+        y: 0.0,
+        width: 160.0,
+        height: 120.0,
+    });
+    let mut quads = Vec::new();
+    let mut text = Vec::new();
+    let mut hits = Vec::new();
+
+    cache.render_pane(
+        "left",
+        &lane,
+        true,
+        &left_snapshot,
+        &[Damage::Full],
+        &left,
+        HitTarget::TerminalScreen,
+        (&mut quads, &mut text, &mut hits),
+    );
+    cache.render_pane(
+        "right",
+        &lane,
+        false,
+        &right_snapshot,
+        &[Damage::Full],
+        &right,
+        HitTarget::TerminalPaneScreen("right".to_string()),
+        (&mut quads, &mut text, &mut hits),
+    );
+
+    assert_eq!(cache.cached_session_count(), 2);
+    let rendered = text.iter().map(|run| run.text.as_str()).collect::<String>();
+    assert!(rendered.contains("left-pane"));
+    assert!(rendered.contains("right-pane"));
+    assert!(
+        hits.iter()
+            .any(|hit| hit.target == HitTarget::TerminalScreen)
+    );
+    assert!(hits.iter().any(|hit| {
+        hit.target == HitTarget::TerminalPaneScreen("right".to_string())
+            && hit.rect.x >= right.screen.x
+    }));
+
+    cache.retain_sessions(["right"]);
+    assert_eq!(cache.cached_session_count(), 1);
+}
+
+#[test]
+fn all_search_matches_are_highlighted_and_active_match_invalidates_retained_rows() {
+    let snapshot = snapshot(b"find me find");
+    let row = snapshot.rows().next().unwrap();
+    let line = row.logical_start().line.get();
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(DockTab::Terminal);
+    let first = datum_gui_protocol::TerminalSearchMatch {
+        start: datum_gui_protocol::TerminalSearchPoint { line, cluster: 0 },
+        end: datum_gui_protocol::TerminalSearchPoint { line, cluster: 3 },
+    };
+    let second = datum_gui_protocol::TerminalSearchMatch {
+        start: datum_gui_protocol::TerminalSearchPoint { line, cluster: 8 },
+        end: datum_gui_protocol::TerminalSearchPoint { line, cluster: 11 },
+    };
+    state.ui.terminal.search.matches = vec![first, second];
+    state.ui.terminal.search.highlights = vec![first, second];
+    state.ui.terminal.search.matched = Some(first);
+    let geometry = geometry();
+    let mut quads = Vec::new();
+    render_terminal_core_snapshot(
+        &state,
+        &snapshot,
+        &geometry,
+        &mut quads,
+        &mut Vec::new(),
+        &mut Vec::new(),
+    );
+    assert_eq!(
+        quads
+            .iter()
+            .filter(|quad| quad.color == TERMINAL_SEARCH_BG)
+            .count(),
+        4
+    );
+    assert_eq!(
+        quads
+            .iter()
+            .filter(|quad| quad.color == TERMINAL_SEARCH_ALL_BG)
+            .count(),
+        4
+    );
+
+    let mut cache = TerminalRenderCache::new();
+    cache.render(
+        &state,
+        &snapshot,
+        &[Damage::Full],
+        &geometry,
+        (&mut Vec::new(), &mut Vec::new(), &mut Vec::new()),
+    );
+    let before = cache.rebuilt_rows();
+    state.ui.terminal.search.matched = Some(second);
+    cache.render(
+        &state,
+        &snapshot,
+        &[],
+        &geometry,
+        (&mut Vec::new(), &mut Vec::new(), &mut Vec::new()),
+    );
+    assert!(cache.rebuilt_rows() > before);
+}
+
+#[test]
+fn sixel_snapshot_produces_clipped_gpu_image_placement() {
+    let snapshot = snapshot(b"\x1bP0;1;0q\"1;1;2;2#2;2;100;0;0@@$AA\x1b\\");
+    assert_eq!(snapshot.graphics().len(), 1);
+    let geometry = geometry();
+    let mut graphics = Vec::new();
+    prepare_terminal_graphics(&snapshot, &geometry, 0, &mut graphics);
+    assert_eq!(graphics.len(), 1);
+    let graphic = &graphics[0];
+    assert_eq!(graphic.graphic.placement().width(), 2);
+    assert_eq!(graphic.graphic.placement().height(), 2);
+    assert_eq!(graphic.rect.x, geometry.screen.x);
+    assert_eq!(graphic.rect.y, geometry.screen.y);
+    assert!(graphic.clip.width > 0.0 && graphic.clip.height > 0.0);
+}

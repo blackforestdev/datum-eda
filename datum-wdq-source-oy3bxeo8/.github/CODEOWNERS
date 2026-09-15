@@ -1,0 +1,34 @@
+# Source-health governance is an owner-controlled boundary. Repository branch
+# protection must require this review and dismiss approval after new commits.
+/docs/decisions/PRODUCT_MECHANICS_022_SOURCE_HEALTH_GOVERNANCE.md @blackforestdev
+/docs/SOURCE_HEALTH_POLICY.md @blackforestdev
+/scripts/check_source_health.py @blackforestdev
+/scripts/test_source_health_governance.py @blackforestdev
+/scripts/check_source_module_size.py @blackforestdev
+/specs/source_module_size_manifest.json @blackforestdev
+/scripts/run_drift_gates.sh @blackforestdev
+/.github/workflows/alignment.yml @blackforestdev
+/.github/CODEOWNERS @blackforestdev
+/specs/spec_governance_manifest.json @blackforestdev
+/specs/spec_parity_manifest.json @blackforestdev
+/specs/SPEC_PARITY.md @blackforestdev
+/scripts/check_spec_parity.py @blackforestdev
+/docs/decisions/PRODUCT_MECHANICS_025_PROJECT_STATE_AUTHORITY.md @blackforestdev
+/docs/decisions/PRODUCT_MECHANICS_029_DEPENDENCY_AUTHORITY.md @blackforestdev
+/docs/decisions/PRODUCT_MECHANICS_030_DATUM_TERMINAL_CORE_ARCHITECTURE.md @blackforestdev
+/docs/gui/DATUM_TERMINAL_CORE_RESEARCH.md @blackforestdev
+/docs/gui/DATUM_TERMINAL_CORE_IMPLEMENTATION_PLAN.md @blackforestdev
+/specs/third_party_dependency_policy.json @blackforestdev
+/scripts/check_dependency_authority.py @blackforestdev
+/scripts/test_dependency_authority.py @blackforestdev
+/scripts/check_terminal_transport_boundary.py @blackforestdev
+/scripts/test_terminal_transport_boundary.py @blackforestdev
+/docs/PROJECT_STATE_POLICY.md @blackforestdev
+/specs/active_frontier.json @blackforestdev
+/specs/PROGRESS.md @blackforestdev
+/.beads/issues.jsonl @blackforestdev
+/scripts/project_status.py @blackforestdev
+/scripts/project_task_details.py @blackforestdev
+/scripts/test_project_status.py @blackforestdev
+/AGENTS.md @blackforestdev
+/CLAUDE.md @blackforestdev

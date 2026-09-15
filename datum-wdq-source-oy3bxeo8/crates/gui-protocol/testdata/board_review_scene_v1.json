@@ -1,0 +1,211 @@
+{
+  "kind": "board_review_scene",
+  "version": 1,
+  "scene_id": "scene-fixture-v1",
+  "project_uuid": "project-fixture",
+  "project_name": "Datum M7 Fixture",
+  "board_uuid": "board-fixture",
+  "board_name": "Route Review Fixture",
+  "units": "nm",
+  "source_revision": "fixture-rev-1",
+  "bounds": {
+    "min_x": 0,
+    "min_y": 0,
+    "max_x": 200000000,
+    "max_y": 140000000
+  },
+  "layers": [
+    {
+      "layer_id": "F.Cu",
+      "name": "Top Copper",
+      "kind": "copper",
+      "render_order": 0,
+      "visible_by_default": true
+    }
+  ],
+  "outline": [
+    {
+      "object_id": "outline:board-fixture",
+      "object_kind": "outline",
+      "source_object_uuid": "board-fixture",
+      "path": [
+        { "x": 10000000, "y": 10000000 },
+        { "x": 190000000, "y": 10000000 },
+        { "x": 190000000, "y": 130000000 },
+        { "x": 10000000, "y": 130000000 },
+        { "x": 10000000, "y": 10000000 }
+      ]
+    }
+  ],
+  "components": [
+    {
+      "object_id": "component:U1",
+      "object_kind": "component",
+      "source_object_uuid": "U1",
+      "component_uuid": "U1",
+      "reference": "U1",
+      "value": "Controller",
+      "placement_layer": "F.Cu",
+      "position": { "x": 100000000, "y": 70000000 },
+      "rotation_degrees": 0.0,
+      "bounds": {
+        "min_x": 70000000,
+        "min_y": 50000000,
+        "max_x": 130000000,
+        "max_y": 90000000
+      }
+    }
+  ],
+  "pads": [
+    {
+      "object_id": "pad:P1",
+      "object_kind": "pad",
+      "source_object_uuid": "P1",
+      "pad_uuid": "P1",
+      "component_uuid": "U1",
+      "net_uuid": "net-demo",
+      "layer_id": "F.Cu",
+      "center": { "x": 58000000, "y": 70000000 },
+      "bounds": {
+        "min_x": 54000000,
+        "min_y": 66000000,
+        "max_x": 62000000,
+        "max_y": 74000000
+      },
+      "shape_kind": "rect"
+    },
+    {
+      "object_id": "pad:P2",
+      "object_kind": "pad",
+      "source_object_uuid": "P2",
+      "pad_uuid": "P2",
+      "component_uuid": "U1",
+      "net_uuid": "net-demo",
+      "layer_id": "F.Cu",
+      "center": { "x": 142000000, "y": 70000000 },
+      "bounds": {
+        "min_x": 138000000,
+        "min_y": 66000000,
+        "max_x": 146000000,
+        "max_y": 74000000
+      },
+      "shape_kind": "rect"
+    }
+  ],
+  "tracks": [
+    {
+      "object_id": "track:T1",
+      "object_kind": "track",
+      "source_object_uuid": "T1",
+      "track_uuid": "T1",
+      "net_uuid": "net-demo",
+      "layer_id": "F.Cu",
+      "width_nm": 2500000,
+      "path": [
+        { "x": 58000000, "y": 70000000 },
+        { "x": 82000000, "y": 70000000 }
+      ]
+    }
+  ],
+  "vias": [
+    {
+      "object_id": "via:V1",
+      "object_kind": "via",
+      "source_object_uuid": "V1",
+      "via_uuid": "V1",
+      "net_uuid": "net-demo",
+      "position": { "x": 100000000, "y": 70000000 },
+      "drill_nm": 300000,
+      "diameter_nm": 700000,
+      "start_layer_id": "F.Cu",
+      "end_layer_id": "B.Cu"
+    }
+  ],
+  "zones": [
+    {
+      "object_id": "zone:Z1",
+      "object_kind": "zone",
+      "source_object_uuid": "Z1",
+      "zone_uuid": "Z1",
+      "net_uuid": "net-demo",
+      "layer_id": "F.Cu",
+      "polygon": [
+        { "x": 20000000, "y": 20000000 },
+        { "x": 180000000, "y": 20000000 },
+        { "x": 180000000, "y": 40000000 },
+        { "x": 20000000, "y": 40000000 }
+      ]
+    }
+  ],
+  "proposal_overlay_primitives": [
+    {
+      "overlay_id": "proposal:action-1:path",
+      "primitive_kind": "track_path",
+      "proposal_action_id": "action-1",
+      "layer_id": "F.Cu",
+      "render_role": "proposed_focus",
+      "width_nm": 3000000,
+      "path": [
+        { "x": 82000000, "y": 70000000 },
+        { "x": 100000000, "y": 55000000 }
+      ]
+    },
+    {
+      "overlay_id": "proposal:action-2:path",
+      "primitive_kind": "track_path",
+      "proposal_action_id": "action-2",
+      "layer_id": "F.Cu",
+      "render_role": "proposed_overlay",
+      "width_nm": 3000000,
+      "path": [
+        { "x": 100000000, "y": 55000000 },
+        { "x": 118000000, "y": 70000000 }
+      ]
+    },
+    {
+      "overlay_id": "proposal:action-3:path",
+      "primitive_kind": "track_path",
+      "proposal_action_id": "action-3",
+      "layer_id": "F.Cu",
+      "render_role": "proposed_overlay",
+      "width_nm": 3000000,
+      "path": [
+        { "x": 118000000, "y": 70000000 },
+        { "x": 142000000, "y": 70000000 }
+      ]
+    },
+    {
+      "overlay_id": "proposal:from-anchor",
+      "primitive_kind": "anchor_marker",
+      "proposal_action_id": "action-1",
+      "layer_id": "F.Cu",
+      "render_role": "authored_related",
+      "width_nm": null,
+      "path": [
+        { "x": 58000000, "y": 70000000 }
+      ]
+    },
+    {
+      "overlay_id": "proposal:to-anchor",
+      "primitive_kind": "anchor_marker",
+      "proposal_action_id": "action-3",
+      "layer_id": "F.Cu",
+      "render_role": "authored_related",
+      "width_nm": null,
+      "path": [
+        { "x": 142000000, "y": 70000000 }
+      ]
+    }
+  ],
+  "review_primitives": [
+    {
+      "review_primitive_id": "review:segment-1",
+      "primitive_kind": "selected_segment_highlight",
+      "evidence_key": "segment:0",
+      "path": [
+        { "x": 82000000, "y": 70000000 },
+        { "x": 100000000, "y": 55000000 }
+      ]
+    }
+  ]
+}

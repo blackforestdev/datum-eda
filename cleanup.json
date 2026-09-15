@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "removed_directories": [
+    "/home/bfadmin/Documents/datum-wdq-source-oy3bxeo8",
+    "/home/bfadmin/Documents/datum-wdq-source-hsci_eyy",
+    "/home/bfadmin/Documents/datum-wdq-activation-final"
+  ],
+  "source_counts": {
+    "datum-wdq-source-oy3bxeo8": 2736,
+    "datum-wdq-source-hsci_eyy": 2385
+  },
+  "source_trees": {
+    "datum-wdq-source-oy3bxeo8": "337c09669275210774fb63eea3d5c7c77be01e40",
+    "datum-wdq-source-hsci_eyy": "0dfae98321f71c317d51405fc53de41c10e1f620"
+  },
+  "legacy_candidate": "9564368735dccada966388e76f7adcc2380b83b8",
+  "legacy_support": [
+    {
+      "path": "preparation.json",
+      "blob": "4b086a35a17cf55f5a37543c4db7b74bde076771",
+      "mode": "0o664"
+    },
+    {
+      "path": "promotion.md",
+      "blob": "8ba2c849985e8a19e16ca2ffdde662ae50938d0a",
+      "mode": "0o664"
+    },
+    {
+      "path": "owner-hooks/pre-commit",
+      "blob": "5ad6ecd3dc4c3b8993925c41d7c7289df2af3704",
+      "mode": "0o700"
+    }
+  ],
+  "retained_runtime_archive": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/retained/owner-runtime-before-workflow-20260915",
+  "open_handles_observed": [],
+  "reason": "Owner-requested removal of inactive workflow source and activation duplicates; source trees and support blobs retained in Git, private runtime records moved without content changes."
+}
