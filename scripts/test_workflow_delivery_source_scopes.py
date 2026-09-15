@@ -1,10 +1,13 @@
 """Permission tests; transaction diff capture and entry-point wiring are separate."""
 
+from copy import deepcopy
 from datetime import datetime, timezone
+from types import SimpleNamespace
 import unittest
 
 from workflow_delivery_io import DeliveryInputError
 from workflow_delivery_source_scopes import authorize_source_paths
+from workflow_delivery_checkpoints import preparation_bootstrap_structure, same_claim_identity
 
 
 class SourceScopesTest(unittest.TestCase):
@@ -84,6 +87,63 @@ class SourceScopesTest(unittest.TestCase):
         del self.item["claim"]
         with self.assertRaises(DeliveryInputError):
             self.check()
+
+    def test_renewed_lease_preserves_scope_permission_and_claim_identity(self):
+        approved = deepcopy(self.item["claim"])
+        self.item["claim"].update(heartbeat_at="2026-09-08T02:00:00Z",
+                                  expires_at="2026-09-08T10:00:00Z")
+        self.assertTrue(same_claim_identity(self.item["claim"], approved))
+        self.assertEqual([{"path": "src/owned/a.py", "authorized_lanes": ["TASK"]}], self.check())
+
+    def test_renewal_does_not_allow_expired_future_or_overlong_leases(self):
+        approved = deepcopy(self.item["claim"])
+        for heartbeat, expiry in (
+            ("2026-09-08T00:00:00Z", "2026-09-08T01:00:00Z"),
+            ("2026-09-08T03:00:00Z", "2026-09-08T04:00:00Z"),
+            ("2026-09-08T01:00:00Z", "2026-09-08T10:00:00Z"),
+            ("invalid", "2026-09-08T03:00:00Z"),
+        ):
+            with self.subTest(heartbeat=heartbeat, expiry=expiry):
+                self.item["claim"].update(heartbeat_at=heartbeat, expires_at=expiry)
+                self.assertTrue(same_claim_identity(self.item["claim"], approved))
+                with self.assertRaises(DeliveryInputError):
+                    self.check()
+
+    def test_renewal_identity_rejects_every_nonlease_field_change(self):
+        approved = deepcopy(self.item["claim"])
+        for key in set(approved) - {"heartbeat_at", "expires_at"}:
+            with self.subTest(field=key):
+                changed = deepcopy(approved)
+                changed[key] = ["src/other"] if key == "scope" else "changed"
+                self.assertFalse(same_claim_identity(changed, approved))
+        for invalid in (None, {}, {**approved, "unknown": True},
+                        {k: v for k, v in approved.items() if k != "expires_at"}):
+            self.assertFalse(same_claim_identity(invalid, approved))
+            self.assertFalse(same_claim_identity(approved, invalid))
+
+    def test_installed_bootstrap_accepts_renewal_but_still_rejects_input_change(self):
+        from workflow_delivery_activation_preflight import S5A_PREPARATION_SCOPE
+
+        item = deepcopy(self.item)
+        item["key"] = "WORKFLOW-DELIVERY-IMPLEMENTATION"
+        item["completion"]["canonical_next_step_id"] = "WDQ-I05"
+        approved = deepcopy(item)
+        authority = SimpleNamespace(
+            json=lambda path: {"frontier": [approved]},
+            manifest=lambda roots: {"scripts/gate.py": "unchanged"})
+        trust = SimpleNamespace(authority=authority, policy={"coverage": {
+            "preparation_scopes": [deepcopy(S5A_PREPARATION_SCOPE)],
+            "source_scopes": [{"frontier_key": item["key"], "step_ids": ["WDQ-I05"]}]}})
+        tree = SimpleNamespace(manifest=lambda roots: {"scripts/gate.py": "unchanged"})
+        contract = {"input_roots": ["scripts/gate.py"]}
+        item["claim"].update(heartbeat_at="2026-09-08T02:00:00Z",
+                             expires_at="2026-09-08T10:00:00Z")
+        self.assertTrue(preparation_bootstrap_structure(tree, item, trust, contract))
+        tree.manifest = lambda roots: {"scripts/gate.py": "changed"}
+        self.assertFalse(preparation_bootstrap_structure(tree, item, trust, contract))
+        tree.manifest = authority.manifest
+        item["claim"]["session"] = "different-session"
+        self.assertFalse(preparation_bootstrap_structure(tree, item, trust, contract))
 
     def test_tracker_mismatch_refuses(self):
         self.issues["dat-task"]["assignee"] = "different-session"

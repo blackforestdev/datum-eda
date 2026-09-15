@@ -39,10 +39,26 @@ def preparation_bootstrap_structure(tree, item, trust, contract):
         return False
     authority_items = trust.authority.json("specs/active_frontier.json")["frontier"]
     authority_item = next((row for row in authority_items if row.get("key") == item["key"]), None)
-    if authority_item is None or item.get("claim") != authority_item.get("claim"):
+    if authority_item is None or not same_claim_identity(claim, authority_item.get("claim")):
         return False
     return (tree.manifest(contract["input_roots"])
             == trust.authority.manifest(contract["input_roots"]))
+
+
+def same_claim_identity(current, approved):
+    """A heartbeat renews an existing lease; it does not transfer ownership.
+
+    PM025 validates live timestamps and tracker synchronization separately.
+    Preserve every other claim field, including the original acquisition time,
+    session, scope, worktree and head. Unknown or missing fields fail closed.
+    """
+    from project_status import CLAIM_KEYS
+
+    if not (type(current) is dict and type(approved) is dict
+            and set(current) == set(approved) == CLAIM_KEYS):
+        return False
+    lease_fields = {"heartbeat_at", "expires_at"}
+    return all(current[key] == approved[key] for key in CLAIM_KEYS - lease_fields)
 
 
 def delivery_shape(item, contract):
