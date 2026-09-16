@@ -6,6 +6,7 @@ from __future__ import annotations
 from pathlib import Path
 import subprocess
 import sys
+from global_preferences_acceptance.capture import executed_tests
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,8 +52,12 @@ def verify_fixture_inventory() -> None:
         raise RuntimeError("\n".join(failures))
 
 
-def run(command: list[str]) -> None:
-    subprocess.run(command, cwd=ROOT, check=True)
+def run(command: list[str], *, require_tests: bool = False) -> None:
+    result = subprocess.run(command, cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False)
+    sys.stdout.buffer.write(result.stdout)
+    result.check_returncode()
+    if require_tests and executed_tests(result.stdout) == 0:
+        raise RuntimeError('bounded proof command executed zero tests: ' + repr(command))
 
 
 def main() -> int:
@@ -74,8 +79,9 @@ def main() -> int:
         ("datum-eda-cli", "project_new"),
         ("eda-engine-daemon", "preferences"),
         ("datum-gui-app", "global_preferences"),
+        ("datum-gui-render", "global_preferences"),
     ):
-        run([*GUARD, "cargo", "test", "-p", package, test_filter])
+        run([*GUARD, "cargo", "test", "--locked", "--offline", "-p", package, test_filter], require_tests=True)
     run(
         [
             sys.executable,
@@ -86,7 +92,7 @@ def main() -> int:
             "mcp-server",
             "-p",
             "test_preferences_product.py",
-        ]
+        ], require_tests=True
     )
 
     print("GP-CM03 bounded proof report: PASS")

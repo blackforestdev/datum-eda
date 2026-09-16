@@ -1,84 +1,67 @@
 #!/usr/bin/env python3
-"""Run the exact GP-CM05 correctness, governance, and release proof."""
-
-from __future__ import annotations
-
+"""Run every standing gate serially and validate the retained complete V2 corpus."""
 import argparse
+import json
 from pathlib import Path
-import subprocess
-import sys
 
+from global_preferences_acceptance.capture import Capture
+from global_preferences_acceptance.gates import commands
+from global_preferences_acceptance.identity import validate_candidate
+from global_preferences_acceptance.inputs import Bundle, EvidenceError, canonical, parse, require
+from global_preferences_acceptance.matrix import validate_matrix
+from global_preferences_acceptance.report import validate_report
 
 ROOT = Path(__file__).resolve().parents[1]
-PYTHON = sys.executable
-GUARD = [PYTHON, str(ROOT / "scripts/run_cargo_guarded.py"), "--workload", "proof", "--"]
 
 
-def run(command: list[str]) -> None:
-    subprocess.run(command, cwd=ROOT, check=True)
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--report', type=Path, required=True, help='retained case, native, measurement and review evidence')
+    parser.add_argument('--bundle-root', type=Path, required=True)
+    parser.add_argument('--candidate', required=True)
+    parser.add_argument('--environment-sha256', required=True)
+    parser.add_argument('--output', type=Path, required=True, help='new report; existing evidence is never overwritten')
+    parser.add_argument('--timeout', type=int, default=3600, help='per-command timeout; timeout is failure')
+    args = parser.parse_args(argv)
+    if args.timeout <= 0:
+        parser.error('--timeout must be positive')
+    try:
+        require(not args.output.exists(), 'output already exists; preserve previous proof')
+        report = parse(args.report.read_bytes(), 'report')
+        require(report['origin']['kind'] == 'product-execution', 'synthetic fixtures are not executable production proof')
+        matrix = parse((ROOT / 'specs/global_preferences_production_acceptance_matrix.json').read_bytes(), 'matrix')
+        validate_matrix(matrix)
+        bundle = Bundle(args.bundle_root, report['artifacts'])
+        validate_candidate(ROOT, report['candidate'], report['input_manifest'], bundle, args.candidate)
+        capture = Capture(args.bundle_root, report['artifacts'])
+        report['gate_results'] = []
+        failed = False
+        for gate, argv_list in commands(ROOT).items():
+            row = {'id': gate, 'candidate_revision': args.candidate,
+                   'input_manifest_sha256': report['input_manifest']['sha256'], 'commands': []}
+            report['gate_results'].append(row)
+            for command in argv_list:
+                print('Running ' + gate + ': ' + ' '.join(command), flush=True)
+                observation = capture.command(command, cwd=ROOT, candidate=args.candidate,
+                                              inputs=report['input_manifest']['sha256'], timeout=args.timeout)
+                row['commands'].append(observation)
+                if observation['exit_code'] != 0:
+                    failed = True
+                    break
+            if failed:
+                break
+        report['artifacts'] = list(capture.inventory.values())
+        with args.output.open('xb') as stream:
+            stream.write(canonical(report) + b'\n')
+        require(not failed, 'mandatory gate failed; incomplete report and raw failure logs retained')
+        result = validate_report(report, matrix, root=ROOT, bundle_root=args.bundle_root, review_only=True,
+                                 expected_revision=args.candidate, expected_environment_sha256=args.environment_sha256)
+        print(json.dumps(result, sort_keys=True))
+        return 0
+    except (EvidenceError, OSError, KeyError, TypeError) as error:
+        print(json.dumps({'state': 'incomplete', 'production_accepted': False, 'error': str(error)}))
+        return 1
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--full-workspace",
-        action="store_true",
-        help="also run the serial full-workspace test and strict-Clippy closure gates",
-    )
-    parser.add_argument(
-        "--measure",
-        action="store_true",
-        help="also rebuild and measure the optimized CLI product paths",
-    )
-    arguments = parser.parse_args()
-
-    for checker in (
-        "check_global_preferences_production_matrix.py",
-        "check_global_preferences_production_evidence.py",
-        "check_global_preferences_boundary.py",
-        "check_menu_model.py",
-        "check_resolver_raw_loads.py",
-        "check_daemon_write_parity.py",
-        "check_mcp_public_taxonomy.py",
-        "check_dependency_authority.py",
-        "check_cargo_resource_policy.py",
-        "check_source_health.py",
-        "check_spec_governance.py",
-        "check_spec_parity.py",
-        "check_evidence_traceability.py",
-        "check_progress_coverage.py",
-        "check_alignment.py",
-    ):
-        run([PYTHON, str(ROOT / "scripts" / checker)])
-    run([PYTHON, str(ROOT / "scripts/project_status.py"), "check"])
-    run([PYTHON, str(ROOT / "scripts/run_global_preferences_proof.py")])
-
-    if arguments.full_workspace:
-        run([*GUARD, "cargo", "test", "--workspace", "--all-targets", "--locked", "--offline"])
-        run(
-            [
-                *GUARD,
-                "cargo",
-                "clippy",
-                "--workspace",
-                "--all-targets",
-                "--locked",
-                "--offline",
-                "--",
-                "-D",
-                "warnings",
-            ]
-        )
-    if arguments.measure:
-        run([*GUARD, "cargo", "build", "--release", "-p", "datum-eda-cli", "--locked", "--offline"])
-        run([PYTHON, str(ROOT / "scripts/measure_global_preferences_release.py"), "--samples", "20"])
-
-    print("GP-CM05 production-candidate proof: PASS")
-    print("Boundary: 11 active Global settings, 45 reserved candidates, eight Project Units seeds.")
-    print("Exclusions: no live Project following, reserved activation, private writer, direct MCP Set/Reset, Publish, or Revision.")
-    print("Disposition: evidence only; GP-CM05V owner budget and production-acceptance decision remains required.")
-    return 0
-
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     raise SystemExit(main())

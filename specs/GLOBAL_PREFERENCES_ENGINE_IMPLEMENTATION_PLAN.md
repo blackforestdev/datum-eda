@@ -1126,6 +1126,14 @@ reserved descriptor, broader Project Preferences, Publish, or Revision work.
 <!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM05 -->
 ### GP-CM05 — Global Preferences production acceptance
 
+Historical execution boundary: GP-CM05 remains completed as candidate evidence.
+The owner-directed GP-CM05E correction now uses
+`specs/GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md` and the V2 matrix
+for complete proof. The older measurements below are historical, not a V2
+readiness claim; GP-CM05V records revise/implement direction and GP-CM05A
+remains the separate final owner review. The draft R/RV steps were never admitted.
+
+
 Run clean-install, upgrade, downgrade, corrupt-store, portable collision,
 backup/restore, Project genesis, existing-Project stability, managed/offline,
 surface-parity, accessibility, performance/resource, negative, and independent
@@ -1137,9 +1145,10 @@ The machine-readable controlling inventory for this step is
 `specs/global_preferences_production_acceptance_matrix.json`. It fixes fifteen
 durable corpus cases, the 11-active/45-reserved Global boundary, the exact
 eight-key Global/factory Project genesis boundary, all exclusions, and eight
-numeric performance/resource families. The checker
-`scripts/check_global_preferences_production_matrix.py` fails if a named test,
-boundary, or numeric limit disappears. The optimized-product measurement path
+numeric performance/resource families. The current checker
+`scripts/check_global_preferences_production_matrix.py` checks exact expanded
+coverage, boundaries and fixed numeric limits; locating a named test alone
+does not establish execution or readiness. The optimized-product measurement path
 is `scripts/measure_global_preferences_release.py`; it uses the real CLI,
 foreground-TTY confirmation for durable mutations, resolver validation of each
 created native Project, per-process `wait4` resource accounting, and disposable

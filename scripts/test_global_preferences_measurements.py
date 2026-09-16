@@ -1,0 +1,165 @@
+"""Raw trials, per-trial limits, storage accounting and resource ownership."""
+from copy import deepcopy
+import tempfile
+import unittest
+import os
+from pathlib import Path
+import sys
+
+from global_preferences_acceptance.inputs import EvidenceError
+from global_preferences_acceptance.inventory import BUDGETS
+from global_preferences_acceptance.measurements import percentile, validate_trials
+from global_preferences_acceptance.test_support import SyntheticBundle
+from test_global_preferences_production_matrix import MATRIX
+
+
+class MeasurementTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temporary = tempfile.TemporaryDirectory()
+        cls.fixture = SyntheticBundle(cls.temporary.name, MATRIX)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.temporary.cleanup()
+
+    def row(self, budget, variant=None):
+        return deepcopy(next(r for r in self.fixture.report['measurements'] if r['budget_id'] == budget
+                             and (variant is None or r['variant_id'] == variant)))
+
+    def check(self, row):
+        self.fixture.rebind_trials(row)
+        validate_trials(row, self.fixture.refresh())
+
+    def test_nearest_rank_and_all_complete_variants(self):
+        self.assertEqual(percentile(list(range(1, 22))), 20)
+        self.assertEqual(percentile(list(range(1, 101))), 95)
+        bundle = self.fixture.refresh()
+        for row in self.fixture.report['measurements']:
+            validate_trials(row, bundle)
+
+    def test_each_timed_max_p95_and_rss(self):
+        for budget, limits in BUDGETS.items():
+            if 'p95_ms' not in limits:
+                continue
+            for failure in ('max', 'p95', 'rss'):
+                if failure == 'rss' and 'max_rss_mib' not in limits:
+                    continue
+                row = self.row(budget)
+                samples = row['trials'][1]['samples']
+                for sample in samples[:6 if failure == 'p95' else 1]:
+                    if failure == 'rss':
+                        sample['rss_kib'] = limits['max_rss_mib'] * 1024 + 1
+                    else:
+                        sample['elapsed_ns'] = limits[failure + '_ms'] * 1_000_000 + 1
+                        if budget == 'durable-mutation':
+                            sample['launch_to_response_ns'] = sample['elapsed_ns']
+                        if sample['presented_elapsed_ns'] is not None:
+                            sample['presented_elapsed_ns'] = sample['elapsed_ns']
+                with self.subTest(budget=budget, failure=failure), self.assertRaises(EvidenceError):
+                    self.check(row)
+
+    def test_cold_open_daemon_rss_sample_count_failure_and_raw_relabel(self):
+        for budget, field, value in [('native-window-open', 'elapsed_ns', 1_000_000_001),
+                                    ('durable-mutation', 'daemon_rss_kib', 32769),
+                                    ('release-query', 'outcome', 'skipped'),
+                                    ('release-query', 'rss_kib', True)]:
+            row = self.row(budget, 'set/daemon' if budget == 'durable-mutation' else None)
+            sample = row['trials'][0]['cold_open'] if budget == 'native-window-open' else row['trials'][0]['samples'][0]
+            sample[field] = value
+            with self.subTest(field=field), self.assertRaises(EvidenceError):
+                self.check(row)
+        row = self.row('release-query')
+        row['trials'][0]['samples'].pop()
+        with self.assertRaises(EvidenceError):
+            self.check(row)
+        row = self.row('gui-feedback')
+        row['environment_id'] = 'different-display'
+        with self.assertRaisesRegex(EvidenceError, 'raw observations'):
+            validate_trials(row, self.fixture.refresh())
+
+    def test_storage_must_be_derived_and_nonempty(self):
+        for variant in ('factory', 'generation'):
+            row = self.row('storage-growth', variant)
+            sample = row['trials'][0]['samples'][0]
+            sample['project_bytes' if variant == 'factory' else 'generation_bytes'] = 0
+            with self.assertRaisesRegex(EvidenceError, 'per-file manifests'):
+                self.check(row)
+        row = self.row('storage-growth', 'generation')
+        row['trials'][0]['samples'][0]['before'] = self.fixture.put(b'not a manifest')
+        with self.assertRaises(EvidenceError):
+            self.check(row)
+
+    def test_lifecycle_growth_orphans_and_invented_baseline(self):
+        for field, value in [('post_close_rss_kib', 1024 + 4097), ('orphan_windows', 1),
+                             ('orphan_writer_leases', 1), ('owned_windows', [{'identity': 'leak', 'owner': 'gui'}]),
+                             ('writer_leases', [{'identity': 'leak', 'owner': 'gui', 'baseline': True}])]:
+            row = self.row('window-lifecycle')
+            row['trials'][0]['samples'][0][field] = value
+            with self.subTest(field=field), self.assertRaises(EvidenceError):
+                self.check(row)
+
+    def test_warmup_types_cross_trial_order_and_observed_baseline(self):
+        for field, value in [('kind', 'wrong'), ('elapsed_ns', 'not-a-number'), ('rss_kib', -99)]:
+            row = self.row('release-query')
+            row['trials'][0]['warmups'][0][field] = value
+            with self.subTest(field=field), self.assertRaises(EvidenceError):
+                self.check(row)
+        row = self.row('release-query')
+        row['trials'][1] = deepcopy(row['trials'][0])
+        row['trials'][1]['index'] = 1
+        with self.assertRaisesRegex(EvidenceError, 'repeat or overlap'):
+            self.check(row)
+        row = self.row('window-lifecycle')
+        row['trials'][0]['baseline_rss_kib'] += 1
+        with self.assertRaisesRegex(EvidenceError, 'final warmed observation'):
+            self.check(row)
+
+    def test_storage_cannot_repeat_one_mutation_as_a_hundred(self):
+        row = self.row('storage-growth', 'generation')
+        sample = row['trials'][0]['samples'][0]
+        row['trials'][0]['samples'][1]['before'] = sample['before']
+        row['trials'][0]['samples'][1]['after'] = sample['after']
+        with self.assertRaisesRegex(EvidenceError, 'continuous retained history'):
+            self.check(row)
+
+
+class ProcessMeasurementTests(unittest.TestCase):
+    def test_collector_cannot_inherit_owner_store_or_daemon_override(self):
+        from unittest.mock import patch
+        from measure_global_preferences_release import isolated_environment
+        inherited = {'XDG_CONFIG_HOME': '/owner/config', 'DATUM_ENGINE_SOCKET': '/owner/daemon',
+                     'EDA_ENGINE_SOCKET': '/owner/legacy-daemon', 'DATUM_GUI_PREFERENCES_PATH': '/owner/legacy.json'}
+        with patch.dict(os.environ, inherited):
+            environment = isolated_environment(Path('/private/config'))
+        self.assertEqual(environment['XDG_CONFIG_HOME'], '/private/config')
+        for key in inherited.keys() - {'XDG_CONFIG_HOME'}:
+            self.assertNotIn(key, environment)
+
+    def test_actual_output_exit_and_wait4_rss_are_retained(self):
+        from global_preferences_acceptance.process import execute
+        result = execute(Path(sys.executable), ['-c', 'import sys; print("observed"); sys.exit(3)'], os.environ.copy())
+        self.assertEqual(result['stdout'], b'observed\n')
+        self.assertEqual(result['exit_code'], 3)
+        self.assertGreater(result['rss_kib'], 0)
+        self.assertGreater(result['elapsed_ns'], 0)
+
+    def test_timeout_has_bounded_failure_and_no_success_substitution(self):
+        from global_preferences_acceptance.process import execute
+        result = execute(Path(sys.executable), ['-c', 'import time; time.sleep(10)'], os.environ.copy(), timeout=0.02)
+        self.assertEqual(result['exit_code'], 124)
+        self.assertTrue(result['timed_out'])
+        self.assertLess(result['elapsed_ns'], 2_000_000_000)
+
+    def test_mutation_clock_starts_at_actual_tty_confirmation(self):
+        from global_preferences_acceptance.process import execute
+        code = 'import time; time.sleep(.03); print("Type APPLY to confirm:", flush=True); print(input(), flush=True)'
+        result = execute(Path(sys.executable), ['-c', code], os.environ.copy(), confirmation=True)
+        self.assertEqual(result['exit_code'], 0, result['stdout'])
+        self.assertTrue(result['confirmed'])
+        self.assertIn(b'APPLY', result['stdout'])
+        self.assertGreater(result['launch_to_response_ns'] - result['elapsed_ns'], 20_000_000)
+
+
+if __name__ == '__main__':
+    unittest.main()

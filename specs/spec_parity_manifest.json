@@ -137,6 +137,25 @@
       "kind": "global_preferences_product_surface",
       "source": "GP-CM03 engine request/response/error schemas + active and seed keys + CLI commands/arguments + MCP tools/arguments",
       "owner_spec": "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md"
+    },
+    {
+      "id": "global_preferences_acceptance_contract",
+      "kind": "file_glob",
+      "glob": "specs/global_preferences_production_acceptance_matrix.json",
+      "owner_spec": "specs/GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md",
+      "notes": "Filename inventory only; exact case, measurement, environment and gate semantics are checked by the V2 matrix/evidence validators and negative regressions, not inferred from this digest.",
+      "planned_shapes": [
+        "ProductionReportV2",
+        "PreferenceFixtureV2",
+        "PreferenceStateV2",
+        "CommandObservationV2",
+        "MeasurementTrialV2",
+        "NativeCaptureV2",
+        "IndependentReviewV2",
+        "ReleaseHandoffV2",
+        "OwnerAcceptanceV2",
+        "PublicationReviewV2"
+      ]
     }
   ]
 }

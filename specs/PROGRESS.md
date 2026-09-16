@@ -3213,3 +3213,15 @@ Status: [x] Closed for scoped M4 slice
 | MCP→daemon transport | [x] | `EngineDaemonClient.call()` uses Unix socket JSON-RPC; behavioral parity remains covered separately from live socket smoke |
 | Git repository initialized | [x] | `main` branch with GitHub remote configured |
 | CI pipeline | [x] | `.github/workflows/alignment.yml` runs alignment and file-size budget checks |
+
+## GP-CM05E production acceptance correction
+
+| Governed artifact | Current | Required target |
+|---|---|---|
+| `specs/GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md` | Owner-directed V2 acceptance implementation: 389 case rows, 48 native scenarios, 90 measured variants; validator/regression work in progress. Historical GP-CM05 results remain incomplete for this contract. | Complete same-candidate raw proof, independent replay and support handoff under GP-CM05E, followed by the existing GP-CM05A owner review. No production acceptance recorded. |
+
+This contract refines the already selected GLOBAL-PREFERENCES-COMPLETION /
+`dat-global-preferences-completion-f84` task. It creates no parallel roadmap
+step, workflow-repair work, prototype change, dependency or broader product
+authority. Historical aggregate-seed proposals in GP-C06 remain subordinate
+to PM-037/PM-040 and the eight individual active Units seeds.
