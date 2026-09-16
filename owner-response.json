@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "kind": "datum.workflow-delivery.activation-response",
+  "response": "WORKFLOW-DELIVERY-IMPLEMENTATION: approve ACTIVATE — 681d51e12c7cd0d5e2a363091136e35dd774b82b4d885aad742bd02311f489be",
+  "source": "Project-owner message in this conversation, verbatim: WORKFLOW-DELIVERY-IMPLEMENTATION: approve ACTIVATE 681d51e12c7cd0d5e2a363091136e35dd774b82b4d885aad742bd02311f489be. The response field normalizes only the omitted em-dash separator to the existing receipt grammar; the approved action and digest are unchanged. No approval of a replacement candidate is inferred.",
+  "recorded_at": "2026-09-16T04:19:51Z"
+}

@@ -1,5 +1,0 @@
-mod write_ops_assign_part;
-mod write_ops_netclass_move;
-mod write_ops_package_replace;
-mod write_ops_smoke_and_delete;
-mod write_ops_value_reference_rotate;

@@ -1,0 +1,23 @@
+{
+  "kind": "datum.workflow-delivery.owner-directed-lease-recovery",
+  "request_sha256": "681d51e12c7cd0d5e2a363091136e35dd774b82b4d885aad742bd02311f489be",
+  "installed_authority": "61f7b2db1730f0dc7911b5a05f623ad6bf2d1000",
+  "renewal_commit": "416686f4c8f1393378bbf4e546517b14257c13da",
+  "owner_direction": "Explicit instructions to bypass the expired lease for already completed and tested work, followed by permission to finish activation. No replacement candidate approval was fabricated.",
+  "exception": "Only WORKFLOW-DELIVERY-IMPLEMENTATION: claim expired at 2026-09-16T02:58:04Z was excepted during promotion inspection. The ordinary validator was restored immediately afterwards.",
+  "recovery_script_sha256": "d0bf33c910463278a3d3c8d8f58a4739a32d06ecb31cb49e4634db82d393c737",
+  "independent_review": "wdq_independent_review found no remaining identified blocker after exact support authentication, lock protections, per-write state guards and final classified state verification were restored. This review did not assert ordinary automated activation or milestone completion.",
+  "installation_journal_sha256": "53c0dd0e07f700795604b7dfb8250e3eac6c7932443c6aabb04a1f354a11fe75",
+  "verification": {
+    "normal_pre_commit_hook": "passed on renewal commit; enforced workflow findings empty; visual-truth and rustfmt passed",
+    "project_status": "passed, 56 frontier items, after committed renewal",
+    "evidence_traceability": "passed, 25 routes and 119 artifacts",
+    "full_suite": "Original independent 527-test pass retained with unchanged reviewed implementation. Not repeated for lease renewal.",
+    "redundant_replay": "Stopped with exit 143 at owner direction. Its partial full-suite logs are not passing evidence. Its completed focused runs passed 15 and 57 tests."
+  },
+  "activation_recovered_and_verified": true,
+  "ordinary_automated_activation_pass": false,
+  "milestone_10_complete": false,
+  "remaining_scope_issue": "Current I05 requires three actual product adoption cohorts. None is claimed complete. Owner scope clarification requested to separate workflow closeout from future product outcomes.",
+  "product_changes": false
+}
