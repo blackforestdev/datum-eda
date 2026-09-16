@@ -699,35 +699,9 @@ fn unrouted_base_color(scene: &BoardReviewSceneV1, unrouted: &UnroutedPrimitive)
         .unwrap_or(UNROUTED_BASE)
 }
 
-fn selected_component_uuid<'a>(
-    scene: &'a BoardReviewSceneV1,
-    state: &ReviewWorkspaceState,
-) -> Option<&'a str> {
-    let SelectionTarget::AuthoredObject(object_id) = &state.selection else {
-        return None;
-    };
-    scene.components.iter().find_map(|component| {
-        ((&component.object_id == object_id)
-            || (format!("component:{}", component.component_uuid) == *object_id))
-            .then_some(component.component_uuid.as_str())
-    })
-}
-
-fn component_is_selection_related(
-    component_uuid: &str,
-    scene: &BoardReviewSceneV1,
-    state: &ReviewWorkspaceState,
-) -> bool {
-    selected_component_uuid(scene, state).is_some_and(|selected| selected == component_uuid)
-}
-
-fn component_is_selection_active(
-    component_uuid: &str,
-    scene: &BoardReviewSceneV1,
-    state: &ReviewWorkspaceState,
-) -> bool {
-    component_is_selection_related(component_uuid, scene, state)
-}
+#[path = "selection_relation.rs"]
+mod selection_relation;
+use selection_relation::{component_is_selection_active, component_is_selection_related};
 
 fn proposal_preview_affected_ids(state: &ReviewWorkspaceState) -> Vec<&str> {
     state

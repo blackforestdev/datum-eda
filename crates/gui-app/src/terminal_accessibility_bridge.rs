@@ -163,9 +163,16 @@ impl LinuxTerminalAccessibilityBridge {
 
 impl Runtime {
     pub(super) fn refresh_menu_accessibility(&mut self) {
-        let nodes = datum_gui_protocol::load_default_gui_menu_model()
-            .map(|model| menu_accessibility_nodes(&model, self.workspace()))
-            .unwrap_or_default();
+        // Zoom invalidates the prepared frame, but a closed menu has no nodes.
+        // Avoid touching its inventory at all in this high-frequency path;
+        // publishing the empty projection still clears nodes when a menu closes.
+        let nodes = if self.workspace().ui.active_menu.is_none() {
+            Vec::new()
+        } else {
+            datum_gui_protocol::gui_menu_model::default_gui_menu_model()
+                .map(|model| menu_accessibility_nodes(model, self.workspace()))
+                .unwrap_or_default()
+        };
         self.terminal_accessibility.update_menus(nodes);
     }
 

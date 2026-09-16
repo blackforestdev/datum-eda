@@ -1,6 +1,7 @@
 use anyhow::{Context, Result};
 use serde::Deserialize;
 use std::collections::BTreeMap;
+use std::sync::OnceLock;
 
 pub mod accessibility;
 pub mod action_registry;
@@ -135,7 +136,17 @@ pub struct GuiIconDef {
 }
 
 pub fn load_default_gui_menu_model() -> Result<GuiMenuModel> {
-    serde_json::from_str(include_str!("../../../docs/gui/menu_model.json"))
+    default_gui_menu_model().cloned()
+}
+
+/// Borrow the immutable, compiled-in inventory without parsing or cloning it on
+/// each frame. Action availability still comes from the caller's live workspace.
+pub fn default_gui_menu_model() -> Result<&'static GuiMenuModel> {
+    static MODEL: OnceLock<std::result::Result<GuiMenuModel, serde_json::Error>> = OnceLock::new();
+    MODEL
+        .get_or_init(|| serde_json::from_str(include_str!("../../../docs/gui/menu_model.json")))
+        .as_ref()
+        .map_err(|error| anyhow::anyhow!("{error}"))
         .context("parse docs/gui/menu_model.json")
 }
 
@@ -147,6 +158,25 @@ pub fn load_default_gui_icon_set() -> Result<GuiIconSet> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn shared_menu_inventory_is_reused_and_matches_embedded_source() {
+        let shared = default_gui_menu_model().unwrap();
+        let fresh: GuiMenuModel =
+            serde_json::from_str(include_str!("../../../docs/gui/menu_model.json")).unwrap();
+        assert_eq!(shared, &fresh);
+        for _ in 0..100 {
+            assert!(std::ptr::eq(shared, default_gui_menu_model().unwrap()));
+        }
+    }
+
+    #[test]
+    fn owned_menu_edits_cannot_mutate_shared_inventory() {
+        let mut owned = load_default_gui_menu_model().unwrap();
+        owned.menubar.clear();
+        assert!(!default_gui_menu_model().unwrap().menubar.is_empty());
+        assert!(!load_default_gui_menu_model().unwrap().menubar.is_empty());
+    }
 
     #[test]
     fn default_menu_and_icon_manifests_parse() {
