@@ -195,8 +195,7 @@
 The owner authorized governance-only admission of `dat-workflow-owner-revision-71j`
 despite its missing Frontier entry on 2026-09-16. The durable
 [owner record](../docs/reviews/workflow-owner-revision/admission-owner-20260916.json)
-and [agent handoff](../docs/reviews/workflow-owner-revision/finish-agent-prompt.md)
-record the authorization, existing candidate, and exact admission failures.
+records the authorization, existing candidate, and exact admission failures.
 
 This is an intake/admission status note, **not an Active Frontier entry, task
 selection, claim, execution permission, or completed repair**. The installed
