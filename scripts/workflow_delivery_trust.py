@@ -38,7 +38,11 @@ def _policy_shape(value):
     commit_id(value["legacy_baseline"], POLICY_PATH)
     array(value["enrolled"], POLICY_PATH)
     for row in value["enrolled"]:
-        closed(row, "frontier_key implementation_sessions activation_ref", POLICY_PATH, "WDQ-POLICY")
+        optional = " historical_ref" if "historical_ref" in row else ""
+        closed(row, "frontier_key implementation_sessions activation_ref" + optional,
+               POLICY_PATH, "WDQ-POLICY")
+        if optional:
+            commit_id(row["historical_ref"], POLICY_PATH + ".historical_ref")
         identifier(row["frontier_key"], POLICY_PATH)
         ids(row["implementation_sessions"], POLICY_PATH)
         ref(row["activation_ref"], POLICY_PATH)

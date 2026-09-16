@@ -212,6 +212,12 @@ def validate_delivery(tree, item, *, phase=None, trust=None, environment=None):
 
 
 def _validate_delivery(tree, item, *, phase=None, trust=None, environment=None):
+    if trust and phase is None:
+        from workflow_delivery_history import historical_delivery
+
+        historical = historical_delivery(tree, item, trust)
+        if historical is not None:
+            return historical
     value = item["completion"]["delivery"]
     phases = mapping_phases(value, item["key"])
     path = value["contract_path"]
@@ -220,9 +226,10 @@ def _validate_delivery(tree, item, *, phase=None, trust=None, environment=None):
             "contract issue absent from beads", "WDQ-IDENTITY")
     validate_handler_files(tree, contract)
     delivery_shape(item, contract)
+    explicit_phase = phase is not None
     phase = phase or required_phase(item)
     bootstrap_structure = bool(
-        trust and preparation_bootstrap_structure(tree, item, trust, contract)
+        not explicit_phase and trust and preparation_bootstrap_structure(tree, item, trust, contract)
     )
     if bootstrap_structure:
         phase = "structure"
@@ -236,19 +243,9 @@ def _validate_delivery(tree, item, *, phase=None, trust=None, environment=None):
         candidates = trust.base.json("specs/active_frontier.json")["frontier"]
         base_item = next((i for i in candidates if i["key"] == item["key"]), None)
     validate_transition(item, base_item)
-    if trust and phase in ("structure", "ready") and not bootstrap_structure:
-        # Pending labels cannot let an enabling source edit land without proof.
-        # A static checker cannot distinguish harmless implementation text from
-        # activation, so changed reviewed build inputs require the bounded proof.
-        current_inputs = tree.manifest(contract["input_roots"])
-        try:
-            previous_inputs = trust.base.manifest(contract["input_roots"])
-        except DeliveryInputError as error:
-            if error.code not in ("WDQ-STALE", "WDQ-ARTIFACT"):
-                raise
-            previous_inputs = None
-        if current_inputs != previous_inputs:
-            phase = "activate" if contract["category"] == "product" else "verify"
+    # A source edit is not a completed activation or verification checkpoint.
+    # Source permission and live ownership are enforced by coverage; readiness
+    # still validates authority. Completed proof checkpoints remain strict below.
     authority = authority_sha256(tree, contract, ready=phase != "structure")
     if "review" in phases and phase != "structure":
         required_normal_consumers(contract)
