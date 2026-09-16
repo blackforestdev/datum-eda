@@ -7,7 +7,7 @@ import unittest
 
 from workflow_delivery_io import DeliveryInputError
 from workflow_delivery_source_scopes import authorize_source_paths
-from workflow_delivery_checkpoints import preparation_bootstrap_structure, same_claim_identity
+from workflow_delivery_checkpoints import preparation_bootstrap_structure, same_claim_identity, infrastructure_closeout
 
 
 class SourceScopesTest(unittest.TestCase):
@@ -149,6 +149,62 @@ class SourceScopesTest(unittest.TestCase):
         self.issues["dat-task"]["assignee"] = "different-session"
         with self.assertRaises(DeliveryInputError):
             self.check()
+
+    def test_infrastructure_closeout_preserves_evidence_history_and_owner_boundary(self):
+        prior = {"completion": {"canonical_next_step_id": "WDQ-I05", "outcome": "guardrails",
+            "steps": [{"id": f"H{i}", "status": "complete", "completion_evidence": ["old"]}
+                      for i in range(9)] + [
+                {"id": "WDQ-I05", "status": "in_progress", "completion_evidence": [], "kind": "execution"},
+                {"id": "WDQ-I06", "status": "pending", "completion_evidence": [], "kind": "owner_decision"}]}}
+        item = deepcopy(prior)
+        item.update(state="specified", authorization="owner_decision")
+        item["completion"]["canonical_next_step_id"] = "WDQ-I06"
+        item["completion"]["steps"][-2].update(status="complete", completion_evidence=["installed-and-handoff"])
+        self.assertTrue(infrastructure_closeout(item, prior))
+        accepted = deepcopy(item)
+        accepted.update(state="landed", authorization="none")
+        accepted["completion"]["canonical_next_step_id"] = None
+        accepted["completion"]["steps"][-1].update(status="complete", completion_evidence=["owner-receipt"])
+        self.assertTrue(infrastructure_closeout(accepted, prior))
+        for mutate in (
+            lambda x: x.update(claim=deepcopy(self.item["claim"])),
+            lambda x: x.update(authorization="execution"),
+            lambda x: x["completion"].update(outcome="weakened"),
+            lambda x: x["completion"]["steps"][0].update(completion_evidence=[]),
+            lambda x: x["completion"]["steps"][-2].update(completion_evidence=[]),
+            lambda x: x["completion"]["steps"][-2].update(status="pending"),
+            lambda x: x["completion"]["steps"][-1].update(kind="execution"),
+            lambda x: x["completion"]["steps"].append({"id": "extra"}),
+        ):
+            changed = deepcopy(item)
+            mutate(changed)
+            self.assertFalse(infrastructure_closeout(changed, prior))
+        accepted["completion"]["steps"][-1]["completion_evidence"] = []
+        self.assertFalse(infrastructure_closeout(accepted, prior))
+
+    def test_closeout_continuation_still_refuses_changed_inputs_or_preparation_scope(self):
+        from workflow_delivery_activation_preflight import S5A_PREPARATION_SCOPE
+        approved = {"key": "WORKFLOW-DELIVERY-IMPLEMENTATION", "completion": {
+            "canonical_next_step_id": "WDQ-I05", "steps": [
+                {"id": f"H{i}", "status": "complete"} for i in range(9)] + [
+                {"id": "WDQ-I05", "status": "in_progress", "completion_evidence": []},
+                {"id": "WDQ-I06", "status": "pending", "completion_evidence": []}]}}
+        item = deepcopy(approved)
+        item.update(state="specified", authorization="owner_decision")
+        item["completion"]["canonical_next_step_id"] = "WDQ-I06"
+        item["completion"]["steps"][-2].update(status="complete", completion_evidence=["proof"])
+        authority = SimpleNamespace(json=lambda p: {"frontier": [approved]}, manifest=lambda p: {"gate": "same"})
+        coverage = {"preparation_scopes": [deepcopy(S5A_PREPARATION_SCOPE)],
+                    "source_scopes": [{"frontier_key": item["key"], "step_ids": ["WDQ-I05"]}]}
+        trust = SimpleNamespace(authority=authority, policy={"coverage": coverage})
+        tree = SimpleNamespace(manifest=authority.manifest)
+        contract = {"input_roots": ["gate"]}
+        self.assertTrue(preparation_bootstrap_structure(tree, item, trust, contract))
+        tree.manifest = lambda p: {"gate": "changed"}
+        self.assertFalse(preparation_bootstrap_structure(tree, item, trust, contract))
+        tree.manifest = authority.manifest
+        coverage["preparation_scopes"] = []
+        self.assertFalse(preparation_bootstrap_structure(tree, item, trust, contract))
 
     def test_lease_repair_promotion_preserves_other_lanes_and_owner_policy(self):
         from workflow_delivery_activation_preflight import installed_lease_repair, LEASE_REPAIR_PATHS
