@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "record_type": "owner_scope_correction",
+  "frontier_key": "WORKFLOW-DELIVERY-IMPLEMENTATION",
+  "issue_id": "dat-wdq-rollout-implementation-ffy",
+  "owner_response": "Approve that scope correction",
+  "reviewed_question": "To close milestone 10 without doing product development, do you approve changing its completion boundary to workflow enforcement installed and verified; product-owner handoffs recorded, while keeping all three product-adoption outcomes explicitly open in their existing product lanes?",
+  "owner_clarification": "I need to be clear that I need that corrected. there is no sane world where the production code needs to be completed before the corse correction (guide rails) can be finished.",
+  "decision": {
+    "WDQ-I05": "Complete the installed and independently verified workflow enforcement, recovery and product-owner handoffs. Completed product code or accepted product cohorts are not prerequisites.",
+    "WDQ-I06": "Owner review and acceptance of the installed workflow guardrails and handoffs, with honest outstanding product status; not acceptance of unfinished product behavior.",
+    "later_product_measurement": "Retain readiness, native proof, independent review, owner acceptance and evidence-linked adoption measurements in UVT-S5A-BUILD, GUI-WRITE-PATH and NATIVE-AUTHORING. Their outcomes remain open in their existing product lanes. Do not create a dependency back from workflow installation or closeout to those future product outcomes."
+  },
+  "preserved_boundaries": [
+    "No Preferences, product source or Claude prototype ownership transfer.",
+    "No fabricated product proof, cohort acceptance or baseline measurements.",
+    "Existing successful verification keeps its original source identity; lease expiry alone does not invalidate it or require replay.",
+    "Actual implementation changes still need proportionate verification and independent review.",
+    "This scope approval is not an assertion that the governing documents, installed lifecycle validator or milestone status have already been reconciled."
+  ],
+  "implementation_status": "Scope approved; contract and lifecycle reconciliation pending. Exact approved lease repair is installed and ordinary renewal verified at 416686f4c8f1393378bbf4e546517b14257c13da.",
+  "milestone_10_complete": false,
+  "product_acceptance_asserted": false
+}
