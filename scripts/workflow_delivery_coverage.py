@@ -7,6 +7,7 @@ and independently validate full PM025 state and delivery phase obligations.
 from workflow_delivery_authority import resolve_ref
 from workflow_delivery_coverage_shapes import coverage_shape
 from workflow_delivery_shapes import require
+from workflow_delivery_owner_revision import validate_revision_records
 from workflow_delivery_tree import Tree
 
 
@@ -82,6 +83,7 @@ def validate_classifications(tree, coverage, manifest, *, authority):
                 "WDQ-COVERAGE")
         pinned_reference(tree, authority, scope["boundary_ref"])
         pinned_reference(tree, authority, scope["approval_ref"])
+    validate_revision_records(tree, coverage, authority)
     return current
 
 

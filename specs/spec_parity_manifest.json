@@ -108,6 +108,17 @@
       "kind": "global_preferences_product_surface",
       "source": "GP-CM03 engine request/response/error schemas + active and seed keys + CLI commands/arguments + MCP tools/arguments",
       "owner_spec": "specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md"
+    },
+    {
+      "id": "workflow_owner_revision_records",
+      "kind": "file_glob",
+      "glob": "specs/workflow_delivery/*.owner-revision.json",
+      "owner_spec": "docs/decisions/PRODUCT_MECHANICS_043_OWNER_DIRECTED_WORKFLOW_REVISIONS.md",
+      "planned_shapes": [
+        "OwnerDirectedRevisionV1",
+        "coverage.owner_revisions"
+      ],
+      "notes": "Records must be explicitly owner-promoted and separately validated. Zero live grants are created by this repair; inventory presence is not authorization, implementation, review or acceptance."
     }
   ]
 }

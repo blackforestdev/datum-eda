@@ -1,6 +1,7 @@
 """Closed schema-2 coverage permissions; no selection, approval or mutation."""
 
 from workflow_delivery_io import normalized_path
+from workflow_delivery_owner_revision import revision_scopes_shape
 from workflow_delivery_shapes import (
     array, closed, commit_id, enum, identifier, ids, ref, require, unique,
 )
@@ -21,7 +22,7 @@ def paths(value, label, *, nonempty=True):
 
 def coverage_shape(value):
     label = "coverage"
-    optional = " preparation_scopes" if "preparation_scopes" in value else ""
+    optional = "".join(" " + key for key in ("preparation_scopes", "owner_revisions") if key in value)
     closed(value, "baseline_ref rows source_scopes production_roots new_item_rule" + optional,
            label, "WDQ-COVERAGE")
     commit_id(value["baseline_ref"], label + ".baseline_ref")
@@ -76,4 +77,6 @@ def coverage_shape(value):
                 require(any(path == root or path.startswith(root + "/")
                             for root in value["production_roots"]), path,
                         "preparation scope must stay inside production roots", "WDQ-COVERAGE")
+    if "owner_revisions" in value:
+        revision_scopes_shape(value["owner_revisions"], value["rows"])
     return value

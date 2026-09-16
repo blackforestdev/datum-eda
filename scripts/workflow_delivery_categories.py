@@ -1,6 +1,7 @@
 """Category transition requirements supplement, never replace, PM025 validation."""
 
 from workflow_delivery_shapes import require
+from workflow_delivery_owner_revision import validate_owner_revision
 
 
 def terminal_owner_closeout(item, prior):
@@ -73,6 +74,8 @@ def validate_categories(items, coverage, enrolled, authority):
             if executing or preflight_done:
                 readiness.append(key)
         elif category == "external_lane":
+            if validate_owner_revision(item, coverage, authority):
+                continue
             prior = promoted.get(key, {})
             old = prior.get("completion", {})
             terminal = terminal_owner_closeout(item, prior)
