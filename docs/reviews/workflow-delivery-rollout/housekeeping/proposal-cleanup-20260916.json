@@ -1,0 +1,45 @@
+{
+  "source": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals",
+  "archive": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/retained/proposal-recovery-20260916.zip",
+  "head_before": "144756a1e8e2c9542fb233666c5df33a87777d23",
+  "source_allocated_bytes": 52139245568,
+  "source_logical_bytes": 44828975304,
+  "archived_paths": 2753588,
+  "unique_contents": 133722,
+  "archive_bytes": 7148648309,
+  "archive_sha256": "df0c720c243d0f999d478f38a2829a36847053c93323151dd3a93ef3a7c5e325",
+  "verification": "Every unique archived object read back and SHA-256 verified; manifest round-trip exact.",
+  "deleted": true,
+  "retired_worktrees": [
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/terminal-owner-20260910",
+      "retained_ref": "refs/datum-wdq/retired-worktrees/9924678c39fe5d176e58ebfd8e25ab6feb213f35"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-i01-20260908/candidate",
+      "retained_ref": "refs/datum-wdq/retired-worktrees/2a85005ce7648322424391281a02c092bff15414"
+    },
+    {
+      "path": "/home/bfadmin/Documents/datum-eda/.git/datum-wdq/proposals/wdq-i02-assembled-20260908/candidate",
+      "retained_ref": "refs/datum-wdq/retired-worktrees/9cab72daab46122da6d2c45ab7f972814f702880"
+    }
+  ],
+  "net_reclaimed_bytes": 44990597259,
+  "scope": "Post-completion housekeeping only; all eleven workflow milestones remain closed. No product lane, roadmap, approval, dependency or licensing change.",
+  "preserved": [
+    "Main checkout and all existing Git evidence refs",
+    "Active trusted/ac33c634092967f71364bf61174119bca6040de8 hook bundle and Git configuration",
+    "Owner responses, installation logs, and owner-runtime retention"
+  ],
+  "recovery_format": "ZIP manifest.json maps paths relative to the removed proposals directory to objects/<sha256>, Unix stat metadata or symlink targets. Every unique object was read back and hash-verified before deletion. Restore only to a separate empty recovery directory; never overwrite the main checkout or activate historical hooks.",
+  "archive_requirement": "Historical recovery only; not required by the installed guardrails or normal product development. Local, private retention; archive payload is not committed.",
+  "post_cleanup_checks": {
+    "project_status": "PASS: 56 frontier items (requires temporary Git-index write access)",
+    "installed_hook": "PASS: no findings; pilot accept and rollout structure checks",
+    "source_health": "PASS: 1962 source files",
+    "spec_governance": "PASS: 261 classified specs",
+    "evidence_traceability": "PASS: 25 routes, 119 artifacts",
+    "registered_worktrees": "Only the main development checkout remains",
+    "full_test_replay": "Not run: housekeeping changes no product or enforcement behavior"
+  }
+}
