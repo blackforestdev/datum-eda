@@ -194,11 +194,16 @@
 
 ### Workflow repair admission transaction
 
-The generated WORKFLOW-OWNER-REVISION entry and matching infrastructure coverage
-are one governance-only proposal under the recorded owner exception. They become
-live only after exact reviewed owner-controlled publication and installed checks.
-No claim, execution enrollment, PM043 ratification or product acceptance follows.
-All OR-C01..OR-C05 evidence remains pending. Existing Frontier items are preserved.
+| Governed preparation | Current evidence | Remaining boundary |
+| --- | --- | --- |
+| `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `specs/workflow_delivery/owner-revision.contract.json`, `docs/reviews/workflow-owner-revision/cases.json` | All seven audited gaps are explicit acceptance requirements; 87 individual recipe rows are registered as unexecuted planning inputs. The owner-directed handoff and new synchronized claim are committed. | Bind proposed entry points to the numbered mechanism and exact reviewed source/enrollment proposal, then collect actual producer and independent evidence. No execution readiness or installed repair is asserted. |
+
+Admission commit `89abd560` installed the WORKFLOW-OWNER-REVISION identity and
+matching infrastructure classification. Its installed verification is recorded in
+`docs/reviews/workflow-owner-revision/admission-installed-20260916.json`.
+Admission did not install implementation, execution enrollment, PM043 ratification
+or product acceptance. Current claim, selected step and authorization are reported
+only by the generated Active Frontier and fresh selector, not this historical note.
 
 ## WORKFLOW-DELIVERY-QUALITY — workflow evidence and readiness adoption
 
@@ -206,7 +211,7 @@ All OR-C01..OR-C05 evidence remains pending. Existing Frontier items are preserv
 
 | Governed documents | Current evidence | Remaining boundary |
 | --- | --- | --- |
-| `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json`, `specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md`, proposed PM042 | Eight of eleven milestones complete for their recorded candidates. I04 renewal separates prerequisite scenario proof from mandatory post-packet real-roadmap integration; terminal-owner evidence remains pinned and historical proof is not relabeled. | `dat-wdq-rollout-implementation-ffy` remains open at WDQ-I04. Reconcile exact evidence, verify the full 56-row roadmap against the assembled packet, then verify actual installation. Standing workflow approval is recorded; Preferences acceptance is not an installation prerequisite. Three actual product cohorts and final acceptance remain due. |
+| `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json`, `specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md`, PM042 | Historical rollout: all eleven milestones and owner acceptance were recorded in `144756a1`; `dat-wdq-rollout-implementation-ffy` was closed. Original proof retains its original source identities. | Subsequent workflow audit repairs are separately tracked under `dat-workflow-owner-revision-71j`; this historical completion is not proof that those repairs are installed. Product-adoption outcomes remain in their product lanes, not prerequisites for infrastructure closeout. Current authorization and selection come only from the generated Active Frontier. |
 
 | Governed document | Current evidence | Target | Tracking |
 | --- | --- | --- | --- |

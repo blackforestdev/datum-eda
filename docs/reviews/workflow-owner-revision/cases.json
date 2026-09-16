@@ -1,0 +1,699 @@
+{
+  "schema_version": 1,
+  "kind": "workflow_repair_case_recipes",
+  "status": "planning_recipes_not_executed",
+  "frontier_key": "WORKFLOW-OWNER-REVISION",
+  "rules": [
+    "Each row is an independent result; parameterized variants retain separate observations.",
+    "All hostile mutations are restricted to owned isolated fixtures. Never modify live installed trust for a test.",
+    "Freeze source/recipe/tool hashes and generated fixture commit IDs, authority/base, lease timestamps and tracker state before execution.",
+    "Capture actual command, exit status, stdout/stderr and before/after source/index/refs/config. Report early refusal without inventing handler dispatch.",
+    "A pass means the named boundary behaved as expected, never product acceptance. Failed readiness or missing evidence leaves the case incomplete.",
+    "Fixture-only authority selection and synthetic owner messages cannot authorize a real publication.",
+    "Only owned ephemeral paths may be cleaned. Preserve shared targets, supplied snapshots and retained evidence. No Documents sibling scratch."
+  ],
+  "recipes": {
+    "revision": {
+      "basis": "scripts/test_workflow_delivery_owner_revision.py:OwnerRevisionTest.setUp (preserved candidate 4b60a848)",
+      "setup": "Construct synthetic owner-decision source, instruction, proposed numbered doctrine, correction target and pending review from the source-pinned helper. Preserve legacy lane and instantiate exact source/grant authority commits.",
+      "entrypoints": [
+        "staged_cli",
+        "candidate_cli",
+        "project_status"
+      ],
+      "oracle": "Compare observed findings and selected correction/review step with exact target; acceptance remains false."
+    },
+    "admission": {
+      "basis": "Existing exact activation request/preflight transaction plus proposed reusable bounded admission validator; implementation pending.",
+      "setup": "Create owned repository from frozen candidate sources with closed rollout and unchanged promoted legacy rows. Construct exact base/candidate request, independent fixture review, owner response, input pins and all before-state hashes.",
+      "entrypoints": [
+        "promotion_cli"
+      ],
+      "oracle": "Valid transition changes only explicitly reviewed fixture paths/authority. Invalid transaction leaves protected state unchanged; historical touched paths are checked, not just final diff."
+    },
+    "session": {
+      "basis": "PM025 synchronized claims plus proposed guarded work-session entry point; implementation pending.",
+      "setup": "Use an admitted infrastructure fixture with one pending planning or enrolled execution step, exact source permissions, open tracker and deterministic recorded lease parameters. Apply only the row mutation.",
+      "entrypoints": [
+        "work_start",
+        "work_finish",
+        "project_status"
+      ],
+      "oracle": "Start/finish cannot manufacture scope, proof, owner input or successor permission. Legitimate heartbeat does not invalidate unchanged proof."
+    },
+    "retention": {
+      "basis": "Existing Git object identity, bundle verification and proposed guarded finish; implementation pending.",
+      "setup": "Record exact candidate commit, artifact hashes and ownership before creating a disposable source snapshot. Retain durable objects outside that disposable snapshot.",
+      "entrypoints": [
+        "work_finish"
+      ],
+      "oracle": "Successful recovery resolves original identities. Refused cleanup preserves evidence; do not relabel old proof as new."
+    },
+    "commit": {
+      "basis": "Proposed authenticated owner commit-msg hook; implementation pending.",
+      "setup": "Install the exact candidate support bundle in an isolated fixture with valid claim and staged scoped change. Invoke real git commit with each message variant; preserve prior HEAD for refusal comparison.",
+      "entrypoints": [
+        "git_commit"
+      ],
+      "oracle": "Valid annotated message creates one commit. Refused message leaves HEAD unchanged and staged input recoverable."
+    },
+    "scratch": {
+      "basis": "scripts/test_workflow_delivery_pilot_scratch.py (candidate 9bca463b)",
+      "setup": "Use a temporary fixture root and synthetic archive with only a tiny source file. Mock compilation, not ownership/cleanup. Track supplied and automatic directories separately.",
+      "entrypoints": [
+        "source_snapshot"
+      ],
+      "oracle": "Automatic source extraction is under root/target and gone on exit; supplied path and evidence remain. Never run Cargo for these ownership cases."
+    },
+    "integration": {
+      "basis": "Actual check_workflow_delivery, project_status, owner hook, support bundle and promotion entry points.",
+      "setup": "Use one recorded post-rollout fixture for the sequential positive lifecycle and fresh copies for single-fault cases. Use real entry points and exact candidate source; snapshot before every action.",
+      "entrypoints": [
+        "owner_hook",
+        "project_status",
+        "promotion_cli"
+      ],
+      "oracle": "Each lifecycle state and refusal is independently observed. Preserve other items, enrolled phases, source permissions and all owner review boundaries."
+    },
+    "parity": {
+      "basis": "Reconciled inventory at 93c3de98 and proposed authenticated staged parity invocation; implementation pending.",
+      "setup": "Use real parity checker and declared source inventory in isolated fixture. Construct separate Git index and worktree bytes as directed, without editing live goldens.",
+      "entrypoints": [
+        "owner_hook",
+        "work_finish"
+      ],
+      "oracle": "Check actual selected staged source and inventory together; valid worktree cannot hide invalid index."
+    }
+  },
+  "cases": [
+    {
+      "id": "OR-S01/legacy-no-grant",
+      "scenario": "OR-S01",
+      "recipe": "revision",
+      "action": "leave the pre-grant lane unchanged",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S01/grant-installed-unchanged",
+      "scenario": "OR-S01",
+      "recipe": "revision",
+      "action": "promote the exact grant but leave the source Frontier item unchanged",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S01/exact-correction",
+      "scenario": "OR-S01",
+      "recipe": "revision",
+      "action": "apply the exact record.target and synchronized tracker acceptance IDs",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S01/planning-claim",
+      "scenario": "OR-S01",
+      "recipe": "revision",
+      "action": "apply target then synchronized live planning claim within correction document scope",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S01/return-to-review",
+      "scenario": "OR-S01",
+      "recipe": "revision",
+      "action": "record correction evidence, release claim and select pending owner review without completing it",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S02/missing-grant",
+      "scenario": "OR-S02",
+      "recipe": "revision",
+      "action": "apply target while selecting the genuine pre-grant authority",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S02/malformed-grant",
+      "scenario": "OR-S02",
+      "recipe": "revision",
+      "action": "add an unknown field to the closed promoted revision record",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S02/duplicate-grant",
+      "scenario": "OR-S02",
+      "recipe": "revision",
+      "action": "duplicate the promoted owner_revisions row",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S02/unpromoted-grant",
+      "scenario": "OR-S02",
+      "recipe": "revision",
+      "action": "change candidate policy only to include a revision grant",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S02/wrong-identity",
+      "scenario": "OR-S02",
+      "recipe": "revision",
+      "action": "change record.issue_id while retaining source lane identity",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S02/wrong-source-step",
+      "scenario": "OR-S02",
+      "recipe": "revision",
+      "action": "point source_step_id at a nonselected source step",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S02/nonancestor-source",
+      "scenario": "OR-S02",
+      "recipe": "revision",
+      "action": "use a separately created nonancestor commit as source_commit",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S02/instruction-drift",
+      "scenario": "OR-S02",
+      "recipe": "revision",
+      "action": "change instruction bytes after authority promotion",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S02/decision-drift",
+      "scenario": "OR-S02",
+      "recipe": "revision",
+      "action": "change numbered decision bytes after authority promotion",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S02/record-drift",
+      "scenario": "OR-S02",
+      "recipe": "revision",
+      "action": "change record bytes after authority promotion",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S02/classification-drift",
+      "scenario": "OR-S02",
+      "recipe": "revision",
+      "action": "remove the governed classification of the revision instruction",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S02/outcome-drift",
+      "scenario": "OR-S02",
+      "recipe": "revision",
+      "action": "change target.completion.outcome from the source outcome",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S02/requirements-drift",
+      "scenario": "OR-S02",
+      "recipe": "revision",
+      "action": "change a historical step requirement marker in the target",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S02/historical-evidence-drift",
+      "scenario": "OR-S02",
+      "recipe": "revision",
+      "action": "replace source historical completion evidence in the target",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S03/source-outside-scope",
+      "scenario": "OR-S03",
+      "recipe": "revision",
+      "action": "add src/unapproved.py with no promoted source permission",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S03/execution-relabel",
+      "scenario": "OR-S03",
+      "recipe": "revision",
+      "action": "change correction kind and item authorization to execution",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S03/premature-review",
+      "scenario": "OR-S03",
+      "recipe": "revision",
+      "action": "select owner review before correction completes",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S03/complete-review",
+      "scenario": "OR-S03",
+      "recipe": "revision",
+      "action": "complete new owner review without a separately authorized transition",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S03/product-landing",
+      "scenario": "OR-S03",
+      "recipe": "revision",
+      "action": "set the correction lane landed and give it a landing commit",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S03/acceptance-disposition",
+      "scenario": "OR-S03",
+      "recipe": "revision",
+      "action": "change revision disposition from revise to accept",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S03/rollback-source",
+      "scenario": "OR-S03",
+      "recipe": "revision",
+      "action": "commit corrected target, then restore the original source boundary",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S03/rewrite-correction-evidence",
+      "scenario": "OR-S03",
+      "recipe": "revision",
+      "action": "commit correction completion then replace its evidence",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S03/unpromoted-target-expansion",
+      "scenario": "OR-S03",
+      "recipe": "revision",
+      "action": "append another governing document or step outside the exact target",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S04/identity-without-classification",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "add a planning Frontier item without a coverage row",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S04/classification-without-identity",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "add a coverage row without its Frontier item",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S04/candidate-only-policy",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "stage an admission policy without external promotion",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S04/bounded-admission",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "promote one exact new planning item with matching tracker, governance and classification, no execution grant",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S04/dirty-base",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "modify a tracked input after preparing the exact activation request",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S04/stale-base",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "advance fixture HEAD after preparing the exact activation request",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S04/unrelated-item",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "change a second Frontier item not named by the admission request",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S04/unrelated-source",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "include a product source change outside reviewed admission paths",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S04/unrelated-environment",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "replace another enrollment environment Blob",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S04/unrelated-enrollment",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "remove another promoted enrollment",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S04/acceptance-smuggling",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "complete a product owner-decision during admission",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S04/missing-response",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "omit the separate exact owner response file",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S04/wrong-response",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "supply a response for a different request digest",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S04/reviewed-enrollment",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "after valid readiness promote the exact lane enrollment, source scope and environment while preserving other lanes",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S04/reviewed-maintenance",
+      "scenario": "OR-S04",
+      "recipe": "admission",
+      "action": "promote independently reviewed workflow-only maintenance after the old rollout is closed, without requiring WDQ-I04",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S05/missing-claim",
+      "scenario": "OR-S05",
+      "recipe": "session",
+      "action": "start work with claim null and open unassigned tracker",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S05/expired-claim",
+      "scenario": "OR-S05",
+      "recipe": "session",
+      "action": "set heartbeat and expiry in the past before start",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S05/wrong-session",
+      "scenario": "OR-S05",
+      "recipe": "session",
+      "action": "request work under a session different from the live claim",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S05/out-of-scope",
+      "scenario": "OR-S05",
+      "recipe": "session",
+      "action": "request a write path outside the active claim and promoted source scope",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S05/unsynchronized-tracker",
+      "scenario": "OR-S05",
+      "recipe": "session",
+      "action": "retain the Frontier claim but make tracker open and unassigned",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S05/legitimate-start",
+      "scenario": "OR-S05",
+      "recipe": "session",
+      "action": "start with live synchronized claim and exact bounded paths",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S05/heartbeat-renewal",
+      "scenario": "OR-S05",
+      "recipe": "session",
+      "action": "renew only heartbeat and expiry within policy TTL preserving identity and valid proof",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S05/finish-dirty",
+      "scenario": "OR-S05",
+      "recipe": "session",
+      "action": "finish with an uncommitted owned tracked edit",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S05/finish-untracked",
+      "scenario": "OR-S05",
+      "recipe": "session",
+      "action": "finish with an uncommitted owned untracked artifact",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S05/finish-missing-proof",
+      "scenario": "OR-S05",
+      "recipe": "session",
+      "action": "finish without required completion evidence",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S05/finish-to-review",
+      "scenario": "OR-S05",
+      "recipe": "session",
+      "action": "finish committed verified work, synchronize tracker and release claim at pending owner review",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S06/retained-candidate",
+      "scenario": "OR-S06",
+      "recipe": "retention",
+      "action": "resolve retained exact source commit and verify the evidence bundle hashes after scratch deletion",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S06/missing-retention",
+      "scenario": "OR-S06",
+      "recipe": "retention",
+      "action": "attempt owned scratch retirement with no verified durable candidate/evidence",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S06/stale-source-identity",
+      "scenario": "OR-S06",
+      "recipe": "retention",
+      "action": "present evidence for a different changed source closure as current proof",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S06/recoverable-handoff",
+      "scenario": "OR-S06",
+      "recipe": "retention",
+      "action": "release synchronized ownership while preserving committed work, remaining scope and exact recovery objects",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S06/annotated-commit",
+      "scenario": "OR-S06",
+      "recipe": "commit",
+      "action": "commit a conventional subject with substantive Problem/Change/Proof/Roadmap, actual issue and selected step",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S06/subject-only-commit",
+      "scenario": "OR-S06",
+      "recipe": "commit",
+      "action": "commit a subject without a body",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S06/missing-section",
+      "scenario": "OR-S06",
+      "recipe": "commit",
+      "action": "omit each required body section in separate parameterized runs",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S06/missing-governed-reference",
+      "scenario": "OR-S06",
+      "recipe": "commit",
+      "action": "omit governed issue or selected step in separate parameterized runs",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S06/scratch-success",
+      "scenario": "OR-S06",
+      "recipe": "scratch",
+      "action": "complete the automatic source context normally",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S06/scratch-build-failure",
+      "scenario": "OR-S06",
+      "recipe": "scratch",
+      "action": "raise a build failure inside the automatic source context",
+      "expected": "cleanup"
+    },
+    {
+      "id": "OR-S06/scratch-archive-failure",
+      "scenario": "OR-S06",
+      "recipe": "scratch",
+      "action": "make git archive return nonzero before build",
+      "expected": "cleanup"
+    },
+    {
+      "id": "OR-S06/supplied-snapshot-preserved",
+      "scenario": "OR-S06",
+      "recipe": "scratch",
+      "action": "raise inside a caller-supplied snapshot context and verify supplied contents remain",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S07/report-not-enforcement",
+      "scenario": "OR-S07",
+      "recipe": "revision",
+      "action": "run an invalid target in report mode and retain findings without asserting permission",
+      "expected": "report"
+    },
+    {
+      "id": "OR-S07/text-diagnostic",
+      "scenario": "OR-S07",
+      "recipe": "revision",
+      "action": "run a refused correction using pipes and inspect nonempty plain-text/JSON diagnostic fields",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S07/staged-view",
+      "scenario": "OR-S07",
+      "recipe": "revision",
+      "action": "stage an invalid correction while leaving worktree valid",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S07/worktree-view",
+      "scenario": "OR-S07",
+      "recipe": "revision",
+      "action": "leave invalid correction unstaged and request worktree validation",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S07/historical-revert",
+      "scenario": "OR-S07",
+      "recipe": "admission",
+      "action": "commit an out-of-scope edit then revert it before candidate inspection",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S07/interrupted-inspection",
+      "scenario": "OR-S07",
+      "recipe": "admission",
+      "action": "interrupt inspection after recorded prestate and before publication",
+      "expected": "unchanged"
+    },
+    {
+      "id": "OR-S07/shared-lock",
+      "scenario": "OR-S07",
+      "recipe": "admission",
+      "action": "hold the fixture activation lock with a live child process then attempt activation",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S07/missing-workspace-pin",
+      "scenario": "OR-S07",
+      "recipe": "admission",
+      "action": "omit required workspace policy pin from the exact request inputs",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S07/fresh-retry",
+      "scenario": "OR-S07",
+      "recipe": "admission",
+      "action": "retry the unchanged valid request after interrupted inspection and releasing its actual process lock",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S08/authenticated-hook",
+      "scenario": "OR-S08",
+      "recipe": "integration",
+      "action": "invoke installed fixture owner hook against a valid correction transaction",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S08/selector-details",
+      "scenario": "OR-S08",
+      "recipe": "integration",
+      "action": "invoke actual project_status details against valid correction and compare selected step",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S08/runtime-tamper",
+      "scenario": "OR-S08",
+      "recipe": "integration",
+      "action": "change one installed runner byte without changing authority",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S08/support-tamper",
+      "scenario": "OR-S08",
+      "recipe": "integration",
+      "action": "change the installed support manifest hash",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S08/environment-drift",
+      "scenario": "OR-S08",
+      "recipe": "integration",
+      "action": "change the selected environment Blob without promotion",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S08/independent-replay",
+      "scenario": "OR-S08",
+      "recipe": "integration",
+      "action": "distinct reviewer reconstructs fixtures from exact recorded recipes and produces fresh raw observations",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S08/full-lifecycle",
+      "scenario": "OR-S08",
+      "recipe": "integration",
+      "action": "admit new planning lane; claim; correct; finish to owner review; record separate exact owner execution direction; enroll; execute bounded infrastructure fixture; finish; owner closeout",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S08/parity-clean",
+      "scenario": "OR-S08",
+      "recipe": "parity",
+      "action": "invoke authenticated parity entry point on the reconciled staged inventory",
+      "expected": "pass"
+    },
+    {
+      "id": "OR-S08/parity-drift",
+      "scenario": "OR-S08",
+      "recipe": "parity",
+      "action": "stage an inventory/source mismatch with otherwise valid governance",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S08/parity-mixed-view",
+      "scenario": "OR-S08",
+      "recipe": "parity",
+      "action": "leave worktree inventory valid but stage a stale inventory digest",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S08/projection-drift",
+      "scenario": "OR-S08",
+      "recipe": "integration",
+      "action": "change only generated Frontier prose without changing structured Frontier",
+      "expected": "refuse"
+    },
+    {
+      "id": "OR-S08/projection-regenerate",
+      "scenario": "OR-S08",
+      "recipe": "integration",
+      "action": "regenerate projection from unchanged structured Frontier then invoke selector",
+      "expected": "pass"
+    }
+  ]
+}

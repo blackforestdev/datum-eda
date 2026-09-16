@@ -5,6 +5,29 @@ enrollment, implementation permission or product acceptance.
 Frontier: WORKFLOW-OWNER-REVISION; issue: dat-workflow-owner-revision-71j.
 The installed repair plan remains the unchanged owner-pinned boundary.
 
+## Seven-gap completion boundary
+
+All seven audit gaps belong to this repair. The eight scenario groups below
+organize proof; they do not replace or narrow these acceptance requirements.
+Preparation commits and a passing unit-test count do not close a gap. Closure
+requires the reviewed implementation, installed entry-point verification and
+the corresponding evidence below. Product implementation is never a prerequisite.
+
+| Audit gap | Required result | Required proof |
+| --- | --- | --- |
+| 1. Admission deadlock | Reusable owner-controlled admission and maintenance promotion, independent of the closed rollout's WDQ-I04 checkpoint. Exact owner approval, independent review and protected unrelated lanes remain mandatory. | Admit a new planning item, enroll its bounded execution after readiness, and promote a reviewed maintenance update; refuse scope expansion, stale base, missing approval and unrelated lane changes. |
+| 2. Revision mistaken for acceptance | An exact promoted owner direction permits correction and return to review without product acceptance or unauthorized source access. | Unchanged source, correction, synchronized claim and return-to-review succeed; missing or altered grants and unauthorized execution refuse. |
+| 3. Structural closeout mistaken for usability | A real post-rollout fixture traverses admission, claim, correction, review, authorized execution and handoff. Historical rollout completion is preserved, not offered as proof of the new path. | Retain each actual transition and entry-point result in order, including execution permission only after its separate owner transition. No product build is needed. |
+| 4. Agent obligations lack practical entry-point checks | Provide a guarded work-start/finish path and authenticated commit-message enforcement for the documented substantive commit structure and governed issue/step references. | Missing or mismatched claim refuses at start; finish rejects dirty/uncommitted owned output or missing proof. Real commit-msg invocation rejects a subject-only message and missing required sections; valid annotated commits pass. Do not claim semantic prose quality or arbitrary filesystem writes are mechanically enforced. |
+| 5. Parity failure escapes enforcement | Preserve the reviewed inventory reconciliation and check parity at an appropriate authenticated commit/finish entry point. | Correct inventory passes; a staged inventory/source mismatch refuses through the actual gate. Mixed staged/worktree inputs cannot produce a false pass. |
+| 6. Contradictory roadmap prose | Remove the obsolete eight-of-eleven/open-I04 assertion. Keep the generated Frontier as the operational status authority, with static historical completion evidence below it. | Check the accepted closure commit against the generated row and revised historical note; the note must not introduce an alternative current task or ordering. |
+| 7. Unowned scratch accumulation | Automatic pilot source snapshots remain in bounded repository-owned disk-backed scratch and are cleaned on success and failure. User-supplied snapshots and durable evidence remain untouched. | Success, build failure, archive failure and caller-supplied preservation tests; verify no sibling Documents directory is created and no Rust build is required for this lifecycle proof. |
+
+The parity reconciliation already committed in `93c3de98` is evidence for the
+inventory correction only; it is not proof of new enforcement. Candidate commits
+`9bca463b` and `4b60a848` preserve prepared scratch/revision work in the private
+repair repository; neither is installed authority or independent review.
+
 <!-- OWNER-REVISION-CONTRACT -->
 ## Bounded delivery contract prepared under OR-C01
 
@@ -43,16 +66,19 @@ observations against the same reviewed source/fixture identities.
   off-repository edits remain agent obligations and are never claimed prevented.
 - OR-S06: retained exact candidate object/bundle and raw evidence; substantive
   Problem/Change/Proof/Roadmap commit and issue references; stale original
-  source identity retained rather than relabeled; recoverable handoff. Commit
-  prose and scratch-space discipline remain agent obligations unless a tested
-  existing entry point enforces them. No universal filesystem enforcement claim.
+  source identity retained rather than relabeled; recoverable handoff. Verify the
+  new guarded start/finish and commit-msg entry points, and automatic pilot scratch
+  cleanup. Semantic prose quality and arbitrary filesystem behavior remain agent
+  obligations; structural commit checks and owned cleanup must actually execute.
 - OR-S07: report-only output is not enforcement; plain-text usable diagnostics;
   staged/worktree/history views; interrupted inspection, shared-lock refusal,
   missing workspace pins and fresh retry. Refusal preserves source/index/refs/
   trust except explicitly declared diagnostic/support preparation outputs.
 - OR-S08: real owner-hook and selector integration; wrong runtime or support
   hash; exact environment selection; distinct independent replay; preserve
-  legacy enrollment phases, product ownership and final owner review.
+  legacy enrollment phases, product ownership and final owner review. Exercise
+  parity through its authenticated staged/finish entry point, not only a direct
+  checker invocation. Include the full post-rollout positive lifecycle from gap 3.
 
 Actual admission/promotion mutation remains separately reviewed: exact request,
 owner response and writer coordination; shared lock and inherited child lock;
@@ -77,9 +103,10 @@ cases are required; CAD precision and design undo/redo are not applicable.
 The input inventory deliberately captures all `scripts/` source and fixture
 helpers, governing docs, the machine contract and exact recorded headless tool
 identities. It is a read boundary, never a write grant. The implementation write
-proposal is limited to owner-revision validation, its coverage/category integration,
-a general governance-admission validator and activation dispatch, and focused
-regressions. Exact paths, owner-selected environment and enrollment must be
+proposal includes owner-revision validation, coverage/category integration,
+general bounded admission/maintenance promotion, guarded start/finish, authenticated
+commit-message/parity checks, pilot scratch ownership and focused regressions.
+Exact paths, owner-selected environment and enrollment must be
 presented together before OR-C02 starts. No code is authorized by this prose.
 
 The prepared checkpoint mapping is ready=OR-C01, verify=OR-C02, review=OR-C03,
@@ -88,6 +115,21 @@ workflow promotion. Completing readiness requires its actual contract/input/rout
 checks and an admitted execution transition; this document does not mark it done.
 
 ## Fixture control inputs and remaining readiness work
+
+The individual recipe inventory is
+`docs/reviews/workflow-owner-revision/cases.json`: 87 named recipe rows across
+OR-S01..OR-S08. Parameterized rows require separate results for every stated
+variant. Recipes distinguish revision checks, publication, claim/finish,
+commit-message validation, parity and scratch ownership; not every entry point
+can meaningfully exercise every mechanism. Existing scenario consumers remain
+mandatory where applicable. Capture early refusal at the actual boundary, not
+a fictional downstream handler. Proposed entry points are explicitly marked
+unimplemented and must be bound to actual commands before readiness is complete.
+
+The inventory is an acceptance input, not producer evidence. No recipe row has
+been marked executed by this planning change. The producer and independent
+review must account for every row and parameter, with exact raw evidence links;
+a missing row or a changed recipe invalidates a completeness claim.
 
 Read the rustfmt exemption manifest and each of its four exact referenced Rust
 files, even in documentation-only hook fixtures: exemption loading inspects them.
