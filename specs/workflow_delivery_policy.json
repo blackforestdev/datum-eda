@@ -592,6 +592,16 @@
           "marker": "<!-- WDQ-COVERAGE:INFRASTRUCTURE -->"
         },
         "external_handoff_ref": null
+      },
+      {
+        "frontier_key": "WORKFLOW-OWNER-REVISION",
+        "issue_id": "dat-workflow-owner-revision-71j",
+        "category": "infrastructure",
+        "boundary_ref": {
+          "path": "specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md",
+          "marker": "<!-- REQ:WORKFLOW-OWNER-REVISION:OR-C01 -->"
+        },
+        "external_handoff_ref": null
       }
     ],
     "source_scopes": [
