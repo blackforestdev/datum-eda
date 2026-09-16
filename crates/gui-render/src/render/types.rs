@@ -200,7 +200,7 @@ struct PreparedTerminalGraphic {
 }
 #[derive(Debug, Clone, PartialEq)]
 pub struct RetainedScene {
-    world_vertices: Vec<Vertex>,
+    world_vertices: std::sync::Arc<[Vertex]>,
     world_strokes: Vec<WorldStrokeInstance>,
     draw_commands: Vec<RetainedDrawCommand>,
     world_hit_index: datum_gui_viewport::SpatialHitIndex<HitTarget>,

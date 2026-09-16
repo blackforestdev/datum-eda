@@ -5,11 +5,17 @@ use super::*;
 impl Runtime {
     pub(super) fn build_terminal_prepared_scene(&mut self) -> Result<PreparedScene> {
         let schematic_camera = self.schematic_camera_for_render();
-        let active_terminal_lane = self.session.workspace().ui.terminal.clone();
-        let terminal_panes = self
-            .terminal_sessions
-            .take_active_tab_render_states(&active_terminal_lane)
-            .context("snapshot active terminal tab panes for rendering")?;
+        // Closed docks consume no terminal render input. Leave dirty rows in
+        // TerminalCore until the dock opens instead of copying its full screen
+        // for each board camera frame.
+        let terminal_panes = if self.workspace().ui.active_dock_tab.is_some() {
+            let active_terminal_lane = self.session.workspace().ui.terminal.clone();
+            self.terminal_sessions
+                .take_active_tab_render_states(&active_terminal_lane)
+                .context("snapshot active terminal tab panes for rendering")?
+        } else {
+            Vec::new()
+        };
         let retained = self
             .retained_scene
             .as_ref()

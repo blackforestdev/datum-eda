@@ -18,7 +18,7 @@ impl Renderer {
         board_interaction: &[Vertex],
         console_overlay: &[Vertex],
         menu_overlay: &[Vertex],
-        world: &[Vertex],
+        world: &std::sync::Arc<[Vertex]>,
         schematic_world: Option<&RetainedScene>,
         schematic_underlay: &[Vertex],
         schematic_overlay: &[Vertex],
@@ -67,14 +67,24 @@ impl Renderer {
         self.sync_world_vertices(device, queue, world);
 
         if let Some(scene) = schematic_world {
-            Self::upload_vertices(
-                device,
-                queue,
-                &mut self.schematic_world_vertex_buffer,
-                &mut self.schematic_world_vertex_capacity,
-                "datum-gui-render-schematic-world-vertex-buffer",
-                scene.world_vertices(),
-            );
+            if self.schematic_world_vertex_buffer.is_none()
+                || !gpu_data::same_vertex_source(
+                    &self.schematic_world_vertex_source,
+                    &scene.world_vertices,
+                )
+            {
+                Self::upload_vertices(
+                    device,
+                    queue,
+                    &mut self.schematic_world_vertex_buffer,
+                    &mut self.schematic_world_vertex_capacity,
+                    "datum-gui-render-schematic-world-vertex-buffer",
+                    scene.world_vertices(),
+                );
+                self.schematic_world_vertex_source = Some(scene.world_vertices.clone());
+            }
+        } else {
+            self.schematic_world_vertex_source = None;
         }
         if !schematic_underlay.is_empty() {
             Self::upload_vertices(
