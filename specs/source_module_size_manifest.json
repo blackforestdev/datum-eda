@@ -667,13 +667,13 @@
     "crates/gui-app/src/main.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 2351
+        "pre_test_lines": 2224
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+      "note": "Window surface acquisition, composition and presentation extracted to runtime_present.rs; remaining application event dispatch and runtime state debt stays frozen."
     },
     "crates/gui-protocol/src/kicad_scene_import.rs": {
       "kind": "rust-production",
@@ -701,7 +701,7 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 8932
+        "expanded_lines": 8906
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
@@ -767,13 +767,13 @@
     "crates/gui-render/src/render/scene.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 775
+        "pre_test_lines": 748
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+      "note": "Component selection identity extracted to selection_relation.rs and alias matching no longer formats per-candidate IDs; remaining prepared-scene construction still requires decomposition."
     },
     "crates/gui-render/src/render/tests.rs": {
       "kind": "rust-test",
