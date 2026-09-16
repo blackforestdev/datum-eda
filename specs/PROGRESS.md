@@ -187,24 +187,18 @@
 - **Implement broader workflow delivery enforcement and measured adoption** (`WORKFLOW-DELIVERY-IMPLEMENTATION`; `dat-wdq-rollout-implementation-ffy`).
    All eleven workflow milestones complete. Owner accepted the installed and independently verified guardrails and product-owner handoffs. No execution claim or workflow step remains. Product adoption, native proof and product acceptance remain open in their existing lanes; no successor is implicitly authorized. *state `landed`; authorization `none`; parallel lane.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_DELIVERY_EXECUTION_PLAN.md`, `specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md`, `specs/workflow_delivery/rollout.contract.json`, `specs/WORKFLOW_DELIVERY_COVERAGE_PROPOSAL.md`, `docs/reviews/workflow-delivery-rollout/coverage-proposal.json`, `research/process-quality/WORKFLOW_COHORT_CONTRACT_PREPARATION.md`, `docs/reviews/workflow-delivery-rollout/cohort-mappings.json`, `specs/workflow_delivery/s5a.contract.json`, `specs/workflow_delivery/gui-write-path.contract.json`, `specs/workflow_delivery/native-authoring.contract.json`, `specs/WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md`, `specs/WORKFLOW_DELIVERY_ROLLOUT_PLAN.md`, `docs/reviews/workflow-delivery-rollout/infrastructure/independent/review-completion.json`, `docs/reviews/workflow-delivery-rollout/infrastructure/owner-dispositions.md`, `docs/reviews/workflow-delivery-rollout/infrastructure/final-publication/producer-inspection.json`, `docs/reviews/workflow-delivery-rollout/infrastructure/workspace-repair-authorization.json`, `docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/producer-closeout.json`, `docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-authorization.json`, `docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/proof-renewal-authorization.json`, `docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/index-repair-producer-closeout.json`, `docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-repair-authorization.json`, `docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-producer-closeout.json`, `docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-independent-closeout.json`, `docs/reviews/workflow-delivery-rollout/infrastructure/workspace-renewal/sequencing-owner-dispositions.md`.
+- **Repair the owner-directed workflow revision path** (`WORKFLOW-OWNER-REVISION`; `dat-workflow-owner-revision-71j`).
+   Admit, claim and finish the owner-directed revision repair with usable preparation, durable commits, independent proof and exact promotion. *state `specified`; authorization `planning`.*
+   *Dependencies:* none. *Unblocks:* none. *Governing:* `specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md`, `research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md`, `docs/reviews/workflow-owner-revision/admission-owner-20260916.json`.
 <!-- ACTIVE FRONTIER:END -->
 
-### Workflow repair admission request — not yet scheduled
+### Workflow repair admission transaction
 
-<!-- WORKFLOW-OWNER-REVISION:ADMISSION-PENDING -->
-The owner authorized governance-only admission of `dat-workflow-owner-revision-71j`
-despite its missing Frontier entry on 2026-09-16. The durable
-[owner record](../docs/reviews/workflow-owner-revision/admission-owner-20260916.json)
-records the authorization, existing candidate, and exact admission failures.
-
-This is an intake/admission status note, **not an Active Frontier entry, task
-selection, claim, execution permission, or completed repair**. The installed
-policy rejects a new Frontier identity without owner-promoted coverage and also
-rejects candidate-only policy changes. Actual admission therefore still requires
-the bounded owner-controlled coverage transaction. The prior eleven rollout
-milestones remain closed; this subsequent integration defect remains open.
-Preferences and every current Frontier item are unchanged. The selector remains
-the sole scheduling authority; this note creates no rival next-task ordering.
+The generated WORKFLOW-OWNER-REVISION entry and matching infrastructure coverage
+are one governance-only proposal under the recorded owner exception. They become
+live only after exact reviewed owner-controlled publication and installed checks.
+No claim, execution enrollment, PM043 ratification or product acceptance follows.
+All OR-C01..OR-C05 evidence remains pending. Existing Frontier items are preserved.
 
 ## WORKFLOW-DELIVERY-QUALITY — workflow evidence and readiness adoption
 
