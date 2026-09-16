@@ -134,6 +134,10 @@ impl App {
 
 impl Runtime {
     fn console_is_inspected(&mut self) -> bool {
+        let console = &self.workspace().ui.console;
+        if console.visible_latest().is_none() && !console.history_expanded() {
+            return false;
+        }
         let Some((x, y)) = self.last_cursor_pos else {
             return false;
         };

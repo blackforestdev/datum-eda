@@ -1,5 +1,9 @@
 use super::*;
 
+#[path = "gpu_surface_pass/world_bundles.rs"]
+mod world_bundles;
+pub(super) use world_bundles::CachedSurfaceBundle;
+
 pub(super) fn prepare_schematic_pass<'a>(
     prepared: &PreparedScene,
     schematic_retained: Option<&'a RetainedScene>,
@@ -93,55 +97,14 @@ impl Renderer {
         &'a self,
         pass: &mut wgpu::RenderPass<'a>,
         prepared: &PreparedScene,
-        schematic: Option<&RetainedScene>,
     ) {
-        for (surface, (_, bind_group)) in prepared
+        for (surface, cached) in prepared
             .surface_passes()
             .iter()
-            .zip(&self.surface_scene_uniforms)
+            .zip(&self.surface_world_bundles)
         {
-            let (vertex_buffer, stroke_buffer, commands) = match surface.surface {
-                SceneSurface::Board => (
-                    self.world_vertex_buffer.as_ref(),
-                    self.world_stroke_buffer.as_ref(),
-                    prepared.visible_draw_commands().to_vec(),
-                ),
-                SceneSurface::Schematic => {
-                    let Some(retained) = schematic else { continue };
-                    (
-                        self.schematic_world_vertex_buffer.as_ref(),
-                        self.schematic_world_stroke_buffer.as_ref(),
-                        retained.all_draw_commands().to_vec(),
-                    )
-                }
-            };
-            for command in commands {
-                match command {
-                    RetainedDrawCommand::Quads { range, .. } => {
-                        let Some(buffer) = vertex_buffer else {
-                            continue;
-                        };
-                        pass.set_pipeline(&self.world_pipeline);
-                        pass.set_bind_group(0, bind_group, &[]);
-                        set_scissor(pass, surface.scene_viewport);
-                        pass.set_vertex_buffer(0, buffer.slice(..));
-                        pass.draw(range, 0..1);
-                    }
-                    RetainedDrawCommand::Strokes { range, .. } => {
-                        let Some(buffer) = stroke_buffer else {
-                            continue;
-                        };
-                        draw_world_strokes(
-                            pass,
-                            &self.world_stroke_pipeline,
-                            bind_group,
-                            buffer,
-                            surface.scene_viewport,
-                            &[range],
-                        );
-                    }
-                }
-            }
+            set_scissor(pass, surface.scene_viewport);
+            pass.execute_bundles(std::iter::once(&cached.bundle));
         }
     }
 }
@@ -153,4 +116,183 @@ fn set_scissor(pass: &mut wgpu::RenderPass<'_>, viewport: RectPx) {
         viewport.width.max(1.0).ceil() as u32,
         viewport.height.max(1.0).ceil() as u32,
     );
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum DrawKind {
+    Quads,
+    Strokes,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct DrawBatch {
+    kind: DrawKind,
+    range: std::ops::Range<u32>,
+}
+
+fn command_batch(command: &RetainedDrawCommand) -> DrawBatch {
+    match command {
+        RetainedDrawCommand::Quads { range, .. } => DrawBatch {
+            kind: DrawKind::Quads,
+            range: range.clone(),
+        },
+        RetainedDrawCommand::Strokes { range, .. } => DrawBatch {
+            kind: DrawKind::Strokes,
+            range: range.clone(),
+        },
+    }
+}
+
+/// Adjacent draws with identical GPU state and contiguous buffer ranges can be
+/// submitted together. Metadata has already selected visibility/order upstream;
+/// it does not change pipeline state. Gaps, overlaps and backwards ranges remain
+/// separate draws, and a primitive switch is always a batching boundary.
+fn draw_batches(commands: &[RetainedDrawCommand]) -> impl Iterator<Item = DrawBatch> + '_ {
+    let mut remaining = commands;
+    std::iter::from_fn(move || {
+        let (first, rest) = remaining.split_first()?;
+        remaining = rest;
+        let mut batch = command_batch(first);
+        while let Some(next) = remaining.first() {
+            let next = command_batch(next);
+            if batch.range.is_empty()
+                || next.range.is_empty()
+                || next.kind != batch.kind
+                || next.range.start != batch.range.end
+            {
+                break;
+            }
+            // Each draw starts a fresh triangle list. Joining incomplete lists
+            // could create a triangle that neither original draw emitted.
+            if batch.kind == DrawKind::Quads
+                && (!(batch.range.end - batch.range.start).is_multiple_of(3)
+                    || !(next.range.end - next.range.start).is_multiple_of(3))
+            {
+                break;
+            }
+            batch.range.end = next.range.end;
+            remaining = &remaining[1..];
+        }
+        Some(batch)
+    })
+}
+
+#[cfg(test)]
+pub(super) fn board_fixture_state() -> ReviewWorkspaceState {
+    let root = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../engine/testdata/import/kicad");
+    datum_gui_protocol::load_board_editor_workspace_state(&datum_gui_protocol::LiveReviewRequest {
+        board_file: Some(root.join("simple-demo.kicad_pcb")),
+        project_root: root,
+        artifact_path: None,
+        net_uuid: None,
+        from_anchor_pad_uuid: None,
+        to_anchor_pad_uuid: None,
+        profile: None,
+        kicad_board_source: None,
+    })
+    .expect("checked-in KiCad board fixture loads")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn quads(layer: &str, range: std::ops::Range<u32>) -> RetainedDrawCommand {
+        RetainedDrawCommand::Quads {
+            layer_id: Some(layer.into()),
+            range,
+        }
+    }
+
+    fn expand(batches: impl Iterator<Item = DrawBatch>) -> Vec<(DrawKind, u32)> {
+        batches
+            .flat_map(|batch| batch.range.map(move |index| (batch.kind, index)))
+            .collect()
+    }
+
+    #[test]
+    fn contiguous_draws_share_submission_without_reordering_layers() {
+        let commands = [
+            quads("B.Cu", 0..6),
+            quads("F.Cu", 6..12),
+            quads("F.SilkS", 12..18),
+        ];
+        let batches: Vec<_> = draw_batches(&commands).collect();
+        assert_eq!(
+            batches,
+            [DrawBatch {
+                kind: DrawKind::Quads,
+                range: 0..18
+            }]
+        );
+        assert_eq!(
+            expand(draw_batches(&commands)),
+            expand(commands.iter().map(command_batch))
+        );
+    }
+
+    #[test]
+    fn gaps_overlaps_backwards_ranges_and_primitive_switches_stay_ordered() {
+        let commands = [
+            quads("F.Cu", 6..12),
+            quads("F.Cu", 18..24),
+            quads("F.Cu", 21..27),
+            quads("B.Cu", 0..6),
+            RetainedDrawCommand::Strokes {
+                layer_id: None,
+                range: 6..9,
+            },
+            RetainedDrawCommand::Strokes {
+                layer_id: None,
+                range: 9..12,
+            },
+            quads("F.Cu", 12..18),
+        ];
+        assert_eq!(draw_batches(&commands).count(), 6);
+        assert_eq!(
+            expand(draw_batches(&commands)),
+            expand(commands.iter().map(command_batch))
+        );
+        assert_eq!(draw_batches(&[]).count(), 0);
+    }
+
+    #[test]
+    fn incomplete_triangle_lists_and_empty_draws_are_not_joined() {
+        for commands in [
+            vec![quads("F.Cu", 0..2), quads("F.Cu", 2..4)],
+            vec![
+                quads("F.Cu", 0..6),
+                quads("F.Cu", 6..6),
+                quads("F.Cu", 6..12),
+            ],
+        ] {
+            assert_eq!(draw_batches(&commands).count(), commands.len());
+        }
+    }
+
+    #[test]
+    fn real_board_fixture_preserves_exact_draw_sequence_with_layer_filtering() {
+        let mut state = board_fixture_state();
+        let retained = RetainedScene::from_workspace(&state, 1280, 800);
+        assert!(!retained.visible_draw_commands(&state).is_empty());
+        for hidden in [
+            None,
+            state
+                .scene
+                .layers
+                .first()
+                .map(|layer| layer.layer_id.clone()),
+        ] {
+            if let Some(layer) = hidden {
+                state.ui.filters.layer_visibility.insert(layer, false);
+            }
+            let commands = retained.visible_draw_commands(&state);
+            assert_eq!(
+                expand(draw_batches(&commands)),
+                expand(commands.iter().map(command_batch))
+            );
+            assert!(draw_batches(&commands).count() <= commands.len());
+        }
+    }
 }

@@ -82,6 +82,11 @@ impl Runtime {
         let Some((x, y)) = self.last_cursor_pos else {
             return false;
         };
+        // A board wheel gesture cannot target the Layers list. Avoid forcing
+        // the previous zoom's invalidated prepared scene just to reject it.
+        if !self.current_layout().left_sidebar.contains(x, y) {
+            return false;
+        }
         let over_layers = self.prepared_scene().hit_regions.iter().any(|region| {
             region.target == HitTarget::LayerScrollRegion && region.rect.contains(x, y)
         });

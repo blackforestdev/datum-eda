@@ -119,13 +119,10 @@ impl Renderer {
         &mut self,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
-        vertices: &[Vertex],
+        vertices: &std::sync::Arc<[Vertex]>,
     ) {
-        let source_ptr = vertices.as_ptr() as usize;
-        let source_len = vertices.len();
         if self.world_vertex_buffer.is_some()
-            && self.world_vertex_source_ptr == source_ptr
-            && self.world_vertex_source_len == source_len
+            && same_vertex_source(&self.world_vertex_source, vertices)
         {
             return;
         }
@@ -137,7 +134,42 @@ impl Renderer {
             "datum-gui-render-world-vertex-buffer",
             vertices,
         );
-        self.world_vertex_source_ptr = source_ptr;
-        self.world_vertex_source_len = source_len;
+        self.world_vertex_source = Some(vertices.clone());
+    }
+}
+
+/// Holding the immutable allocation prevents an old address from being reused
+/// for a different scene. A raw pointer/length pair alone cannot establish this.
+pub(crate) fn same_vertex_source(
+    cached: &Option<std::sync::Arc<[Vertex]>>,
+    current: &std::sync::Arc<[Vertex]>,
+) -> bool {
+    cached
+        .as_ref()
+        .is_some_and(|cached| std::sync::Arc::ptr_eq(cached, current))
+}
+
+#[cfg(test)]
+mod vertex_source_tests {
+    use super::*;
+
+    #[test]
+    fn cloned_scene_reuses_storage_but_equal_sized_replacement_requires_upload() {
+        let state = crate::gpu_surface_pass::board_fixture_state();
+        let scene = crate::RetainedScene::from_workspace(&state, 1280, 800);
+        assert!(!scene.world_vertices.is_empty());
+        let clone = scene.clone();
+        let cached = Some(scene.world_vertices.clone());
+        assert!(same_vertex_source(&cached, &clone.world_vertices));
+        let replacement = std::sync::Arc::from(scene.world_vertices.to_vec());
+        assert_eq!(&*scene.world_vertices, &*replacement);
+        assert!(!same_vertex_source(&cached, &replacement));
+        assert!(!same_vertex_source(&None, &replacement));
+        drop(scene);
+        drop(clone);
+        // The upload cache owns the old allocation until replacement, so a new
+        // allocation can never masquerade as it through allocator address reuse.
+        assert_eq!(std::sync::Arc::strong_count(cached.as_ref().unwrap()), 1);
+        assert!(!same_vertex_source(&cached, &replacement));
     }
 }
