@@ -167,7 +167,8 @@ digest. Every digest domain includes its schema name and version.
 
 Actor, session, repository identity, and authorization facts are trusted
 transport context and never fields accepted from `payload`. Unknown request
-fields are refused as `unsupported_schema_version`; clients cannot smuggle a
+fields in a supported schema are refused as `invalid_request`; an unsupported
+schema name/version is `unsupported_schema_version`. Clients cannot smuggle a
 future authority field into V1. Response fields are additive only within V1;
 changing a field's meaning, removing it, or adding a new operation variant
 requires a new schema version.

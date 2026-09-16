@@ -1,13 +1,13 @@
 {
-  "schema": "datum-global-preferences-production-acceptance-matrix-v1",
+  "schema": "datum-global-preferences-production-acceptance-matrix-v2",
   "frontier_task": "GLOBAL-PREFERENCES-COMPLETION",
-  "execution_step": "GP-CM05",
-  "owner_acceptance_step": "GP-CM05V",
+  "execution_step": "GP-CM05E",
+  "owner_acceptance_step": "GP-CM05A",
   "requirement_markers": [
     "<!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM05 -->",
     "<!-- REQ:GLOBAL-PREFERENCES-COMPLETION:GP-CM05V -->"
   ],
-  "status": "candidate_evidence_pending_owner_budget_acceptance",
+  "status": "implementation_in_progress_not_production_accepted",
   "platform": {
     "os": "Linux",
     "architecture": "x86_64",
@@ -17,10 +17,16 @@
   },
   "product_boundary": {
     "active_global_descriptors": 11,
-    "active_sections": ["appearance", "units"],
+    "active_sections": [
+      "appearance",
+      "units"
+    ],
     "reserved_descriptors": 45,
     "project_seed_keys": 8,
-    "project_seed_modes": ["global", "factory"],
+    "project_seed_modes": [
+      "global",
+      "factory"
+    ],
     "live_project_following": false,
     "mcp_direct_set_or_reset": false,
     "excluded": [
@@ -37,134 +43,1211 @@
       "id": "clean-install",
       "source": "crates/engine/src/preferences/service.rs",
       "test": "clean_open_uses_defaults_without_creating_repository",
-      "authority": "defaults resolve without creating machine state"
+      "authority": "defaults resolve without creating machine state",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "missing-store",
+          "surfaces": [
+            "engine",
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "factory-defaults",
+            "no-repository-created",
+            "no-project-write"
+          ]
+        },
+        {
+          "id": "reopen",
+          "surfaces": [
+            "engine",
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "same-values",
+            "no-repository-created"
+          ]
+        }
+      ]
     },
     {
       "id": "upgrade",
       "source": "crates/engine/src/preferences/repository/tests.rs",
       "test": "migration_plan_is_pure_moves_one_alias_and_writes_a_pre_migration_backup",
-      "authority": "migration is explicit, backed up, and atomic"
+      "authority": "migration is explicit, backed up, and atomic",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "alias-migration",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "pure-plan",
+            "exact-pre-migration-backup",
+            "one-live-alias",
+            "atomic-promotion"
+          ]
+        },
+        {
+          "id": "migration-required",
+          "surfaces": [
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "mutation-refused",
+            "bytes-preserved",
+            "inspection-available"
+          ]
+        },
+        {
+          "id": "migration-interruption",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "old-or-new-complete",
+            "no-false-acknowledgement"
+          ]
+        }
+      ]
     },
     {
       "id": "downgrade-preservation",
       "source": "crates/engine/src/preferences/repository/tests.rs",
       "test": "unknown_bytes_survive_mutation_backup_restore_and_reverse_restore",
-      "authority": "unknown future bytes survive old-reader mutation and round trip"
+      "authority": "unknown future bytes survive old-reader mutation and round trip",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "unknown-key",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "inactive",
+            "exact-bytes-survive"
+          ]
+        },
+        {
+          "id": "unknown-field",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "inactive",
+            "exact-bytes-survive"
+          ]
+        },
+        {
+          "id": "future-version",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "typed-refusal",
+            "exact-bytes-survive"
+          ]
+        },
+        {
+          "id": "restore-both-directions",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "original-and-restored-digests",
+            "no-silent-rewrite"
+          ]
+        }
+      ]
     },
     {
       "id": "corrupt-store",
       "source": "crates/engine/src/preferences/repository/tests.rs",
       "test": "unreadable_generation_is_not_repaired_and_recovery_is_explicit",
-      "authority": "unreadable authority is preserved and never silently repaired"
+      "authority": "unreadable authority is preserved and never silently repaired",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "truncated-head",
+          "surfaces": [
+            "engine",
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "bytes-preserved",
+            "truthful-read-only-state",
+            "no-silent-repair",
+            "no-project-write"
+          ]
+        },
+        {
+          "id": "missing-head",
+          "surfaces": [
+            "engine",
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "bytes-preserved",
+            "truthful-read-only-state",
+            "no-silent-repair",
+            "no-project-write"
+          ]
+        },
+        {
+          "id": "missing-generation",
+          "surfaces": [
+            "engine",
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "bytes-preserved",
+            "truthful-read-only-state",
+            "no-silent-repair",
+            "no-project-write"
+          ]
+        },
+        {
+          "id": "wrong-digest",
+          "surfaces": [
+            "engine",
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "bytes-preserved",
+            "truthful-read-only-state",
+            "no-silent-repair",
+            "no-project-write"
+          ]
+        },
+        {
+          "id": "unpublished-generation",
+          "surfaces": [
+            "engine",
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "bytes-preserved",
+            "truthful-read-only-state",
+            "no-silent-repair",
+            "no-project-write"
+          ]
+        }
+      ]
     },
     {
       "id": "portable-collision",
       "source": "crates/engine/src/preferences/repository/tests.rs",
       "test": "alias_collision_is_retained_and_refused_without_migration_side_effects",
-      "authority": "ambiguous portable identity is retained and refused without writes"
+      "authority": "ambiguous portable identity is retained and refused without writes",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "alias-collision",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "both-values-retained",
+            "whole-operation-refused",
+            "no-side-effects"
+          ]
+        },
+        {
+          "id": "capability-injection",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "authority-refused",
+            "unknown-data-preserved"
+          ]
+        }
+      ]
     },
     {
       "id": "backup-restore",
       "source": "crates/engine/src/preferences/repository/tests.rs",
       "test": "unknown_bytes_survive_mutation_backup_restore_and_reverse_restore",
-      "authority": "backup, restore, and reverse restore preserve exact bytes"
+      "authority": "backup, restore, and reverse restore preserve exact bytes",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "exact-backup",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "all-bytes-preserved",
+            "no-project-write"
+          ]
+        },
+        {
+          "id": "restore",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "preview-pure",
+            "backup-before-restore",
+            "exact-generation-authority"
+          ]
+        },
+        {
+          "id": "reverse-restore",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "original-bytes-restored"
+          ]
+        },
+        {
+          "id": "stale-preview",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "refusal",
+            "no-write"
+          ]
+        },
+        {
+          "id": "incomplete-backup",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "refusal",
+            "no-write"
+          ]
+        }
+      ]
     },
     {
       "id": "project-genesis-crash",
       "source": "crates/engine/src/preferences/project_genesis_lifecycle_tests.rs",
       "test": "every_prepublication_checkpoint_leaves_destination_absent_and_owned_stage_clean",
-      "authority": "no prepublication failure exposes a partial Project"
+      "authority": "no prepublication failure exposes a partial Project",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "staging-prepared",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "destination-absent-or-complete",
+            "no-false-acknowledgement",
+            "owned-cleanup-only",
+            "restart-recovery"
+          ]
+        },
+        {
+          "id": "project-built",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "destination-absent-or-complete",
+            "no-false-acknowledgement",
+            "owned-cleanup-only",
+            "restart-recovery"
+          ]
+        },
+        {
+          "id": "project-validated",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "destination-absent-or-complete",
+            "no-false-acknowledgement",
+            "owned-cleanup-only",
+            "restart-recovery"
+          ]
+        },
+        {
+          "id": "staging-synced",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "destination-absent-or-complete",
+            "no-false-acknowledgement",
+            "owned-cleanup-only",
+            "restart-recovery"
+          ]
+        },
+        {
+          "id": "project-published",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "destination-absent-or-complete",
+            "no-false-acknowledgement",
+            "owned-cleanup-only",
+            "restart-recovery"
+          ]
+        },
+        {
+          "id": "file-flush-error",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "destination-absent-or-complete",
+            "no-false-acknowledgement",
+            "owned-cleanup-only",
+            "restart-recovery"
+          ]
+        },
+        {
+          "id": "parent-flush-error",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "destination-absent-or-complete",
+            "no-false-acknowledgement",
+            "owned-cleanup-only",
+            "restart-recovery"
+          ]
+        },
+        {
+          "id": "process-killed",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "destination-absent-or-complete",
+            "no-false-acknowledgement",
+            "owned-cleanup-only",
+            "restart-recovery"
+          ]
+        },
+        {
+          "id": "disk-full",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "destination-absent-or-complete",
+            "no-false-acknowledgement",
+            "owned-cleanup-only",
+            "restart-recovery"
+          ]
+        },
+        {
+          "id": "permission-denied",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "destination-absent-or-complete",
+            "no-false-acknowledgement",
+            "owned-cleanup-only",
+            "restart-recovery"
+          ]
+        },
+        {
+          "id": "symlink-stage",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "destination-absent-or-complete",
+            "no-false-acknowledgement",
+            "owned-cleanup-only",
+            "restart-recovery"
+          ]
+        }
+      ]
     },
     {
       "id": "project-genesis-replay",
       "source": "crates/engine/src/preferences/project_genesis_lifecycle_tests.rs",
       "test": "concurrent_identical_creators_publish_once_and_replay_one_result",
-      "authority": "concurrent identical requests publish once and replay one receipt"
+      "authority": "concurrent identical requests publish once and replay one receipt",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "identical-concurrent",
+          "surfaces": [
+            "engine",
+            "daemon"
+          ],
+          "assertions": [
+            "one-publication",
+            "one-receipt",
+            "identical-replay"
+          ]
+        },
+        {
+          "id": "response-loss",
+          "surfaces": [
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "restart-replay",
+            "no-second-write"
+          ]
+        },
+        {
+          "id": "changed-content",
+          "surfaces": [
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "idempotency-conflict",
+            "destination-unchanged"
+          ]
+        },
+        {
+          "id": "other-request-existing-target",
+          "surfaces": [
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "project-target-exists",
+            "destination-unchanged"
+          ]
+        }
+      ]
     },
     {
       "id": "existing-project-stability",
       "source": "crates/engine/src/preferences/project_genesis_lifecycle_tests.rs",
       "test": "global_seed_is_pinned_once_and_never_follows_later_edits",
-      "authority": "existing Projects never follow later Global changes"
+      "authority": "existing Projects never follow later Global changes",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "global-populated",
+          "surfaces": [
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "exact-eight-seeds",
+            "resolver-valid-four-file-project",
+            "immutable-receipt",
+            "later-global-edits-no-change"
+          ]
+        },
+        {
+          "id": "global-missing",
+          "surfaces": [
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "exact-eight-seeds",
+            "factory-contribution-disclosed",
+            "no-preference-store"
+          ]
+        },
+        {
+          "id": "factory",
+          "surfaces": [
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "exact-eight-seeds",
+            "no-preference-read-or-write",
+            "immutable-receipt"
+          ]
+        },
+        {
+          "id": "fixed-identities",
+          "surfaces": [
+            "engine",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "byte-identical-projects",
+            "same-normalized-request"
+          ]
+        },
+        {
+          "id": "unavailable-global",
+          "surfaces": [
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "refusal",
+            "no-implicit-factory-fallback",
+            "draft-preserved"
+          ]
+        }
+      ]
     },
     {
       "id": "managed-offline",
       "source": "crates/engine/src/preferences/resolver_tests.rs",
       "test": "inactive_provider_states_are_visible_and_never_participate",
-      "authority": "inactive and offline provider state is disclosed but never gains authority"
+      "authority": "inactive and offline provider state is disclosed but never gains authority",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "inactive",
+          "surfaces": [
+            "engine",
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "state-disclosed",
+            "inactive-source-never-wins",
+            "no-management-ui",
+            "no-network-required"
+          ]
+        },
+        {
+          "id": "expired",
+          "surfaces": [
+            "engine",
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "state-disclosed",
+            "inactive-source-never-wins",
+            "no-management-ui",
+            "no-network-required"
+          ]
+        },
+        {
+          "id": "unavailable",
+          "surfaces": [
+            "engine",
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "state-disclosed",
+            "inactive-source-never-wins",
+            "no-management-ui",
+            "no-network-required"
+          ]
+        },
+        {
+          "id": "offline",
+          "surfaces": [
+            "engine",
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "state-disclosed",
+            "inactive-source-never-wins",
+            "no-management-ui",
+            "no-network-required"
+          ]
+        }
+      ]
     },
     {
       "id": "surface-parity-negative",
       "source": "crates/engine/src/preferences/product_tests.rs",
       "test": "product_catalog_and_active_only_search_have_exact_inventory",
-      "authority": "all surfaces share the 11-active/45-reserved boundary"
+      "authority": "all surfaces share the 11-active/45-reserved boundary",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "active-inventory",
+          "surfaces": [
+            "gui",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "11-active",
+            "45-reserved-absent",
+            "two-sections",
+            "same-service"
+          ]
+        },
+        {
+          "id": "all-query-schemas",
+          "surfaces": [
+            "engine",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "same-result-fields",
+            "same-disclosure"
+          ]
+        },
+        {
+          "id": "reserved-keys",
+          "surfaces": [
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "typed-refusal",
+            "no-activation"
+          ]
+        },
+        {
+          "id": "malformed-requests",
+          "surfaces": [
+            "engine",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "one-code-per-input-class",
+            "no-write"
+          ]
+        },
+        {
+          "id": "all-stable-refusals",
+          "surfaces": [
+            "engine",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "exact-code-and-details",
+            "cli-exit-2",
+            "mcp-envelope"
+          ]
+        },
+        {
+          "id": "preference-write-faults",
+          "surfaces": [
+            "engine"
+          ],
+          "assertions": [
+            "old-or-new-complete",
+            "unknown-bytes-preserved",
+            "no-false-acknowledgement"
+          ]
+        },
+        {
+          "id": "writer-race",
+          "surfaces": [
+            "cli",
+            "daemon",
+            "mcp"
+          ],
+          "assertions": [
+            "one-winner",
+            "stale-or-conflict",
+            "no-hidden-retry"
+          ]
+        },
+        {
+          "id": "lease-restart",
+          "surfaces": [
+            "engine",
+            "daemon"
+          ],
+          "assertions": [
+            "dead-process-releases-lease",
+            "no-sentinel-authority"
+          ]
+        }
+      ]
     },
     {
       "id": "human-agent-authority",
       "source": "crates/engine/src/preferences/product_tests.rs",
       "test": "generic_product_envelope_does_not_bypass_mcp_acceptance",
-      "authority": "portable agents cannot acquire direct mutation authority"
+      "authority": "portable agents cannot acquire direct mutation authority",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "spoofed-actor",
+          "surfaces": [
+            "engine",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "no-unauthorized-write",
+            "safe-error-details",
+            "project-unchanged"
+          ]
+        },
+        {
+          "id": "no-foreground-tty",
+          "surfaces": [
+            "engine",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "no-unauthorized-write",
+            "safe-error-details",
+            "project-unchanged"
+          ]
+        },
+        {
+          "id": "direct-mcp-set-reset",
+          "surfaces": [
+            "engine",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "no-unauthorized-write",
+            "safe-error-details",
+            "project-unchanged"
+          ]
+        },
+        {
+          "id": "stale-proposal",
+          "surfaces": [
+            "engine",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "no-unauthorized-write",
+            "safe-error-details",
+            "project-unchanged"
+          ]
+        },
+        {
+          "id": "acceptance-mismatch",
+          "surfaces": [
+            "engine",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "no-unauthorized-write",
+            "safe-error-details",
+            "project-unchanged"
+          ]
+        },
+        {
+          "id": "acceptance-expired",
+          "surfaces": [
+            "engine",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "no-unauthorized-write",
+            "safe-error-details",
+            "project-unchanged"
+          ]
+        },
+        {
+          "id": "acceptance-consumed",
+          "surfaces": [
+            "engine",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "no-unauthorized-write",
+            "safe-error-details",
+            "project-unchanged"
+          ]
+        },
+        {
+          "id": "daemon-restart",
+          "surfaces": [
+            "engine",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "no-unauthorized-write",
+            "safe-error-details",
+            "project-unchanged"
+          ]
+        },
+        {
+          "id": "request-id-conflict",
+          "surfaces": [
+            "engine",
+            "cli",
+            "mcp"
+          ],
+          "assertions": [
+            "no-unauthorized-write",
+            "safe-error-details",
+            "project-unchanged"
+          ]
+        }
+      ]
     },
     {
       "id": "accessibility-interaction",
       "source": "crates/gui-app/src/global_preferences_runtime_tests.rs",
       "test": "explanation_accessibility_is_complete_and_in_reading_order",
-      "authority": "native semantics expose scope, timing, search, state, and controls"
+      "authority": "native semantics expose scope, timing, search, state, and controls",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "keyboard-all-controls",
+          "surfaces": [
+            "gui"
+          ],
+          "assertions": [
+            "native-at-spi-evidence",
+            "correct-focus",
+            "correct-name-role-value-state",
+            "no-trap",
+            "truthful-announcement"
+          ]
+        },
+        {
+          "id": "search-and-clear",
+          "surfaces": [
+            "gui"
+          ],
+          "assertions": [
+            "native-at-spi-evidence",
+            "correct-focus",
+            "correct-name-role-value-state",
+            "no-trap",
+            "truthful-announcement"
+          ]
+        },
+        {
+          "id": "explanation-and-return",
+          "surfaces": [
+            "gui"
+          ],
+          "assertions": [
+            "native-at-spi-evidence",
+            "correct-focus",
+            "correct-name-role-value-state",
+            "no-trap",
+            "truthful-announcement"
+          ]
+        },
+        {
+          "id": "set-reset-refusal",
+          "surfaces": [
+            "gui"
+          ],
+          "assertions": [
+            "native-at-spi-evidence",
+            "correct-focus",
+            "correct-name-role-value-state",
+            "no-trap",
+            "truthful-announcement"
+          ]
+        },
+        {
+          "id": "new-project-modes",
+          "surfaces": [
+            "gui"
+          ],
+          "assertions": [
+            "native-at-spi-evidence",
+            "correct-focus",
+            "correct-name-role-value-state",
+            "no-trap",
+            "truthful-announcement"
+          ]
+        },
+        {
+          "id": "native-close-reopen",
+          "surfaces": [
+            "gui"
+          ],
+          "assertions": [
+            "native-at-spi-evidence",
+            "correct-focus",
+            "correct-name-role-value-state",
+            "no-trap",
+            "truthful-announcement"
+          ]
+        }
+      ]
     },
     {
       "id": "responsive-render",
       "source": "crates/gui-render/src/global_preferences_dialog_tests.rs",
       "test": "narrow_dialog_keeps_every_preference_hit_inside_the_window",
-      "authority": "narrow rendering preserves usable controls inside the native window"
+      "authority": "narrow rendering preserves usable controls inside the native window",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "ordinary",
+          "surfaces": [
+            "gui-render",
+            "gui"
+          ],
+          "assertions": [
+            "all-controls-reachable",
+            "no-clipping",
+            "correct-provenance"
+          ]
+        },
+        {
+          "id": "narrow",
+          "surfaces": [
+            "gui-render",
+            "gui"
+          ],
+          "assertions": [
+            "all-controls-reachable",
+            "explanation-stacks",
+            "no-clipping"
+          ]
+        }
+      ]
     },
     {
       "id": "noncolor-render",
       "source": "crates/gui-render/src/global_preferences_dialog_tests.rs",
       "test": "high_contrast_mode_keeps_word_and_shape_state_cues",
-      "authority": "non-color rendering preserves word and shape state cues"
+      "authority": "non-color rendering preserves word and shape state cues",
+      "test_anchor_role": "Existing supporting test; execution of this name alone does not satisfy the expanded variants.",
+      "variants": [
+        {
+          "id": "high-contrast-on",
+          "surfaces": [
+            "gui-render",
+            "gui"
+          ],
+          "assertions": [
+            "word-and-shape-cues",
+            "all-information-preserved",
+            "no-motion-dependent-action"
+          ]
+        },
+        {
+          "id": "high-contrast-off",
+          "surfaces": [
+            "gui-render",
+            "gui"
+          ],
+          "assertions": [
+            "word-and-shape-cues",
+            "all-information-preserved",
+            "no-motion-dependent-action"
+          ]
+        },
+        {
+          "id": "reduced-motion-on",
+          "surfaces": [
+            "gui-render",
+            "gui"
+          ],
+          "assertions": [
+            "word-and-shape-cues",
+            "all-information-preserved",
+            "no-motion-dependent-action"
+          ]
+        },
+        {
+          "id": "reduced-motion-off",
+          "surfaces": [
+            "gui-render",
+            "gui"
+          ],
+          "assertions": [
+            "word-and-shape-cues",
+            "all-information-preserved",
+            "no-motion-dependent-action"
+          ]
+        },
+        {
+          "id": "color-removed",
+          "surfaces": [
+            "gui-render",
+            "gui"
+          ],
+          "assertions": [
+            "word-and-shape-cues",
+            "all-information-preserved",
+            "no-motion-dependent-action"
+          ]
+        }
+      ]
     }
   ],
   "candidate_resource_budgets": [
     {
       "id": "release-query",
       "metric": "preferences describe release-process wall time",
-      "limit": {"p95_ms": 50, "max_ms": 100, "max_rss_mib": 32}
+      "limit": {
+        "p95_ms": 50,
+        "max_ms": 100,
+        "max_rss_mib": 32
+      },
+      "protocol_section": "GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md#7-reproducible-resource-measurements"
     },
     {
       "id": "durable-mutation",
       "metric": "confirmed single-key durable Set or Reset wall time",
-      "limit": {"p95_ms": 100, "max_ms": 250, "max_rss_mib": 32}
+      "limit": {
+        "p95_ms": 100,
+        "max_ms": 250,
+        "max_rss_mib": 32
+      },
+      "protocol_section": "GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md#7-reproducible-resource-measurements"
     },
     {
       "id": "project-genesis",
       "metric": "release-process Global or factory native-Project creation on local durable storage",
-      "limit": {"p95_ms": 100, "max_ms": 250, "max_rss_mib": 32}
+      "limit": {
+        "p95_ms": 100,
+        "max_ms": 250,
+        "max_rss_mib": 32
+      },
+      "protocol_section": "GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md#7-reproducible-resource-measurements"
     },
     {
       "id": "project-validation",
       "metric": "release-process validation of the created native Project",
-      "limit": {"p95_ms": 50, "max_ms": 100, "max_rss_mib": 32}
+      "limit": {
+        "p95_ms": 50,
+        "max_ms": 100,
+        "max_rss_mib": 32
+      },
+      "protocol_section": "GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md#7-reproducible-resource-measurements"
     },
     {
       "id": "storage-growth",
       "metric": "canonical storage growth",
-      "limit": {"empty_project_kib": 16, "per_preference_generation_kib": 32}
+      "limit": {
+        "empty_project_kib": 16,
+        "per_preference_generation_kib": 32
+      },
+      "protocol_section": "GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md#7-reproducible-resource-measurements"
     },
     {
       "id": "gui-feedback",
       "metric": "search, focus, and non-durable control feedback from input dispatch to prepared state",
-      "limit": {"p95_ms": 50, "max_ms": 100}
+      "limit": {
+        "p95_ms": 50,
+        "max_ms": 100
+      },
+      "protocol_section": "GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md#7-reproducible-resource-measurements"
     },
     {
       "id": "native-window-open",
       "metric": "Edit > Preferences > Global Preferences to first interactive owned child window",
-      "limit": {"p95_ms": 500, "max_ms": 1000}
+      "limit": {
+        "p95_ms": 500,
+        "max_ms": 1000
+      },
+      "protocol_section": "GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md#7-reproducible-resource-measurements"
     },
     {
       "id": "window-lifecycle",
       "metric": "100 open/close cycles after warm-up",
-      "limit": {"max_rss_growth_mib": 4, "orphan_windows": 0, "orphan_writer_leases": 0}
+      "limit": {
+        "max_rss_growth_mib": 4,
+        "orphan_windows": 0,
+        "orphan_writer_leases": 0
+      },
+      "protocol_section": "GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md#7-reproducible-resource-measurements"
     }
   ],
-  "acceptance_rule": "Every corpus row, standing gate, release measurement, independent PM-037/PM-039 exclusion check, and owner-dispositioned resource budget must pass on one revision. No known failure may be waived inside GP-CM05."
+  "acceptance_rule": "Every expanded case, native observation, mandatory gate, raw-sample budget trial and independent exclusion review passes for the same pinned candidate and input identities. Readiness is computed before owner review. Final acceptance additionally requires the exact owner receipt and a reviewed publication delta. Missing, skipped, stale or failed evidence cannot be waived.",
+  "historical_execution_step": "GP-CM05",
+  "contract": "specs/GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md",
+  "protocol": {
+    "version": 2,
+    "contract": "specs/GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md",
+    "evidence_schema": "datum-global-preferences-production-evidence-v2",
+    "warmup_operations": 10,
+    "samples_per_timed_variant_per_trial": 100,
+    "trials": 3,
+    "percentile": "nearest_rank_ceil_0.95_times_N_minus_1",
+    "compare_unrounded": true,
+    "all_trials_must_pass": true,
+    "allow_outlier_removal": false,
+    "allow_successful_retry_substitution": false,
+    "display_backends": [
+      "wayland",
+      "x11"
+    ],
+    "scale_factors": [
+      1.0,
+      2.0
+    ],
+    "window_sizes_logical_pixels": [
+      [
+        1024,
+        900
+      ],
+      [
+        720,
+        760
+      ]
+    ],
+    "native_scenarios": [
+      "N01",
+      "N02",
+      "N03",
+      "N04",
+      "N05",
+      "N06"
+    ],
+    "gui_case_expansion": "Each gui variant on both backends, both scales and both sizes; engine and gui-render cases do not duplicate by backend.",
+    "lifecycle_cycles_per_trial": 100,
+    "reference_architecture": "x86_64",
+    "reference_environment_rule": "Record the reference host and tool versions before trials; independently review exact environments under GP-CM05E and present them unchanged at GP-CM05A. No faster-equivalent substitution.",
+    "ready_requires_owner_receipt": false,
+    "accepted_requires_exact_owner_receipt": true,
+    "required_gate_ids": [
+      "matrix",
+      "boundary",
+      "menu",
+      "resolver",
+      "daemon",
+      "private-writer",
+      "mcp",
+      "dependencies",
+      "cargo-resources",
+      "source-health",
+      "governance",
+      "parity",
+      "traceability",
+      "progress",
+      "alignment",
+      "project-state",
+      "workspace-tests",
+      "clippy",
+      "checker-regressions"
+    ],
+    "readiness_validator": "Separately evaluates the assembled report; its output is not a self-referential report input."
+  }
 }
