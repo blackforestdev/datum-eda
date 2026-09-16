@@ -1,0 +1,37 @@
+{
+  "kind": "workflow_repair_governance_admission_record",
+  "issue_id": "dat-workflow-owner-revision-71j",
+  "requested_frontier_key": "WORKFLOW-OWNER-REVISION",
+  "recorded_date": "2026-09-16",
+  "owner_response_verbatim": "you are approved to “Authorize governance-only admission of the workflow repair despite its missing\n  Frontier entry\" as you stated. this needs to be commited to the canonical roadmap to prevent this from happening in the future. I also need a prompt to correct and finish that the agent working on the codebase in that step.",
+  "provenance": "Owner message in the active workflow session; an audit record, not a cryptographic signature or exact activation receipt.",
+  "scope": "Prepare and validate governance-only admission despite the named repair's missing Frontier entry. Preserve the existing candidate and its original evidence. Record the authorization and admission blocker durably without claiming active enrollment.",
+  "not_authorized_by_this_record": [
+    "Bypassing hooks or changing installed trust",
+    "Ratifying the candidate PM043 mechanism or approving an unseen activation packet",
+    "Claiming prior unregistered implementation was compliant",
+    "Preferences implementation or production acceptance"
+  ],
+  "base_commit": "68a3a54da094d2846651b71dfb2316996983cd80",
+  "installed_authority": "ac33c634092967f71364bf61174119bca6040de8",
+  "installed_base": "9b26980815a63d65987e1f1b1d7a6ca2ac270599",
+  "status": "pending_owner_controlled_coverage_admission",
+  "active_frontier_admitted": false,
+  "claim_created": false,
+  "implementation_applied": false,
+  "admission_diagnostic": {
+    "method": "Read-only in-memory calls to validate_classifications and Trust using installed-identical modules. No staged roadmap mutation or attempted hook bypass.",
+    "frontier_without_policy": "WDQ-COVERAGE: specs/active_frontier.json: classification mismatch: missing=['WORKFLOW-OWNER-REVISION'], absent=[]",
+    "frontier_with_unpromoted_policy": "WDQ-POLICY: specs/workflow_delivery_policy.json: policy change requires owner-controlled promotion"
+  },
+  "existing_candidate": {
+    "location": "/tmp/datum-workflow-owner-revision/candidate",
+    "patch_location": "/tmp/datum-workflow-owner-revision/workflow-owner-revision.patch",
+    "reported_patch_sha256": "10f8dd8e8964edeb658bb7a3ce49e700832c71d24155c56e5fa7f19b3d2231ac",
+    "reported_tests_passed": 81,
+    "evidence_status": "Producer logs only; not independently replayed or promoted by this admission record. Recheck manifest identities before reuse."
+  },
+  "preserved_product_proposal": "/tmp/datum-gp-cm05-revision",
+  "related_existing_failure": "dat-wdq-environment-parity-jmo",
+  "handoff": "docs/reviews/workflow-owner-revision/finish-agent-prompt.md"
+}
