@@ -1,0 +1,66 @@
+{
+  "kind": "workflow_owner_revision_execution_proposal",
+  "status": "prepared_not_promoted",
+  "frontier_key": "WORKFLOW-OWNER-REVISION",
+  "issue_id": "dat-workflow-owner-revision-71j",
+  "checkpoint_mapping": {
+    "schema_version": 2,
+    "contract_path": "specs/workflow_delivery/owner-revision.contract.json",
+    "checkpoints": {
+      "ready": "OR-C01",
+      "activate": null,
+      "verify": "OR-C02",
+      "review": "OR-C03",
+      "accept": null
+    }
+  },
+  "source_scope": {
+    "frontier_key": "WORKFLOW-OWNER-REVISION",
+    "step_ids": [
+      "OR-C02",
+      "OR-C03"
+    ],
+    "paths": [
+      "scripts/workflow_delivery_owner_revision.py",
+      "scripts/workflow_delivery_coverage_shapes.py",
+      "scripts/workflow_delivery_coverage.py",
+      "scripts/workflow_delivery_categories.py",
+      "scripts/workflow_delivery_admission.py",
+      "scripts/workflow_delivery_activation_preflight.py",
+      "scripts/test_workflow_delivery_owner_revision.py",
+      "scripts/test_workflow_delivery_admission.py",
+      "scripts/test_workflow_delivery_activation_preflight.py",
+      "scripts/test_workflow_delivery_preflight_cli.py"
+    ],
+    "boundary_ref": {
+      "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+      "marker": "<!-- OWNER-REVISION-CONTRACT -->"
+    }
+  },
+  "enrollment": {
+    "frontier_key": "WORKFLOW-OWNER-REVISION",
+    "implementation_sessions": [
+      "workflow-owner-revision-or-c02-20260916"
+    ],
+    "activation_ref": {
+      "path": "specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md",
+      "marker": "<!-- REQ:WORKFLOW-OWNER-REVISION:OR-C02 -->"
+    }
+  },
+  "environment_path": "specs/workflow_delivery/owner-revision.environments.json",
+  "environment_sha256": "60a3c20f355654803bd8db9beced24bcdabcfb7bf11974f3a028033744708b6f",
+  "required_transition": "Only an exact owner-controlled reviewed enrollment transaction may complete evidenced OR-C01 and authorize/claim OR-C02. No such transition is asserted here.",
+  "preserve": [
+    "all other Frontier items",
+    "existing enrollments and environment entries",
+    "existing source/preparation scopes",
+    "Preferences ownership",
+    "product acceptance gates",
+    "dependency and prototype boundaries"
+  ],
+  "historical_candidate": "be96b28626603f8ebdcbf68eb81b649fbecef6df",
+  "scope_limit": "Existing owner revision candidate plus reusable bounded governance-only admission in activation preflight; focused integration/refusal tests. No general trust bypass.",
+  "implementation_applied": false,
+  "readiness_asserted": false,
+  "product_acceptance": false
+}
