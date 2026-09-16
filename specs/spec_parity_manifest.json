@@ -7,7 +7,10 @@
       "glob": "specs/workflow_delivery/*.environments.json",
       "owner_spec": "docs/decisions/PRODUCT_MECHANICS_042_BROAD_WORKFLOW_DELIVERY_ENFORCEMENT.md",
       "notes": "PM042 per-enrollment environment selection filenames, including the installed rollout selection and the unselected OR-C01 owner-revision proposal. This filename inventory does not validate shape, observed environments, trust, readiness or acceptance.",
-      "planned_shapes": ["EnvironmentSelectionV2", "HeadlessEnvironmentV2"]
+      "planned_shapes": [
+        "EnvironmentSelectionV2",
+        "HeadlessEnvironmentV2"
+      ]
     },
     {
       "id": "workflow_delivery_contract_instances",
@@ -15,8 +18,34 @@
       "glob": "specs/workflow_delivery/*.contract.json",
       "owner_spec": "specs/WORKFLOW_DELIVERY_GATE_CONTRACT.md",
       "notes": "PM041 contract instance filenames: pilot, prepared WDQ-I02 infrastructure contract, three explicitly not-ready native cohort drafts governed by WORKFLOW_COHORT_CONTRACT_PREPARATION.md, and the OR-C01 owner-revision contract draft. This file-glob gate tracks names only, not closed shapes, behavior, readiness, enrollment or acceptance; those remain delivery-validator and owner obligations.",
-      "planned_shapes": ["completion.delivery", "Ref", "Blob", "Answer", "Contract", "Consumer", "Scenario", "Proof", "build", "results", "assertions", "Review", "workflow_delivery_policy", "InfrastructureCaseRow"],
-      "case_inventory": {"owner_spec": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md", "marker": "WDQ-INFRA-CASE-MATRIX", "consistency_test": "scripts/test_workflow_rollout_contract.py", "notes": "Prepared case identity/scenario/surface accounting only; executed per-variant records and complete observations remain I03 proof requirements."}
+      "planned_shapes": [
+        "completion.delivery",
+        "Ref",
+        "Blob",
+        "Answer",
+        "Contract",
+        "Consumer",
+        "Scenario",
+        "Proof",
+        "build",
+        "results",
+        "assertions",
+        "Review",
+        "workflow_delivery_policy",
+        "InfrastructureCaseRow",
+        "WorkflowRepairCaseRecipesV1"
+      ],
+      "case_inventory": {
+        "owner_spec": "specs/WORKFLOW_DELIVERY_INFRASTRUCTURE_CONTRACT.md",
+        "marker": "WDQ-INFRA-CASE-MATRIX",
+        "consistency_test": "scripts/test_workflow_rollout_contract.py",
+        "notes": "Prepared case identity/scenario/surface accounting only; executed per-variant records and complete observations remain I03 proof requirements."
+      },
+      "workflow_repair_case_inventory": {
+        "owner_spec": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+        "path": "docs/reviews/workflow-owner-revision/cases.json",
+        "notes": "Individual recipe/parameter identities are acceptance inputs. Filename parity and this shape registration do not prove recipe completeness or execution."
+      }
     },
     {
       "id": "mcp_runtime_methods",

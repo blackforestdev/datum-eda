@@ -21,16 +21,30 @@
       "OR-C03"
     ],
     "paths": [
-      "scripts/workflow_delivery_owner_revision.py",
-      "scripts/workflow_delivery_coverage_shapes.py",
-      "scripts/workflow_delivery_coverage.py",
-      "scripts/workflow_delivery_categories.py",
-      "scripts/workflow_delivery_admission.py",
-      "scripts/workflow_delivery_activation_preflight.py",
-      "scripts/test_workflow_delivery_owner_revision.py",
-      "scripts/test_workflow_delivery_admission.py",
       "scripts/test_workflow_delivery_activation_preflight.py",
-      "scripts/test_workflow_delivery_preflight_cli.py"
+      "scripts/test_workflow_delivery_admission.py",
+      "scripts/test_workflow_delivery_bootstrap.py",
+      "scripts/test_workflow_delivery_commit_message.py",
+      "scripts/test_workflow_delivery_owner_revision.py",
+      "scripts/test_workflow_delivery_owner_revision_integration.py",
+      "scripts/test_workflow_delivery_pilot_scratch.py",
+      "scripts/test_workflow_delivery_preflight_cli.py",
+      "scripts/test_workflow_delivery_support_bundle.py",
+      "scripts/test_workflow_delivery_work_session.py",
+      "scripts/workflow_delivery_activation.py",
+      "scripts/workflow_delivery_activation_preflight.py",
+      "scripts/workflow_delivery_admission.py",
+      "scripts/workflow_delivery_bootstrap.py",
+      "scripts/workflow_delivery_categories.py",
+      "scripts/workflow_delivery_commit_message.py",
+      "scripts/workflow_delivery_commit_message_hook.sh",
+      "scripts/workflow_delivery_coverage.py",
+      "scripts/workflow_delivery_coverage_shapes.py",
+      "scripts/workflow_delivery_owner_hook.sh",
+      "scripts/workflow_delivery_owner_revision.py",
+      "scripts/workflow_delivery_pilot_build.py",
+      "scripts/workflow_delivery_trust.py",
+      "scripts/workflow_delivery_work_session.py"
     ],
     "boundary_ref": {
       "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
@@ -40,7 +54,7 @@
   "enrollment": {
     "frontier_key": "WORKFLOW-OWNER-REVISION",
     "implementation_sessions": [
-      "workflow-owner-revision-or-c02-20260916"
+      "workflow-seven-gap-repair-20260916"
     ],
     "activation_ref": {
       "path": "specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md",
@@ -59,8 +73,26 @@
     "dependency and prototype boundaries"
   ],
   "historical_candidate": "be96b28626603f8ebdcbf68eb81b649fbecef6df",
-  "scope_limit": "Existing owner revision candidate plus reusable bounded governance-only admission in activation preflight; focused integration/refusal tests. No general trust bypass.",
+  "scope_limit": "All seven audit gaps in specs/WORKFLOW_OWNER_REVISION_CONTRACT.md: bounded admission/maintenance, owner revision, positive lifecycle proof, work-start/finish and commit-message enforcement, parity enforcement, truthful status, automatic scratch cleanup. No installed permission follows from this proposal.",
   "implementation_applied": false,
   "readiness_asserted": false,
-  "product_acceptance": false
+  "product_acceptance": false,
+  "prepared_candidates": [
+    {
+      "commit": "9bca463b",
+      "location": ".git/datum-wdq/proposals/audit-repair",
+      "purpose": "automatic source scratch cleanup; three producer tests passed"
+    },
+    {
+      "commit": "4b60a848",
+      "location": ".git/datum-wdq/proposals/audit-repair",
+      "purpose": "preserved owner-revision implementation; nineteen producer tests passed"
+    }
+  ],
+  "scope_review": {
+    "reviewed_base": "70dc69b32a0ceb39cb0cf0d07e54c424961a0b38",
+    "kind": "independent_read_only_readiness_review",
+    "findings": "Inherited draft omitted reusable maintenance, full positive lifecycle, finish/commit enforcement, parity enforcement, status reconciliation and automated cleanup requirements. The seven-gap contract and source proposal now explicitly include them; concrete implementation, case coverage and final independent review remain due.",
+    "implementation_approved": false
+  }
 }

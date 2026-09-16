@@ -126,7 +126,8 @@
     "specs/workflow_delivery/owner-revision.contract.json",
     "specs/workflow_delivery/owner-revision.environments.json",
     "specs/workflow_delivery/rollout.environments.json",
-    "specs/workflow_delivery/workspace-inputs.json"
+    "specs/workflow_delivery/workspace-inputs.json",
+    "docs/reviews/workflow-owner-revision/cases.json"
   ],
   "consumers": [
     {
