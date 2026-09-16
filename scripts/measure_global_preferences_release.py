@@ -11,6 +11,7 @@ from global_preferences_acceptance.capture import Capture
 from global_preferences_acceptance.inputs import EvidenceError, canonical, digest, parse, require
 from global_preferences_acceptance.measurements import percentile
 from global_preferences_acceptance.process import execute
+from global_preferences_acceptance.storage_capture import growth, snapshot
 
 ROOT = Path(__file__).resolve().parents[1]
 KEY = 'datum.accessibility.reduced_motion'
@@ -89,15 +90,47 @@ def collect(binary, root, capture, count, timeout):
                         _, _, response = observe(binary, mutation('set', expected, f'{trial}/reset-setup/{index}'),
                                                   environment, capture, confirmation=True, timeout=timeout)
                         expected = {'kind': 'generation', 'generation': response['context']['generation']}
-                    value, reference, response = observe(binary, mutation(action, expected, f'{trial}/{action}/{index}'),
+                    value, reference, response = observe(binary, mutation(action, expected, f'{trial}/{action}/{index}',
+                                                                          value=index % 2 == 1),
                                                           environment, capture, confirmation=True, timeout=timeout)
+                    require(response['result']['class'] == 'mutation' and response['result']['result']['changed'] is True,
+                            'durable measurement was a no-op rather than a committed mutation')
                     expected = {'kind': 'generation', 'generation': response['context']['generation']}
                     observations.append({'index': index, 'warmup': index < 10, 'raw': reference,
                                          'elapsed_ns': value['elapsed_ns'], 'rss_kib': value['rss_kib']})
                 results.append({'budget_id': 'durable-mutation', 'variant_id': action + '/standalone',
                                 'trial': trial, 'observations': observations})
             results.extend(collect_projects(binary, base, environment, capture, count, timeout, trial))
+            results.append(collect_generation_storage(binary, base, capture, count, timeout, trial))
     return results
+
+
+def collect_generation_storage(binary, base, capture, count, timeout, trial):
+    """One continuous retained history, including warm-ups; no setup writes between samples."""
+    configuration = base / 'config-generation-storage'
+    configuration.mkdir()
+    environment = isolated_environment(configuration)
+    repository = configuration / 'datum/preferences'
+    identity = f'generation-storage/trial-{trial}'
+    before, before_ref = snapshot(repository, capture, identity)
+    expected = {'kind': 'missing'}
+    observations = []
+    for index in range(count + 10):
+        # Alternate the actual value so every observation requires a new generation.
+        value, raw, response = observe(
+            binary, mutation('set', expected, f'{trial}/generation-storage/{index}', value=index % 2 == 0),
+            environment, capture, confirmation=True, timeout=timeout)
+        expected = {'kind': 'generation', 'generation': response['context']['generation']}
+        after, after_ref = snapshot(repository, capture, identity)
+        sizes = growth(before, after)
+        require(sizes['generation_bytes'] > 0, 'storage mutation did not retain a new generation')
+        observations.append({'index': index, 'warmup': index < 10,
+                             'started_monotonic_ns': value['started_monotonic_ns'],
+                             'raw': raw, 'before': before_ref, 'after': after_ref,
+                             'project_bytes': 0, **sizes})
+        before, before_ref = after, after_ref
+    return {'budget_id': 'storage-growth', 'variant_id': 'generation', 'trial': trial,
+            'observations': observations}
 
 
 def collect_projects(binary, base, environment, capture, count, timeout, trial):
@@ -162,7 +195,7 @@ def main(argv=None):
         report = {'schema': 'datum.preferences.partial-release-capture.v2', 'state': 'partial_diagnostic',
                   'production_accepted': False, 'binary_sha256': digest(binary.read_bytes()),
                   'samples_per_trial': args.samples, 'warmups_per_trial': 10, 'trials': 3,
-                  'missing': ['reachable-daemon mutation', 'continuous generation storage capture',
+                  'missing': ['reachable-daemon mutation',
                               'native feedback/window/lifecycle', 'complete candidate proof and independent review']}
         try:
             report['measurements'] = collect(binary, root, capture, args.samples, args.timeout)

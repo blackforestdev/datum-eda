@@ -175,6 +175,59 @@ class MeasurementTests(unittest.TestCase):
             self.check(row)
 
 
+class StorageCaptureTests(unittest.TestCase):
+    def test_actual_retained_bytes_and_continuous_growth(self):
+        from global_preferences_acceptance.capture import Capture
+        from global_preferences_acceptance.inputs import Bundle
+        from global_preferences_acceptance.observations import state_manifest
+        from global_preferences_acceptance.storage_capture import growth, snapshot
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            evidence = base / 'evidence'
+            evidence.mkdir()
+            capture = Capture(evidence)
+            repository = base / 'repository'
+            before, before_ref = snapshot(repository, capture, 'trial-0')
+            generation = repository / 'generations/g000/manifest.json'
+            generation.parent.mkdir(parents=True)
+            generation.write_bytes(b'{"receipt":"retained inside generation"}')
+            (repository / 'head.json').write_bytes(b'head')
+            (repository / 'writer.lock').touch()
+            after, after_ref = snapshot(repository, capture, 'trial-0')
+            self.assertEqual(growth(before, after), {
+                'generation_bytes': generation.stat().st_size, 'receipt_bytes': 0,
+                'request_index_bytes': 0, 'fixed_overhead_bytes': 4})
+            bundle = Bundle(evidence, list(capture.inventory.values()))
+            self.assertEqual(state_manifest(before_ref, bundle), before)
+            self.assertEqual(state_manifest(after_ref, bundle), after)
+            generation.write_bytes(b'changed immutable history')
+            changed, _ = snapshot(repository, capture, 'trial-0')
+            with self.assertRaisesRegex(EvidenceError, 'immutable storage'):
+                growth(after, changed)
+            generation.unlink()
+            removed, _ = snapshot(repository, capture, 'trial-0')
+            with self.assertRaisesRegex(EvidenceError, 'immutable storage'):
+                growth(after, removed)
+
+    def test_symlink_and_special_file_cannot_be_measured_as_storage(self):
+        from global_preferences_acceptance.capture import Capture
+        from global_preferences_acceptance.storage_capture import snapshot
+        with tempfile.TemporaryDirectory() as temporary:
+            base = Path(temporary)
+            evidence, repository = base / 'evidence', base / 'repository'
+            evidence.mkdir()
+            repository.mkdir()
+            capture = Capture(evidence)
+            redirected = repository / 'linked'
+            redirected.symlink_to(evidence, target_is_directory=True)
+            with self.assertRaisesRegex(EvidenceError, 'symlink'):
+                snapshot(repository, capture, 'trial-0')
+            redirected.unlink()
+            os.mkfifo(repository / 'pipe')
+            with self.assertRaisesRegex(EvidenceError, 'regular file'):
+                snapshot(repository, capture, 'trial-0')
+
+
 class ProcessMeasurementTests(unittest.TestCase):
     def test_collector_cannot_inherit_owner_store_or_daemon_override(self):
         from unittest.mock import patch
