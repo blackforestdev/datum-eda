@@ -1,0 +1,25 @@
+{
+  "kind": "installed_preferences_implementation_authority",
+  "candidate": "e6367c62a94c8a0480c842c4f3afe6f1bdb62b64",
+  "request_sha256": "15bd1260781ad7a1c71940771e343b6c883f8e40f0dfc10b64a5756d21b07be0",
+  "owner_response_verbatim": "Approve exact promotion; other writers remain paused",
+  "owner_response_sha256": "a4f3a4b302dd170e5ac02200a52e300ae633bcc451163fd8020996b2f2a94d6d",
+  "activation_log": "/tmp/datum-gp-cm05-implementation-packet/activation-1789572585780930725.jsonl",
+  "activation_log_sha256": "a7ff5d28167e2f1474b8a8e34a1c939c380839a8530c00acf3bc5869f10f73bd",
+  "verified": [
+    "prospective enforcement",
+    "installed staged enforcement",
+    "installed owner hook",
+    "project status check",
+    "Preferences task details",
+    "protected state and support identity"
+  ],
+  "execution_session": "preferences-gp-cm05e-20260916",
+  "product_acceptance": false,
+  "workflow_repair_resumed": false,
+  "paused_claim_reconciliation": {
+    "session": "workflow-seven-gap-repair-20260916",
+    "reason": "Owner halted workflow repair and approved resumed product implementation with other writers paused; stale ownership conflicted on shared governance files.",
+    "result": "claim released; tracker open/unassigned; OR-C01 and planning authorization preserved"
+  }
+}
