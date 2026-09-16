@@ -11,6 +11,8 @@ use super::*;
 use datum_gui_render::RectPx;
 use datum_gui_viewport::{CameraConfig, CameraEngine};
 
+mod layout_cache;
+
 #[derive(Clone)]
 struct CameraViewport {
     pane: datum_gui_protocol::PaneId,
@@ -405,15 +407,19 @@ impl Runtime {
     }
 
     pub(super) fn current_layout(&self) -> ShellLayout {
-        ShellLayout::for_surface(
+        self.shell_layout_for_dock(if self.workspace().ui.active_dock_tab.is_some() {
+            Some(self.workspace().ui.effective_dock_height_px())
+        } else {
+            None
+        })
+    }
+
+    pub(super) fn shell_layout_for_dock(&self, dock_height: Option<u32>) -> ShellLayout {
+        layout_cache::for_surface(
             self.config.width,
             self.config.height,
             self.scale_factor,
-            if self.workspace().ui.active_dock_tab.is_some() {
-                Some(self.workspace().ui.effective_dock_height_px())
-            } else {
-                None
-            },
+            dock_height,
         )
     }
 
