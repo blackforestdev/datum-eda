@@ -191,7 +191,7 @@ class TrustTests(unittest.TestCase):
         self.f.stage()
         self.refuse("WDQ-REVIEW")
 
-    def test_pending_labels_cannot_hide_changed_activation_inputs(self):
+    def test_incremental_source_does_not_assert_completed_activation(self):
         manifest = Tree(self.f.root).json("specs/active_frontier.json")
         item = manifest["frontier"][0]
         item["authorization"] = "execution"
@@ -206,6 +206,10 @@ class TrustTests(unittest.TestCase):
         (self.f.root / self.f.contract["proof_path"]).unlink()
         self.assertEqual(validate_delivery(Tree(self.f.root), item, trust=trust), "ready")
         self.f.write("src/read.py", b"changed activation source")
+        self.assertEqual(validate_delivery(Tree(self.f.root), item, trust=trust), "ready")
+        # Advancing the actual activation checkpoint still needs fresh proof.
+        item["completion"]["steps"][1]["status"] = "complete"
+        item["completion"]["canonical_next_step_id"] = "V"
         with self.assertRaises(DeliveryInputError):
             validate_delivery(Tree(self.f.root), item, trust=trust)
 
