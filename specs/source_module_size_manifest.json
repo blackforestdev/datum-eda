@@ -689,14 +689,14 @@
     "crates/gui-protocol/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 4749,
-        "inline_test_lines": 1855
+        "pre_test_lines": 4660,
+        "inline_test_lines": 1835
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 350,
       "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+      "note": "Board materialization and managed import-container initialization extracted to kicad_board_materialization.rs with its stable-name and isolated-parent regressions; remaining production and test debt stays frozen."
     },
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",

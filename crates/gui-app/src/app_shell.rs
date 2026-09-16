@@ -151,8 +151,9 @@ pub(super) fn fatal_gui_error(
     context: &str,
     err: impl std::fmt::Display,
 ) -> ! {
-    append_gui_diagnostic_line(format!("fatal {context}: {err}"));
-    eprintln!("datum-gui error: {context}: {err}");
+    let message = gui_error_message(context, err);
+    append_gui_diagnostic_line(format!("fatal {message}"));
+    eprintln!("datum-gui error: {message}");
     event_loop.exit();
     std::process::exit(1);
 }
@@ -163,4 +164,23 @@ pub(super) fn terminal_scrollback_page_step(
     usize::from(workspace.ui.terminal.rows)
         .saturating_sub(1)
         .max(1)
+}
+
+fn gui_error_message(context: &str, err: impl std::fmt::Display) -> String {
+    format!("{context}: {err:#}")
+}
+
+#[cfg(test)]
+mod startup_error_tests {
+    #[test]
+    fn startup_error_includes_underlying_filesystem_cause() {
+        let error = anyhow::Error::new(std::io::Error::from(std::io::ErrorKind::NotFound))
+            .context("create native project")
+            .context("resolve GUI launch review context");
+        let message = super::gui_error_message("launch state load failed", error);
+        assert!(message.contains(
+            "launch state load failed: resolve GUI launch review context: create native project:"
+        ));
+        assert!(message.contains("entity not found"));
+    }
 }

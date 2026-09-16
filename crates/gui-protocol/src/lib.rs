@@ -8,9 +8,7 @@ use eda_engine::text::{
 use serde::de::{DeserializeOwned, Deserializer};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::collections::hash_map::DefaultHasher;
 use std::collections::{BTreeMap, BTreeSet};
-use std::hash::{Hash, Hasher};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::sync::{Mutex, OnceLock};
@@ -23,6 +21,8 @@ mod global_preferences;
 pub use global_preferences::*;
 mod new_project;
 pub use new_project::*;
+mod kicad_board_materialization;
+pub use kicad_board_materialization::materialize_kicad_board_request;
 mod kicad_scene_import;
 use kicad_scene_import::{
     load_scene_from_kicad_import, outline_board_graphics_from_outline,
@@ -1011,95 +1011,6 @@ pub fn ensure_known_good_demo_request() -> Result<LiveReviewRequest> {
         profile: Some("default".to_string()),
         kicad_board_source: None,
     })
-}
-
-pub fn materialize_kicad_board_request(
-    board_file: &Path,
-    project_root: Option<PathBuf>,
-) -> Result<LiveReviewRequest> {
-    let source = board_file
-        .canonicalize()
-        .with_context(|| format!("failed to resolve KiCad board {}", board_file.display()))?;
-    let root =
-        project_root.unwrap_or_else(|| default_materialized_kicad_board_project_root(&source));
-    let root_display = root.display().to_string();
-    let source_display = source.display().to_string();
-    let cli = cli_prefix();
-
-    if !root.join("project.json").is_file() {
-        let project_name = materialized_kicad_board_project_name(&source);
-        run_cli_json_owned::<Value>(
-            &cli,
-            &[
-                "project".to_string(),
-                "new".to_string(),
-                root_display.clone(),
-                "--name".to_string(),
-                project_name,
-            ],
-        )
-        .with_context(|| {
-            format!(
-                "failed to create native Datum project at {}",
-                root.display()
-            )
-        })?;
-    }
-
-    run_cli_json_owned::<Value>(
-        &cli,
-        &[
-            "project".to_string(),
-            "import-kicad-board".to_string(),
-            root_display,
-            "--source".to_string(),
-            source_display,
-        ],
-    )
-    .with_context(|| {
-        format!(
-            "failed to materialize KiCad board {} into native Datum project {}",
-            source.display(),
-            root.display()
-        )
-    })?;
-
-    Ok(LiveReviewRequest {
-        project_root: root,
-        board_file: None,
-        artifact_path: None,
-        net_uuid: None,
-        from_anchor_pad_uuid: None,
-        to_anchor_pad_uuid: None,
-        profile: None,
-        // Carry the original KiCad board so pane B can draw its companion
-        // `.kicad_sch`; the materialized project holds no sibling schematic.
-        kicad_board_source: Some(source),
-    })
-}
-
-fn default_materialized_kicad_board_project_root(source: &Path) -> PathBuf {
-    let mut hasher = DefaultHasher::new();
-    source.display().to_string().hash(&mut hasher);
-    let digest = hasher.finish();
-    let stem = source
-        .file_stem()
-        .and_then(|value| value.to_str())
-        .filter(|value| !value.is_empty())
-        .unwrap_or("board");
-    std::env::temp_dir()
-        .join("datum-eda")
-        .join("gui-imports")
-        .join(format!("{stem}-{digest:016x}"))
-}
-
-fn materialized_kicad_board_project_name(source: &Path) -> String {
-    let stem = source
-        .file_stem()
-        .and_then(|value| value.to_str())
-        .filter(|value| !value.is_empty())
-        .unwrap_or("Imported Board");
-    format!("{stem} Datum Workspace")
 }
 
 #[derive(Debug, Clone, Deserialize, PartialEq, Eq)]
@@ -6553,26 +6464,6 @@ mod tests {
         assert!(
             !tp1_mechanical_circles.is_empty(),
             "KiCad-backed TP1 circular geometry should be materialized"
-        );
-    }
-
-    #[test]
-    fn materialized_kicad_board_defaults_to_stable_native_workspace_root() {
-        let source = PathBuf::from("/tmp/example boards/DOA2526.kicad_pcb");
-        let first = default_materialized_kicad_board_project_root(&source);
-        let second = default_materialized_kicad_board_project_root(&source);
-
-        assert_eq!(first, second);
-        assert!(first.starts_with(std::env::temp_dir().join("datum-eda/gui-imports")));
-        assert!(
-            first
-                .file_name()
-                .and_then(|value| value.to_str())
-                .is_some_and(|value| value.starts_with("DOA2526-"))
-        );
-        assert_eq!(
-            materialized_kicad_board_project_name(&source),
-            "DOA2526 Datum Workspace"
         );
     }
 
