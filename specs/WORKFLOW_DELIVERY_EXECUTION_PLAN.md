@@ -7,8 +7,12 @@ Route: `workflow-delivery-rollout`.
 
 Execute the exact approved WORKFLOW_DELIVERY_ROLLOUT_IMPLEMENTATION.md packet;
 the requirements below bind its I1–I6 sequence into the canonical selector.
-No scope reduction: installation alone does not close this task or the full
-reform goal. Preserve all product owners, prerequisites and Claude's HTML lane.
+Owner scope correction (2026-09-16): finish the installed, verified guardrails
+and product-owner handoffs before subsequent product adoption. This supersedes
+the earlier proposal's inverted requirement that product code be completed first.
+Installation alone is insufficient: verification, independent review, handoffs
+and final owner acceptance remain required. Preserve all product owners,
+prerequisites, future adoption measurements and Claude's HTML lane.
 No new dependency is approved. Existing owner-pinned gates stay active until
 the owner approves and installs the exact reviewed replacement.
 
@@ -175,17 +179,22 @@ remain additional mandatory I04 evidence; none of these obligations is deferred
 to product adoption or waived by standing workflow authorization.
 
 <!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I05 -->
-## WDQ-I05 — verify three actual adoption cohorts
+## WDQ-I05 — verify installed guardrails and product-owner handoffs
 
-Coordinate, never take over, S5A, GUI-WRITE-PATH and NATIVE-AUTHORING product
-owners and independent reviewers. Record evidence-linked append-only events
-from first real readiness submission through exact owner acceptance. Measure
-spec gaps, refusals, rework, handoffs, owner corrections and unresolved defects
-without inventing a baseline or excluding failed attempts. Preserve full cohort
-scope and product prerequisites. Future names, synthetic tests, installed policy
-and a partial native slice do not prove three completed adoption outcomes.
-Unavailable owners/reviewers or incomplete native work remain incomplete unless
-the owner explicitly reviews a replacement without dropping domain obligations.
+Verify the installed main-checkout enforcement, independent gate review, normal
+claim renewal and blocking hook/selector checks. Record resolved or explicitly
+bounded external-lane coordination and concrete handoffs to S5A, GUI-WRITE-PATH
+and NATIVE-AUTHORING. Preserve their contracts, ledgers, specification obligations,
+product owners, prerequisites and future proof/review/acceptance requirements.
+These installed guardrails and handoffs are I05's completion boundary. Completed
+product code, product-owner start dates and accepted product cohorts are not
+prerequisites. Do not take over a product lane to close this workflow task.
+
+Each product lane remains responsible for append-only measurement from its first
+real readiness submission through exact owner acceptance: specification gaps,
+refusals, rework, handoffs, owner corrections and defects. Preserve failed attempts
+and report absent observations honestly. All three adoption outcomes remain open;
+workflow completion must not describe them as delivered or accepted.
 
 The owner-approved S5A preparation exposed a bootstrap refusal in the installed
 policy: product readiness inputs cannot be authored before readiness/enrollment.
@@ -198,14 +207,21 @@ it must not waive readiness, proof, independent product review or acceptance.
 
 <!-- REQ:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I06 -->
 <!-- OWNER:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I06:ROLLOUT-ACCEPTANCE -->
-## WDQ-I06 — owner review of the completed reform
+## WDQ-I06 — owner acceptance of installed guardrails and handoffs
 
 Present installed real-roadmap coverage, production transition refusals,
-independent gate review, resolved/bounded external-lane migration, all three
-completed adoption measurements and scheduled specification obligations with
-honest remaining status. Obtain explicit owner acceptance of the full rollout.
+independent gate review, resolved/bounded external-lane migration, recorded
+product-owner handoffs and scheduled specification obligations with honest
+remaining product status. Obtain explicit owner acceptance of the workflow rollout.
+The three future product-adoption outcomes are not prerequisites for this decision.
 Close only after all requirements are evidenced; do not equate candidate code,
 planning approval, a green pilot or partial adoption with completion.
+
+The exact owner scope approval is retained in
+`docs/reviews/workflow-delivery-rollout/scope-correction-owner-20260916.json`.
+Historical evidence below describes its original scope and dates; statements
+there that require three product outcomes before workflow closure are superseded
+by this explicit correction, not rewritten as evidence of completed products.
 
 <!-- EVIDENCE:WORKFLOW-DELIVERY-IMPLEMENTATION:WDQ-I01-PARTIAL -->
 ## WDQ-I01 implementation evidence — partial, not installed

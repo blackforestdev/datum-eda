@@ -154,9 +154,35 @@ validate that rollout structurally only when its complete input manifest is
 byte-identical to the installed authority and the exact owner-approved S5A
 preparation scope remains present. This is the installed continuation of the
 same bootstrap boundary, not a reusable proof waiver. Any rollout-input change,
-claim identity/step change, scope removal, or completion of I05 immediately restores the
-normal readiness/proof/review phase. Other enrolled consumers always retain
+claim identity change, an unapproved lifecycle transition, or scope removal restores the
+normal readiness/proof/review phase. The evidence-backed infrastructure closeout
+below is an approved lifecycle transition, not new product execution. Other enrolled consumers always retain
 their normal phase, and product preparation still requires its own exact scope.
+
+### Infrastructure closeout precedes product adoption
+
+The owner-approved 2026-09-16 scope correction removes completed product adoption
+as a prerequisite for WDQ-I05 and WDQ-I06. I05 verifies installed enforcement,
+independent gate review, working claim renewal, resolved or explicitly bounded
+external-lane coordination, and concrete product-owner handoffs. I06 accepts
+those guardrails and their honest limitations. Product code is not this lane's
+deliverable and must not become a reverse dependency of infrastructure closeout.
+
+The installed continuation may retain structure-only validation for the rollout
+in two additional states: I05 complete with evidence, I06 selected and pending
+under owner-decision authorization in specified state with no claim; then I06
+complete with owner evidence, landed state, none authorization, no claim and no
+selected step. Preserve the exact eleven-step contract and all earlier completed
+history; only I05/I06 status and completion evidence may advance. PM025 still
+validates evidence references, tracker synchronization and lifecycle. The complete
+rollout input manifest and preparation scope must still match installed authority.
+Changed code cannot use this continuation, and no source permission or product
+acceptance follows. Historical proof keeps its original identity.
+
+The three adoption ledgers remain open obligations in UVT-S5A-BUILD,
+GUI-WRITE-PATH and NATIVE-AUTHORING, including native proof, independent review,
+owner acceptance and honest event-based measurement. They are subsequent uses
+of the installed guardrails, not prerequisites for finishing the guardrails.
 
 A routine PM025 lease renewal changes only `heartbeat_at` and `expires_at`.
 It preserves the original `claimed_at`, agent, harness, session, scope, worktree
@@ -542,11 +568,14 @@ review. Cohort mappings and scenario identities from the approved R03 packet are
 not native evidence. Preferences remains with its existing session until an exact
 coordinated migration or owner-approved bounded exception is recorded.
 
-Full rollout acceptance requires installed main-checkout/hook/selector evidence,
-independent gate review, explicit external-lane disposition, and three genuine
-adoption cohorts with evidence-linked gap, refusal, rework, handoff, owner
-correction and unresolved-defect measurements. Do not invent a baseline or count
-future task names, hermetic fixtures or this amendment as completed adoption.
+Workflow rollout acceptance requires installed main-checkout/hook/selector
+evidence, independent gate review, explicit external-lane disposition, scheduled
+specification obligations and recorded product-owner handoffs. The owner-approved
+2026-09-16 scope correction supersedes earlier proposal wording that required
+three completed product cohorts before infrastructure acceptance. Those future
+cohorts retain evidence-linked gap, refusal, rework, handoff, owner-correction and
+defect measurements in their product lanes. Do not invent a baseline or count
+guardrail acceptance, task names or hermetic fixtures as completed product adoption.
 
 ## Ratification evidence boundary
 

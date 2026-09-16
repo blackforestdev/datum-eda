@@ -22,7 +22,10 @@
       "handoff_target": "Actual GUI write-path product owner and independent reviewer, neither assigned by this record",
       "entry_step": "GWP-C01",
       "scope_to_preserve": "All P0/W1/W2/W3 dispatch and durable transaction requirements",
-      "open_prerequisites_at_observation": ["dat-marking-menu-shell-g0w", "dat-project-write-ownership-lock-0ne"]
+      "open_prerequisites_at_observation": [
+        "dat-marking-menu-shell-g0w",
+        "dat-project-write-ownership-lock-0ne"
+      ]
     },
     {
       "frontier_key": "NATIVE-AUTHORING",
@@ -30,7 +33,11 @@
       "handoff_target": "Actual native-authoring product owner and independent reviewer, neither assigned by this record",
       "entry_step": "NA-C01",
       "scope_to_preserve": "Complete schematic and PCB domain contracts, not one passing native edit",
-      "open_prerequisites_at_observation": ["dat-gui-p2-cross-probe-27z", "dat-gui-surface-specs-usb", "dat-gui-write-path-qiu"]
+      "open_prerequisites_at_observation": [
+        "dat-gui-p2-cross-probe-27z",
+        "dat-gui-surface-specs-usb",
+        "dat-gui-write-path-qiu"
+      ]
     }
   ],
   "existing_C01_obligations": [
@@ -43,5 +50,5 @@
   ],
   "measurement": "Append exact evidence-linked events from real readiness submission after reviewed enrollment through proof, independent review and owner acceptance. Keep refused submissions and corrective commits. No retrospective fabricated baseline.",
   "receipt_status": "Prepared in shared repository and coordination comments posted on all three cohort beads and the Preferences bead. No external session acknowledgement or start date has been received.",
-  "remaining_completion": "WDQ-I05 requires three accepted real cohorts. WDQ-I06 requires final owner acceptance of installed and measured reform. Neither is satisfied by this handoff or by standing execution approval."
+  "remaining_completion": "Owner-approved 2026-09-16 correction: WDQ-I05 verifies installed workflow guardrails and these concrete handoffs; WDQ-I06 accepts that infrastructure. Three accepted product cohorts are not prerequisites for either milestone. Their full readiness/proof/review/acceptance and measurement obligations remain open in the named product lanes. No product or external-session acceptance is asserted."
 }

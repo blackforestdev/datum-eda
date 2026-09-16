@@ -17,9 +17,9 @@ PHASES = LEGACY_PHASES
 def preparation_bootstrap_structure(tree, item, trust, contract):
     """Keep the installed rollout repair structural while its own inputs are exact.
 
-    The exception ends as soon as I05 ownership changes or any rollout input
-    differs from the installed authority. Product preparation paths remain
-    governed separately by their exact preparation scope.
+    Execution still requires the original I05 owner. Owner-reviewed closeout
+    may follow without building products or replaying unchanged infrastructure.
+    Any changed rollout input ends this continuation. Product gates are separate.
     """
     from workflow_delivery_activation_preflight import S5A_PREPARATION_SCOPE
 
@@ -30,19 +30,59 @@ def preparation_bootstrap_structure(tree, item, trust, contract):
     selected = item.get("completion", {}).get("canonical_next_step_id")
     claim = item.get("claim")
     if not (item.get("key") == "WORKFLOW-DELIVERY-IMPLEMENTATION"
-            and item.get("state") == "in_progress"
-            and item.get("authorization") == "execution"
-            and selected == "WDQ-I05" and type(claim) is dict
             and preparation == [S5A_PREPARATION_SCOPE]
             and len(rollout_scopes) == 1
             and "WDQ-I05" in rollout_scopes[0].get("step_ids", [])):
         return False
     authority_items = trust.authority.json("specs/active_frontier.json")["frontier"]
     authority_item = next((row for row in authority_items if row.get("key") == item["key"]), None)
-    if authority_item is None or not same_claim_identity(claim, authority_item.get("claim")):
+    if authority_item is None:
+        return False
+    executing = (item.get("state") == "in_progress"
+                 and item.get("authorization") == "execution"
+                 and selected == "WDQ-I05" and type(claim) is dict
+                 and same_claim_identity(claim, authority_item.get("claim")))
+    if not executing and not infrastructure_closeout(item, authority_item):
         return False
     return (tree.manifest(contract["input_roots"])
             == trust.authority.manifest(contract["input_roots"]))
+
+
+def infrastructure_closeout(item, approved):
+    """Permit only evidence-backed I05->I06->landed, never product acceptance.
+
+    PM025 independently validates evidence references and tracker/lifecycle state.
+    This predicate grants no source permission and supplies no owner receipt.
+    """
+    if item.get("claim") is not None:
+        return False
+    current, prior = item.get("completion", {}), approved.get("completion", {})
+    if ({k: v for k, v in current.items() if k not in ("steps", "canonical_next_step_id")}
+            != {k: v for k, v in prior.items() if k not in ("steps", "canonical_next_step_id")}):
+        return False
+    steps, old_steps = current.get("steps", []), prior.get("steps", [])
+    if len(steps) != 11 or [s.get("id") for s in steps] != [s.get("id") for s in old_steps]:
+        return False
+    for step, old in zip(steps, old_steps):
+        if step.get("id") not in ("WDQ-I05", "WDQ-I06"):
+            if step != old or step.get("status") != "complete":
+                return False
+        elif ({k: v for k, v in step.items() if k not in ("status", "completion_evidence")}
+              != {k: v for k, v in old.items() if k not in ("status", "completion_evidence")}):
+            return False
+    by_id = {step["id"]: step for step in steps}
+    if not {"WDQ-I05", "WDQ-I06"} <= by_id.keys():
+        return False
+    delivery, owner = by_id["WDQ-I05"], by_id["WDQ-I06"]
+    if delivery.get("status") != "complete" or not delivery.get("completion_evidence"):
+        return False
+    awaiting = (item.get("state") == "specified" and item.get("authorization") == "owner_decision"
+                and current.get("canonical_next_step_id") == "WDQ-I06"
+                and owner.get("status") == "pending")
+    accepted = (item.get("state") == "landed" and item.get("authorization") == "none"
+                and current.get("canonical_next_step_id") is None
+                and owner.get("status") == "complete" and bool(owner.get("completion_evidence")))
+    return awaiting or accepted
 
 
 def same_claim_identity(current, approved):
