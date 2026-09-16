@@ -1,0 +1,32 @@
+{
+  "kind": "workflow_repair_admission_installed",
+  "issue_id": "dat-workflow-owner-revision-71j",
+  "frontier_key": "WORKFLOW-OWNER-REVISION",
+  "recorded_at": "2026-09-16T11:51:16.041848Z",
+  "owner_response_verbatim": "Approve exact admission; other writers are paused",
+  "provenance": "Explicit owner response to the exact candidate/request and paused-writer question in this conversation.",
+  "candidate": "89abd560157c756300e4feeb25111f2adf537f92",
+  "base": "da8d52e4a80bb0b4cbc69b10408843be7ae1fb29",
+  "request_sha256": "9a1093f21293f25949f49cd544c76201e219506e9a1239d90f381954ee74432c",
+  "owner_response_sha256": "f5a8ec168381e172b4a62d7c915bb483c6b980e3caaea3d495832c70258ad3b5",
+  "activation_log": ".git/datum-wdq/proposals/owner-revision-admission-89abd560/activation-1789559172972876056.jsonl",
+  "activation_log_sha256": "fe26b8a3aec9ac5c5cb4b8b497e3452d4bed9326b99af8083ac89119e552dd52",
+  "verified": [
+    "unchanged prospective gate",
+    "exact fast-forward publication",
+    "exact local and effective trust",
+    "installed staged enforcement",
+    "installed owner hook",
+    "canonical selector check",
+    "canonical named task details",
+    "unchanged final protected state and support bundle"
+  ],
+  "claim_session": "workflow-owner-revision-or-c01-20260916",
+  "selected_step": "OR-C01",
+  "admitted": true,
+  "execution_enrolled": false,
+  "implementation_applied": false,
+  "product_acceptance": false,
+  "historical_candidate": "be96b28626603f8ebdcbf68eb81b649fbecef6df",
+  "remaining": "OR-C01 planning is in progress under the synchronized lease; readiness, scoped execution, independent implementation review and final owner promotion remain incomplete."
+}
