@@ -1,0 +1,1085 @@
+{
+  "schema_version": 1,
+  "id": "datum-workflow-owner-revision",
+  "frontier_key": "WORKFLOW-OWNER-REVISION",
+  "issue_id": "dat-workflow-owner-revision-71j",
+  "category": "infrastructure",
+  "consuming_workflow": "Contributors admit, claim, revise and verify governed work through existing CLI, selector, hook and separately reviewed exact promotion.",
+  "intent": "Permit legitimate bounded owner-directed corrections while preserving review, source authority, ownership and product acceptance boundaries.",
+  "scope": "Eight required scenario groups and all individual variants, with actual observed entry-point behavior and protected state.",
+  "exclusions": "No Preferences implementation or acceptance, prototype edits, dependencies or invented authority; no claim to prevent arbitrary off-repository writes. Promotion mutation has its separate exact owner-reviewed packet.",
+  "authority_refs": [
+    {
+      "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+      "marker": "<!-- OWNER-REVISION-CONTRACT -->"
+    },
+    {
+      "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+      "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+    }
+  ],
+  "route_ids": [
+    "workflow-owner-revision-admission"
+  ],
+  "foundation_answers": {
+    "units_precision": {
+      "disposition": "not_applicable",
+      "reason": "No CAD geometry or unit conversion; control IDs and hashes are not CAD precision.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+        }
+      ]
+    },
+    "numeric_entry": {
+      "disposition": "not_applicable",
+      "reason": "No CAD numeric entry; malformed control values are separately tested as validation inputs.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+        }
+      ]
+    },
+    "selection_identity": {
+      "disposition": "not_applicable",
+      "reason": "No CAD selection or stable design subject; Frontier identity is control authority, not product selection.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+        }
+      ]
+    },
+    "grid_snap": {
+      "disposition": "not_applicable",
+      "reason": "No authored or snapped coordinate, grid setting or editor consumer.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+        }
+      ]
+    },
+    "undo_cancel": {
+      "disposition": "required",
+      "reason": "Refusal and interruption preserve state; no design undo capability is claimed.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+        }
+      ]
+    },
+    "persistence_recovery": {
+      "disposition": "required",
+      "reason": "Protected source/index/refs/trust survive refusal and interruption; a fresh invocation succeeds. No native Save claim.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+        }
+      ]
+    },
+    "library_connectivity": {
+      "disposition": "not_applicable",
+      "reason": "No authored library binding, net or connectivity model.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+        }
+      ]
+    },
+    "settings_scope": {
+      "disposition": "required",
+      "reason": "Read only explicitly selected repository-local trust and requested snapshot; no Global Preferences acceptance.",
+      "authority_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+        }
+      ]
+    }
+  },
+  "open_decisions": [],
+  "input_roots": [
+    ".github/workflows/alignment.yml",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "crates/cli/src/command_plan.rs",
+    "crates/cli/src/commands/board/routing_net.rs",
+    "crates/cli/src/commands/project/validate.rs",
+    "crates/engine/src/substrate/journal.rs",
+    "docs/reviews/workflow-delivery-pilot/proof-artifacts/environment.json",
+    "docs/reviews/workflow-delivery-rollout/infrastructure/prepared-hook-pipes-environment.json",
+    "docs/reviews/workflow-owner-revision/admission-owner-20260916.json",
+    "docs/reviews/workflow-owner-revision/headless-environment.json",
+    "research/process-quality/WORKFLOW_OWNER_REVISION_ADMISSION.md",
+    "scripts",
+    "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+    "specs/WORKFLOW_OWNER_REVISION_REPAIR_PLAN.md",
+    "specs/evidence_traceability_manifest.json",
+    "specs/rustfmt_exemption_manifest.json",
+    "specs/spec_governance_manifest.json",
+    "specs/workflow_delivery/owner-revision.contract.json",
+    "specs/workflow_delivery/owner-revision.environments.json",
+    "specs/workflow_delivery/rollout.environments.json",
+    "specs/workflow_delivery/workspace-inputs.json"
+  ],
+  "consumers": [
+    {
+      "id": "validator",
+      "entry_surfaces": [
+        "staged_cli",
+        "candidate_cli",
+        "owner_hook"
+      ],
+      "dispatch_key": "check_workflow_delivery.main",
+      "handler_ref": {
+        "path": "scripts/check_workflow_delivery.py",
+        "symbol": "main"
+      },
+      "scope": "Explicit isolated repository, externally selected trust and requested snapshot only.",
+      "timing": "Validate before reporting a permitted transition; return actual findings without repairing inputs.",
+      "persistence": "Read-only protected repository state; owned diagnostic logs and derived caches recorded separately.",
+      "unavailable_reason": "Missing or inconsistent authority, inputs or evidence refuses. Early hook trust or prerequisite failures may precede validator dispatch and JSON; retain the actual diagnostic and uninvoked handler, never a fabricated success.",
+      "scenario_ids": [
+        "OR-S01",
+        "OR-S02",
+        "OR-S03",
+        "OR-S04",
+        "OR-S05",
+        "OR-S06",
+        "OR-S07",
+        "OR-S08"
+      ]
+    },
+    {
+      "id": "selector",
+      "entry_surfaces": [
+        "project_status"
+      ],
+      "dispatch_key": "workflow_delivery_selector.selector_failures",
+      "handler_ref": {
+        "path": "scripts/workflow_delivery_selector.py",
+        "symbol": "selector_failures"
+      },
+      "scope": "Explicit isolated repository, externally selected trust and requested snapshot only.",
+      "timing": "Validate before reporting a permitted transition; return actual findings without repairing inputs.",
+      "persistence": "Read-only protected repository state; owned diagnostic logs and derived caches recorded separately.",
+      "unavailable_reason": "Missing or inconsistent authority, inputs or evidence produces a structured refusal; never a fabricated success.",
+      "scenario_ids": [
+        "OR-S01",
+        "OR-S02",
+        "OR-S03",
+        "OR-S04",
+        "OR-S05",
+        "OR-S06",
+        "OR-S07",
+        "OR-S08"
+      ]
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "OR-S01",
+      "consumer_ids": [
+        "validator",
+        "selector"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-CONTRACT -->"
+        }
+      ],
+      "preconditions": "Owned isolated fixture with recorded source, exact authority/base, lease, tracker, environment and case parameters. No live hostile mutation.",
+      "inputs": [
+        "Execute every OR-S01 variant listed in the controlling plan; retain individual observations."
+      ],
+      "expected_visible": "Actual success/refusal diagnostics for bounded correction lifecycle; no invented dispatch or acceptance.",
+      "expected_state": "Only the explicitly authorized fixture transition is permitted; all other protected state and review/source boundaries remain exact.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Observe normal behavior for bounded correction lifecycle, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Observe invalid behavior for bounded correction lifecycle, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Observe cancel behavior for bounded correction lifecycle, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Observe scope behavior for bounded correction lifecycle, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Observe save_reopen behavior for bounded correction lifecycle, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Observe accessibility behavior for bounded correction lifecycle, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Observe failure_recovery behavior for bounded correction lifecycle, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        }
+      },
+      "method": "infrastructure"
+    },
+    {
+      "id": "OR-S02",
+      "consumer_ids": [
+        "validator",
+        "selector"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-CONTRACT -->"
+        }
+      ],
+      "preconditions": "Owned isolated fixture with recorded source, exact authority/base, lease, tracker, environment and case parameters. No live hostile mutation.",
+      "inputs": [
+        "Execute every OR-S02 variant listed in the controlling plan; retain individual observations."
+      ],
+      "expected_visible": "Actual success/refusal diagnostics for revision authority refusals; no invented dispatch or acceptance.",
+      "expected_state": "Only the explicitly authorized fixture transition is permitted; all other protected state and review/source boundaries remain exact.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Observe normal behavior for revision authority refusals, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Observe invalid behavior for revision authority refusals, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Observe cancel behavior for revision authority refusals, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Observe scope behavior for revision authority refusals, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Observe save_reopen behavior for revision authority refusals, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Observe accessibility behavior for revision authority refusals, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Observe failure_recovery behavior for revision authority refusals, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        }
+      },
+      "method": "infrastructure"
+    },
+    {
+      "id": "OR-S03",
+      "consumer_ids": [
+        "validator",
+        "selector"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-CONTRACT -->"
+        }
+      ],
+      "preconditions": "Owned isolated fixture with recorded source, exact authority/base, lease, tracker, environment and case parameters. No live hostile mutation.",
+      "inputs": [
+        "Execute every OR-S03 variant listed in the controlling plan; retain individual observations."
+      ],
+      "expected_visible": "Actual success/refusal diagnostics for scope and acceptance refusals; no invented dispatch or acceptance.",
+      "expected_state": "Only the explicitly authorized fixture transition is permitted; all other protected state and review/source boundaries remain exact.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Observe normal behavior for scope and acceptance refusals, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Observe invalid behavior for scope and acceptance refusals, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Observe cancel behavior for scope and acceptance refusals, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Observe scope behavior for scope and acceptance refusals, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Observe save_reopen behavior for scope and acceptance refusals, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Observe accessibility behavior for scope and acceptance refusals, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Observe failure_recovery behavior for scope and acceptance refusals, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        }
+      },
+      "method": "infrastructure"
+    },
+    {
+      "id": "OR-S04",
+      "consumer_ids": [
+        "validator",
+        "selector"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-CONTRACT -->"
+        }
+      ],
+      "preconditions": "Owned isolated fixture with recorded source, exact authority/base, lease, tracker, environment and case parameters. No live hostile mutation.",
+      "inputs": [
+        "Execute every OR-S04 variant listed in the controlling plan; retain individual observations."
+      ],
+      "expected_visible": "Actual success/refusal diagnostics for governance admission boundaries; no invented dispatch or acceptance.",
+      "expected_state": "Only the explicitly authorized fixture transition is permitted; all other protected state and review/source boundaries remain exact.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Observe normal behavior for governance admission boundaries, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Observe invalid behavior for governance admission boundaries, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Observe cancel behavior for governance admission boundaries, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Observe scope behavior for governance admission boundaries, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Observe save_reopen behavior for governance admission boundaries, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Observe accessibility behavior for governance admission boundaries, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Observe failure_recovery behavior for governance admission boundaries, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        }
+      },
+      "method": "infrastructure"
+    },
+    {
+      "id": "OR-S05",
+      "consumer_ids": [
+        "validator",
+        "selector"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-CONTRACT -->"
+        }
+      ],
+      "preconditions": "Owned isolated fixture with recorded source, exact authority/base, lease, tracker, environment and case parameters. No live hostile mutation.",
+      "inputs": [
+        "Execute every OR-S05 variant listed in the controlling plan; retain individual observations."
+      ],
+      "expected_visible": "Actual success/refusal diagnostics for synchronized ownership; no invented dispatch or acceptance.",
+      "expected_state": "Only the explicitly authorized fixture transition is permitted; all other protected state and review/source boundaries remain exact.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Observe normal behavior for synchronized ownership, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Observe invalid behavior for synchronized ownership, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Observe cancel behavior for synchronized ownership, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Observe scope behavior for synchronized ownership, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Observe save_reopen behavior for synchronized ownership, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Observe accessibility behavior for synchronized ownership, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Observe failure_recovery behavior for synchronized ownership, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        }
+      },
+      "method": "infrastructure"
+    },
+    {
+      "id": "OR-S06",
+      "consumer_ids": [
+        "validator",
+        "selector"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-CONTRACT -->"
+        }
+      ],
+      "preconditions": "Owned isolated fixture with recorded source, exact authority/base, lease, tracker, environment and case parameters. No live hostile mutation.",
+      "inputs": [
+        "Execute every OR-S06 variant listed in the controlling plan; retain individual observations."
+      ],
+      "expected_visible": "Actual success/refusal diagnostics for durable evidence and commits; no invented dispatch or acceptance.",
+      "expected_state": "Only the explicitly authorized fixture transition is permitted; all other protected state and review/source boundaries remain exact.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Observe normal behavior for durable evidence and commits, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Observe invalid behavior for durable evidence and commits, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Observe cancel behavior for durable evidence and commits, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Observe scope behavior for durable evidence and commits, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Observe save_reopen behavior for durable evidence and commits, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Observe accessibility behavior for durable evidence and commits, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Observe failure_recovery behavior for durable evidence and commits, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        }
+      },
+      "method": "infrastructure"
+    },
+    {
+      "id": "OR-S07",
+      "consumer_ids": [
+        "validator",
+        "selector"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-CONTRACT -->"
+        }
+      ],
+      "preconditions": "Owned isolated fixture with recorded source, exact authority/base, lease, tracker, environment and case parameters. No live hostile mutation.",
+      "inputs": [
+        "Execute every OR-S07 variant listed in the controlling plan; retain individual observations."
+      ],
+      "expected_visible": "Actual success/refusal diagnostics for diagnostics and interruption; no invented dispatch or acceptance.",
+      "expected_state": "Only the explicitly authorized fixture transition is permitted; all other protected state and review/source boundaries remain exact.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Observe normal behavior for diagnostics and interruption, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Observe invalid behavior for diagnostics and interruption, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Observe cancel behavior for diagnostics and interruption, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Observe scope behavior for diagnostics and interruption, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Observe save_reopen behavior for diagnostics and interruption, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Observe accessibility behavior for diagnostics and interruption, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Observe failure_recovery behavior for diagnostics and interruption, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        }
+      },
+      "method": "infrastructure"
+    },
+    {
+      "id": "OR-S08",
+      "consumer_ids": [
+        "validator",
+        "selector"
+      ],
+      "requirement_refs": [
+        {
+          "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+          "marker": "<!-- OWNER-REVISION-CONTRACT -->"
+        }
+      ],
+      "preconditions": "Owned isolated fixture with recorded source, exact authority/base, lease, tracker, environment and case parameters. No live hostile mutation.",
+      "inputs": [
+        "Execute every OR-S08 variant listed in the controlling plan; retain individual observations."
+      ],
+      "expected_visible": "Actual success/refusal diagnostics for installed entry points and independent review; no invented dispatch or acceptance.",
+      "expected_state": "Only the explicitly authorized fixture transition is permitted; all other protected state and review/source boundaries remain exact.",
+      "dimensions": {
+        "normal": {
+          "disposition": "required",
+          "reason": "Observe normal behavior for installed entry points and independent review, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "invalid": {
+          "disposition": "required",
+          "reason": "Observe invalid behavior for installed entry points and independent review, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "cancel": {
+          "disposition": "required",
+          "reason": "Observe cancel behavior for installed entry points and independent review, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "scope": {
+          "disposition": "required",
+          "reason": "Observe scope behavior for installed entry points and independent review, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "precision": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "undo_redo": {
+          "disposition": "not_applicable",
+          "reason": "No CAD precision or design undo is authored.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "save_reopen": {
+          "disposition": "required",
+          "reason": "Observe save_reopen behavior for installed entry points and independent review, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "accessibility": {
+          "disposition": "required",
+          "reason": "Observe accessibility behavior for installed entry points and independent review, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        },
+        "failure_recovery": {
+          "disposition": "required",
+          "reason": "Observe failure_recovery behavior for installed entry points and independent review, including the exact required variants in the plan.",
+          "authority_refs": [
+            {
+              "path": "specs/WORKFLOW_OWNER_REVISION_CONTRACT.md",
+              "marker": "<!-- OWNER-REVISION-FOUNDATIONS -->"
+            }
+          ]
+        }
+      },
+      "method": "infrastructure"
+    }
+  ],
+  "proof_path": "docs/reviews/workflow-owner-revision/producer-proof.json",
+  "review_path": "docs/reviews/workflow-owner-revision/independent-review.json"
+}

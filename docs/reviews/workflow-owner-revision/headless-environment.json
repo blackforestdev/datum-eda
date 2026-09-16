@@ -1,0 +1,48 @@
+{
+  "input_method": "Process arguments and standard streams",
+  "kind": "headless",
+  "os": "Linux-6.12.107+deb13-amd64-x86_64-with-glibc2.41",
+  "reproduction_commands": [
+    "python3 -I -S -B scripts/workflow_delivery_observe_python.py --source-root . --output \"$WDQ_CALLS\" --function main --function selector_failures --script scripts/check_workflow_delivery.py -- --root \"$WDQ_SNAPSHOT\" --enforce --authority-ref \"$WDQ_AUTHORITY\" --base-ref \"$WDQ_BASE\" --environment-path specs/workflow_delivery/owner-revision.environments.json --staged",
+    "python3 -I -S -B scripts/workflow_delivery_observe_python.py --source-root . --output \"$WDQ_CALLS\" --function main --function selector_failures --script scripts/check_workflow_delivery.py -- --root \"$WDQ_SNAPSHOT\" --enforce --authority-ref \"$WDQ_AUTHORITY\" --base-ref \"$WDQ_BASE\" --environment-path specs/workflow_delivery/owner-revision.environments.json --candidate-ref \"$WDQ_CANDIDATE\"",
+    "python3 -I -S -B scripts/workflow_delivery_observe_python.py --source-root . --output \"$WDQ_CALLS\" --function main --function selector_failures --script scripts/project_status.py -- --root \"$WDQ_SNAPSHOT\" --json check",
+    "python3 -I -S -B scripts/workflow_delivery_observe_python.py --source-root . --output \"$WDQ_CALLS\" --function main --function selector_failures --script scripts/project_status.py -- --root \"$WDQ_SNAPSHOT\" --json details WORKFLOW-OWNER-REVISION",
+    "DATUM_WDQ_OBSERVE_PATH=\"$WDQ_CALLS\" \"$WDQ_HOOK\" # From the exact owned fixture root with pinned local trust; recipe only, not an execution assertion"
+  ],
+  "schema_version": 2,
+  "terminal_size": null,
+  "toolchain": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]",
+  "tools": [
+    {
+      "name": "interpreter",
+      "path": "/usr/bin/python3.13",
+      "sha256": "889c603f0d17cb54060951bcf4c4f9b8c9ebd9e52b392c70209bbb9755d797d9",
+      "version": "3.13.5 (main, Aug 10 2026, 12:06:59) [GCC 14.2.0]"
+    },
+    {
+      "name": "git",
+      "path": "/usr/bin/git",
+      "sha256": "356db14e102d68a1a37d8a1ac577dfd678d45d46e92f468bef8b7154e7bfdc60",
+      "version": "git version 2.47.3"
+    },
+    {
+      "name": "bash",
+      "path": "/usr/bin/bash",
+      "sha256": "223fe8564b60636bc738b6178d3ba9a50ef7d791266b0efae6363bb716e4c47f",
+      "version": "GNU bash, version 5.2.37(1)-release (x86_64-pc-linux-gnu)\nCopyright (C) 2022 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n\nThis is free software; you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law."
+    },
+    {
+      "name": "realpath",
+      "path": "/usr/bin/realpath",
+      "sha256": "43708156c6862ae153685c621c4b9c601ae3f77fefa737cf2f47f3a0f5afaf24",
+      "version": "realpath (GNU coreutils) 9.7\nPackaged by Debian (9.7-3)\nCopyright (C) 2025 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten by P\u00e1draig Brady."
+    },
+    {
+      "name": "env",
+      "path": "/usr/bin/env",
+      "sha256": "eb1c64bbc9908afcdf8cb48524f17112d8dd76a249f80dee2f01da14747b3b6e",
+      "version": "env (GNU coreutils) 9.7\nPackaged by Debian (9.7-3)\nCopyright (C) 2025 Free Software Foundation, Inc.\nLicense GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.\nThis is free software: you are free to change and redistribute it.\nThere is NO WARRANTY, to the extent permitted by law.\n\nWritten by Richard Mlynarik, David MacKenzie, and Assaf Gordon."
+    }
+  ],
+  "transport": "pipes"
+}
