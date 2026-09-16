@@ -32,6 +32,5 @@
     "evidence_status": "Producer logs only; not independently replayed or promoted by this admission record. Recheck manifest identities before reuse."
   },
   "preserved_product_proposal": "/tmp/datum-gp-cm05-revision",
-  "related_existing_failure": "dat-wdq-environment-parity-jmo",
-  "handoff": "docs/reviews/workflow-owner-revision/finish-agent-prompt.md"
+  "related_existing_failure": "dat-wdq-environment-parity-jmo"
 }
