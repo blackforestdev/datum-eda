@@ -53,6 +53,47 @@ class EvidenceTests(unittest.TestCase):
                 with self.subTest(field=field, change=change), self.assertRaises(EvidenceError):
                     self.check(report)
 
+    def test_matching_noop_command_log_cannot_replace_fixture_recipe(self):
+        report = deepcopy(self.fixture.report)
+        bundle = self.fixture.refresh()
+        row = report['case_results'][0]
+        log = bundle.json(row['log'])
+        row['command'] = log['command'] = ['true']
+        row['log'] = self.fixture.put(log)
+        report['artifacts'] = list(self.fixture.artifacts.values())
+        from global_preferences_acceptance.identity import validate_environments
+        from global_preferences_acceptance.observations import validate_cases
+        with self.assertRaises(EvidenceError):
+            validate_cases(report, Bundle(self.fixture.directory, report['artifacts']),
+                           validate_environments(report['environments']),
+                           {k: v['sha256'] for k, v in report['candidate']['binaries'].items()})
+
+    def test_case_recipe_parameters_and_interpreter_are_not_substitutable(self):
+        from global_preferences_acceptance.identity import validate_environments
+        from global_preferences_acceptance.observations import validate_cases
+        bundle = self.fixture.refresh()
+        original = self.fixture.report['case_results'][0]['command']
+        fixture_argument = json.loads(original[3])
+        fixture_argument['parameters']['coverage'][1] = 'other-variant'
+        substitutions = [
+            ['python3', 'scripts/other_recipe.py', *original[2:]],
+            [*original[:3], json.dumps(fixture_argument)],
+            original[:2],
+            [*original, '--skip-case'],
+            ['sh', '-c', 'true'],
+        ]
+        for command in substitutions:
+            report = deepcopy(self.fixture.report)
+            row = report['case_results'][0]
+            log = bundle.json(row['log'])
+            row['command'] = log['command'] = command
+            row['log'] = self.fixture.put(log)
+            report['artifacts'] = list(self.fixture.artifacts.values())
+            with self.subTest(command=command[:3]), self.assertRaisesRegex(EvidenceError, 'frozen fixture recipe and parameters'):
+                validate_cases(report, Bundle(self.fixture.directory, report['artifacts']),
+                               validate_environments(report['environments']),
+                               {k: v['sha256'] for k, v in report['candidate']['binaries'].items()})
+
     def test_identity_refusals(self):
         for field in ('candidate_revision', 'input_manifest_sha256', 'matrix_sha256', 'binary_sha256'):
             report = deepcopy(self.fixture.report)

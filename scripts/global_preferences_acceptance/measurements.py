@@ -43,6 +43,10 @@ def validate_trials(measurement, bundle):
                             measurement={k: v for k, v in measurement.items() if k != "trials"})
         require(canonical(raw_trial) == canonical(expected_raw),
                 "reported trial differs from retained raw observations")
+        def context(phase):
+            return {"measurement": {k: v for k, v in measurement.items() if k != "trials"},
+                    "trial_index": trial["index"], "phase": phase}
+
         if budget == "window-lifecycle":
             integer(trial["baseline_rss_kib"], "warmed RSS baseline", 1)
             closed(trial["baseline_resources"], "owned_windows writer_leases", "baseline resources")
@@ -52,7 +56,7 @@ def validate_trials(measurement, bundle):
             require(trial["baseline_rss_kib"] is None, "baseline is lifecycle-only")
             require(trial["baseline_resources"] is None, "resource baseline is lifecycle-only")
         if budget == "native-window-open":
-            _timed_sample(trial["cold_open"], budget, limits, bundle)
+            _timed_sample(trial["cold_open"], budget, limits, bundle, context=context("cold_open"))
             require(trial["cold_open"]["index"] == 0, "cold-open index must be zero")
         else:
             require(trial["cold_open"] is None, "cold open is window-open-only")
@@ -64,17 +68,17 @@ def validate_trials(measurement, bundle):
                 "all ten warm-up observations required")
         for sample in warmups:
             require(type(sample) is dict and set(sample) == set(samples[0]), "warm-up shape differs")
-            # Warm-ups retain the full observed shape; only their numeric budgets
+            # Warm-ups retain the full observed shape; only their latency budgets
             # are excluded. Failed operations and leaked resources are never ignored.
             unbounded = {key: (float("inf") if key in {"p95_ms", "max_ms"} else value)
                          for key, value in limits.items()}
             if budget == "storage-growth":
-                _storage_sample(sample, measurement["variant_id"], unbounded, bundle)
+                _storage_sample(sample, measurement["variant_id"], unbounded, bundle, context=context("warmups"))
             elif budget == "window-lifecycle":
                 _lifecycle_sample(sample, trial["baseline_rss_kib"], unbounded, bundle,
-                                  trial["baseline_resources"])
+                                  trial["baseline_resources"], context=context("warmups"))
             else:
-                _timed_sample(sample, budget, unbounded, bundle)
+                _timed_sample(sample, budget, unbounded, bundle, context=context("warmups"))
                 if budget == "durable-mutation":
                     require((sample["daemon_rss_kib"] is not None) == measurement["variant_id"].endswith("/daemon"),
                             "warm-up daemon accounting differs")
@@ -95,12 +99,12 @@ def validate_trials(measurement, bundle):
         elapsed = []
         for sample in samples:
             if budget == "storage-growth":
-                _storage_sample(sample, measurement["variant_id"], limits, bundle)
+                _storage_sample(sample, measurement["variant_id"], limits, bundle, context=context("samples"))
             elif budget == "window-lifecycle":
                 _lifecycle_sample(sample, trial["baseline_rss_kib"], limits, bundle,
-                                  trial["baseline_resources"])
+                                  trial["baseline_resources"], context=context("samples"))
             else:
-                elapsed.append(_timed_sample(sample, budget, limits, bundle))
+                elapsed.append(_timed_sample(sample, budget, limits, bundle, context=context("samples")))
                 if budget == "durable-mutation":
                     require((sample["daemon_rss_kib"] is not None) ==
                             measurement["variant_id"].endswith("/daemon"),
@@ -110,18 +114,26 @@ def validate_trials(measurement, bundle):
                     f"{budget}: trial {trial['index']} p95 exceeds budget")
 
 
-def _identity(sample, bundle):
+def _identity(sample, bundle, context):
     integer(sample["index"], "sample index")
     integer(sample["started_monotonic_ns"], "monotonic start", 1)
     require(sample["outcome"] == "success", "failed or skipped measurement")
-    bundle.read(sample["evidence"])
+    capture = bundle.json(sample["evidence"])
+    closed(capture, "schema measurement trial_index phase exit_code timed_out observation", "measurement capture")
+    require(capture["schema"] == "datum.preferences.measurement-capture.v2", "unknown measurement capture schema")
+    require(canonical({k: capture[k] for k in context}) == canonical(context),
+            "measurement capture execution identity differs")
+    require(type(capture["exit_code"]) is int and capture["exit_code"] == 0
+            and capture["timed_out"] is False, "measurement capture failed or timed out")
+    require(canonical(capture["observation"]) == canonical({k: v for k, v in sample.items() if k != "evidence"}),
+            "reported sample differs from underlying measurement capture")
 
 
-def _timed_sample(sample, budget, limits, bundle):
+def _timed_sample(sample, budget, limits, bundle, *, context):
     closed(sample, "kind index started_monotonic_ns elapsed_ns rss_kib daemon_rss_kib launch_to_response_ns "
            "presented_elapsed_ns outcome evidence", "timed sample")
     require(sample["kind"] == "timed", "timed sample required")
-    _identity(sample, bundle)
+    _identity(sample, bundle, context)
     elapsed = integer(sample["elapsed_ns"], "elapsed nanoseconds")
     integer(sample["rss_kib"], "process RSS", 1)
     require(elapsed <= limits["max_ms"] * 1_000_000, f"{budget}: maximum exceeded")
@@ -149,11 +161,11 @@ def _timed_sample(sample, budget, limits, bundle):
     return elapsed
 
 
-def _storage_sample(sample, variant, limits, bundle):
+def _storage_sample(sample, variant, limits, bundle, *, context):
     closed(sample, "kind index started_monotonic_ns project_bytes generation_bytes receipt_bytes request_index_bytes "
            "fixed_overhead_bytes before after outcome evidence", "storage sample")
     require(sample["kind"] == "storage", "storage sample required")
-    _identity(sample, bundle)
+    _identity(sample, bundle, context)
     for field in ("project_bytes", "generation_bytes", "receipt_bytes", "request_index_bytes",
                   "fixed_overhead_bytes"):
         integer(sample[field], field)
@@ -193,11 +205,11 @@ def _storage_sample(sample, variant, limits, bundle):
                 "genesis must not mutate preference storage")
 
 
-def _lifecycle_sample(sample, baseline, limits, bundle, baseline_resources):
+def _lifecycle_sample(sample, baseline, limits, bundle, baseline_resources, *, context):
     closed(sample, "kind index started_monotonic_ns post_close_rss_kib orphan_windows orphan_writer_leases "
            "owned_windows writer_leases outcome evidence", "lifecycle sample")
     require(sample["kind"] == "lifecycle", "lifecycle sample required")
-    _identity(sample, bundle)
+    _identity(sample, bundle, context)
     integer(sample["post_close_rss_kib"], "post-close RSS", 1)
     require(sample["post_close_rss_kib"] - baseline <= limits["max_rss_growth_mib"] * 1024,
             "post-close peak RSS growth exceeded")

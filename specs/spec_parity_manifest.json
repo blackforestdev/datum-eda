@@ -154,7 +154,8 @@
         "IndependentReviewV2",
         "ReleaseHandoffV2",
         "OwnerAcceptanceV2",
-        "PublicationReviewV2"
+        "PublicationReviewV2",
+        "MeasurementCaptureV2"
       ]
     }
   ]
