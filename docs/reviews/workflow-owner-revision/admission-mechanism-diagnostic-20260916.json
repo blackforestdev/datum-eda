@@ -1,0 +1,27 @@
+{
+  "kind": "workflow_repair_admission_mechanism_diagnostic",
+  "issue_id": "dat-workflow-owner-revision-71j",
+  "base_commit": "117e32a1793d00c57ce1896a55b4861fa716fe43",
+  "installed_authority": "ac33c634092967f71364bf61174119bca6040de8",
+  "method": "Read-only calls to installed-identical promotion boundary functions with an in-memory new infrastructure identity. No candidate publication, trust selection, claim, or implementation mutation. This is a boundary diagnostic, not full activation or independent proof.",
+  "checked_source_sha256": {
+    "scripts/workflow_delivery_activation_preflight.py": "1039a7cdf37da55a5f281a17a25c2089a76ff18fd399614b523ea000c751fedc",
+    "scripts/workflow_delivery_activation.py": "993a6eb714851033f13bdf063b5a3c78308426bcbdd28dec5a098c69398d6aec",
+    "scripts/workflow_delivery_prepare.py": "3e57f33bc2a98fc30439d56e0b7fd94ffc2ed992a31bf52ae6d1d6dfbbb0121c",
+    "scripts/workflow_delivery_prepare_handoff.py": "1c121c090c0279cf76829956361997ec9aebb384fa9b7bc409e1e0234ebd84de"
+  },
+  "observed": {
+    "preparation_scope_migration": false,
+    "initial_mapping_migration": false,
+    "promotion_boundary": "WDQ-PREFLIGHT: promotion cannot add or remove Frontier identities"
+  },
+  "finding": "Existing promotion dispatch has no general governance-only new-task admission path. Changed policy makes recovery false; existing preparation_scopes rules out its one-time migration; schema 2 rules out initial migration; default publication rejects changed Frontier identity sets. The older prepare entry point is hard-coded to G06 pilot completion and is not a general admission mechanism.",
+  "required_owner_disposition": "Ratify a bounded admission mechanism or explicitly specify a separately reviewed owner-controlled bootstrap transaction. The existing governance-only authorization does not approve new gate code, an unseen activation packet, private trust repinning, or bypassing enforcement.",
+  "admitted": false,
+  "claim_created": false,
+  "implementation_resumed": false,
+  "promotion_performed": false,
+  "product_acceptance": false,
+  "candidate_preserved": "/tmp/datum-workflow-owner-revision",
+  "preferences_preserved": "/tmp/datum-gp-cm05-revision"
+}
