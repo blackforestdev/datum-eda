@@ -1,6 +1,6 @@
 # Product Mechanics 044: incremental work and historical delivery
 
-Status: owner-authorized correction candidate; installation remains pending.
+Status: installed after exact owner approval on 2026-09-16; see installation record.
 Tracking: `dat-workflow-owner-revision-71j`, bounded maintenance associated with
 OR-C01; this does not resume or complete the stopped seven-gap repair program.
 Evidence route: `workflow-incremental-delivery`.
@@ -80,3 +80,30 @@ An in-memory check of the real policy confirms the three launch paths refuse
 without the product agent's matching claim and pass with those exact additions.
 No live product claim was modified. Final committed-candidate inspection and
 installation remain separate from these preparation results.
+
+## Installation record — 2026-09-16
+
+Owner response: `Approve activation 6c1e2e1ec1747ac39af062636fbc5b96f1783d24`.
+Installed authority and base both pin that commit. The runner and hook reside
+under `.git/datum-wdq/trusted/6c1e2e1ec1747ac39af062636fbc5b96f1783d24/`;
+the environment selection remains `specs/workflow_delivery/rollout.environments.json`.
+
+Publication was unnecessary: main already contained the approved commit, the
+landed launch correction and later GUI performance work. Activation preserved
+HEAD `5f60ef51ec8e2e6084e12f91d33fff2a6a3fb287`; it did not merge, reset or
+reapply product code. The sole pending tracker correction added `roadmap:intake`
+to `dat-gui-pointer-layout-x1r`, preserving its owner, open status and evidence.
+
+The prospective enforced gate and installed hook passed with zero findings,
+reporting historical pilot acceptance and historical rollout structural evidence
+at `a467ccc4dc87df54a6fa26926c26cd8d8ef4cf68`, never acceptance of current product
+code. Initial selector verification refused one stale generated
+`scripts/__pycache__/workflow_delivery_trust.cpython-313.pyc`; the partial state
+was retained and logged. Removing that regenerable cache alone restored the
+selector: `Project status check passed (57 frontier items)`.
+
+The activation journal is `.git/datum-wdq/logs/pm044-activation-rnrt2ean.jsonl`.
+Installed support remains pinned and verified. Source, dependency, prototype,
+live-claim and final product acceptance checks remain enforced. Product owners
+must synchronize their own claim for newly permitted paths; this installation
+neither claims their work nor closes GP-CM05E or the separate seven-gap repair.

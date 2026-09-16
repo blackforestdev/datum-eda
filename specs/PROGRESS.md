@@ -196,7 +196,7 @@
 
 | Governed preparation | Current evidence | Remaining boundary |
 | --- | --- | --- |
-| PM044 `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md` | Bounded owner-authorized maintenance candidate: revision-bound historical delivery, incremental readiness, and the three GUI-launch permission paths. One-time correction-commit hook exception authorized after direct checks. | Exact installation remains pending. This does not restart or complete the seven-gap program, apply the GUI patch, or accept Preferences. |
+| PM044 `docs/decisions/PRODUCT_MECHANICS_044_INCREMENTAL_DELIVERY_BOUNDARIES.md` | Owner-approved authority `6c1e2e1e` installed and verified on 2026-09-16: historical delivery is revision-bound, source-only readiness escalation removed, three GUI-launch permissions added. Installed hook and 57-item project-state check pass. | Product owners synchronize their own claims for new paths and retain current verification/acceptance obligations. No product acceptance or seven-gap-program completion follows. |
 | `specs/WORKFLOW_OWNER_REVISION_CONTRACT.md`, `specs/workflow_delivery/owner-revision.contract.json`, `docs/reviews/workflow-owner-revision/cases.json` | All seven audited gaps are explicit acceptance requirements; 87 individual recipe rows are registered as unexecuted planning inputs. The owner-directed handoff and new synchronized claim are committed. | Bind proposed entry points to the numbered mechanism and exact reviewed source/enrollment proposal, then collect actual producer and independent evidence. No execution readiness or installed repair is asserted. |
 
 Admission commit `89abd560` installed the WORKFLOW-OWNER-REVISION identity and
