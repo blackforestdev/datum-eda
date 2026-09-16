@@ -412,6 +412,16 @@ Each required assertion is an affirmative property computed by that reviewed
 recipe; its frozen predicate is exactly `{operator: "equal", value: true}`.
 The producer cannot weaken an expectation by choosing a false golden.
 
+Each case command is exactly the argv array `python3`, the candidate-bound
+`recipe.path`, `--fixture-json`, and one canonical JSON string containing the
+complete frozen fixture. This passes every parameter, including coverage,
+surface and display coordinates, plus initial state and expectations. The
+validator derives this argv from the verified fixture and compares both the
+case row and retained command log with it. A matching log for `true`, a
+different recipe, a wrapper, dropped parameters or extra bypass flags fails.
+Recipes resolve retained state references within their supplied proof bundle;
+the fixture JSON is argument data, never shell text or executable source.
+
 A state manifest has `{schema, root, files}`, schema
 `datum.preferences.state.v2`. Files are sorted unique `{path, kind, bytes,
 sha256}` entries; `kind` is `file` or `absent`. Absence has zero bytes and null
@@ -469,6 +479,25 @@ The raw trial log contains the same fields except `log`, plus
 `schema: "datum.preferences.measurement-trial.v2"` and `measurement` (the exact
 measurement row without trials). Thus a complete raw trial cannot be relabeled
 for another binary, candidate, variant or display configuration.
+
+Every sample's `evidence` resolves to a closed
+`{schema, measurement, trial_index, phase, exit_code, timed_out, observation}`
+capture with schema `datum.preferences.measurement-capture.v2`. `measurement`
+is the exact measurement row without trials; `trial_index` is the current
+trial index; `phase` is `cold_open`, `warmups` or `samples` as applicable.
+`exit_code` must be the integer zero and `timed_out` must be Boolean false.
+`observation` contains all fields of the corresponding sample except its
+`evidence` reference: raw outcome, timestamp, timings, process/daemon RSS,
+presentation acknowledgement, storage state references/counts or lifecycle
+resources, according to kind. These are recorded by the capture path before
+report assembly. Every reported value must equal the underlying capture value
+with strict JSON types. Budget checks then apply to those verified values.
+Existence of an artifact, a successful outer trial, or a matching trial-log copy
+cannot override a failed, stale or contradictory individual capture. This
+requirement applies equally to measured samples, warm-ups and cold opens.
+Older incomplete V2 captures lacking this binding must be recaptured; they are
+not upgraded by generating new success labels from report values. Synthetic
+fixtures exercise this format only in the separate test-only validation mode.
 
 Every sample has `kind`, `index`, `started_monotonic_ns`, `outcome`, `evidence`.
 Outcome must be success; start timestamps are positive and strictly ordered

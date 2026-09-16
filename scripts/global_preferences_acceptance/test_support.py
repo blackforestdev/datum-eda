@@ -9,7 +9,7 @@ from .inputs import Bundle, canonical, digest
 from .inventory import NATIVE_ASSERTIONS, PRODUCT_BOUNDARY
 from .matrix import case_inventory, gui_coordinates
 from .measurements import measurement_inventory
-from .observations import observation_context
+from .observations import case_command, observation_context
 
 
 class SyntheticBundle:
@@ -59,7 +59,7 @@ class SyntheticBundle:
                    'subcase_id': subcase, 'surface': surface, 'fixture': fixture,
                    'executed_tests': 1, 'before': self.state, 'after': self.state}
             row['assertions'] = self.assertions(required, observation_context(row))
-            row.update(self.command(['python3', 'scripts/fixture.py', case, variant, subcase],
+            row.update(self.command(case_command(json.loads((self.directory / fixture['path']).read_bytes())),
                                     {r: True for r in required}))
             self.report['case_results'].append(row)
         for scenario, required in NATIVE_ASSERTIONS.items():
@@ -91,7 +91,7 @@ class SyntheticBundle:
                 if budget == 'storage-growth' and variant == 'generation':
                     self.storage_history(trial)
                 row['trials'].append(trial)
-            self.rebind_trials(row)
+            self.rebind_trials(row, capture_samples=True)
             self.report['measurements'].append(row)
         for gate, argv in commands(self.root).items():
             self.report['gate_results'].append({'id': gate, 'candidate_revision': self.revision,
@@ -200,8 +200,17 @@ class SyntheticBundle:
         rows.append({'category': 'native', 'coverage': coverage, **{k: native[k] for k in ('command', 'exit_code', 'log')}})
         return rows
 
-    def rebind_trials(self, row):
+    def rebind_trials(self, row, *, capture_samples=False):
         for trial in row['trials']:
+            if capture_samples:
+                for phase in ('cold_open', 'warmups', 'samples'):
+                    samples = ([trial[phase]] if trial[phase] else []) if phase == 'cold_open' else trial[phase]
+                    for sample in samples:
+                        sample['evidence'] = self.put({
+                            'schema': 'datum.preferences.measurement-capture.v2',
+                            'measurement': {k: v for k, v in row.items() if k != 'trials'},
+                            'trial_index': trial['index'], 'phase': phase, 'exit_code': 0, 'timed_out': False,
+                            'observation': {k: v for k, v in sample.items() if k != 'evidence'}})
             trial['log'] = self.put({k: v for k, v in trial.items() if k != 'log'} | {
                 'schema': 'datum.preferences.measurement-trial.v2',
                 'measurement': {k: v for k, v in row.items() if k != 'trials'}})

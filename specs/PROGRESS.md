@@ -3225,3 +3225,8 @@ This contract refines the already selected GLOBAL-PREFERENCES-COMPLETION /
 step, workflow-repair work, prototype change, dependency or broader product
 authority. Historical aggregate-seed proposals in GP-C06 remain subordinate
 to PM-037/PM-040 and the eight individual active Units seeds.
+
+The c243eb5e follow-up audit correction binds individual measurement captures
+to reported values and success status, and binds case commands to the exact
+candidate fixture recipe and parameters. These are GP-CM05E validator fixes;
+they do not complete the step or establish product readiness or acceptance.

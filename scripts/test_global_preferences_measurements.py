@@ -28,7 +28,7 @@ class MeasurementTests(unittest.TestCase):
                              and (variant is None or r['variant_id'] == variant)))
 
     def check(self, row):
-        self.fixture.rebind_trials(row)
+        self.fixture.rebind_trials(row, capture_samples=True)
         validate_trials(row, self.fixture.refresh())
 
     def test_nearest_rank_and_all_complete_variants(self):
@@ -37,6 +37,57 @@ class MeasurementTests(unittest.TestCase):
         bundle = self.fixture.refresh()
         for row in self.fixture.report['measurements']:
             validate_trials(row, bundle)
+
+    def test_sample_cannot_contradict_its_retained_capture(self):
+        for field, value in [('exit_code', 7), ('timed_out', True),
+                             ('outcome', 'failure'), ('elapsed_ns', 10**12), ('rss_kib', 10**9)]:
+            row = self.row('release-query')
+            sample = row['trials'][0]['samples'][0]
+            raw = {'schema': 'datum.preferences.measurement-capture.v2',
+                   'measurement': {k: v for k, v in row.items() if k != 'trials'},
+                   'trial_index': 0, 'phase': 'samples', 'exit_code': 0, 'timed_out': False,
+                   'observation': {k: v for k, v in sample.items() if k != 'evidence'}}
+            (raw if field in ('exit_code', 'timed_out') else raw['observation'])[field] = value
+            sample['evidence'] = self.fixture.put(raw)
+            self.fixture.rebind_trials(row)
+            with self.subTest(field=field), self.assertRaises(EvidenceError):
+                validate_trials(row, self.fixture.refresh())
+
+    def test_all_sample_kinds_and_phases_bind_capture_values_and_identity(self):
+        bundle = self.fixture.refresh()
+        for budget, phase, field, value in [
+            ('release-query', 'warmups', 'rss_kib', 10**9),
+            ('native-window-open', 'cold_open', 'elapsed_ns', 10**12),
+            ('storage-growth', 'samples', 'project_bytes', 10**9),
+            ('window-lifecycle', 'samples', 'post_close_rss_kib', 10**9),
+            ('durable-mutation', 'samples', 'launch_to_response_ns', 10**12),
+            ('gui-feedback', 'samples', 'presented_elapsed_ns', 10**12),
+        ]:
+            row = self.row(budget)
+            sample = row['trials'][0][phase] if phase == 'cold_open' else row['trials'][0][phase][0]
+            capture = bundle.json(sample['evidence'])
+            capture['observation'][field] = value
+            sample['evidence'] = self.fixture.put(capture)
+            self.fixture.rebind_trials(row)
+            with self.subTest(budget=budget, phase=phase), self.assertRaisesRegex(EvidenceError, 'underlying measurement capture'):
+                validate_trials(row, self.fixture.refresh())
+        for field, value in [('trial_index', 2), ('phase', 'warmups'), ('measurement', {})]:
+            row = self.row('release-query')
+            sample = row['trials'][0]['samples'][0]
+            capture = bundle.json(sample['evidence'])
+            capture[field] = value
+            sample['evidence'] = self.fixture.put(capture)
+            self.fixture.rebind_trials(row)
+            with self.subTest(field=field), self.assertRaisesRegex(EvidenceError, 'execution identity'):
+                validate_trials(row, self.fixture.refresh())
+
+    def test_consistently_reported_failed_capture_cannot_pass(self):
+        row = self.row('release-query')
+        sample = row['trials'][0]['samples'][0]
+        sample['outcome'] = 'failure'
+        self.fixture.rebind_trials(row, capture_samples=True)
+        with self.assertRaises(EvidenceError):
+            validate_trials(row, self.fixture.refresh())
 
     def test_each_timed_max_p95_and_rss(self):
         for budget, limits in BUDGETS.items():

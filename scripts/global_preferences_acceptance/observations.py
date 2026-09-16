@@ -104,6 +104,16 @@ def fixture(reference, bundle, required, report, coverage):
     return value
 
 
+def case_command(frozen):
+    """Execute the input-bound recipe with the complete frozen fixture as data.
+
+    A single canonical JSON argv argument carries every parameter, including
+    surface and display coordinates. No shell or caller-selected wrapper can
+    replace the recipe or silently drop a fixture parameter.
+    """
+    return ["python3", frozen["recipe"]["path"], "--fixture-json", canonical(frozen).decode("utf-8")]
+
+
 def command_observation(row, bundle, *, tests=None):
     command_line(row["command"])
     require(type(row["exit_code"]) is int and row["exit_code"] == 0,
@@ -144,6 +154,8 @@ def validate_cases(report, bundle, environments, binaries):
         require(key in required and key not in observed, "unknown or duplicate case coverage")
         observed.add(key)
         frozen = fixture(row["fixture"], bundle, required[key], report, key)
+        require(row["command"] == case_command(frozen),
+                "case command does not execute the frozen fixture recipe and parameters")
         require(row["before"] == frozen["initial_state"], "case did not start from frozen fixture state")
         assertions(row["assertions"], frozen["expected_assertions"], bundle, observation_context(row))
         state_manifest(row["before"], bundle)
