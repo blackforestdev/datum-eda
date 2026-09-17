@@ -109,16 +109,29 @@ impl App {
                     surface.set_cursor_position(Some((position.x as f32, position.y as f32)));
                 }
             }
+            WindowEvent::Focused(false) => {
+                if let Some(surface) = &mut self.project_preferences_surface {
+                    surface.scrollbar_input(ElementState::Released);
+                }
+            }
             WindowEvent::CursorLeft { .. } => {
                 if let Some(surface) = &mut self.project_preferences_surface {
                     surface.set_cursor_position(None);
                 }
             }
             WindowEvent::MouseInput {
-                state: ElementState::Released,
+                state,
                 button: MouseButton::Left,
                 ..
             } => {
+                if self
+                    .project_preferences_surface
+                    .as_mut()
+                    .is_some_and(|surface| surface.scrollbar_input(state))
+                    || state != ElementState::Released
+                {
+                    return;
+                }
                 let target = self
                     .project_preferences_surface
                     .as_ref()

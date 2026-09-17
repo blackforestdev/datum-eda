@@ -23,6 +23,7 @@ pub mod grid;
 pub mod hit;
 pub mod interaction;
 pub mod profile;
+pub mod scroll;
 pub mod stroke;
 pub mod terminal_grid_geometry;
 
