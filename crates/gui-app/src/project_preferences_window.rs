@@ -129,22 +129,7 @@ impl App {
                 self.request_redraw_if_needed();
             }
             WindowEvent::MouseWheel { delta, .. } => {
-                let rows = match delta {
-                    MouseScrollDelta::LineDelta(_, y) => y.round() as i32,
-                    MouseScrollDelta::PixelDelta(position) => (position.y / 40.0).round() as i32,
-                };
-                if rows != 0
-                    && let Some(runtime) = &mut self.runtime
-                    && runtime
-                        .session
-                        .workspace_mut()
-                        .ui
-                        .project_preferences
-                        .scroll_rows(rows)
-                {
-                    runtime.invalidate_frame();
-                }
-                self.request_redraw_if_needed();
+                self.scroll_preferences_window(delta, true);
             }
             WindowEvent::ModifiersChanged(modifiers) => {
                 if let Some(runtime) = &mut self.runtime {

@@ -1,6 +1,9 @@
 //! Production Global Preferences dialog chrome for the engine-owned GP-F05 rows.
 
 use super::*;
+
+#[path = "render/preferences_scene.rs"]
+mod preferences_scene;
 use crate::global_preferences_primitives::{
     button, draw_header_chip, draw_preference_control, draw_search_icon,
     push_rounded_rect_with_border,
@@ -27,6 +30,21 @@ pub(super) fn render_global_preferences_dialog(
             text,
             hits,
         );
+        return;
+    }
+
+    render_preferences_dialog(dialog, layout, quads, text, hits);
+}
+
+/// Render the shared Project/Global dialog directly, without a workspace scene.
+pub(super) fn render_preferences_dialog(
+    dialog: &datum_gui_protocol::GlobalPreferencesDialogState,
+    layout: &ShellLayout,
+    quads: &mut Vec<Quad>,
+    text: &mut Vec<TextRun>,
+    hits: &mut Vec<HitRegion>,
+) {
+    if !dialog.open {
         return;
     }
 
