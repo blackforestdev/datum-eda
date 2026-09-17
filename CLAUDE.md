@@ -293,6 +293,16 @@ domain builds toward on the landed substrate.
   a separate phase: name it as execution and get explicit authorization
   before doing it. "Proof slice" / "proof gate" sections in the docs are
   specifications of what execution must later demonstrate, not to-dos.
+- **Read-only research is not implementation.** Codebase audits, external
+  research, and conversational architecture planning do not require a live
+  implementation claim or a successful roadmap selector. Disclose unrelated
+  selector/claim failures and continue the investigation. This exception grants
+  no production edits, dependency adoption, reassignment, acceptance, or
+  canonical-next claims. Canonical next-task/completion queries still require
+  the fresh selector and its failure behavior. Tracked research/specification
+  writes and roadmap amendments retain applicable owner authorization and
+  same-change governance. An explicitly owner-approved planning amendment
+  never authorizes renderer implementation by implication.
 - **Dependency authority is owner-only.** Decision 029 forbids agents from
   adding any new third-party code dependency without an explicit numbered
   owner decision naming it and accepting its license obligations. Roadmap

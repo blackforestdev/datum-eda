@@ -1,0 +1,952 @@
+{
+  "schema_version": 1,
+  "marker": "WDQ-CLAUSES.GUI-PERFORMANCE-SPEC",
+  "frontier_key": "GUI-PERFORMANCE-SPEC",
+  "clauses": [
+    {
+      "id": "GUI-PERFORMANCE-R01",
+      "step_id": "GPS-C01",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R01 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R02",
+      "step_id": "GPS-C01",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R02 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R03",
+      "step_id": "GPS-C01",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R03 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R04",
+      "step_id": "GPS-C01",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R04 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R05",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R05 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R06",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R06 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R07",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R07 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R08",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R08 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R09",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R09 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R10",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R10 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R11",
+      "step_id": "GPS-C03",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R11 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R12",
+      "step_id": "GPS-C03",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R12 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R13",
+      "step_id": "GPS-C03",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R13 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R14",
+      "step_id": "GPS-C03",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R14 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R15",
+      "step_id": "GPS-C03",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R15 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R16",
+      "step_id": "GPS-C03",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R16 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R17",
+      "step_id": "GPS-C03",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R17 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R18",
+      "step_id": "GPS-C03",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R18 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R19",
+      "step_id": "GPS-C03",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R19 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R20",
+      "step_id": "GPS-C03",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R20 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R21",
+      "step_id": "GPS-C04",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C04"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R21 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R22",
+      "step_id": "GPS-C04",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C04"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R22 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R23",
+      "step_id": "GPS-C04",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C04"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R23 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R24",
+      "step_id": "GPS-C04",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C04"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R24 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R25",
+      "step_id": "GPS-C04",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C04"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R25 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R26",
+      "step_id": "GPS-C05",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C05"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R26 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R27",
+      "step_id": "GPS-C05",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C05"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R27 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R28",
+      "step_id": "GPS-C05",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C05"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R28 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R29",
+      "step_id": "GPS-C05",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C05"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R29 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R30",
+      "step_id": "GPS-C06",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C06"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R30 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R31",
+      "step_id": "GPS-C06",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C06"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R31 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R32",
+      "step_id": "GPS-C06",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C06"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R32 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R33",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R33 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R34",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R34 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-R35",
+      "step_id": "GPS-C01",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C01"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R35 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R36",
+      "step_id": "GPS-C04",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C04"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R36 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R37",
+      "step_id": "GPS-C04",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C04"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R37 -->"
+        }
+      ],
+      "requires_owner_decision": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R38",
+      "step_id": "GPS-C03",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:R38 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP01",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP01 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP02",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP02 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP03",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP03 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP04",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP04 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP05",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP05 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP06",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP06 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP07",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP07 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP08",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP08 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP09",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP09 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP10",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP10 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP11",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP11 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP12",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP12 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP13",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP13 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP14",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP14 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP15",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP15 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP16",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP16 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP17",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP17 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP18",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP18 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP19",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP19 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP20",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP20 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP21",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP21 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP22",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP22 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP23",
+      "step_id": "GPS-C02",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C02"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP23 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP24",
+      "step_id": "GPS-C03",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP24 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP25",
+      "step_id": "GPS-C03",
+      "requirement_ref": {
+        "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+        "marker": "GPS-C03"
+      },
+      "authority_refs": [
+        {
+          "path": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+          "marker": "<!-- GUI-PERFORMANCE:HP25 -->"
+        }
+      ],
+      "requires_owner_decision": true
+    }
+  ]
+}

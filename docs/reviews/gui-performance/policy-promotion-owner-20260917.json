@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "kind": "datum.gui-performance.policy-promotion-owner-approval",
+  "date": "2026-09-17",
+  "owner_input": "as the WDQ-POLICY owner I approve polocy promotion",
+  "reviewed_patch_sha256": "e239e1f21e7ea283da689d90087cb96e7ec6b93e0ecc8f25f0f4e9d8724900f8",
+  "scope": "Promote the reviewed specification-first planning amendment and its two coverage additions, incorporating the 63-clause historical upgrade. This record captures the subsequent explicit promotion approval; the earlier dated owner-direction record remains historical.",
+  "policy_rows": [
+    "GUI-PERFORMANCE-SPEC",
+    "GUI-PERFORMANCE-IMPLEMENTATION"
+  ],
+  "policy_promotion_approved": true,
+  "renderer_execution_authorized": false,
+  "specification_steps_completed": 0,
+  "product_acceptance_asserted": false,
+  "installation_result": "Recorded separately in the Git-common promotion log after validation and installation; approval alone is not installation."
+}
