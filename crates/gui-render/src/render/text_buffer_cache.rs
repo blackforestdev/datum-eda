@@ -20,6 +20,28 @@ fn retain_recent_text_buffers<T>(
     entries.retain(|entry| text_buffer_frame_is_recent(last_used_frame(entry), current_frame));
 }
 
+const MAX_OVERLAY_BUFFERS: usize = 128;
+const MAX_OVERLAY_TEXT_BYTES: usize = 32 * 1024;
+
+fn retain_overlay_buffers<T>(
+    entries: &mut Vec<T>,
+    age: impl Fn(&T) -> u64,
+    size: impl Fn(&T) -> usize,
+) {
+    entries.sort_by_key(|entry| std::cmp::Reverse(age(entry)));
+    let mut bytes = 0;
+    let mut count = 0;
+    entries.retain(|entry| {
+        let next = bytes + size(entry);
+        if count >= MAX_OVERLAY_BUFFERS || next > MAX_OVERLAY_TEXT_BYTES {
+            return false;
+        }
+        bytes = next;
+        count += 1;
+        true
+    });
+}
+
 impl Renderer {
     /// Retain shaped buffers used by the immediately preceding frame only.
     /// Agent TUIs continuously rewrite status lines; retaining every historical
@@ -32,6 +54,32 @@ impl Renderer {
             &mut self.text_buffer_cache,
             self.text_buffer_frame,
             |entry| entry.last_used_frame,
+        );
+    }
+
+    /// Owned dialogs have a small reusable vocabulary. Keep recently seen rows
+    /// across scroll reversals, instead of shaping them again after one frame.
+    /// The terminal/workspace path keeps its existing two-generation policy.
+    pub(crate) fn begin_overlay_text_buffer_frame(&mut self) {
+        self.text_buffer_frame = self.text_buffer_frame.wrapping_add(1).max(1);
+    }
+
+    /// Called after glyph preparation/submission, when no text-area borrow is
+    /// live. Bound retained buffers and key text; current-frame scratch can grow
+    /// only with that frame's visible text. Glyph instances own their GPU data.
+    pub(crate) fn trim_overlay_text_buffers(&mut self) {
+        retain_overlay_buffers(
+            &mut self.text_buffer_cache,
+            |entry| entry.last_used_frame,
+            |entry| {
+                entry.key.text.len()
+                    + entry
+                        .key
+                        .rich_spans
+                        .iter()
+                        .map(|span| span.text.len())
+                        .sum::<usize>()
+            },
         );
     }
 
@@ -114,12 +162,57 @@ impl Renderer {
 
 #[cfg(test)]
 mod tests {
-    use super::retain_recent_text_buffers;
+    use super::*;
 
     #[derive(Debug)]
     struct SimulatedBuffer {
         key: String,
         last_used_frame: u64,
+    }
+
+    #[test]
+    fn dialog_cache_retains_scroll_history_with_count_and_text_budgets() {
+        let mut entries = Vec::new();
+        for frame in 0..1000 {
+            entries.push(SimulatedBuffer {
+                key: format!("row-{frame}"),
+                last_used_frame: frame,
+            });
+            retain_overlay_buffers(
+                &mut entries,
+                |entry| entry.last_used_frame,
+                |entry| entry.key.len(),
+            );
+            assert!(entries.len() <= MAX_OVERLAY_BUFFERS);
+        }
+        assert!(entries.iter().any(|entry| entry.key == "row-990"));
+        assert!(entries.iter().any(|entry| entry.key == "row-999"));
+        entries.extend((0..100).map(|n| SimulatedBuffer {
+            key: "x".repeat(1024),
+            last_used_frame: 1000 + n,
+        }));
+        retain_overlay_buffers(
+            &mut entries,
+            |entry| entry.last_used_frame,
+            |entry| entry.key.len(),
+        );
+        assert!(
+            entries.iter().map(|entry| entry.key.len()).sum::<usize>() <= MAX_OVERLAY_TEXT_BYTES
+        );
+        entries.push(SimulatedBuffer {
+            key: "x".repeat(MAX_OVERLAY_TEXT_BYTES + 1),
+            last_used_frame: 2000,
+        });
+        retain_overlay_buffers(
+            &mut entries,
+            |entry| entry.last_used_frame,
+            |entry| entry.key.len(),
+        );
+        assert!(
+            entries
+                .iter()
+                .all(|entry| entry.key.len() <= MAX_OVERLAY_TEXT_BYTES)
+        );
     }
 
     #[test]

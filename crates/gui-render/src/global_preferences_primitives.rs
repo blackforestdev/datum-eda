@@ -31,8 +31,26 @@ pub(super) fn push_rounded_rect_with_border(
     }
 }
 
-fn push_rounded_rect_fill(quads: &mut Vec<Quad>, rect: RectPx, color: [f32; 3], radius: f32) {
-    push_projected_polygon_fill(quads, &rounded_rect_points(rect, radius), color);
+pub(super) fn push_rounded_rect_fill(
+    quads: &mut Vec<Quad>,
+    rect: RectPx,
+    color: [f32; 3],
+    radius: f32,
+) {
+    // This contour is convex by construction. Fan triangulation preserves its
+    // exact boundary without general concave/holed-polygon scanline sorting.
+    let points = rounded_rect_points(rect, radius);
+    for index in (1..points.len() - 1).step_by(2) {
+        quads.push(Quad {
+            points: [
+                points[0],
+                points[index],
+                points[index + 1],
+                points[(index + 2).min(points.len() - 1)],
+            ],
+            color,
+        });
+    }
 }
 
 pub(super) fn rounded_rect_points(rect: RectPx, radius: f32) -> Vec<(f32, f32)> {
@@ -65,14 +83,29 @@ pub(super) fn rounded_rect_points(rect: RectPx, radius: f32) -> Vec<(f32, f32)> 
         ),
         (rect.x + radius, rect.y + radius, std::f32::consts::PI),
     ];
-    for (center_x, center_y, start_angle) in corners {
-        for step in 0..=ROUNDED_RECT_CORNER_SEGMENTS {
-            let angle = start_angle
+    static DIRECTIONS: std::sync::OnceLock<[(f32, f32); (ROUNDED_RECT_CORNER_SEGMENTS + 1) * 4]> =
+        std::sync::OnceLock::new();
+    let directions = DIRECTIONS.get_or_init(|| {
+        let starts = [
+            -std::f32::consts::FRAC_PI_2,
+            0.0,
+            std::f32::consts::FRAC_PI_2,
+            std::f32::consts::PI,
+        ];
+        std::array::from_fn(|index| {
+            let corner = index / (ROUNDED_RECT_CORNER_SEGMENTS + 1);
+            let step = index % (ROUNDED_RECT_CORNER_SEGMENTS + 1);
+            let angle = starts[corner]
                 + std::f32::consts::FRAC_PI_2 * step as f32 / ROUNDED_RECT_CORNER_SEGMENTS as f32;
-            points.push((
-                center_x + radius * angle.cos(),
-                center_y + radius * angle.sin(),
-            ));
+            (angle.cos(), angle.sin())
+        })
+    });
+    for ((center_x, center_y, _), arc) in corners
+        .into_iter()
+        .zip(directions.chunks_exact(ROUNDED_RECT_CORNER_SEGMENTS + 1))
+    {
+        for &(cos, sin) in arc {
+            points.push((center_x + radius * cos, center_y + radius * sin));
         }
     }
     points
