@@ -3,7 +3,7 @@ use datum_gui_protocol::{
     GlobalPreferenceControlUi, GlobalPreferenceRowUi, GlobalPreferencesFocus,
 };
 
-fn state_with_preferences_open() -> datum_gui_protocol::ReviewWorkspaceState {
+pub(super) fn state_with_preferences_open() -> datum_gui_protocol::ReviewWorkspaceState {
     let mut state = datum_gui_protocol::load_fixture_workspace_state();
     state.ui.global_preferences.open = true;
     state.ui.global_preferences.focus = GlobalPreferencesFocus::SectionNavigation;

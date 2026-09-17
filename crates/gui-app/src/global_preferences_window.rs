@@ -10,6 +10,7 @@ pub(super) const MIN_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(700.0
 
 pub(super) struct GlobalPreferencesWindowSurface {
     surface: wgpu::Surface<'static>,
+    window: std::sync::Arc<Window>,
     config: wgpu::SurfaceConfiguration,
     scale_factor: f32,
     renderer: Renderer,
@@ -73,6 +74,7 @@ impl GlobalPreferencesWindowSurface {
             retained: None,
             prepared: None,
             cursor_position: None,
+            window,
         })
     }
 
@@ -129,41 +131,41 @@ impl GlobalPreferencesWindowSurface {
             }
             Err(error) => anyhow::bail!("acquire Global Preferences surface texture: {error}"),
         };
-        let mut child_workspace;
-        let workspace = if project_preferences {
-            child_workspace = runtime.workspace().clone();
-            child_workspace.ui.global_preferences = child_workspace.ui.project_preferences.clone();
-            child_workspace.ui.new_project.open = false;
-            &child_workspace
-        } else if new_project {
-            child_workspace = runtime.workspace().clone();
-            child_workspace.ui.global_preferences.open = false;
-            &child_workspace
-        } else {
-            runtime.workspace()
-        };
-        if self.retained.is_none() {
-            self.retained = Some(RetainedScene::from_workspace_for_surface(
-                workspace,
-                self.config.width,
-                self.config.height,
-                self.scale_factor,
-            ));
-        }
         if self.prepared.is_none() {
-            self.prepared = Some(PreparedScene::from_workspace_with_terminal_renderer(
-                workspace,
-                self.config.width,
-                self.config.height,
-                self.scale_factor,
-                runtime.camera,
-                self.retained
-                    .as_ref()
-                    .context("Global Preferences retained scene must exist")?,
-                &[],
-                None,
-                true,
-            ));
+            if new_project {
+                let mut workspace = runtime.workspace().clone();
+                workspace.ui.global_preferences.open = false;
+                self.retained = Some(RetainedScene::from_workspace_for_surface(
+                    &workspace,
+                    self.config.width,
+                    self.config.height,
+                    self.scale_factor,
+                ));
+                self.prepared = Some(PreparedScene::from_workspace_with_terminal_renderer(
+                    &workspace,
+                    self.config.width,
+                    self.config.height,
+                    self.scale_factor,
+                    runtime.camera,
+                    self.retained.as_ref().expect("retained scene initialized"),
+                    &[],
+                    None,
+                    true,
+                ));
+            } else {
+                let dialog = if project_preferences {
+                    &runtime.workspace().ui.project_preferences
+                } else {
+                    &runtime.workspace().ui.global_preferences
+                };
+                self.retained = Some(RetainedScene::empty());
+                self.prepared = Some(PreparedScene::from_native_preferences(
+                    dialog,
+                    self.config.width,
+                    self.config.height,
+                    self.scale_factor,
+                ));
+            }
         }
         let view = frame
             .texture
@@ -182,12 +184,43 @@ impl GlobalPreferencesWindowSurface {
             self.config.width,
             self.config.height,
         )?;
+        self.window.pre_present_notify();
         frame.present();
         Ok(())
     }
 }
 
 impl App {
+    /// Scrolling changes only the owned dialog's transient viewport. Coalesced
+    /// redraws must not rebuild the main Design window or other owned windows.
+    pub(super) fn scroll_preferences_window(&mut self, delta: MouseScrollDelta, project: bool) {
+        let Some(runtime) = &mut self.runtime else {
+            return;
+        };
+        let ui = &mut runtime.session.workspace_mut().ui;
+        let (dialog, surface, window) = if project {
+            (
+                &mut ui.project_preferences,
+                &mut self.project_preferences_surface,
+                &self.project_preferences_window,
+            )
+        } else {
+            (
+                &mut ui.global_preferences,
+                &mut self.global_preferences_surface,
+                &self.global_preferences_window,
+            )
+        };
+        if scroll_dialog(dialog, delta) {
+            if let Some(surface) = surface {
+                surface.invalidate();
+            }
+            if let Some(window) = window {
+                window.request_redraw();
+            }
+        }
+    }
+
     pub(super) fn sync_global_preferences_window(
         &mut self,
         event_loop: &ActiveEventLoop,
@@ -311,22 +344,7 @@ impl App {
                 self.request_redraw_if_needed();
             }
             WindowEvent::MouseWheel { delta, .. } => {
-                let rows = match delta {
-                    MouseScrollDelta::LineDelta(_, y) => y.round() as i32,
-                    MouseScrollDelta::PixelDelta(position) => (position.y / 40.0).round() as i32,
-                };
-                if rows != 0
-                    && let Some(runtime) = &mut self.runtime
-                    && runtime
-                        .session
-                        .workspace_mut()
-                        .ui
-                        .global_preferences
-                        .scroll_rows(rows)
-                {
-                    runtime.invalidate_frame();
-                }
-                self.request_redraw_if_needed();
+                self.scroll_preferences_window(delta, false);
             }
             WindowEvent::ModifiersChanged(modifiers) => {
                 if let Some(runtime) = &mut self.runtime {
@@ -349,9 +367,37 @@ impl App {
     }
 }
 
+fn scroll_dialog(
+    dialog: &mut datum_gui_protocol::GlobalPreferencesDialogState,
+    delta: MouseScrollDelta,
+) -> bool {
+    let rows = match delta {
+        MouseScrollDelta::LineDelta(_, y) => y.round() as i32,
+        MouseScrollDelta::PixelDelta(position) => (position.y / 40.0).round() as i32,
+    };
+    rows != 0 && dialog.scroll_rows(rows)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn wheel_events_without_scroll_movement_do_not_request_a_frame() {
+        let mut dialog = datum_gui_protocol::GlobalPreferencesDialogState::default();
+        let before = dialog.clone();
+        for _ in 0..100 {
+            for delta in [
+                MouseScrollDelta::LineDelta(0.0, 1.0),
+                MouseScrollDelta::LineDelta(0.0, -1.0),
+                MouseScrollDelta::LineDelta(1.0, 0.0),
+                MouseScrollDelta::PixelDelta(winit::dpi::PhysicalPosition::new(0.0, 1.0)),
+            ] {
+                assert!(!scroll_dialog(&mut dialog, delta));
+            }
+        }
+        assert_eq!(dialog, before);
+    }
 
     #[test]
     fn native_window_defaults_fit_the_approved_preferences_target() {
