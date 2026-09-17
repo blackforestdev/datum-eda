@@ -19,6 +19,17 @@ workflow capabilities, review gates, or mutation semantics for Codex.
 
 ## Research and visual evidence
 
+Read-only codebase audits, external research, and conversational architecture
+planning do not require a live implementation claim or a successful roadmap
+selector. Unrelated claim/selector failures must be disclosed but do not stop
+that investigation. This exception grants no production edits, dependency
+adoption, reassignment, acceptance, or canonical-next claims. Requests for the
+canonical next task or its completion steps still require the fresh selector
+and its failure behavior below. Writing tracked research/specifications or
+amending the roadmap still requires the applicable owner authorization and
+same-change governance; an explicit owner-approved planning amendment is not
+renderer implementation authorization.
+
 Before drafting or modifying a specification, decision, GUI contract, research
 report, or `docs/gui/prototypes/*.html`, find its owning route in
 `specs/evidence_traceability_manifest.json` and review every listed source and
