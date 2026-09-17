@@ -142,3 +142,65 @@ fn rounded_control_fans_match_scanline_pixels() {
         }
     }
 }
+
+#[test]
+#[ignore = "requires local GPU; run explicitly with the visual feature"]
+fn fractional_dialog_scroll_preserves_chrome_and_reuses_shaped_text() {
+    let mut state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    state.ui.global_preferences.open_choice_key = Some("datum.console.feedback_duration".into());
+    state.ui.global_preferences.explanation_key = Some("datum.console.feedback_duration".into());
+    let dialog = &state.ui.global_preferences;
+    let mut renderer = hardware_renderer(960, 300);
+    let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
+    let initial =
+        PreparedScene::from_native_preferences_scrolled(dialog, 960, 300, 1.0, &mut scroll, None);
+    let first = capture(&mut renderer, &initial);
+    let header_bottom = scroll.viewport.y as u32;
+    for cycle in 0..2 {
+        for offset in [0.25, 40.0, 100.0, 75.0, 0.0] {
+            scroll.set_offset(offset);
+            let scene = PreparedScene::from_native_preferences_scrolled(
+                dialog,
+                960,
+                300,
+                1.0,
+                &mut scroll,
+                None,
+            );
+            assert!(scene.is_overlay_only());
+            if cycle == 1 {
+                let (_, stats) = renderer.renderer.cached_text_buffer_indices(
+                    scene.menu_overlay_text_runs(),
+                    960,
+                    300,
+                );
+                assert_eq!(
+                    stats.misses, 0,
+                    "unchanged labels must not be reshaped on scrolling"
+                );
+            }
+            let frame = capture(&mut renderer, &scene);
+            for y in 0..header_bottom {
+                for x in 0..960 {
+                    assert_eq!(
+                        frame.get_pixel(x, y),
+                        first.get_pixel(x, y),
+                        "scroll changed pinned chrome at {x},{y}"
+                    );
+                }
+            }
+            if offset == 0.0 {
+                assert!(
+                    frame == first,
+                    "returning to top must restore identical pixels"
+                );
+            }
+            if cycle == 1
+                && offset == 40.0
+                && let Ok(path) = std::env::var("DATUM_SCROLL_CAPTURE")
+            {
+                frame.save(path).unwrap();
+            }
+        }
+    }
+}

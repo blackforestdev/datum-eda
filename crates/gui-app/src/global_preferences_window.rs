@@ -17,6 +17,11 @@ pub(super) struct GlobalPreferencesWindowSurface {
     retained: Option<RetainedScene>,
     prepared: Option<PreparedScene>,
     cursor_position: Option<(f32, f32)>,
+    scroll: datum_gui_viewport::scroll::ScrollViewport,
+    scroll_identity: Option<(String, String, usize)>,
+    scrollbar_pressed: bool,
+    scroll_focus: Option<datum_gui_protocol::GlobalPreferencesFocus>,
+    scroll_expanded: (Option<String>, Option<String>),
 }
 
 impl GlobalPreferencesWindowSurface {
@@ -74,6 +79,11 @@ impl GlobalPreferencesWindowSurface {
             retained: None,
             prepared: None,
             cursor_position: None,
+            scroll: Default::default(),
+            scroll_identity: None,
+            scrollbar_pressed: false,
+            scroll_focus: None,
+            scroll_expanded: (None, None),
             window,
         })
     }
@@ -105,6 +115,28 @@ impl GlobalPreferencesWindowSurface {
 
     pub(super) fn set_cursor_position(&mut self, position: Option<(f32, f32)>) {
         self.cursor_position = position;
+        if let Some((_, y)) = position
+            && self.scroll.drag(y)
+        {
+            self.invalidate();
+            self.window.request_redraw();
+        }
+    }
+
+    pub(super) fn scrollbar_input(&mut self, state: ElementState) -> bool {
+        if state == ElementState::Released {
+            self.scroll.release();
+            return std::mem::take(&mut self.scrollbar_pressed);
+        }
+        let Some((x, y)) = self.cursor_position else {
+            return false;
+        };
+        self.scrollbar_pressed = self.scroll.press(x, y);
+        if self.scrollbar_pressed {
+            self.invalidate();
+            self.window.request_redraw();
+        }
+        self.scrollbar_pressed
     }
 
     pub(super) fn hit_target(&self) -> Option<HitTarget> {
@@ -159,11 +191,41 @@ impl GlobalPreferencesWindowSurface {
                     &runtime.workspace().ui.global_preferences
                 };
                 self.retained = Some(RetainedScene::empty());
-                self.prepared = Some(PreparedScene::from_native_preferences(
+                let identity = (
+                    dialog.section_id.clone(),
+                    dialog.search_query.clone(),
+                    dialog.scroll_row,
+                );
+                let mut reveal_row =
+                    (self.scroll_identity.as_ref() != Some(&identity)).then_some(dialog.scroll_row);
+                let expanded = (
+                    dialog.open_choice_key.clone(),
+                    dialog.explanation_key.clone(),
+                );
+                if self.scroll_focus.as_ref() != Some(&dialog.focus)
+                    || self.scroll_expanded != expanded
+                {
+                    use datum_gui_protocol::GlobalPreferencesFocus;
+                    let key = match &dialog.focus {
+                        GlobalPreferencesFocus::SettingName(key)
+                        | GlobalPreferencesFocus::Control(key)
+                        | GlobalPreferencesFocus::Reset(key) => Some(key.as_str()),
+                        _ => None,
+                    };
+                    if let Some(key) = key {
+                        reveal_row = dialog.visible_rows().position(|row| row.key == key);
+                    }
+                }
+                self.scroll_focus = Some(dialog.focus.clone());
+                self.scroll_expanded = expanded;
+                self.scroll_identity = Some(identity);
+                self.prepared = Some(PreparedScene::from_native_preferences_scrolled(
                     dialog,
                     self.config.width,
                     self.config.height,
                     self.scale_factor,
+                    &mut self.scroll,
+                    reveal_row,
                 ));
             }
         }
@@ -194,30 +256,22 @@ impl App {
     /// Scrolling changes only the owned dialog's transient viewport. Coalesced
     /// redraws must not rebuild the main Design window or other owned windows.
     pub(super) fn scroll_preferences_window(&mut self, delta: MouseScrollDelta, project: bool) {
-        let Some(runtime) = &mut self.runtime else {
+        let surface = if project {
+            &mut self.project_preferences_surface
+        } else {
+            &mut self.global_preferences_surface
+        };
+        let Some(surface) = surface else {
             return;
         };
-        let ui = &mut runtime.session.workspace_mut().ui;
-        let (dialog, surface, window) = if project {
-            (
-                &mut ui.project_preferences,
-                &mut self.project_preferences_surface,
-                &self.project_preferences_window,
-            )
-        } else {
-            (
-                &mut ui.global_preferences,
-                &mut self.global_preferences_surface,
-                &self.global_preferences_window,
-            )
-        };
-        if scroll_dialog(dialog, delta) {
-            if let Some(surface) = surface {
-                surface.invalidate();
-            }
-            if let Some(window) = window {
-                window.request_redraw();
-            }
+        if scroll_wheel(
+            &mut surface.scroll,
+            surface.cursor_position,
+            surface.scale_factor,
+            delta,
+        ) {
+            surface.invalidate();
+            surface.window.request_redraw();
         }
     }
 
@@ -324,16 +378,29 @@ impl App {
                     surface.set_cursor_position(Some((position.x as f32, position.y as f32)));
                 }
             }
+            WindowEvent::Focused(false) => {
+                if let Some(surface) = &mut self.global_preferences_surface {
+                    surface.scrollbar_input(ElementState::Released);
+                }
+            }
             WindowEvent::CursorLeft { .. } => {
                 if let Some(surface) = &mut self.global_preferences_surface {
                     surface.set_cursor_position(None);
                 }
             }
             WindowEvent::MouseInput {
-                state: ElementState::Released,
+                state,
                 button: MouseButton::Left,
                 ..
             } => {
+                if self
+                    .global_preferences_surface
+                    .as_mut()
+                    .is_some_and(|surface| surface.scrollbar_input(state))
+                    || state != ElementState::Released
+                {
+                    return;
+                }
                 let target = self
                     .global_preferences_surface
                     .as_ref()
@@ -367,15 +434,30 @@ impl App {
     }
 }
 
-fn scroll_dialog(
-    dialog: &mut datum_gui_protocol::GlobalPreferencesDialogState,
+/// Keep native physical-pixel input in the renderer's coordinate space. Line
+/// input has a fixed logical step; fractional deltas are never quantized.
+fn scroll_wheel(
+    scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
+    cursor: Option<(f32, f32)>,
+    scale: f32,
     delta: MouseScrollDelta,
 ) -> bool {
-    let rows = match delta {
-        MouseScrollDelta::LineDelta(_, y) => y.round() as i32,
-        MouseScrollDelta::PixelDelta(position) => (position.y / 40.0).round() as i32,
+    let Some((x, y)) = cursor else {
+        return false;
     };
-    rows != 0 && dialog.scroll_rows(rows)
+    let viewport = scroll.viewport;
+    if x < viewport.x
+        || x > viewport.x + viewport.width
+        || y < viewport.y
+        || y > viewport.y + viewport.height
+    {
+        return false;
+    }
+    let pixels = match delta {
+        MouseScrollDelta::LineDelta(_, y) => y * 40.0 * scale,
+        MouseScrollDelta::PixelDelta(position) => position.y as f32,
+    };
+    scroll.wheel(pixels)
 }
 
 #[cfg(test)]
@@ -383,20 +465,40 @@ mod tests {
     use super::*;
 
     #[test]
-    fn wheel_events_without_scroll_movement_do_not_request_a_frame() {
-        let mut dialog = datum_gui_protocol::GlobalPreferencesDialogState::default();
-        let before = dialog.clone();
+    fn native_wheel_preserves_fractional_pixels_and_pane_locality() {
+        let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
+        scroll.layout(
+            datum_gui_viewport::ScreenRectPx {
+                x: 210.0,
+                y: 100.0,
+                width: 750.0,
+                height: 440.0,
+            },
+            800.0,
+        );
+        let tiny = MouseScrollDelta::PixelDelta(winit::dpi::PhysicalPosition::new(0.0, -0.25));
         for _ in 0..100 {
-            for delta in [
-                MouseScrollDelta::LineDelta(0.0, 1.0),
-                MouseScrollDelta::LineDelta(0.0, -1.0),
-                MouseScrollDelta::LineDelta(1.0, 0.0),
-                MouseScrollDelta::PixelDelta(winit::dpi::PhysicalPosition::new(0.0, 1.0)),
-            ] {
-                assert!(!scroll_dialog(&mut dialog, delta));
-            }
+            assert!(scroll_wheel(&mut scroll, Some((400.0, 200.0)), 1.5, tiny));
         }
-        assert_eq!(dialog, before);
+        assert_eq!(scroll.offset(), 25.0);
+        assert!(!scroll_wheel(&mut scroll, Some((50.0, 200.0)), 1.5, tiny));
+        assert!(!scroll_wheel(&mut scroll, Some((400.0, 50.0)), 1.5, tiny));
+        assert!(!scroll_wheel(&mut scroll, None, 1.5, tiny));
+        assert!(scroll_wheel(
+            &mut scroll,
+            Some((400.0, 200.0)),
+            1.5,
+            MouseScrollDelta::LineDelta(0.0, -0.5)
+        ));
+        assert_eq!(scroll.offset(), 55.0);
+        scroll.set_offset(scroll.maximum());
+        assert!(!scroll_wheel(&mut scroll, Some((400.0, 200.0)), 1.5, tiny));
+        assert!(scroll_wheel(
+            &mut scroll,
+            Some((400.0, 200.0)),
+            1.5,
+            MouseScrollDelta::LineDelta(0.0, 0.5)
+        ));
     }
 
     #[test]

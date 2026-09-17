@@ -22,12 +22,33 @@ impl PreparedScene {
         height: u32,
         scale_factor: f32,
     ) -> Self {
+        let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
+        Self::from_native_preferences_scrolled(
+            dialog,
+            width,
+            height,
+            scale_factor,
+            &mut scroll,
+            Some(dialog.scroll_row),
+        )
+    }
+
+    pub fn from_native_preferences_scrolled(
+        dialog: &datum_gui_protocol::GlobalPreferencesDialogState,
+        width: u32,
+        height: u32,
+        scale_factor: f32,
+        scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
+        reveal_row: Option<usize>,
+    ) -> Self {
         let scale = scale_factor.max(0.01);
         let layout = ShellLayout::for_surface(width, height, scale, None);
         let mut quads = Vec::new();
         let mut text = Vec::new();
         let mut hits = Vec::new();
-        super::render_preferences_dialog(dialog, &layout, &mut quads, &mut text, &mut hits);
+        super::render_preferences_dialog_scrolled(
+            dialog, &layout, &mut quads, &mut text, &mut hits, scroll, reveal_row,
+        );
         if (scale - 1.0).abs() > f32::EPSILON {
             scale_text_run_sizes(&mut text, scale);
         }
@@ -121,18 +142,88 @@ mod tests {
     }
 
     #[test]
-    fn scrolling_changes_dialog_content_and_hit_targets_without_world_geometry() {
+    fn fitting_content_does_not_scroll_past_its_end() {
         let mut state = crate::global_preferences_dialog_tests::state_with_preferences_open();
         let before =
             PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
         assert!(state.ui.global_preferences.scroll_rows(-1));
         let after =
             PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
-        assert_ne!(before.menu_overlay_text_runs, after.menu_overlay_text_runs);
-        assert_ne!(before.hit_regions, after.hit_regions);
+        assert_eq!(before.menu_overlay_text_runs, after.menu_overlay_text_runs);
+        assert_eq!(before.hit_regions, after.hit_regions);
         let retained = RetainedScene::empty();
         assert!(retained.world_vertices.is_empty());
         assert!(retained.world_strokes.is_empty());
         assert!(retained.draw_commands.is_empty());
+    }
+    #[test]
+    fn continuous_scroll_clips_rows_and_hits_with_stable_content_bounds() {
+        let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+        let dialog = &state.ui.global_preferences;
+        for scale in [1.0, 1.5] {
+            let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
+            let before = PreparedScene::from_native_preferences_scrolled(
+                dialog,
+                960,
+                240,
+                scale,
+                &mut scroll,
+                None,
+            );
+            assert!(scroll.maximum() > 0.0);
+            let total = scroll.content_height;
+            let row_y = before
+                .menu_overlay_text_runs
+                .iter()
+                .find(|run| run.text == "Console feedback duration")
+                .unwrap()
+                .y;
+            assert!(scroll.wheel(-0.25));
+            let after = PreparedScene::from_native_preferences_scrolled(
+                dialog,
+                960,
+                240,
+                scale,
+                &mut scroll,
+                None,
+            );
+            let moved_y = after
+                .menu_overlay_text_runs
+                .iter()
+                .find(|run| run.text == "Console feedback duration")
+                .unwrap()
+                .y;
+            assert_eq!(row_y - moved_y, 0.25);
+            assert_eq!(scroll.content_height, total);
+            scroll.set_offset(scroll.maximum());
+            let bottom = PreparedScene::from_native_preferences_scrolled(
+                dialog,
+                960,
+                240,
+                scale,
+                &mut scroll,
+                None,
+            );
+            assert_eq!(scroll.content_height, total);
+            for hit in &bottom.hit_regions {
+                if matches!(
+                    hit.target,
+                    HitTarget::GlobalPreferencesSettingName(_)
+                        | HitTarget::GlobalPreferencesControl(_)
+                        | HitTarget::GlobalPreferencesReset(_)
+                ) {
+                    assert!(hit.rect.y >= scroll.viewport.y);
+                    assert!(
+                        hit.rect.y + hit.rect.height <= scroll.viewport.y + scroll.viewport.height
+                    );
+                }
+            }
+            assert!(bottom.visible_draw_commands.is_empty());
+            assert!(bottom.panel_vertices.is_empty());
+            assert_eq!(
+                scroll.thumb().unwrap().y + scroll.thumb().unwrap().height,
+                scroll.viewport.y + scroll.viewport.height
+            );
+        }
     }
 }
