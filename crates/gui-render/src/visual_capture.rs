@@ -355,3 +355,7 @@ mod tests {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "render/gpu_overlay_tests.rs"]
+mod gpu_overlay_tests;

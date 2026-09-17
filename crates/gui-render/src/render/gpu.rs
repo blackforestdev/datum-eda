@@ -67,6 +67,8 @@ mod text_buffer_cache;
 
 #[path = "gpu_init.rs"]
 mod gpu_init;
+#[path = "gpu_overlay.rs"]
+mod gpu_overlay;
 
 impl Renderer {
     #[allow(clippy::too_many_arguments)]
@@ -81,6 +83,9 @@ impl Renderer {
         width: u32,
         height: u32,
     ) -> anyhow::Result<()> {
+        if prepared.is_overlay_only() {
+            return self.render_overlay_only(device, queue, target, prepared, width, height);
+        }
         let render_started = std::time::Instant::now();
         let panel_vertices = prepared.panel_vertices();
         let viewport_underlay_vertices = prepared.viewport_underlay_vertices();
@@ -464,43 +469,7 @@ impl Renderer {
             // shared, so overlay glyph buffers reuse the same atlas.
             let menu_overlay_text_runs = prepared.menu_overlay_text_runs();
             if !menu_overlay_text_runs.is_empty() {
-                let (overlay_indices, _) =
-                    self.cached_text_buffer_indices(menu_overlay_text_runs, width, height);
-                let overlay_prepare = self.menu_overlay_text_renderer.prepare(
-                    device,
-                    queue,
-                    &mut self.font_system,
-                    &mut self.atlas,
-                    &self.viewport,
-                    build_text_areas(
-                        &self.text_buffer_cache,
-                        &overlay_indices,
-                        menu_overlay_text_runs,
-                    ),
-                    &mut self.swash_cache,
-                );
-                if let Err(initial_error) = overlay_prepare {
-                    self.atlas.trim();
-                    self.menu_overlay_text_renderer
-                        .prepare(
-                            device,
-                            queue,
-                            &mut self.font_system,
-                            &mut self.atlas,
-                            &self.viewport,
-                            build_text_areas(
-                                &self.text_buffer_cache,
-                                &overlay_indices,
-                                menu_overlay_text_runs,
-                            ),
-                            &mut self.swash_cache,
-                        )
-                        .map_err(|retry_error| {
-                            anyhow::anyhow!(
-                                "prepare menu overlay text after atlas trim: {retry_error}; initial: {initial_error}"
-                            )
-                        })?;
-                }
+                self.prepare_overlay_text(device, queue, prepared, width, height)?;
                 {
                     let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                         label: Some("datum-gui-menu-overlay-text-pass"),

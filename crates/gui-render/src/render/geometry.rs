@@ -1,3 +1,7 @@
+#[path = "text_metrics.rs"]
+mod text_metrics;
+use text_metrics::{load_datum_fonts, measure_font_system, measured_text_run_width_px, text_attrs};
+
 fn push_points(
     out: &mut Vec<Quad>,
     points: &[PointNm],
@@ -456,73 +460,6 @@ fn push_world_polyline_segments(
                 (b.0 + nx, b.1 + ny),
                 (b.0 - nx, b.1 - ny),
                 (a.0 - nx, a.1 - ny),
-            ],
-            color,
-        );
-    }
-}
-
-#[cfg(test)]
-#[allow(dead_code)]
-fn push_world_polyline_mitered(
-    out: &mut Vec<Quad>,
-    path: &[PointNm],
-    thickness_nm: f32,
-    color: [f32; 3],
-) {
-    let n = path.len();
-    if n < 2 {
-        return;
-    }
-    let h = thickness_nm * 0.5;
-    let is_closed = path[0].x == path[n - 1].x && path[0].y == path[n - 1].y;
-    let unit = |a: PointNm, b: PointNm| -> (f32, f32) {
-        let dx = (b.x - a.x) as f32;
-        let dy = (b.y - a.y) as f32;
-        let l = (dx * dx + dy * dy).sqrt().max(1.0);
-        (dx / l, dy / l)
-    };
-    let perp = |d: (f32, f32)| -> (f32, f32) { (-d.1, d.0) };
-    let mut offsets: Vec<(f32, f32)> = Vec::with_capacity(n);
-    for i in 0..n {
-        let prev_idx = if i == 0 {
-            if is_closed { Some(n - 2) } else { None }
-        } else {
-            Some(i - 1)
-        };
-        let next_idx = if i + 1 == n {
-            if is_closed { Some(1) } else { None }
-        } else {
-            Some(i + 1)
-        };
-        let n_in = prev_idx.map(|p| perp(unit(path[p], path[i])));
-        let n_out = next_idx.map(|q| perp(unit(path[i], path[q])));
-        let o = match (n_in, n_out) {
-            (Some(a), Some(b)) => {
-                let dot = a.0 * b.0 + a.1 * b.1;
-                let denom = (1.0 + dot).max(0.2);
-                ((a.0 + b.0) * h / denom, (a.1 + b.1) * h / denom)
-            }
-            (Some(a), None) => (a.0 * h, a.1 * h),
-            (None, Some(b)) => (b.0 * h, b.1 * h),
-            _ => (0.0, 0.0),
-        };
-        offsets.push(o);
-    }
-    for i in 0..(n - 1) {
-        let a = path[i];
-        let b = path[i + 1];
-        let (ax, ay) = (a.x as f32, a.y as f32);
-        let (bx, by) = (b.x as f32, b.y as f32);
-        let oa = offsets[i];
-        let ob = offsets[i + 1];
-        push_world_quad(
-            out,
-            &[
-                (ax + oa.0, ay + oa.1),
-                (bx + ob.0, by + ob.1),
-                (bx - ob.0, by - ob.1),
-                (ax - oa.0, ay - oa.1),
             ],
             color,
         );
@@ -1236,43 +1173,6 @@ fn estimated_text_run_width_px(text: &str, size: f32, face: TextFace) -> f32 {
     glyphs * size * advance_factor + 16.0
 }
 
-/// Shared, lazily-initialized measuring `FontSystem` loaded with the SAME vendored
-/// IBM Plex faces the renderer uses (`load_datum_fonts`), so a measured width here
-/// matches what gpu.rs actually shapes. Kept separate from the renderer's own
-/// `FontSystem` because measurement happens during scene preparation (no GPU) and
-/// must stay deterministic across threads (goldens depend on it).
-static MEASURE_FS: std::sync::OnceLock<std::sync::Mutex<FontSystem>> = std::sync::OnceLock::new();
-
-fn measure_font_system() -> &'static std::sync::Mutex<FontSystem> {
-    MEASURE_FS.get_or_init(|| {
-        let mut font_system = FontSystem::new();
-        load_datum_fonts(&mut font_system);
-        std::sync::Mutex::new(font_system)
-    })
-}
-
-/// Real shaped width of a single text run, in px, using cosmic-text/glyphon with
-/// the exact per-`TextFace` `Attrs` and `Metrics` gpu.rs renders with (see
-/// `ensure_text_buffer`: `Metrics::new(size, size * 1.22)`, `text_attrs(face)`).
-/// Unlike `estimated_text_run_width_px` (a fixed-advance monospace-style estimate
-/// with baked padding), this reflects the PROPORTIONAL IBM Plex Sans Condensed UI
-/// face, so per-label error is zero and downstream layout gaps stay uniform.
-/// Deterministic: same inputs -> same width, so it is golden-stable.
-fn measured_text_run_width_px(text: &str, size: f32, face: TextFace) -> f32 {
-    let mutex = measure_font_system();
-    let mut font_system = mutex
-        .lock()
-        .unwrap_or_else(|poisoned| poisoned.into_inner());
-    let mut buffer = Buffer::new(&mut font_system, Metrics::new(size, size * 1.22));
-    let attrs = text_attrs(face);
-    buffer.set_text(&mut font_system, text, &attrs, Shaping::Basic, None);
-    buffer.shape_until_scroll(&mut font_system, false);
-    buffer
-        .layout_runs()
-        .map(|run| run.line_w)
-        .fold(0.0_f32, f32::max)
-}
-
 fn scale_text_run_sizes(text_runs: &mut [TextRun], scale: f32) {
     for run in text_runs {
         // Terminal cells already live in the device-pixel coordinate space of
@@ -1283,60 +1183,6 @@ fn scale_text_run_sizes(text_runs: &mut [TextRun], scale: f32) {
         if run.face != TextFace::Terminal {
             run.size *= scale;
         }
-    }
-}
-
-/// Load the vendored IBM Plex faces into the glyphon font database so chrome and
-/// on-canvas UI text render in the Design Book typeface rather than a system
-/// fallback (`docs/gui/DATUM_RENDERING_BOOK.md` §5). Embedded at compile time
-/// from the engine's vendored assets so the GUI never depends on the CWD.
-fn load_datum_fonts(font_system: &mut FontSystem) {
-    let db = font_system.db_mut();
-    db.load_font_data(
-        include_bytes!(
-            "../../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-Regular.ttf"
-        )
-        .to_vec(),
-    );
-    db.load_font_data(
-        include_bytes!(
-            "../../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-Medium.ttf"
-        )
-        .to_vec(),
-    );
-    db.load_font_data(
-        include_bytes!(
-            "../../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-SemiBold.ttf"
-        )
-        .to_vec(),
-    );
-    db.load_font_data(
-        include_bytes!("../../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Regular.ttf")
-            .to_vec(),
-    );
-    db.load_font_data(
-        include_bytes!("../../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Medium.ttf")
-            .to_vec(),
-    );
-    db.load_font_data(
-        include_bytes!("../../../engine/assets/fonts/jetbrains_mono/JetBrainsMono-Regular.ttf")
-            .to_vec(),
-    );
-}
-
-fn text_attrs(face: TextFace) -> Attrs<'static> {
-    match face {
-        TextFace::Ui => Attrs::new().family(Family::Name("IBM Plex Sans Condensed")),
-        TextFace::UiMedium => Attrs::new()
-            .family(Family::Name("IBM Plex Sans Condensed"))
-            .weight(Weight::MEDIUM),
-        TextFace::UiStrong => Attrs::new()
-            .family(Family::Name("IBM Plex Sans Condensed"))
-            .weight(Weight::SEMIBOLD),
-        TextFace::Mono => Attrs::new().family(Family::Name("IBM Plex Mono")),
-        TextFace::Terminal => Attrs::new()
-            .family(Family::Name("JetBrains Mono"))
-            .letter_spacing(bottom_dock::TERMINAL_LETTER_SPACING_EM),
     }
 }
 
@@ -1400,5 +1246,72 @@ fn text_prepare_signature(
                 }),
             })
             .collect(),
+    }
+}
+
+#[cfg(test)]
+#[allow(dead_code)]
+fn push_world_polyline_mitered(
+    out: &mut Vec<Quad>,
+    path: &[PointNm],
+    thickness_nm: f32,
+    color: [f32; 3],
+) {
+    let n = path.len();
+    if n < 2 {
+        return;
+    }
+    let h = thickness_nm * 0.5;
+    let is_closed = path[0].x == path[n - 1].x && path[0].y == path[n - 1].y;
+    let unit = |a: PointNm, b: PointNm| -> (f32, f32) {
+        let dx = (b.x - a.x) as f32;
+        let dy = (b.y - a.y) as f32;
+        let l = (dx * dx + dy * dy).sqrt().max(1.0);
+        (dx / l, dy / l)
+    };
+    let perp = |d: (f32, f32)| -> (f32, f32) { (-d.1, d.0) };
+    let mut offsets: Vec<(f32, f32)> = Vec::with_capacity(n);
+    for i in 0..n {
+        let prev_idx = if i == 0 {
+            if is_closed { Some(n - 2) } else { None }
+        } else {
+            Some(i - 1)
+        };
+        let next_idx = if i + 1 == n {
+            if is_closed { Some(1) } else { None }
+        } else {
+            Some(i + 1)
+        };
+        let n_in = prev_idx.map(|p| perp(unit(path[p], path[i])));
+        let n_out = next_idx.map(|q| perp(unit(path[i], path[q])));
+        let o = match (n_in, n_out) {
+            (Some(a), Some(b)) => {
+                let dot = a.0 * b.0 + a.1 * b.1;
+                let denom = (1.0 + dot).max(0.2);
+                ((a.0 + b.0) * h / denom, (a.1 + b.1) * h / denom)
+            }
+            (Some(a), None) => (a.0 * h, a.1 * h),
+            (None, Some(b)) => (b.0 * h, b.1 * h),
+            _ => (0.0, 0.0),
+        };
+        offsets.push(o);
+    }
+    for i in 0..(n - 1) {
+        let a = path[i];
+        let b = path[i + 1];
+        let (ax, ay) = (a.x as f32, a.y as f32);
+        let (bx, by) = (b.x as f32, b.y as f32);
+        let oa = offsets[i];
+        let ob = offsets[i + 1];
+        push_world_quad(
+            out,
+            &[
+                (ax + oa.0, ay + oa.1),
+                (bx + ob.0, by + ob.1),
+                (bx - ob.0, by - ob.1),
+                (ax - oa.0, ay - oa.1),
+            ],
+            color,
+        );
     }
 }
