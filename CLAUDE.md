@@ -174,6 +174,16 @@ the higher layer wins and the lower doc is the one to fix):
 4. `specs/PROGRESS.md` — status truth
 
 ## Current Status
+### WDQ blocking enforcement retired
+
+The owner retired WDQ blocking enforcement on 2026-09-17 (PM044 retirement
+disposition). Use `scripts/git-hooks`, not an immutable WDQ owner-hook bundle.
+Do not require WDQ enrollment, source-scope promotion or historical-pilot replay
+for ordinary development or roadmap queries. Retained WDQ tooling and records
+are manual diagnostics/history only; do not reinstall them without new explicit
+owner direction. PM025 ownership and roadmap checks, source health, dependency
+authority, visual ownership, formatting and product acceptance requirements remain.
+
 The project has been course-corrected from a milestone-driven roadmap to the
 product-mechanics model above. Status sources of truth: the structured
 `specs/active_frontier.json`, its generated `specs/PROGRESS.md` projection,

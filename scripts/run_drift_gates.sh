@@ -5,11 +5,6 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cargo_guard=(python3 "$repo_root/scripts/run_cargo_guarded.py" --workload proof --)
 cd "$repo_root"
 
-# PM041 bootstrap: hermetic refusal mechanics and non-accepting diagnostics.
-# Trusted authority/base configuration and enforcement remain an owner G06 step.
-python3 -m unittest discover -s scripts -p 'test_workflow_delivery_*.py'
-python3 scripts/check_workflow_delivery.py --report-only
-
 python3 scripts/test_cargo_resource_policy.py
 python3 scripts/check_cargo_resource_policy.py
 
@@ -23,6 +18,7 @@ echo "== clippy: workspace lint gate (-D warnings) =="
 python3 scripts/check_progress_coverage.py
 python3 scripts/test_project_status.py
 python3 scripts/test_project_status_claim.py
+python3 scripts/test_project_status_without_wdq.py
 python3 scripts/project_status.py check
 python3 scripts/check_spec_parity.py
 python3 scripts/check_alignment.py --run-gates
