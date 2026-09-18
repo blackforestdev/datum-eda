@@ -1,0 +1,7 @@
+{
+  "accepted": false,
+  "exit_code": 1,
+  "reason": "Reverse control: decoded before/after/reverse pixels identical despite changing production render traces; X11 import capture not validated. No clamp phase acceptance. Raw images and log retained; original driver raised before persisting clamp counters.",
+  "binary_source": "candidate-sources.json",
+  "driver": "datum_gui_measure_boundary_v2.py"
+}

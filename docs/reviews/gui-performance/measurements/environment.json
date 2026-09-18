@@ -1,0 +1,26 @@
+{
+  "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11)\nbinary: rustc\ncommit-hash: 01f6ddf7588f42ae2d7eb0a2f21d44e8e96674cf\ncommit-date: 2026-02-11\nhost: x86_64-unknown-linux-gnu\nrelease: 1.93.1\nLLVM version: 21.1.8",
+  "cargo": "cargo 1.93.1 (083ac5135 2025-12-15)",
+  "kernel": "Linux debian3520 6.12.107+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.107-1 (2026-08-29) x86_64 GNU/Linux",
+  "xdotool": {
+    "command": "xdotool --version",
+    "exit_code": 0,
+    "output": "xdotool version 3.20160805.1"
+  },
+  "python": "Python 3.13.5",
+  "gpu": "00:02.0 VGA compatible controller [0300]: Intel Corporation HD Graphics P630 [8086:591d] (rev 04)\n01:00.0 3D controller [0302]: NVIDIA Corporation GM107GLM [Quadro M620 Mobile] [10de:13b4] (rev a2)",
+  "cpu_model": "Intel(R) Xeon(R) CPU E3-1505M v6 @ 3.00GHz",
+  "desktop": {
+    "XDG_CURRENT_DESKTOP": "KDE",
+    "XDG_SESSION_TYPE": "wayland",
+    "DISPLAY": ":1",
+    "WAYLAND_DISPLAY": "wayland-0"
+  },
+  "intel_driver": "/sys/bus/pci/drivers/i915",
+  "build_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-gui-app --release",
+  "build_candidate": "2874a8e1b20f7e55029b8dadbd64decb9e2be94e",
+  "fixture_repository_revision": "522649657d36a227b60b0b210ee3e065ab80b876",
+  "fixture_path_in_repository": "hardware/DOA2526/DOA2526.kicad_pcb",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "capture_method": "Final clamp trials: KDE Spectacle activewindow/no-decoration/no-shadow, focus-checked owned window, decoded RGBA hash with ImageMagick. Initial X11 import captures failed reverse validation and are not pixel proof."
+}

@@ -12,6 +12,7 @@ use datum_gui_render::RectPx;
 use datum_gui_viewport::{CameraConfig, CameraEngine};
 
 mod layout_cache;
+mod zoom;
 
 #[derive(Clone)]
 struct CameraViewport {
@@ -129,7 +130,7 @@ impl Runtime {
             return false;
         }
         let fit = CameraState::fit_to_bounds(&route.bounds);
-        CameraEngine::zoom_about_screen_point(
+        if !zoom::apply(
             self.camera_slot_mut(&route, || fit),
             route.camera,
             route.viewport.into(),
@@ -137,7 +138,9 @@ impl Runtime {
             x,
             y,
             delta,
-        );
+        ) {
+            return false;
+        }
         self.invalidate_frame();
         true
     }
@@ -149,7 +152,7 @@ impl Runtime {
         let x = route.viewport.x + route.viewport.width * 0.5;
         let y = route.viewport.y + route.viewport.height * 0.5;
         let fit = CameraState::fit_to_bounds(&route.bounds);
-        CameraEngine::zoom_about_screen_point(
+        if !zoom::apply(
             self.camera_slot_mut(&route, || fit),
             route.camera,
             route.viewport.into(),
@@ -157,7 +160,9 @@ impl Runtime {
             x,
             y,
             delta,
-        );
+        ) {
+            return false;
+        }
         self.invalidate_frame();
         true
     }

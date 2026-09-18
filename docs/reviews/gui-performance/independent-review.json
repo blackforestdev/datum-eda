@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "reviewer": "/root/gui_contract_review",
+  "independent_of_author": true,
+  "scope": "Preliminary engineering contract and bounded zoom correction; no independent native replay. Relevant review covered Rust state transitions, event routing, cache invalidation and measurement validity.",
+  "full_specification_approved": false,
+  "bounded_slice_accepted": true,
+  "findings": [
+    {
+      "id": "GPR-01",
+      "severity": "high",
+      "boundary": "full specification approval",
+      "status": "open",
+      "finding": "Demanding fixtures, scale tiers, complete numerical resource budgets and validated presentation/input-to-display methods remain incomplete. Runtime passes are not required before approval, feasible methods are."
+    },
+    {
+      "id": "GPR-02",
+      "severity": "high",
+      "boundary": "full specification approval",
+      "status": "open",
+      "finding": "E08/E09 slice allocation is not yet complete individual R21/R35 consumer/interface/test/workload/artifact and corrective-hunk reconciliation."
+    },
+    {
+      "id": "GPR-03",
+      "severity": "medium",
+      "boundary": "sequencing",
+      "status": "resolved_reviewer_verified",
+      "finding": "Distinguish current bounded correction grant from R24 wider execution gate.",
+      "correction": "R24 and reservation now cross-reference exact current owner direction and zoom-noop-slice scope."
+    },
+    {
+      "id": "GPR-04",
+      "severity": "medium",
+      "boundary": "slice claim precision",
+      "status": "resolved_reviewer_verified",
+      "finding": "Focused command caller retains console/menu damage; zero submissions is valid only for unchanged wheel camera input without other UI damage.",
+      "correction": "E02 and slice proof now state that exception."
+    },
+    {
+      "id": "GPR-05",
+      "severity": "evidence_pending",
+      "boundary": "bounded slice acceptance",
+      "status": "resolved_reviewer_verified",
+      "finding": "Candidate optimized comparison and same-instance reverse-wheel positive control must complete. Hash launched binary at start.",
+      "correction": "Independent reviewer checked paired optimized trace-on/off reports, decoded compositor RGBA hashes and reverse controls, matched model/pixel comparison, source transitions and recorded tests/build. No remaining narrow-slice blocker; no independent native replay."
+    }
+  ],
+  "procedure": [
+    "Read parent requirements and owning performance evidence route.",
+    "Inspect proposed engineering contract, scope/direction record, camera math, changed handlers and callers.",
+    "Compare all HP table rows and 63-clause inventory against HEAD.",
+    "Inspect driver scripts, raw baseline reports and clamp image; distinguish sent input from acknowledged delivery.",
+    "Require delta review after final evidence packaging."
+  ],
+  "delta_review": "Final separate review accepts bounded no-op zoom correction on inspected code and independently checked evidence. GPR-03/04/05 resolved. GPR-01/02 remain open and block full specification approval. Trace-disabled counters remain null and exact instrumentation overhead is not claimed.",
+  "initial_review_hashes": {
+    "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md": "a40b92ad96ab638ae774ad5d3597463de7055693f1d1fb9dd7db878519f689d1",
+    "specs/GUI_SHARED_ENGINEERING_CONTRACT.md": "a89d221983407211cb3e82eafb2970855244e3e074f5f9ae1062fde4dd42fc22",
+    "docs/reviews/gui-performance/zoom-noop-slice.md": "634995a1291e8a06be28bdca5e8811d4f88dfce508b9cc2f9d49be18bc1881c6",
+    "docs/reviews/gui-performance/sequencing-owner-direction.json": "fb9c00e899f311ca6552021fda7d9b8702746e2370cf618438493e62cd9940fe",
+    "crates/gui-app/src/runtime_camera_pane.rs": "51b74d6b46beb541029406466df6ec363a092c079dab311e94b3294c06346ed8",
+    "crates/gui-app/src/runtime_camera_pane/zoom.rs": "ceb4a36fde0c52763398f199f70ee9ff47be0111e44058619d292358793e5369"
+  },
+  "final_review_hashes": {
+    "crates/gui-app/src/runtime_camera_pane.rs": "51b74d6b46beb541029406466df6ec363a092c079dab311e94b3294c06346ed8",
+    "crates/gui-app/src/runtime_camera_pane/zoom.rs": "ceb4a36fde0c52763398f199f70ee9ff47be0111e44058619d292358793e5369",
+    "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md": "ccd11e4b1a5c52c0077cf09e8931ce8e02d14c70e419c404abf239356ba9a0bb",
+    "specs/GUI_SHARED_ENGINEERING_CONTRACT.md": "11d6eef41d61d273fc0cb8fbeccc0eac0ed9c9410c7cca244fb7ddf5af910abc",
+    "research/gui-performance/BASELINE_AND_FIRST_SLICE.md": "57b2a27001698ee9fd0475274d0a8ac7a25b7a13d1e8a1d2948099d926fb2468",
+    "docs/reviews/gui-performance/zoom-noop-slice.md": "144073e5e0ba1a72e6731802856e45438549edf883b3e40b60f2d6d91a45a50f",
+    "docs/reviews/gui-performance/sequencing-owner-direction.json": "fb9c00e899f311ca6552021fda7d9b8702746e2370cf618438493e62cd9940fe",
+    "docs/reviews/gui-performance/verification.json": "0107901b9e04b91ff5c1b4af98e8b2bb6138f197ab430cd4acf232289d8d902b",
+    "docs/reviews/gui-performance/measurements/candidate-sources.json": "c296d24b5b664c1f3ec49b2012068655d46e6265e38d081686496beea0f6253f",
+    "docs/reviews/gui-performance/measurements/comparison.json": "0ffd3e016348e27ee09b4a77f18817f9f0f484f24f4ae85f8ecfdc49614e001b",
+    "docs/reviews/gui-performance/measurements/baseline-boundary-trace-off/report.json": "e064da2a88bbb6a7a97bf226574d4f7ec00502a122506abb6cfe0cb6a9c1219d",
+    "docs/reviews/gui-performance/measurements/candidate-boundary-trace-off/report.json": "417e01cc7df851f1bdb66678152447ed1eb00fd1f873f2540e69788b7aece4a0"
+  }
+}

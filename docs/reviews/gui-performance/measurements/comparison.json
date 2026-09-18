@@ -1,0 +1,264 @@
+{
+  "qualification": "Bounded investigative slice comparison, not full product performance acceptance.",
+  "rows": [
+    {
+      "receipt": "docs/reviews/gui-performance/measurements/baseline-boundary-v3/report.json",
+      "phase": "clamped_zoom",
+      "cpu_percent_one_core": [
+        4.999912203055922,
+        4.899916546569935,
+        5.199918502733558
+      ],
+      "gpu_render_engine_active_percent": [
+        10.890291889772506,
+        11.352993180334913,
+        11.502480963952333
+      ],
+      "cpu_median": 4.999912203055922,
+      "gpu_median": 11.352993180334913,
+      "submissions": [
+        186,
+        182,
+        185
+      ],
+      "prepared_misses": [
+        186,
+        182,
+        185
+      ],
+      "retained_misses": [
+        0,
+        0,
+        0
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "receipt": "docs/reviews/gui-performance/measurements/candidate-boundary-v3/report.json",
+      "phase": "clamped_zoom",
+      "cpu_percent_one_core": [
+        0.49999536489417074,
+        0.49999182143355286,
+        0.4999945027601411
+      ],
+      "gpu_render_engine_active_percent": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "cpu_median": 0.4999945027601411,
+      "gpu_median": 0.0,
+      "submissions": [
+        0,
+        0,
+        0
+      ],
+      "prepared_misses": [
+        0,
+        0,
+        0
+      ],
+      "retained_misses": [
+        0,
+        0,
+        0
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "receipt": "docs/reviews/gui-performance/measurements/baseline-main-v4/report.json",
+      "phase": "pointer",
+      "cpu_percent_one_core": [
+        11.699798564573385,
+        12.099828279239496,
+        12.199797965262569
+      ],
+      "gpu_render_engine_active_percent": [
+        30.184047991259334,
+        30.314079762586115,
+        30.49556579822453
+      ],
+      "cpu_median": 12.099828279239496,
+      "gpu_median": 30.314079762586115,
+      "submissions": [
+        521,
+        519,
+        512
+      ],
+      "prepared_misses": [
+        0,
+        0,
+        0
+      ],
+      "retained_misses": [
+        0,
+        0,
+        0
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "receipt": "docs/reviews/gui-performance/measurements/candidate-main-v3/report.json",
+      "phase": "pointer",
+      "cpu_percent_one_core": [
+        10.399837651244614,
+        10.499719744639231,
+        10.999827034278162
+      ],
+      "gpu_render_engine_active_percent": [
+        29.278027839463324,
+        29.360638954657652,
+        30.11195970738684
+      ],
+      "cpu_median": 10.499719744639231,
+      "gpu_median": 29.360638954657652,
+      "submissions": [
+        510,
+        492,
+        514
+      ],
+      "prepared_misses": [
+        0,
+        0,
+        0
+      ],
+      "retained_misses": [
+        0,
+        0,
+        0
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "receipt": "docs/reviews/gui-performance/measurements/baseline-main-v4/report.json",
+      "phase": "zoom",
+      "cpu_percent_one_core": [
+        5.9999031171712724,
+        6.199904078814173,
+        6.199888858314875
+      ],
+      "gpu_render_engine_active_percent": [
+        13.069754967453594,
+        13.094205264334086,
+        12.99042248849555
+      ],
+      "cpu_median": 6.199888858314875,
+      "gpu_median": 13.069754967453594,
+      "submissions": [
+        184,
+        186,
+        185
+      ],
+      "prepared_misses": [
+        184,
+        186,
+        185
+      ],
+      "retained_misses": [
+        0,
+        0,
+        0
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "receipt": "docs/reviews/gui-performance/measurements/candidate-main-v3/report.json",
+      "phase": "zoom",
+      "cpu_percent_one_core": [
+        5.799914080674442,
+        5.499799165461096,
+        5.9999054018654645
+      ],
+      "gpu_render_engine_active_percent": [
+        12.907361231689613,
+        12.56301469010957,
+        12.85957156822313
+      ],
+      "cpu_median": 5.799914080674442,
+      "gpu_median": 12.85957156822313,
+      "submissions": [
+        182,
+        176,
+        181
+      ],
+      "prepared_misses": [
+        182,
+        176,
+        181
+      ],
+      "retained_misses": [
+        0,
+        0,
+        0
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "receipt": "docs/reviews/gui-performance/measurements/baseline-boundary-trace-off/report.json",
+      "phase": "clamped_zoom",
+      "trace_enabled": false,
+      "cpu_percent_one_core": [
+        5.3999206476247235,
+        5.399913818447961,
+        4.999927568047233
+      ],
+      "gpu_render_engine_active_percent": [
+        10.999668168773505,
+        11.75860908493444,
+        11.36813449437815
+      ],
+      "cpu_median": 5.399913818447961,
+      "gpu_median": 11.36813449437815,
+      "submissions": null,
+      "prepared_misses": null,
+      "retained_misses": null,
+      "world_bundle_rebuilds": null
+    },
+    {
+      "receipt": "docs/reviews/gui-performance/measurements/candidate-boundary-trace-off/report.json",
+      "phase": "clamped_zoom",
+      "trace_enabled": false,
+      "cpu_percent_one_core": [
+        0.49999330913928713,
+        0.4999917584374703,
+        0.49998744031590386
+      ],
+      "gpu_render_engine_active_percent": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "cpu_median": 0.4999917584374703,
+      "gpu_median": 0.0,
+      "submissions": null,
+      "prepared_misses": null,
+      "retained_misses": null,
+      "world_bundle_rebuilds": null
+    }
+  ],
+  "trace_overhead_disposition": "Logging-disabled paired trials retain the clamp resource improvement. Trace-disabled frame/cache counts are unavailable, not zero. Separate non-simultaneous runs and CPU jiffy precision do not establish an exact trace overhead; no zero-overhead claim. Structural frame proof uses trace-enabled trials."
+}

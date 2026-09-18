@@ -1,0 +1,9 @@
+{
+  "base_revision": "2874a8e1b20f7e55029b8dadbd64decb9e2be94e",
+  "changed_rust_sources": {
+    "crates/gui-app/src/runtime_camera_pane.rs": "51b74d6b46beb541029406466df6ec363a092c079dab311e94b3294c06346ed8",
+    "crates/gui-app/src/runtime_camera_pane/zoom.rs": "ceb4a36fde0c52763398f199f70ee9ff47be0111e44058619d292358793e5369",
+    "Cargo.lock": "0cee76a3005add00e0a63311e937ed7e15d54c0ec57627849b4cb4e756b7387c"
+  },
+  "build_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-gui-app --release"
+}

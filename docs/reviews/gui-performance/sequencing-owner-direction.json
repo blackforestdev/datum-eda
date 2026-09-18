@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-17",
+  "issue_id": "dat-gui-performance-spec-u9n",
+  "owner_direction": [
+    "Resolve the measurement authorization mismatch first. R02–R03 require a current baseline before completing GPS-C01 but explicitly withhold benchmark and instrumentation authorization. Provide bounded permission for those measurements, using existing tooling first.",
+    "Finish the shared engineering contract. Define redraw ownership; what pointer, camera, and scroll changes invalidate; geometry/text/upload reuse; cache lifetime; and common scrolling, clipping, and hit-testing behavior. Preserve legitimate differences between terminal rows and continuous scrolling. Specify measurable correctness and performance expectations.",
+    "Implement and verify bounded Rust changes against that contract. Use the baseline to choose the first change. Window-local invalidation is a plausible candidate, not yet a measured priority. Keep all 25 regression obligations, but execute relevant proof with each implementation slice; reserve complete adoption and endurance qualification for final acceptance.",
+    "The existing plan already separates specification approval from implementation acceptance. We should honor that distinction: define the proof before implementation; do not demand completed production proof before allowing implementation.",
+    "Retain the engineering requirements and correct the sequencing—not discard the specification, replace the renderer wholesale, or add another approval framework."
+  ],
+  "measurement_authorized": true,
+  "bounded_implementation_direction": "Choose by baseline and define engineering contract and slice proof first; preserve specification approval and final implementation acceptance distinction.",
+  "production_acceptance": false,
+  "bounded_correction_scope": {
+    "contract": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md#e02--invalidation-dependencies",
+    "proof_definition": "docs/reviews/gui-performance/zoom-noop-slice.md",
+    "interpretation": "The explicit request to implement and verify bounded Rust changes authorizes this baseline-selected correction to existing camera behavior after defining its contract and proof. It does not approve the proposed cross-cutting mechanisms, numeric budgets or final product acceptance."
+  }
+}
