@@ -1,11 +1,43 @@
 # Product Mechanics 044: incremental work and historical delivery
 
-Status: installed after exact owner approval on 2026-09-16; see installation record.
+Status: blocking WDQ enforcement retired by owner instruction on 2026-09-17.
+Earlier installation records below are historical, not instructions to reinstall.
 Tracking: `dat-workflow-owner-revision-71j`, bounded maintenance associated with
 OR-C01; this does not resume or complete the stopped seven-gap repair program.
 Evidence route: `workflow-incremental-delivery`.
 
 <!-- WDQ-INCREMENTAL-DELIVERY -->
+## Owner-directed retirement — 2026-09-17
+
+The owner approved retiring WDQ blocking enforcement instead of undertaking
+another repair framework. This disposition supersedes PM041/042/044 requirements
+to enroll ordinary development, promote per-file source permissions, or install
+a pinned WDQ runner as a prerequisite for commits or roadmap queries.
+
+Use `scripts/git-hooks` for the normal pre-commit hook: retain visual-file lane
+ownership and staged Rust formatting. Remove all four local
+`datum.workflowDelivery*` trust settings and detach WDQ from automatic roadmap,
+drift and CI entry points. Normal roadmap check/next/details validate PM025 state,
+claims, ordering and completion records, without invoking WDQ transaction checks.
+Existing source-health, dependency, specification, evidence and product tests
+remain in the drift battery. Final product acceptance is not granted or waived.
+
+Retain WDQ records, scripts and old support bundles for explicit manual diagnosis
+and historical reference; they are not development prerequisites. Do not restore
+the installed gate, create replacement enrollment ceremonies or resume the stopped
+seven-gap repair without a new explicit owner instruction. No product source,
+claim, completion or acceptance is changed by this retirement. Generated runtime
+files stay in place; roadmap availability must not depend on deleting them.
+
+Retirement verification: the effective hook is `scripts/git-hooks`, all four
+WDQ trust settings are absent, and the real 59-item check/next/details commands
+succeed with the original `measurements.cpython-313.pyc` still present. Passed
+73 focused tests: four retirement, 45 project-state, five claim, eleven visual
+lane and eight formatting tests. Source-health, dependency, Cargo resource,
+specification governance, parity, traceability and shell syntax checks pass.
+The abandoned selector-only repair was discarded; no new runner was installed.
+No full Rust build or new product acceptance is claimed.
+
 ## Decision and scope
 
 The owner authorized the bounded correction and, separately, a one-time commit

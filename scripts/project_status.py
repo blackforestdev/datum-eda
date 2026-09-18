@@ -183,8 +183,12 @@ def git_commit_exists(root: Path, revision: str) -> bool:
     return result.returncode == 0
 
 
-def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool = True) -> tuple[list[str], dict[str, Any]]:
-    """Return all consistency failures and the loaded state."""
+def validate(root: Path, now: datetime | None = None, *, delivery_checks: bool = False) -> tuple[list[str], dict[str, Any]]:
+    """Validate roadmap consistency, not permission for incidental workspace files.
+
+    Retired WDQ diagnostics are available only to explicit legacy callers.
+    Normal check/next/details and development commits do not invoke them.
+    """
     manifest_path = root / "specs/active_frontier.json"
     try:
         manifest = read_json(manifest_path)

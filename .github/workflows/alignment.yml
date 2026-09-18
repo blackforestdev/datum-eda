@@ -25,12 +25,6 @@ jobs:
         with:
           python-version: "3.12"
 
-      # WDQ-G03 bootstrap is intentionally non-enforcing. G06 must supply an
-      # owner-controlled authority ref and event base to the trusted revision's
-      # runner; candidate YAML/policy must never choose its own approval source.
-      - name: Workflow delivery report-only diagnostics
-        run: python3 scripts/check_workflow_delivery.py --report-only
-
       # Authoritative gate set — single source of truth. Runs the full drift
       # gates: governance coverage/classification, spec parity, contract
       # write-fences (private-writer bans, daemon write parity), MCP public
