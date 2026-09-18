@@ -1,0 +1,106 @@
+{
+  "crop": "1280x706+0+34",
+  "exclusion": "Only top34px and bottom60px excluded because disposable imports have different displayed revision IDs; central content includes complete board/schematic pane bodies, sidebars and interaction overlays. Per-run clamp equality and reversal use full-window RGBA.",
+  "comparisons": [
+    {
+      "images": [
+        "docs/reviews/gui-performance/measurements/baseline-boundary-v3/before-1.png",
+        "docs/reviews/gui-performance/measurements/candidate-boundary-v3/before-1.png"
+      ],
+      "rgba_sha256": [
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4",
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4"
+      ],
+      "equal": true
+    },
+    {
+      "images": [
+        "docs/reviews/gui-performance/measurements/baseline-boundary-v3/after-1.png",
+        "docs/reviews/gui-performance/measurements/candidate-boundary-v3/after-1.png"
+      ],
+      "rgba_sha256": [
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4",
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4"
+      ],
+      "equal": true
+    },
+    {
+      "images": [
+        "docs/reviews/gui-performance/measurements/baseline-boundary-v3/reverse-1.png",
+        "docs/reviews/gui-performance/measurements/candidate-boundary-v3/reverse-1.png"
+      ],
+      "rgba_sha256": [
+        "9534ee5eba5ed66bbadc26373c843e1c7832e3e29aedb5104f7af165a7acd6ae",
+        "173b0dcf9c59de27210f77877f199af571181c9d0d6a208d18532585205ab7c8"
+      ],
+      "equal": false
+    },
+    {
+      "images": [
+        "docs/reviews/gui-performance/measurements/baseline-boundary-v3/before-2.png",
+        "docs/reviews/gui-performance/measurements/candidate-boundary-v3/before-2.png"
+      ],
+      "rgba_sha256": [
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4",
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4"
+      ],
+      "equal": true
+    },
+    {
+      "images": [
+        "docs/reviews/gui-performance/measurements/baseline-boundary-v3/after-2.png",
+        "docs/reviews/gui-performance/measurements/candidate-boundary-v3/after-2.png"
+      ],
+      "rgba_sha256": [
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4",
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4"
+      ],
+      "equal": true
+    },
+    {
+      "images": [
+        "docs/reviews/gui-performance/measurements/baseline-boundary-v3/reverse-2.png",
+        "docs/reviews/gui-performance/measurements/candidate-boundary-v3/reverse-2.png"
+      ],
+      "rgba_sha256": [
+        "9534ee5eba5ed66bbadc26373c843e1c7832e3e29aedb5104f7af165a7acd6ae",
+        "173b0dcf9c59de27210f77877f199af571181c9d0d6a208d18532585205ab7c8"
+      ],
+      "equal": false
+    },
+    {
+      "images": [
+        "docs/reviews/gui-performance/measurements/baseline-boundary-v3/before-3.png",
+        "docs/reviews/gui-performance/measurements/candidate-boundary-v3/before-3.png"
+      ],
+      "rgba_sha256": [
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4",
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4"
+      ],
+      "equal": true
+    },
+    {
+      "images": [
+        "docs/reviews/gui-performance/measurements/baseline-boundary-v3/after-3.png",
+        "docs/reviews/gui-performance/measurements/candidate-boundary-v3/after-3.png"
+      ],
+      "rgba_sha256": [
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4",
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4"
+      ],
+      "equal": true
+    },
+    {
+      "images": [
+        "docs/reviews/gui-performance/measurements/baseline-boundary-v3/reverse-3.png",
+        "docs/reviews/gui-performance/measurements/candidate-boundary-v3/reverse-3.png"
+      ],
+      "rgba_sha256": [
+        "9534ee5eba5ed66bbadc26373c843e1c7832e3e29aedb5104f7af165a7acd6ae",
+        "173b0dcf9c59de27210f77877f199af571181c9d0d6a208d18532585205ab7c8"
+      ],
+      "equal": false
+    }
+  ],
+  "disposition": "Unmatched path-derived object identities: rejected as causal candidate comparison. Exact same-input-path control in matched-model-pixels.json supersedes this comparison; original mismatch retained."
+}

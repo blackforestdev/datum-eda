@@ -1,0 +1,51 @@
+{
+  "board_paths": [
+    "/tmp/datum-gui-candidate-boundary-v3/datum-eda/gui-imports/DOA2526-2024a5c470eef1cc/board/board.json",
+    "/tmp/datum-gui-baseline-shared-path-control/datum-eda/gui-imports/DOA2526-2024a5c470eef1cc/board/board.json"
+  ],
+  "different_top_level_fields": [
+    "uuid"
+  ],
+  "canonical_json_sha256_excluding_root_uuid": [
+    "090cde27e23d298892447c661535bba36f4224ea74df615b74ca3ac83491e1ef",
+    "090cde27e23d298892447c661535bba36f4224ea74df615b74ca3ac83491e1ef"
+  ],
+  "rendered_object_fields_identical": true,
+  "content_crop": "1280x706+0+34",
+  "excluded_regions": "Top34 and bottom60pixels contain differing project revision labels; no central design/pane region excluded.",
+  "comparisons": [
+    {
+      "images": [
+        "docs/reviews/gui-performance/measurements/candidate-boundary-v3/before-1.png",
+        "docs/reviews/gui-performance/measurements/baseline-shared-path-control/before-1.png"
+      ],
+      "rgba_sha256": [
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4",
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4"
+      ],
+      "equal": true
+    },
+    {
+      "images": [
+        "docs/reviews/gui-performance/measurements/candidate-boundary-v3/after-1.png",
+        "docs/reviews/gui-performance/measurements/baseline-shared-path-control/after-1.png"
+      ],
+      "rgba_sha256": [
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4",
+        "41193dc69e1495687a13aafcb547059850830b3c749e713105a8397dcf0729d4"
+      ],
+      "equal": true
+    },
+    {
+      "images": [
+        "docs/reviews/gui-performance/measurements/candidate-boundary-v3/reverse-1.png",
+        "docs/reviews/gui-performance/measurements/baseline-shared-path-control/reverse-1.png"
+      ],
+      "rgba_sha256": [
+        "173b0dcf9c59de27210f77877f199af571181c9d0d6a208d18532585205ab7c8",
+        "173b0dcf9c59de27210f77877f199af571181c9d0d6a208d18532585205ab7c8"
+      ],
+      "equal": true
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "scope": "Owner-authorized no-op zoom correction; no full specification or product acceptance.",
+  "checks": [
+    {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app runtime_camera_pane::zoom::tests -- --test-threads=1",
+      "exit_code": 0,
+      "passed": 3,
+      "failed": 0,
+      "filtered_gui_unit_tests": 319
+    },
+    {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-viewport camera::tests -- --test-threads=1",
+      "exit_code": 0,
+      "passed": 7,
+      "failed": 0,
+      "filtered_tests": 36
+    },
+    {
+      "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-gui-app --release",
+      "exit_code": 0,
+      "profile": "optimized",
+      "elapsed": "5m54s"
+    }
+  ],
+  "limitations": [
+    "No full25HP replay or endurance performed; execute with affected future slices and final acceptance.",
+    "No concurrent multi-device GPU test performed; dat-gpu-test-concurrency-6dt remains unresolved.",
+    "Native X11/Xwayland input and compositor captures do not qualify native Wayland input or end-to-end latency."
+  ],
+  "measurement_artifact_index": "docs/reviews/gui-performance/measurements/SHA256SUMS"
+}

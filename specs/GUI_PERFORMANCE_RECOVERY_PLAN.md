@@ -12,10 +12,12 @@ behind specification approval and a separate execution grant. The owner chose
 shared-foundation scope, qualification on the daily Linux setup first, a 60 Hz
 baseline, and a narrow permanent exception for read-only research.
 
-This document governs how to develop the specification. It is not that completed
-specification and does not authorize production Rust, shader, dependency,
-instrumentation, benchmark-runner, or GUI behavior changes. No completion step
-below is completed merely by registering this plan. Consult the generated
+This document governs specification development. The subsequent owner sequencing
+direction authorizes bounded baseline measurements using existing tooling first,
+and narrowly scoped diagnostic instrumentation only for otherwise unavailable
+measurements. Product changes follow a written engineering contract and slice
+proof definition; specification approval and final implementation acceptance
+remain distinct. No completion step is completed merely by registering this plan. Consult the generated
 Active Frontier for current selection; this document does not maintain a rival
 next-task answer.
 
@@ -51,8 +53,8 @@ or justify replacing Rust/wgpu. Reconcile later commits before reusing findings.
 ## Scheduled specification completion contract
 
 The clause inventory binds the individual requirements below to the six existing
-completion steps. All steps remain pending. No research, specification, runtime
-proof or owner approval is claimed by this amendment.
+completion steps. Step state is maintained in the Frontier. This amendment alone establishes no
+completed research, specification, runtime proof or product acceptance.
 
 <!-- REQ:GUI-PERFORMANCE-SPEC:GPS-C01 -->
 ### Audit reconciliation
@@ -73,15 +75,30 @@ real project/fixture hashes, input schedules, environment, commands, raw observa
 and repeat variability. Separate cold, warm and idle phases; distinguish physical/native
 input from handler replay. Historical QA percentages and screenshots alone cannot
 satisfy this baseline.
+For imported fixtures, also pin resolved object identities and ordering: a raw
+file hash alone is insufficient when the importer derives IDs from its path.
+Use a frozen native fixture or the same controlled import identity on both sides.
 
 <!-- GUI-PERFORMANCE:R03 -->
-**R03.** Record every unavailable baseline measurement and its impact on architecture
-choices. If existing diagnostics cannot supply the required evidence, keep this step
-pending and prepare a bounded measurement-preparation task with scope, outputs,
-dependencies and explicit owner authorization before collecting additional proof or
-changing instrumentation. This amendment authorizes neither benchmark execution nor
-instrumentation code. New measurement work must precede architecture approval; it must
-not be deferred silently to renderer implementation.
+**R03.** The owner's subsequent sequencing direction grants bounded measurement
+execution within GPS-C01: inspect existing diagnostics first; build the current
+optimized GUI with the guarded runner; launch only session-owned instances on
+copies of real fixtures with isolated configuration; collect CPU time, GPU engine
+activity where available, memory, preparation/encoding/upload work and event/frame
+observations for idle, pointer, camera, scrolling and pane/window transitions.
+Retain exact revision/build/fixture/environment, input schedule, raw observations
+and limitations. Cap initial samples at three 30-second trials per workload after
+five-second warmup; final endurance qualification is a later acceptance activity.
+Do not operate on the owner's live project or record generated state in tracked
+fixtures. Existing native capture and OS counters take precedence over new code.
+
+If a metric is unavailable, allow the minimum opt-in diagnostic counters or
+controlled production-handler driver needed to measure it, with the exact source
+scope, overhead and limitations recorded before use. Diagnostic execution is not
+permission to change rendering semantics, adopt dependencies or run a rewrite.
+Keep synthetic handler input distinct from native input and displayed feedback;
+missing measurements cannot be reported as passes. No new approval framework or
+historical acceptance refresh is required for these owner-authorized measurements.
 
 <!-- GUI-PERFORMANCE:R04 -->
 **R04.** Reconcile applicable prior art with Datum's existing shared tooling and
@@ -277,6 +294,14 @@ reservation retains authorization none until the specification blocker closes; t
 transition it to specified/owner_decision, unclaimed and unselected. Only a later
 explicit execution grant may select an execution substep and authorize code changes.
 
+The owner's subsequent instruction to implement and verify baseline-selected
+bounded Rust corrections is a present, narrower grant: the no-op zoom correction
+documented in `docs/reviews/gui-performance/zoom-noop-slice.md` may execute against
+its written contract and slice proof under existing camera doctrine. It does not
+ratify the proposed shared architecture or activate the wider implementation
+reservation. Record its actual results without requiring complete adoption or
+endurance first; do not ask for this same bounded grant again.
+
 <!-- GUI-PERFORMANCE:R25 -->
 **R25.** For each existing GUI consumer name its adoption slice, shared
 interfaces/configuration, legitimate exceptions and parity/regression tests. Define the
@@ -394,6 +419,11 @@ as product work, publishing the reviewed implementation completion contract,
 and selecting its separate owner execution gate must precede execution. No
 existing coverage row, source permission, enrollment, gate implementation,
 historical proof or installed trust is changed by these two candidate additions.
+
+This dated reservation describes the wider architecture implementation. The
+later owner sequencing direction and R24's bounded corrective scope supersede
+its blanket prohibition only for that named correction. No WDQ enrollment or
+source-permission promotion is required for it after retirement of that gate.
 
 Installed authority still requires a separately approved promotion of these
 exact candidate bytes. Readiness is not asserted by writing the candidate
@@ -564,3 +594,29 @@ The earlier 32-clause promotion candidate is superseded. This revision contains
 Existing staged owner directions remain historical authorization records; no
 old candidate hash, acceptance digest or prior evidence is rewritten to claim
 these additions were previously reviewed or approved.
+
+## Owner sequencing correction — 2026-09-17
+
+The owner authorized measurement first, a concrete shared engineering contract
+second, then bounded Rust changes chosen by the baseline. Window-local invalidation
+is a candidate rather than a preselected optimization. R02-R03 now permit the
+measurements required to complete GPS-C01; they no longer withhold that permission.
+The exact direction is recorded in
+`docs/reviews/gui-performance/sequencing-owner-direction.json`.
+
+Specification readiness requires defined, feasible proof methods and a measured
+baseline, not already passing production implementations. All HP01-HP25 remain
+mandatory obligations: map each to its affected slice and execute that slice's
+relevant positive/negative, functional, visual and resource proof when implemented.
+Complete consumer adoption, cross-slice regression replay and long-session/endurance
+qualification are final acceptance conditions. An intermediate slice can land
+without claiming completion of untouched obligations. Preserve the existing
+specification review/approval boundary and implementation acceptance distinction;
+do not insert another approval framework or recreate retired WDQ enforcement.
+
+The concrete draft is `specs/GUI_SHARED_ENGINEERING_CONTRACT.md`. Its E01–E09
+define shared ownership, invalidation, reuse/lifetime, input/clipping, measurable
+oracles and all 25 HP slice allocations. It remains proposed; incomplete broader
+baseline/qualification methods and independent review findings remain visible
+before specification approval. Executing one bounded correction is neither
+GPS-C01 completion nor renderer acceptance.
