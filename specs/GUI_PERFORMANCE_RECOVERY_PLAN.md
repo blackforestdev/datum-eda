@@ -590,7 +590,8 @@ The separately authorized implementation must then execute the positive and
 negative proofs and independent native replay before runtime acceptance.
 
 The earlier 32-clause promotion candidate is superseded. This revision contains
-38 R requirements and 25 individually indexed HP cases (63 clause records).
+42 R requirements and 25 individually indexed HP cases (67 clause records),
+including the subsequent owner-directed R39–R42 reopening below.
 Existing staged owner directions remain historical authorization records; no
 old candidate hash, acceptance digest or prior evidence is rewritten to claim
 these additions were previously reviewed or approved.
@@ -614,9 +615,76 @@ without claiming completion of untouched obligations. Preserve the existing
 specification review/approval boundary and implementation acceptance distinction;
 do not insert another approval framework or recreate retired WDQ enforcement.
 
-The concrete draft is `specs/GUI_SHARED_ENGINEERING_CONTRACT.md`. Its E01–E09
+The concrete draft is `specs/GUI_SHARED_ENGINEERING_CONTRACT.md`. Its E01–E10
 define shared ownership, invalidation, reuse/lifetime, input/clipping, measurable
 oracles and all 25 HP slice allocations. It remains proposed; incomplete broader
 baseline/qualification methods and independent review findings remain visible
 before specification approval. Executing one bounded correction is neither
 GPS-C01 completion nor renderer acceptance.
+
+## Owner-directed global rendering reopening — 2026-09-19
+
+The owner rejects the approximately 34% resize CPU result and reports flickering
+and blinking during testing. Rendering-engine work is explicitly reopened at the
+shared-foundation level, including surface reconfiguration and all uncovered
+scheduling/resource/test gaps. The exact instruction and current observations
+are in `docs/reviews/gui-performance/rendering-reopening.json`. GPS-C01R remains
+historical evidence of a limited CPU/work correction; it is not resize UX or
+resource acceptance. The open QA issue is `dat-gui-vertical-resize-cpu-toj`.
+No existing HP case, product/visual authority, successful correction or historical
+receipt is discarded. This amendment adds requirements to the existing roadmap;
+it does not create another approval framework or claim a runtime fix.
+
+<!-- GUI-PERFORMANCE:R39 -->
+**R39 — Shared native-surface lifecycle (GPS-C02).** Finish E10's single shared
+surface scheduling/configuration/acquisition/recovery/presentation contract and
+explicit host adapters. Cover main Runtime and the shared dialog surface used by
+Global Preferences, Project Preferences and New Project, with pane/terminal damage
+routed only to the host. Separate desired size/DPI, configured resources and
+presented generation; coalesce obsolete resource work without losing input or
+final damage. Specify zero extent, resize, DPI, recovery, minimize and teardown.
+Duplicating another per-window resize loop or adding an unused helper fails the
+shared-by-construction requirement. Proposed mechanisms retain normal ratification.
+
+<!-- GUI-PERFORMANCE:R40 -->
+**R40 — Resize cost and absolute resource expectations (GPS-C03).** Attribute
+configuration/waits, attachment/MSAA allocation and lifetime, layout/text,
+upload/encoding, submission, GPU and compositor costs separately. Compare minimal
+host, shell-only and representative/demanding content at a controlled interaction
+rate. Define justified per-workload numerical budgets and fixed-overhead limits
+before qualification; approximately 34% CPU is rejected, not an accepted budget.
+Lower averages or unchanged final pixels cannot excuse blinking, delayed frames,
+extra GPU work, allocation growth or unrelated-window work. Preserve visual
+quality and frame/input delivery; do not declare success through reduced quality
+or freezing rendering. Actual backend evidence and tracing/capture overhead are
+required. E07's existing numerical candidates remain unratified.
+
+<!-- GUI-PERFORMANCE:R41 -->
+**R41 — Temporal visual and presentation oracle (GPS-C03).** Define and validate
+continuous native-resize output measurement for both axes/corners, reversals,
+DPI/display transitions and window lifecycle. Require detection of unintended
+blank frames, disappearing/stale content, extent mismatch and frame-age/latency
+failure during motion. Prove measurement sensitivity with negative controls and
+known capture cadence/loss; undersampled or unverified capture is inconclusive.
+Settled screenshots, render counters and successful smoke calls are insufficient.
+Keep native Wayland and X11/Xwayland qualification distinct; observation during
+an artificial smoke does not prove the normal application's flicker cause.
+
+<!-- GUI-PERFORMANCE:R42 -->
+**R42 — Global adoption and regression closure (GPS-C04/GPS-C05).** Map R39–R41
+and E10 individually to shared owners, every current native host, pane/terminal
+consumers, test paths, artifacts and removal of competing legacy code. Correct
+smoke reentry and native-size validation before using it as UX proof. Require
+work-count and temporal negative controls plus independent native replay; include
+surface/attachment churn, cross-window invalidation, text/upload reuse, recovery
+and final damage. A local optimization cannot close global adoption. Keep the
+resize QA issue unresolved until both temporal UX and resource criteria pass;
+complete adoption and endurance remain final acceptance, with relevant proof
+executed for each implementation slice.
+
+GPS-C02 must draft this shared lifecycle and reconcile the current main/dialog
+paths. GPS-C03 must define the missing absolute resource and temporal methods;
+GPS-C04 must make adoption and retirement executable for every consumer. The
+existing measurement-first, contract-before-code, bounded-implementation sequence
+remains. This amendment itself neither implements the contract nor completes
+GPS-C02–GPS-C06 or wider engine acceptance.

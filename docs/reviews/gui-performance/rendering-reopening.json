@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "marker": "EVIDENCE:GUI-PERFORMANCE-SPEC:GLOBAL-REOPENING",
+  "recorded_utc_date": "2026-09-19",
+  "issue_id": "dat-gui-performance-spec-u9n",
+  "qa_issue": "dat-gui-vertical-resize-cpu-toj",
+  "owner_direction": "this needs to be addressed and inform the rendering engine development. this was a large gap and 34% is unaceptible for a simple resize. these details coupled with your audit findings suggest that the render engine needs to be reopened and the surface reconfiguration and other issues uncovered need to be resolved globally as the render engine intended.",
+  "disposition": "Reopen shared rendering-engine requirements and global adoption scope. Existing GPS-C01R is historical partial CPU/work proof, not acceptable resize UX or resource qualification. Retain all HP01-HP25 and existing product/visual authority.",
+  "authorization_boundary": "Owner-directed specification/roadmap correction under current measurement-first and contract-before-code sequencing. No new mechanism/numeric ratification, dependency adoption, renderer replacement or product acceptance; bounded implementation still follows defined contract and slice proof.",
+  "requirements": [
+    "R39",
+    "R40",
+    "R41",
+    "R42"
+  ],
+  "contract": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md#e10--reopened-shared-surface-and-resize-contract",
+  "findings": [
+    {
+      "kind": "owner_report",
+      "finding": "Approximately 34% CPU is unacceptable and resize testing visibly flickers/blinks. This is unresolved QA, not proof of the specific root cause."
+    },
+    {
+      "kind": "existing_trace",
+      "finding": "final-traced/report.json records 555/559 configurations and 232/246 rendered frames in respective 10-second height/width samples. Application frame counts are not displayed FPS.",
+      "evidence": "docs/reviews/gui-performance/measurements/resize/final-traced/report.json"
+    },
+    {
+      "kind": "static_code",
+      "finding": "Runtime and shared dialog surface configure for every changed size; desired extent and committed resources are not separated."
+    },
+    {
+      "kind": "static_code",
+      "finding": "Shared renderer recreates a full-size MSAA attachment on changed dimensions. Its CPU/GPU contribution is not isolated by the current measurements."
+    },
+    {
+      "kind": "static_code",
+      "finding": "General App redraw helper also invalidates all open dialog hosts. Actual cost depends on the active consumer and legitimate global changes."
+    },
+    {
+      "kind": "test_gap",
+      "finding": "Resize smoke executes from each RedrawRequested and mutates configured dimensions without requesting native window resize; both archived smoke logs contain 2 starts and 1 end. This confounds test-time visuals and does not identify ordinary-drag flicker cause."
+    },
+    {
+      "kind": "acceptance_gap",
+      "finding": "Settled pixel equality and API-success smoke did not establish temporal continuity, actual backend identity or presentation/frame-age/latency budgets."
+    }
+  ],
+  "required_outputs": {
+    "GPS-C02": "Shared lifecycle ownership and production main/dialog reconciliation, not isolated window fixes.",
+    "GPS-C03": "Validated temporal native-resize oracle plus justified absolute resource/presentation budgets and cost attribution.",
+    "GPS-C04": "Individual invariant-to-owner-to-all-consumer mapping, legacy path retirement and defect-sensitive tests.",
+    "GPS-C05": "Independent review and native replay before runtime acceptance.",
+    "final_acceptance": "All consumer adoption plus full HP regressions and endurance; no local-win substitution."
+  },
+  "source_head": "7e9a995032c0d1e671cbace5aa7d5469c0e52430",
+  "source_sha256": {
+    "crates/gui-app/src/main.rs": "be04db52bed1ab028938370a723d458b263fd2f4b143c153d5bdc50730b366b7",
+    "crates/gui-app/src/runtime_surface.rs": "933e9da4f1eff6cbcc3eb9fe42c788250f7ff3fa941301c26008b74f5ea8949b",
+    "crates/gui-app/src/runtime_present.rs": "09286860b6d46298e645cda7441ca80d84a5aabe2a4d8d071c316588851588b7",
+    "crates/gui-app/src/global_preferences_window.rs": "f3eb67d797426c7a6c658784e4461dbfc65f0aab02483840d5fa48f98e829d14",
+    "crates/gui-app/src/project_preferences_window.rs": "650c49f191261a9353ca1789e504225d5e16c93ffbee7dd4e9568038fd5964fa",
+    "crates/gui-app/src/new_project_window.rs": "78471baab7cb612b4810017bbabdfb9c981b71eab45ba10aa0459c072515fcef",
+    "crates/gui-app/src/app_shell.rs": "9095e885d32e9bde034e6084ae2e7a2671fad63b7e8f48b3fe31547ece603868",
+    "crates/gui-app/src/gui_runtime_support.rs": "a99eab75eb189391c0aca831ccfa790de2c86691da660bf056db195c5b406f23",
+    "crates/gui-render/src/render/gpu_surface.rs": "23ed079ccc6644198298154199593ec4b0430b6feb4b91966b9369b4b7e8f92c"
+  },
+  "runtime_change_this_amendment": false,
+  "product_accepted": false
+}

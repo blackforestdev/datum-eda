@@ -1,0 +1,21 @@
+{
+  "marker": "EVIDENCE:GUI-PERFORMANCE-SPEC:GLOBAL-REOPENING-REVIEW",
+  "reviewer": "/root/gui_contract_review",
+  "independent_of_author": true,
+  "disposition": "Approve the amendment only; no remaining amendment-review blocker.",
+  "scope": "Read-only review of owner-directed global reopening, shared contract, clause inventory and roadmap. No runtime replay or complete specification approval.",
+  "findings": [
+    "All63 original clause records unchanged; four R additions retain all25 HP cases.",
+    "Every current native host is covered, with shared ownership, pane/terminal damage routing and retirement of competing paths.",
+    "Temporal continuity, resource budgets, capture sensitivity and actual backend identification are explicit obligations. Feasibility and numeric approval remain future work.",
+    "R03-authorized diagnostics and isolated harness corrections can establish the temporal oracle before product rendering changes.",
+    "Legitimate refresh-aware pacing/backpressure remains allowed when input, final state and presentation budgets are preserved.",
+    "GPS-C01R remains historical partial proof; GPS-C02-GPS-C06 and full shared-engine acceptance remain incomplete."
+  ],
+  "reviewed_sha256": {
+    "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md": "bd8f94766c1fd034e6c6c732c4ad989fe1d544e97ec02de0c688cd3f6fb02ae6",
+    "specs/GUI_SHARED_ENGINEERING_CONTRACT.md": "c627dfb630b5d224e2fbd6ae3499e9966994ea981056984a18e4c8d2ba152404",
+    "docs/reviews/gui-performance/rendering-reopening.json": "16ed9c8495993d15c005ae5c97e8377431538171f0e164497bfec840af30e97e",
+    "docs/reviews/gui-performance/specification-clauses.json": "60e268757400e430123b3ee34d0334dd93828ae1246a4e28c99c40944a3d4662"
+  }
+}

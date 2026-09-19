@@ -3,7 +3,7 @@
 Status: proposed engineering specification for GUI-PERFORMANCE-SPEC. This is
 the concrete contract requested by the owner's sequencing correction, not
 ratification of a new mechanism or a declaration of production acceptance.
-The parent is `GUI_PERFORMANCE_RECOVERY_PLAN.md`; its R01–R38 and HP01–HP25
+The parent is `GUI_PERFORMANCE_RECOVERY_PLAN.md`; its R01–R42 and HP01–HP25
 remain obligations. Specification review approves definitions and feasible
 proof. Implementation supplies the results, slice by slice. Complete adoption
 and endurance belong to final acceptance.
@@ -242,7 +242,7 @@ prerequisite to the first implementation slice.
 | Slice | Consumers and existing paths | Proof required when implemented |
 |---|---|---|
 | S0 measurement closure | All native hosts; existing trace and OS tools | Verified target/input, baseline raw receipts, trace overhead and missing-metric register |
-| S1 event invalidation | Main board/schematic camera and interaction handlers; `App::request_redraw_if_needed`; owned dialog dispatch | Production no-op and affected-window counts; pointer/focus/capture parity; current baseline selects the first bounded change |
+| S1 shared surface lifecycle and event invalidation | Main runtime and all three dialog instances; shared surface state/scheduling owner; board/schematic camera and interaction handlers; `App::request_redraw_if_needed`; owned dialog dispatch | E10 lifecycle and temporal proof in every host; production no-op and affected-window counts; pointer/focus/capture parity; measured attribution selects bounded changes |
 | S2 retained preparation/upload | `PreparedScene`, retained board/schematic resources, screen-space buffers and encoded draws | Rebuild/upload/encoding counters; identity replacement and eviction negative controls; painter/AA/text parity |
 | S3 shared controls/dialogs | Both Preferences, New Project, Layers, navigator, Inspector, menus/popovers | Dialog-only composition, shared continuous/row adapters, clipping/hit/keyboard tests; remove obsolete duplicated paths |
 | S4 terminal and lifecycle | Terminal host plus every native surface/device | Hidden-work suppression, terminal state/input parity, fair dispatch, bounded fault/recovery and resource release |
@@ -298,3 +298,117 @@ The existing concurrent GPU-test issue `dat-gpu-test-concurrency-6dt` stays open
 GPU tests run serially. Full historical defect replay is not required before
 specification approval; its exact recipes, feasible methods and allocations are.
 No case is marked passed by this table.
+
+## E10 — Reopened shared surface and resize contract
+
+Owner direction reopens rendering-engine development after resize QA exposed
+unacceptable approximately 34% GUI CPU and visible blinking. GPS-C01R proved a
+bounded retained-geometry improvement only; neither that reduction nor settled
+pixel equality qualifies resize UX. This section is a proposed common engineering
+contract under R39–R42, not ratification of a mechanism or new numeric ceiling.
+The exact direction and current-code findings are recorded in
+`docs/reviews/gui-performance/rendering-reopening.json`.
+
+### One surface lifecycle implementation, all native hosts
+
+Define one shared implementation for native surface state, resize scheduling,
+configuration/acquisition/recovery and presentation bookkeeping. Main `Runtime`
+and `GlobalPreferencesWindowSurface` are adapters to it; Global Preferences,
+Project Preferences and New Project must all adopt it. Board, schematic,
+terminal, dock, menus and pane layout report damage to their actual host. Future
+native windows inherit the same implementation. A utility that leaves competing
+configuration loops in place does not satisfy adoption. Device sharing must not
+merge window damage or lifetime. Terminal PTY/state and continuous-scroll
+semantics remain domain-owned.
+
+Separate latest logical/input extent, desired physical surface configuration,
+configured resource generation and last successfully presented generation.
+Track real zero extent/undrawable state rather than silently converting it into
+perpetual 1×1 rendering. Each frame uses one coherent extent/DPI/resource snapshot.
+Input and layout state follow accepted events promptly, including final gesture
+state; superseded unpresented resource work may be coalesced. Configuration work
+belongs to the drawable frame lifecycle, not an unconditional GPU operation for
+every size notification. Ordinarily allow at most one necessary configuration
+per frame attempt; initialization and bounded recovery are separately classified
+and counted. Do not retain a live acquired texture across reconfiguration.
+
+Surface acquisition failure retains damage and schedules a bounded retry under
+E06; no busy retry, lost final resize, stale-generation completion or late work
+after close. Notify/present through the backend-appropriate boundary. Preserve
+coherent visible content while a replacement is pending, with explicit backend
+behavior rather than assuming old-size swapchain contents remain valid. Rendering
+must never intentionally publish an empty intermediate frame. Real resize,
+DPI/display changes, maximize/restore, minimize/restore and close during resize
+must use these transitions. Backend capability differences are explicit adapters,
+not independently invented scheduling policies.
+
+### Resource work and isolation
+
+Profile surface configuration/waits separately from attachment allocation,
+scene/layout/text preparation, upload, encoding, queue submission, GPU execution
+and compositor presentation. Ordinary resize must not invalidate an unrelated
+window; exact work-count proof requires zero induced preparation/submissions for
+an unchanged unrelated host. Genuine application-wide changes name dependents.
+Preserve event delivery and modal focus rather than manufacturing unsupported
+simultaneous gestures to satisfy a benchmark.
+
+Attachment recreation is governed by actual extent/format/sample/device changes
+and the committed frame snapshot. Audit the current full-size MSAA replacement,
+pass/resolve cost, transient allocation and bytes retained in flight. Specify a
+bounded lifetime and release proof before introducing pooling or size buckets;
+resolve compatibility must remain valid. Unchanged frames allocate zero new
+size-dependent attachments. Distinguish unavoidable changed-size allocation from
+superseded work that can be eliminated. Do not lower AA/text fidelity, freeze
+updates during drag, or cap input/render delivery merely to improve CPU figures. Refresh-aware pacing
+and bounded backpressure are legitimate when they preserve accepted input and
+final state and satisfy the agreed presentation/latency budgets; they must not
+manufacture a resource pass by reducing the required work delivered.
+Text, layout, screen geometry and uploads obey their own dependency keys; world
+reuse alone is not the shared-engine solution. Include diagnostics/file I/O in
+cost attribution and measure tracing overhead.
+
+### Temporal proof and resource qualification
+
+Before changing product rendering behavior, define a native-resize reproduction
+and validate the temporal oracle used to accept that change. R03-authorized
+opt-in diagnostics and isolated test-harness corrections may be implemented to
+establish that oracle; completed production proof is not required to begin
+those measurement changes. The corpus covers empty/minimal host, shell-only,
+representative and demanding board/schematic scenes, both Preferences windows,
+New Project, visible/hidden terminal, and multiple open windows. Exercise both
+axes, corners, direction reversal, fractional DPI, maximize/restore, recovery,
+close while pending and return to quiet idle. Record actual backend/adapter and
+display refresh from runtime evidence; environment variables alone are not
+backend proof. Keep X11/Xwayland and native Wayland results separate.
+
+Capture continuous compositor output or independently validated display evidence
+through the full interaction, synchronized with input and application events.
+Detect unintended blank/clear flashes, content disappearance, stale/mismatched
+extents and long repeats; distinguish legitimate newly exposed background and
+moving geometry. Report presented-frame intervals, frame age and input-to-visible
+latency distributions, worst stalls and final settled state. Capture cadence,
+dropped frames and recorder overhead must be known: missing or undersampled
+coverage is inconclusive, not zero flicker. Settled screenshots, submit counts,
+`present()` calls and successful acquisition cannot satisfy this oracle.
+
+GPS-C03 must supply explicit per-workload CPU/GPU/memory and presentation budgets
+on the daily Linux reference setup, separating normal required work from fixed
+shell overhead and avoidable resize churn. Approximately34% CPU is an owner-
+rejected observed result, not a newly accepted ceiling; a relative improvement
+alone cannot close the issue. Existing E07 numbers remain proposals. Both visual
+quality and low resource consumption must pass together; reducing CPU while
+increasing GPU work requires investigation, not automatic acceptance. Preserve
+short investigative runs as such; qualification uses E07 repeated warm trials,
+with full adoption/endurance later. No provable universal minimum is claimed.
+
+The smoke harness must run once per explicit invocation, request real native
+window sizes, observe resulting events and verify configured/presented extent
+agreement. A resource-only stress test may deliberately use artificial dimensions
+but must be identified as such and must not serve as native resize UX evidence.
+Negative controls must demonstrate detection of a blank intermediate frame,
+stale frame/extent, repeated smoke reentry, discarded final damage, cross-window
+redraw and per-event reconfiguration churn. Fault injection stays in test paths.
+GPS-C04 maps every invariant to shared owner, each current consumer, exact proof,
+legacy path removal and artifact. Slice proof must cover all hosts changed by
+that slice; remaining hosts stay explicitly unadopted. Full shared-engine
+completion requires every current host and independent native replay.
