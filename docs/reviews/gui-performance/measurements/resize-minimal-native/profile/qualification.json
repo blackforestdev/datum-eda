@@ -1,0 +1,9 @@
+{
+  "diagnostic": "minimal native profile; fixture not loaded",
+  "cpu_seconds_proc_resize": 3.3,
+  "cpu_seconds_profile": 0.17,
+  "profile_coverage_fraction": 0.05151515151515152,
+  "attribution_accepted": false,
+  "reason": "Only about five percent of process-accounted CPU appears in sampled stacks; cannot rank the dominant CPU cost from this profile. Collector also emitted cwarn 216 SIGPROF. Preserve rather than attribute missing CPU to driver or editor.",
+  "no_temporal_visual_acceptance": true
+}

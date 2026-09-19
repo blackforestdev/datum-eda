@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+"""Bounded, owner-run kernel diagnostic; never launches Datum as root.
+
+Uses only a newly created tracefs instance, one verified minimal-window PID,
+and Intel driver function graphs. Refuses global-tracer fallback.
+Writes a JSON receipt to stdout; redirect it from the owner's ordinary shell.
+Graph durations include observer overhead and possibly sleep; not CPU acceptance.
+"""
+import argparse
+import json
+import os
+from pathlib import Path
+import signal
+import sys
+import time
+import uuid
+
+
+ROOT = Path('/home/bfadmin/Documents/datum-eda')
+TRACEFS = Path('/sys/kernel/tracing')
+FUNCTION = 'i915_gem_execbuffer2_ioctl'
+
+
+def identity(pid):
+    proc = Path(f'/proc/{pid}')
+    executable = proc.joinpath('exe').resolve(strict=True)
+    if executable != ROOT / 'target/release/datum-gui':
+        raise RuntimeError('PID is not the expected Datum release binary')
+    if proc.stat().st_uid != ROOT.stat().st_uid or proc.stat().st_uid == 0:
+        raise RuntimeError('Target must belong to the non-root project owner')
+    if b'DATUM_DIAGNOSTIC_MINIMAL_WINDOW=1' not in proc.joinpath('environ').read_bytes().split(b'\0'):
+        raise RuntimeError('Target is not the opt-in minimal native window')
+    # Field22, starting after the parenthesized command name, identifies reuse.
+    return proc.joinpath('stat').read_text().rsplit(')', 1)[1].split()[19]
+
+
+def capture(pid, seconds):
+    if os.geteuid() != 0:
+        raise RuntimeError('Owner authentication is required; do not grant broad tracefs permissions')
+    started = identity(pid)
+    functions = TRACEFS.joinpath('available_filter_functions').read_text().splitlines()
+    if not any(line.split()[0] == FUNCTION for line in functions if line.split()):
+        raise RuntimeError('Expected Intel ioctl function is not traceable on this kernel')
+    selected = sorted({line.split()[0] for line in functions
+                       if line.split() and ('[i915]' in line.split() or line.split()[0] == FUNCTION)})
+    global_controls = {}
+    for name in ['set_graph_function', 'set_graph_notrace', 'max_graph_depth']:
+        value = TRACEFS.joinpath(name).read_text()
+        global_controls[name] = value
+        if name != 'max_graph_depth' and any(
+                line.strip() and not line.lstrip().startswith('#') for line in value.splitlines()):
+            raise RuntimeError('An existing global graph filter could distort capture; left untouched')
+    instance = TRACEFS / 'instances' / ('datum-resize-' + uuid.uuid4().hex)
+    instance.mkdir()
+    receipt = {'pid': pid, 'process_start': started, 'kernel': os.uname().release,
+               'required_function': FUNCTION, 'selected_functions': selected,
+               'global_graph_controls_unmodified': global_controls, 'seconds_requested': seconds,
+               'instance': str(instance), 'acceptance': False}
+
+    def write(name, value):
+        instance.joinpath(name).write_text(str(value) + '\n')
+
+    try:
+        required = ['tracing_on', 'current_tracer', 'available_tracers',
+                    'set_ftrace_pid', 'set_ftrace_filter', 'buffer_size_kb',
+                    'trace', 'trace_options']
+        missing = [name for name in required if not instance.joinpath(name).exists()]
+        if missing:
+            raise RuntimeError(f'Per-instance controls missing: {missing}; refusing global fallback')
+        write('tracing_on', 0)
+        if 'function_graph' not in instance.joinpath('available_tracers').read_text().split():
+            raise RuntimeError('Per-instance function graph tracer unavailable')
+        write('buffer_size_kb', 1024)
+        write('set_ftrace_pid', pid)
+        # Linux6.12 graph-root/depth controls are global. Its function filter
+        # is instance-local; select traceable i915 functions without changing globals.
+        write('set_ftrace_filter', '\n'.join(selected))
+        write('current_tracer', 'function_graph')
+        receipt['trace_options_unmodified'] = instance.joinpath('trace_options').read_text()
+        if identity(pid) != started:
+            raise RuntimeError('Target changed during setup')
+        print('Kernel capture ready: resize the minimal grid window now.', file=sys.stderr, flush=True)
+        begin = time.monotonic()
+        write('tracing_on', 1)
+        while time.monotonic() - begin < seconds:
+            if identity(pid) != started:
+                raise RuntimeError('Target changed during capture')
+            time.sleep(0.1)
+        write('tracing_on', 0)
+        receipt['elapsed_seconds'] = time.monotonic() - begin
+        receipt['trace'] = instance.joinpath('trace').read_text()
+        receipt['buffer_stats'] = {
+            str(p.relative_to(instance)): p.read_text()
+            for p in instance.glob('per_cpu/cpu*/stats')
+        }
+        receipt['limitations'] = [
+            'Diagnostic function-graph overhead; not uninstrumented performance proof.',
+            'Only selected i915 functions on the main thread; core-kernel descendants and worker work may be absent.',
+            'Global graph depth retained as recorded; no missing function is exonerated.',
+            'Inspect buffer overruns and complete function graphs before interpretation.',
+            'Graph durations are elapsed durations; do not label them CPU time.',
+            'No visual, other-host, or full-regression acceptance.',
+        ]
+    finally:
+        # Controls belong exclusively to this new instance. Never clear the global tracer.
+        try:
+            if instance.joinpath('tracing_on').exists():
+                write('tracing_on', 0)
+            if instance.joinpath('current_tracer').exists():
+                write('current_tracer', 'nop')
+        finally:
+            instance.rmdir()
+    return receipt
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--pid', type=int, required=True)
+    parser.add_argument('--seconds', type=int, choices=range(1, 11), default=5)
+    args = parser.parse_args()
+    if args.pid <= 1:
+        parser.error('Expected a positive application PID greater than1')
+
+    def interrupted(_signal, _frame):
+        raise KeyboardInterrupt
+
+    signal.signal(signal.SIGTERM, interrupted)
+    print(json.dumps(capture(args.pid, args.seconds), indent=2))
+
+
+if __name__ == '__main__':
+    main()

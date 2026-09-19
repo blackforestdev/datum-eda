@@ -1,0 +1,20 @@
+{
+  "matched_submit_call_windows": {
+    "0x40406469": {
+      "count": 303,
+      "cpu_ns": 2049837507,
+      "errors": 0
+    }
+  },
+  "scope": "Whole-run submission windows, including startup; do not use as resize-only CPU percentage.",
+  "request_name": "DRM_IOCTL_I915_GEM_EXECBUFFER2",
+  "request_definition_source": "/usr/src/linux-headers-6.12.107+deb13-common/include/uapi/drm/i915_drm.h",
+  "kernel": "6.12.107+deb13-amd64",
+  "limitations": [
+    "Records ioctl calls consuming at least100us thread CPU; no complete syscall count.",
+    "Same-process realtime end stamps correlated with probe end stamp minus monotonic duration; allows timestamp boundary skew.",
+    "Local Linux x86_64 diagnostic interposer, not portable/product code; assumes conventional third ioctl argument.",
+    "Driver/kernel boundary identified; internal kernel function and content flicker cause remain unknown."
+  ],
+  "next_evidence_needed": "PID-scoped kernel CPU stacks inside the expensive execbuffer submission; kernel tracefs read denied and sudo requires local owner authentication."
+}

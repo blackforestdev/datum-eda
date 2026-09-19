@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-19",
+  "owner_instruction": "your new goal is to complete the GPS-C02 through GPS-C06 per the roadmap development phase.",
+  "disposition": "Prioritize specification development GPS-C02 through GPS-C06. GPS-C01R remains pending and unresolved after GPS-C06; no completion evidence added.",
+  "boundary": "Prepare the complete independently reviewed packet. GPS-C06 requires owner disposition on that packet; this instruction is not approval of unseen specification bytes. No new renderer implementation, dependency adoption or product acceptance.",
+  "preserved_issue": "dat-gui-vertical-resize-cpu-toj"
+}

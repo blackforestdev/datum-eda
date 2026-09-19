@@ -1,0 +1,58 @@
+<experiment version="12.4">
+<collector>2.44</collector>
+</experiment>
+<system hostname="debian3520" arch="x86_64" os="Linux 6.12.107+deb13-amd64" pagesz="4096" npages="8186778">
+  <cpu id="0" clk="3373"/>
+  <cpu id="1" clk="3400"/>
+  <cpu id="2" clk="3450"/>
+  <cpu id="3" clk="3036"/>
+  <cpu id="4" clk="2909"/>
+  <cpu id="5" clk="3412"/>
+  <cpu id="6" clk="3497"/>
+  <cpu id="7" clk="3458"/>
+</system>
+<process pid="360073"></process>
+<process ppid="360056"></process>
+<process pgrp="360056"></process>
+<process sid="360056"></process>
+<process cwd="/home/bfadmin/Documents/datum-eda"></process>
+<process wsize="64"></process>
+<process stackbase="0x0"></process>
+<process>/home/bfadmin/Documents/datum-eda/target/release/datum-gui --board /tmp/datum-gui-candidate-boundary-v3/DOA2526.kicad_pcb --window-size 1280x800</process>
+<dataptr name="frameinfo" format="binary"/>
+<setting pause_signal="12"/>
+<setting sample_period="1"/>
+<setting linetrace="none"/>
+<event kind="run" tstamp="602035.313456238" time="1789845619" tm_zone="28800"/>
+<event kind="sample" tstamp="0.000044789" id="0" label="collector_open_experiment"/>
+<event kind="pause" tstamp="0.000059226"/>
+<profile name="profile" ptimer="5000" numstates="1">
+  <profdata fname="profile"/>
+  <profpckt kind="8" uname="Clock profiling data">
+    <field name="LWPID" uname="Lightweight process id" offset="8" type="INT64"/>
+    <field name="THRID" uname="Thread number" offset="16" type="INT64"/>
+    <field name="CPUID" uname="CPU id" offset="24" type="INT32"/>
+    <field name="TSTAMP" uname="High resolution timestamp" offset="28" type="INT64"/>
+    <field name="FRINFO" offset="36" type="INT64"/>
+    <field name="MSTATE" uname="Thread state" offset="44" type="INT32"/>
+    <field name="NTICK" uname="Duration" offset="48" type="INT32"/>
+  </profpckt>
+</profile>
+<event kind="cwarn" id="216">SIGPROF</event>
+<event kind="resume" tstamp="11.010858629"/>
+<event kind="sample" tstamp="11.010865272" id="1" label="collector_resume"/>
+<event kind="sample" tstamp="12.214322097" id="2" label="periodic"/>
+<event kind="sample" tstamp="13.111775665" id="3" label="periodic"/>
+<event kind="sample" tstamp="14.273796339" id="4" label="periodic"/>
+<event kind="sample" tstamp="15.115226898" id="5" label="periodic"/>
+<event kind="sample" tstamp="16.524065012" id="6" label="collector_pause(signal)"/>
+<event kind="pause" tstamp="16.524121903" name="signal"/>
+<event kind="resume" tstamp="18.576793976"/>
+<event kind="sample" tstamp="18.576804808" id="7" label="collector_resume"/>
+<event kind="sample" tstamp="19.225574752" id="8" label="periodic"/>
+<event kind="sample" tstamp="20.056696485" id="9" label="periodic"/>
+<event kind="sample" tstamp="21.153843161" id="10" label="periodic"/>
+<event kind="sample" tstamp="22.091521578" id="11" label="periodic"/>
+<event kind="sample" tstamp="23.189874452" id="12" label="periodic"/>
+<event kind="sample" tstamp="24.161203440" id="13" label="collector_pause(signal)"/>
+<event kind="pause" tstamp="24.161238845" name="signal"/>

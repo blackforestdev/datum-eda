@@ -157,6 +157,18 @@
         "PublicationReviewV2",
         "MeasurementCaptureV2"
       ]
+    },
+    {
+      "id": "gui_performance_acceptance_draft",
+      "kind": "file_glob",
+      "glob": "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md",
+      "owner_spec": "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md",
+      "notes": "Filename registration of proposed workload, metric and qualification-gap tables. No behavioral coverage, validated methods, numeric ratification or acceptance follows from this digest. C04 must supply individual machine-checkable mappings.",
+      "planned_shapes": [
+        "WorkloadRecipeDraft",
+        "MetricBudgetDraft",
+        "QualificationGapDraft"
+      ]
     }
   ]
 }

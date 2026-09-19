@@ -1,0 +1,12 @@
+{
+  "status": "stopped before resize",
+  "reason": "54 cursor moved events during initial idle sample",
+  "resize_result": null,
+  "binary_sha256": "786f6228d4c71f468ee29f4ba4ae1cb11088ee4fb8541d2599f277ab15c477d6",
+  "flags": {
+    "DATUM_DIAGNOSTIC_MINIMAL_WINDOW": "1",
+    "DATUM_DIAGNOSTIC_RESIZE_TRANSACTION": "0",
+    "DATUM_RESIZE_CPU_PROBE": "1"
+  },
+  "checked_harness_executed": false
+}
