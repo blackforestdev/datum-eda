@@ -482,7 +482,9 @@ def main() -> int:
     )
     render_geometry = RENDER_GEOMETRY.read_text()
     text_buffer_cache = TEXT_BUFFER_CACHE.read_text()
-    render_gpu = RENDER_GPU.read_text()
+    # Full-frame encoding is a normal child module after the resize diagnostic
+    # extraction; retain the same generation-count invariant across both files.
+    render_gpu = RENDER_GPU.read_text() + RENDER_GPU.with_name("gpu_frame.rs").read_text()
     terminal_font_tests = TERMINAL_FONT_TESTS.read_text()
     terminal_core_render = TERMINAL_CORE_RENDER.read_text()
     terminal_core_render_tests = TERMINAL_CORE_RENDER_TESTS.read_text()

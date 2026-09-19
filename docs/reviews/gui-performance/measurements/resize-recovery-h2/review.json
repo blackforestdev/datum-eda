@@ -1,0 +1,22 @@
+{
+  "reviewer": "separate review agent /root/gui_contract_review",
+  "scope": "Independent read-only source review; author ran tests and measurements. No product acceptance.",
+  "disposition": "H2-R01 and H2-R02 resolved; no new source blocker.",
+  "findings": [
+    "Disabled finish instrumentation is trace-gated.",
+    "Acquisition probe closes before recovery match; recovery configure has separate phase.",
+    "Frame body preserved before instrumentation.",
+    "Shared surface defaults and absent-flag instance policy preserved.",
+    "Historical submit metric included encoder finish; current metric excludes it.",
+    "Asynchronous CPU, phase boundaries, diagnostic overhead and missing temporal proof limit evidence."
+  ],
+  "sha256": {
+    "crates/gui-app/src/phase_probe.rs": "e27c820d145881b14cc087ba2e1628e7bf46d715afbb407fc4a4eef3d14176dc",
+    "crates/gui-app/src/runtime_present.rs": "6c8c785ecc13272129057738d68f330995941b73ad58358d1ae4d937c45728f8",
+    "crates/gui-app/src/gui_runtime_support.rs": "477d11e67f7a4c0a3c91e4fe1fa2a87f522771c5c80932e344488b8c4936c878",
+    "crates/gui-render/src/render/gpu_frame.rs": "e39de4f34302091b1f52a7fd3268831df78f3fb0987b9f9ab4e2d141a9b72ff6",
+    "crates/gui-render/src/render/gpu.rs": "a1250c9682a9199ad77272944abf1138fad700c22f14697155470d8c45db3e53",
+    "scripts/check_gui_agent_terminal_convergence.py": "6d599c378b582057c51dee16809b3ecd27121f6403ed270f89a98e61d46dc740"
+  },
+  "followup": "Independent review confirms extracted frame module is included in unchanged generation-count/order guard; not a bypass. Existing focus/font failures remain."
+}

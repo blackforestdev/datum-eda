@@ -1,0 +1,196 @@
+{
+  "status": "investigative; GPS-C01R remains active; resize defect unresolved",
+  "same_binary_control": {
+    "final-plain": {
+      "sha256": "f7eb8e297584b9e2c7f37a5fb0117fe920738cefd1f769fdbf28766f35ffae72",
+      "samples": [
+        {
+          "phase": "idle",
+          "duration_s": 5.000128200976178,
+          "cpu_percent_one_core": 0.0,
+          "surface_configurations": 0,
+          "received_xi_events": {
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "cpu_probe": {}
+        },
+        {
+          "phase": "height",
+          "duration_s": 5.000119133037515,
+          "cpu_percent_one_core": 34.79917085381464,
+          "surface_configurations": 279,
+          "received_xi_events": {
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "cpu_probe": {}
+        },
+        {
+          "phase": "width",
+          "duration_s": 5.000125751947053,
+          "cpu_percent_one_core": 33.799149938217305,
+          "surface_configurations": 279,
+          "received_xi_events": {
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "cpu_probe": {}
+        },
+        {
+          "phase": "idle",
+          "duration_s": 5.000117219984531,
+          "cpu_percent_one_core": 0.0,
+          "surface_configurations": 0,
+          "received_xi_events": {
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "cpu_probe": {}
+        }
+      ]
+    },
+    "final-probe": {
+      "sha256": "f7eb8e297584b9e2c7f37a5fb0117fe920738cefd1f769fdbf28766f35ffae72",
+      "samples": [
+        {
+          "phase": "idle",
+          "duration_s": 5.00016111403238,
+          "cpu_percent_one_core": 0.0,
+          "surface_configurations": 0,
+          "received_xi_events": {
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "cpu_probe": {}
+        },
+        {
+          "phase": "height",
+          "duration_s": 5.000146559905261,
+          "cpu_percent_one_core": 36.998915488490255,
+          "surface_configurations": 277,
+          "received_xi_events": {
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "cpu_probe": {
+            "configure": {
+              "calls": 276,
+              "wall_ns": 3795933361,
+              "process_ns": 965361752,
+              "thread_ns": 858353529
+            },
+            "acquire": {
+              "calls": 120,
+              "wall_ns": 6904600,
+              "process_ns": 6845616,
+              "thread_ns": 6753802
+            },
+            "prepare": {
+              "calls": 120,
+              "wall_ns": 58393015,
+              "process_ns": 58303365,
+              "thread_ns": 58503027
+            },
+            "renderer": {
+              "calls": 120,
+              "wall_ns": 663106056,
+              "process_ns": 657876999,
+              "thread_ns": 658137870
+            },
+            "present": {
+              "calls": 120,
+              "wall_ns": 8909830,
+              "process_ns": 8920719,
+              "thread_ns": 8915648
+            }
+          }
+        },
+        {
+          "phase": "width",
+          "duration_s": 5.000116645009257,
+          "cpu_percent_one_core": 36.39915084414257,
+          "surface_configurations": 277,
+          "received_xi_events": {
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "cpu_probe": {
+            "configure": {
+              "calls": 276,
+              "wall_ns": 4032544782,
+              "process_ns": 1038381801,
+              "thread_ns": 927954139
+            },
+            "acquire": {
+              "calls": 103,
+              "wall_ns": 6507572,
+              "process_ns": 6431058,
+              "thread_ns": 6357132
+            },
+            "prepare": {
+              "calls": 103,
+              "wall_ns": 51940136,
+              "process_ns": 51966804,
+              "thread_ns": 52107906
+            },
+            "renderer": {
+              "calls": 103,
+              "wall_ns": 569751640,
+              "process_ns": 563241959,
+              "thread_ns": 563579783
+            },
+            "present": {
+              "calls": 103,
+              "wall_ns": 8898689,
+              "process_ns": 8855181,
+              "thread_ns": 8837240
+            }
+          }
+        },
+        {
+          "phase": "idle",
+          "duration_s": 5.00018243805971,
+          "cpu_percent_one_core": 0.0,
+          "surface_configurations": 0,
+          "received_xi_events": {
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0,
+            "6": 0
+          },
+          "cpu_probe": {}
+        }
+      ]
+    }
+  },
+  "limits": [
+    "One five-second trial per axis is not an overhead distribution or acceptance.",
+    "Process/thread clocks overlap; async work and phase-boundary truncation preclude exact causal partitions.",
+    "No validated continuous compositor capture or physical border-drag qualification.",
+    "GL X11 startup failed; Wayland GL programmatic pilot does not authorize changing product backend.",
+    "New trace submit measures queue.submit only; compare finish_us + submit_us with historical combined submit."
+  ]
+}

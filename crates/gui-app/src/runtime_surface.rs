@@ -36,7 +36,9 @@ impl Runtime {
         self.config.width = width;
         self.config.height = height;
         append_gui_diagnostic_line("surface configure begin");
+        let probe = gui_runtime_support::phase_probe::Probe::start("configure");
         self.surface.configure(&self.device, &self.config);
+        drop(probe);
         append_gui_diagnostic_line("surface configure end");
         if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
             self.resize_terminal_to_dock();

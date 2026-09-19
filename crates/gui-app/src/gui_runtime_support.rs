@@ -1,3 +1,6 @@
+#[path = "phase_probe.rs"]
+pub(crate) mod phase_probe;
+
 use std::fs;
 use std::fs::OpenOptions;
 use std::io::Write;
@@ -129,5 +132,54 @@ pub(crate) fn convert_texture_pixels_to_rgba(
             Ok(())
         }
         other => anyhow::bail!("unsupported visual screenshot surface format: {other:?}"),
+    }
+}
+
+/// Explicit measurement override using backends already built into wgpu.
+/// Ordinary startup retains the existing adapter-selection policy.
+pub(crate) fn diagnostic_instance() -> wgpu::Instance {
+    let backends = match std::env::var("DATUM_GPU_DIAGNOSTIC_BACKEND").as_deref() {
+        Ok("gl") => wgpu::Backends::GL,
+        Ok("vulkan") => wgpu::Backends::VULKAN,
+        Err(std::env::VarError::NotPresent) => return wgpu::Instance::default(),
+        other => panic!("invalid DATUM_GPU_DIAGNOSTIC_BACKEND: {other:?}; expected gl or vulkan"),
+    };
+    wgpu::Instance::new(&wgpu::InstanceDescriptor {
+        backends,
+        ..Default::default()
+    })
+}
+
+/// Common native-host configuration. Owned windows can prefer the main format;
+/// otherwise retain the existing sRGB/FIFO selection and capability fallbacks.
+pub(crate) fn surface_configuration(
+    caps: &wgpu::SurfaceCapabilities,
+    size: winit::dpi::PhysicalSize<u32>,
+    preferred: Option<wgpu::TextureFormat>,
+) -> wgpu::SurfaceConfiguration {
+    let format = preferred
+        .filter(|format| caps.formats.contains(format))
+        .or_else(|| {
+            caps.formats
+                .iter()
+                .copied()
+                .find(wgpu::TextureFormat::is_srgb)
+        })
+        .unwrap_or(caps.formats[0]);
+    let present_mode = caps
+        .present_modes
+        .iter()
+        .copied()
+        .find(|mode| *mode == wgpu::PresentMode::Fifo)
+        .unwrap_or(caps.present_modes[0]);
+    wgpu::SurfaceConfiguration {
+        usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+        format,
+        width: size.width.max(1),
+        height: size.height.max(1),
+        present_mode,
+        alpha_mode: caps.alpha_modes[0],
+        view_formats: vec![],
+        desired_maximum_frame_latency: 2,
     }
 }
