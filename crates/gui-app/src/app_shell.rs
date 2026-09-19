@@ -17,6 +17,7 @@ pub(super) struct App {
     /// `set_cursor` on a transition (no per-move spam).
     current_cursor: winit::window::CursorIcon,
     kwin_lifecycle_smoke_step: usize,
+    pub(super) resize_smoke: crate::resize_smoke::ResizeSmoke,
     pub(super) terminal_event_proxy: winit::event_loop::EventLoopProxy<()>,
 }
 
@@ -47,6 +48,7 @@ impl App {
             new_project_surface: None,
             current_cursor: winit::window::CursorIcon::Default,
             kwin_lifecycle_smoke_step: 0,
+            resize_smoke: Default::default(),
             terminal_event_proxy,
         }
     }

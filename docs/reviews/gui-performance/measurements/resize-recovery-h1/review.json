@@ -1,0 +1,19 @@
+{
+  "reviewer": "separate gui_contract_review agent",
+  "disposition": "H1 harness correction only; no remaining H1 blocker",
+  "findings_resolved": [
+    "no-op initial target schedules redraw",
+    "interaction smoke rejects skipped frames",
+    "startup quiet deadline and rounding bounds",
+    "ordinary resize excludes harness bookkeeping"
+  ],
+  "reviewed_sha256": {
+    "crates/gui-app/src/resize_smoke.rs": "870caaccd2f56ffadc1d0d5d574defe15a753ba0f30a467cdbb1420a9cf54f92",
+    "crates/gui-app/src/main.rs": "bb307838b095448ee4841a3955a7c44bf8fb83adc1cdd1161c394952472193d3",
+    "docs/reviews/gui-performance/resize-recovery.md": "71b465357c5101eb7be7dc65947e99f930f0756dd01bb038e217979a74e2b969",
+    "docs/reviews/gui-performance/measurements/resize-recovery-h1/x11-final/report.json": "65d973c8a17af09a028c1fc77cf22c0cc6a0dad64257c19378426ddb7150a0ba",
+    "docs/reviews/gui-performance/measurements/resize-recovery-h1/wayland-final/report.json": "46094eaf7c2db030bd95982bee942f0bd57d4061a54f62c594470dd0f7d09e51"
+  },
+  "proof": "author executed three state tests, optimized build, X11 and Wayland native runs; reviewer read source and counted archived logs independently",
+  "limitation": "No independent execution, CPU acceptance, temporal compositor proof or resize defect closure. GPS-C01R stays active."
+}

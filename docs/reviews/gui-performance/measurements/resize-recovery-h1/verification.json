@@ -1,0 +1,11 @@
+{
+  "focused_tests": "3 passed",
+  "optimized_build": "passed",
+  "workspace_clippy": "passed",
+  "source_health": "passed; main legacy ceiling2165 to2106; 13checker tests passed",
+  "required_drift": "failed at existing terminal convergence guard: application focus assignment count and font source marker; tracked dat-terminal-convergence-guard-xke, historical unchanged-HEAD reproduction in resize receipts",
+  "downstream_drift": "not reached; not claimed passed",
+  "alignment_mcp": "415 tests ran,45skipped,pass with socket access; earlier sandbox socket failure preserved",
+  "governance": "roadmap, parity, spec governance, evidence traceability and dependency checks passed",
+  "acceptance": "resize defect unresolved; H1 improves diagnostics only"
+}

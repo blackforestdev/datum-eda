@@ -667,13 +667,13 @@
     "crates/gui-app/src/main.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 2165
+        "pre_test_lines": 2106
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Native surface size/DPI/configuration ownership extracted to runtime_surface.rs; runtime_present owns acquisition/presentation. Remaining application event dispatch/runtime debt stays frozen."
+      "note": "Main redraw completion/capture/smoke orchestration extracted to app_frame.rs; native resize test state belongs to resize_smoke.rs. Remaining event dispatch/runtime debt stays frozen."
     },
     "crates/gui-protocol/src/kicad_scene_import.rs": {
       "kind": "rust-production",

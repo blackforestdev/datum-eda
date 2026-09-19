@@ -1,0 +1,5 @@
+{
+  "passed": false,
+  "failure": "180-second watchdog expired waiting for native target; initial compositor configure superseded first request",
+  "scope": "failed diagnostic harness attempt; not product acceptance"
+}
