@@ -31,6 +31,7 @@ use winit::{
     window::{Window, WindowAttributes, WindowId},
 };
 mod app_bootstrap;
+mod app_frame;
 mod app_shell;
 mod application_terminal_shutdown;
 mod artifact_preview_controls;
@@ -52,6 +53,7 @@ mod pane_resize;
 mod production_status_refresh;
 mod project_preferences_runtime;
 mod project_preferences_window;
+mod resize_smoke;
 mod retained_scene_cache_key;
 mod runtime_board_text_edit;
 mod runtime_camera_fit_targets;
@@ -353,6 +355,9 @@ impl ApplicationHandler for App {
                 }
             }
             WindowEvent::Resized(size) => {
+                if self.args.resize_torture_smoke {
+                    self.resize_smoke.note_native_event();
+                }
                 if let Some(runtime) = &mut self.runtime {
                     runtime.resize(size.width, size.height);
                     self.request_redraw_if_needed();
@@ -627,58 +632,14 @@ impl ApplicationHandler for App {
                 }
                 keyboard_focus::handle_keyboard_input(self, &event);
             }
-            WindowEvent::RedrawRequested => {
-                if let Some(runtime) = &mut self.runtime {
-                    append_gui_verbose_diagnostic_line("redraw handler begin");
-                    runtime.redraw_pending = false;
-                    let render_started = std::time::Instant::now();
-                    if let Err(err) = runtime.render() {
-                        fatal_gui_error(event_loop, "render failed", err);
-                    }
-                    runtime.trace_timing(format!(
-                        "redraw render {}ms",
-                        render_started.elapsed().as_millis()
-                    ));
-                }
-                if self.advance_kwin_lifecycle_smoke(event_loop) {
-                    return;
-                }
-                if let Some(runtime) = &mut self.runtime {
-                    if self.args.interaction_smoke
-                        && let Err(err) = runtime.run_interaction_smoke()
-                    {
-                        fatal_gui_error(event_loop, "interaction smoke failed", err);
-                    }
-                    if self.args.resize_torture_smoke
-                        && let Err(err) = runtime.run_resize_torture_smoke()
-                    {
-                        fatal_gui_error(event_loop, "resize torture smoke failed", err);
-                    }
-                    if self.args.visual_test {
-                        let screenshot_out =
-                            self.args.screenshot_out.as_ref().unwrap_or_else(|| {
-                                fatal_gui_error(
-                                    event_loop,
-                                    "visual screenshot failed",
-                                    "--screenshot-out is required",
-                                )
-                            });
-                        if let Err(err) = runtime.write_visual_screenshot(screenshot_out) {
-                            fatal_gui_error(event_loop, "visual screenshot failed", err);
-                        }
-                        if self.args.exit_after_screenshot {
-                            event_loop.exit();
-                        }
-                    }
-                    append_gui_verbose_diagnostic_line("redraw handler end");
-                }
-            }
+            WindowEvent::RedrawRequested => self.redraw_main_window(event_loop),
             _ => {}
         }
     }
 
     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
         self.poll_background_work(event_loop);
+        self.poll_resize_smoke_start(event_loop);
         if let Err(err) = self.sync_owned_product_windows(event_loop) {
             fatal_gui_error(event_loop, "synchronize owned product window", err);
         }
@@ -817,6 +778,7 @@ impl Runtime {
             })
             .await
             .context("request adapter")?;
+        gui_runtime_support::log_surface_identity(window, &adapter);
         append_gui_diagnostic_line("wgpu request device begin");
         let adapter_format_features =
             wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES & adapter.features();
@@ -945,27 +907,6 @@ impl Runtime {
             runtime_started.elapsed().as_millis()
         ));
         Ok(runtime)
-    }
-
-    fn run_interaction_smoke(&mut self) -> Result<()> {
-        let resized_width = self.config.width.saturating_add(137).max(1);
-        let resized_height = self.config.height.saturating_add(83).max(1);
-        self.resize(resized_width, resized_height);
-        self.render().context("interaction smoke resize render")?;
-
-        let prepared = self
-            .prepared_scene
-            .as_ref()
-            .context("prepared scene should exist before interaction smoke click")?;
-        let click = (
-            prepared.scene_viewport.x + prepared.scene_viewport.width * 0.5,
-            prepared.scene_viewport.y + prepared.scene_viewport.height * 0.5,
-        );
-        self.last_cursor_pos = Some(click);
-        let _ = self.update_hover(click);
-        let _ = self.handle_primary_click();
-        self.render().context("interaction smoke click render")?;
-        Ok(())
     }
 
     #[cfg(feature = "visual")]

@@ -1,0 +1,19 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=24.1 GiB target_free=182.3 GiB tmp_free=10.0 GiB
+warning: Cargo target exceeds soft limit: 24.1 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.42s
+     Running unittests src/main.rs (target/debug/deps/datum_gui-c118320a3ba3ec9f)
+
+running 3 tests
+test resize_smoke::tests::initial_extent_equal_to_first_target_can_advance ... ok
+test resize_smoke::tests::native_extent_and_successful_presentation_are_required ... ok
+test resize_smoke::tests::native_resize_sequence_finishes_once_and_never_reenters ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 322 filtered out; finished in 0.00s
+
+     Running tests/visual_shell.rs (target/debug/deps/visual_shell-f0dd2825356d880e)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 1 filtered out; finished in 0.00s
+

@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--board",
+    "/tmp/datum-gui-candidate-boundary-v3/DOA2526.kicad_pcb",
+    "--window-size",
+    "1280x800",
+    "--resize-torture-smoke"
+  ],
+  "binary_sha256": "f2f9e22a6d4cf5bddffa0a870f6819edd0558fbd1d13982d65e6803242e8a12f",
+  "counts": {
+    "native resize smoke begin": 1,
+    "native resize smoke end": 1,
+    "native resize smoke request": 6,
+    "native resize smoke observed": 6
+  },
+  "identity": [
+    "[SystemTime { tv_sec: 1789800696, tv_nsec: 332160704 }] surface identity window=WindowId(12582916) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+  ],
+  "scope": "Six native requested sizes observed and configured before application presentation attempts; completes once. No compositor visibility, CPU or flicker acceptance."
+}

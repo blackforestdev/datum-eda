@@ -1,0 +1,4 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=24.1 GiB target_free=182.3 GiB tmp_free=10.0 GiB
+warning: Cargo target exceeds soft limit: 24.1 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `release` profile [optimized] target(s) in 18.58s

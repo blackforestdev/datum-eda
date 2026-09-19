@@ -81,6 +81,26 @@ pub(crate) fn trace_startup_timing(message: String) {
     }
 }
 
+pub(crate) fn log_surface_identity(window: &winit::window::Window, adapter: &wgpu::Adapter) {
+    use winit::raw_window_handle::{HasWindowHandle, RawWindowHandle};
+    let backend = match window.window_handle().map(|handle| handle.as_raw()) {
+        Ok(RawWindowHandle::Wayland(_)) => "wayland",
+        Ok(RawWindowHandle::Xlib(_) | RawWindowHandle::Xcb(_)) => "x11",
+        Ok(_) => "other",
+        Err(_) => "unavailable",
+    };
+    let info = adapter.get_info();
+    append_gui_diagnostic_line(format!(
+        "surface identity window={:?} window_backend={backend} gpu_backend={:?} adapter={:?} device_type={:?} driver={:?} driver_info={:?}",
+        window.id(),
+        info.backend,
+        info.name,
+        info.device_type,
+        info.driver,
+        info.driver_info
+    ));
+}
+
 pub(crate) fn select_msaa_samples(adapter: &wgpu::Adapter, format: wgpu::TextureFormat) -> u32 {
     let format_features = adapter.get_texture_format_features(format);
     let supported = format_features.flags.supported_sample_counts();

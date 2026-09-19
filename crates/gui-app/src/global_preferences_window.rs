@@ -34,6 +34,7 @@ impl GlobalPreferencesWindowSurface {
             .instance
             .create_surface(window.clone())
             .context("create Global Preferences native surface")?;
+        gui_runtime_support::log_surface_identity(&window, &runtime.adapter);
         let caps = surface.get_capabilities(&runtime.adapter);
         let format = caps
             .formats

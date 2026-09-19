@@ -4,7 +4,7 @@
 use super::*;
 
 impl Runtime {
-    pub(super) fn render(&mut self) -> Result<()> {
+    pub(super) fn render(&mut self) -> Result<bool> {
         let render_started = std::time::Instant::now();
         let acquire_started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line(format!(
@@ -21,12 +21,12 @@ impl Runtime {
                 ));
                 self.surface.configure(&self.device, &self.config);
                 self.invalidate_frame();
-                return Ok(());
+                return Ok(false);
             }
             Err(wgpu::SurfaceError::Timeout) => {
                 append_gui_diagnostic_line("surface acquire timeout; frame skipped");
                 self.invalidate_frame();
-                return Ok(());
+                return Ok(false);
             }
             Err(wgpu::SurfaceError::OutOfMemory) => {
                 anyhow::bail!("surface out of memory");
@@ -134,6 +134,6 @@ impl Runtime {
             retained_was_cached,
             prepared_was_cached
         ));
-        Ok(())
+        Ok(true)
     }
 }

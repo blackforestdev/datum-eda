@@ -2,7 +2,9 @@
 
 <!-- REQ:GUI-PERFORMANCE-SPEC:GPS-C01R -->
 
-Status: GPS-C01R bounded corrective slice complete; broader QA remains open.
+Status: historical partial correction. The owner has reopened GPS-C01R as the
+active resize defect until resolved; see `resize-recovery.md`. The measurements
+below do not establish acceptable resize resource use or smooth presentation.
 
 <!-- EVIDENCE:GUI-PERFORMANCE-SPEC:GPS-C01R-RESULT -->
 Issue: `dat-gui-vertical-resize-cpu-toj`, related to `dat-gui-performance-spec-u9n`.
