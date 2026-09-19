@@ -1,0 +1,66 @@
+[
+  {
+    "axis": "height",
+    "cpu_seconds": 1.6299999999999997,
+    "accounted_fraction": 0.8986275398773008,
+    "phases": {
+      "minimal_configure": {
+        "cpu_seconds": 0.377253113,
+        "fraction_of_process_cpu": 0.231443627607362,
+        "cpu_ms_per_call": 2.5150207533333333
+      },
+      "minimal_acquire": {
+        "cpu_seconds": 0.010794742,
+        "fraction_of_process_cpu": 0.006622541104294479,
+        "cpu_ms_per_call": 0.07196494666666667
+      },
+      "minimal_encode": {
+        "cpu_seconds": 0.028289406,
+        "fraction_of_process_cpu": 0.017355463803680984,
+        "cpu_ms_per_call": 0.18859604
+      },
+      "minimal_submit": {
+        "cpu_seconds": 1.019997576,
+        "fraction_of_process_cpu": 0.6257653840490799,
+        "cpu_ms_per_call": 6.7999838399999994
+      },
+      "minimal_present": {
+        "cpu_seconds": 0.028428053,
+        "fraction_of_process_cpu": 0.017440523312883437,
+        "cpu_ms_per_call": 0.18952035333333334
+      }
+    }
+  },
+  {
+    "axis": "width",
+    "cpu_seconds": 1.6299999999999997,
+    "accounted_fraction": 0.8933243073619633,
+    "phases": {
+      "minimal_configure": {
+        "cpu_seconds": 0.379915135,
+        "fraction_of_process_cpu": 0.23307676993865037,
+        "cpu_ms_per_call": 2.5497660067114096
+      },
+      "minimal_acquire": {
+        "cpu_seconds": 0.010740089,
+        "fraction_of_process_cpu": 0.006589011656441719,
+        "cpu_ms_per_call": 0.07160059333333332
+      },
+      "minimal_encode": {
+        "cpu_seconds": 0.028486143,
+        "fraction_of_process_cpu": 0.017476161349693254,
+        "cpu_ms_per_call": 0.18990762
+      },
+      "minimal_submit": {
+        "cpu_seconds": 1.007730844,
+        "fraction_of_process_cpu": 0.6182397815950921,
+        "cpu_ms_per_call": 6.718205626666667
+      },
+      "minimal_present": {
+        "cpu_seconds": 0.02924641,
+        "fraction_of_process_cpu": 0.017942582822085894,
+        "cpu_ms_per_call": 0.19497606666666667
+      }
+    }
+  }
+]

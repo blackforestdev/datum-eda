@@ -3,6 +3,14 @@
 Status: active planning contract; renderer mechanisms and numeric budgets are not
 ratified.
 
+On 2026-09-19 the owner directed completion of GPS-C02 through GPS-C06.
+`docs/reviews/gui-performance/specification-resumption-owner-direction.json`
+records the exact instruction. Specification development now precedes the
+pending GPS-C01R recovery. Resize CPU and content blinking remain unresolved;
+neither this ordering nor the eventual specification decision accepts runtime
+performance. GPS-C06 still requires the owner's decision on the completed,
+independently reviewed packet. Preserve all R01–R42 and HP01–HP25 obligations.
+
 ## Authority and owner disposition
 
 On 2026-09-17 the owner approved implementing the roadmap amendment only:

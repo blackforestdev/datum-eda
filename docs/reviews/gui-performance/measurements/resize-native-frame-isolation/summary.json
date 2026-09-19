@@ -1,0 +1,214 @@
+{
+  "binary_sha256": [
+    "22ebe5dcda405b73fa89aee9e9836bb79a87b71ebe9deca2a065667c74cfb498"
+  ],
+  "rows": [
+    {
+      "run": "0-full",
+      "phase": "idle",
+      "duration_s": 5.007422766066156,
+      "cpu_percent": 0.0,
+      "gpu_render_percent": 0.0,
+      "configurations": 0,
+      "present_calls": 0,
+      "requested_resizes": 0,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "0-full",
+      "phase": "height",
+      "duration_s": 5.0001133509213105,
+      "cpu_percent": 34.59921562940635,
+      "gpu_render_percent": 17.080828514470227,
+      "configurations": 280,
+      "present_calls": 114,
+      "requested_resizes": 281,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "0-full",
+      "phase": "width",
+      "duration_s": 5.000105441082269,
+      "cpu_percent": 35.19925771043439,
+      "gpu_render_percent": 17.2269864735804,
+      "configurations": 280,
+      "present_calls": 110,
+      "requested_resizes": 281,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "0-full",
+      "phase": "idle",
+      "duration_s": 5.000170992920175,
+      "cpu_percent": 0.0,
+      "gpu_render_percent": 0.0,
+      "configurations": 0,
+      "present_calls": 0,
+      "requested_resizes": 0,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "1-clear",
+      "phase": "idle",
+      "duration_s": 5.000142222037539,
+      "cpu_percent": 0.0,
+      "gpu_render_percent": 0.0,
+      "configurations": 0,
+      "present_calls": 0,
+      "requested_resizes": 0,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "1-clear",
+      "phase": "height",
+      "duration_s": 5.000107216998003,
+      "cpu_percent": 40.59912941664447,
+      "gpu_render_percent": 3.0890427004229917,
+      "configurations": 280,
+      "present_calls": 237,
+      "requested_resizes": 281,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "1-clear",
+      "phase": "width",
+      "duration_s": 5.000115194008686,
+      "cpu_percent": 40.3990692538531,
+      "gpu_render_percent": 2.90374454120522,
+      "configurations": 280,
+      "present_calls": 231,
+      "requested_resizes": 281,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "1-clear",
+      "phase": "idle",
+      "duration_s": 5.0001775429118425,
+      "cpu_percent": 0.19999289853568922,
+      "gpu_render_percent": 0.0,
+      "configurations": 0,
+      "present_calls": 0,
+      "requested_resizes": 0,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "2-clear",
+      "phase": "idle",
+      "duration_s": 5.004883735906333,
+      "cpu_percent": 0.0,
+      "gpu_render_percent": 0.0,
+      "configurations": 0,
+      "present_calls": 0,
+      "requested_resizes": 0,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "2-clear",
+      "phase": "height",
+      "duration_s": 5.00010241207201,
+      "cpu_percent": 39.19919710580065,
+      "gpu_render_percent": 3.245972214651962,
+      "configurations": 281,
+      "present_calls": 250,
+      "requested_resizes": 282,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "2-clear",
+      "phase": "width",
+      "duration_s": 5.000175166060217,
+      "cpu_percent": 39.998598720609586,
+      "gpu_render_percent": 2.9986467677719415,
+      "configurations": 280,
+      "present_calls": 240,
+      "requested_resizes": 281,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "2-clear",
+      "phase": "idle",
+      "duration_s": 5.000159302959219,
+      "cpu_percent": 0.0,
+      "gpu_render_percent": 0.0,
+      "configurations": 0,
+      "present_calls": 0,
+      "requested_resizes": 0,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "3-full",
+      "phase": "idle",
+      "duration_s": 5.000102021964267,
+      "cpu_percent": 0.0,
+      "gpu_render_percent": 0.0,
+      "configurations": 0,
+      "present_calls": 0,
+      "requested_resizes": 0,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "3-full",
+      "phase": "height",
+      "duration_s": 5.000129833933897,
+      "cpu_percent": 34.9990911860617,
+      "gpu_render_percent": 16.889319418643804,
+      "configurations": 280,
+      "present_calls": 114,
+      "requested_resizes": 281,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "3-full",
+      "phase": "width",
+      "duration_s": 5.000129646039568,
+      "cpu_percent": 34.79909768696087,
+      "gpu_render_percent": 16.812457406296375,
+      "configurations": 279,
+      "present_calls": 110,
+      "requested_resizes": 281,
+      "recoveries": 0,
+      "timeouts": 0
+    },
+    {
+      "run": "3-full",
+      "phase": "idle",
+      "duration_s": 5.000109374988824,
+      "cpu_percent": 0.0,
+      "gpu_render_percent": 0.0,
+      "configurations": 0,
+      "present_calls": 0,
+      "requested_resizes": 0,
+      "recoveries": 0,
+      "timeouts": 0
+    }
+  ],
+  "identities": [
+    "[SystemTime { tv_sec: 1789839709, tv_nsec: 791542030 }] surface identity window=WindowId(31457284) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+    "[SystemTime { tv_sec: 1789839769, tv_nsec: 733890337 }] surface identity window=WindowId(31457284) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+    "[SystemTime { tv_sec: 1789839769, tv_nsec: 879475087 }] DIAGNOSTIC clear-only native frame; no product scene",
+    "[SystemTime { tv_sec: 1789839828, tv_nsec: 857339608 }] surface identity window=WindowId(31457284) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+    "[SystemTime { tv_sec: 1789839829, tv_nsec: 6052334 }] DIAGNOSTIC clear-only native frame; no product scene",
+    "[SystemTime { tv_sec: 1789839888, tv_nsec: 562508019 }] surface identity window=WindowId(31457284) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+  ],
+  "limitations": [
+    "Trace enabled in both conditions; no absolute production acceptance.",
+    "Presentation-call completion counts are not compositor display acknowledgements or frame intervals.",
+    "Different rendering cost changes actual throughput despite identical event-loop code; no additive scene-cost subtraction.",
+    "Clear bypasses product scene preparation, MSAA and product renderer; renderer=0ms is a bypass marker.",
+    "Clear-only remains the native Datum application, not an independent minimal wgpu reproducer."
+  ]
+}

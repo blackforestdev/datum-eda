@@ -1,0 +1,146 @@
+[
+  {
+    "run": "baseline-global",
+    "binary_sha256": "22ebe5dcda405b73fa89aee9e9836bb79a87b71ebe9deca2a065667c74cfb498",
+    "phase": "idle",
+    "main_present_calls": 0,
+    "extra_renderer_calls": 0,
+    "configurations": 0,
+    "cpu_percent": 0.0
+  },
+  {
+    "run": "baseline-global",
+    "binary_sha256": "22ebe5dcda405b73fa89aee9e9836bb79a87b71ebe9deca2a065667c74cfb498",
+    "phase": "height",
+    "main_present_calls": 127,
+    "extra_renderer_calls": 126,
+    "configurations": 236,
+    "cpu_percent": 37.09607528721542
+  },
+  {
+    "run": "baseline-global",
+    "binary_sha256": "22ebe5dcda405b73fa89aee9e9836bb79a87b71ebe9deca2a065667c74cfb498",
+    "phase": "width",
+    "main_present_calls": 133,
+    "extra_renderer_calls": 130,
+    "configurations": 231,
+    "cpu_percent": 33.872290472393566
+  },
+  {
+    "run": "baseline-global",
+    "binary_sha256": "22ebe5dcda405b73fa89aee9e9836bb79a87b71ebe9deca2a065667c74cfb498",
+    "phase": "idle",
+    "main_present_calls": 0,
+    "extra_renderer_calls": 0,
+    "configurations": 0,
+    "cpu_percent": 0.0
+  },
+  {
+    "run": "candidate-global",
+    "binary_sha256": "4077a29be6393f527501ebb3880cde3b846f918a469c951cfaadb96625267849",
+    "phase": "idle",
+    "main_present_calls": 0,
+    "extra_renderer_calls": 0,
+    "configurations": 0,
+    "cpu_percent": 0.0
+  },
+  {
+    "run": "candidate-global",
+    "binary_sha256": "4077a29be6393f527501ebb3880cde3b846f918a469c951cfaadb96625267849",
+    "phase": "height",
+    "main_present_calls": 148,
+    "extra_renderer_calls": 0,
+    "configurations": 238,
+    "cpu_percent": 35.48334238638653
+  },
+  {
+    "run": "candidate-global",
+    "binary_sha256": "4077a29be6393f527501ebb3880cde3b846f918a469c951cfaadb96625267849",
+    "phase": "width",
+    "main_present_calls": 139,
+    "extra_renderer_calls": 0,
+    "configurations": 240,
+    "cpu_percent": 32.58355778539033
+  },
+  {
+    "run": "candidate-global",
+    "binary_sha256": "4077a29be6393f527501ebb3880cde3b846f918a469c951cfaadb96625267849",
+    "phase": "idle",
+    "main_present_calls": 0,
+    "extra_renderer_calls": 0,
+    "configurations": 0,
+    "cpu_percent": 0.18151050853676162
+  },
+  {
+    "run": "candidate-new",
+    "binary_sha256": "4077a29be6393f527501ebb3880cde3b846f918a469c951cfaadb96625267849",
+    "phase": "idle",
+    "main_present_calls": 0,
+    "extra_renderer_calls": 0,
+    "configurations": 0,
+    "cpu_percent": 0.0
+  },
+  {
+    "run": "candidate-new",
+    "binary_sha256": "4077a29be6393f527501ebb3880cde3b846f918a469c951cfaadb96625267849",
+    "phase": "height",
+    "main_present_calls": 124,
+    "extra_renderer_calls": 0,
+    "configurations": 238,
+    "cpu_percent": 34.72802694056704
+  },
+  {
+    "run": "candidate-new",
+    "binary_sha256": "4077a29be6393f527501ebb3880cde3b846f918a469c951cfaadb96625267849",
+    "phase": "width",
+    "main_present_calls": 131,
+    "extra_renderer_calls": 0,
+    "configurations": 240,
+    "cpu_percent": 32.21140483550484
+  },
+  {
+    "run": "candidate-new",
+    "binary_sha256": "4077a29be6393f527501ebb3880cde3b846f918a469c951cfaadb96625267849",
+    "phase": "idle",
+    "main_present_calls": 0,
+    "extra_renderer_calls": 0,
+    "configurations": 0,
+    "cpu_percent": 0.0
+  },
+  {
+    "run": "candidate-project",
+    "binary_sha256": "4077a29be6393f527501ebb3880cde3b846f918a469c951cfaadb96625267849",
+    "phase": "idle",
+    "main_present_calls": 0,
+    "extra_renderer_calls": 0,
+    "configurations": 0,
+    "cpu_percent": 0.0
+  },
+  {
+    "run": "candidate-project",
+    "binary_sha256": "4077a29be6393f527501ebb3880cde3b846f918a469c951cfaadb96625267849",
+    "phase": "height",
+    "main_present_calls": 161,
+    "extra_renderer_calls": 0,
+    "configurations": 239,
+    "cpu_percent": 35.47040665785582
+  },
+  {
+    "run": "candidate-project",
+    "binary_sha256": "4077a29be6393f527501ebb3880cde3b846f918a469c951cfaadb96625267849",
+    "phase": "width",
+    "main_present_calls": 145,
+    "extra_renderer_calls": 0,
+    "configurations": 240,
+    "cpu_percent": 33.780187242317965
+  },
+  {
+    "run": "candidate-project",
+    "binary_sha256": "4077a29be6393f527501ebb3880cde3b846f918a469c951cfaadb96625267849",
+    "phase": "idle",
+    "main_present_calls": 0,
+    "extra_renderer_calls": 0,
+    "configurations": 0,
+    "cpu_percent": 0.0
+  }
+]

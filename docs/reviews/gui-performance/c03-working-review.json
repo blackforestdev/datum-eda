@@ -1,0 +1,18 @@
+{
+  "date": "2026-09-19",
+  "reviewer": "/root/gui_contract_review",
+  "independent_of_author": true,
+  "disposition": "Working draft consistent; C03 incomplete. Bounded calibration appendix reviewed as a proposal only.",
+  "reviewed_sha256": {
+    "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md": "0ac864202557df44533d5f58576eb28308eeeff82b69472f463193bc485c5b2c"
+  },
+  "resolved_findings": [
+    "C03-R01 continuous-only 50ms latency; other transitions have separate deadlines.",
+    "C03-R02 no-op clamp and reversal positive control have separate windows.",
+    "C03-R03 explicit line/pixel units and production conversion.",
+    "C03-R04 whole-frame GPU span, per-pass sums and multiple submissions distinguished."
+  ],
+  "remaining": "Demanding tier, temporal calibration, GPU method validation and numerical target review. Compositor capture is not physical scanout proof.",
+  "execution_performed": false,
+  "full_specification_approved": false
+}

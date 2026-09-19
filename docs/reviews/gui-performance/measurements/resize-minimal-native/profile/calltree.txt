@@ -1,0 +1,96 @@
+Functions Call Tree. Metric: Attributed Total CPU Time
+
+Attr. Total    Name
+CPU
+ sec.      %
+0.170 100.00   +-<Total>
+0.105  61.76     +-<wgpu_hal::vulkan::Queue as wgpu_hal::Queue>::submit
+0.105  61.76     |  +-<static>@0x82093 (<libvulkan_intel.so>)
+0.105  61.76     |    +-<static>@0x82093 (<libvulkan_intel.so>)
+0.105  61.76     |      +-<static>@0x82093 (<libvulkan_intel.so>)
+0.105  61.76     |        +-<static>@0x4bbe0 (<libvulkan_intel.so>)
+0.105  61.76     |          +-<static>@0x4bbe0 (<libvulkan_intel.so>)
+0.105  61.76     |            +-<static>@0x4bbe0 (<libvulkan_intel.so>)
+0.105  61.76     |              +-ioctl
+0.030  17.65     +-wgpu::api::surface::Surface::configure
+0.030  17.65     |  +-<wgpu::backend::wgpu_core::CoreSurface as wgpu::dispatch::SurfaceInterface>::configure
+0.030  17.65     |    +-wgpu_core::device::global::<impl wgpu_core::global::Global>::surface_configure
+0.030  17.65     |      +-wgpu_core::device::resource::Device::configure_surface
+0.020  11.76     |        +-wgpu_core::instance::Surface::get_capabilities_with_raw
+0.020  11.76     |        |  +-<A as wgpu_hal::dynamic::adapter::DynAdapter>::surface_capabilities
+0.020  11.76     |        |    +-wgpu_hal::vulkan::adapter::<impl wgpu_hal::Adapter for wgpu_hal::vulkan::Adapter>::surface_capabilities
+0.020  11.76     |        |      +-<wgpu_hal::vulkan::swapchain::native::NativeSurface as wgpu_hal::vulkan::swapchain::Surface>::surface_capabilities
+0.015   8.82     |        |        +-ash::prelude::read_into_uninitialized_vector
+0.015   8.82     |        |        |  +-<static>@0x82093 (<libvulkan_intel.so>)
+0.015   8.82     |        |        |    +-<static>@0x82093 (<libvulkan_intel.so>)
+0.015   8.82     |        |        |      +-wl_display_roundtrip_queue
+0.015   8.82     |        |        |        +-wl_display_dispatch_queue_pending
+0.015   8.82     |        |        |          +-<static>@0x64c0 (<libwayland-client.so.0.23.1>)
+0.010   5.88     |        |        |            +-<static>@0x8cdf (<libwayland-client.so.0.23.1>)
+0.005   2.94     |        |        |              +-ffi_prep_cif
+0.005   2.94     |        |        |                +-<static>@0x61e1 (<libffi.so.8.1.4>)
+0.005   2.94     |        |        +-ash::prelude::read_into_uninitialized_vector
+0.005   2.94     |        |          +-<static>@0x82093 (<libvulkan_intel.so>)
+0.005   2.94     |        |            +-<static>@0x82093 (<libvulkan_intel.so>)
+0.005   2.94     |        |              +-wl_display_roundtrip_queue
+0.005   2.94     |        |                +-wl_display_dispatch_queue
+0.005   2.94     |        |                  +-wl_display_read_events
+0.005   2.94     |        |                    +-<static>@0x161e67 (<libc.so.6>)
+0.010   5.88     |        +-<S as wgpu_hal::dynamic::surface::DynSurface>::configure
+0.010   5.88     |          +-wgpu_hal::vulkan::instance::<impl wgpu_hal::Surface for wgpu_hal::vulkan::Surface>::configure
+0.010   5.88     |            +-<wgpu_hal::vulkan::swapchain::native::NativeSurface as wgpu_hal::vulkan::swapchain::Surface>::create_swapchain
+0.010   5.88     |              +-<static>@0x45850 (<libvulkan.so.1.4.309>)
+0.010   5.88     |                +-<static>@0x82093 (<libvulkan_intel.so>)
+0.010   5.88     |                  +-<static>@0x82093 (<libvulkan_intel.so>)
+0.005   2.94     |                    +-<static>@0x82093 (<libvulkan_intel.so>)
+0.005   2.94     |                    |  +-<static>@0x4bbe0 (<libvulkan_intel.so>)
+0.005   2.94     |                    |    +-<static>@0x4bbe0 (<libvulkan_intel.so>)
+0.005   2.94     |                    |      +-<static>@0x4bbe0 (<libvulkan_intel.so>)
+0.005   2.94     |                    |        +-<static>@0x4bbe0 (<libvulkan_intel.so>)
+0.005   2.94     |                    |          +-<static>@0x4bbe0 (<libvulkan_intel.so>)
+0.005   2.94     |                    |            +-ioctl
+0.005   2.94     |                    +-wl_proxy_get_id
+0.010   5.88     +-<static>@0x29c21 (<libc.so.6>)
+0.010   5.88     |  +-main
+0.010   5.88     |    +-std::rt::lang_start_internal
+0.010   5.88     |      +-std::rt::lang_start::{{closure}}
+0.010   5.88     |        +-std::sys::backtrace::__rust_begin_short_backtrace
+0.010   5.88     |          +-datum_gui::main
+0.010   5.88     |            +-datum_gui::native_resize_repro::run_if_requested
+0.010   5.88     |              +-winit::platform_impl::linux::EventLoop<T>::run
+0.010   5.88     |                +-winit::platform_impl::linux::wayland::event_loop::EventLoop<T>::pump_events
+0.005   2.94     |                  +-winit::platform_impl::linux::wayland::event_loop::EventLoop<T>::loop_dispatch
+0.005   2.94     |                    +-calloop::loop_logic::EventLoop<Data>::dispatch
+0.005   2.94     |                      +-<core::cell::RefCell<calloop::sources::DispatcherInner<S,F>> as calloop::sources::EventDispatcher<Data>>::before_handle_events
+0.005   2.94     |                        +-<calloop_wayland_source::WaylandSource<D> as calloop::sources::EventSource>::before_handle_events
+0.005   2.94     |                          +-wayland_backend::sys::client_impl::InnerReadEventsGuard::read
+0.005   2.94     |                            +-wayland_backend::sys::client_impl::InnerReadEventsGuard::read_non_dispatch
+0.005   2.94     |                              +-wl_display_read_events
+0.005   2.94     |                                +-<static>@0x8cdf (<libwayland-client.so.0.23.1>)
+0.005   2.94     |                                  +-<static>@0x8cdf (<libwayland-client.so.0.23.1>)
+0.005   2.94     |                                    +-recvmsg
+0.005   2.94     |                                      +-<static>@0x8f2d4 (<libc.so.6>)
+0.005   2.94     |                                        +-<static>@0x8f2d4 (<libc.so.6>)
+0.005   2.94     |                                          +-<static>@0x9a6fc (<libc.so.6>)
+0.010   5.88     +-<static>@0x7675 (<libffi.so.8.1.4>)
+0.010   5.88     |  +-<static>@0x82093 (<libvulkan_intel.so>)
+0.005   2.94     |    +-mmap
+0.010   5.88     +-wgpu_core::command::CommandEncoder::finish
+0.010   5.88     |  +-wgpu_core::command::render::encode_render_pass
+0.005   2.94     |    +-<static>@0x82093 (<libvulkan_intel.so>)
+0.005   2.94     |    |  +-<static>@0x82093 (<libvulkan_intel.so>)
+0.005   2.94     |    |    +-<static>@0x82093 (<libvulkan_intel.so>)
+0.005   2.94     |    +-wgpu_hal::vulkan::command::<impl wgpu_hal::CommandEncoder for wgpu_hal::vulkan::CommandEncoder>::begin_encoding
+0.005   2.94     |      +-<static>@0x82093 (<libvulkan_intel.so>)
+0.005   2.94     |        +-<static>@0x4bbe0 (<libvulkan_intel.so>)
+0.005   2.94     |          +-<static>@0x161e67 (<libc.so.6>)
+0.005   2.94     +-<wgpu_hal::vulkan::swapchain::native::NativeSwapchain as wgpu_hal::vulkan::swapchain::Swapchain>::present
+0.005   2.94       +-<static>@0x82093 (<libvulkan_intel.so>)
+0.005   2.94         +-<static>@0x82093 (<libvulkan_intel.so>)
+0.005   2.94           +-<static>@0x82093 (<libvulkan_intel.so>)
+0.005   2.94             +-<static>@0x82093 (<libvulkan_intel.so>)
+0.005   2.94               +-<static>@0x82093 (<libvulkan_intel.so>)
+0.005   2.94                 +-<static>@0x4bbe0 (<libvulkan_intel.so>)
+0.005   2.94                   +-<static>@0x4bbe0 (<libvulkan_intel.so>)
+0.005   2.94                     +-<static>@0x4bbe0 (<libvulkan_intel.so>)
+0.005   2.94                       +-ioctl

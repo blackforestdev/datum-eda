@@ -1,0 +1,24 @@
+{
+  "marker": "EVIDENCE:GUI-PERFORMANCE-SPEC:GPS-C02-REVIEW",
+  "date": "2026-09-19",
+  "reviewer": "/root/gui_contract_review",
+  "independent_of_author": true,
+  "disposition": "C02 draft review passes. All five C02 findings resolved at specification-draft level.",
+  "scope": "Read-only independent review; no runtime replay, full specification approval or resize acceptance.",
+  "reviewed_sha256": {
+    "specs/GUI_SHARED_ENGINEERING_CONTRACT.md": "a06758130e59a64fd2279be96630a7328c839c9d00fdec36c1fb1ff12262320d"
+  },
+  "resolved_findings": {
+    "C02-R01": "Distinct submission, GPU completion and displayed milestones with resource/damage rules.",
+    "C02-R02": "Shared deadline merger and bounded work; FIFO pending-configuration admission prevents submission starvation.",
+    "C02-R03": "Paused drawable-active-time retry episodes, bounded recovery and data/input/focus preservation.",
+    "C02-R04": "Complete retained control keys, proposed byte/entry caps and eviction.",
+    "C02-R05": "Individual consumer profiles plus pass activation, order and resolve accounting."
+  },
+  "remaining": [
+    "GPS-C03 demanding tier and validated temporal observation method plus numerical budgets.",
+    "GPS-C04 complete individual requirement/consumer/proof mapping.",
+    "GPS-C05 full packet independent review; GPS-C06 actual owner disposition.",
+    "GPS-C01R resize resource/visual defect remains unresolved."
+  ]
+}

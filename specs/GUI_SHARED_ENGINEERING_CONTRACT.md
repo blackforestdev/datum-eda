@@ -322,7 +322,9 @@ merge window damage or lifetime. Terminal PTY/state and continuous-scroll
 semantics remain domain-owned.
 
 Separate latest logical/input extent, desired physical surface configuration,
-configured resource generation and last successfully presented generation.
+configured resource generation, submitted generation, GPU-completed generation
+and independently observed displayed generation. E11 defines these milestones;
+an application `present()` return is never a display acknowledgement.
 Track real zero extent/undrawable state rather than silently converting it into
 perpetual 1×1 rendering. Each frame uses one coherent extent/DPI/resource snapshot.
 Input and layout state follow accepted events promptly, including final gesture
@@ -412,3 +414,206 @@ GPS-C04 maps every invariant to shared owner, each current consumer, exact proof
 legacy path removal and artifact. Slice proof must cover all hosts changed by
 that slice; remaining hosts stay explicitly unadopted. Full shared-engine
 completion requires every current host and independent native replay.
+
+## E11 — Shared scheduling, completion and recovery detail
+
+<!-- EVIDENCE:GUI-PERFORMANCE-SPEC:GPS-C02-CONTRACT -->
+
+This section specifies proposed behavior, not acceptance of the opt-in resize
+transaction currently in the worktree. The interface names below name ownership
+boundaries; implementation may use ordinary Rust structs/enums and composition.
+
+**SCH-01.** One application-owned `NativeFrameCoordinator` owns the event-loop
+work registry and minimum wake deadline. Each entry is addressed by
+`(WindowId, host_generation, device_generation)` and contains dependency damage,
+one pending native redraw token, latest size/DPI, retry episode, and frame state.
+`invalidate`, `set_extent`, `set_drawable`, `redraw_received`, `frame_submitted`,
+`gpu_completed`, `acquire_failed` and `close` are its transition inputs. Native
+hosts adapt events and prepare their own content; they do not keep competing
+retry loops. Pure transition tests use an injected monotonic clock and effects
+such as request-redraw, configure-needed, wake-at and report-failure.
+
+**SCH-02.** The coordinator merges deadlines from surface retries, device progress,
+terminal transport/blink, engine supervision and other existing timers by taking
+the earliest *eligible* deadline once at the event-loop wait boundary. A host
+cannot overwrite another host's earlier deadline. With no eligible work use
+`Wait`. Immediate readiness requests one redraw, never repeated zero-duration
+wakeups for the same token. No deadline exists solely to redraw unchanged pixels.
+
+**SCH-03.** Ready hosts receive round-robin service, at most one frame attempt per
+host per dispatch round. A host waiting on GPU work or an undrawable surface is
+ineligible and yields without discarding damage. Terminal/background work yields
+at an initial proposed budget of 1 ms or 256 messages per dispatch, whichever is
+first, preserving remaining bytes/messages and waking the next round. No handler
+sleeps or waits synchronously for readback. A single indivisible over-budget call
+is recorded as a stall and must be addressed, not hidden by the average budget.
+A continuously busy terminal must not postpone another eligible host by more
+than one ready-host round; native end-to-end latency still has to meet C03.
+
+**SCH-04.** The common device/queue owner serializes application submissions and
+surface configurations. Ordinary configuration waits for already-submitted work
+through completion notification plus bounded nonblocking progress checks; new
+submissions cannot race an active configuration. A pending configuration obtains a FIFO admission ticket
+before draining outstanding work. Once admitted, new submissions are held until
+that bounded prior work completes and the configuration attempt finishes; later
+hosts cannot continually put more work ahead of it. Input/model processing
+continues. At most one configuration ticket per host is retained; newer extents
+replace its requested extent without moving its queue position. Closed or
+undrawable hosts release their ticket. A stalled drain enters REC-01 failure,
+not indefinite global blocking. Deterministic proof continuously submits from
+host A while host B requests resize: B is admitted within one host round, no
+new A submission overtakes its drain, and both resume after configuration.
+Do not infer queue independence
+from separate windows. Queue-wide completion can delay a host, but cannot clear
+another host's damage. Start with at most one outstanding application frame per
+host, no queued prepared snapshots, and at most one outstanding completion
+notification per host generation. This bounds Datum work, not the driver's image
+count. A backend whose configure call blocks despite readiness is an explicit
+measured limitation requiring remediation; wrapping it in a shared type is not
+performance proof. No separate rendering thread or backend switch is ratified.
+
+**SCH-05.** Completion milestones have different meanings and release rules:
+
+| Milestone | Permitted state change | Forbidden inference |
+|---|---|---|
+| Coherent frame prepared | Capture consumed dependency generations and physical extent/DPI | Input after this snapshot was rendered |
+| Queue submission and native present call completed | Retire only consumed application damage; retain the submission receipt and resource references; newer damage remains pending | Pixels were displayed or GPU references can be reused unsafely |
+| GPU completion for that submission | Release eligible transient allocations; retire in-flight accounting; enable a pending configure after acquired surface texture ownership is released | Compositor showed this frame |
+| Independently observed display | Record displayed generation, extent and timestamp in qualification evidence where the backend supports observation | A missing observation is a successful frame or an application failure without further evidence |
+
+Failure before successful submission/present leaves consumed damage pending.
+A completion message carries its host/device generation; close or device reset
+invalidates old messages. Callbacks only enqueue a bounded completion flag/event,
+never perform GPU work, retain a window indefinitely or recreate a closed host.
+Lost/outdated/suspend transitions invalidate submitted-content assumptions and
+require a fresh current-state frame even if old damage was retired. GPU resources
+may be dropped using wgpu's lifetime guarantees; logical in-flight byte accounting
+remains until completion or documented device teardown. An acquired
+`SurfaceTexture` must be released before reconfiguration.
+
+**REC-01.** Retry episodes use monotonic **drawable active time**, accumulating
+only while the host is nonzero, resumed and not known occluded. Zero extent,
+known occlusion and suspension cancel scheduled retries and pause that clock.
+A restore resets the backoff to 16 ms but retains accumulated failed active time;
+it does not grant endless fresh two-second episodes. Successful acquisition and
+submission reset the episode. A size change alone does not. Manual Retry or a
+new device generation starts a new episode. Automatic delays are 16, 32, 64, 128,
+then 250 ms; no automatic attempt after two seconds of active failed time.
+Device recreation is limited to one automatic attempt per episode. GPU-progress
+waiting uses the same bounded episode; never poll a hung queue indefinitely.
+
+**REC-02.** Exhaustion produces a recoverable host failure with Retry and Close
+through existing error reporting. If GPU drawing is unavailable, preserve a
+textual diagnostic through the existing error channel; no claim that a GPU error
+can always be painted. Preserve engine edits, unsaved settings and terminal core
+state. Cancel active pointer capture/drag, keep logical focus identity where it
+still exists, and restore IME/caret geometry after a successful current-layout
+frame. Closing an auxiliary host returns focus under existing modal ownership;
+failure in a main renderer does not commit, discard or replay design operations.
+
+| Fault scenario (production owner with injected backend result) | Required observation |
+|---|---|
+| Zero extent after damage, then restore | No configure/acquire while zero; latest nonzero frame eventually submitted; final input retained |
+| Known occlusion or suspend midway through retry | No render/retry loop while hidden; active-time counter paused; one fresh restore request |
+| Lost/outdated once, then success | Config generation changes once as needed; no live old acquired texture; no lost final damage |
+| Timeout continuously, including resize events | Backoff and two-second active deadline terminate retries; resize cannot reset exhaustion |
+| Occlude/restore repeatedly during timeouts | Paused time excluded; accumulated active time still reaches exhaustion |
+| GPU completion never arrives | Other eligible work dispatches; bounded failure; no readback wait or unbounded callbacks |
+| Device lost with multiple hosts | Old callback generations rejected; all affected GPU caches invalidated; one coordinated recreation |
+| Allocation failure during replacement | No empty submitted frame or unbounded retry; data and old eligible resources preserved safely |
+| Close between submission and callback | No redraw/reconfigure after close; resources retire without retaining the native host |
+| DPI change during thumb drag or camera gesture | Coherent final paint/hit extent; capture reconciled/cancelled by established input policy; no synthetic design mutation |
+
+Upstream constraints checked against pinned wgpu 28.0.0 `api/surface.rs` and
+`api/queue.rs`: configure waits for GPU idle, concurrent submissions may invalidate
+that wait, and an old live acquired surface texture forbids reconfiguration.
+Queue completion callbacks need submit/poll progress and must be short. Winit
+0.30.13 `Window::pre_present_notify` schedules Wayland frame callbacks; it is not
+an X11 display acknowledgement. References:
+https://docs.rs/wgpu/28.0.0/wgpu/struct.Queue.html#method.on_submitted_work_done
+and https://docs.rs/winit/0.30.13/winit/window/struct.Window.html#method.pre_present_notify.
+These API constraints inform the proposed design; they do not prove its resource
+benefit on the daily Intel/KWin environment.
+
+## E12 — Retained controls and explicit consumer profiles
+
+**CTL-01.** The renderer owns a bounded shared control-mesh cache. Its complete
+key contains contour identity/revision, physical dimensions, corner radii,
+border width, DPI, tessellation tolerance and geometry-affecting style generation.
+Color/opacity enters the key only when baked into vertices; otherwise use live
+uniforms. Translation and scissor-only changes reuse the mesh with current
+transform/clip. Clip-baked geometry includes the clip identity in its key.
+Convex controls may use the existing fan path; concave/holed authored geometry
+keeps its valid general tessellator. Shape equivalence includes winding, border,
+AA coverage and fractional-pixel edges. Never clamp contour vertices to clip.
+
+**CTL-02.** Proposed initial retention is 256 mesh entries and 4 MiB of complete
+CPU mesh payload per renderer, plus 4 MiB GPU retained capacity. Count keys and
+payload separately; account for pinned in-flight bytes outside evictable cache
+usage. Evict least-recently-used unpinned entries before insertion; oversized
+meshes bypass retention, are bounded by admitted frame geometry, and retire at
+completion. No eviction removes authoritative control/model state. Close/device
+reset releases the appropriate owner. C03 must reconcile these proposed caps
+with total working-set and scale budgets before specification approval.
+
+**ADP-01.** All rows below use SCH/REC for their host and E02–E05 for dependencies,
+resource identity and clipping. The profile is a semantic adapter, not a private
+scheduler or renderer. `Main` means the common main native host, not a separate
+surface for each pane. Product appearance remains under existing visual authority.
+
+| Existing consumer | Host / shared profile | Specific preserved semantics | Pass/resolve requirement |
+|---|---|---|---|
+| Main shell and pane chrome | Main / shell layout and controls | One shared two-key layout result for paint/hit geometry | Shell/overlay portion of existing general frame; no standalone empty world pass |
+| Board leaves | Main / retained world + CameraEngine | PaneId camera, pointer pane vs focused command, authored identity | Existing world/general schedule; preserve painter order, AA and dependent overlays |
+| Schematic leaves | Main / retained world + CameraEngine | Schematic units/bounds, resolved content required | Same general schedule with schematic resources; placeholder is not schematic proof |
+| Revision panes and witness | Main / screen content | Revision authority and current partial/static status | Existing ordered screen/overlay passes; no new world resolve for screen-only content |
+| Global Preferences | Own native host / continuous ScrollViewport | Global settings/focus and modal routing | One dialog pass, at most one MSAA resolve; zero world/terminal/shell-backdrop work |
+| Project Preferences | Own native host / continuous ScrollViewport | Actual Project event adapter and project scope | Same dialog-only schedule, independently exercised |
+| New Project | Own native host / form/control profile | Existing form focus and project creation authority | Adopt one dialog pass/at most one resolve; retire workspace clone/general backdrop |
+| Layers sidebar | Main / discrete-row adapter | Effective first row clamped by visible capacity; wheel stays local | Main screen/overlay contribution only |
+| Project panel/navigator | Main / shell/control profile | Partial navigator remains partial; no invented tree state | Main screen/overlay contribution only |
+| Inspector projections | Main / shell/control, continuous when content scrolls | Selection/check/review authority and keyboard focus | Main screen/overlay contribution only |
+| Menubar/submenus/action popups | Main / retained menu inventory + transient overlay | Dynamic availability separate from immutable inventory; keyboard/accessibility parity | Existing overlay order; closed surfaces prepare nothing |
+| Console feedback/history | Main / bounded screen content | Retain feedback when hidden, independent command feedback damage | Existing overlay contribution; hidden history prepares nothing |
+| Terminal dock/tabs/split leaves | Main / terminal-row adapter | PTY/core rows, two-generation text churn, selection/search/input | Existing terminal text/graphics and main composition; no generic document-scroll conversion |
+| Terminal clipboard/context popup/graphics | Main / terminal overlay adapter | Confirmation, links, cell clip and session graphics ownership | Existing terminal/overlay order; graphics allocation separately bounded |
+
+**ADP-02.** General-frame passes remain as required by existing world composition,
+selection, text and blending. Before modifying them, record the actual pass graph,
+per-pass inputs/load/store/resolve and the visual necessity of every retained
+pass. The contract does not prescribe a fabricated universal one-pass world
+renderer. C04 binds each row to exact implementation paths and pass-count proof;
+a duplicated dialog pass fails even when pixels match. Future consumers must
+select an existing profile or document the minimal semantic difference and its
+proof, while inheriting shared scheduling/resource ownership.
+
+**PASS-01.** The inspected `render/gpu_frame.rs` and `terminal_graphics.rs`
+encode the following general-frame schedule, shared by Main consumer rows:
+
+| Ordered pass | Activation | Ordering reason | Current resolve count |
+|---|---|---|---|
+| Geometry (`datum-gui-render-pass`) | Every general frame | Clear target; panel, grid, ordered authored world, interaction and console geometry | 1 |
+| Terminal background graphics | Nonempty admitted background graphics layer | Images below terminal text | 1 if active |
+| Main text (`datum-gui-text-pass`) | Every current general frame | Text above base geometry/background images | 1 |
+| Terminal foreground graphics | Nonempty admitted foreground graphics layer | Preserve terminal image z-order above text | 1 if active |
+| Menu card (`datum-gui-menu-overlay-pass`) | Nonempty menu overlay vertices | Occlude underlying geometry **and main text** | 1 if active |
+| Menu text (`datum-gui-menu-overlay-text-pass`) | Menu card active and nonempty menu text | Labels above their card | 1 if active |
+
+Thus current general frames have `2 + B + F + M + MT` passes and resolves,
+where each indicator is zero or one under its activation condition; maximum six.
+Dialog-only frames instead use exactly one pass/resolve, drawing card and its
+text together. Counts are per submitted frame, not per pane; board/schematic
+leaves share the geometry pass through per-pane scissor/camera bindings.
+Terminal graphics layers are absent when no applicable graphics are admitted.
+
+These counts describe the inspected implementation ceiling, not proof that every
+resolve or empty text pass is necessary. A future slice must remove a pass with
+no contributing commands and may merge compatible stages or defer intermediate
+resolves only after proving load/store, MSAA, atlas lifetime and painter parity.
+Any retained extra stage needs a named ordering/resource dependency; no duplicated
+resolve is justified merely because the old implementation performed it. Tests
+count passes/resolves and reject deliberately redundant identical-output passes;
+visual tests additionally expose a menu card drawn before underlying text and
+terminal foreground/background inversion. Quality stays at the existing sample
+count. This contract neither reduces AA nor claims a pass-count change alone
+will fix the measured submission CPU cost.

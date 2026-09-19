@@ -1,0 +1,13 @@
+{
+  "diagnostic": "minimal native reproducer",
+  "environment": {
+    "DATUM_DIAGNOSTIC_MINIMAL_WINDOW": "1",
+    "DATUM_DIAGNOSTIC_RESIZE_TRANSACTION": "0"
+  },
+  "fixture_loaded": false,
+  "harness_field_qualification": "mode=full and fixture_sha256 are inherited harness fields; no board was loaded.",
+  "scheduling": "configure latest pending extent at RedrawRequested",
+  "visual_acceptance": false,
+  "comparison_limit": "Independent loop also changes configuration scheduling; differences cannot be attributed solely to removing renderer work.",
+  "result": "High CPU reproduced without Datum model, scene, layout, text, or renderer. This does not establish a driver defect or reproduce content blinking."
+}
