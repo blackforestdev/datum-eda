@@ -1,0 +1,875 @@
+{
+  "qualification": "Investigative baseline only; no complete input/display acceptance or stable absolute budget. Earlier idle anomalies retained, not averaged away. New Project GPU counters incomplete across client lifetimes.",
+  "rows": [
+    {
+      "receipt": "main-v2/report.json",
+      "phase": "idle",
+      "cpu_percent_one_core": [
+        0.19999797316110254,
+        0.0
+      ],
+      "cpu_median": null,
+      "gpu_surviving_render_client_duty_percent": [
+        0.0726309039368343,
+        0.0
+      ],
+      "gpu_median": null,
+      "rss_peak_kib": [
+        161468,
+        161980
+      ],
+      "sent_actions": [
+        0,
+        0
+      ],
+      "observed_xi_events": [
+        null,
+        null
+      ],
+      "main_submissions": [
+        1,
+        0
+      ],
+      "dialog_submissions": [
+        0,
+        0
+      ],
+      "retained_misses": [
+        0,
+        0
+      ],
+      "prepared_misses": [
+        0,
+        0
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0
+      ],
+      "engine_child_cpu_seconds": [
+        0.0,
+        0.0
+      ],
+      "aggregation_disposition": "Keep initial/final idle samples distinct; no combined median claim."
+    },
+    {
+      "receipt": "main-v2/report.json",
+      "phase": "pan",
+      "cpu_percent_one_core": [
+        30.699542070314088,
+        28.999525611243488,
+        29.59955672896259
+      ],
+      "cpu_median": 29.59955672896259,
+      "gpu_surviving_render_client_duty_percent": [
+        35.201380968639064,
+        33.24044993608046,
+        33.85134517589164
+      ],
+      "gpu_median": 33.85134517589164,
+      "rss_peak_kib": [
+        161472,
+        161472,
+        161472
+      ],
+      "sent_actions": [
+        586,
+        586,
+        586
+      ],
+      "observed_xi_events": [
+        null,
+        null,
+        null
+      ],
+      "main_submissions": [
+        528,
+        501,
+        521
+      ],
+      "dialog_submissions": [
+        0,
+        0,
+        0
+      ],
+      "retained_misses": [
+        0,
+        0,
+        0
+      ],
+      "prepared_misses": [
+        528,
+        501,
+        521
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0,
+        0
+      ],
+      "engine_child_cpu_seconds": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "receipt": "main-v2/report.json",
+      "phase": "focus",
+      "cpu_percent_one_core": [
+        1.0999837204627234,
+        0.9999871011682799,
+        0.9999733115102355
+      ],
+      "cpu_median": 0.9999871011682799,
+      "gpu_surviving_render_client_duty_percent": [
+        1.2476350452528868,
+        1.252983377769788,
+        1.248835299582351
+      ],
+      "gpu_median": 1.248835299582351,
+      "rss_peak_kib": [
+        161472,
+        161472,
+        161472
+      ],
+      "sent_actions": [
+        19,
+        19,
+        19
+      ],
+      "observed_xi_events": [
+        null,
+        null,
+        null
+      ],
+      "main_submissions": [
+        19,
+        19,
+        19
+      ],
+      "dialog_submissions": [
+        0,
+        0,
+        0
+      ],
+      "retained_misses": [
+        0,
+        0,
+        0
+      ],
+      "prepared_misses": [
+        19,
+        19,
+        19
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0,
+        0
+      ],
+      "engine_child_cpu_seconds": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "receipt": "main-v2/report.json",
+      "phase": "resize",
+      "cpu_percent_one_core": [
+        4.799928196410965,
+        4.999948548042225,
+        4.8999202229300565
+      ],
+      "cpu_median": 4.8999202229300565,
+      "gpu_surviving_render_client_duty_percent": [
+        1.4793433100524822,
+        1.5389485834535288,
+        1.526595805036088
+      ],
+      "gpu_median": 1.526595805036088,
+      "rss_peak_kib": [
+        161464,
+        161464,
+        161464
+      ],
+      "sent_actions": [
+        20,
+        20,
+        20
+      ],
+      "observed_xi_events": [
+        null,
+        null,
+        null
+      ],
+      "main_submissions": [
+        19,
+        20,
+        20
+      ],
+      "dialog_submissions": [
+        0,
+        0,
+        0
+      ],
+      "retained_misses": [
+        19,
+        20,
+        20
+      ],
+      "prepared_misses": [
+        19,
+        20,
+        20
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0,
+        0
+      ],
+      "engine_child_cpu_seconds": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "receipt": "main-v2/report.json",
+      "phase": "pane_cycle",
+      "cpu_percent_one_core": [
+        3.799908786233023,
+        3.699934687256297,
+        3.5999110382707387
+      ],
+      "cpu_median": 3.699934687256297,
+      "gpu_surviving_render_client_duty_percent": [
+        3.600866904073987,
+        3.664645100202362,
+        3.5248631328697475
+      ],
+      "gpu_median": 3.600866904073987,
+      "rss_peak_kib": [
+        161660,
+        161700,
+        161724
+      ],
+      "sent_actions": [
+        14,
+        14,
+        14
+      ],
+      "observed_xi_events": [
+        null,
+        null,
+        null
+      ],
+      "main_submissions": [
+        49,
+        50,
+        48
+      ],
+      "dialog_submissions": [
+        0,
+        0,
+        0
+      ],
+      "retained_misses": [
+        0,
+        0,
+        0
+      ],
+      "prepared_misses": [
+        37,
+        34,
+        36
+      ],
+      "world_bundle_rebuilds": [
+        4,
+        3,
+        4
+      ],
+      "engine_child_cpu_seconds": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "receipt": "main-v2/report.json",
+      "phase": "new_cycle",
+      "cpu_percent_one_core": [
+        11.399888563847297,
+        11.39983228907502,
+        11.49983512457755
+      ],
+      "cpu_median": 11.399888563847297,
+      "gpu_surviving_render_client_duty_percent": [
+        3.382745642996063,
+        3.3844021996865092,
+        3.38703618938878
+      ],
+      "gpu_median": 3.3844021996865092,
+      "rss_peak_kib": [
+        164584,
+        164584,
+        164584
+      ],
+      "sent_actions": [
+        14,
+        14,
+        14
+      ],
+      "observed_xi_events": [
+        null,
+        null,
+        null
+      ],
+      "main_submissions": [
+        22,
+        22,
+        22
+      ],
+      "dialog_submissions": [
+        0,
+        0,
+        0
+      ],
+      "retained_misses": [
+        0,
+        0,
+        0
+      ],
+      "prepared_misses": [
+        21,
+        21,
+        21
+      ],
+      "world_bundle_rebuilds": [
+        7,
+        7,
+        7
+      ],
+      "engine_child_cpu_seconds": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "receipt": "pan-uninstrumented/report.json",
+      "phase": "idle",
+      "cpu_percent_one_core": [
+        7.5998490593898085,
+        0.0
+      ],
+      "cpu_median": null,
+      "gpu_surviving_render_client_duty_percent": [
+        15.32894480181111,
+        0.0
+      ],
+      "gpu_median": null,
+      "rss_peak_kib": [
+        160188,
+        160196
+      ],
+      "sent_actions": [
+        0,
+        0
+      ],
+      "observed_xi_events": [
+        null,
+        null
+      ],
+      "main_submissions": [
+        null,
+        null
+      ],
+      "dialog_submissions": [
+        null,
+        null
+      ],
+      "retained_misses": [
+        null,
+        null
+      ],
+      "prepared_misses": [
+        null,
+        null
+      ],
+      "world_bundle_rebuilds": [
+        null,
+        null
+      ],
+      "engine_child_cpu_seconds": [
+        0.0,
+        0.0
+      ],
+      "aggregation_disposition": "Keep initial/final idle samples distinct; no combined median claim."
+    },
+    {
+      "receipt": "pan-uninstrumented/report.json",
+      "phase": "pan",
+      "cpu_percent_one_core": [
+        16.199760583725762,
+        17.199831367684755,
+        16.999744379982232
+      ],
+      "cpu_median": 16.999744379982232,
+      "gpu_surviving_render_client_duty_percent": [
+        38.61894745054567,
+        41.128013398597744,
+        41.3855581378718
+      ],
+      "gpu_median": 41.128013398597744,
+      "rss_peak_kib": [
+        160196,
+        160196,
+        160196
+      ],
+      "sent_actions": [
+        586,
+        586,
+        586
+      ],
+      "observed_xi_events": [
+        null,
+        null,
+        null
+      ],
+      "main_submissions": [
+        null,
+        null,
+        null
+      ],
+      "dialog_submissions": [
+        null,
+        null,
+        null
+      ],
+      "retained_misses": [
+        null,
+        null,
+        null
+      ],
+      "prepared_misses": [
+        null,
+        null,
+        null
+      ],
+      "world_bundle_rebuilds": [
+        null,
+        null,
+        null
+      ],
+      "engine_child_cpu_seconds": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "receipt": "global-v3/report.json",
+      "phase": "idle",
+      "cpu_percent_one_core": [
+        0.09999847089357793,
+        4.299924632209296
+      ],
+      "cpu_median": null,
+      "gpu_surviving_render_client_duty_percent": [
+        0.0,
+        3.3712838791461968
+      ],
+      "gpu_median": null,
+      "rss_peak_kib": [
+        162560,
+        162564
+      ],
+      "sent_actions": [
+        0,
+        0
+      ],
+      "observed_xi_events": [
+        null,
+        null
+      ],
+      "main_submissions": [
+        0,
+        0
+      ],
+      "dialog_submissions": [
+        0,
+        154
+      ],
+      "retained_misses": [
+        0,
+        0
+      ],
+      "prepared_misses": [
+        0,
+        0
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0
+      ],
+      "engine_child_cpu_seconds": [
+        0.0,
+        0.0
+      ],
+      "aggregation_disposition": "Keep initial/final idle samples distinct; no combined median claim."
+    },
+    {
+      "receipt": "global-v3/report.json",
+      "phase": "scroll",
+      "cpu_percent_one_core": [
+        6.499904829696726,
+        8.899917371408627,
+        6.899890964466117
+      ],
+      "cpu_median": 6.899890964466117,
+      "gpu_surviving_render_client_duty_percent": [
+        5.7716500026578865,
+        8.637397808692118,
+        6.265826624268489
+      ],
+      "gpu_median": 6.265826624268489,
+      "rss_peak_kib": [
+        162564,
+        162564,
+        162564
+      ],
+      "sent_actions": [
+        198,
+        197,
+        198
+      ],
+      "observed_xi_events": [
+        null,
+        null,
+        null
+      ],
+      "main_submissions": [
+        0,
+        0,
+        0
+      ],
+      "dialog_submissions": [
+        282,
+        392,
+        290
+      ],
+      "retained_misses": [
+        0,
+        0,
+        0
+      ],
+      "prepared_misses": [
+        0,
+        0,
+        0
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0,
+        0
+      ],
+      "engine_child_cpu_seconds": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "receipt": "project-v3/report.json",
+      "phase": "idle",
+      "cpu_percent_one_core": [
+        0.0999965008524935,
+        0.0
+      ],
+      "cpu_median": null,
+      "gpu_surviving_render_client_duty_percent": [
+        0.0,
+        0.0
+      ],
+      "gpu_median": null,
+      "rss_peak_kib": [
+        173200,
+        173200
+      ],
+      "sent_actions": [
+        0,
+        0
+      ],
+      "observed_xi_events": [
+        null,
+        null
+      ],
+      "main_submissions": [
+        0,
+        0
+      ],
+      "dialog_submissions": [
+        0,
+        0
+      ],
+      "retained_misses": [
+        0,
+        0
+      ],
+      "prepared_misses": [
+        0,
+        0
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0
+      ],
+      "engine_child_cpu_seconds": [
+        0.0,
+        0.0
+      ],
+      "aggregation_disposition": "Keep initial/final idle samples distinct; no combined median claim."
+    },
+    {
+      "receipt": "project-v3/report.json",
+      "phase": "scroll",
+      "cpu_percent_one_core": [
+        8.499871216768032,
+        8.89987071606415,
+        9.19991031925536
+      ],
+      "cpu_median": 8.89987071606415,
+      "gpu_surviving_render_client_duty_percent": [
+        8.09993608626439,
+        8.453950923716205,
+        8.445595952313356
+      ],
+      "gpu_median": 8.445595952313356,
+      "rss_peak_kib": [
+        173200,
+        173200,
+        173200
+      ],
+      "sent_actions": [
+        198,
+        198,
+        197
+      ],
+      "observed_xi_events": [
+        null,
+        null,
+        null
+      ],
+      "main_submissions": [
+        0,
+        0,
+        0
+      ],
+      "dialog_submissions": [
+        393,
+        392,
+        391
+      ],
+      "retained_misses": [
+        0,
+        0,
+        0
+      ],
+      "prepared_misses": [
+        0,
+        0,
+        0
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0,
+        0
+      ],
+      "engine_child_cpu_seconds": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "receipt": "global-observed-v5/report.json",
+      "phase": "idle",
+      "cpu_percent_one_core": [
+        0.0,
+        0.0,
+        0.09999836634661233,
+        0.0
+      ],
+      "cpu_median": null,
+      "gpu_surviving_render_client_duty_percent": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gpu_median": null,
+      "rss_peak_kib": [
+        160044,
+        160044,
+        160044,
+        160044
+      ],
+      "sent_actions": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "observed_xi_events": [
+        {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        },
+        {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 0
+        }
+      ],
+      "main_submissions": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "dialog_submissions": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "retained_misses": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "prepared_misses": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "engine_child_cpu_seconds": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "aggregation_disposition": "Keep initial/final idle samples distinct; no combined median claim."
+    },
+    {
+      "receipt": "global-observed-v5/report.json",
+      "phase": "scroll",
+      "cpu_percent_one_core": [
+        9.499823496137948,
+        9.099846759532436,
+        8.899857202672399
+      ],
+      "cpu_median": 9.099846759532436,
+      "gpu_surviving_render_client_duty_percent": [
+        8.001913696851297,
+        8.584994459591314,
+        8.46005333928184
+      ],
+      "gpu_median": 8.46005333928184,
+      "rss_peak_kib": [
+        160044,
+        160044,
+        160044
+      ],
+      "sent_actions": [
+        197,
+        197,
+        198
+      ],
+      "observed_xi_events": [
+        {
+          "2": 0,
+          "3": 0,
+          "4": 197,
+          "5": 0,
+          "6": 0
+        },
+        {
+          "2": 0,
+          "3": 0,
+          "4": 197,
+          "5": 0,
+          "6": 0
+        },
+        {
+          "2": 0,
+          "3": 0,
+          "4": 198,
+          "5": 0,
+          "6": 0
+        }
+      ],
+      "main_submissions": [
+        0,
+        0,
+        0
+      ],
+      "dialog_submissions": [
+        389,
+        393,
+        390
+      ],
+      "retained_misses": [
+        0,
+        0,
+        0
+      ],
+      "prepared_misses": [
+        0,
+        0,
+        0
+      ],
+      "world_bundle_rebuilds": [
+        0,
+        0,
+        0
+      ],
+      "engine_child_cpu_seconds": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "controlled_main_idle_receipt": "main-idle-observed/report.json",
+  "intermittent_idle_followup": "dat-gui-idle-sample-activity-lhb"
+}

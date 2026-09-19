@@ -1,0 +1,6 @@
+{
+  "main-pilot": "Three-second input pilot only. Focus-header clicks did not change focused pane; reject focus row. Replaced by actual Tab route with production action-state evidence in main-v2. Other pilot rows are not acceptance.",
+  "global-v2": "Failed scroll preflight. Narrow layout uses horizontal tabs; old coordinate clicked Appearance/search area instead of Units. No scroll baseline claimed. v3 selects actual Units tab.",
+  "global-observed": "Failed scroll preflight: Units selection raced initial window resize/layout and left Appearance selected. Quiet initial sample retained; no scroll baseline claimed. v5 adds resize settling before section selection.",
+  "owner_idle_confirmation": "Desktop is idle; continue measuring"
+}

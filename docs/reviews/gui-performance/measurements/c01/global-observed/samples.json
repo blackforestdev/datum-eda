@@ -1,0 +1,362 @@
+[
+  {
+    "phase": "idle",
+    "duration_s": 10.000150221050717,
+    "input_events_sent": 0,
+    "requested_hz": 10,
+    "rate_semantics": "minimum delay between actions; actions may include explicit settling waits",
+    "cpu_seconds": 0.0,
+    "cpu_percent_one_core": 0.0,
+    "rss_peak_kib": 160120,
+    "gpu_engine_active_percent": {
+      "0000:00:02.0/2190/drm-engine-render": 0.0,
+      "0000:00:02.0/2190/drm-engine-copy": 0.0,
+      "0000:00:02.0/2190/drm-engine-video": 0.0,
+      "0000:00:02.0/2190/drm-engine-video-enhance": 0.0,
+      "0000:00:02.0/2188/drm-engine-render": 0.0,
+      "0000:00:02.0/2188/drm-engine-copy": 0.0,
+      "0000:00:02.0/2188/drm-engine-video": 0.0,
+      "0000:00:02.0/2188/drm-engine-video-enhance": 0.0,
+      "0000:00:02.0/2191/drm-engine-render": 0.0,
+      "0000:00:02.0/2191/drm-engine-copy": 0.0,
+      "0000:00:02.0/2191/drm-engine-video": 0.0,
+      "0000:00:02.0/2191/drm-engine-video-enhance": 0.0,
+      "0000:00:02.0/2195/drm-engine-render": 0.0,
+      "0000:00:02.0/2195/drm-engine-copy": 0.0,
+      "0000:00:02.0/2195/drm-engine-video": 0.0,
+      "0000:00:02.0/2195/drm-engine-video-enhance": 0.0
+    },
+    "world_bundle_rebuilds": 0,
+    "main_submissions": 0,
+    "dialog_submissions": 0,
+    "prepared_miss_frames": 0,
+    "retained_miss_frames": 0,
+    "control_reverse": null,
+    "preflight": "separate compositor before/after capture, not per-event display acknowledgement",
+    "main_renderer_ms": [],
+    "dialog_renderer_us": [],
+    "raw_counters": [
+      {
+        "seconds": 3.915000706911087e-05,
+        "cpu_ticks": 83,
+        "rss_kib": 160120,
+        "gpu": {
+          "0000:00:02.0/2190/drm-engine-render": 0,
+          "0000:00:02.0/2190/drm-engine-copy": 0,
+          "0000:00:02.0/2190/drm-engine-video": 0,
+          "0000:00:02.0/2190/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2188/drm-engine-render": 149649,
+          "0000:00:02.0/2188/drm-engine-copy": 0,
+          "0000:00:02.0/2188/drm-engine-video": 0,
+          "0000:00:02.0/2188/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2191/drm-engine-render": 0,
+          "0000:00:02.0/2191/drm-engine-copy": 0,
+          "0000:00:02.0/2191/drm-engine-video": 0,
+          "0000:00:02.0/2191/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2195/drm-engine-render": 28595907,
+          "0000:00:02.0/2195/drm-engine-copy": 0,
+          "0000:00:02.0/2195/drm-engine-video": 0,
+          "0000:00:02.0/2195/drm-engine-video-enhance": 0
+        },
+        "received_xi_events": {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 1
+        }
+      },
+      {
+        "seconds": 1.0102481500362046,
+        "cpu_ticks": 83,
+        "rss_kib": 160120,
+        "gpu": {
+          "0000:00:02.0/2190/drm-engine-render": 0,
+          "0000:00:02.0/2190/drm-engine-copy": 0,
+          "0000:00:02.0/2190/drm-engine-video": 0,
+          "0000:00:02.0/2190/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2188/drm-engine-render": 149649,
+          "0000:00:02.0/2188/drm-engine-copy": 0,
+          "0000:00:02.0/2188/drm-engine-video": 0,
+          "0000:00:02.0/2188/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2191/drm-engine-render": 0,
+          "0000:00:02.0/2191/drm-engine-copy": 0,
+          "0000:00:02.0/2191/drm-engine-video": 0,
+          "0000:00:02.0/2191/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2195/drm-engine-render": 28595907,
+          "0000:00:02.0/2195/drm-engine-copy": 0,
+          "0000:00:02.0/2195/drm-engine-video": 0,
+          "0000:00:02.0/2195/drm-engine-video-enhance": 0
+        },
+        "received_xi_events": {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 1
+        }
+      },
+      {
+        "seconds": 2.0221425730269402,
+        "cpu_ticks": 83,
+        "rss_kib": 160120,
+        "gpu": {
+          "0000:00:02.0/2190/drm-engine-render": 0,
+          "0000:00:02.0/2190/drm-engine-copy": 0,
+          "0000:00:02.0/2190/drm-engine-video": 0,
+          "0000:00:02.0/2190/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2188/drm-engine-render": 149649,
+          "0000:00:02.0/2188/drm-engine-copy": 0,
+          "0000:00:02.0/2188/drm-engine-video": 0,
+          "0000:00:02.0/2188/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2191/drm-engine-render": 0,
+          "0000:00:02.0/2191/drm-engine-copy": 0,
+          "0000:00:02.0/2191/drm-engine-video": 0,
+          "0000:00:02.0/2191/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2195/drm-engine-render": 28595907,
+          "0000:00:02.0/2195/drm-engine-copy": 0,
+          "0000:00:02.0/2195/drm-engine-video": 0,
+          "0000:00:02.0/2195/drm-engine-video-enhance": 0
+        },
+        "received_xi_events": {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 1
+        }
+      },
+      {
+        "seconds": 3.033648113021627,
+        "cpu_ticks": 83,
+        "rss_kib": 160120,
+        "gpu": {
+          "0000:00:02.0/2190/drm-engine-render": 0,
+          "0000:00:02.0/2190/drm-engine-copy": 0,
+          "0000:00:02.0/2190/drm-engine-video": 0,
+          "0000:00:02.0/2190/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2188/drm-engine-render": 149649,
+          "0000:00:02.0/2188/drm-engine-copy": 0,
+          "0000:00:02.0/2188/drm-engine-video": 0,
+          "0000:00:02.0/2188/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2191/drm-engine-render": 0,
+          "0000:00:02.0/2191/drm-engine-copy": 0,
+          "0000:00:02.0/2191/drm-engine-video": 0,
+          "0000:00:02.0/2191/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2195/drm-engine-render": 28595907,
+          "0000:00:02.0/2195/drm-engine-copy": 0,
+          "0000:00:02.0/2195/drm-engine-video": 0,
+          "0000:00:02.0/2195/drm-engine-video-enhance": 0
+        },
+        "received_xi_events": {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 1
+        }
+      },
+      {
+        "seconds": 4.044590446050279,
+        "cpu_ticks": 83,
+        "rss_kib": 160120,
+        "gpu": {
+          "0000:00:02.0/2190/drm-engine-render": 0,
+          "0000:00:02.0/2190/drm-engine-copy": 0,
+          "0000:00:02.0/2190/drm-engine-video": 0,
+          "0000:00:02.0/2190/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2188/drm-engine-render": 149649,
+          "0000:00:02.0/2188/drm-engine-copy": 0,
+          "0000:00:02.0/2188/drm-engine-video": 0,
+          "0000:00:02.0/2188/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2191/drm-engine-render": 0,
+          "0000:00:02.0/2191/drm-engine-copy": 0,
+          "0000:00:02.0/2191/drm-engine-video": 0,
+          "0000:00:02.0/2191/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2195/drm-engine-render": 28595907,
+          "0000:00:02.0/2195/drm-engine-copy": 0,
+          "0000:00:02.0/2195/drm-engine-video": 0,
+          "0000:00:02.0/2195/drm-engine-video-enhance": 0
+        },
+        "received_xi_events": {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 1
+        }
+      },
+      {
+        "seconds": 5.0555278600077145,
+        "cpu_ticks": 83,
+        "rss_kib": 160120,
+        "gpu": {
+          "0000:00:02.0/2190/drm-engine-render": 0,
+          "0000:00:02.0/2190/drm-engine-copy": 0,
+          "0000:00:02.0/2190/drm-engine-video": 0,
+          "0000:00:02.0/2190/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2188/drm-engine-render": 149649,
+          "0000:00:02.0/2188/drm-engine-copy": 0,
+          "0000:00:02.0/2188/drm-engine-video": 0,
+          "0000:00:02.0/2188/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2191/drm-engine-render": 0,
+          "0000:00:02.0/2191/drm-engine-copy": 0,
+          "0000:00:02.0/2191/drm-engine-video": 0,
+          "0000:00:02.0/2191/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2195/drm-engine-render": 28595907,
+          "0000:00:02.0/2195/drm-engine-copy": 0,
+          "0000:00:02.0/2195/drm-engine-video": 0,
+          "0000:00:02.0/2195/drm-engine-video-enhance": 0
+        },
+        "received_xi_events": {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 1
+        }
+      },
+      {
+        "seconds": 6.066123588010669,
+        "cpu_ticks": 83,
+        "rss_kib": 160120,
+        "gpu": {
+          "0000:00:02.0/2190/drm-engine-render": 0,
+          "0000:00:02.0/2190/drm-engine-copy": 0,
+          "0000:00:02.0/2190/drm-engine-video": 0,
+          "0000:00:02.0/2190/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2188/drm-engine-render": 149649,
+          "0000:00:02.0/2188/drm-engine-copy": 0,
+          "0000:00:02.0/2188/drm-engine-video": 0,
+          "0000:00:02.0/2188/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2191/drm-engine-render": 0,
+          "0000:00:02.0/2191/drm-engine-copy": 0,
+          "0000:00:02.0/2191/drm-engine-video": 0,
+          "0000:00:02.0/2191/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2195/drm-engine-render": 28595907,
+          "0000:00:02.0/2195/drm-engine-copy": 0,
+          "0000:00:02.0/2195/drm-engine-video": 0,
+          "0000:00:02.0/2195/drm-engine-video-enhance": 0
+        },
+        "received_xi_events": {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 1
+        }
+      },
+      {
+        "seconds": 7.077855167037342,
+        "cpu_ticks": 83,
+        "rss_kib": 160120,
+        "gpu": {
+          "0000:00:02.0/2190/drm-engine-render": 0,
+          "0000:00:02.0/2190/drm-engine-copy": 0,
+          "0000:00:02.0/2190/drm-engine-video": 0,
+          "0000:00:02.0/2190/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2188/drm-engine-render": 149649,
+          "0000:00:02.0/2188/drm-engine-copy": 0,
+          "0000:00:02.0/2188/drm-engine-video": 0,
+          "0000:00:02.0/2188/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2191/drm-engine-render": 0,
+          "0000:00:02.0/2191/drm-engine-copy": 0,
+          "0000:00:02.0/2191/drm-engine-video": 0,
+          "0000:00:02.0/2191/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2195/drm-engine-render": 28595907,
+          "0000:00:02.0/2195/drm-engine-copy": 0,
+          "0000:00:02.0/2195/drm-engine-video": 0,
+          "0000:00:02.0/2195/drm-engine-video-enhance": 0
+        },
+        "received_xi_events": {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 1
+        }
+      },
+      {
+        "seconds": 8.088240176031832,
+        "cpu_ticks": 83,
+        "rss_kib": 160120,
+        "gpu": {
+          "0000:00:02.0/2190/drm-engine-render": 0,
+          "0000:00:02.0/2190/drm-engine-copy": 0,
+          "0000:00:02.0/2190/drm-engine-video": 0,
+          "0000:00:02.0/2190/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2188/drm-engine-render": 149649,
+          "0000:00:02.0/2188/drm-engine-copy": 0,
+          "0000:00:02.0/2188/drm-engine-video": 0,
+          "0000:00:02.0/2188/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2191/drm-engine-render": 0,
+          "0000:00:02.0/2191/drm-engine-copy": 0,
+          "0000:00:02.0/2191/drm-engine-video": 0,
+          "0000:00:02.0/2191/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2195/drm-engine-render": 28595907,
+          "0000:00:02.0/2195/drm-engine-copy": 0,
+          "0000:00:02.0/2195/drm-engine-video": 0,
+          "0000:00:02.0/2195/drm-engine-video-enhance": 0
+        },
+        "received_xi_events": {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 1
+        }
+      },
+      {
+        "seconds": 9.09928085905267,
+        "cpu_ticks": 83,
+        "rss_kib": 160120,
+        "gpu": {
+          "0000:00:02.0/2190/drm-engine-render": 0,
+          "0000:00:02.0/2190/drm-engine-copy": 0,
+          "0000:00:02.0/2190/drm-engine-video": 0,
+          "0000:00:02.0/2190/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2188/drm-engine-render": 149649,
+          "0000:00:02.0/2188/drm-engine-copy": 0,
+          "0000:00:02.0/2188/drm-engine-video": 0,
+          "0000:00:02.0/2188/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2191/drm-engine-render": 0,
+          "0000:00:02.0/2191/drm-engine-copy": 0,
+          "0000:00:02.0/2191/drm-engine-video": 0,
+          "0000:00:02.0/2191/drm-engine-video-enhance": 0,
+          "0000:00:02.0/2195/drm-engine-render": 28595907,
+          "0000:00:02.0/2195/drm-engine-copy": 0,
+          "0000:00:02.0/2195/drm-engine-video": 0,
+          "0000:00:02.0/2195/drm-engine-video-enhance": 0
+        },
+        "received_xi_events": {
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0,
+          "6": 1
+        }
+      }
+    ],
+    "received_xi_events": {
+      "2": 0,
+      "3": 0,
+      "4": 0,
+      "5": 0,
+      "6": 0
+    },
+    "gpu_counter_scope": "Surviving DRM clients only; window create/destroy may remove clients and is not complete GPU duty.",
+    "engine_children_start": {
+      "ticks": 940,
+      "live_pids": [
+        4098591
+      ]
+    },
+    "engine_children_end": {
+      "ticks": 940,
+      "live_pids": [
+        4098591
+      ]
+    },
+    "engine_cpu_seconds": 0.0
+  }
+]
