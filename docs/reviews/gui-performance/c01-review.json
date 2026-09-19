@@ -1,0 +1,40 @@
+{
+  "marker": "EVIDENCE:GUI-PERFORMANCE-SPEC:GPS-C01-REVIEW",
+  "date": "2026-09-18",
+  "reviewer": "/root/gui_contract_review",
+  "independent_of_author": true,
+  "disposition": "Approve GPS-C01 investigative completion. No remaining C01 blocker found.",
+  "scope": "Read-only independent source, measurement-driver and author-produced receipt review; no build, native runtime replay or product acceptance.",
+  "findings": {
+    "R01": "Consumer/cache/event/surface inventory materially complete; requested clipping and matched-model corrections incorporated. All 51 source hashes and 13 owning-route input hashes verified.",
+    "R02-R03": "Matched pointer/zoom evidence and current pan, switching, resize, pane/window cycles, Preferences and idle receipts provide investigative baseline. Five final report families preserve identical start/end binary hashes; CPU arithmetic verified.",
+    "R04": "Incremental alternatives connected to measured work or demonstrated lifecycle/correctness issues; missing measurements explicit.",
+    "R35": "101 historical hunks classified; all 25 HP obligations and 42 current test references preserved."
+  },
+  "remaining": {
+    "GPR-01": "Open: GPS-C03 qualification methods and budgets.",
+    "GPR-02": "Open: GPS-C04 exact implementation mapping; historical hunk reconciliation satisfied.",
+    "limitations": [
+      "XI2 observer counts events delivered to its own connection, not application acknowledgement.",
+      "Quiet controlled idle samples do not resolve earlier anomalies; dat-gui-idle-sample-activity-lhb remains open.",
+      "Native Wayland, presentation latency, demanding tiers, complete GPU accounting and endurance remain future proof.",
+      "No specification approval, mechanism ratification, broader implementation authorization or final performance acceptance."
+    ]
+  },
+  "reviewed_sha256": {
+    "research/gui-performance/C01_CONSUMER_RECONCILIATION.md": "5b418309c7c038d0ffcb5c2456046d9cf6b6b090350d84ceb0d7e216134bb290",
+    "docs/reviews/gui-performance/c01-historical-hunk-review.json": "d5b6ecc1767f87049ea58e188ac9041fbdb5efa22f10a229abbda10f222946c5",
+    "docs/reviews/gui-performance/measurements/c01/source-inventory.json": "2619c8b83625b01527074500f548bfc6fe6e5a0a6b5618b5a3dbc622cdf59d26",
+    "docs/reviews/gui-performance/measurements/c01/environment.json": "e4a2315f4f4f2867e1281ac09a27bfd5a65265fd79f374551b2ea8d55c0bc616",
+    "docs/reviews/gui-performance/measurements/c01/route-input-review.json": "bc02cc5646fb7534de60afc7a2de96d210f588722018c647f1c59d1cb773718b",
+    "docs/reviews/gui-performance/measurements/c01/summary.json": "fd317334ac62975ddbc58709923f5664a48fbb336393e06fc7d9158e1e67bb16",
+    "docs/reviews/gui-performance/measurements/c01/main-state-observations.json": "7fc79045607fa4840405b3332260d77e829919c49eaf2551d71bc0196ce423db",
+    "docs/reviews/gui-performance/measurements/c01/pilot-dispositions.json": "aa8e925392ae87235cf86816811e45adb02b63dd1228d06921278e8c5d43f342",
+    "docs/reviews/gui-performance/measurements/c01/datum_gui_c01_measure_v5.py": "330f69bb47bf7f42ab659d712d46587c97df4b94b1873e8ec405d3fec2cc5cf9",
+    "docs/reviews/gui-performance/measurements/c01/main-v2/report.json": "efc5b20c46d057fa0190eed5de9fd14158901b2cf4bfdbe6757e4f6a6db0d32a",
+    "docs/reviews/gui-performance/measurements/c01/pan-uninstrumented/report.json": "6dcb64be7d0898ff589078630296fece3989c17967779789d4dc58ae948e2b15",
+    "docs/reviews/gui-performance/measurements/c01/global-observed-v5/report.json": "55e32e43a938cc1738d6cda8794ad538bb593db88f3c58c2af72124ec3757b14",
+    "docs/reviews/gui-performance/measurements/c01/project-v3/report.json": "0ad725def6a8caffe8458d2e7c7194c1f456a3238e09dde75487697f5d817860",
+    "docs/reviews/gui-performance/measurements/c01/main-idle-observed/report.json": "18167ae11622db58a1e0066f9150b0ebd88f4b0e559dd76139c735c7e3da5a77"
+  }
+}

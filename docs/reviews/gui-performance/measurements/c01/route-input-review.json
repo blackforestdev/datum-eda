@@ -1,0 +1,24 @@
+{
+  "route": "gui-performance-recovery",
+  "scope": "Complete current owning performance route reviewed: original static audit, current baseline/source reconciliation, parent plan,63clause inventory, dated owner records, shared draft, prior slice proof/review/verification and current historical hunk review. Runtime observations do not override existing decisions or protected prototypes.",
+  "reviewed_inputs": {
+    "research/gui-performance/SHARED_GUI_PERFORMANCE_AUDIT.md": "0869dc24f75b8fcbd254b7ecdfb0e3a461cb66887b7cebc19aec2836105d9200",
+    "research/gui-performance/BASELINE_AND_FIRST_SLICE.md": "57b2a27001698ee9fd0475274d0a8ac7a25b7a13d1e8a1d2948099d926fb2468",
+    "research/gui-performance/C01_CONSUMER_RECONCILIATION.md": "5b418309c7c038d0ffcb5c2456046d9cf6b6b090350d84ceb0d7e216134bb290",
+    "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md": "ccd11e4b1a5c52c0077cf09e8931ce8e02d14c70e419c404abf239356ba9a0bb",
+    "docs/reviews/gui-performance/specification-clauses.json": "a4a98bb35e09aa2c6cdde399f2c521977cefb26d434a2a21a2ff141c4f7ec3fe",
+    "docs/reviews/gui-performance/promotion-owner-direction.json": "0a80c764d348aa82c56ad9fbae9efe7d77c107549a4e3ad47dc4a51ea20f9dfd",
+    "docs/reviews/gui-performance/policy-promotion-owner-20260917.json": "fff6b53a4e8459816b3e3f3a69783d13b01ea67767249f417655d3f1b2cf2534",
+    "docs/reviews/gui-performance/sequencing-owner-direction.json": "fb9c00e899f311ca6552021fda7d9b8702746e2370cf618438493e62cd9940fe",
+    "specs/GUI_SHARED_ENGINEERING_CONTRACT.md": "11d6eef41d61d273fc0cb8fbeccc0eac0ed9c9410c7cca244fb7ddf5af910abc",
+    "docs/reviews/gui-performance/zoom-noop-slice.md": "144073e5e0ba1a72e6731802856e45438549edf883b3e40b60f2d6d91a45a50f",
+    "docs/reviews/gui-performance/independent-review.json": "ec46541e7e82c468eaaa6b64ca6c4b7357ffb3b2f14a0829a29aa9bdd058f486",
+    "docs/reviews/gui-performance/verification.json": "0107901b9e04b91ff5c1b4af98e8b2bb6138f197ab430cd4acf232289d8d902b",
+    "docs/reviews/gui-performance/c01-historical-hunk-review.json": "d5b6ecc1767f87049ea58e188ac9041fbdb5efa22f10a229abbda10f222946c5"
+  },
+  "artifact_index": "../SHA256SUMS",
+  "artifact_index_note": "Index verified separately; excluded here to avoid a recursive checksum. No other route digest or historical acceptance authority is refreshed.",
+  "source_inventory": "source-inventory.json",
+  "tool_inventory": "environment.json",
+  "review_boundary": "Source reconciliation is not complete architecture approval, R21 adoption mapping or runtime qualification."
+}
