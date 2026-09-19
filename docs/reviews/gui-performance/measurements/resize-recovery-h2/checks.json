@@ -1,0 +1,23 @@
+{
+  "renderer_unit_tests": {
+    "passed": 173
+  },
+  "native_resize_state_tests": {
+    "passed": 3
+  },
+  "optimized_build": "passed",
+  "final_binary_native_smoke": {
+    "x11": "6/6 once",
+    "wayland": "6/6 once"
+  },
+  "source_health": "passed; main pre-test ceiling 2082, renderer expanded ceiling 7843",
+  "full_drift": {
+    "workspace_rustfmt": "passed",
+    "workspace_clippy": "passed",
+    "alignment_mcp_tests": "415 tests,45 skipped, passed outside sandbox",
+    "sandbox_attempt": "Unix-socket permission denied; rerun outside sandbox",
+    "terminal_convergence": "Stopped on focus/font existing failures plus extracted frame loader; loader corrected,11 unit tests pass, only existing two failures remain",
+    "downstream_checks": "not executed after stop"
+  },
+  "acceptance": "No resize resource, temporal UX, global lifecycle adoption or final product acceptance"
+}

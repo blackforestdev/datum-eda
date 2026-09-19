@@ -1,0 +1,307 @@
+Functions sorted by metric: Exclusive Total CPU Time
+
+Excl. Total   Incl. Total    Name
+CPU           CPU
+ sec.      %   sec.      %
+2.825 100.00  2.825 100.00   <Total>
+0.945  33.45  0.945  33.45   ioctl
+0.525  18.58  0.525  18.58   <static>@0x9a6fc (<libc.so.6>)
+0.200   7.08  0.200   7.08   readlink
+0.090   3.19  0.090   3.19   <static>@0x161e67 (<libc.so.6>)
+0.075   2.65  2.135  75.58   <static>@0x82093 (<libvulkan_intel.so>)
+0.065   2.30  0.085   3.01   <static>@0x9fc63 (<libc.so.6>)
+0.065   2.30  0.065   2.30   fstatat
+0.040   1.42  0.970  34.34   <static>@0x4bbe0 (<libvulkan_intel.so>)
+0.035   1.24  0.050   1.77   malloc
+0.035   1.24  0.040   1.42   pthread_create
+0.030   1.06  0.030   1.06   __close_nocancel
+0.030   1.06  0.030   1.06   fstat
+0.030   1.06  0.030   1.06   ftruncate
+0.030   1.06  0.030   1.06   memfd_create
+0.025   0.88  0.065   2.30   free
+0.025   0.88  0.025   0.88   munmap
+0.020   0.71  0.105   3.72   <static>@0x3d6cb3 (<libvulkan_intel.so>)
+0.020   0.71  0.095   3.36   cosmic_text::shape::ShapeLine::build
+0.020   0.71  0.030   1.06   hashbrown::map::HashMap<K,V,S,A>::get_mut
+0.015   0.53  0.015   0.53   <static>@0x9de00 (<libc.so.6>)
+0.015   0.53  0.100   3.54   <static>@0xefdd (<libxcb.so.1.1.0>)
+0.015   0.53  0.015   0.53   getenv
+0.015   0.53  0.070   2.48   glyphon::text_render::TextRenderer::prepare_with_depth_and_custom
+0.015   0.53  0.015   0.53   hashbrown::map::HashMap<K,V,S,A>::insert
+0.015   0.53  0.015   0.53   mmap
+0.015   0.53  0.015   0.53   pthread_mutex_lock
+0.010   0.35  0.010   0.35   <lru::KeyWrapper<K> as core::hash::Hash>::hash
+0.010   0.35  0.010   0.35   alloc::vec::Vec<T,A>::extend_desugared
+0.010   0.35  0.010   0.35   calloop::sources::ping::eventfd::Ping::ping
+0.010   0.35  0.015   0.53   core::ptr::drop_in_place<cosmic_text::cached::Cached<cosmic_text::shape::ShapeLine>>
+0.010   0.35  0.015   0.53   cosmic_text::attrs::AttrsOwned::as_attrs
+0.010   0.35  0.060   2.12   cosmic_text::shape::Shaping::run
+0.010   0.35  0.010   0.35   datum_gui_render::side_panels::render_inspector_panel
+0.010   0.35  0.150   5.31   datum_gui_render::text_buffer_cache::<impl datum_gui_render::Renderer>::cached_text_buffer_indices
+0.010   0.35  0.010   0.35   dup
+0.010   0.35  0.010   0.35   pthread_cond_broadcast
+0.010   0.35  0.170   6.02   realpath
+0.010   0.35  0.010   0.35   swash::internal::RawFont::table_range
+0.010   0.35  0.020   0.71   swash::metrics::MetricsProxy::from_font
+0.010   0.35  0.015   0.53   taffy::compute::flexbox::compute_flexbox_layout
+0.010   0.35  1.160  41.06   wgpu_hal::vulkan::instance::<impl wgpu_hal::Surface for wgpu_hal::vulkan::Surface>::configure
+0.005   0.18  0.010   0.35   <alloc::string::String as core::fmt::Write>::write_str
+0.005   0.18  0.005   0.18   <alloc::vec::Vec<T,A> as core::clone::Clone>::clone
+0.005   0.18  0.005   0.18   <alloc::vec::into_iter::IntoIter<T,A> as core::ops::drop::Drop>::drop
+0.005   0.18  0.010   0.35   <core::iter::adapters::cloned::Cloned<I> as core::iter::traits::iterator::Iterator>::next
+0.005   0.18  0.005   0.18   <core::iter::adapters::map::Map<I,F> as core::iter::traits::iterator::Iterator>::next
+0.005   0.18  0.005   0.18   <core::iter::adapters::map::Map<I,F> as core::iter::traits::iterator::Iterator>::try_fold
+0.005   0.18  0.005   0.18   <cosmic_text::buffer::LayoutRunIter as core::iter::traits::iterator::Iterator>::next
+0.005   0.18  0.035   1.24   <static>@0x45160 (<libX11.so.6.4.0>)
+0.005   0.18  0.485  17.17   <static>@0x55f0 (<libdrm.so.2.124.0>)
+0.005   0.18  0.010   0.35   <static>@0x59a89 (<libc.so.6>)
+0.005   0.18  0.060   2.12   <static>@0x64f77 (<libc.so.6>)
+0.005   0.18  0.020   0.71   <static>@0x83c0 (<libvulkan.so.1.4.309>)
+0.005   0.18  0.005   0.18   <static>@0x8cd7f (<libc.so.6>)
+0.005   0.18  0.005   0.18   <static>@0x8fc05 (<libc.so.6>)
+0.005   0.18  0.280   9.91   <static>@0xcc74 (<libxcb.so.1.1.0>)
+0.005   0.18  0.160   5.66   <static>@0xd5c3 (<libxcb.so.1.1.0>)
+0.005   0.18  0.220   7.79   <static>@0xe881 (<libxcb.so.1.1.0>)
+0.005   0.18  0.005   0.18   <wgpu_hal::vulkan::Device as wgpu_hal::dynamic::DynResource>::as_any
+0.005   0.18  0.005   0.18   <wgpu_hal::vulkan::Fence as wgpu_hal::dynamic::DynResource>::as_any
+0.005   0.18  1.100  38.94   <wgpu_hal::vulkan::swapchain::native::NativeSurface as wgpu_hal::vulkan::swapchain::Surface>::create_swapchain
+0.005   0.18  0.050   1.77   <wgpu_hal::vulkan::swapchain::native::NativeSwapchain as wgpu_hal::vulkan::swapchain::Swapchain>::release_resources
+0.005   0.18  0.035   1.24   _IO_file_doallocate
+0.005   0.18  0.090   3.19   _IO_file_underflow
+0.005   0.18  0.005   0.18   calloc
+0.005   0.18  0.065   2.30   core::fmt::write
+0.005   0.18  0.005   0.18   core::ptr::drop_in_place<cosmic_text::cached::Cached<cosmic_text::shape::ShapeLine>>
+0.005   0.18  0.005   0.18   core::ptr::drop_in_place<wgpu_core::track::Tracker>
+0.005   0.18  0.130   4.60   cosmic_text::buffer::Buffer::shape_until_scroll
+0.005   0.18  0.130   4.60   cosmic_text::buffer_line::BufferLine::layout
+0.005   0.18  0.005   0.18   cosmic_text::font::system::FontSystem::get_font
+0.005   0.18  0.010   0.35   cosmic_text::font::system::FontSystem::get_font_matches
+0.005   0.18  0.025   0.88   cosmic_text::shape::ShapeLine::layout_to_buffer::{{closure}}
+0.005   0.18  0.060   2.12   datum_gui_render::PreparedScene::from_workspace_with_terminal_renderer
+0.005   0.18  0.005   0.18   floorf
+0.005   0.18  0.005   0.18   getdents64
+0.005   0.18  0.005   0.18   hashbrown::rustc_entry::<impl hashbrown::map::HashMap<K,V,S,A>>::rustc_entry
+0.005   0.18  0.100   3.54   open
+0.005   0.18  0.005   0.18   pthread_cond_init
+0.005   0.18  0.005   0.18   pthread_sigmask
+0.005   0.18  0.035   1.24   realloc
+0.005   0.18  0.010   0.35   taffy::compute::grid::compute_grid_layout
+0.005   0.18  0.005   0.18   taffy::compute::leaf::compute_leaf_layout
+0.005   0.18  0.010   0.35   taffy::compute::round_layout::round_layout_inner
+0.005   0.18  0.020   0.71   unicode_bidi::BidiInfo::new_with_data_source
+0.005   0.18  1.225  43.36   wgpu_core::device::global::<impl wgpu_core::global::Global>::surface_configure
+0.005   0.18  0.005   0.18   wgpu_core::identity::IdentityManager<T>::process
+0.005   0.18  0.005   0.18   wgpu_core::init_tracker::texture::TextureInitTracker::new
+0.005   0.18  0.010   0.35   wgpu_hal::vulkan::device::<impl wgpu_hal::Device for wgpu_hal::vulkan::Device>::create_buffer
+0.005   0.18  0.010   0.35   wgpu_hal::vulkan::device::<impl wgpu_hal::Device for wgpu_hal::vulkan::Device>::get_fence_value
+0.005   0.18  0.420  14.87   winit::event_loop::EventLoop<T>::run_app::{{closure}}
+0.005   0.18  0.195   6.90   xcb_request_check
+0.005   0.18  0.010   0.35   xcb_send_request
+0.005   0.18  0.005   0.18   xshmfence_trigger
+0.      0.    0.010   0.35   <&std::io::stdio::Stderr as std::io::Write>::write_fmt
+0.      0.    0.055   1.95   <A as wgpu_hal::dynamic::adapter::DynAdapter>::surface_capabilities
+0.      0.    0.005   0.18   <C as wgpu_hal::dynamic::command::DynCommandEncoder>::begin_render_pass
+0.      0.    0.010   0.35   <C as wgpu_hal::dynamic::command::DynCommandEncoder>::copy_buffer_to_buffer
+0.      0.    0.005   0.18   <C as wgpu_hal::dynamic::command::DynCommandEncoder>::end_encoding
+0.      0.    0.010   0.35   <C as wgpu_hal::dynamic::command::DynCommandEncoder>::reset_all
+0.      0.    0.010   0.35   <D as wgpu_hal::dynamic::device::DynDevice>::create_buffer
+0.      0.    0.005   0.18   <D as wgpu_hal::dynamic::device::DynDevice>::create_texture_view
+0.      0.    0.010   0.35   <D as wgpu_hal::dynamic::device::DynDevice>::get_fence_value
+0.      0.    0.005   0.18   <S as wgpu_hal::dynamic::surface::DynSurface>::acquire_texture
+0.      0.    1.165  41.24   <S as wgpu_hal::dynamic::surface::DynSurface>::configure
+0.      0.    0.005   0.18   <T as alloc::slice::<impl [T]>::to_vec_in::ConvertVec>::to_vec
+0.      0.    0.005   0.18   <alloc::collections::vec_deque::iter::Iter<T> as core::iter::traits::iterator::Iterator>::try_fold
+0.      0.    0.010   0.35   <alloc::string::String as core::clone::Clone>::clone
+0.      0.    0.005   0.18   <alloc::vec::Vec<T,A> as core::clone::Clone>::clone
+0.      0.    0.005   0.18   <alloc::vec::Vec<T> as alloc::vec::spec_from_iter::SpecFromIter<T,I>>::from_iter
+0.      0.    0.005   0.18   <alloc::vec::Vec<T> as alloc::vec::spec_from_iter::SpecFromIter<T,I>>::from_iter
+0.      0.    0.010   0.35   <alloc::vec::Vec<T> as alloc::vec::spec_from_iter_nested::SpecFromIterNested<T,I>>::from_iter
+0.      0.    0.005   0.18   <cosmic_text::font::fallback::FontFallbackIter as core::iter::traits::iterator::Iterator>::next
+0.      0.    0.005   0.18   <gpu_allocator::allocator::free_list_allocator::FreeListAllocator as gpu_allocator::allocator::SubAllocator>::free
+0.      0.    0.470  16.64   <static>@0x29c21 (<libc.so.6>)
+0.      0.    1.025  36.28   <static>@0x45850 (<libvulkan.so.1.4.309>)
+0.      0.    0.045   1.59   <static>@0x4ee1f (<libgp-collector.so>)
+0.      0.    0.010   0.35   <static>@0x60067 (<libc.so.6>)
+0.      0.    0.080   2.83   <static>@0x7e55a (<libc.so.6>)
+0.      0.    0.010   0.35   <static>@0x879ca (<libc.so.6>)
+0.      0.    0.525  18.58   <static>@0x8f2d4 (<libc.so.6>)
+0.      0.    0.005   0.18   <static>@0x8f921 (<libc.so.6>)
+0.      0.    0.005   0.18   <static>@0x9703a (<libc.so.6>)
+0.      0.    0.005   0.18   <static>@0xd149 (<libxcb.so.1.1.0>)
+0.      0.    0.005   0.18   <static>@0xe32c (<libxcb.so.1.1.0>)
+0.      0.    0.025   0.88   <static>@0xfdbb (<libxcb.so.1.1.0>)
+0.      0.    0.005   0.18   <static>@0xffb6 (<libxcb.so.1.1.0>)
+0.      0.    0.040   1.42   <std::fs::File as std::io::Write>::write
+0.      0.    0.040   1.42   <std::io::default_write_fmt::Adapter<T> as core::fmt::Write>::write_str
+0.      0.    0.010   0.35   <std::io::default_write_fmt::Adapter<T> as core::fmt::Write>::write_str
+0.      0.    0.010   0.35   <std::io::stdio::StderrLock as std::io::Write>::write_all
+0.      0.    0.035   1.24   <std::time::SystemTime as core::fmt::Debug>::fmt
+0.      0.    1.225  43.36   <wgpu::backend::wgpu_core::CoreSurface as wgpu::dispatch::SurfaceInterface>::configure
+0.      0.    0.010   0.35   <wgpu::backend::wgpu_core::CoreSurface as wgpu::dispatch::SurfaceInterface>::get_current_texture
+0.      0.    0.010   0.35   <wgpu_core::command::InnerCommandEncoder as core::ops::drop::Drop>::drop
+0.      0.    0.775  27.43   <wgpu_hal::vulkan::Queue as wgpu_hal::Queue>::submit
+0.      0.    0.055   1.95   <wgpu_hal::vulkan::swapchain::native::NativeSurface as wgpu_hal::vulkan::swapchain::Surface>::surface_capabilities
+0.      0.    0.020   0.71   <wgpu_hal::vulkan::swapchain::native::NativeSwapchain as wgpu_hal::vulkan::swapchain::Swapchain>::acquire
+0.      0.    0.015   0.53   <wgpu_hal::vulkan::swapchain::native::NativeSwapchain as wgpu_hal::vulkan::swapchain::Swapchain>::present
+0.      0.    0.030   1.06   XCheckIfEvent
+0.      0.    0.005   0.18   XPending
+0.      0.    0.055   1.95   _IO_default_uflow
+0.      0.    0.035   1.24   _IO_doallocbuf
+0.      0.    0.025   0.88   _IO_file_close_it
+0.      0.    0.080   2.83   _IO_file_fopen
+0.      0.    0.080   2.83   _IO_file_open
+0.      0.    0.035   1.24   _XEventsQueued
+0.      0.    0.005   0.18   __collector_allocCSize
+0.      0.    0.060   2.12   __isoc23_fscanf
+0.      0.    0.005   0.18   __isoc23_sscanf
+0.      0.    0.010   0.35   __snprintf_chk
+0.      0.    0.010   0.35   alloc::fmt::format::format_inner
+0.      0.    0.020   0.71   alloc::raw_vec::RawVec<T,A>::grow_one
+0.      0.    0.005   0.18   alloc::raw_vec::RawVec<T,A>::grow_one
+0.      0.    0.005   0.18   alloc::raw_vec::RawVec<T,A>::grow_one
+0.      0.    0.005   0.18   alloc::raw_vec::RawVec<T,A>::grow_one
+0.      0.    0.005   0.18   alloc::raw_vec::RawVec<T,A>::grow_one
+0.      0.    0.020   0.71   alloc::raw_vec::RawVecInner<A>::finish_grow
+0.      0.    0.010   0.35   alloc::raw_vec::RawVecInner<A>::finish_grow
+0.      0.    0.005   0.18   alloc::raw_vec::RawVecInner<A>::finish_grow
+0.      0.    0.005   0.18   alloc::raw_vec::RawVecInner<A>::finish_grow
+0.      0.    0.005   0.18   alloc::raw_vec::RawVecInner<A>::finish_grow
+0.      0.    0.005   0.18   alloc::raw_vec::RawVecInner<A>::reserve::do_reserve_and_handle
+0.      0.    0.005   0.18   alloc::str::<impl str>::to_uppercase
+0.      0.    0.035   1.24   alloc::vec::Vec<T,A>::retain
+0.      0.    0.015   0.53   ash::extensions_generated::khr::swapchain::Device::new
+0.      0.    0.025   0.88   ash::prelude::read_into_uninitialized_vector
+0.      0.    0.070   2.48   close
+0.      0.    0.005   0.18   core::fmt::Formatter::debug_struct
+0.      0.    0.025   0.88   core::fmt::builders::DebugStruct::field
+0.      0.    0.005   0.18   core::fmt::builders::DebugStruct::finish
+0.      0.    0.005   0.18   core::fmt::num::imp::<impl core::fmt::Display for i64>::fmt
+0.      0.    0.110   3.89   core::ops::function::impls::<impl core::ops::function::FnMut<A> for &mut F>::call_mut
+0.      0.    0.010   0.35   core::ptr::drop_in_place<cosmic_text::cached::Cached<alloc::vec::Vec<cosmic_text::layout::LayoutLine>>>
+0.      0.    0.030   1.06   core::ptr::drop_in_place<datum_gui_render::CachedTextBuffer>
+0.      0.    0.010   0.35   core::ptr::drop_in_place<datum_gui_render::PreparedScene>
+0.      0.    0.005   0.18   core::ptr::drop_in_place<wgpu_core::device::queue::EncoderInFlight>
+0.      0.    0.005   0.18   cosmic_text::attrs::AttrsList::get_span
+0.      0.    0.005   0.18   cosmic_text::buffer::Buffer::new
+0.      0.    0.125   4.42   cosmic_text::buffer::Buffer::set_text
+0.      0.    0.100   3.54   cosmic_text::buffer_line::BufferLine::shape
+0.      0.    0.025   0.88   cosmic_text::shape::ShapeLine::layout_to_buffer
+0.      0.    0.050   1.77   cosmic_text::shape::ShapeSpan::build
+0.      0.    0.050   1.77   cosmic_text::shape::ShapeWord::build
+0.      0.    0.005   0.18   datum_gui::Runtime::trace_timing
+0.      0.    0.050   1.77   datum_gui::gui_runtime_support::append_gui_diagnostic_line
+0.      0.    0.030   1.06   datum_gui::gui_runtime_support::append_gui_diagnostic_line
+0.      0.    0.005   0.18   datum_gui::gui_runtime_support::append_gui_verbose_diagnostic_line
+0.      0.    0.015   0.53   datum_gui::gui_runtime_support::gui_diagnostic_log_path
+0.      0.    0.470  16.64   datum_gui::main
+0.      0.    0.305  10.80   datum_gui::runtime_present::<impl datum_gui::Runtime>::render
+0.      0.    0.090   3.19   datum_gui::runtime_surface::<impl datum_gui::Runtime>::resize
+0.      0.    0.045   1.59   datum_gui::runtime_terminal_render::<impl datum_gui::Runtime>::build_terminal_prepared_scene
+0.      0.    0.005   0.18   datum_gui_render::ShellLayout::for_window
+0.      0.    0.260   9.20   datum_gui_render::gpu_frame::<impl datum_gui_render::Renderer>::render
+0.      0.    0.010   0.35   datum_gui_render::menu_chrome::render_menu_bar
+0.      0.    0.005   0.18   datum_gui_render::push_rect_border
+0.      0.    0.005   0.18   datum_gui_render::render_helpers::draw_text
+0.      0.    0.005   0.18   datum_gui_render::render_helpers::draw_text_clipped
+0.      0.    0.005   0.18   datum_gui_render::render_helpers::trace_render_timing
+0.      0.    0.010   0.35   datum_gui_render::side_panels::render_side_panels
+0.      0.    0.005   0.18   datum_gui_render::text_metrics::MeasurementCache::measure
+0.      0.    0.515  18.23   drmGetDevice2
+0.      0.    0.515  18.23   drmGetDeviceFromDevId
+0.      0.    0.085   3.01   drmIoctl
+0.      0.    0.030   1.06   drmSyncobjCreate
+0.      0.    0.010   0.35   drmSyncobjDestroy
+0.      0.    0.005   0.18   drmSyncobjFDToHandle
+0.      0.    0.005   0.18   drmSyncobjHandleToFD
+0.      0.    0.005   0.18   drmSyncobjQuery
+0.      0.    0.005   0.18   drmSyncobjReset
+0.      0.    0.005   0.18   drmSyncobjSignal
+0.      0.    0.010   0.35   drmSyncobjTimelineWait
+0.      0.    0.010   0.35   drmSyncobjWait
+0.      0.    0.025   0.88   fclose
+0.      0.    0.035   1.24   getdelim
+0.      0.    0.010   0.35   gpu_allocator::vulkan::Allocator::free
+0.      0.    0.470  16.64   main
+0.      0.    0.015   0.53   mmap
+0.      0.    0.025   0.88   munmap
+0.      0.    0.080   2.83   poll
+0.      0.    0.005   0.18   pthread_cond_wait
+0.      0.    0.050   1.77   read
+0.      0.    0.005   0.18   readdir
+0.      0.    0.080   2.83   recvmsg
+0.      0.    0.050   1.77   sendmsg
+0.      0.    0.005   0.18   sigprocmask
+0.      0.    0.015   0.53   std::env::_var_os
+0.      0.    0.010   0.35   std::env::temp_dir
+0.      0.    0.020   0.71   std::fs::OpenOptions::_open
+0.      0.    0.040   1.42   std::io::Write::write_all
+0.      0.    0.045   1.59   std::io::default_write_fmt
+0.      0.    0.010   0.35   std::io::stdio::_eprint
+0.      0.    0.470  16.64   std::rt::lang_start::{{closure}}
+0.      0.    0.470  16.64   std::rt::lang_start_internal
+0.      0.    0.470  16.64   std::sys::backtrace::__rust_begin_short_backtrace
+0.      0.    0.010   0.35   std::sys::env::unix::getenv::{{closure}}
+0.      0.    0.020   0.71   std::sys::fs::unix::File::open_c
+0.      0.    0.010   0.35   swash::<impl swash::font::FontRef>::glyph_metrics
+0.      0.    0.010   0.35   swash::<impl swash::font::FontRef>::metrics
+0.      0.    0.020   0.71   taffy::compute::compute_root_layout
+0.      0.    0.005   0.18   taffy::compute::grid::track_sizing::resolve_intrinsic_track_sizes
+0.      0.    0.005   0.18   taffy::compute::grid::track_sizing::track_sizing_algorithm
+0.      0.    0.005   0.18   taffy::compute::grid::types::grid_item::GridItem::grid_area_size_cached
+0.      0.    0.005   0.18   taffy::compute::grid::types::grid_item::GridItem::min_content_contribution
+0.      0.    0.010   0.35   taffy::tree::taffy_tree::TaffyTree<NodeContext>::compute_layout_with_measure
+0.      0.    0.005   0.18   taffy::tree::taffy_tree::TaffyView<NodeContext,MeasureFunction>::compute_child_layout::{{closure}}
+0.      0.    0.015   0.53   vkGetDeviceProcAddr
+0.      0.    0.005   0.18   wgpu::api::command_buffer_actions::DeferredCommandBufferActions::execute
+0.      0.    0.005   0.18   wgpu::api::queue::Queue::submit
+0.      0.    0.005   0.18   wgpu::api::queue::Queue::write_buffer
+0.      0.    1.225  43.36   wgpu::api::surface::Surface::configure
+0.      0.    0.010   0.35   wgpu::api::surface::Surface::get_current_texture
+0.      0.    0.055   1.95   wgpu_core::command::CommandEncoder::finish
+0.      0.    0.005   0.18   wgpu_core::command::InnerCommandEncoder::close
+0.      0.    0.005   0.18   wgpu_core::command::InnerCommandEncoder::open_pass
+0.      0.    0.020   0.71   wgpu_core::command::bundle::RenderBundle::execute
+0.      0.    0.005   0.18   wgpu_core::command::render::RenderPassInfo::finish
+0.      0.    0.055   1.95   wgpu_core::command::render::encode_render_pass
+0.      0.    0.005   0.18   wgpu_core::device::queue::<impl wgpu_core::global::Global>::queue_write_buffer
+0.      0.    0.005   0.18   wgpu_core::device::queue::Queue::maintain
+0.      0.    0.025   0.88   wgpu_core::device::queue::Queue::write_buffer
+0.      0.    0.015   0.53   wgpu_core::device::queue::Queue::write_staging_buffer_impl
+0.      0.    0.005   0.18   wgpu_core::device::queue::Queue::write_texture
+0.      0.    1.240  43.89   wgpu_core::device::resource::Device::configure_surface
+0.      0.    0.020   0.71   wgpu_core::device::resource::Device::maintain
+0.      0.    0.055   1.95   wgpu_core::instance::Surface::get_capabilities_with_raw
+0.      0.    0.010   0.35   wgpu_core::present::<impl wgpu_core::global::Global>::surface_get_current_texture
+0.      0.    0.010   0.35   wgpu_core::present::<impl wgpu_core::instance::Surface>::get_current_texture
+0.      0.    0.010   0.35   wgpu_core::resource::StagingBuffer::new
+0.      0.    0.005   0.18   wgpu_core::resource::Texture::new
+0.      0.    0.055   1.95   wgpu_hal::vulkan::adapter::<impl wgpu_hal::Adapter for wgpu_hal::vulkan::Adapter>::surface_capabilities
+0.      0.    0.015   0.53   wgpu_hal::vulkan::command::<impl wgpu_hal::CommandEncoder for wgpu_hal::vulkan::CommandEncoder>::begin_encoding
+0.      0.    0.005   0.18   wgpu_hal::vulkan::command::<impl wgpu_hal::CommandEncoder for wgpu_hal::vulkan::CommandEncoder>::begin_render_pass
+0.      0.    0.005   0.18   wgpu_hal::vulkan::command::<impl wgpu_hal::CommandEncoder for wgpu_hal::vulkan::CommandEncoder>::end_encoding
+0.      0.    0.005   0.18   wgpu_hal::vulkan::command::<impl wgpu_hal::CommandEncoder for wgpu_hal::vulkan::CommandEncoder>::end_render_pass
+0.      0.    0.005   0.18   wgpu_hal::vulkan::device::<impl wgpu_hal::Device for wgpu_hal::vulkan::Device>::create_texture_view
+0.      0.    0.010   0.35   wgpu_hal::vulkan::device::<impl wgpu_hal::Device for wgpu_hal::vulkan::Device>::destroy_buffer
+0.      0.    0.005   0.18   wgpu_hal::vulkan::device::<impl wgpu_hal::vulkan::DeviceShared>::new_binary_semaphore
+0.      0.    0.015   0.53   wgpu_hal::vulkan::device::<impl wgpu_hal::vulkan::DeviceShared>::wait_for_fence
+0.      0.    0.005   0.18   wgpu_hal::vulkan::swapchain::native::SwapchainAcquireSemaphore::new
+0.      0.    0.470  16.64   winit::platform_impl::linux::EventLoop<T>::run
+0.      0.    0.005   0.18   winit::platform_impl::linux::x11::EventLoop<T>::has_pending
+0.      0.    0.005   0.18   winit::platform_impl::linux::x11::event_processor::EventProcessor::poll
+0.      0.    0.030   1.06   winit::platform_impl::linux::x11::event_processor::EventProcessor::poll_one_event
+0.      0.    0.120   4.25   winit::platform_impl::linux::x11::event_processor::EventProcessor::process_event
+0.      0.    0.120   4.25   winit::platform_impl::linux::x11::event_processor::EventProcessor::process_xevent
+0.      0.    0.005   0.18   winit::platform_impl::linux::x11::monitor::<impl winit::platform_impl::linux::x11::xdisplay::XConnection>::available_monitors
+0.      0.    0.005   0.18   winit::platform_impl::linux::x11::monitor::<impl winit::platform_impl::linux::x11::xdisplay::XConnection>::get_monitor_for_window
+0.      0.    0.050   1.77   write
+0.      0.    0.045   1.59   writev
+0.      0.    0.005   0.18   xcb_discard_reply
+0.      0.    0.005   0.18   xcb_dri3_pixmap_from_buffers_checked
+0.      0.    0.005   0.18   xcb_get_extension_data
+0.      0.    0.010   0.35   xcb_intern_atom
+0.      0.    0.005   0.18   xcb_send_request_with_fds
+0.      0.    0.010   0.35   xcb_send_request_with_fds64
+0.      0.    0.005   0.18   xcb_take_socket
+0.      0.    0.110   3.89   xcb_wait_for_reply
+0.      0.    0.060   2.12   xshmfence_alloc_shm
+0.      0.    0.015   0.53   xshmfence_map_shm

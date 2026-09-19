@@ -1,0 +1,7 @@
+{
+  "stacks": "Measurement driver lost owned-window focus and refused capture before active trial; sampler then timed out. Not performance evidence.",
+  "wayland-pilot": "Temporary KWin QML script called JS-only windowList API; zero resize events, failed assertion. Script was unloaded. v2 uses QML stackingOrder and succeeds.",
+  "gl": "Explicit GL/X11 diagnostic selected Intel Gl but surface configuration failed Invalid surface. No active resize result. Native Wayland GL pilot is separate, not cross-platform qualification.",
+  "profiler_visual_correction": "stacks-v2 and gprofng used no-op screenshot helpers; inherited generic preflight fields are inaccurate and provide NO visual proof. Their resource totals are diagnostic only; retain original reports with this explicit correction.",
+  "native_pilot_limits": "240 timed compositor requests; received event count may coalesce. Includes process startup logs; pilot CPU phase sums exclude pre-first-resize records but are not matched acceptance trials. No continuous compositor video yet."
+}

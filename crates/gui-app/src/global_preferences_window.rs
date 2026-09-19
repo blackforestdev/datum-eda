@@ -36,35 +36,12 @@ impl GlobalPreferencesWindowSurface {
             .context("create Global Preferences native surface")?;
         gui_runtime_support::log_surface_identity(&window, &runtime.adapter);
         let caps = surface.get_capabilities(&runtime.adapter);
-        let format = caps
-            .formats
-            .iter()
-            .copied()
-            .find(|format| *format == runtime.config.format)
-            .or_else(|| {
-                caps.formats
-                    .iter()
-                    .copied()
-                    .find(wgpu::TextureFormat::is_srgb)
-            })
-            .unwrap_or(caps.formats[0]);
-        let present_mode = caps
-            .present_modes
-            .iter()
-            .copied()
-            .find(|mode| *mode == wgpu::PresentMode::Fifo)
-            .unwrap_or(caps.present_modes[0]);
-        let size = window.inner_size();
-        let config = wgpu::SurfaceConfiguration {
-            usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
-            format,
-            width: size.width.max(1),
-            height: size.height.max(1),
-            present_mode,
-            alpha_mode: caps.alpha_modes[0],
-            view_formats: vec![],
-            desired_maximum_frame_latency: 2,
-        };
+        let config = gui_runtime_support::surface_configuration(
+            &caps,
+            window.inner_size(),
+            Some(runtime.config.format),
+        );
+        let format = config.format;
         surface.configure(&runtime.device, &config);
         let renderer = Renderer::new(
             &runtime.device,

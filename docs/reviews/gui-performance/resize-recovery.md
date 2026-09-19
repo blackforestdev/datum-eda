@@ -50,3 +50,60 @@ Receipts: measurements/resize-recovery-h1/. This is harness verification only:
 no new resource comparison or continuous compositor capture has passed, and the
 owner's CPU/flicker defect remains unresolved and selected. Existing traces show
 substantial surface-configure wall time; wall time is not CPU attribution.
+
+## Cost attribution slice H2 — predefined diagnostic boundary
+
+Use opt-in phase probes to distinguish elapsed time from process CPU and UI-thread
+CPU during surface configure, acquisition, scene preparation, renderer work and
+presentation. Read existing libc CPU clocks; introduce no dependency. Disabled
+probes must not read clocks or write logs. These time windows attribute when CPU
+runs, not the causal origin of asynchronous driver work. Compare instrumented and
+plain release runs before relying on percentages. Keep ordinary resize behavior
+unchanged while measuring; isolate configure cost before selecting a correction.
+
+H2 also permits an explicit diagnostic backend override for Vulkan/GL already
+compiled into the existing wgpu dependency. Ordinary startup selection remains
+unchanged. Compare backend identity, correctness, CPU/GPU and resource behavior;
+a diagnostic result alone cannot change the product backend policy. No new
+package, dependency, lower-quality rendering mode or acceptance is introduced.
+
+H2 findings (investigative, not acceptance): the final identical optimized binary
+used 34.8%/33.8% of one core for vertical/horizontal X11 resize without probes,
+and 37.0%/36.4% with probes (one five-second trial per axis). No owned-window XI2
+input arrived in these windows; idle measured 0%. The 2.2/2.6 percentage-point
+increase prevents treating instrumented totals as uninstrumented performance.
+Configure windows accounted for about 19.3/20.8 CPU percentage points; renderer
+windows about 13.2/11.3. These are sequential measurement windows containing asynchronous work whose
+origin may lie elsewhere, with partial calls at measurement boundaries; they
+do not form an exact causal partition.
+
+An earlier GNU gprofng diagnostic sample independently placed 43.36% of sampled
+CPU under surface configuration and 27.43% under Vulkan queue submission. Device
+filesystem discovery (`drmGetDevice2`) appeared within configuration (18.23% of
+sampled CPU); kernel ioctls dominated submission. Sampling captured less CPU than
+process counters, so these percentages are hotspot evidence only. This directs
+further shared-lifecycle work toward redundant swapchain configuration, waits,
+and allocation/submission churn, rather than another world-geometry rewrite.
+Attachment and staging allocation contributions remain hypotheses to isolate.
+
+Native Wayland programmatic geometry pilots confirmed the same configure path.
+An explicitly selected GL pilot shifted costs into presentation; GL on X11
+failed initial configuration with `Invalid surface`. Neither result changes the
+normal backend policy. KWin geometry requests are not physical interactive border
+drags. GDB/gprofng runs deliberately omitted screenshot preflight; their inherited
+report labels are corrected in failed-attempts.json. No temporal visual pass is
+claimed. Historical failed runs remain archived, not silently excluded.
+
+H2 implementation keeps disabled probes free of clock reads/log writes, splits
+encoder finish from queue submission in opt-in timing, and extracts frame encoding
+into a normal module. The identical surface defaults now have one helper consumed
+by main and all three dialog hosts: existing format preference, FIFO, latency two,
+alpha and extent behavior are preserved. Diagnostic backend selection is explicit
+and defaults to the unchanged wgpu instance policy. Historical `submit` timing
+included encoder finish; new `submit_us` excludes it, so comparisons must sum
+`finish_us + submit_us`. Independent source review found no remaining blocker.
+All 173 renderer tests and three native smoke state tests passed. The final binary
+passed six native resize targets once on both X11 and Wayland. These are lifecycle
+checks, not visible-frame or resource acceptance. Raw receipts, source review,
+control comparisons and failed attempts are under measurements/resize-recovery-h2/.
+GPS-C01R and the resize defect remain active; GPS-C02 does not advance.

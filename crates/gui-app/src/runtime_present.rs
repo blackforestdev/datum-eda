@@ -12,14 +12,19 @@ impl Runtime {
             self.config.width, self.config.height
         ));
         append_gui_verbose_diagnostic_line("render acquire begin");
-        let frame = match self.surface.get_current_texture() {
+        let probe = gui_runtime_support::phase_probe::Probe::start("acquire");
+        let acquired = self.surface.get_current_texture();
+        drop(probe);
+        let frame = match acquired {
             Ok(frame) => frame,
             Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
                 append_gui_diagnostic_line(format!(
                     "surface acquire recovered by reconfigure at {}x{}",
                     self.config.width, self.config.height
                 ));
+                let probe = gui_runtime_support::phase_probe::Probe::start("configure_recovery");
                 self.surface.configure(&self.device, &self.config);
+                drop(probe);
                 self.invalidate_frame();
                 return Ok(false);
             }
@@ -35,6 +40,7 @@ impl Runtime {
                 anyhow::bail!("acquire next surface texture: {err}");
             }
         };
+        let probe = gui_runtime_support::phase_probe::Probe::start("prepare");
         let acquire_elapsed = acquire_started.elapsed();
         append_gui_verbose_diagnostic_line("render acquire end");
         let view = frame
@@ -93,6 +99,8 @@ impl Runtime {
             .as_ref()
             .context("prepared scene should exist before render")?;
         let schematic_retained = self.schematic_retained_scene.as_ref();
+        drop(probe);
+        let probe = gui_runtime_support::phase_probe::Probe::start("renderer");
         let renderer_started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line("renderer render begin");
         self.renderer.render(
@@ -110,12 +118,15 @@ impl Runtime {
             "renderer render end {}ms",
             renderer_elapsed.as_millis()
         ));
+        drop(probe);
+        let probe = gui_runtime_support::phase_probe::Probe::start("present");
         let present_started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line("frame present begin");
         // Wayland frame callbacks pace subsequent redraws; notify immediately
         // before presentation, after the rendering commands have been submitted.
         self.window.pre_present_notify();
         frame.present();
+        drop(probe);
         let present_elapsed = present_started.elapsed();
         append_gui_verbose_diagnostic_line(format!(
             "frame present end {}ms total={}ms",
