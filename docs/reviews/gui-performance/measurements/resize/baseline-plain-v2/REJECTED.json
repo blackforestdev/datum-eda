@@ -1,0 +1,3 @@
+{
+  "reason": "Unexpected keyboard/pointer events in resize-only trials and repeated active-window warnings. Whole run retained as non-comparable; repeat with confirmed idle desktop."
+}

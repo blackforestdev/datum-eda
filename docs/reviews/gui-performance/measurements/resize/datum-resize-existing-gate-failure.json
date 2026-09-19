@@ -1,0 +1,16 @@
+{
+  "base_commit": "f7d0b707a861c6029cec6e048d9ac1cdc6640d99",
+  "snapshot_command": [
+    "git",
+    "archive",
+    "HEAD",
+    "crates/gui-app/src",
+    "crates/gui-render/src",
+    "crates/gui-protocol/src",
+    "crates/gui-viewport/src",
+    "scripts/check_gui_agent_terminal_convergence.py"
+  ],
+  "exit_code": 1,
+  "output": "GUI agent/terminal convergence guard failed:\n  - application focus must mutate only through initialization and set_application_focus\n  - terminal glyph face is missing JetBrainsMono-Regular.ttf\n",
+  "scope": "Unmodified HEAD checker and complete four GUI source trees; no production changes or acceptance updates. Same two failure messages as candidate. Other crates excluded from retired-grid scan; that scan reported no failure on full candidate."
+}

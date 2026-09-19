@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--board",
+    "/tmp/datum-gui-candidate-boundary-v3/DOA2526.kicad_pcb",
+    "--window-size",
+    "1280x800",
+    "--resize-torture-smoke"
+  ],
+  "binary_sha256": "d95f213ee6c8141c87d0588176b91f95f20060c0e15c4ab0bf2134cfc0b0352f",
+  "counts": {
+    "resize apply": 18,
+    "surface configure begin": 18,
+    "frame present end": 7,
+    "resize torture step": 6,
+    "surface acquire recovered": 0,
+    "surface acquire timeout": 0,
+    "retained scene build begin": 1
+  },
+  "scope": "Native GPU smoke: six two-axis bursts preserve independent retained geometry; DPI discards it and renders again. 18 immediate configurations, seven presentations and only the DPI retained rebuild expected. No latency or terminal-process qualification."
+}

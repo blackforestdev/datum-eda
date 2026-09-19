@@ -103,3 +103,115 @@ impl RetainedScene {
         &self.draw_commands
     }
 }
+
+impl RetainedScene {
+    pub fn from_workspace(state: &ReviewWorkspaceState, width: u32, height: u32) -> Self {
+        Self::from_workspace_for_surface(state, width, height, 1.0)
+    }
+
+    pub fn from_workspace_for_surface(
+        state: &ReviewWorkspaceState,
+        width: u32,
+        height: u32,
+        scale_factor: f32,
+    ) -> Self {
+        // This is the single world-scene resolve entry point; count the miss.
+        // (`reference_projection` below is derived here and nowhere else, so a pane
+        // op that reuses the retained scene provably never recomputes it.)
+        RETAINED_RESOLVE_COUNT.with(|count| count.set(count.get() + 1));
+        let started = std::time::Instant::now();
+        let layout =
+            ShellLayout::for_surface(width, height, scale_factor, dock_height_for_state(state));
+        let scene_viewport = layout.scene_viewport(&state.ui.layout);
+        let board_field = inset_rect(scene_viewport, 10.0, 10.0, 10.0, 10.0);
+        let reference_projection = Projection::new(
+            board_field,
+            &state.scene.bounds,
+            CameraState::fit_to_bounds(&state.scene.bounds),
+        );
+        let mut world_quads = Vec::new();
+        let mut world_strokes = Vec::new();
+        let mut draw_commands = Vec::new();
+        let mut world_hit_regions = Vec::new();
+        let geometry_started = std::time::Instant::now();
+        push_retained_scene_geometry(
+            &mut world_quads,
+            &mut world_strokes,
+            &mut draw_commands,
+            &state.scene,
+            &reference_projection,
+            state,
+        );
+        let board_graphics_started = std::time::Instant::now();
+        let board_graphics_before = world_quads.len();
+        push_retained_board_text_geometry_batches(
+            &mut world_quads,
+            &mut draw_commands,
+            &state.scene,
+            &reference_projection,
+            state,
+        );
+        push_retained_board_graphic_batches(
+            &mut world_quads,
+            &mut world_strokes,
+            &mut draw_commands,
+            &state.scene,
+            &reference_projection,
+            state,
+        );
+        scene_retained_access::sort_retained_draw_commands(&mut draw_commands, &state.scene.layers);
+        trace_render_timing(format!(
+            "retained text+board_graphics batches={}ms/{}q",
+            board_graphics_started.elapsed().as_millis(),
+            world_quads.len().saturating_sub(board_graphics_before)
+        ));
+        let geometry_elapsed = geometry_started.elapsed();
+        let hits_started = std::time::Instant::now();
+        push_retained_world_hit_regions(&mut world_hit_regions, &state.scene, state);
+        let hits_elapsed = hits_started.elapsed();
+        let vertex_started = std::time::Instant::now();
+        let world_vertices = quads_to_vertices(&world_quads);
+        let vertex_elapsed = vertex_started.elapsed();
+        trace_render_timing(format!(
+            "retained total={}ms geometry={}ms hits={}ms vertices={}ms quads={} vertices={} hit_regions={}",
+            started.elapsed().as_millis(),
+            geometry_elapsed.as_millis(),
+            hits_elapsed.as_millis(),
+            vertex_elapsed.as_millis(),
+            world_quads.len(),
+            world_vertices.len(),
+            world_hit_regions.len()
+        ));
+        Self {
+            surface_size_independent: Self::scene_is_surface_size_independent(&state.scene),
+            world_vertices: world_vertices.into(),
+            world_strokes,
+            draw_commands,
+            world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions),
+        }
+    }
+
+    // `hit_test_authored_world` (board) and `hit_test_world` (schematic,
+    // unfiltered) live in the `coordinate_hit` include-module, sharing one scan
+    // core so the board path stays byte-identical while the schematic surface
+    // gets a filter-free twin.
+}
+
+impl RetainedScene {
+    /// Physical-size-only changes can retain geometry with no reference-scale
+    /// dependency. Content/style/DPI changes still require their usual rebuild.
+    pub fn can_reuse_for_surface_resize(&self) -> bool {
+        self.surface_size_independent
+    }
+
+    pub(super) fn scene_is_surface_size_independent(scene: &BoardReviewSceneV1) -> bool {
+        // These production paths call world_stroke_nm while constructing world
+        // vertices: unrouted endpoints/widths and closed mechanical dash/gaps.
+        // Be conservative even when those primitives are currently hidden.
+        scene.unrouted_primitives.is_empty()
+            && !scene
+                .component_graphics
+                .iter()
+                .any(|graphic| graphic.closed && graphic.render_role == "component_mechanical")
+    }
+}

@@ -7,6 +7,7 @@ impl RetainedScene {
     /// An owned dialog has no world-space geometry or spatial hit index.
     pub fn empty() -> Self {
         Self {
+            surface_size_independent: true,
             world_vertices: Vec::new().into(),
             world_strokes: Vec::new(),
             draw_commands: Vec::new(),
