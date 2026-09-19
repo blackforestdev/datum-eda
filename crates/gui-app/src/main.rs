@@ -62,6 +62,7 @@ mod runtime_present;
 mod runtime_primary_button;
 mod runtime_primary_pointer;
 mod runtime_revision_workspace;
+mod runtime_surface;
 mod runtime_terminal_clipboard;
 mod runtime_terminal_context;
 mod runtime_terminal_dock;
@@ -946,45 +947,6 @@ impl Runtime {
         Ok(runtime)
     }
 
-    fn resize(&mut self, width: u32, height: u32) {
-        self.apply_resize(width.max(1), height.max(1));
-    }
-
-    fn set_scale_factor(&mut self, scale_factor: f64) {
-        let next = (scale_factor as f32).max(0.01);
-        if (self.scale_factor - next).abs() <= f32::EPSILON {
-            return;
-        }
-        append_gui_diagnostic_line(format!(
-            "scale factor apply {:.4} -> {:.4}",
-            self.scale_factor, next
-        ));
-        self.scale_factor = next;
-        if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
-            self.resize_terminal_to_dock();
-        }
-        self.invalidate_scene();
-    }
-
-    fn apply_resize(&mut self, width: u32, height: u32) {
-        if self.config.width == width && self.config.height == height {
-            return;
-        }
-        append_gui_diagnostic_line(format!(
-            "resize apply {}x{} -> {width}x{height}",
-            self.config.width, self.config.height
-        ));
-        self.config.width = width;
-        self.config.height = height;
-        append_gui_diagnostic_line("surface configure begin");
-        self.surface.configure(&self.device, &self.config);
-        append_gui_diagnostic_line("surface configure end");
-        if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
-            self.resize_terminal_to_dock();
-        }
-        self.invalidate_scene();
-    }
-
     fn run_interaction_smoke(&mut self) -> Result<()> {
         let resized_width = self.config.width.saturating_add(137).max(1);
         let resized_height = self.config.height.saturating_add(83).max(1);
@@ -1003,27 +965,6 @@ impl Runtime {
         let _ = self.update_hover(click);
         let _ = self.handle_primary_click();
         self.render().context("interaction smoke click render")?;
-        Ok(())
-    }
-
-    fn run_resize_torture_smoke(&mut self) -> Result<()> {
-        let restored = (1344_u32, 806_u32);
-        let maximized = (1920_u32, 1051_u32);
-        append_gui_verbose_diagnostic_line("resize torture begin");
-        for (index, (width, height)) in [
-            maximized, restored, maximized, restored, maximized, restored,
-        ]
-        .into_iter()
-        .enumerate()
-        {
-            append_gui_verbose_diagnostic_line(format!(
-                "resize torture step {index} target {width}x{height}"
-            ));
-            self.resize(width, height);
-            self.render()
-                .with_context(|| format!("resize torture render step {index} {width}x{height}"))?;
-        }
-        append_gui_verbose_diagnostic_line("resize torture end");
         Ok(())
     }
 

@@ -58,6 +58,7 @@ impl RetainedScene {
         let mut world_hit_regions = Vec::new();
         coordinate_hit::push_schematic_hit_regions(&mut world_hit_regions, schematic_scene);
         Some(Self {
+            surface_size_independent: Self::scene_is_surface_size_independent(schematic_scene),
             world_vertices: world_vertices.into(),
             world_strokes,
             draw_commands,

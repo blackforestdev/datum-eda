@@ -1,0 +1,58 @@
+{
+  "marker": "EVIDENCE:GUI-PERFORMANCE-SPEC:GPS-C01R-REVIEW",
+  "date": "2026-09-18",
+  "reviewer": "/root/gui_contract_review",
+  "independent_of_author": true,
+  "disposition": "Approve GPS-C01R bounded corrective advancement after focused terminal tests pass, with the reproduced pre-existing drift failure explicitly retained. No source/runtime blocker found; no full resource or product acceptance.",
+  "scope": "Read-only independent source, measurement arithmetic, drivers, pixels and author-produced runtime receipts; no independent execution.",
+  "source_findings": "No correctness blocker in immediate-configuration, dependency-aware reuse. Board and schematic classify separately; prepared layout and old-size history discarded; DPI/content invalidation preserved.",
+  "evidence_findings": {
+    "CPU": "Height median 40.20 to 34.90; width 39.40 to 34.20, about 13.2% relative reduction. Quantized 100ms maxima 63.40 to 56.95 and 64.20 to 56.01; not instantaneous or physical-core peaks.",
+    "GPU": "Mixed duty: 14.53 to 15.56 height; 15.23 to 14.80 width. No general GPU reduction established.",
+    "work": "232/246 traced frames with zero retained misses and zero observed XI2 input.",
+    "pixels": "All three image pairs equal outside two actual six-character revision-label regions; 1546 differing channels confined to those labels. Models equal after only root UUID removal.",
+    "smoke": "Both first smoke blocks contain 18 configurations, 7 presentations, 1 DPI rebuild, 0 timeout/recovery. Backend identity is author-recorded launch configuration, not independently established by receipts.",
+    "PTY": "Visible terminal rows/columns 155x9, 186x9, 155x9 match kernel ioctl. Pixel dimensions zero; splits not qualified."
+  },
+  "record_corrections": {
+    "baseline_idle": "Sample 7 has 41 motion events; excluded from quiet-idle claims. Active baseline samples and all candidate samples have zero observed XI2 input.",
+    "candidate_idle": "CPU seconds 0, 0, 0.01, 0; all GPU activity zero.",
+    "request_counts": "Matched recipe, not identical delivery: 560-563 versus 555-559 requests per trial.",
+    "backend": "Author invocation preserved in launch-dispositions.json; no independent backend claim."
+  },
+  "remaining": [
+    "Physical decoration dragging and presentation latency",
+    "Mixed GPU result and dependent-scene costs",
+    "Broader QA, all HP01-HP25 adoption, demanding tiers and endurance",
+    "Complete specification approval and final product acceptance"
+  ],
+  "reviewed_source_sha256": {
+    "crates/gui-app/src/interaction_refresh.rs": "89c3c62f146bb298d4e91b629cb2b35659884328f0ecacff61cf99919401a9d3",
+    "crates/gui-app/src/main.rs": "be04db52bed1ab028938370a723d458b263fd2f4b143c153d5bdc50730b366b7",
+    "crates/gui-render/src/render/preferences_scene.rs": "66973080664ed857a7c215401d219daf3b51efbde5fe60c893f590d8e53e4d0a",
+    "crates/gui-render/src/render/scene.rs": "20f054bc4e25a7a8fd65bc58d7f00569443aa479c5cbbdf0abff9b8fd7282d2e",
+    "crates/gui-render/src/render/scene_retained_access.rs": "82aca75c40aa50cc0bedb9d8df8ad3ad4e9f8048a08f4b35763995ff1db449ec",
+    "crates/gui-render/src/render/schematic_retained.rs": "53f58f425b2951399ea9e21658c0853070526f91878e99d2ecc99c75289956e5",
+    "crates/gui-render/src/render/types.rs": "3182d9a65a17000f822007191b098516c4483f6aa1a2c34d1215455fe062d8da",
+    "crates/gui-render/src/retained_draw_order_tests.rs": "b2211b4474409900633bfae62c85fe45b431b2fe132a34d7a41234765471f4a1",
+    "crates/gui-app/src/runtime_surface.rs": "933e9da4f1eff6cbcc3eb9fe42c788250f7ff3fa941301c26008b74f5ea8949b",
+    "crates/gui-app/src/runtime_present.rs": "09286860b6d46298e645cda7441ca80d84a5aabe2a4d8d071c316588851588b7",
+    "Cargo.lock": "0cee76a3005add00e0a63311e937ed7e15d54c0ec57627849b4cb4e756b7387c"
+  },
+  "reviewed_receipt_sha256": {
+    "docs/reviews/gui-performance/measurements/resize/baseline-plain-idle/report.json": "456ff3272f19e7d846a7b47580a96047b9f9a8e2b9b10a7ba135b8f961bcfa75",
+    "docs/reviews/gui-performance/measurements/resize/final-plain/report.json": "6ae70786092bc4fe1a85b4b0861848200a22bf645c477adbcdb5381e08acd2bc",
+    "docs/reviews/gui-performance/measurements/resize/final-traced/report.json": "357a9260ed220360f91195e3c118877cb9f46633809e9d835030d9352a534d0b",
+    "docs/reviews/gui-performance/measurements/resize/smoke-final/report.json": "cde6be72aa89f0097da2abf7602e2ef03a99a6cb07e73ce38efde0a0cc4f1522",
+    "docs/reviews/gui-performance/measurements/resize/smoke-wayland-final/report.json": "cde6be72aa89f0097da2abf7602e2ef03a99a6cb07e73ce38efde0a0cc4f1522",
+    "docs/reviews/gui-performance/measurements/resize/terminal-final/report.json": "0459914c6294a0e38f977303e60d27266bb7ec4e10b0ce501406c0ed3b8208d1",
+    "docs/reviews/gui-performance/measurements/resize/terminal-final/terminal-proof.json": "276e1deb8ccf58ee7866f84f9521d6da83568b1c5fd51f1cfb78b24425ff2563"
+  },
+  "final_check_disposition": {
+    "independent_review": "The identical unmodified-HEAD guard failure is not an engineering blocker for this bounded resize correction. Use normal commit path; no enforced-gate bypass authorized.",
+    "tracked_issue": "dat-terminal-convergence-guard-xke",
+    "drift": "Failed at GUI agent/terminal convergence guard; subsequent stages not reached.",
+    "focused_terminal_test_result": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 319 filtered out; finished in 0.45s",
+    "additional_dock_tests": "Seven runtime_terminal_dock tests passed; earlier filename filter matched zero and is not counted."
+  }
+}

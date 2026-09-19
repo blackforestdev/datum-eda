@@ -1,0 +1,21 @@
+{
+  "scope": "Author-recorded tool invocations, not independent backend detection or replay.",
+  "x11_smoke_command": "python3 /tmp/datum_resize_smoke_final.py",
+  "wayland_smoke_command": "DATUM_RESIZE_NATIVE_WAYLAND=1 DATUM_RESIZE_SMOKE_OUTPUT=/tmp/datum-resize-smoke-wayland-final python3 /tmp/datum_resize_smoke_final.py",
+  "backend_selection": "Driver removes WAYLAND_DISPLAY for default X11 launch. Wayland invocation preserves inherited WAYLAND_DISPLAY and sets WINIT_UNIX_BACKEND=wayland. Report JSON does not independently identify backend; repeated count equality is expected.",
+  "baseline_idle_sample_7": "41 observed motion events; excluded from quiet-idle claims. Active baseline trials have zero observed input.",
+  "candidate_idle_cpu_seconds": [
+    0,
+    0,
+    0.01,
+    0
+  ],
+  "candidate_idle_gpu": "Zero surviving DRM engine activity in all four samples.",
+  "rejected_runs": {
+    "baseline-plain": "Compilation overlapped measurement.",
+    "baseline-plain-v2": "Unexpected input activity.",
+    "candidate-plain-idle": "Coalescing-only increased CPU; idle activity also observed.",
+    "candidate-reuse-plain": "Coalescing plus reuse increased GPU duty; not selected."
+  },
+  "qualification": "Only bounded CPU/work reduction and correctness. Mixed GPU results, physical decoration dragging, latency, tiers and endurance remain open."
+}

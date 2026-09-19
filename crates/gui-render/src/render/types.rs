@@ -200,6 +200,7 @@ struct PreparedTerminalGraphic {
 }
 #[derive(Debug, Clone, PartialEq)]
 pub struct RetainedScene {
+    surface_size_independent: bool,
     world_vertices: std::sync::Arc<[Vertex]>,
     world_strokes: Vec<WorldStrokeInstance>,
     draw_commands: Vec<RetainedDrawCommand>,

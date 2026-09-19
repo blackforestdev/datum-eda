@@ -1,0 +1,3 @@
+{
+  "reason": "Cargo build started during measurement. Resource contention invalidates performance comparison; retain raw output, rerun after build idle."
+}

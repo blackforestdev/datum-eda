@@ -46,6 +46,28 @@ impl Runtime {
         self.scene_dirty = true;
     }
 
+    pub(super) fn invalidate_surface_size(&mut self) {
+        // Historical entries carry old surface keys. Preserve only live geometry
+        // whose construction has no dependency on the reference projection size.
+        self.retained_scene_cache.clear();
+        if self
+            .retained_scene
+            .as_ref()
+            .is_some_and(|scene| !scene.can_reuse_for_surface_resize())
+        {
+            self.retained_scene = None;
+        }
+        if self
+            .schematic_retained_scene
+            .as_ref()
+            .is_some_and(|scene| !scene.can_reuse_for_surface_resize())
+        {
+            self.schematic_retained_scene = None;
+        }
+        self.prepared_scene = None;
+        self.scene_dirty = true;
+    }
+
     pub(super) fn invalidate_frame(&mut self) {
         self.prepared_scene = None;
         // Camera/layout/chrome changes rebuild the prepared projection only.

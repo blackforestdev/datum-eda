@@ -79,8 +79,8 @@
    Replace the legacy untyped narration sink with the typed, bounded, output-only Datum Console and render the owner-selected focused-pane feedback overlay without creating a new command, notification, diagnostic, or mutation authority. *state `landed`; authorization `none`.*
    *Dependencies:* none. *Unblocks:* none. *Governing:* `docs/decisions/PRODUCT_MECHANICS_033_OUTPUT_ONLY_DATUM_CONSOLE.md`, `docs/gui/DATUM_GUI_DESIGN_SPEC.md`, `docs/gui/DATUM_GUI_CONFORMANCE_SPEC.md`.
 - **Specify the performance-first shared GUI foundation** (`GUI-PERFORMANCE-SPEC`; `dat-gui-performance-spec-u9n`).
-   GPS-C01 investigative baseline and all-consumer/historical-hunk reconciliation independently reviewed complete. GPS-C02 shared engineering contract is next; qualification budgets, exact implementation mapping and final owner approval remain outstanding. *state `planned`; authorization `planning`; **CANONICAL NEXT**.*
-   *Dependencies:* none. *Unblocks:* dat-gui-performance-implementation-vkq. *Governing:* `specs/GUI_PERFORMANCE_RECOVERY_PLAN.md`, `research/gui-performance/SHARED_GUI_PERFORMANCE_AUDIT.md`, `specs/GUI_SHARED_ENGINEERING_CONTRACT.md`, `docs/reviews/gui-performance/zoom-noop-slice.md`.
+   GPS-C01 investigative baseline and GPS-C01R bounded rapid-resize correction independently reviewed complete. GPS-C02 shared engineering contract resumes; mixed GPU results, physical dragging, qualification budgets, exact implementation mapping and final owner approval remain outstanding. *state `planned`; authorization `planning`; **CANONICAL NEXT**.*
+   *Dependencies:* none. *Unblocks:* dat-gui-performance-implementation-vkq. *Governing:* `specs/GUI_PERFORMANCE_RECOVERY_PLAN.md`, `research/gui-performance/SHARED_GUI_PERFORMANCE_AUDIT.md`, `specs/GUI_SHARED_ENGINEERING_CONTRACT.md`, `docs/reviews/gui-performance/zoom-noop-slice.md`, `docs/reviews/gui-performance/resize-slice.md`.
    *Completion plan:* `python3 scripts/project_status.py details`.
 - **Implement the approved shared GUI performance specification** (`GUI-PERFORMANCE-IMPLEMENTATION`; `dat-gui-performance-implementation-vkq`).
    Blocked reservation only: requires approved specification/numbered decision and a separately selected explicit owner execution gate before any renderer work. Requirement-linked slices are developed during specification; no executable completion contract is claimed here. *state `blocked`; authorization `none`.*
@@ -286,12 +286,13 @@ construction; the six completion questions and product acceptance remain open.
 |---|---|---|
 | Specification-development brief | 38 requirements and 25 historical cases retained; GPS-C01 investigative baseline, all-consumer inventory and 101 historical hunks independently reviewed complete; GPS-C02 shared contract remains pending | Baseline-grounded buildable shared GUI specification, independent review with no unresolved critical/high findings, and owner-ratified numbered decision |
 | Performance/quality contract | E01–E09 shared engineering draft written; optimized Xwayland investigative baseline recorded; demanding tiers and validated latency methods remain open | Complete numerical CPU/GPU/memory/input/visual acceptance matrix with feasible proof methods and explicit qualification scope |
-| Implementation | Wider implementation reservation remains blocked; owner-authorized no-op zoom correction verified with predefined proof within GPS-C01; broader acceptance remains open | Individual requirement-to-consumer-to-test/evidence mapping, regression/rollback gates and independent native replay behind a separate owner execution gate |
+| Implementation | Wider implementation reservation remains blocked; owner-authorized no-op zoom correction verified within GPS-C01; GPS-C01R rapid-resize geometry reuse shows about 13% lower CPU in both axes with mixed GPU duty, preserved pixels and PTY dimensions; independently reviewed complete with a separately reproduced existing drift-guard failure; broader QA/acceptance open | Individual requirement-to-consumer-to-test/evidence mapping, regression/rollback gates and independent native replay behind a separate owner execution gate |
 
 Authority: `specs/GUI_PERFORMANCE_RECOVERY_PLAN.md`; evidence:
 `research/gui-performance/SHARED_GUI_PERFORMANCE_AUDIT.md`; proposed engineering
 contract: `specs/GUI_SHARED_ENGINEERING_CONTRACT.md`; bounded correction proof:
-`docs/reviews/gui-performance/zoom-noop-slice.md`. Current selection,
+`docs/reviews/gui-performance/zoom-noop-slice.md` and
+`docs/reviews/gui-performance/resize-slice.md`. Current selection,
 step, status, and dependencies are owned by the generated Frontier above.
 The owner explicitly released the expired Preferences claim; its unfinished
 step is pending and its acceptance history remains unchanged.

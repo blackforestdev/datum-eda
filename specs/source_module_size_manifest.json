@@ -667,13 +667,13 @@
     "crates/gui-app/src/main.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 2224
+        "pre_test_lines": 2165
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Window surface acquisition, composition and presentation extracted to runtime_present.rs; remaining application event dispatch and runtime state debt stays frozen."
+      "note": "Native surface size/DPI/configuration ownership extracted to runtime_surface.rs; runtime_present owns acquisition/presentation. Remaining application event dispatch/runtime debt stays frozen."
     },
     "crates/gui-protocol/src/kicad_scene_import.rs": {
       "kind": "rust-production",
@@ -701,13 +701,13 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 8379
+        "expanded_lines": 8288
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Literal include! root exceeds the normal recursively expanded logical-module limit; textual splitting is not architectural decomposition."
+      "note": "Retained world construction and surface dependency classification moved out of literal include expansion into scene_retained_access.rs; remaining included rendering owners still exceed the normal logical-module budget."
     },
     "crates/gui-render/src/render/draw_primitives.rs": {
       "kind": "rust-production",

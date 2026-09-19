@@ -1,0 +1,90 @@
+{
+  "passed": true,
+  "samples": [
+    {
+      "window": [
+        1280,
+        1040
+      ],
+      "layout_columns": 155,
+      "layout_rows": 9,
+      "pty": [
+        {
+          "columns": 155,
+          "rows": 9,
+          "pixel_width": 0,
+          "pixel_height": 0
+        },
+        {
+          "columns": 155,
+          "rows": 9,
+          "pixel_width": 0,
+          "pixel_height": 0
+        },
+        {
+          "columns": 155,
+          "rows": 9,
+          "pixel_width": 0,
+          "pixel_height": 0
+        }
+      ]
+    },
+    {
+      "window": [
+        1520,
+        800
+      ],
+      "layout_columns": 186,
+      "layout_rows": 9,
+      "pty": [
+        {
+          "columns": 186,
+          "rows": 9,
+          "pixel_width": 0,
+          "pixel_height": 0
+        },
+        {
+          "columns": 186,
+          "rows": 9,
+          "pixel_width": 0,
+          "pixel_height": 0
+        },
+        {
+          "columns": 186,
+          "rows": 9,
+          "pixel_width": 0,
+          "pixel_height": 0
+        }
+      ]
+    },
+    {
+      "window": [
+        1280,
+        800
+      ],
+      "layout_columns": 155,
+      "layout_rows": 9,
+      "pty": [
+        {
+          "columns": 155,
+          "rows": 9,
+          "pixel_width": 0,
+          "pixel_height": 0
+        },
+        {
+          "columns": 155,
+          "rows": 9,
+          "pixel_width": 0,
+          "pixel_height": 0
+        },
+        {
+          "columns": 155,
+          "rows": 9,
+          "pixel_width": 0,
+          "pixel_height": 0
+        }
+      ]
+    }
+  ],
+  "scope": "Visible terminal layout diagnostics compared with read-only kernel PTY ioctl after both physical axes and restored size; no shell commands."
+}

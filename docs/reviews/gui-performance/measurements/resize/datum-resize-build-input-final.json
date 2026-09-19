@@ -1,0 +1,18 @@
+{
+  "base_commit": "f7d0b707a861c6029cec6e048d9ac1cdc6640d99",
+  "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build -p datum-gui-app --release",
+  "source_sha256": {
+    "crates/gui-app/src/interaction_refresh.rs": "89c3c62f146bb298d4e91b629cb2b35659884328f0ecacff61cf99919401a9d3",
+    "crates/gui-app/src/main.rs": "be04db52bed1ab028938370a723d458b263fd2f4b143c153d5bdc50730b366b7",
+    "crates/gui-render/src/render/preferences_scene.rs": "66973080664ed857a7c215401d219daf3b51efbde5fe60c893f590d8e53e4d0a",
+    "crates/gui-render/src/render/scene.rs": "20f054bc4e25a7a8fd65bc58d7f00569443aa479c5cbbdf0abff9b8fd7282d2e",
+    "crates/gui-render/src/render/scene_retained_access.rs": "82aca75c40aa50cc0bedb9d8df8ad3ad4e9f8048a08f4b35763995ff1db449ec",
+    "crates/gui-render/src/render/schematic_retained.rs": "53f58f425b2951399ea9e21658c0853070526f91878e99d2ecc99c75289956e5",
+    "crates/gui-render/src/render/types.rs": "3182d9a65a17000f822007191b098516c4483f6aa1a2c34d1215455fe062d8da",
+    "crates/gui-render/src/retained_draw_order_tests.rs": "b2211b4474409900633bfae62c85fe45b431b2fe132a34d7a41234765471f4a1",
+    "crates/gui-app/src/runtime_surface.rs": "933e9da4f1eff6cbcc3eb9fe42c788250f7ff3fa941301c26008b74f5ea8949b",
+    "crates/gui-app/src/runtime_present.rs": "09286860b6d46298e645cda7441ca80d84a5aabe2a4d8d071c316588851588b7",
+    "Cargo.lock": "0cee76a3005add00e0a63311e937ed7e15d54c0ec57627849b4cb4e756b7387c"
+  },
+  "binary_sha256": "d95f213ee6c8141c87d0588176b91f95f20060c0e15c4ab0bf2134cfc0b0352f"
+}
