@@ -55,7 +55,7 @@ earlier proven behavior; it is not a destructive reset of shared work.
 | ID | Dependency and scope | Required evidence / rollback boundary |
 |---|---|---|
 | S0 | Separate owner execution grant. Existing measurement tooling first; bounded ADM/GPU/ACC counter and fixture admission completion across all hosts | GPU query conformance, count and lifetime accounting, overhead on/off, native Wayland/Xwayland input validity, unchanged production behavior. Remove diagnostic instrumentation independently if it changes the workload. No optimization bundled into measurement repair. |
-| S1 | S0 attribution; shared NativeFrameCoordinator, host damage generations, queue/configure coordination and recovery in main and all three auxiliary hosts | SCH/REC and lifecycle rows, per-host production invalidation and input/focus proof, surface-generation/resource accounting. E10 requires calibrated temporal oracle **before any resize/surface optimization**: owner-limited initial scope does not bypass it. S0 may report unavailable calibration; S1 then remains unqualified and that change cannot start until this prerequisite is supplied under the appropriate grant. Roll back coherent shared adoption, never leave main/dialog variants with conflicting semantics. |
+| S1 | S0 attribution; shared NativeFrameCoordinator, host damage generations, queue/configure coordination and recovery in main and all three auxiliary hosts | SCH/REC and lifecycle rows, per-host production invalidation and input/focus proof, surface-generation/resource accounting. Owner amendment removes completed resize calibration and budget resolution as development prerequisites. Preserve bounded affected-path regression proof; record missing resize temporal evidence as unqualified on the pinned issue. Roll back coherent shared adoption, never leave main/dialog variants with conflicting semantics. |
 | S2 | S0 measurement; use S1 shared interfaces when available without selecting work out of order. Retained world/encoding/screen uploads, text and cache ownership | Warm zero-work counts, equal-size replacement/address reuse, eviction/device reset, painter/AA/text parity and complete byte caps. Separate geometry, text and upload changes into reviewable patches; revert each optimization independently. |
 | S3 | S2 retained resource interfaces. Shared dialog/control profiles and scroll/clip/hit contracts in both Preferences, New Project and main panels | HP11–23, per-adapter input/focus and pass-count proof; retire New Project general backdrop and duplicate control machinery. Preserve legitimate discrete Layers/terminal semantics. Revert controls without changing stored preferences or project-creation authority. |
 | S4 | S1–S3. Terminal adapters, mixed activity/fairness, all-host closure and fault/recovery adoption | PTY byte/state preservation, hidden-render suppression, two-generation glyph bounds, allocation/recovery accounting and serial shared-device multiwindow proof. Concurrent multi-device crash remains separate. Revert rendering adapters without replacing TerminalCore/PTY state. |
@@ -96,14 +96,12 @@ private generic scheduling/rendering/scroll machinery is not an exception.
 
 ## Execution and acceptance boundaries
 
-The blocked `GUI-PERFORMANCE-IMPLEMENTATION` reservation receives a first owner
-execution decision and requirement-linked S0–S5 steps. It retains authorization
-`none`, no claim and no selection during specification development. Specification
-approval removes its specification blocker only; the transition to
-`specified`/`owner_decision`, unclaimed and unselected, is explicit. No implicit
-execution grant comes from GPS-C06. Pending GPS-C01R also needs an exact selected
-execution scope and E10 proof prerequisites; the old dirty Rust candidate is not
-approved by this packet.
+The `GUI-PERFORMANCE-IMPLEMENTATION` reservation now has its live first owner
+execution decision and requirement-linked S0–S5 steps. The specification blocker
+is closed; the item is specified/owner_decision and unclaimed. No implicit
+execution grant comes from GPS-C06 or resize deferral. GPS-C01R is removed from
+specification completion and retained on the existing open resize bug as
+nonblocking investigation. The old dirty Rust candidate is not approved.
 
 Final independent performance replay must use the same pinned candidate,
 fixtures, environment and required methods, with a reviewer distinct from the
@@ -116,16 +114,17 @@ from this limited scope.
 
 ## Prepared execution completion markers
 
-The reservation references `prepared-implementation-completion.json` until its
-specification blocker closes. The current selector requires an owner-decision
-step to carry owner-decision authorization; installing it now would contradict
-R24 authorization none. Therefore its exact completion object is prepared here
-and installed in the same future transaction that removes the blocker. This
-does not change the selector or weaken the execution boundary.
+The frozen `prepared-implementation-completion.json` records the reviewed draft.
+Its live completion contract is now in `specs/active_frontier.json`, amended by
+the owner's nonblocking resize disposition. Activation normalizes requirement
+marker fields to step IDs, supplies the owner marker below, and preserves all
+six existing downstream implementation dependencies. The frozen preparation
+record remains history, not a competing live contract.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-GRANT -->
+<!-- OWNER:GUI-PERFORMANCE-IMPLEMENTATION:GPI-GRANT:GPI-GRANT -->
 
-**GPI-GRANT.** Approve an exact bounded execution scope against the ratified specification, admitted fixture/method prerequisites and measured priority; no automatic renderer execution. Resize changes retain E10 temporal-oracle prerequisite.
+**GPI-GRANT.** Approve an exact bounded execution scope against the ratified specification, admitted fixture/method prerequisites and measured priority; no automatic renderer execution. Resize investigation is nonblocking under the owner amendment; its qualification remains separate.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S0 -->
 
@@ -133,7 +132,7 @@ does not change the selector or weaken the execution boundary.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S1 -->
 
-**GPI-S1.** Adopt shared surface scheduling/lifecycle in every native host; before resize behavior changes provide calibrated E10 temporal oracle; verify SH/LF/RS and affected HP requirements.
+**GPI-S1.** Adopt shared surface scheduling/lifecycle in every native host; verify SH/LF and affected HP requirements with bounded available resize regressions; RS and resize-budget qualification remain pinned and nonblocking.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S2 -->
 
@@ -150,3 +149,26 @@ does not change the selector or weaken the execution boundary.
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S5 -->
 
 **GPI-S5.** Run complete in-scope adoption/native UX/endurance and independent performance replay; publish all excluded scope without claiming resize closure.
+
+## Owner amendment: resize investigation is nonblocking
+
+The subsequent owner instruction in
+`docs/reviews/gui-performance/resize-deferral-owner-direction.json` pins
+`dat-gui-vertical-resize-cpu-toj` as unresolved investigation and removes resize
+resolution, kernel/driver attribution and completed temporal calibration as
+development gates for S0–S5. This amendment supersedes earlier E10 pre-change
+calibration requirements and GPS-C01R blocking sequence. It does not mark resize
+budgets, flicker or displayed-frame criteria passed or change their numerical
+limits. The Linux-kernel/Intel-driver/hardware explanation is an unconfirmed
+owner hypothesis, not an established root cause.
+
+Shared application lifecycle and reuse fixes may proceed under the separate
+execution grant, with bounded relevant production regressions, available
+before/after resource observations and final-state/extent/hit/focus/PTY/static
+correctness checks. Missing temporal proof is reported as unqualified. It cannot
+be used to claim resize closure, but it does not stop other development.
+All non-resize performance/correctness, adoption, independent replay and
+endurance requirements remain. S5 can conclude only its explicitly limited
+non-resize qualification; full resize resource/temporal closure stays on the
+pinned issue. No new kernel investigation or renderer execution is authorized
+by this amendment.

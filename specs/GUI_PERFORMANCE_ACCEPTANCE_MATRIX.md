@@ -482,3 +482,26 @@ work and explicitly retains the owner's display-qualification exclusion; it is
 not a claim that displayed throughput was equal. Static pixel parity and final
 state cannot fill that excluded observation. Complete adoption/endurance remains
 future runtime evidence.
+
+## Owner amendment: resize investigation is nonblocking
+
+The subsequent owner instruction in
+`docs/reviews/gui-performance/resize-deferral-owner-direction.json` pins
+`dat-gui-vertical-resize-cpu-toj` as unresolved investigation and removes resize
+resolution, kernel/driver attribution and completed temporal calibration as
+development gates for S0–S5. This amendment supersedes earlier E10 pre-change
+calibration requirements and GPS-C01R blocking sequence. It does not mark resize
+budgets, flicker or displayed-frame criteria passed or change their numerical
+limits. The Linux-kernel/Intel-driver/hardware explanation is an unconfirmed
+owner hypothesis, not an established root cause.
+
+Shared application lifecycle and reuse fixes may proceed under the separate
+execution grant, with bounded relevant production regressions, available
+before/after resource observations and final-state/extent/hit/focus/PTY/static
+correctness checks. Missing temporal proof is reported as unqualified. It cannot
+be used to claim resize closure, but it does not stop other development.
+All non-resize performance/correctness, adoption, independent replay and
+endurance requirements remain. S5 can conclude only its explicitly limited
+non-resize qualification; full resize resource/temporal closure stays on the
+pinned issue. No new kernel investigation or renderer execution is authorized
+by this amendment.

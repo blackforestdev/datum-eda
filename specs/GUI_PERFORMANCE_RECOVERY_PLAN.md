@@ -1,15 +1,9 @@
 # Shared GUI performance recovery: specification-development plan
 
-Status: active planning contract; renderer mechanisms and numeric budgets are not
-ratified.
-
-On 2026-09-19 the owner directed completion of GPS-C02 through GPS-C06.
-`docs/reviews/gui-performance/specification-resumption-owner-direction.json`
-records the exact instruction. Specification development now precedes the
-pending GPS-C01R recovery. Resize CPU and content blinking remain unresolved;
-neither this ordering nor the eventual specification decision accepts runtime
-performance. GPS-C06 still requires the owner's decision on the completed,
-independently reviewed packet. Preserve all R01–R42 and HP01–HP25 obligations.
+Status: specification development GPS-C01–GPS-C06 complete and owner-ratified
+under Product Mechanics 045. The subsequent owner amendment below removes
+resize investigation as a development gate; the defect remains open separately.
+Preserve all R01–R42 and HP01–HP25 obligations with explicit qualification limits.
 
 ## Authority and owner disposition
 
@@ -715,3 +709,26 @@ counts and numerical rules. GPS-C04 must map deferred cases explicitly; GPS-C05
 and GPS-C06 must review and disclose the qualification exclusions. No initial
 result closes resize QA or establishes complete rendering-engine performance.
 Mechanism/numeric ratification and implementation authorization remain separate.
+
+## Owner amendment: resize investigation is nonblocking
+
+The subsequent owner instruction in
+`docs/reviews/gui-performance/resize-deferral-owner-direction.json` pins
+`dat-gui-vertical-resize-cpu-toj` as unresolved investigation and removes resize
+resolution, kernel/driver attribution and completed temporal calibration as
+development gates for S0–S5. This amendment supersedes earlier E10 pre-change
+calibration requirements and GPS-C01R blocking sequence. It does not mark resize
+budgets, flicker or displayed-frame criteria passed or change their numerical
+limits. The Linux-kernel/Intel-driver/hardware explanation is an unconfirmed
+owner hypothesis, not an established root cause.
+
+Shared application lifecycle and reuse fixes may proceed under the separate
+execution grant, with bounded relevant production regressions, available
+before/after resource observations and final-state/extent/hit/focus/PTY/static
+correctness checks. Missing temporal proof is reported as unqualified. It cannot
+be used to claim resize closure, but it does not stop other development.
+All non-resize performance/correctness, adoption, independent replay and
+endurance requirements remain. S5 can conclude only its explicitly limited
+non-resize qualification; full resize resource/temporal closure stays on the
+pinned issue. No new kernel investigation or renderer execution is authorized
+by this amendment.
