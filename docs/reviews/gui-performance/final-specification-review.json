@@ -1,0 +1,100 @@
+{
+  "marker": "EVIDENCE:GUI-PERFORMANCE-SPEC:GPS-C05-REVIEW",
+  "reviewer": "/root/gui_contract_review",
+  "independent_of_author": true,
+  "technical_basis": "AI-assisted source/specification analysis of Rust/wgpu ownership, asynchronous lifetimes, scheduling, cache dependencies, measurement accounting and statistical methods; no human credential claimed.",
+  "procedure": [
+    "Verify every input hash; read complete current specifications and proposed decision with historical audit/receipts.",
+    "Check all42 R and25 HP obligations and source/hunk associations; inspect per-consumer exceptions and compound predicate coverage.",
+    "Review GPU/accounting feasibility, numerical/statistical rules, scope exclusions, schedule/queue/lifecycle safety and negative-control design.",
+    "Review prepared first execution gate, adoption/retirement, rollback and independent runtime replay.",
+    "Record identity, independence, technical review basis, exact hashes, severity and reviewer-verified correction; no unresolved high/critical before C06.",
+    "Verified34 corpus artifact hashes and580 archived receipt hashes; independently recomputed all map inverse indexes.",
+    "Reviewed exact C05 delta and confirmed general-frame predicates and zero-endpoint statistical fallback."
+  ],
+  "reviewed_corpus": {
+    "path": "docs/reviews/gui-performance/c05-review-corpus.json",
+    "sha256": "46265a95f9cfcce1fb05fa840773dce628a0768277c270883de27a27c744e1cd"
+  },
+  "reviewed_sha256": {
+    "docs/decisions/PRODUCT_MECHANICS_045_SHARED_GUI_PERFORMANCE.md": "33cb3a7e5bc454660abff428aa8b07ba1776c67afb76cfbda4cea46c2a904cf3",
+    "docs/reviews/gui-performance/c01-historical-hunk-review.json": "d5b6ecc1767f87049ea58e188ac9041fbdb5efa22f10a229abbda10f222946c5",
+    "docs/reviews/gui-performance/c01-review.json": "45e4c8c53a0d39fcdf4af765c56fb2d6df2795ccf5a0afe895970b25268ccc5e",
+    "docs/reviews/gui-performance/c02-contract-review.json": "8d6f55b00becb6792687653b9b2a3bfb26bea8b72a7a5e7c62f8dc62ba6e00fa",
+    "docs/reviews/gui-performance/c03-completion-review.json": "9a9bfd9f9f30ce56b53186c8b1b08a18e6ea78b6f52cc62914483780b66da719",
+    "docs/reviews/gui-performance/c03-working-review.json": "2a307ac06acc34f7cc78540e3155794b559d99d35bbaef3b7ca730e30d75a0a4",
+    "docs/reviews/gui-performance/c04-completion-review.json": "1f6f4d7e30efdbc27b6b3932c6094ce96fe88d3d264f29a13f6fc5c4cf0894fa",
+    "docs/reviews/gui-performance/c04-map-validation.json": "3d5f3ee9e418b7fbcba252730d801c2f9c6dd060f1c298234285064d3355fc82",
+    "docs/reviews/gui-performance/implementation-map.json": "dcac09de66720b45d2b35a9a838477c65fdc3702098e4e1eadb13b6304a452d8",
+    "docs/reviews/gui-performance/independent-review.json": "ec46541e7e82c468eaaa6b64ca6c4b7357ffb3b2f14a0829a29aa9bdd058f486",
+    "docs/reviews/gui-performance/initial-qualification-owner-direction.json": "95837a8b2d8f0cdb5deeb2744ff46091e17bd414528dbbb34e7fd343b16640b4",
+    "docs/reviews/gui-performance/initial-qualification-review.json": "12c23edf39dfae6e2db2eda93d545152b48427a12bf24055798970ecd05a4254",
+    "docs/reviews/gui-performance/measurements/SHA256SUMS": "3824850b8b8e0ec5a369b8602d92a4150b8c57911e22469158d878611e666455",
+    "docs/reviews/gui-performance/policy-promotion-owner-20260917.json": "fff6b53a4e8459816b3e3f3a69783d13b01ea67767249f417655d3f1b2cf2534",
+    "docs/reviews/gui-performance/prepared-implementation-completion.json": "e057f3108608e59649eaaf13ed899a55fbb5e43c9ba4eaef6d70c87a5acad618",
+    "docs/reviews/gui-performance/promotion-owner-direction.json": "0a80c764d348aa82c56ad9fbae9efe7d77c107549a4e3ad47dc4a51ea20f9dfd",
+    "docs/reviews/gui-performance/rendering-reopening-review.json": "8db0fbce7de9587ec4cc0510888efd1530084b5680fb94d1495a7344ff2c0549",
+    "docs/reviews/gui-performance/rendering-reopening.json": "16ed9c8495993d15c005ae5c97e8377431538171f0e164497bfec840af30e97e",
+    "docs/reviews/gui-performance/residual-risks.json": "3ddaed4ce94db7a9942688c5631938ddc419fd1a241cf04d45ef0b561457554f",
+    "docs/reviews/gui-performance/resize-recovery.md": "6f9bb5cf289e00be2ef3fc69b289c395731886b306eb32049048aab300683c28",
+    "docs/reviews/gui-performance/resize-review.json": "3131d7d6318853950aaa32da45b53321d6e163ff681b0544675ec905414617d0",
+    "docs/reviews/gui-performance/resize-slice.md": "1210754337c11fb9e7e46e220da3a43dc18a5239a526504f18983843765c57b0",
+    "docs/reviews/gui-performance/sequencing-owner-direction.json": "fb9c00e899f311ca6552021fda7d9b8702746e2370cf618438493e62cd9940fe",
+    "docs/reviews/gui-performance/specification-clauses.json": "60e268757400e430123b3ee34d0334dd93828ae1246a4e28c99c40944a3d4662",
+    "docs/reviews/gui-performance/specification-resumption-owner-direction.json": "5d1bdb15e3adea14ab9ec3ad03721b2016273e53549dae749d07023f85b36b85",
+    "docs/reviews/gui-performance/verification.json": "0107901b9e04b91ff5c1b4af98e8b2bb6138f197ab430cd4acf232289d8d902b",
+    "docs/reviews/gui-performance/zoom-noop-slice.md": "144073e5e0ba1a72e6731802856e45438549edf883b3e40b60f2d6d91a45a50f",
+    "research/gui-performance/BASELINE_AND_FIRST_SLICE.md": "57b2a27001698ee9fd0475274d0a8ac7a25b7a13d1e8a1d2948099d926fb2468",
+    "research/gui-performance/C01_CONSUMER_RECONCILIATION.md": "5b418309c7c038d0ffcb5c2456046d9cf6b6b090350d84ceb0d7e216134bb290",
+    "research/gui-performance/SHARED_GUI_PERFORMANCE_AUDIT.md": "0869dc24f75b8fcbd254b7ecdfb0e3a461cb66887b7cebc19aec2836105d9200",
+    "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md": "388477ae974b99d7001760af4a515d8f9bdbd35215eb183aa74fe06f92291734",
+    "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md": "880c8aff0bad40348f367e3ac071a5d192b62798f6a51e741a41686f7863068a",
+    "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md": "688709cc49a174f000275cf855a5a6ae89cc558157106d1d7fb96cc53b2e3375",
+    "specs/GUI_SHARED_ENGINEERING_CONTRACT.md": "382eae0dde5e9cc2ebb2906b9ad5a0b4bca1fc2cfa7a64944237810b7e6dca39"
+  },
+  "disposition": "C05 specification review closure supported. No unresolved high/critical findings. Supports C06 owner disposition only.",
+  "findings": [
+    {
+      "id": "C05-R01",
+      "severity": "high",
+      "requirements": [
+        "R21",
+        "R33"
+      ],
+      "evidence": "PASS-01 general-frame proof absent from earlier map.",
+      "correction": "Eight production-path PASS predicates cover contributing/empty/duplicate stages, menu and terminal painter order, resolve compatibility.",
+      "reviewer_verified_resolution": true
+    },
+    {
+      "id": "C05-R02",
+      "severity": "low",
+      "requirements": [
+        "R19",
+        "STAT-01"
+      ],
+      "evidence": "Zero candidate not named in earlier logarithmic-ratio fallback.",
+      "correction": "Either zero/below-resolution endpoint disables log ratios; absolute differences with resolution, no epsilon.",
+      "reviewer_verified_resolution": true
+    }
+  ],
+  "historical_findings_dispositions": [
+    {
+      "id": "GPR-01",
+      "disposition": "Resolved for owner-limited specification scope through explicit exclusions and C03 methods; excluded runtime qualification remains open."
+    },
+    {
+      "id": "GPR-02",
+      "disposition": "Resolved through corrected individual adoption/proof mapping including general-frame pass predicates."
+    }
+  ],
+  "residual_risks": "docs/reviews/gui-performance/residual-risks.json; owner dispositions pending",
+  "runtime_replay_performed": false,
+  "owner_approval": false,
+  "resize_closed": false,
+  "final_whitespace_delta": {
+    "reviewer": "/root/gui_contract_review",
+    "verified": "Exactly one final blank newline removed; restoring it reproduces prior reviewed hash. C05 disposition unchanged.",
+    "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+    "sha256": "880c8aff0bad40348f367e3ac071a5d192b62798f6a51e741a41686f7863068a"
+  }
+}

@@ -39,6 +39,7 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 91 | `e91e20d8b53e8e8abbe35ff0b7eeebe96d74d24e1881cd7de2f604daeedb04da` |
 | `global_preferences_product_surface` | `specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md` | 227 | `92f922ba4dce0e737bd7b702ba2899cfccd4a8a707e620605706469ac06ef30e` |
 | `global_preferences_acceptance_contract` | `specs/GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md` | 1 | `84ef7b2bbe0f4dac20c00683b990ee74c078978b0c4339772beec6e1dea1f68d` |
+| `gui_performance_adoption_contract` | `specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md` | 2 | `29e36b6edfcb15a3c866db0b0b241ee8a55bec9b49eaacdce2e5d4ad5b36e22e` |
 | `gui_performance_acceptance_draft` | `specs/GUI_PERFORMANCE_RECOVERY_PLAN.md` | 1 | `94558a23cd566aff4133851ec4fe17accca4d85e26eca0666844398cc15bf6fc` |
 
 The PM041 delivery inventory tracks the pilot and prepared rollout infrastructure

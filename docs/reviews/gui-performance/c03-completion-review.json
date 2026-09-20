@@ -1,0 +1,34 @@
+{
+  "marker": "EVIDENCE:GUI-PERFORMANCE-SPEC:GPS-C03-REVIEW",
+  "reviewer": "/root/gui_contract_review",
+  "independent_of_author": true,
+  "disposition": "C03 specification closure supported under owner-approved limited scope; no remaining blocking delta findings.",
+  "reviewed_sha256": {
+    "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md": "636fe7ee03d7904d6b1fd4e69dd323fd1434eed485239d8afc430623ce6a2970"
+  },
+  "resolved_findings": [
+    {
+      "id": "C03-M01",
+      "severity": "high",
+      "requirement": "STAT-01",
+      "correction": "Fixed seven-pair formal inference; no three-pair early stop; explicit distribution and independence assumptions.",
+      "reviewer_verified": true
+    },
+    {
+      "id": "C03-M02",
+      "severity": "high",
+      "requirement": "ACC-03",
+      "correction": "Bounded drain included in both common elapsed window and counters; action/drain separately reported.",
+      "reviewer_verified": true
+    }
+  ],
+  "runtime_qualification": false,
+  "owner_budget_ratification": false,
+  "remaining": [
+    "C04 adoption and requirement map",
+    "C05 complete packet independent review",
+    "C06 actual owner approval",
+    "Runtime instrumentation conformance and admission counts",
+    "Larger-project and temporal qualification excluded; resize unresolved"
+  ]
+}

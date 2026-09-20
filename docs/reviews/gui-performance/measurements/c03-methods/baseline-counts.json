@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "kind": "existing-baseline-count-extraction",
+  "source": "docs/reviews/gui-performance/measurements/candidate-main-v3/gui.log.gz",
+  "source_sha256": "640f5383d7c9150c3d073e7438b4c60226fbd61b27e8161e0aa309d8b7dd5433",
+  "frame_records": 2061,
+  "fields": {
+    "panel": {
+      "min": 906,
+      "max": 966
+    },
+    "underlay": {
+      "min": 78,
+      "max": 432
+    },
+    "world": {
+      "min": 138444,
+      "max": 138444
+    },
+    "overlay": {
+      "min": 0,
+      "max": 0
+    },
+    "text_runs": {
+      "min": 142,
+      "max": 144
+    }
+  },
+  "world_vertex_stride_bytes": 20,
+  "world_vertex_payload_bytes": 2768880,
+  "stride_source": "crates/gui-render/src/render/gpu_data.rs::Vertex (repr C; five f32)",
+  "stride_source_sha256": "fc5e57c203c105e559cadaf4b8396f937f3e7f6d0f77eafe6cd4abea6097b4e2",
+  "missing_fields": [
+    "post-clip visible primitives",
+    "shaped glyph instances",
+    "unique font/glyph/raster keys",
+    "all retained allocations and capacities"
+  ],
+  "limits": [
+    "Historical trace configurations, not all current T1 layouts or supported capacity.",
+    "World vertices are retained payload, not submitted or visible geometry.",
+    "Text runs are not glyph counts.",
+    "Unmeasured admission fields must be collected by future production-path count instrumentation before a runtime tier pass."
+  ],
+  "extraction": "Read gzip lines containing vertices panel=; regex (panel|underlay|world|overlay|text_runs)=(\\d+); integer min/max over all records. No warm/cold filtering and no timing inference."
+}

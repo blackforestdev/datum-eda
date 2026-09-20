@@ -1,0 +1,26 @@
+{
+  "kind": "capability-method-review",
+  "reference_receipt": "vulkan-capabilities.txt",
+  "reference_sha256": "c4d39955551ec9a40ac9f5a5ca33a998dc4703dd89179a6d5ddd950ad1fb5f44",
+  "gpu": "Intel P630",
+  "driver": "Mesa 25.0.7-2+deb13u1",
+  "timestampComputeAndGraphics": true,
+  "timestampPeriod_ns": 83.3333,
+  "timestampValidBits": 36,
+  "limits": "Historical Vulkan capability, not enabled wgpu device features or calibrated query results. Current production timestamp_writes are None.",
+  "fresh_read_only_attempts": [
+    {
+      "command": "timeout 15s vulkaninfo --summary",
+      "context": "sandbox",
+      "exit": 1,
+      "error": "XCB failed to connect; AppCreateXcbSurface failed to establish connection"
+    },
+    {
+      "command": "timeout 15s vulkaninfo --summary",
+      "context": "outside sandbox",
+      "exit": 1,
+      "error": "vkGetPhysicalDeviceSurfaceSupportKHR failed with ERROR_INITIALIZATION_FAILED"
+    }
+  ],
+  "disposition": "Reuse existing identified capability evidence for method feasibility; no current successful surface probe, no native launch, no resize or capture experiment."
+}

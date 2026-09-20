@@ -1,0 +1,152 @@
+# Shared GUI performance implementation and adoption contract
+
+Status: GPS-C04 proposal for independent review and GPS-C06 owner ratification.
+No implementation authorization or runtime acceptance. Parent:
+`GUI_PERFORMANCE_RECOVERY_PLAN.md`; engineering: `GUI_SHARED_ENGINEERING_CONTRACT.md`;
+budgets and methods: `GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md`.
+
+<!-- EVIDENCE:GUI-PERFORMANCE-SPEC:GPS-C04-ADOPTION -->
+
+## Traceability and proof semantics
+
+`docs/reviews/gui-performance/implementation-map.json` is the individual mapping.
+Its requirements have stable IDs, source clauses, consumers, shared owner,
+production entry points, implementation slice, positive scenario, deliberately
+bad control, expected artifact and acceptance rule. Its inverse indexes are
+derived from those rows, not independently maintained assertions. The 67 parent
+clauses and 25 historical cases remain individually addressable. Historical test
+references are supplemental evidence, never a claim that the proposed integrated
+production proof already exists. Each future test is explicitly marked planned.
+
+All parameterized rows run through each listed consumer's real event adapter to
+the shared production owner. Calling a helper with a renamed dialog title does
+not qualify Project Preferences. Record the complete adapter-to-frame call path,
+host/consumer IDs and before/after state alongside counters. Deterministic backend
+fault injection substitutes only the backend result, not the scheduler, input
+handler or resource owner being tested. Native trials remain separate.
+
+Evidence under `docs/reviews/gui-performance/implementation/<slice>/<requirement>/`
+must contain candidate and baseline commit/source/binary hashes, fixture and
+environment manifest, exact command, raw counter/event/state data, static native
+captures, statistical result and positive/negative result. This is a future path
+contract, not fabricated files. Temporal evidence is additional when applicable;
+static captures cannot pass a deferred temporal requirement. File presence and
+inventory validation alone do not establish semantic coverage or acceptance.
+
+For every negative control use the historical first parent recorded in
+`c01-historical-hunk-review.json` if it runs the same recipe and fails for the
+target defect. Otherwise apply one isolated defect injection in a disposable
+source copy: record patch/hash and prove unchanged non-target behavior. Never
+modify the active checkout or original fixture to manufacture a failing result.
+Build serially through the guarded Cargo runner using disk-backed artifacts.
+A build failure is not defect sensitivity. Positive passes and the specific
+negative assertion must both be observed; report missing proof as missing.
+
+## Proposed bounded slices
+
+Each slice first pins the baseline and touched paths, records relevant matrix
+rows and proof before code, then runs those rows against the candidate. Absolute
+budgets and exact zero-work/correctness predicates both apply. Use STAT-01 for
+relative claims and retain failed attempts. An unexplained regression blocks
+advancement. Complete cross-consumer endurance is reserved for S5. Rollback means
+reverting the isolated slice, preserving document/settings/terminal state and
+earlier proven behavior; it is not a destructive reset of shared work.
+
+| ID | Dependency and scope | Required evidence / rollback boundary |
+|---|---|---|
+| S0 | Separate owner execution grant. Existing measurement tooling first; bounded ADM/GPU/ACC counter and fixture admission completion across all hosts | GPU query conformance, count and lifetime accounting, overhead on/off, native Wayland/Xwayland input validity, unchanged production behavior. Remove diagnostic instrumentation independently if it changes the workload. No optimization bundled into measurement repair. |
+| S1 | S0 attribution; shared NativeFrameCoordinator, host damage generations, queue/configure coordination and recovery in main and all three auxiliary hosts | SCH/REC and lifecycle rows, per-host production invalidation and input/focus proof, surface-generation/resource accounting. E10 requires calibrated temporal oracle **before any resize/surface optimization**: owner-limited initial scope does not bypass it. S0 may report unavailable calibration; S1 then remains unqualified and that change cannot start until this prerequisite is supplied under the appropriate grant. Roll back coherent shared adoption, never leave main/dialog variants with conflicting semantics. |
+| S2 | S0 measurement; use S1 shared interfaces when available without selecting work out of order. Retained world/encoding/screen uploads, text and cache ownership | Warm zero-work counts, equal-size replacement/address reuse, eviction/device reset, painter/AA/text parity and complete byte caps. Separate geometry, text and upload changes into reviewable patches; revert each optimization independently. |
+| S3 | S2 retained resource interfaces. Shared dialog/control profiles and scroll/clip/hit contracts in both Preferences, New Project and main panels | HP11–23, per-adapter input/focus and pass-count proof; retire New Project general backdrop and duplicate control machinery. Preserve legitimate discrete Layers/terminal semantics. Revert controls without changing stored preferences or project-creation authority. |
+| S4 | S1–S3. Terminal adapters, mixed activity/fairness, all-host closure and fault/recovery adoption | PTY byte/state preservation, hidden-render suppression, two-generation glyph bounds, allocation/recovery accounting and serial shared-device multiwindow proof. Concurrent multi-device crash remains separate. Revert rendering adapters without replacing TerminalCore/PTY state. |
+| S5 | Every adopted implementation slice and required admission/method conformance. Final coverage, native owner UX, distinct-reviewer replay and endurance | Run all in-scope requirements on pinned candidate, both daily native backends and supported scale rows; 60-minute/200-cycle/20-recovery contract. Publish excluded temporal/T2/schematic rows as unqualified, never full performance acceptance. Full resize closure additionally requires all temporal/resource rows; no local or initial-scope result closes it. |
+
+S0 chooses the first bounded optimization from measured attributable work and
+correctness defects; the table is dependency planning, not a claim that local
+window invalidation has already won that comparison. No framework replacement,
+new dependency, extra render thread, reduced AA or backend policy change follows
+from this contract. The first execution gate must record the selected slice and
+its prerequisites; later slice selection follows the canonical roadmap.
+
+## Global adoption and retirement
+
+All 14 ADP-01 consumers are enumerated in the map. Every consumer inherits shared
+host scheduling, lifecycle generations, resource accounting and common clipping.
+Main panes share one native surface; they do not receive individual swapchains.
+Auxiliary hosts use the same coordinator/device owner and distinct host state.
+The map names current adapter paths and specific competing paths to retire.
+
+Completion requires a production call-site inventory showing every native
+`request_redraw`, surface configure/acquire/present, queue submission, attachment
+allocation and close callback routed through the shared ownership boundary.
+Allow native compositor notification at the actual presentation point; it must
+not become an alternate scheduler. Search and inspect call sites, exercise each
+one through production tests, and record the exact remaining low-level calls
+and why each is inside its owner. Merely adding an unused shared helper fails.
+
+Preferences retain continuous offset and clipped hit regions. Terminal history
+and Layers retain discrete rows; they reuse conversion/clip/capture primitives
+where semantics agree. Revision, navigator and Inspector remain partial products:
+qualify their existing behavior, without claiming absent authoring/navigation.
+Resolved schematic performance remains unqualified until a real fixture is
+admitted. Future panes must register host/profile, invalidation dependencies,
+complete cache ownership/caps, input/focus/clip semantics and positive/negative
+proof before admission. An exception needs a semantic reason and evidence;
+private generic scheduling/rendering/scroll machinery is not an exception.
+
+## Execution and acceptance boundaries
+
+The blocked `GUI-PERFORMANCE-IMPLEMENTATION` reservation receives a first owner
+execution decision and requirement-linked S0–S5 steps. It retains authorization
+`none`, no claim and no selection during specification development. Specification
+approval removes its specification blocker only; the transition to
+`specified`/`owner_decision`, unclaimed and unselected, is explicit. No implicit
+execution grant comes from GPS-C06. Pending GPS-C01R also needs an exact selected
+execution scope and E10 proof prerequisites; the old dirty Rust candidate is not
+approved by this packet.
+
+Final independent performance replay must use the same pinned candidate,
+fixtures, environment and required methods, with a reviewer distinct from the
+implementer actually rerunning the trials. A report-only review cannot pass it.
+Initial acceptance, if later granted, prints all scope limitations beside the
+results. Larger-project, resolved-schematic and temporal/display qualification
+remain explicit future obligations; resize QA remains open until its complete
+resource and temporal criteria pass. No full enterprise-readiness claim follows
+from this limited scope.
+
+## Prepared execution completion markers
+
+The reservation references `prepared-implementation-completion.json` until its
+specification blocker closes. The current selector requires an owner-decision
+step to carry owner-decision authorization; installing it now would contradict
+R24 authorization none. Therefore its exact completion object is prepared here
+and installed in the same future transaction that removes the blocker. This
+does not change the selector or weaken the execution boundary.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-GRANT -->
+
+**GPI-GRANT.** Approve an exact bounded execution scope against the ratified specification, admitted fixture/method prerequisites and measured priority; no automatic renderer execution. Resize changes retain E10 temporal-oracle prerequisite.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S0 -->
+
+**GPI-S0.** Complete production measurement conformance, admission counts and matched baseline; document measured optimization priority. Reconcile canonical slice order before any different selection; no scope expansion by inference.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S1 -->
+
+**GPI-S1.** Adopt shared surface scheduling/lifecycle in every native host; before resize behavior changes provide calibrated E10 temporal oracle; verify SH/LF/RS and affected HP requirements.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S2 -->
+
+**GPI-S2.** Adopt retained geometry/text/encoding/upload ownership with exact cache/replacement/negative proofs.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S3 -->
+
+**GPI-S3.** Adopt shared dialog/control/scroll/clip/hit paths; remove New Project backdrop and competing paths with per-adapter proof.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4 -->
+
+**GPI-S4.** Finish terminal fairness/hidden work and all-host recovery/resource adoption; preserve separate concurrent multi-device failure.
+
+<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S5 -->
+
+**GPI-S5.** Run complete in-scope adoption/native UX/endurance and independent performance replay; publish all excluded scope without claiming resize closure.

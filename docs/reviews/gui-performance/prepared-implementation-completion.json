@@ -1,0 +1,162 @@
+{
+  "status": "Prepared only; install completion on specification blocker closure, not an active execution contract.",
+  "activation": {
+    "state": "specified",
+    "authorization": "owner_decision",
+    "canonical_next": false,
+    "claim": null,
+    "completion": {
+      "outcome": "Independently reproduced in-scope shared GUI resource/correctness adoption with explicit unqualified larger-project/schematic/temporal scope and separate full resize closure.",
+      "execution_policy": {
+        "dependency_independence_authorizes_parallelism": false,
+        "max_in_progress_steps": 1
+      },
+      "presentation_policy": {
+        "allow_inferred_concurrency": false,
+        "allow_regrouping": false,
+        "allow_supplementation": false,
+        "mode": "stdout_verbatim",
+        "preserve_step_numbering": true,
+        "preserve_step_order": true
+      },
+      "canonical_next_step_id": "GPI-GRANT",
+      "steps": [
+        {
+          "id": "GPI-GRANT",
+          "kind": "owner_decision",
+          "status": "pending",
+          "action": "Approve an exact bounded execution scope against the ratified specification, admitted fixture/method prerequisites and measured priority; no automatic renderer execution. Resize changes retain E10 temporal-oracle prerequisite.",
+          "depends_on": [],
+          "requirement_refs": [
+            {
+              "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+              "marker": "<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-GRANT -->"
+            }
+          ],
+          "completion_evidence": [],
+          "owner_input": {
+            "requests": [
+              {
+                "id": "GPI-GRANT",
+                "question": "Authorize the bounded S0-S5 implementation contract, beginning with measurement conformance and selecting optimizations from measured evidence, with all E10 prerequisites and per-slice proof retained?",
+                "recommended_response": "Approve only the exact reviewed implementation contract after specification ratification; begin S0 and preserve all proof prerequisites and excluded acceptance scope.",
+                "source_ref": {
+                  "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+                  "marker": "<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-GRANT -->"
+                }
+              }
+            ],
+            "response_format": "Reply `GUI-PERFORMANCE-IMPLEMENTATION: authorize reviewed S0-S5 contract` or `GUI-PERFORMANCE-IMPLEMENTATION: revise \u2014 <scope correction>`."
+          }
+        },
+        {
+          "id": "GPI-S0",
+          "kind": "execution",
+          "status": "pending",
+          "action": "Complete production measurement conformance, admission counts and matched baseline; document measured optimization priority. Reconcile canonical slice order before any different selection; no scope expansion by inference.",
+          "depends_on": [
+            "GPI-GRANT"
+          ],
+          "requirement_refs": [
+            {
+              "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+              "marker": "<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S0 -->"
+            }
+          ],
+          "completion_evidence": []
+        },
+        {
+          "id": "GPI-S1",
+          "kind": "execution",
+          "status": "pending",
+          "action": "Adopt shared surface scheduling/lifecycle in every native host; before resize behavior changes provide calibrated E10 temporal oracle; verify SH/LF/RS and affected HP requirements.",
+          "depends_on": [
+            "GPI-S0"
+          ],
+          "requirement_refs": [
+            {
+              "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+              "marker": "<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S1 -->"
+            }
+          ],
+          "completion_evidence": []
+        },
+        {
+          "id": "GPI-S2",
+          "kind": "execution",
+          "status": "pending",
+          "action": "Adopt retained geometry/text/encoding/upload ownership with exact cache/replacement/negative proofs.",
+          "depends_on": [
+            "GPI-S1"
+          ],
+          "requirement_refs": [
+            {
+              "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+              "marker": "<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S2 -->"
+            }
+          ],
+          "completion_evidence": []
+        },
+        {
+          "id": "GPI-S3",
+          "kind": "execution",
+          "status": "pending",
+          "action": "Adopt shared dialog/control/scroll/clip/hit paths; remove New Project backdrop and competing paths with per-adapter proof.",
+          "depends_on": [
+            "GPI-S2"
+          ],
+          "requirement_refs": [
+            {
+              "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+              "marker": "<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S3 -->"
+            }
+          ],
+          "completion_evidence": []
+        },
+        {
+          "id": "GPI-S4",
+          "kind": "execution",
+          "status": "pending",
+          "action": "Finish terminal fairness/hidden work and all-host recovery/resource adoption; preserve separate concurrent multi-device failure.",
+          "depends_on": [
+            "GPI-S3"
+          ],
+          "requirement_refs": [
+            {
+              "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+              "marker": "<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4 -->"
+            }
+          ],
+          "completion_evidence": []
+        },
+        {
+          "id": "GPI-S5",
+          "kind": "execution",
+          "status": "pending",
+          "action": "Run complete in-scope adoption/native UX/endurance and independent performance replay; publish all excluded scope without claiming resize closure.",
+          "depends_on": [
+            "GPI-S4"
+          ],
+          "requirement_refs": [
+            {
+              "path": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+              "marker": "<!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S5 -->"
+            }
+          ],
+          "completion_evidence": []
+        }
+      ],
+      "post_completion": {
+        "authorizes_successor": false,
+        "effects": [
+          "Publish limited initial runtime results only after independent replay and owner product disposition; full qualification remains unaccepted where excluded."
+        ],
+        "selection": "explicit_frontier_update",
+        "selects_successor": false,
+        "unblocks_issue_ids": []
+      }
+    }
+  },
+  "scope_transition": "Only an explicit execution grant may select S0. Later slice advancement requires its listed prerequisites and accepted slice proof; any scope or ordering amendment updates the canonical contract before work.",
+  "remaining_acceptance": "Runtime results require separate owner product acceptance; excluded temporal/T2/schematic remain unqualified."
+}
