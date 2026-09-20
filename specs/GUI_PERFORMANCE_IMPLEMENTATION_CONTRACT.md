@@ -1,7 +1,7 @@
 # Shared GUI performance implementation and adoption contract
 
-Status: GPS-C04 proposal for independent review and GPS-C06 owner ratification.
-No implementation authorization or runtime acceptance. Parent:
+Status: PM045 ratified specification; owner authorized amended S0–S5 execution
+on2026-09-20. Runtime acceptance remains separate. Parent:
 `GUI_PERFORMANCE_RECOVERY_PLAN.md`; engineering: `GUI_SHARED_ENGINEERING_CONTRACT.md`;
 budgets and methods: `GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md`.
 
@@ -96,12 +96,21 @@ private generic scheduling/rendering/scroll machinery is not an exception.
 
 ## Execution and acceptance boundaries
 
-The `GUI-PERFORMANCE-IMPLEMENTATION` reservation now has its live first owner
-execution decision and requirement-linked S0–S5 steps. The specification blocker
-is closed; the item is specified/owner_decision and unclaimed. No implicit
-execution grant comes from GPS-C06 or resize deferral. GPS-C01R is removed from
-specification completion and retained on the existing open resize bug as
-nonblocking investigation. The old dirty Rust candidate is not approved.
+The owner authorized the amended existing S0–S5 contract on2026-09-20. Start
+with S0 measurement conformance and measured selection, preserving the recovered
+candidate checkpoint c8bac0b6 as the implementation starting point. No deletion
+or restart follows from incomplete compliance. Record bounded improvements,
+diagnostic behavior, implementation gaps and any evidence-supported proposed
+specification correction in the existing adoption map before consolidation.
+GPS-C01R remains separately pinned and nonblocking; unresolved driver attribution,
+resize budgets and deferred temporal qualification do not gate unrelated work.
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:OWNER-EXECUTION -->
+
+Exact owner response: `GUI-PERFORMANCE-IMPLEMENTATION: authorize amended S0-S5 contract`.
+This resolves GPI-GRANT. It authorizes the existing bounded slices, not production
+acceptance, dependency adoption, backend policy or changed performance thresholds.
+The preceding checkpoint/review instruction alone was not treated as this grant.
 
 Final independent performance replay must use the same pinned candidate,
 fixtures, environment and required methods, with a reviewer distinct from the
