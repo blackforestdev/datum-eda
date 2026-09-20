@@ -45,6 +45,8 @@ mod global_preferences_window;
 mod gui_runtime_support;
 mod interaction_refresh;
 mod keyboard_focus;
+mod native_gpu;
+mod native_gpu_measurements;
 mod native_resize_repro;
 mod new_project_window;
 mod owned_window_policy;
@@ -249,6 +251,7 @@ fn run_offscreen_visual_test(_args: &GuiArgs) -> Result<()> {
 }
 impl ApplicationHandler for App {
     fn resumed(&mut self, event_loop: &ActiveEventLoop) {
+        self.measurement_suspend(false);
         append_gui_diagnostic_line("resumed event");
         if self.window.is_some() {
             append_gui_diagnostic_line("resumed ignored; window already exists");
@@ -305,6 +308,7 @@ impl ApplicationHandler for App {
         window_id: WindowId,
         event: WindowEvent,
     ) {
+        self.measurement_window_event(window_id, &event);
         let Some(event) = self.dispatch_owned_product_window_event(event_loop, window_id, event)
         else {
             return;
@@ -638,6 +642,10 @@ impl ApplicationHandler for App {
         }
     }
 
+    fn suspended(&mut self, _event_loop: &ActiveEventLoop) {
+        self.measurement_suspend(true);
+    }
+
     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
         self.poll_background_work(event_loop);
         self.poll_resize_smoke_start(event_loop);
@@ -668,6 +676,7 @@ struct Runtime {
     surface_transaction: SurfaceTransaction,
     scale_factor: f32,
     renderer: Renderer,
+    measurements: native_gpu_measurements::Host,
     session: LiveDesignSession,
     /// Camera for the renderer's live board leaf. Pointer and focused commands
     /// reach it only when their typed pane route names that leaf; schematic and
@@ -764,34 +773,7 @@ impl Runtime {
             PaneContent::Revision(_) => camera,
         };
         let wgpu_started = std::time::Instant::now();
-        append_gui_diagnostic_line("wgpu instance create begin");
-        let instance = gui_runtime_support::diagnostic_instance();
-        let surface = instance.create_surface(window).context("create surface")?;
-        append_gui_diagnostic_line("wgpu request adapter begin");
-        let adapter = instance
-            .request_adapter(&wgpu::RequestAdapterOptions {
-                power_preference: wgpu::PowerPreference::LowPower,
-                compatible_surface: Some(&surface),
-                force_fallback_adapter: false,
-            })
-            .await
-            .context("request adapter")?;
-        gui_runtime_support::log_surface_identity(window, &adapter);
-        append_gui_diagnostic_line("wgpu request device begin");
-        let adapter_format_features =
-            wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES & adapter.features();
-        let (device, queue) = adapter
-            .request_device(&wgpu::DeviceDescriptor {
-                label: Some("datum-m7-spike-device"),
-                required_features: adapter_format_features,
-                required_limits: wgpu::Limits::default(),
-                memory_hints: wgpu::MemoryHints::default(),
-                experimental_features: wgpu::ExperimentalFeatures::disabled(),
-                trace: wgpu::Trace::Off,
-            })
-            .await
-            .context("request device")?;
-        append_gui_diagnostic_line("wgpu request device end");
+        let (instance, surface, adapter, device, queue) = native_gpu::create(window).await?;
         trace_startup_timing(format!(
             "wgpu init {}ms",
             wgpu_started.elapsed().as_millis()
@@ -809,7 +791,9 @@ impl Runtime {
         append_gui_diagnostic_line("initial surface configure end");
         let renderer_started = std::time::Instant::now();
         append_gui_diagnostic_line("renderer init begin");
-        let renderer = Renderer::new(&device, &queue, config.format, msaa_samples);
+        let mut renderer = Renderer::new(&device, &queue, config.format, msaa_samples);
+        let measurements =
+            native_gpu_measurements::Host::new(&mut renderer, &device, &queue, window, None)?;
         append_gui_diagnostic_line("renderer init end");
         trace_startup_timing(format!(
             "renderer init {}ms",
@@ -826,6 +810,7 @@ impl Runtime {
             config,
             scale_factor,
             renderer,
+            measurements,
             session: LiveDesignSession::new(state),
             camera,
             pane_cameras: PaneCameras::new(initial_focus, initial_content, initial_pane_camera),

@@ -36,7 +36,7 @@ The gate is `python3 scripts/check_spec_parity.py`, wired through
 | `schematic_connectivity_surface` | `specs/SCHEMATIC_CONNECTIVITY_SPEC.md` | 9 | `9e6f3473c2eea9b28598a7e8cf7b24c8b0fef6687ced07442e0bf9920f4e55ed` |
 | `zone_fill_surface` | `specs/NATIVE_FORMAT_SPEC.md` | 19 | `8d10f280ffc6abcaf7990ce3120a4253a2ea54b474b0a0d56428b2e30bdd2dfa` |
 | `gui_supervision_surface` | `specs/PROGRESS.md` | 9 | `bf469cb5d3ef2b1d74295a43cef0d3c52b3fc0e6d7961f0784dd2aa0c07132d3` |
-| `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 91 | `ecbf5e013497a2f74c35f387cef727564bbef15b3256182f26edea06e46c694b` |
+| `source_health_debt_surface` | `docs/SOURCE_HEALTH_POLICY.md` | 91 | `8f07e6fbc208631aea0523965ee941e6b643b2daaa63a9eafb908dfc91db9d4b` |
 | `global_preferences_product_surface` | `specs/GLOBAL_PREFERENCES_PRODUCT_SURFACE_CONTRACT.md` | 227 | `92f922ba4dce0e737bd7b702ba2899cfccd4a8a707e620605706469ac06ef30e` |
 | `global_preferences_acceptance_contract` | `specs/GLOBAL_PREFERENCES_PRODUCTION_ACCEPTANCE_CONTRACT.md` | 1 | `84ef7b2bbe0f4dac20c00683b990ee74c078978b0c4339772beec6e1dea1f68d` |
 | `gui_performance_adoption_contract` | `specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md` | 2 | `29e36b6edfcb15a3c866db0b0b241ee8a55bec9b49eaacdce2e5d4ad5b36e22e` |

@@ -1,0 +1,61 @@
+{
+  "unit": "GPI-S0 GPU-01..03 bounded production pass-measurement implementation",
+  "status": "verified bounded unit; S0 remains in_progress",
+  "baseline_commit": "a09e636f1e17d04d2e48069f415c68dde9b0e357",
+  "preserved_candidate": "c8bac0b6bc29a64f15d02b5a558a853fab60a657",
+  "candidate_source_sha256": {
+    "crates/gui-app/src/global_preferences_window.rs": "4bc513e860e4743fdc88e7b3e626c5df0bb7b1fb00d9646d9082f4b17aa9d4ec",
+    "crates/gui-app/src/main.rs": "6accce6844dc575b4ab1175a83117be12064cb6f278b92eea783549d0a1fa094",
+    "crates/gui-app/src/native_gpu.rs": "32e0fb95497508231b5b7074461d59ef0974b44db36a72e8aa8229b173beff5b",
+    "crates/gui-app/src/native_gpu_measurements.rs": "eab4fcc21fc60972fb5a7273f3376c478beb789134564ecfd528d1b40349ed8f",
+    "crates/gui-app/src/production_status_refresh.rs": "8324cd1d05b0a7405e934d7a0957029717db959eb591adafedb5931c8d45b930",
+    "crates/gui-render/src/render/gpu.rs": "990206c55b762573395329a54f349b8b759291c910b887b30e225eae9c678afb",
+    "crates/gui-render/src/render/gpu_frame.rs": "b3883d4c8e28e03064999fec2afbb43e81896f488bc11b72107f03ce53f6ce94",
+    "crates/gui-render/src/render/gpu_init.rs": "46609e76d727483a19f5291d8f6d7b26eacd0f267d0d44d7dc7c8377bfab3f06",
+    "crates/gui-render/src/render/gpu_measurement_api.rs": "4afe404f88cdfc98dbf1724483ed4dd283de604d1e24c546bfc3e669b7cc3676",
+    "crates/gui-render/src/render/gpu_measurements.rs": "a36b566301aa0c8efbebb072d4228fced3bf2d45d63da5acb54e357490775e4c",
+    "crates/gui-render/src/render/gpu_measurements_tests.rs": "b66ff2c5562146fa42325f001a89cdd6bc5ec9a8a8b1a36cfa068812944ed27e",
+    "crates/gui-render/src/render/gpu_overlay.rs": "758b3d51425e3edac4230923d24a8213fcf9d6fc5915e2c435c880191b033a6c",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "1d29568510f0e1d1fe7cc03c554438a0e4566590da0a57728d93cdbbcd478fde",
+    "crates/gui-render/src/render/renderer_state.rs": "0b364f2742388e2a1541446723895b7f48b9d77db0d008783653013473bf9de0",
+    "crates/gui-render/src/render/terminal_graphics.rs": "eae5933a129c161f9d9d2119353280bd3055670c5706a25b156fd246ceb61834",
+    "crates/gui-render/src/visual_capture.rs": "0e93d1172f2ede66341ab37f0298dc984f742c0f96dfb0bfc2f039c8172abe9a"
+  },
+  "release_binary_sha256": "4b8566df2438e5fde06f2667bae5e99b25acdf35e61c7df73d7d51bdcaafaa44",
+  "default_behavior": "Opt-in DATUM_GPU_MEASUREMENTS=1 only. No default timestamp feature/query resources; existing resize transaction/probes retained and not promoted. Adapter/backend/presentation/AA settings unchanged.",
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-render --features visual --lib gpu_measurements -- --include-ignored --nocapture --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --bin datum-gui -- --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --release -p datum-gui-app --bin datum-gui",
+    "python3 docs/reviews/gui-performance/implementation/S0/GPU-01-03/native_probe.py --binary target/release/datum-gui --board /tmp/datum-gui-candidate-boundary-v3/DOA2526.kicad_pcb --output docs/reviews/gui-performance/implementation/S0/GPU-01-03/native-results.json"
+  ],
+  "results": {
+    "gpu_conformance_and_pixel_parity": "5 passed including actual Intel Vulkan adapter, both terminal layers and menu passes",
+    "native": "16 passed: four production hosts x timing on/off x verified Wayland/Xwayland; all Intel Vulkan",
+    "app": "321 passed,0 failed,8 ignored; serial",
+    "release": "passed"
+  },
+  "not_proven": [
+    "matched instrumentation overhead",
+    "complete admission/cache/upload/allocation/process accounting",
+    "complete lifecycle/performance-trial tail collection",
+    "all display scale rows",
+    "S0 baseline and measured optimization selection",
+    "S1-S5 shared production adoption or acceptance",
+    "resize CPU budget, flicker or displayed-frame latency acceptance"
+  ],
+  "failure_history": "failure-dispositions.json",
+  "review": "review.json",
+  "raw_artifacts_sha256": {
+    "app-tests.log": "df6356033c56ed6c6efe1c373c50e475c9f69b728b3cd87b750cc6f80d1a63ac",
+    "conformance-attempt1.log": "5cfa4ed7dd44f6b0d880e0a703dd0071048f5817e6b98e0795650120286bd341",
+    "conformance-before-review.log": "7367ba72bf63e8b57057efe2818aff24f3e7ddf5e269ce2f9125bc7c5c26b456",
+    "conformance.log": "e55fdb2682d4209a30e56a65b23d7d25017ce674f004c8eaf9b45a3d7cf73c3e",
+    "failure-dispositions.json": "cddef8cbac2722cb38b7fe886581dedd71f1773deecfcb284097d73dab9bd54d",
+    "native-attempt1.json": "91a7806e38295dcec5e7fe687ddb28c2c35bdd5c5bcf3f3d67297bc9cb69fbec",
+    "native-results.json": "8ccc2f65182da7523f45af2e85c956e26445355f3517a36418b28a038e42167b",
+    "native_probe.py": "bf35e92a7c35555b7cfb35756050a573315a57cc2b753342b1109bb962ebc529",
+    "release-build.log": "652b5ac2c3cf1a009ea85edebe4a2f1f0efd78eb9fc1edeef5868cd4060b6953",
+    "review.json": "2f604c5bcdfeba2809c518688c77502837c1f4d012eb3d17ed4456e5b3d2e130"
+  }
+}

@@ -229,9 +229,10 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         target: &wgpu::TextureView,
         screen_bind_group: &wgpu::BindGroup,
         foreground: bool,
-    ) {
+        measurement: Option<&mut super::gpu_measurements::FrameQueries>,
+    ) -> anyhow::Result<()> {
         if !self.draws.iter().any(|draw| draw.foreground == foreground) {
-            return;
+            return Ok(());
         }
         let label = if foreground {
             "datum-terminal-foreground-graphics-pass"
@@ -251,10 +252,11 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             })],
             depth_stencil_attachment: None,
             occlusion_query_set: None,
-            timestamp_writes: None,
+            timestamp_writes: measurement.map(|m| m.pass(label)).transpose()?,
             multiview_mask: None,
         });
         self.draw(&mut pass, screen_bind_group, foreground);
+        Ok(())
     }
 
     fn draw<'pass>(
@@ -314,14 +316,16 @@ impl super::Renderer {
         msaa_view: &wgpu::TextureView,
         target: &wgpu::TextureView,
         foreground: bool,
-    ) {
+        measurement: Option<&mut super::gpu_measurements::FrameQueries>,
+    ) -> anyhow::Result<()> {
         self.terminal_graphics.encode_layer(
             encoder,
             msaa_view,
             target,
             &self.uniform_bind_group,
             foreground,
-        );
+            measurement,
+        )
     }
 }
 

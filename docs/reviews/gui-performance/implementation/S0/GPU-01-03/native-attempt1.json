@@ -1,0 +1,1013 @@
+{
+  "scope": "native launch/pass measurement plumbing only; no resource, temporal, lifecycle or overhead acceptance",
+  "binary_sha256": "37746e3bf0735fd8b8176f7f752917734c34869ba6cabdeebb72dbc46714d2bc",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "runs": [
+    {
+      "backend_requested": "wayland",
+      "host": "main",
+      "measurements_enabled": false,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-wayland-main-1cffy9jv/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-wayland-main-1cffy9jv",
+      "samples": [],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928635, tv_nsec: 213690453 }] surface identity window=WindowId(94513125773888) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=659936 start=SystemTime { tv_sec: 1789928633, tv_nsec: 395009619 }\n[SystemTime { tv_sec: 1789928633, tv_nsec: 395216748 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-wayland-main-1cffy9jv/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: false, open_new_project: false, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928633, tv_nsec: 403385599 }] resumed event\n[SystemTime { tv_sec: 1789928633, tv_nsec: 403405458 }] launch state load begin\n[SystemTime { tv_sec: 1789928633, tv_nsec: 403429838 }] request resolve begin\n[SystemTime { tv_sec: 1789928633, tv_nsec: 631084540 }] request resolve end project_root=/tmp/datum-s0-wayland-main-1cffy9jv/datum-eda/gui-imports/board-d85d3ae1d1236b1e board_file=None\n[SystemTime { tv_sec: 1789928633, tv_nsec: 631104673 }] workspace load begin\n[SystemTime { tv_sec: 1789928635, tv_nsec: 71429707 }] workspace load end\n[SystemTime { tv_sec: 1789928635, tv_nsec: 71452308 }] camera fit begin\n[SystemTime { tv_sec: 1789928635, tv_nsec: 71465793 }] camera fit end\n[SystemTime { tv_sec: 1789928635, tv_nsec: 71909711 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928635, tv_nsec: 82692625 }] terminal spawn end\n[SystemTime { tv_sec: 1789928635, tv_nsec: 82723187 }] launch state load end\n[SystemTime { tv_sec: 1789928635, tv_nsec: 85733524 }] window created\n[SystemTime { tv_sec: 1789928635, tv_nsec: 85752404 }] runtime creation begin\n[SystemTime { tv_sec: 1789928635, tv_nsec: 86377430 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928635, tv_nsec: 193822132 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928635, tv_nsec: 213690453 }] surface identity window=WindowId(94513125773888) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928635, tv_nsec: 213712259 }] wgpu request device begin\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "wayland",
+      "host": "global",
+      "measurements_enabled": false,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-wayland-global-px12g8_1/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-wayland-global-px12g8_1",
+      "samples": [],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928637, tv_nsec: 365518273 }] surface identity window=WindowId(94065775764256) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789928637, tv_nsec: 535221114 }] surface identity window=WindowId(94065779700496) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=659983 start=SystemTime { tv_sec: 1789928635, tv_nsec: 591021475 }\n[SystemTime { tv_sec: 1789928635, tv_nsec: 591353532 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-wayland-global-px12g8_1/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: true, open_new_project: false, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928635, tv_nsec: 610054690 }] resumed event\n[SystemTime { tv_sec: 1789928635, tv_nsec: 610078422 }] launch state load begin\n[SystemTime { tv_sec: 1789928635, tv_nsec: 610108446 }] request resolve begin\n[SystemTime { tv_sec: 1789928635, tv_nsec: 842070743 }] request resolve end project_root=/tmp/datum-s0-wayland-global-px12g8_1/datum-eda/gui-imports/board-bfacc0a44ca65ef5 board_file=None\n[SystemTime { tv_sec: 1789928635, tv_nsec: 842108666 }] workspace load begin\n[SystemTime { tv_sec: 1789928637, tv_nsec: 222413836 }] workspace load end\n[SystemTime { tv_sec: 1789928637, tv_nsec: 222437384 }] camera fit begin\n[SystemTime { tv_sec: 1789928637, tv_nsec: 222451715 }] camera fit end\n[SystemTime { tv_sec: 1789928637, tv_nsec: 222827644 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928637, tv_nsec: 234668787 }] terminal spawn end\n[SystemTime { tv_sec: 1789928637, tv_nsec: 234719799 }] launch state load end\n[SystemTime { tv_sec: 1789928637, tv_nsec: 238895268 }] window created\n[SystemTime { tv_sec: 1789928637, tv_nsec: 238922855 }] runtime creation begin\n[SystemTime { tv_sec: 1789928637, tv_nsec: 239705094 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928637, tv_nsec: 347818855 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928637, tv_nsec: 365518273 }] surface identity window=WindowId(94065775764256) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928637, tv_nsec: 365542252 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928637, tv_nsec: 390066921 }] wgpu request device end\n[SystemTime { tv_sec: 1789928637, tv_nsec: 392948895 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n[SystemTime { tv_sec: 1789928637, tv_nsec: 410178762 }] initial surface configure end\n[SystemTime { tv_sec: 1789928637, tv_nsec: 410237244 }] renderer init begin\n[SystemTime { tv_sec: 1789928637, tv_nsec: 532675383 }] renderer init end\n[SystemTime { tv_sec: 1789928637, tv_nsec: 534016630 }] runtime creation end\n[SystemTime { tv_sec: 1789928637, tv_nsec: 534083207 }] window visible\n[SystemTime { tv_sec: 1789928637, tv_nsec: 535221114 }] surface identity window=WindowId(94065779700496) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "wayland",
+      "host": "project",
+      "measurements_enabled": false,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-wayland-project-n94j4clk/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-wayland-project-n94j4clk",
+      "samples": [],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928639, tv_nsec: 684016642 }] surface identity window=WindowId(93905838454368) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789928640, tv_nsec: 41686780 }] surface identity window=WindowId(93905833995952) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=660022 start=SystemTime { tv_sec: 1789928637, tv_nsec: 890629416 }\n[SystemTime { tv_sec: 1789928637, tv_nsec: 890960242 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-wayland-project-n94j4clk/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: false, open_new_project: false, open_project_preferences: true, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928637, tv_nsec: 903427290 }] resumed event\n[SystemTime { tv_sec: 1789928637, tv_nsec: 903462959 }] launch state load begin\n[SystemTime { tv_sec: 1789928637, tv_nsec: 903489707 }] request resolve begin\n[SystemTime { tv_sec: 1789928638, tv_nsec: 128119436 }] request resolve end project_root=/tmp/datum-s0-wayland-project-n94j4clk/datum-eda/gui-imports/board-78f431cfa13078a6 board_file=None\n[SystemTime { tv_sec: 1789928638, tv_nsec: 128139709 }] workspace load begin\n[SystemTime { tv_sec: 1789928639, tv_nsec: 536394555 }] workspace load end\n[SystemTime { tv_sec: 1789928639, tv_nsec: 536417732 }] camera fit begin\n[SystemTime { tv_sec: 1789928639, tv_nsec: 536431358 }] camera fit end\n[SystemTime { tv_sec: 1789928639, tv_nsec: 537042266 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928639, tv_nsec: 548570810 }] terminal spawn end\n[SystemTime { tv_sec: 1789928639, tv_nsec: 548604037 }] launch state load end\n[SystemTime { tv_sec: 1789928639, tv_nsec: 552419631 }] window created\n[SystemTime { tv_sec: 1789928639, tv_nsec: 552442648 }] runtime creation begin\n[SystemTime { tv_sec: 1789928639, tv_nsec: 553103237 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928639, tv_nsec: 666149565 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928639, tv_nsec: 684016642 }] surface identity window=WindowId(93905838454368) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928639, tv_nsec: 684040838 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928639, tv_nsec: 708857655 }] wgpu request device end\n[SystemTime { tv_sec: 1789928639, tv_nsec: 710982026 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n[SystemTime { tv_sec: 1789928639, tv_nsec: 762285904 }] initial surface configure end\n[SystemTime { tv_sec: 1789928639, tv_nsec: 762371255 }] renderer init begin\n[SystemTime { tv_sec: 1789928639, tv_nsec: 891664142 }] renderer init end\n[SystemTime { tv_sec: 1789928640, tv_nsec: 39682546 }] runtime creation end\n[SystemTime { tv_sec: 1789928640, tv_nsec: 39718544 }] window visible\n[SystemTime { tv_sec: 1789928640, tv_nsec: 41686780 }] surface identity window=WindowId(93905833995952) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "wayland",
+      "host": "new",
+      "measurements_enabled": false,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-wayland-new-3p_72k9k/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-wayland-new-3p_72k9k",
+      "samples": [],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928642, tv_nsec: 145671699 }] surface identity window=WindowId(94826560861040) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789928642, tv_nsec: 326671598 }] surface identity window=WindowId(94826559101776) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=660078 start=SystemTime { tv_sec: 1789928640, tv_nsec: 390619038 }\n[SystemTime { tv_sec: 1789928640, tv_nsec: 391005040 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-wayland-new-3p_72k9k/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: false, open_new_project: true, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928640, tv_nsec: 404055013 }] resumed event\n[SystemTime { tv_sec: 1789928640, tv_nsec: 404085233 }] launch state load begin\n[SystemTime { tv_sec: 1789928640, tv_nsec: 404133547 }] request resolve begin\n[SystemTime { tv_sec: 1789928640, tv_nsec: 632779683 }] request resolve end project_root=/tmp/datum-s0-wayland-new-3p_72k9k/datum-eda/gui-imports/board-127023218f6db766 board_file=None\n[SystemTime { tv_sec: 1789928640, tv_nsec: 632799887 }] workspace load begin\n[SystemTime { tv_sec: 1789928642, tv_nsec: 512894 }] workspace load end\n[SystemTime { tv_sec: 1789928642, tv_nsec: 535711 }] camera fit begin\n[SystemTime { tv_sec: 1789928642, tv_nsec: 549407 }] camera fit end\n[SystemTime { tv_sec: 1789928642, tv_nsec: 1031771 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928642, tv_nsec: 13721508 }] terminal spawn end\n[SystemTime { tv_sec: 1789928642, tv_nsec: 13771284 }] launch state load end\n[SystemTime { tv_sec: 1789928642, tv_nsec: 18096518 }] window created\n[SystemTime { tv_sec: 1789928642, tv_nsec: 18118662 }] runtime creation begin\n[SystemTime { tv_sec: 1789928642, tv_nsec: 18960911 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928642, tv_nsec: 125572398 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928642, tv_nsec: 145671699 }] surface identity window=WindowId(94826560861040) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928642, tv_nsec: 145694872 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928642, tv_nsec: 170130348 }] wgpu request device end\n[SystemTime { tv_sec: 1789928642, tv_nsec: 172044335 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n[SystemTime { tv_sec: 1789928642, tv_nsec: 202216301 }] initial surface configure end\n[SystemTime { tv_sec: 1789928642, tv_nsec: 202257118 }] renderer init begin\n[SystemTime { tv_sec: 1789928642, tv_nsec: 323599170 }] renderer init end\n[SystemTime { tv_sec: 1789928642, tv_nsec: 325197183 }] runtime creation end\n[SystemTime { tv_sec: 1789928642, tv_nsec: 325227353 }] window visible\n[SystemTime { tv_sec: 1789928642, tv_nsec: 326671598 }] surface identity window=WindowId(94826559101776) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "wayland",
+      "host": "main",
+      "measurements_enabled": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-wayland-main-vun2eb4c/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-wayland-main-vun2eb4c",
+      "samples": [
+        {
+          "device_epoch": 1,
+          "frame": 1,
+          "frame_span_ns": 8980583.607398987,
+          "host": 1,
+          "own_pass_sum_ns": 8963916.940223694,
+          "passes_ns": [
+            [
+              "scene",
+              7310166.889755249
+            ],
+            [
+              "text",
+              1653750.0504684448
+            ]
+          ],
+          "raw_ticks": [
+            34460358645,
+            34460446367,
+            34460446567,
+            34460466412
+          ],
+          "submission": 1,
+          "timestamp_period_ns": 83.33333587646484
+        }
+      ],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928644, tv_nsec: 453380791 }] surface identity window=WindowId(94545559817536) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=660120 start=SystemTime { tv_sec: 1789928642, tv_nsec: 689193256 }\n[SystemTime { tv_sec: 1789928642, tv_nsec: 689658775 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-wayland-main-vun2eb4c/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: false, open_new_project: false, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928642, tv_nsec: 707907150 }] resumed event\n[SystemTime { tv_sec: 1789928642, tv_nsec: 707945758 }] launch state load begin\n[SystemTime { tv_sec: 1789928642, tv_nsec: 707983624 }] request resolve begin\n[SystemTime { tv_sec: 1789928642, tv_nsec: 936806713 }] request resolve end project_root=/tmp/datum-s0-wayland-main-vun2eb4c/datum-eda/gui-imports/board-fb8d1aeb59ffa366 board_file=None\n[SystemTime { tv_sec: 1789928642, tv_nsec: 936828717 }] workspace load begin\n[SystemTime { tv_sec: 1789928644, tv_nsec: 310564123 }] workspace load end\n[SystemTime { tv_sec: 1789928644, tv_nsec: 310586949 }] camera fit begin\n[SystemTime { tv_sec: 1789928644, tv_nsec: 310600500 }] camera fit end\n[SystemTime { tv_sec: 1789928644, tv_nsec: 310983788 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928644, tv_nsec: 321309704 }] terminal spawn end\n[SystemTime { tv_sec: 1789928644, tv_nsec: 321348965 }] launch state load end\n[SystemTime { tv_sec: 1789928644, tv_nsec: 325403581 }] window created\n[SystemTime { tv_sec: 1789928644, tv_nsec: 325431537 }] runtime creation begin\n[SystemTime { tv_sec: 1789928644, tv_nsec: 326236128 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928644, tv_nsec: 432892264 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928644, tv_nsec: 453380791 }] surface identity window=WindowId(94545559817536) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928644, tv_nsec: 453402724 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928644, tv_nsec: 479209237 }] wgpu request device end\n[SystemTime { tv_sec: 1789928644, tv_nsec: 481098454 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n[SystemTime { tv_sec: 1789928644, tv_nsec: 526156571 }] initial surface configure end\n[SystemTime { tv_sec: 1789928644, tv_nsec: 526187758 }] renderer init begin\n[SystemTime { tv_sec: 1789928644, tv_nsec: 642649986 }] gpu_measurement_host host=1 epoch=1 window=WindowId(94545559817536) timestamp_period_ns=83.333336\n[SystemTime { tv_sec: 1789928644, tv_nsec: 642670570 }] renderer init end\n[SystemTime { tv_sec: 1789928644, tv_nsec: 643924180 }] runtime creation end\n[SystemTime { tv_sec: 1789928644, tv_nsec: 643948749 }] window visible\ngpu_measurement {\"device_epoch\":1,\"frame\":1,\"frame_span_ns\":8980583.607398987,\"host\":1,\"own_pass_sum_ns\":8963916.940223694,\"passes_ns\":[[\"scene\",7310166.889755249],[\"text\",1653750.0504684448]],\"raw_ticks\":[34460358645,34460446367,34460446567,34460466412],\"submission\":1,\"timestamp_period_ns\":83.33333587646484}\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "wayland",
+      "host": "global",
+      "measurements_enabled": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-wayland-global-l9x4z7xf/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-wayland-global-l9x4z7xf",
+      "samples": [
+        {
+          "device_epoch": 1,
+          "frame": 1,
+          "frame_span_ns": 8546750.26082611,
+          "host": 1,
+          "own_pass_sum_ns": 8534500.26045227,
+          "passes_ns": [
+            [
+              "scene",
+              7091166.883071899
+            ],
+            [
+              "text",
+              1443333.377380371
+            ]
+          ],
+          "raw_ticks": [
+            34492701143,
+            34492786237,
+            34492786384,
+            34492803704
+          ],
+          "submission": 1,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 1,
+          "frame_span_ns": 2005333.39453125,
+          "host": 2,
+          "own_pass_sum_ns": 2005333.39453125,
+          "passes_ns": [
+            [
+              "dialog",
+              2005333.39453125
+            ]
+          ],
+          "raw_ticks": [
+            34492848264,
+            34492872328
+          ],
+          "submission": 2,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 2,
+          "frame_span_ns": 3618500.1104278564,
+          "host": 1,
+          "own_pass_sum_ns": 3611083.443534851,
+          "passes_ns": [
+            [
+              "scene",
+              2719083.4163131714
+            ],
+            [
+              "text",
+              892000.0272216797
+            ]
+          ],
+          "raw_ticks": [
+            34493069909,
+            34493102538,
+            34493102627,
+            34493113331
+          ],
+          "submission": 3,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 2,
+          "frame_span_ns": 1159000.035369873,
+          "host": 2,
+          "own_pass_sum_ns": 1159000.035369873,
+          "passes_ns": [
+            [
+              "dialog",
+              1159000.035369873
+            ]
+          ],
+          "raw_ticks": [
+            34493114360,
+            34493128268
+          ],
+          "submission": 4,
+          "timestamp_period_ns": 83.33333587646484
+        }
+      ],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928647, tv_nsec: 71855658 }] surface identity window=WindowId(94233350697760) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789928647, tv_nsec: 243339452 }] surface identity window=WindowId(94233342344400) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=660161 start=SystemTime { tv_sec: 1789928645, tv_nsec: 167177508 }\n[SystemTime { tv_sec: 1789928645, tv_nsec: 167412181 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-wayland-global-l9x4z7xf/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: true, open_new_project: false, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928645, tv_nsec: 175982364 }] resumed event\n[SystemTime { tv_sec: 1789928645, tv_nsec: 176007094 }] launch state load begin\n[SystemTime { tv_sec: 1789928645, tv_nsec: 176036358 }] request resolve begin\n[SystemTime { tv_sec: 1789928645, tv_nsec: 410266813 }] request resolve end project_root=/tmp/datum-s0-wayland-global-l9x4z7xf/datum-eda/gui-imports/board-5fe0b6c4bf566d21 board_file=None\n[SystemTime { tv_sec: 1789928645, tv_nsec: 410288525 }] workspace load begin\n[SystemTime { tv_sec: 1789928646, tv_nsec: 898946506 }] workspace load end\n[SystemTime { tv_sec: 1789928646, tv_nsec: 898970952 }] camera fit begin\n[SystemTime { tv_sec: 1789928646, tv_nsec: 898986036 }] camera fit end\n[SystemTime { tv_sec: 1789928646, tv_nsec: 899417207 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928646, tv_nsec: 912697383 }] terminal spawn end\n[SystemTime { tv_sec: 1789928646, tv_nsec: 912732856 }] launch state load end\n[SystemTime { tv_sec: 1789928646, tv_nsec: 917572403 }] window created\n[SystemTime { tv_sec: 1789928646, tv_nsec: 917601859 }] runtime creation begin\n[SystemTime { tv_sec: 1789928646, tv_nsec: 918691653 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928647, tv_nsec: 50094072 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928647, tv_nsec: 71855658 }] surface identity window=WindowId(94233350697760) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928647, tv_nsec: 71885315 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928647, tv_nsec: 98726350 }] wgpu request device end\n[SystemTime { tv_sec: 1789928647, tv_nsec: 100688783 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n[SystemTime { tv_sec: 1789928647, tv_nsec: 122089740 }] initial surface configure end\n[SystemTime { tv_sec: 1789928647, tv_nsec: 122118733 }] renderer init begin\n[SystemTime { tv_sec: 1789928647, tv_nsec: 240302917 }] gpu_measurement_host host=1 epoch=1 window=WindowId(94233350697760) timestamp_period_ns=83.333336\n[SystemTime { tv_sec: 1789928647, tv_nsec: 240332038 }] renderer init end\n[SystemTime { tv_sec: 1789928647, tv_nsec: 241817090 }] runtime creation end\n[SystemTime { tv_sec: 1789928647, tv_nsec: 241850072 }] window visible\n[SystemTime { tv_sec: 1789928647, tv_nsec: 243339452 }] surface identity window=WindowId(94233342344400) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928647, tv_nsec: 327362330 }] gpu_measurement_host host=2 epoch=1 window=WindowId(94233342344400) timestamp_period_ns=83.333336\ngpu_measurement {\"device_epoch\":1,\"frame\":1,\"frame_span_ns\":8546750.26082611,\"host\":1,\"own_pass_sum_ns\":8534500.26045227,\"passes_ns\":[[\"scene\",7091166.883071899],[\"text\",1443333.377380371]],\"raw_ticks\":[34492701143,34492786237,34492786384,34492803704],\"submission\":1,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":1,\"frame_span_ns\":2005333.39453125,\"host\":2,\"own_pass_sum_ns\":2005333.39453125,\"passes_ns\":[[\"dialog\",2005333.39453125]],\"raw_ticks\":[34492848264,34492872328],\"submission\":2,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":2,\"frame_span_ns\":3618500.1104278564,\"host\":1,\"own_pass_sum_ns\":3611083.443534851,\"passes_ns\":[[\"scene\",2719083.4163131714],[\"text\",892000.0272216797]],\"raw_ticks\":[34493069909,34493102538,34493102627,34493113331],\"submission\":3,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":2,\"frame_span_ns\":1159000.035369873,\"host\":2,\"own_pass_sum_ns\":1159000.035369873,\"passes_ns\":[[\"dialog\",1159000.035369873]],\"raw_ticks\":[34493114360,34493128268],\"submission\":4,\"timestamp_period_ns\":83.33333587646484}\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "wayland",
+      "host": "project",
+      "measurements_enabled": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-wayland-project-4bw9oe_5/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-wayland-project-4bw9oe_5",
+      "samples": [
+        {
+          "device_epoch": 1,
+          "frame": 1,
+          "frame_span_ns": 17893917.212745667,
+          "host": 1,
+          "own_pass_sum_ns": 17878083.87892914,
+          "passes_ns": [
+            [
+              "scene",
+              16168083.82674408
+            ],
+            [
+              "text",
+              1710000.0521850586
+            ]
+          ],
+          "raw_ticks": [
+            34531052207,
+            34531246224,
+            34531246414,
+            34531266934
+          ],
+          "submission": 1,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 1,
+          "frame_span_ns": 9615416.960105896,
+          "host": 2,
+          "own_pass_sum_ns": 9615416.960105896,
+          "passes_ns": [
+            [
+              "dialog",
+              9615416.960105896
+            ]
+          ],
+          "raw_ticks": [
+            34531314706,
+            34531430091
+          ],
+          "submission": 2,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 2,
+          "frame_span_ns": 6792000.207275391,
+          "host": 1,
+          "own_pass_sum_ns": 6776333.540130615,
+          "passes_ns": [
+            [
+              "scene",
+              5178250.158027649
+            ],
+            [
+              "text",
+              1598083.3821029663
+            ]
+          ],
+          "raw_ticks": [
+            34531512310,
+            34531574449,
+            34531574637,
+            34531593814
+          ],
+          "submission": 3,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 2,
+          "frame_span_ns": 2476333.4089050293,
+          "host": 2,
+          "own_pass_sum_ns": 2476333.4089050293,
+          "passes_ns": [
+            [
+              "dialog",
+              2476333.4089050293
+            ]
+          ],
+          "raw_ticks": [
+            34531659282,
+            34531688998
+          ],
+          "submission": 4,
+          "timestamp_period_ns": 83.33333587646484
+        }
+      ],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928649, tv_nsec: 962495000 }] surface identity window=WindowId(93886657950896) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789928650, tv_nsec: 373467538 }] surface identity window=WindowId(93886656187760) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=660237 start=SystemTime { tv_sec: 1789928647, tv_nsec: 866764471 }\n[SystemTime { tv_sec: 1789928647, tv_nsec: 867034245 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-wayland-project-4bw9oe_5/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: false, open_new_project: false, open_project_preferences: true, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928647, tv_nsec: 877914199 }] resumed event\n[SystemTime { tv_sec: 1789928647, tv_nsec: 877946471 }] launch state load begin\n[SystemTime { tv_sec: 1789928647, tv_nsec: 878109609 }] request resolve begin\n[SystemTime { tv_sec: 1789928648, tv_nsec: 136772616 }] request resolve end project_root=/tmp/datum-s0-wayland-project-4bw9oe_5/datum-eda/gui-imports/board-4fb2c7124d32be2d board_file=None\n[SystemTime { tv_sec: 1789928648, tv_nsec: 136796958 }] workspace load begin\n[SystemTime { tv_sec: 1789928649, tv_nsec: 787232365 }] workspace load end\n[SystemTime { tv_sec: 1789928649, tv_nsec: 787258607 }] camera fit begin\n[SystemTime { tv_sec: 1789928649, tv_nsec: 787275040 }] camera fit end\n[SystemTime { tv_sec: 1789928649, tv_nsec: 787688789 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928649, tv_nsec: 801313245 }] terminal spawn end\n[SystemTime { tv_sec: 1789928649, tv_nsec: 801375609 }] launch state load end\n[SystemTime { tv_sec: 1789928649, tv_nsec: 806210941 }] window created\n[SystemTime { tv_sec: 1789928649, tv_nsec: 806236244 }] runtime creation begin\n[SystemTime { tv_sec: 1789928649, tv_nsec: 807407856 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928649, tv_nsec: 933318270 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928649, tv_nsec: 962495000 }] surface identity window=WindowId(93886657950896) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928649, tv_nsec: 962528084 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928650, tv_nsec: 395299 }] wgpu request device end\n[SystemTime { tv_sec: 1789928650, tv_nsec: 2648145 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n[SystemTime { tv_sec: 1789928650, tv_nsec: 42132495 }] initial surface configure end\n[SystemTime { tv_sec: 1789928650, tv_nsec: 42163302 }] renderer init begin\n[SystemTime { tv_sec: 1789928650, tv_nsec: 184700217 }] gpu_measurement_host host=1 epoch=1 window=WindowId(93886657950896) timestamp_period_ns=83.333336\n[SystemTime { tv_sec: 1789928650, tv_nsec: 184725068 }] renderer init end\n[SystemTime { tv_sec: 1789928650, tv_nsec: 370427206 }] runtime creation end\n[SystemTime { tv_sec: 1789928650, tv_nsec: 370491078 }] window visible\n[SystemTime { tv_sec: 1789928650, tv_nsec: 373467538 }] surface identity window=WindowId(93886656187760) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928650, tv_nsec: 508969571 }] gpu_measurement_host host=2 epoch=1 window=WindowId(93886656187760) timestamp_period_ns=83.333336\ngpu_measurement {\"device_epoch\":1,\"frame\":1,\"frame_span_ns\":17893917.212745667,\"host\":1,\"own_pass_sum_ns\":17878083.87892914,\"passes_ns\":[[\"scene\",16168083.82674408],[\"text\",1710000.0521850586]],\"raw_ticks\":[34531052207,34531246224,34531246414,34531266934],\"submission\":1,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":1,\"frame_span_ns\":9615416.960105896,\"host\":2,\"own_pass_sum_ns\":9615416.960105896,\"passes_ns\":[[\"dialog\",9615416.960105896]],\"raw_ticks\":[34531314706,34531430091],\"submission\":2,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":2,\"frame_span_ns\":6792000.207275391,\"host\":1,\"own_pass_sum_ns\":6776333.540130615,\"passes_ns\":[[\"scene\",5178250.158027649],[\"text\",1598083.3821029663]],\"raw_ticks\":[34531512310,34531574449,34531574637,34531593814],\"submission\":3,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":2,\"frame_span_ns\":2476333.4089050293,\"host\":2,\"own_pass_sum_ns\":2476333.4089050293,\"passes_ns\":[[\"dialog\",2476333.4089050293]],\"raw_ticks\":[34531659282,34531688998],\"submission\":4,\"timestamp_period_ns\":83.33333587646484}\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "wayland",
+      "host": "new",
+      "measurements_enabled": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-wayland-new-ih_b2bdf/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-wayland-new-ih_b2bdf",
+      "samples": [
+        {
+          "device_epoch": 1,
+          "frame": 1,
+          "frame_span_ns": 6172750.18837738,
+          "host": 2,
+          "own_pass_sum_ns": 6127750.187004089,
+          "passes_ns": [
+            [
+              "scene",
+              2871250.087623596
+            ],
+            [
+              "text",
+              999250.0304946899
+            ],
+            [
+              "menu-background",
+              1481916.7118911743
+            ],
+            [
+              "menu-text",
+              775333.3569946289
+            ]
+          ],
+          "raw_ticks": [
+            34566416301,
+            34566450756,
+            34566450935,
+            34566462926,
+            34566463107,
+            34566480890,
+            34566481070,
+            34566490374
+          ],
+          "submission": 1,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 1,
+          "frame_span_ns": 6656583.536476135,
+          "host": 1,
+          "own_pass_sum_ns": 6646000.202819824,
+          "passes_ns": [
+            [
+              "scene",
+              5379250.164161682
+            ],
+            [
+              "text",
+              1266750.038658142
+            ]
+          ],
+          "raw_ticks": [
+            34566689659,
+            34566754210,
+            34566754337,
+            34566769538
+          ],
+          "submission": 2,
+          "timestamp_period_ns": 83.33333587646484
+        }
+      ],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928653, tv_nsec: 152431661 }] surface identity window=WindowId(94181698307936) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789928653, tv_nsec: 339513997 }] surface identity window=WindowId(94181706220640) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=660329 start=SystemTime { tv_sec: 1789928651, tv_nsec: 80358063 }\n[SystemTime { tv_sec: 1789928651, tv_nsec: 80726568 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-wayland-new-ih_b2bdf/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: false, open_new_project: true, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928651, tv_nsec: 94275117 }] resumed event\n[SystemTime { tv_sec: 1789928651, tv_nsec: 94304848 }] launch state load begin\n[SystemTime { tv_sec: 1789928651, tv_nsec: 94339666 }] request resolve begin\n[SystemTime { tv_sec: 1789928651, tv_nsec: 405536972 }] request resolve end project_root=/tmp/datum-s0-wayland-new-ih_b2bdf/datum-eda/gui-imports/board-8eee3243ab5aceab board_file=None\n[SystemTime { tv_sec: 1789928651, tv_nsec: 405560871 }] workspace load begin\n[SystemTime { tv_sec: 1789928652, tv_nsec: 991656998 }] workspace load end\n[SystemTime { tv_sec: 1789928652, tv_nsec: 991680797 }] camera fit begin\n[SystemTime { tv_sec: 1789928652, tv_nsec: 991696525 }] camera fit end\n[SystemTime { tv_sec: 1789928652, tv_nsec: 992127921 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928653, tv_nsec: 4921678 }] terminal spawn end\n[SystemTime { tv_sec: 1789928653, tv_nsec: 4960950 }] launch state load end\n[SystemTime { tv_sec: 1789928653, tv_nsec: 10410577 }] window created\n[SystemTime { tv_sec: 1789928653, tv_nsec: 10441495 }] runtime creation begin\n[SystemTime { tv_sec: 1789928653, tv_nsec: 11618539 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928653, tv_nsec: 133383858 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928653, tv_nsec: 152431661 }] surface identity window=WindowId(94181698307936) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928653, tv_nsec: 152457453 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928653, tv_nsec: 178675206 }] wgpu request device end\n[SystemTime { tv_sec: 1789928653, tv_nsec: 180515222 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n[SystemTime { tv_sec: 1789928653, tv_nsec: 218156794 }] initial surface configure end\n[SystemTime { tv_sec: 1789928653, tv_nsec: 218188054 }] renderer init begin\n[SystemTime { tv_sec: 1789928653, tv_nsec: 336330945 }] gpu_measurement_host host=1 epoch=1 window=WindowId(94181698307936) timestamp_period_ns=83.333336\n[SystemTime { tv_sec: 1789928653, tv_nsec: 336351865 }] renderer init end\n[SystemTime { tv_sec: 1789928653, tv_nsec: 338069084 }] runtime creation end\n[SystemTime { tv_sec: 1789928653, tv_nsec: 338124813 }] window visible\n[SystemTime { tv_sec: 1789928653, tv_nsec: 339513997 }] surface identity window=WindowId(94181706220640) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928653, tv_nsec: 417102074 }] gpu_measurement_host host=2 epoch=1 window=WindowId(94181706220640) timestamp_period_ns=83.333336\ngpu_measurement {\"device_epoch\":1,\"frame\":1,\"frame_span_ns\":6172750.18837738,\"host\":2,\"own_pass_sum_ns\":6127750.187004089,\"passes_ns\":[[\"scene\",2871250.087623596],[\"text\",999250.0304946899],[\"menu-background\",1481916.7118911743],[\"menu-text\",775333.3569946289]],\"raw_ticks\":[34566416301,34566450756,34566450935,34566462926,34566463107,34566480890,34566481070,34566490374],\"submission\":1,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":1,\"frame_span_ns\":6656583.536476135,\"host\":1,\"own_pass_sum_ns\":6646000.202819824,\"passes_ns\":[[\"scene\",5379250.164161682],[\"text\",1266750.038658142]],\"raw_ticks\":[34566689659,34566754210,34566754337,34566769538],\"submission\":2,\"timestamp_period_ns\":83.33333587646484}\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "x11",
+      "host": "main",
+      "measurements_enabled": false,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-x11-main-v3ndpi9h/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-x11-main-v3ndpi9h",
+      "samples": [],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928655, tv_nsec: 950477205 }] surface identity window=WindowId(94374147245072) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=660375 start=SystemTime { tv_sec: 1789928653, tv_nsec: 980666169 }\n[SystemTime { tv_sec: 1789928653, tv_nsec: 980923263 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-x11-main-v3ndpi9h/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: false, open_new_project: false, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928653, tv_nsec: 995831677 }] resumed event\n[SystemTime { tv_sec: 1789928653, tv_nsec: 995868960 }] launch state load begin\n[SystemTime { tv_sec: 1789928653, tv_nsec: 995911913 }] request resolve begin\n[SystemTime { tv_sec: 1789928654, tv_nsec: 247672652 }] request resolve end project_root=/tmp/datum-s0-x11-main-v3ndpi9h/datum-eda/gui-imports/board-4da84d4f18e64a1d board_file=None\n[SystemTime { tv_sec: 1789928654, tv_nsec: 247696174 }] workspace load begin\n[SystemTime { tv_sec: 1789928655, tv_nsec: 799659808 }] workspace load end\n[SystemTime { tv_sec: 1789928655, tv_nsec: 799706756 }] camera fit begin\n[SystemTime { tv_sec: 1789928655, tv_nsec: 799723707 }] camera fit end\n[SystemTime { tv_sec: 1789928655, tv_nsec: 800261515 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928655, tv_nsec: 811821177 }] terminal spawn end\n[SystemTime { tv_sec: 1789928655, tv_nsec: 811871705 }] launch state load end\n[SystemTime { tv_sec: 1789928655, tv_nsec: 816371397 }] window created\n[SystemTime { tv_sec: 1789928655, tv_nsec: 816396232 }] runtime creation begin\n[SystemTime { tv_sec: 1789928655, tv_nsec: 817090692 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928655, tv_nsec: 931554641 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928655, tv_nsec: 950477205 }] surface identity window=WindowId(94374147245072) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928655, tv_nsec: 950500013 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928655, tv_nsec: 975424321 }] wgpu request device end\n[SystemTime { tv_sec: 1789928655, tv_nsec: 977311921 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "x11",
+      "host": "global",
+      "measurements_enabled": false,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-x11-global-kqebydxg/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-x11-global-kqebydxg",
+      "samples": [],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928658, tv_nsec: 605865804 }] surface identity window=WindowId(93828857367232) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789928658, tv_nsec: 897334880 }] surface identity window=WindowId(93828864843984) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=660419 start=SystemTime { tv_sec: 1789928656, tv_nsec: 329907378 }\n[SystemTime { tv_sec: 1789928656, tv_nsec: 330237769 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-x11-global-kqebydxg/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: true, open_new_project: false, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928656, tv_nsec: 341244690 }] resumed event\n[SystemTime { tv_sec: 1789928656, tv_nsec: 341266808 }] launch state load begin\n[SystemTime { tv_sec: 1789928656, tv_nsec: 341294959 }] request resolve begin\n[SystemTime { tv_sec: 1789928656, tv_nsec: 579752561 }] request resolve end project_root=/tmp/datum-s0-x11-global-kqebydxg/datum-eda/gui-imports/board-e8ca0732d21291aa board_file=None\n[SystemTime { tv_sec: 1789928656, tv_nsec: 579773782 }] workspace load begin\n[SystemTime { tv_sec: 1789928658, tv_nsec: 394442915 }] workspace load end\n[SystemTime { tv_sec: 1789928658, tv_nsec: 394476728 }] camera fit begin\n[SystemTime { tv_sec: 1789928658, tv_nsec: 394496361 }] camera fit end\n[SystemTime { tv_sec: 1789928658, tv_nsec: 395063664 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928658, tv_nsec: 409171011 }] terminal spawn end\n[SystemTime { tv_sec: 1789928658, tv_nsec: 409222405 }] launch state load end\n[SystemTime { tv_sec: 1789928658, tv_nsec: 415793940 }] window created\n[SystemTime { tv_sec: 1789928658, tv_nsec: 415831479 }] runtime creation begin\n[SystemTime { tv_sec: 1789928658, tv_nsec: 417156053 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928658, tv_nsec: 579259487 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928658, tv_nsec: 605865804 }] surface identity window=WindowId(93828857367232) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928658, tv_nsec: 605902237 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928658, tv_nsec: 654273608 }] wgpu request device end\n[SystemTime { tv_sec: 1789928658, tv_nsec: 656872099 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n[SystemTime { tv_sec: 1789928658, tv_nsec: 710096220 }] initial surface configure end\n[SystemTime { tv_sec: 1789928658, tv_nsec: 710131760 }] renderer init begin\n[SystemTime { tv_sec: 1789928658, tv_nsec: 894435653 }] renderer init end\n[SystemTime { tv_sec: 1789928658, tv_nsec: 896027282 }] runtime creation end\n[SystemTime { tv_sec: 1789928658, tv_nsec: 896069722 }] window visible\n[SystemTime { tv_sec: 1789928658, tv_nsec: 897334880 }] surface identity window=WindowId(93828864843984) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "x11",
+      "host": "project",
+      "measurements_enabled": false,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-x11-project-rbwexubu/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-x11-project-rbwexubu",
+      "samples": [],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928661, tv_nsec: 713630535 }] surface identity window=WindowId(94166962109152) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789928662, tv_nsec: 299586725 }] surface identity window=WindowId(94166946985888) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=660526 start=SystemTime { tv_sec: 1789928659, tv_nsec: 370546865 }\n[SystemTime { tv_sec: 1789928659, tv_nsec: 371062625 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-x11-project-rbwexubu/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: false, open_new_project: false, open_project_preferences: true, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928659, tv_nsec: 384330455 }] resumed event\n[SystemTime { tv_sec: 1789928659, tv_nsec: 384366224 }] launch state load begin\n[SystemTime { tv_sec: 1789928659, tv_nsec: 384406105 }] request resolve begin\n[SystemTime { tv_sec: 1789928659, tv_nsec: 667820005 }] request resolve end project_root=/tmp/datum-s0-x11-project-rbwexubu/datum-eda/gui-imports/board-dd166897a91e2073 board_file=None\n[SystemTime { tv_sec: 1789928659, tv_nsec: 667855445 }] workspace load begin\n[SystemTime { tv_sec: 1789928661, tv_nsec: 537650953 }] workspace load end\n[SystemTime { tv_sec: 1789928661, tv_nsec: 537675117 }] camera fit begin\n[SystemTime { tv_sec: 1789928661, tv_nsec: 537690280 }] camera fit end\n[SystemTime { tv_sec: 1789928661, tv_nsec: 538180867 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928661, tv_nsec: 552909455 }] terminal spawn end\n[SystemTime { tv_sec: 1789928661, tv_nsec: 552976433 }] launch state load end\n[SystemTime { tv_sec: 1789928661, tv_nsec: 557399806 }] window created\n[SystemTime { tv_sec: 1789928661, tv_nsec: 557426612 }] runtime creation begin\n[SystemTime { tv_sec: 1789928661, tv_nsec: 558381866 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928661, tv_nsec: 690082647 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928661, tv_nsec: 713630535 }] surface identity window=WindowId(94166962109152) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928661, tv_nsec: 713665131 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928661, tv_nsec: 761837067 }] wgpu request device end\n[SystemTime { tv_sec: 1789928661, tv_nsec: 768641932 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n[SystemTime { tv_sec: 1789928661, tv_nsec: 798495783 }] initial surface configure end\n[SystemTime { tv_sec: 1789928661, tv_nsec: 798538517 }] renderer init begin\n[SystemTime { tv_sec: 1789928662, tv_nsec: 49005094 }] renderer init end\n[SystemTime { tv_sec: 1789928662, tv_nsec: 298285135 }] runtime creation end\n[SystemTime { tv_sec: 1789928662, tv_nsec: 298325769 }] window visible\n[SystemTime { tv_sec: 1789928662, tv_nsec: 299586725 }] surface identity window=WindowId(94166946985888) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "x11",
+      "host": "new",
+      "measurements_enabled": false,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-x11-new-cp4t5eq1/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-x11-new-cp4t5eq1",
+      "samples": [],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928664, tv_nsec: 531567816 }] surface identity window=WindowId(94531868330672) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789928664, tv_nsec: 741138553 }] surface identity window=WindowId(94531873845632) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=660628 start=SystemTime { tv_sec: 1789928662, tv_nsec: 635023018 }\n[SystemTime { tv_sec: 1789928662, tv_nsec: 635258124 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-x11-new-cp4t5eq1/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: false, open_new_project: true, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928662, tv_nsec: 650645965 }] resumed event\n[SystemTime { tv_sec: 1789928662, tv_nsec: 650682149 }] launch state load begin\n[SystemTime { tv_sec: 1789928662, tv_nsec: 650725545 }] request resolve begin\n[SystemTime { tv_sec: 1789928662, tv_nsec: 900508034 }] request resolve end project_root=/tmp/datum-s0-x11-new-cp4t5eq1/datum-eda/gui-imports/board-c6ef393aae2c55d0 board_file=None\n[SystemTime { tv_sec: 1789928662, tv_nsec: 900532344 }] workspace load begin\n[SystemTime { tv_sec: 1789928664, tv_nsec: 377867594 }] workspace load end\n[SystemTime { tv_sec: 1789928664, tv_nsec: 377891075 }] camera fit begin\n[SystemTime { tv_sec: 1789928664, tv_nsec: 377906152 }] camera fit end\n[SystemTime { tv_sec: 1789928664, tv_nsec: 378353009 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928664, tv_nsec: 388847509 }] terminal spawn end\n[SystemTime { tv_sec: 1789928664, tv_nsec: 388891497 }] launch state load end\n[SystemTime { tv_sec: 1789928664, tv_nsec: 392142279 }] window created\n[SystemTime { tv_sec: 1789928664, tv_nsec: 392165617 }] runtime creation begin\n[SystemTime { tv_sec: 1789928664, tv_nsec: 392895486 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928664, tv_nsec: 513502215 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928664, tv_nsec: 531567816 }] surface identity window=WindowId(94531868330672) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928664, tv_nsec: 531589961 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928664, tv_nsec: 555537888 }] wgpu request device end\n[SystemTime { tv_sec: 1789928664, tv_nsec: 557546403 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n[SystemTime { tv_sec: 1789928664, tv_nsec: 602268283 }] initial surface configure end\n[SystemTime { tv_sec: 1789928664, tv_nsec: 602337687 }] renderer init begin\n[SystemTime { tv_sec: 1789928664, tv_nsec: 736764170 }] renderer init end\n[SystemTime { tv_sec: 1789928664, tv_nsec: 739343613 }] runtime creation end\n[SystemTime { tv_sec: 1789928664, tv_nsec: 739377702 }] window visible\n[SystemTime { tv_sec: 1789928664, tv_nsec: 741138553 }] surface identity window=WindowId(94531873845632) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "x11",
+      "host": "main",
+      "measurements_enabled": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-x11-main-xyo4391p/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-x11-main-xyo4391p",
+      "samples": [
+        {
+          "device_epoch": 1,
+          "frame": 1,
+          "frame_span_ns": 8576083.595054626,
+          "host": 1,
+          "own_pass_sum_ns": 8563333.594665527,
+          "passes_ns": [
+            [
+              "scene",
+              7244666.887756348
+            ],
+            [
+              "text",
+              1318666.7069091797
+            ]
+          ],
+          "raw_ticks": [
+            34729493147,
+            34729580083,
+            34729580236,
+            34729596060
+          ],
+          "submission": 1,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 2,
+          "frame_span_ns": 5702583.507362366,
+          "host": 1,
+          "own_pass_sum_ns": 5689666.840301514,
+          "passes_ns": [
+            [
+              "scene",
+              4392833.467391968
+            ],
+            [
+              "text",
+              1296833.372909546
+            ]
+          ],
+          "raw_ticks": [
+            34729714443,
+            34729767157,
+            34729767312,
+            34729782874
+          ],
+          "submission": 2,
+          "timestamp_period_ns": 83.33333587646484
+        }
+      ],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928666, tv_nsec: 903204823 }] surface identity window=WindowId(93943508358224) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=661157 start=SystemTime { tv_sec: 1789928665, tv_nsec: 82261394 }\n[SystemTime { tv_sec: 1789928665, tv_nsec: 82500012 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-x11-main-xyo4391p/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: false, open_new_project: false, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928665, tv_nsec: 94548492 }] resumed event\n[SystemTime { tv_sec: 1789928665, tv_nsec: 94572572 }] launch state load begin\n[SystemTime { tv_sec: 1789928665, tv_nsec: 94596944 }] request resolve begin\n[SystemTime { tv_sec: 1789928665, tv_nsec: 320882101 }] request resolve end project_root=/tmp/datum-s0-x11-main-xyo4391p/datum-eda/gui-imports/board-b79206ef572e1418 board_file=None\n[SystemTime { tv_sec: 1789928665, tv_nsec: 320901312 }] workspace load begin\n[SystemTime { tv_sec: 1789928666, tv_nsec: 759106939 }] workspace load end\n[SystemTime { tv_sec: 1789928666, tv_nsec: 759131952 }] camera fit begin\n[SystemTime { tv_sec: 1789928666, tv_nsec: 759146665 }] camera fit end\n[SystemTime { tv_sec: 1789928666, tv_nsec: 759721843 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928666, tv_nsec: 771536297 }] terminal spawn end\n[SystemTime { tv_sec: 1789928666, tv_nsec: 771604817 }] launch state load end\n[SystemTime { tv_sec: 1789928666, tv_nsec: 776149015 }] window created\n[SystemTime { tv_sec: 1789928666, tv_nsec: 776174103 }] runtime creation begin\n[SystemTime { tv_sec: 1789928666, tv_nsec: 776882940 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928666, tv_nsec: 885375394 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928666, tv_nsec: 903204823 }] surface identity window=WindowId(93943508358224) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928666, tv_nsec: 903224519 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928666, tv_nsec: 929708897 }] wgpu request device end\n[SystemTime { tv_sec: 1789928666, tv_nsec: 931687940 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n[SystemTime { tv_sec: 1789928666, tv_nsec: 966160742 }] initial surface configure end\n[SystemTime { tv_sec: 1789928666, tv_nsec: 966184785 }] renderer init begin\n[SystemTime { tv_sec: 1789928667, tv_nsec: 71597784 }] gpu_measurement_host host=1 epoch=1 window=WindowId(93943508358224) timestamp_period_ns=83.333336\n[SystemTime { tv_sec: 1789928667, tv_nsec: 71618874 }] renderer init end\n[SystemTime { tv_sec: 1789928667, tv_nsec: 72825833 }] runtime creation end\n[SystemTime { tv_sec: 1789928667, tv_nsec: 72856819 }] window visible\ngpu_measurement {\"device_epoch\":1,\"frame\":1,\"frame_span_ns\":8576083.595054626,\"host\":1,\"own_pass_sum_ns\":8563333.594665527,\"passes_ns\":[[\"scene\",7244666.887756348],[\"text\",1318666.7069091797]],\"raw_ticks\":[34729493147,34729580083,34729580236,34729596060],\"submission\":1,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":2,\"frame_span_ns\":5702583.507362366,\"host\":1,\"own_pass_sum_ns\":5689666.840301514,\"passes_ns\":[[\"scene\",4392833.467391968],[\"text\",1296833.372909546]],\"raw_ticks\":[34729714443,34729767157,34729767312,34729782874],\"submission\":2,\"timestamp_period_ns\":83.33333587646484}\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "x11",
+      "host": "global",
+      "measurements_enabled": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-x11-global-zxpfst7f/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-x11-global-zxpfst7f",
+      "samples": [
+        {
+          "device_epoch": 1,
+          "frame": 1,
+          "frame_span_ns": 2590333.412384033,
+          "host": 2,
+          "own_pass_sum_ns": 2590333.412384033,
+          "passes_ns": [
+            [
+              "dialog",
+              2590333.412384033
+            ]
+          ],
+          "raw_ticks": [
+            34763580608,
+            34763611692
+          ],
+          "submission": 1,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 1,
+          "frame_span_ns": 23224167.375411987,
+          "host": 1,
+          "own_pass_sum_ns": 23211167.37501526,
+          "passes_ns": [
+            [
+              "scene",
+              21932500.669326782
+            ],
+            [
+              "text",
+              1278666.7056884766
+            ]
+          ],
+          "raw_ticks": [
+            34763873271,
+            34764136461,
+            34764136617,
+            34764151961
+          ],
+          "submission": 2,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 2,
+          "frame_span_ns": 2131916.7317276,
+          "host": 2,
+          "own_pass_sum_ns": 2131916.7317276,
+          "passes_ns": [
+            [
+              "dialog",
+              2131916.7317276
+            ]
+          ],
+          "raw_ticks": [
+            34764153709,
+            34764179292
+          ],
+          "submission": 3,
+          "timestamp_period_ns": 83.33333587646484
+        }
+      ],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928669, tv_nsec: 638699121 }] surface identity window=WindowId(94677248806384) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789928669, tv_nsec: 826476160 }] surface identity window=WindowId(94677248018032) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=661208 start=SystemTime { tv_sec: 1789928667, tv_nsec: 580165619 }\n[SystemTime { tv_sec: 1789928667, tv_nsec: 580436952 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-x11-global-zxpfst7f/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: true, open_new_project: false, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928667, tv_nsec: 592669534 }] resumed event\n[SystemTime { tv_sec: 1789928667, tv_nsec: 592701115 }] launch state load begin\n[SystemTime { tv_sec: 1789928667, tv_nsec: 592736128 }] request resolve begin\n[SystemTime { tv_sec: 1789928667, tv_nsec: 839818429 }] request resolve end project_root=/tmp/datum-s0-x11-global-zxpfst7f/datum-eda/gui-imports/board-17766b076317447d board_file=None\n[SystemTime { tv_sec: 1789928667, tv_nsec: 839852467 }] workspace load begin\n[SystemTime { tv_sec: 1789928669, tv_nsec: 488190122 }] workspace load end\n[SystemTime { tv_sec: 1789928669, tv_nsec: 488212894 }] camera fit begin\n[SystemTime { tv_sec: 1789928669, tv_nsec: 488227347 }] camera fit end\n[SystemTime { tv_sec: 1789928669, tv_nsec: 488638851 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928669, tv_nsec: 501544707 }] terminal spawn end\n[SystemTime { tv_sec: 1789928669, tv_nsec: 501589028 }] launch state load end\n[SystemTime { tv_sec: 1789928669, tv_nsec: 505444912 }] window created\n[SystemTime { tv_sec: 1789928669, tv_nsec: 505473554 }] runtime creation begin\n[SystemTime { tv_sec: 1789928669, tv_nsec: 506362590 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928669, tv_nsec: 617358437 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928669, tv_nsec: 638699121 }] surface identity window=WindowId(94677248806384) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928669, tv_nsec: 638725523 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928669, tv_nsec: 663216374 }] wgpu request device end\n[SystemTime { tv_sec: 1789928669, tv_nsec: 665399781 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n[SystemTime { tv_sec: 1789928669, tv_nsec: 694173252 }] initial surface configure end\n[SystemTime { tv_sec: 1789928669, tv_nsec: 694198026 }] renderer init begin\n[SystemTime { tv_sec: 1789928669, tv_nsec: 824032912 }] gpu_measurement_host host=1 epoch=1 window=WindowId(94677248806384) timestamp_period_ns=83.333336\n[SystemTime { tv_sec: 1789928669, tv_nsec: 824056740 }] renderer init end\n[SystemTime { tv_sec: 1789928669, tv_nsec: 825263088 }] runtime creation end\n[SystemTime { tv_sec: 1789928669, tv_nsec: 825298459 }] window visible\n[SystemTime { tv_sec: 1789928669, tv_nsec: 826476160 }] surface identity window=WindowId(94677248018032) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928669, tv_nsec: 918518342 }] gpu_measurement_host host=2 epoch=1 window=WindowId(94677248018032) timestamp_period_ns=83.333336\ngpu_measurement {\"device_epoch\":1,\"frame\":1,\"frame_span_ns\":2590333.412384033,\"host\":2,\"own_pass_sum_ns\":2590333.412384033,\"passes_ns\":[[\"dialog\",2590333.412384033]],\"raw_ticks\":[34763580608,34763611692],\"submission\":1,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":1,\"frame_span_ns\":23224167.375411987,\"host\":1,\"own_pass_sum_ns\":23211167.37501526,\"passes_ns\":[[\"scene\",21932500.669326782],[\"text\",1278666.7056884766]],\"raw_ticks\":[34763873271,34764136461,34764136617,34764151961],\"submission\":2,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":2,\"frame_span_ns\":2131916.7317276,\"host\":2,\"own_pass_sum_ns\":2131916.7317276,\"passes_ns\":[[\"dialog\",2131916.7317276]],\"raw_ticks\":[34764153709,34764179292],\"submission\":3,\"timestamp_period_ns\":83.33333587646484}\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "x11",
+      "host": "project",
+      "measurements_enabled": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-x11-project-zmjq9_pm/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-x11-project-zmjq9_pm",
+      "samples": [
+        {
+          "device_epoch": 1,
+          "frame": 1,
+          "frame_span_ns": 7797750.237968445,
+          "host": 1,
+          "own_pass_sum_ns": 7782833.570846558,
+          "passes_ns": [
+            [
+              "scene",
+              6188500.188858032
+            ],
+            [
+              "text",
+              1594333.3819885254
+            ]
+          ],
+          "raw_ticks": [
+            34797635638,
+            34797709900,
+            34797710079,
+            34797729211
+          ],
+          "submission": 1,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 1,
+          "frame_span_ns": 2139333.3986206055,
+          "host": 2,
+          "own_pass_sum_ns": 2139333.3986206055,
+          "passes_ns": [
+            [
+              "dialog",
+              2139333.3986206055
+            ]
+          ],
+          "raw_ticks": [
+            34797876659,
+            34797902331
+          ],
+          "submission": 2,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 2,
+          "frame_span_ns": 4184500.1277008057,
+          "host": 1,
+          "own_pass_sum_ns": 4176666.794128418,
+          "passes_ns": [
+            [
+              "scene",
+              3305500.1008758545
+            ],
+            [
+              "text",
+              871166.6932525635
+            ]
+          ],
+          "raw_ticks": [
+            34797987921,
+            34798027587,
+            34798027681,
+            34798038135
+          ],
+          "submission": 3,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 3,
+          "frame_span_ns": 3344666.768737793,
+          "host": 1,
+          "own_pass_sum_ns": 3337333.435180664,
+          "passes_ns": [
+            [
+              "scene",
+              2555750.0779953003
+            ],
+            [
+              "text",
+              781583.3571853638
+            ]
+          ],
+          "raw_ticks": [
+            34798154819,
+            34798185488,
+            34798185576,
+            34798194955
+          ],
+          "submission": 4,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 2,
+          "frame_span_ns": 1268666.7053833008,
+          "host": 2,
+          "own_pass_sum_ns": 1268666.7053833008,
+          "passes_ns": [
+            [
+              "dialog",
+              1268666.7053833008
+            ]
+          ],
+          "raw_ticks": [
+            34798196121,
+            34798211345
+          ],
+          "submission": 5,
+          "timestamp_period_ns": 83.33333587646484
+        }
+      ],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928672, tv_nsec: 277208776 }] surface identity window=WindowId(94366239281008) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789928672, tv_nsec: 622298265 }] surface identity window=WindowId(94366254233840) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=661317 start=SystemTime { tv_sec: 1789928670, tv_nsec: 429035973 }\n[SystemTime { tv_sec: 1789928670, tv_nsec: 429270144 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-x11-project-zmjq9_pm/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: false, open_new_project: false, open_project_preferences: true, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928670, tv_nsec: 442689447 }] resumed event\n[SystemTime { tv_sec: 1789928670, tv_nsec: 442716484 }] launch state load begin\n[SystemTime { tv_sec: 1789928670, tv_nsec: 442748023 }] request resolve begin\n[SystemTime { tv_sec: 1789928670, tv_nsec: 677731233 }] request resolve end project_root=/tmp/datum-s0-x11-project-zmjq9_pm/datum-eda/gui-imports/board-99d95a567ab686c5 board_file=None\n[SystemTime { tv_sec: 1789928670, tv_nsec: 677787298 }] workspace load begin\n[SystemTime { tv_sec: 1789928672, tv_nsec: 107143376 }] workspace load end\n[SystemTime { tv_sec: 1789928672, tv_nsec: 107166864 }] camera fit begin\n[SystemTime { tv_sec: 1789928672, tv_nsec: 107182047 }] camera fit end\n[SystemTime { tv_sec: 1789928672, tv_nsec: 107615057 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928672, tv_nsec: 119622957 }] terminal spawn end\n[SystemTime { tv_sec: 1789928672, tv_nsec: 119678715 }] launch state load end\n[SystemTime { tv_sec: 1789928672, tv_nsec: 124766204 }] window created\n[SystemTime { tv_sec: 1789928672, tv_nsec: 124788293 }] runtime creation begin\n[SystemTime { tv_sec: 1789928672, tv_nsec: 125736655 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928672, tv_nsec: 248644189 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928672, tv_nsec: 277208776 }] surface identity window=WindowId(94366239281008) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928672, tv_nsec: 277233246 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928672, tv_nsec: 309826543 }] wgpu request device end\n[SystemTime { tv_sec: 1789928672, tv_nsec: 311976142 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n[SystemTime { tv_sec: 1789928672, tv_nsec: 350165064 }] initial surface configure end\n[SystemTime { tv_sec: 1789928672, tv_nsec: 350191821 }] renderer init begin\n[SystemTime { tv_sec: 1789928672, tv_nsec: 463742651 }] gpu_measurement_host host=1 epoch=1 window=WindowId(94366239281008) timestamp_period_ns=83.333336\n[SystemTime { tv_sec: 1789928672, tv_nsec: 463763675 }] renderer init end\n[SystemTime { tv_sec: 1789928672, tv_nsec: 620703489 }] runtime creation end\n[SystemTime { tv_sec: 1789928672, tv_nsec: 620741383 }] window visible\n[SystemTime { tv_sec: 1789928672, tv_nsec: 622298265 }] surface identity window=WindowId(94366254233840) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928672, tv_nsec: 721234399 }] gpu_measurement_host host=2 epoch=1 window=WindowId(94366254233840) timestamp_period_ns=83.333336\ngpu_measurement {\"device_epoch\":1,\"frame\":1,\"frame_span_ns\":7797750.237968445,\"host\":1,\"own_pass_sum_ns\":7782833.570846558,\"passes_ns\":[[\"scene\",6188500.188858032],[\"text\",1594333.3819885254]],\"raw_ticks\":[34797635638,34797709900,34797710079,34797729211],\"submission\":1,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":1,\"frame_span_ns\":2139333.3986206055,\"host\":2,\"own_pass_sum_ns\":2139333.3986206055,\"passes_ns\":[[\"dialog\",2139333.3986206055]],\"raw_ticks\":[34797876659,34797902331],\"submission\":2,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":2,\"frame_span_ns\":4184500.1277008057,\"host\":1,\"own_pass_sum_ns\":4176666.794128418,\"passes_ns\":[[\"scene\",3305500.1008758545],[\"text\",871166.6932525635]],\"raw_ticks\":[34797987921,34798027587,34798027681,34798038135],\"submission\":3,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":3,\"frame_span_ns\":3344666.768737793,\"host\":1,\"own_pass_sum_ns\":3337333.435180664,\"passes_ns\":[[\"scene\",2555750.0779953003],[\"text\",781583.3571853638]],\"raw_ticks\":[34798154819,34798185488,34798185576,34798194955],\"submission\":4,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":2,\"frame_span_ns\":1268666.7053833008,\"host\":2,\"own_pass_sum_ns\":1268666.7053833008,\"passes_ns\":[[\"dialog\",1268666.7053833008]],\"raw_ticks\":[34798196121,34798211345],\"submission\":5,\"timestamp_period_ns\":83.33333587646484}\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    },
+    {
+      "backend_requested": "x11",
+      "host": "new",
+      "measurements_enabled": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/datum-s0-x11-new-dmhsiypp/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "temporary_fixture": "/tmp/datum-s0-x11-new-dmhsiypp",
+      "samples": [
+        {
+          "device_epoch": 1,
+          "frame": 1,
+          "frame_span_ns": 5772750.176170349,
+          "host": 1,
+          "own_pass_sum_ns": 5760666.842468262,
+          "passes_ns": [
+            [
+              "scene",
+              4429000.1351623535
+            ],
+            [
+              "text",
+              1331666.7073059082
+            ]
+          ],
+          "raw_ticks": [
+            34832218302,
+            34832271450,
+            34832271595,
+            34832287575
+          ],
+          "submission": 1,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 1,
+          "frame_span_ns": 3908666.785949707,
+          "host": 2,
+          "own_pass_sum_ns": 3876583.451637268,
+          "passes_ns": [
+            [
+              "scene",
+              1812000.0552978516
+            ],
+            [
+              "text",
+              621166.685623169
+            ],
+            [
+              "menu-background",
+              947750.0289230347
+            ],
+            [
+              "menu-text",
+              495666.6817932129
+            ]
+          ],
+          "raw_ticks": [
+            34833189991,
+            34833211735,
+            34833211866,
+            34833219320,
+            34833219448,
+            34833230821,
+            34833230947,
+            34833236895
+          ],
+          "submission": 2,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 2,
+          "frame_span_ns": 4802166.813217163,
+          "host": 1,
+          "own_pass_sum_ns": 4791166.81288147,
+          "passes_ns": [
+            [
+              "scene",
+              3687666.7792053223
+            ],
+            [
+              "text",
+              1103500.0336761475
+            ]
+          ],
+          "raw_ticks": [
+            34833238648,
+            34833282900,
+            34833283032,
+            34833296274
+          ],
+          "submission": 3,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 2,
+          "frame_span_ns": 3765500.1149139404,
+          "host": 2,
+          "own_pass_sum_ns": 3735666.780670166,
+          "passes_ns": [
+            [
+              "scene",
+              1747666.7200012207
+            ],
+            [
+              "text",
+              578250.0176467896
+            ],
+            [
+              "menu-background",
+              923333.3615112305
+            ],
+            [
+              "menu-text",
+              486416.6815109253
+            ]
+          ],
+          "raw_ticks": [
+            34833588188,
+            34833609160,
+            34833609278,
+            34833616217,
+            34833616337,
+            34833627417,
+            34833627537,
+            34833633374
+          ],
+          "submission": 4,
+          "timestamp_period_ns": 83.33333587646484
+        },
+        {
+          "device_epoch": 1,
+          "frame": 3,
+          "frame_span_ns": 6018500.183670044,
+          "host": 1,
+          "own_pass_sum_ns": 6008750.183372498,
+          "passes_ns": [
+            [
+              "scene",
+              3631416.7774887085
+            ],
+            [
+              "text",
+              2377333.405883789
+            ]
+          ],
+          "raw_ticks": [
+            34833635034,
+            34833678611,
+            34833678728,
+            34833707256
+          ],
+          "submission": 5,
+          "timestamp_period_ns": 83.33333587646484
+        }
+      ],
+      "identities": [
+        "[SystemTime { tv_sec: 1789928675, tv_nsec: 358812937 }] surface identity window=WindowId(94781233190240) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789928675, tv_nsec: 543953089 }] surface identity window=WindowId(94781252467232) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "diagnostic": "datum-gui diagnostic log pid=661772 start=SystemTime { tv_sec: 1789928673, tv_nsec: 279812046 }\n[SystemTime { tv_sec: 1789928673, tv_nsec: 280179439 }] startup args=GuiArgs { terminal_profile: TerminalProfileArgs { selected: \"default\", custom_name: \"custom\", program: None, args: [], environment: [], environment_remove: [], cwd: \"active\", theme: None, font_scale_percent: None, history_lines: None, history_mebibytes: None, cursor: None, bell: None, agent_authority: \"propose\", unattended_tools: [] }, demo_known_good: false, board_file: Some(\"/tmp/datum-s0-x11-new-dmhsiypp/board.kicad_pcb\"), schematic_file: None, artifact_path: None, project_root: None, select: None, net_uuid: None, from_anchor_pad_uuid: None, to_anchor_pad_uuid: None, profile: None, visual_test: false, initial_layout: None, open_menu: None, open_global_preferences: false, open_new_project: true, open_project_preferences: false, focus_pane: None, fixture_revision_surface: None, layers_scroll_end: false, window_size: \"1280x800\", screenshot_out: None, exit_after_screenshot: false, window_visual_test: false, visual_scale_factor: None, interaction_smoke: false, resize_torture_smoke: false, kwin_lifecycle_smoke: false }\n[SystemTime { tv_sec: 1789928673, tv_nsec: 291984824 }] resumed event\n[SystemTime { tv_sec: 1789928673, tv_nsec: 292012350 }] launch state load begin\n[SystemTime { tv_sec: 1789928673, tv_nsec: 292042611 }] request resolve begin\n[SystemTime { tv_sec: 1789928673, tv_nsec: 656971707 }] request resolve end project_root=/tmp/datum-s0-x11-new-dmhsiypp/datum-eda/gui-imports/board-b142fb533afabfcf board_file=None\n[SystemTime { tv_sec: 1789928673, tv_nsec: 657015552 }] workspace load begin\n[SystemTime { tv_sec: 1789928675, tv_nsec: 211846748 }] workspace load end\n[SystemTime { tv_sec: 1789928675, tv_nsec: 211870888 }] camera fit begin\n[SystemTime { tv_sec: 1789928675, tv_nsec: 211886071 }] camera fit end\n[SystemTime { tv_sec: 1789928675, tv_nsec: 212279558 }] terminal spawn begin\n[SystemTime { tv_sec: 1789928675, tv_nsec: 223999713 }] terminal spawn end\n[SystemTime { tv_sec: 1789928675, tv_nsec: 224050001 }] launch state load end\n[SystemTime { tv_sec: 1789928675, tv_nsec: 227949313 }] window created\n[SystemTime { tv_sec: 1789928675, tv_nsec: 227979589 }] runtime creation begin\n[SystemTime { tv_sec: 1789928675, tv_nsec: 228915753 }] wgpu instance create begin\n[SystemTime { tv_sec: 1789928675, tv_nsec: 339746497 }] wgpu request adapter begin\n[SystemTime { tv_sec: 1789928675, tv_nsec: 358812937 }] surface identity window=WindowId(94781233190240) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928675, tv_nsec: 358853851 }] wgpu request device begin\n[SystemTime { tv_sec: 1789928675, tv_nsec: 385793006 }] wgpu request device end\n[SystemTime { tv_sec: 1789928675, tv_nsec: 388148928 }] initial surface configure begin 1344x840 format=Rgba8UnormSrgb present=Fifo msaa=8\n[SystemTime { tv_sec: 1789928675, tv_nsec: 422188430 }] initial surface configure end\n[SystemTime { tv_sec: 1789928675, tv_nsec: 422227274 }] renderer init begin\n[SystemTime { tv_sec: 1789928675, tv_nsec: 540587759 }] gpu_measurement_host host=1 epoch=1 window=WindowId(94781233190240) timestamp_period_ns=83.333336\n[SystemTime { tv_sec: 1789928675, tv_nsec: 540609677 }] renderer init end\n[SystemTime { tv_sec: 1789928675, tv_nsec: 542279585 }] runtime creation end\n[SystemTime { tv_sec: 1789928675, tv_nsec: 542314180 }] window visible\n[SystemTime { tv_sec: 1789928675, tv_nsec: 543953089 }] surface identity window=WindowId(94781252467232) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"\n[SystemTime { tv_sec: 1789928675, tv_nsec: 621857370 }] gpu_measurement_host host=2 epoch=1 window=WindowId(94781252467232) timestamp_period_ns=83.333336\ngpu_measurement {\"device_epoch\":1,\"frame\":1,\"frame_span_ns\":5772750.176170349,\"host\":1,\"own_pass_sum_ns\":5760666.842468262,\"passes_ns\":[[\"scene\",4429000.1351623535],[\"text\",1331666.7073059082]],\"raw_ticks\":[34832218302,34832271450,34832271595,34832287575],\"submission\":1,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":1,\"frame_span_ns\":3908666.785949707,\"host\":2,\"own_pass_sum_ns\":3876583.451637268,\"passes_ns\":[[\"scene\",1812000.0552978516],[\"text\",621166.685623169],[\"menu-background\",947750.0289230347],[\"menu-text\",495666.6817932129]],\"raw_ticks\":[34833189991,34833211735,34833211866,34833219320,34833219448,34833230821,34833230947,34833236895],\"submission\":2,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":2,\"frame_span_ns\":4802166.813217163,\"host\":1,\"own_pass_sum_ns\":4791166.81288147,\"passes_ns\":[[\"scene\",3687666.7792053223],[\"text\",1103500.0336761475]],\"raw_ticks\":[34833238648,34833282900,34833283032,34833296274],\"submission\":3,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":2,\"frame_span_ns\":3765500.1149139404,\"host\":2,\"own_pass_sum_ns\":3735666.780670166,\"passes_ns\":[[\"scene\",1747666.7200012207],[\"text\",578250.0176467896],[\"menu-background\",923333.3615112305],[\"menu-text\",486416.6815109253]],\"raw_ticks\":[34833588188,34833609160,34833609278,34833616217,34833616337,34833627417,34833627537,34833633374],\"submission\":4,\"timestamp_period_ns\":83.33333587646484}\ngpu_measurement {\"device_epoch\":1,\"frame\":3,\"frame_span_ns\":6018500.183670044,\"host\":1,\"own_pass_sum_ns\":6008750.183372498,\"passes_ns\":[[\"scene\",3631416.7774887085],[\"text\",2377333.405883789]],\"raw_ticks\":[34833635034,34833678611,34833678728,34833707256],\"submission\":5,\"timestamp_period_ns\":83.33333587646484}\n",
+      "stderr": "",
+      "unexpected_exit": null,
+      "passed": true
+    }
+  ]
+}
