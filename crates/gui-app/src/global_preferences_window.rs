@@ -12,6 +12,8 @@ pub(super) struct GlobalPreferencesWindowSurface {
     surface: wgpu::Surface<'static>,
     window: std::sync::Arc<Window>,
     config: wgpu::SurfaceConfiguration,
+    pub(super) surface_transaction:
+        gui_runtime_support::native_surface_transaction::SurfaceTransaction,
     scale_factor: f32,
     renderer: Renderer,
     retained: Option<RetainedScene>,
@@ -51,6 +53,11 @@ impl GlobalPreferencesWindowSurface {
         );
         Ok(Self {
             surface,
+            surface_transaction:
+                gui_runtime_support::native_surface_transaction::SurfaceTransaction::new(
+                    &config,
+                    window.inner_size(),
+                ),
             config,
             scale_factor: scale_factor_override.unwrap_or_else(|| window.scale_factor() as f32),
             renderer,
@@ -72,6 +79,7 @@ impl GlobalPreferencesWindowSurface {
     }
 
     pub(super) fn resize(&mut self, runtime: &Runtime, width: u32, height: u32) {
+        self.surface_transaction.resize(width, height);
         let width = width.max(1);
         let height = height.max(1);
         if self.config.width == width && self.config.height == height {
@@ -79,7 +87,8 @@ impl GlobalPreferencesWindowSurface {
         }
         self.config.width = width;
         self.config.height = height;
-        self.surface.configure(&runtime.device, &self.config);
+        self.surface_transaction
+            .configure_resize(&self.surface, &runtime.device, &self.config);
         self.invalidate();
     }
 
@@ -128,14 +137,25 @@ impl GlobalPreferencesWindowSurface {
         project_preferences: bool,
         new_project: bool,
     ) -> Result<()> {
+        if !self
+            .surface_transaction
+            .begin_frame(&self.surface, &runtime.device, &self.config)?
+        {
+            return Ok(());
+        }
         let frame = match self.surface.get_current_texture() {
             Ok(frame) => frame,
             Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
-                self.surface.configure(&runtime.device, &self.config);
+                if !self.surface_transaction.acquisition_failed(true) {
+                    self.surface.configure(&runtime.device, &self.config);
+                }
                 self.invalidate();
                 return Ok(());
             }
-            Err(wgpu::SurfaceError::Timeout) => return Ok(()),
+            Err(wgpu::SurfaceError::Timeout) => {
+                self.surface_transaction.acquisition_failed(false);
+                return Ok(());
+            }
             Err(wgpu::SurfaceError::OutOfMemory) => {
                 anyhow::bail!("Global Preferences surface out of memory")
             }
@@ -226,6 +246,7 @@ impl GlobalPreferencesWindowSurface {
         )?;
         self.window.pre_present_notify();
         frame.present();
+        self.surface_transaction.presented(&runtime.queue);
         Ok(())
     }
 }

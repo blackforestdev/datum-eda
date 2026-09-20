@@ -1,3 +1,7 @@
+#[path = "native_frame_probe.rs"]
+pub(crate) mod native_frame_probe;
+#[path = "native_surface_transaction.rs"]
+pub(crate) mod native_surface_transaction;
 #[path = "phase_probe.rs"]
 pub(crate) mod phase_probe;
 
@@ -180,6 +184,18 @@ pub(crate) fn surface_configuration(
         present_mode,
         alpha_mode: caps.alpha_modes[0],
         view_formats: vec![],
-        desired_maximum_frame_latency: 2,
+        desired_maximum_frame_latency: diagnostic_frame_latency(),
+    }
+}
+
+/// Bounded swapchain-depth experiment; absent flag preserves the product default.
+fn diagnostic_frame_latency() -> u32 {
+    match std::env::var("DATUM_GPU_DIAGNOSTIC_LATENCY").as_deref() {
+        Err(std::env::VarError::NotPresent) => 2,
+        Ok(value @ ("1" | "2")) => {
+            append_gui_diagnostic_line(format!("diagnostic maximum frame latency hint={value}"));
+            value.parse().expect("validated latency")
+        }
+        other => panic!("invalid DATUM_GPU_DIAGNOSTIC_LATENCY: {other:?}; expected 1 or 2"),
     }
 }
