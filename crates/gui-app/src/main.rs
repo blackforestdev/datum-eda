@@ -16,6 +16,7 @@ use datum_gui_render::{
     CameraState, HitTarget, PreparedScene, Renderer, RetainedScene, SceneSurface, ShellLayout,
     TerminalRenderCache,
 };
+use gui_runtime_support::native_surface_transaction::SurfaceTransaction;
 use std::collections::BTreeMap;
 use std::io::Write;
 use std::path::{Path, PathBuf};
@@ -44,6 +45,7 @@ mod global_preferences_window;
 mod gui_runtime_support;
 mod interaction_refresh;
 mod keyboard_focus;
+mod native_resize_repro;
 mod new_project_window;
 mod owned_window_policy;
 mod pan_gesture;
@@ -153,6 +155,9 @@ struct RetainedSceneCacheKey {
 fn main() -> Result<()> {
     install_gui_panic_hook();
     reset_gui_diagnostic_log();
+    if let Some(result) = native_resize_repro::run_if_requested() {
+        return result;
+    }
     let args = GuiArgs::parse();
     append_gui_diagnostic_line(format!("startup args={args:?}"));
     if args.visual_test && args.exit_after_screenshot && !args.window_visual_test {
@@ -249,11 +254,7 @@ impl ApplicationHandler for App {
             append_gui_diagnostic_line("resumed ignored; window already exists");
             return;
         }
-        // Block the event loop until there is work to do. Winit 0.30 defaults
-        // to ControlFlow::Poll, which busy-loops the main thread and burns
-        // CPU while the GUI is idle. M7 review is an event-driven surface;
-        // Wait is correct. Redraws are explicitly requested via
-        // `request_redraw_if_needed()` when state changes.
+        // Sleep until input or an explicitly requested redraw needs service.
         event_loop.set_control_flow(ControlFlow::Wait);
         self.args
             .validate_visual_args()
@@ -360,7 +361,7 @@ impl ApplicationHandler for App {
                 }
                 if let Some(runtime) = &mut self.runtime {
                     runtime.resize(size.width, size.height);
-                    self.request_redraw_if_needed();
+                    self.request_main_redraw_if_needed();
                 }
             }
             WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
@@ -664,6 +665,7 @@ struct Runtime {
     device: wgpu::Device,
     queue: wgpu::Queue,
     config: wgpu::SurfaceConfiguration,
+    surface_transaction: SurfaceTransaction,
     scale_factor: f32,
     renderer: Renderer,
     session: LiveDesignSession,
@@ -692,12 +694,8 @@ struct Runtime {
     prepared_scene: Option<PreparedScene>,
     terminal_render_cache: TerminalRenderCache,
     terminal_accessibility: terminal_accessibility_bridge::LinuxTerminalAccessibilityBridge,
-    // P2.2a: the static companion schematic world buffer, rendered as the additive
-    // second GPU pass into the Schematic pane. Rebuilt lazily whenever it is None;
-    // cleared in lockstep with `prepared_scene` on every scene/frame invalidation,
-    // so it always reflects the current workspace's `schematic_scene`. `None` when
-    // the workspace carries no companion schematic or the layout has no Schematic
-    // pane (second pass simply stays off).
+    // Lazily retained schematic world geometry; camera-independent geometry
+    // survives frame invalidation and eligible surface-size changes.
     schematic_retained_scene: Option<RetainedScene>,
     scene_dirty: bool,
     terminal_sessions: TerminalSessionRegistry,
@@ -824,6 +822,7 @@ impl Runtime {
             surface,
             device,
             queue,
+            surface_transaction: SurfaceTransaction::new(&config, window.inner_size()),
             config,
             scale_factor,
             renderer,

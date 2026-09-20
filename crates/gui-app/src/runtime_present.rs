@@ -5,6 +5,12 @@ use super::*;
 
 impl Runtime {
     pub(super) fn render(&mut self) -> Result<bool> {
+        if !self
+            .surface_transaction
+            .begin_frame(&self.surface, &self.device, &self.config)?
+        {
+            return Ok(false);
+        }
         let render_started = std::time::Instant::now();
         let acquire_started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line(format!(
@@ -19,16 +25,20 @@ impl Runtime {
             Ok(frame) => frame,
             Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
                 append_gui_diagnostic_line(format!(
-                    "surface acquire recovered by reconfigure at {}x{}",
+                    "surface acquire recovered path requested reconfigure at {}x{}",
                     self.config.width, self.config.height
                 ));
-                let probe = gui_runtime_support::phase_probe::Probe::start("configure_recovery");
-                self.surface.configure(&self.device, &self.config);
-                drop(probe);
+                if !self.surface_transaction.acquisition_failed(true) {
+                    let probe =
+                        gui_runtime_support::phase_probe::Probe::start("configure_recovery");
+                    self.surface.configure(&self.device, &self.config);
+                    drop(probe);
+                }
                 self.invalidate_frame();
                 return Ok(false);
             }
             Err(wgpu::SurfaceError::Timeout) => {
+                self.surface_transaction.acquisition_failed(false);
                 append_gui_diagnostic_line("surface acquire timeout; frame skipped");
                 self.invalidate_frame();
                 return Ok(false);
@@ -46,6 +56,17 @@ impl Runtime {
         let view = frame
             .texture
             .create_view(&wgpu::TextureViewDescriptor::default());
+        if gui_runtime_support::native_frame_probe::clear_only() {
+            gui_runtime_support::native_frame_probe::submit_clear(&self.device, &self.queue, &view);
+            drop(probe);
+            self.present_native_frame(frame);
+            self.trace_timing(format!(
+                "runtime render diagnostic_clear=true total={}ms acquire={}ms renderer=0ms",
+                render_started.elapsed().as_millis(),
+                acquire_elapsed.as_millis()
+            ));
+            return Ok(true);
+        }
         let scene_started = std::time::Instant::now();
         let retained_was_cached = self.retained_scene.is_some();
         let prepared_was_cached = self.prepared_scene.is_some();
@@ -119,15 +140,7 @@ impl Runtime {
             renderer_elapsed.as_millis()
         ));
         drop(probe);
-        let probe = gui_runtime_support::phase_probe::Probe::start("present");
-        let present_started = std::time::Instant::now();
-        append_gui_verbose_diagnostic_line("frame present begin");
-        // Wayland frame callbacks pace subsequent redraws; notify immediately
-        // before presentation, after the rendering commands have been submitted.
-        self.window.pre_present_notify();
-        frame.present();
-        drop(probe);
-        let present_elapsed = present_started.elapsed();
+        let present_elapsed = self.present_native_frame(frame);
         append_gui_verbose_diagnostic_line(format!(
             "frame present end {}ms total={}ms",
             present_elapsed.as_millis(),
@@ -146,5 +159,16 @@ impl Runtime {
             prepared_was_cached
         ));
         Ok(true)
+    }
+
+    fn present_native_frame(&mut self, frame: wgpu::SurfaceTexture) -> std::time::Duration {
+        let probe = gui_runtime_support::phase_probe::Probe::start("present");
+        let started = std::time::Instant::now();
+        append_gui_verbose_diagnostic_line("frame present begin");
+        self.window.pre_present_notify();
+        frame.present();
+        self.surface_transaction.presented(&self.queue);
+        drop(probe);
+        started.elapsed()
     }
 }

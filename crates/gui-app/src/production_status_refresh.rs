@@ -124,6 +124,10 @@ impl App {
         if changed {
             self.request_redraw_if_needed();
         }
+        if let Some(surface_due) = self.service_surface_retries() {
+            next_refresh_due =
+                Some(next_refresh_due.map_or(surface_due, |due| due.min(surface_due)));
+        }
         if let Some(next_refresh_due) = next_refresh_due {
             event_loop.set_control_flow(ControlFlow::WaitUntil(next_refresh_due));
         } else {

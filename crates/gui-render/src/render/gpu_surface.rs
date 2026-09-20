@@ -28,3 +28,7 @@ impl Renderer {
         self.msaa_view.as_ref().expect("MSAA view initialized")
     }
 }
+
+#[cfg(all(test, feature = "visual", target_os = "linux"))]
+#[path = "attachment_cost_probe.rs"]
+mod attachment_cost_probe;

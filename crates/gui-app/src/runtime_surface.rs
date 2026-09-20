@@ -6,6 +6,7 @@ use super::*;
 
 impl Runtime {
     pub(super) fn resize(&mut self, width: u32, height: u32) {
+        self.surface_transaction.resize(width, height);
         self.apply_resize(width.max(1), height.max(1));
     }
 
@@ -35,11 +36,8 @@ impl Runtime {
         ));
         self.config.width = width;
         self.config.height = height;
-        append_gui_diagnostic_line("surface configure begin");
-        let probe = gui_runtime_support::phase_probe::Probe::start("configure");
-        self.surface.configure(&self.device, &self.config);
-        drop(probe);
-        append_gui_diagnostic_line("surface configure end");
+        self.surface_transaction
+            .configure_resize(&self.surface, &self.device, &self.config);
         if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
             self.resize_terminal_to_dock();
         }

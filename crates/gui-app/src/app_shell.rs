@@ -80,13 +80,18 @@ impl App {
         }
     }
 
-    pub(super) fn request_redraw_if_needed(&mut self) {
+    /// Local damage must not invalidate independent native dialog surfaces.
+    pub(super) fn request_main_redraw_if_needed(&mut self) {
         if let (Some(runtime), Some(window)) = (&mut self.runtime, self.window)
             && !runtime.redraw_pending
         {
             runtime.redraw_pending = true;
             window.request_redraw();
         }
+    }
+
+    pub(super) fn request_redraw_if_needed(&mut self) {
+        self.request_main_redraw_if_needed();
         if let (Some(surface), Some(window)) = (
             &mut self.global_preferences_surface,
             &self.global_preferences_window,
