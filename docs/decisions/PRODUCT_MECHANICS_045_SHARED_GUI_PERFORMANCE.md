@@ -1,6 +1,6 @@
 # Product Mechanics 045: Shared GUI performance and resource ownership
 
-Status: **proposed; not ratified**. GPS-C05/GPS-C06 owner review packet.
+Status: **ratified specification doctrine** by the owner at GPS-C06.
 Issue: `dat-gui-performance-spec-u9n`. Implementation reservation:
 `dat-gui-performance-implementation-vkq` remains separately gated.
 
@@ -105,3 +105,16 @@ record exists this decision remains proposed and has no execution authority.
 Dependency/license impact: none; Product Mechanics 029 remains controlling.
 Product Mechanics 023, the Rendering Book, terminal doctrine, Preferences authority
 and the protected prototype lane remain controlling in their existing domains.
+
+## GPS-C06 ratification record
+
+<!-- EVIDENCE:GUI-PERFORMANCE-SPEC:GPS-C06-RATIFIED -->
+
+The owner replied exactly `GUI-PERFORMANCE-SPEC: approve specification only`.
+`docs/reviews/gui-performance/final-owner-direction.json` binds that approval to
+the reviewed packet and resolves all 67 clause and six residual-risk dispositions.
+The proposed mechanisms, numerical budgets and adoption/proof definitions above
+are now approved specification requirements. Pre-ratification wording retained
+in this decision and the frozen packet describes the reviewed proposal; this
+record supplies its current approval state. Runtime results remain unaccepted.
+No implementation grant or resize closure follows from this ratification.
