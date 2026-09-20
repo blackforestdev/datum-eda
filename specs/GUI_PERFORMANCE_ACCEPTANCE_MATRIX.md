@@ -5,6 +5,31 @@ Parent: `GUI_PERFORMANCE_RECOVERY_PLAN.md`, R11–R20/R38/R40–R41.
 Engineering definitions: `GUI_SHARED_ENGINEERING_CONTRACT.md`, E01–E12.
 The numerical targets below are proposals for review, not measured achievements.
 
+## Owner-approved initial qualification limits
+
+The exact owner responses are recorded in
+`docs/reviews/gui-performance/initial-qualification-owner-direction.json`.
+Under R12/R14, initial qualification is limited to the pinned F-DOA small-board
+workloads and declared T0/T1 configurations below. It does not establish capacity
+for arbitrary projects below a footprint count, larger projects, or unadmitted
+schematic content. The 39-package fixture is an evidence boundary, not a claim
+that every 39-package design has equivalent cost.
+
+Initial qualification explicitly excludes resize flicker/blink freedom and
+observed-display latency, frame age and pacing acceptance. VIS-01–03 and the
+corresponding MET-05 display thresholds remain specified **unqualified future
+requirements**, not initial pass criteria or zero-valued results. Static visual
+parity, clipping/hits, input/focus, final state, CPU/GPU/memory and work-count
+proof remain required. Application timestamps cannot substitute for excluded
+display observations. Any report must print these scope exclusions alongside
+results; it cannot claim complete visual responsiveness or enterprise capacity.
+
+All R01–R42 and HP01–HP25 remain mapped for later implementation/final acceptance.
+The resize QA issue stays open until both resource and temporal criteria pass.
+These answers do not approve numerical targets, waive GPU accounting, authorize
+a renderer change or constitute GPS-C06 approval. The capture-calibration
+proposal is not selected; no calibration run follows from this amendment.
+
 ## Reference and fixture admission
 
 Use the recorded daily reference: Xeon E3-1505M v6, Intel P630/i915,
@@ -35,10 +60,10 @@ A board-only schematic placeholder does not qualify a schematic workload.
 |---|---|---|
 | T0 | Independent minimal native grid, no model; then empty product shell | Existing diagnostic isolation, no product or temporal acceptance |
 | T1 | F-DOA, one/two/four visible leaves; main plus each real dialog; terminal hidden/visible | Board investigative baseline available; complete scale/glyph accounting and native qualification pending |
-| T2 | Demanding real resolved board and schematic, with pinned source/model hashes and measured geometry/text counts; four leaves plus permitted auxiliary hosts | Required coverage gap: local populated boards found have only 11–48 footprints; no demanding enterprise tier is established |
+| T2 | Demanding real resolved board and schematic, with pinned source/model hashes and measured geometry/text counts; four leaves plus permitted auxiliary hosts | Outside owner-approved initial scope; larger-project qualification remains unaccepted and requires later fixture admission and proof |
 
-T2 requires an actual qualifying project or explicit owner-limited initial scope
-under R12/R14. Repeating a small project across panes exercises multi-pane cost,
+The owner has selected limited initial scope under R12/R14. T2 still requires
+an actual qualifying project and separate qualification before any larger-project claim. Repeating a small project across panes exercises multi-pane cost,
 but does not establish large-document capacity. No fabricated project or
 unsupported enterprise-capacity claim substitutes for that decision.
 
@@ -65,7 +90,8 @@ and actual accepted dimensions before timing. Keep production modality intact.
 | W-LIFECYCLE | 20 sequences: maximize/restore, minimize/restore, display/DPI move, suspend/resume where supported, injected faults from REC matrix, close while pending | Exact REC transitions, preserved data/focus, bounded retries and resource release |
 | W-MIXED | W-ZOOM or W-SCROLL with terminal output from a bounded recorded 64 KiB/s PTY stream; 4 KiB bursts, plus a one-second 1 MiB burst | No byte loss or input starvation; terminal rows remain terminal-owned; hidden terminal prepares nothing |
 
-W-RESIZE runs T0 minimal, shell, T1 and admitted T2, plus each native dialog,
+Initial W-RESIZE runs T0 minimal, shell and T1, plus each native dialog; T2 is
+reserved for later admitted demanding-project qualification. Include
 visible/hidden terminal, and other unchanged windows present. When production
 modality prevents editor interaction, resize via supported native geometry
 operations and classify it separately from physical input. Never disable modality.
@@ -92,7 +118,8 @@ accounting; a disappeared unaccounted process makes the total incomplete.
 At 60 semantic updates/s, a 10% duty budget allows 1.667 ms CPU per update;
 this is a target substantially below the rejected 32–35% resize result, not an
 assertion that present driver costs already meet it. Required output/latency is
-unchanged. T2 numbers cannot be ratified before fixture admission and rationale.
+unchanged. T2 numbers are outside initial scope and cannot be ratified before
+fixture admission and rationale.
 
 | Workload | CPU duty ceiling | CPU/action ceiling | GPU engine duty ceiling | GPU execution p95/p99 target |
 |---|---:|---:|---:|---:|
@@ -239,14 +266,14 @@ validated independent display observer. No additional kernel tracing is required
 for that calibration. Kernel attribution and temporal output are different
 questions.
 
-## Open C03 completion items
+## C03 scope dispositions and remaining completion items
 
 | ID | Required resolution | Blocks |
 |---|---|---|
-| C03-G01 | Admit a demanding real project with complete counts or record explicit owner scope limit; separately admit resolved schematic content | R12, tier numerical rationale |
-| C03-G02 | Validate temporal capture boundaries/cadence/negative controls, or obtain explicit qualification limit under R14 | R14/R17/R41; no flicker acceptance |
+| C03-G01 | Scale disposition resolved by explicit owner limit: T2 remains unaccepted. Finish T1 geometry/glyph accounting; admit resolved small schematic content separately before schematic claims | R12 initial-scope accounting remains; demanding admission does not block initial scope |
+| C03-G02 | Initial-scope disposition resolved by owner limit. Temporal calibration deferred and unaccepted; preserve VIS methods and explicit report exclusions | Does not block limited initial specification; still blocks R41 temporal acceptance and resize closure |
 | C03-G03 | Validate GPU execution and lifetime-complete accounting methods or approved alternate/scope | R14/R16 |
-| C03-G04 | Review MEM-02 proposed T1 caps and reconcile demanding-tier caps after admission; implementation supplies allocation/lifetime receipts | R18/R40 |
+| C03-G04 | Review MEM-02 proposed T1 caps; demanding-tier caps deferred outside initial scope; implementation supplies allocation/lifetime receipts | R18/R40 |
 | C03-G05 | Reconcile proposed targets and statistical rules through independent review, preserving all 25 HP cases | R19/R38 and later C05/C06 |
 
 These are engineering/proof gaps, not a demand for completed production passes
@@ -255,8 +282,11 @@ advance GPS-C04, approve the architecture or accept the unresolved resize defect
 
 ## Bounded method-calibration proposal for C03-G02/G03
 
-This is the concrete measurement task awaiting owner scope direction, not a new
-approval framework. Use existing native capture, wgpu diagnostics and OS tools.
+Status: preserved future proposal, not selected under the owner-approved initial
+qualification limit. It supplies no current calibration or acceptance evidence.
+GPU-method requirements in C03-G03 remain separate and are not waived by the
+visual limit. If this proposal is later selected, use existing native capture,
+wgpu diagnostics and OS tools.
 No root tracing, package/dependency change, driver tuning or product renderer
 optimization is part of it. Preserve ordinary production flags/defaults.
 

@@ -1,0 +1,19 @@
+{
+  "reviewer": "/root/gui_contract_review",
+  "independent_of_author": true,
+  "disposition": "Owner-limited scope amendment review passes; no blocking correction.",
+  "scope": "Read-only specification amendment review; C03 remains incomplete and runtime qualification unaccepted.",
+  "findings": [
+    "Pinned F-DOA/T0/T1 scope is not arbitrary small-project capacity.",
+    "Larger-project and temporal/display-latency acceptance excluded; GPU/accounting, memory, static correctness and input obligations retained.",
+    "All R/HP obligations remain; calibration unselected, resize unresolved.",
+    "No numerical ratification, implementation grant or GPS-C06 approval."
+  ],
+  "implementation_boundary": "C04 must preserve E10 pre-change temporal-oracle dependency when scheduling future resize changes. Initial qualification limits do not authorize bypassing it.",
+  "reviewed_sha256": {
+    "specs/GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md": "fec13cc1eaa1c524fcc5daf369ba90a6a66d32fea68834c31d2e33f335612744",
+    "specs/GUI_PERFORMANCE_RECOVERY_PLAN.md": "688709cc49a174f000275cf855a5a6ae89cc558157106d1d7fb96cc53b2e3375",
+    "specs/GUI_SHARED_ENGINEERING_CONTRACT.md": "082ccae4dd427c557b214d67ed205ecb3a4a5891683e6f45760b5e0a618d72f0",
+    "docs/reviews/gui-performance/initial-qualification-owner-direction.json": "95837a8b2d8f0cdb5deeb2744ff46091e17bd414528dbbb34e7fd343b16640b4"
+  }
+}

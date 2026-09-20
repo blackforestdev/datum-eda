@@ -696,3 +696,22 @@ GPS-C04 must make adoption and retirement executable for every consumer. The
 existing measurement-first, contract-before-code, bounded-implementation sequence
 remains. This amendment itself neither implements the contract nor completes
 GPS-C02–GPS-C06 or wider engine acceptance.
+
+## Subsequent owner disposition: limited initial qualification
+
+Exact responses: `docs/reviews/gui-performance/initial-qualification-owner-direction.json`.
+The owner approved initial small-project qualification with explicit limits and
+excluded flicker/displayed-frame latency acceptance. Apply the R12/R14 scope
+disposition in `GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md`: pinned T0/T1 workloads
+only, T2 unaccepted; temporal output, frame-age/pacing and displayed-latency
+qualification deferred without a passing result. No capture-calibration task is
+selected by this direction. GPU accounting and other correctness/resource proof
+remain required; the answers are not a broader measurement waiver.
+
+R39–R42 and HP01–HP25 remain engineering and final-acceptance obligations. GPS-C03
+may prepare the limited initial acceptance contract without completed demanding
+project or temporal calibration, but must resolve its remaining in-scope methods,
+counts and numerical rules. GPS-C04 must map deferred cases explicitly; GPS-C05
+and GPS-C06 must review and disclose the qualification exclusions. No initial
+result closes resize QA or establishes complete rendering-engine performance.
+Mechanism/numeric ratification and implementation authorization remain separate.

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "recorded_utc": "2026-09-20T05:16:09.765005+00:00",
+  "issue_id": "dat-gui-performance-spec-u9n",
+  "owner_directions": [
+    {
+      "topic": "project scale",
+      "exact_response": "Approve an initial small-project scope with explicit limits; larger-project qualification remains unaccepted."
+    },
+    {
+      "topic": "temporal visual qualification",
+      "exact_response": "Limit initial qualification explicitly; do not claim flicker or displayed-frame latency acceptance."
+    }
+  ],
+  "disposition": "Apply R12/R14 initial qualification limits. No demanding-project or temporal capture-calibration task is selected by these answers.",
+  "initial_scope": "Pinned F-DOA small-board workload and declared T0/T1 host/pane/input configurations only; no capacity claim for arbitrary small projects or unadmitted schematics.",
+  "excluded_claims": [
+    "Larger-project or enterprise-scale capacity",
+    "Resize flicker/blink freedom",
+    "Displayed-frame latency, frame age or pacing acceptance",
+    "Complete resize defect resolution or full rendering-engine acceptance"
+  ],
+  "preserved_obligations": "Keep all R01-R42 and HP01-HP25. Deferred scale and temporal cases remain explicit final-acceptance obligations. GPU execution/accounting, memory, correctness, clipping/hits/input/focus and independent review are not waived.",
+  "authorization_boundary": "Specification scope amendment only; no numerical ratification, renderer implementation, dependency adoption or GPS-C06 approval."
+}
