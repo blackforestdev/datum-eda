@@ -1,0 +1,18 @@
+{
+  "scope": "Structural verification only; semantic coverage separately independently reviewed. No runtime tests or qualification.",
+  "map_sha256": "d39a2672ffc5504bbcd94c701d1c7b6d5811203555e780040ae7da650b614816",
+  "requirements": 217,
+  "consumers": 14,
+  "parent_clauses": 67,
+  "historical_cases": 25,
+  "measurement_files_verified": 580,
+  "checks": [
+    "Unique requirement IDs",
+    "Exact derived clause/consumer/slice inverse indexes",
+    "Every source marker and engineering anchor resolves",
+    "Every declared production adapter path exists",
+    "Every requirement has per-consumer applicability and positive/negative acceptance/artifact",
+    "All measurement checksums match"
+  ],
+  "result": "pass"
+}

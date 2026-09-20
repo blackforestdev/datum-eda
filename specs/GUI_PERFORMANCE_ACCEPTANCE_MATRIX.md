@@ -1,6 +1,7 @@
 # GUI performance acceptance matrix
 
-Status: GPS-C03 working draft. Not complete, ratified, or runtime-qualified.
+Status: GPS-C03 reviewable acceptance specification; final independent packet
+review and owner ratification remain pending. No runtime qualification claimed.
 Parent: `GUI_PERFORMANCE_RECOVERY_PLAN.md`, R11–R20/R38/R40–R41.
 Engineering definitions: `GUI_SHARED_ENGINEERING_CONTRACT.md`, E01–E12.
 The numerical targets below are proposals for review, not measured achievements.
@@ -170,8 +171,8 @@ or pool trials to hide a failed run.
 
 **MET-06.** CPU/GPU resource ratios versus baseline report median/range and a
 paired confidence interval with the raw per-trial pairs. Three repeats alone
-cannot establish a narrow 95% confidence interval: label uncertain comparisons
-inconclusive and use a predeclared additional repeat count before claiming a win.
+do not establish a formal comparative claim; STAT-01 prescribes a fixed seven-pair
+comparison and inconclusive disposition rather than adaptive significance testing.
 Any repeatable >5% regression requires explanation and review even below ceilings.
 Tracing on/off comparisons require matched schedules **and delivered output**;
 no universal overhead subtraction. Resource acceptance uses diagnostics off;
@@ -266,19 +267,20 @@ validated independent display observer. No additional kernel tracing is required
 for that calibration. Kernel attribution and temporal output are different
 questions.
 
-## C03 scope dispositions and remaining completion items
+## C03 specification dispositions and runtime prerequisites
 
-| ID | Required resolution | Blocks |
+| ID | Specification disposition | Required before affected runtime claim |
 |---|---|---|
-| C03-G01 | Scale disposition resolved by explicit owner limit: T2 remains unaccepted. Finish T1 geometry/glyph accounting; admit resolved small schematic content separately before schematic claims | R12 initial-scope accounting remains; demanding admission does not block initial scope |
-| C03-G02 | Initial-scope disposition resolved by owner limit. Temporal calibration deferred and unaccepted; preserve VIS methods and explicit report exclusions | Does not block limited initial specification; still blocks R41 temporal acceptance and resize closure |
-| C03-G03 | Validate GPU execution and lifetime-complete accounting methods or approved alternate/scope | R14/R16 |
-| C03-G04 | Review MEM-02 proposed T1 caps; demanding-tier caps deferred outside initial scope; implementation supplies allocation/lifetime receipts | R18/R40 |
-| C03-G05 | Reconcile proposed targets and statistical rules through independent review, preserving all 25 HP cases | R19/R38 and later C05/C06 |
+| C03-G01 | Owner limits scope to pinned T0/T1; historical counts are in ADM-01 and the receipt; complete count schema and source boundaries specified | Production admission counts including shaped/visible fields; separately admit schematic content before schematic claims; T2 remains unaccepted |
+| C03-G02 | Explicit owner exclusion of temporal qualification; VIS methods retained for later acceptance | Validated temporal method and proof before flicker/display-latency acceptance or resize closure; no calibration selected now |
+| C03-G03 | GPU-01–03 and ACC-01–03 provide source/capability-validated feasible methods, bounded instrumentation and exact failure rules | Enabled-device feature check, query conformance, overhead and lifetime-complete runtime receipts; unsupported/missing results cannot pass |
+| C03-G04 | MET/MEM define proposed T1 absolute duty, execution, latency and memory limits with accounting boundaries and admission rationale | C05 review/C06 numerical ratification, then actual per-workload runtime compliance; demanding tier remains outside initial scope |
+| C03-G05 | STAT-01 defines fixed-count inference, uncertainty, invalid trials and zero-baseline behavior; all HP obligations retained | Independent complete-packet review and owner specification-only decision; no achieved-budget claim from draft values |
 
-These are engineering/proof gaps, not a demand for completed production passes
-before implementation. GPS-C03 is in progress; this document does not close it,
-advance GPS-C04, approve the architecture or accept the unresolved resize defect.
+This is specification completion, not completion of implementation, instrumentation
+conformance or runtime performance. No missing field has been converted into a
+measurement. Initial approval cannot close the resize defect or authorize broader
+implementation. C04 must map every method, deferred case and runtime prerequisite.
 
 ## Bounded method-calibration proposal for C03-G02/G03
 
@@ -318,3 +320,165 @@ optimization is part of it. Preserve ordinary production flags/defaults.
 The 30-minute bound limits investigation, not the evidence standard. Failure
 requires a concrete method/scope decision; it cannot be converted into acceptance
 or an assumed waiver of R14/R41. Full product proof remains with implementation.
+
+## Specification-level method validation and implementation conformance
+
+<!-- EVIDENCE:GUI-PERFORMANCE-SPEC:GPS-C03-METHODS -->
+
+**ADM-01.** `docs/reviews/gui-performance/measurements/c03-methods/baseline-counts.json`
+recounts all 2,061 records in the pinned historical candidate log: retained world
+vertices are 138,444 throughout; panel vertices 906–966; underlay 78–432;
+reported overlay zero; reported text runs 142–144. The current repr(C) Vertex
+contains five f32 values, so base world vertex payload is 2,768,880 bytes.
+This excludes stroke data, capacities, GPU copies and all other allocations.
+The record identifies its exact input hash and extraction. These are measured
+historical count ranges, not maximum capacities or counts for every T1 state.
+
+The scale boundary is the exact admitted fixture and configurations, not an
+unmeasured glyph ceiling. Initial measurement admission must output, per host,
+pane, model generation and prepared frame: retained vertices/stroke instances;
+submitted commands/ranges and primitive counts; primitives surviving CPU culling;
+clipped raster coverage when that is the metric; text runs, shaped glyph instances
+and unique `(font generation, glyph id, size/raster mode)` keys. Never label a
+CPU-visible primitive as a raster-visible pixel. Use `PreparedScene`, retained
+scene builders, surface draw commands and shaped buffer `layout_runs` at their
+existing production preparation boundaries; no alternate scene implementation.
+Record before/after layout, font, layer, pane and DPI changes. Missing counts
+invalidate runtime admission, not become zero. No glyph/visible-count observation
+is fabricated in the present baseline receipt. Counting instrumentation and its
+conformance cases are the first implementation slice, before runtime tier claims.
+This separates a completely specified method from the results it must produce.
+
+**GPU-01.** The archived identified Intel P630 capability report in
+`measurements/c03-methods/vulkan-capabilities.txt` reports graphics timestamps,
+83.3333 ns/tick and 36 valid bits. It supports feasibility on the reference Vulkan
+adapter; it does not prove timestamps enabled on Datum's wgpu device. Two fresh
+bounded read-only summary attempts failed surface initialization and are retained
+in `capability-disposition.json`; neither is a successful current native test.
+
+Pinned wgpu 28.0.0 API source validates the proposed mechanism:
+`RenderPassDescriptor::timestamp_writes` requires `Features::TIMESTAMP_QUERY`;
+`CommandEncoder::resolve_query_set` writes eight bytes/query with aligned resolve
+offsets; `Queue::get_timestamp_period` supplies nanoseconds/tick (zero unsupported).
+`Queue::on_submitted_work_done` callbacks need submit/poll progress and must be
+short. References are the installed crate's `api/render_pass.rs`,
+`api/command_encoder.rs`, `api/queue.rs`, and
+https://docs.rs/wgpu/28.0.0/wgpu/struct.Queue.html#method.get_timestamp_period.
+No new dependency or arbitrary inside-pass/inside-encoder timestamp feature is
+needed for pass-boundary timing. Production passes currently use None; results
+are therefore absent today, not zero GPU time.
+
+**GPU-02.** The future opt-in measurement adapter checks adapter support, explicitly
+requests TIMESTAMP_QUERY at diagnostic-device creation, verifies enabled device
+features and a finite positive period, and records adapter/backend/device epoch.
+Allocate at most three query/readback slots per host, each holding 32 u64 values
+(16 pass pairs), plus aligned resolve and map-readable copy buffers. Four native
+hosts means at most 12 slots and 384 query values. Logical query data is 3,072
+bytes; each resolve/copy allocation and opaque driver overhead is separately
+accounted. Do not claim that query-data size equals total residency.
+
+Assign host/frame/device epoch, submission IDs and pass names before encoding.
+Write start/end in each contributing pass descriptor; resolve/copy after writes.
+Map asynchronously after submission, harvest with nonblocking polling and a
+bounded two-second active-time failure deadline. Do not reuse a slot before
+unmap/completion. On ring exhaustion record missing data and fail that timed
+trial; never stall the UI or silently discard a slow sample. Device reset cancels
+old slots and invalidates their observations. Missing/zero/invalid periods,
+validation errors, unsupported features or missing pass pairs make the metric
+unavailable and block the affected runtime result.
+
+Use u64 tick differences within one device epoch and convert with the measured
+wgpu period. The historical 36-bit Vulkan counter wraps in about 5,726 seconds;
+keep sample spans below two seconds and reject reversed/unexplained values rather
+than guessing a backend mask through portable wgpu. A wrap sample can be rejected
+and retried within the declared trial cap; it is retained as invalid evidence.
+Never combine epochs or use GPU ticks as a CPU/input/display clock.
+Report own-pass sum and first-start/last-end frame span separately as MET-04
+requires. Pass-boundary timing excludes preceding implicit upload transfers;
+report that limitation and use transfer byte counts plus complete DRM duty for
+those transfers. No claim of total GPU execution follows from pass time alone.
+
+**GPU-03.** Before a timestamp-based runtime pass, instrumentation conformance must
+exercise a real empty pass, a real drawing pass, multiple ordered passes, missing
+query, slot exhaustion, delayed map, device epoch change and simulated wrap.
+Verify units/order/association against raw query values, and separately measure
+query/readback overhead on matched diagnostics-off output. Empty work need not
+measure exactly zero and more work need not always run slower; those assumptions
+are not calibration oracles. Missing/invalid samples must fail the report. These
+are implementation tests of this source-validated method, not completed trials.
+A device lacking the method stays unqualified until a validated alternate or
+explicit owner scope change exists; temporal exclusions do not waive this rule.
+
+**ACC-01.** Resource accounting uses stable allocation IDs plus owner and device
+or document generation. Instrument existing buffer/texture creation and replacement
+in `gpu_init`, `gpu_data`, `gpu_vertex_upload`, `gpu_strokes`, `gpu_surface`,
+`terminal_graphics`, and text/atlas owners. Every allocation has requested payload,
+allocated capacity, reference owners, live/retiring state and release reason.
+Shared references count bytes once; host attribution is a separate incidence
+relation. Releasing the last CPU handle retires an allocation only after GPU use
+completes or documented device teardown. Report API-live allocated bytes, driver
+resident counters and RSS separately; none is a substitute for the others.
+Count queue write_buffer/write_texture, staging writes and encoder copies at the
+actual boundary, including glyph/terminal uploads and alignment. Distinguish an
+upload scheduled by queue.write_buffer from its later execution on submit.
+
+**ACC-02.** Count CPU cache keys and payload capacities, including strings,
+shaped glyph/layout vectors and transient scratch. Counter conformance creates,
+shares, replaces with equal-size different data, evicts, closes and recreates a
+resource; known-byte totals must reconcile and never go negative. Zero unchanged
+upload and allocation assertions use explicit production counters plus a negative
+control that deliberately repeats the upload/allocation. RSS alone cannot pass
+those assertions. No full-system allocator hook is required to count owned caches.
+
+**ACC-03.** OS observation keys processes by PID plus start-time and DRM clients
+by device identity plus client ID plus lifecycle epoch. Shared/duplicated fds are
+deduplicated. Start the process observer before spawning GUI/engine children;
+combine live counters and child exit usage exactly once. At controlled shutdown,
+stop adding workload actions but keep the accounting window open, complete queued
+work through the bounded normal drain, collect final CPU and client counters while
+fds remain live, then close the common elapsed-time window. Numerators and
+denominators include that same tail. Report action-phase and drain duration/cost
+separately, without charging post-window work to a shorter denominator. Clients
+closed earlier retain their final counters within the same overall window. If an
+external crash or client exit removes the final reading, flag the GPU total as
+incomplete; do not extrapolate it from surviving clients. Keep client start/end
+receipts and epoch/reset checks. Sources are the existing `/proc` harness plus
+explicit spawn/teardown lifecycle hooks in the future measurement slice.
+This closes the specification's lost-client ambiguity; it does not rehabilitate
+old window-cycle GPU reports.
+
+**STAT-01.** Absolute limits apply to every valid trial, not just its median.
+An acknowledged action is one accepted semantic state transition; a pointer
+sample that is legally coalesced retains its scheduled/received/final-state
+counts and is not invented as an extra completed action. Report total CPU per
+scheduled input and per acknowledged action separately. No-op and idle workloads
+use scheduled-input and elapsed-time denominators; there is no division by zero
+or fabricated completed-action count. Work correctness is evaluated independently.
+
+For relative comparisons predeclare seven baseline/candidate pairs in alternating
+AB/BA order, identical fixture/state/input schedule and comparable completed
+application work. The first three pairs may be reported descriptively but cannot
+stop early with a formal confidence claim. All formal relative claims use the
+fixed seven pairs: for positive costs calculate each log ratio `log(C/B)`, its
+mean and sample standard deviation, and the two-sided 95% Student-t interval
+`exp(mean ± 2.447 * sd/sqrt(7))`. This assumes independent approximately normal
+log ratios; report that assumption and inspect paired residuals. If it is not
+credible, the interval is descriptive and no formal claim is made. Compare the
+interval with 1.00 for improvement and 1.05 for regression. Stop after seven
+valid pairs; uncertainty is inconclusive, not permission to select a favorable
+subset or keep sampling. At most ten attempted pairs may supply seven valid
+pairs; retain failed/contaminated attempts with reasons fixed before inspecting
+outcomes. Absolute-limit qualification retains MET-01's three trials and cannot
+be replaced by this relative estimator. No repeated experiment tree follows an
+inconclusive result.
+
+A zero or below-resolution baseline **or candidate** disables log ratios. Never
+substitute an epsilon to manufacture a finite ratio. Report absolute differences
+with the observer's
+resolution bound (including both endpoint errors) and the absolute acceptance
+limit; values below resolution are '<resolution', not proof of zero work.
+A comparative resource-only result uses matched application state and completed
+work and explicitly retains the owner's display-qualification exclusion; it is
+not a claim that displayed throughput was equal. Static pixel parity and final
+state cannot fill that excluded observation. Complete adoption/endurance remains
+future runtime evidence.

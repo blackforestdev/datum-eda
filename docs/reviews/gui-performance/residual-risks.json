@@ -1,0 +1,47 @@
+{
+  "status": "Proposed owner packet dispositions; no owner acceptance yet.",
+  "items": [
+    {
+      "id": "RISK-01",
+      "severity": "medium",
+      "impact": "Proposed CPU/GPU ceilings may exceed what existing driver submission path can achieve; no runtime achievement claimed.",
+      "proposed_disposition": "Retain ceilings; failed qualification requires evidence and owner review, not silent relaxation.",
+      "follow_up": "S0 conformance/baseline and per-slice resource comparisons"
+    },
+    {
+      "id": "RISK-02",
+      "severity": "medium",
+      "impact": "Pinned small-board scope cannot establish enterprise or large-project capacity; actual schematic content not admitted.",
+      "proposed_disposition": "Retain owner-approved initial limits; no extrapolated claims.",
+      "follow_up": "Later real T2/schematic fixture admission and separate qualification"
+    },
+    {
+      "id": "RISK-03",
+      "severity": "medium",
+      "impact": "Temporal flicker/displayed-frame qualification excluded initially; resize QA unresolved.",
+      "proposed_disposition": "Retain exclusion and E10 pre-change oracle prerequisite; no full visual responsiveness claim.",
+      "follow_up": "GPS-C01R or expressly selected bounded temporal-method work before affected resize implementation"
+    },
+    {
+      "id": "RISK-04",
+      "severity": "medium",
+      "impact": "Historical GPU duty across closed clients and counts incomplete; timestamp method source-feasible but runtime conformance pending.",
+      "proposed_disposition": "Do not accept missing GPU/accounting evidence.",
+      "follow_up": "S0 ADM/GPU/ACC conformance and complete lifetime receipts"
+    },
+    {
+      "id": "RISK-05",
+      "severity": "medium",
+      "impact": "Concurrent multi-device GPU-test SIGSEGV unresolved; serial tests prove only their topology.",
+      "proposed_disposition": "Keep dat-gpu-test-concurrency-6dt open; require separate supported shared-device multiwindow qualification.",
+      "follow_up": "S4/S5 and separately tracked concurrency defect"
+    },
+    {
+      "id": "RISK-06",
+      "severity": "low",
+      "impact": "Old uncommitted resize Rust candidate is outside this specification packet.",
+      "proposed_disposition": "Preserve without staging or approval; re-evaluate against selected contract before any use.",
+      "follow_up": "Explicit future implementation slice source audit"
+    }
+  ]
+}

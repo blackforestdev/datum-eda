@@ -1,0 +1,50 @@
+{
+  "marker": "EVIDENCE:GUI-PERFORMANCE-SPEC:GPS-C04-REVIEW",
+  "reviewer": "/root/gui_contract_review",
+  "independent_of_author": true,
+  "disposition": "C04 specification closure supported; all five findings resolved, including final three engineering anchor corrections.",
+  "reviewed_sha256": {
+    "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md": "b98687d6e93738310528cb69571338e55992665c839d14d16c77da7448498bc6",
+    "docs/reviews/gui-performance/implementation-map.json": "d39a2672ffc5504bbcd94c701d1c7b6d5811203555e780040ae7da650b614816",
+    "specs/GUI_SHARED_ENGINEERING_CONTRACT.md": "382eae0dde5e9cc2ebb2906b9ad5a0b4bca1fc2cfa7a64944237810b7e6dca39",
+    "docs/reviews/gui-performance/prepared-implementation-completion.json": "e057f3108608e59649eaaf13ed899a55fbb5e43c9ba4eaef6d70c87a5acad618"
+  },
+  "findings": [
+    {
+      "id": "C04-R01",
+      "severity": "high",
+      "affected_requirement": "R21",
+      "correction": "Explicit per-workload CPU/GPU limits, each memory subcap and transition budget independently mapped.",
+      "reviewer_verified_resolution": true
+    },
+    {
+      "id": "C04-R02",
+      "severity": "medium",
+      "affected_requirement": "R21",
+      "correction": "Parent source markers separated from engineering anchors; final text/control refs corrected.",
+      "reviewer_verified_resolution": true
+    },
+    {
+      "id": "C04-R03",
+      "severity": "medium",
+      "affected_requirement": "R25",
+      "correction": "Per-consumer applicability excludes unadmitted schematic content performance while preserving shared correctness.",
+      "reviewer_verified_resolution": true
+    },
+    {
+      "id": "C04-R04",
+      "severity": "medium",
+      "affected_requirement": "R22",
+      "correction": "E09 allocations reconciled with individual map.",
+      "reviewer_verified_resolution": true
+    },
+    {
+      "id": "C04-R05",
+      "severity": "medium",
+      "affected_requirement": "HP14",
+      "correction": "Warm working set obeys entries, key bytes and payload caps together.",
+      "reviewer_verified_resolution": true
+    }
+  ],
+  "runtime_qualification": false
+}

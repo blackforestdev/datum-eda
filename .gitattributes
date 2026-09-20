@@ -6,3 +6,4 @@ crates/terminal-core/unicode/** -whitespace
 docs/reviews/gui-performance/measurements/resize-dialog-isolation/source.patch -whitespace
 docs/reviews/gui-performance/measurements/resize-minimal-native/source.patch -whitespace
 docs/reviews/gui-performance/measurements/resize-minimal-native/profile/functions.txt -whitespace
+docs/reviews/gui-performance/measurements/c03-methods/vulkan-capabilities.txt -whitespace

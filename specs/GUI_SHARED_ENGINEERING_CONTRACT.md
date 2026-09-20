@@ -268,31 +268,31 @@ touching another row's mechanism must also execute that row's relevant proof.
 
 | Case | Contract | Primary slice | Defect-sensitive observation |
 |---|---|---|---|
-| HP01 | E02/E04 | S1 | Warm production hit queries: zero new layout solves |
-| HP02 | E02/E04 | S1 | All layout key changes miss correctly; two-key alternation remains warm |
+| HP01 | E02/E04 | S2 | Warm production hit queries: zero new layout solves |
+| HP02 | E02/E04 | S2 | All layout key changes miss correctly; two-key alternation remains warm |
 | HP03 | E03/E04 | S2 | Menu parse/preparation counts through redraw and accessibility |
-| HP04 | E02 | S1 | Alias query allocation count and exact identity parity |
-| HP05 | E01/E06 | S4 | Notify-before-present in every native host plus native pacing |
+| HP04 | E02 | S2 | Alias query allocation count and exact identity parity |
+| HP05 | E01/E06 | S1 | Notify-before-present in every native host plus native pacing |
 | HP06 | E03 | S2 | Warm camera encoding count; dependency replacement invalidates |
 | HP07 | E03 | S2 | Adjacent-only batching, mixed painter order and fractional pixels |
 | HP08 | E03/E04 | S2 | Zero unchanged world upload bytes; equal-length replacement uploads |
 | HP09 | E02/E04 | S4 | Hidden terminal preparation count; reopening current accumulated state |
-| HP10 | E02/E05 | S1 | Board wheel avoids Layers preparation; Layers wheel cannot zoom board |
+| HP10 | E02/E05 | S3 | Board wheel avoids Layers preparation; Layers wheel cannot zoom board |
 | HP11 | E01/E02/E05 | S1 | Owning-window-only changed scroll; no-op requests zero frames |
 | HP12 | E03 | S3 | Both Preferences: zero hidden world/shell/terminal preparation |
 | HP13 | E03 | S3 | Dialog pass/resolve counts and equivalent pixels |
 | HP14 | E04 | S3 | Warm scroll-return shaping count, bounded keys/payloads and eviction |
-| HP15 | E04 | S3 | Width cache misses/hits and uncached width parity |
+| HP15 | E04 | S2 | Width cache misses/hits and uncached width parity |
 | HP16 | E03 | S3 | Convex-control tessellation counts; holed geometry unchanged |
-| HP17 | E04 | S2/S4 | Glyph signature survives pressure and dialog/workspace transitions |
+| HP17 | E04 | S2 | Glyph signature survives pressure and dialog/workspace transitions |
 | HP18 | E05 | S3 | Fractional delta sum/sign reversal; rounded-row negative fails |
 | HP19 | E05 | S3 | Physical/line conversion exactly once at 1x/fractional/2x |
 | HP20 | E05 | S3 | Content-minus-viewport maximum, thumb and final row |
 | HP21 | E05/E06 | S3 | Thumb grab/page/cancel through production pointer routes |
 | HP22 | E05 | S3 | Paint/hit clip parity, partial controls and pinned chrome |
 | HP23 | E01/E05 | S3 | Local routing, focus reveal, changed extent and return to idle |
-| HP24 | E07 | Every slice/S5 | Complete scheduled input and output accounting; dropped-input negative fails |
-| HP25 | E06/E07 | S4/S5 | Serial proof separately reported; concurrent crash remains unresolved |
+| HP24 | E07 | S0 | Complete scheduled input and output accounting; dropped-input negative fails |
+| HP25 | E06/E07 | S4 | Serial proof separately reported; concurrent crash remains unresolved |
 
 The existing concurrent GPU-test issue `dat-gpu-test-concurrency-6dt` stays open.
 GPU tests run serially. Full historical defect replay is not required before
@@ -630,3 +630,14 @@ Keep CPU/GPU/memory, static appearance, input/focus, clip/hit, final-state and
 shared-adoption obligations. No application milestone is relabeled as observed
 display, and no initial pass closes the unresolved resize defect. This subsequent
 scope disposition does not change the independently reviewed C02 mechanisms.
+
+## C04 allocation reconciliation
+
+The E09 slice column is reconciled to the individual implementation map. Earlier
+allocation was provisional: layout/menu/width reuse is S2, native notification
+is S1, Layers routing is S3, and terminal hidden work is S4. Every slice still
+runs its relevant HP regressions; S5 replays complete in-scope adoption.
+The acceptance matrix MET/MEM/STAT methods supersede E07 starting-point sampling
+where more specific: fixed seven pairs for relative inference, no adaptive
+significance loop, three valid trials for absolute limits. Owner scope exclusions
+remain; no historical trial or implementation is requalified by this allocation.

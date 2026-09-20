@@ -169,6 +169,18 @@
         "MetricBudgetDraft",
         "QualificationGapDraft"
       ]
+    },
+    {
+      "id": "gui_performance_adoption_contract",
+      "kind": "file_glob",
+      "glob": "docs/reviews/gui-performance/*implementation*.json",
+      "owner_spec": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md",
+      "notes": "Registration of proposed individual mapping/prepared roadmap shapes; filename digest is not semantic proof. Validate inverse indexes and clause/consumer coverage separately.",
+      "planned_shapes": [
+        "PerformanceRequirement",
+        "ConsumerAdoption",
+        "PreparedExecutionCompletion"
+      ]
     }
   ]
 }
