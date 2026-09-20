@@ -63,9 +63,9 @@ displayed-frame latency/age/pacing and larger-project qualification. Unadmitted
 resolved schematic content remains unqualified. GPU accounting, memory, static
 appearance, input/focus, clipping/hits and final state remain required. These
 limits permit an honest initial specification; they do not establish complete
-visual responsiveness or enterprise capacity. E10's validated temporal oracle
-remains a prerequisite for future resize behavior changes, and resize QA remains
-open until both resource and temporal criteria pass.
+visual responsiveness or enterprise capacity. The later owner amendment removes E10 temporal calibration as a development
+prerequisite. Resize QA remains open until its resource and temporal criteria
+pass; the kernel/driver/hardware explanation remains unconfirmed.
 
 **GP-045-07 — Separate execution.** Ratification approves only the exact reviewed
 specification, proposed mechanisms, budgets and adoption plan. It does not
@@ -73,8 +73,8 @@ authorize S0–S5 execution, accept an old dirty Rust candidate, add a dependenc
 alter a protected visual prototype, change backend policy or close product QA.
 The prepared implementation completion contract starts with the existing owner
 execution gate. Its installation when the specification blocker closes is an
-explicit roadmap transaction, unclaimed and unselected. GPS-C01R remains pending
-after the specification decision with its own selected scope and prerequisites.
+explicit roadmap transaction, unclaimed and unselected. GPS-C01R is retained on its existing open bug as nonblocking investigation,
+outside the completed specification item.
 
 ## Alternatives and tradeoffs
 
@@ -118,3 +118,26 @@ are now approved specification requirements. Pre-ratification wording retained
 in this decision and the frozen packet describes the reviewed proposal; this
 record supplies its current approval state. Runtime results remain unaccepted.
 No implementation grant or resize closure follows from this ratification.
+
+## Owner amendment: resize investigation is nonblocking
+
+The subsequent owner instruction in
+`docs/reviews/gui-performance/resize-deferral-owner-direction.json` pins
+`dat-gui-vertical-resize-cpu-toj` as unresolved investigation and removes resize
+resolution, kernel/driver attribution and completed temporal calibration as
+development gates for S0–S5. This amendment supersedes earlier E10 pre-change
+calibration requirements and GPS-C01R blocking sequence. It does not mark resize
+budgets, flicker or displayed-frame criteria passed or change their numerical
+limits. The Linux-kernel/Intel-driver/hardware explanation is an unconfirmed
+owner hypothesis, not an established root cause.
+
+Shared application lifecycle and reuse fixes may proceed under the separate
+execution grant, with bounded relevant production regressions, available
+before/after resource observations and final-state/extent/hit/focus/PTY/static
+correctness checks. Missing temporal proof is reported as unqualified. It cannot
+be used to claim resize closure, but it does not stop other development.
+All non-resize performance/correctness, adoption, independent replay and
+endurance requirements remain. S5 can conclude only its explicitly limited
+non-resize qualification; full resize resource/temporal closure stays on the
+pinned issue. No new kernel investigation or renderer execution is authorized
+by this amendment.

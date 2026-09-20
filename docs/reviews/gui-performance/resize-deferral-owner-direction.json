@@ -1,0 +1,36 @@
+{
+  "marker": "OWNER:GUI-PERFORMANCE:RESIZE-NONBLOCKING",
+  "recorded_at": "2026-09-20T15:07:58.970766+00:00",
+  "owner_instruction": "the resize budget is a larger issue that needs to be pinned but cannot be resolved without a larger investigation into the kernal and intel drivers. I belive that this is an issue between the linux kernal and the physical hardware. we need to now pin the resize issue but remove this as a development gate.",
+  "prior_approved_revision": "577ae99695fdd5ca2eb5665357931e52878805e0",
+  "decision": "docs/decisions/PRODUCT_MECHANICS_045_SHARED_GUI_PERFORMANCE.md",
+  "pinned_issue": "dat-gui-vertical-resize-cpu-toj",
+  "disposition": "Defer resize resource/temporal qualification as a separately pinned, nonblocking investigation. Remove GPS-C01R from specification completion and all S0-S5 development prerequisites. This is deferral, not resolution or acceptance.",
+  "root_cause_status": "Owner suspects Linux kernel/Intel driver/physical hardware interaction; unconfirmed hypothesis. Existing evidence does not isolate the cause or establish that application-side work cannot improve it.",
+  "development_boundary": [
+    "No kernel/driver investigation, completed resize budget, or calibrated resize temporal oracle is required to begin or complete otherwise-qualified shared-engine slices.",
+    "Shared lifecycle, correct damage/resource ownership, non-resize CPU/GPU/memory/input/static proof and relevant production regression checks remain mandatory.",
+    "Changes touching resize retain bounded available before/after resource, final-state, extent, hit/focus/PTY and static checks. New regressions must be investigated; missing temporal evidence is explicitly unqualified, not a pre-development gate.",
+    "S5 may qualify its explicitly limited non-resize scope without closing the pinned defect; no complete performance or resize claim.",
+    "Numeric resize budgets and full temporal criteria remain defect-closure requirements; no raised ceiling or passing result is implied.",
+    "Separate first owner execution grant remains; this owner instruction authorizes this planning/roadmap amendment, not kernel experiments or renderer implementation."
+  ],
+  "roadmap_effect": "Close completed specification item after removing unresolved GPS-C01R obligation to its existing open bug; activate the prepared implementation owner gate, unclaimed. Preserve all downstream dependencies on implementation.",
+  "prior_approval_history": "Frozen C05/C06 packets and reviews remain unchanged historical records at their pinned revisions. This subsequent owner amendment changes sequencing/scope only; no historical proof is refreshed.",
+  "deferred_predicate_ids": [
+    "RS-01",
+    "RS-02",
+    "RS-03",
+    "RS-04",
+    "BUD-T0-RESIZE-CPU-DUTY",
+    "BUD-T0-RESIZE-CPU-ACTION",
+    "BUD-T0-RESIZE-GPU-DUTY",
+    "BUD-T0-RESIZE-GPU-P95",
+    "BUD-T0-RESIZE-GPU-P99",
+    "BUD-T1-RESIZE-CPU-DUTY",
+    "BUD-T1-RESIZE-CPU-ACTION",
+    "BUD-T1-RESIZE-GPU-DUTY",
+    "BUD-T1-RESIZE-GPU-P95",
+    "BUD-T1-RESIZE-GPU-P99"
+  ]
+}

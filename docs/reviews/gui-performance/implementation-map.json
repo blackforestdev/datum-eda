@@ -2835,7 +2835,7 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/RS-01/result.json",
       "acceptance_rule": "Oracle detects blank without confusing legitimately exposed background; validated capture cadence/loss.",
-      "qualification_scope": "deferred temporal; mandatory before resize behavior change/closure under E10",
+      "qualification_scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification",
       "engineering_ref": {
         "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
         "anchor": "E10"
@@ -2873,7 +2873,9 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "development_gate": false,
+      "deferred_issue": "dat-gui-vertical-resize-cpu-toj"
     },
     {
       "id": "RS-02",
@@ -2927,7 +2929,7 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/RS-02/result.json",
       "acceptance_rule": "Stale/jump/extent and frame-age detector catches injection; VIS and MET display budgets pass.",
-      "qualification_scope": "deferred temporal; mandatory before resize behavior change/closure under E10",
+      "qualification_scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification",
       "engineering_ref": {
         "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
         "anchor": "E10"
@@ -2965,7 +2967,9 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "development_gate": false,
+      "deferred_issue": "dat-gui-vertical-resize-cpu-toj"
     },
     {
       "id": "RS-03",
@@ -3019,7 +3023,7 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/RS-03/result.json",
       "acceptance_rule": "Exactly one requested run; native event, configured and submitted extent agree; synthetic stress not native UX proof.",
-      "qualification_scope": "deferred temporal; mandatory before resize behavior change/closure under E10",
+      "qualification_scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification",
       "engineering_ref": {
         "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
         "anchor": "E10"
@@ -3057,7 +3061,9 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "development_gate": false,
+      "deferred_issue": "dat-gui-vertical-resize-cpu-toj"
     },
     {
       "id": "RS-04",
@@ -3111,7 +3117,7 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/RS-04/result.json",
       "acceptance_rule": "Final coherent state delivered and no ongoing idle loop; all resource and temporal criteria pass.",
-      "qualification_scope": "deferred temporal; mandatory before resize behavior change/closure under E10",
+      "qualification_scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification",
       "engineering_ref": {
         "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
         "anchor": "E10"
@@ -3149,7 +3155,9 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "development_gate": false,
+      "deferred_issue": "dat-gui-vertical-resize-cpu-toj"
     },
     {
       "id": "AC-01",
@@ -8771,10 +8779,12 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-T0-RESIZE-CPU-DUTY/result.json",
       "acceptance_rule": "<=5% per valid trial; method MET-02 ACC-03 STAT-01; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
-      "qualification_scope": "initial",
+      "qualification_scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification",
       "consumer_applicability": {
         "MAIN": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "development_gate": false,
+      "deferred_issue": "dat-gui-vertical-resize-cpu-toj"
     },
     {
       "id": "BUD-T0-RESIZE-CPU-ACTION",
@@ -8827,10 +8837,12 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-T0-RESIZE-CPU-ACTION/result.json",
       "acceptance_rule": "<=0.833ms at60/s per valid trial; method MET-02 STAT-01; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
-      "qualification_scope": "initial",
+      "qualification_scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification",
       "consumer_applicability": {
         "MAIN": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "development_gate": false,
+      "deferred_issue": "dat-gui-vertical-resize-cpu-toj"
     },
     {
       "id": "BUD-T0-RESIZE-GPU-DUTY",
@@ -8883,10 +8895,12 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-T0-RESIZE-GPU-DUTY/result.json",
       "acceptance_rule": "<=5% per valid trial; method MET-04 ACC-03 STAT-01; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
-      "qualification_scope": "initial",
+      "qualification_scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification",
       "consumer_applicability": {
         "MAIN": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "development_gate": false,
+      "deferred_issue": "dat-gui-vertical-resize-cpu-toj"
     },
     {
       "id": "BUD-T0-RESIZE-GPU-P95",
@@ -8939,10 +8953,12 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-T0-RESIZE-GPU-P95/result.json",
       "acceptance_rule": "<=0.8ms per valid trial; method MET-04 GPU-01 GPU-02 GPU-03; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
-      "qualification_scope": "initial",
+      "qualification_scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification",
       "consumer_applicability": {
         "MAIN": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "development_gate": false,
+      "deferred_issue": "dat-gui-vertical-resize-cpu-toj"
     },
     {
       "id": "BUD-T0-RESIZE-GPU-P99",
@@ -8995,10 +9011,12 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-T0-RESIZE-GPU-P99/result.json",
       "acceptance_rule": "<=1.6ms per valid trial; method MET-04 GPU-01 GPU-02 GPU-03; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
-      "qualification_scope": "initial",
+      "qualification_scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification",
       "consumer_applicability": {
         "MAIN": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "development_gate": false,
+      "deferred_issue": "dat-gui-vertical-resize-cpu-toj"
     },
     {
       "id": "BUD-T1-POINTER-CPU-DUTY",
@@ -9979,7 +9997,7 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-T1-RESIZE-CPU-DUTY/result.json",
       "acceptance_rule": "<=10% per valid trial; method MET-02 ACC-03 STAT-01; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
-      "qualification_scope": "initial",
+      "qualification_scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification",
       "consumer_applicability": {
         "MAIN": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
@@ -9995,7 +10013,9 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "development_gate": false,
+      "deferred_issue": "dat-gui-vertical-resize-cpu-toj"
     },
     {
       "id": "BUD-T1-RESIZE-CPU-ACTION",
@@ -10071,7 +10091,7 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-T1-RESIZE-CPU-ACTION/result.json",
       "acceptance_rule": "<=1.667ms at60/s per valid trial; method MET-02 STAT-01; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
-      "qualification_scope": "initial",
+      "qualification_scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification",
       "consumer_applicability": {
         "MAIN": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
@@ -10087,7 +10107,9 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "development_gate": false,
+      "deferred_issue": "dat-gui-vertical-resize-cpu-toj"
     },
     {
       "id": "BUD-T1-RESIZE-GPU-DUTY",
@@ -10163,7 +10185,7 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-T1-RESIZE-GPU-DUTY/result.json",
       "acceptance_rule": "<=25% per valid trial; method MET-04 ACC-03 STAT-01; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
-      "qualification_scope": "initial",
+      "qualification_scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification",
       "consumer_applicability": {
         "MAIN": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
@@ -10179,7 +10201,9 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "development_gate": false,
+      "deferred_issue": "dat-gui-vertical-resize-cpu-toj"
     },
     {
       "id": "BUD-T1-RESIZE-GPU-P95",
@@ -10255,7 +10279,7 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-T1-RESIZE-GPU-P95/result.json",
       "acceptance_rule": "<=4ms per valid trial; method MET-04 GPU-01 GPU-02 GPU-03; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
-      "qualification_scope": "initial",
+      "qualification_scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification",
       "consumer_applicability": {
         "MAIN": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
@@ -10271,7 +10295,9 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "development_gate": false,
+      "deferred_issue": "dat-gui-vertical-resize-cpu-toj"
     },
     {
       "id": "BUD-T1-RESIZE-GPU-P99",
@@ -10347,7 +10373,7 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S5/BUD-T1-RESIZE-GPU-P99/result.json",
       "acceptance_rule": "<=8ms per valid trial; method MET-04 GPU-01 GPU-02 GPU-03; report raw nearest-rank N/max where applicable. Missing data cannot pass.",
-      "qualification_scope": "initial",
+      "qualification_scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification",
       "consumer_applicability": {
         "MAIN": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
@@ -10363,7 +10389,9 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "development_gate": false,
+      "deferred_issue": "dat-gui-vertical-resize-cpu-toj"
     },
     {
       "id": "BUD-SCROLL-CPU-DUTY",
@@ -20942,12 +20970,14 @@
   "scope_exclusions": [
     "T2 larger projects",
     "unadmitted resolved schematic performance",
-    "flicker and displayed-frame latency/age/pacing"
+    "flicker and displayed-frame latency/age/pacing",
+    "Resize budget/temporal qualification pinned separately; no S0-S5 development gate"
   ],
   "notes": [
     "Host-shared cases parameterize all14 consumers; actual native host cases run independently through MAIN/GLOBAL/PROJECT/NEW adapters.",
-    "Temporal scope exclusion never bypasses E10 pre-change oracle requirement.",
+    "Subsequent explicit owner amendment removes E10 pre-change temporal gate; full resize acceptance stays pinned and unqualified.",
     "Faults are backend-only injections through production owners.",
     "Parallel GPU test crash remains separately unresolved."
-  ]
+  ],
+  "owner_amendment": "docs/reviews/gui-performance/resize-deferral-owner-direction.json"
 }
