@@ -1,0 +1,1376 @@
+{
+  "marker": "EVIDENCE:GUI-PERFORMANCE-SPEC:GPS-C06-OWNER",
+  "recorded_at": "2026-09-20T14:25:46.562971+00:00",
+  "owner_response": "GUI-PERFORMANCE-SPEC: approve specification only",
+  "approved_packet": {
+    "path": "docs/reviews/gui-performance/owner-packet.json",
+    "sha256": "845b43dcc66731f577bd4ce552f0eff427258f575359a3e14b0f642c4f59eab2",
+    "revision": "8d760e87ef4a3c2340a655202aa7fcbec3bb9198"
+  },
+  "decision": "docs/decisions/PRODUCT_MECHANICS_045_SHARED_GUI_PERFORMANCE.md",
+  "disposition": "Approve exact reviewed shared engineering/acceptance/adoption specifications, proposed mechanisms and numerical budgets as specification only. GPS-C06 complete.",
+  "clauses": [
+    {
+      "id": "GUI-PERFORMANCE-R01",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "DOC-01"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R02",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "DOC-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R03",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "DOC-03"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R04",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "DOC-04"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R05",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "SH-01",
+        "SH-02",
+        "SH-03",
+        "SH-04",
+        "SH-05",
+        "SH-06",
+        "SH-07",
+        "SH-08",
+        "SH-09",
+        "SH-10",
+        "SH-11",
+        "SH-12"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R06",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "AC-05",
+        "HP06-01",
+        "HP06-02",
+        "HP08-01",
+        "HP08-02",
+        "HP08-03",
+        "HP14-01",
+        "HP14-02",
+        "HP15-01",
+        "HP15-02",
+        "HP17-01",
+        "HP17-02",
+        "MEM-GUI-STEADY",
+        "MEM-GUI-PEAK",
+        "MEM-HOST-STEADY",
+        "MEM-GUI-COMBINED",
+        "MEM-CLOSE-RSS",
+        "MEM-ENGINE-STEADY",
+        "MEM-ENGINE-PEAK",
+        "MEM-WORLD-CPU",
+        "MEM-WORLD-HISTORY",
+        "MEM-SHAPED-LOCAL",
+        "MEM-SHAPED-TOTAL",
+        "MEM-LABEL-ENTRIES",
+        "MEM-LABEL-KEYS",
+        "MEM-WIDTH-ENTRIES",
+        "MEM-WIDTH-KEYS",
+        "MEM-WIDTH-PAYLOAD",
+        "MEM-MESH-ENTRIES",
+        "MEM-MESH-CPU",
+        "MEM-MESH-GPU",
+        "MEM-WORLD-GPU",
+        "MEM-SCREEN-GPU",
+        "MEM-REPLACEMENT",
+        "MEM-ATLAS-LOCAL",
+        "MEM-ATLAS-TOTAL",
+        "MEM-TERM-CPU",
+        "MEM-TERM-GPU",
+        "MEM-STAGING-LOCAL",
+        "MEM-STAGING-TOTAL",
+        "MEM-GPU-TOTAL",
+        "MEM-ATTACHMENTS",
+        "MEM-CLOSED-LIVE",
+        "REUSE-SCREEN",
+        "REUSE-WORLD-ALLOC",
+        "REUSE-TEXT-KEY",
+        "REUSE-TEXT-LAYOUT",
+        "REUSE-CONTROL-KEY"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R07",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "SH-01",
+        "SH-02",
+        "SH-03",
+        "SH-04",
+        "SH-05",
+        "SH-06",
+        "SH-07",
+        "SH-08",
+        "SH-09",
+        "SH-10",
+        "SH-11",
+        "SH-12",
+        "HP07-01",
+        "HP18-01",
+        "HP19-01",
+        "HP22-01",
+        "HP22-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R08",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "LF-01",
+        "LF-02",
+        "LF-03",
+        "LF-04",
+        "LF-05",
+        "LF-06",
+        "LF-07",
+        "LF-08",
+        "LF-09",
+        "LF-10",
+        "LF-11",
+        "LF-12",
+        "LF-13",
+        "LF-14",
+        "LF-15"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R09",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "LF-01",
+        "LF-02",
+        "LF-03",
+        "LF-04",
+        "LF-05",
+        "LF-06",
+        "LF-07",
+        "LF-08",
+        "LF-09",
+        "LF-10",
+        "LF-11",
+        "LF-12",
+        "LF-13",
+        "LF-14",
+        "LF-15"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R10",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "DOC-10"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R11",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "AC-01"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R12",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "AC-01"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R13",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "AC-02",
+        "AC-03",
+        "AC-04",
+        "AC-06",
+        "BUD-IDLE-CPU-DUTY",
+        "BUD-IDLE-CPU-ACTION",
+        "BUD-IDLE-GPU-DUTY",
+        "BUD-IDLE-GPU-P95",
+        "BUD-IDLE-GPU-P99",
+        "BUD-CLAMP-CPU-DUTY",
+        "BUD-CLAMP-CPU-ACTION",
+        "BUD-CLAMP-GPU-DUTY",
+        "BUD-CLAMP-GPU-P95",
+        "BUD-CLAMP-GPU-P99",
+        "BUD-T0-RESIZE-CPU-DUTY",
+        "BUD-T0-RESIZE-CPU-ACTION",
+        "BUD-T0-RESIZE-GPU-DUTY",
+        "BUD-T0-RESIZE-GPU-P95",
+        "BUD-T0-RESIZE-GPU-P99",
+        "BUD-T1-POINTER-CPU-DUTY",
+        "BUD-T1-POINTER-CPU-ACTION",
+        "BUD-T1-POINTER-GPU-DUTY",
+        "BUD-T1-POINTER-GPU-P95",
+        "BUD-T1-POINTER-GPU-P99",
+        "BUD-T1-PAN-CPU-DUTY",
+        "BUD-T1-PAN-CPU-ACTION",
+        "BUD-T1-PAN-GPU-DUTY",
+        "BUD-T1-PAN-GPU-P95",
+        "BUD-T1-PAN-GPU-P99",
+        "BUD-T1-ZOOM-CPU-DUTY",
+        "BUD-T1-ZOOM-CPU-ACTION",
+        "BUD-T1-ZOOM-GPU-DUTY",
+        "BUD-T1-ZOOM-GPU-P95",
+        "BUD-T1-ZOOM-GPU-P99",
+        "BUD-T1-RESIZE-CPU-DUTY",
+        "BUD-T1-RESIZE-CPU-ACTION",
+        "BUD-T1-RESIZE-GPU-DUTY",
+        "BUD-T1-RESIZE-GPU-P95",
+        "BUD-T1-RESIZE-GPU-P99",
+        "BUD-SCROLL-CPU-DUTY",
+        "BUD-SCROLL-CPU-ACTION",
+        "BUD-SCROLL-GPU-DUTY",
+        "BUD-SCROLL-GPU-P95",
+        "BUD-SCROLL-GPU-P99",
+        "BUD-CONTROLS-CPU-DUTY",
+        "BUD-CONTROLS-CPU-ACTION",
+        "BUD-CONTROLS-GPU-DUTY",
+        "BUD-CONTROLS-GPU-P95",
+        "BUD-CONTROLS-GPU-P99",
+        "BUD-PANES-CPU-DUTY",
+        "BUD-PANES-CPU-ACTION",
+        "BUD-PANES-GPU-DUTY",
+        "BUD-PANES-GPU-P95",
+        "BUD-PANES-GPU-P99",
+        "BUD-WINDOWS-CPU-DUTY",
+        "BUD-WINDOWS-OPEN-CPU",
+        "BUD-WINDOWS-GPU-DUTY",
+        "BUD-WINDOWS-GPU-P95",
+        "BUD-WINDOWS-GPU-P99",
+        "BUD-MIXED-CPU-DUTY",
+        "BUD-MIXED-CPU-ACTION",
+        "BUD-MIXED-GPU-DUTY",
+        "BUD-MIXED-GPU-P95",
+        "BUD-MIXED-GPU-P99",
+        "Q-CPU-P95",
+        "Q-CPU-P99",
+        "Q-CPU-STALL",
+        "Q-DISPLAY-P95",
+        "Q-DISPLAY-P99",
+        "Q-WINDOW-DISPLAY-P95",
+        "Q-WINDOW-DISPLAY-P99",
+        "Q-PACING",
+        "Q-FINAL-DISPLAY",
+        "Q-RECOVERY-CPU",
+        "Q-RECOVERY-GPU95",
+        "Q-RECOVERY-GPU99",
+        "Q-RECOVERY-DISPLAY",
+        "Q-RECOVERY-DEADLINE",
+        "Q-ENDURANCE-DRIFT",
+        "Q-ENDURANCE-TREND",
+        "Q-RETURN-IDLE",
+        "BUD-WINDOWS-CLOSE-CPU"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R14",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "AC-01"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R15",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "AC-02",
+        "BUD-IDLE-CPU-DUTY",
+        "BUD-IDLE-CPU-ACTION",
+        "BUD-CLAMP-CPU-DUTY",
+        "BUD-CLAMP-CPU-ACTION",
+        "BUD-T0-RESIZE-CPU-DUTY",
+        "BUD-T0-RESIZE-CPU-ACTION",
+        "BUD-T1-POINTER-CPU-DUTY",
+        "BUD-T1-POINTER-CPU-ACTION",
+        "BUD-T1-PAN-CPU-DUTY",
+        "BUD-T1-PAN-CPU-ACTION",
+        "BUD-T1-ZOOM-CPU-DUTY",
+        "BUD-T1-ZOOM-CPU-ACTION",
+        "BUD-T1-RESIZE-CPU-DUTY",
+        "BUD-T1-RESIZE-CPU-ACTION",
+        "BUD-SCROLL-CPU-DUTY",
+        "BUD-SCROLL-CPU-ACTION",
+        "BUD-CONTROLS-CPU-DUTY",
+        "BUD-CONTROLS-CPU-ACTION",
+        "BUD-PANES-CPU-DUTY",
+        "BUD-PANES-CPU-ACTION",
+        "BUD-WINDOWS-CPU-DUTY",
+        "BUD-WINDOWS-OPEN-CPU",
+        "BUD-MIXED-CPU-DUTY",
+        "BUD-MIXED-CPU-ACTION",
+        "BUD-WINDOWS-CLOSE-CPU"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R16",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "AC-03",
+        "AC-04",
+        "AC-05",
+        "HP08-01",
+        "HP08-02",
+        "HP08-03",
+        "HP13-01",
+        "HP13-02",
+        "BUD-IDLE-GPU-DUTY",
+        "BUD-IDLE-GPU-P95",
+        "BUD-IDLE-GPU-P99",
+        "BUD-CLAMP-GPU-DUTY",
+        "BUD-CLAMP-GPU-P95",
+        "BUD-CLAMP-GPU-P99",
+        "BUD-T0-RESIZE-GPU-DUTY",
+        "BUD-T0-RESIZE-GPU-P95",
+        "BUD-T0-RESIZE-GPU-P99",
+        "BUD-T1-POINTER-GPU-DUTY",
+        "BUD-T1-POINTER-GPU-P95",
+        "BUD-T1-POINTER-GPU-P99",
+        "BUD-T1-PAN-GPU-DUTY",
+        "BUD-T1-PAN-GPU-P95",
+        "BUD-T1-PAN-GPU-P99",
+        "BUD-T1-ZOOM-GPU-DUTY",
+        "BUD-T1-ZOOM-GPU-P95",
+        "BUD-T1-ZOOM-GPU-P99",
+        "BUD-T1-RESIZE-GPU-DUTY",
+        "BUD-T1-RESIZE-GPU-P95",
+        "BUD-T1-RESIZE-GPU-P99",
+        "BUD-SCROLL-GPU-DUTY",
+        "BUD-SCROLL-GPU-P95",
+        "BUD-SCROLL-GPU-P99",
+        "BUD-CONTROLS-GPU-DUTY",
+        "BUD-CONTROLS-GPU-P95",
+        "BUD-CONTROLS-GPU-P99",
+        "BUD-PANES-GPU-DUTY",
+        "BUD-PANES-GPU-P95",
+        "BUD-PANES-GPU-P99",
+        "BUD-WINDOWS-GPU-DUTY",
+        "BUD-WINDOWS-GPU-P95",
+        "BUD-WINDOWS-GPU-P99",
+        "BUD-MIXED-GPU-DUTY",
+        "BUD-MIXED-GPU-P95",
+        "BUD-MIXED-GPU-P99",
+        "MEM-GUI-STEADY",
+        "MEM-GUI-PEAK",
+        "MEM-HOST-STEADY",
+        "MEM-GUI-COMBINED",
+        "MEM-CLOSE-RSS",
+        "MEM-ENGINE-STEADY",
+        "MEM-ENGINE-PEAK",
+        "MEM-WORLD-CPU",
+        "MEM-WORLD-HISTORY",
+        "MEM-SHAPED-LOCAL",
+        "MEM-SHAPED-TOTAL",
+        "MEM-LABEL-ENTRIES",
+        "MEM-LABEL-KEYS",
+        "MEM-WIDTH-ENTRIES",
+        "MEM-WIDTH-KEYS",
+        "MEM-WIDTH-PAYLOAD",
+        "MEM-MESH-ENTRIES",
+        "MEM-MESH-CPU",
+        "MEM-MESH-GPU",
+        "MEM-WORLD-GPU",
+        "MEM-SCREEN-GPU",
+        "MEM-REPLACEMENT",
+        "MEM-ATLAS-LOCAL",
+        "MEM-ATLAS-TOTAL",
+        "MEM-TERM-CPU",
+        "MEM-TERM-GPU",
+        "MEM-STAGING-LOCAL",
+        "MEM-STAGING-TOTAL",
+        "MEM-GPU-TOTAL",
+        "MEM-ATTACHMENTS",
+        "MEM-CLOSED-LIVE",
+        "REUSE-SCREEN",
+        "REUSE-WORLD-ALLOC",
+        "REUSE-TEXT-KEY",
+        "REUSE-TEXT-LAYOUT",
+        "REUSE-CONTROL-KEY"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R17",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "AC-07",
+        "Q-CPU-P95",
+        "Q-CPU-P99",
+        "Q-CPU-STALL",
+        "Q-DISPLAY-P95",
+        "Q-DISPLAY-P99",
+        "Q-WINDOW-DISPLAY-P95",
+        "Q-WINDOW-DISPLAY-P99",
+        "Q-PACING",
+        "Q-FINAL-DISPLAY",
+        "Q-RECOVERY-CPU",
+        "Q-RECOVERY-GPU95",
+        "Q-RECOVERY-GPU99",
+        "Q-RECOVERY-DISPLAY",
+        "Q-RECOVERY-DEADLINE",
+        "Q-ENDURANCE-DRIFT",
+        "Q-ENDURANCE-TREND",
+        "Q-RETURN-IDLE"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R18",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "AC-05",
+        "END-01",
+        "END-02",
+        "END-03",
+        "END-04",
+        "MEM-GUI-STEADY",
+        "MEM-GUI-PEAK",
+        "MEM-HOST-STEADY",
+        "MEM-GUI-COMBINED",
+        "MEM-CLOSE-RSS",
+        "MEM-ENGINE-STEADY",
+        "MEM-ENGINE-PEAK",
+        "MEM-WORLD-CPU",
+        "MEM-WORLD-HISTORY",
+        "MEM-SHAPED-LOCAL",
+        "MEM-SHAPED-TOTAL",
+        "MEM-LABEL-ENTRIES",
+        "MEM-LABEL-KEYS",
+        "MEM-WIDTH-ENTRIES",
+        "MEM-WIDTH-KEYS",
+        "MEM-WIDTH-PAYLOAD",
+        "MEM-MESH-ENTRIES",
+        "MEM-MESH-CPU",
+        "MEM-MESH-GPU",
+        "MEM-WORLD-GPU",
+        "MEM-SCREEN-GPU",
+        "MEM-REPLACEMENT",
+        "MEM-ATLAS-LOCAL",
+        "MEM-ATLAS-TOTAL",
+        "MEM-TERM-CPU",
+        "MEM-TERM-GPU",
+        "MEM-STAGING-LOCAL",
+        "MEM-STAGING-TOTAL",
+        "MEM-GPU-TOTAL",
+        "MEM-ATTACHMENTS",
+        "MEM-CLOSED-LIVE",
+        "Q-CPU-P95",
+        "Q-CPU-P99",
+        "Q-CPU-STALL",
+        "Q-DISPLAY-P95",
+        "Q-DISPLAY-P99",
+        "Q-WINDOW-DISPLAY-P95",
+        "Q-WINDOW-DISPLAY-P99",
+        "Q-PACING",
+        "Q-FINAL-DISPLAY",
+        "Q-RECOVERY-CPU",
+        "Q-RECOVERY-GPU95",
+        "Q-RECOVERY-GPU99",
+        "Q-RECOVERY-DISPLAY",
+        "Q-RECOVERY-DEADLINE",
+        "Q-ENDURANCE-DRIFT",
+        "Q-ENDURANCE-TREND",
+        "Q-RETURN-IDLE"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R19",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "AC-06",
+        "BUD-IDLE-CPU-DUTY",
+        "BUD-IDLE-CPU-ACTION",
+        "BUD-IDLE-GPU-DUTY",
+        "BUD-IDLE-GPU-P95",
+        "BUD-IDLE-GPU-P99",
+        "BUD-CLAMP-CPU-DUTY",
+        "BUD-CLAMP-CPU-ACTION",
+        "BUD-CLAMP-GPU-DUTY",
+        "BUD-CLAMP-GPU-P95",
+        "BUD-CLAMP-GPU-P99",
+        "BUD-T0-RESIZE-CPU-DUTY",
+        "BUD-T0-RESIZE-CPU-ACTION",
+        "BUD-T0-RESIZE-GPU-DUTY",
+        "BUD-T0-RESIZE-GPU-P95",
+        "BUD-T0-RESIZE-GPU-P99",
+        "BUD-T1-POINTER-CPU-DUTY",
+        "BUD-T1-POINTER-CPU-ACTION",
+        "BUD-T1-POINTER-GPU-DUTY",
+        "BUD-T1-POINTER-GPU-P95",
+        "BUD-T1-POINTER-GPU-P99",
+        "BUD-T1-PAN-CPU-DUTY",
+        "BUD-T1-PAN-CPU-ACTION",
+        "BUD-T1-PAN-GPU-DUTY",
+        "BUD-T1-PAN-GPU-P95",
+        "BUD-T1-PAN-GPU-P99",
+        "BUD-T1-ZOOM-CPU-DUTY",
+        "BUD-T1-ZOOM-CPU-ACTION",
+        "BUD-T1-ZOOM-GPU-DUTY",
+        "BUD-T1-ZOOM-GPU-P95",
+        "BUD-T1-ZOOM-GPU-P99",
+        "BUD-T1-RESIZE-CPU-DUTY",
+        "BUD-T1-RESIZE-CPU-ACTION",
+        "BUD-T1-RESIZE-GPU-DUTY",
+        "BUD-T1-RESIZE-GPU-P95",
+        "BUD-T1-RESIZE-GPU-P99",
+        "BUD-SCROLL-CPU-DUTY",
+        "BUD-SCROLL-CPU-ACTION",
+        "BUD-SCROLL-GPU-DUTY",
+        "BUD-SCROLL-GPU-P95",
+        "BUD-SCROLL-GPU-P99",
+        "BUD-CONTROLS-CPU-DUTY",
+        "BUD-CONTROLS-CPU-ACTION",
+        "BUD-CONTROLS-GPU-DUTY",
+        "BUD-CONTROLS-GPU-P95",
+        "BUD-CONTROLS-GPU-P99",
+        "BUD-PANES-CPU-DUTY",
+        "BUD-PANES-CPU-ACTION",
+        "BUD-PANES-GPU-DUTY",
+        "BUD-PANES-GPU-P95",
+        "BUD-PANES-GPU-P99",
+        "BUD-WINDOWS-CPU-DUTY",
+        "BUD-WINDOWS-OPEN-CPU",
+        "BUD-WINDOWS-GPU-DUTY",
+        "BUD-WINDOWS-GPU-P95",
+        "BUD-WINDOWS-GPU-P99",
+        "BUD-MIXED-CPU-DUTY",
+        "BUD-MIXED-CPU-ACTION",
+        "BUD-MIXED-GPU-DUTY",
+        "BUD-MIXED-GPU-P95",
+        "BUD-MIXED-GPU-P99",
+        "Q-CPU-P95",
+        "Q-CPU-P99",
+        "Q-CPU-STALL",
+        "Q-DISPLAY-P95",
+        "Q-DISPLAY-P99",
+        "Q-WINDOW-DISPLAY-P95",
+        "Q-WINDOW-DISPLAY-P99",
+        "Q-PACING",
+        "Q-FINAL-DISPLAY",
+        "Q-RECOVERY-CPU",
+        "Q-RECOVERY-GPU95",
+        "Q-RECOVERY-GPU99",
+        "Q-RECOVERY-DISPLAY",
+        "Q-RECOVERY-DEADLINE",
+        "Q-ENDURANCE-DRIFT",
+        "Q-ENDURANCE-TREND",
+        "Q-RETURN-IDLE",
+        "BUD-WINDOWS-CLOSE-CPU"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R20",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "AC-08",
+        "HP12-01",
+        "HP12-02",
+        "HP13-01",
+        "HP13-02",
+        "HP21-01",
+        "HP21-02",
+        "HP22-01",
+        "HP22-02",
+        "HP23-01",
+        "HP23-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R21",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "DOC-21",
+        "PASS-GEOMETRY",
+        "PASS-BACKGROUND",
+        "PASS-TEXT",
+        "PASS-FOREGROUND",
+        "PASS-MENU-CARD",
+        "PASS-MENU-TEXT",
+        "PASS-COUNTS",
+        "PASS-RESOLVE"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R22",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "DOC-22"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R23",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "SH-01",
+        "SH-02",
+        "SH-03",
+        "SH-04",
+        "SH-05",
+        "SH-06",
+        "SH-07",
+        "SH-08",
+        "SH-09",
+        "SH-10",
+        "SH-11",
+        "SH-12",
+        "END-01",
+        "END-02",
+        "END-03",
+        "END-04"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R24",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "DOC-24"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R25",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "END-01",
+        "END-02",
+        "END-03",
+        "END-04"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R26",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "DOC-26"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R27",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "DOC-27"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R28",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "DOC-28"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R29",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "END-01",
+        "END-02",
+        "END-03",
+        "END-04",
+        "DOC-29"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R30",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "DOC-30"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R31",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "DOC-31"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R32",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "DOC-32"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R33",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP06-01",
+        "HP06-02",
+        "HP07-01",
+        "HP13-01",
+        "HP13-02",
+        "REUSE-SCREEN",
+        "REUSE-WORLD-ALLOC",
+        "REUSE-TEXT-KEY",
+        "REUSE-TEXT-LAYOUT",
+        "REUSE-CONTROL-KEY",
+        "PASS-GEOMETRY",
+        "PASS-BACKGROUND",
+        "PASS-TEXT",
+        "PASS-FOREGROUND",
+        "PASS-MENU-CARD",
+        "PASS-MENU-TEXT",
+        "PASS-COUNTS",
+        "PASS-RESOLVE"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R34",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP14-01",
+        "HP14-02",
+        "HP15-01",
+        "HP15-02",
+        "HP16-01",
+        "HP16-02",
+        "HP16-03",
+        "HP17-01",
+        "HP17-02",
+        "REUSE-SCREEN",
+        "REUSE-WORLD-ALLOC",
+        "REUSE-TEXT-KEY",
+        "REUSE-TEXT-LAYOUT",
+        "REUSE-CONTROL-KEY"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R35",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP01-01",
+        "HP02-01",
+        "HP02-02",
+        "HP03-01",
+        "HP03-02",
+        "HP04-01",
+        "HP05-01",
+        "HP05-02",
+        "HP06-01",
+        "HP06-02",
+        "HP07-01",
+        "HP08-01",
+        "HP08-02",
+        "HP08-03",
+        "HP09-01",
+        "HP09-02",
+        "HP10-01",
+        "HP10-02",
+        "HP11-01",
+        "HP11-02",
+        "HP12-01",
+        "HP12-02",
+        "HP13-01",
+        "HP13-02",
+        "HP14-01",
+        "HP14-02",
+        "HP15-01",
+        "HP15-02",
+        "HP16-01",
+        "HP16-02",
+        "HP16-03",
+        "HP17-01",
+        "HP17-02",
+        "HP18-01",
+        "HP19-01",
+        "HP20-01",
+        "HP21-01",
+        "HP21-02",
+        "HP22-01",
+        "HP22-02",
+        "HP23-01",
+        "HP23-02",
+        "HP24-01",
+        "HP24-02",
+        "HP25-01"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R36",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP01-01",
+        "HP02-01",
+        "HP02-02",
+        "HP03-01",
+        "HP03-02",
+        "HP04-01",
+        "HP05-01",
+        "HP05-02",
+        "HP06-01",
+        "HP06-02",
+        "HP07-01",
+        "HP08-01",
+        "HP08-02",
+        "HP08-03",
+        "HP09-01",
+        "HP09-02",
+        "HP10-01",
+        "HP10-02",
+        "HP11-01",
+        "HP11-02",
+        "HP12-01",
+        "HP12-02",
+        "HP13-01",
+        "HP13-02",
+        "HP14-01",
+        "HP14-02",
+        "HP15-01",
+        "HP15-02",
+        "HP16-01",
+        "HP16-02",
+        "HP16-03",
+        "HP17-01",
+        "HP17-02",
+        "HP18-01",
+        "HP19-01",
+        "HP20-01",
+        "HP21-01",
+        "HP21-02",
+        "HP22-01",
+        "HP22-02",
+        "HP23-01",
+        "HP23-02",
+        "HP24-01",
+        "HP24-02",
+        "HP25-01"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R37",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "SH-01",
+        "SH-02",
+        "SH-03",
+        "SH-04",
+        "SH-05",
+        "SH-06",
+        "SH-07",
+        "SH-08",
+        "SH-09",
+        "SH-10",
+        "SH-11",
+        "SH-12",
+        "END-01",
+        "END-02",
+        "END-03",
+        "END-04",
+        "PASS-GEOMETRY",
+        "PASS-BACKGROUND",
+        "PASS-TEXT",
+        "PASS-FOREGROUND",
+        "PASS-MENU-CARD",
+        "PASS-MENU-TEXT",
+        "PASS-COUNTS",
+        "PASS-RESOLVE"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R38",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "AC-07",
+        "HP24-01",
+        "HP24-02",
+        "HP25-01"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP01",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP01-01"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP02",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP02-01",
+        "HP02-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP03",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP03-01",
+        "HP03-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP04",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP04-01"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP05",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP05-01",
+        "HP05-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP06",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP06-01",
+        "HP06-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP07",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP07-01"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP08",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP08-01",
+        "HP08-02",
+        "HP08-03"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP09",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP09-01",
+        "HP09-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP10",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP10-01",
+        "HP10-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP11",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP11-01",
+        "HP11-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP12",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP12-01",
+        "HP12-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP13",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP13-01",
+        "HP13-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP14",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP14-01",
+        "HP14-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP15",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP15-01",
+        "HP15-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP16",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP16-01",
+        "HP16-02",
+        "HP16-03"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP17",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP17-01",
+        "HP17-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP18",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP18-01"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP19",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP19-01"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP20",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP20-01"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP21",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP21-01",
+        "HP21-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP22",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP22-01",
+        "HP22-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP23",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP23-01",
+        "HP23-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP24",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP24-01",
+        "HP24-02"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-HP25",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "HP25-01"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R39",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "SH-01",
+        "SH-02",
+        "SH-03",
+        "SH-04",
+        "SH-05",
+        "SH-06",
+        "SH-07",
+        "SH-08",
+        "SH-09",
+        "SH-10",
+        "SH-11",
+        "SH-12",
+        "LF-01",
+        "LF-02",
+        "LF-03",
+        "LF-04",
+        "LF-05",
+        "LF-06",
+        "LF-07",
+        "LF-08",
+        "LF-09",
+        "LF-10",
+        "LF-11",
+        "LF-12",
+        "LF-13",
+        "LF-14",
+        "LF-15",
+        "RS-01",
+        "RS-02",
+        "RS-03",
+        "RS-04"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R40",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "RS-01",
+        "RS-02",
+        "RS-03",
+        "RS-04",
+        "BUD-IDLE-CPU-DUTY",
+        "BUD-IDLE-CPU-ACTION",
+        "BUD-IDLE-GPU-DUTY",
+        "BUD-IDLE-GPU-P95",
+        "BUD-IDLE-GPU-P99",
+        "BUD-CLAMP-CPU-DUTY",
+        "BUD-CLAMP-CPU-ACTION",
+        "BUD-CLAMP-GPU-DUTY",
+        "BUD-CLAMP-GPU-P95",
+        "BUD-CLAMP-GPU-P99",
+        "BUD-T0-RESIZE-CPU-DUTY",
+        "BUD-T0-RESIZE-CPU-ACTION",
+        "BUD-T0-RESIZE-GPU-DUTY",
+        "BUD-T0-RESIZE-GPU-P95",
+        "BUD-T0-RESIZE-GPU-P99",
+        "BUD-T1-POINTER-CPU-DUTY",
+        "BUD-T1-POINTER-CPU-ACTION",
+        "BUD-T1-POINTER-GPU-DUTY",
+        "BUD-T1-POINTER-GPU-P95",
+        "BUD-T1-POINTER-GPU-P99",
+        "BUD-T1-PAN-CPU-DUTY",
+        "BUD-T1-PAN-CPU-ACTION",
+        "BUD-T1-PAN-GPU-DUTY",
+        "BUD-T1-PAN-GPU-P95",
+        "BUD-T1-PAN-GPU-P99",
+        "BUD-T1-ZOOM-CPU-DUTY",
+        "BUD-T1-ZOOM-CPU-ACTION",
+        "BUD-T1-ZOOM-GPU-DUTY",
+        "BUD-T1-ZOOM-GPU-P95",
+        "BUD-T1-ZOOM-GPU-P99",
+        "BUD-T1-RESIZE-CPU-DUTY",
+        "BUD-T1-RESIZE-CPU-ACTION",
+        "BUD-T1-RESIZE-GPU-DUTY",
+        "BUD-T1-RESIZE-GPU-P95",
+        "BUD-T1-RESIZE-GPU-P99",
+        "BUD-SCROLL-CPU-DUTY",
+        "BUD-SCROLL-CPU-ACTION",
+        "BUD-SCROLL-GPU-DUTY",
+        "BUD-SCROLL-GPU-P95",
+        "BUD-SCROLL-GPU-P99",
+        "BUD-CONTROLS-CPU-DUTY",
+        "BUD-CONTROLS-CPU-ACTION",
+        "BUD-CONTROLS-GPU-DUTY",
+        "BUD-CONTROLS-GPU-P95",
+        "BUD-CONTROLS-GPU-P99",
+        "BUD-PANES-CPU-DUTY",
+        "BUD-PANES-CPU-ACTION",
+        "BUD-PANES-GPU-DUTY",
+        "BUD-PANES-GPU-P95",
+        "BUD-PANES-GPU-P99",
+        "BUD-WINDOWS-CPU-DUTY",
+        "BUD-WINDOWS-OPEN-CPU",
+        "BUD-WINDOWS-GPU-DUTY",
+        "BUD-WINDOWS-GPU-P95",
+        "BUD-WINDOWS-GPU-P99",
+        "BUD-MIXED-CPU-DUTY",
+        "BUD-MIXED-CPU-ACTION",
+        "BUD-MIXED-GPU-DUTY",
+        "BUD-MIXED-GPU-P95",
+        "BUD-MIXED-GPU-P99",
+        "Q-CPU-P95",
+        "Q-CPU-P99",
+        "Q-CPU-STALL",
+        "Q-DISPLAY-P95",
+        "Q-DISPLAY-P99",
+        "Q-WINDOW-DISPLAY-P95",
+        "Q-WINDOW-DISPLAY-P99",
+        "Q-PACING",
+        "Q-FINAL-DISPLAY",
+        "Q-RECOVERY-CPU",
+        "Q-RECOVERY-GPU95",
+        "Q-RECOVERY-GPU99",
+        "Q-RECOVERY-DISPLAY",
+        "Q-RECOVERY-DEADLINE",
+        "Q-ENDURANCE-DRIFT",
+        "Q-ENDURANCE-TREND",
+        "Q-RETURN-IDLE",
+        "BUD-WINDOWS-CLOSE-CPU"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R41",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "RS-01",
+        "RS-02",
+        "RS-03",
+        "RS-04"
+      ],
+      "runtime_acceptance": false
+    },
+    {
+      "id": "GUI-PERFORMANCE-R42",
+      "disposition": "approved_specification_only",
+      "requirement_ids": [
+        "SH-01",
+        "SH-02",
+        "SH-03",
+        "SH-04",
+        "SH-05",
+        "SH-06",
+        "SH-07",
+        "SH-08",
+        "SH-09",
+        "SH-10",
+        "SH-11",
+        "SH-12",
+        "LF-01",
+        "LF-02",
+        "LF-03",
+        "LF-04",
+        "LF-05",
+        "LF-06",
+        "LF-07",
+        "LF-08",
+        "LF-09",
+        "LF-10",
+        "LF-11",
+        "LF-12",
+        "LF-13",
+        "LF-14",
+        "LF-15",
+        "RS-01",
+        "RS-02",
+        "RS-03",
+        "RS-04",
+        "END-01",
+        "END-02",
+        "END-03",
+        "END-04"
+      ],
+      "runtime_acceptance": false
+    }
+  ],
+  "risks": [
+    {
+      "id": "RISK-01",
+      "owner_disposition": "Retain ceilings; failed qualification requires evidence and owner review, not silent relaxation.",
+      "follow_up": "S0 conformance/baseline and per-slice resource comparisons"
+    },
+    {
+      "id": "RISK-02",
+      "owner_disposition": "Retain owner-approved initial limits; no extrapolated claims.",
+      "follow_up": "Later real T2/schematic fixture admission and separate qualification"
+    },
+    {
+      "id": "RISK-03",
+      "owner_disposition": "Retain exclusion and E10 pre-change oracle prerequisite; no full visual responsiveness claim.",
+      "follow_up": "GPS-C01R or expressly selected bounded temporal-method work before affected resize implementation"
+    },
+    {
+      "id": "RISK-04",
+      "owner_disposition": "Do not accept missing GPU/accounting evidence.",
+      "follow_up": "S0 ADM/GPU/ACC conformance and complete lifetime receipts"
+    },
+    {
+      "id": "RISK-05",
+      "owner_disposition": "Keep dat-gpu-test-concurrency-6dt open; require separate supported shared-device multiwindow qualification.",
+      "follow_up": "S4/S5 and separately tracked concurrency defect"
+    },
+    {
+      "id": "RISK-06",
+      "owner_disposition": "Preserve without staging or approval; re-evaluate against selected contract before any use.",
+      "follow_up": "Explicit future implementation slice source audit"
+    }
+  ],
+  "boundaries": [
+    "Pinned F-DOA/T0/T1 qualification scope; larger-project, unadmitted schematic and temporal/displayed-frame qualification remain unaccepted.",
+    "GPU/accounting, memory, static visual/input correctness remain required.",
+    "GPS-C01R remains pending and unresolved, with E10 temporal prerequisite; specification-only approval supplies no new execution grant.",
+    "Wider implementation reservation remains blocked until specification item closure and then requires its separate first execution gate, unclaimed and unselected.",
+    "No Rust candidate acceptance, renderer edit, dependency introduction or protected prototype modification."
+  ],
+  "immutable_review_history": "The exact packet and review corpus retain their historical pre-ratification wording and hashes. This subsequent record resolves all67 clause dispositions and all6 residual-risk proposals; it does not rewrite prior evidence."
+}
