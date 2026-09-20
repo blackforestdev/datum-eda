@@ -128,6 +128,13 @@ impl App {
             next_refresh_due =
                 Some(next_refresh_due.map_or(surface_due, |due| due.min(surface_due)));
         }
+        match self.service_gpu_measurements() {
+            Ok(Some(due)) => {
+                next_refresh_due = Some(next_refresh_due.map_or(due, |old| old.min(due)))
+            }
+            Ok(None) => {}
+            Err(err) => super::fatal_gui_error(event_loop, "GPU measurement incomplete", err),
+        }
         if let Some(next_refresh_due) = next_refresh_due {
             event_loop.set_control_flow(ControlFlow::WaitUntil(next_refresh_due));
         } else {

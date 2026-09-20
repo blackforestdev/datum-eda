@@ -80,6 +80,7 @@ impl Renderer {
         width: u32,
         height: u32,
     ) -> anyhow::Result<()> {
+        let mut measurement = self.begin_gpu_measurement()?;
         let started = std::time::Instant::now();
         // Overlay-only frames advance/evict shared shaped-buffer entries. A
         // later workspace frame must rebuild its separate glyph instances.
@@ -129,7 +130,7 @@ impl Renderer {
                 })],
                 depth_stencil_attachment: None,
                 occlusion_query_set: None,
-                timestamp_writes: None,
+                timestamp_writes: measurement.as_mut().map(|m| m.pass("dialog")).transpose()?,
                 multiview_mask: None,
             });
             pass.set_pipeline(&self.pipeline);
@@ -148,7 +149,9 @@ impl Renderer {
                     .map_err(|error| anyhow::anyhow!("render dialog text: {error}"))?;
             }
         }
+        self.resolve_gpu_measurement(&mut measurement, &mut encoder)?;
         queue.submit([encoder.finish()]);
+        self.submit_gpu_measurement(measurement)?;
         self.trim_overlay_text_buffers();
         trace_render_timing(format!(
             "dialog renderer={}us passes=1",

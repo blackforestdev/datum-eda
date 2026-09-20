@@ -17,6 +17,7 @@ impl Renderer {
         if prepared.is_overlay_only() {
             return self.render_overlay_only(device, queue, target, prepared, width, height);
         }
+        let mut measurement = self.begin_gpu_measurement()?;
         let render_started = std::time::Instant::now();
         let panel_vertices = prepared.panel_vertices();
         let viewport_underlay_vertices = prepared.viewport_underlay_vertices();
@@ -96,7 +97,7 @@ impl Renderer {
                 })],
                 depth_stencil_attachment: None,
                 occlusion_query_set: None,
-                timestamp_writes: None,
+                timestamp_writes: measurement.as_mut().map(|m| m.pass("scene")).transpose()?,
                 multiview_mask: None,
             });
             pass.set_pipeline(&self.pipeline);
@@ -276,7 +277,13 @@ impl Renderer {
             // the work-pane quads but every underlying text_run too; its own text
             // then draws in a final pass on top of the card.
         }
-        self.encode_terminal_graphics(&mut encoder, &msaa_view, target, false);
+        self.encode_terminal_graphics(
+            &mut encoder,
+            &msaa_view,
+            target,
+            false,
+            measurement.as_mut(),
+        )?;
         let encode_elapsed = encode_started.elapsed();
         self.viewport.update(queue, Resolution { width, height });
         let text_prepare_started = std::time::Instant::now();
@@ -348,7 +355,7 @@ impl Renderer {
                 })],
                 depth_stencil_attachment: None,
                 occlusion_query_set: None,
-                timestamp_writes: None,
+                timestamp_writes: measurement.as_mut().map(|m| m.pass("text")).transpose()?,
                 multiview_mask: None,
             });
             self.text_renderer
@@ -357,7 +364,13 @@ impl Renderer {
         }
         let text_encode_elapsed = text_encode_started.elapsed();
 
-        self.encode_terminal_graphics(&mut encoder, &msaa_view, target, true);
+        self.encode_terminal_graphics(
+            &mut encoder,
+            &msaa_view,
+            target,
+            true,
+            measurement.as_mut(),
+        )?;
 
         // Composite the menu card and its text after the main text pass.
         if !menu_overlay_vertices.is_empty() {
@@ -378,7 +391,10 @@ impl Renderer {
                     })],
                     depth_stencil_attachment: None,
                     occlusion_query_set: None,
-                    timestamp_writes: None,
+                    timestamp_writes: measurement
+                        .as_mut()
+                        .map(|m| m.pass("menu-background"))
+                        .transpose()?,
                     multiview_mask: None,
                 });
                 pass.set_pipeline(&self.pipeline);
@@ -415,7 +431,10 @@ impl Renderer {
                         })],
                         depth_stencil_attachment: None,
                         occlusion_query_set: None,
-                        timestamp_writes: None,
+                        timestamp_writes: measurement
+                            .as_mut()
+                            .map(|m| m.pass("menu-text"))
+                            .transpose()?,
                         multiview_mask: None,
                     });
                     self.menu_overlay_text_renderer
@@ -427,10 +446,12 @@ impl Renderer {
 
         let trace_enabled = std::env::var_os("DATUM_TRACE_TIMING").is_some();
         let finish_started = trace_enabled.then(std::time::Instant::now);
+        self.resolve_gpu_measurement(&mut measurement, &mut encoder)?;
         let command_buffer = encoder.finish();
         let finish_elapsed = finish_started.map(|started| started.elapsed());
         let submit_started = std::time::Instant::now();
         queue.submit([command_buffer]);
+        self.submit_gpu_measurement(measurement)?;
         let submit_elapsed = submit_started.elapsed();
         if let Some(finish_elapsed) = finish_elapsed {
             trace_render_timing(format!(

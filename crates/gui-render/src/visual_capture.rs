@@ -288,9 +288,7 @@ mod tests {
         assert!(image.pixels().any(|pixel| pixel.0 != [0, 0, 0, 0]));
     }
 
-    #[test]
-    #[ignore = "requires a working local wgpu adapter; explicit DTC-P23 visual proof"]
-    fn offscreen_terminal_sixel_uses_the_production_texture_pipeline() {
+    pub(super) fn sixel_snapshot(include_background: bool) -> datum_terminal_core::RenderSnapshot {
         let values = CoreLimitValues {
             parameter_count: 64,
             parameter_digits: 16,
@@ -329,7 +327,18 @@ mod tests {
         parser.feed(b"\x1bP0;1;0q\"1;1;8;8#2;2;100;0;0!8~\x1b\\", |action| {
             core.apply(action).unwrap();
         });
-        let snapshot = core.render_snapshot().unwrap();
+        if include_background {
+            parser.feed(b"\x1b_Ga=T,f=24,s=1,v=1,z=-1;AP8A\x1b\\", |action| {
+                core.apply(action).unwrap();
+            });
+        }
+        core.render_snapshot().unwrap()
+    }
+
+    #[test]
+    #[ignore = "requires a working local wgpu adapter; explicit DTC-P23 visual proof"]
+    fn offscreen_terminal_sixel_uses_the_production_texture_pipeline() {
+        let snapshot = sixel_snapshot(false);
         let mut state = datum_gui_protocol::load_fixture_workspace_state();
         state.ui.active_dock_tab = Some(DockTab::Terminal);
         state.ui.dock_height_px = 220;

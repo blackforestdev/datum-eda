@@ -2,6 +2,14 @@
 use super::*;
 
 fn hardware_renderer(width: u32, height: u32) -> OffscreenRenderer {
+    hardware_renderer_with_features(width, height, wgpu::Features::empty())
+}
+
+fn hardware_renderer_with_features(
+    width: u32,
+    height: u32,
+    required_features: wgpu::Features,
+) -> OffscreenRenderer {
     let instance = wgpu::Instance::default();
     let adapter = pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
         power_preference: wgpu::PowerPreference::LowPower,
@@ -19,8 +27,11 @@ fn hardware_renderer(width: u32, height: u32) -> OffscreenRenderer {
         "pixel parity adapter: {} ({:?}, {:?})",
         info.name, info.device_type, info.backend
     );
-    let (device, queue) =
-        pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
+        required_features,
+        ..Default::default()
+    }))
+    .unwrap();
     let renderer = Renderer::new(&device, &queue, OUTPUT_FORMAT, DEFAULT_MSAA_SAMPLES);
     OffscreenRenderer {
         device,
@@ -203,4 +214,105 @@ fn fractional_dialog_scroll_preserves_chrome_and_reuses_shaped_text() {
             }
         }
     }
+}
+
+#[test]
+#[ignore = "requires timestamp-capable hardware; production measurement parity"]
+fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
+    let mut renderer = hardware_renderer_with_features(960, 720, wgpu::Features::TIMESTAMP_QUERY);
+    let workspace = datum_gui_protocol::load_fixture_workspace_state();
+    let dialog_state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let dialog =
+        PreparedScene::from_native_preferences(&dialog_state.ui.global_preferences, 960, 720, 1.0);
+    assert!(renderer.renderer.measurements.is_none());
+    assert!(renderer.renderer.gpu_measurement_poll_deadline().is_none());
+    let expected_workspace = renderer.render_workspace(&workspace, None).unwrap();
+    let expected_dialog = capture(&mut renderer, &dialog);
+    let mut menu_workspace = workspace.clone();
+    menu_workspace.ui.active_menu = Some("View".to_owned());
+    let expected_menu = renderer.render_workspace(&menu_workspace, None).unwrap();
+    let mut terminal_workspace = workspace.clone();
+    terminal_workspace.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    terminal_workspace.ui.dock_height_px = 220;
+    let snapshot = super::tests::sixel_snapshot(true);
+    let expected_terminal = renderer
+        .render_workspace_with_terminal_snapshot(&terminal_workspace, &snapshot, 1.0)
+        .unwrap();
+    renderer
+        .renderer
+        .enable_gpu_measurements(
+            &renderer.device,
+            &renderer.queue,
+            101,
+            1,
+            Box::new(|receipt| panic!("unexpected cancellation: {receipt:?}")),
+        )
+        .unwrap();
+    let measured_workspace = renderer.render_workspace(&workspace, None).unwrap();
+    assert!(
+        expected_workspace == measured_workspace,
+        "measurement changed workspace pixels"
+    );
+    let samples = renderer
+        .renderer
+        .poll_gpu_measurements(&renderer.device)
+        .unwrap();
+    assert_eq!(samples.len(), 1);
+    assert_eq!(
+        samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
+        ["scene", "text"]
+    );
+    let measured_dialog = capture(&mut renderer, &dialog);
+    assert!(
+        expected_dialog == measured_dialog,
+        "measurement changed dialog pixels"
+    );
+    let samples = renderer
+        .renderer
+        .poll_gpu_measurements(&renderer.device)
+        .unwrap();
+    assert_eq!(samples.len(), 1);
+    assert_eq!(
+        samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
+        ["dialog"]
+    );
+    let measured_terminal = renderer
+        .render_workspace_with_terminal_snapshot(&terminal_workspace, &snapshot, 1.0)
+        .unwrap();
+    assert!(
+        expected_terminal == measured_terminal,
+        "measurement changed terminal pixels"
+    );
+    let samples = renderer
+        .renderer
+        .poll_gpu_measurements(&renderer.device)
+        .unwrap();
+    assert_eq!(samples.len(), 1);
+    assert!(
+        samples[0]
+            .passes_ns
+            .iter()
+            .any(|p| p.0 == "datum-terminal-foreground-graphics-pass")
+    );
+    assert!(
+        samples[0]
+            .passes_ns
+            .iter()
+            .any(|p| p.0 == "datum-terminal-background-graphics-pass")
+    );
+    let measured_menu = renderer.render_workspace(&menu_workspace, None).unwrap();
+    assert!(
+        expected_menu == measured_menu,
+        "measurement changed menu pixels"
+    );
+    let samples = renderer
+        .renderer
+        .poll_gpu_measurements(&renderer.device)
+        .unwrap();
+    assert_eq!(samples.len(), 1);
+    assert_eq!(
+        samples[0].passes_ns.iter().map(|p| p.0).collect::<Vec<_>>(),
+        ["scene", "text", "menu-background", "menu-text"]
+    );
+    assert!(renderer.renderer.gpu_measurement_poll_deadline().is_none());
 }

@@ -1,0 +1,25 @@
+{
+  "scope": "Retained failed and superseded attempts; none provides acceptance",
+  "attempts": [
+    {
+      "attempt": "initial GPU helper run",
+      "result": "sandbox chose llvmpipe; cancellation attempted unmap on unsubmitted reservation and caused validation panic",
+      "disposition": "fixed cancellation state check; hardware replay subsequently passed; software result is not reference-adapter proof"
+    },
+    {
+      "artifact": "conformance-attempt1.log",
+      "result": "4 passed, production parity test failed expected background SIXEL pass",
+      "disposition": "SIXEL default z-index is 0, so foreground is correct. Test now includes explicit negative-z Kitty graphic and checks both real graphics passes."
+    },
+    {
+      "artifact": "conformance-before-review.log",
+      "result": "5 passed before independent review",
+      "disposition": "superseded by stronger mapping/epoch/cancellation tests; no claim that earlier controls exercised submitted delayed map or live epoch mismatch"
+    },
+    {
+      "artifact": "native-attempt1.json",
+      "result": "16 launch checks passed but all actual backend identity was Wayland",
+      "disposition": "requested x11 labels are invalid Xwayland evidence. Runner now removes WAYLAND_DISPLAY for X11 and asserts actual backend identity; retain this failed backend-selection attempt."
+    }
+  ]
+}

@@ -15,7 +15,8 @@ pub(super) struct GlobalPreferencesWindowSurface {
     pub(super) surface_transaction:
         gui_runtime_support::native_surface_transaction::SurfaceTransaction,
     scale_factor: f32,
-    renderer: Renderer,
+    pub(super) renderer: Renderer,
+    pub(super) measurements: native_gpu_measurements::Host,
     retained: Option<RetainedScene>,
     prepared: Option<PreparedScene>,
     cursor_position: Option<(f32, f32)>,
@@ -45,12 +46,19 @@ impl GlobalPreferencesWindowSurface {
         );
         let format = config.format;
         surface.configure(&runtime.device, &config);
-        let renderer = Renderer::new(
+        let mut renderer = Renderer::new(
             &runtime.device,
             &runtime.queue,
             format,
             select_msaa_samples(&runtime.adapter, format),
         );
+        let measurements = native_gpu_measurements::Host::new(
+            &mut renderer,
+            &runtime.device,
+            &runtime.queue,
+            &window,
+            Some(runtime.measurements.epoch()),
+        )?;
         Ok(Self {
             surface,
             surface_transaction:
@@ -61,6 +69,7 @@ impl GlobalPreferencesWindowSurface {
             config,
             scale_factor: scale_factor_override.unwrap_or_else(|| window.scale_factor() as f32),
             renderer,
+            measurements,
             retained: None,
             prepared: None,
             cursor_position: None,

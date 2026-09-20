@@ -1,0 +1,28 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=26.2 GiB target_free=180.2 GiB tmp_free=9.6 GiB
+warning: Cargo target exceeds soft limit: 26.2 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 9.00s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-a7d7fb54bedfb80c)
+
+running 5 tests
+test gpu_measurements::tests::active_deadline_pauses_without_resetting_progress ... ok
+test gpu_measurements::tests::invalid_or_missing_measurements_are_never_zero_samples ... ok
+test gpu_measurements::tests::measured_pass_sum_excludes_gap_and_preserves_empty_pass ... ok
+test gpu_measurements::tests::real_gpu_query_ring_completion_and_failure_controls ... adapter=AdapterInfo { name: "Intel(R) HD Graphics P630 (KBL GT2)", vendor: 32902, device: 22813, device_type: IntegratedGpu, device_pci_bus_id: "0000:00:02.0", driver: "Intel open-source Mesa driver", driver_info: "Mesa 25.0.7-2+deb13u1", backend: Vulkan, subgroup_min_size: 8, subgroup_max_size: 32, transient_saves_memory: false } sample=GpuFrameSample { host: 1, device_epoch: 1, frame: 1, submission: 1, period_ns: 83.33333587646484, raw_ticks: [23875270322, 23875270405, 23875270588, 23875270933], passes_ns: [("empty", 6916.666877746582), ("draw", 28750.00087738037)], own_pass_sum_ns: 35666.66775512695, frame_span_ns: 50916.66822052002 }
+ok
+test visual::visual_capture::gpu_overlay_tests::gpu_measurements_preserve_production_workspace_and_dialog_pixels ... pixel parity adapter: Intel(R) HD Graphics P630 (KBL GT2) (IntegratedGpu, Vulkan)
+
+thread 'visual::visual_capture::gpu_overlay_tests::gpu_measurements_preserve_production_workspace_and_dialog_pixels' (657201) panicked at crates/gui-render/src/render/gpu_overlay_tests.rs:282:5:
+assertion failed: samples[0].passes_ns.iter().any(|p|
+        p.0 == "datum-terminal-background-graphics-pass")
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    visual::visual_capture::gpu_overlay_tests::gpu_measurements_preserve_production_workspace_and_dialog_pixels
+
+test result: FAILED. 4 passed; 1 failed; 0 ignored; 0 measured; 198 filtered out; finished in 1.01s
+
+error: test failed, to rerun pass `-p datum-gui-render --lib`

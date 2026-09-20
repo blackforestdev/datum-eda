@@ -300,6 +300,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             None,
         );
         Self {
+            measurements: None,
             pipeline,
             world_pipeline,
             world_stroke_pipeline,

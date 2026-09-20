@@ -21609,5 +21609,39 @@
       "acceptance": "Run relevant production adapter proof with each slice; complete in-scope adoption/endurance/replay at S5. Driver attribution and deferred resize temporal/resource qualification remain nonblocking."
     },
     "review_status": "bounded review complete; implementation and acceptance gaps retained"
+  },
+  "s0_work": {
+    "selected_unit": "AC-03 GPU-01..03 production pass-timestamp conformance",
+    "status": "bounded GPU measurement unit verified; S0 remains open",
+    "preserve": "checkpointc8bac0b6 and GEFN default behavior; existing diagnostics retained",
+    "scope": "Opt-in bounded3slot/32query timing through existing main/dialog/terminal render passes, shared native device feature request and nonblocking event-loop collection. No renderer replacement, default pacing/backend/quality change or resize closure.",
+    "proof": [
+      "Real empty and draw passes, multiple ordered passes with raw timestamps/period/identity",
+      "Missing pairs, ring exhaustion, delayed map/deadline, device epoch cancellation and reversed/wrap samples refuse measurement",
+      "Default-disabled code allocates no query/readback resources",
+      "Production renderer integration includes full scene, dialog and terminal passes; preserve output and measure overhead before accepting baseline"
+    ],
+    "remaining": "Measurement overhead, ADM admission counts, ACC lifetime/cache/upload/process accounting, complete trial accounting and matched baseline remain S0 requirements; native launch or helper tests cannot complete S0. No S1-S5 adoption or resize/resource/temporal acceptance.",
+    "production_paths": {
+      "MAIN": "Runtime -> native_gpu::create -> Renderer::enable_gpu_measurements -> gpu_frame full-scene/menu/terminal passes -> App::service_gpu_measurements",
+      "GLOBAL": "GlobalPreferencesWindowSurface -> shared Renderer dialog pass -> App::service_gpu_measurements",
+      "PROJECT": "Project Preferences production adapter -> GlobalPreferencesWindowSurface -> shared Renderer dialog pass -> App::service_gpu_measurements",
+      "NEW": "New Project production adapter -> GlobalPreferencesWindowSurface -> existing full renderer -> App::service_gpu_measurements"
+    },
+    "defaults": "DATUM_GPU_MEASUREMENTS absent or0 retains prior feature request and no query/readback allocations;1 explicitly enables timestamps. Existing transaction/clear/minimal/latency probes retained; no default promotion.",
+    "retirement": "Timestamp None placeholders replaced in every contributing production render pass; existing native device setup extracted without changing default adapter/presentation policy. No production scheduler, cache, backdrop or recovery path retired in this measurement unit.",
+    "review": {
+      "reviewer": "separate existing review session",
+      "first_result": "R01 silent cancellation; R02 process-global ID test ordering; R03 weak delayed-map/epoch controls",
+      "resolution": "mandatory cancellation observer; reservation identity/uniqueness assertions; real submitted map cancellation/error and live epoch mismatch. Delta review found no concrete landing blocker subject to final test results. Not independent performance replay."
+    },
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S0/GPU-01-03",
+    "receipt": "docs/reviews/gui-performance/implementation/S0/GPU-01-03/receipt.json",
+    "results": {
+      "gpu_conformance_and_pixel_parity": "5 passed including actual Intel Vulkan adapter, both terminal layers and menu passes",
+      "native": "16 passed: four production hosts x timing on/off x verified Wayland/Xwayland; all Intel Vulkan",
+      "app": "321 passed,0 failed,8 ignored; serial",
+      "release": "passed"
+    }
   }
 }

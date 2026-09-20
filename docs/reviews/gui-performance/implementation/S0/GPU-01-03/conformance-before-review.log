@@ -1,0 +1,17 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=26.2 GiB target_free=180.2 GiB tmp_free=9.6 GiB
+warning: Cargo target exceeds soft limit: 26.2 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.75s
+     Running unittests src/lib.rs (target/debug/deps/datum_gui_render-a7d7fb54bedfb80c)
+
+running 5 tests
+test gpu_measurements::tests::active_deadline_pauses_without_resetting_progress ... ok
+test gpu_measurements::tests::invalid_or_missing_measurements_are_never_zero_samples ... ok
+test gpu_measurements::tests::measured_pass_sum_excludes_gap_and_preserves_empty_pass ... ok
+test gpu_measurements::tests::real_gpu_query_ring_completion_and_failure_controls ... adapter=AdapterInfo { name: "Intel(R) HD Graphics P630 (KBL GT2)", vendor: 32902, device: 22813, device_type: IntegratedGpu, device_pci_bus_id: "0000:00:02.0", driver: "Intel open-source Mesa driver", driver_info: "Mesa 25.0.7-2+deb13u1", backend: Vulkan, subgroup_min_size: 8, subgroup_max_size: 32, transient_saves_memory: false } sample=GpuFrameSample { host: 1, device_epoch: 1, frame: 1, submission: 1, period_ns: 83.33333587646484, raw_ticks: [24720923942, 24720924028, 24720924217, 24720924576], passes_ns: [("empty", 7166.666885375977), ("draw", 29916.66757965088)], own_pass_sum_ns: 37083.334465026855, frame_span_ns: 52833.33494567871 }
+ok
+test visual::visual_capture::gpu_overlay_tests::gpu_measurements_preserve_production_workspace_and_dialog_pixels ... pixel parity adapter: Intel(R) HD Graphics P630 (KBL GT2) (IntegratedGpu, Vulkan)
+ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 198 filtered out; finished in 1.08s
+

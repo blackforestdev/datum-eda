@@ -1,0 +1,30 @@
+{
+  "scope": "Read-only distinct-reviewer source review of bounded S0 measurement unit; no performance replay or S0-S5 acceptance",
+  "findings": [
+    {
+      "id": "S0-GPU-R01",
+      "severity": "high",
+      "finding": "Pending samples silently lost on host closure",
+      "resolution": "Mandatory observer emits host/device epoch/frame/submission incomplete receipt on cancellation/drop; native diagnostic and stderr fallback; consumers must reject receipts."
+    },
+    {
+      "id": "S0-GPU-R02",
+      "severity": "medium",
+      "finding": "Global submission-ID assertion depends on test order",
+      "resolution": "Compare actual reservation identity and assert uniqueness."
+    },
+    {
+      "id": "S0-GPU-R03",
+      "severity": "medium",
+      "finding": "Delayed map and epoch tests did not reach claimed states",
+      "resolution": "Submit/map real pass before delay; cancel actual pending map for callback failure; test epoch mismatch against live owner."
+    }
+  ],
+  "delta_result": "No remaining concrete landing blocker subject to final checks passing; complete trial accounting remains outside this bounded unit.",
+  "reviewed_hashes": {
+    "crates/gui-render/src/render/gpu_measurements.rs": "a36b566301aa0c8efbebb072d4228fced3bf2d45d63da5acb54e357490775e4c",
+    "crates/gui-render/src/render/gpu_measurements_tests.rs": "b66ff2c5562146fa42325f001a89cdd6bc5ec9a8a8b1a36cfa068812944ed27e",
+    "crates/gui-app/src/native_gpu_measurements.rs": "eab4fcc21fc60972fb5a7273f3376c478beb789134564ecfd528d1b40349ed8f",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "1d29568510f0e1d1fe7cc03c554438a0e4566590da0a57728d93cdbbcd478fde"
+  }
+}
