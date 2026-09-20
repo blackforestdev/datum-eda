@@ -617,3 +617,16 @@ visual tests additionally expose a menu card drawn before underlying text and
 terminal foreground/background inversion. Quality stays at the existing sample
 count. This contract neither reduces AA nor claims a pass-count change alone
 will fix the measured submission CPU cost.
+
+## Initial qualification scope disposition
+
+The subsequent owner scope record
+`docs/reviews/gui-performance/initial-qualification-owner-direction.json` limits
+initial qualification to the acceptance matrix's pinned small-project scope and
+excludes flicker/displayed-frame latency acceptance. E07/E10/E11 displayed-frame
+oracles and demanding-tier proof remain deferred, unqualified requirements for
+full acceptance. They do not block drafting the limited initial specification.
+Keep CPU/GPU/memory, static appearance, input/focus, clip/hit, final-state and
+shared-adoption obligations. No application milestone is relabeled as observed
+display, and no initial pass closes the unresolved resize defect. This subsequent
+scope disposition does not change the independently reviewed C02 mechanisms.
