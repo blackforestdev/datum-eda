@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "proposed specification; no runtime pass or execution authorization",
+  "status": "ratified specification map; S0 execution authorized; preserved-candidate bounded review in progress; no full adoption",
   "parent_clause_count": 67,
   "consumers": [
     {
@@ -20979,5 +20979,635 @@
     "Faults are backend-only injections through production owners.",
     "Parallel GPU test crash remains separately unresolved."
   ],
-  "owner_amendment": "docs/reviews/gui-performance/resize-deferral-owner-direction.json"
+  "owner_amendment": "docs/reviews/gui-performance/resize-deferral-owner-direction.json",
+  "preserved_candidate_review": {
+    "checkpoint_commit": "c8bac0b6bc29a64f15d02b5a558a853fab60a657",
+    "purpose": "Owner-authorized preservation and bounded compliance/integration review; no restart or deletion.",
+    "source_identity": "All12 files match restored pre-cleanup bytes. Eight tracked Git blobs/diff and four full session-recorded file reads verified before checkpoint.",
+    "changes": [
+      {
+        "id": "RC-01",
+        "behavior": "Main Resized updates runtime extent then requests only main redraw; general settings/other broad redraw callers are preserved.",
+        "consumers": [
+          "MAIN",
+          "GLOBAL",
+          "PROJECT",
+          "NEW"
+        ],
+        "activation": "Default; no diagnostic flag.",
+        "requirement_ids": [
+          "SH-01",
+          "SH-02",
+          "SH-10",
+          "LF-08"
+        ],
+        "existing_proof": [
+          "Archived resize-dialog-isolation candidate4077a29b on Wayland/Vulkan/P630: zero induced renderer calls for all3 real dialogs on both axes; Global baseline126/130. Exact isolated source.patch matches this routing change.",
+          "Checkpointc8bac0b6: current release native default-main/global/project/new smoke passed6 main resize extents each. This protects compatibility; exact dialog-isolation counts remain the historical separate recipe."
+        ],
+        "missing_proof": [
+          "Current zero-induced-work measurement through each consumer adapter; native input/DPI/focus and physical-drag/temporal qualification."
+        ],
+        "compliance_differences": [
+          "Only main Resized broadcast retired. Other broadcast callers remain; no global coordinator or complete SH-01 predicate adoption."
+        ],
+        "disposition": "validated improvement (bounded historical isolation proof plus current native compatibility smoke)",
+        "production_paths": [
+          "main.rs::window_event(Resized)",
+          "app_shell.rs::request_main_redraw_if_needed"
+        ],
+        "checkpoint": "c8bac0b6bc29a64f15d02b5a558a853fab60a657"
+      },
+      {
+        "id": "RC-02",
+        "behavior": "Centralize main full-scene and clear-frame pre_present_notify/present/timing/callback boundary without changing ordinary rendering.",
+        "consumers": [
+          "MAIN"
+        ],
+        "activation": "Default helper; clear bypass requires separate flag.",
+        "requirement_ids": [
+          "LF-13",
+          "LF-14"
+        ],
+        "existing_proof": [
+          "Earlier full/clear runs used the common presentation helper; full scene retained normal AA/text."
+        ],
+        "missing_proof": [
+          "Current native integration; consumed/submitted/completed generations and retirement accounting."
+        ],
+        "compliance_differences": [
+          "Present-call completion is not display completion; helper has no frame-generation receipt."
+        ],
+        "disposition": "incomplete implementation (useful shared presentation boundary retained)",
+        "production_paths": [
+          "runtime_present.rs::present_native_frame"
+        ],
+        "checkpoint": "c8bac0b6bc29a64f15d02b5a558a853fab60a657"
+      },
+      {
+        "id": "RC-03",
+        "behavior": "Per-host latest configured extent, deferred frame-bound configuration, nonblocking completion flag/poll and retry state.",
+        "consumers": [
+          "MAIN",
+          "GLOBAL",
+          "PROJECT",
+          "NEW"
+        ],
+        "activation": "DATUM_DIAGNOSTIC_RESIZE_TRANSACTION=1; absent or0 uses existing immediate configure/default recovery.",
+        "requirement_ids": [
+          "SH-07",
+          "SH-08",
+          "SH-09",
+          "LF-01",
+          "LF-02",
+          "LF-03",
+          "LF-04",
+          "LF-05",
+          "LF-10",
+          "LF-12",
+          "LF-13",
+          "LF-14",
+          "LF-15"
+        ],
+        "existing_proof": [
+          "Four direct-state tests cover exhaustion, failed acquisition scheduling, zero extent and independent host flags; not native adapter proof. Earlier proposed transaction comparison never ran.",
+          "Checkpointc8bac0b6: transaction-enabled native main resize completed6targets with each auxiliary startup/render path present;4/4 enabled cases passed. No fault injection or auxiliary resize exercised."
+        ],
+        "missing_proof": [
+          "All-host resize/adapter fault injection, final input/DPI state, shared queue/configure fairness, lifetime accounting, and default-path adoption."
+        ],
+        "compliance_differences": [
+          "No common FIFO queue/configure reservation: one host completion cannot prove other hosts have drained.",
+          "No explicit damage/host/device generations or frame/submission receipts.",
+          "Retry8/16/32/64/128/250ms, eight acquisition attempts and1024 GPU-wait attempts differ from16/32/64/128/250ms and2s drawable-active deadline.",
+          "Zero extent resets failure counts; occlusion/suspension do not pause an accumulated active clock. Initial clamped configure still occurs before transaction construction.",
+          "No coordinated device recreation; exhausted errors use existing fatal/error paths rather than PM045 recoverable Retry/Close."
+        ],
+        "disposition": "incomplete implementation (preserve as starting point; no evidence yet supports changing PM045)",
+        "production_paths": [
+          "native_surface_transaction.rs::SurfaceTransaction",
+          "runtime_surface.rs::resize/apply_resize",
+          "runtime_present.rs::render",
+          "global_preferences_window.rs::resize/render"
+        ],
+        "checkpoint": "c8bac0b6bc29a64f15d02b5a558a853fab60a657"
+      },
+      {
+        "id": "RC-04",
+        "behavior": "Common retry sweep requests the due host and merges its earliest deadline with existing background timers.",
+        "consumers": [
+          "MAIN",
+          "GLOBAL",
+          "PROJECT",
+          "NEW"
+        ],
+        "activation": "Integrated by default; surface deadlines arise only with transaction flag enabled.",
+        "requirement_ids": [
+          "SH-02",
+          "SH-03",
+          "SH-04",
+          "SH-05",
+          "SH-06",
+          "SH-09"
+        ],
+        "existing_proof": [
+          "Source shows earliest-deadline merge and window-local retry request; direct-state test proves one due retry is consumed once.",
+          "Current transaction-enabled main resize succeeds through real event-loop dispatch with each auxiliary host present; timer contention/closure/fairness remain untested."
+        ],
+        "missing_proof": [
+          "Real App background dispatch with simultaneous hosts/timers, closure and input/terminal fairness."
+        ],
+        "compliance_differences": [
+          "No app-owned generation registry, round-robin admission or common one-token bookkeeping for dialogs. Main redraw_pending and direct dialog request_redraw remain distinct owners."
+        ],
+        "disposition": "incomplete implementation (shared retry sweep retained)",
+        "production_paths": [
+          "native_surface_transaction.rs::App::service_surface_retries",
+          "production_status_refresh.rs::App::poll_background_work"
+        ],
+        "checkpoint": "c8bac0b6bc29a64f15d02b5a558a853fab60a657"
+      },
+      {
+        "id": "RC-05",
+        "behavior": "Override desired_maximum_frame_latency in the shared native surface configuration factory.",
+        "consumers": [
+          "MAIN",
+          "GLOBAL",
+          "PROJECT",
+          "NEW"
+        ],
+        "activation": "DATUM_GPU_DIAGNOSTIC_LATENCY=1 or2; absent remains2.",
+        "requirement_ids": [
+          "SH-08",
+          "LF-15",
+          "AC-06"
+        ],
+        "existing_proof": [
+          "H4 observations retained in resize-recovery.md: Intel X11 minimum image count/clamping prevents treating latency1 as demonstrated savings."
+        ],
+        "missing_proof": [
+          "Supported-backend delivered-work/quality comparison before any production policy change."
+        ],
+        "compliance_differences": [
+          "Swapchain hint is not the shared one-outstanding-application-frame policy. No evidence supports changing default2."
+        ],
+        "disposition": "useful diagnostic",
+        "production_paths": [
+          "gui_runtime_support.rs::surface_configuration/diagnostic_frame_latency"
+        ],
+        "checkpoint": "c8bac0b6bc29a64f15d02b5a558a853fab60a657"
+      },
+      {
+        "id": "RC-06",
+        "behavior": "Replace main product preparation/render with one clear pass while retaining native acquire/present.",
+        "consumers": [
+          "MAIN"
+        ],
+        "activation": "DATUM_DIAGNOSTIC_NATIVE_FRAME=clear; absent/full preserves product scene.",
+        "requirement_ids": [
+          "AC-06",
+          "AC-08",
+          "LF-14"
+        ],
+        "existing_proof": [
+          "Archived full/clear/clear/full binary22ebe5dc on X11/Vulkan: full CPU34.60-35.20%, clear39.20-40.60%; different presentation counts prevent subtractive attribution."
+        ],
+        "missing_proof": [
+          "No product quality or performance acceptance from a bypass workload."
+        ],
+        "compliance_differences": [
+          "Intentionally omits scene/text/AA work and cannot be a production rendering fallback or PM045 adoption proof."
+        ],
+        "disposition": "useful diagnostic",
+        "production_paths": [
+          "native_frame_probe.rs",
+          "runtime_present.rs::render"
+        ],
+        "checkpoint": "c8bac0b6bc29a64f15d02b5a558a853fab60a657"
+      },
+      {
+        "id": "RC-07",
+        "behavior": "Independent fixed-pixel-grid native window isolates native/driver work from Datum scene preparation.",
+        "consumers": [
+          "MAIN"
+        ],
+        "activation": "DATUM_DIAGNOSTIC_MINIMAL_WINDOW=1 diverts startup; absent/0 runs Datum.",
+        "requirement_ids": [
+          "AC-01",
+          "AC-06",
+          "LF-14"
+        ],
+        "existing_proof": [
+          "Existing resize-minimal-native receipts and kernel-trace limitations retained; no confirmed kernel/Intel causal attribution."
+        ],
+        "missing_proof": [
+          "Cannot qualify product scene, controls, PTY, settings or all-host integration."
+        ],
+        "compliance_differences": [
+          "Separate diagnostic app has its own event loop/lifecycle. It is not an alternate production implementation; preserve it for bounded investigation only."
+        ],
+        "disposition": "useful diagnostic",
+        "production_paths": [
+          "main.rs::main",
+          "native_resize_repro.rs"
+        ],
+        "checkpoint": "c8bac0b6bc29a64f15d02b5a558a853fab60a657"
+      },
+      {
+        "id": "RC-08",
+        "behavior": "Ignored offscreen allocation-cost tests compare fixed/alternating attachment reuse against replacement.",
+        "consumers": [
+          "MAIN"
+        ],
+        "activation": "Test-only cfg(test,visual,linux), explicit ignored tests; no production attachment cache.",
+        "requirement_ids": [
+          "LF-11",
+          "AC-06"
+        ],
+        "existing_proof": [
+          "Existing H3 results/reviews retained, including adapter-format feature correction and interrupted/rejected trials."
+        ],
+        "missing_proof": [
+          "No native resize/render-quality adoption; fixed two-size benchmark cache does not implement arbitrary resize lifetime."
+        ],
+        "compliance_differences": [
+          "Blocking test readback/wait is diagnostic-only and cannot migrate into UI scheduling."
+        ],
+        "disposition": "useful diagnostic",
+        "production_paths": [
+          "gpu_surface.rs test module",
+          "attachment_cost_probe.rs"
+        ],
+        "checkpoint": "c8bac0b6bc29a64f15d02b5a558a853fab60a657"
+      }
+    ],
+    "qa_attribution": {
+      "owner_command": "cargo run -p datum-gui-app --bin datum-gui -- --board ~/Documents/kicad_projects/DOA2526/hardware/DOA2526/DOA2526.kicad_pcb",
+      "owner_command_record": "resize-recovery.md, QA launch-path coverage correction; user supplied2026-09-19T17:58:46Z",
+      "profile_limit": "Exact command omits --release despite earlier release answer; cannot infer binary/profile of successful QA.",
+      "backend_limit": "Wayland expected from then-current desktop environment; not proof of owner run backend.",
+      "agent_isolation_candidate_sha256": "4077a29be6393f527501ebb3880cde3b846f918a469c951cfaadb96625267849",
+      "agent_isolation_identity": "Wayland/Vulkan, Intel HD Graphics P630, Mesa25.0.7-2+deb13u1",
+      "agent_isolation_flags": "DATUM_TRACE_TIMING=1; DATUM_GUI_VERBOSE_LOG=1; DATUM_DIAGNOSTIC_NATIVE_FRAME=full; no forced GPU backend or latency override. Candidate predates transaction comparison.",
+      "successful_owner_run": "Owner reports preliminary fresh-production-build QA feels snappier, smoother and less choppy/flickery during resize; resource consumption remains and further testing is required. Exact commit/binary/backend/flags/time not supplied; attribution remains unresolved.",
+      "transaction_comparison": "Proposed historical comparison did not run. No documented owner transaction-enabled success yet.",
+      "owner_observation": "preliminary QA testing seems to have imporved the flickering and choppy apearence of the old GUI during resize fresh production builds feel \"snappier\" and wondow rendering seems smoother that the prior itteration. this needs further testing and the resize resource consumption remains but the GUI apears to have improved from the interum work,",
+      "current_environment_observation": {
+        "transaction": "unset",
+        "native_frame": "unset",
+        "minimal_window": "unset",
+        "latency_override": "unset",
+        "gpu_backend_override": "unset",
+        "winit_backend_override": "unset",
+        "session": "wayland",
+        "wayland_display": "wayland-0",
+        "display": ":1",
+        "limit": "Current session observation only, not proof of earlier owner environment."
+      }
+    },
+    "adoption": {
+      "fully_adopted_consumers": [],
+      "bounded_default_improvement": "RC-01 main resize isolation",
+      "retired_paths": [
+        "Main Resized -> broadcast redraw"
+      ],
+      "remaining_competing_paths": [
+        "Other app-wide broadcast redraw callers",
+        "Direct main and dialog initialization/recovery configuration",
+        "Per-host acquisition/presentation entry points",
+        "Dialog direct redraw requests versus main redraw_pending",
+        "New Project general workspace clone/backdrop path"
+      ],
+      "preserved_prior_improvements": [
+        "Retained resize geometry671a0b90",
+        "Shared native surface defaults and frame encoding ownershipc2d60cb8",
+        "Earlier pointer/zoom/preferences corrections and all25 HP obligations"
+      ]
+    },
+    "specification_reconciliation": {
+      "implementation_gaps": [
+        "RC-03 recovery/queue/generation gaps",
+        "RC-04 scheduling/fairness gaps",
+        "S0 timestamp/admission/lifetime accounting conformance",
+        "S2 retained/resource caps",
+        "S3 New Project/control/scroll integration",
+        "S4 terminal/recovery integration",
+        "S5 bounded initial qualification and independent replay"
+      ],
+      "evidence_supported_specification_corrections": [],
+      "reason": "No recovered native result demonstrates that PM045 queue/recovery requirements are wrong. Preserve working behavior and compare before changing mechanics; do not mechanically rewrite or silently waive requirements.",
+      "resize_investigation": "Pinned nonblocking; no kernel attribution or deferred temporal acceptance prerequisite."
+    },
+    "current_candidate_verification": {
+      "application_tests": {
+        "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test -p datum-gui-app --bin datum-gui -- --test-threads=1",
+        "result": "321 passed;0 failed;8 ignored;329 total;14.46s execution",
+        "log_sha256": "1d1ec532077ab4eeb3eee8f55eef0e6926d08c3d66a9844e71984f0e889288b1",
+        "limits": "Includes four SurfaceTransaction direct-state tests; passing app suite is not all-host GPU/native integration proof."
+      },
+      "native_integration": {
+        "result": "8/8 passed;6 native main resize targets completed once in each case; actual auxiliary startup/render paths exercised.",
+        "backend": "Wayland/Vulkan; Intel HD Graphics P630; Mesa25.0.7-2+deb13u1",
+        "command_pattern": "target/release/datum-gui --board <disposable copy of pinned board> --window-size1280x800 --resize-torture-smoke plus each actual --open-global-preferences/--open-project-preferences/--open-new-project; repeat with transaction=1 after default flag absent. Exact argv below.",
+        "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+        "binary_sha256": "9fa3fbef5a40747e86186ae3f8091c7a55469a31e068ec886b56a608ac29b497",
+        "runs": [
+          {
+            "label": "default-main",
+            "args": [
+              "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+              "--board",
+              "/tmp/datum-gui-recovered-smoke/default-main/board.kicad_pcb",
+              "--window-size",
+              "1280x800",
+              "--resize-torture-smoke"
+            ],
+            "transaction_enabled": false,
+            "display_environment": {
+              "DISPLAY": ":1",
+              "WAYLAND_DISPLAY": "wayland-0",
+              "XDG_SESSION_TYPE": "wayland"
+            },
+            "test_logging": true,
+            "begin": 1,
+            "end": 1,
+            "observed": 6,
+            "identity": [
+              "[SystemTime { tv_sec: 1789924712, tv_nsec: 536842245 }] surface identity window=WindowId(93974126325936) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+            ],
+            "dialog_renderer_calls": 0,
+            "all_renderer_calls": 9,
+            "unexpected_exit": null,
+            "elapsed_s": 3.409763803007081,
+            "main_runtime_calls": 9,
+            "auxiliary_renderer_calls": 0,
+            "passed": true
+          },
+          {
+            "label": "default-global",
+            "args": [
+              "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+              "--board",
+              "/tmp/datum-gui-recovered-smoke/default-global/board.kicad_pcb",
+              "--window-size",
+              "1280x800",
+              "--resize-torture-smoke",
+              "--open-global-preferences"
+            ],
+            "transaction_enabled": false,
+            "display_environment": {
+              "DISPLAY": ":1",
+              "WAYLAND_DISPLAY": "wayland-0",
+              "XDG_SESSION_TYPE": "wayland"
+            },
+            "test_logging": true,
+            "begin": 1,
+            "end": 1,
+            "observed": 6,
+            "identity": [
+              "[SystemTime { tv_sec: 1789924715, tv_nsec: 723001268 }] surface identity window=WindowId(94133933736496) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+              "[SystemTime { tv_sec: 1789924715, tv_nsec: 894262119 }] surface identity window=WindowId(94133934385040) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+            ],
+            "dialog_renderer_calls": 2,
+            "all_renderer_calls": 11,
+            "unexpected_exit": null,
+            "elapsed_s": 3.209499597083777,
+            "main_runtime_calls": 9,
+            "auxiliary_renderer_calls": 2,
+            "passed": true
+          },
+          {
+            "label": "default-project",
+            "args": [
+              "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+              "--board",
+              "/tmp/datum-gui-recovered-smoke/default-project/board.kicad_pcb",
+              "--window-size",
+              "1280x800",
+              "--resize-torture-smoke",
+              "--open-project-preferences"
+            ],
+            "transaction_enabled": false,
+            "display_environment": {
+              "DISPLAY": ":1",
+              "WAYLAND_DISPLAY": "wayland-0",
+              "XDG_SESSION_TYPE": "wayland"
+            },
+            "test_logging": true,
+            "begin": 1,
+            "end": 1,
+            "observed": 6,
+            "identity": [
+              "[SystemTime { tv_sec: 1789924718, tv_nsec: 961413744 }] surface identity window=WindowId(94098100626432) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+              "[SystemTime { tv_sec: 1789924719, tv_nsec: 304696061 }] surface identity window=WindowId(94098105353344) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+            ],
+            "dialog_renderer_calls": 2,
+            "all_renderer_calls": 11,
+            "unexpected_exit": null,
+            "elapsed_s": 3.3097896510735154,
+            "main_runtime_calls": 9,
+            "auxiliary_renderer_calls": 2,
+            "passed": true
+          },
+          {
+            "label": "default-new",
+            "args": [
+              "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+              "--board",
+              "/tmp/datum-gui-recovered-smoke/default-new/board.kicad_pcb",
+              "--window-size",
+              "1280x800",
+              "--resize-torture-smoke",
+              "--open-new-project"
+            ],
+            "transaction_enabled": false,
+            "display_environment": {
+              "DISPLAY": ":1",
+              "WAYLAND_DISPLAY": "wayland-0",
+              "XDG_SESSION_TYPE": "wayland"
+            },
+            "test_logging": true,
+            "begin": 1,
+            "end": 1,
+            "observed": 6,
+            "identity": [
+              "[SystemTime { tv_sec: 1789924722, tv_nsec: 357753244 }] surface identity window=WindowId(94676387517696) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+              "[SystemTime { tv_sec: 1789924722, tv_nsec: 551660126 }] surface identity window=WindowId(94676390693152) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+            ],
+            "dialog_renderer_calls": 0,
+            "all_renderer_calls": 11,
+            "unexpected_exit": null,
+            "elapsed_s": 3.210085590952076,
+            "main_runtime_calls": 9,
+            "auxiliary_renderer_calls": 2,
+            "passed": true
+          },
+          {
+            "label": "transaction-main",
+            "args": [
+              "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+              "--board",
+              "/tmp/datum-gui-recovered-smoke/transaction-main/board.kicad_pcb",
+              "--window-size",
+              "1280x800",
+              "--resize-torture-smoke"
+            ],
+            "transaction_enabled": true,
+            "display_environment": {
+              "DISPLAY": ":1",
+              "WAYLAND_DISPLAY": "wayland-0",
+              "XDG_SESSION_TYPE": "wayland"
+            },
+            "test_logging": true,
+            "begin": 1,
+            "end": 1,
+            "observed": 6,
+            "identity": [
+              "[SystemTime { tv_sec: 1789924725, tv_nsec: 635361247 }] surface identity window=WindowId(93872450090560) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+            ],
+            "dialog_renderer_calls": 0,
+            "all_renderer_calls": 9,
+            "unexpected_exit": null,
+            "elapsed_s": 3.108904576045461,
+            "main_runtime_calls": 9,
+            "auxiliary_renderer_calls": 0,
+            "passed": true
+          },
+          {
+            "label": "transaction-global",
+            "args": [
+              "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+              "--board",
+              "/tmp/datum-gui-recovered-smoke/transaction-global/board.kicad_pcb",
+              "--window-size",
+              "1280x800",
+              "--resize-torture-smoke",
+              "--open-global-preferences"
+            ],
+            "transaction_enabled": true,
+            "display_environment": {
+              "DISPLAY": ":1",
+              "WAYLAND_DISPLAY": "wayland-0",
+              "XDG_SESSION_TYPE": "wayland"
+            },
+            "test_logging": true,
+            "begin": 1,
+            "end": 1,
+            "observed": 6,
+            "identity": [
+              "[SystemTime { tv_sec: 1789924728, tv_nsec: 824407490 }] surface identity window=WindowId(94777440814736) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+              "[SystemTime { tv_sec: 1789924729, tv_nsec: 10496413 }] surface identity window=WindowId(94777453364464) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+            ],
+            "dialog_renderer_calls": 2,
+            "all_renderer_calls": 11,
+            "unexpected_exit": null,
+            "elapsed_s": 3.209497036994435,
+            "main_runtime_calls": 9,
+            "auxiliary_renderer_calls": 2,
+            "passed": true
+          },
+          {
+            "label": "transaction-project",
+            "args": [
+              "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+              "--board",
+              "/tmp/datum-gui-recovered-smoke/transaction-project/board.kicad_pcb",
+              "--window-size",
+              "1280x800",
+              "--resize-torture-smoke",
+              "--open-project-preferences"
+            ],
+            "transaction_enabled": true,
+            "display_environment": {
+              "DISPLAY": ":1",
+              "WAYLAND_DISPLAY": "wayland-0",
+              "XDG_SESSION_TYPE": "wayland"
+            },
+            "test_logging": true,
+            "begin": 1,
+            "end": 1,
+            "observed": 6,
+            "identity": [
+              "[SystemTime { tv_sec: 1789924731, tv_nsec: 979450539 }] surface identity window=WindowId(93985592850880) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+              "[SystemTime { tv_sec: 1789924732, tv_nsec: 336365559 }] surface identity window=WindowId(93985599220816) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+            ],
+            "dialog_renderer_calls": 2,
+            "all_renderer_calls": 12,
+            "unexpected_exit": null,
+            "elapsed_s": 3.309783016098663,
+            "main_runtime_calls": 10,
+            "auxiliary_renderer_calls": 2,
+            "passed": true
+          },
+          {
+            "label": "transaction-new",
+            "args": [
+              "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+              "--board",
+              "/tmp/datum-gui-recovered-smoke/transaction-new/board.kicad_pcb",
+              "--window-size",
+              "1280x800",
+              "--resize-torture-smoke",
+              "--open-new-project"
+            ],
+            "transaction_enabled": true,
+            "display_environment": {
+              "DISPLAY": ":1",
+              "WAYLAND_DISPLAY": "wayland-0",
+              "XDG_SESSION_TYPE": "wayland"
+            },
+            "test_logging": true,
+            "begin": 1,
+            "end": 1,
+            "observed": 6,
+            "identity": [
+              "[SystemTime { tv_sec: 1789924735, tv_nsec: 427811793 }] surface identity window=WindowId(93932785894832) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+              "[SystemTime { tv_sec: 1789924735, tv_nsec: 637080631 }] surface identity window=WindowId(93932782387216) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+            ],
+            "dialog_renderer_calls": 0,
+            "all_renderer_calls": 12,
+            "unexpected_exit": null,
+            "elapsed_s": 3.3101177260978147,
+            "main_runtime_calls": 9,
+            "auxiliary_renderer_calls": 3,
+            "passed": true
+          }
+        ],
+        "assertions": [
+          "Exactly one native resize smoke begin and end",
+          "Six observed extents matched configured extents with successful main presentation",
+          "One main surface identity, plus one independent actual auxiliary surface when selected",
+          "Positive auxiliary renderer calls for each auxiliary case; positive dialog-only calls for each Preferences case",
+          "No unexpected process exit; test-owned process terminated only after assertions",
+          "Binary SHA256 unchanged across all eight cases"
+        ],
+        "runner_sha256": "9d84967826fe25bfd70d95f80d8ec901f65ae6fe5462aa43f86871b90a4c76d0",
+        "report_sha256": "dc341df262ca933731cc777bee99837b40b2f725fd006ce26542f8bff71b7e49",
+        "limits": [
+          "Auxiliary startup/render and main resize only; auxiliary resize/fault/recovery/closure not exercised.",
+          "Native requested-size smoke, not physical dragging, calibrated visible frames or CPU/GPU qualification.",
+          "Verbose/timing logging enabled; no resource-performance claims.",
+          "No native X11 replay on this checkpoint.",
+          "No fresh negative-control execution; historic RC-01 baseline remains separately identified."
+        ]
+      },
+      "production_acceptance": false,
+      "release_build": {
+        "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --release -p datum-gui-app --bin datum-gui",
+        "result": "passed; optimized build5m34s",
+        "binary": "target/release/datum-gui",
+        "binary_sha256": "9fa3fbef5a40747e86186ae3f8091c7a55469a31e068ec886b56a608ac29b497",
+        "source_commit": "c8bac0b6bc29a64f15d02b5a558a853fab60a657"
+      },
+      "default_owner_qa_ready": "Yes for continued exploratory QA: recovered default-path release built and native startup/main-resize smoke passed with every auxiliary consumer present. No PM045 full adoption or production acceptance. Transaction remains disabled by default; useful diagnostics retained.",
+      "governance": "Project status59items, source health2046files/13regressions, spec governance310docs, parity20inventories, evidence28routes/124artifacts, dependency authority, staged formatting and whitespace checks passed."
+    },
+    "migration_starting_point": {
+      "S0": "Use checkpointc8bac0b6 as current candidate and existing phase/native instrumentation. Complete missing admission/GPU/lifetime accounting conformance and matched baseline before selecting optimization; retain owner qualitative improvement and unknown launch identity separately.",
+      "S1": "Evolve existing SurfaceTransaction as per-host state; reuse service_surface_retries and surface_configuration. Add application registry, damage/host/device generations, common queue/configure reservation and bounded active-time recovery around these boundaries. Keep current default behavior and diagnostic candidate available until affected-path proof supports default adoption; no second renderer or restart.",
+      "S2_S4": "Reuse current Renderer retained geometry/text/upload owners, dialog profiles/ScrollViewport and TerminalCore/PTY. Consolidate and migrate through existing S2-S4 scope rather than deleting previously working code.",
+      "acceptance": "Run relevant production adapter proof with each slice; complete in-scope adoption/endurance/replay at S5. Driver attribution and deferred resize temporal/resource qualification remain nonblocking."
+    },
+    "review_status": "bounded review complete; implementation and acceptance gaps retained"
+  }
 }
