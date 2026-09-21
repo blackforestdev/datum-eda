@@ -1,0 +1,27 @@
+{
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--board",
+    "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "--window-size",
+    "1280x800",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "binary_sha256": "89b0169344f8215dc8cf4087bbd7dd496030ff6fc9819d7c1e4d234e8c14c945",
+  "before": [
+    162,
+    9
+  ],
+  "after": [
+    162,
+    16
+  ],
+  "preview_resize_count": 0,
+  "cancel_resize_count": 1,
+  "trailing_release_resize_count": 0,
+  "native_focus_loss": true,
+  "later_pointer_barrier": true,
+  "exit": 0,
+  "passed": true
+}
