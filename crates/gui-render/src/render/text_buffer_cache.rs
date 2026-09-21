@@ -1,6 +1,7 @@
 //! Shared shaped-buffer ownership and bounded workspace/dialog retention.
 use super::*;
 use glyphon::Style;
+use std::hash::{Hash, Hasher};
 
 fn text_buffer_frame_is_recent(last_used_frame: u64, current_frame: u64) -> bool {
     last_used_frame >= current_frame.saturating_sub(1)
@@ -39,10 +40,15 @@ fn retain_overlay_buffers<T>(
 #[derive(Default)]
 pub(crate) struct TextBufferCache {
     entries: Vec<CachedTextBuffer>,
+    // Sorted shaping fingerprint + entry index. This owns no text or shaping
+    // payload; exact key comparison remains authoritative within each bucket.
+    lookup: Vec<(u64, usize)>,
     frame: u64,
     revision: u64,
     #[cfg(test)]
     pub(crate) shape_reuses: usize,
+    #[cfg(test)]
+    pub(crate) key_comparisons: usize,
 }
 
 #[derive(Clone, Copy)]
@@ -72,6 +78,36 @@ fn matches_run(key: &TextBufferKey, run: &TextRun, (width_px, height_px): (u32, 
             })
 }
 
+fn shape_fingerprint<'a>(
+    text: &str,
+    size_bits: u32,
+    face: TextFace,
+    spans: impl Iterator<Item = (&'a str, [u32; 3], bool, bool)>,
+) -> u64 {
+    let mut hash = std::collections::hash_map::DefaultHasher::new();
+    (text, size_bits, face).hash(&mut hash);
+    for span in spans {
+        span.hash(&mut hash);
+    }
+    hash.finish()
+}
+
+fn run_fingerprint(run: &TextRun) -> u64 {
+    shape_fingerprint(
+        &run.text,
+        run.size.to_bits(),
+        run.face,
+        run.rich_spans.iter().map(|span| {
+            (
+                span.text.as_str(),
+                span.color.map(f32::to_bits),
+                span.bold,
+                span.italic,
+            )
+        }),
+    )
+}
+
 impl TextBufferCache {
     pub(crate) fn revision(&self) -> u64 {
         self.revision
@@ -92,6 +128,7 @@ impl TextBufferCache {
             });
             if self.entries.len() != old_len {
                 self.revision = self.revision.wrapping_add(1);
+                self.rebuild_lookup();
             }
         }
     }
@@ -115,6 +152,33 @@ impl TextBufferCache {
                         .sum::<usize>()
             },
         );
+        self.rebuild_lookup();
+    }
+
+    fn rebuild_lookup(&mut self) {
+        self.lookup.clear();
+        self.lookup
+            .extend(self.entries.iter().enumerate().map(|(index, entry)| {
+                let key = &entry.key;
+                let fingerprint = shape_fingerprint(
+                    &key.text,
+                    key.size_bits,
+                    key.face,
+                    key.rich_spans
+                        .iter()
+                        .map(|span| (span.text.as_str(), span.color_bits, span.bold, span.italic)),
+                );
+                (fingerprint, index)
+            }));
+        self.lookup.sort_unstable();
+        // Avoid retaining an index sized for an obsolete visible-text peak.
+        // After retirement, metadata capacity is at most four times live rows;
+        // a dialog's 128-row cap thus bounds this index to 512 tuple slots.
+        if self.lookup.capacity() > self.lookup.len().saturating_mul(4) {
+            self.lookup = std::mem::take(&mut self.lookup)
+                .into_boxed_slice()
+                .into_vec();
+        }
     }
 
     pub(crate) fn indices(
@@ -146,8 +210,18 @@ impl TextBufferCache {
         height: u32,
     ) -> (usize, bool) {
         let extent = text_buffer_extent(run, width, height);
+        let fingerprint = run_fingerprint(run);
+        let first = self.lookup.partition_point(|(hash, _)| *hash < fingerprint);
         let mut shaped = None;
-        for (index, entry) in self.entries.iter().enumerate() {
+        for &(_, index) in self.lookup[first..]
+            .iter()
+            .take_while(|(hash, _)| *hash == fingerprint)
+        {
+            #[cfg(test)]
+            {
+                self.key_comparisons += 1;
+            }
+            let entry = &self.entries[index];
             let old_extent = (entry.key.width_px, entry.key.height_px);
             if matches_run(&entry.key, run, old_extent) {
                 if old_extent == extent {
@@ -208,7 +282,12 @@ impl TextBufferCache {
             buffer,
             last_used_frame: self.frame,
         });
-        (self.entries.len() - 1, true)
+        let index = self.entries.len() - 1;
+        let insertion = self
+            .lookup
+            .partition_point(|item| *item < (fingerprint, index));
+        self.lookup.insert(insertion, (fingerprint, index));
+        (index, true)
     }
 }
 

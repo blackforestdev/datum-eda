@@ -16524,7 +16524,7 @@
         "TERMINAL",
         "TERM_OVERLAY"
       ],
-      "shared_owner": "Production measurement/accounting and relevant shared owner",
+      "shared_owner": "Renderer.text_buffers / TextBufferCache",
       "implementation_slice": "S2",
       "production_entry_points": [
         "crates/gui-app/src/app_shell.rs",
@@ -16543,7 +16543,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial shared shaped-cache owner adoption: borrowed existing-key lookup and retained workspace/dialog profiles verified by CPU tests and renderer pixel/scroll proofs. Full shaping-key, atlas/signature eviction, payload accounting and per-adapter qualification remain open.",
+        "status": "Partial shared shaped-cache adoption: borrowed indexed lookup retains exact collision-safe existing keys, extent-only relayout and workspace/dialog profiles. Warm fixture compares 160 keys instead of 12880; collision and disabled-index negatives fail as required. Recency reordering/cap/reindex/two-generation retirement and metadata release pass. GPU scroll/relayout/atlas-reindex and four native smokes pass. Full configurable shaping-key, shaped payload/atlas accounting and per-adapter qualification remain open.",
         "id": "proof_reuse_text_key",
         "positive": "Independently change text/font revision/size/style/language/direction/features",
         "negative_control": "Omit each dependency in turn",
@@ -16569,7 +16569,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json"
+        "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json",
+        "docs/reviews/gui-performance/implementation/S2/text-lookup-index/result.json"
       ]
     },
     {
@@ -25222,13 +25223,14 @@
     ],
     "bounds": "Workspace/terminal retains current/previous generations. Overlay retains at most 128 buffers and 32 KiB of key strings after submission. These are existing entry/key bounds, not complete shaped-payload/atlas/capacity bounds.",
     "remaining_limitations": [
-      "No numerical performance or zero-total-allocation claim. Lookup still scans the bounded entries and allocates frame index storage.",
+      "No numerical performance or zero-total-allocation claim. Indexed lookup narrows exact comparisons; collision/extent buckets still scan candidates, and frame index storage still allocates.",
       "Preserves the existing TextBufferKey; additional font-revision/language/direction/features contracts and shaping/layout separation are not completed here.",
       "Full shaped payload, atlas, scratch and GPU memory accounting/caps remain open; no third-party source changes or vendoring.",
       "Complete glyph-signature eviction/atlas-pressure controls, per-adapter negative qualification, Wayland/scale/native static coverage and S2 completion remain open.",
       "Known terminal lineage and convergence failures remain unresolved; no full drift pass.",
       "No dependency, version, license, product mutation, shader/pass/AA or resize qualification change."
-    ]
+    ],
+    "followup_evidence": "docs/reviews/gui-performance/implementation/S2/text-lookup-index/result.json"
   },
   "s2_screen_upload_owner_work": {
     "status": "Bounded screen upload ownership migration; GPI-S2 remains in progress",
@@ -25438,5 +25440,34 @@
       "No dependency, vendoring, Cargo, visual-prototype, product-authority, renderer pass-count or resize-qualification change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S2/screen-span-trimming/result.json"
+  },
+  "s2_text_lookup_index_work": {
+    "status": "Shared shaped-text lookup indexed in every default renderer; GPI-S2 remains in progress",
+    "production_consumers_migrated": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "shared_owner": "Renderer.text_buffers / TextBufferCache",
+    "competing_paths_retired": [
+      "Scanning every retained shaped buffer for each label on the default workspace/terminal/dialog paths"
+    ],
+    "remaining_competing_paths": [
+      "Current shaping/layout keys, profiles, glyph preparation and static text width owner remain unchanged. Complete configurable-key/resource qualification stays open."
+    ],
+    "bounds": {
+      "owner": "Same TextBufferCache lifetime as shaped buffers; renderer replacement/closure drops it",
+      "entries": "Exactly one (u64, usize) tuple per live cache entry",
+      "retained_capacity": "After eviction/reordering, at most four times live entry count; empty releases all index capacity. Dialog post-frame 128-entry cap therefore bounds index capacity to 512 tuple slots (8192 bytes on this 64-bit target). Workspace follows its existing two generations/current visible text; no absolute workspace payload cap is newly claimed.",
+      "proof": "160-row fixture trims to 128 retained rows with 2560 metadata-capacity bytes; subsequent workspace retirement shrinks to one entry and then zero capacity. This metadata accounting excludes shaped payload/atlas, which remain separately unqualified."
+    },
+    "limits": [
+      "The index accelerates lookup; it does not complete configurable font/language/features keys, shaped allocation accounting, atlas bounds or full REUSE-TEXT-KEY qualification.",
+      "Collision buckets and multiple extents still require exact comparison. Cold insertion shifts sorted metadata, and eviction/reordering rebuilds it; no zero-total-work or numerical application speedup claim.",
+      "Full per-adapter counters, native backend/scale/endurance/resource qualification and S2 completion remain open.",
+      "No dependency, vendoring, Cargo, visual-prototype, product-authority, rendering schedule or resize qualification change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S2/text-lookup-index/result.json"
   }
 }
