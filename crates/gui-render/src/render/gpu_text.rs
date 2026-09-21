@@ -10,12 +10,34 @@ pub(crate) struct GlyphPreparation {
     pub(crate) workspace_prepares: usize,
     #[cfg(test)]
     pub(crate) atlas_retries: usize,
+    #[cfg(test)]
+    pub(crate) overlay_prepares: usize,
 }
 
 impl GlyphPreparation {
     #[cfg(test)]
     pub(crate) fn is_invalid(&self) -> bool {
         self.prepared.is_none()
+    }
+}
+
+fn has_text_payload(runs: &[TextRun]) -> bool {
+    runs.iter().any(|run| {
+        if run.rich_spans.is_empty() {
+            !run.text.is_empty()
+        } else {
+            run.rich_spans.iter().any(|span| !span.text.is_empty())
+        }
+    })
+}
+
+impl PreparedScene {
+    pub(crate) fn has_workspace_text(&self) -> bool {
+        has_text_payload(&self.text_runs)
+    }
+
+    pub(crate) fn has_overlay_text(&self) -> bool {
+        !self.menu_overlay_vertices().is_empty() && has_text_payload(self.menu_overlay_text_runs())
     }
 }
 
@@ -35,13 +57,18 @@ impl Renderer {
         } else {
             text_buffer_cache::Profile::Workspace
         });
-        let (workspace, stats) = if overlay_only {
+        let has_workspace_text = !overlay_only && prepared.has_workspace_text();
+        let has_overlay_text = prepared.has_overlay_text();
+        if has_workspace_text || has_overlay_text {
+            self.viewport.update(queue, Resolution { width, height });
+        }
+        let (workspace, stats) = if !has_workspace_text {
             (Vec::new(), TextBufferCacheStats::default())
         } else {
             self.text_buffers
                 .indices(&mut self.font_system, &prepared.text_runs, width, height)
         };
-        let overlay = if prepared.menu_overlay_vertices().is_empty() {
+        let overlay = if !has_overlay_text {
             Vec::new()
         } else {
             self.text_buffers
@@ -53,7 +80,7 @@ impl Renderer {
                 )
                 .0
         };
-        let signature = (!overlay_only)
+        let signature = has_workspace_text
             .then(|| text_prepare_signature(&workspace, &prepared.text_runs, width, height));
         let revision = self.text_buffers.revision();
         let reuse = signature.as_ref().is_some_and(|signature| {
@@ -71,7 +98,7 @@ impl Renderer {
             prepared,
             &workspace,
             &overlay,
-            !overlay_only && !reuse,
+            has_workspace_text && !reuse,
         );
         let retried = if let Err(initial) = first {
             // trim clears atlas residency protection. Re-prepare workspace FIRST
@@ -81,18 +108,23 @@ impl Renderer {
                 self.text_preparation.atlas_retries += 1;
             }
             self.atlas.trim();
-            self.prepare_text_pair(device, queue, prepared, &workspace, &overlay, !overlay_only)
-                .map_err(|retry| {
-                    anyhow::anyhow!(
-                        "prepare frame text after atlas trim: {retry}; initial: {initial}"
-                    )
-                })?;
+            self.prepare_text_pair(
+                device,
+                queue,
+                prepared,
+                &workspace,
+                &overlay,
+                has_workspace_text,
+            )
+            .map_err(|retry| {
+                anyhow::anyhow!("prepare frame text after atlas trim: {retry}; initial: {initial}")
+            })?;
             true
         } else {
             false
         };
         self.text_preparation.prepared = signature.map(|signature| (revision, signature));
-        Ok((stats, reuse && !retried))
+        Ok((stats, !has_workspace_text || (reuse && !retried)))
     }
 
     #[allow(clippy::too_many_arguments)]
@@ -127,6 +159,10 @@ impl Renderer {
             if self.text_preparation.forced_overlay_errors > 0 {
                 self.text_preparation.forced_overlay_errors -= 1;
                 anyhow::bail!("injected overlay allocation pressure");
+            }
+            #[cfg(test)]
+            {
+                self.text_preparation.overlay_prepares += 1;
             }
             self.menu_overlay_text_renderer
                 .prepare(

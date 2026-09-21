@@ -17011,7 +17011,7 @@
         "crates/gui-render/src/render/terminal_graphics.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial shared text-contribution adoption: absent/empty plain/rich text skips preparation and text pass; conditional viewport updates and stale-glyph suppression verified. Actual GPU pass lists and fractional pixels match retained-pass controls; existing full graph/atlas regressions and four native smoke cases pass. Nonempty fully clipped payloads remain conservative; complete native/backend/scale/graph qualification remains open.",
         "id": "proof_pass_text",
         "positive": "Main text present/absent and applicable load/store",
         "negative_control": "Keep empty text pass without dependency or omit required text",
@@ -17019,7 +17019,10 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S2/PASS-TEXT/result.json",
       "acceptance_rule": "Contributing text rendered after geometry/background; no unjustified empty stage",
-      "qualification_scope": "initial static/correctness; temporal claims remain deferred"
+      "qualification_scope": "initial static/correctness; temporal claims remain deferred",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json"
+      ]
     },
     {
       "id": "PASS-FOREGROUND",
@@ -17215,7 +17218,7 @@
         "crates/gui-render/src/render/terminal_graphics.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial shared text-contribution adoption: absent/empty plain/rich text skips preparation and text pass; conditional viewport updates and stale-glyph suppression verified. Actual GPU pass lists and fractional pixels match retained-pass controls; existing full graph/atlas regressions and four native smoke cases pass. Nonempty fully clipped payloads remain conservative; complete native/backend/scale/graph qualification remains open.",
         "id": "proof_pass_menu_text",
         "positive": "Menu card/text combinations",
         "negative_control": "Render text behind card or invent empty resolve",
@@ -17223,7 +17226,10 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S2/PASS-MENU-TEXT/result.json",
       "acceptance_rule": "Menu text above card only when card and contributing text active",
-      "qualification_scope": "initial static/correctness; temporal claims remain deferred"
+      "qualification_scope": "initial static/correctness; temporal claims remain deferred",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json"
+      ]
     },
     {
       "id": "PASS-COUNTS",
@@ -17283,7 +17289,7 @@
         "crates/gui-render/src/render/terminal_graphics.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial shared text-contribution adoption: absent/empty plain/rich text skips preparation and text pass; conditional viewport updates and stale-glyph suppression verified. Actual GPU pass lists and fractional pixels match retained-pass controls; existing full graph/atlas regressions and four native smoke cases pass. Nonempty fully clipped payloads remain conservative; complete native/backend/scale/graph qualification remains open.",
         "id": "proof_pass_counts",
         "positive": "Exercise every reachable B/F/M/MT activation combination",
         "negative_control": "Insert duplicate same-output pass or MSAA resolve",
@@ -17291,7 +17297,10 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S2/PASS-COUNTS/result.json",
       "acceptance_rule": "Initial graph2+B+F+M+MT maximum6; remove noncontributing stages absent documented dependency; every retained extra stage names resource/ordering reason",
-      "qualification_scope": "initial static/correctness; temporal claims remain deferred"
+      "qualification_scope": "initial static/correctness; temporal claims remain deferred",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json"
+      ]
     },
     {
       "id": "PASS-RESOLVE",
@@ -17351,7 +17360,7 @@
         "crates/gui-render/src/render/terminal_graphics.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial shared text-contribution adoption: absent/empty plain/rich text skips preparation and text pass; conditional viewport updates and stale-glyph suppression verified. Actual GPU pass lists and fractional pixels match retained-pass controls; existing full graph/atlas regressions and four native smoke cases pass. Nonempty fully clipped payloads remain conservative; complete native/backend/scale/graph qualification remains open.",
         "id": "proof_pass_resolve",
         "positive": "Merge/defer compatible stages under native pixel comparison",
         "negative_control": "Resolve incompatible extent/sample format or alter AA",
@@ -17359,7 +17368,10 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S2/PASS-RESOLVE/result.json",
       "acceptance_rule": "Exact load/store/resolve compatibility, existing sample quality and atlas lifetime; no painter/fractional-pixel change",
-      "qualification_scope": "initial static/correctness; temporal claims remain deferred"
+      "qualification_scope": "initial static/correctness; temporal claims remain deferred",
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json"
+      ]
     }
   ],
   "by_clause": {
@@ -25319,6 +25331,28 @@
       "Font/language/direction/features key qualification, full shaped-payload/atlas/scratch accounting and caps remain open.",
       "Native boundary counters, prescribed full per-adapter negatives, backend/scale/endurance and complete S2 acceptance remain open.",
       "No third-party modifications, downloads, dependencies, versions/licenses, visual prototypes, shaping policy/typography, product mutation or resize qualification changes."
+    ]
+  },
+  "s2_text_contribution_work": {
+    "status": "Shared text contribution checks retire empty preparation/pass work; GPI-S2 remains in progress",
+    "evidence": "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json",
+    "production_consumers_migrated": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "competing_paths_retired": [
+      "Unconditional workspace text pass and empty glyph preparation",
+      "Separate vector-nonempty predicates for overlay preparation/drawing",
+      "Unconditional glyph viewport uploads in general and dialog callers"
+    ],
+    "remaining_limitations": [
+      "Contribution test is deliberately conservative: nonempty payloads can retain a text pass even when clipping or glyph content makes no visible pixels. Complete empty-stage qualification remains open.",
+      "One GPU/backend structural proof and native smoke do not establish full supported-backend/scale graph/resource/performance acceptance.",
+      "Complete text keys, byte caps/accounting, native boundary counters and S2 completion remain open.",
+      "GPU timestamp measurement remains opt-in; default path benefits from the contribution conditions without measurement. No numerical speedup claim.",
+      "No dependency, vendoring, version/license, prototype, shader/AA, product mutation or resize qualification change."
     ]
   }
 }

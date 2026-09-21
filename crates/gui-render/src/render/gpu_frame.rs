@@ -325,13 +325,14 @@ impl Renderer {
             measurement.as_mut(),
         )?;
         let encode_elapsed = encode_started.elapsed();
-        self.viewport.update(queue, Resolution { width, height });
         let text_prepare_started = std::time::Instant::now();
         let (text_cache_stats, skipped_text_prepare) =
             self.prepare_frame_text(device, queue, prepared, width, height, false)?;
         let text_prepare_elapsed = text_prepare_started.elapsed();
         let text_encode_started = std::time::Instant::now();
-        {
+        // Geometry already clears/resolves the target. An empty text stage has
+        // no load/store dependency and must not add another pass/resolve.
+        if prepared.has_workspace_text() {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("datum-gui-text-pass"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -404,8 +405,7 @@ impl Renderer {
             // dedicated overlay text renderer so the main renderer's prepared
             // state/caching is untouched. The content-keyed text_buffer_cache is
             // shared, so overlay glyph buffers reuse the same atlas.
-            let menu_overlay_text_runs = prepared.menu_overlay_text_runs();
-            if !menu_overlay_text_runs.is_empty() {
+            if prepared.has_overlay_text() {
                 {
                     let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                         label: Some("datum-gui-menu-overlay-text-pass"),

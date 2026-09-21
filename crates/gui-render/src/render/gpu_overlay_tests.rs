@@ -555,3 +555,6 @@ fn cached_shape_relayout_matches_fresh_dialog_pixels() {
         assert_eq!(renderer.renderer.text_buffers.shape_reuses, step.min(2));
     }
 }
+
+#[path = "gpu_pass_tests.rs"]
+mod pass_tests;

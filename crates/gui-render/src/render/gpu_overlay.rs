@@ -52,8 +52,7 @@ impl Renderer {
             "datum-menu-overlay-vertex-buffer",
             prepared.menu_overlay_vertices(),
         );
-        self.viewport.update(queue, Resolution { width, height });
-        let has_text = !prepared.menu_overlay_text_runs().is_empty();
+        let has_text = prepared.has_overlay_text();
         self.prepare_frame_text(device, queue, prepared, width, height, true)?;
         let msaa_view = self.ensure_msaa(device, width, height).clone();
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
