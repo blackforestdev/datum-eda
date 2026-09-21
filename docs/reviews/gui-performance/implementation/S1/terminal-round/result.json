@@ -1,0 +1,220 @@
+{
+  "status": "Default terminal wake/drain moved to one native round; bounded flood responsiveness and controlled shutdown improved; SH-05/S1 qualification remains partial",
+  "production_consumers_migrated": [
+    "MAIN terminal transport/model background phase",
+    "GLOBAL, PROJECT and NEW share the same native event/frame round; native flood regression exercised GLOBAL"
+  ],
+  "shared_owner": "App::about_to_wait -> dispatch_native_frame_round -> poll_background_work -> one Runtime::poll_terminal_output -> TerminalWakeGate acknowledgement and bounded drain",
+  "retired_paths": [
+    "Terminal parsing and wake acknowledgement inside ApplicationHandler::user_event, which could immediately requeue itself inside winit user-event drain before redraw dispatch.",
+    "Output-driven redraw after each pending terminal batch during controlled shutdown. Initial closing frame and blocked-shutdown error still request presentation; all terminal data/lifecycle draining continues."
+  ],
+  "verification": {
+    "app": "368 passed, 0 failed, 9 ignored; existing byte retention/ordering/time-budget and shutdown tests preserved",
+    "clippy": "app datum-gui binary -D warnings passed",
+    "release": "fresh guarded offline release passed",
+    "native": "One matched Global Preferences six-second PTY flood: baseline final requested extent observed after output ended (8.170s); final candidate observed while output still flowing (0.315s). Baseline and final exit 0. Intermediate candidate exposed shutdown repaint coupling (19 post-close frames and 20-second timeout); final performs one closing presentation, exits and releases Main Window ownership.",
+    "source_health": "passed",
+    "dependency": "authority passed; no dependency/license changes"
+  },
+  "limits": [
+    "Single bounded native trial is not a percentile, full end-to-end latency, all-host flood or numeric budget acceptance. Requested extent uses native presentation counters, not independent pixels. Resize resource/temporal closure is not claimed.",
+    "Backpressured producer delivered 1275750 bytes on baseline versus 283500 on both candidates during the bounded interval. Throughput is lower and not qualified. The change enforces native-round fairness; it does not establish joint throughput/resource acceptance.",
+    "Repeated approximately 0.98-second Main surface acquisition stalls observed in intermediate trace remain unresolved. This slice prevents those frames from delaying every shutdown drain batch; it does not fix the acquisition calls or unrelated missing CloseRequested cases. Existing dat-main-native-capture-delay-md9 updated and open.",
+    "Full saturated multi-session/control fairness, byte/state native replay, full resources and S1/S4 completion remain open."
+  ],
+  "receipt": "docs/reviews/gui-performance/implementation/S1/terminal-round/result.json",
+  "selection": {
+    "baseline": "f17e4436",
+    "scope": "S1 SCH-03 / SH-05 terminal work must yield to native host round",
+    "gap": "Runtime drains and immediately rearms terminal wake inside winit user-event receiver drain loop; a 1ms per-call budget does not bound repeated calls before redraw/native input.",
+    "change": "Acknowledge gate and drain once in existing background phase after ready host frame dispatch; retire terminal parsing from user_event callback.",
+    "baseline_proof": "Actual PTY flood reproduces Preferences resize starvation: requested final extent presented after producer ended (8.17 seconds observed).",
+    "limits": "Bounded structural fairness regression; not full latency/throughput/resource qualification or resize CPU/temporal closure."
+  },
+  "source_sha256": {
+    "app_native_events.rs": "f8f300572bcf3eeb1c57f3d61c5ebc1a7d1ddb6c88aec1366169bc35a21becfa",
+    "production_status_refresh.rs": "6e4933fb31a5bdef611c60b5d6ab4ce1350f46a2066f9c3852a863aaab4a78c0"
+  },
+  "runs": {
+    "baseline": {
+      "binary_sha256": "cb9835ae3280a99a45c5648893ccc55d0c058c063ce94f02a444e4956bfc6a81",
+      "command": [
+        "/tmp/pm045-terminal-round-baseline",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--open-global-preferences",
+        "--window-size",
+        "1280x800",
+        "--terminal-session-profile",
+        "custom",
+        "--terminal-program",
+        "/usr/bin/python3",
+        "--terminal-arg=-u",
+        "--terminal-arg=/tmp/pm045_terminal_flood.py",
+        "--terminal-arg=/tmp/pm045-terminal-round/baseline"
+      ],
+      "resize_observed_seconds": 8.170211342046969,
+      "resized_while_producer_running": false,
+      "final_present": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 2,
+        "configure_attempts": 2,
+        "configured_extent": [
+          1200,
+          800
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 5,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 4,
+        "host": 2,
+        "last_frame_submission_receipt": 5,
+        "last_present_receipt": 5,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 5 })",
+        "window": "WindowId(12582917)"
+      },
+      "producer": {
+        "monotonic": 740144.871272947,
+        "bytes": 1275750,
+        "payload_bytes": 4050
+      },
+      "exit": 0,
+      "completed": true
+    },
+    "candidate": {
+      "binary_sha256": "44cc0fb66e9366f9674eb5b84174c4c601cf61995882a5ae9d3133e7c0ab250e",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--open-global-preferences",
+        "--window-size",
+        "1280x800",
+        "--terminal-session-profile",
+        "custom",
+        "--terminal-program",
+        "/usr/bin/python3",
+        "--terminal-arg=-u",
+        "--terminal-arg=/tmp/pm045_terminal_flood.py",
+        "--terminal-arg=/tmp/pm045-terminal-round/candidate"
+      ],
+      "resize_observed_seconds": 0.31431459402665496,
+      "resized_while_producer_running": true,
+      "final_present": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 2,
+        "configure_attempts": 2,
+        "configured_extent": [
+          1200,
+          800
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 6,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 5,
+        "host": 2,
+        "last_frame_submission_receipt": 6,
+        "last_present_receipt": 6,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 6 })",
+        "window": "WindowId(12582917)"
+      },
+      "producer": {
+        "monotonic": 740225.550897614,
+        "bytes": 283500,
+        "payload_bytes": 4050
+      },
+      "completed": false,
+      "error": "Command '['/home/bfadmin/Documents/datum-eda/target/release/datum-gui', '--board', '/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb', '--open-global-preferences', '--window-size', '1280x800', '--terminal-session-profile', 'custom', '--terminal-program', '/usr/bin/python3', '--terminal-arg=-u', '--terminal-arg=/tmp/pm045_terminal_flood.py', '--terminal-arg=/tmp/pm045-terminal-round/candidate']' timed out after 20 seconds"
+    },
+    "candidate-final": {
+      "binary_sha256": "ed521296d6e9e2c16b244c3e1de4740b466c897553520418afe761c442043c6c",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--open-global-preferences",
+        "--window-size",
+        "1280x800",
+        "--terminal-session-profile",
+        "custom",
+        "--terminal-program",
+        "/usr/bin/python3",
+        "--terminal-arg=-u",
+        "--terminal-arg=/tmp/pm045_terminal_flood.py",
+        "--terminal-arg=/tmp/pm045-terminal-round/candidate-final"
+      ],
+      "resize_observed_seconds": 0.3145582909928635,
+      "resized_while_producer_running": true,
+      "final_present": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 2,
+        "configure_attempts": 2,
+        "configured_extent": [
+          1200,
+          800
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 6,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 5,
+        "host": 2,
+        "last_frame_submission_receipt": 6,
+        "last_present_receipt": 6,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 6 })",
+        "window": "WindowId(12582917)"
+      },
+      "producer": {
+        "monotonic": 740404.959367788,
+        "bytes": 283500,
+        "payload_bytes": 4050
+      },
+      "exit": 0,
+      "completed": true
+    }
+  },
+  "production_call_inventory": {
+    "poll_terminal_output": "one caller in poll_background_work",
+    "user_event": "no App override; winit default handler does no parsing or wake acknowledgement",
+    "wake_acknowledgement": "start of Runtime::poll_terminal_output before bounded draining",
+    "upstream_constraint": "locally installed winit 0.30.13 platform_impl/linux/x11/mod.rs lines 547-552 drains user_receiver until empty before redraw receiver"
+  },
+  "artifacts_sha256": {
+    "baseline/finished.json.gz": "872e4a302d1dd98677755426b0eebb97faf3c2c72d44632ec224d5af959040cd",
+    "baseline/native.log.gz": "1e30852e5221ae1efb769af512ce2241f058d1d074aa810d12db0b4eb7da10e9",
+    "baseline/result.json.gz": "6488373e0867e0ef427b69558b5a88831f87eafbf437fb0a89203d35df2ae08c",
+    "baseline/started.json.gz": "400d98b159bfec79d405a6f510741dfa5ca1110fa315bf834e441d82fd8793eb",
+    "baseline/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "build.log.gz": "6fd45c646edeab62c36c5f54c1ff3fff3498cd279aa224d3f6d8aae868220400",
+    "candidate/finished.json.gz": "3dae0acbc07ad3cc9e0e8a98a68f5a622c4ad83def2ef631967f34a92cd69a7e",
+    "candidate/native.log.gz": "aac0a8c5ce8b6dbb17f260e88efce5220673a994770f88de17903cbebd397a9e",
+    "candidate/result.json.gz": "76059fd711e7a57c508c1843fbd7d41c970538f3f15695792dbfdec333af4cf9",
+    "candidate/started.json.gz": "0f1da82655092be267d4c317a7c472fdad2791e59cd140081e538398f08ad710",
+    "candidate/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "candidate-final/finished.json.gz": "4baf4796eef2658322bcb0e59546f578dbeec1905ffeac7a68b243e6035bb7aa",
+    "candidate-final/native.log.gz": "2e25a366523c4ffd8c78992bf5b73de2f0e4556fff91826d0b313fe385c7069b",
+    "candidate-final/result.json.gz": "d8f96e829a022bdaec6be7ce113b93829be06bfc9bc135b36fe451fddee85e30",
+    "candidate-final/started.json.gz": "5285011aeaad3afa1ab5dd1d44a457197fb5c1b565b45bd02ec1d43df9072221",
+    "candidate-final/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "clippy.log.gz": "bb21313b4201a6ef502e2709d0e3d580626a1abacc1c5bc5d29e2b1f53d263f7",
+    "initial-launch-failure.log.gz": "7419228748df29aa36f637076a951464e0d597a82c1f35b9f6f0e4d4110a0bff",
+    "producer.py.gz": "6daece400f262ebd155b5d18a7787b87de55a1da6b8f8a03eeccc5dff64eefaa",
+    "runner.py.gz": "4824e3e244fbca523dc54dd11b27e404c36680a9497d5035f32b4f5419818779",
+    "tests.log.gz": "46f4eb599e905d7fced5815440248a5d178ab11351834d0c48a009a096d2fcaa"
+  }
+}
