@@ -104,6 +104,7 @@ impl Runtime {
             retained_scene: None,
             retained_scene_cache: Vec::new(),
             prepared_scene: None,
+            presented_console_layout: None,
             terminal_render_cache: TerminalRenderCache::new(),
             terminal_accessibility:
                 terminal_accessibility_bridge::LinuxTerminalAccessibilityBridge::default(),

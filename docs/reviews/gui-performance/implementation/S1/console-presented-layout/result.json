@@ -1,0 +1,42 @@
+{
+  "binary_sha256": "e600bfa4b1d5283a2b1247546af0c43fb8b3ccd7a5f4150732dd984ad2893882",
+  "runs": [
+    {
+      "host": "MAIN",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "window": "WindowId(12582916)",
+      "before": {
+        "12582916": {
+          "submit": 2,
+          "present": 2
+        }
+      },
+      "hover": {
+        "12582916": {
+          "submit": 4,
+          "present": 4
+        }
+      },
+      "paused": {
+        "12582916": {
+          "submit": 4,
+          "present": 4
+        }
+      },
+      "expired": {
+        "12582916": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "scope": "Console inspection/fade native counters; screenshot final states require visual review"
+    }
+  ]
+}
