@@ -499,6 +499,30 @@ impl ApplicationHandler for App {
         // here, after ready hosts, so a drain cannot requeue itself inside
         // winit's user-event loop and postpone redraw/input dispatch.
         self.poll_background_work(event_loop);
+        for (window, title) in [
+            (self.window.as_deref(), "Datum EDA"),
+            (
+                self.global_preferences_window.as_deref(),
+                "Global Preferences — Datum",
+            ),
+            (
+                self.project_preferences_window.as_deref(),
+                "Project Preferences — Datum",
+            ),
+            (self.new_project_window.as_deref(), "New Project — Datum"),
+        ] {
+            if let Some(window) = window
+                && let Some(failed) = self.frames.take_failure_title_change(window.id())
+            {
+                if failed {
+                    window.set_title(&format!(
+                        "{title} — Rendering paused; F5 to Retry or close window"
+                    ));
+                } else {
+                    window.set_title(title);
+                }
+            }
+        }
         self.poll_resize_smoke_start();
         self.request_restored_native_frames();
         event_loop.set_control_flow(self.frames.take_control_flow());

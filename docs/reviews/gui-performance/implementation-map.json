@@ -2467,7 +2467,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/retry-modifiers/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/held-completion/result.json",
-        "docs/reviews/gui-performance/implementation/S1/gesture-geometry/result.json"
+        "docs/reviews/gui-performance/implementation/S1/gesture-geometry/result.json",
+        "docs/reviews/gui-performance/implementation/S1/native-failure-title/result.json"
       ]
     },
     {
@@ -25011,5 +25012,23 @@
     "evidence": "docs/reviews/gui-performance/implementation/S1/gesture-geometry/result.json",
     "native_focus_evidence": "docs/reviews/gui-performance/implementation/S1/gesture-geometry/native-focus/result.json",
     "native_focus_result": "Actual Main X11 press/drag/focus-loss/regain/release: preview makes no terminal resize; shared cancellation reconciles 162x9 to 162x16 once; trailing release adds no resize and later native pointer confirms event progress; close exit 0. Preserve 993 ms frame stall; no timing qualification."
+  },
+  "s1_native_failure_notice_work": {
+    "evidence": "docs/reviews/gui-performance/implementation/S1/native-failure-title/result.json",
+    "production_consumers_migrated": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "competing_paths_retired": [],
+    "result": "Shared default native title notification on failure, ordinary title after Retry/rebind. Full LF-10 qualification remains partial.",
+    "limitations": [
+      "X11/Xwayland native property proof only; no static screenshot, compositor text visibility/width or Wayland qualification.",
+      "Queue diagnostic holds completion publication; not a driver hang.",
+      "Device-rebind title restoration and no repeated title transitions are coordinator tested; native recipe exercises manual queue Retry.",
+      "Retained baseline startup timeout is not attributed to this candidate or resolved.",
+      "No latency/resource-budget claim, complete LF-10/S1 acceptance, prescribed historical negative replay, dependency change, or resize qualification."
+    ]
   }
 }

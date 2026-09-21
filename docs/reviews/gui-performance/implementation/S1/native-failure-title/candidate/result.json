@@ -1,0 +1,88 @@
+{
+  "source_commit": "7874b29aea98d26431af06020c70ff9046c278f8",
+  "binary_sha256": "189459201322aff697a3d674b5a037a6658232af8e177ebb46eb6c25a74cb2a0",
+  "expected_notice": true,
+  "runs": [
+    {
+      "host": "MAIN",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "failed_titles": [
+        "Datum EDA \u2014 Rendering paused; F5 to Retry or close window"
+      ],
+      "restored_titles": [
+        "Datum EDA"
+      ],
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "failed_titles": [
+        "Datum EDA \u2014 Rendering paused; F5 to Retry or close window",
+        "Global Preferences \u2014 Datum \u2014 Rendering paused; F5 to Retry or close window"
+      ],
+      "restored_titles": [
+        "Datum EDA",
+        "Global Preferences \u2014 Datum"
+      ],
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "failed_titles": [
+        "Datum EDA \u2014 Rendering paused; F5 to Retry or close window",
+        "Project Preferences \u2014 Datum \u2014 Rendering paused; F5 to Retry or close window"
+      ],
+      "restored_titles": [
+        "Datum EDA",
+        "Project Preferences \u2014 Datum"
+      ],
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "NEW",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "failed_titles": [
+        "Datum EDA \u2014 Rendering paused; F5 to Retry or close window",
+        "New Project \u2014 Datum \u2014 Rendering paused; F5 to Retry or close window"
+      ],
+      "restored_titles": [
+        "Datum EDA",
+        "New Project \u2014 Datum"
+      ],
+      "passed": true,
+      "exit": 0
+    }
+  ]
+}
