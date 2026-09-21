@@ -1,0 +1,33 @@
+{
+  "status": "Actual Main X11 focus-loss dock finalization and release suppression verified",
+  "source_commit": "4dc4d5f9326a1dac9d63a45cbe53d8b8b7bb8f53",
+  "binary_sha256": "89b0169344f8215dc8cf4087bbd7dd496030ff6fc9819d7c1e4d234e8c14c945",
+  "production_change": "None; verifies shared finalization moved in 8a54b5d9 through actual native mouse and focus adapters.",
+  "production_consumers_exercised": [
+    "MAIN terminal dock"
+  ],
+  "production_consumers_migrated": [],
+  "competing_paths_retired": [],
+  "sequence": "Native tab click opens Terminal; native press on dock handle and 90-pixel upward motion preview geometry; XSetInputFocus moves focus to a separate session-owned helper window while the button remains down; focus returns, release is delivered and a later native pointer event confirms dispatch progress; PID-scoped KWin close ends Main.",
+  "result": {
+    "initial_columns_rows": [
+      162,
+      9
+    ],
+    "final_columns_rows": [
+      162,
+      16
+    ],
+    "resizes_during_preview": 0,
+    "resizes_on_cancellation": 1,
+    "resizes_on_trailing_release": 0,
+    "exit": 0
+  },
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "limits": [
+    "Default GPU backend on X11/Xwayland with visual scale 1; not Wayland, native DPI/display movement, split gesture or injected recovery qualification.",
+    "Existing diagnostic resize calls/counts and successful native closure are observed; no independent kernel PTY size, pixel or semantic content snapshot.",
+    "Trace retains an approximately 993 ms frame. Existing dat-main-native-capture-delay-md9 acquisition/delivery limitations remain unresolved; no latency or throughput pass claimed.",
+    "Bounded regression of the preceding production change, without a new build or full test-suite rerun. No full LF-08/LF-10/S1, numeric, dependency, proposed-amendment or resize acceptance."
+  ]
+}
