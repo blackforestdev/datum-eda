@@ -1358,11 +1358,14 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial production Global dependency routing with native Units-negative/high-contrast-positive proof; Project writes and complete setting/font/hit qualification remain open",
         "id": "proof_sh_12",
         "positive": "Genuine font/global setting change",
         "negative_control": "Suppress every cross-window invalidation",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S1/preference-dependencies/receipt.json"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/SH-12/result.json",
       "acceptance_rule": "Exactly actual dependents invalidated; each changes rendered content and hit geometry correctly.",
@@ -23195,5 +23198,33 @@
       "Resize CPU remains unresolved and nonblocking"
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/preference-control-damage/receipt.json"
+  },
+  "s1_preference_dependencies_work": {
+    "status": "bounded default Global preference dependency migration, not complete SH-12/S1 qualification",
+    "production_consumers": [
+      "Global Preferences keyboard activation/cycle/endpoint/reset",
+      "Global Preferences pointer control/choice/reset",
+      "Main shell high contrast, terminal theme, visible Console feedback",
+      "New Project legacy workspace backdrop remains an actual workspace dependent until S3"
+    ],
+    "shared_component": "GlobalPreferenceRenderState plus shared App::activate_preferences_target and DialogInputOutcome::Workspace",
+    "retired_paths": "Global preference writes no longer blindly broadcast to every native host. Shared before/after projection selects dialog only or workspace plus owning dialog. Close/focus lifecycle retains broader path.",
+    "native_results": {
+      "units": "Fresh isolated Global profile: Automatic -> Whole units visibly saved. Main submit/present delta 1 in prior baseline -> 0 candidate; dialog delta 1.",
+      "contrast": "Pointer toggled high contrast On, keyboard toggled Off; each caused Main submit/present delta 1. Dialog rendered both. local:false fields are expected positive dependent-routing controls.",
+      "visual": "Units mutation screenshot and contrast focused screenshot inspected. No displayed-frame timing claim."
+    },
+    "proof": {
+      "tests": "352 app tests passed, 9 ignored; screenshot integration ignored. Existing real-service projection test extended for live contrast/reset, unchanged values and Console timeout hide/reveal.",
+      "clippy": "app all targets -D warnings passed",
+      "build": "fresh guarded offline release passed"
+    },
+    "limitations": [
+      "Project preference writes retain conservative dependent routing; complete SH-12 and other consumer qualification remain open",
+      "Native X11 only; no complete font/hit geometry, all settings, resource/latency/Wayland/endurance qualification",
+      "Existing New Project backdrop dependency preserved, not retired here",
+      "Resize CPU and temporal qualification remain unresolved and nonblocking; S1 remains in progress"
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/preference-dependencies/receipt.json"
   }
 }

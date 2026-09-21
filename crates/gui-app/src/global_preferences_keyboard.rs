@@ -6,6 +6,17 @@ impl Runtime {
         &mut self,
         event: &KeyEvent,
     ) -> crate::global_preferences_window::DialogInputOutcome {
+        let before = crate::global_preferences_window::GlobalPreferenceRenderState::capture(
+            &self.workspace().ui,
+        );
+        let outcome = self.handle_global_preferences_key_inner(event);
+        before.finish(outcome, &self.workspace().ui)
+    }
+
+    fn handle_global_preferences_key_inner(
+        &mut self,
+        event: &KeyEvent,
+    ) -> crate::global_preferences_window::DialogInputOutcome {
         use crate::global_preferences_window::DialogInputOutcome as Outcome;
         if !self.workspace().ui.global_preferences.open {
             return Outcome::Unhandled;

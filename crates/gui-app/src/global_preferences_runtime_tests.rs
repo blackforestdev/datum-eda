@@ -286,6 +286,11 @@ fn every_visible_value_updates_its_declared_live_consumer() {
     };
     let mut ui = WorkspaceUiState::new(filters);
     coordinator.publish_projection(&mut ui);
+    use crate::global_preferences_window::{
+        DialogInputOutcome as Damage, GlobalPreferenceRenderState,
+    };
+    ui.global_preferences.open = true;
+    let before = GlobalPreferenceRenderState::capture(&ui);
     let original_terminal_theme = ui.terminal.theme;
 
     coordinator
@@ -308,6 +313,7 @@ fn every_visible_value_updates_its_declared_live_consumer() {
         )
         .unwrap();
     assert!(ui.global_preferences.reduced_motion);
+    assert_eq!(before.finish(Damage::Dependents, &ui), Damage::Dialog);
 
     coordinator
         .set_value(
@@ -317,6 +323,8 @@ fn every_visible_value_updates_its_declared_live_consumer() {
         )
         .unwrap();
     assert!(ui.global_preferences.high_contrast_noncolor);
+    assert_eq!(before.finish(Damage::Dependents, &ui), Damage::Workspace);
+    let before = GlobalPreferenceRenderState::capture(&ui);
     assert_eq!(
         ui.terminal.theme,
         datum_gui_protocol::TerminalTheme::HighContrast
@@ -326,7 +334,40 @@ fn every_visible_value_updates_its_declared_live_consumer() {
         .reset("datum.accessibility.high_contrast_noncolor", &mut ui)
         .unwrap();
     assert!(!ui.global_preferences.high_contrast_noncolor);
+    assert_eq!(before.finish(Damage::Dependents, &ui), Damage::Workspace);
     assert_eq!(ui.terminal.theme, original_terminal_theme);
+    // Shortening a timeout can immediately hide an existing echo; extending it
+    // can reveal it again. Those changes must invalidate the workspace too.
+    ui.console
+        .publish(datum_gui_protocol::ConsoleFeedbackDraft::action_echo(
+            ConsoleFeedbackSource::Viewport,
+            0,
+            "fit board",
+        ));
+    ui.console.advance_visibility(7_000, false);
+    for duration in ["4s", "never"] {
+        let before = GlobalPreferenceRenderState::capture(&ui);
+        coordinator
+            .set_value(
+                "datum.console.feedback_duration",
+                serde_json::Value::String(duration.to_owned()),
+                &mut ui,
+            )
+            .unwrap();
+        assert_eq!(before.finish(Damage::Dependents, &ui), Damage::Workspace);
+    }
+    // Reapplying an effective value retains dialog notice/provenance work only.
+    let before = GlobalPreferenceRenderState::capture(&ui);
+    coordinator
+        .set_value(
+            "datum.console.feedback_duration",
+            serde_json::Value::String("never".to_owned()),
+            &mut ui,
+        )
+        .unwrap();
+    assert_eq!(before.finish(Damage::Dependents, &ui), Damage::Dialog);
+    ui.global_preferences.open = false;
+    assert_eq!(before.finish(Damage::Dependents, &ui), Damage::Dependents);
     let _ = std::fs::remove_dir_all(base);
 }
 
