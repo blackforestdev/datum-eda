@@ -1,0 +1,18 @@
+{
+  "binary_sha256": "7977cd16c89e14afcda41b7215fe20b7d0188f2c88aa77fc045514ff25b62f67",
+  "runs": [
+    {
+      "host": "MAIN",
+      "pid": 1213790,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "passed": false,
+      "error": ""
+    }
+  ]
+}

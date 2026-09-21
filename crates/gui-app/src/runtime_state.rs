@@ -2,7 +2,6 @@
 use super::*;
 
 pub(super) struct Runtime {
-    pub(super) window: std::sync::Arc<Window>,
     pub(super) instance: wgpu::Instance,
     pub(super) adapter: wgpu::Adapter,
     pub(super) surface: wgpu::Surface<'static>,
@@ -69,4 +68,7 @@ pub(super) struct Runtime {
     pub(super) global_preferences: global_preferences_runtime::GlobalPreferencesCoordinator,
     pub(super) project_preferences_raise_requested: bool,
     pub(super) project_preferences: project_preferences_runtime::ProjectPreferencesCoordinator,
+    // Rust drops fields in declaration order. Keep the native display alive
+    // until every GPU handle (including unused backend instances) is destroyed.
+    pub(super) window: std::sync::Arc<Window>,
 }

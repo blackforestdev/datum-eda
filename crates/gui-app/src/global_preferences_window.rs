@@ -68,7 +68,6 @@ impl DialogInputOutcome {
 
 pub(super) struct GlobalPreferencesWindowSurface {
     surface: wgpu::Surface<'static>,
-    window: std::sync::Arc<Window>,
     config: wgpu::SurfaceConfiguration,
     // Drop renderer references before recording host attachment retirement.
     pub(super) renderer: Renderer,
@@ -86,6 +85,9 @@ pub(super) struct GlobalPreferencesWindowSurface {
     scrollbar_pressed: bool,
     scroll_focus: Option<datum_gui_protocol::GlobalPreferencesFocus>,
     scroll_expanded: (Option<String>, Option<String>),
+    // Retain the native display through renderer/measurement GPU teardown.
+    // A wgpu surface alone can drop before the final device/instance reference.
+    window: std::sync::Arc<Window>,
 }
 
 impl GlobalPreferencesWindowSurface {
