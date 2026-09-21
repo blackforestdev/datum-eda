@@ -145,71 +145,7 @@ pub(super) fn render_pane(
         }
         RevisionPane::Witness => render_witness(state, x, y, rect, quads, text),
     }
-    clip_pane_output(rect, quads, quad_start, text, text_start, hits, hit_start);
-}
-
-fn clip_pane_output(
-    rect: RectPx,
-    quads: &mut Vec<Quad>,
-    quad_start: usize,
-    text: &mut Vec<TextRun>,
-    text_start: usize,
-    hits: &mut Vec<HitRegion>,
-    hit_start: usize,
-) {
-    let clipped_quads = quads
-        .drain(quad_start..)
-        .filter_map(|quad| {
-            let min_x = quad
-                .points
-                .iter()
-                .map(|p| p.0)
-                .fold(f32::INFINITY, f32::min);
-            let max_x = quad
-                .points
-                .iter()
-                .map(|p| p.0)
-                .fold(f32::NEG_INFINITY, f32::max);
-            let min_y = quad
-                .points
-                .iter()
-                .map(|p| p.1)
-                .fold(f32::INFINITY, f32::min);
-            let max_y = quad
-                .points
-                .iter()
-                .map(|p| p.1)
-                .fold(f32::NEG_INFINITY, f32::max);
-            let clipped = RectPx {
-                x: min_x,
-                y: min_y,
-                width: (max_x - min_x).max(0.0),
-                height: (max_y - min_y).max(0.0),
-            }
-            .intersect(rect)?;
-            Some(Quad::from_rect(clipped, quad.color))
-        })
-        .collect::<Vec<_>>();
-    quads.extend(clipped_quads);
-
-    let clipped_text = text
-        .drain(text_start..)
-        .filter_map(|mut run| {
-            let bounds = run.clip_bounds.unwrap_or(rect).intersect(rect)?;
-            run.clip_bounds = Some(bounds);
-            Some(run)
-        })
-        .collect::<Vec<_>>();
-    text.extend(clipped_text);
-
-    let clipped_hits = hits
-        .drain(hit_start..)
-        .filter_map(|mut hit| {
-            hit.rect = hit.rect.intersect(rect)?;
-            Some(hit)
-        })
-        .collect::<Vec<_>>();
-    hits.extend(clipped_hits);
+    crate::hit_clipping::clip_content(quads, text, hits, quad_start, text_start, hit_start, rect);
 }
 
 fn render_witness(

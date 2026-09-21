@@ -6614,6 +6614,10 @@
         "REVISION": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s3_content_clipping_progress": {
+        "status": "partial shared GLOBAL/PROJECT/REVISION content adoption; complete consumer qualification outstanding",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/shared-content-clipping/result.json"
       }
     },
     {
@@ -6687,6 +6691,10 @@
         "REVISION": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s3_content_clipping_progress": {
+        "status": "partial shared GLOBAL/PROJECT/REVISION content adoption; complete consumer qualification outstanding",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/shared-content-clipping/result.json"
       }
     },
     {
@@ -26496,5 +26504,39 @@
       "Workspace invalidation retirement verified in call sites; native background-output stress proof remains outstanding."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/new-project-dialog/result.json"
+  },
+  "s3_shared_content_clipping_work": {
+    "status": "partial S3 production adoption; no milestone or HP22 acceptance",
+    "baseline": "5b1a4e59fc13ef1427d935645e4d69211104c813",
+    "candidate_sources": {
+      "crates/gui-render/src/render/hit_clipping.rs": "e146874c6ee7062f4f149eb7bc91da753f1fce2c658c1868907d516341bc2054",
+      "crates/gui-render/src/render/preferences_rows.rs": "40ad9c022c8ac64e7fbc739ac50b90e6f72683283a8903b6925a46815ccb8e7b",
+      "crates/gui-render/src/revision_workspace.rs": "f0a26e9b3f41a4da113d2e7e6292680223c52900971b6f8a17f90c6983dbff9e"
+    },
+    "production_consumers": [
+      "GLOBAL and PROJECT scrolled Preferences rows",
+      "REVISION Release/Impact/Change/Evidence/Witness pane composition",
+      "Existing editor scene pointer hits retain shared hit clipping"
+    ],
+    "shared_owner": "render/hit_clipping.rs::clip_content and clip_new_hit_regions",
+    "retired_paths": [
+      "Preferences vertical-only triangle/hit clip and replacement of descendant text clips",
+      "Revision bounding-box substitution for quad contours",
+      "Separate allocating hit/text clipping loops"
+    ],
+    "behavior": "One four-edge viewport for contour-preserving triangle clipping, intersected nested text bounds and positive-area hit rectangles. Pinned prefixes remain unchanged. Rectangles retain one-quad encoding; triangle clipping uses fixed stack scratch arrays; text/hits retain in place. Scroll offsets, terminal row authority, form controls and design mutation unchanged.",
+    "proof": {
+      "cpu": "208 renderer tests pass;22 ignored. Includes all existing Revision pane clipping tests and two new area/nested-clip/pinned-prefix/horizontal-hit tests.",
+      "gpu": "13 explicit hardware GPU regressions pass including fractional Preferences scroll/pinned chrome, full/dialog pixel parity, AA and New Project.",
+      "negative": "Area oracle rejects rectangle substitution conceptually; no independent defect-injection run performed in this slice. Prescribed qualification remains open.",
+      "native": "Fresh offline release; four X11 host startup/presentation/controlled close smokes pass. GLOBAL and PROJECT captures visually inspected; no full input/clip qualification claimed.",
+      "checks": "Visual all-targets renderer Clippy and source health pass; governance gates run before commit."
+    },
+    "limits": [
+      "Other Main panel/terminal content profiles still need their individual shared-component adoption review.",
+      "Native all-consumer clip/input/focus matrix, independent negatives and complete resource/budget qualification remain outstanding.",
+      "No dependency, prototype, acceptance or resize-scope change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/shared-content-clipping/result.json"
   }
 }
