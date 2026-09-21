@@ -1,0 +1,102 @@
+{
+  "binary_sha256": "7991d4bdc0f849c9643abd296bd551a9f5342eef4dad10c1619ba97dc452a68f",
+  "revision": "19b94b1d1e2220509af91ed184689302ec67b558",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--open-global-preferences",
+        "--window-size",
+        "1280x800",
+        "--terminal-session-profile",
+        "custom",
+        "--terminal-program",
+        "/usr/bin/python3",
+        "--terminal-arg=-u",
+        "--terminal-arg=/tmp/pm045_workspace_producer.py",
+        "--terminal-arg=/tmp/pm045-workspace-proof/candidate/GLOBAL"
+      ],
+      "passed": true,
+      "main_rounds": 9,
+      "auxiliary_rounds": 0,
+      "native_Tab_focus_rounds": 1,
+      "producer": {
+        "bursts": 24,
+        "bytes": 672
+      },
+      "native_ids": [
+        "12582916",
+        "12582917"
+      ],
+      "log_sha256": "bfc9e85d143b5d3cf95c043fd8566cb33fc724b23444cc79e5d61a1b9cb424e4",
+      "output_window_sha256": "42ff68e9fe341366e81331d75bd05002033b3f6a7daa72231d9df85f437e00f3"
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--open-project-preferences",
+        "--window-size",
+        "1280x800",
+        "--terminal-session-profile",
+        "custom",
+        "--terminal-program",
+        "/usr/bin/python3",
+        "--terminal-arg=-u",
+        "--terminal-arg=/tmp/pm045_workspace_producer.py",
+        "--terminal-arg=/tmp/pm045-workspace-proof/candidate/PROJECT"
+      ],
+      "passed": true,
+      "main_rounds": 9,
+      "auxiliary_rounds": 0,
+      "native_Tab_focus_rounds": 1,
+      "producer": {
+        "bursts": 24,
+        "bytes": 672
+      },
+      "native_ids": [
+        "12582916",
+        "12582917"
+      ],
+      "log_sha256": "71ff3f266934479997d7f3b06d7647ffce4180b8244089c96b6b84ba66b5f9fa",
+      "output_window_sha256": "6c5994197614fa53cf4be882976a59ed71cbc67d62665bab83ccaccda8ad5dcc"
+    },
+    {
+      "host": "NEW",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+        "--open-new-project",
+        "--window-size",
+        "1280x800",
+        "--terminal-session-profile",
+        "custom",
+        "--terminal-program",
+        "/usr/bin/python3",
+        "--terminal-arg=-u",
+        "--terminal-arg=/tmp/pm045_workspace_producer.py",
+        "--terminal-arg=/tmp/pm045-workspace-proof/candidate/NEW"
+      ],
+      "passed": true,
+      "main_rounds": 5,
+      "auxiliary_rounds": 5,
+      "native_Tab_focus_rounds": 1,
+      "producer": {
+        "bursts": 24,
+        "bytes": 672
+      },
+      "native_ids": [
+        "12582916",
+        "12582917"
+      ],
+      "log_sha256": "e4ccf636163c9532ffe5ec2f05e17023d81cd0564ae60cbf425736208a09b4cd",
+      "output_window_sha256": "1fe391789eb0f396c179af72513a59c7a7a207b6c3083913bb5cc3fe17045af1"
+    }
+  ]
+}

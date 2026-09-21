@@ -1,0 +1,99 @@
+{
+  "binary_sha256": "5bcff23aeed9a916806165d57060823aef4588cbaa76e7fed1e8efd3cd97f43b",
+  "revision": "19b94b1d1e2220509af91ed184689302ec67b558",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/pm045-workspace-redraw-baseline/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--open-global-preferences",
+        "--window-size",
+        "1280x800",
+        "--terminal-session-profile",
+        "custom",
+        "--terminal-program",
+        "/usr/bin/python3",
+        "--terminal-arg=-u",
+        "--terminal-arg=/tmp/pm045_workspace_producer.py",
+        "--terminal-arg=/tmp/pm045-workspace-proof/baseline/GLOBAL"
+      ],
+      "passed": true,
+      "main_rounds": 7,
+      "auxiliary_rounds": 7,
+      "producer": {
+        "bursts": 24,
+        "bytes": 672
+      },
+      "native_ids": [
+        "12582916",
+        "12582917"
+      ],
+      "log_sha256": "57bb2898e8c1663114d656da2dc285e9048609c89ba184f2634db5da6c5258ae",
+      "output_window_sha256": "6de80b97f0e1b4c8b86ff69a948c96948378af52fc102eba2eafb61f349b5852"
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/pm045-workspace-redraw-baseline/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--open-project-preferences",
+        "--window-size",
+        "1280x800",
+        "--terminal-session-profile",
+        "custom",
+        "--terminal-program",
+        "/usr/bin/python3",
+        "--terminal-arg=-u",
+        "--terminal-arg=/tmp/pm045_workspace_producer.py",
+        "--terminal-arg=/tmp/pm045-workspace-proof/baseline/PROJECT"
+      ],
+      "passed": true,
+      "main_rounds": 5,
+      "auxiliary_rounds": 5,
+      "producer": {
+        "bursts": 24,
+        "bytes": 672
+      },
+      "native_ids": [
+        "12582916",
+        "12582917"
+      ],
+      "log_sha256": "abea775d28fa0d33a6975c5b57525169da13ff7cf5c95c9facd47407cfcd0470",
+      "output_window_sha256": "d7247222dc089b93ef4ef3c2f9ba1c1125646f1b84ac8c684614aba4361231bf"
+    },
+    {
+      "host": "NEW",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/pm045-workspace-redraw-baseline/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+        "--open-new-project",
+        "--window-size",
+        "1280x800",
+        "--terminal-session-profile",
+        "custom",
+        "--terminal-program",
+        "/usr/bin/python3",
+        "--terminal-arg=-u",
+        "--terminal-arg=/tmp/pm045_workspace_producer.py",
+        "--terminal-arg=/tmp/pm045-workspace-proof/baseline/NEW"
+      ],
+      "passed": true,
+      "main_rounds": 5,
+      "auxiliary_rounds": 5,
+      "producer": {
+        "bursts": 24,
+        "bytes": 672
+      },
+      "native_ids": [
+        "12582916",
+        "12582917"
+      ],
+      "log_sha256": "f8a8858e7788c6eb7390728c9450973d03b692780ec6fdce508a7d09096006f8",
+      "output_window_sha256": "a107156e5855f65b84410549320c4be61144bbf8c08e98ee13acbae26810bca4"
+    }
+  ]
+}
