@@ -22,8 +22,12 @@ fn retain_overlay_buffers<T>(
     entries: &mut Vec<T>,
     age: impl Fn(&T) -> u64,
     size: impl Fn(&T) -> usize,
-) {
-    entries.sort_by_key(|entry| std::cmp::Reverse(age(entry)));
+) -> bool {
+    let reordered = entries.windows(2).any(|pair| age(&pair[0]) < age(&pair[1]));
+    if reordered {
+        entries.sort_by_key(|entry| std::cmp::Reverse(age(entry)));
+    }
+    let old_len = entries.len();
     let mut bytes = 0;
     let mut count = 0;
     entries.retain(|entry| {
@@ -35,6 +39,7 @@ fn retain_overlay_buffers<T>(
         count += 1;
         true
     });
+    reordered || entries.len() != old_len
 }
 
 #[derive(Default)]
@@ -137,9 +142,7 @@ impl TextBufferCache {
     /// live. Bound retained buffers and key text; current-frame scratch can grow
     /// only with that frame's visible text. Glyph instances own their GPU data.
     pub(crate) fn trim_overlay(&mut self) {
-        // Sorting can change buffer indices even without evicting entries.
-        self.revision = self.revision.wrapping_add(1);
-        retain_overlay_buffers(
+        let changed = retain_overlay_buffers(
             &mut self.entries,
             |entry| entry.last_used_frame,
             |entry| {
@@ -152,7 +155,11 @@ impl TextBufferCache {
                         .sum::<usize>()
             },
         );
-        self.rebuild_lookup();
+        if changed {
+            // Only actual retirement/reordering invalidates index signatures.
+            self.revision = self.revision.wrapping_add(1);
+            self.rebuild_lookup();
+        }
     }
 
     fn rebuild_lookup(&mut self) {

@@ -107,6 +107,14 @@ fn dialog_single_pass_matches_general_renderer_pixels() {
             );
             assert!(prepared.is_overlay_only());
             let actual = capture(&mut renderer, &prepared);
+            // A retirement/reindex may need one fresh preparation before reuse.
+            assert!(actual == capture(&mut renderer, &prepared));
+            let prepares = renderer.renderer.text_preparation.overlay_prepares;
+            assert!(actual == capture(&mut renderer, &prepared));
+            assert_eq!(
+                renderer.renderer.text_preparation.overlay_prepares, prepares,
+                "unchanged dialog must not prepare/upload glyphs again"
+            );
             assert!(renderer.renderer.text_preparation.is_invalid());
             let mut general = prepared.clone();
             // An off-screen quad selects the general renderer without changing
@@ -419,7 +427,7 @@ fn shared_atlas_retry_and_cache_reindex_refresh_workspace_glyphs() {
         renderer.renderer.text_preparation.workspace_prepares, count,
         "warm workspace preparation stays skipped"
     );
-    renderer.renderer.text_preparation.forced_overlay_errors = 1;
+    renderer.renderer.text_preparation.force_overlay_errors(1);
     assert!(cold == capture(&mut renderer, &prepared));
     assert_eq!(
         renderer.renderer.text_preparation.workspace_prepares,
@@ -427,7 +435,7 @@ fn shared_atlas_retry_and_cache_reindex_refresh_workspace_glyphs() {
         "retry must re-protect workspace glyphs before overlay allocation"
     );
 
-    renderer.renderer.text_preparation.forced_overlay_errors = 2;
+    renderer.renderer.text_preparation.force_overlay_errors(2);
     let failed = renderer.renderer.prepare_frame_text(
         &renderer.device,
         &renderer.queue,
@@ -648,3 +656,22 @@ mod control_tests;
 
 #[path = "gpu_uniform_tests.rs"]
 mod uniform_tests;
+
+#[test]
+#[ignore = "requires local GPU; bounded overlay signature proof"]
+fn oversized_overlay_signature_bypasses_reuse_without_omitting_text() {
+    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let mut renderer = hardware_renderer(960, 720);
+    let mut prepared =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+    prepared.menu_overlay_text_runs = vec![prepared.menu_overlay_text_runs[0].clone(); 129];
+    let cold = capture(&mut renderer, &prepared);
+    let prepares = renderer.renderer.text_preparation.overlay_prepares;
+    assert!(cold == capture(&mut renderer, &prepared));
+    assert_eq!(
+        renderer.renderer.text_preparation.overlay_prepares,
+        prepares + 1
+    );
+    let mut fresh = hardware_renderer(960, 720);
+    assert!(cold == capture(&mut fresh, &prepared));
+}

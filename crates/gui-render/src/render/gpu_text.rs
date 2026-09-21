@@ -1,9 +1,12 @@
 //! Prepare all consumers of the shared glyph atlas before encoding either one.
 use super::*;
 
+const MAX_OVERLAY_SIGNATURE_RUNS: usize = 128;
+
 #[derive(Default)]
 pub(crate) struct GlyphPreparation {
     prepared: Option<(u64, TextPrepareSignature)>,
+    overlay_prepared: Option<(u64, TextPrepareSignature)>,
     #[cfg(test)]
     pub(crate) forced_overlay_errors: usize,
     #[cfg(test)]
@@ -15,6 +18,12 @@ pub(crate) struct GlyphPreparation {
 }
 
 impl GlyphPreparation {
+    #[cfg(all(test, feature = "visual"))]
+    pub(crate) fn force_overlay_errors(&mut self, count: usize) {
+        self.overlay_prepared = None;
+        self.forced_overlay_errors = count;
+    }
+
     #[cfg(all(test, feature = "visual"))]
     pub(crate) fn is_invalid(&self) -> bool {
         self.prepared.is_none()
@@ -89,9 +98,21 @@ impl Renderer {
                 .as_ref()
                 .is_some_and(|(old_revision, old)| *old_revision == revision && old == signature)
         });
+        let overlay_signature = (has_overlay_text && overlay.len() <= MAX_OVERLAY_SIGNATURE_RUNS)
+            .then(|| {
+                text_prepare_signature(&overlay, prepared.menu_overlay_text_runs(), width, height)
+            })
+            .filter(|signature| signature.runs.capacity() <= MAX_OVERLAY_SIGNATURE_RUNS);
+        let reuse_overlay = overlay_signature.as_ref().is_some_and(|signature| {
+            self.text_preparation
+                .overlay_prepared
+                .as_ref()
+                .is_some_and(|(old_revision, old)| *old_revision == revision && old == signature)
+        });
         // Prepare mutates glyph instances even on failure. No old signature may
         // survive a partial attempt, including one that fails its retry.
         self.text_preparation.prepared = None;
+        self.text_preparation.overlay_prepared = None;
         let first = self.prepare_text_pair(
             device,
             queue,
@@ -99,6 +120,7 @@ impl Renderer {
             &workspace,
             &overlay,
             has_workspace_text && !reuse,
+            has_overlay_text && !reuse_overlay,
         );
         let retried = if let Err(initial) = first {
             // trim clears atlas residency protection. Re-prepare workspace FIRST
@@ -115,6 +137,7 @@ impl Renderer {
                 &workspace,
                 &overlay,
                 has_workspace_text,
+                has_overlay_text,
             )
             .map_err(|retry| {
                 anyhow::anyhow!("prepare frame text after atlas trim: {retry}; initial: {initial}")
@@ -124,6 +147,8 @@ impl Renderer {
             false
         };
         self.text_preparation.prepared = signature.map(|signature| (revision, signature));
+        self.text_preparation.overlay_prepared =
+            overlay_signature.map(|signature| (revision, signature));
         Ok((stats, !has_workspace_text || (reuse && !retried)))
     }
 
@@ -136,6 +161,7 @@ impl Renderer {
         workspace: &[usize],
         overlay: &[usize],
         prepare_workspace: bool,
+        prepare_overlay: bool,
     ) -> anyhow::Result<()> {
         if prepare_workspace {
             #[cfg(test)]
@@ -154,7 +180,7 @@ impl Renderer {
                 )
                 .map_err(|error| anyhow::anyhow!("prepare workspace text: {error}"))?;
         }
-        if !overlay.is_empty() {
+        if prepare_overlay {
             #[cfg(test)]
             if self.text_preparation.forced_overlay_errors > 0 {
                 self.text_preparation.forced_overlay_errors -= 1;
