@@ -256,43 +256,6 @@ fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {
 fn run_offscreen_visual_test(_args: &GuiArgs) -> Result<()> {
     anyhow::bail!("datum-gui --visual-test requires the datum-gui-app visual feature")
 }
-impl ApplicationHandler for App {
-    fn resumed(&mut self, event_loop: &ActiveEventLoop) {
-        self.resume_native(event_loop);
-    }
-    fn window_event(
-        &mut self,
-        event_loop: &ActiveEventLoop,
-        window_id: WindowId,
-        event: WindowEvent,
-    ) {
-        self.handle_native_window_event(event_loop, window_id, event);
-    }
-
-    fn suspended(&mut self, _event_loop: &ActiveEventLoop) {
-        self.frames.set_suspended(true);
-        self.measurement_suspend(true);
-    }
-
-    fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
-        self.poll_background_work(event_loop);
-        self.poll_resize_smoke_start(event_loop);
-        if let Err(err) = self.sync_owned_product_windows(event_loop) {
-            fatal_gui_error(event_loop, "synchronize owned product window", err);
-        }
-        self.request_restored_native_frames();
-    }
-
-    fn user_event(&mut self, _event_loop: &ActiveEventLoop, (): ()) {
-        if self
-            .runtime
-            .as_mut()
-            .is_some_and(Runtime::handle_terminal_output_wake)
-        {
-            self.request_redraw_if_needed();
-        }
-    }
-}
 
 impl Runtime {
     #[cfg(feature = "visual")]

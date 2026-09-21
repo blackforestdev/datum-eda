@@ -465,9 +465,6 @@ impl App {
             WindowEvent::KeyboardInput { event, .. } => {
                 keyboard_focus::handle_keyboard_input(self, &event);
             }
-            WindowEvent::RedrawRequested => {
-                self.redraw_owned_window(event_loop, native_frame_adapters::OwnedHost::Global)
-            }
             _ => {}
         }
     }

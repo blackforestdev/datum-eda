@@ -187,9 +187,6 @@ impl App {
                 }
                 self.request_redraw_if_needed();
             }
-            WindowEvent::RedrawRequested => {
-                self.redraw_owned_window(event_loop, native_frame_adapters::OwnedHost::New)
-            }
             _ => {}
         }
     }
