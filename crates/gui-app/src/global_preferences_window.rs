@@ -82,6 +82,10 @@ impl GlobalPreferencesWindowSurface {
         })
     }
 
+    pub(super) fn window_id(&self) -> WindowId {
+        self.window.id()
+    }
+
     pub(super) fn invalidate(&mut self) {
         self.retained = None;
         self.prepared = None;
@@ -109,17 +113,25 @@ impl GlobalPreferencesWindowSurface {
         }
     }
 
-    pub(super) fn set_cursor_position(&mut self, position: Option<(f32, f32)>) {
+    pub(super) fn set_cursor_position(
+        &mut self,
+        position: Option<(f32, f32)>,
+        frames: &mut native_frame_coordinator::NativeFrameCoordinator,
+    ) {
         self.cursor_position = position;
         if let Some((_, y)) = position
             && self.scroll.drag(y)
         {
             self.invalidate();
-            self.window.request_redraw();
+            frames.invalidate(&self.window);
         }
     }
 
-    pub(super) fn scrollbar_input(&mut self, state: ElementState) -> bool {
+    pub(super) fn scrollbar_input(
+        &mut self,
+        state: ElementState,
+        frames: &mut native_frame_coordinator::NativeFrameCoordinator,
+    ) -> bool {
         if state == ElementState::Released {
             self.scroll.release();
             return std::mem::take(&mut self.scrollbar_pressed);
@@ -130,7 +142,7 @@ impl GlobalPreferencesWindowSurface {
         self.scrollbar_pressed = self.scroll.press(x, y);
         if self.scrollbar_pressed {
             self.invalidate();
-            self.window.request_redraw();
+            frames.invalidate(&self.window);
         }
         self.scrollbar_pressed
     }
@@ -145,12 +157,12 @@ impl GlobalPreferencesWindowSurface {
         runtime: &Runtime,
         project_preferences: bool,
         new_project: bool,
-    ) -> Result<()> {
+    ) -> Result<bool> {
         if !self
             .surface_transaction
             .begin_frame(&self.surface, &runtime.device, &self.config)?
         {
-            return Ok(());
+            return Ok(false);
         }
         let frame = match self.surface.get_current_texture() {
             Ok(frame) => frame,
@@ -159,11 +171,11 @@ impl GlobalPreferencesWindowSurface {
                     self.surface.configure(&runtime.device, &self.config);
                 }
                 self.invalidate();
-                return Ok(());
+                return Ok(false);
             }
             Err(wgpu::SurfaceError::Timeout) => {
                 self.surface_transaction.acquisition_failed(false);
-                return Ok(());
+                return Ok(false);
             }
             Err(wgpu::SurfaceError::OutOfMemory) => {
                 anyhow::bail!("Global Preferences surface out of memory")
@@ -256,7 +268,7 @@ impl GlobalPreferencesWindowSurface {
         self.window.pre_present_notify();
         frame.present();
         self.surface_transaction.presented(&runtime.queue);
-        Ok(())
+        Ok(true)
     }
 }
 
@@ -279,7 +291,7 @@ impl App {
             delta,
         ) {
             surface.invalidate();
-            surface.window.request_redraw();
+            self.frames.invalidate(&surface.window);
         }
     }
 
@@ -295,6 +307,9 @@ impl App {
             let had_window = self.global_preferences_window.is_some();
             if let Some(window) = self.global_preferences_window.take() {
                 window.set_visible(false);
+            }
+            if let Some(surface) = &self.global_preferences_surface {
+                self.frames.close(surface.window_id());
             }
             self.global_preferences_surface = None;
             if had_window && let Some(window) = self.window {
@@ -328,9 +343,11 @@ impl App {
                 window.clone(),
                 self.args.visual_scale_factor,
             )?;
+            self.frames
+                .register(window.id(), surface.measurements.epoch());
             self.global_preferences_surface = Some(surface);
             self.global_preferences_window = Some(window.clone());
-            owned_window_policy::show_owned_window(&window);
+            owned_window_policy::show_owned_window(&window, &mut self.frames);
         }
 
         let raise = self
@@ -338,7 +355,7 @@ impl App {
             .as_mut()
             .is_some_and(Runtime::take_global_preferences_raise_request);
         if raise && let Some(window) = &self.global_preferences_window {
-            owned_window_policy::raise_owned_window(window);
+            owned_window_policy::raise_owned_window(window, &mut self.frames);
         }
         Ok(())
     }
@@ -365,7 +382,7 @@ impl App {
                     surface.resize(runtime, size.width, size.height);
                 }
                 if let Some(window) = &self.global_preferences_window {
-                    window.request_redraw();
+                    self.frames.invalidate(window);
                 }
             }
             WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
@@ -378,22 +395,25 @@ impl App {
                     surface.set_scale_factor(scale_factor);
                 }
                 if let Some(window) = &self.global_preferences_window {
-                    window.request_redraw();
+                    self.frames.invalidate(window);
                 }
             }
             WindowEvent::CursorMoved { position, .. } => {
                 if let Some(surface) = &mut self.global_preferences_surface {
-                    surface.set_cursor_position(Some((position.x as f32, position.y as f32)));
+                    surface.set_cursor_position(
+                        Some((position.x as f32, position.y as f32)),
+                        &mut self.frames,
+                    );
                 }
             }
             WindowEvent::Focused(false) => {
                 if let Some(surface) = &mut self.global_preferences_surface {
-                    surface.scrollbar_input(ElementState::Released);
+                    surface.scrollbar_input(ElementState::Released, &mut self.frames);
                 }
             }
             WindowEvent::CursorLeft { .. } => {
                 if let Some(surface) = &mut self.global_preferences_surface {
-                    surface.set_cursor_position(None);
+                    surface.set_cursor_position(None, &mut self.frames);
                 }
             }
             WindowEvent::MouseInput {
@@ -404,7 +424,7 @@ impl App {
                 if self
                     .global_preferences_surface
                     .as_mut()
-                    .is_some_and(|surface| surface.scrollbar_input(state))
+                    .is_some_and(|surface| surface.scrollbar_input(state, &mut self.frames))
                     || state != ElementState::Released
                 {
                     return;
@@ -430,12 +450,7 @@ impl App {
                 keyboard_focus::handle_keyboard_input(self, &event);
             }
             WindowEvent::RedrawRequested => {
-                if let (Some(runtime), Some(surface)) =
-                    (&self.runtime, &mut self.global_preferences_surface)
-                    && let Err(error) = surface.render(runtime, false, false)
-                {
-                    fatal_gui_error(event_loop, "render Global Preferences window", error);
-                }
+                self.redraw_owned_window(event_loop, native_frame_adapters::OwnedHost::Global)
             }
             _ => {}
         }

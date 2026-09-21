@@ -1,0 +1,26 @@
+{
+  "scope": "Bounded S0 baseline: actual production host startup and existing six-extent native input/final-state regression; not a budget, latency or overhead trial.",
+  "revision": "e91bd932b264ac3c1a21b633d4453f64bce23808",
+  "binary_sha256": "4b8566df2438e5fde06f2667bae5e99b25acdf35e61c7df73d7d51bdcaafaa44",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "runs": [
+    {
+      "host": "MAIN",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--resize-torture-smoke"
+      ],
+      "passed": false,
+      "observed": [],
+      "identity": [
+        "[SystemTime { tv_sec: 1789954428, tv_nsec: 268852122 }] surface identity window=WindowId(94891219423424) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "unexpected_exit": null,
+      "log_sha256": "065dfc60fe90b4c404a129ecbed03c9f19da9ae89d00aaf6e7895ce08d088ae0"
+    }
+  ]
+}

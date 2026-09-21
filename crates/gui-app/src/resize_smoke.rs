@@ -70,7 +70,7 @@ impl App {
         };
         if std::time::Instant::now() >= deadline {
             if let Some(window) = self.window {
-                window.request_redraw();
+                self.frames.invalidate(window);
             }
         } else {
             let next = match event_loop.control_flow() {
@@ -137,11 +137,11 @@ impl App {
                         size.width, size.height
                     ));
                     runtime.resize(size.width, size.height);
-                    runtime.window.request_redraw();
+                    self.frames.invalidate(runtime.window);
                 }
                 // A no-op request need not produce a native size event.
                 if observed == (width, height) {
-                    runtime.window.request_redraw();
+                    self.frames.invalidate(runtime.window);
                 }
                 // Otherwise None awaits a native Resized event.
                 true

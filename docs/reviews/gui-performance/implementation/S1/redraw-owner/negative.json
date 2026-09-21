@@ -1,0 +1,5 @@
+{
+  "defect": "Remove pending-token coalescing; retain all other scheduling/rendering code.",
+  "original_sha256": "f57666e207d26de6d71008c17fe82f1f2e3ee65490ddf7b5387ac23aa8cca1ea",
+  "mutated_sha256": "7d479869c99988b64a55d6d6950743673c34dad79307e396baaff270c942afa5"
+}

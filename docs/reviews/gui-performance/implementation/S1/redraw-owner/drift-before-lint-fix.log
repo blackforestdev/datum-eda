@@ -1,0 +1,69 @@
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.003s
+
+OK
+Cargo resource policy: PASS
+== rustfmt: workspace formatting gate ==
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.001s
+
+OK
+rustfmt gate passed for workspace (4 ceiling-bound exemption(s) in specs/rustfmt_exemption_manifest.json).
+== clippy: workspace lint gate (-D warnings) ==
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=21.2 GiB target_free=184.7 GiB tmp_free=9.3 GiB
+warning: Cargo target exceeds soft limit: 21.2 GiB used; soft limit 20.0 GiB
+    Checking datum-verb-registry v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/verb-registry)
+    Checking eda-engine v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine)
+    Checking datum-terminal-core v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/terminal-core)
+    Checking eda-test-harness v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/test-harness)
+    Checking datum-gui-protocol v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-protocol)
+    Checking datum-eda-cli v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/cli)
+    Checking eda-engine-daemon v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/engine-daemon)
+    Checking datum-gui-viewport v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-viewport)
+    Checking datum-gui-render v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-render)
+    Checking datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+error: this `if` statement can be collapsed
+   --> crates/gui-app/src/native_gpu_measurements.rs:124:9
+    |
+124 | /         if let Some(runtime) = self.runtime.as_mut() {
+125 | |             if runtime.window.id() == id {
+126 | |                 runtime.measurements.event(&mut runtime.renderer, event);
+127 | |             }
+128 | |         }
+    | |_________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.93.0/index.html#collapsible_if
+    = note: `-D clippy::collapsible-if` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::collapsible_if)]`
+help: collapse nested if block
+    |
+124 ~         if let Some(runtime) = self.runtime.as_mut()
+125 ~             && runtime.window.id() == id {
+126 |                 runtime.measurements.event(&mut runtime.renderer, event);
+127 ~             }
+    |
+
+error: this `if` statement can be collapsed
+   --> crates/gui-app/src/native_gpu_measurements.rs:140:13
+    |
+140 | /             if let (Some(surface), Some(window)) = (surface, window) {
+141 | |                 if window.id() == id {
+142 | |                     surface.measurements.event(&mut surface.renderer, event);
+143 | |                 }
+144 | |             }
+    | |_____________^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.93.0/index.html#collapsible_if
+help: collapse nested if block
+    |
+140 ~             if let (Some(surface), Some(window)) = (surface, window)
+141 ~                 && window.id() == id {
+142 |                     surface.measurements.event(&mut surface.renderer, event);
+143 ~                 }
+    |
+
+error: could not compile `datum-gui-app` (bin "datum-gui") due to 2 previous errors
+warning: build failed, waiting for other jobs to finish...
+error: could not compile `datum-gui-app` (bin "datum-gui" test) due to 2 previous errors

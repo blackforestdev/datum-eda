@@ -121,10 +121,10 @@ impl Host {
 
 impl App {
     pub(super) fn measurement_window_event(&mut self, id: WindowId, event: &WindowEvent) {
-        if let Some(runtime) = self.runtime.as_mut() {
-            if runtime.window.id() == id {
-                runtime.measurements.event(&mut runtime.renderer, event);
-            }
+        if let Some(runtime) = self.runtime.as_mut()
+            && runtime.window.id() == id
+        {
+            runtime.measurements.event(&mut runtime.renderer, event);
         }
         for (surface, window) in [
             (
@@ -137,10 +137,10 @@ impl App {
             ),
             (&mut self.new_project_surface, &self.new_project_window),
         ] {
-            if let (Some(surface), Some(window)) = (surface, window) {
-                if window.id() == id {
-                    surface.measurements.event(&mut surface.renderer, event);
-                }
+            if let (Some(surface), Some(window)) = (surface, window)
+                && window.id() == id
+            {
+                surface.measurements.event(&mut surface.renderer, event);
             }
         }
     }

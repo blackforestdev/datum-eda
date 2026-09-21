@@ -1,0 +1,15 @@
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=21.2 GiB target_free=184.7 GiB tmp_free=9.3 GiB
+warning: Cargo target exceeds soft limit: 21.2 GiB used; soft limit 20.0 GiB
+   Compiling datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.07s
+     Running unittests src/main.rs (target/debug/deps/datum_gui-c118320a3ba3ec9f)
+
+running 5 tests
+test native_frame_coordinator::tests::closed_replaced_and_duplicate_completions_cannot_clear_new_damage ... ok
+test native_frame_coordinator::tests::failed_acquisition_retains_damage_without_busy_retry ... ok
+test native_frame_coordinator::tests::late_failed_attempt_cannot_complete_retry_of_identical_damage ... ok
+test native_frame_coordinator::tests::local_damage_does_not_request_other_hosts ... ok
+test native_frame_coordinator::tests::native_hosts_coalesce_requests_without_losing_latest_damage ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 329 filtered out; finished in 0.00s
+

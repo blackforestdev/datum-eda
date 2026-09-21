@@ -1,0 +1,56 @@
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.003s
+
+OK
+Cargo resource policy: PASS
+== rustfmt: workspace formatting gate ==
+........
+----------------------------------------------------------------------
+Ran 8 tests in 0.000s
+
+OK
+rustfmt gate passed for workspace (4 ceiling-bound exemption(s) in specs/rustfmt_exemption_manifest.json).
+== clippy: workspace lint gate (-D warnings) ==
+Cargo resource preflight: target=/home/bfadmin/Documents/datum-eda/target size=21.2 GiB target_free=184.7 GiB tmp_free=9.3 GiB
+warning: Cargo target exceeds soft limit: 21.2 GiB used; soft limit 20.0 GiB
+    Checking datum-gui-app v0.1.0 (/home/bfadmin/Documents/datum-eda/crates/gui-app)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.47s
+Progress coverage audit passed.
+.............................................
+----------------------------------------------------------------------
+Ran 45 tests in 0.907s
+
+OK
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 0.000s
+
+OK
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.105s
+
+OK
+Project status check passed (59 frontier items).
+Spec parity check passed (20 inventories).
+Alignment audit passed.
+Spec governance gate passed (311 specs classified: 242 governed, 50 doctrine, 6 pending, 13 historical).
+Project Preferences tripwire satisfied: drawing without a spec is allowed.
+Evidence traceability gate passed (28 routes, 124 research/prototype artifacts).
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.001s
+
+OK
+dependency authority: PASS
+Resolver raw-load guard passed (0 allowlisted call sites).
+Global Preferences boundary gate passed (5 product-service adapters; 3 engine mutation files).
+...........
+----------------------------------------------------------------------
+Ran 11 tests in 0.002s
+
+OK
+GUI agent/terminal convergence guard failed:
+  - application focus must mutate only through initialization and set_application_focus
+  - terminal glyph face is missing JetBrainsMono-Regular.ttf

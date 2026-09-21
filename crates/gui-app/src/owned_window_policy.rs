@@ -45,24 +45,31 @@ pub(super) const fn owner_activation_raises_owned_window(
 
 pub(super) fn redirect_owner_activation(
     owner_focused: bool,
+    frames: &mut crate::native_frame_coordinator::NativeFrameCoordinator,
     owned_window: Option<&Arc<Window>>,
 ) -> bool {
     if !owner_activation_raises_owned_window(owner_focused, owned_window.is_some()) {
         return false;
     }
     let window = owned_window.expect("open owned window checked above");
-    raise_owned_window(window);
+    raise_owned_window(window, frames);
     true
 }
 
-pub(super) fn show_owned_window(window: &Window) {
+pub(super) fn show_owned_window(
+    window: &Window,
+    frames: &mut crate::native_frame_coordinator::NativeFrameCoordinator,
+) {
     window.set_visible(true);
     window.focus_window();
-    window.request_redraw();
+    frames.invalidate(window);
 }
 
-pub(super) fn raise_owned_window(window: &Window) {
-    show_owned_window(window);
+pub(super) fn raise_owned_window(
+    window: &Window,
+    frames: &mut crate::native_frame_coordinator::NativeFrameCoordinator,
+) {
+    show_owned_window(window, frames);
     window.request_user_attention(Some(UserAttentionType::Informational));
 }
 

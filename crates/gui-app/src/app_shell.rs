@@ -2,6 +2,7 @@ use super::*;
 
 pub(super) struct App {
     pub(super) args: GuiArgs,
+    pub(super) frames: native_frame_coordinator::NativeFrameCoordinator,
     pub(super) window: Option<&'static Window>,
     pub(super) runtime: Option<Runtime>,
     pub(super) global_preferences_window: Option<std::sync::Arc<Window>>,
@@ -38,6 +39,7 @@ impl App {
     ) -> Self {
         Self {
             args,
+            frames: Default::default(),
             window: None,
             runtime: None,
             global_preferences_window: None,
@@ -82,11 +84,8 @@ impl App {
 
     /// Local damage must not invalidate independent native dialog surfaces.
     pub(super) fn request_main_redraw_if_needed(&mut self) {
-        if let (Some(runtime), Some(window)) = (&mut self.runtime, self.window)
-            && !runtime.redraw_pending
-        {
-            runtime.redraw_pending = true;
-            window.request_redraw();
+        if let Some(window) = self.window {
+            self.frames.invalidate(window);
         }
     }
 
@@ -97,20 +96,20 @@ impl App {
             &self.global_preferences_window,
         ) {
             surface.invalidate();
-            window.request_redraw();
+            self.frames.invalidate(window);
         }
         if let (Some(surface), Some(window)) = (
             &mut self.project_preferences_surface,
             &self.project_preferences_window,
         ) {
             surface.invalidate();
-            window.request_redraw();
+            self.frames.invalidate(window);
         }
         if let (Some(surface), Some(window)) =
             (&mut self.new_project_surface, &self.new_project_window)
         {
             surface.invalidate();
-            window.request_redraw();
+            self.frames.invalidate(window);
         }
     }
 
@@ -148,7 +147,7 @@ impl App {
             }
         }
         self.kwin_lifecycle_smoke_step += 1;
-        window.request_redraw();
+        self.frames.invalidate(window);
         true
     }
 }

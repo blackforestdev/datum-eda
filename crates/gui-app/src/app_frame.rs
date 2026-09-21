@@ -4,9 +4,14 @@ use super::*;
 
 impl App {
     pub(super) fn redraw_main_window(&mut self, event_loop: &ActiveEventLoop) {
+        let Some(window) = self.window else {
+            return;
+        };
+        let Some(receipt) = self.frames.redraw_received(window.id()) else {
+            return;
+        };
         let presented = if let Some(runtime) = &mut self.runtime {
             append_gui_verbose_diagnostic_line("redraw handler begin");
-            runtime.redraw_pending = false;
             let started = std::time::Instant::now();
             let presented = runtime
                 .render()
@@ -16,6 +21,7 @@ impl App {
         } else {
             false
         };
+        self.frames.frame_finished(window, receipt, presented);
         if self.advance_kwin_lifecycle_smoke(event_loop) {
             return;
         }

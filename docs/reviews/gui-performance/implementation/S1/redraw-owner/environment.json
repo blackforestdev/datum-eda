@@ -1,0 +1,12 @@
+{
+  "observed_at": "2026-09-21T01:47:20.084400+00:00",
+  "uname": "Linux debian3520 6.12.107+deb13-amd64 #1 SMP PREEMPT_DYNAMIC Debian 6.12.107-1 (2026-08-29) x86_64 GNU/Linux",
+  "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11)\nbinary: rustc\ncommit-hash: 01f6ddf7588f42ae2d7eb0a2f21d44e8e96674cf\ncommit-date: 2026-02-11\nhost: x86_64-unknown-linux-gnu\nrelease: 1.93.1\nLLVM version: 21.1.8\n",
+  "cargo_lock_sha256": "0cee76a3005add00e0a63311e937ed7e15d54c0ec57627849b4cb4e756b7387c",
+  "display": {
+    "DISPLAY": ":1",
+    "WAYLAND_DISPLAY": "wayland-0",
+    "XDG_SESSION_TYPE": "wayland"
+  },
+  "native_scope": "Xwayland application on Wayland desktop; runtime adapter/driver identities in native receipts. No kernel or temporal investigation."
+}
