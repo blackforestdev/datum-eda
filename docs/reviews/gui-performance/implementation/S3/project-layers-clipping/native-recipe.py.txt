@@ -1,0 +1,59 @@
+import os,subprocess,time,json,re,hashlib,sys
+from pathlib import Path
+root=Path('/home/bfadmin/Documents/datum-eda');binary=root/'target/release/datum-gui';out=Path(sys.argv[1]);out.mkdir(exist_ok=False)
+def wait(fn,p):
+ end=time.monotonic()+20
+ while time.monotonic()<end:
+  assert p.poll() is None,p.returncode
+  value=fn()
+  if value:return value
+  time.sleep(.05)
+ raise AssertionError('native predicate timeout')
+def close(p,title,case):
+ js=case/'close.js';js.write_text('for (const w of workspace.windowList()) { if (Number(w.pid) === '+str(p.pid)+' && w.caption === '+json.dumps(title)+') w.closeWindow(); }')
+ name='pm045-s2-'+str(p.pid)+'-'+str(time.monotonic_ns());sid=subprocess.check_output(['qdbus6','org.kde.KWin','/Scripting','loadScript',str(js),name],text=True).strip()
+ try:subprocess.run(['qdbus6','org.kde.KWin','/Scripting/Script'+sid,'run'],check=True,stdout=subprocess.DEVNULL)
+ finally:subprocess.run(['qdbus6','org.kde.KWin','/Scripting','unloadScript',name],check=True,stdout=subprocess.DEVNULL)
+def records(log):
+ data=log.read_text();lines=data.splitlines() if data.endswith('\n') else data.splitlines()[:-1]
+ return [json.loads(s.split('native_surface_lifecycle ',1)[1]) for s in lines if 'native_surface_lifecycle ' in s]
+report={'binary_sha256':hashlib.sha256(binary.read_bytes()).hexdigest(),'runs':[]}
+for host,flag,title in [('MAIN',None,'Datum EDA'),('GLOBAL','--open-global-preferences','Global Preferences — Datum'),('PROJECT','--open-project-preferences','Project Preferences — Datum'),('NEW','--open-new-project','New Project — Datum')]:
+ if os.environ.get('PM045_HOST') and os.environ['PM045_HOST']!=host:continue
+ case=out/host;case.mkdir();log=case/'native.log';log.write_text('');env=os.environ.copy()
+ for key in list(env):
+  if key.startswith(('DATUM_DIAGNOSTIC_','DATUM_GPU_DIAGNOSTIC_')):env.pop(key)
+ env.pop('WAYLAND_DISPLAY',None);env.pop('DATUM_TRACE_TIMING',None)
+ env.update(EDA_CLI_BIN=str(root/'target/release/datum-eda'),DATUM_GPU_MEASUREMENTS='0',DATUM_GUI_VERBOSE_LOG='1',DATUM_GUI_LOG=str(log),WINIT_UNIX_BACKEND='x11',XDG_CONFIG_HOME=str(case/'config'),XDG_CACHE_HOME=str(case/'cache'))
+ cmd=[str(binary),'--board','/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb','--window-size','1280x800','--initial-layout','single','--visual-scale-factor','1']+([flag] if flag else [])
+ with (case/'stderr.log').open('w') as stream:
+  p=subprocess.Popen(cmd,cwd=root,env=env,stdout=stream,stderr=stream);result={'host':host,'command':cmd}
+  try:
+   ids=wait(lambda:(v if len(v)==(2 if flag else 1) else None) if (v:=re.findall(r'surface identity window=WindowId\((\d+)\)',log.read_text())) else None,p)
+   key='WindowId('+ids[-1]+')'
+   wait(lambda:any(r['window']==key and r['reason']=='present' for r in records(log)),p)
+   time.sleep(.3)
+   if host=='MAIN':
+    count=sum(r['reason']=='present' for r in records(log))
+    subprocess.run(['xdotool','windowactivate','--sync',ids[0]],check=True)
+    subprocess.run(['xdotool','mousemove','--window',ids[0],'800','350','click','4'],check=True)
+    wait(lambda:sum(r['reason']=='present' for r in records(log))>count,p)
+    count=sum(r['reason']=='present' for r in records(log))
+    subprocess.run(['xdotool','click','5'],check=True)
+    wait(lambda:sum(r['reason']=='present' for r in records(log))>count,p)
+    result['wheel_frames']=2
+   subprocess.run(['xdotool','mousemove','--window',ids[0],'100','550','click','--repeat','2','--delay','100','5'],check=True)
+   time.sleep(.5)
+   subprocess.run(['import','-window',ids[-1],str(case/'native.png')],check=True)
+   result['presentations']=sum(r['reason']=='present' for r in records(log))
+   close(p,title,case)
+   if flag:
+    wait(lambda:any(r['window']==key and r['reason']=='owner_drop' for r in records(log)),p);close(p,'Datum EDA',case)
+   p.wait(timeout=20);assert p.returncode==0
+   assert 'native Main window ownership released=true' in log.read_text()
+   result.update(passed=True,exit=0);print(host,'pass',flush=True)
+  except Exception as error:result.update(passed=False,error=str(error));print(host,repr(error),flush=True)
+  finally:
+   if p.poll() is None:p.terminate();p.wait(timeout=5)
+   report['runs'].append(result);(out/'result.json').write_text(json.dumps(report,indent=2)+'\n')
+assert all(r['passed'] for r in report['runs'])

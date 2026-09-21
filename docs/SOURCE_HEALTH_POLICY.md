@@ -37,6 +37,11 @@ Project-root operation application into its cohesive dispatch owner and returned
 entry and the no-longer-needed `replay.rs` rustfmt exemption were removed in the
 same change.
 
+PM045 S3 moved Project/Layers composition and shared panel chrome into normal
+Rust modules. `gui-render/src/side_panels.rs` drops from 91 to 52 physical lines
+and from 1,685 to 1,393 expanded lines; its remaining include debt stays open
+with an exact downward ceiling. Panel clipping uses the shared content owner.
+
 ## What Counts as Structural Evidence
 
 Qualifying evidence names the ownership moved, the real module boundary created,

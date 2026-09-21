@@ -767,7 +767,7 @@
     "crates/gui-render/src/side_panels.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 1685
+        "expanded_lines": 1393
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
