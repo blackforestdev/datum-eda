@@ -325,8 +325,10 @@ impl App {
                         }
                         return;
                     }
-                    if runtime.handle_console_history_scroll(scroll_lines) {
-                        self.request_workspace_redraw();
+                    if let Some(changed) = runtime.handle_console_history_scroll(scroll_lines) {
+                        if changed {
+                            self.request_workspace_redraw();
+                        }
                         return;
                     }
                     if runtime.report_terminal_mouse_wheel(scroll_lines) {

@@ -125,32 +125,35 @@ impl Runtime {
         true
     }
 
-    pub(super) fn handle_console_history_scroll(&mut self, scroll_lines: f32) -> bool {
-        if scroll_lines.abs() <= 0.01 || !self.workspace().ui.console.history_expanded() {
-            return false;
+    pub(super) fn handle_console_history_scroll(&mut self, scroll_lines: f32) -> Option<bool> {
+        if !self.workspace().ui.console.history_expanded() {
+            return None;
         }
-        let Some((x, y)) = self.last_cursor_pos else {
-            return false;
-        };
-        let history_panel = self
-            .presented_console_layout
-            .and_then(|layout| layout.history_panel);
-        if !history_panel.is_some_and(|panel| panel.contains(x, y)) {
-            return false;
+        let (x, y) = self.last_cursor_pos?;
+        let panel = self.presented_console_layout?.history_panel?;
+        if !panel.contains(x, y) {
+            return None;
         }
+        if !scroll_lines.is_finite() || scroll_lines.abs() <= 0.01 {
+            return Some(false);
+        }
+        let maximum =
+            datum_gui_render::ConsoleOverlayLayout::history_scroll_maximum(self.workspace());
         let console = &mut self.session.workspace_mut().ui.console;
-        let next = if scroll_lines > 0.0 {
-            console.history_scroll_offset().saturating_add(1).min(
-                datum_gui_protocol::CONSOLE_FEEDBACK_CAPACITY
-                    + datum_gui_protocol::CONSOLE_JOURNAL_PROJECTION_CAPACITY
-                    + 2,
-            )
-        } else {
-            console.history_scroll_offset().saturating_sub(1)
-        };
+        let before = console.history_scroll_offset().min(maximum);
+        // Console history counts backward from newest and steps one record.
+        let next = datum_gui_viewport::scroll::scrolled_row_offset(
+            before,
+            maximum + 1,
+            1,
+            -scroll_lines.signum(),
+        );
         console.set_history_scroll_offset(next);
-        self.invalidate_frame();
-        true
+        let changed = next != before;
+        if changed {
+            self.invalidate_frame();
+        }
+        Some(changed)
     }
 }
 

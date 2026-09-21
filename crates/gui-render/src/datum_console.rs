@@ -223,7 +223,9 @@ fn render_history(
     };
     let rows = history_rows(state);
     let scroll = state.ui.console.history_scroll_offset();
-    let end = rows.len().saturating_sub(scroll.min(rows.len()));
+    let end = rows
+        .len()
+        .saturating_sub(scroll.min(rows.len().saturating_sub(1)));
     for (index, clip) in history_layout::visible_rows(&rows[..end], rows_clip, scale) {
         let row = &rows[index];
         draw_text_clipped(
@@ -245,6 +247,39 @@ struct HistoryRow {
     color: [f32; 3],
 }
 
+fn feedback_history_records(
+    state: &ReviewWorkspaceState,
+) -> impl Iterator<Item = &datum_gui_protocol::ConsoleFeedbackRecord> {
+    let filter = state.ui.console.history_filter();
+    state.ui.console.records().filter(move |record| {
+        filter != ConsoleHistoryFilter::Operations
+            && (filter != ConsoleHistoryFilter::Errors
+                || matches!(
+                    record.severity,
+                    ConsoleFeedbackSeverity::Warning | ConsoleFeedbackSeverity::Error
+                ))
+    })
+}
+
+impl ConsoleOverlayLayout {
+    /// Record-based history keeps at least the oldest selected record visible.
+    /// Count the same filtered projection as paint without formatting its text.
+    pub fn history_scroll_maximum(state: &ReviewWorkspaceState) -> usize {
+        let filter = state.ui.console.history_filter();
+        let feedback = feedback_history_records(state).count()
+            + usize::from(
+                filter != ConsoleHistoryFilter::Operations && state.ui.console.dropped_count() > 0,
+            );
+        let operations = if filter != ConsoleHistoryFilter::Errors {
+            state.ui.console_journal.records().count()
+                + usize::from(state.ui.console_journal.omitted_session_record_count() > 0)
+        } else {
+            0
+        };
+        (feedback + operations).saturating_sub(1)
+    }
+}
+
 fn history_rows(state: &ReviewWorkspaceState) -> Vec<HistoryRow> {
     let filter = state.ui.console.history_filter();
     let mut rows = Vec::new();
@@ -258,17 +293,9 @@ fn history_rows(state: &ReviewWorkspaceState) -> Vec<HistoryRow> {
                 color: design_tokens::chrome::TEXT_MUTED,
             });
         }
-        rows.extend(state.ui.console.records().filter_map(|record| {
-            if filter == ConsoleHistoryFilter::Errors
-                && !matches!(
-                    record.severity,
-                    ConsoleFeedbackSeverity::Warning | ConsoleFeedbackSeverity::Error
-                )
-            {
-                return None;
-            }
+        rows.extend(feedback_history_records(state).map(|record| {
             let seconds = (record.occurred_unix_ms / 1_000) % 86_400;
-            Some(HistoryRow {
+            HistoryRow {
                 text: format!(
                     "{:02}:{:02}:{:02}  {}  gui",
                     seconds / 3_600,
@@ -281,7 +308,7 @@ fn history_rows(state: &ReviewWorkspaceState) -> Vec<HistoryRow> {
                 } else {
                     design_tokens::chrome::TEXT_SECONDARY
                 },
-            })
+            }
         }));
     }
     if filter != ConsoleHistoryFilter::Errors {
@@ -635,5 +662,27 @@ mod tests {
                 HitTarget::ConsoleHistoryFilter(ConsoleHistoryFilter::Operations)
             )
         }));
+        for filter in [
+            ConsoleHistoryFilter::All,
+            ConsoleHistoryFilter::Operations,
+            ConsoleHistoryFilter::Errors,
+        ] {
+            state.ui.console.set_history_filter(filter);
+            let rows = history_rows(&state);
+            assert!(!rows.is_empty());
+            assert_eq!(
+                ConsoleOverlayLayout::history_scroll_maximum(&state),
+                rows.len() - 1
+            );
+            state.ui.console.set_history_scroll_offset(usize::MAX);
+            quads.clear();
+            text.clear();
+            hits.clear();
+            render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut hits);
+            assert!(
+                text.iter().any(|run| run.text == rows[0].text),
+                "oversized stored scroll must keep the oldest filtered record visible"
+            );
+        }
     }
 }
