@@ -77,12 +77,7 @@ impl Runtime {
             if self.retained_scene.is_none() {
                 let retained_started = std::time::Instant::now();
                 append_gui_verbose_diagnostic_line(|| "retained scene build begin");
-                self.retained_scene = Some(RetainedScene::from_workspace_for_surface(
-                    self.session.workspace(),
-                    self.config.width,
-                    self.config.height,
-                    self.scale_factor,
-                ));
+                self.ensure_retained_scene();
                 retained_build_ms = retained_started.elapsed().as_millis();
                 append_gui_verbose_diagnostic_line(|| {
                     format!("retained scene build end {retained_build_ms}ms")

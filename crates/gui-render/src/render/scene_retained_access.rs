@@ -216,8 +216,57 @@ impl RetainedScene {
     }
 }
 
+impl RetainedScene {
+    /// Heap payload of one retained scene, excluding allocator/Arc headers and
+    /// this inline owner. Shared geometry is conservatively charged in full to
+    /// each history entry; this is cache admission, not process-wide accounting.
+    pub fn heap_payload_bytes(&self) -> Option<usize> {
+        let hits = self
+            .world_hit_index
+            .heap_payload_bytes(|target| match target {
+                HitTarget::AuthoredObject(id) => Some(id.capacity()),
+                _ => None,
+            })?;
+        let mut bytes = std::mem::size_of_val(self.world_vertices.as_ref())
+            .checked_add(std::mem::size_of_val(self.world_strokes.as_ref()))?
+            .checked_add(
+                self.draw_commands
+                    .capacity()
+                    .checked_mul(std::mem::size_of::<RetainedDrawCommand>())?,
+            )?
+            .checked_add(hits)?;
+        for command in &self.draw_commands {
+            let layer = match command {
+                RetainedDrawCommand::Quads { layer_id, .. }
+                | RetainedDrawCommand::Strokes { layer_id, .. } => layer_id,
+            };
+            bytes = bytes.checked_add(layer.as_ref().map_or(0, String::capacity))?;
+        }
+        Some(bytes)
+    }
+}
+
 #[cfg(test)]
 mod retained_storage_tests {
+    #[test]
+    fn retained_payload_accounts_geometry_and_refuses_unknown_targets() {
+        let state = datum_gui_protocol::load_fixture_workspace_state();
+        let mut scene = RetainedScene::from_workspace(&state, 960, 720);
+        assert!(
+            scene.heap_payload_bytes().unwrap()
+                > std::mem::size_of_val(scene.world_vertices.as_ref())
+        );
+        scene.world_hit_index = datum_gui_viewport::SpatialHitIndex::new(vec![WorldHitRegion {
+            target: HitTarget::ReviewAction("unsupported retained target".into()),
+            layer_id: None,
+            shape: WorldHitShape::Circle {
+                center: PointNm { x: 0, y: 0 },
+                radius_nm: 1.0,
+            },
+        }]);
+        assert_eq!(scene.heap_payload_bytes(), None);
+    }
+
     use super::*;
 
     #[test]

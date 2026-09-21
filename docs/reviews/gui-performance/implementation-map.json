@@ -12879,7 +12879,7 @@
         "crates/gui-app/src/runtime_camera_pane.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial MAIN production adoption: shared history owner enforces six entries plus a conservative 64 MiB heap-payload admission budget with active-scene headroom. Payload-capacity, byte-pressure/retirement, recent recovery, oversized bypass and rejected byte/headroom/capacity negatives pass. All Main construction paths migrated; four native regression smokes pass. Complete unique shared/pinned ownership, allocator overhead, construction peaks, native pressure/RSS and total document qualification remain open.",
         "id": "proof_mem_world_cpu",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -12891,7 +12891,10 @@
       "consumer_applicability": {
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/scene-history-budget/result.json"
+      ]
     },
     {
       "id": "MEM-WORLD-HISTORY",
@@ -12930,7 +12933,7 @@
         "crates/gui-app/src/runtime_camera_pane.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial MAIN production adoption: shared history owner enforces six entries plus a conservative 64 MiB heap-payload admission budget with active-scene headroom. Payload-capacity, byte-pressure/retirement, recent recovery, oversized bypass and rejected byte/headroom/capacity negatives pass. All Main construction paths migrated; four native regression smokes pass. Complete unique shared/pinned ownership, allocator overhead, construction peaks, native pressure/RSS and total document qualification remain open.",
         "id": "proof_mem_world_history",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -12942,7 +12945,10 @@
       "consumer_applicability": {
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/scene-history-budget/result.json"
+      ]
     },
     {
       "id": "MEM-SHAPED-LOCAL",
@@ -25537,5 +25543,43 @@
       "No dependency, vendoring, Cargo, visual-prototype, product-authority, pass/resolve schedule or resize CPU qualification change. Offscreen extent correctness is not reopening deferred resize qualification."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S2/uniform-owner/result.json"
+  },
+  "s2_scene_history_budget_work": {
+    "status": "Main derived-scene history has byte admission and active-scene headroom; full world-memory qualification and GPI-S2 remain open",
+    "production_consumers_migrated": [
+      "MAIN native rendering",
+      "MAIN lazy prepared-scene construction",
+      "MAIN primary-click and marking-menu world hits",
+      "MAIN authoring target lookup",
+      "MAIN visual capture construction"
+    ],
+    "shared_owner": "RetainedSceneHistory with Runtime::ensure_retained_scene / restore_cached_retained_scene; retained payload inspection in Datum-owned RetainedScene and SpatialHitIndex",
+    "competing_paths_retired": [
+      "Raw Vec history policy that limited only entry count",
+      "Independent Main scene constructors in rendering, lazy preparation, pointer/menu/authoring hit resolution and visual capture",
+      "BTreeMap storage in retained cache keys; canonical sorted boxed entries preserve exact key equality with countable storage"
+    ],
+    "bounds": {
+      "historical_entries": 6,
+      "admission_payload_bytes": 67108864,
+      "rule": "History entry heap plus entry-vector capacity and the active scene heap share the budget when the active scene itself fits. An oversized/unknown active scene clears history without dropping or refusing active geometry. All existing cache-key dependencies remain exact.",
+      "counting": "SpatialHitIndex counts region/order/tree-node capacities, shape-vector capacities, layer strings and caller-supplied target payload. Current authored-object targets are supported; unknown target kinds return None and bypass retention. Shared Arc geometry is charged in full per entry, conservatively; this is not unique global ownership accounting.",
+      "scope": "Heap payload excludes inline top-level owners, allocator and Arc control-block overhead, construction scratch, renderer-held references and companion schematic ownership outside Main history. No complete 64 MiB document/process ceiling is claimed. Construction can coexist with old history until the new payload is known.",
+      "release": "Oldest entries are removed under entry/byte pressure; restored entries transfer to active ownership; clear drops entry-vector capacity as well as entries. Authoritative model/session data is never evicted."
+    },
+    "source_health": {
+      "main_physical_before": 1471,
+      "main_physical_after": 1407,
+      "main_production_ceiling_before": 1450,
+      "main_production_ceiling_after": 1386,
+      "ownership": "Cache-key construction, history admission/eviction/restoration and active scene construction moved into the normal retained_scene_history module. All six Main construction call sites use it; no forwarding-only decomposition or ceiling increase."
+    },
+    "limits": [
+      "The conservative history guard is not full MEM-WORLD-CPU/MEM-WORLD-HISTORY qualification; unique shared/pinned ownership, allocator overhead, construction peaks, native pressure/RSS and total document bounds remain open.",
+      "Active scenes beyond the budget continue rendering with history disabled; this does not grant large-project admission or satisfy an unbounded-input memory contract.",
+      "Companion schematic/native auxiliary resource bounds, per-adapter counters, backend/scale/endurance and S2 completion remain open.",
+      "No dependency, vendoring, Cargo, license, visual-prototype, model mutation, pass/resolve schedule or resize qualification change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S2/scene-history-budget/result.json"
   }
 }

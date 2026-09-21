@@ -110,6 +110,42 @@ impl<T> SpatialHitIndex<T> {
         index
     }
 
+    /// Retained heap payload, excluding this inline owner and allocator overhead.
+    /// The caller accounts for heap data owned by each application target. An
+    /// unknown target size or arithmetic overflow refuses cache admission.
+    pub fn heap_payload_bytes(
+        &self,
+        mut target_bytes: impl FnMut(&T) -> Option<usize>,
+    ) -> Option<usize> {
+        let mut bytes = self
+            .regions
+            .capacity()
+            .checked_mul(std::mem::size_of::<HitRegion<T>>())?
+            .checked_add(
+                self.order
+                    .capacity()
+                    .checked_mul(std::mem::size_of::<usize>())?,
+            )?
+            .checked_add(
+                self.nodes
+                    .capacity()
+                    .checked_mul(std::mem::size_of::<Node>())?,
+            )?;
+        for region in &self.regions {
+            let shape = match &region.shape {
+                HitShape::Polyline { path, .. } | HitShape::Polygon(path) => path
+                    .capacity()
+                    .checked_mul(std::mem::size_of::<PointNm>())?,
+                HitShape::Rect(_) | HitShape::Circle { .. } => 0,
+            };
+            bytes = bytes
+                .checked_add(shape)?
+                .checked_add(region.layer_id.as_ref().map_or(0, String::capacity))?
+                .checked_add(target_bytes(&region.target)?)?;
+        }
+        Some(bytes)
+    }
+
     pub fn regions(&self) -> &[HitRegion<T>] {
         &self.regions
     }
@@ -292,6 +328,41 @@ fn point_in_polygon(path: &[PointNm], point: PointNm) -> bool {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn retained_payload_counts_spare_shape_and_index_storage() {
+        let mut path = Vec::with_capacity(128);
+        path.extend([PointNm { x: 0, y: 0 }, PointNm { x: 100, y: 0 }]);
+        let mut target = String::with_capacity(64);
+        target.push_str("object");
+        let mut layer = String::with_capacity(32);
+        layer.push_str("F.Cu");
+        let nested =
+            path.capacity() * std::mem::size_of::<PointNm>() + target.capacity() + layer.capacity();
+        let mut regions = Vec::with_capacity(8);
+        regions.push(HitRegion {
+            target,
+            layer_id: Some(layer),
+            shape: HitShape::Polyline {
+                path,
+                half_width_nm: 10.0,
+            },
+        });
+        let index = SpatialHitIndex::new(regions);
+        let expected = nested
+            + index.regions.capacity() * std::mem::size_of::<HitRegion<String>>()
+            + index.order.capacity() * std::mem::size_of::<usize>()
+            + index.nodes.capacity() * std::mem::size_of::<Node>();
+        assert_eq!(
+            index.heap_payload_bytes(|value| Some(value.capacity())),
+            Some(expected)
+        );
+        assert_eq!(index.heap_payload_bytes(|_| None), None);
+        assert_eq!(
+            SpatialHitIndex::<String>::new(Vec::new()).heap_payload_bytes(|_| None),
+            Some(0)
+        );
+    }
+
     use super::*;
 
     fn rect(min_x: i64, min_y: i64, max_x: i64, max_y: i64) -> HitShape {

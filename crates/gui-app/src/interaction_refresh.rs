@@ -4,7 +4,7 @@
 //! pointer-only changes refresh interaction chrome, while authored/session
 //! changes may invalidate the considerably more expensive retained geometry.
 
-use super::{RETAINED_SCENE_CACHE_LIMIT, RetainedScene, RetainedSceneCacheKey, Runtime};
+use super::{RetainedScene, RetainedSceneCacheKey, Runtime};
 
 impl Runtime {
     pub(super) fn cache_retained_scene(
@@ -12,17 +12,7 @@ impl Runtime {
         key: RetainedSceneCacheKey,
         retained: RetainedScene,
     ) {
-        if let Some(index) = self
-            .retained_scene_cache
-            .iter()
-            .position(|(cached_key, _)| cached_key == &key)
-        {
-            self.retained_scene_cache.remove(index);
-        }
-        self.retained_scene_cache.push((key, retained));
-        if self.retained_scene_cache.len() > RETAINED_SCENE_CACHE_LIMIT {
-            self.retained_scene_cache.remove(0);
-        }
+        self.retained_scene_cache.insert(key, retained);
     }
 
     pub(super) fn invalidate_scene_for_session_change(
