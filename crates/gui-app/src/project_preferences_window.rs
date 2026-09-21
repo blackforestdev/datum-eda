@@ -58,6 +58,7 @@ impl App {
                 window.id(),
                 surface.measurements.epoch(),
                 window.inner_size(),
+                surface.surface_transaction.recovery.clone(),
             );
             self.project_preferences_surface = Some(surface);
             self.project_preferences_window = Some(window.clone());

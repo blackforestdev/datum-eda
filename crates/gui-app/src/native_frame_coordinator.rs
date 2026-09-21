@@ -2,8 +2,10 @@
 //!
 //! Native events still update input/model state before requesting a frame. A
 //! frame retires only its captured damage; host identity prevents late completion
-//! from changing a closed or replacement host. Queue/recovery policy is separate.
-use std::collections::HashMap;
+//! from changing a closed or replacement host. Each host owns its recovery clock;
+//! queue configuration admission is shared separately by the native device.
+use crate::gui_runtime_support::native_recovery::RecoveryHandle;
+use std::{collections::HashMap, time::Instant};
 use winit::window::{Window, WindowId};
 use winit::{dpi::PhysicalSize, event::WindowEvent};
 
@@ -18,6 +20,7 @@ pub(super) struct FrameReceipt {
 
 #[derive(Debug)]
 struct Host {
+    recovery: RecoveryHandle,
     extent: PhysicalSize<u32>,
     occluded: bool,
     restore_pending: bool,
@@ -43,7 +46,12 @@ impl NativeFrameCoordinator {
         window: WindowId,
         device_generation: u64,
         extent: PhysicalSize<u32>,
+        recovery: RecoveryHandle,
     ) {
+        recovery.borrow_mut().set_drawable(
+            !self.suspended && extent.width != 0 && extent.height != 0,
+            Instant::now(),
+        );
         self.generation = self
             .generation
             .checked_add(1)
@@ -51,6 +59,7 @@ impl NativeFrameCoordinator {
         self.hosts.insert(
             window,
             Host {
+                recovery,
                 extent,
                 occluded: false,
                 restore_pending: false,
@@ -98,6 +107,9 @@ impl NativeFrameCoordinator {
             .checked_add(1)
             .expect("damage generation exhausted");
         host.restore_pending = Self::drawable(host, self.suspended);
+        host.recovery
+            .borrow_mut()
+            .set_drawable(host.restore_pending, Instant::now());
         if !host.restore_pending {
             host.pending = false;
         }
@@ -114,6 +126,9 @@ impl NativeFrameCoordinator {
                 .checked_add(1)
                 .expect("damage generation exhausted");
             host.restore_pending = Self::drawable(host, suspended);
+            host.recovery
+                .borrow_mut()
+                .set_drawable(host.restore_pending, Instant::now());
             if suspended {
                 host.pending = false;
             }
@@ -145,6 +160,44 @@ impl NativeFrameCoordinator {
             .is_some_and(|host| Self::drawable(host, self.suspended))
     }
 
+    pub(super) fn service_recovery(
+        &mut self,
+        window: &Window,
+        now: Instant,
+    ) -> (Option<Instant>, bool) {
+        let Some(host) = self.hosts.get_mut(&window.id()) else {
+            return (None, false);
+        };
+        let (ready, due) = host.recovery.borrow_mut().poll(now);
+        let failed = host.recovery.borrow_mut().take_failure();
+        if failed {
+            host.pending = false;
+            host.restore_pending = false;
+            let message = format!(
+                "Rendering paused for native host {:?}: recovery exhausted two seconds of drawable active time. Press F5 to Retry, or close this window. Application state is retained.",
+                window.id()
+            );
+            crate::append_gui_diagnostic_line(&message);
+            eprintln!("datum-gui error: {message}");
+        }
+        if ready && Self::request(host, self.suspended) {
+            window.request_redraw();
+        }
+        (due, failed)
+    }
+
+    pub(super) fn manual_retry(&mut self, window: WindowId) -> bool {
+        self.hosts
+            .get_mut(&window)
+            .is_some_and(|host| host.recovery.borrow_mut().manual_retry())
+    }
+
+    pub(super) fn rendering_failed(&self, window: WindowId) -> bool {
+        self.hosts
+            .get(&window)
+            .is_some_and(|host| host.recovery.borrow().failed())
+    }
+
     pub(super) fn close(&mut self, window: WindowId) {
         self.hosts.remove(&window);
     }
@@ -170,6 +223,7 @@ impl NativeFrameCoordinator {
 
     fn request(host: &mut Host, suspended: bool) -> bool {
         if !Self::drawable(host, suspended)
+            || !host.recovery.borrow_mut().ready(Instant::now())
             || host.pending
             || host.rendering.is_some()
             || host.damage == host.presented
@@ -184,7 +238,9 @@ impl NativeFrameCoordinator {
     /// A compositor may request repaint without a preceding application request.
     pub(super) fn redraw_received(&mut self, window: WindowId) -> Option<FrameReceipt> {
         let host = self.hosts.get_mut(&window)?;
-        if !Self::drawable(host, self.suspended) {
+        if !Self::drawable(host, self.suspended)
+            || !host.recovery.borrow_mut().ready(Instant::now())
+        {
             host.pending = false;
             return None;
         }
@@ -253,7 +309,7 @@ mod tests {
     fn zero_extent_retains_damage_and_restores_one_current_frame() {
         let mut frames = NativeFrameCoordinator::default();
         let id = WindowId::from(1);
-        frames.register(id, 1, PhysicalSize::new(1280, 800));
+        frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
         assert!(frames.invalidate_id(id));
         frames.window_event(id, &WindowEvent::Resized(PhysicalSize::new(0, 800)));
         assert!(!frames.hosts[&id].pending);
@@ -276,7 +332,7 @@ mod tests {
     fn occlusion_and_application_suspend_require_both_to_clear() {
         let mut frames = NativeFrameCoordinator::default();
         let id = WindowId::from(1);
-        frames.register(id, 1, PhysicalSize::new(1280, 800));
+        frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
         frames.window_event(id, &WindowEvent::Occluded(true));
         frames.set_suspended(true);
         assert!(!frames.invalidate_id(id));
@@ -297,7 +353,7 @@ mod tests {
     fn initially_zero_and_closed_hosts_cannot_be_revived_by_old_events() {
         let mut frames = NativeFrameCoordinator::default();
         let id = WindowId::from(1);
-        frames.register(id, 1, PhysicalSize::new(0, 0));
+        frames.register(id, 1, PhysicalSize::new(0, 0), Default::default());
         assert!(!frames.invalidate_id(id));
         assert!(frames.redraw_received(id).is_none());
         frames.window_event(id, &WindowEvent::Resized(PhysicalSize::new(1, 1)));
@@ -316,7 +372,7 @@ mod tests {
         let mut frames = NativeFrameCoordinator::default();
         for id in 1..=4 {
             let window = WindowId::from(id);
-            frames.register(window, 1, PhysicalSize::new(1280, 800));
+            frames.register(window, 1, PhysicalSize::new(1280, 800), Default::default());
             assert!(frames.invalidate_id(window));
             for _ in 0..100 {
                 assert!(!frames.invalidate_id(window));
@@ -338,7 +394,12 @@ mod tests {
     fn local_damage_does_not_request_other_hosts() {
         let mut frames = NativeFrameCoordinator::default();
         for id in 1..=4 {
-            frames.register(WindowId::from(id), 1, PhysicalSize::new(1280, 800));
+            frames.register(
+                WindowId::from(id),
+                1,
+                PhysicalSize::new(1280, 800),
+                Default::default(),
+            );
         }
         assert!(frames.invalidate_id(WindowId::from(1)));
         for id in 2..=4 {
@@ -350,7 +411,7 @@ mod tests {
     fn failed_acquisition_retains_damage_without_busy_retry() {
         let mut frames = NativeFrameCoordinator::default();
         let id = WindowId::from(1);
-        frames.register(id, 1, PhysicalSize::new(1280, 800));
+        frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
         assert!(frames.invalidate_id(id));
         let receipt = frames.redraw_received(id).unwrap();
         assert!(!frames.finish(receipt, false));
@@ -366,12 +427,12 @@ mod tests {
     fn closed_replaced_and_duplicate_completions_cannot_clear_new_damage() {
         let mut frames = NativeFrameCoordinator::default();
         let id = WindowId::from(1);
-        frames.register(id, 1, PhysicalSize::new(1280, 800));
+        frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
         let old = frames.redraw_received(id).unwrap();
         frames.close(id);
         assert!(!frames.finish(old, true));
         assert!(!frames.invalidate_id(id));
-        frames.register(id, 2, PhysicalSize::new(1280, 800));
+        frames.register(id, 2, PhysicalSize::new(1280, 800), Default::default());
         let new = frames.redraw_received(id).unwrap();
         assert!(!frames.finish(old, true));
         assert_eq!(frames.hosts[&id].rendering, Some(new.attempt));
@@ -385,7 +446,7 @@ mod tests {
     fn late_failed_attempt_cannot_complete_retry_of_identical_damage() {
         let mut frames = NativeFrameCoordinator::default();
         let id = WindowId::from(1);
-        frames.register(id, 1, PhysicalSize::new(1280, 800));
+        frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
         let failed = frames.redraw_received(id).unwrap();
         assert!(!frames.finish(failed, false));
         let retry = frames.redraw_received(id).unwrap();

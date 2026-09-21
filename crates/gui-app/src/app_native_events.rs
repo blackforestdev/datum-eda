@@ -2,6 +2,66 @@
 use super::*;
 
 impl App {
+    pub(super) fn resume_native(&mut self, event_loop: &ActiveEventLoop) {
+        self.frames.set_suspended(false);
+        self.measurement_suspend(false);
+        append_gui_diagnostic_line("resumed event");
+        if self.window.is_some() {
+            append_gui_diagnostic_line("resumed ignored; window already exists");
+            return;
+        }
+        // Sleep until input or an explicitly requested redraw needs service.
+        event_loop.set_control_flow(ControlFlow::Wait);
+        self.args
+            .validate_visual_args()
+            .unwrap_or_else(|err| fatal_gui_error(event_loop, "visual launch args invalid", err));
+        append_gui_diagnostic_line("launch state load begin");
+        let launch_state = self
+            .args
+            .load_launch_state(Some(self.terminal_event_proxy.clone()))
+            .unwrap_or_else(|err| fatal_gui_error(event_loop, "launch state load failed", err));
+        append_gui_diagnostic_line("launch state load end");
+        let (window_width, window_height) = self
+            .args
+            .visual_window_size()
+            .unwrap_or_else(|err| fatal_gui_error(event_loop, "window size invalid", err));
+        let window = event_loop
+            .create_window(
+                WindowAttributes::default()
+                    .with_title("Datum EDA")
+                    .with_inner_size(LogicalSize::new(window_width as f64, window_height as f64))
+                    .with_visible(false),
+            )
+            .unwrap_or_else(|err| fatal_gui_error(event_loop, "window creation failed", err));
+        append_gui_diagnostic_line("window created");
+        // Hold chords require raw press/release events; focused rich-text fields
+        // may opt into IME explicitly when that ownership model lands.
+        window.set_ime_allowed(false);
+        let window_ref: &'static Window = Box::leak(Box::new(window));
+        append_gui_diagnostic_line("runtime creation begin");
+        let runtime = pollster::block_on(Runtime::new(
+            window_ref,
+            launch_state,
+            self.args.visual_scale_factor,
+        ))
+        .unwrap_or_else(|err| fatal_gui_error(event_loop, "runtime creation failed", err));
+        append_gui_diagnostic_line("runtime creation end");
+        self.frames.register(
+            window_ref.id(),
+            runtime.measurements.epoch(),
+            window_ref.inner_size(),
+            runtime.surface_transaction.recovery.clone(),
+        );
+        self.runtime = Some(runtime);
+        self.window = Some(window_ref);
+        window_ref.set_visible(true);
+        append_gui_diagnostic_line("window visible");
+        self.request_redraw_if_needed();
+        if let Err(err) = self.sync_owned_product_windows(event_loop) {
+            fatal_gui_error(event_loop, "open owned product window", err);
+        }
+    }
+
     pub(super) fn handle_native_window_event(
         &mut self,
         event_loop: &ActiveEventLoop,
@@ -11,6 +71,42 @@ impl App {
         self.frames.window_event(window_id, &event);
         self.sync_surface_drawability();
         self.measurement_window_event(window_id, &event);
+        if matches!(&event, WindowEvent::KeyboardInput { event, .. }
+            if event.state == ElementState::Pressed && event.logical_key == Key::Named(NamedKey::F5))
+            && self.frames.manual_retry(window_id)
+        {
+            for window in [
+                self.window,
+                self.global_preferences_window.as_deref(),
+                self.project_preferences_window.as_deref(),
+                self.new_project_window.as_deref(),
+            ]
+            .into_iter()
+            .flatten()
+            .filter(|window| window.id() == window_id)
+            {
+                self.frames.invalidate(window);
+            }
+            return;
+        }
+
+        // A failed renderer cannot show the outcome of editing input. Keep
+        // lifecycle/close delivery alive while the explicit Retry action above
+        // owns recovery; background engine/terminal processing stays separate.
+        if self.frames.rendering_failed(window_id)
+            && !matches!(
+                &event,
+                WindowEvent::CloseRequested
+                    | WindowEvent::Destroyed
+                    | WindowEvent::Resized(_)
+                    | WindowEvent::ScaleFactorChanged { .. }
+                    | WindowEvent::Focused(_)
+                    | WindowEvent::Occluded(_)
+                    | WindowEvent::RedrawRequested
+            )
+        {
+            return;
+        }
         let Some(event) = self.dispatch_owned_product_window_event(event_loop, window_id, event)
         else {
             return;

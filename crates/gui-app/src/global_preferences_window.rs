@@ -83,6 +83,11 @@ impl GlobalPreferencesWindowSurface {
         self.window.id()
     }
 
+    pub(super) fn cancel_capture(&mut self) {
+        self.scroll.release();
+        self.scrollbar_pressed = false;
+    }
+
     pub(super) fn invalidate(&mut self) {
         self.retained = None;
         self.prepared = None;
@@ -328,6 +333,7 @@ impl App {
                 window.id(),
                 surface.measurements.epoch(),
                 window.inner_size(),
+                surface.surface_transaction.recovery.clone(),
             );
             self.global_preferences_surface = Some(surface);
             self.global_preferences_window = Some(window.clone());
