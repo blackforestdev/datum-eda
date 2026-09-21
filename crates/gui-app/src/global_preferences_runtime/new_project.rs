@@ -310,21 +310,20 @@ impl Runtime {
                     self.invalidate_frame();
                     return Outcome::Dialog;
                 }
-                Key::Character(value)
-                    if !self.modifiers.control_key()
-                        && !self.modifiers.alt_key()
-                        && !value.chars().any(char::is_control) =>
-                {
-                    let dialog = &mut self.session.workspace_mut().ui.new_project;
-                    if focus == NewProjectFocus::ProjectName {
-                        dialog.project_name.push_str(value);
-                    } else {
-                        dialog.destination.push_str(value);
+                key => {
+                    if let Some(value) =
+                        crate::global_preferences_window::dialog_text_input(key, self.modifiers)
+                    {
+                        let dialog = &mut self.session.workspace_mut().ui.new_project;
+                        if focus == NewProjectFocus::ProjectName {
+                            dialog.project_name.push_str(value);
+                        } else {
+                            dialog.destination.push_str(value);
+                        }
+                        self.invalidate_frame();
+                        return Outcome::Dialog;
                     }
-                    self.invalidate_frame();
-                    return Outcome::Dialog;
                 }
-                _ => {}
             }
         }
         if focus == NewProjectFocus::UnitsChoice

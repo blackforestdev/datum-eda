@@ -76,19 +76,18 @@ impl Runtime {
                     }
                     return Outcome::Consumed;
                 }
-                Key::Character(value)
-                    if !self.modifiers.control_key()
-                        && !self.modifiers.alt_key()
-                        && !value.chars().any(char::is_control) =>
-                {
-                    let dialog = &mut self.session.workspace_mut().ui.global_preferences;
-                    dialog.search_query.push_str(value);
-                    dialog.scroll_row = 0;
-                    self.invalidate_frame();
-                    self.announce_global_preferences_search_count();
-                    return Outcome::Dialog;
+                key => {
+                    if let Some(value) =
+                        crate::global_preferences_window::dialog_text_input(key, self.modifiers)
+                    {
+                        let dialog = &mut self.session.workspace_mut().ui.global_preferences;
+                        dialog.search_query.push_str(value);
+                        dialog.scroll_row = 0;
+                        self.invalidate_frame();
+                        self.announce_global_preferences_search_count();
+                        return Outcome::Dialog;
+                    }
                 }
-                _ => {}
             }
         }
 

@@ -8,6 +8,19 @@ use super::*;
 pub(super) const DEFAULT_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(960.0, 720.0);
 pub(super) const MIN_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(700.0, 540.0);
 
+/// Text-field input differs from button activation: winit represents a space
+/// as a named key on native backends, even though it is printable text.
+pub(crate) fn dialog_text_input(key: &Key, modifiers: ModifiersState) -> Option<&str> {
+    if modifiers.control_key() || modifiers.alt_key() {
+        return None;
+    }
+    match key {
+        Key::Named(NamedKey::Space) => Some(" "),
+        Key::Character(value) if !value.chars().any(char::is_control) => Some(value.as_str()),
+        _ => None,
+    }
+}
+
 /// Input consumption and rendering damage are independent.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(crate) enum DialogInputOutcome {
@@ -570,6 +583,31 @@ fn scroll_wheel(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn native_named_space_is_text_only_without_command_modifiers() {
+        let none = ModifiersState::empty();
+        assert_eq!(
+            dialog_text_input(&Key::Named(NamedKey::Space), none),
+            Some(" ")
+        );
+        assert_eq!(
+            dialog_text_input(&Key::Character("é".into()), none),
+            Some("é")
+        );
+        assert_eq!(dialog_text_input(&Key::Named(NamedKey::Enter), none), None);
+        assert_eq!(dialog_text_input(&Key::Character("\t".into()), none), None);
+        for modifier in [ModifiersState::CONTROL, ModifiersState::ALT] {
+            assert_eq!(
+                dialog_text_input(&Key::Named(NamedKey::Space), modifier),
+                None
+            );
+            assert_eq!(
+                dialog_text_input(&Key::Character("x".into()), modifier),
+                None
+            );
+        }
+    }
 
     #[test]
     fn native_wheel_preserves_fractional_pixels_and_pane_locality() {

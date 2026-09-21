@@ -1,0 +1,173 @@
+{
+  "binary_sha256": "bedcb25def464f9aaca165615e37eea66f31a68b3eac6c2bc0f734c8e46c7dc0",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "window": "WindowId(12582917)",
+      "query": "units",
+      "before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 1,
+          "present": 1
+        }
+      },
+      "after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 7,
+          "present": 7
+        }
+      },
+      "unmatched_key": "F6",
+      "before_unmatched": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 7,
+          "present": 7
+        }
+      },
+      "after_unmatched": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 7,
+          "present": 7
+        }
+      },
+      "scope": "native input to own dialog; Main submission/presentation unchanged; screenshot final text requires visual review"
+    },
+    {
+      "host": "PROJECT",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "window": "WindowId(12582917)",
+      "query": "precision",
+      "before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 1,
+          "present": 1
+        }
+      },
+      "after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 9,
+          "present": 9
+        }
+      },
+      "unmatched_key": "F6",
+      "before_unmatched": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 9,
+          "present": 9
+        }
+      },
+      "after_unmatched": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 9,
+          "present": 9
+        }
+      },
+      "scope": "native input to own dialog; Main submission/presentation unchanged; screenshot final text requires visual review"
+    },
+    {
+      "host": "NEW",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "window": "WindowId(12582917)",
+      "query": "PM045 Input",
+      "before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 1,
+          "present": 1
+        }
+      },
+      "after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "unmatched_key": "F6",
+      "before_unmatched": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "after_unmatched": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "scope": "native input to own dialog; Main submission/presentation unchanged; screenshot final text requires visual review"
+    }
+  ]
+}
