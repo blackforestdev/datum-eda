@@ -1,0 +1,36 @@
+{
+  "status": "bounded native input and final-state proof passed after production fix; S1 remains in progress",
+  "baseline_commit": "49fb3de7 (production binary built from b35fd41e)",
+  "candidate_base": "49fb3de7 plus four Rust files in this commit",
+  "candidate_binary_sha256": "6d30d8e5d25c63b75678f6166f3909c8ee7f4e30615eb60ce7f4ceb5e578a5ce",
+  "environment": "Native X11/Vulkan on existing desktop; owner confirmed idle and authorized native test resumption",
+  "defect": "Native Space is Key::Named(Space); three character-only focused text handlers discarded it.",
+  "production_consumers": [
+    "Global Preferences search",
+    "Project Preferences search",
+    "New Project name and destination"
+  ],
+  "retired_paths": "Three independent character-only text acceptance branches replaced by shared dialog_text_input; existing input outcome and host-local redraw retained.",
+  "baseline_disposition": "Script passed frame-locality counters, but visual review FAILED New Project final state: PM045Input instead of PM045 Input. Baseline passed:true means only scripted counters, not final-state conformance.",
+  "candidate_visual_review": {
+    "GLOBAL": "board precision; one Board precision result",
+    "PROJECT": "board precision; one Board precision result",
+    "NEW": "PM045 Input"
+  },
+  "native_assertions": [
+    "Each dialog submitted/presented typed input while Main counts remained unchanged",
+    "F6 after input caused zero submissions/presentations on both hosts",
+    "All three final screenshots visually inspected"
+  ],
+  "proof": {
+    "app_tests": "352 passed, 0 failed, 9 ignored",
+    "app_clippy": "all targets, -D warnings passed",
+    "release": "fresh offline guarded build passed"
+  },
+  "limitations": [
+    "Native X11 only, one text field per host; New Project destination shares handler but was not exercised natively",
+    "No project created; settings activation and all other controls not qualified here",
+    "No whole SH/LF/S1, memory, latency, Wayland, PTY, endurance or temporal acceptance",
+    "Resize CPU remains unresolved and nonblocking"
+  ]
+}

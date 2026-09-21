@@ -23149,5 +23149,28 @@
       "No memory budget, full LF-15/S1, Wayland, temporal/display or comprehensive resize acceptance",
       "Process termination used for fixture teardown; not all-host graceful-close proof"
     ]
+  },
+  "s1_dialog_text_input_work": {
+    "status": "bounded native input and final-state proof passed after production fix; S1 remains in progress",
+    "consumers": [
+      "Global Preferences search",
+      "Project Preferences search",
+      "New Project name and destination"
+    ],
+    "shared_component": "crates/gui-app/src/global_preferences_window.rs::dialog_text_input",
+    "retired_paths": "Three independent character-only text acceptance branches replaced by shared dialog_text_input; existing input outcome and host-local redraw retained.",
+    "receipt": "docs/reviews/gui-performance/implementation/S1/dialog-text-input/receipt.json",
+    "verification": {
+      "app_tests": "352 passed, 0 failed, 9 ignored",
+      "app_clippy": "all targets, -D warnings passed",
+      "release": "fresh offline guarded build passed"
+    },
+    "native_result": "Three final text states inspected; host-local submissions and F6 zero-frame negative control passed. Initial counter-only pass failed visual state and is preserved.",
+    "limitations": [
+      "Native X11 only, one text field per host; New Project destination shares handler but was not exercised natively",
+      "No project created; settings activation and all other controls not qualified here",
+      "No whole SH/LF/S1, memory, latency, Wayland, PTY, endurance or temporal acceptance",
+      "Resize CPU remains unresolved and nonblocking"
+    ]
   }
 }

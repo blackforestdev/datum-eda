@@ -554,18 +554,17 @@ impl Runtime {
                     self.invalidate_frame();
                     return Outcome::Dialog;
                 }
-                Key::Character(value)
-                    if !self.modifiers.control_key()
-                        && !self.modifiers.alt_key()
-                        && !value.chars().any(char::is_control) =>
-                {
-                    let dialog = &mut self.session.workspace_mut().ui.project_preferences;
-                    dialog.search_query.push_str(value);
-                    dialog.scroll_row = 0;
-                    self.invalidate_frame();
-                    return Outcome::Dialog;
+                key => {
+                    if let Some(value) =
+                        crate::global_preferences_window::dialog_text_input(key, self.modifiers)
+                    {
+                        let dialog = &mut self.session.workspace_mut().ui.project_preferences;
+                        dialog.search_query.push_str(value);
+                        dialog.scroll_row = 0;
+                        self.invalidate_frame();
+                        return Outcome::Dialog;
+                    }
                 }
-                _ => {}
             }
         }
         let activate = matches!(
