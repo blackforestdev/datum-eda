@@ -335,16 +335,18 @@ pub(super) fn render_rows(
             });
         }
     }
-    clip_content(
+    crate::hit_clipping::clip_content(
         quads,
         text,
         hits,
         q_start,
         t_start,
         h_start,
-        datum_gui_viewport::ScreenRectPx {
+        RectPx {
+            x: viewport.x,
+            y: viewport.y,
             width: content_width,
-            ..viewport
+            height: viewport.height,
         },
     );
     for (rect, color) in [
@@ -361,73 +363,6 @@ pub(super) fn render_rows(
                 },
                 color,
             ));
-        }
-    }
-}
-
-/// Clip triangles rather than clamping vertices, which distorts diagonal edges.
-/// Text uses glyph scissoring; hit regions use the same visible viewport.
-#[allow(clippy::too_many_arguments)]
-fn clip_content(
-    quads: &mut ControlPainter<'_>,
-    text: &mut [TextRun],
-    hits: &mut Vec<HitRegion>,
-    q_start: usize,
-    t_start: usize,
-    h_start: usize,
-    viewport: datum_gui_viewport::ScreenRectPx,
-) {
-    let top = viewport.y;
-    let bottom = top + viewport.height;
-    let originals: Vec<_> = quads.drain(q_start..).collect();
-    for q in originals {
-        if q.points.iter().all(|p| p.1 >= top && p.1 <= bottom) {
-            quads.push(q);
-            continue;
-        }
-        for indices in [[0, 1, 2], [0, 2, 3]] {
-            let mut polygon = indices.map(|i| q.points[i]).to_vec();
-            for (edge, lower) in [(top, true), (bottom, false)] {
-                let mut clipped = Vec::new();
-                if let Some(mut previous) = polygon.last().copied() {
-                    for current in polygon {
-                        let inside = |p: (f32, f32)| if lower { p.1 >= edge } else { p.1 <= edge };
-                        if inside(previous) != inside(current) {
-                            let t = (edge - previous.1) / (current.1 - previous.1);
-                            clipped.push((previous.0 + t * (current.0 - previous.0), edge));
-                        }
-                        if inside(current) {
-                            clipped.push(current);
-                        }
-                        previous = current;
-                    }
-                }
-                polygon = clipped;
-            }
-            for i in 1..polygon.len().saturating_sub(1) {
-                quads.push(Quad {
-                    points: [polygon[0], polygon[i], polygon[i + 1], polygon[i + 1]],
-                    color: q.color,
-                });
-            }
-        }
-    }
-    for run in &mut text[t_start..] {
-        run.clip_bounds = Some(RectPx {
-            x: viewport.x,
-            y: top,
-            width: viewport.width,
-            height: viewport.height,
-        });
-    }
-    let original_hits: Vec<_> = hits.drain(h_start..).collect();
-    for mut hit in original_hits {
-        let y = hit.rect.y.max(top);
-        let end = (hit.rect.y + hit.rect.height).min(bottom);
-        if end > y {
-            hit.rect.y = y;
-            hit.rect.height = end - y;
-            hits.push(hit);
         }
     }
 }
