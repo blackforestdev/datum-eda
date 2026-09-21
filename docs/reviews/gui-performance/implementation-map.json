@@ -2735,11 +2735,15 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial native execution; Main lifecycle passed bounded checks, auxiliary startup invalidated by observed unrequested Escape; complete requirement remains unqualified",
         "id": "proof_lf_15",
         "positive": "Maximize/restore/minimize/resume in each native host",
         "negative_control": "Use special unshared native-size path",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S1/native-lifecycle/native.json",
+          "docs/reviews/gui-performance/implementation/S1/native-lifecycle/auxiliary-escape.log.gz"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/LF-15/result.json",
       "acceptance_rule": "Same lifecycle owner handles actual native extents; memory and final-state correctness pass.",
@@ -22655,6 +22659,54 @@
       "failed-modal-input.log.gz": "9d6c7ce5bcd8fc52a8d286b489223d78f38409b84b59d7ac9efe134f96c563d2",
       "native.json": "c87e7d17a2349d8947ec888504f79c692c836ec745077195b34acb6babe907fa",
       "probe.py": "53aca254c9f1080a70898d68672eb93c2a84bd8abbeb1441954cce3305384599"
+    }
+  },
+  "s1_native_lifecycle_work": {
+    "status": "partial LF-15 proof; no S1 closure",
+    "baseline_commit": "62fb347e",
+    "consumers_exercised": [
+      "MAIN",
+      "GLOBAL"
+    ],
+    "production_change": "Native event trace now identifies WindowId and includes auxiliary events before modal routing. Verbose-disabled path skips diagnostic label formatting/allocation. Existing surface lifecycle trace distinguishes admission wait, undrawable and recovery skips; visibility/DPI labels use the same event trace.",
+    "retired_paths": [
+      "Main-only event tracing after owned-host dispatch",
+      "Eager native event label formatting when verbose logging is disabled"
+    ],
+    "verification": {
+      "native_main": "Actual Main maximize changes physical extent and _NET_WM_STATE; restore returns original extent, screenshot shows board/UI content. Minimize has no observed submit/present for 400ms after settle, and resume presents original extent. This is bounded application milestone evidence, not full memory/temporal qualification.",
+      "auxiliary": "Global was selected for dispatch, waited behind submitted Main work, then closed. Added event identity trace observes native Escape Pressed at the auxiliary before owner_drop. The current recipe sends no Escape; run is inadmissible for lifecycle proof. No input source attribution or renderer defect inferred.",
+      "clippy": "Targeted app Clippy -D warnings passes"
+    },
+    "failed_attempts": [
+      "Initial activation-free recipe and early activation recipe failed auxiliary first presentation",
+      "Waiting for mapped state also failed; admission trace alone did not explain closure",
+      "Complete per-host input trace identified Escape closure; prior harness-timing explanation withdrawn. All failed traces retained."
+    ],
+    "limits": [
+      "No auxiliary maximize/minimize pass; Project/New not reached by this recipe",
+      "No exact configure/acquire absence while hidden claim because only submit/present observations were asserted",
+      "No resource-byte, input-final-state, static parity or displayed-frame acceptance; LF-15 and S1 remain open",
+      "Focus-taking native checks stopped after unrequested input; independent implementation remains authorized"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/native-lifecycle",
+    "source_sha256": {
+      "crates/gui-app/src/app_native_events.rs": "f39463a41e302f4a748719e5fac66e1cc5b6d21a92c59c4f2acc9f65be7abf94",
+      "crates/gui-app/src/gui_runtime_support.rs": "4e185007e4729bd6a593e8a46f745b858a8d62f91e3cbfee9dd3c2c720ee97af",
+      "crates/gui-app/src/native_surface_transaction.rs": "ed42c22339dbd82c37d147b5623a72cd03480fe862e6360307c697b7f9c05860"
+    },
+    "artifacts_sha256": {
+      "admission-trace.log.gz": "f3f26708aee37d4d9e59fc9a49d27a150bd9c9bb0a71718d9a7bb0caa710f112",
+      "auxiliary-escape.log.gz": "59da9cee7d45b67ba383729a73db7fb24e9869026df3d651a4f367621376338f",
+      "clippy.log.gz": "a73d9ee0a7de65b9cfef3ae6cc03e6bfb2a370c1fa62c292f0c85d399a7b3c10",
+      "early-activation.log.gz": "c6a588b14e1a3b3742e08efdda756449e1edec89ced0af8e2712c0ee9fd41da4",
+      "first-attempt.log.gz": "97eff4463deef9e267a5d4e463595f64d16a625bbf9cfe1bab8d322294a84da2",
+      "main-restored.png": "c94d6591a79deb8026b588fc4f46376371f9286df3293304e1bd5704d2052b33",
+      "main.log.gz": "faf5db66b36bff4e58f5fb69a48746b9c96bdf0bb68d78f53dd13c45da6d1099",
+      "mapped-activation.log.gz": "3b56c107f4a804d40f5faa5c4cc1145214deb0df19f40238acdf3a8069531ddf",
+      "native.json": "12a65b0cf104cf5f400e198b94f8e3ef59969f996170d336ac3da55e9afa1641",
+      "probe.py": "6ad757af3c8fafdb1909fe7f938706db6ceacb35917130afe30288efc386f8c8",
+      "trace_probe.py": "0a65a8a860ed50ab5947a5e46021b65a84d642572b38486f16c70a43e15a571d"
     }
   }
 }

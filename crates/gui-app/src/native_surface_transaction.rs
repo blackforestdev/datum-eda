@@ -301,9 +301,11 @@ impl SurfaceTransaction {
             "cannot configure or acquire while a native surface texture is live"
         );
         if !self.drawable {
+            self.trace_lifecycle("skip_undrawable");
             return Ok(false);
         }
         if !self.recovery.borrow_mut().ready(Instant::now()) {
+            self.trace_lifecycle("skip_recovery");
             return Ok(false);
         }
         let now = Instant::now();
@@ -317,6 +319,7 @@ impl SurfaceTransaction {
             self.in_flight,
         ) {
             super::native_queue_owner::Admission::Wait => {
+                self.trace_lifecycle("wait_queue");
                 self.recovery.borrow_mut().defer(RetryReason::Queue, now);
                 return Ok(false);
             }
