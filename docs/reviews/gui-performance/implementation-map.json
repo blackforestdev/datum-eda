@@ -648,11 +648,15 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial component proof: Rotating four-host service and ineligible-host yield are component-tested. Native saturated PTY/host coexistence and end-to-end latency remain unqualified.",
         "id": "proof_sh_05",
         "positive": "Saturate terminal messages while main and auxiliary hosts need service",
         "negative_control": "Drain terminal queue without yield",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "executed_component_tests": [
+          "delivered_tokens_have_rotating_bounded_service_independent_of_native_order",
+          "ready_round_skips_waiting_hidden_closed_and_replaced_tokens"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/SH-05/result.json",
       "acceptance_rule": "Round-robin one attempt/host; terminal dispatch <=1ms or256 messages before yield, input latency/stall budgets met.",
@@ -702,7 +706,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz"
+      ]
     },
     {
       "id": "SH-06",
@@ -1478,11 +1485,15 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial component proof: Zero-extent coordinator admission, retained damage and single restore are component-tested. Native zero extent plus backend configure/acquire/submit counters remain unqualified.",
         "id": "proof_lf_01",
         "positive": "Zero native extent with pending damage then restore",
         "negative_control": "Clamp zero to1x1 and keep rendering",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "executed_component_tests": [
+          "zero_extent_retains_damage_and_restores_one_current_frame",
+          "initially_zero_and_closed_hosts_cannot_be_revived_by_old_events"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/LF-01/result.json",
       "acceptance_rule": "Zero configure/acquire/submit while undrawable; latest damage retained and restored.",
@@ -1524,7 +1535,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz"
+      ]
     },
     {
       "id": "LF-02",
@@ -1757,11 +1771,15 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial component proof: Recovery active-clock pause/no-reset and combined occlusion/suspend eligibility are component-tested. Native repeated hidden recovery and zero backend attempts remain unqualified.",
         "id": "proof_lf_04",
         "positive": "Occlude/suspend during retry repeatedly then resume",
         "negative_control": "Reset accumulated active failure time or keep hidden retry loop",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "executed_component_tests": [
+          "visibility_cycles_preserve_accumulated_active_failure_time",
+          "occlusion_and_application_suspend_require_both_to_clear"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/LF-04/result.json",
       "acceptance_rule": "Active time pauses without reset; zero hidden surface attempts; exactly one fresh restore request.",
@@ -1803,7 +1821,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz"
+      ]
     },
     {
       "id": "LF-05",
@@ -1849,11 +1870,15 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial component proof: Device generation rebind and late-error isolation are component-tested. All-four-host automatic recreation, full cache/data/camera/focus preservation and native fault qualification remain unqualified; the ignored Vulkan callback test is not counted.",
         "id": "proof_lf_05",
         "positive": "Device loss while all four hosts have work",
         "negative_control": "Recreate separately per host or keep stale GPU keys",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "executed_component_tests": [
+          "device_rebind_preserves_visibility_and_rejects_old_or_closed_receipts",
+          "retired_device_error_bursts_cannot_wake_or_fail_replacement_generation"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/LF-05/result.json",
       "acceptance_rule": "One coordinated automatic recreation per episode, GPU caches invalidated, data/cameras/focus preserved.",
@@ -1895,7 +1920,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz"
+      ]
     },
     {
       "id": "LF-06",
@@ -2033,11 +2061,16 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial component proof: Close-before-completion metadata lifetime, ticket cancellation and receipt-scoped retirement are component-tested. Native callback-after-close/no-late-work and complete memory budgets remain unqualified; metadata tests do not prove driver allocation release.",
         "id": "proof_lf_07",
         "positive": "Close after submit before callback",
         "negative_control": "Capture strong native-host owner in callback",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "executed_component_tests": [
+          "completion_callback_keeps_closed_host_accounting_until_gpu_completion",
+          "closed_host_releases_ticket_but_not_outstanding_gpu_ownership",
+          "closed_attachment_retirement_cannot_release_a_later_host_submission"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/LF-07/result.json",
       "acceptance_rule": "No late redraw/configure; live resources retire after GPU completion; close memory budgets pass.",
@@ -2079,7 +2112,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz"
+      ]
     },
     {
       "id": "LF-08",
@@ -2125,11 +2161,15 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial component proof: Capture release suppression across DPI/device replacement and next-gesture recovery are component-tested. Native display/DPI move, extent/paint/hit parity and no-design-commit proof remain unqualified.",
         "id": "proof_lf_08",
         "positive": "DPI/display move during thumb drag or pan",
         "negative_control": "Mix logical old extent with physical new hit map",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "executed_component_tests": [
+          "cancelled_capture_cannot_activate_a_control_after_dpi_or_device_replacement",
+          "missing_cancelled_release_does_not_poison_new_gesture_or_reopened_host"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/LF-08/result.json",
       "acceptance_rule": "One coherent extent/DPI snapshot; hit/paint parity and established capture cancellation, no synthetic design commit.",
@@ -2171,7 +2211,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz"
+      ]
     },
     {
       "id": "LF-09",
@@ -2591,11 +2634,15 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial component proof: Texture lease exclusivity/abort and queue configuration admission are component-tested separately. Native acquire-then-configure sequence and complete adapter composition remain unqualified.",
         "id": "proof_lf_13",
         "positive": "Acquire texture then request configure",
         "negative_control": "Configure with live old acquired texture",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "executed_component_tests": [
+          "one_acquisition_lease_survives_rejected_overlap_and_releases_on_abort",
+          "configuration_ticket_prevents_busy_host_overtaking_and_preserves_fifo"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/LF-13/result.json",
       "acceptance_rule": "No configure until texture ownership released and required queue completion observed.",
@@ -2637,7 +2684,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz"
+      ]
     },
     {
       "id": "LF-14",
@@ -2683,11 +2733,15 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial component proof: Acquire/submit/present/discard counters and post-submit failure distinction are component-tested. Full prepared/submitted/GPU/display ID/timestamp qualification remains unqualified; no display claim follows.",
         "id": "proof_lf_14",
         "positive": "Record prepared/submitted/GPU/display milestones",
         "negative_control": "Treat present return as displayed completion",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "executed_component_tests": [
+          "acquired_frames_reconcile_present_discard_and_live_ownership",
+          "submitted_frame_discard_preserves_submission_without_claiming_presentation"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/LF-14/result.json",
       "acceptance_rule": "Distinct IDs/timestamps and resource retirement rules; no displayed-frame claim from application milestones.",
@@ -2729,7 +2783,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz"
+      ]
     },
     {
       "id": "LF-15",
@@ -23513,5 +23570,20 @@
       "No dependency, product mechanism, timer duration, resize budget or exclusion change"
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/wait-owner/receipt.json"
+  },
+  "s1_component_evidence_reconciliation": {
+    "source_commit": "2ef1aba5",
+    "rows_corrected": [
+      "SH-05",
+      "LF-01",
+      "LF-04",
+      "LF-05",
+      "LF-07",
+      "LF-08",
+      "LF-13",
+      "LF-14"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
+    "disposition": "Existing current 354-pass app suite covers these named production-owner tests; planned-only descriptions were stale. No test was rerun and no native/resource predicate or milestone is declared complete. LF-02 Lost/Outdated succession, LF-06 allocation failure and LF-12 ordinary coalesced configure remain without specific executed proof in their rows; LF-11 renderer allocation proof requires separate verification. Continue S1 implementation/proof within existing order; S2-S5 remain pending."
   }
 }
