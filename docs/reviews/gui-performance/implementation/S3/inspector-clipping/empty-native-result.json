@@ -1,0 +1,23 @@
+{
+  "binary_sha256": "44b3d696e42dc2114e417c034e3e3d53294d16d9fae5be5819a39cdc87676210",
+  "runs": [
+    {
+      "host": "MAIN",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1"
+      ],
+      "wheel_frames": 2,
+      "presentations": 5,
+      "passed": true,
+      "exit": 0
+    }
+  ]
+}

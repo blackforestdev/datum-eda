@@ -6618,6 +6618,10 @@
       "s3_content_clipping_progress": {
         "status": "partial shared GLOBAL/PROJECT/REVISION content adoption; complete consumer qualification outstanding",
         "evidence": "docs/reviews/gui-performance/implementation/S3/shared-content-clipping/result.json"
+      },
+      "s3_inspector_progress": {
+        "status": "partial default Inspector adoption; full input/profile qualification outstanding",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/inspector-clipping/result.json"
       }
     },
     {
@@ -6695,6 +6699,10 @@
       "s3_content_clipping_progress": {
         "status": "partial shared GLOBAL/PROJECT/REVISION content adoption; complete consumer qualification outstanding",
         "evidence": "docs/reviews/gui-performance/implementation/S3/shared-content-clipping/result.json"
+      },
+      "s3_inspector_progress": {
+        "status": "partial default Inspector adoption; full input/profile qualification outstanding",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/inspector-clipping/result.json"
       }
     },
     {
@@ -26538,5 +26546,26 @@
       "No dependency, prototype, acceptance or resize-scope change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/shared-content-clipping/result.json"
+  },
+  "s3_inspector_clipping_work": {
+    "status": "partial S3 default Main Inspector adoption",
+    "baseline": "a298966ff2258dddcba7e81c4a7003954a206f70",
+    "source_sha256": {
+      "crates/gui-render/src/side_panels/inspector_dispatch.rs": "24847ae1f4874a98cd2dde9c6062b606cecd373091da22881e33e91d4a1aa914"
+    },
+    "production_consumers": [
+      "Main active selection/check Inspector",
+      "Main Revision evidence Inspector"
+    ],
+    "call_path": "frame_preparation -> render_side_panels -> inspector_dispatch::render_active_inspector -> shared hit_clipping::clip_content",
+    "retired_path": "Unclipped Inspector content and hit emission outside the panel rectangle",
+    "preserved": "Existing profile dispatch, selection/model authority and all control actions. No new scroll or Inspector product capability. Header chrome emitted before profile content remains untouched.",
+    "proof": {
+      "cpu": "209 renderer tests pass;22 ignored. New actual Inspector profile test covers narrow panel geometry and inherited text clips for ordinary and Revision-evidence dispatch.",
+      "native": "Fresh release Main wheel/start/present/close check passed. Separate click on real fixture object shows +Supply1 selected with Value/Layer/Pos Inspector content; empty and selected captures inspected.",
+      "checks": "Renderer visual all-targets Clippy and source health passed.",
+      "limits": "Default fixture does not exercise editable board-text hit controls; full per-profile input/focus, negative-control and GPU pixel qualification remain open. No new performance-budget claim."
+    },
+    "evidence": "docs/reviews/gui-performance/implementation/S3/inspector-clipping/result.json"
   }
 }
