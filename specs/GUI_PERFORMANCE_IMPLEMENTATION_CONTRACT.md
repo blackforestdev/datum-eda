@@ -226,3 +226,60 @@ sequence and remains failed/unqualified. Selection is the demonstrated redraw
 ownership/damage-retirement gap, not a numerical performance claim. S1 begins
 with shared redraw tokens/generations; full ADM/GPU/ACC, S1 adoption and S5
 qualification remain outstanding under the approved component allocation.
+
+## Proposed S1 implementation exit amendment — pending owner review
+
+This section is a review draft, **not operative authority**. The existing S1
+exit and Frontier dependency remain controlling until an explicit owner
+response is recorded and the following changes are applied together. The
+2026-09-20 amendment did not explicitly defer unfinished S1 row qualification.
+
+The current default call inventory routes all four native hosts through
+`NativeFrameCoordinator`, `SurfaceTransaction` and `QueueOwner`; the adoption
+map records actual native adapter trials and remaining partial proof. Advancing
+S2 today would require treating those partial rows as sufficient for “verify
+SH/LF and affected HP requirements.” This proposal makes that different exit
+criterion explicit rather than silently declaring those requirements passed.
+
+Exact proposed edits:
+
+1. Replace the **S1 table required-evidence cell** with:
+
+   > Establish implementation readiness from the current production call-site
+   > inventory for all four native hosts, retired competing default paths,
+   > shared-owner correctness regressions, actual per-host native adapter
+   > evidence, and implemented surface-generation/submission/attachment-lifetime
+   > accounting. Preserve bounded affected-change positive/negative evidence
+   > and all failed attempts; an unexplained regression still blocks advancement.
+   > Record each unfinished SH/LF/affected-HP predicate in its existing map row.
+   > Outstanding prescribed per-row negative-control replays, complete native
+   > final-state/static/input/focus coverage, backend/scale coverage and full
+   > resource/method qualification become explicit S5 exit prerequisites.
+   > They remain unqualified, not satisfied by S1 readiness. Rollback preserves
+   > coherent shared adoption. Resize qualification stays separately nonblocking.
+
+2. Replace **GPI-S1** with:
+
+   > Adopt shared surface scheduling/lifecycle in every default native host and
+   > establish bounded implementation readiness under the S1 table. Preserve
+   > unfinished SH/LF and affected HP qualification individually for S5; do not
+   > declare global acceptance. RS and resize-budget qualification remain pinned
+   > and nonblocking.
+
+3. Append to the **S5 table required-evidence cell**:
+
+   > Close every in-scope SH/LF/affected-HP predicate carried from S1, including
+   > prescribed negative controls and native final-state/static/input/focus and
+   > complete resource/method proof. S1 readiness does not waive any such result.
+
+4. In the same approved transaction, mirror revised GPI-S1 wording in
+   `specs/active_frontier.json` and regenerate `specs/PROGRESS.md`. Do not advance
+   S1 until its revised readiness evidence is inspected and recorded; do not
+   start S2 before that transition. Keep every partial map status and original
+   evidence receipt intact until the corresponding qualification actually passes.
+
+This changes **when unfinished S1 qualification must be complete**, not numerical
+thresholds, default-path adoption, PM029 authority, product semantics, independent
+review, endurance or final acceptance. It creates no permission for dependencies,
+prototype edits, a broad rewrite, or acceptance of known regressions. It does not
+mark any implementation step complete by itself.

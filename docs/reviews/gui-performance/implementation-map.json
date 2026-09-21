@@ -24928,5 +24928,39 @@
       "No dependency, licensing, preference mutation authority, visual-truth or nonblocking resize boundary change. Existing full drift terminal-convergence failures remain; full drift not rerun for this input-only patch."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S1/empty-search-input/result.json"
+  },
+  "s1_exit_reconciliation": {
+    "status": "Owner-review proposal only; GPI-S1 remains in progress and GPI-S2 pending",
+    "source_commit": "ed1b38fafa4bc0244c52054a7af22c832ff88798",
+    "source_sha256": {
+      "crates/gui-app/src/native_frame_coordinator.rs": "1f9ef53eee2aedaff7964487877118f3daff5f4c84eaa6eddcab0bb5c8737d45",
+      "crates/gui-app/src/native_surface_transaction.rs": "146c5937f2676fe46dd5089a5a8e098b0101752a90a759e4715183ef21dc9d8b",
+      "crates/gui-app/src/native_queue_owner.rs": "9376a698f4726d89a72a046adc60decc61ad503c8c1beca1d964ce948a6e0f8b",
+      "crates/gui-app/src/native_frame_adapters.rs": "3d528ac6accd13e75c6ef7fcfadad84036f1fc456db67eb6ac230dcb0e9c7252",
+      "crates/gui-app/src/runtime_present.rs": "70440a93f8664d52144a117ad2b313ad75e3f1cc4dfb3e56c5b0c88d14cbf537",
+      "crates/gui-app/src/global_preferences_window.rs": "8ac28b8ec25bd6e363d4c79f6fc01bdff4d9f2ddf44e88585f31d8eb87ee34d2",
+      "crates/gui-app/src/project_preferences_window.rs": "36ae86d461f032950472d9168fe6766471ca6d5afe86b4ff6c6eb3b0ccc0a472",
+      "crates/gui-app/src/new_project_window.rs": "e187b51cf5444f4feb7f143ccac7e3a77da3253a566b1c8ab4496a9b2ed938d8",
+      "crates/gui-app/src/native_device_recovery.rs": "b689472f68908a56265786988cef87ac6d62ec2b493eb4f7880f1048a22f2eb1"
+    },
+    "default_inventory": {
+      "redraw": "Four Window::request_redraw call sites, all inside NativeFrameCoordinator.",
+      "surface": "Sole default configure/get_current_texture/pre_present_notify/texture.present sites in SurfaceTransaction. Main runtime_present and the shared auxiliary renderer consume them.",
+      "queue": "Native admitted renderer frame/overlay submissions produce shared QueueOwner receipts; device replacement stages every live host before publication.",
+      "diagnostic_exception": "native_resize_repro direct calls remain behind the explicit DATUM_DIAGNOSTIC_MINIMAL_WINDOW entry; not default adoption evidence."
+    },
+    "evidence_reviewed": [
+      "s1_work",
+      "s1_queue_work",
+      "s1_atomic_device_staging_work",
+      "s1_attachment_retirement_work",
+      "s1_native_surface_barriers_work",
+      "s1_native_attachment_reconciliation",
+      "s1_focus_loss_capture_work",
+      "s1_empty_search_input_work"
+    ],
+    "barrier": "Existing GPI-S1 requires verification of SH/LF and affected HP while their map rows still contain missing prescribed negative controls, native final-state and resource predicates. S2 has an explicit GPI-S1 dependency. This is unfinished proof under the current exit, not missing Rust implementation authority or a new third-party dependency. Continuing small unrelated fixes is an execution choice, not a substitute for resolving this exit.",
+    "proposal": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#proposed-s1-implementation-exit-amendment--pending-owner-review",
+    "limits": "Call-site inventory establishes default routing, not complete per-consumer qualification. No partial status, requirement, step or authority is advanced. Approval would require the exact same-change edits and a separate evidence-based readiness disposition."
   }
 }
