@@ -56,10 +56,10 @@ earlier proven behavior; it is not a destructive reset of shared work.
 |---|---|---|
 | S0 | Separate owner execution grant; pin current source/fixture/environment, select the first bounded S1 change from attributable work or a demonstrated correctness defect, and validate only the measurements used for that selection and its proof | Record production entry points, matched baseline, verified input/final state, applicable counters and their conformance/overhead, relevant static/input regressions, and every outstanding ADM/GPU/ACC obligation with its owning S1–S4 component. No global admission, budget or performance pass follows. Keep measurement repair separable from behavior changes. |
 | S1 | S0 attribution; shared NativeFrameCoordinator, host damage generations, queue/configure coordination and recovery in main and all three auxiliary hosts | Establish implementation readiness from the current production call-site inventory for all four native hosts, retired competing default paths, shared-owner correctness regressions, actual per-host native adapter evidence, and implemented surface-generation/submission/attachment-lifetime accounting. Preserve bounded affected-change positive/negative evidence and all failed attempts; an unexplained regression still blocks advancement. Record each unfinished SH/LF/affected-HP predicate in its existing map row. Outstanding prescribed per-row negative-control replays, complete native final-state/static/input/focus coverage, backend/scale coverage and full resource/method qualification become explicit S5 exit prerequisites. They remain unqualified, not satisfied by S1 readiness. Rollback preserves coherent shared adoption. Resize qualification stays separately nonblocking. |
-| S2 | S0 measurement; use S1 shared interfaces when available without selecting work out of order. Retained world/encoding/screen uploads, text and cache ownership | Warm zero-work counts, equal-size replacement/address reuse, eviction/device reset, painter/AA/text parity and complete byte caps. Separate geometry, text and upload changes into reviewable patches; revert each optimization independently. |
+| S2 | S0 measurement; use S1 shared interfaces when available without selecting work out of order. Retained world/encoding/screen uploads, text and cache ownership | Establish bounded shared-implementation readiness from the default production consumers of retained world, encoding, screen/uniform upload and shaped-text ownership; retired competing paths; affected warm/replacement/eviction and painter/AA/text correctness proofs; and explicit resource limits. Keep each unfinished implementation and qualification predicate in its existing map row. Complete accounting/caps, exact changed-range transfers and complete shaping/layout dependency implementation are S4 exit prerequisites; full native/replacement/device-reset/negative and budget qualification is required at S5. Partial limits are not complete byte caps. Unexplained regressions block readiness. Preserve separately reversible geometry/text/upload patches. |
 | S3 | S2 retained resource interfaces. Shared dialog/control profiles and scroll/clip/hit contracts in both Preferences, New Project and main panels | HP11–23, per-adapter input/focus and pass-count proof; retire New Project general backdrop and duplicate control machinery. Preserve legitimate discrete Layers/terminal semantics. Revert controls without changing stored preferences or project-creation authority. |
-| S4 | S1–S3. Terminal adapters, mixed activity/fairness, all-host closure and fault/recovery adoption | PTY byte/state preservation, hidden-render suppression, two-generation glyph bounds, allocation/recovery accounting and serial shared-device multiwindow proof. Concurrent multi-device crash remains separate. Revert rendering adapters without replacing TerminalCore/PTY state. |
-| S5 | Every adopted implementation slice and required admission/method conformance. Final coverage, native owner UX, distinct-reviewer replay and endurance | Run all in-scope requirements on pinned candidate, both daily native backends and supported scale rows; 60-minute/200-cycle/20-recovery contract. Publish excluded temporal/T2/schematic rows as unqualified, never full performance acceptance. Full resize closure additionally requires all temporal/resource rows; no local or initial-scope result closes it. Close every in-scope SH/LF/affected-HP predicate carried from S1, including prescribed negative controls and native final-state/static/input/focus and complete resource/method proof. S1 readiness does not waive any such result. |
+| S4 | S1–S3. Terminal adapters, mixed activity/fairness, all-host closure and fault/recovery adoption | PTY byte/state preservation, hidden-render suppression, two-generation glyph bounds, allocation/recovery accounting and serial shared-device multiwindow proof. Concurrent multi-device crash remains separate. Revert rendering adapters without replacing TerminalCore/PTY state. Complete every unfinished S2 accounting/cap, exact changed-range transfer and shaping/layout dependency implementation carried in the adoption map, with affected positive/negative and counter-conformance proof. Private dependency internals remain a technical boundary to resolve within owner-authorized scope, not a waiver or permission to modify third-party code. |
+| S5 | Every adopted implementation slice and required admission/method conformance. Final coverage, native owner UX, distinct-reviewer replay and endurance | Run all in-scope requirements on pinned candidate, both daily native backends and supported scale rows; 60-minute/200-cycle/20-recovery contract. Publish excluded temporal/T2/schematic rows as unqualified, never full performance acceptance. Full resize closure additionally requires all temporal/resource rows; no local or initial-scope result closes it. Close every in-scope SH/LF/affected-HP predicate carried from S1, including prescribed negative controls and native final-state/static/input/focus and complete resource/method proof. S1 readiness does not waive any such result. Close every in-scope qualification predicate carried from S2, including exact warm/replacement/address-reuse/eviction/device-reset negatives, painter/AA/text parity, complete byte caps and ACC-01/02 conformance across the required consumers/configurations. Unfinished implementation at S4 blocks S5 entry; moving a predicate does not satisfy it. |
 
 S1 owns scheduler/surface generations, redraw/configure/acquire/submit/present
 counts and changed surface-resource lifetime accounting. S2 owns retained
@@ -161,7 +161,7 @@ record remains history, not a competing live contract.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S2 -->
 
-**GPI-S2.** Adopt retained geometry/text/encoding/upload ownership with exact cache/replacement/negative proofs.
+**GPI-S2.** Adopt retained geometry/text/encoding/upload ownership and establish bounded shared-implementation readiness under the S2 table. Preserve unfinished implementation explicitly for S4 and complete qualification for S5; neither readiness nor partial cache proof establishes resource-budget acceptance.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S3 -->
 
@@ -169,7 +169,7 @@ record remains history, not a competing live contract.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S4 -->
 
-**GPI-S4.** Finish terminal fairness/hidden work and all-host recovery/resource adoption; preserve separate concurrent multi-device failure.
+**GPI-S4.** Finish terminal fairness/hidden work and all-host recovery/resource adoption; preserve separate concurrent multi-device failure. Complete the unfinished S2 implementation predicates carried by the S2/S4 tables before advancing to S5.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S5 -->
 
@@ -262,67 +262,29 @@ Four pinned resize rows and one deferred temporal HP row retain their exclusions
 No complete row qualification or performance acceptance follows. S2 may begin
 through the synchronized Frontier transition; S3–S5 remain pending.
 
-## Proposed S2 implementation exit amendment — pending owner review
+## Owner amendment: S2 implementation exit
 
-This section is a review draft, not an operative amendment. The approved S0 and
-S1 changes do not authorize it. GPI-S2 remains in progress and S3 remains pending.
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S2-EXIT-APPROVED -->
 
-At `73cae904`, the retained world, screen upload, uniform, encoded-batch and shaped
-text owners are production code with bounded receipts in the existing adoption
-map. This is not S2 completion: the table still requires complete byte caps and
-exact cache/replacement/negative proof. Missing work includes implementation, not
-only qualification: complete owned/in-flight byte accounting and caps, exact
-changed-range transfers, and complete shaping/layout dependency coverage.
+On 2026-09-21 the owner approved the exact six-clause proposal in commit
+`74ba0b78`:
 
-The installed text dependencies expose some shaped vectors but hide other owned
-capacities and atlas creation/upload boundaries. Public visible counts are not
-complete ACC-01/02 accounting. This observation grants no vendoring, dependency
-change, surrogate accounting pass or acceptance waiver. An authorized technical
-solution is still required; resequencing does not supply that solution.
+> Approve the proposed S2 amendment
 
-To allow shared-component migration before these implementation gaps close, the
-smallest proposed transaction is the following six exact clause changes:
+The S2 table and GPI-S2 now require bounded shared-implementation readiness.
+Unfinished accounting/cap, exact changed-range transfer and shaping/layout
+implementation remains required at S4; complete qualification remains required
+at S5 under the amended tables and GPI-S4. The Frontier mirrors these actions.
+The adoption map records the outstanding predicates individually; their original
+acceptance rules, statuses and receipts remain unchanged.
 
-1. Replace the **S2 evidence/exit cell** with:
-   > Establish bounded shared-implementation readiness from the default production
-   > consumers of retained world, encoding, screen/uniform upload and shaped-text
-   > ownership; retired competing paths; affected warm/replacement/eviction and
-   > painter/AA/text correctness proofs; and explicit resource limits. Keep each
-   > unfinished implementation and qualification predicate in its existing map
-   > row. Complete accounting/caps, exact changed-range transfers and complete
-   > shaping/layout dependency implementation are S4 exit prerequisites; full
-   > native/replacement/device-reset/negative and budget qualification is required
-   > at S5. Partial limits are not complete byte caps. Unexplained regressions
-   > block readiness. Preserve separately reversible geometry/text/upload patches.
-2. Replace **GPI-S2** with:
-   > Adopt retained geometry/text/encoding/upload ownership and establish bounded
-   > shared-implementation readiness under the S2 table. Preserve unfinished
-   > implementation explicitly for S4 and complete qualification for S5; neither
-   > readiness nor partial cache proof establishes resource-budget acceptance.
-3. Append to the **S4 evidence/exit cell**:
-   > Complete every unfinished S2 accounting/cap, exact changed-range transfer and
-   > shaping/layout dependency implementation carried in the adoption map, with
-   > affected positive/negative and counter-conformance proof. Private dependency
-   > internals remain a technical boundary to resolve within owner-authorized
-   > scope, not a waiver or permission to modify third-party code.
-4. Append to **GPI-S4**:
-   > Complete the unfinished S2 implementation predicates carried by the S2/S4
-   > tables before advancing to S5.
-5. Append to the **S5 evidence/exit cell**:
-   > Close every in-scope qualification predicate carried from S2, including exact
-   > warm/replacement/address-reuse/eviction/device-reset negatives, painter/AA/text
-   > parity, complete byte caps and ACC-01/02 conformance across the required
-   > consumers/configurations. Unfinished implementation at S4 blocks S5 entry;
-   > moving a predicate does not satisfy it.
-6. In the same approval transaction, mirror the changed **GPI-S2/GPI-S4** wording
-   in `specs/active_frontier.json`, regenerate `specs/PROGRESS.md`, and record each
-   outstanding S2 predicate's implementation/qualification disposition in the
-   existing adoption map. A separate evidence-based S2 readiness reconciliation
-   must precede S2 completion and S3 selection; approval alone completes neither.
+An evidence-based S2 readiness reconciliation must precede S2 completion and S3
+selection. This approval itself completes neither. S2 remains selected and in
+progress until that reconciliation is recorded.
 
-PM045 GP-045-05 already assigns complete accounting to S1–S4 and final accounting
-qualification to S5; that allocation is preserved. Numerical thresholds, original
-receipts, all required consumers, independent replay, endurance, dependency
-policy, product authority and nonblocking resize exclusions remain unchanged.
-Without approval, retain the current S2 exit and continue S2 implementation; do
-not advance S3 or declare the overall goal blocked merely by this proposal.
+The amendment changes sequencing, not numerical budgets, dependency authority,
+product behavior, independent replay, endurance or the nonblocking resize scope.
+It does not supply a technical solution for private resource accounting. The
+installed public wgpu allocator report can observe atlas backing allocations on
+the tested Vulkan backend, but snapshots do not establish stable allocation IDs,
+upload events, CPU owned capacities or complete ACC-01/02 qualification.
