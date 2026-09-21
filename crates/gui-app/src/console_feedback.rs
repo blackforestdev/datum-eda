@@ -133,8 +133,7 @@ impl Runtime {
             return false;
         };
         let history_panel = self
-            .prepared_scene()
-            .console_overlay_layout()
+            .presented_console_layout
             .and_then(|layout| layout.history_panel);
         if !history_panel.is_some_and(|panel| panel.contains(x, y)) {
             return false;

@@ -231,7 +231,8 @@
         "negative_control": "Broadcast request_redraw to all hosts",
         "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
         "observed_artifacts": [
-          "docs/reviews/gui-performance/implementation/S1/local-input-invalidation/tests.log.gz"
+          "docs/reviews/gui-performance/implementation/S1/local-input-invalidation/tests.log.gz",
+          "docs/reviews/gui-performance/implementation/S1/console-presented-layout/receipt.json"
         ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/SH-01/result.json",
@@ -23310,5 +23311,32 @@
       "No new Rust code, dependency, build or resize investigation in this evidence slice"
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/main-idle/receipt.json"
+  },
+  "s1_console_presented_layout_work": {
+    "status": "default Main Console input/lifetime layout ownership migrated; S1 remains in progress",
+    "production_consumers": [
+      "MAIN Console lifetime inspection",
+      "CONSOLE history wheel routing"
+    ],
+    "shared_owner": "Runtime::presented_console_layout copied from the prepared Console layout only after successful Main surface presentation; resize/DPI clears incompatible geometry.",
+    "retired_paths": [
+      "poll_console_lifetime -> console_is_inspected -> Runtime::prepared_scene could rebuild unrelated Main geometry/text merely for timer inspection",
+      "handle_console_history_scroll -> Runtime::prepared_scene could rebuild the full Main projection between coalesced wheel events"
+    ],
+    "production_change": "Both consumers now read the same small Copy layout snapshot. Console inspection takes &self and cannot call the mutating scene-preparation accessor. Ordinary frame invalidation preserves the last presented hit geometry; no new cache/renderer/dependency or per-query allocation.",
+    "verification": {
+      "app": "352 passed, 0 failed, 9 ignored; screenshot integration ignored",
+      "protocol": "8 Console feedback tests passed, 113 filtered; other filtered integration targets ran zero tests",
+      "clippy": "app all targets -D warnings passed",
+      "release": "fresh guarded offline build passed",
+      "native": "X11 Main: view fit message remained visible through seven seconds of pointer inspection with zero additional submissions (4 -> 4). After pointer left, frames advanced to 6 and message expired; all three screenshots inspected."
+    },
+    "limits": [
+      "No direct native scene-preparation counter comparison: retirement of the two full-scene calls is source/type-checked evidence, not a measured CPU percentage",
+      "History wheel routing migrated but native history-scroll burst not exercised here",
+      "Full SH-01/02/04, all-host, resize/DPI, resource and timing qualification remain open",
+      "Presentation means application surface presentation, not compositor timing proof; resize CPU remains nonblocking"
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/console-presented-layout/receipt.json"
   }
 }

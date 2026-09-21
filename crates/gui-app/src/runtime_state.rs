@@ -39,6 +39,8 @@ pub(super) struct Runtime {
     pub(super) retained_scene: Option<RetainedScene>,
     pub(super) retained_scene_cache: Vec<(RetainedSceneCacheKey, RetainedScene)>,
     pub(super) prepared_scene: Option<PreparedScene>,
+    /// Console input/lifetime queries must not prepare a dirty workspace frame.
+    pub(super) presented_console_layout: Option<datum_gui_render::ConsoleOverlayLayout>,
     pub(super) terminal_render_cache: TerminalRenderCache,
     pub(super) terminal_accessibility:
         terminal_accessibility_bridge::LinuxTerminalAccessibilityBridge,

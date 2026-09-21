@@ -148,7 +148,7 @@ impl App {
 }
 
 impl Runtime {
-    fn console_is_inspected(&mut self) -> bool {
+    fn console_is_inspected(&self) -> bool {
         let console = &self.workspace().ui.console;
         if console.visible_latest().is_none() && !console.history_expanded() {
             return false;
@@ -156,14 +156,12 @@ impl Runtime {
         let Some((x, y)) = self.last_cursor_pos else {
             return false;
         };
-        self.prepared_scene()
-            .console_overlay_layout()
-            .is_some_and(|layout| {
-                layout.strip.contains(x, y)
-                    || layout
-                        .history_panel
-                        .is_some_and(|history| history.contains(x, y))
-            })
+        self.presented_console_layout.is_some_and(|layout| {
+            layout.strip.contains(x, y)
+                || layout
+                    .history_panel
+                    .is_some_and(|history| history.contains(x, y))
+        })
     }
 
     pub(super) fn poll_console_lifetime(&mut self) -> bool {

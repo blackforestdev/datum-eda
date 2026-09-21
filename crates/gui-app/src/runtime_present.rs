@@ -161,6 +161,10 @@ impl Runtime {
         append_gui_verbose_diagnostic_line(|| "frame present begin");
         let first_device_frame = !self.surface_transaction.has_presented();
         self.surface_transaction.present(frame, self.window)?;
+        self.presented_console_layout = self
+            .prepared_scene
+            .as_ref()
+            .and_then(PreparedScene::console_overlay_layout);
         if first_device_frame && self.terminal_owns_input() {
             let (x, y, width, height) = self.terminal_ime_cursor_rect();
             self.window.set_ime_cursor_area(
