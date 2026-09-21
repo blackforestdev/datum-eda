@@ -72,21 +72,6 @@ impl App {
         if self.frames.consume_cancelled_release(window_id, &event) {
             return;
         }
-        if matches!(event, WindowEvent::Focused(false))
-            && self
-                .window
-                .as_ref()
-                .is_some_and(|window| window.id() == window_id)
-            && let Some(runtime) = &mut self.runtime
-        {
-            // Finalize preview geometry before shared capture cancellation clears
-            // drag state. Both operations must run; neither may short-circuit.
-            let split_finished = runtime.finish_terminal_split_drag().is_some();
-            let dock_finished = runtime.finish_dock_resize_drag().is_some();
-            if split_finished || dock_finished {
-                self.request_workspace_redraw();
-            }
-        }
         if matches!(
             event,
             WindowEvent::ScaleFactorChanged { .. } | WindowEvent::Focused(false)
