@@ -1,0 +1,7 @@
+{
+  "source_commit": "bf1f468dc48adfc640617af0595f9d0373cb51dc",
+  "original_sha256": "9376a698f4726d89a72a046adc60decc61ad503c8c1beca1d964ce948a6e0f8b",
+  "mutated_sha256": "f7c3594bb9d4bd1c03ed18416c935695f216eb0ea216e5ae459d93359481af60",
+  "source_copy": "/home/bfadmin/Documents/datum-eda/target/pm045-queue-negative-source",
+  "defect": "Remove per-host unfinished-receipt admission guard, permitting frame snapshots while a preceding frame remains outstanding. FIFO/configuration/completion and all tests unchanged."
+}

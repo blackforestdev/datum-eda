@@ -1,0 +1,16 @@
+--- a/crates/gui-app/src/native_queue_owner.rs
++++ b/crates/gui-app/src/native_queue_owner.rs
+@@ -298,11 +298,8 @@
+             }
+             return Admission::Configure;
+         }
+-        if completed < in_flight {
+-            Admission::Wait
+-        } else {
+-            Admission::Frame
+-        }
++        let _ = in_flight;
++        Admission::Frame
+     }
+     pub(super) fn configured(&self, host: u64) {
+         let mut state = self.0.borrow_mut();
