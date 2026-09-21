@@ -153,10 +153,7 @@ impl App {
                     .project_preferences_surface
                     .as_ref()
                     .and_then(GlobalPreferencesWindowSurface::hit_target);
-                if let (Some(runtime), Some(target)) = (&mut self.runtime, target.as_ref()) {
-                    let _ = runtime.activate_project_preferences_hit_target(target);
-                }
-                self.request_preferences_target_redraw(target.as_ref(), true);
+                self.activate_preferences_target(target.as_ref(), true);
             }
             WindowEvent::MouseWheel { delta, .. } => {
                 self.scroll_preferences_window(delta, true);

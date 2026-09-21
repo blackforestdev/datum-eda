@@ -5,6 +5,9 @@
 //! projection. The Design workspace never becomes a backdrop for Preferences.
 
 use super::*;
+#[path = "global_preferences_damage.rs"]
+mod damage;
+pub(crate) use damage::GlobalPreferenceRenderState;
 pub(super) const DEFAULT_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(960.0, 720.0);
 pub(super) const MIN_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(700.0, 540.0);
 
@@ -28,6 +31,7 @@ pub(crate) enum DialogInputOutcome {
     Consumed,
     Dialog,
     Dependents,
+    Workspace,
 }
 
 impl DialogInputOutcome {
@@ -348,6 +352,10 @@ impl App {
             DialogInputOutcome::Consumed => {}
             DialogInputOutcome::Dialog => self.request_dialog_redraw(host),
             DialogInputOutcome::Dependents => self.request_redraw_if_needed(),
+            DialogInputOutcome::Workspace => {
+                self.request_workspace_redraw();
+                self.request_dialog_redraw(host);
+            }
         }
         true
     }
@@ -364,51 +372,51 @@ impl App {
             self.frames.invalidate(&surface.window);
         }
     }
-    /// Transient navigation belongs to this dialog. Setting edits may affect
-    /// workspace consumers and keep the application-wide invalidation path.
-    pub(super) fn request_preferences_target_redraw(
+    /// Apply authoritative preference input before selecting damaged hosts.
+    pub(super) fn activate_preferences_target(
         &mut self,
         target: Option<&HitTarget>,
         project: bool,
     ) {
-        match target {
-            None | Some(HitTarget::GlobalPreferencesModal) => return,
-            Some(
-                HitTarget::GlobalPreferencesSection(_)
-                | HitTarget::GlobalPreferencesSearch
-                | HitTarget::GlobalPreferencesSettingName(_)
-                | HitTarget::GlobalPreferencesExplanationClose,
-            ) => {}
-            Some(HitTarget::GlobalPreferencesControl(key)) => {
-                let Some(runtime) = &self.runtime else {
-                    return;
-                };
-                let dialog = if project {
-                    &runtime.workspace().ui.project_preferences
-                } else {
-                    &runtime.workspace().ui.global_preferences
-                };
-                let outcome = DialogInputOutcome::control_activation(dialog, key);
-                self.request_dialog_key_redraw(
-                    outcome,
-                    if project {
-                        native_frame_adapters::OwnedHost::Project
-                    } else {
-                        native_frame_adapters::OwnedHost::Global
-                    },
-                );
-                return;
-            }
-            Some(_) => {
-                self.request_redraw_if_needed();
-                return;
-            }
-        }
-        self.request_dialog_redraw(if project {
-            native_frame_adapters::OwnedHost::Project
+        let (Some(target), Some(runtime)) = (target, &mut self.runtime) else {
+            return;
+        };
+        let before = GlobalPreferenceRenderState::capture(&runtime.workspace().ui);
+        if project {
+            let _ = runtime.activate_project_preferences_hit_target(target);
         } else {
-            native_frame_adapters::OwnedHost::Global
-        });
+            let _ = runtime.activate_application_overlay_hit_target(target);
+        }
+        let ui = &runtime.workspace().ui;
+        let dialog = if project {
+            &ui.project_preferences
+        } else {
+            &ui.global_preferences
+        };
+        let outcome = match target {
+            HitTarget::GlobalPreferencesModal => DialogInputOutcome::Consumed,
+            HitTarget::GlobalPreferencesSection(_)
+            | HitTarget::GlobalPreferencesSearch
+            | HitTarget::GlobalPreferencesSettingName(_)
+            | HitTarget::GlobalPreferencesExplanationClose => DialogInputOutcome::Dialog,
+            HitTarget::GlobalPreferencesControl(key) => {
+                DialogInputOutcome::control_activation(dialog, key)
+            }
+            _ => DialogInputOutcome::Dependents,
+        };
+        let outcome = if project {
+            outcome
+        } else {
+            before.finish(outcome, ui)
+        };
+        self.request_dialog_key_redraw(
+            outcome,
+            if project {
+                native_frame_adapters::OwnedHost::Project
+            } else {
+                native_frame_adapters::OwnedHost::Global
+            },
+        );
     }
     /// Scrolling changes only the owned dialog's transient viewport. Coalesced
     /// redraws must not rebuild the main Design window or other owned windows.
@@ -579,10 +587,7 @@ impl App {
                     .global_preferences_surface
                     .as_ref()
                     .and_then(GlobalPreferencesWindowSurface::hit_target);
-                if let (Some(runtime), Some(target)) = (&mut self.runtime, target.as_ref()) {
-                    let _ = runtime.activate_application_overlay_hit_target(target);
-                }
-                self.request_preferences_target_redraw(target.as_ref(), false);
+                self.activate_preferences_target(target.as_ref(), false);
             }
             WindowEvent::MouseWheel { delta, .. } => {
                 self.scroll_preferences_window(delta, false);
