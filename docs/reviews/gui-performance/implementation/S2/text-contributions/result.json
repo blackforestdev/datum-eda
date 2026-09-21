@@ -1,0 +1,46 @@
+{
+  "status": "Shared text contribution checks retire empty preparation/pass work; GPI-S2 remains in progress",
+  "baseline_commit": "ffd08bebeff8ca8b233997af11915d9d5e41a21d",
+  "selection": "The general renderer always prepared and encoded workspace text even with zero text runs. Empty plain/rich payloads also caused workspace/menu glyph preparation. Geometry already clears, stores and resolves; terminal graphics and menu stages have their own load/store/resolve boundaries.",
+  "production_consumers_migrated": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "production_paths": [
+    "PreparedScene::has_workspace_text/has_overlay_text -> shared glyph transaction and general text/menu pass conditions",
+    "Dialog-only glyph preparation/rendering -> same overlay contribution check"
+  ],
+  "competing_paths_retired": [
+    "Unconditional workspace text pass and empty glyph preparation",
+    "Separate vector-nonempty predicates for overlay preparation/drawing",
+    "Unconditional glyph viewport uploads in general and dialog callers"
+  ],
+  "change": "Shared contribution predicates inspect the actual plain or rich text payload. Skip empty workspace/menu preparation and drawing; update the glyph viewport only when text contributes. Empty workspace frames leave no stale reusable signature. Geometry clears/resolves, menu cards, real text, terminal foreground/background, painter order and sample quality remain unchanged.",
+  "proof": {
+    "baseline": "Baseline actual GPU pass list is [scene,text] for a geometry-only frame; the expected [scene] assertion fails. Baseline test patch/log retained.",
+    "renderer": "198 passed, 18 ignored.",
+    "gpu_contributions": "Intel P630/Vulkan timestamps record [scene] for absent text, empty plain text and empty rich spans with unused plain fallback, with zero workspace prepares. A nonempty clipped control records [scene,text] and identical fractional-geometry pixels. Returning to empty text omits the pass and does not leak prior glyphs. Blank menu records [scene,menu-background] with zero overlay prepares; clipped nonempty menu adds menu-text with identical pixels.",
+    "gpu_graph": "Existing production workspace/dialog/menu/terminal timestamp and measured/unmeasured pixel parity test passes. Shared atlas retry/failure/reindex test remains passing.",
+    "native": "Fresh release MAIN zoom-in/out and GLOBAL/PROJECT/NEW X11 startup/presentation/close smoke pass, exit zero. Native smoke does not claim empty-text pass counts or full graph qualification.",
+    "build_lint": "Offline guarded release and renderer library/tests Clippy pass.",
+    "governance": "Source health, dependency authority, parity, traceability/spec/project, diff and staged formatting checked before commit.",
+    "app_scope": "No app source changes or full app suite rerun; known terminal lineage/convergence issues remain open."
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "d1173aecff862d201e964fbf44187cf12ef9f6d0c6db05adce889fe8545f3a5d",
+    "crates/gui-render/src/render/gpu_overlay.rs": "360a37797eb186b326b4601e6f038ee595d28afc682ff456c8b95771d9c2d252",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "59ceb7542557a3b26a72776d43ca35e88cb2f38fd7696d3e1a3f65ed00b93ee7",
+    "crates/gui-render/src/render/gpu_text.rs": "a2ee7f19319c2e21d633c65d6b3da99f48f27a35bb5e7abba24eccff474766e1",
+    "crates/gui-render/src/render/gpu_pass_tests.rs": "5c22f414e4db9d18a51f17dff812d80201f6247ca9e1dee9610e4f2605ac7db4"
+  },
+  "candidate_binary_sha256": "f94c058d125871e09d718f0e1d6ee47b208695c5d8e6b45bd69b9b25ffcd971c",
+  "limits": [
+    "Contribution test is deliberately conservative: nonempty payloads can retain a text pass even when clipping or glyph content makes no visible pixels. Complete empty-stage qualification remains open.",
+    "One GPU/backend structural proof and native smoke do not establish full supported-backend/scale graph/resource/performance acceptance.",
+    "Complete text keys, byte caps/accounting, native boundary counters and S2 completion remain open.",
+    "GPU timestamp measurement remains opt-in; default path benefits from the contribution conditions without measurement. No numerical speedup claim.",
+    "No dependency, vendoring, version/license, prototype, shader/AA, product mutation or resize qualification change."
+  ]
+}
