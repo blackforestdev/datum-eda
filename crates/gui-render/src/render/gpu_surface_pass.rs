@@ -123,7 +123,7 @@ enum DrawKind {
     Strokes,
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 struct DrawBatch {
     kind: DrawKind,
     range: std::ops::Range<u32>,

@@ -8,7 +8,9 @@ pub(crate) struct CachedSurfaceBundle {
     vertex_buffer: Option<wgpu::Buffer>,
     stroke_buffer: Option<wgpu::Buffer>,
     bind_group: wgpu::BindGroup,
-    commands: Vec<RetainedDrawCommand>,
+    // Only actual encoded state belongs here. Visibility/layer metadata has
+    // already selected the command stream and owns no additional GPU state.
+    batches: Box<[DrawBatch]>,
 }
 
 impl CachedSurfaceBundle {
@@ -22,7 +24,7 @@ impl CachedSurfaceBundle {
         self.vertex_buffer.as_ref() == vertex
             && self.stroke_buffer.as_ref() == stroke
             && &self.bind_group == binding
-            && self.commands == commands
+            && draw_batches(commands).eq(self.batches.iter().cloned())
     }
 }
 
@@ -58,6 +60,7 @@ impl Renderer {
             {
                 continue;
             }
+            let batches: Box<[_]> = draw_batches(commands).collect();
             let mut encoder =
                 device.create_render_bundle_encoder(&wgpu::RenderBundleEncoderDescriptor {
                     label: Some("datum-world-bundle"),
@@ -69,7 +72,7 @@ impl Renderer {
             encoder.set_bind_group(0, bind_group, &[]);
             let mut bound_kind = None;
             let mut draws = 0;
-            for batch in draw_batches(commands) {
+            for batch in &batches {
                 let (pipeline, buffer) = match batch.kind {
                     DrawKind::Quads => (&self.world_pipeline, vertex),
                     DrawKind::Strokes => (&self.world_stroke_pipeline, stroke),
@@ -81,8 +84,8 @@ impl Renderer {
                     bound_kind = Some(batch.kind);
                 }
                 match batch.kind {
-                    DrawKind::Quads => encoder.draw(batch.range, 0..1),
-                    DrawKind::Strokes => encoder.draw(0..6, batch.range),
+                    DrawKind::Quads => encoder.draw(batch.range.clone(), 0..1),
+                    DrawKind::Strokes => encoder.draw(0..6, batch.range.clone()),
                 }
                 draws += 1;
             }
@@ -93,7 +96,7 @@ impl Renderer {
                 vertex_buffer: vertex.cloned(),
                 stroke_buffer: stroke.cloned(),
                 bind_group: bind_group.clone(),
-                commands: commands.to_vec(),
+                batches,
             };
             if index == self.surface_world_bundles.len() {
                 self.surface_world_bundles.push(cached);
@@ -165,6 +168,80 @@ mod tests {
         assert_eq!(
             initial, renderer.surface_world_bundles[0].bundle,
             "camera contents do not change bound GPU resources"
+        );
+        let mut equivalent = prepared.clone();
+        for command in &mut equivalent.visible_draw_commands {
+            match command {
+                RetainedDrawCommand::Quads { layer_id, .. }
+                | RetainedDrawCommand::Strokes { layer_id, .. } => {
+                    *layer_id = Some("metadata already applied upstream".into());
+                }
+            }
+        }
+        let (split_index, split_range) = equivalent
+            .visible_draw_commands
+            .iter()
+            .enumerate()
+            .find_map(|(index, command)| match command {
+                RetainedDrawCommand::Quads { range, .. } if range.end - range.start >= 6 => {
+                    Some((index, range.clone()))
+                }
+                _ => None,
+            })
+            .expect("fixture has a splittable triangle list");
+        equivalent.visible_draw_commands.splice(
+            split_index..=split_index,
+            [
+                RetainedDrawCommand::Quads {
+                    layer_id: None,
+                    range: split_range.start..split_range.start + 3,
+                },
+                RetainedDrawCommand::Quads {
+                    layer_id: None,
+                    range: split_range.start + 3..split_range.end,
+                },
+            ],
+        );
+        renderer
+            .render(
+                &device,
+                &queue,
+                &view,
+                &equivalent,
+                &retained,
+                None,
+                1280,
+                800,
+            )
+            .unwrap();
+        assert_eq!(
+            initial, renderer.surface_world_bundles[0].bundle,
+            "equivalent encoded batches ignore upstream labels and segmentation"
+        );
+        let key = &renderer.surface_world_bundles[0].batches;
+        assert!(key.len() < equivalent.visible_draw_commands.len());
+        eprintln!(
+            "bundle key: source_commands={} batches={} payload_bytes={}",
+            equivalent.visible_draw_commands.len(),
+            key.len(),
+            std::mem::size_of_val(key.as_ref())
+        );
+        equivalent.visible_draw_commands.reverse();
+        renderer
+            .render(
+                &device,
+                &queue,
+                &view,
+                &equivalent,
+                &retained,
+                None,
+                1280,
+                800,
+            )
+            .unwrap();
+        assert_ne!(
+            initial, renderer.surface_world_bundles[0].bundle,
+            "painter order remains part of the encoding key"
         );
         let layer = prepared
             .visible_draw_commands

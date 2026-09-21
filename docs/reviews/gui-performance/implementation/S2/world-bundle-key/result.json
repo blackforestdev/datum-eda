@@ -1,0 +1,47 @@
+{
+  "status": "World bundle identity uses actual encoded batches; GPI-S2 remains in progress",
+  "baseline_commit": "3de8a0ec484fee7c17a78d6721eaaeea816aa6d1",
+  "production_consumers_migrated": [
+    "MAIN world surfaces",
+    "NEW existing general-world backdrop; S3 retirement still pending"
+  ],
+  "shared_owner": "Renderer.surface_world_bundles / CachedSurfaceBundle, shared Board and schematic encoding",
+  "change": "Replace cloned source commands and nested layer strings with a boxed sequence of actual adjacent DrawBatch values. Compare the same batch iterator on warm preparation; build and encode from the owned batches on a miss. Upstream metadata continues to select visibility before encoding. Equivalent labels or contiguous triangle-list segmentation no longer invalidate encoding.",
+  "competing_paths_retired": [
+    "Cached clone of every RetainedDrawCommand and its optional layer-name allocation",
+    "Bundle invalidation solely from upstream metadata or segmentation that leaves encoded draws unchanged"
+  ],
+  "remaining_competing_paths": [
+    "World visibility/prepared-command generation is unchanged and still scans source commands. Warm key comparison traverses batchable commands; no constant-time encoding check is claimed."
+  ],
+  "key_and_lifetime": {
+    "variable_dependencies": [
+      "vertex buffer handle",
+      "stroke buffer handle",
+      "camera bind-group handle",
+      "ordered primitive kinds and ranges after adjacent compatible merging"
+    ],
+    "renderer_invariants": "Pipelines, format and sample count are initialized with Renderer and not mutated in the current production path; device replacement creates a new Renderer. Scissor and camera uniform contents remain live outside the bundle. No clipping is baked into the bundle.",
+    "owned_key_payload": "Box<[DrawBatch]> owns no nested allocations or retained spare capacity. The fixture has five source commands after an equivalent split and four batches, totaling 48 owned key bytes. This counts the CPU key only, not opaque WGPU/driver encoding storage.",
+    "bound": "One bundle per current visible surface slot; preparation truncates closed slots. Key length is bounded by that surface command count. No new absolute GPU memory ceiling or full in-flight-resource accounting claim."
+  },
+  "proof": {
+    "renderer_wgpu": "Actual Renderer reuses bundle identity across camera updates, changed labels and equivalent triangle-list segmentation. Reversed painter order, visibility changes, replacement/shrunk buffers and changed bind groups invalidate; closed panes release bundles.",
+    "negative": "Ignoring batch identity fails the painter-order assertion. Disabling reuse fails camera-only warm identity. Both mutations restored byte-for-byte; final GPU proof passes.",
+    "batch_semantics": "Existing renderer suite verifies adjacency-only batching, gaps/overlaps/backwards ranges, primitive switches and incomplete triangle boundaries. The batching algorithm is unchanged.",
+    "tests": "201 passed, 20 ignored; explicit bundle proof run separately. Renderer library/tests visual-feature Clippy and fresh offline release pass.",
+    "native": "MAIN/NEW production world paths plus unchanged GLOBAL/PROJECT pass X11 startup/presentation/close smoke; Main wheel input passes. Native encoding counters, matched timing, Wayland and supported-scale matrix remain unqualified.",
+    "governance": "Source health, dependency authority, parity, evidence traceability, spec/project checks and staged formatting checked before commit. No ceiling changes. Existing unrelated terminal convergence drift remains open; full drift not rerun."
+  },
+  "limits": [
+    "HP06/HP07 and S2 are not fully qualified by these bounded proofs. Native per-adapter key negatives, device recreation, complete resource caps and performance replay remain open.",
+    "Shared schematic encoder is code adoption only; resolved schematic workload/visual performance still requires admitted fixtures.",
+    "No global CPU/GPU memory or numerical latency improvement claim follows from compact CPU key payload.",
+    "No dependency, vendoring, Cargo, visual-prototype, product-authority, pass/resolve schedule or resize qualification change."
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_surface_pass.rs": "fa7f10095e0d6a39dc8cff0a8a9ccc53eff0c0a1aae163cd56bd49e7c9dbfe3d",
+    "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs": "0b2850b275fcb0aabf351f811a4f5dcdb77cf00c77798a92626e4740227c0db6"
+  },
+  "candidate_binary_sha256": "63a4ed35033c0de230c2e1c9f53d251f0a1cfa561998c46c6ba6e56271d3bfa9"
+}
