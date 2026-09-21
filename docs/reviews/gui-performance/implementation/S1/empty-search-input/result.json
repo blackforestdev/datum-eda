@@ -1,0 +1,38 @@
+{
+  "status": "Default no-op search input consumes without native redraw in both Preferences adapters",
+  "baseline_commit": "64598838f3fa874067430120e671af11c8dfecc5",
+  "baseline_binary_sha256": "9833756fbf2ce26cc2c13d2ebeb23b6840fe718dba759cdd010afa1cc543cb09",
+  "candidate_binary_sha256": "d9efa11c530e6b037872030d649af6cca99668186115bfaf5edf6344f086b2bb",
+  "issue": "dat-empty-search-redraw-cvi",
+  "production_consumers_migrated": [
+    "GLOBAL",
+    "PROJECT"
+  ],
+  "shared_owner": "DialogInputOutcome::Consumed -> App::request_dialog_key_redraw; NativeFrameCoordinator remains sole native redraw owner.",
+  "competing_paths_retired": [
+    "Unconditional search invalidation after empty Backspace in Global and Project keyboard adapters."
+  ],
+  "production_change": "Only a successful String::pop resets search scroll, invalidates the frame and (Global) announces the changed result count. An empty search returns Consumed before those effects. Native key release and other control behavior remain unchanged.",
+  "verification": {
+    "native_before": "Both actual X11 Preferences keyboard routes: Tab into Search, empty Backspace, insert a, delete a, empty Backspace. Each operation produces one dialog presentation. Both processes close normally.",
+    "native_after": "Both hosts: empty deletions produce zero presentations; insertion and deletion each produce one. All requested press/release pairs are observed; both processes close exit 0.",
+    "app": "375 passed, zero failed, 10 ignored.",
+    "release": "Guarded offline release build passed.",
+    "clippy": "Guarded offline app binary/tests Clippy -D warnings passed.",
+    "governance": "Source health, dependency authority, spec parity and project state passed before evidence update; traceability and governance rechecked with map update."
+  },
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_keyboard.rs": "31977d438a7cbde007cadf400e104dffb711e207786142b765c6e5d3e9ca8f9a",
+    "crates/gui-app/src/project_preferences_runtime.rs": "b8e27e5e4a49f24b262d7ccc228f6adcfee649e0db36873766026d5b5084fa16"
+  },
+  "fixture_sha256": {
+    "GLOBAL": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "PROJECT": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+  },
+  "limits": [
+    "First candidate received final empty Backspace press but no release before timeout; incomplete run retained. Spaced replay uses xdotool --delay 80 instead of default spacing; this is a work-count correctness observation, not a matched timing/latency performance claim.",
+    "Application event and presentation counters do not establish independent pixels, all semantic state, all backend/scale combinations or full SH-01/S1 qualification.",
+    "No numerical CPU/GPU benefit, complete prescribed negative-control matrix or global adoption claimed.",
+    "No dependency, licensing, preference mutation authority, visual-truth or nonblocking resize boundary change. Existing full drift terminal-convergence failures remain; full drift not rerun for this input-only patch."
+  ]
+}
