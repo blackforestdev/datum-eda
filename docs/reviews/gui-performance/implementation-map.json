@@ -1284,7 +1284,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial: production pane closure now uses shared focus transition then prunes camera/grid stores; component proof preserves surviving warm state and releases closed ids. Complete native split/rebind/close camera/focus qualification remains open.",
         "id": "proof_sh_11",
         "positive": "Pane split/content rebind/close with warm other cameras",
         "negative_control": "Reuse camera solely by document or reset every camera",
@@ -1338,7 +1338,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/pane-close/receipt.json"
+      ]
     },
     {
       "id": "SH-12",
@@ -23849,5 +23852,32 @@
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/prepared-attachment/receipt.json",
     "native_call_site_inventory": "docs/reviews/gui-performance/implementation/S1/prepared-attachment/native-call-sites.json"
+  },
+  "s1_pane_close_work": {
+    "status": "production pane closure reconciled with shared focus and live view-state owners; bounded component proof",
+    "production_consumers": [
+      "Main workspace pane closure for Board/Schematic/Revision leaves"
+    ],
+    "production_entry": "View > Close Pane -> Runtime::activate_gui_local_menu_action -> Runtime::pane_close_focused -> Runtime::swap_pane_focus -> PaneCameras / PaneGridLod::retain_live",
+    "retired_paths": [
+      "duplicated close-only Board camera transition without application-focus reconciliation",
+      "camera pruning before outgoing-camera stash",
+      "indefinite closed-pane grid LOD retention"
+    ],
+    "verification": {
+      "app": "361 passed, 0 failed, 9 ignored; visual integration ignored",
+      "camera": "Closing active Board retains survivor zoom exactly, never calls fit initializer, removes outgoing camera and retains one live entry",
+      "grid": "64 distinct temporary pane closures remove each temporary grid entry while survivor keeps its prior hysteresis tier",
+      "clippy": "app all targets -D warnings passed",
+      "release": "guarded offline release build passed",
+      "gates": "source health, dependency authority, evidence traceability, spec governance, diff whitespace"
+    },
+    "limits": [
+      "Component tests exercise shared camera/grid stores; Runtime adapter ordering and shared focus routing are code-inspected, not native final-state proof.",
+      "No complete split/rebind/close native camera/focus matrix, baseline defect-injection replay or numerical latency/resource acceptance.",
+      "SH-11 and S1 remain partial; existing preset reset and content mismatch semantics preserved.",
+      "No dependency/license changes, new cache, editor mechanism or visual design. Resize CPU/temporal exclusions unchanged."
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/pane-close/receipt.json"
   }
 }
