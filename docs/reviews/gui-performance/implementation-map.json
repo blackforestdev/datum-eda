@@ -2099,7 +2099,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial component proof: Close-before-completion metadata lifetime, ticket cancellation and receipt-scoped retirement are component-tested. Native callback-after-close/no-late-work and complete memory budgets remain unqualified; metadata tests do not prove driver allocation release. Shared default idle completion now advances through the single minimum-deadline owner; five component regressions and four bounded native healthy-queue idle/close runs passed. Full native fault/deadline/resource qualification remains open. Main permanent window leak retired in favor of owned Arc; all four ordinary host closes and one device-recovery replay observe zero strong Main references after teardown. One device-run close timeout retained; driver lifetime and full lifecycle qualification remain open.",
+        "status": "partial component proof: Close-before-completion metadata lifetime, ticket cancellation and receipt-scoped retirement are component-tested. Native callback-after-close/no-late-work and complete memory budgets remain unqualified; metadata tests do not prove driver allocation release. Shared default idle completion now advances through the single minimum-deadline owner; five component regressions and four bounded native healthy-queue idle/close runs passed. Full native fault/deadline/resource qualification remains open. Main permanent window leak retired in favor of owned Arc; all four ordinary host closes and one device-recovery replay observe zero strong Main references after teardown. One device-run close timeout retained; driver lifetime and full lifecycle qualification remain open. Default Wayland native close crash reproduced twice and corrected by keeping window fields alive through all GPU field drops; all four Wayland and X11 host regressions pass (s1_native_window_lifetime_work). Complete driver-memory and fault/endurance qualification remain open.",
         "id": "proof_lf_07",
         "positive": "Close after submit before callback",
         "negative_control": "Capture strong native-host owner in callback",
@@ -2157,7 +2157,8 @@
         "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
         "docs/reviews/gui-performance/implementation/S1/prepared-attachment/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json",
-        "docs/reviews/gui-performance/implementation/S1/owned-main-window/result.json"
+        "docs/reviews/gui-performance/implementation/S1/owned-main-window/result.json",
+        "docs/reviews/gui-performance/implementation/S1/native-window-lifetime/result.json"
       ]
     },
     {
@@ -24631,5 +24632,40 @@
       "Native runs exercise Main redraw/presentation, not selection target diagnostics or opt-in clear rendering; all migrated callers compile under Clippy.",
       "No render/scheduler/input/model/backend or dependency/license behavior change. S1 and complete resource/per-adapter qualification remain open; resize stays nonblocking."
     ]
+  },
+  "s1_native_window_lifetime_work": {
+    "status": "Default native lifetime corrected; eight bounded native cases pass, full S1 qualification remains open",
+    "baseline_commit": "bb758dba44113141de6ba67d283cea75f94a59d2",
+    "issue": "dat-wayland-gpu-teardown-74j",
+    "production_consumers_migrated": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "shared_ownership_change": "Runtime and shared GlobalPreferencesWindowSurface declare their Arc<Window> after every GPU-bearing field. Rust field drop order retains the native display until renderer, measurements, surface and remaining device/instance handles are destroyed.",
+    "competing_paths_retired": [
+      "Window field dropped before later renderer/measurement GPU handles in Main and auxiliary ownership."
+    ],
+    "verification": {
+      "baseline": "Two default Main Wayland runs received CloseRequested and crashed during teardown. First coredump reports SIGSEGV in libwayland-client through EGL instance destruction during Renderer/Runtime drop; replay records exit -11. No backend selection override or fault injection.",
+      "candidate_wayland": "MAIN, GLOBAL, PROJECT and NEW pass initial presentation, three-second idle with no extra presentation, native CloseRequested, process exit 0 and released Main window ownership. KWin temporary close scripts match exact PID and title, then unload.",
+      "release": "Guarded offline release build passed.",
+      "candidate_x11": "Four X11 hosts pass final 1200x800 extent, completed receipts, three idle seconds with no extra presentations and close exit 0.",
+      "clippy": "Guarded offline app binary/test Clippy passed with -D warnings.",
+      "governance": "Source health, spec parity, traceability and dependency authority passed. No full drift rerun for this field-order-only change; preceding bb758dba run records existing terminal-convergence failures."
+    },
+    "source_sha256": {
+      "crates/gui-app/src/runtime_state.rs": "4aecf5b5d39c7822c332eb8585852884cee701501ab769005c8acff23d06bf54",
+      "crates/gui-app/src/global_preferences_window.rs": "4181141135dc1f2a0316dc1abf9e5c6b7e43b33f0e7462fef11701dfddb4f4cf"
+    },
+    "limits": [
+      "Bounded application-reference teardown and clean exit proof, not driver residency accounting, complete LF-07/endurance or S1 acceptance.",
+      "Wayland requests originate through compositor scripting, not physical pointer input. Native backend identity and CloseRequested are observed in application logs.",
+      "Default Vulkan surface also initializes an unused EGL backend; preserve existing backend policy and fix owner lifetime instead. No new dependencies, vendoring or third-party changes.",
+      "First harness omitted a useful nonzero exit message and had a later unreachable lowercase ownership assertion. Replay/candidate correct those assertions; baseline native close still demonstrably crashes before either ownership assertion.",
+      "Resize CPU/temporal qualification remains nonblocking and unqualified."
+    ],
+    "candidate_binary_sha256": "174313519a838c079bdf524e806d301ff6507c16cb38b58d796ff7a8bb0558c1"
   }
 }

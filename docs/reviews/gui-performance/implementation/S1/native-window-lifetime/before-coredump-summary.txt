@@ -1,0 +1,50 @@
+           PID: 1213790 (datum-gui)
+           UID: 1000 (bfadmin)
+           GID: 1000 (bfadmin)
+        Signal: 11 (SEGV)
+     Timestamp: Mon 2026-09-21 04:48:52 PDT (1min 57s ago)
+  Command Line: /home/bfadmin/Documents/datum-eda/target/release/datum-gui --board /tmp/pm045-readiness-x11/MAIN/board.kicad_pcb --window-size 1280x800
+    Executable: /home/bfadmin/Documents/datum-eda/target/release/datum-gui
+ Control Group: /user.slice/user-1000.slice/user@1000.service/app.slice/app-ghostty-transient-2167.scope/surfaces/3B46CE90.scope
+          Unit: user@1000.service
+     User Unit: app-ghostty-transient-2167.scope
+         Slice: user-1000.slice
+     Owner UID: 1000 (bfadmin)
+       Boot ID: 37a4d96394a34bdc9c5fa238b5aa24b8
+    Machine ID: c77eca0efc16406b843c0620808f6a1a
+      Hostname: debian3520
+       Storage: /var/lib/systemd/coredump/core.datum-gui.1000.37a4d96394a34bdc9c5fa238b5aa24b8.1213790.1789991332000000.zst (present)
+  Size on Disk: 6.5M
+       Message: Process 1213790 (datum-gui) of user 1000 dumped core.
+                
+                Module libzstd.so.1 from deb libzstd-1.5.7+dfsg-1.amd64
+                Module libstdc++.so.6 from deb gcc-14-14.2.0-19.amd64
+                Module libgcc_s.so.1 from deb gcc-14-14.2.0-19.amd64
+                Stack trace of thread 1213790:
+                #0  0x00007fb158a76c8e n/a (libwayland-client.so.0 + 0xbc8e)
+                #1  0x00007fb158a71d50 n/a (libwayland-client.so.0 + 0x6d50)
+                #2  0x00007fb158a734d2 wl_proxy_marshal_array_flags (libwayland-client.so.0 + 0x84d2)
+                #3  0x00007fb158a73a71 wl_proxy_marshal_flags (libwayland-client.so.0 + 0x8a71)
+                #4  0x00007fb14c9ad9c7 n/a (libEGL_mesa.so.0 + 0x2f9c7)
+                #5  0x00007fb14c9a37b8 n/a (libEGL_mesa.so.0 + 0x257b8)
+                #6  0x00007fb14c9a3dd0 n/a (libEGL_mesa.so.0 + 0x25dd0)
+                #7  0x00007fb14c990d07 n/a (libEGL_mesa.so.0 + 0x12d07)
+                #8  0x000055cfe6127657 _ZN68_$LT$wgpu_hal..gles..egl..Inner$u20$as$u20$core..ops..drop..Drop$GT$4drop17h58bc32a75b8dcdf1E (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0xee1657)
+                #9  0x000055cfe6032287 _ZN4core3ptr50drop_in_place$LT$wgpu_hal..gles..egl..Instance$GT$17h747028be4f0e1cd0E (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0xdec287)
+                #10 0x000055cfe5f748b1 _ZN70_$LT$alloc..vec..Vec$LT$T$C$A$GT$$u20$as$u20$core..ops..drop..Drop$GT$4drop17h522bdbe198ee14e9E (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0xd2e8b1)
+                #11 0x000055cfe5f8ef1d _ZN5alloc4sync16Arc$LT$T$C$A$GT$9drop_slow17h482513e58e4e31b4E (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0xd48f1d)
+                #12 0x000055cfe5f8e970 _ZN5alloc4sync16Arc$LT$T$C$A$GT$9drop_slow17h0b65a99ad644fe2cE (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0xd48970)
+                #13 0x000055cfe59cc30e _ZN4core3ptr63drop_in_place$LT$datum_gui_render..renderer_state..Renderer$GT$17h8562939dc82ec7e7E (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0x78630e)
+                #14 0x000055cfe59ca28e _ZN4core3ptr54drop_in_place$LT$datum_gui..runtime_state..Runtime$GT$17h877254142c43764bE (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0x78428e)
+                #15 0x000055cfe59c8c11 _ZN4core3ptr46drop_in_place$LT$datum_gui..app_shell..App$GT$17h7cff4026ca2648d0E (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0x782c11)
+                #16 0x000055cfe59f08dc _ZN9datum_gui9app_shell3App3run17ha8bf93d6ef8342a9E (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0x7aa8dc)
+                #17 0x000055cfe596d899 _ZN9datum_gui4main17h62307047716d4d87E (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0x727899)
+                #18 0x000055cfe5b11843 _ZN3std3sys9backtrace28__rust_begin_short_backtrace17h4502a98024fecd5aE (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0x8cb843)
+                #19 0x000055cfe5a39dbd _ZN3std2rt10lang_start28_$u7b$$u7b$closure$u7d$$u7d$17h43e155f49e767ac5E.llvm.14951824977891632086 (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0x7f3dbd)
+                #20 0x000055cfe6d72076 _ZN3std2rt19lang_start_internal17hb84cc625940d332aE (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0x1b2c076)
+                #21 0x000055cfe596d985 main (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0x727985)
+                #22 0x00007fb15876eca8 n/a (libc.so.6 + 0x29ca8)
+                #23 0x00007fb15876ed65 __libc_start_main (libc.so.6 + 0x29d65)
+                #24 0x000055cfe5917f61 _start (/home/bfadmin/Documents/datum-eda/target/release/datum-gui + 0x6d1f61)
+                
+                
