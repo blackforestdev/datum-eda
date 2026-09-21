@@ -22171,5 +22171,85 @@
       "native_probe.py": "54d1484e739969cb444669a2227fe989797095684322f0f4d99c59bb9714fb49",
       "new_probe.py": "c0a71c3dbcb7d1aca8c8960de60b92cdec635e1b76b32f133ac728e146736155"
     }
+  },
+  "s1_host_round_work": {
+    "status": "default delivered-token host rounds adopted; S1 remains in progress",
+    "baseline_commit": "fa033feb",
+    "requirements": [
+      "SCH-01",
+      "SCH-03",
+      "SCH-05"
+    ],
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_entry": "App::handle_native_window_event(RedrawRequested) -> NativeFrameCoordinator::redraw_received -> ApplicationHandler::about_to_wait -> dispatch_native_frame_round -> ready_round -> main/owned adapter -> begin_frame -> render -> frame_finished",
+    "shared_owner": "NativeFrameCoordinator owns bounded delivered-token readiness and rotating host order; native_frame_adapters owns dispatch",
+    "retired_paths": [
+      "Main RedrawRequested immediate-render arm",
+      "Global Preferences RedrawRequested immediate-render arm",
+      "Project Preferences RedrawRequested immediate-render arm",
+      "New Project RedrawRequested immediate-render arm",
+      "Dependence on native callback ordering for first host service"
+    ],
+    "behavior": [
+      "Only delivered RedrawRequested tokens enter a round; input-only wakeups do not create frames",
+      "Duplicate tokens coalesce; each ready host is attempted once per snapshot and the first host rotates between rounds",
+      "Known hidden, suspended, retry-waiting, closed and replaced tokens are excluded without retiring damage",
+      "All input is applied before a frame captures current damage; delivered tokens remain reserved until their selected host begins",
+      "Owned-window close/open synchronization precedes selection; retry deadlines created by rendering join the existing wait decision afterward",
+      "No extra render thread, timer loop or prepared snapshot queue"
+    ],
+    "verification": {
+      "app": "337 passed, 0 failed, 8 ignored; two new round tests exercise reversed native order, repeated duplicate tokens, later input, reserved tokens, rotation, wait/hidden/close/replacement and no-token suppression",
+      "native": "Four Xwayland/Vulkan configurations pass six accepted-extent/final-state transitions; each log records the actual production host-round entry",
+      "recovery": "GLOBAL plus main recovers through actual device-loss callback fault_code=1; persistent MAIN surface OOM stops automatic retry and permits one native F5 attempt",
+      "build": "Fresh default-feature offline release passed",
+      "drift": "Workspace formatting, Clippy and preceding gates pass; drift stops at the same two baseline dat-terminal-convergence-guard-xke focus-count/font-marker failures; later stages not run",
+      "source_health": "Moved native ApplicationHandler lifecycle/wait orchestration to existing app_native_events owner; main pre-test 1492 -> 1455; source policy regression 13 passed"
+    },
+    "limits": [
+      "SCH-03 terminal dispatch budgets and mixed-work native fairness remain S4 obligations; host-round tests do not qualify them",
+      "Surface/resource accounting and complete SH/LF input/focus proof remain open; S1 not complete",
+      "No numerical, static visual, temporal or Wayland acceptance from these checks",
+      "Previously recorded Project resize stall remains failed/unqualified under nonblocking owner disposition; this pass does not close resize"
+    ],
+    "commands": [
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui",
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app",
+      "CARGO_NET_OFFLINE=true bash scripts/run_drift_gates.sh",
+      "python3 /tmp/pm045_round_native.py",
+      "python3 /tmp/pm045_round_fault.py"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/host-rounds",
+    "source_sha256": {
+      "crates/gui-app/src/app_frame.rs": "9426a5ef040bb402d8c2afe666e6b5e48da9ba47081b3af6d5876f9805266f3a",
+      "crates/gui-app/src/app_native_events.rs": "b5ad79f168aa2f486a20518c298214d2b806c143ba36c5c8ec6a0d62f5bbebcf",
+      "crates/gui-app/src/global_preferences_window.rs": "da1d4cfdad0736293c304250a48b402e1e9508517b5f8418bda91d21bedc2fc4",
+      "crates/gui-app/src/main.rs": "f2d5ec42ef6724d9ecbb2b0430d9c6f38de964da05e44cf6804c53f0337c143f",
+      "crates/gui-app/src/native_frame_adapters.rs": "88bab653a514035d07bad630d0d46abf5feb56b5fc6352040e57e91ea5c5dd78",
+      "crates/gui-app/src/native_frame_coordinator.rs": "6607232094ea26ab2acba9f5970a64a04b5f104c61fb804cbf94eeac4f744f04",
+      "crates/gui-app/src/new_project_window.rs": "737ecdac772c4366814c64925df32005742b0c61b1e4cdb87aca4819cf645b53",
+      "crates/gui-app/src/project_preferences_window.rs": "e537bd02da1946212adfd2ad292b2b9f659f6c0a1ea5ac5d8605dd430716cb17"
+    },
+    "artifacts_sha256": {
+      "GLOBAL-fault.log.gz": "a3a16287960ef34fd888f4c20c0465ac85c208dda54db87080e1487ff1e6f7e7",
+      "GLOBAL-native.log.gz": "7b81c573ff6df2f74405aaea0fc54f51eb9e0775ac91d4c4199048c938b0d79b",
+      "MAIN-native.log.gz": "687a08b2dd1fe22c2861b98c8151ac3a0df3c33580d2260fc0b499ad6b373244",
+      "NEW-native.log.gz": "29bc527daa325fbb97896b1d069b5a00c67cfb602d70e4ccc3638715bae79be4",
+      "PROJECT-native.log.gz": "366f73c2a6ea1039e99a7cc67d33a5d4a5b6fd17ed85ef027d4a9533be5d6606",
+      "app.log.gz": "01b19a95328df0b3e1263d96e9df2fa93dc0661dc10291c8413d4640b5b785e6",
+      "build.log.gz": "2ba631aec7196d7212da0876432b606974e2b5a896dc37b7e7c0f57e6a5370f5",
+      "drift.log.gz": "8c2582b1c3bd8f755a7dada365ad6cfdb65347ee65e4aef8d07124513f5f0059",
+      "fault_probe.py": "7bc199788986266c8005766bb17a2ea290307bbe7d82d9b82b01ae13143619fa",
+      "faults.json": "931a48d8fd65d921d36ed45b3a896aa27ae0a7271e24f68931ee9023f69f5b5b",
+      "native.json": "0bfd9af5091850832698813d5aa7fbf819029f6de66c65bc12d2bac1ad92bbbc",
+      "native_probe.py": "7bea255d9da430564b3dfe92df7c533019b5b2abaa6488233b124e4428a45d3d",
+      "oom-fault.log.gz": "0adae911e9954b94fc26670e47830ebc590e5d4304c406285c8dd3443c7df78b",
+      "source-policy.log.gz": "8727ffcf673dbe4c957a375f098e885a94e233edf2678c5fd80db1f9f25ec5f2"
+    }
   }
 }

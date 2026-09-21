@@ -5,7 +5,10 @@
 //! from changing a closed or replacement host. Each host owns its recovery clock;
 //! queue configuration admission is shared separately by the native device.
 use crate::gui_runtime_support::native_recovery::RecoveryHandle;
-use std::{collections::HashMap, time::Instant};
+use std::{
+    collections::{HashMap, VecDeque},
+    time::Instant,
+};
 use winit::window::{Window, WindowId};
 use winit::{
     dpi::PhysicalSize,
@@ -34,6 +37,7 @@ struct Host {
     damage: u64,
     presented: u64,
     pending: bool,
+    ready: bool,
     attempt: u64,
     rendering: Option<u64>,
 }
@@ -43,6 +47,7 @@ pub(super) struct NativeFrameCoordinator {
     generation: u64,
     hosts: HashMap<WindowId, Host>,
     suspended: bool,
+    order: VecDeque<WindowId>,
 }
 
 impl NativeFrameCoordinator {
@@ -61,6 +66,9 @@ impl NativeFrameCoordinator {
             .generation
             .checked_add(1)
             .expect("host generation exhausted");
+        if !self.hosts.contains_key(&window) {
+            self.order.push_back(window);
+        }
         self.hosts.insert(
             window,
             Host {
@@ -75,6 +83,7 @@ impl NativeFrameCoordinator {
                 damage: 1,
                 presented: 0,
                 pending: false,
+                ready: false,
                 attempt: 0,
                 rendering: None,
             },
@@ -119,6 +128,7 @@ impl NativeFrameCoordinator {
             .set_drawable(host.restore_pending, Instant::now());
         if !host.restore_pending {
             host.pending = false;
+            host.ready = false;
         }
     }
 
@@ -138,6 +148,7 @@ impl NativeFrameCoordinator {
                 .set_drawable(host.restore_pending, Instant::now());
             if suspended {
                 host.pending = false;
+                host.ready = false;
             }
         }
     }
@@ -226,6 +237,7 @@ impl NativeFrameCoordinator {
         let failed = host.recovery.borrow_mut().take_failure();
         if failed {
             host.pending = false;
+            host.ready = false;
             host.restore_pending = false;
             let message = format!(
                 "Rendering paused for native host {:?}: automatic recovery stopped. Press F5 to Retry, or close this window. Application state is retained.",
@@ -244,6 +256,7 @@ impl NativeFrameCoordinator {
         for host in self.hosts.values_mut() {
             host.recovery.borrow_mut().fail_device();
             host.pending = false;
+            host.ready = false;
             host.rendering = None;
         }
     }
@@ -283,6 +296,7 @@ impl NativeFrameCoordinator {
 
     pub(super) fn close(&mut self, window: WindowId) {
         self.hosts.remove(&window);
+        self.order.retain(|id| *id != window);
     }
 
     /// The sole product request_redraw boundary. This does not apply or coalesce
@@ -318,13 +332,46 @@ impl NativeFrameCoordinator {
         true
     }
 
+    /// Accept only native redraw tokens. Input-only event-loop wakeups cannot
+    /// manufacture ready frames; duplicate native tokens coalesce until dispatch.
+    pub(super) fn redraw_received(&mut self, window: WindowId) {
+        if let Some(host) = self.hosts.get_mut(&window) {
+            host.ready = true;
+            host.pending = true;
+        }
+    }
+
+    /// Snapshot one bounded round after native event delivery. Rotate the first
+    /// host, not just the requests, so repeated compositor ordering cannot give
+    /// the same busy host first service in every round.
+    pub(super) fn ready_round(&mut self, now: Instant) -> Vec<WindowId> {
+        let mut ready = Vec::new();
+        for id in &self.order {
+            let host = self.hosts.get_mut(id).expect("registered dispatch host");
+            if !std::mem::take(&mut host.ready) {
+                continue;
+            }
+            if Self::drawable(host, self.suspended) && host.recovery.borrow_mut().ready(now) {
+                // Keep the delivered token reserved until this host begins.
+                ready.push(*id);
+            } else {
+                host.pending = false;
+            }
+        }
+        if !ready.is_empty() {
+            self.order.rotate_left(1);
+        }
+        ready
+    }
+
     /// A compositor may request repaint without a preceding application request.
-    pub(super) fn redraw_received(&mut self, window: WindowId) -> Option<FrameReceipt> {
+    pub(super) fn begin_frame(&mut self, window: WindowId) -> Option<FrameReceipt> {
         let host = self.hosts.get_mut(&window)?;
         if !Self::drawable(host, self.suspended)
             || !host.recovery.borrow_mut().ready(Instant::now())
         {
             host.pending = false;
+            host.ready = false;
             return None;
         }
         if host.rendering.is_some() {
@@ -388,6 +435,74 @@ impl NativeFrameCoordinator {
 mod tests {
     use super::*;
 
+    #[test]
+    fn delivered_tokens_have_rotating_bounded_service_independent_of_native_order() {
+        let mut frames = NativeFrameCoordinator::default();
+        let ids: Vec<_> = (1..=4).map(WindowId::from).collect();
+        for id in &ids {
+            frames.register(*id, 1, PhysicalSize::new(1280, 800), Default::default());
+        }
+        for round in 0..8 {
+            for id in ids.iter().rev() {
+                for _ in 0..20 {
+                    frames.redraw_received(*id);
+                }
+                // Later input before dispatch belongs to the current frame.
+                assert!(!frames.invalidate_id(*id));
+            }
+            let actual = frames.ready_round(Instant::now());
+            let mut expected = ids.clone();
+            expected.rotate_left(round % 4);
+            assert_eq!(actual, expected);
+            for id in actual {
+                assert!(!frames.invalidate_id(id));
+                let receipt = frames.begin_frame(id).unwrap();
+                assert_eq!(receipt.damage, frames.hosts[&id].damage);
+                assert!(!frames.finish(receipt, true));
+            }
+            assert!(frames.ready_round(Instant::now()).is_empty());
+        }
+    }
+
+    #[test]
+    fn ready_round_skips_waiting_hidden_closed_and_replaced_tokens() {
+        use crate::gui_runtime_support::native_recovery::RetryReason;
+        let mut frames = NativeFrameCoordinator::default();
+        for raw in 1..=5 {
+            let id = WindowId::from(raw);
+            frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
+            frames.redraw_received(id);
+        }
+        let now = Instant::now();
+        let waiting = WindowId::from(1);
+        frames.hosts[&waiting]
+            .recovery
+            .borrow_mut()
+            .defer(RetryReason::Queue, now);
+        frames.window_event(WindowId::from(2), &WindowEvent::Occluded(true));
+        frames.close(WindowId::from(3));
+        frames.rebind_device(WindowId::from(4), 2, Default::default());
+        assert_eq!(frames.ready_round(now), vec![WindowId::from(5)]);
+        assert!(frames.ready_round(now).is_empty());
+        assert_ne!(
+            frames.hosts[&waiting].damage,
+            frames.hosts[&waiting].presented
+        );
+        assert!(!frames.hosts[&waiting].pending);
+        assert_eq!(frames.order.len(), 4);
+        // Expiry without a new native token cannot manufacture a frame.
+        assert!(
+            frames
+                .ready_round(now + std::time::Duration::from_millis(3))
+                .is_empty()
+        );
+        frames.redraw_received(waiting);
+        assert_eq!(
+            frames.ready_round(now + std::time::Duration::from_millis(3)),
+            vec![waiting]
+        );
+    }
+
     fn primary(state: ElementState) -> WindowEvent {
         WindowEvent::MouseInput {
             device_id: winit::event::DeviceId::dummy(),
@@ -442,16 +557,16 @@ mod tests {
         let mut frames = NativeFrameCoordinator::default();
         let id = WindowId::from(7);
         frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
-        let old = frames.redraw_received(id).unwrap();
+        let old = frames.begin_frame(id).unwrap();
         frames.window_event(id, &WindowEvent::Resized(PhysicalSize::new(1440, 900)));
         frames.window_event(id, &WindowEvent::Occluded(true));
         frames.fail_device();
         frames.rebind_device(id, 2, Default::default());
         assert!(!frames.finish(old, true));
         assert_eq!(frames.hosts[&id].extent, PhysicalSize::new(1440, 900));
-        assert!(frames.redraw_received(id).is_none());
+        assert!(frames.begin_frame(id).is_none());
         frames.window_event(id, &WindowEvent::Occluded(false));
-        let current = frames.redraw_received(id).unwrap();
+        let current = frames.begin_frame(id).unwrap();
         assert_eq!(current.device_generation, 2);
         assert!(!frames.finish(current, true));
         frames.close(id);
@@ -469,14 +584,14 @@ mod tests {
         assert!(!frames.hosts[&id].pending);
         for _ in 0..20 {
             assert!(!frames.invalidate_id(id));
-            assert!(frames.redraw_received(id).is_none());
+            assert!(frames.begin_frame(id).is_none());
             assert!(!frames.take_restore_request(id));
         }
         let latest = frames.hosts[&id].damage;
         frames.window_event(id, &WindowEvent::Resized(PhysicalSize::new(1440, 900)));
         assert!(frames.take_restore_request(id));
         assert!(!frames.take_restore_request(id));
-        let receipt = frames.redraw_received(id).unwrap();
+        let receipt = frames.begin_frame(id).unwrap();
         assert!(receipt.damage > latest);
         assert!(!frames.finish(receipt, true));
         assert_eq!(frames.hosts[&id].presented, frames.hosts[&id].damage);
@@ -492,10 +607,10 @@ mod tests {
         assert!(!frames.invalidate_id(id));
         frames.window_event(id, &WindowEvent::Occluded(false));
         assert!(!frames.take_restore_request(id));
-        assert!(frames.redraw_received(id).is_none());
+        assert!(frames.begin_frame(id).is_none());
         frames.set_suspended(false);
         assert!(frames.take_restore_request(id));
-        let receipt = frames.redraw_received(id).unwrap();
+        let receipt = frames.begin_frame(id).unwrap();
         assert!(!frames.finish(receipt, false));
         // Restoration was consumed by the actual attempt, not a retry timer.
         for _ in 0..20 {
@@ -509,7 +624,7 @@ mod tests {
         let id = WindowId::from(1);
         frames.register(id, 1, PhysicalSize::new(0, 0), Default::default());
         assert!(!frames.invalidate_id(id));
-        assert!(frames.redraw_received(id).is_none());
+        assert!(frames.begin_frame(id).is_none());
         frames.window_event(id, &WindowEvent::Resized(PhysicalSize::new(1, 1)));
         assert!(frames.take_restore_request(id));
         frames.window_event(id, &WindowEvent::Destroyed);
@@ -518,7 +633,7 @@ mod tests {
         frames.set_suspended(true);
         frames.set_suspended(false);
         assert!(!frames.take_restore_request(id));
-        assert!(frames.redraw_received(id).is_none());
+        assert!(frames.begin_frame(id).is_none());
     }
 
     #[test]
@@ -531,11 +646,11 @@ mod tests {
             for _ in 0..100 {
                 assert!(!frames.invalidate_id(window));
             }
-            let first = frames.redraw_received(window).unwrap();
+            let first = frames.begin_frame(window).unwrap();
             assert!(!frames.invalidate_id(window));
             assert!(frames.finish(first, true));
             assert!(!frames.invalidate_id(window));
-            let last = frames.redraw_received(window).unwrap();
+            let last = frames.begin_frame(window).unwrap();
             assert!(!frames.finish(last, true));
             assert_eq!(
                 frames.hosts[&window].damage,
@@ -567,12 +682,12 @@ mod tests {
         let id = WindowId::from(1);
         frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
         assert!(frames.invalidate_id(id));
-        let receipt = frames.redraw_received(id).unwrap();
+        let receipt = frames.begin_frame(id).unwrap();
         assert!(!frames.finish(receipt, false));
         assert_ne!(frames.hosts[&id].damage, frames.hosts[&id].presented);
         assert!(!frames.hosts[&id].pending);
         assert!(frames.invalidate_id(id));
-        let retry = frames.redraw_received(id).unwrap();
+        let retry = frames.begin_frame(id).unwrap();
         assert!(!frames.finish(retry, true));
         assert_eq!(frames.hosts[&id].damage, frames.hosts[&id].presented);
     }
@@ -582,12 +697,12 @@ mod tests {
         let mut frames = NativeFrameCoordinator::default();
         let id = WindowId::from(1);
         frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
-        let old = frames.redraw_received(id).unwrap();
+        let old = frames.begin_frame(id).unwrap();
         frames.close(id);
         assert!(!frames.finish(old, true));
         assert!(!frames.invalidate_id(id));
         frames.register(id, 2, PhysicalSize::new(1280, 800), Default::default());
-        let new = frames.redraw_received(id).unwrap();
+        let new = frames.begin_frame(id).unwrap();
         assert!(!frames.finish(old, true));
         assert_eq!(frames.hosts[&id].rendering, Some(new.attempt));
         assert!(!frames.finish(new, true));
@@ -601,9 +716,9 @@ mod tests {
         let mut frames = NativeFrameCoordinator::default();
         let id = WindowId::from(1);
         frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
-        let failed = frames.redraw_received(id).unwrap();
+        let failed = frames.begin_frame(id).unwrap();
         assert!(!frames.finish(failed, false));
-        let retry = frames.redraw_received(id).unwrap();
+        let retry = frames.begin_frame(id).unwrap();
         assert_eq!(retry.damage, failed.damage);
         assert_ne!(retry.attempt, failed.attempt);
         assert!(!frames.finish(failed, true));

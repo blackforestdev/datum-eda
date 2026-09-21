@@ -7,7 +7,7 @@ impl App {
         let Some(window) = self.window else {
             return;
         };
-        let Some(receipt) = self.frames.redraw_received(window.id()) else {
+        let Some(receipt) = self.frames.begin_frame(window.id()) else {
             return;
         };
         let presented = if let Some(runtime) = &mut self.runtime {

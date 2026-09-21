@@ -667,13 +667,13 @@
     "crates/gui-app/src/main.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1492
+        "pre_test_lines": 1455
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Runtime state definition lives in runtime_state.rs; native lifecycle/event dispatch in app_native_events.rs and device replacement in native_device_recovery.rs. Entry point delegates these owners."
+      "note": "Native ApplicationHandler lifecycle, wait-boundary orchestration and input dispatch live in app_native_events.rs; Runtime state and device replacement retain their separate owners."
     },
     "crates/gui-protocol/src/kicad_scene_import.rs": {
       "kind": "rust-production",
