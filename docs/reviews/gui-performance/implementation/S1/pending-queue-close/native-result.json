@@ -1,0 +1,76 @@
+{
+  "binary_sha256": "d9efa11c530e6b037872030d649af6cca99668186115bfaf5edf6344f086b2bb",
+  "runs": [
+    {
+      "host": "MAIN",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "pid": 1242144,
+      "target_submissions_before_close": 1,
+      "unpublished_receipt_before_close": 1,
+      "exit": 0,
+      "all_hosts_dropped": true,
+      "no_lifecycle_after_drop": true,
+      "main_window_released": true
+    },
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "pid": 1242275,
+      "target_submissions_before_close": 0,
+      "unpublished_receipt_before_close": 1,
+      "exit": 0,
+      "all_hosts_dropped": true,
+      "no_lifecycle_after_drop": true,
+      "main_window_released": true
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "pid": 1242335,
+      "target_submissions_before_close": 0,
+      "unpublished_receipt_before_close": 1,
+      "exit": 0,
+      "all_hosts_dropped": true,
+      "no_lifecycle_after_drop": true,
+      "main_window_released": true
+    },
+    {
+      "host": "NEW",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "pid": 1242389,
+      "target_submissions_before_close": 0,
+      "unpublished_receipt_before_close": 1,
+      "exit": 0,
+      "all_hosts_dropped": true,
+      "no_lifecycle_after_drop": true,
+      "main_window_released": true
+    }
+  ]
+}
