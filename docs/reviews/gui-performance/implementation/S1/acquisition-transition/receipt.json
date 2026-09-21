@@ -1,0 +1,27 @@
+{
+  "status": "shared acquisition failure transition adopted; partial LF-02 component conformance",
+  "production_consumers": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "shared_owner": "Recovery::acquisition_failed(error, monotonic_now) -> AcquisitionFailure; SurfaceTransaction applies backend configuration/device/reporting effects",
+  "retired_paths": [
+    "Surface acquisition embedded error classification plus separate direct retry-clock mutations"
+  ],
+  "production_change": "Lost/Outdated request reconfiguration and share the existing bounded acquisition episode with Timeout. Allocation failure and fatal errors remain separate effects. No new retry policy, backend seam, timer or dependency.",
+  "verification": {
+    "transition": "Sequential Lost/Outdated/Timeout consumes 16/32/64ms backoff in one two-second episode; manual Retry and success reset it. Allocation/fatal outcomes create no automatic acquisition timer.",
+    "app_initial": "355 passed, one known restart-lineage failure, nine ignored",
+    "app_replay": "isolated restart replay passed; full replay 356 passed, zero failed, nine ignored; visual integration ignored",
+    "clippy": "all app targets -D warnings passed"
+  },
+  "limits": [
+    "dat-terminal-restart-lineage-jti remains unresolved; failed run preserved",
+    "LF-02 native per-host sequence, actual configure generations and final-state delivery remain open",
+    "LF-06 replacement allocation failure is not established by acquisition OutOfMemory classification",
+    "S1 and full SH/LF/resource/native qualification remain open; no performance budget or global adoption claim",
+    "No dependency, product authority or resize exclusion change"
+  ]
+}

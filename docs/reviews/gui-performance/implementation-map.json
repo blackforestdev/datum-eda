@@ -1584,7 +1584,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial: shared backend-error recovery transition and monotonic sequence proof; native configuration-generation/final-state proof remains open",
         "id": "proof_lf_02",
         "positive": "Lost then outdated then success per native host",
         "negative_control": "Drop damage on acquisition failure",
@@ -1630,7 +1630,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/acquisition-transition/receipt.json"
+      ]
     },
     {
       "id": "LF-03",
@@ -23585,5 +23588,33 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
     "disposition": "Existing current 354-pass app suite covers these named production-owner tests; planned-only descriptions were stale. No test was rerun and no native/resource predicate or milestone is declared complete. LF-02 Lost/Outdated succession, LF-06 allocation failure and LF-12 ordinary coalesced configure remain without specific executed proof in their rows; LF-11 renderer allocation proof requires separate verification. Continue S1 implementation/proof within existing order; S2-S5 remain pending."
+  },
+  "s1_acquisition_transition_work": {
+    "status": "shared acquisition failure transition adopted; partial LF-02 component conformance",
+    "production_consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "shared_owner": "Recovery::acquisition_failed(error, monotonic_now) -> AcquisitionFailure; SurfaceTransaction applies backend configuration/device/reporting effects",
+    "retired_paths": [
+      "Surface acquisition embedded error classification plus separate direct retry-clock mutations"
+    ],
+    "production_change": "Lost/Outdated request reconfiguration and share the existing bounded acquisition episode with Timeout. Allocation failure and fatal errors remain separate effects. No new retry policy, backend seam, timer or dependency.",
+    "verification": {
+      "transition": "Sequential Lost/Outdated/Timeout consumes 16/32/64ms backoff in one two-second episode; manual Retry and success reset it. Allocation/fatal outcomes create no automatic acquisition timer.",
+      "app_initial": "355 passed, one known restart-lineage failure, nine ignored",
+      "app_replay": "isolated restart replay passed; full replay 356 passed, zero failed, nine ignored; visual integration ignored",
+      "clippy": "all app targets -D warnings passed"
+    },
+    "limits": [
+      "dat-terminal-restart-lineage-jti remains unresolved; failed run preserved",
+      "LF-02 native per-host sequence, actual configure generations and final-state delivery remain open",
+      "LF-06 replacement allocation failure is not established by acquisition OutOfMemory classification",
+      "S1 and full SH/LF/resource/native qualification remain open; no performance budget or global adoption claim",
+      "No dependency, product authority or resize exclusion change"
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/acquisition-transition/receipt.json"
   }
 }

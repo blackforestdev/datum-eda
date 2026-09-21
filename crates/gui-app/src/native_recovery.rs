@@ -11,6 +11,14 @@ pub(crate) enum RetryReason {
     Acquisition,
     Queue,
 }
+#[derive(Debug, PartialEq, Eq)]
+pub(crate) enum AcquisitionFailure {
+    Reconfigure,
+    Retry,
+    DeviceAllocation,
+    Fatal,
+}
+
 #[derive(Debug)]
 pub(crate) struct Recovery {
     drawable: bool,
@@ -37,6 +45,27 @@ impl Default for Recovery {
     }
 }
 impl Recovery {
+    /// Classify the backend result and advance the same monotonic episode.
+    /// Reconfiguration never grants a fresh failure budget.
+    pub(crate) fn acquisition_failed(
+        &mut self,
+        error: &wgpu::SurfaceError,
+        now: Instant,
+    ) -> AcquisitionFailure {
+        match error {
+            wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated => {
+                self.defer(RetryReason::Acquisition, now);
+                AcquisitionFailure::Reconfigure
+            }
+            wgpu::SurfaceError::Timeout => {
+                self.defer(RetryReason::Acquisition, now);
+                AcquisitionFailure::Retry
+            }
+            wgpu::SurfaceError::OutOfMemory => AcquisitionFailure::DeviceAllocation,
+            wgpu::SurfaceError::Other => AcquisitionFailure::Fatal,
+        }
+    }
+
     fn advance(&mut self, now: Instant) {
         if let Some(since) = self.since {
             self.active += now.saturating_duration_since(since);
@@ -186,5 +215,67 @@ mod tests {
         r.defer(RetryReason::Queue, now + Duration::from_secs(10));
         assert_eq!(r.poll(now + Duration::from_secs(12)), (false, None));
         assert!(r.failed());
+    }
+}
+
+#[cfg(test)]
+mod acquisition_tests {
+    use super::*;
+
+    #[test]
+    fn lost_outdated_and_timeout_share_one_episode_until_success() {
+        let start = Instant::now();
+        let mut recovery = Recovery::default();
+        assert_eq!(
+            recovery.acquisition_failed(&wgpu::SurfaceError::Lost, start),
+            AcquisitionFailure::Reconfigure
+        );
+        let second = start + Duration::from_millis(16);
+        assert_eq!(recovery.poll(second), (true, None));
+        assert_eq!(
+            recovery.acquisition_failed(&wgpu::SurfaceError::Outdated, second),
+            AcquisitionFailure::Reconfigure
+        );
+        let third = second + Duration::from_millis(32);
+        assert_eq!(recovery.poll(third), (true, None));
+        assert_eq!(
+            recovery.acquisition_failed(&wgpu::SurfaceError::Timeout, third),
+            AcquisitionFailure::Retry
+        );
+        assert_eq!(
+            recovery.poll(third),
+            (false, Some(third + Duration::from_millis(64)))
+        );
+        // Later backend failures/reconfiguration did not restart the two-second clock.
+        assert!(!recovery.ready(start + LIMIT));
+        assert!(recovery.failed());
+        assert!(recovery.manual_retry());
+        assert!(recovery.ready(start + LIMIT));
+        recovery.acquisition_failed(&wgpu::SurfaceError::Lost, start + LIMIT);
+        recovery.success();
+        assert!(recovery.ready(start + LIMIT * 2));
+        let next = start + LIMIT * 2;
+        recovery.acquisition_failed(&wgpu::SurfaceError::Outdated, next);
+        assert_eq!(
+            recovery.poll(next),
+            (false, Some(next + Duration::from_millis(16)))
+        );
+    }
+
+    #[test]
+    fn allocation_and_fatal_errors_do_not_start_automatic_acquisition_retry() {
+        let now = Instant::now();
+        for (error, action) in [
+            (
+                wgpu::SurfaceError::OutOfMemory,
+                AcquisitionFailure::DeviceAllocation,
+            ),
+            (wgpu::SurfaceError::Other, AcquisitionFailure::Fatal),
+        ] {
+            let mut recovery = Recovery::default();
+            assert_eq!(recovery.acquisition_failed(&error, now), action);
+            assert_eq!(recovery.poll(now), (false, None));
+            assert!(!recovery.episode);
+        }
     }
 }
