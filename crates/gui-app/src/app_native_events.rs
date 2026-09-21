@@ -490,8 +490,9 @@ impl ApplicationHandler for App {
         self.dispatch_native_frame_round(event_loop);
         // Include retries created by this round in the single wait decision.
         self.poll_background_work(event_loop);
-        self.poll_resize_smoke_start(event_loop);
+        self.poll_resize_smoke_start();
         self.request_restored_native_frames();
+        event_loop.set_control_flow(self.frames.take_control_flow());
     }
 
     fn user_event(&mut self, _event_loop: &ActiveEventLoop, (): ()) {

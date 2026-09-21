@@ -4,7 +4,7 @@ use datum_gui_protocol::{
     refresh_check_run_review_state, refresh_production_status, refresh_source_shard_status,
 };
 use std::time::{Duration, Instant};
-use winit::event_loop::{ActiveEventLoop, ControlFlow};
+use winit::event_loop::ActiveEventLoop;
 
 use super::{App, Runtime};
 
@@ -103,7 +103,6 @@ impl App {
     pub(super) fn poll_background_work(&mut self, event_loop: &ActiveEventLoop) {
         let mut changed = false;
         let device_due = self.service_device_recovery();
-        let mut next_refresh_due = None;
         if let Some(runtime) = &mut self.runtime {
             changed |= runtime.poll_terminal_output();
             changed |= runtime.poll_scheduled_production_refresh();
@@ -113,37 +112,21 @@ impl App {
                 return;
             }
             changed |= runtime.poll_application_terminal_shutdown();
-            next_refresh_due = [
-                runtime.next_production_refresh_due(),
-                runtime.next_console_refresh_due(),
-                runtime.next_application_terminal_shutdown_due(),
-            ]
-            .into_iter()
-            .flatten()
-            .min();
+            self.frames.wake_at(runtime.next_production_refresh_due());
+            self.frames.wake_at(runtime.next_console_refresh_due());
+            self.frames
+                .wake_at(runtime.next_application_terminal_shutdown_due());
         }
         if changed {
             self.request_workspace_redraw();
         }
-        if let Some(surface_due) = self.service_surface_retries() {
-            next_refresh_due =
-                Some(next_refresh_due.map_or(surface_due, |due| due.min(surface_due)));
-        }
+        let surface_due = self.service_surface_retries();
+        self.frames.wake_at(surface_due);
         match self.service_gpu_measurements() {
-            Ok(Some(due)) => {
-                next_refresh_due = Some(next_refresh_due.map_or(due, |old| old.min(due)))
-            }
-            Ok(None) => {}
+            Ok(due) => self.frames.wake_at(due),
             Err(err) => super::fatal_gui_error(event_loop, "GPU measurement incomplete", err),
         }
-        if let Some(due) = device_due {
-            next_refresh_due = Some(next_refresh_due.map_or(due, |old| old.min(due)));
-        }
-        if let Some(next_refresh_due) = next_refresh_due {
-            event_loop.set_control_flow(ControlFlow::WaitUntil(next_refresh_due));
-        } else {
-            event_loop.set_control_flow(ControlFlow::Wait);
-        }
+        self.frames.wake_at(device_due);
     }
 }
 

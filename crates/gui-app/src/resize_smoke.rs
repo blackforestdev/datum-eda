@@ -61,7 +61,7 @@ impl ResizeSmoke {
 }
 
 impl App {
-    pub(super) fn poll_resize_smoke_start(&mut self, event_loop: &ActiveEventLoop) {
+    pub(super) fn poll_resize_smoke_start(&mut self) {
         if !self.args.resize_torture_smoke || self.resize_smoke.requested != 0 {
             return;
         }
@@ -73,12 +73,7 @@ impl App {
                 self.frames.invalidate(window);
             }
         } else {
-            let next = match event_loop.control_flow() {
-                ControlFlow::WaitUntil(existing) => existing.min(deadline),
-                ControlFlow::Poll => return,
-                ControlFlow::Wait => deadline,
-            };
-            event_loop.set_control_flow(ControlFlow::WaitUntil(next));
+            self.frames.wake_at(Some(deadline));
         }
     }
 
