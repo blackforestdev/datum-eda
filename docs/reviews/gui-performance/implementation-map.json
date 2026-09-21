@@ -651,14 +651,15 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial: bounded parser/byte-order tests plus actual shared event-round adoption. Native Global Preferences flood no longer postpones final extent until producer completion; controlled close no longer redraws each drain batch. Single-trial latency/throughput, other adapters, saturated session/control fairness and acquisition stalls remain unqualified. Closed-dock plain output now produces zero Main presentations in bounded native flood; title positive control still presents. Shared bounded application rotates across spare budget with one byte cap. Full visible-terminal/all-host/resource and S4 hidden work remain open.",
+        "status": "partial: bounded parser/byte-order tests plus actual shared event-round adoption. Native Global Preferences flood no longer postpones final extent until producer completion; controlled close no longer redraws each drain batch. Single-trial latency/throughput, other adapters, saturated session/control fairness and acquisition stalls remain unqualified. Closed-dock plain output now produces zero Main presentations in bounded native flood; title positive control still presents. Shared bounded application rotates across spare budget with one byte cap. Full visible-terminal/all-host/resource and S4 hidden work remain open. Ready-host rotation now skips idle registrations when advancing first service; baseline-failing subset regression and four-host healthy native smoke pass. Native saturated latency qualification remains open.",
         "id": "proof_sh_05",
         "positive": "Saturate terminal messages while main and auxiliary hosts need service",
         "negative_control": "Drain terminal queue without yield",
         "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
         "executed_component_tests": [
           "delivered_tokens_have_rotating_bounded_service_independent_of_native_order",
-          "ready_round_skips_waiting_hidden_closed_and_replaced_tokens"
+          "ready_round_skips_waiting_hidden_closed_and_replaced_tokens",
+          "idle_hosts_do_not_bias_first_service_between_active_hosts"
         ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/SH-05/result.json",
@@ -713,7 +714,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
         "docs/reviews/gui-performance/implementation/S1/terminal-round/result.json",
-        "docs/reviews/gui-performance/implementation/S1/terminal-output-damage/result.json"
+        "docs/reviews/gui-performance/implementation/S1/terminal-output-damage/result.json",
+        "docs/reviews/gui-performance/implementation/S1/active-host-fairness/result.json"
       ]
     },
     {
@@ -24562,5 +24564,40 @@
       "Guard rejection is not a deliberately regressed-source negative-control replay; that qualification remains open.",
       "Blocking device wait and event pumping are test-only; default application behavior and dependencies unchanged."
     ]
+  },
+  "s1_active_host_fairness_work": {
+    "status": "Default scheduler fairness correction with bounded component and four-host native regression proof; GPI-S1 remains in progress",
+    "baseline_commit": "f94b4a2023634968ac77b80a708c2c73e21a35e6",
+    "problem": "Rotating one registered slot per nonempty round lets idle registrations bias first service between ready hosts. Four registrations with only first and last active fails alternating first-service assertion on round three.",
+    "production_consumers_migrated": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_owner": "NativeFrameCoordinator::ready_round, called by App::dispatch_native_frame_round for all native hosts.",
+    "competing_paths_retired": [
+      "Rotation by registration slot regardless of eligible service; replaced by rotation past the first selected host."
+    ],
+    "source_sha256": {
+      "crates/gui-app/src/native_frame_coordinator.rs": "1f9ef53eee2aedaff7964487877118f3daff5f4c84eaa6eddcab0bb5c8737d45",
+      "crates/gui-app/src/native_frame_dispatch_tests.rs": "da07d957f7beaa54caf2712a05865684872d293220c11ae17f99225c959af329"
+    },
+    "verification": {
+      "baseline": "New focused regression fails against unchanged production scheduler: round three returns [4,1], expected [1,4]. No defect injection in active checkout.",
+      "candidate": "18 coordinator tests pass, including alternating first service across eight rounds, existing all-ready rotation and ineligible-host cases.",
+      "app": "375 passed, 0 failed, 10 ignored.",
+      "test_organization": "Moved three dispatch tests into native_frame_dispatch_tests.rs to retain 350-line inline limit; no source-health ceiling raised.",
+      "native": "MAIN, GLOBAL, PROJECT and NEW each reached 1200x800, completed submitted receipts, had no extra presentation during three idle seconds, and closed with exit 0. No fault injection.",
+      "build": "Guarded offline release build passed.",
+      "clippy": "Guarded offline app binary/test Clippy passed with -D warnings.",
+      "governance": "Source health, spec parity, dependency authority, Cargo resource policy and evidence traceability passed."
+    },
+    "limits": [
+      "Deterministic scheduler regression establishes service order, not measured native end-to-end latency or full SH-05/SCH-03 qualification.",
+      "Native healthy-host smoke does not reproduce simultaneous subset saturation or replace prescribed per-adapter negative controls.",
+      "No dependency, backend, retry budget, authoritative model or nonblocking resize exclusion changes. GPI-S1 remains in progress."
+    ],
+    "candidate_binary_sha256": "d9961fa43b449bbd6f23a5f90ddffe33e0a063c99f133fa7680a544c19a2f043"
   }
 }

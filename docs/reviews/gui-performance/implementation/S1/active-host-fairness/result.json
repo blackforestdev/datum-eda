@@ -1,0 +1,35 @@
+{
+  "status": "Default scheduler fairness correction with bounded component and four-host native regression proof; GPI-S1 remains in progress",
+  "baseline_commit": "f94b4a2023634968ac77b80a708c2c73e21a35e6",
+  "problem": "Rotating one registered slot per nonempty round lets idle registrations bias first service between ready hosts. Four registrations with only first and last active fails alternating first-service assertion on round three.",
+  "production_consumers_migrated": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "production_owner": "NativeFrameCoordinator::ready_round, called by App::dispatch_native_frame_round for all native hosts.",
+  "competing_paths_retired": [
+    "Rotation by registration slot regardless of eligible service; replaced by rotation past the first selected host."
+  ],
+  "source_sha256": {
+    "crates/gui-app/src/native_frame_coordinator.rs": "1f9ef53eee2aedaff7964487877118f3daff5f4c84eaa6eddcab0bb5c8737d45",
+    "crates/gui-app/src/native_frame_dispatch_tests.rs": "da07d957f7beaa54caf2712a05865684872d293220c11ae17f99225c959af329"
+  },
+  "verification": {
+    "baseline": "New focused regression fails against unchanged production scheduler: round three returns [4,1], expected [1,4]. No defect injection in active checkout.",
+    "candidate": "18 coordinator tests pass, including alternating first service across eight rounds, existing all-ready rotation and ineligible-host cases.",
+    "app": "375 passed, 0 failed, 10 ignored.",
+    "test_organization": "Moved three dispatch tests into native_frame_dispatch_tests.rs to retain 350-line inline limit; no source-health ceiling raised.",
+    "native": "MAIN, GLOBAL, PROJECT and NEW each reached 1200x800, completed submitted receipts, had no extra presentation during three idle seconds, and closed with exit 0. No fault injection.",
+    "build": "Guarded offline release build passed.",
+    "clippy": "Guarded offline app binary/test Clippy passed with -D warnings.",
+    "governance": "Source health, spec parity, dependency authority, Cargo resource policy and evidence traceability passed."
+  },
+  "limits": [
+    "Deterministic scheduler regression establishes service order, not measured native end-to-end latency or full SH-05/SCH-03 qualification.",
+    "Native healthy-host smoke does not reproduce simultaneous subset saturation or replace prescribed per-adapter negative controls.",
+    "No dependency, backend, retry budget, authoritative model or nonblocking resize exclusion changes. GPI-S1 remains in progress."
+  ],
+  "candidate_binary_sha256": "d9961fa43b449bbd6f23a5f90ddffe33e0a063c99f133fa7680a544c19a2f043"
+}
