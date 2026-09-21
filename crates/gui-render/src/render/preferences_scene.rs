@@ -42,13 +42,40 @@ impl PreparedScene {
         scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
         reveal_row: Option<usize>,
     ) -> Self {
+        Self::from_native_preferences_cached(
+            dialog,
+            width,
+            height,
+            scale_factor,
+            scroll,
+            reveal_row,
+            &mut ControlMeshCache::default(),
+        )
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn from_native_preferences_cached(
+        dialog: &datum_gui_protocol::GlobalPreferencesDialogState,
+        width: u32,
+        height: u32,
+        scale_factor: f32,
+        scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
+        reveal_row: Option<usize>,
+        controls: &mut ControlMeshCache,
+    ) -> Self {
         let scale = scale_factor.max(0.01);
         let layout = ShellLayout::for_surface(width, height, scale, None);
         let mut quads = Vec::new();
         let mut text = Vec::new();
         let mut hits = Vec::new();
         super::render_preferences_dialog_scrolled(
-            dialog, &layout, &mut quads, &mut text, &mut hits, scroll, reveal_row,
+            dialog,
+            &layout,
+            &mut ControlPainter::new(&mut quads, controls, scale),
+            &mut text,
+            &mut hits,
+            scroll,
+            reveal_row,
         );
         if (scale - 1.0).abs() > f32::EPSILON {
             scale_text_run_sizes(&mut text, scale);
@@ -89,6 +116,28 @@ impl PreparedScene {
             schematic_underlay_vertices: Vec::new(),
             schematic_overlay_vertices: Vec::new(),
         }
+    }
+}
+
+impl Renderer {
+    pub fn prepare_native_preferences_scrolled(
+        &mut self,
+        dialog: &datum_gui_protocol::GlobalPreferencesDialogState,
+        width: u32,
+        height: u32,
+        scale_factor: f32,
+        scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
+        reveal_row: Option<usize>,
+    ) -> PreparedScene {
+        PreparedScene::from_native_preferences_cached(
+            dialog,
+            width,
+            height,
+            scale_factor,
+            scroll,
+            reveal_row,
+            &mut self.control_meshes,
+        )
     }
 }
 

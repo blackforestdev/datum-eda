@@ -2,6 +2,7 @@
 use super::*;
 
 pub struct Renderer {
+    pub(super) control_meshes: crate::global_preferences_primitives::ControlMeshCache,
     pub(super) schematic_world_strokes_gpu:
         gpu_data::retained_buffer::RetainedBuffer<WorldStrokeInstance>,
     pub(super) schematic_world_vertices_gpu: gpu_data::retained_buffer::RetainedBuffer<Vertex>,
