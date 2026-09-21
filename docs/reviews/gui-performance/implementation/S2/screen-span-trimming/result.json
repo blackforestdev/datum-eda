@@ -1,0 +1,59 @@
+{
+  "status": "Bounded screen upload span trimming adopted; byte-minimal MEM-01 and GPI-S2 remain incomplete",
+  "baseline_commit": "26a6a4912de1a38350ddeb95331384db69f93f25",
+  "production_consumers_migrated": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "shared_owner": "ScreenBuffer, all nine existing semantic screen streams",
+  "change": "Keep existing adjacent dirty-vertex spans, then trim unchanged four-byte words from both edges before writing. No extra queue write, CPU allocation, snapshot, GPU resource, encoder, pass or submission is introduced. Exact snapshot identity, warm zero uploads, cap bypass, replacement/shrink and release remain unchanged.",
+  "competing_paths_retired": [
+    "Uploading clean edge words of dirty-vertex spans"
+  ],
+  "remaining_competing_paths": [
+    "Clean words inside a coalesced span still transfer. Full byte-minimal transfer requires an efficient fragmented-update path; neither rejected experiment qualifies."
+  ],
+  "proof": {
+    "gpu_owner": "Real GPU readback covers isolated internal fields, separated changed vertices, growing live prefixes, warm reuse, cap/bypass/shrink/reset. A 3-vertex fixture has 12 dirty bytes but transfers 20 bytes: eight internal clean bytes remain explicitly coalesced.",
+    "production_dialog": "An isolated red-field replacement and restoration each upload four bytes instead of a 20-byte vertex. Pixels match forced-cold upload; restored pixels match baseline. Bypassing trimming makes the four-byte assertion fail; exact source restored and positive rerun passes.",
+    "renderer": "200 passed, 20 ignored. Explicit GPU proofs run separately. Renderer library/tests visual-feature Clippy passes.",
+    "native": "Fresh offline release passes all four native X11 host smoke cases, including Main wheel input; no native timing or full backend/scale qualification claim.",
+    "governance": "Source health, dependency authority, traceability, parity, project/spec governance and staged formatting checked before commit. No source-health ceiling changes. Existing unrelated terminal convergence drift failure remains open; full drift not rerun for this slice."
+  },
+  "rejected_experiments": {
+    "fixture": "4096 five-word vertices; first coordinate changes each iteration; twelve iterations with queue submission and device wait outside the measured sync interval. Local debug build, diagnostic only.",
+    "baseline": {
+      "median_sync_us": 214,
+      "uploaded_bytes": 81920
+    },
+    "word_queue_writes": {
+      "median_sync_us": 73895,
+      "uploaded_bytes": 16384,
+      "disposition": "Rejected: thousands of queue writes cause a severe CPU regression."
+    },
+    "packed_buffer_copies": {
+      "median_sync_us": 29135,
+      "uploaded_bytes": 16384,
+      "disposition": "Rejected prototype: thousands of copy commands remain expensive. This isolated probe additionally submits inside its timed function, so it is not a matched production timing or a claim about all possible batched implementations."
+    },
+    "selected_span_trimming": {
+      "median_sync_us": 212,
+      "uploaded_bytes": 81904,
+      "disposition": "Retains baseline queue-call count and only trims span edges. Diagnostic supports rejecting the regressions, not a numerical application speedup or final method conformance."
+    },
+    "reproduction": "Use an isolated checkout of baseline_commit. Apply rejected-word-upload.patch for the word/copy comparison recipes; they read the current candidate and restore it in finally. For trim-comparison use this committed production candidate. Baseline in recipes is git HEAD at execution time, so pin HEAD to baseline_commit when reproducing the paired experiment. Negative recipe operates on the selected trim candidate. Initial copy-probe signature compilation failure is retained; corrected probe passes."
+  },
+  "limits": [
+    "MEM-01 exact dirty-range bytes plus alignment is not satisfied by internal-gap coalescing. REUSE-SCREEN remains partial.",
+    "The diagnostic fixture is not native performance admission, a universal bound, or proof of application latency/CPU gains.",
+    "Per-adapter upload accounting, absolute resource caps, full negative/backend/scale/endurance qualification and remaining S2 ownership work stay open.",
+    "No dependency, vendoring, Cargo, visual-prototype, product-authority, renderer pass-count or resize-qualification change."
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/render/screen_buffer.rs": "06aa77d08756d0a192dc7745e5ec22a8b375fc9a75ce3559456459220a933339",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "93d9ccb0627637f33500ec2851212b0c0eb533052417a809f2ff95203fc534e4"
+  },
+  "candidate_binary_sha256": "b452a212f03131dc3df82192c6aa439fe49bf85901e7a908069b5f6d6a0d3ab5"
+}

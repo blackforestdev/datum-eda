@@ -373,11 +373,14 @@ fn production_dialog_upload_reuses_content_and_matches_evicted_pixels() {
     assert!(renderer.renderer.menu_overlay_gpu.last_upload_bytes > 0);
     assert!(warm == evicted);
     let mut replacement = prepared.clone();
-    replacement.menu_overlay_vertices[0].color = [1.0, 0.0, 0.0];
-    capture(&mut renderer, &replacement);
-    assert!(renderer.renderer.menu_overlay_gpu.last_upload_bytes > 0);
+    let red = &mut replacement.menu_overlay_vertices[0].color[0];
+    *red = if *red == 1.0 { 0.0 } else { 1.0 };
+    let changed = capture(&mut renderer, &replacement);
+    assert_eq!(renderer.renderer.menu_overlay_gpu.last_upload_bytes, 4);
+    renderer.renderer.menu_overlay_gpu = Default::default();
+    assert!(changed == capture(&mut renderer, &replacement));
     let restored = capture(&mut renderer, &prepared);
-    assert!(renderer.renderer.menu_overlay_gpu.last_upload_bytes > 0);
+    assert_eq!(renderer.renderer.menu_overlay_gpu.last_upload_bytes, 4);
     assert!(restored == cold);
 }
 

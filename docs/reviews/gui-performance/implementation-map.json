@@ -16387,7 +16387,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial production adoption: nine screen streams share bounded last-content/GPU ownership; warm zero uploads and vertex-range replacement, cap bypass, release/reset, real GPU readback and full/dialog pixel parity verified. Four native smoke checks pass. Vertex-granular uploads, native counters, byte-minimal interpretation/prescribed negatives and complete qualification remain open.",
+        "status": "Partial production adoption: nine shared screen streams retain bounded snapshots and GPU capacity. Clean span-edge words no longer upload; actual dialog single-field changes transfer four bytes and match cold/restored pixels. Owner readback, cap/bypass/shrink/reset and rejected untrimmed negative pass. Exact word writes and packed-copy prototypes rejected for diagnostic CPU regressions; internal clean-gap coalescing remains. Full MEM-01 byte-minimal transfer, native counters and qualification stay open.",
         "id": "proof_reuse_screen",
         "positive": "Change one screen/control/text range",
         "negative_control": "Rewrite entire unchanged buffer",
@@ -16413,7 +16413,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S2/screen-upload-owner/result.json"
+        "docs/reviews/gui-performance/implementation/S2/screen-upload-owner/result.json",
+        "docs/reviews/gui-performance/implementation/S2/screen-span-trimming/result.json"
       ]
     },
     {
@@ -25262,15 +25263,16 @@
       "maximum_snapshot_bytes_per_renderer": 2359296,
       "eviction": "Overlarge content renders but bypasses snapshot retention. Empty input releases CPU/GPU storage; renderer/device teardown drops all owners.",
       "gpu_capacity": "At most four times last nonempty payload, with WGPU alignment. Larger-to-smaller transitions shrink allocations above that bound. This is an input-relative bound, not an absolute application GPU memory ceiling.",
-      "dirty_unit": "One complete vertex (20 bytes in production), aligned to the four-byte queue-write requirement. Unchanged words inside a changed vertex are uploaded; unchanged vertices between dirty ranges are not."
+      "dirty_unit": "Adjacent dirty vertices define spans; unchanged four-byte edge words are trimmed. Internal clean words remain coalesced, preserving the prior queue-call count. This is not byte-minimal transfer."
     },
     "remaining_limitations": [
       "Snapshot comparison and changed-content copies remain CPU work; overlarge streams bypass retention and upload normally. No numerical performance or zero-preparation claim.",
-      "Dirty ranges are vertex-granular, not byte-minimal. Complete REUSE-SCREEN native boundary counters and prescribed negative qualification remain open; this does not satisfy its full acceptance rule.",
+      "MEM-01 exact dirty-range bytes plus alignment is not satisfied by internal-gap coalescing. REUSE-SCREEN remains partial. Full native boundary accounting and prescribed qualification remain open.",
       "CPU screen geometry generation, world encoding/cache capacity qualification, complete text keys/payload/atlas bounds and S2 completion remain open.",
       "Schematic stream migration is code adoption only; resolved schematic content performance remains unqualified without fixture admission.",
       "No new dependency, vendoring, version/license, visual-prototype, product mutation or resize qualification change."
-    ]
+    ],
+    "followup_evidence": "docs/reviews/gui-performance/implementation/S2/screen-span-trimming/result.json"
   },
   "s2_glyph_transaction_work": {
     "status": "Shared pre-encoding glyph transaction adopted; GPI-S2 remains in progress",
@@ -25413,5 +25415,28 @@
       "No dependency, vendoring, Cargo, visual prototype, product authority or resize-qualification change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S2/workspace-control-owner/result.json"
+  },
+  "s2_screen_span_trimming_work": {
+    "status": "Bounded screen upload span trimming adopted; byte-minimal MEM-01 and GPI-S2 remain incomplete",
+    "production_consumers_migrated": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "shared_owner": "ScreenBuffer, all nine existing semantic screen streams",
+    "competing_paths_retired": [
+      "Uploading clean edge words of dirty-vertex spans"
+    ],
+    "remaining_competing_paths": [
+      "Clean words inside a coalesced span still transfer. Full byte-minimal transfer requires an efficient fragmented-update path; neither rejected experiment qualifies."
+    ],
+    "limits": [
+      "MEM-01 exact dirty-range bytes plus alignment is not satisfied by internal-gap coalescing. REUSE-SCREEN remains partial.",
+      "The diagnostic fixture is not native performance admission, a universal bound, or proof of application latency/CPU gains.",
+      "Per-adapter upload accounting, absolute resource caps, full negative/backend/scale/endurance qualification and remaining S2 ownership work stay open.",
+      "No dependency, vendoring, Cargo, visual-prototype, product-authority, renderer pass-count or resize-qualification change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S2/screen-span-trimming/result.json"
   }
 }
