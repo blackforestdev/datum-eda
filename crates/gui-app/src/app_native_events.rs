@@ -78,7 +78,7 @@ impl App {
         if std::env::var_os("DATUM_GUI_VERBOSE_LOG").is_some()
             && let Some(label) = window_event_diagnostic_label(&event)
         {
-            append_gui_verbose_diagnostic_line(format!("window event {window_id:?} {label}"));
+            append_gui_verbose_diagnostic_line(|| format!("window event {window_id:?} {label}"));
         }
         self.frames.window_event(window_id, &event);
         if self

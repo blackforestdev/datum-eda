@@ -340,13 +340,15 @@ impl TerminalSessionRegistry {
         }
         let elapsed = now().saturating_duration_since(started);
         if elapsed > DISPATCH_BUDGET {
-            crate::gui_runtime_support::append_gui_verbose_diagnostic_line(format!(
-                "terminal dispatch over budget elapsed_us={} events={} bytes={} pending={}",
-                elapsed.as_micros(),
-                report.events,
-                report.output_bytes,
-                report.pending
-            ));
+            crate::gui_runtime_support::append_gui_verbose_diagnostic_line(|| {
+                format!(
+                    "terminal dispatch over budget elapsed_us={} events={} bytes={} pending={}",
+                    elapsed.as_micros(),
+                    report.events,
+                    report.output_bytes,
+                    report.pending
+                )
+            });
         }
         report
     }

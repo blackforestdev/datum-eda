@@ -22868,5 +22868,38 @@
       "clippy.log.gz": "94a17a52427628f2541719059d745f106bb9285604ea9cb8b09aa223cb29ca10",
       "gpu.log.gz": "4e7315503a89e00a881a17def59e04da107cb714d7eb0835abf6a59c04d414f1"
     }
+  },
+  "s1_lazy_diagnostic_work": {
+    "status": "shared verbose logging migrated to lazy message construction in production; no timing or milestone acceptance claim",
+    "baseline_commit": "c1f24652",
+    "consumers": [
+      "MAIN presentation and pan gesture handling",
+      "MAIN/GLOBAL/PROJECT/NEW shared frame-round dispatch and native event routing",
+      "Terminal refresh, resize and drain diagnostics",
+      "Diagnostic native resize repro caller migrated for API compatibility"
+    ],
+    "change": "append_gui_verbose_diagnostic_line accepts FnOnce message construction; formatting executes only when DATUM_GUI_VERBOSE_LOG is present. All existing callers use the new interface. Input application and frame scheduling remain outside the diagnostic closure.",
+    "retired_paths": [
+      "Eager formatted String construction at verbose logging call sites while logging is disabled"
+    ],
+    "verification": {
+      "app": "351 passed, 0 failed, 9 ignored",
+      "clippy": "App all-targets offline Clippy -D warnings passed",
+      "build": "Fresh offline release build passed",
+      "checks": "Source health, dependency authority, traceability and spec governance/parity passed"
+    },
+    "limitations": [
+      "No benchmark campaign or numerical improvement claim; this removes directly visible unnecessary formatting work",
+      "Other timing and unconditional diagnostic paths are unchanged",
+      "Existing native desktop qualification gaps remain; no focus-taking test run",
+      "GPI-S1 remains in progress; S2-S5 pending; resize qualification remains pinned and nonblocking"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/lazy-diagnostics",
+    "release_binary_sha256": "40a429bafdb197ea89808aae6515d606ba3075a1b6f8a6cf9d80b4fcc2a97deb",
+    "artifacts_sha256": {
+      "build.log.gz": "987e308bc3ab0e21a19bbb532f0121bc12a529499ab9e9d80edeb8ac8df4b308",
+      "clippy.log.gz": "c57e9eb23c3004e8269e1cc55402d75f6abefdb126427ca855a2872dd7ae830e",
+      "tests.log.gz": "285638f6b428e9ce763f8151be76e8e204b99b84ff795ab7fbc57659a777d9a5"
+    }
   }
 }

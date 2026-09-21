@@ -10,11 +10,10 @@ impl Runtime {
         }
         let render_started = std::time::Instant::now();
         let acquire_started = std::time::Instant::now();
-        append_gui_verbose_diagnostic_line(format!(
-            "render begin {}x{}",
-            self.config.width, self.config.height
-        ));
-        append_gui_verbose_diagnostic_line("render acquire begin");
+        append_gui_verbose_diagnostic_line(|| {
+            format!("render begin {}x{}", self.config.width, self.config.height)
+        });
+        append_gui_verbose_diagnostic_line(|| "render acquire begin");
         let Some(mut frame) = self.surface_transaction.acquire(
             &self.surface,
             &self.device,
@@ -26,7 +25,7 @@ impl Runtime {
         };
         let probe = gui_runtime_support::phase_probe::Probe::start("prepare");
         let acquire_elapsed = acquire_started.elapsed();
-        append_gui_verbose_diagnostic_line("render acquire end");
+        append_gui_verbose_diagnostic_line(|| "render acquire end");
         let view = frame.view();
         if gui_runtime_support::native_frame_probe::clear_only() {
             let submission = gui_runtime_support::native_frame_probe::submit_clear(
@@ -54,13 +53,13 @@ impl Runtime {
         let mut retained_build_ms = 0;
         let mut prepared_build_ms = 0;
         if self.prepared_scene.is_none() {
-            append_gui_verbose_diagnostic_line(format!(
-                "render scene prepare begin retained_cached={retained_was_cached}"
-            ));
+            append_gui_verbose_diagnostic_line(|| {
+                format!("render scene prepare begin retained_cached={retained_was_cached}")
+            });
             self.scene_dirty = false;
             if self.retained_scene.is_none() {
                 let retained_started = std::time::Instant::now();
-                append_gui_verbose_diagnostic_line("retained scene build begin");
+                append_gui_verbose_diagnostic_line(|| "retained scene build begin");
                 self.retained_scene = Some(RetainedScene::from_workspace_for_surface(
                     self.session.workspace(),
                     self.config.width,
@@ -68,17 +67,17 @@ impl Runtime {
                     self.scale_factor,
                 ));
                 retained_build_ms = retained_started.elapsed().as_millis();
-                append_gui_verbose_diagnostic_line(format!(
-                    "retained scene build end {retained_build_ms}ms"
-                ));
+                append_gui_verbose_diagnostic_line(|| {
+                    format!("retained scene build end {retained_build_ms}ms")
+                });
             }
             let prepared_started = std::time::Instant::now();
-            append_gui_verbose_diagnostic_line("prepared scene build begin");
+            append_gui_verbose_diagnostic_line(|| "prepared scene build begin");
             self.prepared_scene = Some(self.build_terminal_prepared_scene()?);
             prepared_build_ms = prepared_started.elapsed().as_millis();
-            append_gui_verbose_diagnostic_line(format!(
-                "prepared scene build end {prepared_build_ms}ms"
-            ));
+            append_gui_verbose_diagnostic_line(|| {
+                format!("prepared scene build end {prepared_build_ms}ms")
+            });
         }
         let scene_elapsed = scene_started.elapsed();
         // P2.2a: resolve the companion schematic world buffer lazily (cleared on
@@ -104,7 +103,7 @@ impl Runtime {
         drop(probe);
         let probe = gui_runtime_support::phase_probe::Probe::start("renderer");
         let renderer_started = std::time::Instant::now();
-        append_gui_verbose_diagnostic_line("renderer render begin");
+        append_gui_verbose_diagnostic_line(|| "renderer render begin");
         let rendered = self.renderer.render_with_submission(
             &self.device,
             &self.queue,
@@ -123,20 +122,21 @@ impl Runtime {
             .observe_attachment(&self.renderer, &frame);
         rendered?;
         let renderer_elapsed = renderer_started.elapsed();
-        append_gui_verbose_diagnostic_line(format!(
-            "renderer render end {}ms",
-            renderer_elapsed.as_millis()
-        ));
+        append_gui_verbose_diagnostic_line(|| {
+            format!("renderer render end {}ms", renderer_elapsed.as_millis())
+        });
         drop(probe);
         if self.device_health.failed() {
             return Ok(false);
         }
         let present_elapsed = self.present_native_frame(frame)?;
-        append_gui_verbose_diagnostic_line(format!(
-            "frame present end {}ms total={}ms",
-            present_elapsed.as_millis(),
-            render_started.elapsed().as_millis()
-        ));
+        append_gui_verbose_diagnostic_line(|| {
+            format!(
+                "frame present end {}ms total={}ms",
+                present_elapsed.as_millis(),
+                render_started.elapsed().as_millis()
+            )
+        });
         self.trace_timing(format!(
             "runtime render total={}ms acquire={}ms scene={}ms retained_build={}ms prepared_build={}ms renderer={}ms present={}ms retained_was_cached={} prepared_was_cached={}",
             render_started.elapsed().as_millis(),
@@ -158,7 +158,7 @@ impl Runtime {
     ) -> Result<std::time::Duration> {
         let probe = gui_runtime_support::phase_probe::Probe::start("present");
         let started = std::time::Instant::now();
-        append_gui_verbose_diagnostic_line("frame present begin");
+        append_gui_verbose_diagnostic_line(|| "frame present begin");
         let first_device_frame = !self.surface_transaction.has_presented();
         self.surface_transaction.present(frame, self.window)?;
         if first_device_frame && self.terminal_owns_input() {
