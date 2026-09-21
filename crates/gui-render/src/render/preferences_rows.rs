@@ -8,7 +8,7 @@ pub(super) fn render_rows(
     content_width: f32,
     mut y: f32,
     card: RectPx,
-    quads: &mut Vec<Quad>,
+    quads: &mut ControlPainter<'_>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
     scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
@@ -369,7 +369,7 @@ pub(super) fn render_rows(
 /// Text uses glyph scissoring; hit regions use the same visible viewport.
 #[allow(clippy::too_many_arguments)]
 fn clip_content(
-    quads: &mut Vec<Quad>,
+    quads: &mut ControlPainter<'_>,
     text: &mut [TextRun],
     hits: &mut Vec<HitRegion>,
     q_start: usize,

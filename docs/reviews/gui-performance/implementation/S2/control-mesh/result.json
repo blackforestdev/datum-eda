@@ -1,0 +1,60 @@
+{
+  "status": "Renderer-owned retained rounded controls adopted in GLOBAL/PROJECT; GPI-S2 remains in progress",
+  "baseline_commit": "1af5852d610f858ea07739aedcf70b10f0f35496",
+  "selection": "Rounded controls allocated contours and tessellated fans whenever Preferences geometry was prepared. CTL-01 requires renderer ownership, so persistence is passed explicitly through preparation rather than added as thread-local/global state.",
+  "production_consumers_migrated": [
+    "GLOBAL",
+    "PROJECT"
+  ],
+  "production_paths": [
+    "GlobalPreferencesWindowSurface::render -> self.renderer.prepare_native_preferences_scrolled -> ControlPainter -> Renderer.control_meshes",
+    "ProjectPreferencesWindow uses the same GlobalPreferencesWindowSurface and default preparation route"
+  ],
+  "competing_paths_retired": [
+    "Repeated fan tessellation on warm Global/Project Preferences preparation",
+    "Independent convex-fill generation at shared control call sites; one cached mesh generator now supplies them"
+  ],
+  "remaining_competing_paths": [
+    "Static PreparedScene construction and Main/New Project compatibility composition currently create temporary caches; their renderer-lifetime retention is not migrated or claimed.",
+    "Frame quads/vertices and clipping are still materialized; GPU control-mesh retention/instancing is not introduced."
+  ],
+  "change": "ControlMeshCache is a Renderer field, with explicit borrowed ControlPainter flowing through Preferences primitives and row clipping. Local position-only meshes are reused across translation and color, while frame materialization applies live placement/color and the existing clip algorithm. Keys contain dimensions, normalized radius, border width, DPI, contour revision, segment tolerance and style generation. Current rounded contour revision/style policy is immutable. Renderer recreation starts cold; closure drops the owner.",
+  "bounds": {
+    "entries": 256,
+    "cpu_mesh_payload_bytes": 4194304,
+    "rule": "LRU eviction before retained insertion; oversized meshes bypass retention and are consumed transiently. Meshes are boxed fixed-size point arrays with no nested allocations. Cached references never escape materialization, so no CPU cache entry is pinned in flight.",
+    "accounting_proof": "256-entry fixture: 24576 mesh payload bytes, 8192 key bytes, 12288 entry storage bytes. Keys are included in entry storage, not additional to it. Separate byte-pressure test retains exactly 4194304 bytes in two entries; oversized bypass leaves existing accounting unchanged.",
+    "boundary": "Complete retained CPU mesh payload bound only. Frame quad/vertex scratch, existing screen GPU streams, total/native/driver memory and the specified GPU control budget are not qualified here."
+  },
+  "proof": {
+    "renderer": "200 passed, 19 ignored on restored source.",
+    "cpu": "All eight key components change identity; identical key hits avoid rebuilding. LRU promotion/eviction, entry/byte caps, oversized bypass, translation/color reuse and geometry/DPI misses pass.",
+    "gpu_owner": "Actual Renderer-owned Preferences preparation stays warm on repetition, changes identity at 1.5x DPI, matches fresh scene pixels and rebuilds after Renderer replacement.",
+    "gpu_aa": "Cached rounded geometry matches the original general scanline boundary pixels for the existing size/radius/fractional-position matrix on Intel P630/Vulkan.",
+    "gpu_scroll": "Fractional scroll proof now uses the migrated Renderer preparation API: repeated scroll cycle adds no control mesh builds, reuses text, preserves pinned chrome and restores original pixels.",
+    "negative": "Omitting DPI fails the independent key-change proof. Disabling mesh reuse fails the actual Renderer warm-preparation proof. Both mutations restored byte-for-byte before final positives/lint/release.",
+    "app": "Three GlobalPreferencesWindowSurface tests pass. Initial --lib invocation failed because datum-gui-app has only a binary target; corrected command/result retained. Full app suite not rerun; known unrelated terminal lineage/convergence issues remain.",
+    "native": "Fresh release X11 MAIN zoom-in/out and GLOBAL/PROJECT/NEW startup/presentation/close smoke pass with exit zero. Only GLOBAL/PROJECT persistent cache adoption is claimed; native tessellation counters/performance not qualified.",
+    "build_lint": "Offline guarded release and renderer library/tests Clippy pass. Initial items-after-test-module lint corrected by moving Renderer methods before tests; no logic change. Failure retained.",
+    "governance": "Source health, dependency authority, parity, traceability/spec/project, diff and staged rustfmt checked before commit. Test-only helper moved after production functions to meet source-health inline-tail rules; no ceiling raised."
+  },
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_window.rs": "938bad1b636f9631c21a2353324b5e3851a4970141b07465f42c2eff67be2cc3",
+    "crates/gui-render/src/global_preferences_dialog.rs": "794ca2c6b9fc53ce8b8e80246992231cc9fbdb445e46266b8e00077530d8b429",
+    "crates/gui-render/src/global_preferences_primitives.rs": "c120071acf1acce4cf4762be12a8594dfc05402b452f912d0e1ea6d0e97828ad",
+    "crates/gui-render/src/new_project_dialog.rs": "2cbda493a326fe1898459dc65a939fd686eead82e60c63a09975f25ddd399067",
+    "crates/gui-render/src/render/gpu_init.rs": "53cbabc67955f2c53a8032466c7dc0af2ff730660fd2594d8010734e119c2334",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "9790f95e91b0554e98bb4890a79a311998477b1e5c7d120a48bc368f6be91c0e",
+    "crates/gui-render/src/render/preferences_rows.rs": "434ea8e7002388daa6f25e78f3e5a7b994bb4dfa735f2855e3f9a634a4a01959",
+    "crates/gui-render/src/render/preferences_scene.rs": "5521b4b612bfbcb6552e5112afe830452fad9fa2c7420feda6abf330af2f2c87",
+    "crates/gui-render/src/render/renderer_state.rs": "b28e51010f367bc14070736d700af31e2c8482aff395f6f2c28e8f5312be49af",
+    "crates/gui-render/src/render/control_mesh.rs": "416582241aec3aee99a88086069fe32c43138778d319d24dc6ebb71085a2d6f6"
+  },
+  "candidate_binary_sha256": "7db891abd05cbb2bec86552efc435c22d21e6fc36429319d70e67c645c85ce38",
+  "limits": [
+    "Persistent cache adoption is GLOBAL/PROJECT only. Main/New Project and other control families remain pending; no global control adoption or S3 completion.",
+    "This retains CPU meshes; frame translation/color/clip materialization and screen uploads still occur under their existing owners. No zero-allocation or numerical speedup claim.",
+    "Full per-adapter key omission/eviction negatives, native shape counters, GPU control capacity and complete resource/backend/scale/endurance qualification remain open.",
+    "Concave/holed authored geometry remains on its existing tessellator. No dependency, vendoring, version/license, visual prototype, typography, engine mutation or resize qualification change."
+  ]
+}

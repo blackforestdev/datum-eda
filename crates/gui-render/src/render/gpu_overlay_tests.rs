@@ -181,14 +181,21 @@ fn fractional_dialog_scroll_preserves_chrome_and_reuses_shaped_text() {
     let dialog = &state.ui.global_preferences;
     let mut renderer = hardware_renderer(960, 300);
     let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
-    let initial =
-        PreparedScene::from_native_preferences_scrolled(dialog, 960, 300, 1.0, &mut scroll, None);
+    let initial = renderer.renderer.prepare_native_preferences_scrolled(
+        dialog,
+        960,
+        300,
+        1.0,
+        &mut scroll,
+        None,
+    );
     let first = capture(&mut renderer, &initial);
     let header_bottom = scroll.viewport.y as u32;
     for cycle in 0..2 {
         for offset in [0.25, 40.0, 100.0, 75.0, 0.0] {
             scroll.set_offset(offset);
-            let scene = PreparedScene::from_native_preferences_scrolled(
+            let previous_builds = renderer.renderer.control_meshes.builds;
+            let scene = renderer.renderer.prepare_native_preferences_scrolled(
                 dialog,
                 960,
                 300,
@@ -198,6 +205,10 @@ fn fractional_dialog_scroll_preserves_chrome_and_reuses_shaped_text() {
             );
             assert!(scene.is_overlay_only());
             if cycle == 1 {
+                assert_eq!(
+                    renderer.renderer.control_meshes.builds, previous_builds,
+                    "warm scroll must reuse control meshes"
+                );
                 let (_, stats) = renderer.renderer.text_buffers.indices(
                     &mut renderer.renderer.font_system,
                     scene.menu_overlay_text_runs(),
@@ -558,3 +569,64 @@ fn cached_shape_relayout_matches_fresh_dialog_pixels() {
 
 #[path = "gpu_pass_tests.rs"]
 mod pass_tests;
+
+#[test]
+#[ignore = "requires local GPU; renderer-owned control preparation proof"]
+fn renderer_owned_preferences_meshes_stay_warm_and_match_fresh_pixels() {
+    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let mut renderer = hardware_renderer(960, 720);
+    let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
+    let prepared = renderer.renderer.prepare_native_preferences_scrolled(
+        &state.ui.global_preferences,
+        960,
+        720,
+        1.0,
+        &mut scroll,
+        Some(0),
+    );
+    let cold = capture(&mut renderer, &prepared);
+    let builds = renderer.renderer.control_meshes.builds;
+    assert!(builds > 0);
+    let warm = renderer.renderer.prepare_native_preferences_scrolled(
+        &state.ui.global_preferences,
+        960,
+        720,
+        1.0,
+        &mut scroll,
+        None,
+    );
+    assert_eq!(renderer.renderer.control_meshes.builds, builds);
+    assert!(cold == capture(&mut renderer, &warm));
+    let scaled = renderer.renderer.prepare_native_preferences_scrolled(
+        &state.ui.global_preferences,
+        960,
+        720,
+        1.5,
+        &mut scroll,
+        Some(0),
+    );
+    assert!(renderer.renderer.control_meshes.builds > builds);
+    let expected =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.5);
+    assert!(capture(&mut renderer, &scaled) == capture(&mut renderer, &expected));
+    renderer.renderer = Renderer::new(
+        &renderer.device,
+        &renderer.queue,
+        OUTPUT_FORMAT,
+        DEFAULT_MSAA_SAMPLES,
+    );
+    assert_eq!(
+        renderer.renderer.control_meshes.builds, 0,
+        "renderer replacement starts without old control retention"
+    );
+    let restored = renderer.renderer.prepare_native_preferences_scrolled(
+        &state.ui.global_preferences,
+        960,
+        720,
+        1.0,
+        &mut scroll,
+        Some(0),
+    );
+    assert!(renderer.renderer.control_meshes.builds > 0);
+    assert!(cold == capture(&mut renderer, &restored));
+}

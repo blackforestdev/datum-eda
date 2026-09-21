@@ -326,6 +326,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             text_renderer,
             menu_overlay_text_renderer,
             text_buffers: Default::default(),
+            control_meshes: Default::default(),
             text_preparation: Default::default(),
             panel_gpu: Default::default(),
             viewport_underlay_gpu: Default::default(),

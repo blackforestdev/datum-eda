@@ -2,7 +2,8 @@
 
 use super::*;
 use crate::global_preferences_primitives::{
-    button, push_dashed_rect_border, push_rounded_rect_with_border,
+    ControlMeshCache, ControlPainter, button, push_dashed_rect_border,
+    push_rounded_rect_with_border,
 };
 use datum_gui_protocol::{NewProjectFocus, NewProjectUnitsChoice};
 
@@ -18,6 +19,9 @@ pub(super) fn render_new_project_dialog(
     if !dialog.open || !native_window {
         return;
     }
+    let mut controls = ControlMeshCache::default();
+    let mut painter = ControlPainter::new(quads, &mut controls, 1.0);
+    let quads = &mut painter;
     let window = RectPx {
         x: 0.0,
         y: 0.0,
@@ -343,7 +347,7 @@ fn draw_text_field(
     focused: bool,
     y: f32,
     width: f32,
-    quads: &mut Vec<Quad>,
+    quads: &mut ControlPainter<'_>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
     target: HitTarget,

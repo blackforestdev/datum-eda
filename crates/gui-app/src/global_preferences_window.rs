@@ -329,7 +329,7 @@ impl GlobalPreferencesWindowSurface {
                 self.scroll_focus = Some(dialog.focus.clone());
                 self.scroll_expanded = expanded;
                 self.scroll_identity = Some(identity);
-                self.prepared = Some(PreparedScene::from_native_preferences_scrolled(
+                self.prepared = Some(self.renderer.prepare_native_preferences_scrolled(
                     dialog,
                     self.config.width,
                     self.config.height,

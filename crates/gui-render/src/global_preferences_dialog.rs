@@ -7,8 +7,8 @@ mod preferences_rows;
 #[path = "render/preferences_scene.rs"]
 mod preferences_scene;
 use crate::global_preferences_primitives::{
-    button, draw_header_chip, draw_preference_control, draw_search_icon,
-    push_rounded_rect_with_border,
+    ControlMeshCache, ControlPainter, button, draw_header_chip, draw_preference_control,
+    draw_search_icon, push_rounded_rect_with_border,
 };
 use datum_gui_protocol::{
     GlobalPreferenceControlUi, GlobalPreferencesFocus, GlobalPreferencesNoticeUi,
@@ -47,10 +47,12 @@ pub(super) fn render_preferences_dialog(
     hits: &mut Vec<HitRegion>,
 ) {
     let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
+    let mut controls = ControlMeshCache::default();
+    let mut painter = ControlPainter::new(quads, &mut controls, 1.0);
     render_preferences_dialog_scrolled(
         dialog,
         layout,
-        quads,
+        &mut painter,
         text,
         hits,
         &mut scroll,
@@ -62,7 +64,7 @@ pub(super) fn render_preferences_dialog(
 fn render_preferences_dialog_scrolled(
     dialog: &datum_gui_protocol::GlobalPreferencesDialogState,
     layout: &ShellLayout,
-    quads: &mut Vec<Quad>,
+    quads: &mut ControlPainter<'_>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
     scroll: &mut datum_gui_viewport::scroll::ScrollViewport,

@@ -1,18 +1,21 @@
 //! Small screen-space primitives used by the protected Global Preferences grammar.
 
 use super::*;
+#[path = "render/control_mesh.rs"]
+mod control_mesh;
+pub(crate) use control_mesh::{ControlMeshCache, ControlPainter};
 
 const ROUNDED_RECT_CORNER_SEGMENTS: usize = 4;
 
 pub(super) fn push_rounded_rect_with_border(
-    quads: &mut Vec<Quad>,
+    quads: &mut ControlPainter<'_>,
     rect: RectPx,
     fill: [f32; 3],
     border: [f32; 3],
     thickness: f32,
     radius: f32,
 ) {
-    push_rounded_rect_fill(quads, rect, border, radius);
+    quads.rounded_fill(rect, border, radius, thickness);
     let inset = thickness
         .max(0.0)
         .min(rect.width * 0.5)
@@ -27,29 +30,7 @@ pub(super) fn push_rounded_rect_with_border(
         height: rect.height - inset * 2.0,
     };
     if inner.width > 0.0 && inner.height > 0.0 {
-        push_rounded_rect_fill(quads, inner, fill, (radius - inset).max(0.0));
-    }
-}
-
-pub(super) fn push_rounded_rect_fill(
-    quads: &mut Vec<Quad>,
-    rect: RectPx,
-    color: [f32; 3],
-    radius: f32,
-) {
-    // This contour is convex by construction. Fan triangulation preserves its
-    // exact boundary without general concave/holed-polygon scanline sorting.
-    let points = rounded_rect_points(rect, radius);
-    for index in (1..points.len() - 1).step_by(2) {
-        quads.push(Quad {
-            points: [
-                points[0],
-                points[index],
-                points[index + 1],
-                points[(index + 2).min(points.len() - 1)],
-            ],
-            color,
-        });
+        quads.rounded_fill(inner, fill, (radius - inset).max(0.0), thickness);
     }
 }
 
@@ -111,7 +92,11 @@ pub(super) fn rounded_rect_points(rect: RectPx, radius: f32) -> Vec<(f32, f32)> 
     points
 }
 
-pub(super) fn push_dashed_rect_border(quads: &mut Vec<Quad>, rect: RectPx, color: [f32; 3]) {
+pub(super) fn push_dashed_rect_border(
+    quads: &mut ControlPainter<'_>,
+    rect: RectPx,
+    color: [f32; 3],
+) {
     let dash: f32 = 6.0;
     let gap: f32 = 4.0;
     let mut horizontal = |y: f32| {
@@ -153,7 +138,7 @@ pub(super) fn draw_header_chip(
     label: &str,
     x: f32,
     y: f32,
-    quads: &mut Vec<Quad>,
+    quads: &mut ControlPainter<'_>,
     text: &mut Vec<TextRun>,
 ) -> RectPx {
     let rect = RectPx {
@@ -186,7 +171,7 @@ pub(super) fn draw_header_chip(
     rect
 }
 
-pub(super) fn draw_search_icon(x: f32, y: f32, quads: &mut Vec<Quad>) {
+pub(super) fn draw_search_icon(x: f32, y: f32, quads: &mut ControlPainter<'_>) {
     push_projected_ellipse(
         quads,
         RectPx {
@@ -225,7 +210,7 @@ pub(super) fn draw_choice_control(
     rect: RectPx,
     focused: bool,
     available: bool,
-    quads: &mut Vec<Quad>,
+    quads: &mut ControlPainter<'_>,
     text: &mut Vec<TextRun>,
 ) {
     push_rounded_rect_with_border(
@@ -276,7 +261,7 @@ pub(super) fn draw_boolean_control(
     rect: RectPx,
     focused: bool,
     available: bool,
-    quads: &mut Vec<Quad>,
+    quads: &mut ControlPainter<'_>,
     text: &mut Vec<TextRun>,
 ) {
     let switch = RectPx {
@@ -347,7 +332,7 @@ pub(super) fn button(
     rect: RectPx,
     focused: bool,
     available: bool,
-    quads: &mut Vec<Quad>,
+    quads: &mut ControlPainter<'_>,
     text: &mut Vec<TextRun>,
 ) {
     let border = if focused {
@@ -385,7 +370,7 @@ pub(super) fn draw_preference_control(
     y: f32,
     focused: bool,
     available: bool,
-    quads: &mut Vec<Quad>,
+    quads: &mut ControlPainter<'_>,
     text: &mut Vec<TextRun>,
 ) -> RectPx {
     use datum_gui_protocol::GlobalPreferenceControlUi;
@@ -485,4 +470,15 @@ fn control_rect(right: f32, y: f32, width: f32) -> RectPx {
         width,
         height: 30.0,
     }
+}
+
+#[cfg(test)]
+pub(super) fn push_rounded_rect_fill(
+    quads: &mut Vec<Quad>,
+    rect: RectPx,
+    color: [f32; 3],
+    radius: f32,
+) {
+    let mut cache = ControlMeshCache::default();
+    ControlPainter::new(quads, &mut cache, 1.0).rounded_fill(rect, color, radius, 0.0);
 }
