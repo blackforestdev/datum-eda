@@ -574,7 +574,8 @@ fn cached_shape_relayout_matches_fresh_dialog_pixels() {
             actual == capture(&mut fresh, &prepared),
             "cached shape differs at width {width}"
         );
-        assert_eq!(renderer.renderer.text_buffers.shape_reuses, step.min(2));
+        assert_eq!(renderer.renderer.text_buffers.shape_reuses, step);
+        assert_eq!(renderer.renderer.text_buffers.entries().len(), 1);
     }
 }
 

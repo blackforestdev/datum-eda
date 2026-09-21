@@ -16658,7 +16658,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial production adoption: extent-only misses reuse cloned public shaping caches and relayout, while exact layout/placement hits remain warm. CPU glyph-layout parity, repeated-width and size/style invalidation, rejected no-reuse control, real GPU fresh-cache pixel parity and four native smoke checks pass. Full configurable layout/shape-key, native counters and backend/resource qualification remain open.",
+        "status": "Partial shared production adoption: extent-only misses reuse an unused matching Buffer in place, preserving shaping storage and invalidating glyph revision; current-frame consumers retain independent layouts. Original clone and missing current-frame guard negatives fail. Real CPU fresh-layout/glyph parity, GPU fresh-dialog pixels and four native regression smokes pass. Complete shaping/layout dependency, byte accounting and per-adapter/backend qualification remain open.",
         "id": "proof_reuse_text_layout",
         "positive": "Change wrap width/line metrics/alignment, then placement/clip only",
         "negative_control": "Keep old wrap or reshape solely for translation",
@@ -16684,7 +16684,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S2/text-relayout/result.json"
+        "docs/reviews/gui-performance/implementation/S2/text-relayout/result.json",
+        "docs/reviews/gui-performance/implementation/S2/text-layout-transfer/result.json"
       ]
     },
     {
@@ -25633,5 +25634,29 @@
     "next_production_choice": "S3 shared dialog/profile migration can consume existing shared owners, but current S2 exit prevents selection. The proposal changes that ordering; continuing substantive S2 work remains authorized without it.",
     "proposal": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#proposed-s2-implementation-exit-amendment--pending-owner-review",
     "disposition": "No requirement satisfied, no step advanced, no technical accounting solution or dependency authority inferred. Proposed S4 implementation and S5 qualification carryforward requires explicit owner approval."
+  },
+  "s2_text_layout_transfer_work": {
+    "status": "production S2 shaped-layout transfer; S2 incomplete and exit amendment remains pending",
+    "production_consumers": [
+      "MAIN workspace/menu and existing NEW full-frame text path",
+      "GLOBAL and PROJECT dialog-only labels"
+    ],
+    "owner": "TextBufferCache::ensure_text_buffer, through shared Renderer::prepare_frame_text",
+    "retired_path": "Unconditional clone of shaped Buffer and duplicate cache entry for extent-only misses when an old matching entry is unused by the current frame",
+    "behavior": "Search the exact shaping bucket for an unused matching entry after checking exact layout hits. Relayout that Buffer in place, update extent/last-used and invalidate glyph revision. Index/fingerprint and shaped/key storage stay owned by the entry. Keep cloning when all matching entries are referenced by current-frame consumers, preserving both layouts. Continue reporting extent changes as layout misses.",
+    "proof": {
+      "negative": "Original clone path fails the new same-index/one-entry test; removing current-frame guard fails the distinct-index assertion. Both production profiles covered. Original source restored before final suite/build.",
+      "cpu": "203 renderer tests passed, 21 ignored. Four extent changes preserve shape-span storage and one entry with fresh-buffer layout/glyph parity and exact repeated-layout hits. Two current-frame extents preserve independent layouts.",
+      "gpu": "Existing real GPU fresh-dialog pixel parity proof strengthened with one-entry retention and each-transition shape reuse; passed.",
+      "native": "Fresh offline release passes MAIN/GLOBAL/PROJECT/NEW X11 smokes; Main wheel input included. These are regression checks, not native memory/performance qualification.",
+      "checks": "Renderer visual all-targets Clippy, source health, dependency authority, traceability/parity/spec governance, fresh project selector and staged formatting checked."
+    },
+    "remaining": [
+      "No complete shaped-payload/atlas allocation accounting, byte caps, global adoption or numerical performance claim.",
+      "Historical extent reuse can require relayout when revisited; same-frame layouts remain separately retained.",
+      "Full native backend/scale, static/negative/counter qualification and S2 exit remain open. Pending sequencing proposal is not approved or applied.",
+      "No dependencies, third-party edits, Cargo/license/font changes, product authority or resize qualification changes."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S2/text-layout-transfer/result.json"
   }
 }
