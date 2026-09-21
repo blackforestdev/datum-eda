@@ -757,7 +757,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial: shared wait owner and mixed-deadline/cancellation component proof; native producer coexistence remains open",
+        "status": "partial: shared wait owner and mixed-deadline/cancellation component proof; native producer coexistence remains open Shared default idle completion now advances through the single minimum-deadline owner; five component regressions and four bounded native healthy-queue idle/close runs passed. Full native fault/deadline/resource qualification remains open.",
         "id": "proof_sh_06",
         "positive": "Host timer deadlines for retry/terminal/device progress coexist",
         "negative_control": "Keep stale earlier deadline after cancellation",
@@ -814,7 +814,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/wait-owner/receipt.json",
-        "docs/reviews/gui-performance/implementation/S1/device-wake/receipt.json"
+        "docs/reviews/gui-performance/implementation/S1/device-wake/receipt.json",
+        "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json"
       ]
     },
     {
@@ -2078,7 +2079,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial component proof: Close-before-completion metadata lifetime, ticket cancellation and receipt-scoped retirement are component-tested. Native callback-after-close/no-late-work and complete memory budgets remain unqualified; metadata tests do not prove driver allocation release.",
+        "status": "partial component proof: Close-before-completion metadata lifetime, ticket cancellation and receipt-scoped retirement are component-tested. Native callback-after-close/no-late-work and complete memory budgets remain unqualified; metadata tests do not prove driver allocation release. Shared default idle completion now advances through the single minimum-deadline owner; five component regressions and four bounded native healthy-queue idle/close runs passed. Full native fault/deadline/resource qualification remains open.",
         "id": "proof_lf_07",
         "positive": "Close after submit before callback",
         "negative_control": "Capture strong native-host owner in callback",
@@ -2132,7 +2133,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
-        "docs/reviews/gui-performance/implementation/S1/prepared-attachment/receipt.json"
+        "docs/reviews/gui-performance/implementation/S1/prepared-attachment/receipt.json",
+        "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json"
       ]
     },
     {
@@ -2278,7 +2280,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial component proof: current gpu_wait_is_bounded_by_same_episode_and_success_resets_it test verifies queue-wait recovery limit; native never-completing queue, callback/allocation bounds and dispatch qualification remain open.",
+        "status": "Partial component proof: current gpu_wait_is_bounded_by_same_episode_and_success_resets_it test verifies queue-wait recovery limit; native never-completing queue, callback/allocation bounds and dispatch qualification remain open. Shared default idle completion now advances through the single minimum-deadline owner; five component regressions and four bounded native healthy-queue idle/close runs passed. Full native fault/deadline/resource qualification remains open.",
         "id": "proof_lf_09",
         "positive": "Queue completion never arrives",
         "negative_control": "Block UI polling until completion",
@@ -2327,7 +2329,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json"
+      ]
     },
     {
       "id": "LF-10",
@@ -23989,5 +23994,31 @@
       "S1 remains in progress; no dependency/license or default policy change. Resize CPU/temporal qualification remains nonblocking."
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/LF-02/result.json"
+  },
+  "s1_queue_progress_work": {
+    "status": "Default shared queue completion progress adopted; bounded native idle proof passed; S1 qualification remains partial",
+    "production_consumers_migrated": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_path": "App::poll_background_work -> shared QueueOwner::progress -> nonblocking Device::poll -> existing completion watermark -> attachment retirement; minimum deadline through NativeFrameCoordinator",
+    "production_change": "Outstanding native frame receipts now drive bounded progress independently of rendering. No outstanding receipt means no poll/deadline; all hosts undrawable pauses polling and active time. Only actual completion advancement renews the two-second stalled-watermark budget. Exhaustion/error preserves state, stops shared admission and uses existing textual error/F5 Retry/Close paths. F5 retries affected hosts together.",
+    "retired_paths": "Retired reliance on a later frame or device-recovery event to drive the final native receipt. Existing begin_frame nonblocking poll still serves immediate frame admission; it is not a competing deadline owner. No new callback, submission, thread, dependency or readback wait.",
+    "verification": {
+      "app": "367 passed, 0 failed, 9 ignored: five new completion ordering/retirement/timeout/hidden/retry component tests",
+      "clippy": "datum-gui-app datum-gui binary, -D warnings passed",
+      "release": "fresh guarded offline release build passed",
+      "native": "All four X11/Xwayland hosts: actual native final frame, receipt 3/3 collected, three-second idle adds zero frames, clean native closes and auxiliary focus restoration; diagnostics disabled except existing verbose log",
+      "governance": "source health and dependency authority passed"
+    },
+    "limits": [
+      "Native runs observe completion on a healthy queue; never-completing native queue, native timeout/F5 and close-before-callback replay remain open. Component tests alone do not qualify these native faults.",
+      "Three seconds is bounded regression proof, not full W-IDLE or endurance acceptance. No CPU/GPU numerical tier, independent pixels or driver memory release claim.",
+      "A nonblocking wgpu poll cannot preempt a driver that blocks internally; this patch does not qualify that backend failure.",
+      "S1 remains in progress; resize CPU/temporal qualification remains separate and nonblocking."
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json"
   }
 }

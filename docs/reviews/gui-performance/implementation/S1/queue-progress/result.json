@@ -1,0 +1,252 @@
+{
+  "status": "Default shared queue completion progress adopted; bounded native idle proof passed; S1 qualification remains partial",
+  "production_consumers_migrated": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "production_path": "App::poll_background_work -> shared QueueOwner::progress -> nonblocking Device::poll -> existing completion watermark -> attachment retirement; minimum deadline through NativeFrameCoordinator",
+  "production_change": "Outstanding native frame receipts now drive bounded progress independently of rendering. No outstanding receipt means no poll/deadline; all hosts undrawable pauses polling and active time. Only actual completion advancement renews the two-second stalled-watermark budget. Exhaustion/error preserves state, stops shared admission and uses existing textual error/F5 Retry/Close paths. F5 retries affected hosts together.",
+  "retired_paths": "Retired reliance on a later frame or device-recovery event to drive the final native receipt. Existing begin_frame nonblocking poll still serves immediate frame admission; it is not a competing deadline owner. No new callback, submission, thread, dependency or readback wait.",
+  "verification": {
+    "app": "367 passed, 0 failed, 9 ignored: five new completion ordering/retirement/timeout/hidden/retry component tests",
+    "clippy": "datum-gui-app datum-gui binary, -D warnings passed",
+    "release": "fresh guarded offline release build passed",
+    "native": "All four X11/Xwayland hosts: actual native final frame, receipt 3/3 collected, three-second idle adds zero frames, clean native closes and auxiliary focus restoration; diagnostics disabled except existing verbose log",
+    "governance": "source health and dependency authority passed"
+  },
+  "limits": [
+    "Native runs observe completion on a healthy queue; never-completing native queue, native timeout/F5 and close-before-callback replay remain open. Component tests alone do not qualify these native faults.",
+    "Three seconds is bounded regression proof, not full W-IDLE or endurance acceptance. No CPU/GPU numerical tier, independent pixels or driver memory release claim.",
+    "A nonblocking wgpu poll cannot preempt a driver that blocks internally; this patch does not qualify that backend failure.",
+    "S1 remains in progress; resize CPU/temporal qualification remains separate and nonblocking."
+  ],
+  "receipt": "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json",
+  "selection": {
+    "baseline": "1f249f815bf6a20225501c5695822140416dcfe4",
+    "requirement": "GPI-S1 SCH-02/04/05 and LF-07/LF-09 bounded queue completion and retirement",
+    "defect": "Pinned wgpu Queue::on_submitted_work_done requires submit/instance poll/device poll. Default healthy idle event loop has no completion progress after last submission; callback and closed-host retirement may remain pending until unrelated rendering.",
+    "scope": [
+      "shared QueueOwner progress clock",
+      "SurfaceTransaction/App integration",
+      "native event-loop minimum deadline and F5 retry"
+    ],
+    "preserve": [
+      "no new rendering, submission or completion callback from polling",
+      "one callback per submitted frame and existing epoch isolation",
+      "2s drawable-active timeout; pause while all hosts undrawable; manual retry after failure"
+    ],
+    "proof": [
+      "deterministic clock/callback/watermark tests",
+      "app tests and Clippy/release",
+      "native close/idle retirement log regression"
+    ]
+  },
+  "binary_sha256": "c6e6b0cdb709c1a9f8f22c81c438aef7a98f42296e95024b2a081885594d3bba",
+  "source_sha256": {
+    "app_native_events.rs": "a7158219e51bab04e2547301ce55d64d7359dfe516992505eebf291f7e45532c",
+    "native_attachment_ledger.rs": "99eb8910a722c705d75a21c53aedc66ba85e9127ca7f12049db816cffa1999ea",
+    "native_queue_owner.rs": "f9ef61e1e6436e7f5b2a3678fc9f8206549e6b3977964b849ef5c78180aa4ea8",
+    "native_queue_progress_tests.rs": "22f93b495a8e445aa0afa10e2766342ecdd8b3d218c4b05f5411767fe138da78",
+    "native_surface_transaction.rs": "d04f53fd2cfb0ee26a5f3390a3c4d414575ae3d42332da73cdf02003db456629",
+    "production_status_refresh.rs": "b477a132ed7c412d8fedd413cde5bb128eea96006bbf9b988f0ecb436040019a"
+  },
+  "runs": [
+    {
+      "host": "MAIN",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "final_present": {
+        "acquire_attempts": 3,
+        "acquired": 3,
+        "active": 0,
+        "configuration_generation": 2,
+        "configure_attempts": 2,
+        "configured_extent": [
+          1200,
+          800
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 3,
+        "frame_submissions": 3,
+        "gpu_completed_through_receipt": 2,
+        "host": 1,
+        "last_frame_submission_receipt": 3,
+        "last_present_receipt": 3,
+        "presented": 3,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 3 })",
+        "window": "WindowId(12582916)"
+      },
+      "completion": [
+        1,
+        3,
+        3
+      ],
+      "idle_seconds": 3,
+      "presentations_before_idle": 3,
+      "presentations_after_idle": 3,
+      "main_presentations": 3,
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "final_present": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 2,
+        "configure_attempts": 2,
+        "configured_extent": [
+          1200,
+          800
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 3,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 2,
+        "host": 2,
+        "last_frame_submission_receipt": 3,
+        "last_present_receipt": 3,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 3 })",
+        "window": "WindowId(12582917)"
+      },
+      "completion": [
+        1,
+        3,
+        3
+      ],
+      "idle_seconds": 3,
+      "presentations_before_idle": 3,
+      "presentations_after_idle": 3,
+      "main_presentations": 1,
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "final_present": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 2,
+        "configure_attempts": 2,
+        "configured_extent": [
+          1200,
+          800
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 3,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 2,
+        "host": 2,
+        "last_frame_submission_receipt": 3,
+        "last_present_receipt": 3,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 3 })",
+        "window": "WindowId(12582917)"
+      },
+      "completion": [
+        1,
+        3,
+        3
+      ],
+      "idle_seconds": 3,
+      "presentations_before_idle": 3,
+      "presentations_after_idle": 3,
+      "main_presentations": 1,
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "NEW",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "final_present": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 2,
+        "configure_attempts": 2,
+        "configured_extent": [
+          1200,
+          800
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 3,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 2,
+        "host": 2,
+        "last_frame_submission_receipt": 3,
+        "last_present_receipt": 3,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 3 })",
+        "window": "WindowId(12582917)"
+      },
+      "completion": [
+        1,
+        3,
+        3
+      ],
+      "idle_seconds": 3,
+      "presentations_before_idle": 3,
+      "presentations_after_idle": 3,
+      "main_presentations": 1,
+      "passed": true,
+      "exit": 0
+    }
+  ],
+  "artifacts_sha256": {
+    "GLOBAL/native.log.gz": "09f6ba1ece99e9d7286490d53421a88cf9a1fce4a6b9eb3a5342d0decfd7b8e8",
+    "GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "MAIN/native.log.gz": "ce552d30f7d6f6a1d7c101580c95c5a6d6f7697abe6b8f024577270031fc99d9",
+    "MAIN/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "NEW/native.log.gz": "9ae2df9f266bd45247f18aaa2ea670b99709740cfeb1581170b5d593fa485128",
+    "NEW/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "PROJECT/native.log.gz": "57c2336f8b9899cf5850dd7faf9eca69a71564aa0eb5376d3508e4b7576a47ed",
+    "PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "build.log.gz": "794d4109259a2f7f9cf3299dd589896dbd8edf8a4a96b8c9cdd78a6ca8bf7409",
+    "clippy.log.gz": "8f5b1e2aaabe27fd629ec0f67794e806fd2aaffdd56a3d851056ec1ffe9b2cd9",
+    "raw-result.json.gz": "e2be7ff848bddf62d9eb8f86e3138df4f7612d34195b2191eb60679e8cd2ad04",
+    "run.log.gz": "48173d1d060277530155bc2ed85e5338e07b4e4d63ef3f302a493ad4ffb84e52",
+    "runner.py.gz": "7ad792d04d9bcf79759f8b6b6ff5958d1ff8fbf06ae1bbac86e8cc573d555c82",
+    "tests.log.gz": "20033278db87fa857f6488da7c895bfd296937ca5d3c229621e1adbe1d324993"
+  }
+}

@@ -481,6 +481,12 @@ impl SurfaceTransaction {
     }
 }
 
+impl SurfaceTransaction {
+    pub(super) fn queue_owner(&self) -> &super::native_queue_owner::QueueOwner {
+        &self.queue_owner
+    }
+}
+
 impl crate::App {
     pub(crate) fn sync_surface_drawability(&mut self) {
         if let (Some(runtime), Some(window)) = (&mut self.runtime, self.window) {

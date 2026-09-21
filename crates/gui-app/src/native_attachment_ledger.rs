@@ -91,7 +91,7 @@ impl Ledger {
             .expect("attachment bytes exhausted")
     }
 
-    fn reap(&mut self, completed: u64) {
+    pub(super) fn reap(&mut self, completed: u64) {
         self.records.retain(|_, allocation| {
             let release = allocation.release_reason.is_some()
                 && (allocation.last_submission <= completed || self.device_lost);

@@ -8,6 +8,7 @@ use std::{
         Arc, Mutex,
         atomic::{AtomicBool, AtomicU64, Ordering},
     },
+    time::Instant,
 };
 
 #[path = "native_attachment_ledger.rs"]
@@ -24,6 +25,8 @@ struct State {
     device_lost: Arc<AtomicBool>,
     tickets: VecDeque<u64>,
     attachments: Arc<Mutex<attachment::Ledger>>,
+    progress: super::native_recovery::Recovery,
+    progress_completed: u64,
 }
 impl Default for State {
     fn default() -> Self {
@@ -39,6 +42,8 @@ impl Default for State {
             device_lost: Arc::default(),
             tickets: VecDeque::new(),
             attachments: Arc::default(),
+            progress: Default::default(),
+            progress_completed: 0,
         }
     }
 }
@@ -51,6 +56,84 @@ pub(super) enum Admission {
 }
 
 impl QueueOwner {
+    /// Drive only completion callbacks, including when no redraw is pending.
+    /// New submissions do not renew a stalled watermark's active-time budget.
+    pub(super) fn progress(
+        &self,
+        now: Instant,
+        drawable: bool,
+        poll: impl FnOnce() -> anyhow::Result<()>,
+    ) -> anyhow::Result<(Option<Instant>, bool)> {
+        {
+            let mut state = self.0.borrow_mut();
+            if state.progress.failed() {
+                return Ok((None, state.progress.take_failure()));
+            }
+            let completed = state.completed.load(Ordering::Acquire);
+            let advanced = completed > state.progress_completed;
+            if advanced {
+                state.progress.success();
+                state.progress_completed = completed;
+                drop(state);
+                self.with_attachments(|ledger, completed| ledger.reap(completed));
+                self.trace_progress();
+                state = self.0.borrow_mut();
+            }
+            state.progress.set_drawable(drawable, now);
+            if completed == state.submitted {
+                state.progress.success();
+                return Ok((None, false));
+            }
+            if !state.progress.ready(now) {
+                let (_, due) = state.progress.poll(now);
+                return Ok((due, state.progress.take_failure()));
+            }
+        }
+        if let Err(error) = poll() {
+            self.0.borrow_mut().progress.fail();
+            // The caller reports this error; do not report it again next round.
+            self.0.borrow_mut().progress.take_failure();
+            return Err(error);
+        }
+        self.with_attachments(|ledger, completed| ledger.reap(completed));
+        let mut state = self.0.borrow_mut();
+        let completed = state.completed.load(Ordering::Acquire);
+        let advanced = completed > state.progress_completed;
+        if advanced {
+            state.progress.success();
+            state.progress_completed = completed;
+        }
+        let due = if completed == state.submitted {
+            state.progress.success();
+            None
+        } else {
+            state
+                .progress
+                .defer(super::native_recovery::RetryReason::Queue, now);
+            state.progress.poll(now).1
+        };
+        let failed = state.progress.take_failure();
+        drop(state);
+        if advanced {
+            self.trace_progress();
+        }
+        Ok((due, failed))
+    }
+
+    fn trace_progress(&self) {
+        if std::env::var_os("DATUM_GUI_VERBOSE_LOG").is_some() {
+            let (epoch, submitted, completed) = self.snapshot();
+            super::append_gui_diagnostic_line(format!(
+                "native queue progress epoch={epoch} submitted={submitted} completed={completed}"
+            ));
+            self.trace_attachments();
+        }
+    }
+
+    pub(super) fn retry_progress(&self) -> bool {
+        self.0.borrow_mut().progress.manual_retry()
+    }
+
     pub(super) fn with_device_loss(signal: Arc<AtomicBool>) -> Self {
         let owner = Self::default();
         owner.0.borrow_mut().device_lost = signal;
@@ -135,6 +218,9 @@ impl QueueOwner {
 
     pub(super) fn admit(&self, host: u64, configuration: bool, in_flight: u64) -> Admission {
         let mut state = self.0.borrow_mut();
+        if state.progress.failed() {
+            return Admission::Wait;
+        }
         if configuration && !state.tickets.contains(&host) {
             state.tickets.push_back(host);
         }
@@ -192,6 +278,76 @@ impl QueueOwner {
         (state.submitted, Arc::clone(&state.completed))
     }
 }
+
+impl crate::App {
+    pub(crate) fn service_native_queue_progress(&mut self) -> Option<Instant> {
+        if self.device_recovery.pending() || !self.native_device_available() {
+            return None;
+        }
+        let runtime = self.runtime.as_ref()?;
+        let result = runtime.surface_transaction.queue_owner().progress(
+            Instant::now(),
+            self.frames.has_drawable_host(),
+            || {
+                runtime
+                    .device
+                    .poll(wgpu::PollType::Poll)
+                    .map(|_| ())
+                    .map_err(Into::into)
+            },
+        );
+        let error = match result {
+            Ok((due, false)) => return due,
+            Ok((_, true)) => "GPU completion exceeded two drawable-active seconds".to_owned(),
+            Err(error) => error.to_string(),
+        };
+        self.frames.fail_device();
+        let windows = [
+            self.window,
+            self.global_preferences_window.as_deref(),
+            self.project_preferences_window.as_deref(),
+            self.new_project_window.as_deref(),
+        ]
+        .map(|window| window.map(|window| window.id()));
+        for window in windows.into_iter().flatten() {
+            self.cancel_native_host_gestures(window);
+        }
+        let message = format!(
+            "Rendering paused for shared native queue: {error}. State retained; press F5 to Retry or close the window."
+        );
+        super::append_gui_diagnostic_line(&message);
+        eprintln!("datum-gui error: {message}");
+        None
+    }
+
+    pub(crate) fn retry_failed_queue(&mut self) -> bool {
+        if !self
+            .runtime
+            .as_ref()
+            .is_some_and(|runtime| runtime.surface_transaction.queue_owner().retry_progress())
+        {
+            return false;
+        }
+        for window in [
+            self.window,
+            self.global_preferences_window.as_deref(),
+            self.project_preferences_window.as_deref(),
+            self.new_project_window.as_deref(),
+        ]
+        .into_iter()
+        .flatten()
+        {
+            if self.frames.manual_retry(window.id()) {
+                self.frames.invalidate(window);
+            }
+        }
+        true
+    }
+}
+
+#[cfg(test)]
+#[path = "native_queue_progress_tests.rs"]
+mod progress_tests;
 
 #[cfg(test)]
 mod tests {
