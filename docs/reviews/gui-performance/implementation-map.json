@@ -2100,7 +2100,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial component proof: Close-before-completion metadata lifetime, ticket cancellation and receipt-scoped retirement are component-tested. Native callback-after-close/no-late-work and complete memory budgets remain unqualified; metadata tests do not prove driver allocation release. Shared default idle completion now advances through the single minimum-deadline owner; five component regressions and four bounded native healthy-queue idle/close runs passed. Full native fault/deadline/resource qualification remains open. Main permanent window leak retired in favor of owned Arc; all four ordinary host closes and one device-recovery replay observe zero strong Main references after teardown. One device-run close timeout retained; driver lifetime and full lifecycle qualification remain open. Default Wayland native close crash reproduced twice and corrected by keeping window fields alive through all GPU field drops; all four Wayland and X11 host regressions pass (s1_native_window_lifetime_work). Complete driver-memory and fault/endurance qualification remain open.",
+        "status": "partial component proof: Close-before-completion metadata lifetime, ticket cancellation and receipt-scoped retirement are component-tested. Native callback-after-close/no-late-work and complete memory budgets remain unqualified; metadata tests do not prove driver allocation release. Shared default idle completion now advances through the single minimum-deadline owner; five component regressions and four bounded native healthy-queue idle/close runs passed. Full native fault/deadline/resource qualification remains open. Main permanent window leak retired in favor of owned Arc; all four ordinary host closes and one device-recovery replay observe zero strong Main references after teardown. One device-run close timeout retained; driver lifetime and full lifecycle qualification remain open. Default Wayland native close crash reproduced twice and corrected by keeping window fields alive through all GPU field drops; all four Wayland and X11 host regressions pass (s1_native_window_lifetime_work). Complete driver-memory and fault/endurance qualification remain open. Eight existing Wayland/X11 healthy traces now reconcile physical attachment payload, allocation identity, sampled per-host current/retiring bounds and zero final references. Main X11 same-extent successive presentations reuse the allocation; auxiliary warm proof and complete resource/driver/fault qualification remain separate (s1_native_attachment_reconciliation).",
         "id": "proof_lf_07",
         "positive": "Close after submit before callback",
         "negative_control": "Capture strong native-host owner in callback",
@@ -2159,7 +2159,8 @@
         "docs/reviews/gui-performance/implementation/S1/prepared-attachment/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json",
         "docs/reviews/gui-performance/implementation/S1/owned-main-window/result.json",
-        "docs/reviews/gui-performance/implementation/S1/native-window-lifetime/result.json"
+        "docs/reviews/gui-performance/implementation/S1/native-window-lifetime/result.json",
+        "docs/reviews/gui-performance/implementation/S1/native-attachment-reconciliation/result.json"
       ]
     },
     {
@@ -2502,7 +2503,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial: real Vulkan attachment identity/reuse/equal-payload extent/forced-replacement tests passed; full native generation and MEM-budget proof remains open",
+        "status": "partial: real Vulkan attachment identity/reuse/equal-payload extent/forced-replacement tests passed; full native generation and MEM-budget proof remains open Eight existing Wayland/X11 healthy traces now reconcile physical attachment payload, allocation identity, sampled per-host current/retiring bounds and zero final references. Main X11 same-extent successive presentations reuse the allocation; auxiliary warm proof and complete resource/driver/fault qualification remain separate (s1_native_attachment_reconciliation).",
         "id": "proof_lf_11",
         "positive": "Repeated same-size frame then changed-size frame",
         "negative_control": "Recreate MSAA attachments unconditionally",
@@ -2551,7 +2552,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/attachment-guard/receipt.json",
-        "docs/reviews/gui-performance/implementation/S1/prepared-attachment/receipt.json"
+        "docs/reviews/gui-performance/implementation/S1/prepared-attachment/receipt.json",
+        "docs/reviews/gui-performance/implementation/S1/native-attachment-reconciliation/result.json"
       ]
     },
     {
@@ -24710,6 +24712,142 @@
       "X11 minimize proof remains separate; zero-size and application suspend rules still apply when delivered. No global LF-04 or S1 acceptance follows.",
       "No specification amendment is needed to describe absent signals: E06 already requires this applicability record. Future signal support remains tracked and cannot introduce or change a dependency without PM029 owner authority.",
       "No renderer code, dependency, backend policy or nonblocking resize exclusion changed."
+    ]
+  },
+  "s1_native_attachment_reconciliation": {
+    "scope": "Recorded application MSAA attachment references only",
+    "runs": [
+      {
+        "trace": "docs/reviews/gui-performance/implementation/S1/native-window-lifetime/candidate-wayland/main-native.log.gz",
+        "sha256": "4495ff4643111afbb206a316300e5e97b2f5a855cb344fc45559adf7f866db2e",
+        "ledger_snapshots": 4,
+        "allocations_observed_and_retired": 1,
+        "peak_referenced_payload_bytes": 36126720,
+        "same_extent_successive_presentations_by_queue_host": {},
+        "observed_hosts": [
+          1
+        ],
+        "final_referenced_payload_bytes": 0
+      },
+      {
+        "trace": "docs/reviews/gui-performance/implementation/S1/native-window-lifetime/candidate-wayland/global-native.log.gz",
+        "sha256": "91a8ff6bcc643fe30fdf00a26f02d3ae1c31860add5fa728b65a9ba26e3569dd",
+        "ledger_snapshots": 8,
+        "allocations_observed_and_retired": 2,
+        "peak_referenced_payload_bytes": 60512256,
+        "same_extent_successive_presentations_by_queue_host": {},
+        "observed_hosts": [
+          1,
+          2
+        ],
+        "final_referenced_payload_bytes": 0
+      },
+      {
+        "trace": "docs/reviews/gui-performance/implementation/S1/native-window-lifetime/candidate-wayland/project-native.log.gz",
+        "sha256": "a1ec8480e0edf5e0ad56509b362b1f251fb17dca7bba29df64befb885fbbd6bc",
+        "ledger_snapshots": 8,
+        "allocations_observed_and_retired": 2,
+        "peak_referenced_payload_bytes": 60512256,
+        "same_extent_successive_presentations_by_queue_host": {},
+        "observed_hosts": [
+          1,
+          2
+        ],
+        "final_referenced_payload_bytes": 0
+      },
+      {
+        "trace": "docs/reviews/gui-performance/implementation/S1/native-window-lifetime/candidate-wayland/new-native.log.gz",
+        "sha256": "e6d00f6d0159b0876ca97c1f12912b0dbe6e334d6e798346011ea9283d0e9222",
+        "ledger_snapshots": 8,
+        "allocations_observed_and_retired": 2,
+        "peak_referenced_payload_bytes": 55431936,
+        "same_extent_successive_presentations_by_queue_host": {},
+        "observed_hosts": [
+          1,
+          2
+        ],
+        "final_referenced_payload_bytes": 0
+      },
+      {
+        "trace": "docs/reviews/gui-performance/implementation/S1/native-window-lifetime/candidate-x11/main-native.log.gz",
+        "sha256": "cb2f21231a5dbc10e343f485780bf55e0145109a34a4b73fbf46fe37ae6b7a08",
+        "ledger_snapshots": 11,
+        "allocations_observed_and_retired": 2,
+        "peak_referenced_payload_bytes": 66252448,
+        "same_extent_successive_presentations_by_queue_host": {
+          "1": 2
+        },
+        "observed_hosts": [
+          1
+        ],
+        "final_referenced_payload_bytes": 0
+      },
+      {
+        "trace": "docs/reviews/gui-performance/implementation/S1/native-window-lifetime/candidate-x11/global-native.log.gz",
+        "sha256": "af9b0ac17998a49ec6478f0e4a3a86b35fe0410cb8cb0f2a98d5b8d14903bb5b",
+        "ledger_snapshots": 15,
+        "allocations_observed_and_retired": 3,
+        "peak_referenced_payload_bytes": 90252448,
+        "same_extent_successive_presentations_by_queue_host": {
+          "1": 2
+        },
+        "observed_hosts": [
+          1,
+          2
+        ],
+        "final_referenced_payload_bytes": 0
+      },
+      {
+        "trace": "docs/reviews/gui-performance/implementation/S1/native-window-lifetime/candidate-x11/project-native.log.gz",
+        "sha256": "711a090568583a009e3bf0481dd4389fd02eabff067c73319cd253bd15fd0824",
+        "ledger_snapshots": 15,
+        "allocations_observed_and_retired": 3,
+        "peak_referenced_payload_bytes": 90252448,
+        "same_extent_successive_presentations_by_queue_host": {
+          "1": 2
+        },
+        "observed_hosts": [
+          1,
+          2
+        ],
+        "final_referenced_payload_bytes": 0
+      },
+      {
+        "trace": "docs/reviews/gui-performance/implementation/S1/native-window-lifetime/candidate-x11/new-native.log.gz",
+        "sha256": "4a1c0d7c70c28c06d949ceec3b94fd3df05c01a625ebadf9ef8698014d7ba1c5",
+        "ledger_snapshots": 15,
+        "allocations_observed_and_retired": 3,
+        "peak_referenced_payload_bytes": 85260448,
+        "same_extent_successive_presentations_by_queue_host": {
+          "1": 2
+        },
+        "observed_hosts": [
+          1,
+          2
+        ],
+        "final_referenced_payload_bytes": 0
+      }
+    ],
+    "status": "Bounded native application-owned attachment accounting; full LF-07/LF-11 and S1 remain open",
+    "production_consumers_migrated": [],
+    "competing_paths_retired": [],
+    "source_commit": "22c8f0c6b036a5588e262fedd17fd84a36a3db5f",
+    "command": "python3 docs/reviews/gui-performance/implementation/S1/native-attachment-reconciliation/check.py",
+    "source_continuity": "No changes since 061ae1c4 to native attachment ledger, surface transaction, queue owner or gui-render sources; source continuity checked with git diff.",
+    "assertions": [
+      "Known RGBA8/BGRA8 payload equals physical width times height times four format bytes times sample count.",
+      "Allocation identity retains host, extent, format, sample count and payload across observations.",
+      "Every ledger snapshot reconciles observed = completed-retired + device-loss-retired + live records; current and retiring sums reconcile to payload fields.",
+      "At most one current and one retiring allocation per host in every recorded ledger snapshot.",
+      "Each successful presentation uses the recorded current attachment at the configured extent. Repeated same-extent presentations retain allocation identity where observed.",
+      "Each final ledger has zero current/retiring payload and all observed allocations retired through completed receipts, with no fabricated device-loss retirements."
+    ],
+    "limits": [
+      "Application-owned MSAA attachment references only. This is not total GPU allocation capacity, swapchain residency, driver release or the 512 MiB aggregate budget.",
+      "Snapshot bounds do not independently prove unsampled transient driver allocation bounds. Recorded peak is the existing logical referenced-payload counter, not physical residency.",
+      "Only Main X11 has successive same-extent presentations in these eight captures. No auxiliary warm-allocation acceptance follows from before/after observations within one frame.",
+      "Captured runs are healthy completion/close regressions, not delayed callback, close-before-completion, stale epoch, full fault/endurance or prescribed per-adapter negative-control qualification.",
+      "Analyzer validates retained production traces. It is not itself a production consumer migration or new runtime experiment. Resize CPU/temporal exclusions remain unchanged."
     ]
   }
 }
