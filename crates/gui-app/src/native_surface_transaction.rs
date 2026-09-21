@@ -106,6 +106,8 @@ impl Drop for TextureLease {
 #[derive(Clone, Copy, Debug)]
 enum InjectedFault {
     LostOnce,
+    LostThenOutdated,
+    OutdatedOnce,
     OtherOnce,
     Timeout,
     OutOfMemory,
@@ -130,6 +132,7 @@ impl SurfaceTransaction {
             Err(std::env::VarError::NotPresent) | Ok("0") => None,
             Ok("other-once") => Some(InjectedFault::OtherOnce),
             Ok("lost-once") => Some(InjectedFault::LostOnce),
+            Ok("lost-outdated") => Some(InjectedFault::LostThenOutdated),
             Ok("timeout") => Some(InjectedFault::Timeout),
             Ok("oom") => Some(InjectedFault::OutOfMemory),
             other => panic!("invalid DATUM_DIAGNOSTIC_SURFACE_FAULT: {other:?}"),
@@ -267,7 +270,10 @@ impl SurfaceTransaction {
         // Explicit fault qualification uses the same production classification,
         // recovery owner and native dispatcher as a real backend error.
         increment(&self.texture_active.acquire_attempts);
-        let result = if let Some(fault) = self.injected_fault {
+        let fault = self.injected_fault.filter(|fault| {
+            !matches!(fault, InjectedFault::LostThenOutdated) || self.has_presented()
+        });
+        let result = if let Some(fault) = fault {
             super::append_gui_diagnostic_line(format!(
                 "surface fault injected host={} kind={fault:?}",
                 self.queue_host
@@ -276,6 +282,14 @@ impl SurfaceTransaction {
                 InjectedFault::LostOnce => {
                     self.injected_fault = None;
                     Err(wgpu::SurfaceError::Lost)
+                }
+                InjectedFault::LostThenOutdated => {
+                    self.injected_fault = Some(InjectedFault::OutdatedOnce);
+                    Err(wgpu::SurfaceError::Lost)
+                }
+                InjectedFault::OutdatedOnce => {
+                    self.injected_fault = None;
+                    Err(wgpu::SurfaceError::Outdated)
                 }
                 InjectedFault::OtherOnce => {
                     self.injected_fault = None;

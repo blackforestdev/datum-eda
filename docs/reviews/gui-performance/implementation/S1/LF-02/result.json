@@ -1,0 +1,159 @@
+{
+  "status": "LF-02 bounded native positive transition passed in all four hosts; full qualification remains partial",
+  "selection": {
+    "baseline": "d84227dce988b6e47b49932fe6cb94f07214adde",
+    "scope": "LF-02 native production adapter verification",
+    "change": "Extend existing opt-in backend-result injection with Lost after first successful presentation, then Outdated, then normal acquisition. Default path and recovery classifier unchanged.",
+    "proof": "All four actual hosts: prior successful frame; no acquired lease during errors; one configuration generation after each fault; newest requested native extent presented; latest damage retired; normal closure.",
+    "limits": [
+      "Injected backend result validates application transitions, not driver reliability or numeric latency/resource acceptance",
+      "No default-path performance claim"
+    ]
+  },
+  "source_sha256": "9fd69cc52da0a96bf8627f6102c659c1b12f815ca0e85f37944f3b6b0b5ddc0c",
+  "binary_sha256": "8702d81f511cdb1b3279d5aa13983e73f56bb2e3082030172934056dc3f97220",
+  "production_consumers_verified": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "production_path": "native redraw token -> NativeFrameCoordinator -> Main/shared auxiliary renderer -> SurfaceTransaction backend-result classification -> shared Recovery / QueueOwner -> native presentation and damage retirement",
+  "production_change": "Existing opt-in backend fault switch gains lost-outdated sequence after first successful presentation. Default configuration/acquisition/recovery behavior is unchanged.",
+  "retired_paths": "none; verifies already adopted shared production owners instead of helper-only classification",
+  "runs": [
+    {
+      "host": "MAIN",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "configuration_generations": {
+        "first_present": 1,
+        "lost": 1,
+        "outdated": 2,
+        "recovery_present": 3,
+        "final_present": 3
+      },
+      "acquired_during_errors": [
+        0,
+        0
+      ],
+      "final_extent": [
+        1200,
+        800
+      ],
+      "final_damage": 6,
+      "presented_damage": 6,
+      "exit": 0
+    },
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "configuration_generations": {
+        "first_present": 1,
+        "lost": 2,
+        "outdated": 3,
+        "recovery_present": 4,
+        "final_present": 4
+      },
+      "acquired_during_errors": [
+        0,
+        0
+      ],
+      "final_extent": [
+        1200,
+        800
+      ],
+      "final_damage": 5,
+      "presented_damage": 5,
+      "exit": 0
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "configuration_generations": {
+        "first_present": 1,
+        "lost": 2,
+        "outdated": 3,
+        "recovery_present": 4,
+        "final_present": 4
+      },
+      "acquired_during_errors": [
+        0,
+        0
+      ],
+      "final_extent": [
+        1200,
+        800
+      ],
+      "final_damage": 5,
+      "presented_damage": 5,
+      "exit": 0
+    },
+    {
+      "host": "NEW",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "configuration_generations": {
+        "first_present": 1,
+        "lost": 2,
+        "outdated": 3,
+        "recovery_present": 4,
+        "final_present": 4
+      },
+      "acquired_during_errors": [
+        0,
+        0
+      ],
+      "final_extent": [
+        1200,
+        800
+      ],
+      "final_damage": 4,
+      "presented_damage": 4,
+      "exit": 0
+    }
+  ],
+  "verification": {
+    "app": "362 passed, 0 failed, 9 ignored; visual integration ignored",
+    "clippy": "all app targets -D warnings passed",
+    "release": "fresh guarded offline release build passed; shared cache shrink required dependency rebuild",
+    "native": "one Lost and one Outdated injection per target after prior presentation; no acquired lease during errors; one generation increment after each; 1200x800 actual native geometry and presented extent; final damage fully retired; all exits 0"
+  },
+  "fixture_sha256": {
+    "MAIN": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "GLOBAL": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "PROJECT": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "NEW": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+  },
+  "limits": [
+    "Backend-result injection verifies application transitions, not actual driver loss reliability or numerical recovery latency.",
+    "Final-state proof is native extent plus damage/acquire/present counters, not independently observed pixels or every consumer input state.",
+    "No deliberately broken recovery negative-control replay or complete GPU/resource budget qualification.",
+    "S1 remains in progress; no dependency/license or default policy change. Resize CPU/temporal qualification remains nonblocking."
+  ]
+}
