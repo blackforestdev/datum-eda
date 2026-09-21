@@ -1508,7 +1508,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial component proof: Zero-extent coordinator admission, retained damage and single restore are component-tested. Native zero extent plus backend configure/acquire/submit counters remain unqualified.",
+        "status": "Partial component and native-adapter proof: four real X11 host adapters receive injected zero extent plus Expose; configure/acquire/submit/present stop, restore presents current damage once with existing configuration. Physical zero-size platform behavior, prescribed negative control, semantic input/pixel and complete qualification remain open.",
         "id": "proof_lf_01",
         "positive": "Zero native extent with pending damage then restore",
         "negative_control": "Clamp zero to1x1 and keep rendering",
@@ -1560,7 +1560,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz"
+        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
+        "docs/reviews/gui-performance/implementation/S1/native-zero-extent/result.json"
       ]
     },
     {

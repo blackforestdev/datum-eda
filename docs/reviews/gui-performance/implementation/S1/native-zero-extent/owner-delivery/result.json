@@ -1,0 +1,252 @@
+{
+  "binary_sha256": "9833756fbf2ce26cc2c13d2ebeb23b6840fe718dba759cdd010afa1cc543cb09",
+  "runs": [
+    {
+      "host": "MAIN",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "native_zero_notification": true,
+      "native_expose_delivered_while_zero": true,
+      "zero_interval_seconds": 0.3,
+      "before": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1333,
+          833
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 2,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 1,
+        "host": 1,
+        "last_frame_submission_receipt": 2,
+        "last_present_receipt": 2,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+        "window": "WindowId(12582916)"
+      },
+      "restored": {
+        "acquire_attempts": 3,
+        "acquired": 3,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1333,
+          833
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 3,
+        "frame_submissions": 3,
+        "gpu_completed_through_receipt": 2,
+        "host": 1,
+        "last_frame_submission_receipt": 3,
+        "last_present_receipt": 3,
+        "presented": 3,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 3 })",
+        "window": "WindowId(12582916)"
+      },
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "native_zero_notification": true,
+      "native_expose_delivered_while_zero": true,
+      "zero_interval_seconds": 0.3,
+      "before": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1000,
+          750
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 2,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 1,
+        "host": 2,
+        "last_frame_submission_receipt": 2,
+        "last_present_receipt": 2,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+        "window": "WindowId(12582917)"
+      },
+      "restored": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1000,
+          750
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 3,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 2,
+        "host": 2,
+        "last_frame_submission_receipt": 3,
+        "last_present_receipt": 3,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 3 })",
+        "window": "WindowId(12582917)"
+      },
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "native_zero_notification": true,
+      "native_expose_delivered_while_zero": true,
+      "zero_interval_seconds": 0.3,
+      "before": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1000,
+          750
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 2,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 1,
+        "host": 2,
+        "last_frame_submission_receipt": 2,
+        "last_present_receipt": 2,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+        "window": "WindowId(12582917)"
+      },
+      "restored": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1000,
+          750
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 3,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 2,
+        "host": 2,
+        "last_frame_submission_receipt": 3,
+        "last_present_receipt": 3,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 3 })",
+        "window": "WindowId(12582917)"
+      },
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "NEW",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "native_zero_notification": true,
+      "native_expose_delivered_while_zero": true,
+      "zero_interval_seconds": 0.3,
+      "before": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          792,
+          750
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 2,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 1,
+        "host": 2,
+        "last_frame_submission_receipt": 2,
+        "last_present_receipt": 2,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+        "window": "WindowId(12582917)"
+      },
+      "restored": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          792,
+          750
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 3,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 2,
+        "host": 2,
+        "last_frame_submission_receipt": 3,
+        "last_present_receipt": 3,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 3 })",
+        "window": "WindowId(12582917)"
+      },
+      "passed": false,
+      "error": "Command '['/home/bfadmin/Documents/datum-eda/target/release/datum-gui', '--board', '/tmp/pm045-readiness-x11/NEW/board.kicad_pcb', '--window-size', '1280x800', '--open-new-project']' timed out after 20 seconds"
+    }
+  ]
+}
