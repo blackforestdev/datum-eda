@@ -10,14 +10,14 @@ pub(super) const MIN_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(700.0
 
 /// Input consumption and rendering damage are independent.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum PreferencesKeyOutcome {
+pub(crate) enum DialogInputOutcome {
     Unhandled,
     Consumed,
     Dialog,
     Dependents,
 }
 
-impl PreferencesKeyOutcome {
+impl DialogInputOutcome {
     pub(crate) fn from_handled(handled: bool, changed: Self) -> Self {
         if handled { changed } else { Self::Unhandled }
     }
@@ -299,25 +299,26 @@ impl GlobalPreferencesWindowSurface {
 }
 
 impl App {
-    pub(super) fn request_preferences_key_redraw(
+    pub(super) fn request_dialog_key_redraw(
         &mut self,
-        outcome: PreferencesKeyOutcome,
-        project: bool,
+        outcome: DialogInputOutcome,
+        host: native_frame_adapters::OwnedHost,
     ) -> bool {
         match outcome {
-            PreferencesKeyOutcome::Unhandled => return false,
-            PreferencesKeyOutcome::Consumed => {}
-            PreferencesKeyOutcome::Dialog => self.request_preferences_dialog_redraw(project),
-            PreferencesKeyOutcome::Dependents => self.request_redraw_if_needed(),
+            DialogInputOutcome::Unhandled => return false,
+            DialogInputOutcome::Consumed => {}
+            DialogInputOutcome::Dialog => self.request_dialog_redraw(host),
+            DialogInputOutcome::Dependents => self.request_redraw_if_needed(),
         }
         true
     }
 
-    fn request_preferences_dialog_redraw(&mut self, project: bool) {
-        let surface = if project {
-            &mut self.project_preferences_surface
-        } else {
-            &mut self.global_preferences_surface
+    fn request_dialog_redraw(&mut self, host: native_frame_adapters::OwnedHost) {
+        use native_frame_adapters::OwnedHost;
+        let surface = match host {
+            OwnedHost::Global => &mut self.global_preferences_surface,
+            OwnedHost::Project => &mut self.project_preferences_surface,
+            OwnedHost::New => &mut self.new_project_surface,
         };
         if let Some(surface) = surface {
             surface.invalidate();
@@ -344,7 +345,11 @@ impl App {
                 return;
             }
         }
-        self.request_preferences_dialog_redraw(project);
+        self.request_dialog_redraw(if project {
+            native_frame_adapters::OwnedHost::Project
+        } else {
+            native_frame_adapters::OwnedHost::Global
+        });
     }
     /// Scrolling changes only the owned dialog's transient viewport. Coalesced
     /// redraws must not rebuild the main Design window or other owned windows.

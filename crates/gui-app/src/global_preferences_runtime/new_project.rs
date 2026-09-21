@@ -270,16 +270,20 @@ impl Runtime {
         true
     }
 
-    pub(crate) fn handle_new_project_key(&mut self, event: &KeyEvent) -> bool {
+    pub(crate) fn handle_new_project_key(
+        &mut self,
+        event: &KeyEvent,
+    ) -> crate::global_preferences_window::DialogInputOutcome {
+        use crate::global_preferences_window::DialogInputOutcome as Outcome;
         if !self.workspace().ui.new_project.open {
-            return false;
+            return Outcome::Unhandled;
         }
         if event.state != ElementState::Pressed {
-            return true;
+            return Outcome::Consumed;
         }
         if matches!(event.logical_key, Key::Named(NamedKey::Escape)) {
             self.close_new_project();
-            return true;
+            return Outcome::Dependents;
         }
         if matches!(event.logical_key, Key::Named(NamedKey::Tab)) {
             self.session
@@ -288,7 +292,7 @@ impl Runtime {
                 .new_project
                 .move_focus(self.modifiers.shift_key());
             self.invalidate_frame();
-            return true;
+            return Outcome::Dialog;
         }
         let focus = self.workspace().ui.new_project.focus;
         if matches!(
@@ -304,7 +308,7 @@ impl Runtime {
                         dialog.destination.pop();
                     }
                     self.invalidate_frame();
-                    return true;
+                    return Outcome::Dialog;
                 }
                 Key::Character(value)
                     if !self.modifiers.control_key()
@@ -318,7 +322,7 @@ impl Runtime {
                         dialog.destination.push_str(value);
                     }
                     self.invalidate_frame();
-                    return true;
+                    return Outcome::Dialog;
                 }
                 _ => {}
             }
@@ -343,7 +347,7 @@ impl Runtime {
             self.global_preferences
                 .refresh_new_project_preview(&mut self.session.workspace_mut().ui);
             self.invalidate_frame();
-            return true;
+            return Outcome::Dialog;
         }
         if matches!(
             event.logical_key,
@@ -354,14 +358,18 @@ impl Runtime {
                     self.global_preferences
                         .refresh_new_project_preview(&mut self.session.workspace_mut().ui);
                     self.invalidate_frame();
-                    true
+                    Outcome::Dialog
                 }
-                NewProjectFocus::Cancel => self.close_new_project(),
-                NewProjectFocus::Create => self.submit_new_project(),
-                _ => true,
+                NewProjectFocus::Cancel => {
+                    Outcome::from_handled(self.close_new_project(), Outcome::Dependents)
+                }
+                NewProjectFocus::Create => {
+                    Outcome::from_handled(self.submit_new_project(), Outcome::Dependents)
+                }
+                _ => Outcome::Consumed,
             };
         }
-        true
+        Outcome::Consumed
     }
 }
 

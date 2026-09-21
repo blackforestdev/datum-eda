@@ -510,8 +510,8 @@ impl Runtime {
     pub(super) fn handle_project_preferences_key(
         &mut self,
         event: &KeyEvent,
-    ) -> crate::global_preferences_window::PreferencesKeyOutcome {
-        use crate::global_preferences_window::PreferencesKeyOutcome as Outcome;
+    ) -> crate::global_preferences_window::DialogInputOutcome {
+        use crate::global_preferences_window::DialogInputOutcome as Outcome;
         if !self.workspace().ui.project_preferences.open {
             return Outcome::Unhandled;
         }
