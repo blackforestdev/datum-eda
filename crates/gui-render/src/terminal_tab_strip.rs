@@ -48,6 +48,11 @@ pub(super) fn render_terminal_tab_strip(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
+    let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
+    let viewport = RectPx {
+        height: strip.height.clamp(0.0, TAB_STRIP_ROW_HEIGHT_PX),
+        ..strip
+    };
     let routine_hint = "Ctrl+Shift+T new terminal   \u{00B7}   Ctrl+K palette";
     let lifecycle_label = state
         .ui
@@ -80,7 +85,7 @@ pub(super) fn render_terminal_tab_strip(
     };
     let trailing_x = strip.x + strip.width - 12.0 - trailing_width;
     let tab_y = strip.y + 6.0;
-    let tab_height = (strip.height - 6.0).max(1.0);
+    let tab_height = (viewport.height - 6.0).max(0.0);
     let mut x = strip.x + 12.0;
     let tabs = &state.ui.terminal.tabs;
 
@@ -250,6 +255,19 @@ pub(super) fn render_terminal_tab_strip(
         target: HitTarget::TerminalSessionNew,
         rect: plus,
     });
+    crate::hit_clipping::clip_content(
+        panel_quads,
+        text_runs,
+        hit_regions,
+        starts.0,
+        starts.1,
+        starts.2,
+        RectPx {
+            width: (trailing_x - TAB_GAP_PX - strip.x).clamp(0.0, viewport.width),
+            ..viewport
+        },
+    );
+    let chrome_starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
     if let Some(label) = lifecycle_label {
         let chrome = lifecycle_chrome_rect(strip, trailing_x, trailing_width);
         panel_quads.push(Quad::from_rect(chrome, PANEL_BG));
@@ -360,6 +378,15 @@ pub(super) fn render_terminal_tab_strip(
             text_runs,
         );
     }
+    crate::hit_clipping::clip_content(
+        panel_quads,
+        text_runs,
+        hit_regions,
+        chrome_starts.0,
+        chrome_starts.1,
+        chrome_starts.2,
+        viewport,
+    );
 }
 
 pub(super) fn top_tab_label(tab: &TerminalTabState, tab_width: f32) -> String {

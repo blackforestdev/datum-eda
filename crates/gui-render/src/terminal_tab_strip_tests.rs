@@ -1,6 +1,68 @@
 use super::*;
 
 #[test]
+fn terminal_tab_chrome_cannot_paint_or_hit_outside_its_header_row() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    for width in [88.0, 480.0, 1280.0] {
+        for status in ["running", "close terminal? Enter confirms; Escape cancels"] {
+            state.ui.terminal.status = status.into();
+            let strip = RectPx {
+                x: 10.0,
+                y: 100.0,
+                width,
+                height: 260.0,
+            };
+            let viewport = RectPx {
+                height: 44.0,
+                ..strip
+            };
+            let mut quads = Vec::new();
+            let mut text = Vec::new();
+            let mut hits = Vec::new();
+            crate::terminal_tab_strip::render_terminal_tab_strip(
+                &state, strip, &mut quads, &mut text, &mut hits,
+            );
+            if width >= 480.0 {
+                assert!(!quads.is_empty() && !text.is_empty() && !hits.is_empty());
+            }
+            if status.starts_with("close") {
+                let label = text
+                    .iter()
+                    .find(|run| run.text.starts_with("close"))
+                    .unwrap();
+                let reserved_left = label.x - 8.0;
+                for hit in &hits {
+                    if matches!(
+                        hit.target,
+                        HitTarget::TerminalTab
+                            | HitTarget::TerminalSessionTab(_)
+                            | HitTarget::TerminalSessionClose(_)
+                            | HitTarget::TerminalSessionNew
+                    ) {
+                        assert!(hit.rect.x + hit.rect.width <= reserved_left);
+                    }
+                }
+            }
+            for quad in quads {
+                assert!(quad.points.iter().all(|&(x, y)| viewport.contains(x, y)));
+            }
+            for run in text {
+                let clip = run.clip_bounds.expect("header text inherits viewport");
+                assert!(viewport.contains(clip.x, clip.y));
+                assert!(viewport.contains(clip.x + clip.width, clip.y + clip.height));
+            }
+            for hit in hits {
+                assert!(viewport.contains(hit.rect.x, hit.rect.y));
+                assert!(
+                    viewport.contains(hit.rect.x + hit.rect.width, hit.rect.y + hit.rect.height)
+                );
+            }
+        }
+    }
+}
+
+#[test]
 fn inactive_tabs_use_non_color_output_and_bell_attention_markers() {
     let mut tab = datum_gui_protocol::TerminalTabState {
         session_id: "terminal-1".to_string(),
