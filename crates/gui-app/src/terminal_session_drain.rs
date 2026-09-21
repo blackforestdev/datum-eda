@@ -23,6 +23,7 @@ pub(crate) struct TerminalDrainReport {
     pub(crate) events: usize,
     pub(crate) output_events: usize,
     pub(crate) output_bytes: usize,
+    applied_bytes: usize,
     pub(crate) active_projection_changed: bool,
     pub(crate) tabs_changed: bool,
     pub(crate) pending: bool,
@@ -57,7 +58,15 @@ fn flush_output_batch(
         return;
     }
     let slot = &mut sessions[index];
-    let count = slot.pending_drain_output.len().min(APPLY_BATCH_BYTES);
+    let count = slot
+        .pending_drain_output
+        .len()
+        .min(APPLY_BATCH_BYTES)
+        .min(GUI_DRAIN_BYTE_LIMIT.saturating_sub(report.applied_bytes));
+    if count == 0 {
+        return;
+    }
+    report.applied_bytes += count;
     let bytes: Vec<_> = slot.pending_drain_output.drain(..count).collect();
     debug_assert_eq!(slot.core.session_id(), slot.session.session_id());
     debug_assert_eq!(slot.core.context_id(), slot.session.context_id);
@@ -90,6 +99,32 @@ fn flush_output_batch(
 }
 
 impl TerminalSessionRegistry {
+    /// Use available dispatch time without letting a busy session monopolize it.
+    /// One byte cap spans both retained and newly dequeued application passes.
+    fn apply_pending_output(
+        &mut self,
+        active_lane: &mut TerminalLaneState,
+        report: &mut TerminalDrainReport,
+        active_index: Option<usize>,
+        started: Instant,
+        now: &mut impl FnMut() -> Instant,
+    ) {
+        let mut idle_visits = 0;
+        while idle_visits < self.sessions.len()
+            && report.applied_bytes < GUI_DRAIN_BYTE_LIMIT
+            && now().saturating_duration_since(started) < DISPATCH_BUDGET
+        {
+            let index = self.next_apply_index % self.sessions.len();
+            self.next_apply_index = (index + 1) % self.sessions.len();
+            if self.sessions[index].pending_drain_output.is_empty() {
+                idle_visits += 1;
+                continue;
+            }
+            idle_visits = 0;
+            flush_output_batch(&mut self.sessions, active_index, active_lane, report, index);
+        }
+    }
+
     pub(crate) fn drain_all(&mut self, active_lane: &mut TerminalLaneState) -> TerminalDrainReport {
         self.drain_with_clock(active_lane, Instant::now)
     }
@@ -180,21 +215,13 @@ impl TerminalSessionRegistry {
         // Finish retained batches before dequeuing more bytes. This keeps the
         // application staging bound at one existing 64 KiB dispatch, even when
         // a slow parser/log write makes a single batch exceed the time budget.
-        let first_apply = self.next_apply_index;
-        for offset in 0..self.sessions.len() {
-            if now().saturating_duration_since(started) >= DISPATCH_BUDGET {
-                break;
-            }
-            let index = (first_apply + offset) % self.sessions.len();
-            self.next_apply_index = (index + 1) % self.sessions.len();
-            flush_output_batch(
-                &mut self.sessions,
-                visible_active_index,
-                active_lane,
-                &mut report,
-                index,
-            );
-        }
+        self.apply_pending_output(
+            active_lane,
+            &mut report,
+            visible_active_index,
+            started,
+            &mut now,
+        );
         let retained = self
             .sessions
             .iter()
@@ -312,21 +339,13 @@ impl TerminalSessionRegistry {
                 }
             }
         }
-        let first_apply = self.next_apply_index;
-        for offset in 0..self.sessions.len() {
-            let index = (first_apply + offset) % self.sessions.len();
-            if now().saturating_duration_since(started) >= DISPATCH_BUDGET {
-                break;
-            }
-            self.next_apply_index = (index + 1) % self.sessions.len();
-            flush_output_batch(
-                &mut self.sessions,
-                visible_active_index,
-                active_lane,
-                &mut report,
-                index,
-            );
-        }
+        self.apply_pending_output(
+            active_lane,
+            &mut report,
+            visible_active_index,
+            started,
+            &mut now,
+        );
         if self.remove_presented_closed(active_lane) {
             report.tabs_changed = true;
             report.active_projection_changed = true;

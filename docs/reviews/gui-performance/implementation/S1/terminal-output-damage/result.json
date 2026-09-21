@@ -1,0 +1,175 @@
+{
+  "status": "Default closed-terminal output damage narrowed to visible strip changes; bounded native positive/negative cases passed; full qualification remains partial",
+  "production_consumers_migrated": {
+    "MAIN": "Terminal background polling updates data without redraw when dock is closed and visible strip unchanged",
+    "NEW": "Existing workspace-backdrop invalidation follows the same narrowed output decision; no backdrop retirement claimed",
+    "GLOBAL/PROJECT": "Existing independent dialog invalidation retained; native flood case uses Global Preferences"
+  },
+  "shared_owner": "Runtime::poll_terminal_output -> ClosedStrip comparison -> existing App workspace damage owner; shared terminal drain uses round-robin batches within existing dispatch cap",
+  "production_changes": [
+    "Closed-strip comparison tracks session identity/order, label, active state, unread/bell marker, title/status and shutdown error. Open dock, search and confirmation controls retain conservative redraw. Data, terminal core, activity logging and accessibility still update.",
+    "Retained/new output application rotates 4KiB batches until existing 1ms deadline or one shared 64KiB applied-byte cap. Dequeue/message/staging limits and final-exit ordering remain bounded."
+  ],
+  "retired_paths": [
+    "Unconditional workspace damage for output rows/history/activity that do not paint in the closed terminal strip.",
+    "Two fixed one-batch-per-session passes that could leave available dispatch budget unused."
+  ],
+  "verification": {
+    "app": "371 passed, 0 failed, 9 ignored on full replay. Initial suite: 370 passed, one known restart-lineage failure; isolated restart replay passed. Failure evidence retained; dat-terminal-restart-lineage-jti remains open.",
+    "component": "Visible strip metadata separation, status/identity/attention/search changes, open-dock fallback; byte cap across retained/new applications, round-robin batches, existing time-yield/UTF8/exit ordering regressions.",
+    "clippy": "app datum-gui binary -D warnings passed",
+    "release": "fresh guarded offline release passed",
+    "native": "Real six-second PTY flood with closed dock: zero Main presentations during plain output; OSC title change causes a fresh Main presentation; Global final native extent observed while flood continues (0.308s); exit 0. Producer sent 1551150 bytes.",
+    "governance": "source health and dependency authority passed; no dependencies/license changes"
+  },
+  "limits": [
+    "Single native case is bounded evidence, not statistical throughput/latency, all-host adapter, complete visible terminal or full hidden-work qualification. Independent pixel correctness and numeric tiers remain unqualified.",
+    "Batch-only intermediate trial did not improve observed throughput (247050 bytes versus prior 283500); retain it and do not attribute final native gain to that helper alone. Final producer retains the same flood body but adds a title positive control after the interval.",
+    "Core projection, activity and accessibility still update while closed; S4 complete hidden-work adoption remains open. The visible-field list was checked against existing terminal_tab_strip.rs; search and confirmation cases conservatively redraw.",
+    "Known restart-lineage flake and native acquisition/missing-close-event issues remain unresolved. Resize resource/temporal exclusions remain nonblocking. S1 is not closed by this slice."
+  ],
+  "receipt": "docs/reviews/gui-performance/implementation/S1/terminal-output-damage/result.json",
+  "selection": {
+    "baseline": "b4cba09e",
+    "scope": "S1 SH-05 bounded terminal application within native round",
+    "gap": "Retained output applies at most two 4KiB batches per session per dispatch even with spare budget; budgeted throughput needlessly limited by number of sessions.",
+    "change": "Round-robin 4KiB applications continue until time or one shared 64KiB applied-byte cap; no extra native-round drain or larger message/staging/time cap.",
+    "proof": "Existing ordering/time-yield regressions plus deterministic two-session cap across retained/new output, and same bounded actual PTY flood recipe used by previous slice.",
+    "limits": "No fix or acceptance of native acquisition stalls; numeric throughput and latency remain unqualified."
+  },
+  "selection_reconciliation": "Batch-only native observation did not show a gain. Continued same S1 invalidation investigation identified unnecessary closed-dock row redraw; final scope combines bounded drain application and actual visible-strip damage, with title positive control.",
+  "baseline_evidence": "docs/reviews/gui-performance/implementation/S1/terminal-round/result.json",
+  "source_sha256": {
+    "terminal_session_drain.rs": "5b29c85d7f7ccc70dc170e5bf55726619bbcb4a3d70787674b220ed58cc121f8",
+    "terminal_session_drain_tests.rs": "65b5bb6f4054d22e58e18c6eabbf0ff946ad43c67d412cf068a6547e3c88ea4a",
+    "production_status_refresh.rs": "4dd24e8f12017686a9c7f3628f8c2088c9eea8a061160a7751f842e743c610df",
+    "terminal_output_damage.rs": "9639ac8bbacebe1ca97492728daebe7fb3b3f9fb857eaf1b26278612f1c3eb51"
+  },
+  "runs": {
+    "apply-candidate": {
+      "binary_sha256": "f64d5823e31a07aba47d36a736070f6054d491f27839ee0121622ed6b2a18e3d",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--open-global-preferences",
+        "--window-size",
+        "1280x800",
+        "--terminal-session-profile",
+        "custom",
+        "--terminal-program",
+        "/usr/bin/python3",
+        "--terminal-arg=-u",
+        "--terminal-arg=/tmp/pm045_terminal_flood.py",
+        "--terminal-arg=/tmp/pm045-terminal-round/apply-candidate"
+      ],
+      "resize_observed_seconds": 0.3142580250278115,
+      "resized_while_producer_running": true,
+      "final_present": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 2,
+        "configure_attempts": 2,
+        "configured_extent": [
+          1200,
+          800
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 6,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 5,
+        "host": 2,
+        "last_frame_submission_receipt": 6,
+        "last_present_receipt": 6,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 6 })",
+        "window": "WindowId(12582917)"
+      },
+      "producer": {
+        "monotonic": 740774.004854693,
+        "bytes": 247050,
+        "payload_bytes": 4050
+      },
+      "exit": 0,
+      "completed": true
+    },
+    "damage-candidate": {
+      "binary_sha256": "a2c7da4bddc41af431a69645a2d7de29f19fbcdab07b67b4670a2d512c15696b",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--open-global-preferences",
+        "--window-size",
+        "1280x800",
+        "--terminal-session-profile",
+        "custom",
+        "--terminal-program",
+        "/usr/bin/python3",
+        "--terminal-arg=-u",
+        "--terminal-arg=/tmp/pm045_terminal_damage_producer.py",
+        "--terminal-arg=/tmp/pm045-terminal-round/damage-candidate"
+      ],
+      "resize_observed_seconds": 0.30760618299245834,
+      "resized_while_producer_running": true,
+      "final_present": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 2,
+        "configure_attempts": 2,
+        "configured_extent": [
+          1200,
+          800
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 3,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 2,
+        "host": 2,
+        "last_frame_submission_receipt": 3,
+        "last_present_receipt": 3,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 3 })",
+        "window": "WindowId(12582917)"
+      },
+      "producer": {
+        "monotonic": 741250.962167377,
+        "bytes": 1551150,
+        "payload_bytes": 4050
+      },
+      "main_presentations_during_plain_output": 0,
+      "title_change_presented": true,
+      "exit": 0,
+      "completed": true
+    }
+  },
+  "artifacts_sha256": {
+    "apply-candidate/finished.json.gz": "8b1f20140a3b632dae8966e9d01b8a3e520bc20d5532e89666749cd46e6b8072",
+    "apply-candidate/native.log.gz": "7c4d0bf5b80c0a91cc08ed86cf137f04b77b893836aba8e81dfcda40aff549a2",
+    "apply-candidate/result.json.gz": "da865ca2d91f8616f4a45fd8bd7b9cfd080c8f5c94f6a74e65018727f9cfd36b",
+    "apply-candidate/started.json.gz": "58cf11465498f7b6ee8398deee6c2179975c4b9b17363dd1d99c5ff5c312bd54",
+    "apply-candidate/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "batch-cap-test.log.gz": "7925b09165edf7f65860dec0a02c7fc820439a94dd8f7638437501fcacefc66f",
+    "batch-runner.py.gz": "4824e3e244fbca523dc54dd11b27e404c36680a9497d5035f32b4f5419818779",
+    "batch-tests.log.gz": "bb5c27b0b13ddc3f7e5cab45d7051014b781758f961d6c732c856f8e42864068",
+    "build.log.gz": "385cec618c4e0a5b5bf8720c1260515bcfa92ed9fac845312a9c1be596e59d31",
+    "clippy.log.gz": "5830ee0a436f6375b52a954fa6e0afd28d38ff845aee6e0e0da7dd8d846f4104",
+    "damage-candidate/finished.json.gz": "df3280bedb17ecc6e68b00ef6bf27fcdc59d9a5bee5b7201a63519cc1c1d7fb8",
+    "damage-candidate/native.log.gz": "1ff1a3db02da2e14e41a4c014e82f7dcb59461221db73d042bb0873f0468bb3e",
+    "damage-candidate/result.json.gz": "6e9ac10aa8844bf732ea16db49a6db96482d178b1286d5dee979b669337dbf61",
+    "damage-candidate/started.json.gz": "f7dacc18ac603527482c9932dca1048332d81ae50d24ce437e24d5b662c61ada",
+    "damage-candidate/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "damage-candidate/title-sent.json.gz": "965adfbbdbe59ef3299baeb3ce32b972d7aa2e75f89378596ae0fe8dc694de51",
+    "initial-tests.log.gz": "d38c08f231acb5e0d819dd295fe7df92d1bd34f700fe25f6556dfc262148a08a",
+    "producer.py.gz": "f8d250b55c16bf35c0f68d50c7a0676d7e7807147d6cba78894d41d1cee4eed3",
+    "restart-replay.log.gz": "08502a7e9ffcb79f0a2d85e2afed6601f4cfada06979e6d8cf0030a5e77e1f19",
+    "runner.py.gz": "be93a415b8ca4b9c494a055f41c8ae1d26a31532bd9d850473946fd4a10d2107",
+    "tests.log.gz": "03ab67ba0da9eb0bd943c9cab55ad5f2649e43b687e8027e19b2e8ddf3c2ac43"
+  }
+}

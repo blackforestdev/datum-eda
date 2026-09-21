@@ -225,7 +225,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial production invalidation migration; complete native per-consumer zero-unrelated-submission and final-state qualification remain open",
+        "status": "partial production invalidation migration; complete native per-consumer zero-unrelated-submission and final-state qualification remain open Closed-dock plain output now produces zero Main presentations in bounded native flood; title positive control still presents. Shared bounded application rotates across spare budget with one byte cap. Full visible-terminal/all-host/resource and S4 hidden work remain open.",
         "id": "proof_sh_01",
         "positive": "W-POINTER/W-SCROLL: change one consumer while other hosts remain clean",
         "negative_control": "Broadcast request_redraw to all hosts",
@@ -283,7 +283,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/terminal-output-damage/result.json"
+      ]
     },
     {
       "id": "SH-02",
@@ -648,7 +651,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial: bounded parser/byte-order tests plus actual shared event-round adoption. Native Global Preferences flood no longer postpones final extent until producer completion; controlled close no longer redraws each drain batch. Single-trial latency/throughput, other adapters, saturated session/control fairness and acquisition stalls remain unqualified.",
+        "status": "partial: bounded parser/byte-order tests plus actual shared event-round adoption. Native Global Preferences flood no longer postpones final extent until producer completion; controlled close no longer redraws each drain batch. Single-trial latency/throughput, other adapters, saturated session/control fairness and acquisition stalls remain unqualified. Closed-dock plain output now produces zero Main presentations in bounded native flood; title positive control still presents. Shared bounded application rotates across spare budget with one byte cap. Full visible-terminal/all-host/resource and S4 hidden work remain open.",
         "id": "proof_sh_05",
         "positive": "Saturate terminal messages while main and auxiliary hosts need service",
         "negative_control": "Drain terminal queue without yield",
@@ -709,7 +712,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
-        "docs/reviews/gui-performance/implementation/S1/terminal-round/result.json"
+        "docs/reviews/gui-performance/implementation/S1/terminal-round/result.json",
+        "docs/reviews/gui-performance/implementation/S1/terminal-output-damage/result.json"
       ]
     },
     {
@@ -24103,5 +24107,37 @@
       "Full saturated multi-session/control fairness, byte/state native replay, full resources and S1/S4 completion remain open."
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/terminal-round/result.json"
+  },
+  "s1_terminal_output_damage_work": {
+    "status": "Default closed-terminal output damage narrowed to visible strip changes; bounded native positive/negative cases passed; full qualification remains partial",
+    "production_consumers_migrated": {
+      "MAIN": "Terminal background polling updates data without redraw when dock is closed and visible strip unchanged",
+      "NEW": "Existing workspace-backdrop invalidation follows the same narrowed output decision; no backdrop retirement claimed",
+      "GLOBAL/PROJECT": "Existing independent dialog invalidation retained; native flood case uses Global Preferences"
+    },
+    "shared_owner": "Runtime::poll_terminal_output -> ClosedStrip comparison -> existing App workspace damage owner; shared terminal drain uses round-robin batches within existing dispatch cap",
+    "production_changes": [
+      "Closed-strip comparison tracks session identity/order, label, active state, unread/bell marker, title/status and shutdown error. Open dock, search and confirmation controls retain conservative redraw. Data, terminal core, activity logging and accessibility still update.",
+      "Retained/new output application rotates 4KiB batches until existing 1ms deadline or one shared 64KiB applied-byte cap. Dequeue/message/staging limits and final-exit ordering remain bounded."
+    ],
+    "retired_paths": [
+      "Unconditional workspace damage for output rows/history/activity that do not paint in the closed terminal strip.",
+      "Two fixed one-batch-per-session passes that could leave available dispatch budget unused."
+    ],
+    "verification": {
+      "app": "371 passed, 0 failed, 9 ignored on full replay. Initial suite: 370 passed, one known restart-lineage failure; isolated restart replay passed. Failure evidence retained; dat-terminal-restart-lineage-jti remains open.",
+      "component": "Visible strip metadata separation, status/identity/attention/search changes, open-dock fallback; byte cap across retained/new applications, round-robin batches, existing time-yield/UTF8/exit ordering regressions.",
+      "clippy": "app datum-gui binary -D warnings passed",
+      "release": "fresh guarded offline release passed",
+      "native": "Real six-second PTY flood with closed dock: zero Main presentations during plain output; OSC title change causes a fresh Main presentation; Global final native extent observed while flood continues (0.308s); exit 0. Producer sent 1551150 bytes.",
+      "governance": "source health and dependency authority passed; no dependencies/license changes"
+    },
+    "limits": [
+      "Single native case is bounded evidence, not statistical throughput/latency, all-host adapter, complete visible terminal or full hidden-work qualification. Independent pixel correctness and numeric tiers remain unqualified.",
+      "Batch-only intermediate trial did not improve observed throughput (247050 bytes versus prior 283500); retain it and do not attribute final native gain to that helper alone. Final producer retains the same flood body but adds a title positive control after the interval.",
+      "Core projection, activity and accessibility still update while closed; S4 complete hidden-work adoption remains open. The visible-field list was checked against existing terminal_tab_strip.rs; search and confirmation cases conservatively redraw.",
+      "Known restart-lineage flake and native acquisition/missing-close-event issues remain unresolved. Resize resource/temporal exclusions remain nonblocking. S1 is not closed by this slice."
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/terminal-output-damage/result.json"
   }
 }

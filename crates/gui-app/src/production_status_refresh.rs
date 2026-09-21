@@ -99,6 +99,9 @@ fn refresh_workspace_after_terminal_output(
     Ok(ProductionStatusRefresh::Changed)
 }
 
+#[path = "terminal_output_damage.rs"]
+mod terminal_output_damage;
+
 impl App {
     pub(super) fn poll_background_work(&mut self, event_loop: &ActiveEventLoop) {
         let mut changed = false;
@@ -241,6 +244,10 @@ impl Runtime {
     }
 
     pub(super) fn poll_terminal_output(&mut self) -> bool {
+        let strip = terminal_output_damage::ClosedStrip::capture(
+            self.workspace().ui.active_dock_tab.is_some(),
+            &self.workspace().ui.terminal,
+        );
         self.terminal_sessions.acknowledge_output_poll();
         let spawn_notices = self
             .terminal_sessions
@@ -309,6 +316,11 @@ impl Runtime {
             self.invalidate_frame();
         }
         self.refresh_terminal_accessibility();
-        true
+        strip.is_none_or(|before| {
+            !before.unchanged(
+                self.workspace().ui.active_dock_tab.is_some(),
+                &self.workspace().ui.terminal,
+            )
+        })
     }
 }
