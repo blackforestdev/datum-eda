@@ -1179,7 +1179,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial native proof: Global and Project Preferences retain focus through Main activation/wheel attempts with zero Main submissions; close returns focus and enables Main input frames. Full per-consumer input, negative control and backend qualification remain open.",
         "id": "proof_sh_10",
         "positive": "Focus-modal Preferences while editor input attempted",
         "negative_control": "Bypass modality in test input injector",
@@ -1233,7 +1233,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/SH-10/result.json"
+      ]
     },
     {
       "id": "SH-11",

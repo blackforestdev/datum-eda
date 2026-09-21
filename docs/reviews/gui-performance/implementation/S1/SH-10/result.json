@@ -1,0 +1,75 @@
+{
+  "binary_sha256": "baaa12b28f60c1fe034a7d7d386bbab864f0b81de07e16d720638c84c244db9b",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "main_window": "12582916",
+      "owned_window": "12582917",
+      "activation_redirected": true,
+      "blocked_main_wheel_events": 6,
+      "blocked_main_submit_delta": 0,
+      "focus_retained": true,
+      "focus_returned_on_close": true,
+      "unblocked_main_submit_delta": 2,
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "main_window": "12582916",
+      "owned_window": "12582917",
+      "activation_redirected": true,
+      "blocked_main_wheel_events": 6,
+      "blocked_main_submit_delta": 0,
+      "focus_retained": true,
+      "focus_returned_on_close": true,
+      "unblocked_main_submit_delta": 1,
+      "passed": true,
+      "exit": 0
+    }
+  ],
+  "status": "bounded native Preferences modality proof passed; complete SH-10 qualification remains open",
+  "source_commit": "1d641aecdd8a79a895c081d27cfa747cf3c5ff6e",
+  "production_consumers_verified": [
+    "MAIN/BOARD input guard while GLOBAL open",
+    "MAIN/BOARD input guard while PROJECT open"
+  ],
+  "production_path": "App::handle_native_window_event -> owned native Preferences adapters / Main modal-input guard / owned_window_policy::redirect_owner_activation -> NativeFrameCoordinator",
+  "production_changes": "none; bounded proof of already migrated default scheduler and existing focus policy",
+  "retired_paths": "none in this proof commit",
+  "method": "Actual X11 window activation, XTest pointer/wheel at Main canvas with dialog moved aside, real focus query and native WM_DELETE_WINDOW. No direct Runtime invocation, synthetic Rust event, focus bypass or product routing modification. Logs prove delivery of Main wheel events, zero Main submissions while modal and subsequent Main submissions after close.",
+  "fixture_sha256": {
+    "GLOBAL": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "PROJECT": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+  },
+  "environment": {
+    "application_backend": "X11 via Xwayland",
+    "desktop": "KDE Wayland",
+    "gpu_measurements": "disabled",
+    "verbose_native_logs": "enabled",
+    "cli": "existing target/release/datum-eda pinned; no implicit Cargo build"
+  },
+  "limits": [
+    "Two Preferences hosts with Board visible; no per-consumer keyboard/gesture matrix, exact final camera assertion, pixel capture or other-backend proof.",
+    "Activation receipt establishes owned focus after attempt; no inference about whether compositor or application performed each redirection.",
+    "No invalid-injector negative-control replay or latency/CPU/memory numerical acceptance.",
+    "Native event count includes backend wheel delivery semantics; three physical wheel clicks yielded six logged events per modal attempt.",
+    "No new implementation/dependencies or changed policy. S1 remains in progress; resize CPU/temporal qualification remains nonblocking."
+  ]
+}
