@@ -21782,7 +21782,7 @@
     "verification": {
       "coordinator": "8 passed, covering native Resized/Occluded transitions, combined suspension, restoration, retained damage and closed host identity",
       "app": "329 passed; 0 failed; 8 ignored; serial offline suite",
-      "native": "Four actual Xwayland/Vulkan hosts each passed six extent transitions; no native zero-size/occlusion/suspend or Wayland qualification inferred",
+      "native": "Four Xwayland/Vulkan configurations completed Main window six-extent smoke, with each auxiliary open in its separate run. That recipe did not resize auxiliary windows; native zero-size/occlusion/suspend and Wayland remain unqualified.",
       "build": "Offline optimized build passed",
       "extraction": "Native input dispatch body compared exactly against baseline after shared lifecycle observation; main pre-test1934->1606",
       "clippy": "App all-targets and workspace drift Clippy passed; workspace formatting passed",
@@ -21843,7 +21843,7 @@
     "verification": {
       "transaction_tests": "4 passed",
       "app": "329 passed; 0 failed; 8 ignored",
-      "native": "4 Xwayland/Vulkan native hosts; 6 extent transitions each; same fixture paths as baseline",
+      "native": "Four Xwayland/Vulkan configurations; six Main-window extent transitions each, with auxiliary hosts opened separately. Same fixture paths; no auxiliary-window resizing in that recipe.",
       "build": "Offline release passed",
       "drift": "Workspace formatting, Clippy and preceding governance gates passed; stopped at two baseline terminal focus-count/font-marker failures dat-terminal-convergence-guard-xke; later stages not run"
     },
@@ -21896,7 +21896,7 @@
     "verification": {
       "queue": "3 tests pass: FIFO starvation prevention including yield after configure, close with outstanding GPU work, stale completion watermark and bounded drain",
       "app": "Final exact-source suite332 passed,0failed,8ignored. Initial suite331passed,1unchanged terminal restart identity failure; isolated replay passed; dat-terminal-restart-identity-igx",
-      "native": "4 actual Xwayland/Vulkan hosts pass six extent transitions each. Shared queue configure receipts: MAIN7, GLOBAL8, PROJECT8, NEW8; completed watermark >= submitted at each configure",
+      "native": "Four Xwayland/Vulkan configurations complete Main-window six-extent smoke. Shared queue configure receipts: Main-only 7; Main plus Global/Project/New 8 each (including auxiliary initialization), not eight auxiliary reconfigurations. Completed watermark >= submitted at each configure.",
       "interaction": "Explicit synchronous interaction smoke passes three acquisitions; proof-only waits are bounded to2s, normal rendering stays nonblocking",
       "release": "Final offline optimized build passes",
       "drift": "Workspace formatting, Clippy and preceding governance checks pass; stops at baseline terminal focus-count/font-marker failures dat-terminal-convergence-guard-xke; later stages not run",
@@ -21968,7 +21968,7 @@
     "verification": {
       "clock": "3 tests pass: exact16/32/64/128/250ms backoff and2s active limit; repeated hidden/restore retains elapsed time; GPU wait shares episode and success resets",
       "app": "Final331passed,0failed,8ignored; four retired legacy transaction tests replaced by three recovery-policy tests",
-      "native": "Four actual Xwayland/Vulkan hosts each pass six normal extent transitions; four injected Lost-once configurations also finish all six transitions",
+      "native": "Four Xwayland/Vulkan configurations complete six Main-window extent transitions; four Lost-once configurations also finish that Main-window sequence. Auxiliary windows are opened and exercise their acquisition paths, but this recipe does not resize them.",
       "timeout": "Persistent backend-result Timeout injection exhausts; no extra attempts during0.5s quiet observation; actual native F5 starts one new bounded episode.11first-episode attempts,23total across two episodes; no driver-failure reliability claim",
       "release": "Final offline optimized build passes; fault probe verifies binary unchanged across its complete run",
       "drift": "Workspace formatting, Clippy and preceding governance checks pass; stops at baseline dat-terminal-convergence-guard-xke focus-count/font-marker failures; later stages not run",
@@ -22410,6 +22410,89 @@
       "native.json": "da59cf7e8dd52b9303cce2bf9000f8e564e6fb282ec4e9024ec53a3c104b7c2a",
       "native_probe.py": "40139043918aa9cf821ac944ccfee32a1543444fbd7aeceaf06b7073ec2e2592",
       "oom-fault.log.gz": "ab623d4ef3c7ca5c274b196c0dad07567605c06a7326969de0cb01dd2500eb48"
+    }
+  },
+  "native_resize_scope_correction": {
+    "source": "crates/gui-app/src/resize_smoke.rs::advance_native_resize_smoke reads runtime.window/runtime.config",
+    "correction": "Earlier entries stating each actual native host completed six resize transitions overstated the evidence. The built-in smoke always resized Main; auxiliary flags opened additional windows. Corrected the affected current map descriptions. Historical receipts remain unchanged and must be read under this scope correction.",
+    "new_evidence": "S1/lifecycle-counts/host_probe.py targets each actual auxiliary WindowId with two size changes and a return to original size, verified by its own configured extent and presentation counter. This is additional bounded proof, not full resize qualification."
+  },
+  "s1_lifecycle_counts_work": {
+    "status": "default per-surface acquisition lifecycle accounting implemented; full S1 and ACC qualification remain open",
+    "baseline_commit": "a8f040e8",
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_owner": "SurfaceTransaction/TextureLease count configure attempts, successful configuration generations, acquisition attempts, successful acquisitions, presentation and discarded acquisitions; QueueOwner scopes presentation/completion receipts by unique queue epoch",
+    "behavior": [
+      "Counters reconcile acquired = presented + discarded + active, with at most one active acquisition",
+      "A successful acquisition followed by observed device failure is counted and discarded through the same lease",
+      "Transactions bind native WindowId at construction and reject presentation using another native window",
+      "Generation/host/window identity and completion milestones are visible through the existing verbose log; detailed serialization is disabled without DATUM_GUI_VERBOSE_LOG",
+      "Queue presentation receipts are explicitly distinguished from raw GPU submission totals"
+    ],
+    "retired_paths": [
+      "Boolean-only acquired-texture bookkeeping",
+      "Uncounted discard of successful acquisition after observed device failure",
+      "Surface construction without native window identity",
+      "Ambiguous unscoped queue receipts across replacement"
+    ],
+    "verification": {
+      "app": "Final 341 passed, 0 failed, 8 ignored. Added counter-equation and replacement-epoch conformance tests alongside existing lease tests",
+      "native": "Final binary: actual GLOBAL/PROJECT/NEW window identities each accept two changed extents and restore original extent, with matching own-host presentation records. Main presents in every configuration. Earlier built-in smoke coverage is explicitly Main-only.",
+      "recovery": "Final binary: device-loss callback recovery with Main and Global, followed by a new-generation presented frame; persistent Main OOM stops automatically and native F5 starts one additional attempt. Recovery-only recipe does not depend on resize completion.",
+      "counters": "25 records across five final native runs pass ownership equations, monotonic counts, generation bounds and completion-watermark bounds; two observed queue epochs for device replacement, three for persistent OOM plus manual retry",
+      "release": "Fresh offline release passes",
+      "clippy": "Final targeted app Clippy -D warnings passes",
+      "checks": "Dependency, source health, formatting, parity, spec governance and evidence checks pass"
+    },
+    "failed_attempts": [
+      "Intermediate combined device-loss/resize recipe recovered successfully but stalled after requesting the next Main extent. Entire combined result remains failed/unqualified; trace retained. Final bounded recovery proof waits for new-generation presentation without invoking the deferred resize recipe."
+    ],
+    "limits": [
+      "Raw queue submission counts, scheduler request/coalescing counts and allocation IDs/bytes are not completed by these surface counters",
+      "Detailed diagnostic overhead, full native discard/close-during-acquisition proof, attachment retirement/capacity accounting and all SH/LF predicates remain unqualified",
+      "No CPU/GPU budget, display timing, static parity, Wayland or full S1 acceptance claim",
+      "Full drift not rerun; baseline terminal guard failures remain recorded"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/lifecycle-counts",
+    "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "commands": [
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui",
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app",
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-app --bin datum-gui -- -D warnings",
+      "python3 /tmp/pm045_counts_hosts.py",
+      "python3 /tmp/pm045_counts_recovery.py",
+      "python3 /tmp/pm045_counts_validate.py"
+    ],
+    "source_sha256": {
+      "crates/gui-app/src/native_surface_transaction.rs": "3c09a5e1eec4ce3710d8ff7ee283c1358ee2e0232e3f4616e7010fea8bb9dfba",
+      "crates/gui-app/src/native_queue_owner.rs": "3bcb61bf324ad9ca298b23e8d29b6d2a7d881686d2854cb87437090069072aa1",
+      "crates/gui-app/src/runtime_init.rs": "61f5baefc88f9e783401ddfc124558d6f86510adaa7233a37c3b47334d4e53aa",
+      "crates/gui-app/src/global_preferences_window.rs": "1d21608f057970f97e4ea69ca1c924b992bf50ee7a7647e865207bc817696080",
+      "crates/gui-app/src/native_device_recovery.rs": "64374bfe993d04b62d268078b8c58bb57579487ce6227fc323cf757197b6fc6b"
+    },
+    "artifacts_sha256": {
+      "GLOBAL-native.log.gz": "6b12ac147266bca4f2ff1008fc2a3eba70778c319d2370230683d14d62bdbfec",
+      "GLOBAL-recovery.log.gz": "a6abf6033d7cbc8f1e71f94e9a030e8c2169c3321bcf3b1121a8036bb035b6ba",
+      "NEW-native.log.gz": "441bbb5e7917603bb05e7c261e0a7156ac74e3f4502f4680d47e0d6e67dfcd32",
+      "PROJECT-native.log.gz": "6a75b2477bebfe6521dfcefda2a5a7613879b73d7155e4a47fd0d290179121e1",
+      "app.log.gz": "543648b60812ac067f52519f9c3c4428f04b4fd91ae44e07c96bfe76686a83e8",
+      "build.log.gz": "24dfb4c95c301d5daf139a046be37cc815ccdd32351658f75b9c550dc1b2229a",
+      "clippy.log.gz": "0f65b3bd803c0743fee686fdd656f035151b2d8aea5b6376a6f7a2baa273d6f1",
+      "failed-combined-probe.py": "fe66ab61fd4ef533a7318ecaf06f258dd0b99d7cf05fae02e2429bae6902e85f",
+      "failed-combined-recovery.json": "5611f7d58d1c5ffe4bd6961a183882358ce5d4778c49409977e40e3da445785b",
+      "failed-combined-recovery.log.gz": "0d6cd6bec32e3202f737e2ca39a59cf4943da6af9bea1098d13ffea5f3fbd461",
+      "host_probe.py": "a6248a56fb129ebd471f1696b3d1392f452653f0bc9f1e7ef86172d1f748a1f6",
+      "hosts.json": "70274bd395a92676c4e846f5505748cd0117e4114d319924c5b930bd25064609",
+      "oom-recovery.log.gz": "1315edf414f439698476f17cda93b6f3a841c69581a3d9a04c1d98497f5ea0b1",
+      "recovery.json": "96694a00ba64229b4e4cbb7e61e207f6fc7a1c6d968d765b98aca7467ef4bed5",
+      "recovery_probe.py": "51fc3060d9b3a8d1142cf2dd0801983dd66bfb30689ebd94d6d35b18a039c628",
+      "validate.py": "f4c757eb730fec106382cda8304aa75ee372f4defed9f3295fca96ae2f76e726",
+      "validation.json": "8e9cf9e8431c5689c81d125c68418938fbdc78415377b38ba0d66939e7ef8acc"
     }
   }
 }

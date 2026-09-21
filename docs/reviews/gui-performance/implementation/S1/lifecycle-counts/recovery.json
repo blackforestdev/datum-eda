@@ -1,0 +1,32 @@
+{
+  "binary_sha256": "544d4295461294323e47dc0f7f17dd245241a4b26b4ebbe96ee07251fbf097bc",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "passed": true,
+      "attempts": 1,
+      "commits": 1,
+      "state_receipts": 1,
+      "unexpected_exit": null,
+      "backend_fault_receipts": [
+        "[SystemTime { tv_sec: 1789962767, tv_nsec: 487143914 }] native device replacement begin fault_code=1"
+      ]
+    },
+    {
+      "host": "MAIN",
+      "fault": "persistent surface OutOfMemory",
+      "passed": true,
+      "automatic_attempts": 1,
+      "after_native_F5_attempts": 2,
+      "process_retained": true
+    }
+  ]
+}
