@@ -288,11 +288,12 @@ impl NativeFrameCoordinator {
         &mut self,
         window: &Window,
         now: Instant,
+        admitted: bool,
     ) -> (Option<Instant>, bool) {
         let Some(host) = self.hosts.get_mut(&window.id()) else {
             return (None, false);
         };
-        let (ready, due) = host.recovery.borrow_mut().poll(now);
+        let (ready, due) = host.recovery.borrow_mut().poll_admitted(now, admitted);
         let failed = host.recovery.borrow_mut().take_failure();
         if failed {
             host.pending = false;

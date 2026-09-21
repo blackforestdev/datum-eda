@@ -83,6 +83,24 @@ pub(super) enum Admission {
 }
 
 impl QueueOwner {
+    pub(super) fn pending_progress(&self) -> bool {
+        let state = self.0.borrow();
+        !state.progress.failed() && state.completed.load(Ordering::Acquire) < state.submitted
+    }
+
+    /// Read-only retry eligibility. Only admit() can create/cancel FIFO tickets.
+    pub(super) fn retry_ready(&self, host: u64, in_flight: u64) -> bool {
+        let state = self.0.borrow();
+        if state.progress.failed() {
+            return false;
+        }
+        let completed = state.completed.load(Ordering::Acquire);
+        match state.tickets.front() {
+            Some(first) => *first == host && completed >= state.submitted,
+            None => completed >= in_flight,
+        }
+    }
+
     /// Drive only completion callbacks, including when no redraw is pending.
     /// New submissions do not renew a stalled watermark's active-time budget.
     pub(super) fn progress(
@@ -336,6 +354,29 @@ impl crate::App {
     pub(crate) fn service_native_queue_progress(&mut self) -> Option<Instant> {
         if self.device_recovery.pending() || !self.native_device_available() {
             return None;
+        }
+        // Suppressed queue-wait redraws cannot serve as visibility probes.
+        // Refresh existing hosts only while real queue work remains pending;
+        // this adds neither an idle timer nor foreground X11 property reads.
+        if self
+            .runtime
+            .as_ref()?
+            .surface_transaction
+            .queue_owner()
+            .pending_progress()
+            && self.frames.has_drawable_host()
+        {
+            let ids = [
+                self.window.as_deref(),
+                self.global_preferences_window.as_deref(),
+                self.project_preferences_window.as_deref(),
+                self.new_project_window.as_deref(),
+            ]
+            .map(|window| window.map(|window| window.id()));
+            for id in ids.into_iter().flatten() {
+                self.observe_native_minimization(id);
+            }
+            self.sync_surface_drawability();
         }
         let runtime = self.runtime.as_ref()?;
         let result = runtime.surface_transaction.queue_owner().progress(

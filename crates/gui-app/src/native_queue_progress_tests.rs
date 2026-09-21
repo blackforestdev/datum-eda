@@ -218,3 +218,50 @@ fn diagnostic_retry_releases_only_delivered_receipts_and_keeps_future_callbacks_
         (None, false)
     );
 }
+
+#[test]
+fn queue_retry_gate_preserves_fifo_and_does_not_create_tickets() {
+    let owner = QueueOwner::default();
+    let a = owner.register();
+    let b = owner.register();
+    assert!(!owner.pending_progress());
+    let (serial, completed) = owner.submission_receipt();
+    assert!(owner.pending_progress());
+    assert!(!owner.retry_ready(a, serial));
+    assert!(owner.retry_ready(b, 0));
+    assert!(owner.0.borrow().tickets.is_empty());
+    assert_eq!(owner.admit(b, true, 0), Admission::Wait);
+    assert!(!owner.retry_ready(a, 0));
+    assert!(!owner.retry_ready(b, 0));
+    completed.store(serial, Ordering::Release);
+    assert!(!owner.pending_progress());
+    assert!(owner.retry_ready(b, 0));
+    assert!(!owner.retry_ready(a, serial));
+    owner.configured(b);
+    assert!(owner.retry_ready(a, serial));
+    owner.0.borrow_mut().progress.fail();
+    assert!(!owner.retry_ready(a, serial));
+    assert!(!owner.pending_progress());
+}
+
+#[test]
+fn unadmitted_retry_yields_without_renewing_active_budget() {
+    use super::super::native_recovery::{Recovery, RetryReason};
+    let start = Instant::now();
+    let mut recovery = Recovery::default();
+    recovery.defer(RetryReason::Queue, start);
+    for millis in (2..2000).step_by(2) {
+        assert_eq!(
+            recovery.poll_admitted(at(start, millis), false),
+            (false, Some(at(start, millis + 2)))
+        );
+    }
+    assert_eq!(
+        recovery.poll_admitted(at(start, 2000), false),
+        (false, None)
+    );
+    assert!(recovery.failed());
+    assert!(recovery.manual_retry());
+    recovery.defer(RetryReason::Queue, at(start, 2001));
+    assert_eq!(recovery.poll_admitted(at(start, 2003), true), (true, None));
+}

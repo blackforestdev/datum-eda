@@ -521,16 +521,37 @@ impl crate::App {
         let now = Instant::now();
         let mut next: Option<Instant> = None;
         let mut failed = Vec::new();
-        for window in [
-            self.window.as_deref(),
-            self.global_preferences_window.as_deref(),
-            self.project_preferences_window.as_deref(),
-            self.new_project_window.as_deref(),
-        ]
-        .into_iter()
-        .flatten()
-        {
-            let (due, reported) = self.frames.service_recovery(window, now);
+        for (window, transaction) in [
+            (
+                self.window.as_deref(),
+                self.runtime.as_ref().map(|r| &r.surface_transaction),
+            ),
+            (
+                self.global_preferences_window.as_deref(),
+                self.global_preferences_surface
+                    .as_ref()
+                    .map(|s| &s.surface_transaction),
+            ),
+            (
+                self.project_preferences_window.as_deref(),
+                self.project_preferences_surface
+                    .as_ref()
+                    .map(|s| &s.surface_transaction),
+            ),
+            (
+                self.new_project_window.as_deref(),
+                self.new_project_surface
+                    .as_ref()
+                    .map(|s| &s.surface_transaction),
+            ),
+        ] {
+            let (Some(window), Some(transaction)) = (window, transaction) else {
+                continue;
+            };
+            let admitted = transaction
+                .queue_owner
+                .retry_ready(transaction.queue_host, transaction.in_flight);
+            let (due, reported) = self.frames.service_recovery(window, now, admitted);
             if reported {
                 failed.push(window.id());
             }

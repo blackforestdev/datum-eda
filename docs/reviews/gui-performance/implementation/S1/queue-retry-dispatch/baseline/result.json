@@ -1,0 +1,68 @@
+{
+  "binary_sha256": "c82008a8605241d3ed9bc6993eb1073a3fc2823501fe6de2803ce6b186d20c0c",
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--board",
+    "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "--window-size",
+    "1280x800"
+  ],
+  "hidden_state": "_NET_WM_STATE(ATOM) = _NET_WM_STATE_HIDDEN\nWM_STATE(WM_STATE):\n\t\twindow state: Iconic\n\t\ticon window: 0x0\n",
+  "before_hidden": {
+    "acquire_attempts": 1,
+    "acquired": 1,
+    "active": 0,
+    "configuration_generation": 1,
+    "configure_attempts": 1,
+    "configured_extent": [
+      1333,
+      833
+    ],
+    "discarded": 0,
+    "frame_submission_receipts_issued": 1,
+    "frame_submissions": 1,
+    "gpu_completed_through_receipt": 0,
+    "host": 1,
+    "last_frame_submission_receipt": 1,
+    "last_present_receipt": 1,
+    "presented": 1,
+    "queue_epoch": 1,
+    "reason": "wait_queue",
+    "wgpu_submission": "Some(SubmissionIndex { index: 1 })",
+    "window": "WindowId(27262980)"
+  },
+  "events_during_hidden": [
+    "[SystemTime { tv_sec: 1789986518, tv_nsec: 30703491 }] window event WindowId(27262980) redraw requested",
+    "[SystemTime { tv_sec: 1789986518, tv_nsec: 33404308 }] window event WindowId(27262980) redraw requested",
+    "[SystemTime { tv_sec: 1789986518, tv_nsec: 36064107 }] window event WindowId(27262980) redraw requested",
+    "[SystemTime { tv_sec: 1789986518, tv_nsec: 38782051 }] window event WindowId(27262980) redraw requested"
+  ],
+  "after_hidden": {
+    "acquire_attempts": 1,
+    "acquired": 1,
+    "active": 0,
+    "configuration_generation": 1,
+    "configure_attempts": 1,
+    "configured_extent": [
+      1333,
+      833
+    ],
+    "discarded": 0,
+    "frame_submission_receipts_issued": 1,
+    "frame_submissions": 1,
+    "gpu_completed_through_receipt": 0,
+    "host": 1,
+    "last_frame_submission_receipt": 1,
+    "last_present_receipt": 1,
+    "presented": 1,
+    "queue_epoch": 1,
+    "reason": "wait_queue",
+    "wgpu_submission": "Some(SubmissionIndex { index: 1 })",
+    "window": "WindowId(27262980)"
+  },
+  "failed_while_hidden": false,
+  "minimized_observed": true,
+  "failed_after_restore": true,
+  "retry_presented": true,
+  "exit": 0
+}
