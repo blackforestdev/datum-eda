@@ -2113,7 +2113,8 @@
           "closed_attachment_retirement_cannot_release_a_later_host_submission"
         ],
         "atomic_device_staging_evidence": "docs/reviews/gui-performance/implementation/S1/atomic-device-staging/receipt.json",
-        "atomic_device_staging_result": "Default replacement stages all live hosts before Main publication. Three actual auxiliary paths reject epoch 3 while retaining epoch 1, drop both staged transactions with zero acquisition/submission, then F5 commits epoch 5 and presents current extent; workspace/terminal state and Main teardown checks pass. Full requirement qualification remains open."
+        "atomic_device_staging_result": "Default replacement stages all live hosts before Main publication. Three actual auxiliary paths reject epoch 3 while retaining epoch 1, drop both staged transactions with zero acquisition/submission, then F5 commits epoch 5 and presents current extent; workspace/terminal state and Main teardown checks pass. Full requirement qualification remains open.",
+        "pending_queue_close": "Four native X11 cases close with receipt 1 unpublished: Main after submit; auxiliaries before their own configuration/submission, followed by Main close. All exit zero, with no lifecycle work after owner drop and Main window reference released. This is publication-hold shutdown evidence, not actual callback-after-close or memory-budget qualification."
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/LF-07/result.json",
       "acceptance_rule": "No late redraw/configure; live resources retire after GPU completion; close memory budgets pass.",
@@ -2162,7 +2163,8 @@
         "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json",
         "docs/reviews/gui-performance/implementation/S1/owned-main-window/result.json",
         "docs/reviews/gui-performance/implementation/S1/native-window-lifetime/result.json",
-        "docs/reviews/gui-performance/implementation/S1/native-attachment-reconciliation/result.json"
+        "docs/reviews/gui-performance/implementation/S1/native-attachment-reconciliation/result.json",
+        "docs/reviews/gui-performance/implementation/S1/pending-queue-close/result.json"
       ]
     },
     {

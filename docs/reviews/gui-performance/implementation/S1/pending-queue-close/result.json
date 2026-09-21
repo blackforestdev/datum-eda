@@ -1,0 +1,29 @@
+{
+  "status": "Bounded native shutdown with unpublished shared completion passes; LF-07 remains partial",
+  "source_commit": "1e4d2e2f3dbf82d204c3354a494642e0fb4e13e9",
+  "binary_sha256": "d9efa11c530e6b037872030d649af6cca99668186115bfaf5edf6344f086b2bb",
+  "production_consumers_exercised": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "production_consumers_migrated": [],
+  "competing_paths_retired": [],
+  "production_change": "None; existing ae88968d release application and existing hold-until-retry backend diagnostic.",
+  "actual_path": "PID/title-scoped KWin close -> real WindowEvent::CloseRequested -> owned-host synchronization or controlled Main shutdown -> NativeFrameCoordinator::close and SurfaceTransaction::drop / QueueOwner::close_host.",
+  "verification": "Four X11/Xwayland cases observe two-second shared queue failure while receipt 1 remains unpublished. Main closes after its first submission. Each auxiliary closes before its first configure/submit, then Main closes. All owner-drop records are terminal for their host; each process exits zero and reports Main window ownership released=true without F5 releasing completion.",
+  "limits": [
+    "The diagnostic holds publication of actual wgpu callbacks. It does not prove the backend callback itself occurs after closure or simulate driver failure.",
+    "Auxiliary cases have zero own submissions: they prove closure while waiting for shared queue configuration, not close after their own submit.",
+    "No full LF-07, prescribed strong-host-capture negative replay, driver memory release, close memory budget, full resource qualification or S1 completion.",
+    "No new Rust tests/build or statistical performance claim. Existing binary previously passed 375 app tests, release and Clippy.",
+    "S1 exit amendment remains pending owner review; no roadmap or authority change. Resize remains nonblocking."
+  ],
+  "fixture_sha256": {
+    "MAIN": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "GLOBAL": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "PROJECT": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "NEW": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+  }
+}
