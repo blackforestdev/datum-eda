@@ -21818,5 +21818,51 @@
       "crates/gui-app/src/runtime_surface.rs": "248152143e5e149a3493d6c01f2664efe6ca59f4c420c2b49d33c36c291d011f",
       "crates/gui-app/src/app_native_events.rs": "9dd2be65a4742884a8eb4d95ebd139d66c589b7f1a4fc78e3102a748268234f6"
     }
+  },
+  "s1_acquisition_work": {
+    "status": "bounded production acquisition consolidation verified; S1 remains in progress",
+    "baseline_commit": "6a8d02b8",
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_owner": "SurfaceTransaction::acquire",
+    "retired_paths": [
+      "Runtime::render private get_current_texture and surface-error match",
+      "GlobalPreferencesWindowSurface::render private get_current_texture and surface-error match",
+      "Scene cache invalidation solely because surface acquisition failed"
+    ],
+    "limits": [
+      "Existing default immediate recovery configure and opt-in retry policy preserved; coordinator-owned drawable-active bounded recovery remains pending",
+      "Initialization configure and diagnostic minimal reproducer remain separate",
+      "No global queue ownership or numerical performance claim",
+      "No injected GPU surface-error production qualification yet"
+    ],
+    "verification": {
+      "transaction_tests": "4 passed",
+      "app": "329 passed; 0 failed; 8 ignored",
+      "native": "4 Xwayland/Vulkan native hosts; 6 extent transitions each; same fixture paths as baseline",
+      "build": "Offline release passed",
+      "drift": "Workspace formatting, Clippy and preceding governance gates passed; stopped at two baseline terminal focus-count/font-marker failures dat-terminal-convergence-guard-xke; later stages not run"
+    },
+    "source_sha256": {
+      "crates/gui-app/src/native_surface_transaction.rs": "2b879aac1df2ff0da097a85f9a7166802621ecf8e0dbff2e7b1feb8df8fc3886",
+      "crates/gui-app/src/runtime_present.rs": "6b283f3a90fc38ac329758a0683b3e33d8658b96ce45c9e6ce826c1d2d2cbb0c",
+      "crates/gui-app/src/global_preferences_window.rs": "37bb531834cc1ec1c3abcc4f3a0dcd5019e9625a41dcda15ab43d724056cf8ec"
+    },
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/acquisition-owner",
+    "artifacts_sha256": {
+      "GLOBAL-native.log.gz": "0c8d1c5bf47815c69ea7b4c86bf32c8d9fde4039ed8e6e44d1dcc994f356d05d",
+      "MAIN-native.log.gz": "94c84e51ce343b4e740b70613d3abf713b3ea151ec60bd491b689d2c694d3bb3",
+      "NEW-native.log.gz": "2fa03ddf283fd5ed509f13b2f44c92031e9ef4b94d5f06cdd4226bf5e876d56e",
+      "PROJECT-native.log.gz": "8c8f7b1879263c49b6a1fb732c4fd708a20b087c80c1968233f2effc3bc34701",
+      "app.log.gz": "86929578278dec63ab4421e53ebf95feea361480be8be9498ea1904a0e9a798b",
+      "build.log.gz": "64753eead27c09758ef9d5b1200f05278b2f36760821ccf992f13a005ca400be",
+      "drift.log.gz": "df4ad61bcff7cdd8573a70f43628b36a666b4800991fb87c181cd2a7c77836da",
+      "native.json": "1b26857abfb88a943abad5219378e06341d87671d12b558dc437419e792d727d",
+      "tests.log.gz": "4a6d157933239aa670413b20fc53396958dcc701315ca64223d4045fc3ccd90b"
+    }
   }
 }

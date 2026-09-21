@@ -76,6 +76,40 @@ impl SurfaceTransaction {
         self.configured = Some((config.width, config.height));
     }
 
+    /// Common acquisition and error classification for every native product host.
+    /// Rendering adapters retain their damage when this returns no texture.
+    pub(crate) fn acquire(
+        &mut self,
+        surface: &wgpu::Surface<'_>,
+        device: &wgpu::Device,
+        config: &wgpu::SurfaceConfiguration,
+    ) -> anyhow::Result<Option<wgpu::SurfaceTexture>> {
+        if !self.begin_frame(surface, device, config)? {
+            return Ok(None);
+        }
+        let probe = super::phase_probe::Probe::start("acquire");
+        let result = surface.get_current_texture();
+        drop(probe);
+        match result {
+            Ok(frame) => Ok(Some(frame)),
+            Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
+                if !self.acquisition_failed(true) {
+                    self.configure(surface, device, config);
+                }
+                Ok(None)
+            }
+            Err(wgpu::SurfaceError::Timeout) => {
+                self.acquisition_failed(false);
+                super::append_gui_diagnostic_line("surface acquire timeout; frame skipped");
+                Ok(None)
+            }
+            Err(wgpu::SurfaceError::OutOfMemory) => {
+                anyhow::bail!("native surface out of memory")
+            }
+            Err(error) => anyhow::bail!("acquire native surface texture: {error}"),
+        }
+    }
+
     pub(crate) fn begin_frame(
         &mut self,
         surface: &wgpu::Surface<'_>,

@@ -1,0 +1,114 @@
+{
+  "scope": "S1 shared redraw owner: final source candidate, same baseline fixture paths and six native input/final-state transitions per actual host. No performance, static capture or display timing claim.",
+  "revision": "6a8d02b88ab53ce0c7f87b2ae3f3ff425af2c5ec",
+  "binary_sha256": "885b67612ca268d94192f01db0447417bdfa5a649e56697f3ce719484fdacf58",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "runs": [
+    {
+      "host": "MAIN",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--resize-torture-smoke"
+      ],
+      "passed": true,
+      "observed": [
+        "[SystemTime { tv_sec: 1789956150, tv_nsec: 852806649 }] native resize smoke observed 1280x900 configured 1280x900 presented=true",
+        "[SystemTime { tv_sec: 1789956151, tv_nsec: 861494741 }] native resize smoke observed 1440x900 configured 1440x900 presented=true",
+        "[SystemTime { tv_sec: 1789956152, tv_nsec: 866526999 }] native resize smoke observed 1280x800 configured 1280x800 presented=true",
+        "[SystemTime { tv_sec: 1789956152, tv_nsec: 881482275 }] native resize smoke observed 1440x800 configured 1440x800 presented=true",
+        "[SystemTime { tv_sec: 1789956153, tv_nsec: 871901179 }] native resize smoke observed 1280x900 configured 1280x900 presented=true",
+        "[SystemTime { tv_sec: 1789956153, tv_nsec: 888637040 }] native resize smoke observed 1280x800 configured 1280x800 presented=true"
+      ],
+      "identity": [
+        "[SystemTime { tv_sec: 1789956149, tv_nsec: 601544715 }] surface identity window=WindowId(12582916) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "unexpected_exit": null,
+      "log_sha256": "7ef52b82adef3a44627e67dfb60276aba77e730ca9109954b47731daf1fb7f3d"
+    },
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--resize-torture-smoke",
+        "--open-global-preferences"
+      ],
+      "passed": true,
+      "observed": [
+        "[SystemTime { tv_sec: 1789956158, tv_nsec: 642047328 }] native resize smoke observed 1280x900 configured 1280x900 presented=true",
+        "[SystemTime { tv_sec: 1789956159, tv_nsec: 667705737 }] native resize smoke observed 1440x900 configured 1440x900 presented=true",
+        "[SystemTime { tv_sec: 1789956159, tv_nsec: 685850873 }] native resize smoke observed 1280x800 configured 1280x800 presented=true",
+        "[SystemTime { tv_sec: 1789956160, tv_nsec: 671354202 }] native resize smoke observed 1440x800 configured 1440x800 presented=true",
+        "[SystemTime { tv_sec: 1789956160, tv_nsec: 687578353 }] native resize smoke observed 1280x900 configured 1280x900 presented=true",
+        "[SystemTime { tv_sec: 1789956161, tv_nsec: 675547143 }] native resize smoke observed 1280x800 configured 1280x800 presented=true"
+      ],
+      "identity": [
+        "[SystemTime { tv_sec: 1789956156, tv_nsec: 285338786 }] surface identity window=WindowId(12582916) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789956156, tv_nsec: 375550973 }] surface identity window=WindowId(12582934) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "unexpected_exit": null,
+      "log_sha256": "cc7f9bf415a67b418566ba648b5e07512f247380dff558f4c6c376b183d32b1f"
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--resize-torture-smoke",
+        "--open-project-preferences"
+      ],
+      "passed": true,
+      "observed": [
+        "[SystemTime { tv_sec: 1789956165, tv_nsec: 84548223 }] native resize smoke observed 1280x900 configured 1280x900 presented=true",
+        "[SystemTime { tv_sec: 1789956165, tv_nsec: 133823036 }] native resize smoke observed 1440x900 configured 1440x900 presented=true",
+        "[SystemTime { tv_sec: 1789956166, tv_nsec: 88530528 }] native resize smoke observed 1280x800 configured 1280x800 presented=true",
+        "[SystemTime { tv_sec: 1789956166, tv_nsec: 103330573 }] native resize smoke observed 1440x800 configured 1440x800 presented=true",
+        "[SystemTime { tv_sec: 1789956167, tv_nsec: 91582084 }] native resize smoke observed 1280x900 configured 1280x900 presented=true",
+        "[SystemTime { tv_sec: 1789956167, tv_nsec: 106605294 }] native resize smoke observed 1280x800 configured 1280x800 presented=true"
+      ],
+      "identity": [
+        "[SystemTime { tv_sec: 1789956163, tv_nsec: 579786421 }] surface identity window=WindowId(12582916) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789956163, tv_nsec: 836575324 }] surface identity window=WindowId(12582934) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "unexpected_exit": null,
+      "log_sha256": "b7cf995e48a8c41d0de6eb3dcd339f5c4213d8e5e6d14b0d38a8342f5970ebe4"
+    },
+    {
+      "host": "NEW",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--resize-torture-smoke",
+        "--open-new-project"
+      ],
+      "passed": true,
+      "observed": [
+        "[SystemTime { tv_sec: 1789956170, tv_nsec: 716381079 }] native resize smoke observed 1280x900 configured 1280x900 presented=true",
+        "[SystemTime { tv_sec: 1789956170, tv_nsec: 760110078 }] native resize smoke observed 1440x900 configured 1440x900 presented=true",
+        "[SystemTime { tv_sec: 1789956171, tv_nsec: 721577197 }] native resize smoke observed 1280x800 configured 1280x800 presented=true",
+        "[SystemTime { tv_sec: 1789956171, tv_nsec: 736151930 }] native resize smoke observed 1440x800 configured 1440x800 presented=true",
+        "[SystemTime { tv_sec: 1789956172, tv_nsec: 726251994 }] native resize smoke observed 1280x900 configured 1280x900 presented=true",
+        "[SystemTime { tv_sec: 1789956172, tv_nsec: 742456671 }] native resize smoke observed 1280x800 configured 1280x800 presented=true"
+      ],
+      "identity": [
+        "[SystemTime { tv_sec: 1789956169, tv_nsec: 281015099 }] surface identity window=WindowId(12582916) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+        "[SystemTime { tv_sec: 1789956169, tv_nsec: 398503491 }] surface identity window=WindowId(12582934) window_backend=x11 gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+      ],
+      "unexpected_exit": null,
+      "log_sha256": "b5bbec5740794f1d635a6d456c5a41c1a2891eab907c75402e49a99a8128cfe6"
+    }
+  ]
+}
