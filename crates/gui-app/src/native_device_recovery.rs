@@ -6,24 +6,27 @@ use std::{
     pin::Pin,
     sync::{
         Arc,
-        atomic::{AtomicU8, Ordering},
+        atomic::{AtomicBool, AtomicU8, Ordering},
     },
     task::{Context, Poll, Wake, Waker},
     time::{Duration, Instant},
 };
 
-#[derive(Clone)]
-pub(super) struct DeviceHealth(Arc<AtomicU8>);
+#[derive(Clone, Default)]
+pub(super) struct DeviceHealth {
+    failure: Arc<AtomicU8>,
+    lost: Arc<AtomicBool>,
+}
 impl DeviceHealth {
     pub(super) fn observe(
         device: &wgpu::Device,
         wake: winit::event_loop::EventLoopProxy<()>,
     ) -> Self {
-        let health = Self(Arc::new(AtomicU8::new(0)));
+        let health = Self::default();
         let lost = health.clone();
         let lost_wake = wake.clone();
         device.set_device_lost_callback(move |_, _| {
-            if lost.signal(1) {
+            if lost.confirm_device_loss() {
                 let _ = lost_wake.send_event(());
             }
         });
@@ -41,7 +44,15 @@ impl DeviceHealth {
         health
     }
     pub(super) fn failed(&self) -> bool {
-        self.0.load(Ordering::Acquire) != 0
+        self.failure.load(Ordering::Acquire) != 0
+    }
+    pub(super) fn device_loss_signal(&self) -> Arc<AtomicBool> {
+        self.lost.clone()
+    }
+    fn confirm_device_loss(&self) -> bool {
+        // A prior OOM/validation failure must not hide the eventual backend loss.
+        self.lost.store(true, Ordering::Release);
+        self.signal(1)
     }
     pub(super) fn allocation_failed(&self) {
         self.signal(2);
@@ -50,7 +61,7 @@ impl DeviceHealth {
         self.signal(4);
     }
     fn signal(&self, code: u8) -> bool {
-        self.0
+        self.failure
             .compare_exchange(0, code, Ordering::AcqRel, Ordering::Acquire)
             .is_ok()
     }
@@ -120,6 +131,11 @@ impl Runtime {
             !health.failed(),
             "replacement device failed during renderer initialization"
         );
+        // Only the validated replacement reaches this boundary. Request old
+        // device destruction and nonblocking progress; destroy alone is not a
+        // completed GPU milestone. Its registered callback owns that evidence.
+        self.device.destroy();
+        let _ = self.device.poll(wgpu::PollType::Poll);
         self.instance = instance;
         self.surface = surface;
         self.adapter = adapter;
@@ -129,7 +145,7 @@ impl Runtime {
         self.renderer = renderer;
         self.measurements = measurements;
         self.device_health = health;
-        self.surface_transaction = SurfaceTransaction::new(self.window);
+        self.surface_transaction = SurfaceTransaction::new(self.window, &self.device_health);
         self.invalidate_scene();
         Ok(())
     }
@@ -185,6 +201,9 @@ impl App {
             }
             return None;
         }
+        // Continue old-queue callbacks while asynchronous replacement is in
+        // progress. No wait/readback and no additional completion notification.
+        let _ = runtime.device.poll(wgpu::PollType::Poll);
         self.frames.fail_device();
         if !self.frames.has_drawable_host() {
             if let Some(pending) = &mut self.device_recovery.pending
@@ -196,7 +215,7 @@ impl App {
         }
         if !self.device_recovery.attempted {
             let main_window = runtime.window;
-            let fault_code = runtime.device_health.0.load(Ordering::Acquire);
+            let fault_code = runtime.device_health.failure.load(Ordering::Acquire);
             for window in [
                 Some(main_window.id()),
                 self.global_preferences_window
@@ -363,15 +382,74 @@ impl App {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[cfg(target_os = "linux")]
+    #[test]
+    #[ignore = "requires Vulkan and X11 connection; creates no visible window; run serially"]
+    fn registered_backend_callback_confirms_destroy_after_prior_error() {
+        use winit::platform::x11::EventLoopBuilderExtX11;
+        let event_loop = winit::event_loop::EventLoop::<()>::with_user_event()
+            .with_x11()
+            .with_any_thread(true)
+            .build()
+            .unwrap();
+        let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+            backends: wgpu::Backends::VULKAN,
+            ..Default::default()
+        });
+        let adapter =
+            pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))
+                .unwrap();
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())).unwrap();
+        let health = DeviceHealth::observe(&device, event_loop.create_proxy());
+        let buffer = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("device-loss-conformance"),
+            size: 16,
+            usage: wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor::default());
+        encoder.clear_buffer(&buffer, 0, None);
+        queue.submit([encoder.finish()]);
+        health.allocation_failed();
+        let loss = health.device_loss_signal();
+        assert!(!loss.load(Ordering::Acquire));
+        device.destroy();
+        let deadline = Instant::now() + Duration::from_secs(2);
+        while !loss.load(Ordering::Acquire) && Instant::now() < deadline {
+            let _ = device.poll(wgpu::PollType::Poll);
+            std::thread::sleep(Duration::from_millis(1));
+        }
+        assert!(
+            loss.load(Ordering::Acquire),
+            "registered backend callback did not confirm loss"
+        );
+        assert_eq!(health.failure.load(Ordering::Acquire), 2);
+    }
+
+    #[test]
+    fn prior_failure_does_not_hide_confirmed_device_loss_or_poison_replacement() {
+        let old = DeviceHealth::default();
+        old.allocation_failed();
+        let old_loss = old.device_loss_signal();
+        assert!(!old_loss.load(Ordering::Acquire));
+        assert!(!old.confirm_device_loss()); // Already reported error; do not wake twice.
+        assert!(old_loss.load(Ordering::Acquire));
+        assert_eq!(old.failure.load(Ordering::Acquire), 2);
+        let replacement = DeviceHealth::default();
+        assert!(!replacement.failed());
+        assert!(!replacement.device_loss_signal().load(Ordering::Acquire));
+    }
+
     #[test]
     fn retired_device_error_bursts_cannot_wake_or_fail_replacement_generation() {
-        let old = DeviceHealth(Arc::new(AtomicU8::new(0)));
+        let old = DeviceHealth::default();
         let callback = old.clone();
         assert!(old.signal(1));
         for _ in 0..1000 {
             assert!(!callback.signal(3));
         }
-        let replacement = DeviceHealth(Arc::new(AtomicU8::new(0)));
+        let replacement = DeviceHealth::default();
         drop(old);
         assert!(!callback.signal(2));
         assert!(!replacement.failed());

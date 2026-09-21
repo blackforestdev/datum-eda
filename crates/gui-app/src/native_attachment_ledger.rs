@@ -17,6 +17,8 @@ pub(super) struct Ledger {
     records: BTreeMap<(u64, u64), Allocation>,
     observed: u64,
     retired: u64,
+    device_retired: u64,
+    device_lost: bool,
     peak_payload_bytes: u64,
 }
 
@@ -28,6 +30,8 @@ pub(super) struct Snapshot {
     pub unknown_payload_allocations: usize,
     pub observed_allocations: u64,
     pub completed_retirements: u64,
+    pub device_loss_retirements: u64,
+    pub device_loss_confirmed: bool,
     pub allocations: Vec<Allocation>,
 }
 
@@ -74,6 +78,11 @@ impl Ledger {
         self.reap(completed);
     }
 
+    pub(super) fn confirm_device_loss(&mut self, completed: u64) {
+        self.device_lost = true;
+        self.reap(completed);
+    }
+
     fn known_payload(&self) -> u64 {
         self.records
             .values()
@@ -84,17 +93,24 @@ impl Ledger {
 
     fn reap(&mut self, completed: u64) {
         self.records.retain(|_, allocation| {
-            let release =
-                allocation.release_reason.is_some() && allocation.last_submission <= completed;
+            let release = allocation.release_reason.is_some()
+                && (allocation.last_submission <= completed || self.device_lost);
             if release {
-                self.retired = self
-                    .retired
+                let count = if allocation.last_submission <= completed {
+                    &mut self.retired
+                } else {
+                    &mut self.device_retired
+                };
+                *count = count
                     .checked_add(1)
                     .expect("attachment retirements exhausted");
             }
             !release
         });
-        debug_assert_eq!(self.observed, self.retired + self.records.len() as u64);
+        debug_assert_eq!(
+            self.observed,
+            self.retired + self.device_retired + self.records.len() as u64
+        );
     }
 
     pub(super) fn snapshot(&mut self, completed: u64) -> Snapshot {
@@ -106,6 +122,8 @@ impl Ledger {
             unknown_payload_allocations: 0,
             observed_allocations: self.observed,
             completed_retirements: self.retired,
+            device_loss_retirements: self.device_retired,
+            device_loss_confirmed: self.device_lost,
             allocations: self.records.values().copied().collect(),
         };
         for allocation in &snapshot.allocations {
@@ -166,6 +184,25 @@ mod tests {
         assert_eq!(finished.retiring_payload_bytes, 0);
         assert_eq!(finished.completed_retirements, 2);
         assert!(finished.allocations.is_empty());
+    }
+
+    #[test]
+    fn confirmed_device_loss_retires_only_dropped_references_without_faking_completion() {
+        let mut ledger = Ledger::default();
+        ledger.observe(allocation(1, Some(1024), 9), 0);
+        ledger.confirm_device_loss(0);
+        let alive = ledger.snapshot(0);
+        assert!(alive.device_loss_confirmed);
+        assert_eq!(alive.current_payload_bytes, 1024);
+        assert_eq!(alive.completed_retirements, 0);
+        assert_eq!(alive.device_loss_retirements, 0);
+        ledger.close(1, 0);
+        let retired = ledger.snapshot(0);
+        assert_eq!(retired.device_loss_retirements, 1);
+        assert_eq!(retired.completed_retirements, 0);
+        assert!(retired.allocations.is_empty());
+        assert_eq!(ledger.snapshot(9).device_loss_retirements, 1);
+        assert_eq!(ledger.snapshot(9).completed_retirements, 0);
     }
 
     #[test]

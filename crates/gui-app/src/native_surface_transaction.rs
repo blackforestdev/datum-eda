@@ -112,7 +112,10 @@ enum InjectedFault {
 }
 
 impl SurfaceTransaction {
-    pub(crate) fn new(window: &winit::window::Window) -> Self {
+    pub(crate) fn new(
+        window: &winit::window::Window,
+        health: &crate::native_device_recovery::DeviceHealth,
+    ) -> Self {
         let native_size = window.inner_size();
         // The recovered diagnostic implementation is now superseded by the
         // shared default policy; retain validation of the legacy switch.
@@ -120,7 +123,8 @@ impl SurfaceTransaction {
             Err(std::env::VarError::NotPresent) | Ok("0" | "1") => {}
             other => panic!("invalid DATUM_DIAGNOSTIC_RESIZE_TRANSACTION: {other:?}"),
         }
-        let queue_owner = super::native_queue_owner::QueueOwner::default();
+        let queue_owner =
+            super::native_queue_owner::QueueOwner::with_device_loss(health.device_loss_signal());
         let queue_host = queue_owner.register();
         let injected_fault = match std::env::var("DATUM_DIAGNOSTIC_SURFACE_FAULT").as_deref() {
             Err(std::env::VarError::NotPresent) | Ok("0") => None,

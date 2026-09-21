@@ -22817,5 +22817,56 @@
       "build.log.gz": "25dad12dce3a466e97b2f14bf79d6ce21bc9f40f7b3a82231aea68c8daed95ea",
       "clippy.log.gz": "ee277256ef2f1fe9f4d7d4bfdde0b0c8c2dfd7a501a3110d0cce57292142991f"
     }
+  },
+  "s1_device_loss_retirement_work": {
+    "status": "default device teardown and separate attachment loss accounting implemented; all-host native recovery qualification remains open",
+    "baseline_commit": "10d7b8d6",
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_change": [
+      "After a replacement renderer is validated, Runtime explicitly destroys the old device and polls once without waiting; failed-device recovery also polls nonblocking while replacement is pending",
+      "The registered backend device-lost callback sets an epoch-local signal even when an earlier allocation/validation failure already initiated recovery",
+      "Every native surface transaction binds its queue attachment ledger to that device signal; current CPU references remain counted until replacement/close",
+      "Retirement following confirmed loss is counted separately from actual submission completion; no artificial completion watermark and no replacement-epoch contamination"
+    ],
+    "retired_paths": [
+      "Implicit old-device handle drop as the only replacement teardown request",
+      "First failure masking subsequent backend-loss evidence",
+      "Attachment retirement requiring a completion watermark even after backend-confirmed loss and CPU reference release"
+    ],
+    "verification": {
+      "app": "351 passed; 0 failed; 9 ignored. Three added CPU tests cover prior failure followed by loss, reference retention and independent queue epochs.",
+      "backend": "Explicit ignored Vulkan test passed (1/1): real submitted clear, prior allocation failure, destroy and registered device-lost callback. X11 event loop connection only; no visible window or desktop input.",
+      "build_clippy": "Fresh offline release build and app/renderer all-targets Clippy -D warnings passed",
+      "checks": "Dependency authority, source health, specification governance/parity and traceability passed"
+    },
+    "limitations": [
+      "Real callback conformance is not an all-host native replacement or close replay; those checks remain open",
+      "Device.destroy itself is never treated as completed GPU work; only the callback confirms loss",
+      "Ledger is queried at observation/close/verbose snapshot boundaries; no promise that an unobserved late teardown produces a final trace",
+      "Only observed MSAA nominal payload/reference accounting is covered; driver residency, RSS, other allocations and full ACC remain unqualified",
+      "No new focus-taking desktop tests; earlier unsolicited Escape and failed isolated-compositor receipts remain preserved",
+      "GPI-S1 remains in progress; S2-S5 remain pending; resize resource and temporal qualification remain pinned and nonblocking"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/device-loss-retirement",
+    "source_sha256": {
+      "crates/gui-app/src/global_preferences_window.rs": "dd0a0f90e6f77d190e8cad7fe56694ad2cd1a0746f773b9dc4fdda19ecac24f2",
+      "crates/gui-app/src/native_attachment_ledger.rs": "4d6ea11449a1b8cb2da6a1a77a40d56590f0a5bb2b14c27f347281b1ff83582b",
+      "crates/gui-app/src/native_device_recovery.rs": "025b6fb2d0166fd6610c739048eb653ef0cb0541cb190ea1d02b620b2c0b266e",
+      "crates/gui-app/src/native_queue_owner.rs": "10d941944236521900cac8e7460a270953de3146310c0e1d95e7ab2f94de5c0b",
+      "crates/gui-app/src/native_surface_transaction.rs": "aceb089b21b9d25eeb5738242e00d03182e980c895ec359688f98f2cbe383599",
+      "crates/gui-app/src/runtime_init.rs": "e531fff2ba5574a02291d7a39dd930dbed57512c2f5ccc95126eddeb559cfdb4"
+    },
+    "release_binary_sha256": "1b1a1ffd57cc633b11e4241009883c608c570a137bba31423217cde3dab4535b",
+    "artifacts_sha256": {
+      "app.log.gz": "13f4bf47d231ba2df0e008f195d3af898b8bb452a787333dea25f95dab26b0cc",
+      "build.log.gz": "28d2a74800e8bb33925adc55d3dd98a331bc0e8a9fd27aaad853b7085ffb11a7",
+      "clippy.log.gz": "94a17a52427628f2541719059d745f106bb9285604ea9cb8b09aa223cb29ca10",
+      "gpu.log.gz": "4e7315503a89e00a881a17def59e04da107cb714d7eb0835abf6a59c04d414f1"
+    }
   }
 }
