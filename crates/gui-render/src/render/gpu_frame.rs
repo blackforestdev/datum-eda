@@ -102,9 +102,15 @@ impl Renderer {
             "datum-surface-grid-vertex-buffer",
             &surface_grid_vertices,
         );
-        self.sync_world_strokes(device, queue, world_strokes);
+        self.world_strokes_gpu
+            .sync(device, queue, "datum-world-strokes", world_strokes);
         if let Some((_, _, _, scene)) = schematic_pass.as_ref() {
-            self.sync_schematic_world_strokes(device, queue, scene.world_strokes());
+            self.schematic_world_strokes_gpu.sync(
+                device,
+                queue,
+                "datum-schematic-world-strokes",
+                scene.world_strokes(),
+            );
         }
         self.sync_terminal_graphics(device, queue, prepared, width, height);
         let upload_elapsed = upload_started.elapsed();
@@ -172,7 +178,7 @@ impl Renderer {
                 for command in prepared.visible_draw_commands() {
                     match command {
                         RetainedDrawCommand::Quads { range, .. } => {
-                            let Some(buffer) = self.world_vertex_buffer.as_ref() else {
+                            let Some(buffer) = self.world_vertices_gpu.buffer() else {
                                 continue;
                             };
                             pass.set_pipeline(&self.world_pipeline);
@@ -187,7 +193,7 @@ impl Renderer {
                             pass.draw(range.clone(), 0..1);
                         }
                         RetainedDrawCommand::Strokes { range, .. } => {
-                            let Some(buffer) = self.world_stroke_buffer.as_ref() else {
+                            let Some(buffer) = self.world_strokes_gpu.buffer() else {
                                 continue;
                             };
                             draw_world_strokes(
@@ -226,7 +232,7 @@ impl Renderer {
                 for command in sr.all_draw_commands() {
                     match command {
                         RetainedDrawCommand::Quads { range, .. } => {
-                            let Some(buffer) = self.schematic_world_vertex_buffer.as_ref() else {
+                            let Some(buffer) = self.schematic_world_vertices_gpu.buffer() else {
                                 continue;
                             };
                             pass.set_pipeline(&self.world_pipeline);
@@ -241,7 +247,7 @@ impl Renderer {
                             pass.draw(range.clone(), 0..1);
                         }
                         RetainedDrawCommand::Strokes { range, .. } => {
-                            let Some(buffer) = self.schematic_world_stroke_buffer.as_ref() else {
+                            let Some(buffer) = self.schematic_world_strokes_gpu.buffer() else {
                                 continue;
                             };
                             draw_world_strokes(

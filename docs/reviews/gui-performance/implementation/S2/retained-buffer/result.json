@@ -1,0 +1,67 @@
+{
+  "status": "Bounded default retained-buffer migration; S2 remains in progress",
+  "baseline_commit": "54818b2d",
+  "selection": "Demonstrated clone-copy defect and source inspection of unowned pointer/length stroke upload keys; not a numerical performance ranking.",
+  "requirements": [
+    "HP08-01",
+    "HP08-02",
+    "HP08-03",
+    "REUSE-WORLD-ALLOC"
+  ],
+  "production_consumers_migrated": [
+    "BOARD",
+    "SCHEMATIC"
+  ],
+  "owner": "gpu_data::retained_buffer::RetainedBuffer<T>: immutable Arc source, GPU buffer and actual allocation capacity held together per renderer/device resource.",
+  "production_paths": [
+    "Renderer::render_with_submission -> upload_frame_vertices -> shared Board/Schematic vertex owners",
+    "Renderer::render_with_submission -> shared Board/Schematic stroke owners",
+    "SceneSurface draw encoding and world render bundles borrow the same owner buffers"
+  ],
+  "competing_paths_retired": [
+    "Raw pointer/length stroke keys in both Board and schematic renderer slots",
+    "Separate vertex-source/capacity/buffer identity management in gpu_data and gpu_vertex_upload",
+    "Duplicate Board/schematic stroke upload implementations",
+    "RetainedScene cloning copies stroke Vec storage"
+  ],
+  "resource_policy": "One immutable CPU source reference and one reusable GPU allocation per resource slot. Equal-size replacement retains GPU capacity but changes the source owner. Empty/cleared slots release both. Existing maximum-seen GPU capacity retention for nonempty smaller replacements remains; complete byte budgets/caps and full accounting remain S2 obligations.",
+  "proof": {
+    "baseline": "New cloned_retained_scene_shares_immutable_stroke_storage test fails on pre-migration source: two different live stroke pointers. Not a historical-first-parent qualification control.",
+    "renderer": "195 passed, 12 ignored; immutable clone test now passes.",
+    "gpu_buffer": "Real GPU owner test passes before and after final Clippy correction: first upload 16 bytes; same-source clone and warm replacement return 0; equal-sized new content uploads 16 into the same buffer and GPU readback matches; old CPU owner drops on replacement, clear releases source/buffer/capacity, empty allocates nothing, reset creates a distinct GPU buffer.",
+    "gpu_bundle": "Existing actual Renderer GPU test passes camera-only bundle reuse, layer-sequence rebuild, replaced-buffer and bind-group invalidation, and closed-pane bundle release.",
+    "app": "376 passed, 11 ignored.",
+    "build_lint": "Final guarded offline release build and renderer library/test Clippy -D warnings pass.",
+    "native": "See native-final/result.json. Native X11 Main single-Board wheel frames and three actual auxiliary startup/presentation/close trials; no upload-byte or pixel inference from presentation counts.",
+    "governance": "Source health, 13 source-health policy tests, parity, dependency authority, traceability, spec governance and renewed project-state checks pass. Full drift retains existing terminal convergence failures; not claimed passed."
+  },
+  "failed_attempts": [
+    "Initial test compile needed an explicit u8 readback cast; fixed and renderer suite passed.",
+    "Initial Clippy rejected an unnecessary unwrap; replaced with if-let and reran targeted GPU proof, lint and release build.",
+    "Initial Main native wheel assertion timed out: recipe did not explicitly bind a Board pane in the default two-pane layout. Three auxiliary cases passed. Final recipe pins existing single-Board capture affordance and scale 1; original logs retained."
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_data.rs": "408152700436db26f187eb81e5751fa9c7159dbb4a4544fa99e09086f0341586",
+    "crates/gui-render/src/render/gpu_frame.rs": "176ca72da96b3b49aa56e97c2b9fca7ef23ff8b38e001ad9a2d5b99467238652",
+    "crates/gui-render/src/render/gpu_init.rs": "27a8b706c3bbb40a5ae4d792ca577a4300f9c0e2c9d6e1bd6cca3f8f93fd4875",
+    "crates/gui-render/src/render/gpu_strokes.rs": "f635cd0ad8695ccf13eab33ad077a987ec3107ba6c3bd67eb77c888b5cd89fc2",
+    "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs": "589d12133e2333b5eef0721045f2484e2f9dc7f6c485f7276d72e5c1be06a625",
+    "crates/gui-render/src/render/gpu_vertex_upload.rs": "af4869ff22581a6b3f549b275a3f603423bd05eee674e32e4ea4e2740bdaeff4",
+    "crates/gui-render/src/render/preferences_scene.rs": "d0ee0e26184637d6eb56e9911a443e3e1be3611fdd2db97c8ac1e9ef87f866b4",
+    "crates/gui-render/src/render/renderer_state.rs": "cf2c21f9491a19fb96cd22bddbc91d6d6184c71e491d4736594c6179592e3593",
+    "crates/gui-render/src/render/scene_retained_access.rs": "5a2be99719fa97cb372277f30ee04aa9c4757ec8b930f2dd74d7e0dace14cced",
+    "crates/gui-render/src/render/schematic_retained.rs": "e0c171f79f13c272afde042df6634e13ff80fd1a6e6ec4f437b059f88d49387e",
+    "crates/gui-render/src/render/types.rs": "58afd0a937e7e31f409361765d536b0d628eaca5f05cd136bc1e508c6db10b43",
+    "crates/gui-render/src/render/retained_buffer.rs": "e2b699bf431860dd0da092bfc38a4007a69f71b0c3adaaaf9b20c94d0be6c997"
+  },
+  "candidate_binary_sha256": "488bfa4c5e9c723849efcd19c7370c9cdd43dd6d0d97085a5f303aacac9c6d75",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "limits": [
+    "Resolved schematic workload remains unqualified. No all-consumer/native warm-upload accounting, full address-reuse negative control, actual device-recreation qualification, static AA/text parity or performance-budget claim.",
+    "GPU owner proof uses typed primitive data; actual Renderer bundle proof uses existing board fixture. Native trials are separate smoke, not a replacement for full S2 predicates.",
+    "Native final recipe uses explicit single-Board layout/scale affordances; default native first attempt and its failure remain separate. No Wayland or supported-scale qualification.",
+    "Shaped text, screen uploads, full encoding keys/cache eviction, complete byte caps and broader S2 requirements remain incomplete.",
+    "Source ownership is one reference per slot; GPU capacity, in-flight render-bundle references, driver residency and caches are not equated with live CPU bytes.",
+    "No dependency, third-party source, license, shader/pass/AA policy, engine mutation or resize qualification change. Existing terminal drift and native-stall limitations remain."
+  ]
+}

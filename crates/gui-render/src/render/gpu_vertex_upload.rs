@@ -64,27 +64,18 @@ impl Renderer {
             "datum-gui-render-menu-overlay-vertex-buffer",
             menu_overlay,
         );
-        self.sync_world_vertices(device, queue, world);
-
+        self.world_vertices_gpu
+            .sync(device, queue, "datum-world-vertices", world);
         if let Some(scene) = schematic_world {
-            if self.schematic_world_vertex_buffer.is_none()
-                || !gpu_data::same_vertex_source(
-                    &self.schematic_world_vertex_source,
-                    &scene.world_vertices,
-                )
-            {
-                Self::upload_vertices(
-                    device,
-                    queue,
-                    &mut self.schematic_world_vertex_buffer,
-                    &mut self.schematic_world_vertex_capacity,
-                    "datum-gui-render-schematic-world-vertex-buffer",
-                    scene.world_vertices(),
-                );
-                self.schematic_world_vertex_source = Some(scene.world_vertices.clone());
-            }
+            self.schematic_world_vertices_gpu.sync(
+                device,
+                queue,
+                "datum-schematic-world-vertices",
+                &scene.world_vertices,
+            );
         } else {
-            self.schematic_world_vertex_source = None;
+            self.schematic_world_vertices_gpu.clear();
+            self.schematic_world_strokes_gpu.clear();
         }
         if !schematic_underlay.is_empty() {
             Self::upload_vertices(

@@ -4694,7 +4694,7 @@
         "crates/gui-app/src/runtime_camera_pane.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial shared-owner implementation and GPU proof: immutable clone retention, warm reuse, equal-sized replacement/readback and clear/reset verified. Actual Renderer bundle regression and separate bounded native smoke pass. Full per-adapter accounting, prescribed negative, device recreation, byte-cap and visual qualification remain open.",
         "id": "proof_hp08_01",
         "positive": "Warm pointer/camera frames unchanged content",
         "negative_control": "Upload unchanged buffers",
@@ -4732,7 +4732,10 @@
       "consumer_applicability": {
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json"
+      ]
     },
     {
       "id": "HP08-02",
@@ -4755,7 +4758,7 @@
         "crates/gui-app/src/runtime_camera_pane.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial shared-owner implementation and GPU proof: immutable clone retention, warm reuse, equal-sized replacement/readback and clear/reset verified. Actual Renderer bundle regression and separate bounded native smoke pass. Full per-adapter accounting, prescribed negative, device recreation, byte-cap and visual qualification remain open.",
         "id": "proof_hp08_02",
         "positive": "Equal-length replacement then allocation-address reuse",
         "negative_control": "Compare pointer+length without retained generation",
@@ -4793,7 +4796,10 @@
       "consumer_applicability": {
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json"
+      ]
     },
     {
       "id": "HP08-03",
@@ -4816,7 +4822,7 @@
         "crates/gui-app/src/runtime_camera_pane.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial shared-owner implementation and GPU proof: immutable clone retention, warm reuse, equal-sized replacement/readback and clear/reset verified. Actual Renderer bundle regression and separate bounded native smoke pass. Full per-adapter accounting, prescribed negative, device recreation, byte-cap and visual qualification remain open.",
         "id": "proof_hp08_03",
         "positive": "Evict/recreate device while references in flight",
         "negative_control": "Prematurely release or retain obsolete owner",
@@ -4854,7 +4860,10 @@
       "consumer_applicability": {
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json"
+      ]
     },
     {
       "id": "HP09-01",
@@ -16438,7 +16447,7 @@
         "crates/gui-app/src/runtime_camera_pane.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial shared-owner implementation and GPU proof: immutable clone retention, warm reuse, equal-sized replacement/readback and clear/reset verified. Actual Renderer bundle regression and separate bounded native smoke pass. Full per-adapter accounting, prescribed negative, device recreation, byte-cap and visual qualification remain open.",
         "id": "proof_reuse_world_alloc",
         "positive": "Warm pointer/camera unchanged geometry",
         "negative_control": "Allocate new world buffer each frame",
@@ -16450,7 +16459,10 @@
       "consumer_applicability": {
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json"
+      ]
     },
     {
       "id": "REUSE-TEXT-KEY",
@@ -25134,6 +25146,29 @@
       "dat-terminal-convergence-guard-xke remains: focus-assignment/font-source-marker guard failures; full drift not green.",
       "Historical map slice entries and original receipts remain immutable scoped history, including statements that S1 was then in progress. This receipt records current readiness only.",
       "S2-S4 migrations, S5 carried proof, distinct-reviewer replay and endurance remain incomplete. Larger-project/resolved-schematic/temporal exclusions and pinned resize issue remain."
+    ]
+  },
+  "s2_retained_buffer_work": {
+    "status": "Bounded default retained-buffer migration; S2 remains in progress",
+    "evidence": "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json",
+    "production_consumers_migrated": [
+      "BOARD",
+      "SCHEMATIC"
+    ],
+    "competing_paths_retired": [
+      "Raw pointer/length stroke keys in both Board and schematic renderer slots",
+      "Separate vertex-source/capacity/buffer identity management in gpu_data and gpu_vertex_upload",
+      "Duplicate Board/schematic stroke upload implementations",
+      "RetainedScene cloning copies stroke Vec storage"
+    ],
+    "resource_policy": "One immutable CPU source reference and one reusable GPU allocation per resource slot. Equal-size replacement retains GPU capacity but changes the source owner. Empty/cleared slots release both. Existing maximum-seen GPU capacity retention for nonempty smaller replacements remains; complete byte budgets/caps and full accounting remain S2 obligations.",
+    "remaining_limitations": [
+      "Resolved schematic workload remains unqualified. No all-consumer/native warm-upload accounting, full address-reuse negative control, actual device-recreation qualification, static AA/text parity or performance-budget claim.",
+      "GPU owner proof uses typed primitive data; actual Renderer bundle proof uses existing board fixture. Native trials are separate smoke, not a replacement for full S2 predicates.",
+      "Native final recipe uses explicit single-Board layout/scale affordances; default native first attempt and its failure remain separate. No Wayland or supported-scale qualification.",
+      "Shaped text, screen uploads, full encoding keys/cache eviction, complete byte caps and broader S2 requirements remain incomplete.",
+      "Source ownership is one reference per slot; GPU capacity, in-flight render-bundle references, driver residency and caches are not equated with live CPU bytes.",
+      "No dependency, third-party source, license, shader/pass/AA policy, engine mutation or resize qualification change. Existing terminal drift and native-stall limitations remain."
     ]
   }
 }

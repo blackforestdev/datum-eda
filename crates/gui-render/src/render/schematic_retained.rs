@@ -60,7 +60,7 @@ impl RetainedScene {
         Some(Self {
             surface_size_independent: Self::scene_is_surface_size_independent(schematic_scene),
             world_vertices: world_vertices.into(),
-            world_strokes,
+            world_strokes: world_strokes.into(),
             draw_commands,
             world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions),
         })
