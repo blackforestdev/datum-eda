@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "ratified specification map; S0 execution authorized; preserved-candidate bounded review in progress; no full adoption",
+  "status": "Ratified specification map; bounded S0 readiness complete; S1 shared native host migration in progress; S2-S5 pending; no full adoption",
   "parent_clause_count": 67,
   "consumers": [
     {
@@ -21621,7 +21621,7 @@
       "Default-disabled code allocates no query/readback resources",
       "Production renderer integration includes full scene, dialog and terminal passes; preserve output and measure overhead before accepting baseline"
     ],
-    "remaining": "Bounded first-S1 readiness remains open. Matched instrumentation overhead, ADM admission, ACC lifetime/cache/upload/process accounting and complete trial accounting remain unproven; deliver affected proof with the owning S1–S4 component under measurement_delivery. Full admission/accounting remains required before runtime tier/budget claims and S5 completion.",
+    "remaining": "Bounded first-S1 readiness completed as recorded in s0_readiness. Matched instrumentation overhead, ADM admission, ACC lifetime/cache/upload/process accounting and complete trial accounting remain unproven; deliver affected proof with the owning S1\u2013S4 component under measurement_delivery. Full admission/accounting remains required before runtime tier/budget claims and S5 completion.",
     "production_paths": {
       "MAIN": "Runtime -> native_gpu::create -> Renderer::enable_gpu_measurements -> gpu_frame full-scene/menu/terminal passes -> App::service_gpu_measurements",
       "GLOBAL": "GlobalPreferencesWindowSurface -> shared Renderer dialog pass -> App::service_gpu_measurements",
@@ -21652,7 +21652,7 @@
     "S3": "Dialog/control geometry, text/pass counts and control-cache accounting.",
     "S4": "Terminal/glyph uploads, hidden work, fairness and remaining all-host recovery/teardown accounting.",
     "S5": "Complete all in-scope method/admission/accounting proof, adoption, independent replay and endurance before qualification.",
-    "index_semantics": "AC-01–08 and HP24 rows indexed under S0 identify method ownership/readiness, not completed all-consumer qualification. Requirement IDs, indexes, acceptance rules and exclusions are unchanged.",
+    "index_semantics": "AC-01\u201308 and HP24 rows indexed under S0 identify method ownership/readiness, not completed all-consumer qualification. Requirement IDs, indexes, acceptance rules and exclusions are unchanged.",
     "missing_metrics": "All prior missing proof remains open. Inaccessible third-party internals are proof gaps, not exact estimates or vendor authority."
   },
   "s0_readiness": {
@@ -21753,5 +21753,70 @@
     },
     "evidence_directory": "docs/reviews/gui-performance/implementation/S1/redraw-owner",
     "receipt": "docs/reviews/gui-performance/implementation/S1/redraw-owner/receipt.json"
+  },
+  "s1_drawable_work": {
+    "status": "bounded drawable-state slice verified; S1 remains in progress",
+    "baseline_commit": "235bd478",
+    "scope": "Shared redraw/acquisition eligibility across all four native hosts; zero-size configure suppression; retain latest logical damage and request once on restore. Existing queue/configure/recovery ownership remains pending.",
+    "proof_plan": [
+      "Actual winit Resized/Occluded events through shared production transition entry",
+      "Suspend/resume with outstanding token and newer damage",
+      "No request/acquire admission while undrawable; restore coalesces one request",
+      "Existing matched native extent recipe for all four adapters",
+      "Existing diagnostic transaction behavior remains bounded and opt-in"
+    ],
+    "limits": [
+      "Known-occluded nonzero configuration and queue/device recovery move in subsequent S1 slice",
+      "No temporal or numerical performance qualification"
+    ],
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "retired_paths": [
+      "Redraw/acquisition admission for zero-size, known-occluded or application-suspended hosts",
+      "Clamping zero native resize dimensions to one before surface configuration"
+    ],
+    "verification": {
+      "coordinator": "8 passed, covering native Resized/Occluded transitions, combined suspension, restoration, retained damage and closed host identity",
+      "app": "329 passed; 0 failed; 8 ignored; serial offline suite",
+      "native": "Four actual Xwayland/Vulkan hosts each passed six extent transitions; no native zero-size/occlusion/suspend or Wayland qualification inferred",
+      "build": "Offline optimized build passed",
+      "extraction": "Native input dispatch body compared exactly against baseline after shared lifecycle observation; main pre-test1934->1606",
+      "clippy": "App all-targets and workspace drift Clippy passed; workspace formatting passed",
+      "drift": "Stopped at terminal convergence guard. Updated guard source path for extracted event handler; 11 guard tests pass. Standalone replay retains only baseline focus-assignment-count and font-marker failures (dat-terminal-convergence-guard-xke). Later drift stages not run."
+    },
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/drawable-state",
+    "artifacts_sha256": {
+      "GLOBAL-native.log.gz": "52aa093ade12bc0c39544b199200cc655ea315f2037bd9f3e821ed4df8b8cc91",
+      "GLOBAL-stderr.log.gz": "6813ecb8afcdccafa84a397324954908a1efcf0bf0bb4dbb88d16c213d83a6f1",
+      "MAIN-native.log.gz": "f7a983a346c0e18674477d299fca0cda6a96a94ff75fb94d08eba67394952e60",
+      "MAIN-stderr.log.gz": "6815048fb7fcfa8d4dccc5acfbaaec83b431c4434e8b9be385d8b39ae7de0cea",
+      "NEW-native.log.gz": "0b8a49989ab13d4782ac0f0f8582e370a1a52c50e9bd3ac664c456d1614668ea",
+      "NEW-stderr.log.gz": "95b18879d9a73b4579bfa09aa864dad6682dd5510ff29bf6cb14664a7fc4b357",
+      "PROJECT-native.log.gz": "47caa9f4f663145ffb725e97d919db81aaba158fc79bcc844227e40b54cf3d35",
+      "PROJECT-stderr.log.gz": "64c5d11d2f334c34d8090a79bddd831358aa67efc60c16aa803bba929f54bfe4",
+      "app-tests.log.gz": "22af641f9b3c11b8cc114c88d7c30ec7398ee2701b518de2cc9cff06cb2692d7",
+      "clippy.log.gz": "1836bb440cc95a1aa62c669ef92a2e6f73c2fe0b60cddaee3393365e482613db",
+      "coordinator-tests.log.gz": "cb7a27775e228b14323815bf9d439983a555152c2e2fc21de15d9276b39ca071",
+      "drift.log.gz": "f75131f45730f784b694cc1cb97d032a203591a7ca25c24ccb6cb44cfc0e76e9",
+      "native.json": "27cdac20b406b6541460a558f2b242e84fa7f993c9288feef302d65a0fa2c078",
+      "release.log.gz": "ca03f9789cd3e992d4401f147f1289d08fc2f1bf65ef496e2d2a3510c1eca318",
+      "terminal-guard.log.gz": "8cd7485fa28b435011048646808e2db7d24739b3eb947a3e5b487e696d72eee4"
+    },
+    "source_sha256": {
+      "crates/gui-app/src/global_preferences_window.rs": "384240b413de5499eaf4943b9021c6805c7d725ad5989a5edbb2dca37c05dfe7",
+      "crates/gui-app/src/main.rs": "e6aaeb1d5b9c17c599079f6b5e99938bdd4c0092eac648b82b33585b866f9ca2",
+      "crates/gui-app/src/native_frame_adapters.rs": "a518ac4cfef0a0998f622d6263dde59fccd566004d320391dbb1cf661d8d2fe3",
+      "crates/gui-app/src/native_frame_coordinator.rs": "ef3b9e7a38bfcb3e8baeb92b325df5c846438ce065f5651bf55dade9752fb1bf",
+      "crates/gui-app/src/native_surface_transaction.rs": "d6f08c0931e4ad01a9a6f48c55513b5a45e7ed77effefd8235af419f915b54b9",
+      "crates/gui-app/src/new_project_window.rs": "9de136b3c0ee7a7de4be59639f9739e8b96f8e20236001f89d9dac8234ea416b",
+      "crates/gui-app/src/project_preferences_window.rs": "75cc90732d1646b070f8b8d1682d4e42fc8e0971eb0997bd514b22fc6000c061",
+      "crates/gui-app/src/runtime_init.rs": "7e1c54a901e3f0bb495e217ed31bdeca19b21eb5f27afc7b0952297de2511ec7",
+      "crates/gui-app/src/runtime_surface.rs": "248152143e5e149a3493d6c01f2664efe6ca59f4c420c2b49d33c36c291d011f",
+      "crates/gui-app/src/app_native_events.rs": "9dd2be65a4742884a8eb4d95ebd139d66c589b7f1a4fc78e3102a748268234f6"
+    }
   }
 }

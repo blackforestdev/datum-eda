@@ -1,0 +1,346 @@
+//! Native input/event dispatch; input state is applied before redraw effects.
+use super::*;
+
+impl App {
+    pub(super) fn handle_native_window_event(
+        &mut self,
+        event_loop: &ActiveEventLoop,
+        window_id: WindowId,
+        event: WindowEvent,
+    ) {
+        self.frames.window_event(window_id, &event);
+        self.measurement_window_event(window_id, &event);
+        let Some(event) = self.dispatch_owned_product_window_event(event_loop, window_id, event)
+        else {
+            return;
+        };
+        if let Some(window) = self.window
+            && window.id() != window_id
+        {
+            return;
+        }
+        if self.runtime.as_ref().is_some_and(|runtime| {
+            runtime.workspace().ui.global_preferences.open
+                || runtime.workspace().ui.project_preferences.open
+                || runtime.workspace().ui.new_project.open
+        }) && !matches!(
+            &event,
+            WindowEvent::CloseRequested
+                | WindowEvent::Resized(_)
+                | WindowEvent::ScaleFactorChanged { .. }
+                | WindowEvent::Focused(_)
+                | WindowEvent::RedrawRequested
+        ) {
+            return;
+        }
+        if let Some(label) = window_event_diagnostic_label(&event) {
+            append_gui_verbose_diagnostic_line(format!("window event {label}"));
+        }
+        if matches!(event, WindowEvent::CloseRequested) {
+            self.request_controlled_close(event_loop);
+            return;
+        }
+        match event {
+            WindowEvent::Ime(ime)
+                if self
+                    .runtime
+                    .as_ref()
+                    .is_some_and(Runtime::terminal_owns_input) =>
+            {
+                if let Some(runtime) = &mut self.runtime
+                    && runtime.handle_terminal_ime(&ime)
+                {
+                    if let Some(window) = self.window {
+                        let (x, y, width, height) = runtime.terminal_ime_cursor_rect();
+                        window.set_ime_cursor_area(
+                            winit::dpi::PhysicalPosition::new(x, y),
+                            winit::dpi::PhysicalSize::new(width, height),
+                        );
+                    }
+                    self.request_redraw_if_needed();
+                }
+            }
+            WindowEvent::Resized(size) => {
+                if self.args.resize_torture_smoke {
+                    self.resize_smoke.note_native_event();
+                }
+                if let Some(runtime) = &mut self.runtime {
+                    runtime.resize(size.width, size.height);
+                    self.request_main_redraw_if_needed();
+                }
+            }
+            WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
+                if let Some(runtime) = &mut self.runtime {
+                    let scale_factor = self
+                        .args
+                        .visual_scale_factor
+                        .map(f64::from)
+                        .unwrap_or(scale_factor);
+                    runtime.set_scale_factor(scale_factor);
+                    self.request_redraw_if_needed();
+                }
+            }
+            WindowEvent::Focused(focused) => {
+                if owned_window_policy::redirect_owner_activation(
+                    focused,
+                    &mut self.frames,
+                    self.project_preferences_window
+                        .as_ref()
+                        .or(self.global_preferences_window.as_ref()),
+                ) {
+                    return;
+                }
+                if let Some(runtime) = &mut self.runtime {
+                    runtime.window_focused = focused;
+                    let terminal_split_finished =
+                        !focused && runtime.finish_terminal_split_drag().is_some();
+                    if !focused {
+                        runtime.pan_gesture.cancel();
+                        runtime.cancel_terminal_tab_drag();
+                        runtime.cancel_terminal_text_selection_drag();
+                    }
+                    if !focused && (runtime.clear_interaction_overlay() || terminal_split_finished)
+                    {
+                        self.request_redraw_if_needed();
+                    }
+                }
+            }
+            WindowEvent::CursorLeft { .. } => {
+                if let Some(runtime) = &mut self.runtime {
+                    runtime.last_cursor_pos = None;
+                    runtime.pan_gesture.cancel();
+                    runtime.cancel_terminal_tab_drag();
+                    runtime.cancel_terminal_text_selection_drag();
+                    let terminal_split_finished = runtime.finish_terminal_split_drag().is_some();
+                    let terminal_hover_cleared = runtime.clear_terminal_tab_hover();
+                    if runtime.clear_interaction_overlay()
+                        || terminal_hover_cleared
+                        || terminal_split_finished
+                    {
+                        self.request_redraw_if_needed();
+                    }
+                    self.apply_cursor(None);
+                }
+            }
+            WindowEvent::CursorMoved { position, .. } => {
+                if let Some(runtime) = &mut self.runtime {
+                    let next_pos = (position.x as f32, position.y as f32);
+                    let previous_pos = runtime.last_cursor_pos;
+                    runtime.last_cursor_pos = Some(next_pos);
+                    let terminal_hover_changed = runtime.update_terminal_tab_hover(next_pos);
+                    if runtime.terminal_tab_drag.is_some() {
+                        if runtime.advance_terminal_tab_drag(next_pos) || terminal_hover_changed {
+                            self.request_redraw_if_needed();
+                        }
+                        self.apply_cursor_icon(winit::window::CursorIcon::Grabbing);
+                        return;
+                    }
+                    if runtime.terminal_split_drag.is_some() {
+                        let changed = runtime.advance_terminal_split_drag(next_pos);
+                        let icon = runtime
+                            .terminal_split_cursor_icon(next_pos)
+                            .unwrap_or(winit::window::CursorIcon::Default);
+                        if changed {
+                            self.request_redraw_if_needed();
+                        }
+                        self.apply_cursor_icon(icon);
+                        return;
+                    }
+                    if runtime.terminal_clipboard_menu_active() {
+                        return;
+                    }
+                    if runtime.advance_terminal_text_selection(next_pos) {
+                        self.apply_cursor_icon(winit::window::CursorIcon::Text);
+                        self.request_redraw_if_needed();
+                        return;
+                    }
+                    if runtime.report_terminal_mouse_motion() {
+                        runtime.clear_interaction_overlay();
+                        self.request_redraw_if_needed();
+                        return;
+                    }
+                    let mut changed = runtime.update_menu_hover(next_pos) || terminal_hover_changed;
+                    if runtime.dock_drag_active {
+                        changed = runtime.handle_dock_resize_drag(next_pos);
+                    } else if runtime.divider_drag.is_some() {
+                        changed = runtime.handle_divider_drag(next_pos);
+                    } else if runtime.marking_menu_active() {
+                        changed = runtime.update_marking_menu_preview(next_pos);
+                    } else if runtime.pan_gesture.is_active() {
+                        changed = previous_pos.is_some_and(|previous| {
+                            runtime.advance_primary_pan(previous, next_pos)
+                        });
+                    }
+                    if !runtime.dock_drag_active
+                        && runtime.divider_drag.is_none()
+                        && !runtime.pan_gesture.is_active()
+                        && !runtime.marking_menu_active()
+                    {
+                        changed = runtime.handle_authoring_pointer_move(next_pos) || changed;
+                        changed = runtime.update_hover(next_pos) || changed;
+                    } else {
+                        changed = runtime.clear_interaction_overlay() || changed;
+                    }
+                    let pointer_cursor = runtime.pointer_cursor_icon(next_pos);
+                    if changed {
+                        self.request_redraw_if_needed();
+                    }
+                    self.apply_cursor_icon(pointer_cursor);
+                }
+            }
+            WindowEvent::MouseWheel { delta, .. } => {
+                if let Some(runtime) = &mut self.runtime {
+                    let scroll_lines = match delta {
+                        MouseScrollDelta::LineDelta(_, y) => y,
+                        MouseScrollDelta::PixelDelta(pos) => (pos.y as f32) / 20.0,
+                    };
+                    if runtime.handle_layer_scroll(scroll_lines) {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
+                    if runtime.handle_console_history_scroll(scroll_lines) {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
+                    if runtime.report_terminal_mouse_wheel(scroll_lines) {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
+                    if runtime.cursor_in_dock() && scroll_lines.abs() > 0.01 {
+                        if runtime.handle_dock_scroll(scroll_lines) {
+                            self.request_redraw_if_needed();
+                        }
+                    } else {
+                        let zoom_delta = if scroll_lines > 0.0 {
+                            Some(1.12_f32.powf(scroll_lines.abs().min(3.0)))
+                        } else if scroll_lines < 0.0 {
+                            Some(0.89_f32.powf(scroll_lines.abs().min(3.0)))
+                        } else {
+                            None
+                        };
+                        if let Some(zoom_delta) = zoom_delta
+                            && runtime.handle_zoom(zoom_delta)
+                        {
+                            self.request_redraw_if_needed();
+                        }
+                    }
+                }
+            }
+            WindowEvent::MouseInput {
+                state,
+                button: button @ (MouseButton::Middle | MouseButton::Right),
+                ..
+            } => {
+                if let Some(runtime) = &mut self.runtime {
+                    if button == MouseButton::Right
+                        && state == ElementState::Pressed
+                        && runtime.cursor_in_dock()
+                        && runtime.open_terminal_clipboard_menu_at_cursor()
+                    {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
+                    if button == MouseButton::Right && runtime.terminal_clipboard_menu_active() {
+                        return;
+                    }
+                    if runtime.report_terminal_mouse_button(button, state) {
+                        return;
+                    }
+                    if button == MouseButton::Right && runtime.handle_context_menu_button(state) {
+                        self.request_redraw_if_needed();
+                    }
+                }
+            }
+            WindowEvent::MouseInput {
+                state: ElementState::Pressed,
+                button: MouseButton::Left,
+                ..
+            } => {
+                self.handle_primary_button_press();
+            }
+            WindowEvent::MouseInput {
+                state: ElementState::Released,
+                button: MouseButton::Left,
+                ..
+            } => {
+                if let Some(runtime) = &mut self.runtime {
+                    if let Some(icon) = runtime.finish_dock_resize_drag() {
+                        self.apply_cursor_icon(icon);
+                        self.request_redraw_if_needed();
+                        return;
+                    }
+                    if let Some(icon) = runtime.finish_terminal_split_drag() {
+                        self.apply_cursor_icon(icon);
+                        self.request_redraw_if_needed();
+                        return;
+                    }
+                    if runtime.finish_terminal_tab_drag() {
+                        let icon = runtime
+                            .last_cursor_pos
+                            .and_then(|pointer| runtime.terminal_tab_cursor_icon(pointer))
+                            .unwrap_or(winit::window::CursorIcon::Default);
+                        self.apply_cursor_icon(icon);
+                        self.request_redraw_if_needed();
+                        return;
+                    }
+                    // A completed divider-drag resize ends here; the release must NOT
+                    // fall through to click-to-focus / selection.
+                    let was_divider_drag = runtime.divider_drag.take().is_some();
+                    if runtime.finish_terminal_text_selection() {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
+                    if !runtime.terminal_clipboard_menu_active()
+                        && runtime
+                            .report_terminal_mouse_button(MouseButton::Left, ElementState::Released)
+                    {
+                        return;
+                    }
+                    if runtime.finish_primary_pan() {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
+                    if was_divider_drag {
+                        self.request_redraw_if_needed();
+                        return;
+                    }
+                    let handled = runtime.handle_primary_click();
+                    if handled {
+                        self.request_redraw_if_needed();
+                    }
+                }
+            }
+            WindowEvent::ModifiersChanged(modifiers) => {
+                if let Some(runtime) = &mut self.runtime {
+                    runtime.modifiers = modifiers.state();
+                }
+            }
+            WindowEvent::KeyboardInput { event, .. } => {
+                if event.state == ElementState::Pressed
+                    && matches!(event.logical_key, Key::Named(NamedKey::Escape))
+                    && self
+                        .runtime
+                        .as_mut()
+                        .is_some_and(Runtime::dismiss_terminal_clipboard_menu)
+                {
+                    self.request_redraw_if_needed();
+                    return;
+                }
+                if event.state == ElementState::Pressed
+                    && matches!(event.logical_key, Key::Named(NamedKey::Escape))
+                    && self
+                        .runtime
+                        .as_mut()
+                        .is_some_and(Runtime::cancel_terminal_tab_drag)
+                {
+                    self.apply_cursor_icon(winit::window::CursorIcon::Default);
+                    self.request_redraw_if_needed();
+                    return;
+                }
+                keyboard_focus::handle_keyboard_input(self, &event);
+            }
+            WindowEvent::RedrawRequested => self.redraw_main_window(event_loop),
+            _ => {}
+        }
+    }
+}

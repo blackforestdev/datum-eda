@@ -93,8 +93,11 @@ impl App {
                 window.clone(),
                 self.args.visual_scale_factor,
             )?;
-            self.frames
-                .register(window.id(), surface.measurements.epoch());
+            self.frames.register(
+                window.id(),
+                surface.measurements.epoch(),
+                window.inner_size(),
+            );
             self.new_project_surface = Some(surface);
             self.new_project_window = Some(window.clone());
             owned_window_policy::show_owned_window(&window, &mut self.frames);

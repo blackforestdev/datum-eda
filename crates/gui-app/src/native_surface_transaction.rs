@@ -29,12 +29,17 @@ impl SurfaceTransaction {
         Self {
             enabled,
             drawable: native_size.width != 0 && native_size.height != 0,
-            configured: Some((config.width, config.height)),
+            configured: (native_size.width != 0 && native_size.height != 0)
+                .then_some((config.width, config.height)),
             completed: Arc::new(AtomicBool::new(true)),
             retry_at: None,
             failures: 0,
             gpu_wait_attempts: 0,
         }
+    }
+
+    pub(crate) fn configured_for(&self, width: u32, height: u32) -> bool {
+        self.configured == Some((width, height))
     }
 
     pub(crate) fn resize(&mut self, width: u32, height: u32) {
