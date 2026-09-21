@@ -1,0 +1,87 @@
+{
+  "unit": "GPI-S1 bounded application redraw ownership",
+  "baseline": "S0/readiness/receipt.json",
+  "binary_sha256": "b27b86936eae3ee54b95c734a6b5cd000274328890e0a189eb373e77a8f5b460",
+  "candidate_source_sha256": {
+    "crates/gui-app/src/app_frame.rs": "5747ca7354354490b4721b480a034c5f9338e2afdc191761033980e879275735",
+    "crates/gui-app/src/app_shell.rs": "d28c26813a398e3ac5d9e8e167ce22447d835252b628eb83c1e664c8d2e890e7",
+    "crates/gui-app/src/global_preferences_window.rs": "b61e110f51c6691be7d45ba4ac0e6af1da171d2aebe6362814dc7feec23aaefa",
+    "crates/gui-app/src/main.rs": "ab5715281b9e1a3a3b884580defb67efcb081bf94ed641d27802fd046d8f37fc",
+    "crates/gui-app/src/native_gpu_measurements.rs": "45f0388353c98ed1db961ee55c0f6437b64000ab43d36f65ae7dc4f08d19a8cb",
+    "crates/gui-app/src/native_surface_transaction.rs": "296a9b8a21d2dcca6a0d8a3f3a7197089b9a241c5f292a22b3853f5964dc04ca",
+    "crates/gui-app/src/new_project_window.rs": "5d475a4ba6953706697da9565df3d4c7e20452d859d3b0ee38ef232a10d6670c",
+    "crates/gui-app/src/owned_window_policy.rs": "98644eef80f9f124206a4e164b64c0759da76654692e2da5de2232fa4a67d521",
+    "crates/gui-app/src/project_preferences_window.rs": "da76f60a1146993d6040d8f29e1e993ed355cdd67c38062cec34275154ffa4e1",
+    "crates/gui-app/src/resize_smoke.rs": "002c4eed82b40f388dd57aea7cee9c0afbca20afadf3f92cf2245dbc43e27057",
+    "crates/gui-app/src/native_frame_coordinator.rs": "f57666e207d26de6d71008c17fe82f1f2e3ee65490ddf7b5387ac23aa8cca1ea",
+    "crates/gui-app/src/native_frame_adapters.rs": "b151951fc0a421d7c2ce2ba2f3775ca0d172c5701b32439be03cbbba292e8196",
+    "crates/gui-app/src/runtime_init.rs": "94d4b41c28b9906ac1a98c777bbdd5c9a20bd4d3be9569de8c0e47682206ca05"
+  },
+  "production_consumers": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "retired": [
+    "Runtime::redraw_pending",
+    "Direct product request_redraw calls outside NativeFrameCoordinator",
+    "Three separate auxiliary redraw-completion bodies"
+  ],
+  "results": {
+    "state_tests": "5 passed",
+    "negative_control": "isolated one-condition defect; coalescing test failed and4non-target tests passed",
+    "native": "4actual Xwayland/Vulkan host configurations;6extent transitions each; final1280x800;same fixture paths as baseline",
+    "app": "325passed,1failed,8ignored; unchanged terminal PID-file test failed; isolated replay passed; dat-terminal-escaped-pid-race-e4d",
+    "release": "offline optimized build passed before and after equivalent Clippy condition correction",
+    "drift": "workspace Clippy, formatting, alignment, project state, parity, governance, evidence, dependency and Preferences boundary passed; then existing dat-terminal-convergence-guard-xke failed; later stages not run",
+    "source_health": "passed against HEAD; main pre-test2066->1934; runtime initialization extracted into its owner"
+  },
+  "failed_attempts": [
+    "Initial Wayland baseline resize smoke did not start; kept in S0 readiness.",
+    "Spectacle CaptureActiveWindow returned no reply and no images; no static capture pass.",
+    "One unmodified terminal test failed in application suite; isolated replay passed.",
+    "Negative variant reused the same Cargo package artifact identity; a subsequent canonical invocation initially reused that test artifact. Forced canonical source rebuild passed5; release artifacts were not affected.",
+    "Initial drift Clippy flagged2pre-existing collapsible conditions; equivalent routing cleanup resolved them."
+  ],
+  "limitations": [
+    "S1 incomplete: shared queue/configure admission, drawable-active recovery/device recreation, dependency-domain invalidation, fairness and full resource/lifetime accounting remain.",
+    "Retained damage after failed presentation has no new default recovery deadline in this slice; current recovery behavior remains for next S1 migration.",
+    "No CPU/GPU improvement, budget, static-image, Wayland resize, display or full-consumer adoption acceptance.",
+    "No renderer, backend, AA, dependency or prototype change."
+  ],
+  "artifacts_sha256": {
+    "drift.log": "542f872fb3e4301a8644981184391894cd7cbc6ac1a4e5c9b45fa328b38773e3",
+    "stale-negative-artifact.log": "bc80cdb094edfe2953dafa5c66a1735f42be350fc1a5894fbbbe89692a7ac852",
+    "native_probe.py": "da3ccd8f39639581df9af431e7448b957d3a815c71cd21a9b23f6e6945548c39",
+    "native-results.json": "c63a942cccc20a9a90be2ea9665d15e83a74513bc3f740f3aab1855d60169e7c",
+    "negative.diff": "49834227de3a2c965235ebb45d31779f55c9b220d7ef5f9db4758958ece2decb",
+    "final-PROJECT-native.log.gz": "44e659b6bd1c02feb4db8b970401b5e43f0554900531ec373ea7867c0b37be1f",
+    "NEW-stderr.log.gz": "ca283ce6748f4b4b4180bf5eabe831aaad7dfe68ce18ef412b227905bb218e7d",
+    "final-MAIN-stderr.log.gz": "d56347db381ebae258140be8e8fc7d93603f023e160ac6745e665b184e9ec11c",
+    "release-build.log": "70b538497e5f98ba28cd590946fb026b367a1cff462d5150ba255e5fa03c1989",
+    "negative.log": "a89d95e71c108fb715b9951b3c3574f223743ad5a813146c393c323c4f1808af",
+    "terminal-replay.log": "10088a601c9a0f0928030b27a8f1af89b047684048d540e4d63c0d3daa714aa5",
+    "NEW-native.log.gz": "d0a8d432bc295f5c4e77a61252618fb9a7b6d56f83c7194ad81631b50effcf72",
+    "release-final.log": "445f0c1ed4bfd712e8c226113bd37603356c98df0fe8c1f0a1e036240d01ffd2",
+    "MAIN-native.log.gz": "91d1c3fadf48c6b4335b13726d25da5481834726d063336ae69987897828fe89",
+    "final-PROJECT-stderr.log.gz": "aa807a8963d655516c009b1dc9b3e473b05c4c54653e95d4fd2e6cb0ba09d132",
+    "drift-before-lint-fix.log": "09e0e9d06ba04b817351b6d4006185d996586b21d01c82d3dc0e0400f58978bf",
+    "GLOBAL-native.log.gz": "f578ace249aab2c530c18140d1dd8ccf01c0f2c2efd38bb2d35737b5b72c6df6",
+    "PROJECT-native.log.gz": "e727ee938c4014437805eb6b6bb155e9fef91c8c904cbe64924192dc98d10d24",
+    "native-final-probe.py": "84fbf7bed8f088ded40b0998cc9c95978a794ef357f66fd76806f5cd341a53f5",
+    "final-NEW-stderr.log.gz": "6e8c7a18693f553b23ea08568c1e5512bb1cb2e3f138d365785d29955ea2b155",
+    "MAIN-stderr.log.gz": "3e17d9088bd94d7f0d7db3a938b9b06e606610a2312784ae110963d79cb38bf4",
+    "environment.json": "d51fbbb6d892b789eed1f88fd28b59d95e362b517d2e04550861db16e1916956",
+    "PROJECT-stderr.log.gz": "abad879882396f094da0f0a789a53cc8270cd483af73cf840cbe5a5313c4717d",
+    "app-tests.log": "462b429caf7b497b8821bf25a28025a181a38ccec86ea758473812e6a9ed4109",
+    "final-GLOBAL-stderr.log.gz": "dd32b49482302f2d4ee3f1e8384d88742f0bb2323c479d14dfdbe81b866b5941",
+    "positive.log": "25c0fee6d8b1a9b69e02d27c43a47ba68b4bf9aeb45e5ec4431ec0dbb0d0ea38",
+    "final-GLOBAL-native.log.gz": "97e17c3665d79dc94177764c79fd3294bb9d13d5be2b84c8fcff50fddc3fe1b3",
+    "negative.json": "47eb216a8e7b1ef7a2d2b42e002a8d39bee8628f8c2a02a7305984f544863fed",
+    "GLOBAL-stderr.log.gz": "cba17de2aa1da6499327e823cc51efb2131b48d2d4685e6deb52ff9beba57f9a",
+    "final-MAIN-native.log.gz": "c8f9f2d654ee78208c0f59f6e7fd081327802ef55f21be6b28c6542f7761b5bd",
+    "final-NEW-native.log.gz": "5975090bcd07c01a0f08324ba0134e529e152511c3f18c0cf932cddad8a0d842",
+    "native-final-results.json": "ca402c0583015949f0c9b2fb521762f8f6660c91282a4acfe1dd19d3e8d1a0f0"
+  }
+}

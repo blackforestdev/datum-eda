@@ -21654,5 +21654,104 @@
     "S5": "Complete all in-scope method/admission/accounting proof, adoption, independent replay and endurance before qualification.",
     "index_semantics": "AC-01–08 and HP24 rows indexed under S0 identify method ownership/readiness, not completed all-consumer qualification. Requirement IDs, indexes, acceptance rules and exclusions are unchanged.",
     "missing_metrics": "All prior missing proof remains open. Inaccessible third-party internals are proof gaps, not exact estimates or vendor authority."
+  },
+  "s0_readiness": {
+    "marker": "EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S0-BOUNDED-READY",
+    "baseline_commit": "659524ee51dcb8e81313d7f13c5718ee8c5e298a",
+    "governance_commit": "e91bd932b264ac3c1a21b633d4453f64bce23808",
+    "binary_sha256": "4b8566df2438e5fde06f2667bae5e99b25acdf35e61c7df73d7d51bdcaafaa44",
+    "build": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app --bin datum-gui",
+    "build_result": "passed; optimized;4m56s; binary exactly reproduces prior GPU receipt",
+    "selection": "S1 shared application redraw-token and damage-generation owner. Existing main handler clears redraw_pending before render success; dialogs request directly without an application pending token or consumed-damage receipt. This is a demonstrated ownership/correctness gap, not a measured speedup claim.",
+    "native_baseline": "Four actual production host configurations passed six requested/observed/configured/presented extents on Xwayland/Vulkan. Each ended at1280x800. Main and auxiliary identities recorded.",
+    "failed_method": "Fresh Wayland trial rendered initial frame but no scripted resize sequence began within30s. Keep unqualified; do not infer kernel cause or resize regression. Historical identical-binary native startup receipts remain historical evidence only.",
+    "measurement_limits": "No CPU/GPU budget, relative performance, instrumentation overhead, display timing or complete accounting claim. Existing trace logs verify event/extents and successful presents only. Their timing values are diagnostic and not qualification results.",
+    "source_hashes": {
+      "crates/gui-app/src/app_shell.rs": "7440a75a1d87235b3f4ede233a61d9c9cf259cd00b7a06a5e6d31a0665615c3f",
+      "crates/gui-app/src/app_frame.rs": "7ae5570c44eb9be87e8a57e9d7ac6ed0f5616c5a8a76c611881fe3ef49434bc3",
+      "crates/gui-app/src/main.rs": "6accce6844dc575b4ab1175a83117be12064cb6f278b92eea783549d0a1fa094",
+      "crates/gui-app/src/global_preferences_window.rs": "4bc513e860e4743fdc88e7b3e626c5df0bb7b1fb00d9646d9082f4b17aa9d4ec",
+      "crates/gui-app/src/project_preferences_window.rs": "650c49f191261a9353ca1789e504225d5e16c93ffbee7dd4e9568038fd5964fa",
+      "crates/gui-app/src/new_project_window.rs": "78471baab7cb612b4810017bbabdfb9c981b71eab45ba10aa0459c072515fcef",
+      "crates/gui-app/src/runtime_present.rs": "408abfaba0050d5a5a7a8ba004c9b659b6be2630f332c1b9a74ce9a7b69ac7e1",
+      "crates/gui-app/src/native_surface_transaction.rs": "a3a57a7bdc5d9c9adc40c4b50056d2ce62cbe1a29ae2c5d58d212fe46333e284",
+      "crates/gui-app/src/owned_window_policy.rs": "7e95a1c0aff33cea1d637ab9992dbedb062ef273e38bac67a302114f4e9c634b",
+      "crates/gui-app/src/resize_smoke.rs": "870caaccd2f56ffadc1d0d5d574defe15a753ba0f30a467cdbb1420a9cf54f92"
+    },
+    "remaining": "Full ADM/GPU/ACC and per-component proof remains open under measurement_delivery; S1-S5 incomplete.",
+    "artifacts": {
+      "x11-GLOBAL-stderr.log.gz": "cbf344b9909e785cc44bd3d81cf2b3d66ba1ce2c91bdfac4f2c769f04c7c1fd1",
+      "x11-NEW-stderr.log.gz": "02e27282a7640c2f951dc015ed56d0fb98a1832e4ef8c77402153400fe5224ae",
+      "x11.json": "e89c57acfb5957b451cd5ff53fff75d5ae5ecaa575a2810663e627f7184bf2fd",
+      "x11-NEW-native.log.gz": "480b028e9ace86101df5e16721755f8f5096155b6d5b3de1b1a60137e17d772e",
+      "x11-PROJECT-native.log.gz": "ecaaaaa15a2d4f31d5e3f9b9314dacfb1d50b938fc196865973ce7dc779124ad",
+      "wayland-failed.json": "987e1cb03a0ed9b28d7009f70f524b8d09b745cd4f640402e5e4cc148ed77160",
+      "x11-MAIN-native.log.gz": "20a4d9ac5124e83574354a104b16ca54fc32c1e8a10afd3333ba6880be025027",
+      "x11_probe.py": "8886b9ebaff2abce07ec7d679cd29dcb149b29c2d71a323cbf717961b65eda5e",
+      "wayland_probe.py": "10fbb399a841b406fa89d28990c36738bf4b5da59781b0f1712a53c54510ae03",
+      "wayland-failed-MAIN-native.log.gz": "720e401eb824b5275428551c30a11579077afa3e99d712d84a941c2d691dd9f4",
+      "x11-PROJECT-stderr.log.gz": "de9e7f8e0a867a574a5802c8eaa68c0da2669dc1718b86c8b5335f4801ae511c",
+      "x11-GLOBAL-native.log.gz": "3e6c8c8bf93d418ddd8a1ddf747363574fe1bf795149417330481501e9cf57e2",
+      "wayland-failed-MAIN-stderr.log.gz": "9d9ba5a6d493e8eb488493e43e25a77702d988b7e4fca74ac880874365b69263",
+      "x11-MAIN-stderr.log.gz": "081ad5763f1d4312fd42f056ed9d8e40052ca7a4e636a386e66da4f62a767549"
+    }
+  },
+  "s1_work": {
+    "selected_unit": "Shared application-owned redraw tokens and host/device/damage generations",
+    "status": "bounded redraw-owner implementation verified by production native adapters and state tests; S1 remains open",
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_paths": [
+      "App::request_main_redraw_if_needed",
+      "App::request_redraw_if_needed",
+      "App::redraw_main_window",
+      "GlobalPreferencesWindowSurface input and rendering",
+      "App::global_preferences_window_event",
+      "App::project_preferences_window_event",
+      "App::new_project_window_event",
+      "owned_window_policy",
+      "native resize smoke and diagnostic retries"
+    ],
+    "proof_plan": [
+      "Production adapter startup and final native extent compared against pinned baseline",
+      "Coalesced request counts, damage during render, failed acquisition, host replacement and duplicate completion tests",
+      "Relevant app suite and native per-host regressions; no inferred all-consumer adoption or speedup"
+    ],
+    "retirement_target": [
+      "Runtime::redraw_pending",
+      "Direct native redraw requests in product dialog adapters"
+    ],
+    "preserve": [
+      "Default resize geometry reuse and main resize isolation",
+      "Actual input updates before scheduling",
+      "Current renderer and configuration timing",
+      "Opt-in transaction behavior"
+    ],
+    "remaining": [
+      "Common queue/configure reservation",
+      "Drawable-active recovery and device recreation",
+      "Complete dependency-domain invalidation and fairness",
+      "Full S1 resource/accounting and native qualification"
+    ],
+    "retired_paths": [
+      "Runtime::redraw_pending and unconditional clear before rendering",
+      "Direct request_redraw in product main/dialog handlers, owned-window show/raise, explicit smoke and diagnostic retry adapters",
+      "Separate per-dialog redraw dispatch completion bodies"
+    ],
+    "verification": {
+      "coordinator": "Five state/ownership tests pass after canonical rebuild. Isolated pending-token negative fails exactly the coalescing assertion; four other state tests pass. Prior shared-artifact reuse failure is retained in receipt.",
+      "native": "Four real Xwayland/Vulkan production host configurations passed all six native extent transitions on same fixture paths as baseline. No Wayland or static capture pass inferred.",
+      "app": "325 passed;1 terminal PID-file failure;8 ignored. Exact isolated terminal replay passed; tracked dat-terminal-escaped-pid-race-e4d.",
+      "release": "Offline optimized build passed; no dependency changes.",
+      "static": "KWin capture unavailable; existing renderer/scene/AA untouched. Fresh static image proof remains missing.",
+      "source_health": "Runtime initialization moved to runtime_init.rs; main.rs pre-test2066->1934.",
+      "drift": "workspace Clippy, formatting, alignment, project state, parity, governance, evidence, dependency and Preferences boundary passed; then existing dat-terminal-convergence-guard-xke failed; later stages not run"
+    },
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/redraw-owner",
+    "receipt": "docs/reviews/gui-performance/implementation/S1/redraw-owner/receipt.json"
   }
 }

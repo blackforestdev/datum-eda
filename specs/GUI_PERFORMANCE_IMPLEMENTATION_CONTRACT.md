@@ -214,3 +214,15 @@ E08 and ADM-01. It does not complete S0 or any implementation slice. The existin
 execution grant remains in force. All numerical criteria, affected production
 proof, independent replay, exclusions and owner-only dependency authority remain.
 Frozen specification approval packets and earlier receipts remain historical.
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S0-BOUNDED-READY -->
+
+Bounded S0 readiness is recorded in
+`docs/reviews/gui-performance/implementation/S0/readiness/receipt.json` and the
+existing adoption map. The fresh offline release build reproduces the prior
+binary exactly; four Xwayland production host configurations pass native extent
+input/final-state checks. A fresh Wayland smoke attempt did not start its resize
+sequence and remains failed/unqualified. Selection is the demonstrated redraw
+ownership/damage-retirement gap, not a numerical performance claim. S1 begins
+with shared redraw tokens/generations; full ADM/GPU/ACC, S1 adoption and S5
+qualification remain outstanding under the approved component allocation.

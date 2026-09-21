@@ -59,6 +59,9 @@ impl App {
             if let Some(window) = self.new_project_window.take() {
                 window.set_visible(false);
             }
+            if let Some(surface) = &self.new_project_surface {
+                self.frames.close(surface.window_id());
+            }
             self.new_project_surface = None;
             if had_window && let Some(window) = self.window {
                 window.focus_window();
@@ -90,9 +93,11 @@ impl App {
                 window.clone(),
                 self.args.visual_scale_factor,
             )?;
+            self.frames
+                .register(window.id(), surface.measurements.epoch());
             self.new_project_surface = Some(surface);
             self.new_project_window = Some(window.clone());
-            owned_window_policy::show_owned_window(&window);
+            owned_window_policy::show_owned_window(&window, &mut self.frames);
         }
         Ok(())
     }
@@ -119,7 +124,7 @@ impl App {
                     surface.resize(runtime, size.width, size.height);
                 }
                 if let Some(window) = &self.new_project_window {
-                    window.request_redraw();
+                    self.frames.invalidate(window);
                 }
             }
             WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
@@ -132,17 +137,20 @@ impl App {
                     surface.set_scale_factor(scale_factor);
                 }
                 if let Some(window) = &self.new_project_window {
-                    window.request_redraw();
+                    self.frames.invalidate(window);
                 }
             }
             WindowEvent::CursorMoved { position, .. } => {
                 if let Some(surface) = &mut self.new_project_surface {
-                    surface.set_cursor_position(Some((position.x as f32, position.y as f32)));
+                    surface.set_cursor_position(
+                        Some((position.x as f32, position.y as f32)),
+                        &mut self.frames,
+                    );
                 }
             }
             WindowEvent::CursorLeft { .. } => {
                 if let Some(surface) = &mut self.new_project_surface {
-                    surface.set_cursor_position(None);
+                    surface.set_cursor_position(None, &mut self.frames);
                 }
             }
             WindowEvent::MouseInput {
@@ -171,12 +179,7 @@ impl App {
                 self.request_redraw_if_needed();
             }
             WindowEvent::RedrawRequested => {
-                if let (Some(runtime), Some(surface)) =
-                    (&self.runtime, &mut self.new_project_surface)
-                    && let Err(error) = surface.render(runtime, false, true)
-                {
-                    fatal_gui_error(event_loop, "render New Project window", error);
-                }
+                self.redraw_owned_window(event_loop, native_frame_adapters::OwnedHost::New)
             }
             _ => {}
         }

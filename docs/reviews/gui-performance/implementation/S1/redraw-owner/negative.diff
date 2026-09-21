@@ -1,0 +1,11 @@
+--- a/crates/gui-app/src/native_frame_coordinator.rs
++++ b/crates/gui-app/src/native_frame_coordinator.rs
+@@ -76,7 +76,7 @@
+     }
+ 
+     fn request(host: &mut Host) -> bool {
+-        if host.pending || host.rendering.is_some() || host.damage == host.presented {
++        if host.rendering.is_some() || host.damage == host.presented {
+             return false;
+         }
+         host.pending = true;

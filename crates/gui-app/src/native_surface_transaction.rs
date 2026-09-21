@@ -185,7 +185,7 @@ impl crate::App {
             if let (Some(surface), Some(window)) = (surface, window) {
                 let (redraw, due) = surface.surface_transaction.poll_retry(now);
                 if redraw {
-                    window.request_redraw();
+                    self.frames.invalidate(window);
                 }
                 if let Some(due) = due {
                     next = Some(next.map_or(due, |old| old.min(due)));
