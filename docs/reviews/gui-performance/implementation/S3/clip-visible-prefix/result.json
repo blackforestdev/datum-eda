@@ -1,0 +1,22 @@
+{
+  "status": "bounded S3 shared clipping improvement; qualification remains open",
+  "baseline": "00ce7c16",
+  "sources": {
+    "crates/gui-render/src/render/hit_clipping.rs": "80b90e1d755c2ae78041afe7c11a1d4ab99800dd017a2f7f35a3f700c915debb"
+  },
+  "production_consumers": [
+    "GLOBAL and PROJECT Preferences rows",
+    "REVISION panes",
+    "Main Inspector profiles",
+    "Main Project and Layers panels"
+  ],
+  "shared_owner": "render/hit_clipping.rs::clip_content",
+  "retired_path": "Unconditional split_off allocation and copy of the complete appended geometry layer before clipping",
+  "behavior": "Leave the fully visible geometry prefix in place; process only the suffix beginning at the first crossing quad. A fully contained layer uses split_off(len), allocating no geometry scratch and copying no quads. Existing contour clipping, painter order, nested text bounds and hit intersections are unchanged. Partially clipped suffixes still allocate.",
+  "proof": {
+    "renderer": "193 renderer library tests pass serially, including existing contour area, nested clips, pinned-prefix, Inspector and Revision checks. Command: python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib -- --test-threads=1",
+    "fresh_build": "Offline release GUI build passed at baseline 00ce7c16, before this clipping change.",
+    "native_attempt": "Before this change, private Weston headless/pixman plus Xwayland failed for GLOBAL and PROJECT: Xwayland SIGSEGV on synthetic pointer motion, before scroll assertions. Weston exit 0 is not a test pass. Failed result and logs retained in headless-failed.json.gz. Actual desktop untouched. No driver investigation or repeat campaign.",
+    "limits": "No new native, timing, allocation-counter or numerical budget qualification. No S3 exit, all-consumer adoption or full HP22 claim. No dependency or prototype changes."
+  }
+}

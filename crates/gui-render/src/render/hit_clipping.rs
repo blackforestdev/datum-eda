@@ -36,6 +36,13 @@ pub(crate) fn clip_content(
     hit_start: usize,
     viewport: RectPx,
 ) {
+    // Keep the already-visible prefix in place. A fully visible layer needs
+    // no geometry clipping; split_off(len) then allocates no scratch buffer.
+    // Starting at the first crossing preserves painter order for the suffix.
+    let quad_start = quads[quad_start..]
+        .iter()
+        .position(|quad| !quad.points.iter().all(|&(x, y)| viewport.contains(x, y)))
+        .map_or(quads.len(), |offset| quad_start + offset);
     let original = quads.split_off(quad_start);
     for quad in original {
         if quad.points.iter().all(|&(x, y)| viewport.contains(x, y)) {
