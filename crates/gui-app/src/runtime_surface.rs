@@ -31,10 +31,9 @@ impl Runtime {
     }
 
     fn apply_resize(&mut self, width: u32, height: u32) {
-        if self.config.width == width
-            && self.config.height == height
-            && self.surface_transaction.configured_for(width, height)
-        {
+        // Backend reconfiguration is owned by SurfaceTransaction. An unchanged
+        // logical extent must not discard prepared input/layout while it waits.
+        if self.config.width == width && self.config.height == height {
             return;
         }
         append_gui_diagnostic_line(format!(

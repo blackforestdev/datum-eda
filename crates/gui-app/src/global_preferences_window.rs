@@ -176,10 +176,9 @@ impl GlobalPreferencesWindowSurface {
         if width == 0 || height == 0 {
             return;
         }
-        if self.config.width == width
-            && self.config.height == height
-            && self.surface_transaction.configured_for(width, height)
-        {
+        // Backend reconfiguration is owned by SurfaceTransaction. An unchanged
+        // logical extent must not discard prepared input/layout while it waits.
+        if self.config.width == width && self.config.height == height {
             return;
         }
         self.config.width = width;
@@ -552,9 +551,7 @@ impl App {
                 {
                     surface.resize(runtime, size.width, size.height);
                 }
-                if let Some(window) = &self.global_preferences_window {
-                    self.frames.invalidate(window);
-                }
+                // The shared extent transition owns the redraw request.
             }
             WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
                 let scale_factor = self

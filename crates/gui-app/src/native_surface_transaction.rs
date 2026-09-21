@@ -192,10 +192,6 @@ impl SurfaceTransaction {
         ));
     }
 
-    pub(crate) fn configured_for(&self, width: u32, height: u32) -> bool {
-        self.configured == Some((width, height))
-    }
-
     pub(crate) fn resize(&mut self, width: u32, height: u32) {
         // Native coordinator owns occlusion/suspend; zero extent is also safe
         // for direct diagnostic callers outside native dispatch.

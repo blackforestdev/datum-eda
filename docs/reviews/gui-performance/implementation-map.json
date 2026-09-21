@@ -2551,7 +2551,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial: four-host extent-burst component proof and native Main six-change/configuration regression; native burst/all-host qualification remains open",
         "id": "proof_lf_12",
         "positive": "Coalesced native size events before frame attempt",
         "negative_control": "Configure for every event",
@@ -2597,7 +2597,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/extent-owner/receipt.json"
+      ]
     },
     {
       "id": "LF-13",
@@ -23650,5 +23653,36 @@
       "No dependency/license, protected prototype, product authority or resize exclusion change"
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/attachment-guard/receipt.json"
+  },
+  "s1_extent_owner_work": {
+    "status": "default native extent redraw ownership unified; bounded LF-12 proof",
+    "production_consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "shared_owner": "NativeFrameCoordinator::window_event and request_restored; SurfaceTransaction keeps independent backend configuration admission",
+    "retired_paths": [
+      "Four Resized adapter arms independently invalidating redraw after the coordinator already recorded extent damage",
+      "Main/dialog CPU layout invalidation tied to backend configured_for readiness even when logical dimensions were unchanged",
+      "SurfaceTransaction::configured_for adapter coupling"
+    ],
+    "production_change": "Only actual extent changes invalidate CPU layout/hits/terminal dimensions. Coordinator owns extent damage and restore request, retaining final extent through bursts; backend Lost/Outdated configuration still occurs independently.",
+    "verification": {
+      "app": "357 passed, 0 failed, 9 ignored; visual integration ignored",
+      "extent_test": "Four hosts: repeated identical extent creates no damage; three changed extents plus duplicates retain latest extent and produce one restore request and final damage retirement",
+      "clippy": "app all targets -D warnings passed",
+      "release": "fresh guarded offline release passed",
+      "native": "Existing Main X11 resize smoke completed six actual extent/configuration/presentation matches and WM_DELETE_WINDOW exit 0. Final counters: 7 configurations, 11 submissions/presents; ledger reports 7 completed attachment retirements and zero current/retiring payload at teardown."
+    },
+    "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "limits": [
+      "Component burst proof plus bounded Main native regression; no actual native duplicate-event burst or auxiliary-host resize replay in this slice",
+      "Ledger zero is not driver-residency or full MEM-budget proof; teardown here did not force close before GPU completion",
+      "No native final-pixel capture or CPU/temporal qualification; resize remains explicitly nonblocking",
+      "LF-12/S1 and full SH/LF qualification remain open; no dependency/license or product-policy change"
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/extent-owner/receipt.json"
   }
 }

@@ -185,7 +185,7 @@ impl App {
                 }
                 if let Some(runtime) = &mut self.runtime {
                     runtime.resize(size.width, size.height);
-                    self.request_main_redraw_if_needed();
+                    // The shared extent transition owns the redraw request.
                 }
             }
             WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
