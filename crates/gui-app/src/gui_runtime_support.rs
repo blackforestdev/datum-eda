@@ -68,6 +68,10 @@ pub(crate) fn window_event_diagnostic_label(event: &WindowEvent) -> Option<Strin
         WindowEvent::Destroyed => Some("destroyed".to_string()),
         WindowEvent::Resized(size) => Some(format!("resized {}x{}", size.width, size.height)),
         WindowEvent::Focused(focused) => Some(format!("focused {focused}")),
+        WindowEvent::Occluded(occluded) => Some(format!("occluded {occluded}")),
+        WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
+            Some(format!("scale factor {scale_factor}"))
+        }
         WindowEvent::RedrawRequested => Some("redraw requested".to_string()),
         WindowEvent::MouseInput { state, button, .. } => {
             Some(format!("mouse input {button:?} {state:?}"))

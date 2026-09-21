@@ -75,6 +75,11 @@ impl App {
         if matches!(event, WindowEvent::ScaleFactorChanged { .. }) {
             self.cancel_native_host_gestures(window_id);
         }
+        if std::env::var_os("DATUM_GUI_VERBOSE_LOG").is_some()
+            && let Some(label) = window_event_diagnostic_label(&event)
+        {
+            append_gui_verbose_diagnostic_line(format!("window event {window_id:?} {label}"));
+        }
         self.frames.window_event(window_id, &event);
         if self
             .runtime
@@ -147,9 +152,6 @@ impl App {
                 | WindowEvent::RedrawRequested
         ) {
             return;
-        }
-        if let Some(label) = window_event_diagnostic_label(&event) {
-            append_gui_verbose_diagnostic_line(format!("window event {label}"));
         }
         if matches!(event, WindowEvent::CloseRequested) {
             self.request_controlled_close(event_loop);
