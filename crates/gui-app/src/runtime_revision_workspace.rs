@@ -75,36 +75,34 @@ impl Runtime {
         Some(true)
     }
 
-    pub(super) fn handle_layer_scroll(&mut self, scroll_lines: f32) -> bool {
-        if scroll_lines.abs() <= 0.01 {
-            return false;
-        }
-        let Some((x, y)) = self.last_cursor_pos else {
-            return false;
-        };
-        // A board wheel gesture cannot target the Layers list. Avoid forcing
-        // the previous zoom's invalidated prepared scene just to reject it.
+    /// None is outside Layers; Some(false) consumes a local no-op.
+    pub(super) fn handle_layer_scroll(&mut self, scroll_lines: f32) -> Option<bool> {
+        let (x, y) = self.last_cursor_pos?;
+        // Board wheel input must not force Layers preparation.
         if !self.current_layout().left_sidebar.contains(x, y) {
-            return false;
+            return None;
         }
-        let over_layers = self.presented_hits.regions().iter().any(|region| {
+        let regions = self.presented_hits.regions();
+        if !regions.iter().any(|region| {
             region.target == HitTarget::LayerScrollRegion && region.rect.contains(x, y)
-        });
-        if !over_layers {
-            return false;
+        }) {
+            return None;
         }
-        let layer_count = self.workspace().scene.layers.len();
+        let visible = regions
+            .iter()
+            .filter(|region| matches!(region.target, HitTarget::ToggleLayer(_)))
+            .count();
+        let total = self.workspace().scene.layers.len();
         let offset = &mut self.session.workspace_mut().ui.filters.layer_scroll_offset;
-        let step = scroll_lines.abs().ceil() as usize;
-        *offset = if scroll_lines < 0.0 {
-            offset
-                .saturating_add(step)
-                .min(layer_count.saturating_sub(1))
-        } else {
-            offset.saturating_sub(step)
-        };
-        self.invalidate_frame();
-        true
+        let before = datum_gui_viewport::scroll::scrolled_row_offset(*offset, total, visible, 0.0);
+        let next =
+            datum_gui_viewport::scroll::scrolled_row_offset(before, total, visible, scroll_lines);
+        *offset = next;
+        let changed = next != before;
+        if changed {
+            self.invalidate_frame();
+        }
+        Some(changed)
     }
 }
 

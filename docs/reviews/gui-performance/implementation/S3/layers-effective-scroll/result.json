@@ -1,0 +1,25 @@
+{
+  "status": "bounded S3 default Layers row-bound and routing correction",
+  "baseline": "da661195af475293f24a9e6812501c27130222c5",
+  "sources": {
+    "crates/gui-viewport/src/scroll.rs": "1d1260caabe0bbf82a39836192b9bff0e3d6275972b513309a7c8463c3668458",
+    "crates/gui-app/src/runtime_revision_workspace.rs": "82003f66e99b89e852a369986ef84a5abef7d58937dbb7998810fdafb6b19fa1",
+    "crates/gui-app/src/app_native_events.rs": "03998e582d33cc9277cb149b867bd1f66bf1c862a6adb974270aeb5c85471264"
+  },
+  "production_consumers": [
+    "MAIN discrete Layers wheel adapter"
+  ],
+  "call_path": "App MouseWheel -> Runtime::handle_layer_scroll -> last-presented LayerScrollRegion/ToggleLayer capacity -> shared scrolled_row_offset -> changed-only invalidate and workspace redraw",
+  "retired_paths": [
+    "Count-minus-one offset bound that differed from rendered full-page bound",
+    "Boundary redraw for consumed unchanged Layers wheel",
+    "Treating zero local Layers delta as unconsumed"
+  ],
+  "preserved": "Discrete ceil(line) steps and native conversion; existing sorted/rendered rows and layer visibility/selection authority. Board input rejects left-sidebar ownership before inspecting rows and still never prepares Layers. Terminal/continuous Preferences policies unchanged.",
+  "proof": {
+    "viewport": "46 viewport tests pass. Row cases cover last full page, no-op boundary, stale hidden-offset reversal, zero/nonfinite input, fractional row policy and no-scroll capacities.",
+    "limits": "Actual native frame counts/camera equality/row-selection and independent negative qualification remain open. Desktop-use question remains pending; no focus-taking test launched. No full HP10/HP19 or S3 acceptance.",
+    "app": "App test binary built successfully after shared cache rebuild. The layer filter matched zero app tests; this is compile integration evidence only, not an adapter test pass."
+  },
+  "evidence": "docs/reviews/gui-performance/implementation/S3/layers-effective-scroll/result.json"
+}

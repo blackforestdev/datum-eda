@@ -319,8 +319,10 @@ impl App {
                         MouseScrollDelta::LineDelta(_, y) => y,
                         MouseScrollDelta::PixelDelta(pos) => (pos.y as f32) / 20.0,
                     };
-                    if runtime.handle_layer_scroll(scroll_lines) {
-                        self.request_workspace_redraw();
+                    if let Some(changed) = runtime.handle_layer_scroll(scroll_lines) {
+                        if changed {
+                            self.request_workspace_redraw();
+                        }
                         return;
                     }
                     if runtime.handle_console_history_scroll(scroll_lines) {
