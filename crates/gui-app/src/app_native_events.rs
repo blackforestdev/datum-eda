@@ -92,7 +92,9 @@ impl App {
         self.measurement_window_event(window_id, &event);
         if matches!(&event, WindowEvent::KeyboardInput { event, .. }
             if event.state == ElementState::Pressed && event.logical_key == Key::Named(NamedKey::F5))
-            && (self.retry_failed_device() || self.frames.manual_retry(window_id))
+            && (self.retry_failed_device()
+                || self.retry_failed_queue()
+                || self.frames.manual_retry(window_id))
         {
             for window in [
                 self.window,

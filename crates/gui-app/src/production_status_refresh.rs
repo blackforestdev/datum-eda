@@ -120,6 +120,8 @@ impl App {
         if changed {
             self.request_workspace_redraw();
         }
+        let queue_due = self.service_native_queue_progress();
+        self.frames.wake_at(queue_due);
         let surface_due = self.service_surface_retries();
         self.frames.wake_at(surface_due);
         match self.service_gpu_measurements() {
