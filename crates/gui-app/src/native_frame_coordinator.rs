@@ -61,10 +61,27 @@ pub(super) struct NativeFrameCoordinator {
     generation: u64,
     hosts: HashMap<WindowId, Host>,
     suspended: bool,
+    wake_deadline: Option<Instant>,
     order: VecDeque<WindowId>,
 }
 
 impl NativeFrameCoordinator {
+    /// Producers contribute eligible work; no producer can postpone another.
+    pub(super) fn wake_at(&mut self, deadline: Option<Instant>) {
+        if let Some(deadline) = deadline {
+            self.wake_deadline = Some(self.wake_deadline.map_or(deadline, |old| old.min(deadline)));
+        }
+    }
+
+    /// Consume this round's deadlines once at the native wait boundary. The
+    /// next round must re-register eligible work, so canceled timers cannot spin.
+    pub(super) fn take_control_flow(&mut self) -> winit::event_loop::ControlFlow {
+        self.wake_deadline.take().map_or(
+            winit::event_loop::ControlFlow::Wait,
+            winit::event_loop::ControlFlow::WaitUntil,
+        )
+    }
+
     pub(super) fn register(
         &mut self,
         window: WindowId,
@@ -830,3 +847,7 @@ mod tests {
         assert_eq!(frames.hosts[&id].presented, retry.damage);
     }
 }
+
+#[cfg(test)]
+#[path = "native_frame_deadline_tests.rs"]
+mod deadline_tests;

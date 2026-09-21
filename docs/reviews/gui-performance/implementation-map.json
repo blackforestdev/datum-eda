@@ -750,7 +750,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial: shared wait owner and mixed-deadline/cancellation component proof; native producer coexistence remains open",
         "id": "proof_sh_06",
         "positive": "Host timer deadlines for retry/terminal/device progress coexist",
         "negative_control": "Keep stale earlier deadline after cancellation",
@@ -804,7 +804,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/wait-owner/receipt.json"
+      ]
     },
     {
       "id": "SH-07",
@@ -23464,5 +23467,36 @@
       "status": "capture comparison unavailable; no product pass",
       "disposition": "Keep dat-main-native-capture-delay-md9 open. Cause of stale window captures and delayed Close remains unestablished. Stop repeating native captures under these conditions; continue independent code/component work. No kernel/driver investigation, renderer attribution, native input timing or final-pixel qualification follows."
     }
+  },
+  "s1_wait_owner_work": {
+    "status": "shared native wait owner adopted; bounded component proof",
+    "production_consumers": [
+      "MAIN/GLOBAL/PROJECT/NEW surface retry deadlines",
+      "shared device recovery progress",
+      "terminal-driven production refresh",
+      "Console lifetime",
+      "application terminal shutdown",
+      "opt-in GPU measurement completion",
+      "opt-in existing resize smoke start"
+    ],
+    "shared_owner": "NativeFrameCoordinator::wake_at / take_control_flow; App::about_to_wait commits one final wait decision",
+    "retired_paths": [
+      "App background poller local minimum accumulator and direct wait setter",
+      "Resize smoke direct ControlFlow override and separate deadline minimum"
+    ],
+    "production_change": "All existing deadline producers register eligible absolute instants with the coordinator. The minimum is consumed once after dispatch/background/restore work; next round must register current work, so canceled producers do not retain stale deadlines. Launch initialization remains Wait. No per-frame allocation or new timer.",
+    "verification": {
+      "app": "354 passed, 0 failed, 9 ignored; visual integration ignored",
+      "deadline_test": "Mixed surface/device/terminal/shutdown deadline order cannot postpone earliest work; absent producer cannot erase it; serviced/canceled deadlines do not survive into the following wait cycle",
+      "clippy": "all app targets -D warnings passed",
+      "release": "fresh guarded offline build passed"
+    },
+    "limits": [
+      "Pure component and production call-site proof, not native timer coexistence or numeric timing acceptance",
+      "Native capture limitation dat-main-native-capture-delay-md9 unchanged; no repeated capture campaign",
+      "SH-06 full qualification, S1 completion, all remaining component accounting and S2-S5 remain open",
+      "No dependency, product mechanism, timer duration, resize budget or exclusion change"
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/wait-owner/receipt.json"
   }
 }
