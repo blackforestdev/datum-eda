@@ -24939,7 +24939,7 @@
     "evidence": "docs/reviews/gui-performance/implementation/S1/empty-search-input/result.json"
   },
   "s1_exit_reconciliation": {
-    "status": "Owner-review proposal only; GPI-S1 remains in progress and GPI-S2 pending",
+    "status": "Owner approved the exact S1 exit amendment on 2026-09-21; amended readiness review still required before S1 completion or S2 selection",
     "source_commit": "ed1b38fafa4bc0244c52054a7af22c832ff88798",
     "source_sha256": {
       "crates/gui-app/src/native_frame_coordinator.rs": "1f9ef53eee2aedaff7964487877118f3daff5f4c84eaa6eddcab0bb5c8737d45",
@@ -24968,9 +24968,12 @@
       "s1_focus_loss_capture_work",
       "s1_empty_search_input_work"
     ],
-    "barrier": "Existing GPI-S1 requires verification of SH/LF and affected HP while their map rows still contain missing prescribed negative controls, native final-state and resource predicates. S2 has an explicit GPI-S1 dependency. This is unfinished proof under the current exit, not missing Rust implementation authority or a new third-party dependency. Continuing small unrelated fixes is an execution choice, not a substitute for resolving this exit.",
-    "proposal": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#proposed-s1-implementation-exit-amendment--pending-owner-review",
-    "limits": "Call-site inventory establishes default routing, not complete per-consumer qualification. No partial status, requirement, step or authority is advanced. Approval would require the exact same-change edits and a separate evidence-based readiness disposition."
+    "proposal": "Historical exact proposal: commit 1e4d2e2f",
+    "limits": "Approval does not complete S1 or qualify partial rows. All original receipts and row statuses remain; full carried qualification, independent replay and endurance are S5 prerequisites.",
+    "previous_barrier": "Existing GPI-S1 requires verification of SH/LF and affected HP while their map rows still contain missing prescribed negative controls, native final-state and resource predicates. S2 has an explicit GPI-S1 dependency. This is unfinished proof under the current exit, not missing Rust implementation authority or a new third-party dependency. Continuing small unrelated fixes is an execution choice, not a substitute for resolving this exit.",
+    "barrier": "S1 bounded implementation readiness review remains required; unfinished per-row qualification is now an explicit S5 exit obligation.",
+    "owner_response": "Approve the proposed S1 exit amendment",
+    "operative_contract": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#owner-amendment-s1-implementation-exit"
   },
   "s1_gesture_geometry_work": {
     "status": "Shared cancellation finalizes retained terminal resize previews; bounded Runtime integration proof passes",

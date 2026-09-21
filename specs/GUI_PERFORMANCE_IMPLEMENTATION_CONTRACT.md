@@ -55,11 +55,11 @@ earlier proven behavior; it is not a destructive reset of shared work.
 | ID | Dependency and scope | Required evidence / rollback boundary |
 |---|---|---|
 | S0 | Separate owner execution grant; pin current source/fixture/environment, select the first bounded S1 change from attributable work or a demonstrated correctness defect, and validate only the measurements used for that selection and its proof | Record production entry points, matched baseline, verified input/final state, applicable counters and their conformance/overhead, relevant static/input regressions, and every outstanding ADM/GPU/ACC obligation with its owning S1–S4 component. No global admission, budget or performance pass follows. Keep measurement repair separable from behavior changes. |
-| S1 | S0 attribution; shared NativeFrameCoordinator, host damage generations, queue/configure coordination and recovery in main and all three auxiliary hosts | SCH/REC and lifecycle rows, per-host production invalidation and input/focus proof, surface-generation/resource accounting. Owner amendment removes completed resize calibration and budget resolution as development prerequisites. Preserve bounded affected-path regression proof; record missing resize temporal evidence as unqualified on the pinned issue. Roll back coherent shared adoption, never leave main/dialog variants with conflicting semantics. |
+| S1 | S0 attribution; shared NativeFrameCoordinator, host damage generations, queue/configure coordination and recovery in main and all three auxiliary hosts | Establish implementation readiness from the current production call-site inventory for all four native hosts, retired competing default paths, shared-owner correctness regressions, actual per-host native adapter evidence, and implemented surface-generation/submission/attachment-lifetime accounting. Preserve bounded affected-change positive/negative evidence and all failed attempts; an unexplained regression still blocks advancement. Record each unfinished SH/LF/affected-HP predicate in its existing map row. Outstanding prescribed per-row negative-control replays, complete native final-state/static/input/focus coverage, backend/scale coverage and full resource/method qualification become explicit S5 exit prerequisites. They remain unqualified, not satisfied by S1 readiness. Rollback preserves coherent shared adoption. Resize qualification stays separately nonblocking. |
 | S2 | S0 measurement; use S1 shared interfaces when available without selecting work out of order. Retained world/encoding/screen uploads, text and cache ownership | Warm zero-work counts, equal-size replacement/address reuse, eviction/device reset, painter/AA/text parity and complete byte caps. Separate geometry, text and upload changes into reviewable patches; revert each optimization independently. |
 | S3 | S2 retained resource interfaces. Shared dialog/control profiles and scroll/clip/hit contracts in both Preferences, New Project and main panels | HP11–23, per-adapter input/focus and pass-count proof; retire New Project general backdrop and duplicate control machinery. Preserve legitimate discrete Layers/terminal semantics. Revert controls without changing stored preferences or project-creation authority. |
 | S4 | S1–S3. Terminal adapters, mixed activity/fairness, all-host closure and fault/recovery adoption | PTY byte/state preservation, hidden-render suppression, two-generation glyph bounds, allocation/recovery accounting and serial shared-device multiwindow proof. Concurrent multi-device crash remains separate. Revert rendering adapters without replacing TerminalCore/PTY state. |
-| S5 | Every adopted implementation slice and required admission/method conformance. Final coverage, native owner UX, distinct-reviewer replay and endurance | Run all in-scope requirements on pinned candidate, both daily native backends and supported scale rows; 60-minute/200-cycle/20-recovery contract. Publish excluded temporal/T2/schematic rows as unqualified, never full performance acceptance. Full resize closure additionally requires all temporal/resource rows; no local or initial-scope result closes it. |
+| S5 | Every adopted implementation slice and required admission/method conformance. Final coverage, native owner UX, distinct-reviewer replay and endurance | Run all in-scope requirements on pinned candidate, both daily native backends and supported scale rows; 60-minute/200-cycle/20-recovery contract. Publish excluded temporal/T2/schematic rows as unqualified, never full performance acceptance. Full resize closure additionally requires all temporal/resource rows; no local or initial-scope result closes it. Close every in-scope SH/LF/affected-HP predicate carried from S1, including prescribed negative controls and native final-state/static/input/focus and complete resource/method proof. S1 readiness does not waive any such result. |
 
 S1 owns scheduler/surface generations, redraw/configure/acquire/submit/present
 counts and changed surface-resource lifetime accounting. S2 owns retained
@@ -157,7 +157,7 @@ record remains history, not a competing live contract.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S1 -->
 
-**GPI-S1.** Adopt shared surface scheduling/lifecycle in every native host; verify SH/LF and affected HP requirements with bounded available resize regressions; RS and resize-budget qualification remain pinned and nonblocking.
+**GPI-S1.** Adopt shared surface scheduling/lifecycle in every default native host and establish bounded implementation readiness under the S1 table. Preserve unfinished SH/LF and affected HP qualification individually for S5; do not declare global acceptance. RS and resize-budget qualification remain pinned and nonblocking.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S2 -->
 
@@ -227,59 +227,24 @@ ownership/damage-retirement gap, not a numerical performance claim. S1 begins
 with shared redraw tokens/generations; full ADM/GPU/ACC, S1 adoption and S5
 qualification remain outstanding under the approved component allocation.
 
-## Proposed S1 implementation exit amendment — pending owner review
+## Owner amendment: S1 implementation exit
 
-This section is a review draft, **not operative authority**. The existing S1
-exit and Frontier dependency remain controlling until an explicit owner
-response is recorded and the following changes are applied together. The
-2026-09-20 amendment did not explicitly defer unfinished S1 row qualification.
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S1-EXIT-APPROVED -->
 
-The current default call inventory routes all four native hosts through
-`NativeFrameCoordinator`, `SurfaceTransaction` and `QueueOwner`; the adoption
-map records actual native adapter trials and remaining partial proof. Advancing
-S2 today would require treating those partial rows as sufficient for “verify
-SH/LF and affected HP requirements.” This proposal makes that different exit
-criterion explicit rather than silently declaring those requirements passed.
+On 2026-09-21 the owner approved the exact four-edit proposal reviewed in commit
+`1e4d2e2f`:
 
-Exact proposed edits:
+> Approve the proposed S1 exit amendment
 
-1. Replace the **S1 table required-evidence cell** with:
+The S1 table and GPI-S1 now define bounded shared-implementation readiness;
+unfinished prescribed negative-control, native final-state/static/input/focus,
+backend/scale and full resource/method qualification explicitly remain S5 exit
+prerequisites under the amended S5 table. The Frontier mirrors this wording.
+Each partial map row and original evidence receipt remains intact. No unfinished
+requirement becomes passed through this amendment.
 
-   > Establish implementation readiness from the current production call-site
-   > inventory for all four native hosts, retired competing default paths,
-   > shared-owner correctness regressions, actual per-host native adapter
-   > evidence, and implemented surface-generation/submission/attachment-lifetime
-   > accounting. Preserve bounded affected-change positive/negative evidence
-   > and all failed attempts; an unexplained regression still blocks advancement.
-   > Record each unfinished SH/LF/affected-HP predicate in its existing map row.
-   > Outstanding prescribed per-row negative-control replays, complete native
-   > final-state/static/input/focus coverage, backend/scale coverage and full
-   > resource/method qualification become explicit S5 exit prerequisites.
-   > They remain unqualified, not satisfied by S1 readiness. Rollback preserves
-   > coherent shared adoption. Resize qualification stays separately nonblocking.
-
-2. Replace **GPI-S1** with:
-
-   > Adopt shared surface scheduling/lifecycle in every default native host and
-   > establish bounded implementation readiness under the S1 table. Preserve
-   > unfinished SH/LF and affected HP qualification individually for S5; do not
-   > declare global acceptance. RS and resize-budget qualification remain pinned
-   > and nonblocking.
-
-3. Append to the **S5 table required-evidence cell**:
-
-   > Close every in-scope SH/LF/affected-HP predicate carried from S1, including
-   > prescribed negative controls and native final-state/static/input/focus and
-   > complete resource/method proof. S1 readiness does not waive any such result.
-
-4. In the same approved transaction, mirror revised GPI-S1 wording in
-   `specs/active_frontier.json` and regenerate `specs/PROGRESS.md`. Do not advance
-   S1 until its revised readiness evidence is inspected and recorded; do not
-   start S2 before that transition. Keep every partial map status and original
-   evidence receipt intact until the corresponding qualification actually passes.
-
-This changes **when unfinished S1 qualification must be complete**, not numerical
-thresholds, default-path adoption, PM029 authority, product semantics, independent
-review, endurance or final acceptance. It creates no permission for dependencies,
-prototype edits, a broad rewrite, or acceptance of known regressions. It does not
-mark any implementation step complete by itself.
+Approval changes when that qualification must be complete. It does not change
+numerical thresholds, default-path adoption, PM029 dependency authority, product
+semantics, independent replay, endurance, the resize exclusion or final acceptance.
+An evidence-based readiness review must precede S1 completion and S2 selection;
+this owner disposition does not itself complete S1.
