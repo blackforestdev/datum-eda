@@ -79,8 +79,7 @@ pub(super) struct GlobalPreferencesWindowSurface {
     retained: Option<RetainedScene>,
     prepared: Option<PreparedScene>,
     // Input keeps targeting the last presented geometry while damage coalesces.
-    presented_hits: Vec<datum_gui_render::HitRegion>,
-    hit_regions_pending: bool,
+    presented_hits: gui_runtime_support::presented_hit_regions::PresentedHitRegions,
     cursor_position: Option<(f32, f32)>,
     scroll: datum_gui_viewport::scroll::ScrollViewport,
     scroll_identity: Option<(String, String, usize)>,
@@ -122,6 +121,9 @@ impl GlobalPreferencesWindowSurface {
         )?;
         let mut surface_transaction = SurfaceTransaction::new(&window, &runtime.device_health);
         surface_transaction.share_queue_with(&runtime.surface_transaction);
+        let mut presented_hits =
+            gui_runtime_support::presented_hit_regions::PresentedHitRegions::default();
+        presented_hits.mark_pending();
         Ok(Self {
             surface,
             surface_transaction,
@@ -131,8 +133,7 @@ impl GlobalPreferencesWindowSurface {
             measurements,
             retained: None,
             prepared: None,
-            presented_hits: Vec::new(),
-            hit_regions_pending: true,
+            presented_hits,
             cursor_position: None,
             scroll: Default::default(),
             scroll_identity: None,
@@ -167,7 +168,7 @@ impl GlobalPreferencesWindowSurface {
     pub(super) fn invalidate(&mut self) {
         self.retained = None;
         self.prepared = None;
-        self.hit_regions_pending = true;
+        self.presented_hits.mark_pending();
     }
 
     pub(super) fn resize(&mut self, _runtime: &Runtime, width: u32, height: u32) {
@@ -232,11 +233,7 @@ impl GlobalPreferencesWindowSurface {
 
     pub(super) fn hit_target(&self) -> Option<HitTarget> {
         let (x, y) = self.cursor_position?;
-        self.presented_hits
-            .iter()
-            .rev()
-            .find(|region| region.rect.contains(x, y))
-            .map(|region| region.target.clone())
+        self.presented_hits.hit_test(x, y).cloned()
     }
 
     pub(super) fn render(
@@ -349,18 +346,8 @@ impl GlobalPreferencesWindowSurface {
             return Ok(false);
         }
         self.surface_transaction.present(frame, &self.window)?;
-        if self.hit_regions_pending {
-            // Move the new map only after a successful presentation. No extra
-            // hit-map clone/allocation, and failed frames retain the old map.
-            self.presented_hits = std::mem::take(
-                &mut self
-                    .prepared
-                    .as_mut()
-                    .expect("prepared frame presented")
-                    .hit_regions,
-            );
-            self.hit_regions_pending = false;
-        }
+        self.presented_hits
+            .present(self.prepared.as_mut().expect("prepared frame presented"));
         Ok(true)
     }
 }

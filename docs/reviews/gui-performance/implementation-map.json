@@ -23420,5 +23420,44 @@
       "No new dependency, PTY policy, budget, or resize qualification change"
     ],
     "evidence_directory": "docs/reviews/gui-performance/implementation/S1/shutdown-deadline"
+  },
+  "s1_main_hit_ownership_work": {
+    "status": "shared presented-hit ownership adopted in all four native hosts; bounded proof only",
+    "production_consumers": [
+      "MAIN menu pointer hover and activation",
+      "MAIN primary chrome selection",
+      "MAIN terminal split/tab drag, hover and cursor targeting",
+      "MAIN terminal clipboard menu",
+      "MAIN layer wheel targeting",
+      "MAIN artifact-preview pan targeting",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "shared_owner": "gui_runtime_support::presented_hit_regions::PresentedHitRegions",
+    "retired_paths": [
+      "Auxiliary-only Vec/pending hit-map implementation",
+      "Main hit-target reads that rebuilt dirty prepared scenes or found no scene after invalidation",
+      "Full PreparedScene clone on each Board pan segment solely for artifact-preview rectangle testing"
+    ],
+    "production_change": "Move hit-region allocation into shared owner after successful presentation; cached frames preserve it and pending/failed frames do not publish. Clear on extent/DPI change. Keep camera/world-coordinate projection separate.",
+    "candidate_sha256": "d8aacdbd243ddbed12a40197b1b24ac87233ad3be87b9cab9647ed8f7ce747ad",
+    "baseline_sha256": "d703da1e9aeb1c0f51bc255ed371fd1b992ba49e53bec0dacc2f4cf38e2a1920",
+    "verification": {
+      "app": "353 passed, 0 failed, 9 ignored; visual integration ignored",
+      "ownership_test": "Real prepared File-menu geometry retains hit priority through dirty/cached frames, then publishes dismissal; verifies moved allocation pointer",
+      "clippy": "initial collapsible-if finding corrected; all-targets -D warnings passed",
+      "release": "fresh guarded offline final build passed",
+      "native_auxiliary": "Global and Project multiword search/control button bursts, local submit counts and consumed F6 no-frame regressions passed; screenshots inspected. New queued Name-to-Location button burst types burst into Location with Name empty, screenshot inspected.",
+      "native_main": "Both baseline and candidate trace File menu opening, hover focus index 1, dismissal, and changed board camera. Menu-open/hover screenshots inspected. Final pan screenshot stale in both runs; candidate close timeout retained. No complete Main final-state/timing pass."
+    },
+    "limits": [
+      "dat-main-native-capture-delay-md9 tracks unresolved stale Main capture/delayed close observation; native main candidate failure retained",
+      "Terminal split/tab/clipboard, layer wheel and artifact-preview paths compile and use shared owner but lack individual native replay in this slice",
+      "World projection and other pointer routes may still prepare scene; no zero-preparation or measured latency/CPU claim",
+      "S1 SH/LF, full resource accounting and S2-S5 remain open; no global adoption acceptance",
+      "No dependency, protected prototype, product authority or resize exclusion change"
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/receipt.json"
   }
 }

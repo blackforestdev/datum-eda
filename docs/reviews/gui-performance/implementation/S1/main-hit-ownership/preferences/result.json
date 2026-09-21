@@ -1,0 +1,167 @@
+{
+  "binary_sha256": "d8aacdbd243ddbed12a40197b1b24ac87233ad3be87b9cab9647ed8f7ce747ad",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "control_before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 5,
+          "present": 5
+        }
+      },
+      "control_after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 7,
+          "present": 7
+        }
+      },
+      "local": true
+    },
+    {
+      "host": "GLOBAL",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "window": "WindowId(12582917)",
+      "query": "board precision",
+      "before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 1,
+          "present": 1
+        }
+      },
+      "after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 5,
+          "present": 5
+        }
+      },
+      "burst": "two button press/release pairs before the next presentation; final screenshot requires visual review",
+      "unmatched_key": "F6",
+      "before_unmatched": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 9,
+          "present": 9
+        }
+      },
+      "after_unmatched": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 9,
+          "present": 9
+        }
+      },
+      "scope": "native input to own dialog; Main submission/presentation unchanged; screenshot final text requires visual review"
+    },
+    {
+      "host": "PROJECT",
+      "control_before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 5,
+          "present": 5
+        }
+      },
+      "control_after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "local": true
+    },
+    {
+      "host": "PROJECT",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "window": "WindowId(12582917)",
+      "query": "board precision",
+      "before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 1,
+          "present": 1
+        }
+      },
+      "after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 5,
+          "present": 5
+        }
+      },
+      "burst": "two button press/release pairs before the next presentation; final screenshot requires visual review",
+      "unmatched_key": "F6",
+      "before_unmatched": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 7,
+          "present": 7
+        }
+      },
+      "after_unmatched": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 7,
+          "present": 7
+        }
+      },
+      "scope": "native input to own dialog; Main submission/presentation unchanged; screenshot final text requires visual review"
+    }
+  ]
+}

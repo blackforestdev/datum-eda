@@ -87,7 +87,7 @@ impl Runtime {
         if !self.current_layout().left_sidebar.contains(x, y) {
             return false;
         }
-        let over_layers = self.prepared_scene().hit_regions.iter().any(|region| {
+        let over_layers = self.presented_hits.regions().iter().any(|region| {
             region.target == HitTarget::LayerScrollRegion && region.rect.contains(x, y)
         });
         if !over_layers {

@@ -70,7 +70,7 @@ impl Runtime {
         // its hit against the displayed context before a canvas focus gesture
         // can change the focused pane (and therefore the action's readiness).
         if self.workspace().ui.active_menu.is_some() {
-            let target = self.prepared_scene().hit_test(x, y).cloned();
+            let target = self.presented_hits.hit_test(x, y).cloned();
             if let Some(target @ (HitTarget::MenuTitle(_) | HitTarget::MenuItem { .. })) = target {
                 return self.select_hit_target(&target);
             }
@@ -97,13 +97,8 @@ impl Runtime {
             }
         }
         let prepared_started = std::time::Instant::now();
-        let (prepared_target, world_point) = {
-            let prepared = self.prepared_scene();
-            (
-                prepared.hit_test(x, y).cloned(),
-                prepared.world_point_at_screen(x, y),
-            )
-        };
+        let prepared_target = self.presented_hits.hit_test(x, y).cloned();
+        let world_point = self.prepared_scene().world_point_at_screen(x, y);
         let prepared_elapsed = prepared_started.elapsed();
         if self.terminal_clipboard_menu_active()
             && !matches!(

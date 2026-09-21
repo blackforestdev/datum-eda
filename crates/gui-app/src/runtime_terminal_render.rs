@@ -35,6 +35,7 @@ impl Runtime {
             prepared.set_schematic_camera(camera);
         }
         self.apply_prepared_grid_lod(&mut prepared);
+        self.presented_hits.mark_pending();
         Ok(prepared)
     }
 }
