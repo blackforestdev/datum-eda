@@ -1,0 +1,31 @@
+{
+  "candidate": "b35fd41e",
+  "owner_desktop_disposition": "Desktop is idle; native tests may resume",
+  "backend": "X11/Vulkan; Intel HD Graphics P630; Mesa 25.0.7-2+deb13u1",
+  "held_key_observation": {
+    "escape_keycode": 9,
+    "down_before_release": [
+      9
+    ],
+    "down_after_release": [],
+    "action": "xdotool keyup Escape",
+    "limit": "Origin of the held key is unknown; no attribution to owner input."
+  },
+  "failed_attempts": [
+    "Held Escape reproduced on owner-confirmed idle desktop; auxiliary closed before first present",
+    "After clearing Escape, naive minimize immediately returned focus to Main and existing modal policy raised Preferences; old resume predicate was invalid"
+  ],
+  "method_correction": "Minimize Main before auxiliary, assert auxiliary WM_STATE Iconic, observe 400ms with no submit/present, then map/activate auxiliary and require a fresh presentation at restored extent. Main tested separately. Preserve modal focus redirection.",
+  "passed_hosts": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "visual_review": "All four restored screenshots inspected; intact content and correct host UI observed. This is bounded visual review, not a temporal oracle.",
+  "limits": [
+    "One lifecycle cycle per host on X11/Vulkan only",
+    "No memory budget, full LF-15/S1, Wayland, temporal/display or comprehensive resize acceptance",
+    "Process termination used for fixture teardown; not all-host graceful-close proof"
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "binary_sha256": "bedcb25def464f9aaca165615e37eea66f31a68b3eac6c2bc0f734c8e46c7dc0",
+  "runs": [
+    {
+      "host": "MAIN",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "window": "WindowId(12582916)",
+      "initial": {
+        "acquire_attempts": 2,
+        "acquired": 2,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1333,
+          833
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 2,
+        "frame_submissions": 2,
+        "gpu_completed_through_receipt": 1,
+        "host": 1,
+        "last_frame_submission_receipt": 2,
+        "last_present_receipt": 2,
+        "presented": 2,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+        "window": "WindowId(12582916)"
+      },
+      "maximized": {
+        "acquire_attempts": 3,
+        "acquired": 3,
+        "active": 0,
+        "configuration_generation": 2,
+        "configure_attempts": 2,
+        "configured_extent": [
+          1920,
+          1051
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 3,
+        "frame_submissions": 3,
+        "gpu_completed_through_receipt": 2,
+        "host": 1,
+        "last_frame_submission_receipt": 3,
+        "last_present_receipt": 3,
+        "presented": 3,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 3 })",
+        "window": "WindowId(12582916)"
+      },
+      "restored": {
+        "acquire_attempts": 4,
+        "acquired": 4,
+        "active": 0,
+        "configuration_generation": 3,
+        "configure_attempts": 3,
+        "configured_extent": [
+          1333,
+          833
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 4,
+        "frame_submissions": 4,
+        "gpu_completed_through_receipt": 3,
+        "host": 1,
+        "last_frame_submission_receipt": 4,
+        "last_present_receipt": 4,
+        "presented": 4,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 4 })",
+        "window": "WindowId(12582916)"
+      },
+      "resumed": {
+        "acquire_attempts": 5,
+        "acquired": 5,
+        "active": 0,
+        "configuration_generation": 3,
+        "configure_attempts": 3,
+        "configured_extent": [
+          1333,
+          833
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 5,
+        "frame_submissions": 5,
+        "gpu_completed_through_receipt": 4,
+        "host": 1,
+        "last_frame_submission_receipt": 5,
+        "last_present_receipt": 5,
+        "presented": 5,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 5 })",
+        "window": "WindowId(12582916)"
+      },
+      "hidden_state": "WM_STATE(WM_STATE):\n\t\twindow state: Iconic\n\t\ticon window: 0x0\n",
+      "owner_minimized_first": false,
+      "hidden_observation_ms": 400,
+      "hidden_submit_present": 0,
+      "maximized_state": "_NET_WM_STATE(ATOM) = _NET_WM_STATE_MAXIMIZED_VERT, _NET_WM_STATE_MAXIMIZED_HORZ, _NET_WM_STATE_FOCUSED\n"
+    }
+  ]
+}
