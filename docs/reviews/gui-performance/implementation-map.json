@@ -23001,5 +23001,33 @@
       "clippy.log.gz": "ccfc555582e1c66d6f8371de317714c8598afa19cac055f4a83749d3dffb07b5",
       "tests.log.gz": "fa244cf007f3186ccd72cdbb6c4bcb65e0a1dd30150fdd5007b6744ae1ad221d"
     }
+  },
+  "s1_dialog_navigation_work": {
+    "status": "Global and Project Preferences pointer navigation migrated; full SH-01 qualification remains open",
+    "baseline_commit": "8a4b6287",
+    "consumers": [
+      "GLOBAL",
+      "PROJECT"
+    ],
+    "shared_owner": "App::request_preferences_target_redraw; both native pointer-release adapters invoke it after existing input activation",
+    "retired_paths": [
+      "Unconditional all-host invalidation after section/search-focus/setting-explanation/explanation-close clicks",
+      "Redraw after empty-space or nonmutating modal-background hits"
+    ],
+    "preserved": "Setting controls, choices, resets and unclassified actions retain broader invalidation. Input processing, accessibility announcements, native modality and mutation authority are unchanged.",
+    "verification": {
+      "app": "351 passed; 0 failed; 9 ignored",
+      "build_clippy": "Fresh offline release and all-targets app Clippy -D warnings passed",
+      "source_review": "Reviewed both actual activation paths including search-result/explanation behavior; local targets mutate dialog state and accessibility output only",
+      "gates": "Source health, dependency authority, traceability, spec governance/parity and formatting passed"
+    },
+    "limits": [
+      "Keyboard navigation still uses its existing broader path",
+      "Runtime frame-cache invalidation remains unchanged; this slice narrows native frame scheduling",
+      "No new native pointer replay while desktop availability is unresolved; no zero-unrelated-submission, numeric improvement or global adoption acceptance claim",
+      "GPI-S1 remains in progress; S2-S5 remain pending; resize qualification remains pinned and nonblocking"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/dialog-navigation",
+    "release_binary_sha256": "51872b9cbfeefddbcdca95a05a189d47872f5db1356cc30fe83e65f570d3df6a"
   }
 }

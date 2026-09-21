@@ -284,6 +284,36 @@ impl GlobalPreferencesWindowSurface {
 }
 
 impl App {
+    /// Transient navigation belongs to this dialog. Setting edits may affect
+    /// workspace consumers and keep the application-wide invalidation path.
+    pub(super) fn request_preferences_target_redraw(
+        &mut self,
+        target: Option<&HitTarget>,
+        project: bool,
+    ) {
+        match target {
+            None | Some(HitTarget::GlobalPreferencesModal) => return,
+            Some(
+                HitTarget::GlobalPreferencesSection(_)
+                | HitTarget::GlobalPreferencesSearch
+                | HitTarget::GlobalPreferencesSettingName(_)
+                | HitTarget::GlobalPreferencesExplanationClose,
+            ) => {}
+            Some(_) => {
+                self.request_redraw_if_needed();
+                return;
+            }
+        }
+        let surface = if project {
+            &mut self.project_preferences_surface
+        } else {
+            &mut self.global_preferences_surface
+        };
+        if let Some(surface) = surface {
+            surface.invalidate();
+            self.frames.invalidate(&surface.window);
+        }
+    }
     /// Scrolling changes only the owned dialog's transient viewport. Coalesced
     /// redraws must not rebuild the main Design window or other owned windows.
     pub(super) fn scroll_preferences_window(&mut self, delta: MouseScrollDelta, project: bool) {
@@ -456,7 +486,7 @@ impl App {
                 if let (Some(runtime), Some(target)) = (&mut self.runtime, target.as_ref()) {
                     let _ = runtime.activate_application_overlay_hit_target(target);
                 }
-                self.request_redraw_if_needed();
+                self.request_preferences_target_redraw(target.as_ref(), false);
             }
             WindowEvent::MouseWheel { delta, .. } => {
                 self.scroll_preferences_window(delta, false);
