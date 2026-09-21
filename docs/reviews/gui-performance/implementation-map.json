@@ -1972,7 +1972,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial: reported failure at real texture/view creation retains prior attachment and fresh retry succeeds; native backend failure/memory proof remains open",
         "id": "proof_lf_06",
         "positive": "Attachment allocation failure during replacement",
         "negative_control": "Publish clear frame or repeatedly allocate",
@@ -2018,7 +2018,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/attachment-guard/receipt.json"
+      ]
     },
     {
       "id": "LF-07",
@@ -2453,7 +2456,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial: real Vulkan attachment identity/reuse/equal-payload extent/forced-replacement tests passed; full native generation and MEM-budget proof remains open",
         "id": "proof_lf_11",
         "positive": "Repeated same-size frame then changed-size frame",
         "negative_control": "Recreate MSAA attachments unconditionally",
@@ -2499,7 +2502,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/attachment-guard/receipt.json"
+      ]
     },
     {
       "id": "LF-12",
@@ -23616,5 +23622,33 @@
       "No dependency, product authority or resize exclusion change"
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/acquisition-transition/receipt.json"
+  },
+  "s1_attachment_guard_work": {
+    "status": "default four-host guarded attachment preparation adopted; partial LF-06/LF-11 proof",
+    "production_consumers": [
+      "MAIN via Runtime::render",
+      "GLOBAL/PROJECT/NEW via GlobalPreferencesWindowSurface::render"
+    ],
+    "shared_owner": "Renderer::prepare_surface_attachment -> SurfaceAttachments::ensure_guarded using existing native DeviceHealth signal",
+    "retired_paths": [
+      "Native attachment replacement first occurring inside render after scene uploads",
+      "Publishing a replacement view before checking a reported creation failure"
+    ],
+    "production_change": "Prepare attachment before scene preparation/uploads/encoding. Check existing device health before allocation, after texture creation, and before view publication. On reported failure return error and retain old attachment; native acquired frame drops through existing lease. Same-size render reuses the prepared attachment. Non-native entries retain existing ensure behavior.",
+    "verification": {
+      "app": "final suite 356 passed, 0 failed, 9 ignored; visual integration ignored",
+      "gpu": "3 gpu_surface tests passed serially with visual feature on Vulkan, 203 filtered: real small allocations, same-size reuse, equal-payload changed extent, forced replacement negative control, failed health checks at texture/view creation retaining old identity, later fresh successful retry",
+      "failure_injection": "Existing device-health guard callback is injected in the focused test. No real hardware OOM or native backend error callback was forced.",
+      "clippy": "app and renderer all targets with renderer visual feature, -D warnings passed",
+      "release": "fresh guarded offline release passed"
+    },
+    "limits": [
+      "Deferred backend errors arriving after publication are not caught by this guard; existing device recovery still owns them",
+      "No complete native allocation-failure/no-empty-frame replay or engine/PTY preservation measurement",
+      "Current logical payload and allocation-call identity proof does not establish driver residency, failed-candidate peak bytes or full MEM budgets",
+      "LF-06/LF-11/S1 remain incomplete; md9 native capture limitation remains",
+      "No dependency/license, protected prototype, product authority or resize exclusion change"
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/attachment-guard/receipt.json"
   }
 }

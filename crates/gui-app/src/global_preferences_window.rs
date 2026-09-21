@@ -254,6 +254,12 @@ impl GlobalPreferencesWindowSurface {
         else {
             return Ok(false);
         };
+        self.renderer.prepare_surface_attachment(
+            &runtime.device,
+            self.config.width,
+            self.config.height,
+            || !runtime.device_health.failed(),
+        )?;
         if self.prepared.is_none() {
             if new_project {
                 let mut workspace = runtime.workspace().clone();
