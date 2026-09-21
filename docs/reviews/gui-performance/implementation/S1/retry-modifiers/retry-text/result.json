@@ -1,0 +1,22 @@
+{
+  "binary_sha256": "d703da1e9aeb1c0f51bc255ed371fd1b992ba49e53bec0dacc2f4cf38e2a1920",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "window": "WindowId(12582917)",
+      "typed_after_retry": "retry text",
+      "failure_reports": 1,
+      "application_exit": 0,
+      "scope": "one-shot backend Other fault; Ctrl held at launch then released while failed; native F5 successful frame and text input, WM_DELETE_WINDOW Close; final screenshot requires visual review"
+    }
+  ]
+}

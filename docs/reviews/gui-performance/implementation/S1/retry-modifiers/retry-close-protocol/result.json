@@ -1,0 +1,76 @@
+{
+  "binary_sha256": "e600bfa4b1d5283a2b1247546af0c43fb8b3ccd7a5f4150732dd984ad2893882",
+  "runs": [
+    {
+      "host": "MAIN",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "window": "WindowId(12582916)",
+      "first_episode_attempts": 11,
+      "manual_retry_attempts": 12,
+      "failure_reports": 2,
+      "application_exit": 0,
+      "scope": "backend timeout injection; native F5 and WM_DELETE_WINDOW Close; no successful-frame/data-state/resource-budget qualification"
+    },
+    {
+      "host": "GLOBAL",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "window": "WindowId(12582917)",
+      "first_episode_attempts": 12,
+      "manual_retry_attempts": 12,
+      "failure_reports": 2,
+      "application_exit": 0,
+      "scope": "backend timeout injection; native F5 and WM_DELETE_WINDOW Close; no successful-frame/data-state/resource-budget qualification"
+    },
+    {
+      "host": "PROJECT",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "window": "WindowId(12582917)",
+      "first_episode_attempts": 12,
+      "manual_retry_attempts": 12,
+      "failure_reports": 2,
+      "application_exit": 0,
+      "scope": "backend timeout injection; native F5 and WM_DELETE_WINDOW Close; no successful-frame/data-state/resource-budget qualification"
+    },
+    {
+      "host": "NEW",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "window": "WindowId(12582917)",
+      "first_episode_attempts": 12,
+      "manual_retry_attempts": 12,
+      "failure_reports": 2,
+      "application_exit": 0,
+      "scope": "backend timeout injection; native F5 and WM_DELETE_WINDOW Close; no successful-frame/data-state/resource-budget qualification"
+    }
+  ]
+}
