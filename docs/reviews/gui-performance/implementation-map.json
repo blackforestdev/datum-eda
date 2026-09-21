@@ -5324,7 +5324,11 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/terminal-output-damage/tests.log.gz"
       ],
-      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row.",
+      "s3_scroll_press_progress": {
+        "status": "partial; changed-only default adapter damage implemented; native counters unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-press-damage/result.json"
+      }
     },
     {
       "id": "HP12-01",
@@ -6482,6 +6486,10 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "INSPECTOR": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s3_scroll_press_progress": {
+        "status": "partial; changed-only default adapter damage implemented; native counters unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-press-damage/result.json"
       }
     },
     {
@@ -26615,5 +26623,26 @@
       "guard_reconciliation": "Shared clipping previously retired drain/collect for retain_mut. Update the existing marker check to require retain, prefix guard, index increment and intersection; all11 guard tests pass including individual missing-marker rejection."
     },
     "evidence": "docs/reviews/gui-performance/implementation/S3/project-layers-clipping/result.json"
+  },
+  "s3_scroll_press_damage_work": {
+    "status": "bounded S3 default Preferences press-damage implementation; qualification partial",
+    "baseline": "ef042598104f82dd52d7044d85cee6edc54a6b5b",
+    "sources": {
+      "crates/gui-viewport/src/scroll.rs": "826b250a5a7e2aa4682fc3e97831460dc1f433c4c06a24e78edc43a3262d80bc",
+      "crates/gui-app/src/global_preferences_window.rs": "4e176dec3f769ab3bdac2ac6f52ab4b17c3b64e3228058c12576f3517f183b86"
+    },
+    "production_consumers": [
+      "GLOBAL native scrollbar pointer adapter",
+      "PROJECT native scrollbar pointer adapter"
+    ],
+    "call_path": "native mouse press -> GlobalPreferencesWindowSurface::scrollbar_input -> ScrollViewport::press -> ScrollPress(consumed,changed) -> changed-only invalidate/request",
+    "retired_path": "Unconditional content preparation/frame request for every consumed thumb press",
+    "behavior": "Thumb press retains exact grab and consumes routing without changing offset or rendering; track page press reports offset change and requests owning-host damage. Release consumption and drag damage retain existing paths. Pressed state is not a drawn style in the current renderer.",
+    "proof": {
+      "viewport": "44 viewport tests pass; updated grab/page test distinguishes consumed-no-change from consumed-change and retains drag/page/bounds assertions.",
+      "app": "Three focused global_preferences_window tests pass; app test binary compiles with changed shared API.",
+      "limits": "No actual native per-adapter frame ledger or independent defect injection in this slice. Focus-taking native tests remain deferred pending desktop-use response. This is not full HP11/HP21 or S3 acceptance."
+    },
+    "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-press-damage/result.json"
   }
 }

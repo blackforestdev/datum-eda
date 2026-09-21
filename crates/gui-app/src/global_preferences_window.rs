@@ -233,8 +233,9 @@ impl GlobalPreferencesWindowSurface {
         let Some((x, y)) = self.cursor_position else {
             return false;
         };
-        self.scrollbar_pressed = self.scroll.press(x, y);
-        if self.scrollbar_pressed {
+        let outcome = self.scroll.press(x, y);
+        self.scrollbar_pressed = outcome.consumed;
+        if outcome.changed {
             self.invalidate();
             frames.invalidate(&self.window);
         }
