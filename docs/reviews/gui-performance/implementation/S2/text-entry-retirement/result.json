@@ -1,0 +1,28 @@
+{
+  "status": "partial S2 memory retirement improvement; no S2 exit or full shaped-text byte-cap qualification",
+  "baseline_commit": "edc15d7d602c499f4599b1d75dcc5b5f5b69bbb8",
+  "production_consumers": [
+    "MAIN full-frame workspace/menu text, including NEW on its existing full-frame preparation path",
+    "GLOBAL and PROJECT dialog-only text"
+  ],
+  "owner": "TextBufferCache::rebuild_lookup, reached by workspace begin_frame retirement and dialog post-submission trim_overlay",
+  "retired_path": "Unbounded spare entry-vector allocation after text buffers were evicted; lookup index already had the same retirement policy",
+  "behavior": "After retirement, entry-vector capacity is at most four times live rows; beyond that threshold it shrinks to live length, reaching zero when empty. Overlay cap implies at most 512 entry slots after trimming. Moving entries keeps order, index identity, exact keys and nested shaping payloads; glyph revision invalidation remains before rebuilding. Hysteresis avoids shrinking on every small retirement.",
+  "proof": {
+    "negative": "Expanded existing shaped-cache test from 160 to 640 labels. Before production fix, assertion entries.capacity <= 4 * MAX_OVERLAY_BUFFERS failed. Initial negative still touched labels 159 onward in the next frame; final test touches only the last label to preserve the original recency scenario.",
+    "positive": "Final test checks 640 exact warm hits and collision safety, trims to 128 dialog rows, proves all surviving labels still hit, retires to one workspace row then zero with both entry/index capacities bounded/released.",
+    "renderer": "202 passed, 21 ignored; separate real-GPU atlas retry/cache-reindex regression passed",
+    "build": "Offline release and renderer all-targets visual Clippy with denied warnings pass",
+    "native": "Four X11 host startup/present/controlled-close smokes pass; Main wheel input included. These are regressions, not native byte-pressure or process memory acceptance."
+  },
+  "remaining": [
+    "Complete key, glyph/layout, nested capacities and atlas byte accounting; 8 MiB renderer and 32 MiB process limits remain unqualified.",
+    "Current visible content is not evicted; no cap on active frame scratch is established here.",
+    "No native backend/scale/endurance, global adoption or RSS/performance claim. No dependency, license, font assets, third-party code or resize qualification change."
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/render/text_buffer_cache.rs": "c015744dc50b2bcb8e48e749bdcec31ae5d45a277549d4b95002396d8f3acdcd",
+    "crates/gui-render/src/render/text_buffer_cache_tests.rs": "43a3b61100197072db54efc8edc790b89c693021392f05a47e7b6c6da53e3cda"
+  },
+  "candidate_binary_sha256": "8748ab8b4c226ad26de123e7f181556196f31e12596ea73d022459c300e93eee"
+}
