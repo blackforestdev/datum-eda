@@ -1,0 +1,49 @@
+{
+  "status": "Shared pre-encoding glyph transaction adopted; GPI-S2 remains in progress",
+  "issue": "dat-glyph-atlas-retry-wl5",
+  "baseline_commit": "6b03c9f2d7d7bcd2f05f1b560e6321999ac9864c",
+  "selection": "Overlay preparation could trim the shared atlas after workspace text encoding. Glyphon trim clears residency protection, allowing subsequent allocations to evict glyphs referenced by workspace instances before submission. Prior signatures also survived failed preparations and did not carry cache reindex identity.",
+  "production_consumers_migrated": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "production_paths": [
+    "Renderer::render_with_submission -> prepare_frame_text before either text pass",
+    "Renderer::render_overlay_only -> same prepare_frame_text transaction"
+  ],
+  "competing_paths_retired": [
+    "Independent workspace and overlay trim/retry implementations",
+    "Post-workspace-encoding overlay preparation",
+    "Ungenerational last_text_prepare_signature field"
+  ],
+  "change": "One transaction prepares both atlas consumers before either text draw. On pressure, trim once and retry workspace first to protect its glyphs, then overlay. Invalidate before any fallible preparation, publish the signature only after both succeed, and qualify reuse by shaped-cache revision. Insertion, eviction and overlay reorder advance that revision. Overlay-only frames leave no workspace signature. Unchanged successful frames retain the workspace prepare skip.",
+  "proof": {
+    "renderer": "197 passed, 16 ignored after restoration. Initial test import compile failure preserved; corrected crate-qualified module path.",
+    "gpu_transaction": "Actual renderer preserves warm workspace skip; injected overlay failure retries workspace; failed retry leaves signature invalid and recovers on the next frame. Retained cache hit at reused index zero refreshes workspace glyphs and matches forced fresh preparation.",
+    "real_pressure": "Intel P630/Vulkan, 192x192 target and 256x256 device texture limit: 32 successive overlay size sets exercise six real atlas retries without injected errors. Final pixels match a fresh atlas; unchanged recovery remains warm.",
+    "negative_controls": "Disabling workspace retry fails its preparation-count assertion. Omitting cache revision fails the reused-index assertion. Both were deliberate source mutations, serial guarded GPU tests, and restored byte-for-byte; final positive suite/GPU tests/Clippy/release rebuilt restored source.",
+    "parity": "Full/dialog pixel parity passes at 1x/1.5x and fractional dialog scroll preserves chrome/text reuse.",
+    "native": "Final release MAIN zoom-in/out and GLOBAL/PROJECT/NEW X11 startup/presentation/close pass, exit zero. Native atlas pressure and backend matrix remain unqualified.",
+    "build_lint": "Offline guarded release and renderer library/tests Clippy pass.",
+    "app_scope": "No app source edits or full app suite rerun; known terminal lineage and convergence failures remain open.",
+    "governance": "Source health, parity, dependency authority, traceability/spec/project, diff and staged rustfmt checked before commit."
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "539abf1c8569fa1b0aa088e45315aab33f1fdfe0ed2a1c012a875a6fdec2c191",
+    "crates/gui-render/src/render/gpu_init.rs": "94757b0a60b71f74fd33db148737a3db2544e8ebd303f1944650439eb504fb5f",
+    "crates/gui-render/src/render/gpu_overlay.rs": "6fd37ea84b522c340de3de76aafd4dd93b6aa9ea73678393a7bbf48e6db5943b",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "353146615ff2a55fbdf5129c11832315544f29c6b501a7fa4193732559d89b0f",
+    "crates/gui-render/src/render/renderer_state.rs": "33a2c6728cc45cbcf80b4127d472ad227c5b4626fcd737f2127827420cae1d26",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "15667ed3bc2f83ef1f3d2c571f9b6f33b49548536128b79af92a7b269671b718",
+    "crates/gui-render/src/render/gpu_text.rs": "a9bde4a5d171d2e2e7a36c265c855663de9a2449e04e0f4c013715ada598e09c"
+  },
+  "candidate_binary_sha256": "c52a26178667db3fafa663d28f1c862ae437cbbd8ef742edd72a201bcacfcdc8",
+  "limits": [
+    "Pressure proof is one real GPU/backend with deliberately restricted atlas capacity, not native default-capacity endurance or comprehensive backend qualification.",
+    "Complete text shaping/layout keys and shaped-payload/atlas/scratch accounting/caps remain open; this slice adds no cache or third-party instrumentation.",
+    "No numerical performance or whole-PM045 acceptance. S2 remains selected; S3-S5 remain pending.",
+    "Existing text, render pass/AA, dependency/license and resize boundaries remain unchanged."
+  ]
+}

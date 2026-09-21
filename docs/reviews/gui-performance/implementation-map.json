@@ -5931,7 +5931,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial shared shaped-cache owner adoption: borrowed existing-key lookup and retained workspace/dialog profiles verified by CPU tests and renderer pixel/scroll proofs. Full shaping-key, atlas/signature eviction, payload accounting and per-adapter qualification remain open.",
+        "status": "Partial native adoption with real GPU qualification: shared pre-encoding glyph transaction, cache-revision identity, failed-attempt invalidation and coordinated atlas retry implemented. Six actual restricted-atlas retries preserve fresh-atlas pixels; retry/reindex negative mutations fail and restored positives pass. Four native smoke checks pass. Full default-capacity native backend/scale/endurance and payload accounting remain open.",
         "id": "proof_hp17_01",
         "positive": "Switch workspace/dialog with eviction/reorder and changed text",
         "negative_control": "Keep stale glyph signature",
@@ -5975,7 +5975,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json"
+        "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json",
+        "docs/reviews/gui-performance/implementation/S2/glyph-transaction/result.json"
       ]
     },
     {
@@ -6007,7 +6008,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial shared shaped-cache owner adoption: borrowed existing-key lookup and retained workspace/dialog profiles verified by CPU tests and renderer pixel/scroll proofs. Full shaping-key, atlas/signature eviction, payload accounting and per-adapter qualification remain open.",
+        "status": "Partial native adoption with real GPU qualification: shared pre-encoding glyph transaction, cache-revision identity, failed-attempt invalidation and coordinated atlas retry implemented. Six actual restricted-atlas retries preserve fresh-atlas pixels; retry/reindex negative mutations fail and restored positives pass. Four native smoke checks pass. Full default-capacity native backend/scale/endurance and payload accounting remain open.",
         "id": "proof_hp17_02",
         "positive": "Terminal churn repeatedly across two generations",
         "negative_control": "Retain all historical text",
@@ -6051,7 +6052,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json"
+        "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json",
+        "docs/reviews/gui-performance/implementation/S2/glyph-transaction/result.json"
       ]
     },
     {
@@ -25248,6 +25250,27 @@
       "CPU screen geometry generation, world encoding/cache capacity qualification, complete text keys/payload/atlas bounds and S2 completion remain open.",
       "Schematic stream migration is code adoption only; resolved schematic content performance remains unqualified without fixture admission.",
       "No new dependency, vendoring, version/license, visual-prototype, product mutation or resize qualification change."
+    ]
+  },
+  "s2_glyph_transaction_work": {
+    "status": "Shared pre-encoding glyph transaction adopted; GPI-S2 remains in progress",
+    "evidence": "docs/reviews/gui-performance/implementation/S2/glyph-transaction/result.json",
+    "production_consumers_migrated": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "competing_paths_retired": [
+      "Independent workspace and overlay trim/retry implementations",
+      "Post-workspace-encoding overlay preparation",
+      "Ungenerational last_text_prepare_signature field"
+    ],
+    "remaining_limitations": [
+      "Pressure proof is one real GPU/backend with deliberately restricted atlas capacity, not native default-capacity endurance or comprehensive backend qualification.",
+      "Complete text shaping/layout keys and shaped-payload/atlas/scratch accounting/caps remain open; this slice adds no cache or third-party instrumentation.",
+      "No numerical performance or whole-PM045 acceptance. S2 remains selected; S3-S5 remain pending.",
+      "Existing text, render pass/AA, dependency/license and resize boundaries remain unchanged."
     ]
   }
 }

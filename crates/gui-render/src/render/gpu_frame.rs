@@ -327,60 +327,8 @@ impl Renderer {
         let encode_elapsed = encode_started.elapsed();
         self.viewport.update(queue, Resolution { width, height });
         let text_prepare_started = std::time::Instant::now();
-        self.text_buffers
-            .begin_frame(text_buffer_cache::Profile::Workspace);
-        let (text_buffer_indices, text_cache_stats) =
-            self.text_buffers
-                .indices(&mut self.font_system, &prepared.text_runs, width, height);
-        let text_signature =
-            text_prepare_signature(&text_buffer_indices, &prepared.text_runs, width, height);
-        let skipped_text_prepare = self
-            .last_text_prepare_signature
-            .as_ref()
-            .is_some_and(|previous| previous == &text_signature)
-            && text_cache_stats.misses == 0;
-        if !skipped_text_prepare {
-            let prepare_result = self.text_renderer.prepare(
-                device,
-                queue,
-                &mut self.font_system,
-                &mut self.atlas,
-                &self.viewport,
-                build_text_areas(
-                    self.text_buffers.entries(),
-                    &text_buffer_indices,
-                    &prepared.text_runs,
-                ),
-                &mut self.swash_cache,
-            );
-            if let Err(initial_error) = prepare_result {
-                // Keep the glyph atlas warm during normal interaction. Trim only
-                // when prepare reports pressure, then retry with the same semantic
-                // text areas. This preserves the DOA2526 atlas-safety behavior
-                // without forcing avoidable re-rasterization on every selection.
-                self.atlas.trim();
-                self.text_renderer
-                    .prepare(
-                        device,
-                        queue,
-                        &mut self.font_system,
-                        &mut self.atlas,
-                        &self.viewport,
-                        build_text_areas(
-                            self.text_buffers.entries(),
-                            &text_buffer_indices,
-                            &prepared.text_runs,
-                        ),
-                        &mut self.swash_cache,
-                    )
-                    .map_err(|retry_error| {
-                        anyhow::anyhow!(
-                            "prepare GUI text after atlas trim: {retry_error}; initial: {initial_error}"
-                        )
-                    })?;
-            }
-            self.last_text_prepare_signature = Some(text_signature);
-        }
+        let (text_cache_stats, skipped_text_prepare) =
+            self.prepare_frame_text(device, queue, prepared, width, height, false)?;
         let text_prepare_elapsed = text_prepare_started.elapsed();
         let text_encode_started = std::time::Instant::now();
         {
@@ -458,7 +406,6 @@ impl Renderer {
             // shared, so overlay glyph buffers reuse the same atlas.
             let menu_overlay_text_runs = prepared.menu_overlay_text_runs();
             if !menu_overlay_text_runs.is_empty() {
-                self.prepare_overlay_text(device, queue, prepared, width, height)?;
                 {
                     let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                         label: Some("datum-gui-menu-overlay-text-pass"),

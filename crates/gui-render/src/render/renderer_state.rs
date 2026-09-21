@@ -28,7 +28,7 @@ pub struct Renderer {
     pub(super) text_renderer: TextRenderer,
     pub(super) menu_overlay_text_renderer: TextRenderer,
     pub(super) text_buffers: text_buffer_cache::TextBufferCache,
-    pub(super) last_text_prepare_signature: Option<TextPrepareSignature>,
+    pub(super) text_preparation: gpu_overlay::gpu_text::GlyphPreparation,
     pub(super) panel_gpu: gpu_data::screen_buffer::ScreenBuffer,
     pub(super) viewport_underlay_gpu: gpu_data::screen_buffer::ScreenBuffer,
     pub(super) viewport_overlay_gpu: gpu_data::screen_buffer::ScreenBuffer,
