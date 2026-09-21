@@ -30,8 +30,12 @@ impl Renderer {
         width: u32,
         height: u32,
     ) -> anyhow::Result<()> {
-        let (overlay_indices, _) =
-            self.cached_text_buffer_indices(prepared.menu_overlay_text_runs(), width, height);
+        let (overlay_indices, _) = self.text_buffers.indices(
+            &mut self.font_system,
+            prepared.menu_overlay_text_runs(),
+            width,
+            height,
+        );
         let overlay_prepare = self.menu_overlay_text_renderer.prepare(
             device,
             queue,
@@ -39,7 +43,7 @@ impl Renderer {
             &mut self.atlas,
             &self.viewport,
             build_text_areas(
-                &self.text_buffer_cache,
+                self.text_buffers.entries(),
                 &overlay_indices,
                 prepared.menu_overlay_text_runs(),
             ),
@@ -55,7 +59,7 @@ impl Renderer {
                             &mut self.atlas,
                             &self.viewport,
                             build_text_areas(
-                                &self.text_buffer_cache,
+                                self.text_buffers.entries(),
                                 &overlay_indices,
                                 prepared.menu_overlay_text_runs(),
                             ),
@@ -103,7 +107,8 @@ impl Renderer {
             prepared.menu_overlay_vertices(),
         );
         self.viewport.update(queue, Resolution { width, height });
-        self.begin_overlay_text_buffer_frame();
+        self.text_buffers
+            .begin_frame(text_buffer_cache::Profile::Overlay);
         let has_text = !prepared.menu_overlay_text_runs().is_empty();
         if has_text {
             self.prepare_overlay_text(device, queue, prepared, width, height)?;
@@ -154,7 +159,7 @@ impl Renderer {
         let submission = queue.submit([encoder.finish()]);
         on_submitted(submission);
         self.submit_gpu_measurement(measurement)?;
-        self.trim_overlay_text_buffers();
+        self.text_buffers.trim_overlay();
         trace_render_timing(format!(
             "dialog renderer={}us passes=1",
             started.elapsed().as_micros()

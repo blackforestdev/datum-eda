@@ -180,7 +180,8 @@ fn fractional_dialog_scroll_preserves_chrome_and_reuses_shaped_text() {
             );
             assert!(scene.is_overlay_only());
             if cycle == 1 {
-                let (_, stats) = renderer.renderer.cached_text_buffer_indices(
+                let (_, stats) = renderer.renderer.text_buffers.indices(
+                    &mut renderer.renderer.font_system,
                     scene.menu_overlay_text_runs(),
                     960,
                     300,

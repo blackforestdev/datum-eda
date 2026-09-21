@@ -1,0 +1,10 @@
+    fn ensure_text_buffer(&mut self, run: &TextRun, width: u32, height: u32) -> (usize, bool) {
+        let key = text_buffer_key(run, width, height);
+        if let Some(index) = self
+            .text_buffer_cache
+            .iter()
+            .position(|entry| entry.key == key)
+        {
+            self.text_buffer_cache[index].last_used_frame = self.text_buffer_frame;
+            return (index, false);
+        }

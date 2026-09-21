@@ -1,10 +1,4 @@
-// Glyph-buffer cache helpers for the `Renderer`, extracted from `gpu.rs` to keep
-// it under its source-health ceiling (decision 022) as S4 threads the schematic
-// interaction underlay through it. A real `#[path] mod` child of the crate root
-// (declared in `gpu.rs`), so this inherent-impl block reaches the `Renderer`'s
-// private fields and the crate-root text types/helpers via `use super::*` exactly
-// as the inline methods did. Behaviour is unchanged — a verbatim move.
-
+//! Shared shaped-buffer ownership and bounded workspace/dialog retention.
 use super::*;
 use glyphon::Style;
 
@@ -42,34 +36,61 @@ fn retain_overlay_buffers<T>(
     });
 }
 
-impl Renderer {
-    /// Retain shaped buffers used by the immediately preceding frame only.
-    /// Agent TUIs continuously rewrite status lines; retaining every historical
-    /// whole-string buffer made lookup progressively slower and memory grow
-    /// without bound. Current and previous-frame residency preserves stable
-    /// frame reuse while bounding churn by visible scene complexity.
-    pub(crate) fn begin_text_buffer_frame(&mut self) {
-        self.text_buffer_frame = self.text_buffer_frame.wrapping_add(1).max(1);
-        retain_recent_text_buffers(
-            &mut self.text_buffer_cache,
-            self.text_buffer_frame,
-            |entry| entry.last_used_frame,
-        );
+#[derive(Default)]
+pub(crate) struct TextBufferCache {
+    entries: Vec<CachedTextBuffer>,
+    frame: u64,
+}
+
+#[derive(Clone, Copy)]
+pub(crate) enum Profile {
+    Workspace,
+    Overlay,
+}
+
+/// Compare the complete existing shaping/layout key without allocating a copy.
+/// Position and default color belong to glyph placement, not this buffer key.
+fn matches_run(key: &TextBufferKey, run: &TextRun, (width_px, height_px): (u32, u32)) -> bool {
+    key.text == run.text
+        && key.size_bits == run.size.to_bits()
+        && key.face == run.face
+        && key.width_px == width_px
+        && key.height_px == height_px
+        && key.rich_spans.len() == run.rich_spans.len()
+        && key
+            .rich_spans
+            .iter()
+            .zip(&run.rich_spans)
+            .all(|(key, span)| {
+                key.text == span.text
+                    && key.color_bits == span.color.map(f32::to_bits)
+                    && key.bold == span.bold
+                    && key.italic == span.italic
+            })
+}
+
+impl TextBufferCache {
+    pub(crate) fn entries(&self) -> &[CachedTextBuffer] {
+        &self.entries
     }
 
-    /// Owned dialogs have a small reusable vocabulary. Keep recently seen rows
-    /// across scroll reversals, instead of shaping them again after one frame.
-    /// The terminal/workspace path keeps its existing two-generation policy.
-    pub(crate) fn begin_overlay_text_buffer_frame(&mut self) {
-        self.text_buffer_frame = self.text_buffer_frame.wrapping_add(1).max(1);
+    /// Workspace/terminal keeps two generations; dialog history is trimmed
+    /// after submission so every current-frame text-area borrow stays valid.
+    pub(crate) fn begin_frame(&mut self, profile: Profile) {
+        self.frame = self.frame.wrapping_add(1).max(1);
+        if matches!(profile, Profile::Workspace) {
+            retain_recent_text_buffers(&mut self.entries, self.frame, |entry| {
+                entry.last_used_frame
+            });
+        }
     }
 
     /// Called after glyph preparation/submission, when no text-area borrow is
     /// live. Bound retained buffers and key text; current-frame scratch can grow
     /// only with that frame's visible text. Glyph instances own their GPU data.
-    pub(crate) fn trim_overlay_text_buffers(&mut self) {
+    pub(crate) fn trim_overlay(&mut self) {
         retain_overlay_buffers(
-            &mut self.text_buffer_cache,
+            &mut self.entries,
             |entry| entry.last_used_frame,
             |entry| {
                 entry.key.text.len()
@@ -83,8 +104,9 @@ impl Renderer {
         );
     }
 
-    pub(crate) fn cached_text_buffer_indices(
+    pub(crate) fn indices(
         &mut self,
+        font_system: &mut FontSystem,
         text_runs: &[TextRun],
         width: u32,
         height: u32,
@@ -92,7 +114,7 @@ impl Renderer {
         let mut indices = Vec::with_capacity(text_runs.len());
         let mut stats = TextBufferCacheStats::default();
         for run in text_runs {
-            let (index, missed) = self.ensure_text_buffer(run, width, height);
+            let (index, missed) = self.ensure_text_buffer(font_system, run, width, height);
             if missed {
                 stats.misses += 1;
             } else {
@@ -103,38 +125,36 @@ impl Renderer {
         (indices, stats)
     }
 
-    fn ensure_text_buffer(&mut self, run: &TextRun, width: u32, height: u32) -> (usize, bool) {
-        let key = text_buffer_key(run, width, height);
+    fn ensure_text_buffer(
+        &mut self,
+        font_system: &mut FontSystem,
+        run: &TextRun,
+        width: u32,
+        height: u32,
+    ) -> (usize, bool) {
+        let extent = text_buffer_extent(run, width, height);
         if let Some(index) = self
-            .text_buffer_cache
+            .entries
             .iter()
-            .position(|entry| entry.key == key)
+            .position(|entry| matches_run(&entry.key, run, extent))
         {
-            self.text_buffer_cache[index].last_used_frame = self.text_buffer_frame;
+            self.entries[index].last_used_frame = self.frame;
             return (index, false);
         }
-        let mut buffer = Buffer::new(
-            &mut self.font_system,
-            Metrics::new(run.size, run.size * 1.22),
-        );
+        let key = text_buffer_key(run, width, height);
+        let mut buffer = Buffer::new(font_system, Metrics::new(run.size, run.size * 1.22));
         let (buffer_width, buffer_height) = text_buffer_extent(run, width, height);
         buffer.set_size(
-            &mut self.font_system,
+            font_system,
             Some(buffer_width as f32),
             Some(buffer_height as f32),
         );
         let attrs = text_attrs(run.face);
         if run.rich_spans.is_empty() {
-            buffer.set_text(
-                &mut self.font_system,
-                &run.text,
-                &attrs,
-                Shaping::Basic,
-                None,
-            );
+            buffer.set_text(font_system, &run.text, &attrs, Shaping::Basic, None);
         } else {
             buffer.set_rich_text(
-                &mut self.font_system,
+                font_system,
                 run.rich_spans.iter().map(|span| {
                     let mut span_attrs = attrs.clone().color(text_color(span.color));
                     if span.bold {
@@ -150,19 +170,128 @@ impl Renderer {
                 None,
             );
         }
-        buffer.shape_until_scroll(&mut self.font_system, false);
-        self.text_buffer_cache.push(CachedTextBuffer {
+        buffer.shape_until_scroll(font_system, false);
+        self.entries.push(CachedTextBuffer {
             key,
             buffer,
-            last_used_frame: self.text_buffer_frame,
+            last_used_frame: self.frame,
         });
-        (self.text_buffer_cache.len() - 1, true)
+        (self.entries.len() - 1, true)
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn run() -> TextRun {
+        TextRun {
+            text: "Cache label".into(),
+            rich_spans: vec![],
+            x: 0.0,
+            y: 0.0,
+            size: 12.0,
+            color: TEXT_PRIMARY,
+            face: TextFace::Ui,
+            clip_bounds: None,
+        }
+    }
+
+    #[test]
+    fn borrowed_lookup_preserves_the_complete_existing_key() {
+        let mut original = run();
+        original.rich_spans.push(TextRunSpan {
+            text: "span".into(),
+            color: TEXT_PRIMARY,
+            bold: false,
+            italic: false,
+        });
+        let key = text_buffer_key(&original, 1280, 800);
+        let mut variants = vec![original.clone()];
+        for change in 0..10 {
+            let mut changed = original.clone();
+            match change {
+                0 => {
+                    changed.x += 20.0;
+                    changed.y += 30.0;
+                    changed.color = TEXT_SECONDARY;
+                }
+                1 => changed.text.push('!'),
+                2 => changed.size += 1.0,
+                3 => changed.face = TextFace::Terminal,
+                4 => changed.rich_spans[0].text.push('!'),
+                5 => changed.rich_spans[0].bold = true,
+                6 => changed.rich_spans[0].italic = true,
+                7 => changed.rich_spans[0].color = TEXT_SECONDARY,
+                8 => changed.rich_spans.clear(),
+                _ => {
+                    changed.clip_bounds = Some(RectPx {
+                        x: 0.0,
+                        y: 0.0,
+                        width: 40.0,
+                        height: 20.0,
+                    })
+                }
+            }
+            variants.push(changed);
+        }
+        for candidate in variants {
+            for (width, height) in [(1280, 800), (25, 10)] {
+                assert_eq!(
+                    matches_run(
+                        &key,
+                        &candidate,
+                        text_buffer_extent(&candidate, width, height)
+                    ),
+                    key == text_buffer_key(&candidate, width, height)
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn real_shaped_cache_reuses_placement_changes_and_retires_old_workspace_rows() {
+        let mut fonts = FontSystem::new();
+        load_datum_fonts(&mut fonts);
+        let mut cache = TextBufferCache::default();
+        let original = run();
+        cache.begin_frame(Profile::Workspace);
+        let (indices, cold) = cache.indices(&mut fonts, std::slice::from_ref(&original), 1280, 800);
+        assert_eq!(cold.misses, 1);
+        assert!(
+            cache.entries()[indices[0]]
+                .buffer
+                .layout_runs()
+                .next()
+                .is_some()
+        );
+        let key_storage = cache.entries()[indices[0]].key.text.as_ptr();
+        let mut moved = original.clone();
+        moved.x += 20.0;
+        moved.color = TEXT_SECONDARY;
+        cache.begin_frame(Profile::Workspace);
+        let (warm_indices, warm) = cache.indices(&mut fonts, &[moved], 1280, 800);
+        assert_eq!(warm.hits, 1);
+        assert_eq!(warm.misses, 0);
+        assert_eq!(indices, warm_indices);
+        assert_eq!(key_storage, cache.entries()[indices[0]].key.text.as_ptr());
+        let mut changed = original.clone();
+        changed.text.push('!');
+        cache.begin_frame(Profile::Workspace);
+        assert_eq!(cache.indices(&mut fonts, &[changed], 1280, 800).1.misses, 1);
+        assert_eq!(cache.entries().len(), 2);
+        cache.begin_frame(Profile::Workspace);
+        assert_eq!(cache.entries().len(), 1);
+        assert_ne!(cache.entries()[0].key.text, original.text);
+        cache.begin_frame(Profile::Overlay);
+        cache.indices(&mut fonts, std::slice::from_ref(&original), 1280, 800);
+        cache.trim_overlay();
+        cache.begin_frame(Profile::Overlay);
+        assert_eq!(
+            cache.indices(&mut fonts, &[original], 1280, 800).1.misses,
+            0
+        );
+    }
 
     #[derive(Debug)]
     struct SimulatedBuffer {

@@ -5931,7 +5931,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial shared shaped-cache owner adoption: borrowed existing-key lookup and retained workspace/dialog profiles verified by CPU tests and renderer pixel/scroll proofs. Full shaping-key, atlas/signature eviction, payload accounting and per-adapter qualification remain open.",
         "id": "proof_hp17_01",
         "positive": "Switch workspace/dialog with eviction/reorder and changed text",
         "negative_control": "Keep stale glyph signature",
@@ -5973,7 +5973,10 @@
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json"
+      ]
     },
     {
       "id": "HP17-02",
@@ -6004,7 +6007,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial shared shaped-cache owner adoption: borrowed existing-key lookup and retained workspace/dialog profiles verified by CPU tests and renderer pixel/scroll proofs. Full shaping-key, atlas/signature eviction, payload accounting and per-adapter qualification remain open.",
         "id": "proof_hp17_02",
         "positive": "Terminal churn repeatedly across two generations",
         "negative_control": "Retain all historical text",
@@ -6046,7 +6049,10 @@
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json"
+      ]
     },
     {
       "id": "HP18-01",
@@ -16530,7 +16536,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial shared shaped-cache owner adoption: borrowed existing-key lookup and retained workspace/dialog profiles verified by CPU tests and renderer pixel/scroll proofs. Full shaping-key, atlas/signature eviction, payload accounting and per-adapter qualification remain open.",
         "id": "proof_reuse_text_key",
         "positive": "Independently change text/font revision/size/style/language/direction/features",
         "negative_control": "Omit each dependency in turn",
@@ -16554,7 +16560,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json"
+      ]
     },
     {
       "id": "REUSE-TEXT-LAYOUT",
@@ -25169,6 +25178,30 @@
       "Shaped text, screen uploads, full encoding keys/cache eviction, complete byte caps and broader S2 requirements remain incomplete.",
       "Source ownership is one reference per slot; GPU capacity, in-flight render-bundle references, driver residency and caches are not equated with live CPU bytes.",
       "No dependency, third-party source, license, shader/pass/AA policy, engine mutation or resize qualification change. Existing terminal drift and native-stall limitations remain."
+    ]
+  },
+  "s2_text_cache_owner_work": {
+    "status": "Bounded shared shaped-cache migration; GPI-S2 remains in progress",
+    "evidence": "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json",
+    "production_consumers_migrated": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "competing_paths_retired": [
+      "Renderer-owned raw cache vector and separately mutable frame counter",
+      "Renderer-specific cache lifecycle and ensure helpers",
+      "Unconditional owned-key construction for warm cache hits"
+    ],
+    "bounds": "Workspace/terminal retains current/previous generations. Overlay retains at most 128 buffers and 32 KiB of key strings after submission. These are existing entry/key bounds, not complete shaped-payload/atlas/capacity bounds.",
+    "remaining_limitations": [
+      "No numerical performance or zero-total-allocation claim. Lookup still scans the bounded entries and allocates frame index storage.",
+      "Preserves the existing TextBufferKey; additional font-revision/language/direction/features contracts and shaping/layout separation are not completed here.",
+      "Full shaped payload, atlas, scratch and GPU memory accounting/caps remain open; no third-party source changes or vendoring.",
+      "Complete glyph-signature eviction/atlas-pressure controls, per-adapter negative qualification, Wayland/scale/native static coverage and S2 completion remain open.",
+      "Known terminal lineage and convergence failures remain unresolved; no full drift pass.",
+      "No dependency, version, license, product mutation, shader/pass/AA or resize qualification change."
     ]
   }
 }

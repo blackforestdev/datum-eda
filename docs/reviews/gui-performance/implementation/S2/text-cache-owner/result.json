@@ -1,0 +1,50 @@
+{
+  "status": "Bounded shared shaped-cache migration; GPI-S2 remains in progress",
+  "baseline_commit": "a6da23e147a9820deeaf253a89de6deff4a60eb8",
+  "baseline_source_sha256": "445fcf9b7365aa2f741fa09bbe6edfd44f2ba3f7c0c0de2cd01115944cf0d62d",
+  "selection": "Existing ensure_text_buffer constructs an owned TextBufferKey before lookup, cloning plain/rich strings even on hits. Source inspection establishes avoidable work; no benchmark or numerical speedup claim.",
+  "production_consumers_migrated": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "production_paths": [
+    "General frame/workspace/terminal text: Renderer::render_with_submission -> TextBufferCache::begin_frame(Workspace) -> indices -> glyphon prepare",
+    "General menu and dialog text: Renderer::prepare_overlay_text -> same TextBufferCache::indices",
+    "Dialog-only frames: Renderer::render_overlay_only -> begin_frame(Overlay) -> prepare_overlay_text -> trim_overlay"
+  ],
+  "competing_paths_retired": [
+    "Renderer-owned raw cache vector and separately mutable frame counter",
+    "Renderer-specific cache lifecycle and ensure helpers",
+    "Unconditional owned-key construction for warm cache hits"
+  ],
+  "change": "TextBufferCache owns entries and frame age. Borrowed lookup compares every existing key field; extent computed once per run, owned strings constructed only for a miss. Existing shaping APIs, glyph preparation signatures, cache profile semantics, shaders and render passes remain.",
+  "bounds": "Workspace/terminal retains current/previous generations. Overlay retains at most 128 buffers and 32 KiB of key strings after submission. These are existing entry/key bounds, not complete shaped-payload/atlas/capacity bounds.",
+  "proof": {
+    "renderer": "197 passed, 12 ignored. Added complete existing-key equivalence matrix and actual shaped-buffer hit/miss, placement reuse, row retirement and profile-transition proof.",
+    "gpu_pixels": "dialog_single_pass_matches_general_renderer_pixels passes on Intel P630/Vulkan at 1x and 1.5x; repeated rows and workspace/dialog transitions preserve equality.",
+    "gpu_scroll": "fractional_dialog_scroll_preserves_chrome_and_reuses_shaped_text passes on Intel P630/Vulkan; warm label misses remain zero and pinned chrome pixels remain equal.",
+    "app": "Full app suite: 375 passed, 1 failed, 11 ignored. Existing dat-terminal-restart-lineage-jti failed at unchanged terminal_session_tests.rs:328; focused serial replay passed in 0.07 seconds. Do not report this suite as fully green.",
+    "native": "Final native X11 single-Board Main zoom-in/out and GLOBAL/PROJECT/NEW startup/presentation/close pass; exit zero and Main ownership released in each case. Smoke only, not native shaping counters/pixel or latency qualification.",
+    "build_lint": "Guarded offline release and renderer library/test Clippy -D warnings pass.",
+    "governance": "Source health and 13 source-health policy tests, parity, dependency authority and diff checks pass; final traceability/spec/project checks recorded at commit."
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "fd56d4121e921be0fa0580e4019e19386942424fc1030894539d0aa66196f6bc",
+    "crates/gui-render/src/render/gpu_init.rs": "0f1bb030a067e81be5a3990619f6a5853cc1a8ee7bee82c8e10fd23abfb71882",
+    "crates/gui-render/src/render/gpu_overlay.rs": "5ebe72c331439955b8380f0af09a987ddbc1ae1f0462221743b1bbcee37fe09f",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "dbe8a2e64eefec2109d8f1e6ad0a89911cdea9c6d917fa3192f996d67fa50c0e",
+    "crates/gui-render/src/render/renderer_state.rs": "3780269c6cab8499e5f23d77a1e021911d3b20bdd0e669d3d38451413ec1692e",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "8566b3b20e37cd82338edcc54d12e8ff6516977a1b676a003171750430a150a1"
+  },
+  "candidate_binary_sha256": "4e3b1932df6a0d167ae25e7f0a7c8f69095ef1a6d7cbfb39c76b622cc99969bf",
+  "limits": [
+    "No numerical performance or zero-total-allocation claim. Lookup still scans the bounded entries and allocates frame index storage.",
+    "Preserves the existing TextBufferKey; additional font-revision/language/direction/features contracts and shaping/layout separation are not completed here.",
+    "Full shaped payload, atlas, scratch and GPU memory accounting/caps remain open; no third-party source changes or vendoring.",
+    "Complete glyph-signature eviction/atlas-pressure controls, per-adapter negative qualification, Wayland/scale/native static coverage and S2 completion remain open.",
+    "Known terminal lineage and convergence failures remain unresolved; no full drift pass.",
+    "No dependency, version, license, product mutation, shader/pass/AA or resize qualification change."
+  ]
+}
