@@ -45,7 +45,9 @@ impl GlobalPreferencesWindowSurface {
             Some(runtime.config.format),
         );
         let format = config.format;
-        surface.configure(&runtime.device, &config);
+        if window.inner_size().width != 0 && window.inner_size().height != 0 {
+            surface.configure(&runtime.device, &config);
+        }
         let mut renderer = Renderer::new(
             &runtime.device,
             &runtime.queue,
@@ -93,9 +95,13 @@ impl GlobalPreferencesWindowSurface {
 
     pub(super) fn resize(&mut self, runtime: &Runtime, width: u32, height: u32) {
         self.surface_transaction.resize(width, height);
-        let width = width.max(1);
-        let height = height.max(1);
-        if self.config.width == width && self.config.height == height {
+        if width == 0 || height == 0 {
+            return;
+        }
+        if self.config.width == width
+            && self.config.height == height
+            && self.surface_transaction.configured_for(width, height)
+        {
             return;
         }
         self.config.width = width;
@@ -343,8 +349,11 @@ impl App {
                 window.clone(),
                 self.args.visual_scale_factor,
             )?;
-            self.frames
-                .register(window.id(), surface.measurements.epoch());
+            self.frames.register(
+                window.id(),
+                surface.measurements.epoch(),
+                window.inner_size(),
+            );
             self.global_preferences_surface = Some(surface);
             self.global_preferences_window = Some(window.clone());
             owned_window_policy::show_owned_window(&window, &mut self.frames);

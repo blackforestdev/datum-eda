@@ -8,6 +8,20 @@ pub(super) enum OwnedHost {
 }
 
 impl App {
+    pub(super) fn request_restored_native_frames(&mut self) {
+        for window in [
+            self.window,
+            self.global_preferences_window.as_deref(),
+            self.project_preferences_window.as_deref(),
+            self.new_project_window.as_deref(),
+        ]
+        .into_iter()
+        .flatten()
+        {
+            self.frames.request_restored(window);
+        }
+    }
+
     pub(super) fn redraw_owned_window(&mut self, event_loop: &ActiveEventLoop, host: OwnedHost) {
         let (window, surface, project, new, label) = match host {
             OwnedHost::Global => (

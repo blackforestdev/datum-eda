@@ -7,7 +7,9 @@ use super::*;
 impl Runtime {
     pub(super) fn resize(&mut self, width: u32, height: u32) {
         self.surface_transaction.resize(width, height);
-        self.apply_resize(width.max(1), height.max(1));
+        if width != 0 && height != 0 {
+            self.apply_resize(width, height);
+        }
     }
 
     pub(super) fn set_scale_factor(&mut self, scale_factor: f64) {
@@ -27,7 +29,10 @@ impl Runtime {
     }
 
     fn apply_resize(&mut self, width: u32, height: u32) {
-        if self.config.width == width && self.config.height == height {
+        if self.config.width == width
+            && self.config.height == height
+            && self.surface_transaction.configured_for(width, height)
+        {
             return;
         }
         append_gui_diagnostic_line(format!(

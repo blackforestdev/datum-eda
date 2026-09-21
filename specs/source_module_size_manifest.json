@@ -667,13 +667,13 @@
     "crates/gui-app/src/main.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1934
+        "pre_test_lines": 1606
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Runtime construction and initial product/GPU state moved to runtime_init.rs. Shared redraw dispatch belongs to native_frame_adapters.rs and native_frame_coordinator.rs. Main event dispatch debt remains frozen."
+      "note": "Runtime construction lives in runtime_init.rs; native event dispatch moved intact to app_native_events.rs. Shared frame state and host dispatch live in native_frame_coordinator.rs and native_frame_adapters.rs."
     },
     "crates/gui-protocol/src/kicad_scene_import.rs": {
       "kind": "rust-production",

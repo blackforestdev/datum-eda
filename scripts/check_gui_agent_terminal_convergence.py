@@ -457,7 +457,9 @@ def check_terminal_transport_boundary(
 def main() -> int:
     failures: list[str] = []
     check_terminal_grid_writers(failures)
-    main = MAIN.read_text()
+    # Native dispatch is extracted from ApplicationHandler without changing its
+    # input/focus authority. Inspect both parts of that production entry point.
+    main = MAIN.read_text() + "\n" + (MAIN.parent / "app_native_events.rs").read_text()
     keyboard_focus = KEYBOARD_FOCUS.read_text()
     focus_mutation_sources = "\n".join(
         path.read_text(encoding="utf-8")

@@ -60,7 +60,9 @@ impl Runtime {
             "initial surface configure begin {}x{} format={:?} present={:?} msaa={}",
             config.width, config.height, config.format, config.present_mode, msaa_samples
         ));
-        surface.configure(&device, &config);
+        if size.width != 0 && size.height != 0 {
+            surface.configure(&device, &config);
+        }
         append_gui_diagnostic_line("initial surface configure end");
         let renderer_started = std::time::Instant::now();
         append_gui_diagnostic_line("renderer init begin");
