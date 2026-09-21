@@ -26865,5 +26865,36 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/main-menu-clipping/result.json",
     "limits": "No native focus/input, full pixel parity, independent negative, timing or resource qualification. Existing constrained-window title/Inspector crowding is outside this menu clipping change. No dependency, license, prototype, action authority, acceptance or sequencing change."
+  },
+  "proposed_s3_resource_dependency_clarification": {
+    "status": "prepared for owner review; not approved; existing S3 exit remains controlling",
+    "contract": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#proposed-s3-shared-resource-dependency-clarification--not-approved",
+    "proposed_resource_dependencies": {
+      "HP14-01": [
+        "MEM-SHAPED-LOCAL",
+        "MEM-SHAPED-TOTAL",
+        "MEM-LABEL-ENTRIES",
+        "MEM-LABEL-KEYS"
+      ],
+      "HP14-02": [
+        "MEM-SHAPED-LOCAL",
+        "MEM-SHAPED-TOTAL",
+        "MEM-LABEL-ENTRIES",
+        "MEM-LABEL-KEYS",
+        "MEM-ATLAS-LOCAL",
+        "MEM-ATLAS-TOTAL",
+        "MEM-STAGING-LOCAL",
+        "MEM-STAGING-TOTAL",
+        "MEM-REPLACEMENT"
+      ],
+      "HP16-03": [
+        "MEM-MESH-ENTRIES",
+        "MEM-MESH-CPU",
+        "MEM-MESH-GPU",
+        "MEM-REPLACEMENT"
+      ]
+    },
+    "on_approval": "Apply only the proposed S3 table evidence-cell replacement. Record complete S2-owned resource implementation due S4 and resource qualification due S5 for these associations; preserve every original acceptance rule and unqualified status. Conduct a separate S3 exit review before selecting S4.",
+    "unchanged": "All other S3 implementation/warm-reuse/input/focus/pass/negative predicates remain required. No numerical, dependency, native-qualification, independent-replay, endurance or resize waiver."
   }
 }

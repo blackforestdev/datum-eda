@@ -306,3 +306,26 @@ accounting/cap, exact changed-range and shaping/layout implementation is require
 at S4; full qualification remains required at S5. No full byte-budget, native
 backend/scale, independent replay, endurance, schematic admission or resize
 acceptance follows from this bounded readiness disposition.
+
+## Proposed S3 shared-resource dependency clarification — not approved
+
+The S3 table still requires HP11–23 proof before S4. HP14-01/02 require
+complete shaped-label/atlas/scratch bounds, and HP16-03 requires complete
+control-mesh resource bounds. These reference the same S2-owned resources whose
+unfinished accounting/cap implementation the approved S2/S4 tables explicitly
+carry to S4, with qualification at S5. The current S3 wording therefore demands
+proof of those resources before their approved implementation deadline. The
+S2 readiness receipt and the original map rows still correctly mark them open.
+
+Proposed exact replacement for the S3 table's **Required evidence / rollback
+boundary** cell, leaving its dependency/scope cell and all other clauses intact:
+
+> HP11–23, per-adapter input/focus and pass-count proof; retire New Project general backdrop and duplicate control machinery. Preserve legitimate discrete Layers/terminal semantics. Revert controls without changing stored preferences or project-creation authority. Only the complete S2-owned resource accounting/cap dependencies of HP14-01, HP14-02 and HP16-03 follow the approved S4 implementation and S5 qualification deadlines. S3 still requires shared production adoption, bounded warm reuse/eviction behavior and the other functional/input/focus/pass predicates at explicitly recorded current limits. Complete resource bounds, including the working-set resource precondition of HP14-01, remain unqualified until S5; implementation must be complete at S4. Record these resource dependencies individually against the existing MEM rows in the adoption map without changing acceptance rules or marking them passed. No other S3 predicate moves, and unexplained regressions still prevent advancement.
+
+The pending map entry `proposed_s3_resource_dependency_clarification` identifies
+the exact resource-row associations. Approval would apply the cell above and
+record those associations as operative, followed by a separate evidence-based
+S3 exit review. It would not complete S3, waive its remaining native/negative
+proof, authorize S4 selection immediately, solve private resource accounting,
+change numerical budgets, authorize dependencies or alter resize exclusions.
+Until explicit owner approval, the existing S3 table remains controlling.
