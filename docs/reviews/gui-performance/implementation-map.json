@@ -2690,14 +2690,15 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial component proof: Texture lease exclusivity/abort and queue configuration admission are component-tested separately. Native acquire-then-configure sequence and complete adapter composition remain unqualified.",
+        "status": "Partial native owner composition proof: actual acquired X11/Vulkan texture prevents reconfigure; after discard, held real completion receipt still prevents reconfigure; released receipt admits new extent and acquisition. Actual per-host adapter and prescribed negative-control qualification remain open.",
         "id": "proof_lf_13",
         "positive": "Acquire texture then request configure",
         "negative_control": "Configure with live old acquired texture",
         "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
         "executed_component_tests": [
           "one_acquisition_lease_survives_rejected_overlap_and_releases_on_abort",
-          "configuration_ticket_prevents_busy_host_overtaking_and_preserves_fifo"
+          "configuration_ticket_prevents_busy_host_overtaking_and_preserves_fifo",
+          "native_texture_and_queue_receipt_both_gate_reconfiguration"
         ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/LF-13/result.json",
@@ -2742,7 +2743,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz"
+        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
+        "docs/reviews/gui-performance/implementation/S1/native-surface-barriers/result.json"
       ]
     },
     {
@@ -24534,6 +24536,31 @@
       "A healthy staged device can still fail asynchronously after commit; existing recovery policy handles later errors. This change makes publication conditional on successful staging, not immune to later backend faults.",
       "Prior intermittent native close-delivery and surface stalls remain tracked; these passing trials do not close them.",
       "No dependency/license, authoritative model/terminal mutation, device policy, recovery limit or nonblocking resize exclusion changes."
+    ]
+  },
+  "s1_native_surface_barriers_work": {
+    "status": "Partial native owner composition proof; GPI-S1 remains in progress",
+    "baseline_commit": "737d87ee50db3b1565582ef5b27abada61f85759",
+    "source": "crates/gui-app/src/native_surface_transaction.rs",
+    "source_sha256": "146c5937f2676fe46dd5089a5a8e098b0101752a90a759e4715183ef21dc9d8b",
+    "production_consumers_migrated": [],
+    "competing_paths_retired": [],
+    "production_change": "None. Focused safety verification of the existing production SurfaceTransaction and QueueOwner.",
+    "test": "native_texture_and_queue_receipt_both_gate_reconfiguration",
+    "command": "DATUM_GPU_DIAGNOSTIC_BACKEND=vulkan DATUM_DIAGNOSTIC_QUEUE_COMPLETION=hold-until-retry python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_texture_and_queue_receipt_both_gate_reconfiguration -- --ignored --test-threads=1",
+    "verification": {
+      "native": "1 passed; actual X11/Vulkan surface texture and actual backend completion callback, with existing opt-in publication hold.",
+      "unit": "4 passed, 1 ignored.",
+      "sequence": "Configure count remains one while texture is live, remains one after discard while completion publication is held, advances to two/generation two at 96x72 after actual receipt publication; second acquisition succeeds and discards.",
+      "initial_failure": "Fixture assumed synchronous native resize (observed 80x60 instead of 96x72). Unwinding also triggered Vulkan swapchain semaphore destructor panic. Corrected fixture pumps native resize events with two-second deadline; corrected execution and teardown pass.",
+      "clippy": "Guarded offline datum-gui-app binary/test Clippy passed with -D warnings.",
+      "governance": "Source health, spec parity, evidence traceability, spec governance, dependency authority and Cargo resource policy passed."
+    },
+    "limits": [
+      "Direct shared-owner fixture, not actual per-host App adapter qualification.",
+      "No scene rendering, presentation, displayed pixels, all-backend/scale, resource-budget or endurance qualification.",
+      "Guard rejection is not a deliberately regressed-source negative-control replay; that qualification remains open.",
+      "Blocking device wait and event pumping are test-only; default application behavior and dependencies unchanged."
     ]
   }
 }
