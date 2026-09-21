@@ -26852,5 +26852,18 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-header-clipping/result.json",
     "limits": "No native focus/input, independent negative, full pixel-parity, performance or resource qualification. Existing narrow main-menu/Inspector crowding outside terminal remains visible and unqualified. S3 remains open. No dependency, license, prototype, PTY/core or sequencing change."
+  },
+  "s3_main_menu_clipping_work": {
+    "status": "bounded S3 Main MENU shared clipping adoption; full qualification open",
+    "production_consumers": [
+      "Main menu-bar title composition",
+      "Main dropdown and submenu item composition"
+    ],
+    "retired_paths": [
+      "Unrestricted menu title geometry/text/hits",
+      "Position-clamped dropdown/submenu cards with unclipped text and hidden-row hit extents"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/main-menu-clipping/result.json",
+    "limits": "No native focus/input, full pixel parity, independent negative, timing or resource qualification. Existing constrained-window title/Inspector crowding is outside this menu clipping change. No dependency, license, prototype, action authority, acceptance or sequencing change."
   }
 }

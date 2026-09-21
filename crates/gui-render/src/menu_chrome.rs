@@ -26,6 +26,7 @@ pub(super) fn render_menu_bar(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
+    let title_starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
     let model = match menu_model() {
         Ok(model) => model,
         Err(err) => {
@@ -87,6 +88,16 @@ pub(super) fn render_menu_bar(
         });
         x += width + design_tokens::spacing::SP_01;
     }
+
+    crate::hit_clipping::clip_content(
+        panel_quads,
+        text_runs,
+        hit_regions,
+        title_starts.0,
+        title_starts.1,
+        title_starts.2,
+        layout.top_menu_bar,
+    );
 
     if let Some(active_menu) = state.ui.active_menu.as_deref()
         && let Some(menu) = model.menubar.iter().find(|menu| menu.menu == active_menu)
@@ -183,6 +194,11 @@ fn render_menu_items(
     menu_overlay_text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) -> RectPx {
+    let starts = (
+        menu_overlay_quads.len(),
+        menu_overlay_text_runs.len(),
+        hit_regions.len(),
+    );
     let item_height = design_tokens::spacing::SP_07;
     // Content-driven card width: the widest item's [icon indent + shaped label +
     // gap + shaped shortcut + right pad] sets the width, so labels and shortcuts
@@ -298,6 +314,29 @@ fn render_menu_items(
             rect: row,
         });
     }
+    let surface = RectPx {
+        x: layout.top_menu_bar.x,
+        y: layout.top_menu_bar.y + layout.top_menu_bar.height,
+        width: layout.top_menu_bar.width,
+        height: (layout.status_bar.y + layout.status_bar.height
+            - layout.top_menu_bar.y
+            - layout.top_menu_bar.height)
+            .max(0.0),
+    };
+    let visible = rect.intersect(surface).unwrap_or(RectPx {
+        width: 0.0,
+        height: 0.0,
+        ..surface
+    });
+    crate::hit_clipping::clip_content(
+        menu_overlay_quads,
+        menu_overlay_text_runs,
+        hit_regions,
+        starts.0,
+        starts.1,
+        starts.2,
+        visible,
+    );
     rect
 }
 
@@ -378,6 +417,55 @@ fn icon_set() -> Result<&'static GuiIconSet, &'static str> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn long_menu_in_small_window_shares_paint_text_and_hit_bounds() {
+        let state = datum_gui_protocol::load_fixture_workspace_state();
+        let layout = ShellLayout::for_window(160, 120, None);
+        let model = menu_model().unwrap();
+        let menu = model
+            .menubar
+            .iter()
+            .max_by_key(|menu| menu.items.len())
+            .unwrap();
+        let mut quads = Vec::new();
+        let mut text = Vec::new();
+        let mut hits = Vec::new();
+        render_menu_items(
+            &menu.menu,
+            &menu.items,
+            &state,
+            Some(0),
+            None,
+            &layout,
+            0.0,
+            layout.top_menu_bar.height,
+            &mut quads,
+            &mut text,
+            &mut hits,
+        );
+        let visible = RectPx {
+            x: 0.0,
+            y: layout.top_menu_bar.height,
+            width: 160.0,
+            height: 120.0 - layout.top_menu_bar.height,
+        };
+        assert!(!hits.is_empty() && hits.len() < menu.items.len());
+        for quad in quads {
+            assert!(quad.points.iter().all(|&(x, y)| visible.contains(x, y)));
+        }
+        for run in text {
+            let clip = run
+                .clip_bounds
+                .expect("menu text must have a visible card clip");
+            assert!(visible.contains(clip.x, clip.y));
+            assert!(visible.contains(clip.x + clip.width, clip.y + clip.height));
+        }
+        for hit in hits {
+            assert!(visible.contains(hit.rect.x, hit.rect.y));
+            assert!(visible.contains(hit.rect.x + hit.rect.width, hit.rect.y + hit.rect.height));
+        }
+    }
 
     #[test]
     fn menu_model_is_available_to_renderer() {
