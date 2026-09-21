@@ -1,5 +1,7 @@
 #[path = "retained_buffer.rs"]
 pub(crate) mod retained_buffer;
+#[path = "vertex_allocation.rs"]
+mod vertex_allocation;
 
 #[path = "screen_buffer.rs"]
 pub(crate) mod screen_buffer;

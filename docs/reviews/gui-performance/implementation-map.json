@@ -16458,7 +16458,7 @@
         "crates/gui-app/src/runtime_camera_pane.rs"
       ],
       "test": {
-        "status": "Partial shared-owner implementation and GPU proof: immutable clone retention, warm reuse, equal-sized replacement/readback and clear/reset verified. Actual Renderer bundle regression and separate bounded native smoke pass. Full per-adapter accounting, prescribed negative, device recreation, byte-cap and visual qualification remain open.",
+        "status": "Partial shared-owner/GPU proof: immutable clone retention, warm zero uploads, equal-size replacement/readback, clear/reset, four-times capacity boundary/shrink and actual Renderer bundle rebind/warm reuse pass. Baseline peak-retention regression fails as expected. Four native smoke checks pass. Full per-adapter accounting, prescribed negatives, device recreation, absolute byte caps and visual/performance qualification remain open.",
         "id": "proof_reuse_world_alloc",
         "positive": "Warm pointer/camera unchanged geometry",
         "negative_control": "Allocate new world buffer each frame",
@@ -16472,7 +16472,8 @@
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json"
+        "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json",
+        "docs/reviews/gui-performance/implementation/S2/vertex-allocation/result.json"
       ]
     },
     {
@@ -25175,7 +25176,7 @@
       "Duplicate Board/schematic stroke upload implementations",
       "RetainedScene cloning copies stroke Vec storage"
     ],
-    "resource_policy": "One immutable CPU source reference and one reusable GPU allocation per resource slot. Equal-size replacement retains GPU capacity but changes the source owner. Empty/cleared slots release both. Existing maximum-seen GPU capacity retention for nonempty smaller replacements remains; complete byte budgets/caps and full accounting remain S2 obligations.",
+    "resource_policy": "One immutable CPU source reference per slot; shared VertexAllocation now bounds retained GPU capacity to four times the latest live payload (with alignment), shrinking historical peaks. Equal-size replacement reuses capacity but changes source ownership. Empty/clear releases the slot. See implementation/S2/vertex-allocation/result.json; complete byte budgets and full accounting remain open.",
     "remaining_limitations": [
       "Resolved schematic workload remains unqualified. No all-consumer/native warm-upload accounting, full address-reuse negative control, actual device-recreation qualification, static AA/text parity or performance-budget claim.",
       "GPU owner proof uses typed primitive data; actual Renderer bundle proof uses existing board fixture. Native trials are separate smoke, not a replacement for full S2 predicates.",
@@ -25271,6 +25272,30 @@
       "Complete text shaping/layout keys and shaped-payload/atlas/scratch accounting/caps remain open; this slice adds no cache or third-party instrumentation.",
       "No numerical performance or whole-PM045 acceptance. S2 remains selected; S3-S5 remain pending.",
       "Existing text, render pass/AA, dependency/license and resize boundaries remain unchanged."
+    ]
+  },
+  "s2_vertex_allocation_work": {
+    "status": "Shared vertex allocation ownership and world capacity shrink adopted; GPI-S2 remains in progress",
+    "evidence": "docs/reviews/gui-performance/implementation/S2/vertex-allocation/result.json",
+    "production_consumers_migrated": [
+      "MAIN",
+      "BOARD",
+      "SCHEMATIC",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "competing_paths_retired": [
+      "Independent GPU allocation/capacity ownership in RetainedBuffer",
+      "Duplicate GPU allocation/grow/shrink creation in ScreenBuffer",
+      "Maximum-seen world capacity retained across arbitrary nonempty shrink"
+    ],
+    "bounds": "Thirteen production slots share the input-relative four-times-live capacity policy, with WGPU alignment for sub-word payloads. Screen CPU snapshot caps remain 256 KiB per slot (nine slots); retained CPU source ownership remains one Arc per slot. This is not an absolute admitted-workload byte ceiling or driver/in-flight residency measurement.",
+    "remaining_limitations": [
+      "No numerical speedup or process/driver memory claim. Transient in-flight resources and externally held bundle/buffer handles are not counted as released physical GPU memory by these tests.",
+      "Absolute workload byte caps and complete CPU/GPU/native accounting, actual device-recreation qualification and full backend/scale/performance qualification remain open.",
+      "Resolved schematic content performance remains unqualified; shared Board/schematic resource code adoption does not admit a fixture.",
+      "World and screen source identity semantics, screen vertex-granular dirty ranges, text/AA/pass order, dependency/license and resize boundaries remain unchanged. S2 remains in progress."
     ]
   }
 }

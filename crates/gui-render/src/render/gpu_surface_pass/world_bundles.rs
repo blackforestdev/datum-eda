@@ -197,6 +197,44 @@ mod tests {
             filtered, replaced_buffer,
             "a replacement GPU allocation must be rebound"
         );
+        // A real retained-scene replacement can shrink a previous large world
+        // allocation. Its original prefix and draw commands preserve geometry.
+        let mut oversized = retained.clone();
+        oversized.world_vertices = retained.world_vertices.repeat(8).into();
+        renderer
+            .render(
+                &device, &queue, &view, &prepared, &oversized, None, 1280, 800,
+            )
+            .unwrap();
+        let large_bundle = renderer.surface_world_bundles[0].bundle.clone();
+        let live_bytes = std::mem::size_of_val(retained.world_vertices.as_ref()) as u64;
+        assert_eq!(
+            renderer.world_vertices_gpu.buffer().unwrap().size(),
+            live_bytes * 8
+        );
+        renderer
+            .render(
+                &device, &queue, &view, &prepared, &retained, None, 1280, 800,
+            )
+            .unwrap();
+        assert_eq!(
+            renderer.world_vertices_gpu.buffer().unwrap().size(),
+            live_bytes
+        );
+        let shrunk_bundle = renderer.surface_world_bundles[0].bundle.clone();
+        assert_ne!(
+            large_bundle, shrunk_bundle,
+            "capacity shrink must rebind world draws"
+        );
+        renderer
+            .render(
+                &device, &queue, &view, &prepared, &retained, None, 1280, 800,
+            )
+            .unwrap();
+        assert_eq!(
+            shrunk_bundle, renderer.surface_world_bundles[0].bundle,
+            "unchanged replacement remains warm"
+        );
         renderer.surface_scene_uniforms.clear();
         renderer
             .render(
@@ -204,7 +242,7 @@ mod tests {
             )
             .unwrap();
         assert_ne!(
-            replaced_buffer, renderer.surface_world_bundles[0].bundle,
+            shrunk_bundle, renderer.surface_world_bundles[0].bundle,
             "a new pane camera binding must be rebound"
         );
         prepared.surface_passes.clear();
