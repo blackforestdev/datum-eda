@@ -1,12 +1,16 @@
-fn render_project_and_filters_panel(
+//! Project and discrete Layers composition, clipped to their owning panels.
+use super::*;
+
+pub(super) fn render_project_and_filters_panel(
     state: &ReviewWorkspaceState,
     project_layout: &ProjectPanelLayout,
-    _project_rect: RectPx,
+    project_rect: RectPx,
     filters_rect: RectPx,
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
+    let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
     // Project display slug: data strings render verbatim (mixed case); only
     // panel/section TITLES stay uppercase.
     draw_text(
@@ -85,6 +89,16 @@ fn render_project_and_filters_panel(
     );
     // (Removed the "LAST <action>" command-status line — terminal/debug noise.)
     let _ = project_layout.last_status;
+    crate::hit_clipping::clip_content(
+        panel_quads,
+        text_runs,
+        hit_regions,
+        starts.0,
+        starts.1,
+        starts.2,
+        project_rect,
+    );
+    let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
     let filters_layout = solve_filters_panel_layout_with_taffy(state, filters_rect);
     let Some(filters_layout) = filters_layout else {
         return;
@@ -186,6 +200,15 @@ fn render_project_and_filters_panel(
         filters_layout.focus_summary,
         filters_layout.outputs_summary,
     );
+    crate::hit_clipping::clip_content(
+        panel_quads,
+        text_runs,
+        hit_regions,
+        starts.0,
+        starts.1,
+        starts.2,
+        filters_rect,
+    );
 }
 
 fn render_layer_row(
@@ -249,4 +272,58 @@ fn render_layer_row(
         TextFace::Ui,
         text_runs,
     );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn project_and_discrete_layers_inherit_separate_panel_bounds() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        let sidebar = RectPx {
+            x: 0.0,
+            y: 30.0,
+            width: 130.0,
+            height: 420.0,
+        };
+        let layout = solve_project_panel_layout_with_taffy(&state, sidebar)
+            .unwrap_or_else(|| fallback_project_panel_layout(&state, sidebar));
+        for offset in [0, usize::MAX] {
+            state.ui.filters.layer_scroll_offset = offset;
+            let mut quads = Vec::new();
+            let mut text = Vec::new();
+            let mut hits = Vec::new();
+            render_project_and_filters_panel(
+                &state,
+                &layout,
+                layout.project_rect,
+                layout.filters_rect,
+                &mut quads,
+                &mut text,
+                &mut hits,
+            );
+            assert!(!text.is_empty());
+            for run in text {
+                let clip = run.clip_bounds.expect("panel labels must inherit a clip");
+                assert!(
+                    clip.intersect(layout.project_rect) == Some(clip)
+                        || clip.intersect(layout.filters_rect) == Some(clip)
+                );
+            }
+            for hit in hits {
+                assert!(
+                    hit.rect.intersect(layout.project_rect) == Some(hit.rect)
+                        || hit.rect.intersect(layout.filters_rect) == Some(hit.rect)
+                );
+            }
+            for quad in quads {
+                assert!(quad.points.iter().all(|&(x, y)| sidebar.contains(x, y)));
+            }
+            assert_eq!(
+                state.ui.filters.layer_scroll_offset, offset,
+                "painting must not mutate discrete row authority"
+            );
+        }
+    }
 }

@@ -124,7 +124,7 @@ def check_terminal_hit_ownership(
     for marker in ("scene_hit_start", "hit_clipping::clip_new_hit_regions"):
         if marker not in render_scene:
             failures.append(f"editor scene hit clipping is missing {marker}")
-    for marker in (".drain(first_new_region..)", "region.rect.intersect(viewport)"):
+    for marker in ("hit_regions.retain_mut", "index < first_new_region", "index += 1", "region.rect.intersect(viewport)"):
         if marker not in hit_clipping:
             failures.append(f"editor scene hit clipping is missing {marker}")
     for marker in (

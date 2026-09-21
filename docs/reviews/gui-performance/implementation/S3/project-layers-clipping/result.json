@@ -1,0 +1,40 @@
+{
+  "status": "partial S3 default Project/Layers adoption",
+  "baseline": "f0f987120a2a1085c5148a2404f203821c669cac",
+  "candidate_sources": {
+    "crates/gui-render/src/side_panels.rs": "d05dbb1888f3ec0bc9f336932d4bf48b13eabf0a82b1b886d6acb6092394c4ce",
+    "crates/gui-render/src/side_panels/render_project_filters.rs": "b71badac25435a08227cdb1f3b5f6bf43d9d4aa65793877e095fdba8e65bb745",
+    "crates/gui-render/src/side_panels/panel_chrome.rs": "33e44c21d674d24086d41f804adff72e904f528e41d50c6c7199d89ae742cb38"
+  },
+  "production_consumers": [
+    "Main Project panel",
+    "Main discrete Layers panel"
+  ],
+  "call_path": "frame_preparation -> render_side_panels -> render_project_filters::render_project_and_filters_panel -> shared clip_content for each panel",
+  "retired_paths": [
+    "Unclipped Project/Layers geometry/text/hit emission",
+    "Textual inclusion of Project/Layers composition into side_panels"
+  ],
+  "preserved": "Existing row sorting, discrete offset/clamp/visible capacity, wheel authority and actions. Shared header/chrome composition extracted without behavior change; no new navigator product features.",
+  "source_health": {
+    "side_panels_physical": [
+      91,
+      52
+    ],
+    "side_panels_expanded": [
+      1685,
+      1393
+    ],
+    "ownership": "Normal Project/Layers composition module and common side-panel chrome module; exact downward ratchet.",
+    "policy_tests": "Source-health policy regression suite passed."
+  },
+  "proof": {
+    "cpu": "210 renderer tests pass serially;22 ignored. New actual Project/Layers composition test proves ancestor clipping at first/max row offsets without mutating row authority.",
+    "failed_attempt": "Concurrent renderer suite exited SIGSEGV after new panel test passed. Preserved raw log; serial run passes. Known concurrent multi-device risk remains unresolved, no attribution or closure claimed.",
+    "limits": "Complete native row/hit/camera locality and prescribed independent negative/profile/GPU/resource qualification remain outstanding.",
+    "native": "Fresh release built; Main presented four frames. Wheel recipe timed out with external pointer movement: requested board coordinate 800,350, but actual wheel was preceded by cursor 1136,234 inside Inspector. Preserve failed run; no native wheel/capture pass claimed. Focus-taking tests stopped pending current desktop-use clarification.",
+    "gates": "Source-health policy tests and gate pass. Full drift invoked: first run caught required source-health parity refresh; after reconciliation workspace Clippy/parity pass. Hit guard updated with negative tests for actual retain/prefix/index/intersection owner. Remaining five focus/text-marker failures match tracked convergence issue; no full drift pass.",
+    "guard_reconciliation": "Shared clipping previously retired drain/collect for retain_mut. Update the existing marker check to require retain, prefix guard, index increment and intersection; all11 guard tests pass including individual missing-marker rejection."
+  },
+  "evidence": "docs/reviews/gui-performance/implementation/S3/project-layers-clipping/result.json"
+}
