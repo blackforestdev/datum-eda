@@ -1,0 +1,290 @@
+{
+  "binary_sha256": "544d4295461294323e47dc0f7f17dd245241a4b26b4ebbe96ee07251fbf097bc",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "window": "WindowId(12582917)",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "initial": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1000,
+          750
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 1,
+        "host": 2,
+        "last_present_receipt": 2,
+        "present_receipts_issued": 2,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "window": "WindowId(12582917)"
+      },
+      "observed": [
+        {
+          "acquire_attempts": 2,
+          "acquired": 2,
+          "active": 0,
+          "configuration_generation": 2,
+          "configure_attempts": 2,
+          "configured_extent": [
+            1100,
+            800
+          ],
+          "discarded": 0,
+          "gpu_completed_through_receipt": 2,
+          "host": 2,
+          "last_present_receipt": 3,
+          "present_receipts_issued": 3,
+          "presented": 2,
+          "queue_epoch": 1,
+          "reason": "present",
+          "window": "WindowId(12582917)"
+        },
+        {
+          "acquire_attempts": 3,
+          "acquired": 3,
+          "active": 0,
+          "configuration_generation": 3,
+          "configure_attempts": 3,
+          "configured_extent": [
+            1200,
+            850
+          ],
+          "discarded": 0,
+          "gpu_completed_through_receipt": 3,
+          "host": 2,
+          "last_present_receipt": 4,
+          "present_receipts_issued": 4,
+          "presented": 3,
+          "queue_epoch": 1,
+          "reason": "present",
+          "window": "WindowId(12582917)"
+        },
+        {
+          "acquire_attempts": 4,
+          "acquired": 4,
+          "active": 0,
+          "configuration_generation": 4,
+          "configure_attempts": 4,
+          "configured_extent": [
+            1000,
+            750
+          ],
+          "discarded": 0,
+          "gpu_completed_through_receipt": 4,
+          "host": 2,
+          "last_present_receipt": 5,
+          "present_receipts_issued": 5,
+          "presented": 4,
+          "queue_epoch": 1,
+          "reason": "present",
+          "window": "WindowId(12582917)"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "host": "PROJECT",
+      "window": "WindowId(12582917)",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "initial": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1000,
+          750
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 1,
+        "host": 2,
+        "last_present_receipt": 2,
+        "present_receipts_issued": 2,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "window": "WindowId(12582917)"
+      },
+      "observed": [
+        {
+          "acquire_attempts": 2,
+          "acquired": 2,
+          "active": 0,
+          "configuration_generation": 2,
+          "configure_attempts": 2,
+          "configured_extent": [
+            1100,
+            800
+          ],
+          "discarded": 0,
+          "gpu_completed_through_receipt": 2,
+          "host": 2,
+          "last_present_receipt": 3,
+          "present_receipts_issued": 3,
+          "presented": 2,
+          "queue_epoch": 1,
+          "reason": "present",
+          "window": "WindowId(12582917)"
+        },
+        {
+          "acquire_attempts": 3,
+          "acquired": 3,
+          "active": 0,
+          "configuration_generation": 3,
+          "configure_attempts": 3,
+          "configured_extent": [
+            1200,
+            850
+          ],
+          "discarded": 0,
+          "gpu_completed_through_receipt": 3,
+          "host": 2,
+          "last_present_receipt": 4,
+          "present_receipts_issued": 4,
+          "presented": 3,
+          "queue_epoch": 1,
+          "reason": "present",
+          "window": "WindowId(12582917)"
+        },
+        {
+          "acquire_attempts": 4,
+          "acquired": 4,
+          "active": 0,
+          "configuration_generation": 4,
+          "configure_attempts": 4,
+          "configured_extent": [
+            1000,
+            750
+          ],
+          "discarded": 0,
+          "gpu_completed_through_receipt": 4,
+          "host": 2,
+          "last_present_receipt": 5,
+          "present_receipts_issued": 5,
+          "presented": 4,
+          "queue_epoch": 1,
+          "reason": "present",
+          "window": "WindowId(12582917)"
+        }
+      ],
+      "passed": true
+    },
+    {
+      "host": "NEW",
+      "window": "WindowId(12582917)",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "initial": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          792,
+          750
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 1,
+        "host": 2,
+        "last_present_receipt": 2,
+        "present_receipts_issued": 2,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "window": "WindowId(12582917)"
+      },
+      "observed": [
+        {
+          "acquire_attempts": 2,
+          "acquired": 2,
+          "active": 0,
+          "configuration_generation": 2,
+          "configure_attempts": 2,
+          "configured_extent": [
+            1100,
+            800
+          ],
+          "discarded": 0,
+          "gpu_completed_through_receipt": 2,
+          "host": 2,
+          "last_present_receipt": 3,
+          "present_receipts_issued": 3,
+          "presented": 2,
+          "queue_epoch": 1,
+          "reason": "present",
+          "window": "WindowId(12582917)"
+        },
+        {
+          "acquire_attempts": 3,
+          "acquired": 3,
+          "active": 0,
+          "configuration_generation": 3,
+          "configure_attempts": 3,
+          "configured_extent": [
+            1200,
+            850
+          ],
+          "discarded": 0,
+          "gpu_completed_through_receipt": 3,
+          "host": 2,
+          "last_present_receipt": 4,
+          "present_receipts_issued": 4,
+          "presented": 3,
+          "queue_epoch": 1,
+          "reason": "present",
+          "window": "WindowId(12582917)"
+        },
+        {
+          "acquire_attempts": 4,
+          "acquired": 4,
+          "active": 0,
+          "configuration_generation": 4,
+          "configure_attempts": 4,
+          "configured_extent": [
+            792,
+            750
+          ],
+          "discarded": 0,
+          "gpu_completed_through_receipt": 4,
+          "host": 2,
+          "last_present_receipt": 5,
+          "present_receipts_issued": 5,
+          "presented": 4,
+          "queue_epoch": 1,
+          "reason": "present",
+          "window": "WindowId(12582917)"
+        }
+      ],
+      "passed": true
+    }
+  ]
+}

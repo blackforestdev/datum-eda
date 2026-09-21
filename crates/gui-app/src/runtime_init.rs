@@ -81,7 +81,7 @@ impl Runtime {
             device,
             device_health,
             queue,
-            surface_transaction: SurfaceTransaction::new(&config, window.inner_size()),
+            surface_transaction: SurfaceTransaction::new(window),
             config,
             scale_factor,
             renderer,

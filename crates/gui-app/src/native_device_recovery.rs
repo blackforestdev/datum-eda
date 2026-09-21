@@ -129,7 +129,7 @@ impl Runtime {
         self.renderer = renderer;
         self.measurements = measurements;
         self.device_health = health;
-        self.surface_transaction = SurfaceTransaction::new(&self.config, self.window.inner_size());
+        self.surface_transaction = SurfaceTransaction::new(self.window);
         self.invalidate_scene();
         Ok(())
     }

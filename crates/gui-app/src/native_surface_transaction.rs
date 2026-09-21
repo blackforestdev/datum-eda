@@ -4,6 +4,7 @@ use super::native_recovery::{RecoveryHandle, RetryReason};
 use std::{cell::Cell, rc::Rc, time::Instant};
 
 pub(crate) struct SurfaceTransaction {
+    window: winit::window::WindowId,
     injected_fault: Option<InjectedFault>,
     queue_owner: super::native_queue_owner::QueueOwner,
     queue_host: u64,
@@ -12,7 +13,7 @@ pub(crate) struct SurfaceTransaction {
     drawable: bool,
     configured: Option<(u32, u32)>,
     configuration_generation: u64,
-    texture_active: Rc<Cell<bool>>,
+    texture_active: Rc<FrameCounts>,
 }
 
 /// Presentation ownership is deliberately separate from GPU completion. Dropping
@@ -33,25 +34,58 @@ impl NativeSurfaceFrame {
     }
 }
 
+#[derive(Default)]
+struct FrameCounts {
+    active: Cell<bool>,
+    acquired: Cell<u64>,
+    presented: Cell<u64>,
+    discarded: Cell<u64>,
+    configure_attempts: Cell<u64>,
+    acquire_attempts: Cell<u64>,
+}
+fn increment(count: &Cell<u64>) {
+    count.set(
+        count
+            .get()
+            .checked_add(1)
+            .expect("native lifecycle count exhausted"),
+    );
+}
+
 struct TextureLease {
-    active: Rc<Cell<bool>>,
+    active: Rc<FrameCounts>,
     generation: u64,
+    presented: bool,
 }
 impl TextureLease {
-    fn acquire(active: &Rc<Cell<bool>>, generation: u64) -> anyhow::Result<Self> {
-        anyhow::ensure!(!active.replace(true), "native surface already acquired");
+    fn acquire(active: &Rc<FrameCounts>, generation: u64) -> anyhow::Result<Self> {
+        anyhow::ensure!(
+            !active.active.replace(true),
+            "native surface already acquired"
+        );
+        increment(&active.acquired);
         Ok(Self {
             active: active.clone(),
             generation,
+            presented: false,
         })
     }
-    fn belongs_to(&self, active: &Rc<Cell<bool>>, generation: u64) -> bool {
+    fn belongs_to(&self, active: &Rc<FrameCounts>, generation: u64) -> bool {
         Rc::ptr_eq(&self.active, active) && self.generation == generation
     }
 }
 impl Drop for TextureLease {
     fn drop(&mut self) {
-        self.active.set(false);
+        self.active.active.set(false);
+        increment(if self.presented {
+            &self.active.presented
+        } else {
+            &self.active.discarded
+        });
+        debug_assert_eq!(
+            self.active.acquired.get(),
+            self.active.presented.get() + self.active.discarded.get()
+        );
     }
 }
 
@@ -63,10 +97,8 @@ enum InjectedFault {
 }
 
 impl SurfaceTransaction {
-    pub(crate) fn new(
-        _config: &wgpu::SurfaceConfiguration,
-        native_size: winit::dpi::PhysicalSize<u32>,
-    ) -> Self {
+    pub(crate) fn new(window: &winit::window::Window) -> Self {
+        let native_size = window.inner_size();
         // The recovered diagnostic implementation is now superseded by the
         // shared default policy; retain validation of the legacy switch.
         match std::env::var("DATUM_DIAGNOSTIC_RESIZE_TRANSACTION").as_deref() {
@@ -83,6 +115,7 @@ impl SurfaceTransaction {
             other => panic!("invalid DATUM_DIAGNOSTIC_SURFACE_FAULT: {other:?}"),
         };
         Self {
+            window: window.id(),
             injected_fault,
             queue_owner,
             queue_host,
@@ -136,10 +169,12 @@ impl SurfaceTransaction {
     ) -> bool {
         super::append_gui_diagnostic_line("surface configure begin");
         let probe = super::phase_probe::Probe::start("configure");
+        increment(&self.texture_active.configure_attempts);
         surface.configure(device, config);
         drop(probe);
         super::append_gui_diagnostic_line("surface configure end");
         if health.failed() {
+            self.trace_lifecycle("configure_failed");
             return false;
         }
         self.configuration_generation = self
@@ -169,6 +204,7 @@ impl SurfaceTransaction {
         let probe = super::phase_probe::Probe::start("acquire");
         // Explicit fault qualification uses the same production classification,
         // recovery owner and native dispatcher as a real backend error.
+        increment(&self.texture_active.acquire_attempts);
         let result = if let Some(fault) = self.injected_fault {
             super::append_gui_diagnostic_line(format!(
                 "surface fault injected host={} kind={fault:?}",
@@ -187,12 +223,24 @@ impl SurfaceTransaction {
         };
         drop(probe);
         match result {
-            Ok(frame) if !health.failed() => Ok(Some(NativeSurfaceFrame {
-                texture: Some(frame),
-                lease: TextureLease::acquire(&self.texture_active, self.configuration_generation)?,
-            })),
-            Ok(_) => Ok(None),
+            Ok(frame) => {
+                let frame = NativeSurfaceFrame {
+                    texture: Some(frame),
+                    lease: TextureLease::acquire(
+                        &self.texture_active,
+                        self.configuration_generation,
+                    )?,
+                };
+                if health.failed() {
+                    drop(frame);
+                    self.trace_lifecycle("acquired_after_failure");
+                    Ok(None)
+                } else {
+                    Ok(Some(frame))
+                }
+            }
             Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
+                self.trace_lifecycle("acquire_lost_or_outdated");
                 self.configured = None;
                 self.recovery
                     .borrow_mut()
@@ -200,6 +248,7 @@ impl SurfaceTransaction {
                 Ok(None)
             }
             Err(wgpu::SurfaceError::Timeout) => {
+                self.trace_lifecycle("acquire_timeout");
                 self.recovery
                     .borrow_mut()
                     .defer(RetryReason::Acquisition, Instant::now());
@@ -207,10 +256,14 @@ impl SurfaceTransaction {
                 Ok(None)
             }
             Err(wgpu::SurfaceError::OutOfMemory) => {
+                self.trace_lifecycle("acquire_oom");
                 health.allocation_failed();
                 Ok(None)
             }
-            Err(error) => anyhow::bail!("acquire native surface texture: {error}"),
+            Err(error) => {
+                self.trace_lifecycle("acquire_other_error");
+                anyhow::bail!("acquire native surface texture: {error}")
+            }
         }
     }
 
@@ -222,7 +275,7 @@ impl SurfaceTransaction {
         health: &crate::native_device_recovery::DeviceHealth,
     ) -> anyhow::Result<bool> {
         anyhow::ensure!(
-            !self.texture_active.get(),
+            !self.texture_active.active.get(),
             "cannot configure or acquire while a native surface texture is live"
         );
         if !self.drawable {
@@ -274,6 +327,10 @@ impl SurfaceTransaction {
         queue: &wgpu::Queue,
     ) -> anyhow::Result<()> {
         anyhow::ensure!(
+            window.id() == self.window,
+            "native presentation window does not own this surface"
+        );
+        anyhow::ensure!(
             frame
                 .lease
                 .belongs_to(&self.texture_active, self.configuration_generation),
@@ -285,11 +342,34 @@ impl SurfaceTransaction {
             .take()
             .expect("unconsumed native frame")
             .present();
+        frame.lease.presented = true;
         // Release acquisition before a subsequent configure can be admitted.
         drop(frame);
         self.in_flight = self.queue_owner.submitted(queue);
         self.recovery.borrow_mut().success();
+        self.trace_lifecycle("present");
         Ok(())
+    }
+
+    fn trace_lifecycle(&self, reason: &str) {
+        if std::env::var_os("DATUM_GUI_VERBOSE_LOG").is_none() {
+            return;
+        }
+        let (epoch, submitted, completed) = self.queue_owner.snapshot();
+        let counts = &self.texture_active;
+        super::append_gui_diagnostic_line(format!(
+            "native_surface_lifecycle {}",
+            serde_json::json!({
+                "queue_epoch": epoch, "host": self.queue_host, "window": format!("{:?}", self.window), "reason": reason,
+                "configuration_generation": self.configuration_generation, "configured_extent": self.configured,
+                "configure_attempts": counts.configure_attempts.get(),
+                "acquire_attempts": counts.acquire_attempts.get(),
+                "acquired": counts.acquired.get(), "presented": counts.presented.get(),
+                "discarded": counts.discarded.get(), "active": u8::from(counts.active.get()),
+                "last_present_receipt": self.in_flight,
+                "present_receipts_issued": submitted, "gpu_completed_through_receipt": completed
+            })
+        ));
     }
 }
 
@@ -388,6 +468,7 @@ impl crate::App {
 
 impl Drop for SurfaceTransaction {
     fn drop(&mut self) {
+        self.trace_lifecycle("owner_drop");
         self.queue_owner.cancel(self.queue_host);
     }
 }
@@ -397,32 +478,56 @@ mod tests {
     use super::*;
 
     #[test]
+    fn acquired_frames_reconcile_present_discard_and_live_ownership() {
+        let counts = Rc::new(FrameCounts::default());
+        increment(&counts.acquire_attempts);
+        let mut shown = TextureLease::acquire(&counts, 1).unwrap();
+        assert_eq!(counts.acquired.get(), 1);
+        assert_eq!(counts.presented.get(), 0);
+        shown.presented = true;
+        drop(shown);
+        increment(&counts.acquire_attempts); // Backend failure produces no lease.
+        increment(&counts.acquire_attempts);
+        let abandoned = TextureLease::acquire(&counts, 1).unwrap();
+        assert_eq!(
+            counts.acquired.get(),
+            counts.presented.get() + u64::from(counts.active.get())
+        );
+        drop(abandoned);
+        assert_eq!(counts.acquire_attempts.get(), 3);
+        assert_eq!(counts.acquired.get(), 2);
+        assert_eq!(counts.presented.get(), 1);
+        assert_eq!(counts.discarded.get(), 1);
+        assert!(!counts.active.get());
+    }
+
+    #[test]
     fn one_acquisition_lease_survives_rejected_overlap_and_releases_on_abort() {
-        let active = Rc::new(Cell::new(false));
+        let active = Rc::new(FrameCounts::default());
         let first = TextureLease::acquire(&active, 1).unwrap();
-        assert!(active.get());
+        assert!(active.active.get());
         assert!(TextureLease::acquire(&active, 1).is_err());
-        assert!(active.get());
+        assert!(active.active.get());
         drop(first); // Preparation/error exit before presentation.
-        assert!(!active.get());
+        assert!(!active.active.get());
         let next = TextureLease::acquire(&active, 2).unwrap();
         assert!(next.belongs_to(&active, 2));
         drop(next);
-        assert!(!active.get());
+        assert!(!active.active.get());
     }
 
     #[test]
     fn foreign_and_retired_generation_frames_cannot_present_or_clear_new_ownership() {
-        let old = Rc::new(Cell::new(false));
-        let replacement = Rc::new(Cell::new(false));
+        let old = Rc::new(FrameCounts::default());
+        let replacement = Rc::new(FrameCounts::default());
         let first = TextureLease::acquire(&old, 7).unwrap();
         let next = TextureLease::acquire(&replacement, 7).unwrap();
         assert!(!first.belongs_to(&old, 8));
         assert!(!first.belongs_to(&replacement, 7));
         assert!(next.belongs_to(&replacement, 7));
         drop(first);
-        assert!(replacement.get());
+        assert!(replacement.active.get());
         drop(next);
-        assert!(!replacement.get());
+        assert!(!replacement.active.get());
     }
 }

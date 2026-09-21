@@ -1,0 +1,317 @@
+[
+  {
+    "path": "/tmp/pm045-counts-host-proof/GLOBAL/native.log",
+    "records": 5,
+    "owners": 2,
+    "queue_epochs": [
+      1
+    ],
+    "final_owner_records": [
+      {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1333,
+          833
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 0,
+        "host": 1,
+        "last_present_receipt": 1,
+        "present_receipts_issued": 1,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "window": "WindowId(12582916)"
+      },
+      {
+        "acquire_attempts": 4,
+        "acquired": 4,
+        "active": 0,
+        "configuration_generation": 4,
+        "configure_attempts": 4,
+        "configured_extent": [
+          1000,
+          750
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 4,
+        "host": 2,
+        "last_present_receipt": 5,
+        "present_receipts_issued": 5,
+        "presented": 4,
+        "queue_epoch": 1,
+        "reason": "present",
+        "window": "WindowId(12582917)"
+      }
+    ],
+    "passed": true
+  },
+  {
+    "path": "/tmp/pm045-counts-host-proof/PROJECT/native.log",
+    "records": 5,
+    "owners": 2,
+    "queue_epochs": [
+      1
+    ],
+    "final_owner_records": [
+      {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1333,
+          833
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 0,
+        "host": 1,
+        "last_present_receipt": 1,
+        "present_receipts_issued": 1,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "window": "WindowId(12582916)"
+      },
+      {
+        "acquire_attempts": 4,
+        "acquired": 4,
+        "active": 0,
+        "configuration_generation": 4,
+        "configure_attempts": 4,
+        "configured_extent": [
+          1000,
+          750
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 4,
+        "host": 2,
+        "last_present_receipt": 5,
+        "present_receipts_issued": 5,
+        "presented": 4,
+        "queue_epoch": 1,
+        "reason": "present",
+        "window": "WindowId(12582917)"
+      }
+    ],
+    "passed": true
+  },
+  {
+    "path": "/tmp/pm045-counts-host-proof/NEW/native.log",
+    "records": 5,
+    "owners": 2,
+    "queue_epochs": [
+      1
+    ],
+    "final_owner_records": [
+      {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1333,
+          833
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 0,
+        "host": 1,
+        "last_present_receipt": 1,
+        "present_receipts_issued": 1,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "window": "WindowId(12582916)"
+      },
+      {
+        "acquire_attempts": 4,
+        "acquired": 4,
+        "active": 0,
+        "configuration_generation": 4,
+        "configure_attempts": 4,
+        "configured_extent": [
+          792,
+          750
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 4,
+        "host": 2,
+        "last_present_receipt": 5,
+        "present_receipts_issued": 5,
+        "presented": 4,
+        "queue_epoch": 1,
+        "reason": "present",
+        "window": "WindowId(12582917)"
+      }
+    ],
+    "passed": true
+  },
+  {
+    "path": "/tmp/pm045-counts-final-device-proof/GLOBAL.log",
+    "records": 5,
+    "owners": 4,
+    "queue_epochs": [
+      1,
+      3
+    ],
+    "final_owner_records": [
+      {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1333,
+          833
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 1,
+        "host": 1,
+        "last_present_receipt": 1,
+        "present_receipts_issued": 1,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "owner_drop",
+        "window": "WindowId(12582916)"
+      },
+      {
+        "acquire_attempts": 0,
+        "acquired": 0,
+        "active": 0,
+        "configuration_generation": 0,
+        "configure_attempts": 0,
+        "configured_extent": null,
+        "discarded": 0,
+        "gpu_completed_through_receipt": 1,
+        "host": 2,
+        "last_present_receipt": 0,
+        "present_receipts_issued": 1,
+        "presented": 0,
+        "queue_epoch": 1,
+        "reason": "owner_drop",
+        "window": "WindowId(12582917)"
+      },
+      {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1333,
+          833
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 0,
+        "host": 1,
+        "last_present_receipt": 1,
+        "present_receipts_issued": 1,
+        "presented": 1,
+        "queue_epoch": 3,
+        "reason": "present",
+        "window": "WindowId(12582916)"
+      },
+      {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1000,
+          750
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 1,
+        "host": 2,
+        "last_present_receipt": 2,
+        "present_receipts_issued": 2,
+        "presented": 1,
+        "queue_epoch": 3,
+        "reason": "present",
+        "window": "WindowId(12582917)"
+      }
+    ],
+    "passed": true
+  },
+  {
+    "path": "/tmp/pm045-counts-final-device-proof/oom.log",
+    "records": 5,
+    "owners": 3,
+    "queue_epochs": [
+      1,
+      2,
+      3
+    ],
+    "final_owner_records": [
+      {
+        "acquire_attempts": 1,
+        "acquired": 0,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1333,
+          833
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 0,
+        "host": 1,
+        "last_present_receipt": 0,
+        "present_receipts_issued": 0,
+        "presented": 0,
+        "queue_epoch": 1,
+        "reason": "owner_drop",
+        "window": "WindowId(12582916)"
+      },
+      {
+        "acquire_attempts": 1,
+        "acquired": 0,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1333,
+          833
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 0,
+        "host": 1,
+        "last_present_receipt": 0,
+        "present_receipts_issued": 0,
+        "presented": 0,
+        "queue_epoch": 2,
+        "reason": "owner_drop",
+        "window": "WindowId(12582916)"
+      },
+      {
+        "acquire_attempts": 1,
+        "acquired": 0,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1333,
+          833
+        ],
+        "discarded": 0,
+        "gpu_completed_through_receipt": 0,
+        "host": 1,
+        "last_present_receipt": 0,
+        "present_receipts_issued": 0,
+        "presented": 0,
+        "queue_epoch": 3,
+        "reason": "acquire_oom",
+        "window": "WindowId(12582916)"
+      }
+    ],
+    "passed": true
+  }
+]

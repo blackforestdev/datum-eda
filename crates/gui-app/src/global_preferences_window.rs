@@ -58,7 +58,7 @@ impl GlobalPreferencesWindowSurface {
             &window,
             Some(runtime.measurements.epoch()),
         )?;
-        let mut surface_transaction = SurfaceTransaction::new(&config, window.inner_size());
+        let mut surface_transaction = SurfaceTransaction::new(&window);
         surface_transaction.share_queue_with(&runtime.surface_transaction);
         Ok(Self {
             surface,

@@ -12,14 +12,30 @@ use std::{
 
 #[derive(Clone, Default)]
 pub(super) struct QueueOwner(Rc<RefCell<State>>);
-#[derive(Default)]
 struct State {
+    epoch: u64,
     next_host: u64,
     submitted: u64,
     configurations: u64,
     completed: Arc<AtomicU64>,
     tickets: VecDeque<u64>,
 }
+impl Default for State {
+    fn default() -> Self {
+        static EPOCH: AtomicU64 = AtomicU64::new(1);
+        Self {
+            epoch: EPOCH
+                .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
+                .expect("native queue epoch exhausted"),
+            next_host: 0,
+            submitted: 0,
+            configurations: 0,
+            completed: Arc::default(),
+            tickets: VecDeque::new(),
+        }
+    }
+}
+
 #[derive(Debug, PartialEq, Eq)]
 pub(super) enum Admission {
     Frame,
@@ -28,6 +44,17 @@ pub(super) enum Admission {
 }
 
 impl QueueOwner {
+    /// Presentation receipts and their GPU completion watermark, not a count of
+    /// every raw queue submission (renderer initialization may also submit).
+    pub(super) fn snapshot(&self) -> (u64, u64, u64) {
+        let state = self.0.borrow();
+        (
+            state.epoch,
+            state.submitted,
+            state.completed.load(Ordering::Acquire),
+        )
+    }
+
     pub(super) fn register(&self) -> u64 {
         let mut state = self.0.borrow_mut();
         state.next_host = state
@@ -91,6 +118,20 @@ impl QueueOwner {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn queue_epochs_distinguish_replacement_from_late_old_completion() {
+        let old = QueueOwner::default();
+        let shared = old.clone();
+        let replacement = QueueOwner::default();
+        let (serial, completion) = old.submission_receipt();
+        assert_eq!(old.snapshot(), shared.snapshot());
+        assert_ne!(old.snapshot().0, replacement.snapshot().0);
+        completion.store(serial, Ordering::Release);
+        assert_eq!(old.snapshot().2, serial);
+        assert_eq!(replacement.snapshot().1, 0);
+        assert_eq!(replacement.snapshot().2, 0);
+    }
+
     #[test]
     fn configuration_ticket_prevents_busy_host_overtaking_and_preserves_fifo() {
         let owner = QueueOwner::default();
