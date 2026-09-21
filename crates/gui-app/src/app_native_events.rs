@@ -354,7 +354,7 @@ impl App {
                         && runtime.cursor_in_dock()
                         && runtime.open_terminal_clipboard_menu_at_cursor()
                     {
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                         return;
                     }
                     if button == MouseButton::Right && runtime.terminal_clipboard_menu_active() {
@@ -364,7 +364,7 @@ impl App {
                         return;
                     }
                     if button == MouseButton::Right && runtime.handle_context_menu_button(state) {
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                     }
                 }
             }
@@ -383,12 +383,12 @@ impl App {
                 if let Some(runtime) = &mut self.runtime {
                     if let Some(icon) = runtime.finish_dock_resize_drag() {
                         self.apply_cursor_icon(icon);
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                         return;
                     }
                     if let Some(icon) = runtime.finish_terminal_split_drag() {
                         self.apply_cursor_icon(icon);
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                         return;
                     }
                     if runtime.finish_terminal_tab_drag() {
@@ -397,14 +397,14 @@ impl App {
                             .and_then(|pointer| runtime.terminal_tab_cursor_icon(pointer))
                             .unwrap_or(winit::window::CursorIcon::Default);
                         self.apply_cursor_icon(icon);
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                         return;
                     }
                     // A completed divider-drag resize ends here; the release must NOT
                     // fall through to click-to-focus / selection.
                     let was_divider_drag = runtime.divider_drag.take().is_some();
                     if runtime.finish_terminal_text_selection() {
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                         return;
                     }
                     if !runtime.terminal_clipboard_menu_active()
@@ -414,11 +414,11 @@ impl App {
                         return;
                     }
                     if runtime.finish_primary_pan() {
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                         return;
                     }
                     if was_divider_drag {
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                         return;
                     }
                     let handled = runtime.handle_primary_click();
@@ -440,7 +440,7 @@ impl App {
                         .as_mut()
                         .is_some_and(Runtime::dismiss_terminal_clipboard_menu)
                 {
-                    self.request_redraw_if_needed();
+                    self.request_workspace_redraw();
                     return;
                 }
                 if event.state == ElementState::Pressed
@@ -451,7 +451,7 @@ impl App {
                         .is_some_and(Runtime::cancel_terminal_tab_drag)
                 {
                     self.apply_cursor_icon(winit::window::CursorIcon::Default);
-                    self.request_redraw_if_needed();
+                    self.request_workspace_redraw();
                     return;
                 }
                 keyboard_focus::handle_keyboard_input(self, &event);
