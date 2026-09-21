@@ -290,7 +290,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
             runtime.sync_terminal_tabs();
             runtime.invalidate_frame();
         }
-        app.request_redraw_if_needed();
+        app.request_workspace_redraw();
         return true;
     }
     let opens_terminal_session = app.runtime.as_ref().is_some_and(|runtime| {
@@ -308,7 +308,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
             runtime.set_application_focus(ApplicationFocus::Terminal);
             runtime.invalidate_frame();
         }
-        app.request_redraw_if_needed();
+        app.request_workspace_redraw();
         return true;
     }
     let dock_visible = app
@@ -344,7 +344,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
             let pane = runtime.workspace().ui.layout.focused;
             runtime.set_application_focus(ApplicationFocus::Editor(pane));
             runtime.invalidate_frame();
-            app.request_redraw_if_needed();
+            app.request_workspace_redraw();
         }
         return true;
     }
@@ -363,7 +363,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         if let Some(runtime) = &mut app.runtime
             && runtime.handle_terminal_key_input(event)
         {
-            app.request_redraw_if_needed();
+            app.request_workspace_redraw();
         }
         return true;
     }
@@ -379,7 +379,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         if let Some(runtime) = &mut app.runtime
             && runtime.dismiss_marking_menu()
         {
-            app.request_redraw_if_needed();
+            app.request_workspace_redraw();
         }
         return true;
     }
@@ -393,7 +393,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
             } else {
                 runtime.pane_focus_next();
             }
-            app.request_redraw_if_needed();
+            app.request_workspace_redraw();
         }
         return true;
     }
@@ -410,14 +410,14 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
             && editor_owns_hotkeys
             && crate::workspace_keyboard::apply(runtime, action)
         {
-            app.request_redraw_if_needed();
+            app.request_workspace_redraw();
         }
         return true;
     }
     if escape_released {
         if let Some(runtime) = &mut app.runtime {
             if runtime.dispatch_session_command(SessionCommand::CancelAuthoringGesture) {
-                app.request_redraw_if_needed();
+                app.request_workspace_redraw();
                 return true;
             }
             if !matches!(
@@ -425,7 +425,7 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
                 datum_gui_protocol::SelectionTarget::None
             ) && runtime.dispatch_session_command(SessionCommand::ClearSelection)
             {
-                app.request_redraw_if_needed();
+                app.request_workspace_redraw();
             }
         }
         return true;

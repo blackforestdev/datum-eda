@@ -23063,5 +23063,38 @@
     ],
     "evidence_directory": "docs/reviews/gui-performance/implementation/S1/preferences-key-outcome",
     "release_binary_sha256": "e969886741b246f03169c0c7142651906a9f5a4a623cdb7e68f7df99c0079443"
+  },
+  "s1_workspace_gesture_key_work": {
+    "status": "24 additional production input call sites migrated; complete native SH-01/SH-02 qualification remains open",
+    "baseline_commit": "9c67514e",
+    "consumers": [
+      "MAIN workspace character shortcuts, pane focus and gesture cancellation",
+      "MAIN terminal keys, session actions and focus exit",
+      "MAIN terminal link/selection/menu interaction, tab/split/dock/divider dragging and pan completion"
+    ],
+    "shared_owner": "Existing request_workspace_redraw targets Main and current New Project backdrop; Preferences remain independent",
+    "retired_paths": [
+      "Nine all-window requests after workspace/terminal keyboard actions",
+      "Five all-window requests in primary-button press handling",
+      "Ten all-window requests in secondary-button, drag release and terminal Escape handling"
+    ],
+    "preserved": [
+      "Input/action order, raw PTY and Escape ownership, focus/modal policy and mutation authority",
+      "General click/menu actions, settings/dialog actions, startup/recovery/shutdown and New Project retain existing broader invalidation"
+    ],
+    "verification": {
+      "first_app_run": "350 passed, 1 failed, 9 ignored; terminal_session_restart_preserves_tab_and_reports_lineage retained old ID after three-second deadline",
+      "focused_replay": "Same restart test passed in 0.07s; no test or restart source modification",
+      "full_recheck": "351 passed, 0 failed, 9 ignored",
+      "clippy_build": "Offline all-targets app Clippy -D warnings and fresh release passed",
+      "gates": "Source health, dependency authority, traceability, spec governance/parity and formatting passed"
+    },
+    "limits": [
+      "Restart failure root cause remains unresolved under dat-terminal-restart-lineage-jti; failed evidence preserved, not erased by passing replay",
+      "No focus-taking native replay; existing tests are regression evidence, not full per-consumer input/final-state or zero-unrelated-submission proof",
+      "No numerical performance or milestone closure claim; S1 in progress, S2-S5 pending; resize pinned and nonblocking"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/workspace-input",
+    "release_binary_sha256": "214878287a44fbb0e02f9d7b4d8f70f54c5b66a4df9b107a8b2976c4c0712b64"
   }
 }

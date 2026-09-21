@@ -13,7 +13,7 @@ impl App {
         }
         if runtime.cursor_in_dock() {
             if runtime.modifiers.control_key() && runtime.arm_terminal_link_at_cursor() {
-                self.request_redraw_if_needed();
+                self.request_workspace_redraw();
                 return;
             }
             if runtime.begin_terminal_split_drag() {
@@ -31,7 +31,7 @@ impl App {
             runtime.focus_terminal_screen_before_mouse_report();
             if runtime.begin_terminal_text_selection() {
                 self.apply_cursor_icon(winit::window::CursorIcon::Text);
-                self.request_redraw_if_needed();
+                self.request_workspace_redraw();
                 return;
             }
             if runtime.report_terminal_mouse_button(MouseButton::Left, ElementState::Pressed) {
@@ -40,7 +40,7 @@ impl App {
         }
         if runtime.begin_primary_pan() {
             if runtime.clear_interaction_overlay() {
-                self.request_redraw_if_needed();
+                self.request_workspace_redraw();
             }
             return;
         }
@@ -48,12 +48,12 @@ impl App {
             return;
         };
         if runtime.begin_dock_resize_drag((x, y)) {
-            self.request_redraw_if_needed();
+            self.request_workspace_redraw();
             return;
         }
         // Divider drag precedes click-to-focus so a gutter never selects a pane.
         if runtime.begin_divider_drag(x, y) {
-            self.request_redraw_if_needed();
+            self.request_workspace_redraw();
         }
     }
 }
