@@ -52,11 +52,11 @@ impl App {
         let Some(receipt) = self.frames.redraw_received(window.id()) else {
             return;
         };
-        let presented = surface
-            .render(runtime, project, new)
-            .unwrap_or_else(|error| {
-                fatal_gui_error(event_loop, &format!("render {label} window"), error)
-            });
+        let presented = match surface.render(runtime, project, new) {
+            Ok(presented) => presented,
+            Err(_) if runtime.device_health.failed() => false,
+            Err(error) => fatal_gui_error(event_loop, &format!("render {label} window"), error),
+        };
         self.frames.frame_finished(window, receipt, presented);
     }
 }

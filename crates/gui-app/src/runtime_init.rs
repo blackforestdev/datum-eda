@@ -6,6 +6,7 @@ impl Runtime {
         window: &'static Window,
         launch_state: LaunchState,
         scale_factor_override: Option<f32>,
+        wake: winit::event_loop::EventLoopProxy<()>,
     ) -> Result<Self> {
         let runtime_started = std::time::Instant::now();
         let LaunchState {
@@ -61,6 +62,7 @@ impl Runtime {
             config.width, config.height, config.format, config.present_mode, msaa_samples
         ));
         // Initial configuration joins the same admission path as later frames.
+        let device_health = native_device_recovery::DeviceHealth::observe(&device, wake);
         let renderer_started = std::time::Instant::now();
         append_gui_diagnostic_line("renderer init begin");
         let mut renderer = Renderer::new(&device, &queue, config.format, msaa_samples);
@@ -77,6 +79,7 @@ impl Runtime {
             adapter,
             surface,
             device,
+            device_health,
             queue,
             surface_transaction: SurfaceTransaction::new(&config, window.inner_size()),
             config,

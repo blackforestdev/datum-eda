@@ -2,6 +2,7 @@ use super::*;
 
 pub(super) struct App {
     pub(super) args: GuiArgs,
+    pub(super) device_recovery: native_device_recovery::DeviceRecovery,
     pub(super) frames: native_frame_coordinator::NativeFrameCoordinator,
     pub(super) window: Option<&'static Window>,
     pub(super) runtime: Option<Runtime>,
@@ -40,6 +41,7 @@ impl App {
         Self {
             args,
             frames: Default::default(),
+            device_recovery: Default::default(),
             window: None,
             runtime: None,
             global_preferences_window: None,

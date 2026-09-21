@@ -13,9 +13,11 @@ impl App {
         let presented = if let Some(runtime) = &mut self.runtime {
             append_gui_verbose_diagnostic_line("redraw handler begin");
             let started = std::time::Instant::now();
-            let presented = runtime
-                .render()
-                .unwrap_or_else(|err| fatal_gui_error(event_loop, "render failed", err));
+            let presented = match runtime.render() {
+                Ok(presented) => presented,
+                Err(_) if runtime.device_health.failed() => false,
+                Err(error) => fatal_gui_error(event_loop, "render failed", error),
+            };
             runtime.trace_timing(format!("redraw render {}ms", started.elapsed().as_millis()));
             presented
         } else {

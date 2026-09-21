@@ -68,6 +68,11 @@ impl App {
             }
             return Ok(());
         }
+        if self.new_project_window.is_none() && !self.native_device_available() {
+            // Keep the requested logical window state until replacement finishes.
+            // The close path above remains available on a failed device.
+            return Ok(());
+        }
         if self.new_project_window.is_none() {
             let window = std::sync::Arc::new(
                 event_loop.create_window(

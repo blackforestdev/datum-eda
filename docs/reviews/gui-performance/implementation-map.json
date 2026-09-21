@@ -22016,5 +22016,99 @@
       "timeout-stderr.log.gz": "339d238530678fca89905f9976cc4f7d67257ff6ff26ddaebdb29d2a0444c243",
       "timeout.log.gz": "90f83febb6cd616c110f8a74d88835cc774783354cd42749260daf29c52484a6"
     }
+  },
+  "s1_device_work": {
+    "status": "bounded default coordinated device replacement verified; S1 remains in progress",
+    "baseline_commit": "3b927da6",
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_owner": "App DeviceRecovery polls one native GPU replacement future; Runtime DeviceHealth scopes callbacks to the device generation",
+    "retired_paths": [
+      "Unobserved device loss and uncaptured GPU error process-abort behavior",
+      "Surface OutOfMemory process-exit path",
+      "Renderer error process exit after observed device failure"
+    ],
+    "behavior": [
+      "Stop native frame admission on observed shared-device failure; retain live engine and terminal registries",
+      "At most one automatic replacement per failure episode; explicit F5 may start another after failure",
+      "Poll existing adapter/device creation future on event loop; bounded drawable-active deadline and minimum wake; no new renderer thread",
+      "Replace main GPU state and stage every surviving auxiliary renderer before generation rebind; preserve window identities, scroll offsets and logical focus",
+      "Retired device callbacks hold only their own health flag and event-loop wake; closed hosts cannot rebind",
+      "Callbacks coalesce error bursts into one failure wake per device generation",
+      "Failed configuration does not advance configured receipts or proceed to acquisition",
+      "New auxiliary GPU construction waits for device availability while logical open/close state remains owned",
+      "Cursor capture cancels and first replacement main frame refreshes terminal IME geometry when terminal owns input"
+    ],
+    "limits": [
+      "Backend API calls and renderer initialization can be indivisible stalls; polling is nonblocking but cannot preempt a synchronous driver call",
+      "Native hidden/restore and close-during-replacement fault qualification remains incomplete",
+      "Active PTY byte/state preservation stress and complete failure input/IME parity remain unqualified",
+      "Full lifecycle accounting and S1 completion remain open"
+    ],
+    "verification": {
+      "coordinator": "9 tests pass including preservation of occlusion/extent and refusal of stale/closed-host rebind completion",
+      "callbacks": "1 test passes:1000old-generation error notifications do not wake again or affect replacement health",
+      "app": "Final333passed,0failed,8ignored",
+      "native": "Four Xwayland/Vulkan native configurations: actual device.destroy plus nonblocking poll, without direct application failure flag injection. Each records backend device-loss callback fault_code=1, exactly one replacement, unchanged workspace/terminal registry identity/count, and six completed resize transitions",
+      "allocation_failure": "Persistent SurfaceError::OutOfMemory injection retains process; exactly one automatic replacement, quiet after failure, exactly one additional replacement after actual native F5",
+      "normal": "Four normal production-host configurations pass six extent transitions each on the final binary",
+      "release": "Final offline optimized build passes; native device probe verifies binary unchanged across all cases",
+      "drift": "Workspace formatting, Clippy and preceding governance checks pass; stops at baseline dat-terminal-convergence-guard-xke focus-count/font-marker failures; later stages not run",
+      "source_health": "Runtime state definition moved intact to runtime_state.rs; main pre-test1551->1492; source health passes"
+    },
+    "failed_attempts": [
+      "Initial code-only Clippy found one collapsible nested clock-pause conditional; equivalent correction applied.",
+      "Early destruction probe also set application failure flag; those runs are excluded from final callback-delivery proof.",
+      "Removing that shortcut exposed acquisition after failed auxiliary configuration on destroyed device, causing a wgpu panic. Shared lifecycle now checks device health after poll/configure/acquire, and failed configure does not advance receipts. Native failing trace retained; final callback-driven runs pass."
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/device-recovery",
+    "source_sha256": {
+      "crates/gui-app/src/app_frame.rs": "90ac71c751d6c1f2cae7cdef63410420faf85ce98a16d6d24cbfe44ba4c0357c",
+      "crates/gui-app/src/app_native_events.rs": "93d7acba4d5113a21c4768f2f35a0d1afe8825902c38ec6d76f049244a40c81b",
+      "crates/gui-app/src/app_shell.rs": "a6bce860fa1fd73744df9d4463adccb42d830642a58f0c24fb85bddaad5b36ae",
+      "crates/gui-app/src/global_preferences_window.rs": "40cc917b309f3d4bd8428077668e2883cfb8b503c05505d70c77cb338dfec87e",
+      "crates/gui-app/src/main.rs": "ace0b44b543da40ba6e582c91102c47dbb8f0f4dd12d4a62c4c29fb844f4a36b",
+      "crates/gui-app/src/native_frame_adapters.rs": "9d6655a089bc65b48e0b1b1caa0204ad7da6ee0f112bf798d32e5753cf175453",
+      "crates/gui-app/src/native_frame_coordinator.rs": "9e5f0679ba42d9a3f6302cee7183a597ccfe557f665adba68c7efca72867753a",
+      "crates/gui-app/src/native_gpu.rs": "d3bebb777085edeee5bdb741c2b36e56f02cb02e888adba07910bd83fd6c340d",
+      "crates/gui-app/src/native_gpu_measurements.rs": "f55279fed4cb88effae6660326b9e0c16a74b4ffa43e0d210f23f7c1b505b3b7",
+      "crates/gui-app/src/native_recovery.rs": "692da0b04796f4215996a5ba1309870b210344dec519bbe15b6d68f8f96b0fcf",
+      "crates/gui-app/src/native_surface_transaction.rs": "a4d63cbe508b4771b91e703198268b350a3f57f7d38aef4732f68b6f74c05cab",
+      "crates/gui-app/src/new_project_window.rs": "630326e622424c6e88b611b0ef3003c3e36e0e6be55a52bddbc4e1d9f99ee1bf",
+      "crates/gui-app/src/production_status_refresh.rs": "fd4edeb1e4f7bf979d828af548feb390089333dbacad33d8ad9367ebe3c358a8",
+      "crates/gui-app/src/project_preferences_window.rs": "664ad0f5bde79f1608a4fc956d99be6854d5139ad6752656589c4db32c5669c1",
+      "crates/gui-app/src/runtime_init.rs": "27decea8c876a9539c3eada8fd15a56aaba2efabaa07ee57e3931182422a0da9",
+      "crates/gui-app/src/runtime_present.rs": "14fd66052f2269d7e29048d0011898b031838f83f7bf291b2253edb7d4920484",
+      "crates/gui-app/src/native_device_recovery.rs": "826cb672dd64c1cc73755ea4e72d73ea80834bd22f40f70ce8113446be7227b3",
+      "crates/gui-app/src/runtime_state.rs": "692bab0427e0a4245dc4bf36aa41d57be4108c9e4a6b77c1b9119a9ce87454d4"
+    },
+    "artifacts_sha256": {
+      "GLOBAL-device.log.gz": "7cf294e471bd6dc823ae1aa709f7122d2d285908c91f8d472afbf9d9258f1e78",
+      "GLOBAL-native.log.gz": "9c0089d111249f67975c9c4e77ec19c81967527ab1912673fda1dcba6c11e6ea",
+      "MAIN-device.log.gz": "538906fc4d50eff7867ccaaa2851fa4ea888971168e37c9e80f00e613431832a",
+      "MAIN-native.log.gz": "9bebc8933f26924a36948d404502fb24a884f9402234951e49d8e5ee8c51fc31",
+      "NEW-device.log.gz": "8ef19565178438965fb1fdf6a73134b6751bcd732b7a8afbd5c82fe2f9dfa70e",
+      "NEW-native.log.gz": "ee2af13d23821ada5e15258c4cd77412731798178d2748e560286641067a7064",
+      "PROJECT-device.log.gz": "1b7d0d596dc1ea59d613133decb1e75db83497318bdcb1a7bbbcc7dfda3cc7d3",
+      "PROJECT-native.log.gz": "bb370465b01c70aba7909f56f1f827f3a9631dbee0008101580a5ce7a1b46a3b",
+      "app.log.gz": "d70eb686fe4a81988c558f7e61f6228eb35f3992ef1bc718faa2b614182c345e",
+      "build.log.gz": "703bd2d7d7c9dc82fd9c4bf69ac3a6768049076ee2d9f3bee55dff1a5376d952",
+      "callbacks.log.gz": "3daff79e7524a25c85374f3ed208e30b170bac97b6f10e77600db770b9e99dae",
+      "coordinator.log.gz": "6b8937df6743c979ca864b50e1ec7c4e4ce3b99414364c35522db705926add00",
+      "device_probe.py": "011e000004ea8b82ac4d6a44dd15b504c96413bea4ce8ae1a10f6e6d90cba5ca",
+      "drift.log.gz": "a0ecfcd855eda638a3db66fa5f09d7c78056c05cb192e0610c50b06eb6bab749",
+      "failed-configure-GLOBAL-stderr.log.gz": "6f455a650cd64f721ddc74158be434f477706712023ab0bf7c8535c48a6e73bf",
+      "failed-configure-GLOBAL.log.gz": "df2e5c2d3bcefa99f5831b652c36ebbbf67b9a55b0b2b993781bf9c43d8a106d",
+      "failed-configure.json": "c6d5c696eb481718f3a2f5c784a9234577902167458f35dad437f363cca411fc",
+      "faults.json": "cda0bbb9b1be99d6ca0009496fd2c295900d5e55a73f1aa5e9dae23158173679",
+      "initial-clippy-failure.log.gz": "ca21344f9a0fe33c6f470651209c972b6be1895d0178dccf4b65e9e0f1949aaa",
+      "normal-native.json": "34f2ae2055fabca10abc68e897f97739cf4d16ed645576ee7a161de3464107b5",
+      "oom-stderr.log.gz": "c7ada23e4eead746cc6ac360345b07462f19d5e022157f8fb51f8c643d6adacc",
+      "oom.log.gz": "6ea630505dc0a4b7d6f91ac2525b37f27efcceb27dd110f9b838500f1026b4e2"
+    }
   }
 }

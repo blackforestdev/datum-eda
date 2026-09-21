@@ -160,6 +160,16 @@ impl NativeFrameCoordinator {
             .is_some_and(|host| Self::drawable(host, self.suspended))
     }
 
+    pub(super) fn has_drawable_host(&self) -> bool {
+        self.hosts
+            .values()
+            .any(|host| Self::drawable(host, self.suspended))
+    }
+
+    pub(super) fn contains_host(&self, window: WindowId) -> bool {
+        self.hosts.contains_key(&window)
+    }
+
     pub(super) fn service_recovery(
         &mut self,
         window: &Window,
@@ -174,7 +184,7 @@ impl NativeFrameCoordinator {
             host.pending = false;
             host.restore_pending = false;
             let message = format!(
-                "Rendering paused for native host {:?}: recovery exhausted two seconds of drawable active time. Press F5 to Retry, or close this window. Application state is retained.",
+                "Rendering paused for native host {:?}: automatic recovery stopped. Press F5 to Retry, or close this window. Application state is retained.",
                 window.id()
             );
             crate::append_gui_diagnostic_line(&message);
@@ -184,6 +194,30 @@ impl NativeFrameCoordinator {
             window.request_redraw();
         }
         (due, failed)
+    }
+
+    pub(super) fn fail_device(&mut self) {
+        for host in self.hosts.values_mut() {
+            host.recovery.borrow_mut().fail_device();
+            host.pending = false;
+            host.rendering = None;
+        }
+    }
+
+    pub(super) fn rebind_device(&mut self, window: WindowId, epoch: u64, recovery: RecoveryHandle) {
+        let Some(previous) = self
+            .hosts
+            .get(&window)
+            .map(|host| (host.extent, host.occluded))
+        else {
+            return;
+        };
+        self.register(window, epoch, previous.0, recovery);
+        let host = self.hosts.get_mut(&window).expect("rebound native host");
+        host.occluded = previous.1;
+        host.recovery
+            .borrow_mut()
+            .set_drawable(Self::drawable(host, self.suspended), Instant::now());
     }
 
     pub(super) fn manual_retry(&mut self, window: WindowId) -> bool {
@@ -304,6 +338,28 @@ impl NativeFrameCoordinator {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn device_rebind_preserves_visibility_and_rejects_old_or_closed_receipts() {
+        let mut frames = NativeFrameCoordinator::default();
+        let id = WindowId::from(7);
+        frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
+        let old = frames.redraw_received(id).unwrap();
+        frames.window_event(id, &WindowEvent::Resized(PhysicalSize::new(1440, 900)));
+        frames.window_event(id, &WindowEvent::Occluded(true));
+        frames.fail_device();
+        frames.rebind_device(id, 2, Default::default());
+        assert!(!frames.finish(old, true));
+        assert_eq!(frames.hosts[&id].extent, PhysicalSize::new(1440, 900));
+        assert!(frames.redraw_received(id).is_none());
+        frames.window_event(id, &WindowEvent::Occluded(false));
+        let current = frames.redraw_received(id).unwrap();
+        assert_eq!(current.device_generation, 2);
+        assert!(!frames.finish(current, true));
+        frames.close(id);
+        frames.rebind_device(id, 3, Default::default());
+        assert!(!frames.contains_host(id));
+    }
 
     #[test]
     fn zero_extent_retains_damage_and_restores_one_current_frame() {

@@ -1,0 +1,92 @@
+{
+  "binary_sha256": "0631047d26c08c4d321f2e5d15fa643401453d46ec7475723c96bbfd160202fb",
+  "runs": [
+    {
+      "host": "MAIN",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--resize-torture-smoke"
+      ],
+      "passed": true,
+      "attempts": 1,
+      "commits": 1,
+      "state_receipts": 1,
+      "unexpected_exit": null,
+      "backend_fault_receipts": [
+        "[SystemTime { tv_sec: 1789959408, tv_nsec: 131876482 }] native device replacement begin fault_code=1"
+      ]
+    },
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--resize-torture-smoke",
+        "--open-global-preferences"
+      ],
+      "passed": true,
+      "attempts": 1,
+      "commits": 1,
+      "state_receipts": 1,
+      "unexpected_exit": null,
+      "backend_fault_receipts": [
+        "[SystemTime { tv_sec: 1789959414, tv_nsec: 175094838 }] native device replacement begin fault_code=1"
+      ]
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--resize-torture-smoke",
+        "--open-project-preferences"
+      ],
+      "passed": true,
+      "attempts": 1,
+      "commits": 1,
+      "state_receipts": 1,
+      "unexpected_exit": null,
+      "backend_fault_receipts": [
+        "[SystemTime { tv_sec: 1789959420, tv_nsec: 340895385 }] native device replacement begin fault_code=1"
+      ]
+    },
+    {
+      "host": "NEW",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--resize-torture-smoke",
+        "--open-new-project"
+      ],
+      "passed": true,
+      "attempts": 1,
+      "commits": 1,
+      "state_receipts": 1,
+      "unexpected_exit": null,
+      "backend_fault_receipts": [
+        "[SystemTime { tv_sec: 1789959426, tv_nsec: 387339551 }] native device replacement begin fault_code=1"
+      ]
+    },
+    {
+      "host": "MAIN",
+      "fault": "persistent surface OutOfMemory",
+      "passed": true,
+      "automatic_attempts": 1,
+      "after_native_F5_attempts": 2,
+      "process_retained": true
+    }
+  ]
+}

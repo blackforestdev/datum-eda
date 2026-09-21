@@ -17,6 +17,7 @@ pub(crate) struct SurfaceTransaction {
 enum InjectedFault {
     LostOnce,
     Timeout,
+    OutOfMemory,
 }
 
 impl SurfaceTransaction {
@@ -36,6 +37,7 @@ impl SurfaceTransaction {
             Err(std::env::VarError::NotPresent) | Ok("0") => None,
             Ok("lost-once") => Some(InjectedFault::LostOnce),
             Ok("timeout") => Some(InjectedFault::Timeout),
+            Ok("oom") => Some(InjectedFault::OutOfMemory),
             other => panic!("invalid DATUM_DIAGNOSTIC_SURFACE_FAULT: {other:?}"),
         };
         Self {
@@ -47,6 +49,10 @@ impl SurfaceTransaction {
             drawable: native_size.width != 0 && native_size.height != 0,
             configured: None,
         }
+    }
+
+    pub(crate) fn has_presented(&self) -> bool {
+        self.in_flight != 0
     }
 
     pub(crate) fn configured_for(&self, width: u32, height: u32) -> bool {
@@ -82,14 +88,19 @@ impl SurfaceTransaction {
         surface: &wgpu::Surface<'_>,
         device: &wgpu::Device,
         config: &wgpu::SurfaceConfiguration,
-    ) {
+        health: &crate::native_device_recovery::DeviceHealth,
+    ) -> bool {
         super::append_gui_diagnostic_line("surface configure begin");
         let probe = super::phase_probe::Probe::start("configure");
         surface.configure(device, config);
         drop(probe);
         super::append_gui_diagnostic_line("surface configure end");
+        if health.failed() {
+            return false;
+        }
         self.configured = Some((config.width, config.height));
         self.queue_owner.configured(self.queue_host);
+        true
     }
 
     /// Common acquisition and error classification for every native product host.
@@ -99,8 +110,10 @@ impl SurfaceTransaction {
         surface: &wgpu::Surface<'_>,
         device: &wgpu::Device,
         config: &wgpu::SurfaceConfiguration,
+        health: &crate::native_device_recovery::DeviceHealth,
     ) -> anyhow::Result<Option<wgpu::SurfaceTexture>> {
-        if !self.begin_frame(surface, device, config)?
+        if !self.begin_frame(surface, device, config, health)?
+            || health.failed()
             || !self.recovery.borrow_mut().ready(Instant::now())
         {
             return Ok(None);
@@ -119,13 +132,15 @@ impl SurfaceTransaction {
                     Err(wgpu::SurfaceError::Lost)
                 }
                 InjectedFault::Timeout => Err(wgpu::SurfaceError::Timeout),
+                InjectedFault::OutOfMemory => Err(wgpu::SurfaceError::OutOfMemory),
             }
         } else {
             surface.get_current_texture()
         };
         drop(probe);
         match result {
-            Ok(frame) => Ok(Some(frame)),
+            Ok(frame) if !health.failed() => Ok(Some(frame)),
+            Ok(_) => Ok(None),
             Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
                 self.configured = None;
                 self.recovery
@@ -141,7 +156,8 @@ impl SurfaceTransaction {
                 Ok(None)
             }
             Err(wgpu::SurfaceError::OutOfMemory) => {
-                anyhow::bail!("native surface out of memory")
+                health.allocation_failed();
+                Ok(None)
             }
             Err(error) => anyhow::bail!("acquire native surface texture: {error}"),
         }
@@ -152,6 +168,7 @@ impl SurfaceTransaction {
         surface: &wgpu::Surface<'_>,
         device: &wgpu::Device,
         config: &wgpu::SurfaceConfiguration,
+        health: &crate::native_device_recovery::DeviceHealth,
     ) -> anyhow::Result<bool> {
         if !self.drawable {
             return Ok(false);
@@ -161,6 +178,9 @@ impl SurfaceTransaction {
         }
         let now = Instant::now();
         device.poll(wgpu::PollType::Poll)?;
+        if health.failed() {
+            return Ok(false);
+        }
         match self.queue_owner.admit(
             self.queue_host,
             self.configured != Some((config.width, config.height)),
@@ -171,7 +191,9 @@ impl SurfaceTransaction {
                 return Ok(false);
             }
             super::native_queue_owner::Admission::Configure => {
-                self.configure(surface, device, config);
+                if !self.configure(surface, device, config, health) {
+                    return Ok(false);
+                }
                 // The next FIFO ticket owns the queue as soon as ours finishes.
                 // Do not submit this host's frame ahead of its configuration.
                 if self
@@ -222,6 +244,9 @@ impl crate::App {
 
     pub(crate) fn service_surface_retries(&mut self) -> Option<Instant> {
         self.sync_surface_drawability();
+        if self.device_recovery.pending() {
+            return None;
+        }
         let now = Instant::now();
         let mut next: Option<Instant> = None;
         let mut failed = Vec::new();
@@ -248,7 +273,7 @@ impl crate::App {
         next
     }
 
-    fn cancel_failed_host_gestures(&mut self, window: winit::window::WindowId) {
+    pub(crate) fn cancel_failed_host_gestures(&mut self, window: winit::window::WindowId) {
         if self.window.is_some_and(|main| main.id() == window)
             && let Some(runtime) = &mut self.runtime
         {
@@ -259,6 +284,7 @@ impl crate::App {
             runtime.divider_drag = None;
             runtime.dock_drag_active = false;
             runtime.terminal_mouse_button = None;
+            self.apply_cursor_icon(winit::window::CursorIcon::Default);
         }
         for (surface, native) in [
             (
