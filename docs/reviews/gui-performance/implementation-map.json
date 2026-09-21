@@ -23029,5 +23029,39 @@
     ],
     "evidence_directory": "docs/reviews/gui-performance/implementation/S1/dialog-navigation",
     "release_binary_sha256": "51872b9cbfeefddbcdca95a05a189d47872f5db1356cc30fe83e65f570d3df6a"
+  },
+  "s1_preferences_key_outcome_work": {
+    "status": "both Preferences keyboard adapters migrated to shared consumption/damage outcomes; native keyboard qualification remains open",
+    "baseline_commit": "6a8da6b4",
+    "consumers": [
+      "GLOBAL",
+      "PROJECT"
+    ],
+    "shared_owner": "PreferencesKeyOutcome and App::request_preferences_key_redraw; keyboard and pointer paths reuse request_preferences_dialog_redraw",
+    "retired_paths": [
+      "Boolean consumed result treated as unconditional all-host redraw in both Preferences keyboard adapters",
+      "Redraw for key release and unmatched consumed keys",
+      "All-host redraw for Tab, search, section navigation and explanation dismissal while the dialog stays open"
+    ],
+    "preserved": [
+      "Existing key activation order, text/modifier handling, focus and accessibility announcements",
+      "Setting activation, reset and dialog closure retain dependent-window invalidation",
+      "Existing action false returns retain unhandled semantics",
+      "Global handler extracted into global_preferences_keyboard.rs to keep source size within policy; no independent input authority introduced"
+    ],
+    "verification": {
+      "app": "351 passed, 0 failed, 9 ignored",
+      "clippy_build": "Fresh offline release and all-targets app Clippy -D warnings passed",
+      "source_review": "Reviewed actual action return branches, search-result/explanation behavior, and Escape closure versus inner dismissal",
+      "gates": "Source health, dependency authority, traceability, spec governance/parity and exact formatting passed"
+    },
+    "limits": [
+      "Existing tests do not qualify native keyboard focus, final state or zero unrelated submissions; desktop replay remains open",
+      "Existing frame-cache invalidation and fine-grained control no-op detection are unchanged",
+      "Setting activation retains conservative broader invalidation, including choice popup activation",
+      "No numerical performance claim; GPI-S1 remains in progress, S2-S5 pending, resize qualification pinned and nonblocking"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/preferences-key-outcome",
+    "release_binary_sha256": "e969886741b246f03169c0c7142651906a9f5a4a623cdb7e68f7df99c0079443"
   }
 }

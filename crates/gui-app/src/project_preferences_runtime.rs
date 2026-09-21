@@ -507,12 +507,16 @@ impl Runtime {
         true
     }
 
-    pub(super) fn handle_project_preferences_key(&mut self, event: &KeyEvent) -> bool {
+    pub(super) fn handle_project_preferences_key(
+        &mut self,
+        event: &KeyEvent,
+    ) -> crate::global_preferences_window::PreferencesKeyOutcome {
+        use crate::global_preferences_window::PreferencesKeyOutcome as Outcome;
         if !self.workspace().ui.project_preferences.open {
-            return false;
+            return Outcome::Unhandled;
         }
         if event.state != ElementState::Pressed {
-            return true;
+            return Outcome::Consumed;
         }
         if matches!(event.logical_key, Key::Named(NamedKey::Escape)) {
             let dismissal = self
@@ -525,7 +529,11 @@ impl Runtime {
                 self.set_application_focus(self.project_preferences.return_focus);
             }
             self.invalidate_frame();
-            return true;
+            return if dismissal == GlobalPreferencesDismissal::DialogClosed {
+                Outcome::Dependents
+            } else {
+                Outcome::Dialog
+            };
         }
         if matches!(event.logical_key, Key::Named(NamedKey::Tab)) {
             self.session
@@ -534,7 +542,7 @@ impl Runtime {
                 .project_preferences
                 .advance_focus(self.modifiers.shift_key());
             self.invalidate_frame();
-            return true;
+            return Outcome::Dialog;
         }
         let focus = self.workspace().ui.project_preferences.focus.clone();
         if focus == GlobalPreferencesFocus::Search {
@@ -544,7 +552,7 @@ impl Runtime {
                     dialog.search_query.pop();
                     dialog.scroll_row = 0;
                     self.invalidate_frame();
-                    return true;
+                    return Outcome::Dialog;
                 }
                 Key::Character(value)
                     if !self.modifiers.control_key()
@@ -555,7 +563,7 @@ impl Runtime {
                     dialog.search_query.push_str(value);
                     dialog.scroll_row = 0;
                     self.invalidate_frame();
-                    return true;
+                    return Outcome::Dialog;
                 }
                 _ => {}
             }
@@ -565,19 +573,22 @@ impl Runtime {
             Key::Named(NamedKey::Enter | NamedKey::Space)
         );
         match focus {
-            GlobalPreferencesFocus::Control(key) if activate => {
-                self.activate_project_preference_control(&key)
+            GlobalPreferencesFocus::Control(key) if activate => Outcome::from_handled(
+                self.activate_project_preference_control(&key),
+                Outcome::Dependents,
+            ),
+            GlobalPreferencesFocus::Reset(key) if activate => {
+                Outcome::from_handled(self.reset_project_preference(&key), Outcome::Dependents)
             }
-            GlobalPreferencesFocus::Reset(key) if activate => self.reset_project_preference(&key),
             GlobalPreferencesFocus::ExplanationClose if activate => {
                 let dialog = &mut self.session.workspace_mut().ui.project_preferences;
                 if let Some(key) = dialog.explanation_key.take() {
                     dialog.focus = GlobalPreferencesFocus::SettingName(key);
                 }
                 self.invalidate_frame();
-                true
+                Outcome::Dialog
             }
-            _ => true,
+            _ => Outcome::Consumed,
         }
     }
 

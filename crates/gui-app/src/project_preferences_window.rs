@@ -168,9 +168,9 @@ impl App {
             }
             WindowEvent::KeyboardInput { event, .. } => {
                 if let Some(runtime) = &mut self.runtime {
-                    runtime.handle_project_preferences_key(&event);
+                    let outcome = runtime.handle_project_preferences_key(&event);
+                    self.request_preferences_key_redraw(outcome, true);
                 }
-                self.request_redraw_if_needed();
             }
             _ => {}
         }
