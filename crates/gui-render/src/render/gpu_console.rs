@@ -4,8 +4,7 @@ use super::{ConsoleOverlayLayout, PreparedScene, Renderer, Vertex};
 
 #[derive(Default)]
 pub(super) struct ConsoleGpuResources {
-    vertex_buffer: Option<wgpu::Buffer>,
-    vertex_capacity: usize,
+    vertices: super::gpu_data::screen_buffer::ScreenBuffer,
 }
 
 impl Renderer {
@@ -27,11 +26,9 @@ impl ConsoleGpuResources {
         queue: &wgpu::Queue,
         vertices: &[Vertex],
     ) {
-        Renderer::upload_vertices(
+        self.vertices.sync(
             device,
             queue,
-            &mut self.vertex_buffer,
-            &mut self.vertex_capacity,
             "datum-gui-render-console-overlay-vertex-buffer",
             vertices,
         );
@@ -49,7 +46,7 @@ impl ConsoleGpuResources {
         let Some(layout) = layout else {
             return;
         };
-        let Some(buffer) = self.vertex_buffer.as_ref() else {
+        let Some(buffer) = self.vertices.buffer() else {
             return;
         };
 

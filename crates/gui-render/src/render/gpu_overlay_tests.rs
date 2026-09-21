@@ -100,6 +100,10 @@ fn dialog_single_pass_matches_general_renderer_pixels() {
             )]);
             assert!(!general.is_overlay_only());
             let expected = capture(&mut renderer, &general);
+            let warm_general = capture(&mut renderer, &general);
+            assert!(expected == warm_general);
+            assert_eq!(renderer.renderer.panel_gpu.last_upload_bytes, 0);
+            assert_eq!(renderer.renderer.menu_overlay_gpu.last_upload_bytes, 0);
             assert!(
                 actual == expected,
                 "dialog pixels differ at row {row}, scale {scale}"
@@ -316,4 +320,30 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
         ["scene", "text", "menu-background", "menu-text"]
     );
     assert!(renderer.renderer.gpu_measurement_poll_deadline().is_none());
+}
+
+#[test]
+#[ignore = "requires local GPU; run explicitly with the visual feature"]
+fn production_dialog_upload_reuses_content_and_matches_evicted_pixels() {
+    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let mut renderer = hardware_renderer(960, 720);
+    let prepared =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+    let cold = capture(&mut renderer, &prepared);
+    assert!(renderer.renderer.menu_overlay_gpu.last_upload_bytes > 0);
+    let warm = capture(&mut renderer, &prepared);
+    assert_eq!(renderer.renderer.menu_overlay_gpu.last_upload_bytes, 0);
+    assert!(cold == warm);
+    // Forced eviction is the negative path: it must upload, with identical pixels.
+    renderer.renderer.menu_overlay_gpu = Default::default();
+    let evicted = capture(&mut renderer, &prepared);
+    assert!(renderer.renderer.menu_overlay_gpu.last_upload_bytes > 0);
+    assert!(warm == evicted);
+    let mut replacement = prepared.clone();
+    replacement.menu_overlay_vertices[0].color = [1.0, 0.0, 0.0];
+    capture(&mut renderer, &replacement);
+    assert!(renderer.renderer.menu_overlay_gpu.last_upload_bytes > 0);
+    let restored = capture(&mut renderer, &prepared);
+    assert!(renderer.renderer.menu_overlay_gpu.last_upload_bytes > 0);
+    assert!(restored == cold);
 }

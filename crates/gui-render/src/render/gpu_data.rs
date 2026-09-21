@@ -1,9 +1,10 @@
 #[path = "retained_buffer.rs"]
 pub(crate) mod retained_buffer;
 
-use wgpu::util::DeviceExt;
+#[path = "screen_buffer.rs"]
+pub(crate) mod screen_buffer;
 
-use super::{Quad, Renderer};
+use super::Quad;
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, bytemuck::Pod, bytemuck::Zeroable)]
@@ -90,31 +91,4 @@ pub(crate) fn quads_to_vertices(quads: &[Quad]) -> Vec<Vertex> {
         quad_to_vertices(&mut out, *quad);
     }
     out
-}
-
-impl Renderer {
-    pub(crate) fn upload_vertices(
-        device: &wgpu::Device,
-        queue: &wgpu::Queue,
-        buffer: &mut Option<wgpu::Buffer>,
-        capacity: &mut usize,
-        label: &str,
-        vertices: &[Vertex],
-    ) {
-        let bytes = bytemuck::cast_slice(vertices);
-        if buffer.is_none() || *capacity < bytes.len() {
-            *buffer = Some(
-                device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                    label: Some(label),
-                    contents: bytes,
-                    usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
-                }),
-            );
-            *capacity = bytes.len();
-            return;
-        }
-        if let Some(buffer) = buffer.as_ref() {
-            queue.write_buffer(buffer, 0, bytes);
-        }
-    }
 }

@@ -98,11 +98,9 @@ impl Renderer {
                 _pad: [0.0, 0.0],
             }),
         );
-        Self::upload_vertices(
+        self.menu_overlay_gpu.sync(
             device,
             queue,
-            &mut self.menu_overlay_vertex_buffer,
-            &mut self.menu_overlay_vertex_capacity,
             "datum-menu-overlay-vertex-buffer",
             prepared.menu_overlay_vertices(),
         );
@@ -143,8 +141,8 @@ impl Renderer {
             pass.set_bind_group(0, &self.uniform_bind_group, &[]);
             pass.set_vertex_buffer(
                 0,
-                self.menu_overlay_vertex_buffer
-                    .as_ref()
+                self.menu_overlay_gpu
+                    .buffer()
                     .expect("dialog buffer uploaded")
                     .slice(..),
             );

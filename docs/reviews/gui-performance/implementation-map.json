@@ -16385,7 +16385,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial production adoption: nine screen streams share bounded last-content/GPU ownership; warm zero uploads and vertex-range replacement, cap bypass, release/reset, real GPU readback and full/dialog pixel parity verified. Four native smoke checks pass. Vertex-granular uploads, native counters, byte-minimal interpretation/prescribed negatives and complete qualification remain open.",
         "id": "proof_reuse_screen",
         "positive": "Change one screen/control/text range",
         "negative_control": "Rewrite entire unchanged buffer",
@@ -16409,7 +16409,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/screen-upload-owner/result.json"
+      ]
     },
     {
       "id": "REUSE-WORLD-ALLOC",
@@ -25202,6 +25205,49 @@
       "Complete glyph-signature eviction/atlas-pressure controls, per-adapter negative qualification, Wayland/scale/native static coverage and S2 completion remain open.",
       "Known terminal lineage and convergence failures remain unresolved; no full drift pass.",
       "No dependency, version, license, product mutation, shader/pass/AA or resize qualification change."
+    ]
+  },
+  "s2_screen_upload_owner_work": {
+    "status": "Bounded screen upload ownership migration; GPI-S2 remains in progress",
+    "evidence": "docs/reviews/gui-performance/implementation/S2/screen-upload-owner/result.json",
+    "production_consumers_migrated": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "streams": [
+      "panel",
+      "viewport_underlay",
+      "viewport_overlay",
+      "board_interaction",
+      "console_overlay",
+      "menu_overlay",
+      "surface_grid",
+      "schematic_underlay",
+      "schematic_overlay"
+    ],
+    "competing_paths_retired": [
+      "Renderer::upload_vertices unconditional upload helper",
+      "Eight independent Renderer buffer/capacity pairs",
+      "Console independent buffer/capacity pair",
+      "Skipping empty schematic streams while retaining stale allocation"
+    ],
+    "bounds": {
+      "snapshot_entries_per_stream": 1,
+      "snapshot_bytes_per_stream": 262144,
+      "production_streams": 9,
+      "maximum_snapshot_bytes_per_renderer": 2359296,
+      "eviction": "Overlarge content renders but bypasses snapshot retention. Empty input releases CPU/GPU storage; renderer/device teardown drops all owners.",
+      "gpu_capacity": "At most four times last nonempty payload, with WGPU alignment. Larger-to-smaller transitions shrink allocations above that bound. This is an input-relative bound, not an absolute application GPU memory ceiling.",
+      "dirty_unit": "One complete vertex (20 bytes in production), aligned to the four-byte queue-write requirement. Unchanged words inside a changed vertex are uploaded; unchanged vertices between dirty ranges are not."
+    },
+    "remaining_limitations": [
+      "Snapshot comparison and changed-content copies remain CPU work; overlarge streams bypass retention and upload normally. No numerical performance or zero-preparation claim.",
+      "Dirty ranges are vertex-granular, not byte-minimal. Complete REUSE-SCREEN native boundary counters and prescribed negative qualification remain open; this does not satisfy its full acceptance rule.",
+      "CPU screen geometry generation, world encoding/cache capacity qualification, complete text keys/payload/atlas bounds and S2 completion remain open.",
+      "Schematic stream migration is code adoption only; resolved schematic content performance remains unqualified without fixture admission.",
+      "No new dependency, vendoring, version/license, visual-prototype, product mutation or resize qualification change."
     ]
   }
 }
