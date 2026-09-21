@@ -1,0 +1,26 @@
+crates/gui-render/src/visual_capture.rs:223:        self.queue.submit([encoder.finish()]);
+crates/gui-render/src/render/gpu_measurements_tests.rs:149:    queue.submit([encoder.finish()]);
+crates/gui-render/src/render/gpu_measurements_tests.rs:216:        queue.submit([encoder.finish()]);
+crates/gui-render/src/render/attachment_cost_probe.rs:48:    queue.submit([encoder.finish()]);
+crates/gui-render/src/render/gpu_overlay.rs:154:        let submission = queue.submit([encoder.finish()]);
+crates/gui-app/src/native_frame_probe.rs:54:    queue.submit(Some(encoder.finish()))
+crates/gui-app/src/native_surface_transaction.rs:238:        surface.configure(device, config);
+crates/gui-app/src/native_surface_transaction.rs:302:            surface.get_current_texture()
+crates/gui-app/src/native_surface_transaction.rs:385:                if !self.configure(surface, device, config, health) {
+crates/gui-app/src/native_surface_transaction.rs:445:        window.pre_present_notify();
+crates/gui-app/src/native_surface_transaction.rs:739:        transaction.submitted(&mut frame, &queue, queue.submit([encoder.finish()]));
+crates/gui-app/src/native_frame_coordinator.rs:221:            window.request_redraw();
+crates/gui-app/src/native_frame_coordinator.rs:312:            window.request_redraw();
+crates/gui-app/src/native_frame_coordinator.rs:401:            window.request_redraw();
+crates/gui-app/src/native_frame_coordinator.rs:513:            window.request_redraw();
+crates/gui-render/src/render/gpu_frame.rs:489:        let submission = queue.submit([command_buffer]);
+crates/gui-app/src/native_device_recovery.rs:515:        queue.submit([encoder.finish()]);
+crates/gui-app/src/native_resize_repro.rs:80:        surface.configure(&device, &config);
+crates/gui-app/src/native_resize_repro.rs:123:        window.request_redraw();
+crates/gui-app/src/native_resize_repro.rs:144:            self.surface.configure(&self.device, &self.config);
+crates/gui-app/src/native_resize_repro.rs:152:            .get_current_texture()
+crates/gui-app/src/native_resize_repro.rs:178:        self.queue.submit([commands]);
+crates/gui-app/src/native_resize_repro.rs:181:        self.window.pre_present_notify();
+crates/gui-app/src/native_resize_repro.rs:182:        frame.present();
+crates/gui-app/src/native_resize_repro.rs:218:                state.window.request_redraw();
+crates/gui-app/src/main.rs:376:        self.queue.submit([encoder.finish()]);

@@ -248,3 +248,16 @@ numerical thresholds, default-path adoption, PM029 dependency authority, product
 semantics, independent replay, endurance, the resize exclusion or final acceptance.
 An evidence-based readiness review must precede S1 completion and S2 selection;
 this owner disposition does not itself complete S1.
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S1-BOUNDED-READY -->
+
+Bounded S1 readiness is recorded in
+`docs/reviews/gui-performance/implementation/S1/readiness/result.json` and the
+existing adoption map. Current default call-site inventory, all four native
+host adapters, retired competing paths, shared-owner correctness and negative
+proof, and implemented generation/submission/attachment-lifetime accounting
+satisfy the approved implementation exit. The 30 initial-scope S1 rows retain
+their partial test statuses and now name GPI-S5 as their qualification exit.
+Four pinned resize rows and one deferred temporal HP row retain their exclusions.
+No complete row qualification or performance acceptance follows. S2 may begin
+through the synchronized Frontier transition; S3–S5 remain pending.
