@@ -22335,5 +22335,81 @@
       "failed-fixture-resolution.log.gz": "066da7d01ae58067a0a3061b483820792a62bf4d94d7553b9b5e27d3e67341fd",
       "producer.py": "067f76c11eba1097f706c66ac48d81eddedb27ed2d420d2e10a2a02999940141"
     }
+  },
+  "s1_frame_ownership_work": {
+    "status": "default owned acquisition and shared presentation adopted; S1 resource qualification remains open",
+    "baseline_commit": "02ed37d4",
+    "requirements": [
+      "LF-13",
+      "LF-14",
+      "HP05-01"
+    ],
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "shared_owner": "SurfaceTransaction owns acquisition lease, configuration generation and native notify/present; NativeFrameCoordinator still owns damage retirement",
+    "production_entry": "Runtime::render or GlobalPreferencesWindowSurface::render -> SurfaceTransaction::acquire -> NativeSurfaceFrame::view -> Renderer::render -> SurfaceTransaction::present -> coordinator completion",
+    "retired_paths": [
+      "Main direct pre_present_notify and SurfaceTexture::present",
+      "Auxiliary direct pre_present_notify and SurfaceTexture::present",
+      "Raw untracked SurfaceTexture returned across the acquisition owner boundary"
+    ],
+    "behavior": [
+      "Exactly one live acquisition lease per surface; overlapping acquisition or configuration is rejected before backend calls",
+      "A frame can present only through its originating surface owner and configuration generation",
+      "Backend texture drops before its lease on preparation/error exit; abort never declares a successful frame",
+      "Common presentation notifies the native compositor immediately before presenting; acquisition releases before subsequent configuration admission",
+      "GPU completion receipt and application damage retirement remain separate; no displayed-frame inference"
+    ],
+    "remaining_low_level_calls": [
+      "native_surface_transaction.rs contains product get_current_texture, pre_present_notify and present",
+      "native_resize_repro.rs retains explicitly separate minimal diagnostic acquisition/presentation; it is not a production consumer"
+    ],
+    "verification": {
+      "app": "339 passed, 0 failed, 8 ignored; new lease tests cover rejected overlap, abort/drop, foreign owner and retired configuration identity without clearing replacement ownership",
+      "native": "All four Xwayland/Vulkan configurations pass six native extent/final-state transitions through common presentation",
+      "recovery": "Main plus Global recover through actual device-loss callback; persistent MAIN allocation failure retains bounded automatic and native F5 retry",
+      "build": "Fresh offline release passed",
+      "clippy": "Targeted app Clippy with -D warnings passed",
+      "checks": "Source health, dependency authority, formatting, parity, evidence, spec governance and project state passed"
+    },
+    "limits": [
+      "Lease tests support application ownership transitions; full native close-during-acquisition/fault and completion accounting remain unqualified",
+      "Allocation IDs/bytes, attachment retirement accounting and complete LF/SH acceptance remain open; this is not ACC completion",
+      "No visual, temporal, numeric performance, Wayland or full S1 acceptance claim",
+      "Full drift not rerun; previously recorded baseline terminal guard failures remain"
+    ],
+    "bookkeeping": "Added missing roadmap:intake label to dat-gui-cli-build-guard-bte after selector detected its omission; current selector and project state checks pass, with GPI-S1 unchanged",
+    "commands": [
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui",
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app",
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-app --bin datum-gui -- -D warnings",
+      "python3 /tmp/pm045_frame_lease_native.py",
+      "python3 /tmp/pm045_frame_lease_fault.py"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/frame-ownership",
+    "source_sha256": {
+      "crates/gui-app/src/native_surface_transaction.rs": "4ce6afe604dcd39e33df1d46369ba7b6d7c6626226f45b57b294a2a88169dd40",
+      "crates/gui-app/src/runtime_present.rs": "3944430474d5896fa644a3af804136e12398398e5320b034a4c0aeafeca4703b",
+      "crates/gui-app/src/global_preferences_window.rs": "9fe9e2e4802b6201e583a3c6a9734fbe8b57af19d29ae6f27f1961cdd3bf05d1"
+    },
+    "artifacts_sha256": {
+      "GLOBAL-fault.log.gz": "89df684716478b4856f52fa1774f4e26a50a59b67777c37d46745039f1165985",
+      "GLOBAL-native.log.gz": "2c57f0018520aa17fd0a3ddead8a2fa8ee163f8876a9c57fbb0d23592cb20c88",
+      "MAIN-native.log.gz": "114446520a7d32a6a77606909b236355c0729acf1d2c78fb01410344842388ac",
+      "NEW-native.log.gz": "1716eea8bdfc1f47da619652019b98d5f10f94a458181cc080458ab0c3ab76cf",
+      "PROJECT-native.log.gz": "4de1180da6e9ec1340811642a3f98d0f1521c22f6dd11619626e5d788c93c0de",
+      "app.log.gz": "2c80946ac018c19f8e641ca9c1f949981432652dbe58592632a7c0eedbe37420",
+      "build.log.gz": "672166c3241883daf0716b397408680d4c050aac8aa1bca2e817f93a9b7b54af",
+      "clippy.log.gz": "bb1883b2e50669f933da63c7696914607243cde79518d7d1dc27fe037359c41c",
+      "fault_probe.py": "a5b1160e8828a02846bcecb4b019c194b6efacc77adf7cb15c2582e74cbf2c95",
+      "faults.json": "befd7f40bdce8e481e51c625ba53fcc89cea13998e045ea7c094a4a8b96dace3",
+      "native.json": "da59cf7e8dd52b9303cce2bf9000f8e564e6fb282ec4e9024ec53a3c104b7c2a",
+      "native_probe.py": "40139043918aa9cf821ac944ccfee32a1543444fbd7aeceaf06b7073ec2e2592",
+      "oom-fault.log.gz": "ab623d4ef3c7ca5c274b196c0dad07567605c06a7326969de0cb01dd2500eb48"
+    }
   }
 }
