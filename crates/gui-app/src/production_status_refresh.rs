@@ -113,14 +113,14 @@ impl App {
                 return;
             }
             changed |= runtime.poll_application_terminal_shutdown();
-            next_refresh_due = match (
+            next_refresh_due = [
                 runtime.next_production_refresh_due(),
                 runtime.next_console_refresh_due(),
-            ) {
-                (Some(a), Some(b)) => Some(a.min(b)),
-                (Some(due), None) | (None, Some(due)) => Some(due),
-                (None, None) => None,
-            };
+                runtime.next_application_terminal_shutdown_due(),
+            ]
+            .into_iter()
+            .flatten()
+            .min();
         }
         if changed {
             self.request_workspace_redraw();

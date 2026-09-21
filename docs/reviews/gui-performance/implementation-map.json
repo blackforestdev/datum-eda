@@ -23397,5 +23397,28 @@
       "This migration does not close SH/LF predicates, S1, or S2 cache/resource qualification"
     ],
     "evidence_directory": "docs/reviews/gui-performance/implementation/S1/menu-inventory"
+  },
+  "s1_shutdown_deadline_work": {
+    "status": "default shutdown deadline admitted to common wait decision; SH-06 and S1 remain open",
+    "production_consumers": [
+      "MAIN application close",
+      "TERMINAL owned-session shutdown"
+    ],
+    "shared_owner": "App::poll_background_work earliest eligible deadline; Runtime::next_application_terminal_shutdown_due supplies the same deadline used by polling",
+    "retired_paths": [
+      "Application teardown timeout checked only opportunistically on unrelated event delivery"
+    ],
+    "production_change": "Include the existing six-second shutdown limit beside production/Console deadlines and surface/device/GPU progress. Blocked or canceled shutdown supplies no deadline; Retry resets the start. Preserve existing transport termination policy.",
+    "verification": {
+      "app": "352 passed, 0 failed, 9 ignored; visual integration ignored",
+      "focused": "existing owner-ratified phase deadlines test passed; verifies six-second transport policy, not native wake delivery",
+      "clippy": "app all targets -D warnings passed"
+    },
+    "limits": [
+      "No native blocked-teardown fault injection or timer coexistence qualification performed",
+      "SH-06 full eligibility/wake ordering, S1 and S4 teardown acceptance remain open",
+      "No new dependency, PTY policy, budget, or resize qualification change"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/shutdown-deadline"
   }
 }
