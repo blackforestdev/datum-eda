@@ -21621,7 +21621,7 @@
       "Default-disabled code allocates no query/readback resources",
       "Production renderer integration includes full scene, dialog and terminal passes; preserve output and measure overhead before accepting baseline"
     ],
-    "remaining": "Measurement overhead, ADM admission counts, ACC lifetime/cache/upload/process accounting, complete trial accounting and matched baseline remain S0 requirements; native launch or helper tests cannot complete S0. No S1-S5 adoption or resize/resource/temporal acceptance.",
+    "remaining": "Bounded first-S1 readiness remains open. Matched instrumentation overhead, ADM admission, ACC lifetime/cache/upload/process accounting and complete trial accounting remain unproven; deliver affected proof with the owning S1–S4 component under measurement_delivery. Full admission/accounting remains required before runtime tier/budget claims and S5 completion.",
     "production_paths": {
       "MAIN": "Runtime -> native_gpu::create -> Renderer::enable_gpu_measurements -> gpu_frame full-scene/menu/terminal passes -> App::service_gpu_measurements",
       "GLOBAL": "GlobalPreferencesWindowSurface -> shared Renderer dialog pass -> App::service_gpu_measurements",
@@ -21643,5 +21643,16 @@
       "app": "321 passed,0 failed,8 ignored; serial",
       "release": "passed"
     }
+  },
+  "measurement_delivery": {
+    "authority": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:SEQUENCING-APPROVED",
+    "S0": "Bounded first-S1 readiness: matched baseline, verified input/final state, attributable selection and conformance/overhead for measurements used. No global admission or budget qualification.",
+    "S1": "Scheduler/surface generations, redraw/configure/acquire/submit/present counts and changed surface-resource lifetimes.",
+    "S2": "Retained geometry, draw/upload, shaped-text/cache and allocation-capacity accounting.",
+    "S3": "Dialog/control geometry, text/pass counts and control-cache accounting.",
+    "S4": "Terminal/glyph uploads, hidden work, fairness and remaining all-host recovery/teardown accounting.",
+    "S5": "Complete all in-scope method/admission/accounting proof, adoption, independent replay and endurance before qualification.",
+    "index_semantics": "AC-01–08 and HP24 rows indexed under S0 identify method ownership/readiness, not completed all-consumer qualification. Requirement IDs, indexes, acceptance rules and exclusions are unchanged.",
+    "missing_metrics": "All prior missing proof remains open. Inaccessible third-party internals are proof gaps, not exact estimates or vendor authority."
   }
 }

@@ -54,8 +54,14 @@ engine mutation path retain their existing authority.
 all 14 current consumers. Tests exercise production adapters and deliberately
 faulty controls. Complete adoption requires retiring competing paths. Relevant
 proof accompanies each bounded slice; final independent native replay and
-endurance follow adoption. Instrumentation conformance and full admission counts
-are implementation prerequisites, not fabricated specification results.
+endurance follow adoption. Instrumentation conformance is required before relying on the corresponding
+measurement. S0 establishes the matched baseline, verified input/final state,
+and attributable work needed to select and verify the first bounded S1 change.
+Complete ADM/GPU/ACC accounting is developed and verified with its production
+owners in S1–S4; affected correctness, resource-lifetime, zero-work and cache-bound
+proof accompanies each change. Full admission and accounting remain prerequisites
+to runtime tier/budget qualification and S5 completion. Missing results remain
+unqualified; neither S0 closure nor a component migration declares them satisfied.
 
 **GP-045-06 — Explicit initial scope.** The owner has limited initial
 qualification to pinned F-DOA/T0/T1 configurations and excluded flicker,
