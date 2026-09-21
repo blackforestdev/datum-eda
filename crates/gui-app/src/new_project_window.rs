@@ -97,6 +97,7 @@ impl App {
                 window.id(),
                 surface.measurements.epoch(),
                 window.inner_size(),
+                surface.surface_transaction.recovery.clone(),
             );
             self.new_project_surface = Some(surface);
             self.new_project_window = Some(window.clone());

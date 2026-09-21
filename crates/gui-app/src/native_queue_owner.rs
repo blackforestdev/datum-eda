@@ -8,7 +8,6 @@ use std::{
         Arc,
         atomic::{AtomicU64, Ordering},
     },
-    time::{Duration, Instant},
 };
 
 #[derive(Clone, Default)]
@@ -89,16 +88,6 @@ impl QueueOwner {
     }
 }
 
-/// A bounded nonblocking drain; full drawable-active recovery is owned by the
-/// frame coordinator migration. No timer is scheduled when there is no waiter.
-pub(super) fn check_drain(start: Instant, now: Instant) -> anyhow::Result<()> {
-    anyhow::ensure!(
-        now.duration_since(start) < Duration::from_secs(2),
-        "native queue drain exceeded two seconds; stop submissions"
-    );
-    Ok(())
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -149,7 +138,5 @@ mod tests {
         assert_eq!(owner.admit(host, false, new), Admission::Wait);
         completion.fetch_max(new, Ordering::Release);
         assert_eq!(owner.admit(host, false, new), Admission::Frame);
-        let now = Instant::now();
-        assert!(check_drain(now, now + Duration::from_secs(2)).is_err());
     }
 }

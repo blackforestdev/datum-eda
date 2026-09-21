@@ -21936,5 +21936,85 @@
       "Initial Clippy rejected Drop implementation after test module; moved implementation before tests, workspace Clippy passes.",
       "Initial application suite terminal restart identity failure retained; isolated and final full replays pass."
     ]
+  },
+  "s1_recovery_work": {
+    "status": "bounded default coordinator recovery migration verified; S1 remains in progress",
+    "baseline_commit": "b9d7fe60",
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_owner": "Coordinator host RecoveryHandle shared with its SurfaceTransaction backend adapter",
+    "retired_paths": [
+      "Opt-in-only acquisition retry policy and eight-attempt counter",
+      "Separate per-surface retry deadlines and completion flags",
+      "Separate uninterrupted queue-drain clock",
+      "Four independent retry polling paths"
+    ],
+    "behavior": [
+      "Default16/32/64/128/250ms acquisition backoff; GPU progress waits share the same two-second drawable-active episode",
+      "Zero/occlusion/suspend cancel deadlines and pause accumulated time; restore16ms does not reset elapsed failure time",
+      "Exhaustion stops automatic rendering and reports F5 Retry/window Close through existing textual error channel; gestures canceled without engine or terminal mutation",
+      "One minimum native retry deadline merged with existing event-loop timers",
+      "Paused hosts suppress editing input while accepting Retry and lifecycle/close events; background engine and terminal state processing continues"
+    ],
+    "limits": [
+      "Device-loss/recreation and allocation failure handling remain pending",
+      "Full failure-state pointer/focus/IME qualification and native hidden/restore fault cases remain incomplete",
+      "No complete S1 accounting or numerical/temporal qualification"
+    ],
+    "verification": {
+      "clock": "3 tests pass: exact16/32/64/128/250ms backoff and2s active limit; repeated hidden/restore retains elapsed time; GPU wait shares episode and success resets",
+      "app": "Final331passed,0failed,8ignored; four retired legacy transaction tests replaced by three recovery-policy tests",
+      "native": "Four actual Xwayland/Vulkan hosts each pass six normal extent transitions; four injected Lost-once configurations also finish all six transitions",
+      "timeout": "Persistent backend-result Timeout injection exhausts; no extra attempts during0.5s quiet observation; actual native F5 starts one new bounded episode.11first-episode attempts,23total across two episodes; no driver-failure reliability claim",
+      "release": "Final offline optimized build passes; fault probe verifies binary unchanged across its complete run",
+      "drift": "Workspace formatting, Clippy and preceding governance checks pass; stops at baseline dat-terminal-convergence-guard-xke focus-count/font-marker failures; later stages not run",
+      "source_health": "Native startup/resume moved intact into existing app_native_events owner; main pre-test1606->1551. Source health passes"
+    },
+    "failed_attempts": [
+      "Initial clock-test delay list stopped at1.99s; extended to exercise exact2s limit and refusal.",
+      "Initial Clippy rejected two nested capture-cancel conditions; collapsed equivalent branches.",
+      "Intermediate candidate Lost recovery presented successfully, but subsequent resize smoke received no next native extent within30s. Trial retained as failed/unqualified; no kernel/compositor cause inferred. Final fresh candidate trial passes."
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/active-recovery",
+    "source_sha256": {
+      "crates/gui-app/src/app_native_events.rs": "42c7d643ca0d82dc9bce15e53eb5db8787c0e3dd1f7e856362f5ea32cd579b43",
+      "crates/gui-app/src/global_preferences_window.rs": "ab7952f0205c4da88214b088e2968f4eebf56a291c602bdd0accec517036e379",
+      "crates/gui-app/src/gui_runtime_support.rs": "f66a1f8ae950e20c4048f685ce032b1786f7434470f56c600fcb2746713edf4b",
+      "crates/gui-app/src/main.rs": "f7f43b7a510f7c14bdd28f0c1f6b74e6d2aa8cf0d40d11b83c48641e9e8e7db6",
+      "crates/gui-app/src/native_frame_coordinator.rs": "f9c7586722792d90ceeb3300e4c99499769ca8e2f091bd191db9317f774a4111",
+      "crates/gui-app/src/native_queue_owner.rs": "dfc954f32be85eda0b50fddef674e7cfdcda0c27283b704c5a8b9a34fd1a8082",
+      "crates/gui-app/src/native_surface_transaction.rs": "bcbb889567b17b310a312ef73e4fd6f04db76048e0a4d1d3a39ff9653f44c841",
+      "crates/gui-app/src/new_project_window.rs": "f74b1c48eefe71c70b7740eb0b387a8a206cdb9acf270b6616fc91e9314138d4",
+      "crates/gui-app/src/project_preferences_window.rs": "5ef0e0da086b0a87d01895de63979bce37c75237eb0aaeef0642f7b25a9d946d",
+      "crates/gui-app/src/native_recovery.rs": "7486595daedcd7c52c86a37bde1b6bf34bd7a50ec7cb9e7483828365be04ea59"
+    },
+    "artifacts_sha256": {
+      "GLOBAL-lost.log.gz": "e793157b41ed0b66955520a15a615f097ee54a8a8f4e24388826a4ca7f6635d9",
+      "GLOBAL-native.log.gz": "cc9c407a3617a52a7ba790295d338f6e057f0cea1fef0557ab3464e5e5982ed9",
+      "MAIN-lost.log.gz": "144881d9b71fcc692958e09c3f6f20df546bcbd9b90b82557ac100dd0ae09895",
+      "MAIN-native.log.gz": "ed32ee60c5826fec7288ff1aecd46b2aefb3874384a695bdb61f36419006b96a",
+      "NEW-lost.log.gz": "2ebeb6b29aa665d0a2bcdc450616a275e4782fcc01904f213865eddbb83afe7e",
+      "NEW-native.log.gz": "d96d9e7c673a3ef1ac4eaf0ce956be51814cae7ceaf62ac929ef7a54b6429150",
+      "PROJECT-lost.log.gz": "663f8f1b9393d323efe74c259758e71ee2467742e3c0fa3b1abf159755e7bab5",
+      "PROJECT-native.log.gz": "69a2ddeefb54c6bfebf627c6b9f4a738992b7aea9409998a7ce7aa32690858d0",
+      "app.log.gz": "6d33e3292bc9e53a1a423553ce3603fef297b4747ff4b2f51dfba6fdc769aa7f",
+      "build.log.gz": "b14363fb933122ebd1fe4065db0c26accf81d66946bf87be79dc3912f406693d",
+      "clock-tests.log.gz": "1ba46ba4b33e47c1daf58dc6b32fbe761f38d0a9ded33c569c1aa2bd3276f4fc",
+      "drift.log.gz": "7fa982687dca4ae94d2efb9b8099c34f66df2a35825637e18db71157c17dc17f",
+      "fault_probe.py": "39c7290a62ada420953a1698cf623ba719529eec2f88f8b994c4fde51955022e",
+      "faults.json": "9c7ce444f6da8dc1e9ab7f204e2bdd8292e9983296eae4b264f6e13136ae7bda",
+      "initial-clippy-failure.log.gz": "17b306b52e270773c3af2f672b0b24b339cf593fe444d90fcc0d3d2b168a5043",
+      "initial-clock-test-failure.log.gz": "9bc577b7707d555f9fc1b9cb8bfe12a0f56c2da8ffc29a28bc4afaebb372c680",
+      "native.json": "5d72839017858bbcef57106acd247a1e4bcf480fa25b8c1773ac93cb750dc95d",
+      "stalled-intermediate-MAIN-lost.log.gz": "14ecaf8f0ac10740eb17ba598ce86961a24daa64926e1d4c27b1b4d42c49a5b6",
+      "stalled-intermediate-MAIN-stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "stalled-intermediate.json": "1157c882db294ad013fda8a719154cad82ed40960d807b7dd81d968b67efb800",
+      "timeout-stderr.log.gz": "339d238530678fca89905f9976cc4f7d67257ff6ff26ddaebdb29d2a0444c243",
+      "timeout.log.gz": "90f83febb6cd616c110f8a74d88835cc774783354cd42749260daf29c52484a6"
+    }
   }
 }
