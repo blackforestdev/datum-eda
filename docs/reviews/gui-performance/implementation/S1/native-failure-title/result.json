@@ -1,0 +1,34 @@
+{
+  "baseline_commit": "7874b29aea98d26431af06020c70ff9046c278f8",
+  "production_consumers_migrated": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "competing_paths_retired": [],
+  "behavior_replaced": "Failure notification solely through stderr/logs; existing diagnostic reporting retained.",
+  "change": "NativeFrameCoordinator tracks failure-title transitions per host; about_to_wait publishes GPU-independent native title instructions once per transition. Retry and device rebinding restore normal titles.",
+  "production_path": "ApplicationHandler::about_to_wait -> poll_background_work -> NativeFrameCoordinator::take_failure_title_change -> Window::set_title",
+  "proof": {
+    "baseline": "All four actual X11 hosts retained ordinary titles during shared queue failure; first Project startup predicate timed out, explicit replay passed. Both retained.",
+    "candidate": "See candidate/result.json for each actual host native title, Retry restoration and controlled close.",
+    "app_tests": "376 passed; 11 ignored",
+    "release_build": "passed offline guarded",
+    "clippy": "passed offline guarded",
+    "governance": "Source health, 13 source-health policy tests, parity, dependency authority, resource policy, evidence traceability, specification governance and project state passed."
+  },
+  "source_hashes": {
+    "crates/gui-app/src/app_native_events.rs": "bdd4aa0e03a267d3783419fc7ce8a5edcf30f757456bf6b58c2574a9fc0fb8cc",
+    "crates/gui-app/src/native_frame_coordinator.rs": "a7ec38840b10291286442d71948373c5bbeca90c7a0b97626c5cbbc067e91140"
+  },
+  "limitations": [
+    "X11/Xwayland native property proof only; no static screenshot, compositor text visibility/width or Wayland qualification.",
+    "Queue diagnostic holds completion publication; not a driver hang.",
+    "Device-rebind title restoration and no repeated title transitions are coordinator tested; native recipe exercises manual queue Retry.",
+    "Retained baseline startup timeout is not attributed to this candidate or resolved.",
+    "No latency/resource-budget claim, complete LF-10/S1 acceptance, prescribed historical negative replay, dependency change, or resize qualification.",
+    "Full drift remains unqualified: existing dat-terminal-convergence-guard-xke focus-assignment and font-source-marker failures reproduced."
+  ],
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+}

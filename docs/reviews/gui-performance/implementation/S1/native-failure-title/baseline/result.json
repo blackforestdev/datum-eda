@@ -1,0 +1,80 @@
+{
+  "source_commit": "7874b29aea98d26431af06020c70ff9046c278f8",
+  "binary_sha256": "89b0169344f8215dc8cf4087bbd7dd496030ff6fc9819d7c1e4d234e8c14c945",
+  "expected_notice": false,
+  "runs": [
+    {
+      "host": "MAIN",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "failed_titles": [
+        "Datum EDA"
+      ],
+      "restored_titles": [
+        "Datum EDA"
+      ],
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "failed_titles": [
+        "Datum EDA",
+        "Global Preferences \u2014 Datum"
+      ],
+      "restored_titles": [
+        "Datum EDA",
+        "Global Preferences \u2014 Datum"
+      ],
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "passed": false,
+      "error": "native predicate timed out"
+    },
+    {
+      "host": "NEW",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "failed_titles": [
+        "Datum EDA",
+        "New Project \u2014 Datum"
+      ],
+      "restored_titles": [
+        "Datum EDA",
+        "New Project \u2014 Datum"
+      ],
+      "passed": true,
+      "exit": 0
+    }
+  ]
+}

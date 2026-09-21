@@ -41,6 +41,7 @@ struct RedrawCounts {
 struct Host {
     counts: RedrawCounts,
     recovery: RecoveryHandle,
+    failure_title_visible: bool,
     primary_down: bool,
     suppress_release: bool,
     extent: PhysicalSize<u32>,
@@ -109,6 +110,7 @@ impl NativeFrameCoordinator {
             Host {
                 counts: RedrawCounts::default(),
                 recovery,
+                failure_title_visible: false,
                 primary_down: false,
                 suppress_release: false,
                 extent,
@@ -343,6 +345,7 @@ impl NativeFrameCoordinator {
                 host.primary_down,
                 host.suppress_release,
                 host.minimized,
+                host.failure_title_visible,
             )
         }) else {
             return;
@@ -353,6 +356,7 @@ impl NativeFrameCoordinator {
         host.primary_down = previous.2;
         host.suppress_release = previous.3;
         host.minimized = previous.4;
+        host.failure_title_visible = previous.5;
         host.recovery
             .borrow_mut()
             .set_drawable(Self::drawable(host, self.suspended), Instant::now());
@@ -362,6 +366,19 @@ impl NativeFrameCoordinator {
         self.hosts
             .get_mut(&window)
             .is_some_and(|host| host.recovery.borrow_mut().manual_retry())
+    }
+
+    /// Native chrome remains available even when the GPU cannot draw a notice.
+    /// Emit only transitions; device rebinding preserves the displayed state so
+    /// recovery can restore the title without adding steady-state native work.
+    pub(super) fn take_failure_title_change(&mut self, window: WindowId) -> Option<bool> {
+        let host = self.hosts.get_mut(&window)?;
+        let failed = host.recovery.borrow().failed();
+        if failed == host.failure_title_visible {
+            return None;
+        }
+        host.failure_title_visible = failed;
+        Some(failed)
     }
 
     pub(super) fn rendering_failed(&self, window: WindowId) -> bool {
@@ -554,6 +571,27 @@ mod tests {
             state,
             button: MouseButton::Left,
         }
+    }
+
+    #[test]
+    fn failure_title_tracks_retry_rebind_and_closed_hosts_without_idle_updates() {
+        let mut frames = NativeFrameCoordinator::default();
+        let id = WindowId::from(1);
+        let recovery = RecoveryHandle::default();
+        frames.register(id, 1, PhysicalSize::new(1280, 800), recovery.clone());
+        assert_eq!(frames.take_failure_title_change(id), None);
+        recovery.borrow_mut().fail();
+        assert_eq!(frames.take_failure_title_change(id), Some(true));
+        assert_eq!(frames.take_failure_title_change(id), None);
+        assert!(frames.manual_retry(id));
+        assert_eq!(frames.take_failure_title_change(id), Some(false));
+        frames.fail_device();
+        assert_eq!(frames.take_failure_title_change(id), Some(true));
+        frames.rebind_device(id, 2, RecoveryHandle::default());
+        assert_eq!(frames.take_failure_title_change(id), Some(false));
+        assert_eq!(frames.take_failure_title_change(id), None);
+        frames.close(id);
+        assert_eq!(frames.take_failure_title_change(id), None);
     }
 
     #[test]
