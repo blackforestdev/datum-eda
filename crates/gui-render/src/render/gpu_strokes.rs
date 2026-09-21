@@ -1,6 +1,5 @@
-use super::{PointNm, Renderer};
+use super::PointNm;
 use std::ops::Range;
-use wgpu::util::DeviceExt;
 
 #[repr(C)]
 #[derive(Debug, Clone, Copy, PartialEq, bytemuck::Pod, bytemuck::Zeroable)]
@@ -207,81 +206,6 @@ pub(crate) fn draw_world_strokes<'a>(
     pass.set_vertex_buffer(0, buffer.slice(..));
     for range in ranges {
         pass.draw(0..6, range.clone());
-    }
-}
-
-impl Renderer {
-    pub(crate) fn sync_schematic_world_strokes(
-        &mut self,
-        device: &wgpu::Device,
-        queue: &wgpu::Queue,
-        strokes: &[WorldStrokeInstance],
-    ) {
-        let ptr = strokes.as_ptr() as usize;
-        if self.schematic_world_stroke_buffer.is_some()
-            && self.schematic_world_stroke_source_ptr == ptr
-            && self.schematic_world_stroke_source_len == strokes.len()
-        {
-            return;
-        }
-        Self::upload_stroke_instances(
-            device,
-            queue,
-            &mut self.schematic_world_stroke_buffer,
-            &mut self.schematic_world_stroke_capacity,
-            "datum-schematic-world-stroke-buffer",
-            strokes,
-        );
-        self.schematic_world_stroke_source_ptr = ptr;
-        self.schematic_world_stroke_source_len = strokes.len();
-    }
-
-    pub(crate) fn upload_stroke_instances(
-        device: &wgpu::Device,
-        queue: &wgpu::Queue,
-        buffer: &mut Option<wgpu::Buffer>,
-        capacity: &mut usize,
-        label: &str,
-        strokes: &[WorldStrokeInstance],
-    ) {
-        let bytes = bytemuck::cast_slice(strokes);
-        if buffer.is_none() || *capacity < bytes.len() {
-            *buffer = Some(
-                device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                    label: Some(label),
-                    contents: bytes,
-                    usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
-                }),
-            );
-            *capacity = bytes.len();
-        } else if let Some(buffer) = buffer {
-            queue.write_buffer(buffer, 0, bytes);
-        }
-    }
-
-    pub(crate) fn sync_world_strokes(
-        &mut self,
-        device: &wgpu::Device,
-        queue: &wgpu::Queue,
-        strokes: &[WorldStrokeInstance],
-    ) {
-        let ptr = strokes.as_ptr() as usize;
-        if self.world_stroke_buffer.is_some()
-            && self.world_stroke_source_ptr == ptr
-            && self.world_stroke_source_len == strokes.len()
-        {
-            return;
-        }
-        Self::upload_stroke_instances(
-            device,
-            queue,
-            &mut self.world_stroke_buffer,
-            &mut self.world_stroke_capacity,
-            "datum-world-stroke-buffer",
-            strokes,
-        );
-        self.world_stroke_source_ptr = ptr;
-        self.world_stroke_source_len = strokes.len();
     }
 }
 

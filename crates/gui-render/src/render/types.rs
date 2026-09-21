@@ -202,7 +202,7 @@ struct PreparedTerminalGraphic {
 pub struct RetainedScene {
     surface_size_independent: bool,
     world_vertices: std::sync::Arc<[Vertex]>,
-    world_strokes: Vec<WorldStrokeInstance>,
+    world_strokes: std::sync::Arc<[WorldStrokeInstance]>,
     draw_commands: Vec<RetainedDrawCommand>,
     world_hit_index: datum_gui_viewport::SpatialHitIndex<HitTarget>,
 }

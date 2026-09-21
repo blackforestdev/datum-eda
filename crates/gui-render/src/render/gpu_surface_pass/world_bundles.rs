@@ -41,13 +41,13 @@ impl Renderer {
         {
             let (vertex, stroke, commands) = match surface.surface {
                 SceneSurface::Board => (
-                    self.world_vertex_buffer.as_ref(),
-                    self.world_stroke_buffer.as_ref(),
+                    self.world_vertices_gpu.buffer(),
+                    self.world_strokes_gpu.buffer(),
                     prepared.visible_draw_commands(),
                 ),
                 SceneSurface::Schematic => (
-                    self.schematic_world_vertex_buffer.as_ref(),
-                    self.schematic_world_stroke_buffer.as_ref(),
+                    self.schematic_world_vertices_gpu.buffer(),
+                    self.schematic_world_strokes_gpu.buffer(),
                     schematic.map_or(&[][..], RetainedScene::all_draw_commands),
                 ),
             };
@@ -186,7 +186,7 @@ mod tests {
             initial, filtered,
             "visibility must change the recorded draw sequence"
         );
-        renderer.world_vertex_buffer = None;
+        renderer.world_vertices_gpu.clear();
         renderer
             .render(
                 &device, &queue, &view, &prepared, &retained, None, 1280, 800,

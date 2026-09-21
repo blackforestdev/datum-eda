@@ -76,7 +76,7 @@ impl RetainedScene {
     pub fn world_vertices(&self) -> &[Vertex] {
         &self.world_vertices
     }
-    pub(crate) fn world_strokes(&self) -> &[WorldStrokeInstance] {
+    pub(crate) fn world_strokes(&self) -> &std::sync::Arc<[WorldStrokeInstance]> {
         &self.world_strokes
     }
 
@@ -185,7 +185,7 @@ impl RetainedScene {
         Self {
             surface_size_independent: Self::scene_is_surface_size_independent(&state.scene),
             world_vertices: world_vertices.into(),
-            world_strokes,
+            world_strokes: world_strokes.into(),
             draw_commands,
             world_hit_index: datum_gui_viewport::SpatialHitIndex::new(world_hit_regions),
         }
@@ -213,5 +213,26 @@ impl RetainedScene {
                 .component_graphics
                 .iter()
                 .any(|graphic| graphic.closed && graphic.render_role == "component_mechanical")
+    }
+}
+
+#[cfg(test)]
+mod retained_storage_tests {
+    use super::*;
+
+    #[test]
+    fn cloned_retained_scene_shares_immutable_stroke_storage() {
+        let state = crate::gpu_surface_pass::board_fixture_state();
+        let retained = RetainedScene::from_workspace(&state, 1280, 800);
+        assert!(!retained.world_strokes.is_empty());
+        let cloned = retained.clone();
+        assert_eq!(
+            retained.world_vertices.as_ptr(),
+            cloned.world_vertices.as_ptr()
+        );
+        assert_eq!(
+            retained.world_strokes.as_ptr(),
+            cloned.world_strokes.as_ptr()
+        );
     }
 }
