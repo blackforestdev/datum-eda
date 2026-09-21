@@ -16405,7 +16405,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial production adoption: nine shared screen streams retain bounded snapshots and GPU capacity. Clean span-edge words no longer upload; actual dialog single-field changes transfer four bytes and match cold/restored pixels. Owner readback, cap/bypass/shrink/reset and rejected untrimmed negative pass. Exact word writes and packed-copy prototypes rejected for diagnostic CPU regressions; internal clean-gap coalescing remains. Full MEM-01 byte-minimal transfer, native counters and qualification stay open. Shared screen/camera uniform owners now skip exact-byte repeats; full/dialog pixel and changing-input proof plus always-upload/stale-value/retirement negatives pass. Changed uniforms still upload full values; no byte-minimal or complete native qualification follows.",
+        "status": "Partial production adoption: nine shared screen streams retain bounded snapshots and GPU capacity. Clean span-edge words no longer upload; actual dialog single-field changes transfer four bytes and match cold/restored pixels. Owner readback, cap/bypass/shrink/reset and rejected untrimmed negative pass. Exact word writes and packed-copy prototypes rejected for diagnostic CPU regressions; internal clean-gap coalescing remains. Full MEM-01 byte-minimal transfer, native counters and qualification stay open. Shared screen/camera uniform owners now skip exact-byte repeats; full/dialog pixel and changing-input proof plus always-upload/stale-value/retirement negatives pass. Changed uniforms still upload full values; no byte-minimal or complete native qualification follows. Shared screen/camera UniformBuffer now transfers exact changed four-byte-aligned ranges with cold/full initialization and warm zero-write behavior. Exhaustive range oracle and actual renderer fresh-pixel proof pass; large screen stream internal gaps and complete boundary/native qualification remain open.",
         "id": "proof_reuse_screen",
         "positive": "Change one screen/control/text range",
         "negative_control": "Rewrite entire unchanged buffer",
@@ -16433,7 +16433,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/screen-upload-owner/result.json",
         "docs/reviews/gui-performance/implementation/S2/screen-span-trimming/result.json",
-        "docs/reviews/gui-performance/implementation/S2/uniform-owner/result.json"
+        "docs/reviews/gui-performance/implementation/S2/uniform-owner/result.json",
+        "docs/reviews/gui-performance/implementation/S2/uniform-changed-ranges/result.json"
       ]
     },
     {
@@ -25693,5 +25694,30 @@
       "Pending S2 amendment remains unapplied; no dependency, license, third-party source, Cargo, visual truth or resize qualification change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S2/overlay-glyph-reuse/result.json"
+  },
+  "s2_uniform_changed_ranges_work": {
+    "status": "exact aligned uniform updates implemented; complete MEM-01/REUSE-SCREEN and GPI-S2 remain open",
+    "production_consumers": [
+      "Shared screen uniform in full-frame and dialog-only rendering for MAIN/GLOBAL/PROJECT/NEW",
+      "Per-surface camera uniforms in the full-frame renderer"
+    ],
+    "owner": "UniformBuffer<T>::sync / write_changed_ranges",
+    "retired_path": "Full 16-byte screen or 64-byte camera write whenever any field changed",
+    "behavior": "Compare four-byte COPY_BUFFER_ALIGNMENT words; write each maximal adjacent dirty-word range at its actual offset. Do not include clean internal words. Unchanged values issue zero writes; empty new owners initialize the full value. Preserve GPU buffer identity, bind groups, last-value ownership and inactive-slot retirement.",
+    "bounds": "No new allocations or cache: retained value stays the existing fixed T. Scan at most 4 screen or 16 camera words. Changed words coalesce into at most 2 screen or 8 camera writes; fragmentation may increase queue-call count versus one full write. This policy is limited to these small fixed records, not the large screen streams whose fragmented-upload experiments regressed.",
+    "proof": {
+      "negative": "Before production change, actual GPU screen update fails expected 8 bytes with observed 16.",
+      "unit": "Exhaust all 256 dirty-word masks of a 32-byte record, verify exact aligned byte count, no clean transferred word, minimal contiguous-run count and byte-for-byte reconstructed result. Cold 64-byte storage requires one full write. Renderer suite: 204 passed, 22 ignored.",
+      "gpu": "Production screen changes transfer 8 bytes; hot camera updates transfer >0 and <64 bytes, warm repeats zero, close/reopen creates full 64-byte initialization. Changed and warmed board/dialog pixels match fresh Renderer. Initial candidate run caught an old unconditional 64-byte hot-camera assertion; updated it to distinguish cold initialization and partial hot updates, then proof passed.",
+      "native": "Fresh offline release and four X11 smoke cases pass. These do not establish a native CPU improvement or full upload/resource qualification.",
+      "checks": "Renderer visual all-targets Clippy, source health, dependency authority, traceability, parity/spec governance, fresh selector and staged formatting checked."
+    },
+    "remaining": [
+      "Large screen streams still transfer internal clean gaps in merged vertex spans; no complete REUSE-SCREEN pass.",
+      "Glyph/atlas/other allocation-upload boundaries and full resource/counter/native qualification remain open.",
+      "Queue-call overhead and numerical application performance are not qualified by this result; no broad performance acceptance claim.",
+      "Pending S2 sequencing amendment remains unapplied. No dependency, third-party source, Cargo/license/font, visual truth, product authority or resize qualification changes."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S2/uniform-changed-ranges/result.json"
   }
 }
