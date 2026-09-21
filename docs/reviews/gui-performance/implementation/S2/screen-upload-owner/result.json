@@ -1,0 +1,73 @@
+{
+  "status": "Bounded screen upload ownership migration; GPI-S2 remains in progress",
+  "baseline_commit": "f806c33770d3ccaad70118e8b5cf20650f93e3c0",
+  "selection": "Default Renderer::upload_vertices rewrote each screen vertex stream every frame, kept separate capacity fields and retained historical peak allocations. Empty schematic streams skipped synchronization. Source inspection selected this production change; no numerical speedup claim.",
+  "production_consumers_migrated": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "streams": [
+    "panel",
+    "viewport_underlay",
+    "viewport_overlay",
+    "board_interaction",
+    "console_overlay",
+    "menu_overlay",
+    "surface_grid",
+    "schematic_underlay",
+    "schematic_overlay"
+  ],
+  "production_paths": [
+    "Renderer::upload_frame_vertices and surface grids -> ScreenBuffer::sync",
+    "Renderer::render_overlay_only -> same menu ScreenBuffer",
+    "ConsoleGpuResources::upload -> same ScreenBuffer"
+  ],
+  "competing_paths_retired": [
+    "Renderer::upload_vertices unconditional upload helper",
+    "Eight independent Renderer buffer/capacity pairs",
+    "Console independent buffer/capacity pair",
+    "Skipping empty schematic streams while retaining stale allocation"
+  ],
+  "change": "ScreenBuffer owns the last exact content snapshot and GPU buffer. Equal content returns zero upload bytes regardless of source address. Adjacent dirty vertices are joined into writes; unchanged vertex gaps are skipped. Empty input releases both owners. Renderer replacement drops the owner. Painter order, passes, AA, shaders and uniform behavior are unchanged.",
+  "bounds": {
+    "snapshot_entries_per_stream": 1,
+    "snapshot_bytes_per_stream": 262144,
+    "production_streams": 9,
+    "maximum_snapshot_bytes_per_renderer": 2359296,
+    "eviction": "Overlarge content renders but bypasses snapshot retention. Empty input releases CPU/GPU storage; renderer/device teardown drops all owners.",
+    "gpu_capacity": "At most four times last nonempty payload, with WGPU alignment. Larger-to-smaller transitions shrink allocations above that bound. This is an input-relative bound, not an absolute application GPU memory ceiling.",
+    "dirty_unit": "One complete vertex (20 bytes in production), aligned to the four-byte queue-write requirement. Unchanged words inside a changed vertex are uploaded; unchanged vertices between dirty ranges are not."
+  },
+  "proof": {
+    "renderer": "197 passed, 14 ignored.",
+    "gpu_owner": "Real GPU readback: cold 16 bytes; relocated identical content zero; same-address/equal-length single-u32 replacement 4 bytes; disjoint replacements 8 bytes and correct complete contents. Exact-cap warm hit, over-cap bypass, shrink, empty and reset pass.",
+    "production_gpu": "Actual dialog render path: warm zero menu upload, forced owner eviction requires upload with equal pixels; same-size vertex replacement uploads and restoration reproduces pixels.",
+    "parity": "Actual full-frame and dialog-only paths produce equal pixels at 1x/1.5x across scroll rows. Repeated full frames report zero panel/menu uploads and equal pixels.",
+    "native": "Fresh release X11 MAIN zoom-in/out and GLOBAL/PROJECT/NEW startup/presentation/close smoke pass; final exit zero. Native upload counters/latency not qualified.",
+    "build_lint": "Guarded offline release and renderer library/tests Clippy -D warnings pass. Initial test-only unnecessary-to-owned lint corrected by explicitly checking relocated source identity; failure retained.",
+    "governance": "Source health, dependency authority, parity, Cargo resource policy, traceability/spec/project, diff and staged rustfmt gates checked before commit.",
+    "app_scope": "No app source changes. Full app suite not rerun; prior known terminal restart-lineage failure and convergence drift remain open."
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_console.rs": "63011d45d90f959e0516ced25dbab3297a1af7a2d4cad9b90c051f7f2d1cd856",
+    "crates/gui-render/src/render/gpu_data.rs": "8f205e0b4f2ef2e87d4f01561e5efff0d1057c56b5014a266d5d35c5c48b9386",
+    "crates/gui-render/src/render/gpu_frame.rs": "93fff46a67a818bf8abb2ee9545693e6444e115844c0e509a9f2b01f899f6c23",
+    "crates/gui-render/src/render/gpu_init.rs": "4c6b6f0191554f8c7790ff1939d8e44b91dfea8fc73a6d681af8eb84b9e648e7",
+    "crates/gui-render/src/render/gpu_overlay.rs": "a168ef7973701f83661891b77e905142e7e3b8fabcfc368936b2d4ecec946feb",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "5df111068a9ee951647c190c164e2e7f9599bfb24ed677984db58e8e6b736d49",
+    "crates/gui-render/src/render/gpu_surface_pass.rs": "7eafa06b81745da021dd0c6ea515ecd4c0ac9cf056f7a82a0b0341c27e7e4469",
+    "crates/gui-render/src/render/gpu_vertex_upload.rs": "74868daa3027043b56f1a824cfbfa73e31d05960027194d82eaef09a522ba618",
+    "crates/gui-render/src/render/renderer_state.rs": "e95538252cc3d7599f272ccccec88da11805770b1033bd0ac6f8b762b92a6089",
+    "crates/gui-render/src/render/screen_buffer.rs": "a24ce0d466c1a3b899146920f2a2060164a239bf9827f4d604909765f3014e2b"
+  },
+  "candidate_binary_sha256": "026cefc157b75d541426063a51bcedeea66c294aecfeb7526b49809aafbaa632",
+  "limits": [
+    "Snapshot comparison and changed-content copies remain CPU work; overlarge streams bypass retention and upload normally. No numerical performance or zero-preparation claim.",
+    "Dirty ranges are vertex-granular, not byte-minimal. Complete REUSE-SCREEN native boundary counters and prescribed negative qualification remain open; this does not satisfy its full acceptance rule.",
+    "CPU screen geometry generation, world encoding/cache capacity qualification, complete text keys/payload/atlas bounds and S2 completion remain open.",
+    "Schematic stream migration is code adoption only; resolved schematic content performance remains unqualified without fixture admission.",
+    "No new dependency, vendoring, version/license, visual-prototype, product mutation or resize qualification change."
+  ]
+}

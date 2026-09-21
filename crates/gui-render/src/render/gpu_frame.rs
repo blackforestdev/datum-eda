@@ -94,11 +94,9 @@ impl Renderer {
             schematic_underlay_vertices,
             schematic_overlay_vertices,
         );
-        Self::upload_vertices(
+        self.surface_grid_gpu.sync(
             device,
             queue,
-            &mut self.surface_grid_vertex_buffer,
-            &mut self.surface_grid_vertex_capacity,
             "datum-surface-grid-vertex-buffer",
             &surface_grid_vertices,
         );
@@ -147,8 +145,8 @@ impl Renderer {
             if !panel_vertices.is_empty() {
                 pass.set_vertex_buffer(
                     0,
-                    self.panel_vertex_buffer
-                        .as_ref()
+                    self.panel_gpu
+                        .buffer()
                         .expect("panel vertex buffer should exist")
                         .slice(..),
                 );
@@ -163,8 +161,8 @@ impl Renderer {
                 );
                 pass.set_vertex_buffer(
                     0,
-                    self.viewport_underlay_vertex_buffer
-                        .as_ref()
+                    self.viewport_underlay_gpu
+                        .buffer()
                         .expect("viewport underlay vertex buffer should exist")
                         .slice(..),
                 );
@@ -214,7 +212,7 @@ impl Renderer {
             if prepared.surface_passes().is_empty()
                 && !schematic_underlay_vertices.is_empty()
                 && let Some((scene_viewport, _, _, _)) = schematic_pass.as_ref()
-                && let Some(buffer) = self.schematic_underlay_vertex_buffer.as_ref()
+                && let Some(buffer) = self.schematic_underlay_gpu.buffer()
             {
                 pass.set_scissor_rect(
                     scene_viewport.x.max(0.0).floor() as u32,
@@ -267,7 +265,7 @@ impl Renderer {
             // Interaction chrome stays above schematic world geometry.
             if !schematic_overlay_vertices.is_empty()
                 && let Some(scene_viewport) = prepared.interaction_viewport(SceneSurface::Schematic)
-                && let Some(buffer) = self.schematic_overlay_vertex_buffer.as_ref()
+                && let Some(buffer) = self.schematic_overlay_gpu.buffer()
             {
                 pass.set_scissor_rect(
                     scene_viewport.x.max(0.0).floor() as u32,
@@ -287,8 +285,8 @@ impl Renderer {
                 );
                 pass.set_vertex_buffer(
                     0,
-                    self.viewport_overlay_vertex_buffer
-                        .as_ref()
+                    self.viewport_overlay_gpu
+                        .buffer()
                         .expect("viewport overlay vertex buffer should exist")
                         .slice(..),
                 );
@@ -306,8 +304,8 @@ impl Renderer {
                 );
                 pass.set_vertex_buffer(
                     0,
-                    self.board_interaction_vertex_buffer
-                        .as_ref()
+                    self.board_interaction_gpu
+                        .buffer()
                         .expect("board interaction vertex buffer should exist")
                         .slice(..),
                 );
@@ -446,8 +444,8 @@ impl Renderer {
                 pass.set_scissor_rect(0, 0, width, height);
                 pass.set_vertex_buffer(
                     0,
-                    self.menu_overlay_vertex_buffer
-                        .as_ref()
+                    self.menu_overlay_gpu
+                        .buffer()
                         .expect("menu overlay vertex buffer should exist")
                         .slice(..),
                 );

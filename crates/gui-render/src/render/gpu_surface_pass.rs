@@ -26,12 +26,11 @@ impl Renderer {
         pass: &mut wgpu::RenderPass<'a>,
         batches: &[surface_grid_pass::SurfaceGridBatch],
     ) {
-        // `upload_vertices` retains a zero-sized buffer for an empty grid frame.
-        // WGPU rejects binding any slice of that buffer, so avoid the bind entirely.
+        // Empty geometry releases its upload owner and has nothing to bind.
         if batches.is_empty() {
             return;
         }
-        let Some(buffer) = self.surface_grid_vertex_buffer.as_ref() else {
+        let Some(buffer) = self.surface_grid_gpu.buffer() else {
             return;
         };
         pass.set_pipeline(&self.pipeline);
