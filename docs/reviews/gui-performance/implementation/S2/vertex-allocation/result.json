@@ -1,0 +1,50 @@
+{
+  "status": "Shared vertex allocation ownership and world capacity shrink adopted; GPI-S2 remains in progress",
+  "baseline_commit": "6bd57b2799c3d91806278f868bbd91f719de5d25",
+  "selection": "RetainedBuffer reused all maximum-seen capacity on nonempty smaller replacements. Baseline regression demonstrates a 60-byte live payload retaining a 256-byte GPU allocation.",
+  "production_consumers_migrated": [
+    "MAIN",
+    "BOARD",
+    "SCHEMATIC",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "production_paths": [
+    "RetainedBuffer<Vertex/StrokeInstance> -> VertexAllocation for Board/schematic world vertices/strokes (four slots)",
+    "ScreenBuffer -> same VertexAllocation for nine screen streams in full-frame and dialog-only rendering"
+  ],
+  "competing_paths_retired": [
+    "Independent GPU allocation/capacity ownership in RetainedBuffer",
+    "Duplicate GPU allocation/grow/shrink creation in ScreenBuffer",
+    "Maximum-seen world capacity retained across arbitrary nonempty shrink"
+  ],
+  "change": "VertexAllocation owns the buffer handle and mapped initialization. Source owners preserve immutable-Arc or exact-screen-content identity. Reuse capacity between live payload and four times live payload; replace outside that interval. Empty streams drop the source/allocation owner. Renderer/device teardown drops all owners. GPU buffer size is allocation authority instead of a separately mutable capacity counter.",
+  "bounds": "Thirteen production slots share the input-relative four-times-live capacity policy, with WGPU alignment for sub-word payloads. Screen CPU snapshot caps remain 256 KiB per slot (nine slots); retained CPU source ownership remains one Arc per slot. This is not an absolute admitted-workload byte ceiling or driver/in-flight residency measurement.",
+  "proof": {
+    "baseline": "New test on baseline production code fails: allocation size 256 versus expected 60 after below-quarter occupancy. Test-only patch and failed log retained.",
+    "renderer": "197 passed, 16 ignored.",
+    "retained_gpu": "Actual GPU readback passes cold/warm/equal-size replacement plus 256->64 boundary reuse, 64->60 shrink to 60, correct replacement bytes, warm zero upload and clear/reset. Existing retained-source lifetime checks remain.",
+    "screen_gpu": "Existing actual screen-owner readback passes exact reuse, dirty replacement, snapshot cap/bypass, capacity shrink, empty and reset against the common allocator.",
+    "bundle_gpu": "Actual Renderer draws a retained world with 8x vertex storage then its original source: GPU capacity shrinks to original payload, encoded bundle rebinds, and unchanged subsequent frame keeps the bundle. Camera/visibility/binding/close cases remain passing.",
+    "dialog_gpu": "Actual dialog warm/evicted/restored upload pixel comparison passes after allocation migration.",
+    "native": "Fresh release X11 MAIN zoom-in/out plus GLOBAL/PROJECT/NEW startup/presentation/close pass, exit zero. Native resource replacement accounting/driver memory not qualified.",
+    "build_lint": "Offline guarded release and renderer library/tests Clippy pass.",
+    "governance": "Source health, dependency authority, parity, traceability/spec/project, diff and staged formatting checked before commit.",
+    "app_scope": "No app source changes or full app suite rerun. Known terminal lineage/convergence issues remain open."
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_data.rs": "5f358e91cb4c1cc246e539df29eeada1ab8e71070646a3c2840345421e3d5909",
+    "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs": "b72dd420c9d803359d5685208a193f65ab07a55bbca7caf70da00220d6563dd2",
+    "crates/gui-render/src/render/retained_buffer.rs": "90977e837bfa09ba97888418da231f6f426ed9f6e0f0d7cb5c7584cf44f008bb",
+    "crates/gui-render/src/render/screen_buffer.rs": "6788699a2916e56491180d26968229f466d733dbdaaf1d8ba0daacd83911181b",
+    "crates/gui-render/src/render/vertex_allocation.rs": "2d050ee47265f42374df722190f629beaa0a718c4d4c62a6fcde86720fbc07e5"
+  },
+  "candidate_binary_sha256": "2ceea64da9b6ae5ab7474ec4cf40f9206e5f26d02eba3b2e8aeb62ee5860cebc",
+  "limits": [
+    "No numerical speedup or process/driver memory claim. Transient in-flight resources and externally held bundle/buffer handles are not counted as released physical GPU memory by these tests.",
+    "Absolute workload byte caps and complete CPU/GPU/native accounting, actual device-recreation qualification and full backend/scale/performance qualification remain open.",
+    "Resolved schematic content performance remains unqualified; shared Board/schematic resource code adoption does not admit a fixture.",
+    "World and screen source identity semantics, screen vertex-granular dirty ranges, text/AA/pass order, dependency/license and resize boundaries remain unchanged. S2 remains in progress."
+  ]
+}

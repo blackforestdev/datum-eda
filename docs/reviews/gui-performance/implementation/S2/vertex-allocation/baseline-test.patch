@@ -1,0 +1,41 @@
+diff --git a/crates/gui-render/src/render/retained_buffer.rs b/crates/gui-render/src/render/retained_buffer.rs
+index adf2e098..9fdbed70 100644
+--- a/crates/gui-render/src/render/retained_buffer.rs
++++ b/crates/gui-render/src/render/retained_buffer.rs
+@@ -135,10 +135,34 @@ mod tests {
+             bytemuck::cast_slice::<u32, u8>(replacement.as_ref())
+         );
+         assert_eq!(retained.sync(&device, &queue, "proof", &replacement), 0);
+-        let weak = Arc::downgrade(&replacement);
++        let large: Arc<[u32]> = vec![42; 64].into();
++        assert_eq!(retained.sync(&device, &queue, "proof", &large), 256);
++        let peak = retained.buffer().unwrap().clone();
++        let quarter: Arc<[u32]> = vec![43; 16].into();
++        assert_eq!(retained.sync(&device, &queue, "proof", &quarter), 64);
++        assert_eq!(
++            retained.buffer(),
++            Some(&peak),
++            "reuse at four-times boundary"
++        );
++        let small: Arc<[u32]> = vec![44; 15].into();
++        assert_eq!(retained.sync(&device, &queue, "proof", &small), 60);
++        assert_eq!(
++            retained.buffer().unwrap().size(),
++            60,
++            "release historical peak below quarter occupancy"
++        );
++        assert_ne!(retained.buffer(), Some(&peak));
++        assert_eq!(retained.sync(&device, &queue, "proof", &small), 0);
++        assert_eq!(
++            read(&device, &queue, retained.buffer().unwrap(), 60),
++            bytemuck::cast_slice::<u32, u8>(&small)
++        );
++        let weak = Arc::downgrade(&small);
+         retained.clear();
++        drop(small);
++        assert!(retained.buffer().is_none());
+         assert!(retained.buffer().is_none());
+-        assert_eq!(retained.capacity_bytes, 0);
+         drop(replacement);
+         assert!(weak.upgrade().is_none());
+         let empty: Arc<[u32]> = Arc::from([]);

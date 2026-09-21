@@ -1,5 +1,5 @@
 //! Bounded last-content ownership for immediate screen-space vertex uploads.
-use wgpu::util::DeviceExt;
+use super::vertex_allocation::VertexAllocation;
 
 // One snapshot per semantic stream, not frame history. Larger streams still
 // render normally but bypass CPU retention. Nine production slots bound total
@@ -9,14 +9,14 @@ const MAX_SNAPSHOT_BYTES: usize = 256 * 1024;
 #[derive(Default)]
 pub(crate) struct ScreenBuffer {
     snapshot: Box<[u8]>,
-    buffer: Option<wgpu::Buffer>,
+    allocation: VertexAllocation,
     #[cfg(test)]
     pub(crate) last_upload_bytes: usize,
 }
 
 impl ScreenBuffer {
     pub(crate) fn buffer(&self) -> Option<&wgpu::Buffer> {
-        self.buffer.as_ref()
+        self.allocation.buffer()
     }
 
     /// Exact bytes are the key: equal size, allocator reuse, NaN payloads and
@@ -38,31 +38,13 @@ impl ScreenBuffer {
             *self = Self::default();
             return 0;
         }
-        if self.buffer.is_some() && self.snapshot.as_ref() == bytes {
+        if self.allocation.buffer().is_some() && self.snapshot.as_ref() == bytes {
             return 0;
         }
-        // Reuse nearby capacity, but do not keep a historical peak after a
-        // large-to-small transition. Live GPU capacity is at most 4x current
-        // payload (plus WGPU's alignment for the smallest buffers).
-        let replace = self.buffer.as_ref().is_none_or(|buffer| {
-            buffer.size() < bytes.len() as u64
-                || buffer.size() > (bytes.len() as u64).saturating_mul(4)
-        });
         let uploaded;
-        if replace {
-            let mut usage = wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST;
-            if cfg!(test) {
-                usage |= wgpu::BufferUsages::COPY_SRC;
-            }
-            self.buffer = Some(
-                device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                    label: Some(label),
-                    contents: bytes,
-                    usage,
-                }),
-            );
+        if self.allocation.replace_if_needed(device, label, bytes) {
             uploaded = bytes.len();
-        } else if let Some(buffer) = &self.buffer {
+        } else if let Some(buffer) = self.allocation.buffer() {
             uploaded = write_dirty_ranges(
                 queue,
                 buffer,

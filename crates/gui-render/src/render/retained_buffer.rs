@@ -1,26 +1,24 @@
 //! One immutable CPU source and its reusable GPU allocation per renderer/device.
+use super::vertex_allocation::VertexAllocation;
 use std::sync::Arc;
-use wgpu::util::DeviceExt;
 
 pub(crate) struct RetainedBuffer<T> {
     source: Option<Arc<[T]>>,
-    buffer: Option<wgpu::Buffer>,
-    capacity_bytes: usize,
+    allocation: VertexAllocation,
 }
 
 impl<T> Default for RetainedBuffer<T> {
     fn default() -> Self {
         Self {
             source: None,
-            buffer: None,
-            capacity_bytes: 0,
+            allocation: VertexAllocation::default(),
         }
     }
 }
 
 impl<T: bytemuck::Pod> RetainedBuffer<T> {
     pub(crate) fn buffer(&self) -> Option<&wgpu::Buffer> {
-        self.buffer.as_ref()
+        self.allocation.buffer()
     }
 
     pub(crate) fn clear(&mut self) {
@@ -41,7 +39,7 @@ impl<T: bytemuck::Pod> RetainedBuffer<T> {
             self.clear();
             return 0;
         }
-        if self.buffer.is_some()
+        if self.allocation.buffer().is_some()
             && self
                 .source
                 .as_ref()
@@ -50,20 +48,9 @@ impl<T: bytemuck::Pod> RetainedBuffer<T> {
             return 0;
         }
         let bytes = bytemuck::cast_slice(source.as_ref());
-        if self.buffer.is_none() || self.capacity_bytes < bytes.len() {
-            let mut usage = wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST;
-            if cfg!(test) {
-                usage |= wgpu::BufferUsages::COPY_SRC;
-            }
-            self.buffer = Some(
-                device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                    label: Some(label),
-                    contents: bytes,
-                    usage,
-                }),
-            );
-            self.capacity_bytes = self.buffer.as_ref().unwrap().size() as usize;
-        } else if let Some(buffer) = &self.buffer {
+        if !self.allocation.replace_if_needed(device, label, bytes)
+            && let Some(buffer) = self.allocation.buffer()
+        {
             queue.write_buffer(buffer, 0, bytes);
         }
         self.source = Some(source.clone());
@@ -135,10 +122,34 @@ mod tests {
             bytemuck::cast_slice::<u32, u8>(replacement.as_ref())
         );
         assert_eq!(retained.sync(&device, &queue, "proof", &replacement), 0);
-        let weak = Arc::downgrade(&replacement);
+        let large: Arc<[u32]> = vec![42; 64].into();
+        assert_eq!(retained.sync(&device, &queue, "proof", &large), 256);
+        let peak = retained.buffer().unwrap().clone();
+        let quarter: Arc<[u32]> = vec![43; 16].into();
+        assert_eq!(retained.sync(&device, &queue, "proof", &quarter), 64);
+        assert_eq!(
+            retained.buffer(),
+            Some(&peak),
+            "reuse at four-times boundary"
+        );
+        let small: Arc<[u32]> = vec![44; 15].into();
+        assert_eq!(retained.sync(&device, &queue, "proof", &small), 60);
+        assert_eq!(
+            retained.buffer().unwrap().size(),
+            60,
+            "release historical peak below quarter occupancy"
+        );
+        assert_ne!(retained.buffer(), Some(&peak));
+        assert_eq!(retained.sync(&device, &queue, "proof", &small), 0);
+        assert_eq!(
+            read(&device, &queue, retained.buffer().unwrap(), 60),
+            bytemuck::cast_slice::<u32, u8>(&small)
+        );
+        let weak = Arc::downgrade(&small);
         retained.clear();
+        drop(small);
         assert!(retained.buffer().is_none());
-        assert_eq!(retained.capacity_bytes, 0);
+        assert!(retained.buffer().is_none());
         drop(replacement);
         assert!(weak.upgrade().is_none());
         let empty: Arc<[u32]> = Arc::from([]);
