@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--board",
+    "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "--window-size",
+    "1280x800",
+    "--interaction-smoke"
+  ],
+  "binary_sha256": "2bc9a60c85ae801604a50014b338b772ba0a9998ebd78039e4da2ea9c97524b9",
+  "acquisitions": 3,
+  "unexpected_exit": null
+}

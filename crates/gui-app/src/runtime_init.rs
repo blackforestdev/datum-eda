@@ -57,13 +57,10 @@ impl Runtime {
         let config = gui_runtime_support::surface_configuration(&caps, size, None);
         let msaa_samples = select_msaa_samples(&adapter, config.format);
         append_gui_diagnostic_line(format!(
-            "initial surface configure begin {}x{} format={:?} present={:?} msaa={}",
+            "initial surface configuration requested {}x{} format={:?} present={:?} msaa={}",
             config.width, config.height, config.format, config.present_mode, msaa_samples
         ));
-        if size.width != 0 && size.height != 0 {
-            surface.configure(&device, &config);
-        }
-        append_gui_diagnostic_line("initial surface configure end");
+        // Initial configuration joins the same admission path as later frames.
         let renderer_started = std::time::Instant::now();
         append_gui_diagnostic_line("renderer init begin");
         let mut renderer = Renderer::new(&device, &queue, config.format, msaa_samples);

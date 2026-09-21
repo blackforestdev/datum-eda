@@ -1,5 +1,5 @@
 //! Native surface dimensions, configuration and resize invalidation ownership.
-//! Preserve immediate surface/input/terminal updates; size-independent authored
+//! Preserve immediate logical/input/terminal updates; size-independent authored
 //! geometry survives physical resizing while prepared layout remains fresh.
 
 use super::*;
@@ -41,8 +41,6 @@ impl Runtime {
         ));
         self.config.width = width;
         self.config.height = height;
-        self.surface_transaction
-            .configure_resize(&self.surface, &self.device, &self.config);
         if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
             self.resize_terminal_to_dock();
         }

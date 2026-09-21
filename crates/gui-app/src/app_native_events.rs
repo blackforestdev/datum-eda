@@ -9,6 +9,7 @@ impl App {
         event: WindowEvent,
     ) {
         self.frames.window_event(window_id, &event);
+        self.sync_surface_drawability();
         self.measurement_window_event(window_id, &event);
         let Some(event) = self.dispatch_owned_product_window_event(event_loop, window_id, event)
         else {

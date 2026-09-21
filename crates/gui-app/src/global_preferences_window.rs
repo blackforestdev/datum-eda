@@ -45,9 +45,6 @@ impl GlobalPreferencesWindowSurface {
             Some(runtime.config.format),
         );
         let format = config.format;
-        if window.inner_size().width != 0 && window.inner_size().height != 0 {
-            surface.configure(&runtime.device, &config);
-        }
         let mut renderer = Renderer::new(
             &runtime.device,
             &runtime.queue,
@@ -61,13 +58,11 @@ impl GlobalPreferencesWindowSurface {
             &window,
             Some(runtime.measurements.epoch()),
         )?;
+        let mut surface_transaction = SurfaceTransaction::new(&config, window.inner_size());
+        surface_transaction.share_queue_with(&runtime.surface_transaction);
         Ok(Self {
             surface,
-            surface_transaction:
-                gui_runtime_support::native_surface_transaction::SurfaceTransaction::new(
-                    &config,
-                    window.inner_size(),
-                ),
+            surface_transaction,
             config,
             scale_factor: scale_factor_override.unwrap_or_else(|| window.scale_factor() as f32),
             renderer,
@@ -93,7 +88,7 @@ impl GlobalPreferencesWindowSurface {
         self.prepared = None;
     }
 
-    pub(super) fn resize(&mut self, runtime: &Runtime, width: u32, height: u32) {
+    pub(super) fn resize(&mut self, _runtime: &Runtime, width: u32, height: u32) {
         self.surface_transaction.resize(width, height);
         if width == 0 || height == 0 {
             return;
@@ -106,8 +101,6 @@ impl GlobalPreferencesWindowSurface {
         }
         self.config.width = width;
         self.config.height = height;
-        self.surface_transaction
-            .configure_resize(&self.surface, &runtime.device, &self.config);
         self.invalidate();
     }
 

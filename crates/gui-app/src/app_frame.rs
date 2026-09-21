@@ -61,6 +61,12 @@ impl Runtime {
     pub(super) fn run_interaction_smoke(&mut self) -> Result<()> {
         let size = self.window.inner_size();
         self.resize(size.width, size.height);
+        // This explicit synchronous proof runner waits for its previous frame;
+        // ordinary event-loop rendering uses nonblocking queue admission.
+        self.device.poll(wgpu::PollType::Wait {
+            submission_index: None,
+            timeout: Some(std::time::Duration::from_secs(2)),
+        })?;
         anyhow::ensure!(
             self.render().context("interaction smoke initial render")?,
             "interaction smoke initial frame was not presented"
@@ -77,6 +83,12 @@ impl Runtime {
         self.last_cursor_pos = Some(click);
         let _ = self.update_hover(click);
         let _ = self.handle_primary_click();
+        // This explicit synchronous proof runner waits for its previous frame;
+        // ordinary event-loop rendering uses nonblocking queue admission.
+        self.device.poll(wgpu::PollType::Wait {
+            submission_index: None,
+            timeout: Some(std::time::Duration::from_secs(2)),
+        })?;
         anyhow::ensure!(
             self.render().context("interaction smoke click render")?,
             "interaction smoke click frame was not presented"

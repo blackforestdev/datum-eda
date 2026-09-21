@@ -21864,5 +21864,77 @@
       "native.json": "1b26857abfb88a943abad5219378e06341d87671d12b558dc437419e792d727d",
       "tests.log.gz": "4a6d157933239aa670413b20fc53396958dcc701315ca64223d4045fc3ccd90b"
     }
+  },
+  "s1_queue_work": {
+    "status": "bounded default production queue/configuration admission verified; S1 remains in progress",
+    "baseline_commit": "0d4c9d79",
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_owner": "Shared QueueOwner retained by each SurfaceTransaction on the same native device",
+    "retired_paths": [
+      "Immediate surface.configure in Runtime::resize and GlobalPreferencesWindowSurface::resize",
+      "Separate initial configurations in Runtime and auxiliary construction",
+      "Direct recovery configure outside queue admission",
+      "Per-surface completion flag as configuration admission authority"
+    ],
+    "behavior": [
+      "FIFO one-ticket-per-host configuration admission; extents remain latest desired config",
+      "Global completion watermark prevents prior GPU work from being discarded when its host closes",
+      "At most one outstanding normal frame per host; bounded nonblocking drain checks",
+      "Known-undrawable hosts cancel tickets and wake deadlines; callbacks retain no windows"
+    ],
+    "limits": [
+      "Full coordinator-owned drawable-active retry and recoverable failure UI remain open; drain currently fails through existing controlled fatal reporting after two active uninterrupted seconds",
+      "Default failed acquisition still retains damage for subsequent activity; opt-in legacy acquisition retry remains separate pending migration",
+      "Renderer low-level submit calls remain inside synchronous admitted frame body; explicit screenshot/interaction diagnostic paths are not ordinary scheduler qualification",
+      "No full S1 resource accounting, native starvation, temporal, or numerical performance acceptance"
+    ],
+    "verification": {
+      "queue": "3 tests pass: FIFO starvation prevention including yield after configure, close with outstanding GPU work, stale completion watermark and bounded drain",
+      "app": "Final exact-source suite332 passed,0failed,8ignored. Initial suite331passed,1unchanged terminal restart identity failure; isolated replay passed; dat-terminal-restart-identity-igx",
+      "native": "4 actual Xwayland/Vulkan hosts pass six extent transitions each. Shared queue configure receipts: MAIN7, GLOBAL8, PROJECT8, NEW8; completed watermark >= submitted at each configure",
+      "interaction": "Explicit synchronous interaction smoke passes three acquisitions; proof-only waits are bounded to2s, normal rendering stays nonblocking",
+      "release": "Final offline optimized build passes",
+      "drift": "Workspace formatting, Clippy and preceding governance checks pass; stops at baseline terminal focus-count/font-marker failures dat-terminal-convergence-guard-xke; later stages not run",
+      "source_health": "Passed against baseline; all new source within limits"
+    },
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/queue-admission",
+    "source_sha256": {
+      "crates/gui-app/src/app_frame.rs": "da71583d6d66688a1fb2a8ca5e39e63ee4f051046ddffacaad15e82fca676adc",
+      "crates/gui-app/src/app_native_events.rs": "bd33729feed2ce7fd8c3fecc15cbf5ee94282df52c16141bc952225e666ac0ab",
+      "crates/gui-app/src/global_preferences_window.rs": "b03bf189558c23666d97e9fca3567b76823faa7b3dc6154daacb41c51d0b4a07",
+      "crates/gui-app/src/gui_runtime_support.rs": "ac260d1b1fc08066085fe60394e832d614698bad185c68501c514a93b8c33343",
+      "crates/gui-app/src/native_frame_coordinator.rs": "fb810d866f2bb34cd36863ea2d5fdb1b23d66705f64019b7e9273b75ae9a971e",
+      "crates/gui-app/src/native_surface_transaction.rs": "6b1e2e3a502d09a1f503c64386bc9adf73baff7f1546abb05de7873eb3751805",
+      "crates/gui-app/src/runtime_init.rs": "7cf6ee3ddaf37efe2963009eb7bbf839ca4509aafa1315b4878a33a0db95b42b",
+      "crates/gui-app/src/runtime_surface.rs": "8c0259dbc6472d329059651d1c9b5b4dbb56413349eb95dbb1b88ef2aa55832c",
+      "crates/gui-app/src/native_queue_owner.rs": "cdce9ecfa92fd9ca7384b16dbf81fe5a2aba5c111eb900483e7b0b7f98c71915"
+    },
+    "artifacts_sha256": {
+      "GLOBAL-native.log.gz": "0ff477c660c854780e502fb2247a4ea3dcd477dfac2933092505a8b57d0053e9",
+      "MAIN-native.log.gz": "1e03674aad313cbfcc9d2db9a592832c3752bbc9a1f9ff6a1354b8925ff52cb4",
+      "NEW-native.log.gz": "9ddcd17b8f395d29ffa3428915ab0508e86283d73a8e42b8f5a573eab2fddd91",
+      "PROJECT-native.log.gz": "a0cbc97832acd88116815b08270e26f9ffecfaaea9f0b4075f859d52d28fa35c",
+      "app-final.log.gz": "7a508246f5665ef267d65d5dd4b0dfa448c35e58c02c0b6435ef22e6a4d8eb0b",
+      "app-initial.log.gz": "771a924b0f57554a65a722c88b9ad42d47c41a80989cec5c81608ff1dce4711c",
+      "build.log.gz": "2f40b4882b3898229b722ab527b900dbcf5b3cd81c97af3299a3a13c52fcbe20",
+      "clippy-initial-failure.log.gz": "80bb634c60231dcb76271400f1fb3ec2306a53173b3ac39bfdeef2e6a9c13221",
+      "drift.log.gz": "03e754328571c2e22765d9801e3b737992807c6bf5cc467be89f14d5c5d1a858",
+      "interaction.json": "041f6c75f17755f49e600cc90d88d3e914bf469d56af95cc3c6fc4af3b6506f1",
+      "interaction.log.gz": "2393d525c1fc5343ffcbc69161a735bfa1a6f38bbefcf09db1fc1cd59fe4d65a",
+      "interaction_probe.py": "c0e0905a18037a660903b78846305d80cd02a945b2dec7f6129ad164e15a5527",
+      "native.json": "e042ff528b2e10e200a3e441115521e62783526133f929e10bf173222091a56f",
+      "queue-receipts.json": "f850191455f3367f95c59f889b1b7f28d761c632e9d1b37e4ecc509d274a5cfb",
+      "terminal-replay.log.gz": "f23ac40a6ec319dce2f6a47c2b3246dcd9fd75678d7423ba6235f4867c4074bb",
+      "tests.log.gz": "8113f8b3f78f5982a181c33db585aab78b02ba7c33d6e691555be9a6f375b2b0"
+    },
+    "failed_attempts": [
+      "Initial Clippy rejected Drop implementation after test module; moved implementation before tests, workspace Clippy passes.",
+      "Initial application suite terminal restart identity failure retained; isolated and final full replays pass."
+    ]
   }
 }
