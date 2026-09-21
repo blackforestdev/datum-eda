@@ -26705,5 +26705,30 @@
       "app": "App test binary built successfully after shared cache rebuild. The layer filter matched zero app tests; this is compile integration evidence only, not an adapter test pass."
     },
     "evidence": "docs/reviews/gui-performance/implementation/S3/layers-effective-scroll/result.json"
+  },
+  "s3_console_history_bounds_work": {
+    "status": "bounded S3 Console record-scroll adoption; native qualification open",
+    "baseline": "7dc49947301dc7358345f591cd09adeda93e137c",
+    "sources": {
+      "crates/gui-render/src/datum_console.rs": "0d3462665b464b07f502a5b0785b1c34e90d08d4d11ef574a7581ebae9ff4f21",
+      "crates/gui-app/src/console_feedback.rs": "3e9cb0f2660197a0dbc6d70fd0d67d5734c9c2e9d7458a96b33e6d4ffd46dcfe",
+      "crates/gui-app/src/app_native_events.rs": "7c01534a1965abb4f9662314f196ace5054255fc2ac78a1a8dd2e80a1dc1a98d"
+    },
+    "production_consumers": [
+      "MAIN Console expanded history overlay"
+    ],
+    "call_path": "Main MouseWheel -> handle_console_history_scroll -> last-presented history panel -> renderer filtered history limit + shared discrete row arithmetic -> changed-only invalidate",
+    "retired_paths": [
+      "Storage-capacity-based Console scroll limit unrelated to filtered records",
+      "Blank history at oversized stored offsets",
+      "Unconditional redraw for consumed unchanged Console wheel"
+    ],
+    "preserved": "One-record backward-from-newest scroll policy, feedback retention and journal authority, All/Operations/Errors filters, wrapping/clip and overlay painter order. No terminal scroll policy or hidden-history preparation change.",
+    "proof": {
+      "renderer": "Eight focused datum_console tests pass; existing mixed feedback/journal regression now compares filtered limits and asserts oldest record remains rendered for usize::MAX offsets across All/Operations/Errors.",
+      "app": "Eight Console app tests pass; actual native dispatch compiles with separate consumption/change result.",
+      "limits": "No native frame-ledger, boundary input, full filter/focus matrix, independent negative or performance-budget qualification. Desktop-use clarification pending; no focus-taking tests. S3 and goal remain incomplete."
+    },
+    "evidence": "docs/reviews/gui-performance/implementation/S3/console-history-bounds/result.json"
   }
 }
