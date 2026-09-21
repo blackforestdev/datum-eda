@@ -62,6 +62,59 @@ fn geometry() -> TerminalScreenGeometry {
 }
 
 #[test]
+fn partial_terminal_viewport_clips_cached_and_cold_cell_paint() {
+    let snapshot = snapshot(b"\x1b[4;9;48;2;4;5;6mABC");
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.focus = ApplicationFocus::Terminal;
+    let mut geometry = geometry();
+    geometry.screen.width = geometry.metrics.width * 1.5;
+    geometry.screen.height = geometry.metrics.height * 0.75;
+    let screen: RectPx = geometry.screen.into();
+    let mut cache = TerminalRenderCache::default();
+    for cached in [false, true, true] {
+        let mut quads = Vec::new();
+        let mut text = Vec::new();
+        let mut hits = Vec::new();
+        if cached {
+            cache.render(
+                &state,
+                &snapshot,
+                &[],
+                &geometry,
+                (&mut quads, &mut text, &mut hits),
+            );
+        } else {
+            render_terminal_core_snapshot(
+                &state, &snapshot, &geometry, &mut quads, &mut text, &mut hits,
+            );
+        }
+        assert!(!quads.is_empty());
+        for quad in quads {
+            assert!(quad.points.iter().all(|&(x, y)| screen.contains(x, y)));
+        }
+        assert!(
+            text.iter().any(|run| run.text == "B"),
+            "partially visible cell remains"
+        );
+        assert!(
+            !text.iter().any(|run| run.text == "C"),
+            "hidden cell omitted"
+        );
+        for run in text {
+            let clip = run.clip_bounds.unwrap();
+            assert!(screen.contains(clip.x, clip.y));
+            assert!(screen.contains(clip.x + clip.width, clip.y + clip.height));
+        }
+        assert_eq!(hits.len(), 1);
+        let hit = hits[0].rect;
+        assert_eq!((hit.x, hit.y), (screen.x, screen.y));
+        assert!(screen.contains(hit.x + hit.width, hit.y + hit.height));
+        assert!((hit.width - screen.width).abs() < 0.001);
+        assert!((hit.height - screen.height).abs() < 0.001);
+    }
+}
+
+#[test]
 fn scaled_geometry_drives_glyph_cursor_and_clip_dimensions_together() {
     let snapshot = snapshot(b"ab");
     let mut state = datum_gui_protocol::load_fixture_workspace_state();

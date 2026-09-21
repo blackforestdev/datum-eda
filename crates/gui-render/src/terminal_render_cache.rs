@@ -123,6 +123,7 @@ impl TerminalSessionRenderCache {
         sinks: (&mut Vec<Quad>, &mut Vec<TextRun>, &mut Vec<HitRegion>),
     ) {
         let (panel_quads, text_runs, hit_regions) = sinks;
+        let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
         let screen: RectPx = geometry.screen.into();
         hit_regions.push(HitRegion {
             target,
@@ -244,6 +245,15 @@ impl TerminalSessionRenderCache {
         self.search_match = lane.search.matched;
         self.session_id = Some(session_id.to_string());
         self.scroll_offset = scroll;
+        crate::hit_clipping::clip_content(
+            panel_quads,
+            text_runs,
+            hit_regions,
+            starts.0,
+            starts.1,
+            starts.2,
+            screen,
+        );
     }
 }
 

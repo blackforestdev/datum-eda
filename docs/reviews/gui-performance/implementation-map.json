@@ -6662,6 +6662,10 @@
       "s3_terminal_menu_progress": {
         "status": "actual terminal context-menu adapter inherits shared viewport clipping; complete terminal/overlay qualification open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-menu-clipping/result.json"
+      },
+      "s3_terminal_cell_progress": {
+        "status": "cold and retained terminal composition use shared clipping; complete per-adapter qualification open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-cell-clipping/result.json"
       }
     },
     {
@@ -6755,6 +6759,10 @@
       "s3_terminal_menu_progress": {
         "status": "actual terminal context-menu adapter inherits shared viewport clipping; complete terminal/overlay qualification open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-menu-clipping/result.json"
+      },
+      "s3_terminal_cell_progress": {
+        "status": "cold and retained terminal composition use shared clipping; complete per-adapter qualification open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-cell-clipping/result.json"
       }
     },
     {
@@ -26793,5 +26801,20 @@
     "retired_path": "Position-clamped menu with unrestricted geometry, text and clickable row extents",
     "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-menu-clipping/result.json",
     "limits": "No native input/screenshot, independent negative, timing, full HP22 or all-terminal-profile qualification. No new menu navigation/overflow product behavior. No dependency, license, prototype or terminal core/PTY changes."
+  },
+  "s3_terminal_cell_clipping_work": {
+    "status": "bounded S3 terminal screen shared clipping adoption; full qualification open",
+    "production_consumers": [
+      "Main retained terminal session/split rows through TerminalSessionRenderCache",
+      "Cold terminal snapshot rendering",
+      "Terminal IME and graphics rectangle intersection"
+    ],
+    "retired_paths": [
+      "Private terminal intersection/nonempty_intersection implementations",
+      "Unrestricted terminal cell background/decoration/cursor geometry after row composition",
+      "Text construction for fully clipped cells and IME"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-cell-clipping/result.json",
+    "limits": "No native, pixel, independent negative, timing or full HP22/resource qualification. Terminal tab chrome and remaining profile review stay open. No PTY/state model, row policy, dependency, license or prototype change."
   }
 }

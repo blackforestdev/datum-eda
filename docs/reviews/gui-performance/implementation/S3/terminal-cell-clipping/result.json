@@ -1,0 +1,28 @@
+{
+  "status": "bounded S3 terminal screen shared clipping adoption; full qualification open",
+  "baseline": "43348ea6",
+  "sources": {
+    "crates/gui-render/src/terminal_core_render.rs": "312f85218833c56e98d44161860b1b923a8aef8b54878c483fff8dd00e4b823c",
+    "crates/gui-render/src/terminal_render_cache.rs": "fff915979f0f27f9d2a5f3227467a316301a640803163f434194304f8755819f",
+    "crates/gui-render/src/terminal_core_render_tests.rs": "9dfb14b9db7abf7e4c66adee84ff0ee90931bf27e4aaeb859e422aa783fdccaa"
+  },
+  "production_consumers": [
+    "Main retained terminal session/split rows through TerminalSessionRenderCache",
+    "Cold terminal snapshot rendering",
+    "Terminal IME and graphics rectangle intersection"
+  ],
+  "shared_owner": "render/hit_clipping.rs::clip_content and RectPx::intersect",
+  "retired_paths": [
+    "Private terminal intersection/nonempty_intersection implementations",
+    "Unrestricted terminal cell background/decoration/cursor geometry after row composition",
+    "Text construction for fully clipped cells and IME"
+  ],
+  "behavior": "Retained and cold terminal composition clip their appended geometry, text and screen hit to the same screen viewport. Preserve per-cell glyph clips, discrete row offsets, logical cluster counting, painter order and pinned prior sinks. IME and graphics use shared positive-area rectangle intersection. Warm cache replay inherits final viewport clipping.",
+  "proof": {
+    "renderer": "195 renderer library tests pass serially, including actual cold/cached/warm-cache partial-viewport regression with backgrounds/decorations, partial B cell, omitted C cell and screen hit bounds. Existing terminal style, shaping, selection, cache, IME and graphics tests pass.",
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib -- --test-threads=1",
+    "initial_failure": "194 passed; new test failed exact screen-hit float equality. Corrected assertion to visible corner bounds plus subpixel extent tolerance. Production implementation unchanged; failed log retained.",
+    "limits": "No native, pixel, independent negative, timing or full HP22/resource qualification. Terminal tab chrome and remaining profile review stay open. No PTY/state model, row policy, dependency, license or prototype change.",
+    "clippy": "Guarded offline datum-gui-render library Clippy passed with -D warnings."
+  }
+}

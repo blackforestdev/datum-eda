@@ -104,7 +104,7 @@ pub(super) fn prepare_terminal_graphics(
             width,
             height,
         };
-        if let Some(clip) = nonempty_intersection(rect, screen) {
+        if let Some(clip) = rect.intersect(screen) {
             graphics.push(PreparedTerminalGraphic {
                 graphic: graphic.clone(),
                 rect,
@@ -123,6 +123,7 @@ pub(super) fn render_terminal_core_snapshot(
     hit_regions: &mut Vec<HitRegion>,
 ) {
     let screen: RectPx = geometry.screen.into();
+    let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
     hit_regions.push(HitRegion {
         target: HitTarget::TerminalScreen,
         rect: screen,
@@ -186,6 +187,15 @@ pub(super) fn render_terminal_core_snapshot(
             }
         }
     }
+    crate::hit_clipping::clip_content(
+        panel_quads,
+        text_runs,
+        hit_regions,
+        starts.0,
+        starts.1,
+        starts.2,
+        screen,
+    );
 }
 
 fn render_ime_preedit(
@@ -205,7 +215,9 @@ fn render_ime_preedit(
         width: cells * metrics.width,
         height: metrics.height,
     };
-    let clip = intersection(rect, screen);
+    let Some(clip) = rect.intersect(screen) else {
+        return;
+    };
     quads.push(Quad::from_rect(clip, [0.16, 0.12, 0.17]));
     push_rect_border(quads, clip, TEXT_ACCENT, 1.0);
     draw_rich_text(
@@ -268,6 +280,9 @@ pub(super) fn render_row(
             width: width_cells as f32 * context.metrics.width,
             height: context.metrics.height,
         };
+        let Some(clip) = cell_rect.intersect(context.screen) else {
+            continue;
+        };
         let (foreground, background) = style_colors(cell.style, snapshot.palette(), context.theme);
         if background != resolve_background(Color::Default, snapshot.palette(), context.theme) {
             quads.push(Quad::from_rect(cell_rect, background));
@@ -320,7 +335,7 @@ pub(super) fn render_row(
             text_runs,
         );
         if let Some(run) = text_runs.last_mut() {
-            run.clip_bounds = Some(intersection(cell_rect, context.screen));
+            run.clip_bounds = Some(clip);
         }
     }
 }
@@ -623,24 +638,6 @@ pub(super) fn render_cursor(
     } else {
         push_rect_border(quads, rect, color, CURSOR_STROKE_PX);
     }
-}
-
-fn intersection(first: RectPx, second: RectPx) -> RectPx {
-    let x = first.x.max(second.x);
-    let y = first.y.max(second.y);
-    let right = (first.x + first.width).min(second.x + second.width);
-    let bottom = (first.y + first.height).min(second.y + second.height);
-    RectPx {
-        x,
-        y,
-        width: (right - x).max(0.0),
-        height: (bottom - y).max(0.0),
-    }
-}
-
-fn nonempty_intersection(first: RectPx, second: RectPx) -> Option<RectPx> {
-    let intersection = intersection(first, second);
-    (intersection.width > 0.0 && intersection.height > 0.0).then_some(intersection)
 }
 
 #[cfg(test)]
