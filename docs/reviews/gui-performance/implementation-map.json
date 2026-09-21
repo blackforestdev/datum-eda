@@ -1593,7 +1593,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial: shared backend-error recovery transition and monotonic sequence proof; native configuration-generation/final-state proof remains open",
+        "status": "native positive scenario passed across all four hosts: prior frame, Lost then Outdated, one reconfiguration after each, no live acquisition during errors, latest native extent presented and damage retired. Negative-control, independent visible final-state and full resource qualification remain open.",
         "id": "proof_lf_02",
         "positive": "Lost then outdated then success per native host",
         "negative_control": "Drop damage on acquisition failure",
@@ -1641,7 +1641,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S1/acquisition-transition/receipt.json"
+        "docs/reviews/gui-performance/implementation/S1/acquisition-transition/receipt.json",
+        "docs/reviews/gui-performance/implementation/S1/LF-02/result.json"
       ]
     },
     {
@@ -23963,5 +23964,30 @@
       "No dependency/license or new view mechanism. PM023 identity and PM045 E02 govern; S1 remains partial and resize exclusions unchanged."
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/pane-rebind/receipt.json"
+  },
+  "s1_native_surface_sequence_work": {
+    "status": "LF-02 bounded native positive transition passed in all four hosts; full qualification remains partial",
+    "production_consumers_verified": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_path": "native redraw token -> NativeFrameCoordinator -> Main/shared auxiliary renderer -> SurfaceTransaction backend-result classification -> shared Recovery / QueueOwner -> native presentation and damage retirement",
+    "production_change": "Existing opt-in backend fault switch gains lost-outdated sequence after first successful presentation. Default configuration/acquisition/recovery behavior is unchanged.",
+    "retired_paths": "none; verifies already adopted shared production owners instead of helper-only classification",
+    "verification": {
+      "app": "362 passed, 0 failed, 9 ignored; visual integration ignored",
+      "clippy": "all app targets -D warnings passed",
+      "release": "fresh guarded offline release build passed; shared cache shrink required dependency rebuild",
+      "native": "one Lost and one Outdated injection per target after prior presentation; no acquired lease during errors; one generation increment after each; 1200x800 actual native geometry and presented extent; final damage fully retired; all exits 0"
+    },
+    "limits": [
+      "Backend-result injection verifies application transitions, not actual driver loss reliability or numerical recovery latency.",
+      "Final-state proof is native extent plus damage/acquire/present counters, not independently observed pixels or every consumer input state.",
+      "No deliberately broken recovery negative-control replay or complete GPU/resource budget qualification.",
+      "S1 remains in progress; no dependency/license or default policy change. Resize CPU/temporal qualification remains nonblocking."
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/LF-02/result.json"
   }
 }
