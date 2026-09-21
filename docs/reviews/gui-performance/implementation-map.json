@@ -22494,5 +22494,64 @@
       "validate.py": "f4c757eb730fec106382cda8304aa75ee372f4defed9f3295fca96ae2f76e726",
       "validation.json": "8e9cf9e8431c5689c81d125c68418938fbdc78415377b38ba0d66939e7ef8acc"
     }
+  },
+  "s1_submission_work": {
+    "status": "default native frame submission ownership implemented; S1 remains in progress",
+    "baseline_commit": "7fc96f7a",
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_owner": "Renderer invokes a synchronous observer immediately after full-frame or overlay queue.submit. SurfaceTransaction registers queue completion and binds the returned opaque wgpu SubmissionIndex and host receipt to the acquired frame before fallible measurement collection or presentation.",
+    "retired_paths": [
+      "After-presentation-only registration of submitted GPU work",
+      "Using existence of a submission as evidence of first successful presentation"
+    ],
+    "behavior": [
+      "Submitted but discarded frames retain their queue receipt, so acquisition/configuration admission continues to wait for GPU completion",
+      "Presentation requires a matching lease submission; one callback is registered per native frame submission",
+      "Offscreen Renderer::render remains compatible through a no-op submission observer; clear-only diagnostic path also reports its actual submission"
+    ],
+    "verification": {
+      "app": "342 passed, 0 failed, 8 ignored; includes submitted-frame discard preserving submission without presentation",
+      "native": "All four default hosts show submit before present; actual GLOBAL/PROJECT/NEW windows each change extent twice and restore. Device loss replacement and bounded persistent OOM plus native F5 pass. 43 records in five runs satisfy acquisition, submission, presentation and queue-epoch bounds.",
+      "build": "Fresh offline release passed",
+      "clippy": "Targeted app including renderer -D warnings passed",
+      "checks": "Source health and dependency authority passed"
+    },
+    "limits": [
+      "Frame submissions are actual renderer queue.submit observations, not a count of all initialization, atlas or other internal submissions",
+      "Discard-after-submit bookkeeping is unit tested; native forced post-submit-error and close-during-acquisition qualification remain open",
+      "No performance budget, static parity, displayed-frame, Wayland, complete ACC or S1 acceptance claim; pinned resize CPU remains nonblocking",
+      "Full drift not rerun; previously recorded baseline terminal guard failures unchanged"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/submission-boundary",
+    "source_sha256": {
+      "crates/gui-render/src/render/gpu_frame.rs": "75fbaa6c9d8009a6cbc4b3e2a24babfe1e76e558d25ba9f8d303c900746907a6",
+      "crates/gui-render/src/render/gpu_overlay.rs": "3f4caa0fd7bdcbd08d3a6c2906dfe0ec389279c665e0a2b5d481676c824e68be",
+      "crates/gui-app/src/native_surface_transaction.rs": "2e04e5dc7e03cf28ac31c7cb23a285e57932650d408d8ebb8270f6e64ff2b638",
+      "crates/gui-app/src/native_queue_owner.rs": "9e1040c1b4cae01fd14018e09a8e2335543e245cf016398cfe93fc06033aff62",
+      "crates/gui-app/src/native_frame_probe.rs": "09434f59ddfb6a6712411604a48cf668b99d1ca19c4456d68cce7cd77067b0c4",
+      "crates/gui-app/src/runtime_present.rs": "356dca4c7fbd60d3f0c99707c6ea70a3b9ea1b919c0a976210ddd410da0d0896",
+      "crates/gui-app/src/global_preferences_window.rs": "402a7eb502ac2a044c4150f17504c1188ea72eb9f8a8f6a3a91cde5082a2cbc6"
+    },
+    "artifacts_sha256": {
+      "GLOBAL-native.log.gz": "a47a6e1e2e366ef6e8dbaa2c073c15e2bfe694022215ecee5b285dc486cedeb5",
+      "GLOBAL-recovery.log.gz": "b9c1de79beaef1af1fe8fd97d1ca3c2387e838be3e4a8a7764473f3bbde56e75",
+      "NEW-native.log.gz": "8b05a42aed2b3fd2ec4a7e8173a5e972f116b711765185169e9a9b65e77862f9",
+      "PROJECT-native.log.gz": "21f4c789e26a4c0a61b95ffdbba46928f3451c0df3ce5092809cb9a5a4f01c5b",
+      "app.log.gz": "4742eca26f70d2b343ed6ff48b76c9286f750b4f3d50beb5729ab96c39baa375",
+      "build.log.gz": "e28f3ab24c1c4b617856cf609eb19ddfe7f0ba119cb3f5a4039142a32d0f4688",
+      "clippy.log.gz": "16c0dade157d83dfc84586112519df6d9109ffb5d497e4ce0827e9db17a04f92",
+      "host_probe.py": "ba36049fc937e7baf004c3c01be62cf36057398bbddad0c186cb440aa1f2dae3",
+      "hosts.json": "5894374b36333f6fecc9e3894c12c8b967349cb81e02c0e91019b0f4c4a60fb3",
+      "oom-recovery.log.gz": "b0a1173a77f2ec38c19da88b82702b36af160628e0fc7ef6dc636e5019248433",
+      "recovery.json": "d083a7dc9b8e35191ffd9ab1d59469de9a943966f9d51880226067861c39a7d4",
+      "recovery_probe.py": "6f0863513dcd08e9a42df9d931488919c9a61d6cf69ff74c0415e227ce651b4e",
+      "validate.py": "e386702e5fcbfd7817ff326fa8e8258609ab4e1e43d9e27d982727a18158e384",
+      "validation.json": "bdd233542c553c509afa91458c737fe44f1c40375bc752e9b2886880b6617010"
+    }
   }
 }

@@ -79,6 +79,7 @@ impl Renderer {
         prepared: &PreparedScene,
         width: u32,
         height: u32,
+        on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<()> {
         let mut measurement = self.begin_gpu_measurement()?;
         let started = std::time::Instant::now();
@@ -150,7 +151,8 @@ impl Renderer {
             }
         }
         self.resolve_gpu_measurement(&mut measurement, &mut encoder)?;
-        queue.submit([encoder.finish()]);
+        let submission = queue.submit([encoder.finish()]);
+        on_submitted(submission);
         self.submit_gpu_measurement(measurement)?;
         self.trim_overlay_text_buffers();
         trace_render_timing(format!(

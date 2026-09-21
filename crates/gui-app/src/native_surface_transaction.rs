@@ -9,6 +9,8 @@ pub(crate) struct SurfaceTransaction {
     queue_owner: super::native_queue_owner::QueueOwner,
     queue_host: u64,
     in_flight: u64,
+    last_present_receipt: u64,
+    last_submission: Option<wgpu::SubmissionIndex>,
     pub(crate) recovery: RecoveryHandle,
     drawable: bool,
     configured: Option<(u32, u32)>,
@@ -39,6 +41,7 @@ struct FrameCounts {
     active: Cell<bool>,
     acquired: Cell<u64>,
     presented: Cell<u64>,
+    frame_submissions: Cell<u64>,
     discarded: Cell<u64>,
     configure_attempts: Cell<u64>,
     acquire_attempts: Cell<u64>,
@@ -56,6 +59,7 @@ struct TextureLease {
     active: Rc<FrameCounts>,
     generation: u64,
     presented: bool,
+    submission_receipt: Option<u64>,
 }
 impl TextureLease {
     fn acquire(active: &Rc<FrameCounts>, generation: u64) -> anyhow::Result<Self> {
@@ -68,8 +72,18 @@ impl TextureLease {
             active: active.clone(),
             generation,
             presented: false,
+            submission_receipt: None,
         })
     }
+    fn submitted(&mut self, receipt: u64) {
+        assert!(
+            self.submission_receipt.is_none(),
+            "native acquisition submitted twice"
+        );
+        self.submission_receipt = Some(receipt);
+        increment(&self.active.frame_submissions);
+    }
+
     fn belongs_to(&self, active: &Rc<FrameCounts>, generation: u64) -> bool {
         Rc::ptr_eq(&self.active, active) && self.generation == generation
     }
@@ -120,6 +134,8 @@ impl SurfaceTransaction {
             queue_owner,
             queue_host,
             in_flight: 0,
+            last_present_receipt: 0,
+            last_submission: None,
             recovery: RecoveryHandle::default(),
             drawable: native_size.width != 0 && native_size.height != 0,
             configured: None,
@@ -129,7 +145,7 @@ impl SurfaceTransaction {
     }
 
     pub(crate) fn has_presented(&self) -> bool {
-        self.in_flight != 0
+        self.texture_active.presented.get() != 0
     }
 
     pub(crate) fn configured_for(&self, width: u32, height: u32) -> bool {
@@ -318,13 +334,32 @@ impl SurfaceTransaction {
         Ok(true)
     }
 
+    /// Called synchronously at the renderer's queue.submit boundary, even when
+    /// a later measurement or device-health check prevents presentation.
+    pub(crate) fn submitted(
+        &mut self,
+        frame: &mut NativeSurfaceFrame,
+        queue: &wgpu::Queue,
+        submission: wgpu::SubmissionIndex,
+    ) {
+        assert!(
+            frame
+                .lease
+                .belongs_to(&self.texture_active, self.configuration_generation)
+        );
+        assert!(frame.lease.submission_receipt.is_none());
+        self.in_flight = self.queue_owner.submitted(queue);
+        self.last_submission = Some(submission);
+        frame.lease.submitted(self.in_flight);
+        self.trace_lifecycle("submit");
+    }
+
     /// The sole product notification/presentation boundary for acquired native
     /// frames. Success retires consumed damage only in the coordinator afterward.
     pub(crate) fn present(
         &mut self,
         mut frame: NativeSurfaceFrame,
         window: &winit::window::Window,
-        queue: &wgpu::Queue,
     ) -> anyhow::Result<()> {
         anyhow::ensure!(
             window.id() == self.window,
@@ -336,6 +371,10 @@ impl SurfaceTransaction {
                 .belongs_to(&self.texture_active, self.configuration_generation),
             "native frame belongs to another surface or configuration generation"
         );
+        anyhow::ensure!(
+            frame.lease.submission_receipt == Some(self.in_flight),
+            "native frame has no matching submitted work"
+        );
         window.pre_present_notify();
         frame
             .texture
@@ -345,7 +384,7 @@ impl SurfaceTransaction {
         frame.lease.presented = true;
         // Release acquisition before a subsequent configure can be admitted.
         drop(frame);
-        self.in_flight = self.queue_owner.submitted(queue);
+        self.last_present_receipt = self.in_flight;
         self.recovery.borrow_mut().success();
         self.trace_lifecycle("present");
         Ok(())
@@ -366,8 +405,10 @@ impl SurfaceTransaction {
                 "acquire_attempts": counts.acquire_attempts.get(),
                 "acquired": counts.acquired.get(), "presented": counts.presented.get(),
                 "discarded": counts.discarded.get(), "active": u8::from(counts.active.get()),
-                "last_present_receipt": self.in_flight,
-                "present_receipts_issued": submitted, "gpu_completed_through_receipt": completed
+                "last_present_receipt": self.last_present_receipt,
+                "last_frame_submission_receipt": self.in_flight, "wgpu_submission": format!("{:?}", self.last_submission),
+                "frame_submissions": counts.frame_submissions.get(),
+                "frame_submission_receipts_issued": submitted, "gpu_completed_through_receipt": completed
             })
         ));
     }
@@ -484,6 +525,7 @@ mod tests {
         let mut shown = TextureLease::acquire(&counts, 1).unwrap();
         assert_eq!(counts.acquired.get(), 1);
         assert_eq!(counts.presented.get(), 0);
+        shown.submitted(1);
         shown.presented = true;
         drop(shown);
         increment(&counts.acquire_attempts); // Backend failure produces no lease.
@@ -497,6 +539,20 @@ mod tests {
         assert_eq!(counts.acquire_attempts.get(), 3);
         assert_eq!(counts.acquired.get(), 2);
         assert_eq!(counts.presented.get(), 1);
+        assert_eq!(counts.frame_submissions.get(), 1);
+        assert_eq!(counts.discarded.get(), 1);
+        assert!(!counts.active.get());
+    }
+
+    #[test]
+    fn submitted_frame_discard_preserves_submission_without_claiming_presentation() {
+        let counts = Rc::new(FrameCounts::default());
+        let mut frame = TextureLease::acquire(&counts, 1).unwrap();
+        frame.submitted(7);
+        assert_eq!(frame.submission_receipt, Some(7));
+        drop(frame); // A post-submit error skips presentation.
+        assert_eq!(counts.frame_submissions.get(), 1);
+        assert_eq!(counts.presented.get(), 0);
         assert_eq!(counts.discarded.get(), 1);
         assert!(!counts.active.get());
     }

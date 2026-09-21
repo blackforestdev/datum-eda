@@ -44,7 +44,7 @@ pub(super) enum Admission {
 }
 
 impl QueueOwner {
-    /// Presentation receipts and their GPU completion watermark, not a count of
+    /// Native frame submission receipts and their GPU completion watermark, not a count of
     /// every raw queue submission (renderer initialization may also submit).
     pub(super) fn snapshot(&self) -> (u64, u64, u64) {
         let state = self.0.borrow();

@@ -177,7 +177,7 @@ impl GlobalPreferencesWindowSurface {
         if runtime.device_health.failed() {
             return Ok(false);
         }
-        let Some(frame) = self.surface_transaction.acquire(
+        let Some(mut frame) = self.surface_transaction.acquire(
             &self.surface,
             &runtime.device,
             &self.config,
@@ -253,7 +253,7 @@ impl GlobalPreferencesWindowSurface {
             }
         }
         let view = frame.view();
-        self.renderer.render(
+        self.renderer.render_with_submission(
             &runtime.device,
             &runtime.queue,
             &view,
@@ -266,12 +266,15 @@ impl GlobalPreferencesWindowSurface {
             None,
             self.config.width,
             self.config.height,
+            &mut |submission| {
+                self.surface_transaction
+                    .submitted(&mut frame, &runtime.queue, submission)
+            },
         )?;
         if runtime.device_health.failed() {
             return Ok(false);
         }
-        self.surface_transaction
-            .present(frame, &self.window, &runtime.queue)?;
+        self.surface_transaction.present(frame, &self.window)?;
         Ok(true)
     }
 }
