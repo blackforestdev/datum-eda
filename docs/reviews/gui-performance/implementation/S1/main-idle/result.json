@@ -1,0 +1,152 @@
+{
+  "binary_sha256": "e2f93a90ae086f0c5bc144915b17c66174d321290a220a9249fb9094aee41e85",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "clock_ticks_per_second": 100,
+  "scope": "current Main X11 application-family CPU and application submission idle control; no baseline-relative or GPU/display qualification",
+  "runs": [
+    {
+      "trial": 1,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "pid": 1007598,
+      "start_monotonic": 731311.316168741,
+      "end_monotonic": 731371.316281102,
+      "before": {
+        "1007598": {
+          "ppid": 1007579,
+          "cpu_ticks": 62,
+          "start_ticks": 73131577
+        },
+        "1007630": {
+          "ppid": 1007598,
+          "cpu_ticks": 1,
+          "start_ticks": 73131720
+        }
+      },
+      "after": {
+        "1007598": {
+          "ppid": 1007579,
+          "cpu_ticks": 65,
+          "start_ticks": 73131577
+        },
+        "1007630": {
+          "ppid": 1007598,
+          "cpu_ticks": 1,
+          "start_ticks": 73131720
+        }
+      },
+      "stable_family": true,
+      "cpu_percent_one_core": 0.049999906365973824,
+      "frames_before": {
+        "submit": 2,
+        "present": 2
+      },
+      "frames_after": {
+        "submit": 2,
+        "present": 2
+      },
+      "passed": true
+    },
+    {
+      "trial": 2,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "pid": 1008052,
+      "start_monotonic": 731378.217518612,
+      "end_monotonic": 731438.217791502,
+      "before": {
+        "1008084": {
+          "ppid": 1008052,
+          "cpu_ticks": 1,
+          "start_ticks": 73138418
+        },
+        "1008052": {
+          "ppid": 1007579,
+          "cpu_ticks": 61,
+          "start_ticks": 73138275
+        }
+      },
+      "after": {
+        "1008084": {
+          "ppid": 1008052,
+          "cpu_ticks": 1,
+          "start_ticks": 73138418
+        },
+        "1008052": {
+          "ppid": 1007579,
+          "cpu_ticks": 64,
+          "start_ticks": 73138275
+        }
+      },
+      "stable_family": true,
+      "cpu_percent_one_core": 0.04999977259272528,
+      "frames_before": {
+        "submit": 2,
+        "present": 2
+      },
+      "frames_after": {
+        "submit": 2,
+        "present": 2
+      },
+      "passed": true
+    },
+    {
+      "trial": 3,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "pid": 1008413,
+      "start_monotonic": 731445.076802375,
+      "end_monotonic": 731505.076958621,
+      "before": {
+        "1008449": {
+          "ppid": 1008413,
+          "cpu_ticks": 1,
+          "start_ticks": 73145106
+        },
+        "1008413": {
+          "ppid": 1007579,
+          "cpu_ticks": 61,
+          "start_ticks": 73144963
+        }
+      },
+      "after": {
+        "1008449": {
+          "ppid": 1008413,
+          "cpu_ticks": 1,
+          "start_ticks": 73145106
+        },
+        "1008413": {
+          "ppid": 1007579,
+          "cpu_ticks": 63,
+          "start_ticks": 73144963
+        }
+      },
+      "stable_family": true,
+      "cpu_percent_one_core": 0.033333246530220885,
+      "frames_before": {
+        "submit": 2,
+        "present": 2
+      },
+      "frames_after": {
+        "submit": 2,
+        "present": 2
+      },
+      "passed": true
+    }
+  ]
+}

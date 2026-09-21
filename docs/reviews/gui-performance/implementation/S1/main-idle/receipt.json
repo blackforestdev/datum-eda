@@ -1,0 +1,38 @@
+{
+  "status": "bounded current Main idle observations; SH-04/MET-02 qualification remains partial",
+  "candidate_commit": "11eb97d5",
+  "recipe": "Three independent native X11 launches, five-second warmup after first presentation, then 60 seconds no input each. Existing admitted isolated Main board fixture. Native logging enabled, GPU timestamp measurement disabled.",
+  "binary_sha256": "e2f93a90ae086f0c5bc144915b17c66174d321290a220a9249fb9094aee41e85",
+  "measurement": "Linux /proc process utime+stime counters include all process threads and kernel time, summed across sampled descendants. Raw PID/start-time/tick endpoints retained; stable sampled family in all three intervals.",
+  "resolution": "100 clock ticks/second; one tick over 60 seconds is approximately 0.0167% of one core.",
+  "results": [
+    {
+      "trial": 1,
+      "GUI_percent_one_core": 0.049999906365973824,
+      "sampled_descendants_percent_one_core": 0.0,
+      "additional_submissions": 0,
+      "additional_presentations": 0
+    },
+    {
+      "trial": 2,
+      "GUI_percent_one_core": 0.04999977259272528,
+      "sampled_descendants_percent_one_core": 0.0,
+      "additional_submissions": 0,
+      "additional_presentations": 0
+    },
+    {
+      "trial": 3,
+      "GUI_percent_one_core": 0.033333246530220885,
+      "sampled_descendants_percent_one_core": 0.0,
+      "additional_submissions": 0,
+      "additional_presentations": 0
+    }
+  ],
+  "limitations": [
+    "passed:true in raw result means sampled-family CPU <=1% and zero additional application submissions, not full MET/SH qualification",
+    "Endpoint sampling did not collect complete transient-child exit accounting; values describe the observed stable process family and cannot establish complete MET-02 total CPU",
+    "No GPU-active counter or display/visual invariant evidence; no baseline-relative improvement or diagnostic-overhead qualification",
+    "Main host and pinned fixture only; auxiliary hosts, wider scales/backends, terminal animation and complete W-IDLE/SH-04/S1 remain open",
+    "No new Rust code, dependency, build or resize investigation in this evidence slice"
+  ]
+}

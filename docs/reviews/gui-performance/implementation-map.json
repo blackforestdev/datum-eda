@@ -437,11 +437,14 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial component proof: current native_hosts_coalesce_requests_without_losing_latest_damage test injects damage after begin_frame and verifies exactly one successor; native prepare/submit injection and full requirement acceptance remain unqualified.",
         "id": "proof_sh_03",
         "positive": "Inject fresh damage between prepare and successful submit",
         "negative_control": "Clear all damage on completion",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S1/presented-hit-ownership/tests.log.gz"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/SH-03/result.json",
       "acceptance_rule": "Consumed generation cleared only; later generation gets exactly one pending successor.",
@@ -539,11 +542,14 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial Main native observations: three independent 60-second samples, zero additional submissions and observed-family CPU below 1%; complete child-exit accounting, GPU activity and all-host qualification remain open.",
         "id": "proof_sh_04",
         "positive": "W-IDLE after all deadlines finish",
         "negative_control": "Requeue a perpetual redraw",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S1/main-idle/receipt.json"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/SH-04/result.json",
       "acceptance_rule": "MET idle <=1% core and zero application submissions; no idle wake loop.",
@@ -845,11 +851,14 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial component proof: current configuration_ticket_prevents_busy_host_overtaking_and_preserves_fifo test verifies reservation order under simulated outstanding receipts; complete native competing-host configure/drain qualification remains open.",
         "id": "proof_sh_07",
         "positive": "Resize host A while host B continuously submits",
         "negative_control": "Allow B submission to overtake pending configure reservation",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S1/presented-hit-ownership/tests.log.gz"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/SH-07/result.json",
       "acceptance_rule": "FIFO device-owner reservation drains prior work, admits configure safely and resumes eligible hosts without starvation.",
@@ -947,11 +956,14 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial component proof: current completed_watermark_does_not_complete_later_submission test verifies in-flight admission remains blocked until its receipt completes; native delayed-completion and complete resource-byte qualification remain open.",
         "id": "proof_sh_08",
         "positive": "Delay GPU completion across multiple redraw requests",
         "negative_control": "Queue unbounded frame snapshots",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S1/presented-hit-ownership/tests.log.gz"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/SH-08/result.json",
       "acceptance_rule": "At most one outstanding frame per host; latest logical state retained, bounded resource bytes.",
@@ -2198,11 +2210,14 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial component proof: current gpu_wait_is_bounded_by_same_episode_and_success_resets_it test verifies queue-wait recovery limit; native never-completing queue, callback/allocation bounds and dispatch qualification remain open.",
         "id": "proof_lf_09",
         "positive": "Queue completion never arrives",
         "negative_control": "Block UI polling until completion",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S1/presented-hit-ownership/tests.log.gz"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/LF-09/result.json",
       "acceptance_rule": "Other input dispatch continues; bounded failure, bounded callback/allocation count, no synchronous readback wait.",
@@ -23259,5 +23274,41 @@
       "Resize CPU remains unresolved and nonblocking"
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/presented-hit-ownership/receipt.json"
+  },
+  "s1_main_idle_work": {
+    "status": "bounded current Main idle observations; SH-04/MET-02 qualification remains partial",
+    "candidate_commit": "11eb97d5",
+    "recipe": "Three independent native X11 launches, five-second warmup after first presentation, then 60 seconds no input each. Existing admitted isolated Main board fixture. Native logging enabled, GPU timestamp measurement disabled.",
+    "results": [
+      {
+        "trial": 1,
+        "GUI_percent_one_core": 0.049999906365973824,
+        "sampled_descendants_percent_one_core": 0.0,
+        "additional_submissions": 0,
+        "additional_presentations": 0
+      },
+      {
+        "trial": 2,
+        "GUI_percent_one_core": 0.04999977259272528,
+        "sampled_descendants_percent_one_core": 0.0,
+        "additional_submissions": 0,
+        "additional_presentations": 0
+      },
+      {
+        "trial": 3,
+        "GUI_percent_one_core": 0.033333246530220885,
+        "sampled_descendants_percent_one_core": 0.0,
+        "additional_submissions": 0,
+        "additional_presentations": 0
+      }
+    ],
+    "limitations": [
+      "passed:true in raw result means sampled-family CPU <=1% and zero additional application submissions, not full MET/SH qualification",
+      "Endpoint sampling did not collect complete transient-child exit accounting; values describe the observed stable process family and cannot establish complete MET-02 total CPU",
+      "No GPU-active counter or display/visual invariant evidence; no baseline-relative improvement or diagnostic-overhead qualification",
+      "Main host and pinned fixture only; auxiliary hosts, wider scales/backends, terminal animation and complete W-IDLE/SH-04/S1 remain open",
+      "No new Rust code, dependency, build or resize investigation in this evidence slice"
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/main-idle/receipt.json"
   }
 }
