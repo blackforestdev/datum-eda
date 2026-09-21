@@ -7,7 +7,10 @@
 use crate::gui_runtime_support::native_recovery::RecoveryHandle;
 use std::{collections::HashMap, time::Instant};
 use winit::window::{Window, WindowId};
-use winit::{dpi::PhysicalSize, event::WindowEvent};
+use winit::{
+    dpi::PhysicalSize,
+    event::{ElementState, MouseButton, WindowEvent},
+};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(super) struct FrameReceipt {
@@ -21,6 +24,8 @@ pub(super) struct FrameReceipt {
 #[derive(Debug)]
 struct Host {
     recovery: RecoveryHandle,
+    primary_down: bool,
+    suppress_release: bool,
     extent: PhysicalSize<u32>,
     occluded: bool,
     restore_pending: bool,
@@ -60,6 +65,8 @@ impl NativeFrameCoordinator {
             window,
             Host {
                 recovery,
+                primary_down: false,
+                suppress_release: false,
                 extent,
                 occluded: false,
                 restore_pending: false,
@@ -154,6 +161,43 @@ impl NativeFrameCoordinator {
         Self::request(host, self.suspended)
     }
 
+    /// Cancel the gesture without turning its trailing release into a click.
+    pub(super) fn cancel_capture(&mut self, window: WindowId) {
+        if let Some(host) = self.hosts.get_mut(&window) {
+            host.suppress_release |= host.primary_down;
+        }
+    }
+
+    /// Native primary-button tracking is shared by all adapters. A new press
+    /// starts a new gesture even if a cancelled release was never delivered.
+    pub(super) fn consume_cancelled_release(
+        &mut self,
+        window: WindowId,
+        event: &WindowEvent,
+    ) -> bool {
+        let Some(host) = self.hosts.get_mut(&window) else {
+            return false;
+        };
+        if let WindowEvent::MouseInput {
+            state,
+            button: MouseButton::Left,
+            ..
+        } = event
+        {
+            match state {
+                ElementState::Pressed => {
+                    host.primary_down = true;
+                    host.suppress_release = false;
+                }
+                ElementState::Released => {
+                    host.primary_down = false;
+                    return std::mem::take(&mut host.suppress_release);
+                }
+            }
+        }
+        false
+    }
+
     pub(super) fn is_drawable(&self, window: WindowId) -> bool {
         self.hosts
             .get(&window)
@@ -205,16 +249,21 @@ impl NativeFrameCoordinator {
     }
 
     pub(super) fn rebind_device(&mut self, window: WindowId, epoch: u64, recovery: RecoveryHandle) {
-        let Some(previous) = self
-            .hosts
-            .get(&window)
-            .map(|host| (host.extent, host.occluded))
-        else {
+        let Some(previous) = self.hosts.get(&window).map(|host| {
+            (
+                host.extent,
+                host.occluded,
+                host.primary_down,
+                host.suppress_release,
+            )
+        }) else {
             return;
         };
         self.register(window, epoch, previous.0, recovery);
         let host = self.hosts.get_mut(&window).expect("rebound native host");
         host.occluded = previous.1;
+        host.primary_down = previous.2;
+        host.suppress_release = previous.3;
         host.recovery
             .borrow_mut()
             .set_drawable(Self::drawable(host, self.suspended), Instant::now());
@@ -338,6 +387,55 @@ impl NativeFrameCoordinator {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn primary(state: ElementState) -> WindowEvent {
+        WindowEvent::MouseInput {
+            device_id: winit::event::DeviceId::dummy(),
+            state,
+            button: MouseButton::Left,
+        }
+    }
+
+    #[test]
+    fn cancelled_capture_cannot_activate_a_control_after_dpi_or_device_replacement() {
+        let mut frames = NativeFrameCoordinator::default();
+        for id in 1..=4 {
+            let window = WindowId::from(id);
+            frames.register(window, 1, PhysicalSize::new(1280, 800), Default::default());
+            assert!(!frames.consume_cancelled_release(window, &primary(ElementState::Pressed)));
+        }
+        // Only the affected native host loses its current coordinate gesture.
+        frames.cancel_capture(WindowId::from(2));
+        assert!(
+            !frames.consume_cancelled_release(WindowId::from(1), &primary(ElementState::Released))
+        );
+        for id in 2..=4 {
+            let window = WindowId::from(id);
+            frames.cancel_capture(window);
+            // Cancellation survives GPU replacement, which preserves native input identity.
+            frames.rebind_device(window, 2, Default::default());
+            assert!(frames.consume_cancelled_release(window, &primary(ElementState::Released)));
+            assert!(!frames.consume_cancelled_release(window, &primary(ElementState::Released)));
+            assert!(!frames.consume_cancelled_release(window, &primary(ElementState::Pressed)));
+            assert!(!frames.consume_cancelled_release(window, &primary(ElementState::Released)));
+        }
+    }
+
+    #[test]
+    fn missing_cancelled_release_does_not_poison_new_gesture_or_reopened_host() {
+        let mut frames = NativeFrameCoordinator::default();
+        let id = WindowId::from(1);
+        frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
+        frames.consume_cancelled_release(id, &primary(ElementState::Pressed));
+        frames.cancel_capture(id);
+        frames.consume_cancelled_release(id, &primary(ElementState::Pressed));
+        assert!(!frames.consume_cancelled_release(id, &primary(ElementState::Released)));
+        frames.consume_cancelled_release(id, &primary(ElementState::Pressed));
+        frames.cancel_capture(id);
+        frames.close(id);
+        frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
+        assert!(!frames.consume_cancelled_release(id, &primary(ElementState::Released)));
+    }
 
     #[test]
     fn device_rebind_preserves_visibility_and_rejects_old_or_closed_receipts() {

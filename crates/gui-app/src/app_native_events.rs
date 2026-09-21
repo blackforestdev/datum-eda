@@ -69,6 +69,12 @@ impl App {
         window_id: WindowId,
         event: WindowEvent,
     ) {
+        if self.frames.consume_cancelled_release(window_id, &event) {
+            return;
+        }
+        if matches!(event, WindowEvent::ScaleFactorChanged { .. }) {
+            self.cancel_native_host_gestures(window_id);
+        }
         self.frames.window_event(window_id, &event);
         if self
             .runtime

@@ -22110,5 +22110,66 @@
       "oom-stderr.log.gz": "c7ada23e4eead746cc6ac360345b07462f19d5e022157f8fb51f8c643d6adacc",
       "oom.log.gz": "6ea630505dc0a4b7d6f91ac2525b37f27efcceb27dd110f9b838500f1026b4e2"
     }
+  },
+  "s1_capture_work": {
+    "status": "bounded default capture cancellation implemented; LF-08 and S1 remain unqualified/in progress",
+    "baseline_commit": "232a4ed9",
+    "requirements": [
+      "LF-08",
+      "REC-02"
+    ],
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_entry": "App::handle_native_window_event -> shared cancel_native_host_gestures before native ScaleFactorChanged adapters; recovery failure and device replacement use the same cancellation",
+    "shared_owner": "NativeFrameCoordinator host primary-button identity and cancelled-release suppression; existing Runtime and dialog capture owners",
+    "retired_paths": [
+      "DPI layout transition with old-coordinate active drag",
+      "Cancelled primary release reaching click activation after rendering recovery",
+      "Separate tab-drag release suppression for shared host cancellation"
+    ],
+    "behavior": [
+      "Cancel pan/divider/dock/terminal gestures and auxiliary scroll capture before DPI adaptation without altering logical focus or stored settings",
+      "Consume only the affected held primary release; new press clears stale suppression",
+      "Device rebind retains native button/cancellation state; close and new host discard it"
+    ],
+    "verification": {
+      "app": "335 passed, 0 failed, 8 ignored; two new coordinator tests cover host isolation, cancelled release, replacement, missing release, fresh gesture and reopened host",
+      "native": "MAIN/GLOBAL/NEW Xwayland/Vulkan configurations pass six-extent regression. PROJECT stalls after fourth size request, with three observed sizes; failed/unqualified trace retained. This recipe does not exercise DPI changes.",
+      "build": "Offline default-feature release build passed",
+      "checks": "Workspace formatting, source health, dependency authority, parity and spec governance passed"
+    },
+    "limits": [
+      "Real DPI/display moves during pan and scrollbar drag, hit/paint parity, native capture and IME remain unqualified; coordinator tests do not pass LF-08",
+      "No numerical performance or global adoption claim; S1 accounting and scheduling requirements remain open",
+      "Existing baseline drift terminal failures remain recorded; full drift suite not rerun for this slice",
+      "Project Preferences resize-smoke stall remains unqualified under owner nonblocking resize disposition; no root-cause or regression-free claim"
+    ],
+    "commands": [
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui",
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app",
+      "python3 /tmp/pm045_capture_native.py"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/capture-cancellation",
+    "source_sha256": {
+      "crates/gui-app/src/app_native_events.rs": "20047e7ba8746f7037d259ad6149612d46571cc0f410ffeb99cf9e0764c4879a",
+      "crates/gui-app/src/native_frame_coordinator.rs": "d969cec5e395e577f3d3cdcbcb96eb8174ac04f4949eb667be789b2aae7b32f7",
+      "crates/gui-app/src/native_surface_transaction.rs": "395384a5c7f7dd43cadcbc8fe50af2c58fd6f293be919e01dcd23180a3398155",
+      "crates/gui-app/src/native_device_recovery.rs": "226c1e27e16fbb2db8801a899f787b66d8eefa4f28219bda7d54a2f78d4dd317"
+    },
+    "artifacts_sha256": {
+      "GLOBAL.log.gz": "7ddb074d24745c73b78d1eaeb89ff63d7b63a691002e07c595abfbaad823f202",
+      "MAIN.log.gz": "c3263bcc424e23d0686d0626b21f54a589f53ffafe6a850177acf2c3272a115c",
+      "NEW.log.gz": "fc5eadc092a526ef0c0934bd22f49eb9f67e4e4f62f583a6ad046414e4bf846e",
+      "PROJECT.log.gz": "fc6489ca3e2e1e839f3f8233e77742e08283126c278e31fddde2aed6b31a596d",
+      "app.log.gz": "d5c9c92b7b81760c72894b34d442cad26954d31ea1fc3dadba408d36c0181d74",
+      "build.log.gz": "e801391a9639f855ebe88d42a532e3a6da18794643bdce2cf0e83b7bb5165422",
+      "native.json": "fb64a0ad8b3d245fb45f47f3d2ac2531726f81c175dc5487aa40b85f67b7f95f",
+      "native_probe.py": "54d1484e739969cb444669a2227fe989797095684322f0f4d99c59bb9714fb49",
+      "new_probe.py": "c0a71c3dbcb7d1aca8c8960de60b92cdec635e1b76b32f133ac728e146736155"
+    }
   }
 }
