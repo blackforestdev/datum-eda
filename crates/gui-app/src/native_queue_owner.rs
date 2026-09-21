@@ -6,7 +6,7 @@ use std::{
     rc::Rc,
     sync::{
         Arc, Mutex,
-        atomic::{AtomicU64, Ordering},
+        atomic::{AtomicBool, AtomicU64, Ordering},
     },
 };
 
@@ -21,6 +21,7 @@ struct State {
     submitted: u64,
     configurations: u64,
     completed: Arc<AtomicU64>,
+    device_lost: Arc<AtomicBool>,
     tickets: VecDeque<u64>,
     attachments: Arc<Mutex<attachment::Ledger>>,
 }
@@ -35,6 +36,7 @@ impl Default for State {
             submitted: 0,
             configurations: 0,
             completed: Arc::default(),
+            device_lost: Arc::default(),
             tickets: VecDeque::new(),
             attachments: Arc::default(),
         }
@@ -49,6 +51,25 @@ pub(super) enum Admission {
 }
 
 impl QueueOwner {
+    pub(super) fn with_device_loss(signal: Arc<AtomicBool>) -> Self {
+        let owner = Self::default();
+        owner.0.borrow_mut().device_lost = signal;
+        owner
+    }
+
+    fn with_attachments<R>(&self, operation: impl FnOnce(&mut attachment::Ledger, u64) -> R) -> R {
+        let state = self.0.borrow();
+        let completed = state.completed.load(Ordering::Acquire);
+        let mut ledger = state
+            .attachments
+            .lock()
+            .expect("attachment ledger poisoned");
+        if state.device_lost.load(Ordering::Acquire) {
+            ledger.confirm_device_loss(completed);
+        }
+        operation(&mut ledger, completed)
+    }
+
     /// Native frame submission receipts and their GPU completion watermark, not a count of
     /// every raw queue submission (renderer initialization may also submit).
     pub(super) fn snapshot(&self) -> (u64, u64, u64) {
@@ -79,13 +100,9 @@ impl QueueOwner {
         payload_bytes: Option<u64>,
         submission: u64,
     ) {
-        let state = self.0.borrow();
-        assert!(submission <= state.submitted);
-        state
-            .attachments
-            .lock()
-            .expect("attachment ledger poisoned")
-            .observe(
+        assert!(submission <= self.0.borrow().submitted);
+        self.with_attachments(|ledger, completed| {
+            ledger.observe(
                 attachment::Allocation {
                     host,
                     owner,
@@ -94,33 +111,25 @@ impl QueueOwner {
                     last_submission: submission,
                     release_reason: None,
                 },
-                state.completed.load(Ordering::Acquire),
-            );
+                completed,
+            )
+        });
     }
 
     pub(super) fn close_host(&self, host: u64) {
         self.cancel(host);
-        let state = self.0.borrow();
-        state
-            .attachments
-            .lock()
-            .expect("attachment ledger poisoned")
-            .close(host, state.completed.load(Ordering::Acquire));
+        self.with_attachments(|ledger, completed| ledger.close(host, completed));
     }
 
     pub(super) fn trace_attachments(&self) {
         if std::env::var_os("DATUM_GUI_VERBOSE_LOG").is_none() {
             return;
         }
-        let state = self.0.borrow();
-        let snapshot = state
-            .attachments
-            .lock()
-            .expect("attachment ledger poisoned")
-            .snapshot(state.completed.load(Ordering::Acquire));
+        let epoch = self.0.borrow().epoch;
+        let snapshot = self.with_attachments(|ledger, completed| ledger.snapshot(completed));
         super::append_gui_diagnostic_line(format!(
             "native attachment ledger {}",
-            serde_json::json!({ "queue_epoch": state.epoch, "attachments": snapshot })
+            serde_json::json!({ "queue_epoch": epoch, "attachments": snapshot })
         ));
     }
 
@@ -187,6 +196,35 @@ impl QueueOwner {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn backend_loss_retires_old_epoch_without_faking_or_advancing_new_completion() {
+        let loss = Arc::new(AtomicBool::new(false));
+        let old = QueueOwner::with_device_loss(loss.clone());
+        let new = QueueOwner::with_device_loss(Arc::default());
+        let a = old.register();
+        let b = new.register();
+        let (old_serial, old_completion) = old.submission_receipt();
+        let (new_serial, _) = new.submission_receipt();
+        old.observe_attachment(a, 1, 1, Some(1024), old_serial);
+        new.observe_attachment(b, 2, 1, Some(2048), new_serial);
+        loss.store(true, Ordering::Release);
+        old.close_host(a);
+        new.close_host(b);
+        let retired = old.with_attachments(|ledger, completed| ledger.snapshot(completed));
+        assert_eq!(retired.device_loss_retirements, 1);
+        assert_eq!(retired.completed_retirements, 0);
+        old_completion.store(old_serial, Ordering::Release);
+        assert_eq!(
+            old.with_attachments(|ledger, completed| ledger.snapshot(completed))
+                .completed_retirements,
+            0
+        );
+        let pending = new.with_attachments(|ledger, completed| ledger.snapshot(completed));
+        assert!(!pending.device_loss_confirmed);
+        assert_eq!(pending.retiring_payload_bytes, 2048);
+        assert_eq!(new.snapshot().2, 0);
+    }
+
     #[test]
     fn completion_callback_keeps_closed_host_accounting_until_gpu_completion() {
         let owner = QueueOwner::default();

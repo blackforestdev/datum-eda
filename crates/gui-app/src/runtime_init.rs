@@ -73,6 +73,7 @@ impl Runtime {
             "renderer init {}ms",
             renderer_started.elapsed().as_millis()
         ));
+        let surface_transaction = SurfaceTransaction::new(window, &device_health);
         let mut runtime = Self {
             window,
             instance,
@@ -81,7 +82,7 @@ impl Runtime {
             device,
             device_health,
             queue,
-            surface_transaction: SurfaceTransaction::new(window),
+            surface_transaction,
             config,
             scale_factor,
             renderer,
