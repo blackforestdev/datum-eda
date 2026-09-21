@@ -2122,7 +2122,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz"
+        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
+        "docs/reviews/gui-performance/implementation/S1/prepared-attachment/receipt.json"
       ]
     },
     {
@@ -2506,7 +2507,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S1/attachment-guard/receipt.json"
+        "docs/reviews/gui-performance/implementation/S1/attachment-guard/receipt.json",
+        "docs/reviews/gui-performance/implementation/S1/prepared-attachment/receipt.json"
       ]
     },
     {
@@ -23784,5 +23786,65 @@
       "S1 SH/LF requirements remain partial; S2-S5 pending. Nonblocking resize qualification unchanged. No dependency or licensing changes."
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/device-wake/receipt.json"
+  },
+  "s1_prepared_attachment_work": {
+    "status": "default four-host attachment creation accounting corrected; bounded native ordering proof passed",
+    "production_consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "shared_owner": "Renderer::prepare_surface_attachment -> SurfaceTransaction::observe_attachment -> QueueOwner attachment ledger",
+    "retired_path": "first observation solely after render; replacement now observed before fallible CPU scene preparation, unchanged attachments avoid extra observation",
+    "verification": {
+      "app": "359 passed, 0 failed, 9 ignored; visual integration ignored",
+      "gpu": "3 attachment tests passed serially with visual feature (actual Vulkan reuse/replacement and guard failure)",
+      "clippy": "app and renderer all targets with renderer visual feature -D warnings passed",
+      "release": "fresh guarded offline release build passed",
+      "component": "unsubmitted replacement closes without completing outstanding old attachment work",
+      "native": [
+        {
+          "host": "GLOBAL",
+          "allocations_first_observed_before_submission": 3,
+          "same_allocations_later_submitted": 3,
+          "final_ledger_empty": true,
+          "native_exit": 0,
+          "binary_sha256": "baaa12b28f60c1fe034a7d7d386bbab864f0b81de07e16d720638c84c244db9b"
+        },
+        {
+          "host": "PROJECT",
+          "allocations_first_observed_before_submission": 3,
+          "same_allocations_later_submitted": 3,
+          "final_ledger_empty": true,
+          "native_exit": 0,
+          "binary_sha256": "baaa12b28f60c1fe034a7d7d386bbab864f0b81de07e16d720638c84c244db9b"
+        },
+        {
+          "host": "NEW",
+          "allocations_first_observed_before_submission": 3,
+          "same_allocations_later_submitted": 3,
+          "final_ledger_empty": true,
+          "native_exit": 0,
+          "binary_sha256": "baaa12b28f60c1fe034a7d7d386bbab864f0b81de07e16d720638c84c244db9b"
+        },
+        {
+          "host": "MAIN",
+          "allocations_first_observed_before_submission": 2,
+          "same_allocations_later_submitted": 2,
+          "final_ledger_empty": true,
+          "native_exit": 0,
+          "binary_sha256": "baaa12b28f60c1fe034a7d7d386bbab864f0b81de07e16d720638c84c244db9b"
+        }
+      ]
+    },
+    "limits": [
+      "Native scene-preparation failure was not injected; abort ownership is ledger component proof and inspected adapter ordering.",
+      "First allocation/receipt ordering is not GPU physical residency, full allocation accounting or MEM budget acceptance.",
+      "No historical negative replay, pixel capture, CPU/latency claim or global S1 completion.",
+      "Main static window reference remains process-lifetime; native call-site inventory does not establish every teardown/fault race. Resize exclusions unchanged; no dependencies changed."
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/prepared-attachment/receipt.json",
+    "native_call_site_inventory": "docs/reviews/gui-performance/implementation/S1/prepared-attachment/native-call-sites.json"
   }
 }

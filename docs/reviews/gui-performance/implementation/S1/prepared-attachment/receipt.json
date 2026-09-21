@@ -1,0 +1,90 @@
+{
+  "status": "default four-host attachment creation accounting corrected; bounded native ordering proof passed",
+  "selection": {
+    "baseline": "eb71849688b88de5796f0109db14c105f32a7e9e",
+    "defect": "Main and shared auxiliary renderer create/publish replacement attachments before fallible scene preparation but observe ownership only after renderer returns. A failed preparation can leave new live attachment unrecorded and old attachment current in ledger.",
+    "scope": [
+      "crates/gui-app/src/runtime_present.rs",
+      "crates/gui-app/src/global_preferences_window.rs",
+      "crates/gui-render/src/render/gpu_surface.rs",
+      "crates/gui-app/src/native_attachment_ledger.rs"
+    ],
+    "requirements": [
+      "GPI-S1 changed surface-resource lifetime accounting",
+      "LF-07",
+      "LF-11",
+      "SCH-05"
+    ],
+    "proof": [
+      "existing attachment GPU reuse/guard tests",
+      "new unsubmitted replacement ledger test",
+      "all app tests and Clippy",
+      "four native host bursts: replacement observed at receipt0 before submit and same allocation updated afterward"
+    ],
+    "limits": [
+      "No physical residency or full allocation budget claim",
+      "Native scene preparation failure not injected"
+    ]
+  },
+  "source_sha256": {
+    "crates/gui-app/src/runtime_present.rs": "54d10623bcfe932923fff21cafe0d0488d1f16298792b0fc0e754c5b3eefba5d",
+    "crates/gui-app/src/global_preferences_window.rs": "4410520829d124904869d629f8a5469353a4c1771a389d534133c3413633b7f6",
+    "crates/gui-render/src/render/gpu_surface.rs": "09815785479ddfdbdee24ef23e9b1ba72ba3574d8fb59e7c1b954255834a5f7f",
+    "crates/gui-app/src/native_attachment_ledger.rs": "1fe155feea3df2c5008bbbb66ddf28a9d1b04ed912d2020490dea8b6f147a6de"
+  },
+  "production_consumers": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "shared_owner": "Renderer::prepare_surface_attachment -> SurfaceTransaction::observe_attachment -> QueueOwner attachment ledger",
+  "retired_path": "first observation solely after render; replacement now observed before fallible CPU scene preparation, unchanged attachments avoid extra observation",
+  "verification": {
+    "app": "359 passed, 0 failed, 9 ignored; visual integration ignored",
+    "gpu": "3 attachment tests passed serially with visual feature (actual Vulkan reuse/replacement and guard failure)",
+    "clippy": "app and renderer all targets with renderer visual feature -D warnings passed",
+    "release": "fresh guarded offline release build passed",
+    "component": "unsubmitted replacement closes without completing outstanding old attachment work",
+    "native": [
+      {
+        "host": "GLOBAL",
+        "allocations_first_observed_before_submission": 3,
+        "same_allocations_later_submitted": 3,
+        "final_ledger_empty": true,
+        "native_exit": 0,
+        "binary_sha256": "baaa12b28f60c1fe034a7d7d386bbab864f0b81de07e16d720638c84c244db9b"
+      },
+      {
+        "host": "PROJECT",
+        "allocations_first_observed_before_submission": 3,
+        "same_allocations_later_submitted": 3,
+        "final_ledger_empty": true,
+        "native_exit": 0,
+        "binary_sha256": "baaa12b28f60c1fe034a7d7d386bbab864f0b81de07e16d720638c84c244db9b"
+      },
+      {
+        "host": "NEW",
+        "allocations_first_observed_before_submission": 3,
+        "same_allocations_later_submitted": 3,
+        "final_ledger_empty": true,
+        "native_exit": 0,
+        "binary_sha256": "baaa12b28f60c1fe034a7d7d386bbab864f0b81de07e16d720638c84c244db9b"
+      },
+      {
+        "host": "MAIN",
+        "allocations_first_observed_before_submission": 2,
+        "same_allocations_later_submitted": 2,
+        "final_ledger_empty": true,
+        "native_exit": 0,
+        "binary_sha256": "baaa12b28f60c1fe034a7d7d386bbab864f0b81de07e16d720638c84c244db9b"
+      }
+    ]
+  },
+  "limits": [
+    "Native scene-preparation failure was not injected; abort ownership is ledger component proof and inspected adapter ordering.",
+    "First allocation/receipt ordering is not GPU physical residency, full allocation accounting or MEM budget acceptance.",
+    "No historical negative replay, pixel capture, CPU/latency claim or global S1 completion.",
+    "Main static window reference remains process-lifetime; native call-site inventory does not establish every teardown/fault race. Resize exclusions unchanged; no dependencies changed."
+  ]
+}

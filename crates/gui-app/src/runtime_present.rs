@@ -47,12 +47,15 @@ impl Runtime {
             ));
             return Ok(true);
         }
-        self.renderer.prepare_surface_attachment(
+        if self.renderer.prepare_surface_attachment(
             &self.device,
             self.config.width,
             self.config.height,
             || !self.device_health.failed(),
-        )?;
+        )? {
+            self.surface_transaction
+                .observe_attachment(&self.renderer, &frame);
+        }
         let scene_started = std::time::Instant::now();
         let retained_was_cached = self.retained_scene.is_some();
         let prepared_was_cached = self.prepared_scene.is_some();
