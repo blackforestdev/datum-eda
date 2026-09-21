@@ -25,14 +25,18 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
         let changed = capture_retained(&mut renderer, &prepared, &retained);
         assert_eq!(
             renderer.renderer.uniform_buffer.last_upload_bytes,
-            if step == 1 { 0 } else { 16 }
+            if step == 1 { 0 } else { 8 }
         );
         assert!(
             renderer
                 .renderer
                 .surface_scene_uniforms
                 .iter()
-                .any(|(owner, _)| owner.last_upload_bytes == 64)
+                .any(|(owner, _)| if step == 0 {
+                    owner.last_upload_bytes == 64
+                } else {
+                    owner.last_upload_bytes > 0 && owner.last_upload_bytes < 64
+                })
         );
         assert!(changed == capture_retained(&mut renderer, &prepared, &retained));
         assert_eq!(renderer.renderer.uniform_buffer.last_upload_bytes, 0);
@@ -50,6 +54,32 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
             DEFAULT_MSAA_SAMPLES,
         );
         assert!(changed == capture_retained(&mut fresh, &prepared, &retained));
+
+        let mut moved_camera = camera;
+        moved_camera.zoom *= 1.1;
+        let moved = PreparedScene::from_workspace_for_surface(
+            &state,
+            width,
+            height,
+            1.0,
+            moved_camera,
+            &retained,
+        );
+        let moved_pixels = capture_retained(&mut renderer, &moved, &retained);
+        assert!(
+            renderer
+                .renderer
+                .surface_scene_uniforms
+                .iter()
+                .any(|(owner, _)| owner.last_upload_bytes > 0 && owner.last_upload_bytes < 64)
+        );
+        fresh.renderer = Renderer::new(
+            &fresh.device,
+            &fresh.queue,
+            OUTPUT_FORMAT,
+            DEFAULT_MSAA_SAMPLES,
+        );
+        assert!(moved_pixels == capture_retained(&mut fresh, &moved, &retained));
 
         let mut closed = prepared.clone();
         closed.surface_passes.clear();
@@ -87,7 +117,7 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
         1.0,
     );
     let changed = capture(&mut renderer, &resized);
-    assert_eq!(renderer.renderer.uniform_buffer.last_upload_bytes, 16);
+    assert_eq!(renderer.renderer.uniform_buffer.last_upload_bytes, 8);
     fresh.width = renderer.width;
     fresh.height = renderer.height;
     fresh.renderer = Renderer::new(
