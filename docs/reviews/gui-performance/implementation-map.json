@@ -16658,7 +16658,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial shared production adoption: extent-only misses reuse an unused matching Buffer in place, preserving shaping storage and invalidating glyph revision; current-frame consumers retain independent layouts. Original clone and missing current-frame guard negatives fail. Real CPU fresh-layout/glyph parity, GPU fresh-dialog pixels and four native regression smokes pass. Complete shaping/layout dependency, byte accounting and per-adapter/backend qualification remain open.",
+        "status": "Partial shared production adoption: extent-only misses reuse an unused matching Buffer in place, preserving shaping storage and invalidating glyph revision; current-frame consumers retain independent layouts. Original clone and missing current-frame guard negatives fail. Real CPU fresh-layout/glyph parity, GPU fresh-dialog pixels and four native regression smokes pass. Complete shaping/layout dependency, byte accounting and per-adapter/backend qualification remain open. Further bounded production adoption: unchanged overlay glyph preparation reused with 128-record signature cap; no-op trim preserves cache revision. GPU warm/scroll/parity, retry/reindex/atlas pressure and oversized bypass regressions pass. Full qualification remains open.",
         "id": "proof_reuse_text_layout",
         "positive": "Change wrap width/line metrics/alignment, then placement/clip only",
         "negative_control": "Keep old wrap or reshape solely for translation",
@@ -16685,7 +16685,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-relayout/result.json",
-        "docs/reviews/gui-performance/implementation/S2/text-layout-transfer/result.json"
+        "docs/reviews/gui-performance/implementation/S2/text-layout-transfer/result.json",
+        "docs/reviews/gui-performance/implementation/S2/overlay-glyph-reuse/result.json"
       ]
     },
     {
@@ -17244,7 +17245,7 @@
         "crates/gui-render/src/render/terminal_graphics.rs"
       ],
       "test": {
-        "status": "Partial shared text-contribution adoption: absent/empty plain/rich text skips preparation and text pass; conditional viewport updates and stale-glyph suppression verified. Actual GPU pass lists and fractional pixels match retained-pass controls; existing full graph/atlas regressions and four native smoke cases pass. Nonempty fully clipped payloads remain conservative; complete native/backend/scale/graph qualification remains open.",
+        "status": "Partial shared text-contribution adoption: absent/empty plain/rich text skips preparation and text pass; conditional viewport updates and stale-glyph suppression verified. Actual GPU pass lists and fractional pixels match retained-pass controls; existing full graph/atlas regressions and four native smoke cases pass. Nonempty fully clipped payloads remain conservative; complete native/backend/scale/graph qualification remains open. Further bounded production adoption: unchanged overlay glyph preparation reused with 128-record signature cap; no-op trim preserves cache revision. GPU warm/scroll/parity, retry/reindex/atlas pressure and oversized bypass regressions pass. Full qualification remains open.",
         "id": "proof_pass_menu_text",
         "positive": "Menu card/text combinations",
         "negative_control": "Render text behind card or invent empty resolve",
@@ -17254,7 +17255,8 @@
       "acceptance_rule": "Menu text above card only when card and contributing text active",
       "qualification_scope": "initial static/correctness; temporal claims remain deferred",
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json"
+        "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json",
+        "docs/reviews/gui-performance/implementation/S2/overlay-glyph-reuse/result.json"
       ]
     },
     {
@@ -25658,5 +25660,38 @@
       "No dependencies, third-party edits, Cargo/license/font changes, product authority or resize qualification changes."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S2/text-layout-transfer/result.json"
+  },
+  "s2_overlay_glyph_reuse_work": {
+    "status": "bounded default overlay glyph reuse; GPI-S2 remains incomplete",
+    "production_consumers": [
+      "GLOBAL and PROJECT dialog-only labels",
+      "MAIN menu/overlay and NEW overlay text through the full-frame renderer"
+    ],
+    "owner": "GlyphPreparation in Renderer::prepare_frame_text with TextBufferCache post-frame retirement",
+    "retired_paths": [
+      "Unconditional overlay TextRenderer::prepare on every contributing frame",
+      "Unconditional dialog cache sorting/reindex/revision invalidation even when entry order and membership were unchanged"
+    ],
+    "behavior": "Reuse prepared overlay glyph instances when exact placement/clip/color/target and shaped-cache revision match. Retain at most 128 TextPrepareRunKey records; reject retention if actual Vec capacity exceeds 128. Larger lists render through normal preparation without reuse. Sorting/eviction still invalidates indices; an actual post-frame reindex can require one preparation before warm reuse. Retry trims atlas and re-prepares both contributing consumers before drawing; clear both saved signatures before any fallible preparation. Empty text clears its signature; Renderer recreation initializes empty state.",
+    "bounds": {
+      "signature_slots_per_renderer": 1,
+      "max_run_capacity": 128,
+      "owned_heap_bytes": "At most 128 * size_of::<TextPrepareRunKey>(); no text strings or shaped buffers copied into this signature. Fixed inline Option<(u64, TextPrepareSignature)> ownership is additional.",
+      "key": "Buffer index plus cache revision, exact x/y/color/clip bits, target extent; atlas protection follows the existing shared transaction and forced full preparation after trim.",
+      "release": "Replace on changed frame, clear on absent text or failure, bypass overlarge lists, drop on Renderer teardown. Other text payload/atlas/scratch and process totals remain unqualified."
+    },
+    "proof": {
+      "negative": "Original production code fails the unchanged-dialog overlay_prepares assertion; final proof permits an initial retirement/reindex refresh before measuring reuse.",
+      "cpu": "203 renderer tests passed; 22 GPU tests ignored in the ordinary suite.",
+      "gpu": "13 explicitly run GPU tests passed serially: dialog/full-path pixel parity and warm prepare suppression across rows at 1x/1.5x, scroll/relayout, reindex, forced partial/repeated errors, real restricted-atlas pressure, pass/mesh/uniform regressions and 129-run signature bypass with fresh-renderer pixel parity.",
+      "native": "Fresh offline release passes four X11 host smoke cases. Native counter, backend/scale/endurance and full resource qualification remain open.",
+      "checks": "Renderer all-targets visual Clippy, source health, dependency authority, traceability, parity/spec governance, fresh selector, formatting and diff checked."
+    },
+    "remaining": [
+      "No numerical CPU/GPU benefit or complete warm-frame zero-allocation/zero-upload claim; signature/index construction and other renderer work remain.",
+      "No full shaping key, owned byte/atlas/upload accounting, native per-adapter or S2 exit qualification.",
+      "Pending S2 amendment remains unapplied; no dependency, license, third-party source, Cargo, visual truth or resize qualification change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S2/overlay-glyph-reuse/result.json"
   }
 }

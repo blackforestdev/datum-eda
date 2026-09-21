@@ -1,0 +1,39 @@
+{
+  "status": "bounded default overlay glyph reuse; GPI-S2 remains incomplete",
+  "baseline": "107d30cd296ae8018e9b03c842be0fe3ff6fc983",
+  "production_consumers": [
+    "GLOBAL and PROJECT dialog-only labels",
+    "MAIN menu/overlay and NEW overlay text through the full-frame renderer"
+  ],
+  "owner": "GlyphPreparation in Renderer::prepare_frame_text with TextBufferCache post-frame retirement",
+  "retired_paths": [
+    "Unconditional overlay TextRenderer::prepare on every contributing frame",
+    "Unconditional dialog cache sorting/reindex/revision invalidation even when entry order and membership were unchanged"
+  ],
+  "behavior": "Reuse prepared overlay glyph instances when exact placement/clip/color/target and shaped-cache revision match. Retain at most 128 TextPrepareRunKey records; reject retention if actual Vec capacity exceeds 128. Larger lists render through normal preparation without reuse. Sorting/eviction still invalidates indices; an actual post-frame reindex can require one preparation before warm reuse. Retry trims atlas and re-prepares both contributing consumers before drawing; clear both saved signatures before any fallible preparation. Empty text clears its signature; Renderer recreation initializes empty state.",
+  "bounds": {
+    "signature_slots_per_renderer": 1,
+    "max_run_capacity": 128,
+    "owned_heap_bytes": "At most 128 * size_of::<TextPrepareRunKey>(); no text strings or shaped buffers copied into this signature. Fixed inline Option<(u64, TextPrepareSignature)> ownership is additional.",
+    "key": "Buffer index plus cache revision, exact x/y/color/clip bits, target extent; atlas protection follows the existing shared transaction and forced full preparation after trim.",
+    "release": "Replace on changed frame, clear on absent text or failure, bypass overlarge lists, drop on Renderer teardown. Other text payload/atlas/scratch and process totals remain unqualified."
+  },
+  "proof": {
+    "negative": "Original production code fails the unchanged-dialog overlay_prepares assertion; final proof permits an initial retirement/reindex refresh before measuring reuse.",
+    "cpu": "203 renderer tests passed; 22 GPU tests ignored in the ordinary suite.",
+    "gpu": "13 explicitly run GPU tests passed serially: dialog/full-path pixel parity and warm prepare suppression across rows at 1x/1.5x, scroll/relayout, reindex, forced partial/repeated errors, real restricted-atlas pressure, pass/mesh/uniform regressions and 129-run signature bypass with fresh-renderer pixel parity.",
+    "native": "Fresh offline release passes four X11 host smoke cases. Native counter, backend/scale/endurance and full resource qualification remain open.",
+    "checks": "Renderer all-targets visual Clippy, source health, dependency authority, traceability, parity/spec governance, fresh selector, formatting and diff checked."
+  },
+  "remaining": [
+    "No numerical CPU/GPU benefit or complete warm-frame zero-allocation/zero-upload claim; signature/index construction and other renderer work remain.",
+    "No full shaping key, owned byte/atlas/upload accounting, native per-adapter or S2 exit qualification.",
+    "Pending S2 amendment remains unapplied; no dependency, license, third-party source, Cargo, visual truth or resize qualification change."
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_text.rs": "4a02174bc5a434fa4e679d0e5361bf81b173f5bcbdbcd22db87f168c0bd9acb2",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "52f6144e15f8839ff860111f46e51570fe55a11b6c6d94591bf82e70691d3a23",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "5519275001930fe2cf554039655790d020cba60c6af237c412a539a954757754"
+  },
+  "candidate_binary_sha256": "6d695d43eaa3d09e9bcb855d8d8c2049c33135bd6dff626a6a1bdd5e3921d26a"
+}
