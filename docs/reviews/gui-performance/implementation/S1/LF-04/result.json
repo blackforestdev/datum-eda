@@ -1,0 +1,54 @@
+{
+  "status": "bounded minimization adoption; LF-04 and S1 remain partial",
+  "baseline_commit": "a1e147b1b8e8073ba005d1812defca3c571e47d6",
+  "baseline_binary_sha256": "a2c7da4bddc41af431a69645a2d7de29f19fbcdab07b67b4670a2d512c15696b",
+  "candidate_source_sha256": {
+    "crates/gui-app/src/app_native_events.rs": "f293ebfd4c351493e3346f689bec93026bc6262f730fe2b70adda3099aac5414",
+    "crates/gui-app/src/native_frame_adapters.rs": "3d528ac6accd13e75c6ef7fcfadad84036f1fc456db67eb6ac230dcb0e9c7252",
+    "crates/gui-app/src/native_frame_coordinator.rs": "1c676dcc7cff8fe12e39356938fd178cf03547eb9fe7a2bf9f48b4d21c577629",
+    "crates/gui-app/src/native_frame_deadline_tests.rs": "e8964035b6f62582ac21a734b5d3f8e1b3302d4bf61f59027804ee9837fc493e"
+  },
+  "candidate_binary_sha256": "c82008a8605241d3ed9bc6993eb1073a3fc2823501fe6de2803ce6b186d20c0c",
+  "production_consumers_migrated": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "shared_path": "App lifecycle/redraw event -> observe_native_minimization -> NativeFrameCoordinator visibility -> shared Recovery and SurfaceTransaction drawability",
+  "retired_path": "Occluded/extent/suspend-only drawability that continued Main retries after X11 minimization without an Occluded event",
+  "verification": {
+    "component": "minimization independent of occlusion, duplicate observation no-op, pending token cancellation, device rebind preservation, one restore request",
+    "app_tests": "372 passed; 0 failed; 9 ignored",
+    "clippy": "datum-gui app -D warnings passed",
+    "release": "guarded offline release build passed",
+    "native_recovery": "minimized-final/result.json: four hosts, two minimize/restore cycles each, X11 HIDDEN/Iconic confirmation, zero configure/acquire/submit/present deltas while hidden, approximately two drawable-active seconds until failure, zero new attempts after exhaustion, close exit 0",
+    "native_default": "Four hosts pass current extent 1200x800, completed queue receipts, three seconds idle with zero additional presentations and close exit 0; no fault injection.",
+    "drift": "Full drift stopped at existing dat-terminal-convergence-guard-xke focus-assignment and font-source-marker failures. Workspace all-target Clippy, alignment, traceability and dependency checks passed; no full drift pass claimed."
+  },
+  "retained_failures": {
+    "hidden-retry/hidden-state": "Baseline Main minimized but no Occluded(true); acquisition attempts continue and recovery exhausts. Second trial confirms X11 HIDDEN/Iconic state.",
+    "minimized-candidate": "Main passes; modal Global is immediately restored by existing parent/dialog focus behavior when minimized alone, invalidating hidden predicate.",
+    "minimized-family": "Main passes; minimizing only Main leaves Global visible.",
+    "minimized-both": "Main/Global/Project pass; restoring Main alone leaves New Project minimized; final recipe restores both explicitly."
+  },
+  "environment": {
+    "backend": "winit X11 on KDE Wayland/Xwayland",
+    "fault": "existing DATUM_DIAGNOSTIC_SURFACE_FAULT=timeout from first acquisition; only backend result substituted",
+    "measurements": "DATUM_GPU_MEASUREMENTS=0",
+    "fixture_sha256": {
+      "MAIN": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+      "GLOBAL": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+      "PROJECT": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+      "NEW": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+    },
+    "commands": "python3 minimized_final.py and python3 minimized_healthy.py; exact launch commands/environments in scripts/results; EDA_CLI_BIN pinned"
+  },
+  "limits": [
+    "No displayed-pixel/temporal or numerical performance acceptance; timeout trial presents no successful frames.",
+    "Default foreground redraw uses cached has_focus and no minimization property query; unfocused lifecycle/redraw checks use existing winit is_minimized, which can perform a synchronous X11 property read. Its complete overhead qualification is outstanding.",
+    "Event-observed minimization only: no new polling timer; backend Unknown does not invent hidden state. Native Wayland minimization, already-unfocused host with no delivered event, and full queue-only hidden transition remain unqualified.",
+    "Independent prescribed negative injection/control, complete suspend/occlusion scenarios and resource/accounting acceptance remain open. Native baseline defect is recorded, not promoted to all LF-04 negative-control qualification.",
+    "S1 remains in progress; S2-S5 pending; resize resource/temporal qualification remains nonblocking."
+  ]
+}

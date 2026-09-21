@@ -62,3 +62,32 @@ fn native_extent_bursts_keep_latest_size_and_one_restore_per_host() {
         );
     }
 }
+
+#[test]
+fn minimization_is_independent_of_occlusion_and_survives_device_rebind() {
+    use winit::{dpi::PhysicalSize, event::WindowEvent, window::WindowId};
+    let mut frames = NativeFrameCoordinator::default();
+    for id in (1..=4).map(WindowId::from) {
+        frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
+        frames.redraw_received(id);
+        frames.observe_minimized(id, true);
+        assert!(!frames.is_drawable(id));
+        assert!(frames.begin_frame(id).is_none());
+        assert!(!frames.hosts[&id].ready);
+        let damage = frames.hosts[&id].damage;
+        frames.observe_minimized(id, true);
+        assert_eq!(frames.hosts[&id].damage, damage);
+        frames.window_event(id, &WindowEvent::Occluded(false));
+        assert!(!frames.is_drawable(id));
+        frames.rebind_device(id, 2, Default::default());
+        assert!(!frames.is_drawable(id));
+        frames.window_event(id, &WindowEvent::Occluded(true));
+        frames.observe_minimized(id, false);
+        assert!(!frames.is_drawable(id));
+        assert!(!frames.take_restore_request(id));
+        frames.window_event(id, &WindowEvent::Occluded(false));
+        assert!(frames.is_drawable(id));
+        assert!(frames.take_restore_request(id));
+        assert!(!frames.take_restore_request(id));
+    }
+}

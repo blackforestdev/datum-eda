@@ -1,0 +1,17 @@
+{
+  "binary_sha256": "a2c7da4bddc41af431a69645a2d7de29f19fbcdab07b67b4670a2d512c15696b",
+  "runs": [
+    {
+      "host": "MAIN",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "passed": false,
+      "error": "native predicate timeout or process exit None"
+    }
+  ]
+}

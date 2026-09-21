@@ -8,6 +8,33 @@ pub(super) enum OwnedHost {
 }
 
 impl App {
+    /// X11 can report minimization without an Occluded event. Sample the
+    /// window's own state at lifecycle/redraw delivery, before admitting work.
+    /// Keep this separate from occlusion: unminimizing does not prove exposure.
+    pub(super) fn observe_native_minimization(&mut self, id: WindowId) {
+        for window in [
+            self.window.as_deref(),
+            self.global_preferences_window.as_deref(),
+            self.project_preferences_window.as_deref(),
+            self.new_project_window.as_deref(),
+        ]
+        .into_iter()
+        .flatten()
+        .filter(|window| window.id() == id)
+        {
+            // Focused windows cannot be minimized. Avoid a synchronous X11
+            // property query on ordinary foreground redraws and resizing.
+            let minimized = if window.has_focus() {
+                Some(false)
+            } else {
+                window.is_minimized()
+            };
+            if let Some(minimized) = minimized {
+                self.frames.observe_minimized(id, minimized);
+            }
+        }
+    }
+
     pub(super) fn dispatch_native_frame_round(&mut self, event_loop: &ActiveEventLoop) {
         let ready = self.frames.ready_round(std::time::Instant::now());
         if !ready.is_empty() {
