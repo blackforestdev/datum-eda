@@ -1,0 +1,22 @@
+{
+  "status": "bounded S3 default Preferences press-damage implementation; qualification partial",
+  "baseline": "ef042598104f82dd52d7044d85cee6edc54a6b5b",
+  "sources": {
+    "crates/gui-viewport/src/scroll.rs": "826b250a5a7e2aa4682fc3e97831460dc1f433c4c06a24e78edc43a3262d80bc",
+    "crates/gui-app/src/global_preferences_window.rs": "4e176dec3f769ab3bdac2ac6f52ab4b17c3b64e3228058c12576f3517f183b86"
+  },
+  "production_consumers": [
+    "GLOBAL native scrollbar pointer adapter",
+    "PROJECT native scrollbar pointer adapter"
+  ],
+  "call_path": "native mouse press -> GlobalPreferencesWindowSurface::scrollbar_input -> ScrollViewport::press -> ScrollPress(consumed,changed) -> changed-only invalidate/request",
+  "retired_path": "Unconditional content preparation/frame request for every consumed thumb press",
+  "behavior": "Thumb press retains exact grab and consumes routing without changing offset or rendering; track page press reports offset change and requests owning-host damage. Release consumption and drag damage retain existing paths. Pressed state is not a drawn style in the current renderer.",
+  "proof": {
+    "viewport": "44 viewport tests pass; updated grab/page test distinguishes consumed-no-change from consumed-change and retains drag/page/bounds assertions.",
+    "app": "Three focused global_preferences_window tests pass; app test binary compiles with changed shared API.",
+    "limits": "No actual native per-adapter frame ledger or independent defect injection in this slice. Focus-taking native tests remain deferred pending desktop-use response. This is not full HP11/HP21 or S3 acceptance.",
+    "checks": "Viewport/app all-targets Clippy passed; source health, traceability, parity, spec governance and project-state checks passed."
+  },
+  "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-press-damage/result.json"
+}

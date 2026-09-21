@@ -2,6 +2,14 @@
 //! share one bounded pixel offset in the caller's coordinate space; no timer or redraw loop is owned here.
 use crate::ScreenRectPx;
 
+/// Pointer routing and visible damage are separate: grabbing a thumb consumes
+/// the press without changing its pixels or document offset.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct ScrollPress {
+    pub consumed: bool,
+    pub changed: bool,
+}
+
 #[derive(Debug, Clone)]
 pub struct ScrollViewport {
     pub viewport: ScreenRectPx,
@@ -86,13 +94,14 @@ impl ScrollViewport {
         })
     }
     /// Track clicks page; thumb presses retain the exact pointer grab position.
-    pub fn press(&mut self, x: f32, y: f32) -> bool {
+    pub fn press(&mut self, x: f32, y: f32) -> ScrollPress {
         let Some(track) = self.track() else {
-            return false;
+            return ScrollPress::default();
         };
         if x < track.x || x > track.x + track.width || y < track.y || y > track.y + track.height {
-            return false;
+            return ScrollPress::default();
         }
+        let before = self.offset;
         let thumb = self.thumb().expect("scrollable track has thumb");
         if y >= thumb.y && y <= thumb.y + thumb.height {
             self.drag_grab = Some(y - thumb.y);
@@ -106,7 +115,10 @@ impl ScrollViewport {
                     },
             );
         }
-        true
+        ScrollPress {
+            consumed: true,
+            changed: self.offset != before,
+        }
     }
     pub fn drag(&mut self, y: f32) -> bool {
         let Some(grab) = self.drag_grab else {
@@ -160,13 +172,25 @@ mod tests {
         let mut s = scroll();
         let t = s.thumb().unwrap();
         assert_eq!(t.height, 160.0);
-        assert!(s.press(t.x, t.y + 20.0));
+        assert_eq!(
+            s.press(t.x, t.y + 20.0),
+            ScrollPress {
+                consumed: true,
+                changed: false
+            }
+        );
         assert!(s.drag(320.0));
         assert_eq!(s.offset(), 600.0);
         assert_eq!(s.thumb().unwrap().y + t.height, 460.0);
         s.release();
         assert!(!s.drag(100.0));
-        assert!(s.press(t.x, 61.0));
+        assert_eq!(
+            s.press(t.x, 61.0),
+            ScrollPress {
+                consumed: true,
+                changed: true
+            }
+        );
         assert_eq!(s.offset(), 200.0);
         s.layout(s.viewport, 200.0);
         assert_eq!(s.offset(), 0.0);
