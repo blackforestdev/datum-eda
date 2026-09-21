@@ -38,13 +38,16 @@ impl Renderer {
     ) -> anyhow::Result<()> {
         let mut measurement = self.begin_gpu_measurement()?;
         let started = std::time::Instant::now();
-        queue.write_buffer(
-            &self.uniform_buffer,
-            0,
-            bytemuck::bytes_of(&ScreenUniform {
+        // Dialog-only frames have no world-camera consumers. Drop both owners
+        // because a cached bundle also retains its camera bind group.
+        self.surface_world_bundles.clear();
+        self.surface_scene_uniforms.clear();
+        self.uniform_buffer.sync(
+            queue,
+            ScreenUniform {
                 resolution: [width as f32, height as f32],
                 _pad: [0.0, 0.0],
-            }),
+            },
         );
         self.menu_overlay_gpu.sync(
             device,

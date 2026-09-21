@@ -141,20 +141,20 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                     count: None,
                 }],
             });
-        let uniform_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-            label: Some("datum-gui-render-uniform-buffer"),
-            contents: bytemuck::bytes_of(&ScreenUniform {
+        let uniform_buffer = gpu_data::uniform_buffer::UniformBuffer::new(
+            device,
+            "datum-gui-render-uniform-buffer",
+            ScreenUniform {
                 resolution: [1.0, 1.0],
                 _pad: [0.0, 0.0],
-            }),
-            usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
-        });
+            },
+        );
         let uniform_bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("datum-gui-render-uniform-bg"),
             layout: &uniform_bind_group_layout,
             entries: &[wgpu::BindGroupEntry {
                 binding: 0,
-                resource: uniform_buffer.as_entire_binding(),
+                resource: uniform_buffer.buffer().as_entire_binding(),
             }],
         });
         let scene_uniform_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {

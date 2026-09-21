@@ -50,19 +50,19 @@ impl Renderer {
         width: u32,
         height: u32,
     ) {
+        self.surface_scene_uniforms
+            .truncate(prepared.surface_passes().len());
         while self.surface_scene_uniforms.len() < prepared.surface_passes().len() {
-            let buffer = device.create_buffer(&wgpu::BufferDescriptor {
-                label: Some("datum-surface-scene-uniform-buffer"),
-                size: std::mem::size_of::<SceneUniform>() as u64,
-                usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST,
-                mapped_at_creation: false,
-            });
+            let buffer = gpu_data::uniform_buffer::UniformBuffer::empty(
+                device,
+                "datum-surface-scene-uniform-buffer",
+            );
             let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
                 label: Some("datum-surface-scene-bind-group"),
                 layout: &self.scene_bind_group_layout,
                 entries: &[wgpu::BindGroupEntry {
                     binding: 0,
-                    resource: buffer.as_entire_binding(),
+                    resource: buffer.buffer().as_entire_binding(),
                 }],
             });
             self.surface_scene_uniforms.push((buffer, bind_group));
@@ -70,14 +70,13 @@ impl Renderer {
         for (surface, (buffer, _)) in prepared
             .surface_passes()
             .iter()
-            .zip(&self.surface_scene_uniforms)
+            .zip(&mut self.surface_scene_uniforms)
         {
             let field = inset_rect(surface.scene_viewport, 10.0, 10.0, 10.0, 10.0);
             let projection = Projection::new(field, &surface.bounds, surface.camera);
-            queue.write_buffer(
-                buffer,
-                0,
-                bytemuck::bytes_of(&SceneUniform {
+            buffer.sync(
+                queue,
+                SceneUniform {
                     resolution: [width as f32, height as f32, 0.0, 0.0],
                     viewport_origin: [field.x, field.y, 0.0, 0.0],
                     viewport_size: [field.width, field.height, 0.0, 0.0],
@@ -87,7 +86,7 @@ impl Renderer {
                         projection.scale,
                         0.0,
                     ],
-                }),
+                },
             );
         }
     }

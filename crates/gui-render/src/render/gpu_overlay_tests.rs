@@ -644,3 +644,6 @@ fn renderer_owned_preferences_meshes_stay_warm_and_match_fresh_pixels() {
 
 #[path = "gpu_control_tests.rs"]
 mod control_tests;
+
+#[path = "gpu_uniform_tests.rs"]
+mod uniform_tests;
