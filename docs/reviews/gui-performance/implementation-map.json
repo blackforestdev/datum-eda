@@ -23466,6 +23466,21 @@
       "receipt": "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/capture-followup/receipt.json",
       "status": "capture comparison unavailable; no product pass",
       "disposition": "Keep dat-main-native-capture-delay-md9 open. Cause of stale window captures and delayed Close remains unestablished. Stop repeating native captures under these conditions; continue independent code/component work. No kernel/driver investigation, renderer attribution, native input timing or final-pixel qualification follows."
+    },
+    "chrome_first_dispatch": {
+      "production_consumer": "Runtime::handle_primary_click: Main chrome, terminal, layers, clipboard dismissal",
+      "retired_path": "Unconditional prepared_scene().world_point_at_screen before chrome target dispatch, rebuilding dirty projection and terminal render snapshots for an unused world point",
+      "production_change": "Presented chrome targets and clipboard dismissal return before world projection. Only remaining canvas path prepares coordinates; pane focus and selection dispatch order retained. Diagnostic reports presented-hit lookup separately from canvas preparation.",
+      "verification": {
+        "app": "354 passed, 0 failed, 9 ignored; visual integration ignored",
+        "clippy": "all app targets -D warnings passed"
+      },
+      "limitations": [
+        "Source/call-path proof, not a measured count/CPU/latency pass",
+        "No native replay because capture remains unqualified under md9",
+        "Project journal write dependency routing remains conservative; SH/S1 not closed"
+      ],
+      "evidence_directory": "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first"
     }
   },
   "s1_wait_owner_work": {
