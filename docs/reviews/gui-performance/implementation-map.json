@@ -6654,6 +6654,10 @@
       "s3_project_layers_progress": {
         "status": "partial production adoption; native input qualification unproven",
         "evidence": "docs/reviews/gui-performance/implementation/S3/project-layers-clipping/result.json"
+      },
+      "s3_visible_prefix_progress": {
+        "status": "shared clipping skips fully visible geometry copies; full native/negative/resource qualification open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/clip-visible-prefix/result.json"
       }
     },
     {
@@ -6739,6 +6743,10 @@
       "s3_project_layers_progress": {
         "status": "partial production adoption; native input qualification unproven",
         "evidence": "docs/reviews/gui-performance/implementation/S3/project-layers-clipping/result.json"
+      },
+      "s3_visible_prefix_progress": {
+        "status": "shared clipping skips fully visible geometry copies; full native/negative/resource qualification open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/clip-visible-prefix/result.json"
       }
     },
     {
@@ -26756,5 +26764,17 @@
       "limits": "No numerical timing, native frame/visual/scroll-return or full process/font/shaped-resource accounting claim. Per-thread scalar cache caps are not complete PM045 resource acceptance. Desktop-focus trials remain deferred; S3 stays open."
     },
     "evidence": "docs/reviews/gui-performance/implementation/S3/history-height-measurements/result.json"
+  },
+  "s3_clip_visible_prefix_work": {
+    "status": "bounded S3 shared clipping improvement; qualification remains open",
+    "production_consumers": [
+      "GLOBAL and PROJECT Preferences rows",
+      "REVISION panes",
+      "Main Inspector profiles",
+      "Main Project and Layers panels"
+    ],
+    "retired_path": "Unconditional split_off allocation and copy of the complete appended geometry layer before clipping",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/clip-visible-prefix/result.json",
+    "limits": "No new native, timing, allocation-counter or numerical budget qualification. No S3 exit, all-consumer adoption or full HP22 claim. No dependency or prototype changes."
   }
 }
