@@ -156,6 +156,15 @@ impl TextBufferCache {
     }
 
     fn rebuild_lookup(&mut self) {
+        // Retirement must release obsolete entry slots as well as their nested
+        // buffers. Shrink only beyond 4x live rows to avoid allocation churn.
+        // Moving retained entries preserves indices, keys and shaped payloads;
+        // callers have already invalidated glyph signatures before this point.
+        if self.entries.capacity() > self.entries.len().saturating_mul(4) {
+            self.entries = std::mem::take(&mut self.entries)
+                .into_boxed_slice()
+                .into_vec();
+        }
         self.lookup.clear();
         self.lookup
             .extend(self.entries.iter().enumerate().map(|(index, entry)| {

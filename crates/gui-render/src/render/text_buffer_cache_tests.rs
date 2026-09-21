@@ -258,7 +258,7 @@ fn indexed_lookup_checks_collisions_and_tracks_retirement() {
     let mut fonts = FontSystem::new();
     load_datum_fonts(&mut fonts);
     let mut cache = TextBufferCache::default();
-    let runs: Vec<_> = (0..160)
+    let runs: Vec<_> = (0..640)
         .map(|index| TextRun {
             text: format!("indexed label {index}"),
             ..run()
@@ -284,12 +284,13 @@ fn indexed_lookup_checks_collisions_and_tracks_retirement() {
     cache.rebuild_lookup();
 
     cache.begin_frame(Profile::Overlay);
-    cache.indices(&mut fonts, &runs[159..], 1280, 800);
+    cache.indices(&mut fonts, &runs[639..], 1280, 800);
     cache.trim_overlay();
-    assert_eq!(cache.entries[0].key.text, runs[159].text);
+    assert_eq!(cache.entries[0].key.text, runs[639].text);
     assert_eq!(cache.entries.len(), MAX_OVERLAY_BUFFERS);
     assert_eq!(cache.lookup.len(), cache.entries.len());
     assert!(cache.lookup.capacity() <= 4 * MAX_OVERLAY_BUFFERS);
+    assert!(cache.entries.capacity() <= 4 * MAX_OVERLAY_BUFFERS);
     eprintln!(
         "text index retained metadata capacity bytes={}",
         cache.lookup.capacity() * std::mem::size_of::<(u64, usize)>()
@@ -314,8 +315,10 @@ fn indexed_lookup_checks_collisions_and_tracks_retirement() {
     assert_eq!(cache.entries.len(), 1);
     assert_eq!(cache.lookup.len(), 1);
     assert!(cache.lookup.capacity() <= 4);
+    assert!(cache.entries.capacity() <= 4);
     cache.begin_frame(Profile::Workspace);
     cache.begin_frame(Profile::Workspace);
     assert!(cache.lookup.is_empty());
     assert_eq!(cache.lookup.capacity(), 0);
+    assert_eq!(cache.entries.capacity(), 0);
 }

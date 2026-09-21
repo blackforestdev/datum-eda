@@ -13011,7 +13011,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial implementation: shared shaped-cache entry and lookup vectors release obsolete peak capacity at existing workspace/dialog retirement points. 640-label real-buffer negative/positive and GPU reindex/native regression proof recorded. Complete 8 MiB/renderer and 32 MiB/process key/shaping/capacity accounting and acceptance remain unqualified.",
         "id": "proof_mem_shaped_local",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -13035,7 +13035,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json"
+      ]
     },
     {
       "id": "MEM-SHAPED-TOTAL",
@@ -13098,7 +13101,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial implementation: shared shaped-cache entry and lookup vectors release obsolete peak capacity at existing workspace/dialog retirement points. 640-label real-buffer negative/positive and GPU reindex/native regression proof recorded. Complete 8 MiB/renderer and 32 MiB/process key/shaping/capacity accounting and acceptance remain unqualified.",
         "id": "proof_mem_shaped_total",
         "positive": "Warm admitted workload then churn/replace/close; live counters plus OS RSS",
         "negative_control": "Leak/over-retain the named resource beyond its cap or fail its release deadline",
@@ -13122,7 +13125,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json"
+      ]
     },
     {
       "id": "MEM-LABEL-ENTRIES",
@@ -25581,5 +25587,28 @@
       "No dependency, vendoring, Cargo, license, visual-prototype, model mutation, pass/resolve schedule or resize qualification change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S2/scene-history-budget/result.json"
+  },
+  "s2_text_entry_retirement_work": {
+    "status": "partial S2 memory retirement improvement; no S2 exit or full shaped-text byte-cap qualification",
+    "production_consumers": [
+      "MAIN full-frame workspace/menu text, including NEW on its existing full-frame preparation path",
+      "GLOBAL and PROJECT dialog-only text"
+    ],
+    "owner": "TextBufferCache::rebuild_lookup, reached by workspace begin_frame retirement and dialog post-submission trim_overlay",
+    "retired_path": "Unbounded spare entry-vector allocation after text buffers were evicted; lookup index already had the same retirement policy",
+    "behavior": "After retirement, entry-vector capacity is at most four times live rows; beyond that threshold it shrinks to live length, reaching zero when empty. Overlay cap implies at most 512 entry slots after trimming. Moving entries keeps order, index identity, exact keys and nested shaping payloads; glyph revision invalidation remains before rebuilding. Hysteresis avoids shrinking on every small retirement.",
+    "proof": {
+      "negative": "Expanded existing shaped-cache test from 160 to 640 labels. Before production fix, assertion entries.capacity <= 4 * MAX_OVERLAY_BUFFERS failed. Initial negative still touched labels 159 onward in the next frame; final test touches only the last label to preserve the original recency scenario.",
+      "positive": "Final test checks 640 exact warm hits and collision safety, trims to 128 dialog rows, proves all surviving labels still hit, retires to one workspace row then zero with both entry/index capacities bounded/released.",
+      "renderer": "202 passed, 21 ignored; separate real-GPU atlas retry/cache-reindex regression passed",
+      "build": "Offline release and renderer all-targets visual Clippy with denied warnings pass",
+      "native": "Four X11 host startup/present/controlled-close smokes pass; Main wheel input included. These are regressions, not native byte-pressure or process memory acceptance."
+    },
+    "remaining": [
+      "Complete key, glyph/layout, nested capacities and atlas byte accounting; 8 MiB renderer and 32 MiB process limits remain unqualified.",
+      "Current visible content is not evicted; no cap on active frame scratch is established here.",
+      "No native backend/scale/endurance, global adoption or RSS/performance claim. No dependency, license, font assets, third-party code or resize qualification change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json"
   }
 }
