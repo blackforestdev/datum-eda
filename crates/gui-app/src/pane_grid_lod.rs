@@ -113,6 +113,10 @@ impl PaneGridLod {
         self.warm.clear();
     }
 
+    pub(crate) fn retain_live(&mut self, live: &[PaneId]) {
+        self.warm.retain(|id, _| live.contains(id));
+    }
+
     #[cfg(test)]
     fn state(&self, pane: PaneId) -> Option<(PaneContent, GridLodState)> {
         self.warm.get(&pane).copied()
@@ -160,6 +164,25 @@ mod tests {
             lod.previous(pane, PaneContent::Board),
             GridLodState { tier: Some(2) }
         );
+    }
+
+    #[test]
+    fn repeated_pane_closure_releases_lod_without_resetting_surviving_hysteresis() {
+        let survivor = PaneId(1);
+        let mut lod = PaneGridLod::default();
+        lod.update(survivor, PaneContent::Board, GridLodState { tier: Some(2) });
+        for id in 2..66 {
+            let temporary = PaneId(id);
+            lod.update(
+                temporary,
+                PaneContent::Schematic,
+                GridLodState { tier: Some(1) },
+            );
+            lod.retain_live(&[survivor]);
+            assert!(lod.state(temporary).is_none());
+            assert_eq!(lod.warm.len(), 1);
+            assert_eq!(lod.previous(survivor, PaneContent::Board).tier, Some(2));
+        }
     }
 
     #[test]

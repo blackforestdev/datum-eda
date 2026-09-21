@@ -260,28 +260,12 @@ impl Runtime {
     }
 
     pub(super) fn pane_close_focused(&mut self) {
-        let outgoing_scene = self.scene_leaf_id();
-        self.session.workspace_mut().ui.layout.close_focused();
-        let incoming_scene = self.scene_leaf_id();
+        self.swap_pane_focus(|layout| layout.close_focused());
         let live = self.workspace().ui.layout.leaves();
+        // Prune after the focus transition, which stashes the outgoing camera.
+        // Otherwise closing the active Board would reinsert its dead pane id.
         self.pane_cameras.retain_live(&live);
-        // Swap only when the board SCENE leaf changed (e.g. the board pane itself was
-        // closed and another board took over); closing a schematic pane leaves the
-        // board's framing untouched.
-        if let (Some(outgoing), Some(incoming)) = (outgoing_scene, incoming_scene)
-            && outgoing != incoming
-        {
-            let bounds = self.workspace().scene.bounds.clone();
-            self.camera = self.pane_cameras.focus_to(
-                outgoing,
-                datum_gui_protocol::PaneContent::Board,
-                self.camera,
-                incoming,
-                datum_gui_protocol::PaneContent::Board,
-                || CameraState::fit_to_bounds(&bounds),
-            );
-        }
-        self.invalidate_frame();
+        self.pane_grid_lod.retain_live(&live);
     }
 
     pub(super) fn pane_toggle_zoom(&mut self) {

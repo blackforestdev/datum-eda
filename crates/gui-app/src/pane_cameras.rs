@@ -252,6 +252,27 @@ mod tests {
     }
 
     #[test]
+    fn closing_active_board_preserves_survivor_and_removes_outgoing_camera() {
+        let closed = PaneId(1);
+        let survivor = PaneId(2);
+        let mut cameras = PaneCameras::new(closed, PaneContent::Board, cam(3.5));
+        cameras.inherit(survivor, PaneContent::Board, cam(0.75));
+        let active = cameras.focus_to(
+            closed,
+            PaneContent::Board,
+            cam(4.0),
+            survivor,
+            PaneContent::Board,
+            || panic!("surviving warm camera must not be refitted"),
+        );
+        cameras.retain_live(&[survivor]);
+        assert_eq!(active, cam(0.75));
+        assert_eq!(cameras.camera(closed, PaneContent::Board), None);
+        assert_eq!(cameras.camera(survivor, PaneContent::Board), Some(active));
+        assert_eq!(cameras.warm.len(), 1);
+    }
+
+    #[test]
     fn content_replacement_never_reuses_the_previous_surfaces_camera() {
         let pane = PaneId(7);
         let mut cameras = PaneCameras::new(pane, PaneContent::Board, cam(9.0));
