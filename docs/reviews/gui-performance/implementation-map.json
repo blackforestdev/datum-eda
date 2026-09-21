@@ -22553,5 +22553,56 @@
       "validate.py": "e386702e5fcbfd7817ff326fa8e8258609ab4e1e43d9e27d982727a18158e384",
       "validation.json": "bdd233542c553c509afa91458c737fe44f1c40375bc752e9b2886880b6617010"
     }
+  },
+  "s1_terminal_dispatch_work": {
+    "status": "default terminal drain now yields by elapsed time and preserves staged bytes; SH-05/S1 and S4 qualification remain open",
+    "baseline_commit": "7881c1c7",
+    "consumers": [
+      "TERMINAL",
+      "TERM_OVERLAY",
+      "MAIN"
+    ],
+    "production_owner": "TerminalSessionRegistry::drain_all uses one 1ms clock across dequeue/application. A session retains staged bytes across yields; rotating application cursor services at most 4 KiB in each indivisible core/log batch. Existing 128-output-event/64-KiB dequeue caps remain, plus 256 total event cap.",
+    "retired_paths": [
+      "Time-unbounded output dequeue followed by unconditional application of every staged session",
+      "End-of-dispatch local-only output staging that could not survive a yield"
+    ],
+    "correctness": [
+      "No new transport output is dequeued until carried staging is applied; total staged byte lengths remain bounded by existing 64 KiB drain cap",
+      "Control/exit cannot overtake staged output; closing waits for staged bytes; session reorder remaps application cursor",
+      "Pending work uses the existing wake gate; no sleeps or additional thread/dependency",
+      "Tiny chunks still batch, UTF-8/control parser state survives 4-KiB splits; individual over-budget dispatches are recorded through existing verbose diagnostics"
+    ],
+    "verification": {
+      "app": "343 passed, 0 failed, 8 ignored. New deterministic deadline test covers retained UTF-8 tail, rotating application and exit ordering; existing core/transport/job-control/session tests pass.",
+      "native": "Fresh release: 229376 PTY bytes reconciled to applied event-log byte counts in 57 batches of at most 4096 bytes. Main received nine frame rounds and Global three during burst/input interval; subsequent Tab also produces a frame. No >1ms drain observed in this bounded run.",
+      "build_clippy": "Offline release and targeted Clippy -D warnings pass",
+      "checks": "Source health and dependency authority pass"
+    },
+    "limits": [
+      "1ms is a cooperative deadline between indivisible work, not a preemptive bound. A slow filesystem/core/status operation may exceed it and remains subject to stall qualification.",
+      "Byte-length reconciliation is not a native byte-for-byte or displayed-final-state oracle; deterministic stream tests establish split ordering",
+      "Native input latency, sustained mixed workload, all-host round latency, full hidden-work/resource accounting and S1/S4 acceptance remain open",
+      "Retained Vec capacities can persist per session; complete ACC capacity accounting remains outstanding. No resize, Wayland, visual parity or numeric budget acceptance."
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/terminal-dispatch",
+    "source_sha256": {
+      "crates/gui-app/src/terminal_session.rs": "c0b1d2d999dadab3f81394f5f0459d1c2f4647331d8256956ff94b08e50ff7e0",
+      "crates/gui-app/src/terminal_session_spawn.rs": "feb365979620c478232661843323b1a3733c7b30f5c37dae17fa1ca51386094a",
+      "crates/gui-app/src/terminal_session_lifecycle.rs": "23ddae350309caf74b1089e250593575e70fb1507e2215d7b65ff28830657ff4",
+      "crates/gui-app/src/terminal_session_reorder.rs": "fa9b200eb539e4c0641fa03c1c877630dd899eeab5bdfb92e3827c0ee9ab3c06",
+      "crates/gui-app/src/terminal_session_drain.rs": "b31140193aa62053d4f157562d2ff9bf3511d6ae53245aea8685bc8ef581e384",
+      "crates/gui-app/src/terminal_session_drain_tests.rs": "66e1f33ee5e5281fe8bc98bc0619f566e0a9deef44e7c9cf5025fbc15646f1f0"
+    },
+    "artifacts_sha256": {
+      "app.log.gz": "d01e2531fbfc14141e0781ea94d586fefad46f49671d365264d9e224be3da5f6",
+      "build.log.gz": "7628e61a00ff89f67a9c3eb87ca6f0240696123867495c5a1d8fe04e90fbe575",
+      "bytes.json": "7c37789b0d0304b6d33bae249011c1d6da5a8238188a728c9c623d5342f81613",
+      "clippy.log.gz": "f1fab829f31e14a1f5852a098248bcde18e3e909abf014a4d2bc07d3c95c6388",
+      "native.json": "c47a447d5c29a0e5274061791681b14098c6203e3c69697d5fdc8baede07ff66",
+      "native.log.gz": "978e7f79251605f63583505987587f6d7686bdd33971ee2e7588edcc089c837a",
+      "probe.py": "c74db842b5fdf7fd486e209faf7e57e247d06d618a50675fb9735384c424f3d8",
+      "producer.py": "eec54be760cf13c1d5fe820eb5599acdb08bc3324bb83ba1fbcfba85df06e7a2"
+    }
   }
 }

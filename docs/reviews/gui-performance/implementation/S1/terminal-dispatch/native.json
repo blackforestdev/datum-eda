@@ -1,0 +1,38 @@
+{
+  "binary_sha256": "ce85e39f44ad06e52326181c2747a7985a6efd8918caf6b61b6848782ea95783",
+  "revision": "7881c1c7446cb4bfac4aacd6446e2d73466e71bc",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--open-global-preferences",
+        "--window-size",
+        "1280x800",
+        "--terminal-session-profile",
+        "custom",
+        "--terminal-program",
+        "/usr/bin/python3",
+        "--terminal-arg=-u",
+        "--terminal-arg=/tmp/pm045_budget_producer.py",
+        "--terminal-arg=/tmp/pm045-budget-proof/candidate/GLOBAL"
+      ],
+      "passed": true,
+      "main_rounds": 9,
+      "auxiliary_rounds": 3,
+      "native_Tab_focus_rounds": 1,
+      "producer": {
+        "bytes": 229376,
+        "event_log": "/tmp/pm045-readiness-x11/GLOBAL/datum-eda/gui-imports/board-8bd7cf58e88aad46/.datum/tool-sessions/terminal-901394-1789963817568092232.events.jsonl"
+      },
+      "native_ids": [
+        "12582916",
+        "12582917"
+      ],
+      "log_sha256": "a7f348522fcbfaf9c322a052e444d659f4dc26eb23e45820459929a58c827973",
+      "output_window_sha256": "0fd47ee0d4a9c21e212cc5aa7527b8584a45573bb12aa351d22a8b8041df47c9"
+    }
+  ]
+}

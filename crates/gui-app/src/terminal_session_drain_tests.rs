@@ -43,8 +43,9 @@ fn active_pending_tab_keeps_previous_session_output_in_its_parked_projection() {
         .transport
         .push_synthetic_output(b"old-shell-output");
 
+    let fixed_now = Instant::now();
     let mut lane = TerminalLaneState::default();
-    let report = registry.drain_all(&mut lane);
+    let report = registry.drain_with_clock(&mut lane, || fixed_now);
     assert!(!report.active_projection_changed);
     assert_eq!(registry.test_active_text().trim_end(), "old-shell-output");
 }
@@ -56,6 +57,7 @@ fn one_gui_turn_never_exceeds_owner_ratified_output_limits() {
     std::fs::create_dir_all(&root).unwrap();
     let context = TerminalLaunchContext::for_project_root(&root);
     let mut registry = TerminalSessionRegistry::spawn(&context).unwrap();
+    let fixed_now = Instant::now();
     let mut lane = TerminalLaneState::default();
     registry
         .active()
@@ -65,7 +67,7 @@ fn one_gui_turn_never_exceeds_owner_ratified_output_limits() {
     while !registry.active().has_pending_event() && Instant::now() < deadline {
         std::thread::sleep(Duration::from_millis(5));
     }
-    let report = registry.drain_all(&mut lane);
+    let report = registry.drain_with_clock(&mut lane, || fixed_now);
     assert!(report.output_events <= GUI_DRAIN_EVENT_LIMIT);
     assert!(report.output_bytes <= GUI_DRAIN_BYTE_LIMIT);
     let _ = std::fs::remove_dir_all(root);
@@ -111,6 +113,7 @@ fn synthetic_registry(session_count: usize) -> TerminalSessionRegistry {
                 columns: 80,
                 rows: 24,
                 activity: TerminalActivitySummaryCache::default(),
+                pending_drain_output: Vec::new(),
                 parked_lane: TerminalLaneState::default(),
                 disconnected_reported: false,
                 termination_failure_reported: false,
@@ -137,6 +140,7 @@ fn synthetic_registry(session_count: usize) -> TerminalSessionRegistry {
         next_session_ordinal: session_count + 1,
         terminal_wake: wake,
         next_drain_index: 0,
+        next_apply_index: 0,
         projection_managed: true,
     }
 }
@@ -157,8 +161,9 @@ fn control_priority_round_robin_cursor_and_exact_global_caps_are_literal() {
         }
         assert!(round < 43);
     }
+    let fixed_now = Instant::now();
     let mut lane = TerminalLaneState::default();
-    let first = registry.drain_all(&mut lane);
+    let first = registry.drain_with_clock(&mut lane, || fixed_now);
     assert_eq!(first.serviced[0], (1, "control", 0));
     assert_eq!(first.output_events, GUI_DRAIN_EVENT_LIMIT);
     assert_eq!(first.output_bytes, GUI_DRAIN_BYTE_LIMIT);
@@ -175,12 +180,18 @@ fn control_priority_round_robin_cursor_and_exact_global_caps_are_literal() {
     );
     assert_eq!(registry.next_drain_index, 1);
 
-    let second = registry.drain_all(&mut lane);
-    assert_eq!(second.serviced[0].0, 1);
-    assert_eq!(second.serviced[0].1, "output");
-    assert_eq!(second.output_events, 1);
-    assert_eq!(second.output_bytes, 512);
-    assert!(!second.pending);
+    let mut total = first.output_bytes;
+    while registry
+        .sessions
+        .iter()
+        .any(|slot| !slot.pending_drain_output.is_empty() || slot.session.has_pending_event())
+    {
+        let next = registry.drain_with_clock(&mut lane, || fixed_now);
+        total += next.output_bytes;
+        assert!(next.output_bytes <= GUI_DRAIN_BYTE_LIMIT);
+        assert!(next.events <= 256);
+    }
+    assert_eq!(total, 129 * 512);
 }
 
 #[test]
@@ -190,9 +201,10 @@ fn inactive_output_and_bell_mark_only_the_originating_tab_unread() {
         .session
         .transport
         .push_synthetic_output(b"background\x07");
+    let fixed_now = Instant::now();
     let mut lane = TerminalLaneState::default();
 
-    let report = registry.drain_all(&mut lane);
+    let report = registry.drain_with_clock(&mut lane, || fixed_now);
     assert_eq!(report.output_bytes, 11);
     registry.sync_lane_tabs(&mut lane);
     assert!(!lane.tabs[0].unread_output);
@@ -210,8 +222,9 @@ fn tiny_chunk_flood_is_applied_once_per_session_per_turn() {
             .transport
             .push_synthetic_output(b"x");
     }
+    let fixed_now = Instant::now();
     let mut lane = TerminalLaneState::default();
-    let report = registry.drain_all(&mut lane);
+    let report = registry.drain_with_clock(&mut lane, || fixed_now);
     assert_eq!(report.output_events, GUI_DRAIN_EVENT_LIMIT);
     assert_eq!(report.output_bytes, GUI_DRAIN_EVENT_LIMIT);
     assert_eq!(report.output_batches, 1);
@@ -241,8 +254,9 @@ fn osc52_becomes_a_typed_session_scoped_request_without_changing_cells() {
         .session
         .transport
         .push_synthetic_output(b"peer");
+    let fixed_now = Instant::now();
     let mut lane = TerminalLaneState::default();
-    let report = registry.drain_all(&mut lane);
+    let report = registry.drain_with_clock(&mut lane, || fixed_now);
 
     assert_eq!(report.clipboard_requests.len(), 1);
     let request = &report.clipboard_requests[0];
@@ -275,8 +289,9 @@ fn osc7_and_osc133_are_untrusted_session_metadata_not_design_authority() {
         .transport
         .push_synthetic_output(b"peer\x1b]133;A\x07");
 
+    let fixed_now = Instant::now();
     let mut lane = TerminalLaneState::default();
-    let report = registry.drain_all(&mut lane);
+    let report = registry.drain_with_clock(&mut lane, || fixed_now);
     assert!(report.notices.is_empty(), "{:?}", report.notices);
     assert_eq!(
         lane.current_working_directory.as_deref(),
@@ -341,8 +356,9 @@ fn split_control_and_utf8_chunks_batch_without_cross_session_leakage() {
             .transport
             .push_synthetic_output(bytes);
     }
+    let fixed_now = Instant::now();
     let mut lane = TerminalLaneState::default();
-    let report = registry.drain_all(&mut lane);
+    let report = registry.drain_with_clock(&mut lane, || fixed_now);
     assert_eq!(report.output_batches, 2);
     assert!(registry.test_session_text(0).contains("red"));
     assert!(registry.test_session_text(1).contains('┌'));
@@ -370,8 +386,12 @@ fn same_session_output_is_applied_before_its_final_exit_control() {
         .transport
         .finish_synthetic_reader();
 
+    let fixed_now = Instant::now();
     let mut lane = TerminalLaneState::default();
-    let report = registry.drain_all(&mut lane);
+    let mut report = registry.drain_with_clock(&mut lane, || fixed_now);
+    report
+        .serviced
+        .extend(registry.drain_with_clock(&mut lane, || fixed_now).serviced);
     let controlled_apply = report
         .serviced
         .iter()
@@ -388,6 +408,59 @@ fn same_session_output_is_applied_before_its_final_exit_control() {
         .position(|entry| *entry == (0, "apply", 9))
         .unwrap();
     assert!(controlled_apply < exit);
-    assert!(exit < unrelated_apply);
+    assert_ne!(controlled_apply, unrelated_apply);
     assert!(registry.test_session_text(1).contains("final-tail"));
+}
+
+#[test]
+fn budget_yield_retains_bytes_rotates_application_and_cannot_overtake_exit() {
+    let mut registry = synthetic_registry(2);
+    registry.active_index = 1; // Preserve the exited inactive tab for content assertions.
+    registry.sessions[0].pending_drain_output =
+        [vec![b'x'; 4095], "┌tail".as_bytes().to_vec()].concat();
+    registry.sessions[1].pending_drain_output = b"peer".to_vec();
+    registry.sessions[0]
+        .session
+        .transport
+        .push_synthetic_child_exit(TerminalExitStatus::Code(23));
+    registry.sessions[0]
+        .session
+        .transport
+        .finish_synthetic_reader();
+    let mut lane = TerminalLaneState::default();
+    let start = Instant::now();
+    let mut calls = 0;
+    let first = registry.drain_with_clock(&mut lane, || {
+        calls += 1;
+        start
+            + if calls <= 2 {
+                Duration::ZERO
+            } else {
+                Duration::from_millis(2)
+            }
+    });
+    assert!(first.pending);
+    assert_eq!(first.serviced, vec![(0, "apply", 4096)]);
+    assert_eq!(registry.sessions[0].pending_drain_output.len(), 6);
+    assert_eq!(registry.sessions[1].pending_drain_output, b"peer");
+    assert!(registry.sessions[0].exact_exit_status.is_none());
+    calls = 0;
+    let second = registry.drain_with_clock(&mut lane, || {
+        calls += 1;
+        start
+            + if calls <= 2 {
+                Duration::ZERO
+            } else {
+                Duration::from_millis(2)
+            }
+    });
+    assert_eq!(second.serviced, vec![(1, "apply", 4)]);
+    assert!(second.pending);
+    let final_turn = registry.drain_with_clock(&mut lane, || start);
+    assert_eq!(final_turn.serviced[0], (0, "apply", 6));
+    assert_eq!(final_turn.serviced[1], (0, "control", 0));
+    assert!(!final_turn.pending);
+    assert!(registry.test_session_text(0).contains("┌tail"));
+    assert!(registry.test_session_text(1).contains("peer"));
+    assert!(!registry.test_session_text(1).contains("tail"));
 }

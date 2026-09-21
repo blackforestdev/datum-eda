@@ -196,7 +196,11 @@ impl TerminalSessionRegistry {
             .sessions
             .iter()
             .enumerate()
-            .filter(|(_, slot)| slot.remove_when_closed && slot.session.presentation_complete())
+            .filter(|(_, slot)| {
+                slot.remove_when_closed
+                    && slot.pending_drain_output.is_empty()
+                    && slot.session.presentation_complete()
+            })
             .map(|(index, _)| index)
             .collect::<Vec<_>>();
         if targets.is_empty() {

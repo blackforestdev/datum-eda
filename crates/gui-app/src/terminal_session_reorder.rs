@@ -37,6 +37,7 @@ impl TerminalSessionRegistry {
         }
         self.active_index = active;
         self.next_drain_index = next_drain;
+        self.next_apply_index = remap_index(self.next_apply_index, from, to);
         Ok(true)
     }
 }
