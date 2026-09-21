@@ -2,6 +2,26 @@
 //! share one bounded pixel offset in the caller's coordinate space; no timer or redraw loop is owned here.
 use crate::ScreenRectPx;
 
+/// Discrete row adapters retain row authority rather than document offsets.
+/// Clamp against the rendered capacity before applying a native line step.
+pub fn scrolled_row_offset(offset: usize, total: usize, visible: usize, lines: f32) -> usize {
+    let maximum = if visible == 0 {
+        0
+    } else {
+        total.saturating_sub(visible)
+    };
+    let offset = offset.min(maximum);
+    if !lines.is_finite() || lines.abs() <= 0.01 {
+        return offset;
+    }
+    let step = lines.abs().ceil() as usize;
+    if lines < 0.0 {
+        offset.saturating_add(step).min(maximum)
+    } else {
+        offset.saturating_sub(step)
+    }
+}
+
 /// Pointer routing and visible damage are separate: grabbing a thumb consumes
 /// the press without changing its pixels or document offset.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
@@ -160,6 +180,18 @@ mod tests {
         );
         s
     }
+    #[test]
+    fn discrete_rows_clamp_to_visible_capacity_and_reverse_without_hidden_debt() {
+        assert_eq!(scrolled_row_offset(0, 24, 7, -100.0), 17);
+        assert_eq!(scrolled_row_offset(17, 24, 7, -1.0), 17);
+        assert_eq!(scrolled_row_offset(23, 24, 7, 1.0), 16);
+        assert_eq!(scrolled_row_offset(17, 24, 7, 0.0), 17);
+        assert_eq!(scrolled_row_offset(17, 24, 7, f32::NAN), 17);
+        assert_eq!(scrolled_row_offset(0, 24, 7, -0.25), 1);
+        assert_eq!(scrolled_row_offset(10, 24, 24, -1.0), 0);
+        assert_eq!(scrolled_row_offset(10, 24, 0, -1.0), 0);
+    }
+
     #[test]
     fn fractional_input_is_never_rounded_away_and_bounds_do_not_accumulate_debt() {
         let mut s = scroll();
