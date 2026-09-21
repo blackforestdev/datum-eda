@@ -322,3 +322,57 @@ fn indexed_lookup_checks_collisions_and_tracks_retirement() {
     assert_eq!(cache.lookup.capacity(), 0);
     assert_eq!(cache.entries.capacity(), 0);
 }
+
+#[test]
+fn relayout_moves_unused_entries_but_preserves_current_frame_layouts() {
+    let mut fonts = FontSystem::new();
+    load_datum_fonts(&mut fonts);
+    let signature = |buffer: &Buffer| {
+        buffer
+            .layout_runs()
+            .map(|line| (line.line_w.to_bits(), format!("{:?}", line.glyphs)))
+            .collect::<Vec<_>>()
+    };
+    for profile in [Profile::Workspace, Profile::Overlay] {
+        let mut cache = TextBufferCache::default();
+        let mut label = run();
+        label.text = "Retain shaped paragraphs across wrap changes: µm Ω".into();
+        let mut shape_storage = None;
+        for width in [220, 90, 140, 90] {
+            cache.begin_frame(profile);
+            let revision = cache.revision();
+            let (indices, stats) =
+                cache.indices(&mut fonts, std::slice::from_ref(&label), width, 300);
+            assert_eq!(indices, [0]);
+            assert_eq!(stats.misses, 1, "changed layout remains a layout miss");
+            assert_eq!(cache.entries.len(), 1, "obsolete layout must not be cloned");
+            assert_ne!(cache.revision(), revision);
+            let buffer = &cache.entries[0].buffer;
+            let storage = buffer.lines[0].shape_opt().unwrap().spans.as_ptr();
+            assert_eq!(*shape_storage.get_or_insert(storage), storage);
+            let mut fresh = TextBufferCache::default();
+            fresh.indices(&mut fonts, std::slice::from_ref(&label), width, 300);
+            assert_eq!(signature(buffer), signature(&fresh.entries[0].buffer));
+            assert_eq!(
+                cache
+                    .indices(&mut fonts, std::slice::from_ref(&label), width, 300)
+                    .1
+                    .hits,
+                1
+            );
+            if matches!(profile, Profile::Overlay) {
+                cache.trim_overlay();
+            }
+        }
+        // Two consumers may need different extents within one preparation. The
+        // first index must keep its layout while the second gets a separate one.
+        cache.begin_frame(profile);
+        let (first, _) = cache.indices(&mut fonts, std::slice::from_ref(&label), 90, 300);
+        let before = signature(&cache.entries[first[0]].buffer);
+        let (second, _) = cache.indices(&mut fonts, std::slice::from_ref(&label), 210, 300);
+        assert_ne!(first, second);
+        assert_eq!(signature(&cache.entries[first[0]].buffer), before);
+        assert_eq!(cache.entries[first[0]].key.width_px, 90);
+        assert_eq!(cache.entries[second[0]].key.width_px, 210);
+    }
+}

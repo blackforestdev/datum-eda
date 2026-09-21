@@ -222,6 +222,7 @@ impl TextBufferCache {
         let fingerprint = run_fingerprint(run);
         let first = self.lookup.partition_point(|(hash, _)| *hash < fingerprint);
         let mut shaped = None;
+        let mut reusable = None;
         for &(_, index) in self.lookup[first..]
             .iter()
             .take_while(|(hash, _)| *hash == fingerprint)
@@ -238,7 +239,29 @@ impl TextBufferCache {
                     return (index, false);
                 }
                 shaped.get_or_insert(index);
+                if entry.last_used_frame != self.frame {
+                    reusable.get_or_insert(index);
+                }
             }
+        }
+        if let Some(index) = reusable {
+            // No current-frame text area references this entry. Relayout its
+            // existing Buffer instead of cloning paragraphs and retaining an
+            // obsolete extent. The shaping fingerprint and index stay valid.
+            let entry = &mut self.entries[index];
+            entry
+                .buffer
+                .set_size(font_system, Some(extent.0 as f32), Some(extent.1 as f32));
+            entry.buffer.shape_until_scroll(font_system, false);
+            entry.key.width_px = extent.0;
+            entry.key.height_px = extent.1;
+            entry.last_used_frame = self.frame;
+            self.revision = self.revision.wrapping_add(1);
+            #[cfg(test)]
+            {
+                self.shape_reuses += 1;
+            }
+            return (index, true);
         }
         let key = text_buffer_key(run, width, height);
         // Extent belongs to layout. Clone the existing public Buffer cache so

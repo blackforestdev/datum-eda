@@ -1,0 +1,30 @@
+{
+  "status": "production S2 shaped-layout transfer; S2 incomplete and exit amendment remains pending",
+  "baseline": "74ba0b78d3f092a0950b54f724de9e45c2d25b59",
+  "production_consumers": [
+    "MAIN workspace/menu and existing NEW full-frame text path",
+    "GLOBAL and PROJECT dialog-only labels"
+  ],
+  "owner": "TextBufferCache::ensure_text_buffer, through shared Renderer::prepare_frame_text",
+  "retired_path": "Unconditional clone of shaped Buffer and duplicate cache entry for extent-only misses when an old matching entry is unused by the current frame",
+  "behavior": "Search the exact shaping bucket for an unused matching entry after checking exact layout hits. Relayout that Buffer in place, update extent/last-used and invalidate glyph revision. Index/fingerprint and shaped/key storage stay owned by the entry. Keep cloning when all matching entries are referenced by current-frame consumers, preserving both layouts. Continue reporting extent changes as layout misses.",
+  "proof": {
+    "negative": "Original clone path fails the new same-index/one-entry test; removing current-frame guard fails the distinct-index assertion. Both production profiles covered. Original source restored before final suite/build.",
+    "cpu": "203 renderer tests passed, 21 ignored. Four extent changes preserve shape-span storage and one entry with fresh-buffer layout/glyph parity and exact repeated-layout hits. Two current-frame extents preserve independent layouts.",
+    "gpu": "Existing real GPU fresh-dialog pixel parity proof strengthened with one-entry retention and each-transition shape reuse; passed.",
+    "native": "Fresh offline release passes MAIN/GLOBAL/PROJECT/NEW X11 smokes; Main wheel input included. These are regression checks, not native memory/performance qualification.",
+    "checks": "Renderer visual all-targets Clippy, source health, dependency authority, traceability/parity/spec governance, fresh project selector and staged formatting checked."
+  },
+  "remaining": [
+    "No complete shaped-payload/atlas allocation accounting, byte caps, global adoption or numerical performance claim.",
+    "Historical extent reuse can require relayout when revisited; same-frame layouts remain separately retained.",
+    "Full native backend/scale, static/negative/counter qualification and S2 exit remain open. Pending sequencing proposal is not approved or applied.",
+    "No dependencies, third-party edits, Cargo/license/font changes, product authority or resize qualification changes."
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/render/text_buffer_cache.rs": "932b5e658b064e73e2c3a50150cb7db39e821abdf408e0eb2ebff813416fab6f",
+    "crates/gui-render/src/render/text_buffer_cache_tests.rs": "6e2533bbacb24dbd007e1ef72eb770719c0cf0e4983c199d582cc0d10696844d",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "bb4570facdf603613129335d552086a67e70e67792adb3a27db6999ea6d6c5ad"
+  },
+  "candidate_binary_sha256": "4c9d6233b4894fa58ecd15edc9eb513c573ce2beb897c0a8ed151cdeee47fb74"
+}
