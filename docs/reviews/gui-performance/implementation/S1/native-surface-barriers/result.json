@@ -1,0 +1,25 @@
+{
+  "status": "Partial native owner composition proof; GPI-S1 remains in progress",
+  "baseline_commit": "737d87ee50db3b1565582ef5b27abada61f85759",
+  "source": "crates/gui-app/src/native_surface_transaction.rs",
+  "source_sha256": "146c5937f2676fe46dd5089a5a8e098b0101752a90a759e4715183ef21dc9d8b",
+  "production_consumers_migrated": [],
+  "competing_paths_retired": [],
+  "production_change": "None. Focused safety verification of the existing production SurfaceTransaction and QueueOwner.",
+  "test": "native_texture_and_queue_receipt_both_gate_reconfiguration",
+  "command": "DATUM_GPU_DIAGNOSTIC_BACKEND=vulkan DATUM_DIAGNOSTIC_QUEUE_COMPLETION=hold-until-retry python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_texture_and_queue_receipt_both_gate_reconfiguration -- --ignored --test-threads=1",
+  "verification": {
+    "native": "1 passed; actual X11/Vulkan surface texture and actual backend completion callback, with existing opt-in publication hold.",
+    "unit": "4 passed, 1 ignored.",
+    "sequence": "Configure count remains one while texture is live, remains one after discard while completion publication is held, advances to two/generation two at 96x72 after actual receipt publication; second acquisition succeeds and discards.",
+    "initial_failure": "Fixture assumed synchronous native resize (observed 80x60 instead of 96x72). Unwinding also triggered Vulkan swapchain semaphore destructor panic. Corrected fixture pumps native resize events with two-second deadline; corrected execution and teardown pass.",
+    "clippy": "Guarded offline datum-gui-app binary/test Clippy passed with -D warnings.",
+    "governance": "Source health, spec parity, evidence traceability, spec governance, dependency authority and Cargo resource policy passed."
+  },
+  "limits": [
+    "Direct shared-owner fixture, not actual per-host App adapter qualification.",
+    "No scene rendering, presentation, displayed pixels, all-backend/scale, resource-budget or endurance qualification.",
+    "Guard rejection is not a deliberately regressed-source negative-control replay; that qualification remains open.",
+    "Blocking device wait and event pumping are test-only; default application behavior and dependencies unchanged."
+  ]
+}

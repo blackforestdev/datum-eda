@@ -681,4 +681,141 @@ mod tests {
         drop(next);
         assert!(!replacement.active.get());
     }
+    #[cfg(target_os = "linux")]
+    #[test]
+    #[ignore = "requires X11/Vulkan and hold-until-retry diagnostic; run serially"]
+    #[allow(deprecated)] // Hidden window fixture; production uses ActiveEventLoop.
+    fn native_texture_and_queue_receipt_both_gate_reconfiguration() {
+        use std::{sync::Arc, time::Duration};
+        use winit::platform::{pump_events::EventLoopExtPumpEvents, x11::EventLoopBuilderExtX11};
+        assert_eq!(
+            std::env::var("DATUM_DIAGNOSTIC_QUEUE_COMPLETION").as_deref(),
+            Ok("hold-until-retry")
+        );
+        let mut event_loop = winit::event_loop::EventLoop::<()>::with_user_event()
+            .with_x11()
+            .with_any_thread(true)
+            .build()
+            .unwrap();
+        let window = Arc::new(
+            event_loop
+                .create_window(
+                    winit::window::Window::default_attributes()
+                        .with_visible(false)
+                        .with_inner_size(winit::dpi::PhysicalSize::new(80, 60)),
+                )
+                .unwrap(),
+        );
+        let (_instance, surface, adapter, device, queue) =
+            pollster::block_on(crate::native_gpu::create(window.clone())).unwrap();
+        let health = crate::native_device_recovery::DeviceHealth::observe(
+            &device,
+            event_loop.create_proxy(),
+        );
+        let mut config = super::super::surface_configuration(
+            &surface.get_capabilities(&adapter),
+            window.inner_size(),
+            None,
+        );
+        let mut transaction = SurfaceTransaction::new(&window, &health);
+        let mut frame = transaction
+            .acquire(&surface, &device, &config, &health)
+            .unwrap()
+            .unwrap();
+        let buffer = device.create_buffer(&wgpu::BufferDescriptor {
+            label: Some("native-lifetime-proof"),
+            size: 16,
+            usage: wgpu::BufferUsages::COPY_DST,
+            mapped_at_creation: false,
+        });
+        let mut encoder = device.create_command_encoder(&Default::default());
+        encoder.clear_buffer(&buffer, 0, None);
+        transaction.submitted(&mut frame, &queue, queue.submit([encoder.finish()]));
+        // This explicit fixture waits for real backend delivery; production only
+        // polls. The existing diagnostic holds publication of that actual receipt.
+        device
+            .poll(wgpu::PollType::Wait {
+                submission_index: None,
+                timeout: Some(Duration::from_secs(2)),
+            })
+            .unwrap();
+        assert_eq!(transaction.queue_owner.snapshot().1, 1);
+        assert_eq!(transaction.queue_owner.snapshot().2, 0);
+        let _ = window.request_inner_size(winit::dpi::PhysicalSize::new(96, 72));
+        let resize_deadline = Instant::now() + Duration::from_secs(2);
+        while window.inner_size() != winit::dpi::PhysicalSize::new(96, 72) {
+            assert!(
+                Instant::now() < resize_deadline,
+                "native resize not observed"
+            );
+            event_loop.pump_events(Some(Duration::from_millis(2)), |_, _| {});
+        }
+        config.width = 96;
+        config.height = 72;
+        // Even completed backend work cannot permit configure while its acquired
+        // native texture remains owned. The guard must run before backend entry.
+        assert!(
+            transaction
+                .begin_frame(&surface, &device, &config, &health)
+                .unwrap_err()
+                .to_string()
+                .contains("native surface texture is live")
+        );
+        assert_eq!(transaction.texture_active.configure_attempts.get(), 1);
+        assert!(transaction.texture_active.active.get());
+        drop(frame);
+        assert_eq!(transaction.texture_active.discarded.get(), 1);
+        assert!(!transaction.texture_active.active.get());
+        // Releasing the texture alone is insufficient: the shared queue still
+        // denies configuration until completion publication is released.
+        assert!(
+            !transaction
+                .begin_frame(&surface, &device, &config, &health)
+                .unwrap()
+        );
+        assert_eq!(transaction.texture_active.configure_attempts.get(), 1);
+        assert_eq!(transaction.configuration_generation, 1);
+        let now = Instant::now();
+        transaction
+            .queue_owner
+            .progress(now, true, || {
+                device
+                    .poll(wgpu::PollType::Poll)
+                    .map(|_| ())
+                    .map_err(Into::into)
+            })
+            .unwrap();
+        assert_eq!(
+            transaction
+                .queue_owner
+                .progress(now + Duration::from_secs(2), true, || panic!(
+                    "expired queue must not poll"
+                ))
+                .unwrap(),
+            (None, true)
+        );
+        assert!(transaction.queue_owner.retry_progress());
+        assert_eq!(transaction.queue_owner.snapshot().2, 1);
+        let deadline = Instant::now() + Duration::from_secs(2);
+        while !transaction
+            .begin_frame(&surface, &device, &config, &health)
+            .unwrap()
+        {
+            assert!(Instant::now() < deadline, "configuration did not resume");
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        assert_eq!(transaction.texture_active.configure_attempts.get(), 2);
+        assert_eq!(transaction.configuration_generation, 2);
+        assert_eq!(transaction.configured, Some((96, 72)));
+        let current = transaction
+            .acquire(&surface, &device, &config, &health)
+            .unwrap()
+            .unwrap();
+        assert_eq!(transaction.texture_active.configure_attempts.get(), 2);
+        assert_eq!(transaction.texture_active.acquired.get(), 2);
+        drop(current);
+        assert_eq!(transaction.texture_active.discarded.get(), 2);
+        assert_eq!(transaction.texture_active.presented.get(), 0);
+        assert!(!health.failed());
+    }
 }
