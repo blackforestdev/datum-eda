@@ -1,0 +1,48 @@
+{
+  "baseline": "d28287552eb99bf3e330b8d0592a9424967935e2",
+  "command": [
+    "python3",
+    "scripts/run_cargo_guarded.py",
+    "--workload",
+    "proof",
+    "--",
+    "cargo",
+    "test",
+    "--offline",
+    "-p",
+    "datum-gui-render",
+    "--lib",
+    "--",
+    "--test-threads=1"
+  ],
+  "target": "/home/bfadmin/Documents/datum-eda/target",
+  "source": "crates/gui-render/src/terminal_core_render.rs",
+  "positive_sha256": "312f85218833c56e98d44161860b1b923a8aef8b54878c483fff8dd00e4b823c",
+  "negative_sha256": "ba11aa26f4596074c92f15412e7d78a527afa1d4ecbfd6d111c5fd91c3a34070",
+  "negative_exit": 101,
+  "positive_exit": 0,
+  "status": "three bounded terminal clipping negative controls verified; full HP22 and S3 qualification open",
+  "additional_controls": [
+    {
+      "source": "crates/gui-render/src/terminal_render_cache.rs",
+      "positive_sha256": "fff915979f0f27f9d2a5f3227467a316301a640803163f434194304f8755819f",
+      "negative_sha256": "d6121e8eb9aac7a4b038a35469d4d9bdbf8747aebc0c05cfb0b46daaae26b987",
+      "negative_exit": 101
+    },
+    {
+      "source": "crates/gui-render/src/terminal_clipboard_menu.rs",
+      "positive_sha256": "6c2c1bd363dc8f1140e8a4076c383a2b2585f6ae13b9e90cd9be0a12290481a9",
+      "negative_sha256": "10f87c8605a454c56ac0c04eae78f2d3895b6b967e6a723dd05e916301358a74",
+      "negative_exit": 101
+    }
+  ],
+  "results": {
+    "cold_clip_removed": "194 pass, one intended partial_terminal_viewport_clips_cached_and_cold_cell_paint failure at geometry containment",
+    "retained_clip_removed": "194 pass, one intended partial_terminal_viewport_clips_cached_and_cold_cell_paint failure at geometry containment",
+    "menu_clip_removed": "194 pass, one intended undersized_terminal_menu_clips_paint_text_and_actions_to_screen failure at geometry containment",
+    "restored": "195 pass after cold negative, and 195 pass after both additional negatives; same full-suite command"
+  },
+  "isolation": "Detached disposable source copy at pinned baseline. Remove one production clip call per trial, restore exact original bytes before next trial. Active checkout never modified for injection; source copy verified clean then removed; shared disk-backed target preserved.",
+  "failed_setup": "First additional-control patch locator expected four-space indentation and matched zero in retained cache. Assertion stopped before any mutation or test; corrected locator accepts actual indentation.",
+  "limits": "CPU adapter defect sensitivity only. No native input/focus/backend/scale, screenshot, resource, timing, independent reviewer or full HP22/S3 acceptance. Separate cell/text/hit negatives and remaining profiles remain unqualified."
+}

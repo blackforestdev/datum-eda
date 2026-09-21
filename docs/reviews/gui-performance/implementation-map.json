@@ -6666,6 +6666,10 @@
       "s3_terminal_cell_progress": {
         "status": "cold and retained terminal composition use shared clipping; complete per-adapter qualification open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-cell-clipping/result.json"
+      },
+      "terminal_component_negatives": {
+        "status": "three geometry-boundary negatives each fail intended assertion; byte-restored candidate passes; full requirement open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-clip-negative/result.json"
       }
     },
     {
@@ -26816,5 +26820,15 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-cell-clipping/result.json",
     "limits": "No native, pixel, independent negative, timing or full HP22/resource qualification. Terminal tab chrome and remaining profile review stay open. No PTY/state model, row policy, dependency, license or prototype change."
+  },
+  "s3_terminal_clipping_negative_work": {
+    "status": "three bounded terminal clipping negative controls verified; full HP22 and S3 qualification open",
+    "production_consumers": [
+      "cold terminal snapshot",
+      "retained terminal session/split composition",
+      "terminal context menu"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-clip-negative/result.json",
+    "limits": "CPU adapter defect sensitivity only. No native input/focus/backend/scale, screenshot, resource, timing, independent reviewer or full HP22/S3 acceptance. Separate cell/text/hit negatives and remaining profiles remain unqualified."
   }
 }
