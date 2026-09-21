@@ -23458,6 +23458,11 @@
       "S1 SH/LF, full resource accounting and S2-S5 remain open; no global adoption acceptance",
       "No dependency, protected prototype, product authority or resize exclusion change"
     ],
-    "receipt": "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/receipt.json"
+    "receipt": "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/receipt.json",
+    "capture_followup": {
+      "receipt": "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/capture-followup/receipt.json",
+      "status": "capture comparison unavailable; no product pass",
+      "disposition": "Keep dat-main-native-capture-delay-md9 open. Cause of stale window captures and delayed Close remains unestablished. Stop repeating native captures under these conditions; continue independent code/component work. No kernel/driver investigation, renderer attribution, native input timing or final-pixel qualification follows."
+    }
   }
 }
