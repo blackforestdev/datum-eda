@@ -22251,5 +22251,89 @@
       "oom-fault.log.gz": "0adae911e9954b94fc26670e47830ebc590e5d4304c406285c8dd3443c7df78b",
       "source-policy.log.gz": "8727ffcf673dbe4c957a375f098e885a94e233edf2678c5fd80db1f9f25ec5f2"
     }
+  },
+  "s1_workspace_invalidation_work": {
+    "status": "default background invalidation scoped to actual workspace dependents; full SH-01/SH-12 and S1 remain open",
+    "baseline_commit": "19b94b1d",
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_entry": "ApplicationHandler::user_event -> Runtime::handle_terminal_output_wake and App::poll_background_work -> request_workspace_redraw -> shared NativeFrameCoordinator",
+    "retired_paths": [
+      "Terminal output wake invalidating every auxiliary surface",
+      "Background production/console refresh invalidating both independent Preferences surfaces"
+    ],
+    "behavior": [
+      "Workspace/terminal/console changes invalidate Main and the current New Project workspace backdrop",
+      "Global and Project Preferences retain their prepared content for unrelated background notifications",
+      "Actual dialog/settings changes retain the all-dependent invalidation path; New Project backdrop dependency remains until S3"
+    ],
+    "verification": {
+      "app": "337 passed, 0 failed, 8 ignored",
+      "release": "Fresh offline default-feature release build passed",
+      "clippy": "Targeted app Clippy with -D warnings passed",
+      "native": "Same bounded actual custom-profile PTY producer emits 24 bursts on prior and candidate binaries. Baseline output intervals dispatch Global 7 and Project 5 times; candidate dispatches each zero times while Main dispatches 9 times in each run. New Project continues to dispatch 5 times. Native Tab positive control dispatches each candidate auxiliary host afterward. These are dispatch counts, not CPU/GPU/display performance measurements.",
+      "baseline_identity": "Prior executable SHA256 matches committed host-round proof; no fabricated defect source",
+      "checks": "Dependency authority, source health, parity, evidence and spec governance pass"
+    },
+    "failed_attempts": [
+      "Two relocated-baseline launches stopped at fixture resolution before native readiness. Relocation prevented adjacent CLI discovery and reached the existing cargo-run fallback. Exact existing release EDA_CLI_BIN was then supplied to both baseline and candidate; offline mode pinned. Failed traces retained and excluded from rendering results."
+    ],
+    "limits": [
+      "Native cases cover bounded PTY/background notifications on Xwayland/Vulkan, not all invalidation classes, terminal byte/state acceptance, broader host adoption or mixed-work latency",
+      "Dispatch absence implies no adapter prepare/submit through the inspected shared production path; these logs do not account complete allocation/GPU work",
+      "No full SH-01/SH-12, statistical performance, visual, Wayland or S1 completion claim",
+      "New Project still has a workspace backdrop and is deliberately not treated as an independent Preferences consumer",
+      "Existing baseline terminal drift failures remain recorded; full drift suite not rerun for this bounded three-file routing change"
+    ],
+    "commands": [
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui",
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app",
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-app --bin datum-gui -- -D warnings",
+      "python3 /tmp/pm045_workspace_baseline_probe.py target/pm045-workspace-redraw-baseline/datum-gui baseline",
+      "python3 /tmp/pm045_workspace_probe.py target/release/datum-gui candidate"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/workspace-invalidation",
+    "source_sha256": {
+      "crates/gui-app/src/app_shell.rs": "8ee5948bb6d0f577d01212c1322f35e1bf1fc32418be86b488e2a34b64643295",
+      "crates/gui-app/src/app_native_events.rs": "a5fc47f7edef61ebd75b275806054b8ca8ec3e846374d87f014d04401388557b",
+      "crates/gui-app/src/production_status_refresh.rs": "715df34158c83c973be03b99bb63baebb78dcbe668794bb9c4cb0d929189a7ed"
+    },
+    "artifacts_sha256": {
+      "app.log.gz": "ad977747e3254c1d4c8bdca834980d619000fdacf7f660d2b41e89ce8215478a",
+      "baseline-GLOBAL-native.log.gz": "2fdd6ff9c141f665d39732121cca33c5879607f8b469b63688e1dd0d247d1aaf",
+      "baseline-GLOBAL-output-window.log.gz": "dcacb40bd229ee096595d685b1f13fc45ea6a2f74833be061a538512adadac50",
+      "baseline-GLOBAL-stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "baseline-NEW-native.log.gz": "c1f8dca3d8aabea4cb5fc3a39a690f6c3e3980af3b67011b2faec14718771fe1",
+      "baseline-NEW-output-window.log.gz": "49f383c09ee90335e426c9e2ada16b98c5b1aa1df755caa4fdcbc9d997756287",
+      "baseline-NEW-stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "baseline-PROJECT-native.log.gz": "4c32298c9c16a24589871208579ea569b4dd0f112b883ed6de81114532578974",
+      "baseline-PROJECT-output-window.log.gz": "8c61043288757012ce6af8a775a4f8e2501f76568017d256ef080ef2f64ec286",
+      "baseline-PROJECT-stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "baseline.json": "b598803312bbd3ad68f2d003531f3563b0f38262e5283543907832e300c316ac",
+      "baseline_probe.py": "d29cbbf43c9136ab1182071040bf2b7804b6548e9953622fcff4f66bb8e0103e",
+      "build.log.gz": "29646b63fbe6839b2bdd05d1b08f8a68da840d097540eed66e1792a029f47068",
+      "candidate-GLOBAL-focus-window.log.gz": "1ef457701ac35420d0e99bd3991c38aa09a26fcbd57aa3349f6952b05f84b3e4",
+      "candidate-GLOBAL-native.log.gz": "fed15c58a0f47de7cd00825aaf033716cf3da4e254e81fdb22ada5d2cb13f490",
+      "candidate-GLOBAL-output-window.log.gz": "1b81ebd3afeecc37487d198257acdfa8230b57f7034ce89c6efec973b3178b3b",
+      "candidate-GLOBAL-stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "candidate-NEW-focus-window.log.gz": "0893bbc430f2ad779794ef647f85b786f5eb97abee5991946e108e6d79ef8ff7",
+      "candidate-NEW-native.log.gz": "e100606bd55a1ee8d854612660890be8e615314f7fe53f6c3a250e84ebf91b70",
+      "candidate-NEW-output-window.log.gz": "1e6532c32419257bd0e12fd681e552d1dca747b73277709e1e0fea2b653f1fdc",
+      "candidate-NEW-stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "candidate-PROJECT-focus-window.log.gz": "787b9d8e97a3513dc7560a275028f0d7d470e23fb272f4ce45ed3f249fa5ab8d",
+      "candidate-PROJECT-native.log.gz": "43014f83b022bc090a0157d4860d076261c6af0b00294d577e018b435f3f11ac",
+      "candidate-PROJECT-output-window.log.gz": "317f743d99e2e37e2d21e0aafe27a25b9b73005adce8369212fe8d0b6b5504f4",
+      "candidate-PROJECT-stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "candidate.json": "cc30aaf590324b06bf2e7e2624b22904fe2d562eed9da4c35efe83ad18117bc9",
+      "candidate_probe.py": "b96f1153f88c665dbf963abef7c9a3ea90516837d72d9c4087b59861ededc940",
+      "clippy.log.gz": "99bbf4b1de2d208ccfede5adee44e5071d3caf83e222d049a6c22533ea020a39",
+      "failed-cli-resolution.log.gz": "cea29c39a71c95e7373d3ad8e1b860f7e6c772f6ead51062b5853c48362fed3c",
+      "failed-fixture-resolution.log.gz": "066da7d01ae58067a0a3061b483820792a62bf4d94d7553b9b5e27d3e67341fd",
+      "producer.py": "067f76c11eba1097f706c66ac48d81eddedb27ed2d420d2e10a2a02999940141"
+    }
   }
 }

@@ -123,7 +123,7 @@ impl App {
             };
         }
         if changed {
-            self.request_redraw_if_needed();
+            self.request_workspace_redraw();
         }
         if let Some(surface_due) = self.service_surface_retries() {
             next_refresh_due =

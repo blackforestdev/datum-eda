@@ -496,7 +496,7 @@ impl ApplicationHandler for App {
             .as_mut()
             .is_some_and(Runtime::handle_terminal_output_wake)
         {
-            self.request_redraw_if_needed();
+            self.request_workspace_redraw();
         }
     }
 }
