@@ -77,6 +77,17 @@ impl PreparedScene {
             scroll,
             reveal_row,
         );
+        Self::from_dialog_parts(layout, quads, text, hits, scale)
+    }
+
+    /// Shared native-dialog envelope: no hidden workspace preparation or hits.
+    pub(crate) fn from_dialog_parts(
+        layout: ShellLayout,
+        quads: Vec<Quad>,
+        mut text: Vec<TextRun>,
+        hits: Vec<HitRegion>,
+        scale: f32,
+    ) -> Self {
         if (scale - 1.0).abs() > f32::EPSILON {
             scale_text_run_sizes(&mut text, scale);
         }

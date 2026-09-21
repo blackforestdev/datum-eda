@@ -5505,6 +5505,10 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "NEW": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s3_new_project_progress": {
+        "status": "partial; default native backdrop retired; full acceptance remains unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/new-project-dialog/result.json"
       }
     },
     {
@@ -5574,6 +5578,10 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "NEW": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s3_new_project_progress": {
+        "status": "partial; default native backdrop retired; full acceptance remains unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/new-project-dialog/result.json"
       }
     },
     {
@@ -26452,5 +26460,41 @@
     "implementation_due": "S4",
     "qualification_due": "S5",
     "limits": "Bounded shared-owner readiness only; New Project backdrop/dialog-control convergence remains S3, all original row acceptance/test statuses remain unchanged."
+  },
+  "s3_new_project_dialog_work": {
+    "status": "bounded default NEW migration; S3 remains in progress",
+    "baseline": "f2072f5e",
+    "candidate_sources": {
+      "crates/gui-app/src/app_shell.rs": "1eb609dc4634fb87f866d574be48349ac463ec4acad85040421c6562c388ca4b",
+      "crates/gui-app/src/global_preferences_window.rs": "2cf100457d6359af425da99cd6849de9e14320aa83a5a648f75d2ecf31d71c5a",
+      "crates/gui-render/src/global_preferences_dialog.rs": "de398d5496fab1396d0a4feca9af67eda19adb6219b303b4c22c867d2e18e0c4",
+      "crates/gui-render/src/new_project_dialog.rs": "4c1418d5a8dafb27c4159d2262c7a72d77bc474fb2f2a11a4d44b15e0879328f",
+      "crates/gui-render/src/render/gpu_control_tests.rs": "265d279f3fced0f16ea6c1d72cf671d8b3d305f57c64be06a6dda8b073364399",
+      "crates/gui-render/src/render/preferences_scene.rs": "06bbf666d82ba8b317d25e46c894110b6081ff8a9703feb9b97eeb30a5d57b25"
+    },
+    "production_consumers": [
+      "NEW native host; GLOBAL/PROJECT reuse extracted unchanged dialog envelope"
+    ],
+    "call_path": "redraw_owned_window(New) -> GlobalPreferencesWindowSurface::render -> Renderer::prepare_native_new_project -> PreparedScene::from_dialog_parts -> render_with_submission -> render_overlay_only",
+    "retired_paths": [
+      "NEW workspace clone and retained world/index construction",
+      "NEW full shell/terminal/board CPU preparation and general GPU pass path",
+      "NEW invalidation from workspace-only terminal/console/board updates"
+    ],
+    "preserved": "Existing form painter, hit/focus dispatch and project genesis authority; renderer-owned control mesh cache, shaping, AA and dialog pass owner unchanged. Legacy general composition remains as a comparison/compatibility API, not NEW default native path.",
+    "proof": {
+      "cpu": "188 renderer tests pass; 4 focused app New Project tests pass",
+      "gpu": "13 targeted GPU tests pass; NEW cold/warm/edit/reset and 1x/1.5x compare exact form vertices, text and modal hit regions with full composition; actual GPU pixels identical",
+      "native": "Four fresh release X11 hosts pass startup/presentation/controlled close. NEW mouse name input and Tab focus verified by captures; inspected destination caret and preserved entered text. No project created.",
+      "failed_attempt": "Initial visual-feature test compilation missing HitTarget import; fixed, replay passes. This is not a negative control.",
+      "negative": "Legacy composition is the unchanged pixel/content comparator; prescribed independent defect-injection qualification remains outstanding."
+    },
+    "limits": [
+      "No S3 exit or full HP13 qualification; complete native pass counters/backend/scale/input matrix remain due.",
+      "No full resource or performance-budget acceptance, relative speed claim, resize qualification or dependency change.",
+      "Main panel controls and scroll/clip/hit convergence remain S3 work.",
+      "Workspace invalidation retirement verified in call sites; native background-output stress proof remains outstanding."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/new-project-dialog/result.json"
   }
 }
