@@ -156,7 +156,7 @@ impl App {
                 if let (Some(runtime), Some(target)) = (&mut self.runtime, target.as_ref()) {
                     let _ = runtime.activate_project_preferences_hit_target(target);
                 }
-                self.request_redraw_if_needed();
+                self.request_preferences_target_redraw(target.as_ref(), true);
             }
             WindowEvent::MouseWheel { delta, .. } => {
                 self.scroll_preferences_window(delta, true);
