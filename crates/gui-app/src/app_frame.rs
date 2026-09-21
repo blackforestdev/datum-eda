@@ -11,7 +11,7 @@ impl App {
             return;
         };
         let presented = if let Some(runtime) = &mut self.runtime {
-            append_gui_verbose_diagnostic_line("redraw handler begin");
+            append_gui_verbose_diagnostic_line(|| "redraw handler begin");
             let started = std::time::Instant::now();
             let presented = match runtime.render() {
                 Ok(presented) => presented,
@@ -57,7 +57,7 @@ impl App {
                     event_loop.exit();
                 }
             }
-            append_gui_verbose_diagnostic_line("redraw handler end");
+            append_gui_verbose_diagnostic_line(|| "redraw handler end");
         }
     }
 }

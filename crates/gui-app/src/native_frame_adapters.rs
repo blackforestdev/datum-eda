@@ -11,7 +11,7 @@ impl App {
     pub(super) fn dispatch_native_frame_round(&mut self, event_loop: &ActiveEventLoop) {
         let ready = self.frames.ready_round(std::time::Instant::now());
         if !ready.is_empty() {
-            append_gui_verbose_diagnostic_line(format!("native frame round hosts={ready:?}"));
+            append_gui_verbose_diagnostic_line(|| format!("native frame round hosts={ready:?}"));
         }
         for id in ready {
             if event_loop.exiting() {

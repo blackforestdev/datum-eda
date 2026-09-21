@@ -23,46 +23,52 @@ impl Runtime {
             event.repeat,
             pointer_in_scene,
         );
-        append_gui_verbose_diagnostic_line(format!(
-            "pan key physical={:?} logical={:?} state={:?} repeat={} pointer_in_scene={} held={} consumed={}",
-            event.physical_key,
-            event.logical_key,
-            event.state,
-            event.repeat,
-            pointer_in_scene,
-            self.pan_gesture.space_is_held(),
-            consumed
-        ));
+        append_gui_verbose_diagnostic_line(|| {
+            format!(
+                "pan key physical={:?} logical={:?} state={:?} repeat={} pointer_in_scene={} held={} consumed={}",
+                event.physical_key,
+                event.logical_key,
+                event.state,
+                event.repeat,
+                pointer_in_scene,
+                self.pan_gesture.space_is_held(),
+                consumed
+            )
+        });
         consumed
     }
 
     pub(super) fn begin_primary_pan(&mut self) -> bool {
         let pointer_in_scene = self.cursor_in_editor_scene();
         let active = self.pan_gesture.primary_pressed(pointer_in_scene);
-        append_gui_verbose_diagnostic_line(format!(
-            "pan primary pressed cursor={:?} pointer_in_scene={} held={} active={}",
-            self.last_cursor_pos,
-            pointer_in_scene,
-            self.pan_gesture.space_is_held(),
-            active
-        ));
+        append_gui_verbose_diagnostic_line(|| {
+            format!(
+                "pan primary pressed cursor={:?} pointer_in_scene={} held={} active={}",
+                self.last_cursor_pos,
+                pointer_in_scene,
+                self.pan_gesture.space_is_held(),
+                active
+            )
+        });
         active
     }
 
     pub(super) fn advance_primary_pan(&mut self, previous: (f32, f32), next: (f32, f32)) -> bool {
         let changed = self.handle_pan_drag(previous, next);
-        append_gui_verbose_diagnostic_line(format!(
-            "pan move previous={previous:?} next={next:?} changed={changed}"
-        ));
+        append_gui_verbose_diagnostic_line(|| {
+            format!("pan move previous={previous:?} next={next:?} changed={changed}")
+        });
         changed
     }
 
     pub(super) fn finish_primary_pan(&mut self) -> bool {
         let suppress_click = self.pan_gesture.primary_released();
-        append_gui_verbose_diagnostic_line(format!(
-            "pan primary released cursor={:?} suppress_click={suppress_click}",
-            self.last_cursor_pos
-        ));
+        append_gui_verbose_diagnostic_line(|| {
+            format!(
+                "pan primary released cursor={:?} suppress_click={suppress_click}",
+                self.last_cursor_pos
+            )
+        });
         suppress_click
     }
 

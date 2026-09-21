@@ -205,7 +205,7 @@ impl ApplicationHandler for MinimalApp {
             return;
         };
         if let Some(label) = support::window_event_diagnostic_label(&event) {
-            support::append_gui_verbose_diagnostic_line(format!("window event {label}"));
+            support::append_gui_verbose_diagnostic_line(|| format!("window event {label}"));
         }
         match event {
             WindowEvent::CloseRequested => event_loop.exit(),

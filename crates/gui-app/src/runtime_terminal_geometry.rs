@@ -121,7 +121,7 @@ impl Runtime {
             .map(|pane| pane.geometry)
             .unwrap_or(root_geometry);
         let (cols, rows) = (focused.columns, focused.rows);
-        append_gui_verbose_diagnostic_line(format!("terminal resize begin {cols}x{rows}"));
+        append_gui_verbose_diagnostic_line(|| format!("terminal resize begin {cols}x{rows}"));
         let result = if panes.is_empty() {
             self.terminal_sessions.resize_active_surface(
                 cols,
@@ -137,7 +137,7 @@ impl Runtime {
                 let terminal = &mut self.session.workspace_mut().ui.terminal;
                 terminal.columns = cols;
                 terminal.rows = rows;
-                append_gui_verbose_diagnostic_line("terminal resize end");
+                append_gui_verbose_diagnostic_line(|| "terminal resize end");
             }
             Err(err) => {
                 append_gui_diagnostic_line(format!("terminal resize failed: {err}"));

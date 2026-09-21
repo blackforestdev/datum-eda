@@ -56,9 +56,11 @@ pub(crate) fn append_gui_diagnostic_line(message: impl AsRef<str>) {
     );
 }
 
-pub(crate) fn append_gui_verbose_diagnostic_line(message: impl AsRef<str>) {
+/// Construct diagnostics only when enabled; callers must keep message-only work
+/// inside the closure so disabled tracing adds no formatting or string allocation.
+pub(crate) fn append_gui_verbose_diagnostic_line<M: AsRef<str>>(message: impl FnOnce() -> M) {
     if std::env::var_os("DATUM_GUI_VERBOSE_LOG").is_some() {
-        append_gui_diagnostic_line(message);
+        append_gui_diagnostic_line(message());
     }
 }
 
