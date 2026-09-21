@@ -40,6 +40,7 @@ fn retain_overlay_buffers<T>(
 pub(crate) struct TextBufferCache {
     entries: Vec<CachedTextBuffer>,
     frame: u64,
+    revision: u64,
 }
 
 #[derive(Clone, Copy)]
@@ -70,6 +71,10 @@ fn matches_run(key: &TextBufferKey, run: &TextRun, (width_px, height_px): (u32, 
 }
 
 impl TextBufferCache {
+    pub(crate) fn revision(&self) -> u64 {
+        self.revision
+    }
+
     pub(crate) fn entries(&self) -> &[CachedTextBuffer] {
         &self.entries
     }
@@ -79,9 +84,13 @@ impl TextBufferCache {
     pub(crate) fn begin_frame(&mut self, profile: Profile) {
         self.frame = self.frame.wrapping_add(1).max(1);
         if matches!(profile, Profile::Workspace) {
+            let old_len = self.entries.len();
             retain_recent_text_buffers(&mut self.entries, self.frame, |entry| {
                 entry.last_used_frame
             });
+            if self.entries.len() != old_len {
+                self.revision = self.revision.wrapping_add(1);
+            }
         }
     }
 
@@ -89,6 +98,8 @@ impl TextBufferCache {
     /// live. Bound retained buffers and key text; current-frame scratch can grow
     /// only with that frame's visible text. Glyph instances own their GPU data.
     pub(crate) fn trim_overlay(&mut self) {
+        // Sorting can change buffer indices even without evicting entries.
+        self.revision = self.revision.wrapping_add(1);
         retain_overlay_buffers(
             &mut self.entries,
             |entry| entry.last_used_frame,
@@ -171,6 +182,7 @@ impl TextBufferCache {
             );
         }
         buffer.shape_until_scroll(font_system, false);
+        self.revision = self.revision.wrapping_add(1);
         self.entries.push(CachedTextBuffer {
             key,
             buffer,

@@ -10,6 +10,15 @@ fn hardware_renderer_with_features(
     height: u32,
     required_features: wgpu::Features,
 ) -> OffscreenRenderer {
+    hardware_renderer_with_atlas_limit(width, height, required_features, None)
+}
+
+fn hardware_renderer_with_atlas_limit(
+    width: u32,
+    height: u32,
+    required_features: wgpu::Features,
+    max_dimension: Option<u32>,
+) -> OffscreenRenderer {
     let instance = wgpu::Instance::default();
     let adapter = pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions {
         power_preference: wgpu::PowerPreference::LowPower,
@@ -29,6 +38,11 @@ fn hardware_renderer_with_features(
     );
     let (device, queue) = pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor {
         required_features,
+        required_limits: wgpu::Limits {
+            max_texture_dimension_2d:
+                max_dimension.unwrap_or(wgpu::Limits::default().max_texture_dimension_2d),
+            ..Default::default()
+        },
         ..Default::default()
     }))
     .unwrap();
@@ -85,7 +99,7 @@ fn dialog_single_pass_matches_general_renderer_pixels() {
             );
             assert!(prepared.is_overlay_only());
             let actual = capture(&mut renderer, &prepared);
-            assert!(renderer.renderer.last_text_prepare_signature.is_none());
+            assert!(renderer.renderer.text_preparation.is_invalid());
             let mut general = prepared.clone();
             // An off-screen quad selects the general renderer without changing
             // any output pixel, so both paths consume the identical dialog.
@@ -346,4 +360,167 @@ fn production_dialog_upload_reuses_content_and_matches_evicted_pixels() {
     let restored = capture(&mut renderer, &prepared);
     assert!(renderer.renderer.menu_overlay_gpu.last_upload_bytes > 0);
     assert!(restored == cold);
+}
+
+#[test]
+#[ignore = "requires local GPU; run explicitly with the visual feature"]
+fn shared_atlas_retry_and_cache_reindex_refresh_workspace_glyphs() {
+    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let mut renderer = hardware_renderer(960, 720);
+    let mut prepared =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+    let mut workspace = prepared.menu_overlay_text_runs[0].clone();
+    workspace.text = "Workspace glyph residency".into();
+    workspace.rich_spans.clear();
+    workspace.x = 20.0;
+    workspace.y = 680.0;
+    workspace.clip_bounds = None;
+    let mut overlay = workspace.clone();
+    overlay.text = "Overlay glyph residency".into();
+    overlay.x = 600.0;
+    overlay.y = 20.0;
+    prepared.text_runs = vec![workspace.clone()];
+    prepared.menu_overlay_text_runs = vec![overlay.clone()];
+    prepared.menu_overlay_vertices = crate::gpu_data::quads_to_vertices(&[crate::Quad::from_rect(
+        crate::RectPx {
+            x: 500.0,
+            y: 0.0,
+            width: 460.0,
+            height: 720.0,
+        },
+        [0.05; 3],
+    )]);
+    let cold = capture(&mut renderer, &prepared);
+    let count = renderer.renderer.text_preparation.workspace_prepares;
+    assert!(cold == capture(&mut renderer, &prepared));
+    assert_eq!(
+        renderer.renderer.text_preparation.workspace_prepares, count,
+        "warm workspace preparation stays skipped"
+    );
+    renderer.renderer.text_preparation.forced_overlay_errors = 1;
+    assert!(cold == capture(&mut renderer, &prepared));
+    assert_eq!(
+        renderer.renderer.text_preparation.workspace_prepares,
+        count + 1,
+        "retry must re-protect workspace glyphs before overlay allocation"
+    );
+
+    renderer.renderer.text_preparation.forced_overlay_errors = 2;
+    let failed = renderer.renderer.prepare_frame_text(
+        &renderer.device,
+        &renderer.queue,
+        &prepared,
+        960,
+        720,
+        false,
+    );
+    assert!(failed.is_err());
+    assert!(renderer.renderer.text_preparation.is_invalid());
+    let count = renderer.renderer.text_preparation.workspace_prepares;
+    assert!(cold == capture(&mut renderer, &prepared));
+    assert_eq!(
+        renderer.renderer.text_preparation.workspace_prepares,
+        count + 1
+    );
+
+    // Evict entry zero but retain entry one, which moves into the same index.
+    // The new workspace hits that existing buffer with the old placement key.
+    renderer
+        .renderer
+        .text_buffers
+        .begin_frame(crate::text_buffer_cache::Profile::Workspace);
+    renderer.renderer.text_buffers.indices(
+        &mut renderer.renderer.font_system,
+        &[overlay],
+        960,
+        720,
+    );
+    renderer
+        .renderer
+        .text_buffers
+        .begin_frame(crate::text_buffer_cache::Profile::Workspace);
+    prepared.text_runs[0].text = "Overlay glyph residency".into();
+    let (indices, stats) = renderer.renderer.text_buffers.indices(
+        &mut renderer.renderer.font_system,
+        &prepared.text_runs,
+        960,
+        720,
+    );
+    assert_eq!(indices, vec![0]);
+    assert_eq!(
+        stats.misses, 0,
+        "collision is a retained cache hit, not new shaping"
+    );
+    let count = renderer.renderer.text_preparation.workspace_prepares;
+    let reindexed = capture(&mut renderer, &prepared);
+    assert_eq!(
+        renderer.renderer.text_preparation.workspace_prepares,
+        count + 1
+    );
+    assert!(
+        reindexed != cold,
+        "workspace changed to the retained overlay label"
+    );
+    renderer.renderer.text_preparation = Default::default();
+    assert!(
+        reindexed == capture(&mut renderer, &prepared),
+        "reindex reuse matches forced fresh glyph preparation"
+    );
+}
+
+#[test]
+#[ignore = "requires local GPU; run explicitly with the visual feature"]
+fn shared_text_preparation_survives_real_atlas_pressure() {
+    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let mut renderer =
+        hardware_renderer_with_atlas_limit(192, 192, wgpu::Features::empty(), Some(256));
+    let mut prepared =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 192, 192, 1.0);
+    let mut run = prepared.menu_overlay_text_runs[0].clone();
+    run.rich_spans.clear();
+    run.clip_bounds = None;
+    run.x = 10.0;
+    run.y = 10.0;
+    run.text = "Workspace".into();
+    run.size = 14.0;
+    prepared.text_runs = vec![run.clone()];
+    prepared.menu_overlay_vertices = crate::gpu_data::quads_to_vertices(&[crate::Quad::from_rect(
+        crate::RectPx {
+            x: 0.0,
+            y: 80.0,
+            width: 192.0,
+            height: 112.0,
+        },
+        [0.05; 3],
+    )]);
+    for size in 24..56 {
+        prepared.menu_overlay_text_runs = (b'A'..=b'L')
+            .map(|ch| {
+                let mut label = run.clone();
+                label.text = (ch as char).to_string();
+                label.size = size as f32;
+                label.y = 85.0;
+                label
+            })
+            .collect();
+        capture(&mut renderer, &prepared);
+    }
+    assert!(
+        renderer.renderer.text_preparation.atlas_retries > 0,
+        "limited atlas must exercise real pressure, without injection"
+    );
+    let pressure = capture(&mut renderer, &prepared);
+    let retries = renderer.renderer.text_preparation.atlas_retries;
+    let mut fresh =
+        hardware_renderer_with_atlas_limit(192, 192, wgpu::Features::empty(), Some(256));
+    assert!(
+        pressure == capture(&mut fresh, &prepared),
+        "pressure result differs from fresh atlas"
+    );
+    assert!(pressure == capture(&mut renderer, &prepared));
+    assert_eq!(
+        renderer.renderer.text_preparation.atlas_retries, retries,
+        "unchanged pressure recovery remains warm"
+    );
+    eprintln!("real bounded-atlas retries: {retries}");
 }
