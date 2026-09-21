@@ -1,0 +1,61 @@
+{
+  "binary_sha256": "e2f93a90ae086f0c5bc144915b17c66174d321290a220a9249fb9094aee41e85",
+  "runs": [
+    {
+      "host": "NEW",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "window": "WindowId(12582917)",
+      "query": "burst",
+      "before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 1,
+          "present": 1
+        }
+      },
+      "after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "unmatched_key": "F6",
+      "before_unmatched": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "after_unmatched": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "scope": "native input to own dialog; Main submission/presentation unchanged; screenshot final text requires visual review"
+    }
+  ]
+}
