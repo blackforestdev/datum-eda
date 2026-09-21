@@ -2280,7 +2280,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial component proof: current gpu_wait_is_bounded_by_same_episode_and_success_resets_it test verifies queue-wait recovery limit; native never-completing queue, callback/allocation bounds and dispatch qualification remain open. Shared default idle completion now advances through the single minimum-deadline owner; five component regressions and four bounded native healthy-queue idle/close runs passed. Full native fault/deadline/resource qualification remains open.",
+        "status": "Partial component proof: current gpu_wait_is_bounded_by_same_episode_and_success_resets_it test verifies queue-wait recovery limit; native never-completing queue, callback/allocation bounds and dispatch qualification remain open. Shared default idle completion now advances through the single minimum-deadline owner; five component regressions and four bounded native healthy-queue idle/close runs passed. Full native fault/deadline/resource qualification remains open. Bounded native publication-stall/F5/current-extent recovery now verified across four hosts. This is not actual driver-hang qualification; Main close repeatability remains unresolved (one pass, two timeouts).",
         "id": "proof_lf_09",
         "positive": "Queue completion never arrives",
         "negative_control": "Block UI polling until completion",
@@ -2331,7 +2331,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json"
+        "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json",
+        "docs/reviews/gui-performance/implementation/S1/held-completion/result.json"
       ]
     },
     {
@@ -2378,7 +2379,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial: four-host native persistent-timeout/F5/Close proof; full predicate remains open",
+        "status": "partial: four-host native persistent-timeout/F5/Close proof; full predicate remains open Bounded native publication-stall/F5/current-extent recovery now verified across four hosts. This is not actual driver-hang qualification; Main close repeatability remains unresolved (one pass, two timeouts).",
         "id": "proof_lf_10",
         "positive": "Exhaust automatic retry then choose Retry/Close",
         "negative_control": "Automatically retry forever or discard engine state",
@@ -2426,7 +2427,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S1/retry-modifiers/receipt.json"
+        "docs/reviews/gui-performance/implementation/S1/retry-modifiers/receipt.json",
+        "docs/reviews/gui-performance/implementation/S1/held-completion/result.json"
       ]
     },
     {
@@ -24020,5 +24022,30 @@
       "S1 remains in progress; resize CPU/temporal qualification remains separate and nonblocking."
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json"
+  },
+  "s1_held_completion_work": {
+    "status": "Bounded native stalled-completion publication and F5 recovery verified across four hosts; full LF-09/LF-10 qualification remains partial",
+    "production_consumers_verified": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_path": "Actual wgpu completion callback -> QueueOwner watermark -> bounded shared progress failure -> native F5 -> shared retry -> current extent/configure/acquire/present",
+    "production_change": "Opt-in DATUM_DIAGNOSTIC_QUEUE_COMPLETION=hold-until-retry holds publication of genuine delivered completion receipts. Existing Retry releases only those receipts; later callbacks remain live. No driver blocking or invented completion. Default has no held state, no extra callback and no new dependency.",
+    "retired_paths": "None; verifies default shared queue/recovery owners landed in ca9c2b38 through their actual native adapters.",
+    "verification": {
+      "app": "368 passed, 0 failed, 9 ignored; new test proves undelivered later receipt cannot be released by Retry",
+      "clippy": "app datum-gui binary -D warnings passed",
+      "release": "fresh guarded offline release build passed",
+      "native": "All four hosts observed bounded shared failure, resize dispatched with no additional presentation while failed, F5 released actual completion, and current 1200x800 frame completed. Global/Project/New close and focus restoration passed. Main close passed once and timed out in two repeat runs; those logs lack CloseRequested."
+    },
+    "limits": [
+      "Injected publication stall validates application scheduling/admission/retry, not an actually hung GPU driver, callback latency under driver failure, or full callback/allocation/resource budgets.",
+      "First auxiliary attempt expected its own initial presentation; Main had already submitted and correctly blocked auxiliary configure. Preserve failed harness trace and corrected shared-queue observation.",
+      "Main close is not repeatably qualified: one pass and two 20-second close timeouts; processes were terminated after observation. Synchronizing X11 send did not resolve the issue. Existing dat-main-native-capture-delay-md9 remains open; no root cause or resolution claimed.",
+      "No native hidden-time, saturated PTY coexistence, independent pixel/state replay, full resource or S1 completion claim. Resize CPU/temporal exclusions unchanged."
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/held-completion/result.json"
   }
 }
