@@ -1,0 +1,294 @@
+{
+  "binary_sha256": "174313519a838c079bdf524e806d301ff6507c16cb38b58d796ff7a8bb0558c1",
+  "runs": [
+    {
+      "host": "MAIN",
+      "pid": 1218222,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "kwin_initial": {
+        "activities": {
+          "type": "as",
+          "data": [
+            "bb1994fa-ea2d-4cb8-9b9a-3225f354bede"
+          ]
+        },
+        "caption": {
+          "type": "s",
+          "data": "Datum EDA"
+        },
+        "clientMachine": {
+          "type": "s",
+          "data": ""
+        },
+        "desktopFile": {
+          "type": "s",
+          "data": ""
+        },
+        "desktops": {
+          "type": "as",
+          "data": [
+            "11be47b7-ab1f-4562-ae8e-f6341a075ff2"
+          ]
+        },
+        "fullscreen": {
+          "type": "b",
+          "data": false
+        },
+        "height": {
+          "type": "d",
+          "data": 828.5714285714286
+        },
+        "keepAbove": {
+          "type": "b",
+          "data": false
+        },
+        "keepBelow": {
+          "type": "b",
+          "data": false
+        },
+        "layer": {
+          "type": "i",
+          "data": 2
+        },
+        "localhost": {
+          "type": "b",
+          "data": true
+        },
+        "maximizeHorizontal": {
+          "type": "i",
+          "data": 0
+        },
+        "maximizeVertical": {
+          "type": "i",
+          "data": 0
+        },
+        "minimized": {
+          "type": "b",
+          "data": false
+        },
+        "noBorder": {
+          "type": "b",
+          "data": false
+        },
+        "resourceClass": {
+          "type": "s",
+          "data": "datum-gui"
+        },
+        "resourceName": {
+          "type": "s",
+          "data": "datum-gui"
+        },
+        "role": {
+          "type": "s",
+          "data": ""
+        },
+        "shaded": {
+          "type": "b",
+          "data": false
+        },
+        "skipPager": {
+          "type": "b",
+          "data": false
+        },
+        "skipSwitcher": {
+          "type": "b",
+          "data": false
+        },
+        "skipTaskbar": {
+          "type": "b",
+          "data": false
+        },
+        "type": {
+          "type": "i",
+          "data": 0
+        },
+        "uuid": {
+          "type": "s",
+          "data": "{e686d0da-0bc4-4b42-a456-4b29e9fdafe9}"
+        },
+        "width": {
+          "type": "d",
+          "data": 1281.904761904762
+        },
+        "x": {
+          "type": "d",
+          "data": 273.0
+        },
+        "y": {
+          "type": "d",
+          "data": 99.0
+        }
+      },
+      "kwin_matches": {
+        "type": "a(sssida{sv})",
+        "data": [
+          [
+            [
+              "0_{e686d0da-0bc4-4b42-a456-4b29e9fdafe9}",
+              "Datum EDA",
+              "wayland",
+              100,
+              0.8,
+              {
+                "subtext": {
+                  "type": "s",
+                  "data": "Activate running window on Desktop 1"
+                }
+              }
+            ]
+          ]
+        ]
+      },
+      "kwin_minimized": {
+        "activities": {
+          "type": "as",
+          "data": [
+            "bb1994fa-ea2d-4cb8-9b9a-3225f354bede"
+          ]
+        },
+        "caption": {
+          "type": "s",
+          "data": "Datum EDA"
+        },
+        "clientMachine": {
+          "type": "s",
+          "data": ""
+        },
+        "desktopFile": {
+          "type": "s",
+          "data": ""
+        },
+        "desktops": {
+          "type": "as",
+          "data": [
+            "11be47b7-ab1f-4562-ae8e-f6341a075ff2"
+          ]
+        },
+        "fullscreen": {
+          "type": "b",
+          "data": false
+        },
+        "height": {
+          "type": "d",
+          "data": 828.5714285714286
+        },
+        "keepAbove": {
+          "type": "b",
+          "data": false
+        },
+        "keepBelow": {
+          "type": "b",
+          "data": false
+        },
+        "layer": {
+          "type": "i",
+          "data": 2
+        },
+        "localhost": {
+          "type": "b",
+          "data": true
+        },
+        "maximizeHorizontal": {
+          "type": "i",
+          "data": 0
+        },
+        "maximizeVertical": {
+          "type": "i",
+          "data": 0
+        },
+        "minimized": {
+          "type": "b",
+          "data": true
+        },
+        "noBorder": {
+          "type": "b",
+          "data": false
+        },
+        "resourceClass": {
+          "type": "s",
+          "data": "datum-gui"
+        },
+        "resourceName": {
+          "type": "s",
+          "data": "datum-gui"
+        },
+        "role": {
+          "type": "s",
+          "data": ""
+        },
+        "shaded": {
+          "type": "b",
+          "data": false
+        },
+        "skipPager": {
+          "type": "b",
+          "data": false
+        },
+        "skipSwitcher": {
+          "type": "b",
+          "data": false
+        },
+        "skipTaskbar": {
+          "type": "b",
+          "data": false
+        },
+        "type": {
+          "type": "i",
+          "data": 0
+        },
+        "uuid": {
+          "type": "s",
+          "data": "{e686d0da-0bc4-4b42-a456-4b29e9fdafe9}"
+        },
+        "width": {
+          "type": "d",
+          "data": 1281.904761904762
+        },
+        "x": {
+          "type": "d",
+          "data": 273.0
+        },
+        "y": {
+          "type": "d",
+          "data": 99.0
+        }
+      },
+      "queue_exhausted_while_minimized": true,
+      "reported_visibility_events": [],
+      "exit": 0,
+      "passed": true,
+      "idle_presentations_before": 1,
+      "idle_presentations_after": 1,
+      "final_present": {
+        "acquire_attempts": 1,
+        "acquired": 1,
+        "active": 0,
+        "configuration_generation": 1,
+        "configure_attempts": 1,
+        "configured_extent": [
+          1344,
+          840
+        ],
+        "discarded": 0,
+        "frame_submission_receipts_issued": 1,
+        "frame_submissions": 1,
+        "gpu_completed_through_receipt": 0,
+        "host": 1,
+        "last_frame_submission_receipt": 1,
+        "last_present_receipt": 1,
+        "presented": 1,
+        "queue_epoch": 1,
+        "reason": "present",
+        "wgpu_submission": "Some(SubmissionIndex { index: 1 })",
+        "window": "WindowId(94438807005024)"
+      },
+      "native_close_requests": 2
+    }
+  ]
+}
