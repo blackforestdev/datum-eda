@@ -1,0 +1,15 @@
+diff --git a/crates/gui-viewport/src/scroll.rs b/crates/gui-viewport/src/scroll.rs
+index 4b17e0ca..d403d11e 100644
+--- a/crates/gui-viewport/src/scroll.rs
++++ b/crates/gui-viewport/src/scroll.rs
+@@ -64,9 +64,7 @@ impl ScrollViewport {
+     pub fn layout(&mut self, viewport: ScreenRectPx, content_height: f32) {
+         let content_height = content_height.max(0.0);
+         if self.viewport != viewport || self.content_height != content_height {
+-            // The stored grab belongs to the old thumb geometry. Do not apply
+-            // it to a reflowed document; an unchanged layout keeps capture.
+-            self.release();
++            // Deliberate negative control: retain obsolete grab after reflow.
+         }
+         self.viewport = viewport;
+         self.content_height = content_height;

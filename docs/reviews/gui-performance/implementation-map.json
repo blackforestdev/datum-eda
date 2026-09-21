@@ -6565,6 +6565,10 @@
       "s3_scroll_reflow_progress": {
         "status": "partial shared/default native implementation; native event qualification open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-reflow-capture/result.json"
+      },
+      "component_negative_proof": {
+        "status": "reflow-owner negative fails, restored positive passes; native qualification open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-reflow-negative/result.json"
       }
     },
     {
@@ -26679,7 +26683,8 @@
       "app": "Three focused global_preferences_window tests pass and app test binary compiles with new paths.",
       "limits": "No native DPI/resize/input/final-state qualification or independent negative injection performed. Desktop-use clarification remains pending. No resource/temporal resize acceptance, S3 closure or full HP21 pass."
     },
-    "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-reflow-capture/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-reflow-capture/result.json",
+    "component_negative_proof": "docs/reviews/gui-performance/implementation/S3/scroll-reflow-negative/result.json"
   },
   "s3_layers_effective_scroll_work": {
     "status": "bounded S3 default Layers row-bound and routing correction",
