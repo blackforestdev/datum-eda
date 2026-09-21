@@ -1,0 +1,23 @@
+{
+  "status": "bounded S3 Main MENU shared clipping adoption; full qualification open",
+  "baseline": "35b390cd",
+  "sources": {
+    "crates/gui-render/src/menu_chrome.rs": "417f2652addb7ec700f8ec4d286457f2885b5b6341103de41d0a1f90f4ea18ac"
+  },
+  "production_consumers": [
+    "Main menu-bar title composition",
+    "Main dropdown and submenu item composition"
+  ],
+  "shared_owner": "render/hit_clipping.rs::clip_content",
+  "retired_paths": [
+    "Unrestricted menu title geometry/text/hits",
+    "Position-clamped dropdown/submenu cards with unclipped text and hidden-row hit extents"
+  ],
+  "behavior": "Clip titles to their menu bar and dropdown/submenu content to the intersection of its card and window below the bar. Preserve title anchors, content-driven sizing, row order, enabled/disabled action authority and submenu placement; fully hidden rows have no hit target. No overflow navigation redesign.",
+  "proof": {
+    "renderer": "197 renderer library tests passed serially. New actual menu-item composition regression uses the largest existing menu in a constrained window and checks geometry/text/hit bounds plus omission of fully hidden rows. Existing overlay/title-position/width/readiness tests pass.",
+    "clippy": "Offline guarded renderer library Clippy passed with -D warnings.",
+    "static_capture": "Existing OffscreenRenderer/fixture projection at1280x800 and480x240 with File menu open; both visually inspected. Constrained capture is diagnostic geometry, not admitted native-window usability. Temporary first-party example removed; recipe retained.",
+    "limits": "No native focus/input, full pixel parity, independent negative, timing or resource qualification. Existing constrained-window title/Inspector crowding is outside this menu clipping change. No dependency, license, prototype, action authority, acceptance or sequencing change."
+  }
+}
