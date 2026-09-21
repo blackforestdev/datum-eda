@@ -287,7 +287,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/terminal-output-damage/result.json",
         "docs/reviews/gui-performance/implementation/S1/empty-search-input/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "SH-02",
@@ -394,7 +395,8 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "SH-03",
@@ -499,7 +501,8 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "SH-04",
@@ -604,7 +607,8 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "SH-05",
@@ -717,7 +721,8 @@
         "docs/reviews/gui-performance/implementation/S1/terminal-round/result.json",
         "docs/reviews/gui-performance/implementation/S1/terminal-output-damage/result.json",
         "docs/reviews/gui-performance/implementation/S1/active-host-fairness/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "SH-06",
@@ -826,7 +831,8 @@
         "docs/reviews/gui-performance/implementation/S1/wait-owner/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/device-wake/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "SH-07",
@@ -933,7 +939,8 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "SH-08",
@@ -1044,7 +1051,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/queue-receipt-negative/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "SH-09",
@@ -1150,7 +1158,8 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "SH-10",
@@ -1255,7 +1264,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/SH-10/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "SH-11",
@@ -1362,7 +1372,8 @@
         "docs/reviews/gui-performance/implementation/S1/pane-close/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/pane-close/native/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/pane-rebind/receipt.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "SH-12",
@@ -1467,7 +1478,8 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-01",
@@ -1567,7 +1579,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
         "docs/reviews/gui-performance/implementation/S1/native-zero-extent/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-02",
@@ -1663,7 +1676,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/acquisition-transition/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/LF-02/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-03",
@@ -1758,7 +1772,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/retry-modifiers/receipt.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-04",
@@ -1860,7 +1875,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
         "docs/reviews/gui-performance/implementation/S1/wayland-visibility-applicability/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-05",
@@ -1963,7 +1979,8 @@
         "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
         "docs/reviews/gui-performance/implementation/S1/device-wake/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/owned-main-window/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-06",
@@ -2060,7 +2077,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/attachment-guard/receipt.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-07",
@@ -2169,7 +2187,8 @@
         "docs/reviews/gui-performance/implementation/S1/native-window-lifetime/result.json",
         "docs/reviews/gui-performance/implementation/S1/native-attachment-reconciliation/result.json",
         "docs/reviews/gui-performance/implementation/S1/pending-queue-close/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-08",
@@ -2270,7 +2289,8 @@
         "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
         "docs/reviews/gui-performance/implementation/S1/focus-loss-capture/result.json",
         "docs/reviews/gui-performance/implementation/S1/gesture-geometry/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-09",
@@ -2371,7 +2391,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json",
         "docs/reviews/gui-performance/implementation/S1/held-completion/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-10",
@@ -2469,7 +2490,8 @@
         "docs/reviews/gui-performance/implementation/S1/held-completion/result.json",
         "docs/reviews/gui-performance/implementation/S1/gesture-geometry/result.json",
         "docs/reviews/gui-performance/implementation/S1/native-failure-title/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-11",
@@ -2566,7 +2588,8 @@
         "docs/reviews/gui-performance/implementation/S1/attachment-guard/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/prepared-attachment/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/native-attachment-reconciliation/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-12",
@@ -2662,7 +2685,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/extent-owner/receipt.json",
         "docs/reviews/gui-performance/implementation/S1/extent-owner/native-burst/receipt.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-13",
@@ -2763,7 +2787,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
         "docs/reviews/gui-performance/implementation/S1/native-surface-barriers/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-14",
@@ -2862,7 +2887,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "LF-15",
@@ -2959,7 +2985,8 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "RS-01",
@@ -4395,7 +4422,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/owned-main-window/result.json",
         "docs/reviews/gui-performance/implementation/S1/LF-02/result.json"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "HP05-02",
@@ -5090,7 +5118,8 @@
       "consumer_applicability": {
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "HP11-02",
@@ -5145,7 +5174,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/terminal-output-damage/tests.log.gz"
-      ]
+      ],
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
     },
     {
       "id": "HP12-01",
@@ -24939,7 +24969,7 @@
     "evidence": "docs/reviews/gui-performance/implementation/S1/empty-search-input/result.json"
   },
   "s1_exit_reconciliation": {
-    "status": "Owner approved the exact S1 exit amendment on 2026-09-21; amended readiness review still required before S1 completion or S2 selection",
+    "status": "Owner-approved exit applied; S1 bounded readiness reviewed and recorded in s1_readiness. Full per-row qualification remains required at S5.",
     "source_commit": "ed1b38fafa4bc0244c52054a7af22c832ff88798",
     "source_sha256": {
       "crates/gui-app/src/native_frame_coordinator.rs": "1f9ef53eee2aedaff7964487877118f3daff5f4c84eaa6eddcab0bb5c8737d45",
@@ -24971,7 +25001,7 @@
     "proposal": "Historical exact proposal: commit 1e4d2e2f",
     "limits": "Approval does not complete S1 or qualify partial rows. All original receipts and row statuses remain; full carried qualification, independent replay and endurance are S5 prerequisites.",
     "previous_barrier": "Existing GPI-S1 requires verification of SH/LF and affected HP while their map rows still contain missing prescribed negative controls, native final-state and resource predicates. S2 has an explicit GPI-S1 dependency. This is unfinished proof under the current exit, not missing Rust implementation authority or a new third-party dependency. Continuing small unrelated fixes is an execution choice, not a substitute for resolving this exit.",
-    "barrier": "S1 bounded implementation readiness review remains required; unfinished per-row qualification is now an explicit S5 exit obligation.",
+    "barrier": "No remaining S1 implementation-readiness prerequisite; S2 selection follows the recorded readiness transition.",
     "owner_response": "Approve the proposed S1 exit amendment",
     "operative_contract": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#owner-amendment-s1-implementation-exit"
   },
@@ -25032,6 +25062,78 @@
       "Device-rebind title restoration and no repeated title transitions are coordinator tested; native recipe exercises manual queue Retry.",
       "Retained baseline startup timeout is not attributed to this candidate or resolved.",
       "No latency/resource-budget claim, complete LF-10/S1 acceptance, prescribed historical negative replay, dependency change, or resize qualification."
+    ]
+  },
+  "s1_readiness": {
+    "status": "S1 bounded implementation readiness satisfied under approved exit; requirement qualification remains partial",
+    "evidence": "docs/reviews/gui-performance/implementation/S1/readiness/result.json",
+    "production_consumers_migrated": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "qualification_carried_to_s5": [
+      "SH-01",
+      "SH-02",
+      "SH-03",
+      "SH-04",
+      "SH-05",
+      "SH-06",
+      "SH-07",
+      "SH-08",
+      "SH-09",
+      "SH-10",
+      "SH-11",
+      "SH-12",
+      "LF-01",
+      "LF-02",
+      "LF-03",
+      "LF-04",
+      "LF-05",
+      "LF-06",
+      "LF-07",
+      "LF-08",
+      "LF-09",
+      "LF-10",
+      "LF-11",
+      "LF-12",
+      "LF-13",
+      "LF-14",
+      "LF-15",
+      "HP05-01",
+      "HP11-01",
+      "HP11-02"
+    ],
+    "unchanged_exclusions": [
+      {
+        "id": "RS-01",
+        "scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification"
+      },
+      {
+        "id": "RS-02",
+        "scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification"
+      },
+      {
+        "id": "RS-03",
+        "scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification"
+      },
+      {
+        "id": "RS-04",
+        "scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification"
+      },
+      {
+        "id": "HP05-02",
+        "scope": "deferred temporal"
+      }
+    ],
+    "limits": [
+      "No full SH/LF/HP row acceptance, complete static/native input/focus, backend/scale, prescribed per-row negative or resource/method qualification follows.",
+      "Wayland minimized/occluded signals are absent in existing winit backend; retain documented E06 applicability and dat-wayland-visibility-signal-nti.",
+      "dat-main-native-capture-delay-md9 retains intermittent native stalls/delivery failures; no latency or GEFN reacceptance claim.",
+      "dat-terminal-convergence-guard-xke remains: focus-assignment/font-source-marker guard failures; full drift not green.",
+      "Historical map slice entries and original receipts remain immutable scoped history, including statements that S1 was then in progress. This receipt records current readiness only.",
+      "S2-S4 migrations, S5 carried proof, distinct-reviewer replay and endurance remain incomplete. Larger-project/resolved-schematic/temporal exclusions and pinned resize issue remain."
     ]
   }
 }

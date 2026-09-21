@@ -1,0 +1,150 @@
+{
+  "status": "S1 bounded implementation readiness satisfied under approved exit; requirement qualification remains partial",
+  "source_commit": "6cf658c3a16933c061add63317ad68851710688e",
+  "production_commit": "f0e2cd38",
+  "owner_amendment_commit": "6cf658c3",
+  "candidate_binary_sha256": "189459201322aff697a3d674b5a037a6658232af8e177ebb46eb6c25a74cb2a0",
+  "source_sha256": {
+    "crates/gui-app/src/native_frame_coordinator.rs": "a7ec38840b10291286442d71948373c5bbeca90c7a0b97626c5cbbc067e91140",
+    "crates/gui-app/src/native_frame_adapters.rs": "3d528ac6accd13e75c6ef7fcfadad84036f1fc456db67eb6ac230dcb0e9c7252",
+    "crates/gui-app/src/app_native_events.rs": "bdd4aa0e03a267d3783419fc7ce8a5edcf30f757456bf6b58c2574a9fc0fb8cc",
+    "crates/gui-app/src/native_surface_transaction.rs": "0b9decfa54a726dee6203d3b1bebfd7b96227311ede2d4137e61655eb75f93a1",
+    "crates/gui-app/src/native_queue_owner.rs": "9376a698f4726d89a72a046adc60decc61ad503c8c1beca1d964ce948a6e0f8b",
+    "crates/gui-app/src/native_attachment_ledger.rs": "99eb8910a722c705d75a21c53aedc66ba85e9127ca7f12049db816cffa1999ea",
+    "crates/gui-app/src/native_device_recovery.rs": "b689472f68908a56265786988cef87ac6d62ec2b493eb4f7880f1048a22f2eb1",
+    "crates/gui-app/src/runtime_init.rs": "78f073042648030284a784a9cde059461f3d1ccb59dff092d3677df3dbf86956",
+    "crates/gui-app/src/runtime_state.rs": "4aecf5b5d39c7822c332eb8585852884cee701501ab769005c8acff23d06bf54",
+    "crates/gui-app/src/runtime_present.rs": "70440a93f8664d52144a117ad2b313ad75e3f1cc4dfb3e56c5b0c88d14cbf537",
+    "crates/gui-app/src/global_preferences_window.rs": "8ac28b8ec25bd6e363d4c79f6fc01bdff4d9f2ddf44e88585f31d8eb87ee34d2",
+    "crates/gui-app/src/project_preferences_window.rs": "36ae86d461f032950472d9168fe6766471ca6d5afe86b4ff6c6eb3b0ccc0a472",
+    "crates/gui-app/src/new_project_window.rs": "e187b51cf5444f4feb7f143ccac7e3a77da3253a566b1c8ab4496a9b2ed938d8",
+    "crates/gui-app/src/app_shell.rs": "3553d33394f5858191823cc081e105a94ff4cf7ec59b8556e17b9f95bea2506c",
+    "crates/gui-render/src/render/gpu_frame.rs": "75fbaa6c9d8009a6cbc4b3e2a24babfe1e76e558d25ba9f8d303c900746907a6",
+    "crates/gui-render/src/render/gpu_overlay.rs": "3f4caa0fd7bdcbd08d3a6c2906dfe0ec389279c665e0a2b5d481676c824e68be",
+    "crates/gui-render/src/render/gpu_surface.rs": "09815785479ddfdbdee24ef23e9b1ba72ba3574d8fb59e7c1b954255834a5f7f"
+  },
+  "criteria": {
+    "all_default_native_hosts": {
+      "result": "MAIN/GLOBAL/PROJECT/NEW register with NativeFrameCoordinator. Main and shared auxiliary rendering acquire/present through SurfaceTransaction; auxiliary construction shares Main QueueOwner before acquisition. All four actual current native adapters reach recovery, Retry and controlled close.",
+      "evidence": "../native-failure-title/candidate/result.json"
+    },
+    "retired_competing_paths": {
+      "result": "No private default request_redraw/configure/acquire/present call remains. Four redraw sites belong to NativeFrameCoordinator; configure/acquire/pre_present_notify/present belong to SurfaceTransaction. Full and overlay renderer submissions synchronously report actual receipts before fallible post-submit work. Main and three auxiliary paths inherit the same owners.",
+      "inventory": "native-call-inventory.txt",
+      "historical_map_records": [
+        "s1_work",
+        "s1_queue_work",
+        "s1_acquisition_work",
+        "s1_submission_work",
+        "s1_attachment_owner_work",
+        "s1_attachment_retirement_work"
+      ]
+    },
+    "correctness_and_defect_sensitivity": {
+      "result": "Current app suite 376 passed, 11 ignored; current receipt-admission regression passes. Retained isolated QueueOwner negative has exactly targeted Frame-vs-Wait failure with six others passing; source-restored positive has seven passing. Retained stale-artifact replays are failures, not positives. Earlier native Wayland teardown baseline crashes and candidate closes remain preserved.",
+      "evidence": [
+        "../native-failure-title/app-tests.log.gz",
+        "../queue-receipt-negative/negative.log.gz",
+        "../queue-receipt-negative/source-restored.log.gz",
+        "../native-window-lifetime/result.json"
+      ]
+    },
+    "native_adapter_evidence": {
+      "result": "Current X11 four-host failure/Retry/close recipes pass. Re-read current traces: 47 lifecycle records satisfy acquired=presented+discarded+active. Re-read and hash-verify eight retained X11/Wayland host lifetime traces: each records presentation, owner_drop and released Main window ownership. This is bounded adapter proof, not complete native qualification.",
+      "evidence": [
+        "../native-failure-title/candidate/result.json",
+        "../native-window-lifetime/candidate-x11/result.json",
+        "../native-window-lifetime/candidate-wayland/result.json"
+      ]
+    },
+    "implemented_accounting": {
+      "result": "Host/device/damage generations, configure/acquisition/presentation/discard counters, actual submission receipts and completion watermark, current/retiring attachment-reference ledger and nominal payload accounting are default production owners. Complete ACC/driver residency/capacity and method qualification remain required at S5.",
+      "owners": [
+        "NativeFrameCoordinator",
+        "SurfaceTransaction/TextureLease",
+        "QueueOwner",
+        "SurfaceAttachments",
+        "native_attachment_ledger::Ledger"
+      ],
+      "existing_map_records": [
+        "s1_lifecycle_counts_work",
+        "s1_submission_work",
+        "s1_attachment_retirement_work",
+        "s1_native_attachment_reconciliation"
+      ]
+    },
+    "bounded_regressions": {
+      "result": "Current app tests, guarded offline release build, app/test Clippy, source-health and policy tests pass. Current four-host X11 native trials pass; baseline Project startup timeout is preserved. No newly demonstrated target regression in this slice. Existing intermittent native stalls/delivery failures and terminal drift failures remain unresolved qualification limitations.",
+      "evidence": "../native-failure-title/result.json"
+    }
+  },
+  "inventory_exceptions": [
+    "native_resize_repro direct calls are explicit DATUM_DIAGNOSTIC_MINIMAL_WINDOW isolation, not default product paths.",
+    "native_frame_probe clear-only submission is opt-in; caller still reports its receipt through SurfaceTransaction.",
+    "native_device_recovery and native_surface_transaction extra raw submissions are test-only.",
+    "main.rs visual-feature readback, gui-render visual_capture, gpu_measurements_tests and attachment_cost_probe are explicit offscreen/diagnostic/test paths, not default native frame scheduling.",
+    "Third-party internal queue activity, initialization and offscreen allocations are not qualified by the native frame receipt ledger; full accounting remains S5 proof."
+  ],
+  "qualification_carried_to_s5": [
+    "SH-01",
+    "SH-02",
+    "SH-03",
+    "SH-04",
+    "SH-05",
+    "SH-06",
+    "SH-07",
+    "SH-08",
+    "SH-09",
+    "SH-10",
+    "SH-11",
+    "SH-12",
+    "LF-01",
+    "LF-02",
+    "LF-03",
+    "LF-04",
+    "LF-05",
+    "LF-06",
+    "LF-07",
+    "LF-08",
+    "LF-09",
+    "LF-10",
+    "LF-11",
+    "LF-12",
+    "LF-13",
+    "LF-14",
+    "LF-15",
+    "HP05-01",
+    "HP11-01",
+    "HP11-02"
+  ],
+  "unchanged_exclusions": [
+    {
+      "id": "RS-01",
+      "scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification"
+    },
+    {
+      "id": "RS-02",
+      "scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification"
+    },
+    {
+      "id": "RS-03",
+      "scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification"
+    },
+    {
+      "id": "RS-04",
+      "scope": "pinned resize investigation; nonblocking for S0-S5 development and limited non-resize qualification"
+    },
+    {
+      "id": "HP05-02",
+      "scope": "deferred temporal"
+    }
+  ],
+  "limitations": [
+    "No full SH/LF/HP row acceptance, complete static/native input/focus, backend/scale, prescribed per-row negative or resource/method qualification follows.",
+    "Wayland minimized/occluded signals are absent in existing winit backend; retain documented E06 applicability and dat-wayland-visibility-signal-nti.",
+    "dat-main-native-capture-delay-md9 retains intermittent native stalls/delivery failures; no latency or GEFN reacceptance claim.",
+    "dat-terminal-convergence-guard-xke remains: focus-assignment/font-source-marker guard failures; full drift not green.",
+    "Historical map slice entries and original receipts remain immutable scoped history, including statements that S1 was then in progress. This receipt records current readiness only.",
+    "S2-S4 migrations, S5 carried proof, distinct-reviewer replay and endurance remain incomplete. Larger-project/resolved-schematic/temporal exclusions and pinned resize issue remain."
+  ]
+}
