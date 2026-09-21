@@ -2551,7 +2551,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial: four-host extent-burst component proof and native Main six-change/configuration regression; native burst/all-host qualification remains open",
+        "status": "partial: four-host native ordinary queued extent bursts each configure once at final size and close cleanly; recovery classification and wider S1 qualification remain open",
         "id": "proof_lf_12",
         "positive": "Coalesced native size events before frame attempt",
         "negative_control": "Configure for every event",
@@ -2599,7 +2599,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S1/extent-owner/receipt.json"
+        "docs/reviews/gui-performance/implementation/S1/extent-owner/receipt.json",
+        "docs/reviews/gui-performance/implementation/S1/extent-owner/native-burst/receipt.json"
       ]
     },
     {
@@ -23683,6 +23684,78 @@
       "No native final-pixel capture or CPU/temporal qualification; resize remains explicitly nonblocking",
       "LF-12/S1 and full SH/LF qualification remain open; no dependency/license or product-policy change"
     ],
-    "receipt": "docs/reviews/gui-performance/implementation/S1/extent-owner/receipt.json"
+    "receipt": "docs/reviews/gui-performance/implementation/S1/extent-owner/receipt.json",
+    "native_burst_followup": {
+      "receipt": "docs/reviews/gui-performance/implementation/S1/extent-owner/native-burst/receipt.json",
+      "status": "bounded native ordinary extent-burst proof passed for all four hosts",
+      "hosts": [
+        {
+          "host": "GLOBAL",
+          "initial_extent": [
+            1000,
+            750
+          ],
+          "final_extent": [
+            1000,
+            800
+          ],
+          "configure_delta": 1,
+          "main_submit_delta": 0,
+          "passed": true,
+          "exit": 0
+        },
+        {
+          "host": "PROJECT",
+          "initial_extent": [
+            1000,
+            750
+          ],
+          "final_extent": [
+            1000,
+            800
+          ],
+          "configure_delta": 1,
+          "main_submit_delta": 0,
+          "passed": true,
+          "exit": 0
+        },
+        {
+          "host": "NEW",
+          "initial_extent": [
+            792,
+            750
+          ],
+          "final_extent": [
+            1000,
+            800
+          ],
+          "configure_delta": 1,
+          "main_submit_delta": 0,
+          "passed": true,
+          "exit": 0
+        },
+        {
+          "host": "MAIN",
+          "initial_extent": [
+            1333,
+            833
+          ],
+          "final_extent": [
+            1280,
+            800
+          ],
+          "configure_delta": 1,
+          "main_submit_delta": 1,
+          "passed": true,
+          "exit": 0
+        }
+      ],
+      "limits": [
+        "Controlled queued-native burst, not representative user timing or benchmark",
+        "No compositor/display pixel capture, GPU/CPU budget, latency or driver-memory acceptance",
+        "Initialization configuration excluded by before/after count; recovery reconfiguration is outside this case",
+        "S1 and all remaining native/resource requirements remain open; nonblocking resize qualification unchanged"
+      ]
+    }
   }
 }

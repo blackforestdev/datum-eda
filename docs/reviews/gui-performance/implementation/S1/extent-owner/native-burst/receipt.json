@@ -1,0 +1,74 @@
+{
+  "status": "bounded native ordinary extent-burst proof passed for all four hosts",
+  "source_commit": "f00171df",
+  "binary_sha256": "d2bea9e1532c808693bc7aa90dfafcbcb27970682ed0b06a5c58b925a00912f3",
+  "method": "Pause only the test-owned GUI process with SIGSTOP, issue three actual X11 window sizes, verify final X window geometry, then SIGCONT. Require application presentation at final configured extent, exactly one additional configuration, and native protocol closure. All process handles reached exit 0.",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "initial_extent": [
+        1000,
+        750
+      ],
+      "final_extent": [
+        1000,
+        800
+      ],
+      "configure_delta": 1,
+      "main_submit_delta": 0,
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "PROJECT",
+      "initial_extent": [
+        1000,
+        750
+      ],
+      "final_extent": [
+        1000,
+        800
+      ],
+      "configure_delta": 1,
+      "main_submit_delta": 0,
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "NEW",
+      "initial_extent": [
+        792,
+        750
+      ],
+      "final_extent": [
+        1000,
+        800
+      ],
+      "configure_delta": 1,
+      "main_submit_delta": 0,
+      "passed": true,
+      "exit": 0
+    },
+    {
+      "host": "MAIN",
+      "initial_extent": [
+        1333,
+        833
+      ],
+      "final_extent": [
+        1280,
+        800
+      ],
+      "configure_delta": 1,
+      "main_submit_delta": 1,
+      "passed": true,
+      "exit": 0
+    }
+  ],
+  "limits": [
+    "Controlled queued-native burst, not representative user timing or benchmark",
+    "No compositor/display pixel capture, GPU/CPU budget, latency or driver-memory acceptance",
+    "Initialization configuration excluded by before/after count; recovery reconfiguration is outside this case",
+    "S1 and all remaining native/resource requirements remain open; nonblocking resize qualification unchanged"
+  ]
+}
