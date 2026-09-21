@@ -464,3 +464,37 @@ fn budget_yield_retains_bytes_rotates_application_and_cannot_overtake_exit() {
     assert!(registry.test_session_text(1).contains("peer"));
     assert!(!registry.test_session_text(1).contains("tail"));
 }
+
+#[test]
+fn spare_dispatch_time_rotates_batches_with_one_shared_application_byte_cap() {
+    let mut registry = synthetic_registry(2);
+    registry.sessions[0].pending_drain_output = vec![b'a'; GUI_DRAIN_BYTE_LIMIT / 2];
+    registry.sessions[1].pending_drain_output = vec![b'b'; GUI_DRAIN_BYTE_LIMIT / 2];
+    for slot in &registry.sessions {
+        slot.session
+            .transport
+            .push_synthetic_output(&vec![b'c'; GUI_DRAIN_BYTE_LIMIT / 4]);
+    }
+    let start = Instant::now();
+    let mut lane = TerminalLaneState::default();
+    let report = registry.drain_with_clock(&mut lane, || start);
+    assert_eq!(report.applied_bytes, GUI_DRAIN_BYTE_LIMIT);
+    assert_eq!(report.output_bytes, GUI_DRAIN_BYTE_LIMIT / 2);
+    assert!(report.pending);
+    let applied: Vec<_> = report
+        .serviced
+        .iter()
+        .filter(|(_, kind, _)| *kind == "apply")
+        .collect();
+    assert_eq!(applied.len(), GUI_DRAIN_BYTE_LIMIT / APPLY_BATCH_BYTES);
+    for (turn, (index, _, bytes)) in applied.into_iter().enumerate() {
+        assert_eq!(*index, turn % 2);
+        assert_eq!(*bytes, APPLY_BATCH_BYTES);
+    }
+    for slot in &registry.sessions {
+        assert_eq!(slot.pending_drain_output.len(), GUI_DRAIN_BYTE_LIMIT / 4);
+    }
+    let second = registry.drain_with_clock(&mut lane, || start);
+    assert_eq!(second.applied_bytes, GUI_DRAIN_BYTE_LIMIT / 2);
+    assert!(!second.pending);
+}
