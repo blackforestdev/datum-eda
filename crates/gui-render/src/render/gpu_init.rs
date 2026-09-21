@@ -352,8 +352,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             world_stroke_capacity: 0,
             world_stroke_source_ptr: 0,
             world_stroke_source_len: 0,
-            msaa_view: None,
-            msaa_size: (0, 0),
+            surface_attachments: gpu_surface::SurfaceAttachments::default(),
             msaa_format: format,
             msaa_samples,
         }

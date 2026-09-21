@@ -105,7 +105,7 @@ impl Runtime {
         let probe = gui_runtime_support::phase_probe::Probe::start("renderer");
         let renderer_started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line("renderer render begin");
-        self.renderer.render_with_submission(
+        let rendered = self.renderer.render_with_submission(
             &self.device,
             &self.queue,
             &view,
@@ -118,7 +118,9 @@ impl Runtime {
                 self.surface_transaction
                     .submitted(&mut frame, &self.queue, submission)
             },
-        )?;
+        );
+        self.surface_transaction.trace_attachment(&self.renderer);
+        rendered?;
         let renderer_elapsed = renderer_started.elapsed();
         append_gui_verbose_diagnostic_line(format!(
             "renderer render end {}ms",

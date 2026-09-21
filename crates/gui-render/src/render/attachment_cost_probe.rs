@@ -165,7 +165,15 @@ fn run_probe(alternate: bool) {
         let cache: Vec<_> = if alternate && !replace {
             cases
                 .iter()
-                .map(|(w, h, ..)| renderer.ensure_msaa(&device, *w, *h).clone())
+                .map(|(w, h, ..)| {
+                    renderer.ensure_msaa(&device, *w, *h);
+                    renderer
+                        .surface_attachments
+                        .current
+                        .as_ref()
+                        .unwrap()
+                        .clone()
+                })
                 .collect()
         } else {
             Vec::new()
@@ -178,12 +186,11 @@ fn run_probe(alternate: bool) {
             let index = frame as usize % cases.len();
             let (width, height, _, view, retained, prepared, _) = &cases[index];
             if !cache.is_empty() {
-                renderer.msaa_view = Some(cache[index].clone());
-                renderer.msaa_size = (*width, *height);
+                renderer.surface_attachments.current = Some(cache[index].clone());
             }
             if replace {
                 // Keep old view alive until allocation, matching production resize.
-                renderer.msaa_size = (0, 0);
+                renderer.surface_attachments.force_replacement = true;
             }
             renderer
                 .render(

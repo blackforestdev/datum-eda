@@ -150,6 +150,27 @@ impl SurfaceTransaction {
         self.texture_active.presented.get() != 0
     }
 
+    pub(crate) fn trace_attachment(&self, renderer: &datum_gui_render::Renderer) {
+        if std::env::var_os("DATUM_GUI_VERBOSE_LOG").is_none() {
+            return;
+        }
+        let Some(attachment) = renderer.surface_attachment_snapshot() else {
+            return;
+        };
+        let (queue_epoch, _, _) = self.queue_owner.snapshot();
+        super::append_gui_diagnostic_line(format!(
+            "native surface attachment {}",
+            serde_json::json!({
+                "window": format!("{:?}", self.window), "host": self.queue_host, "queue_epoch": queue_epoch,
+                "owner": attachment.owner, "allocation": attachment.allocation,
+                "allocations_created": attachment.allocations_created, "extent": attachment.extent,
+                "format": format!("{:?}", attachment.format), "samples": attachment.samples,
+                "payload_bytes": attachment.payload_bytes, "state": "current_renderer_reference",
+                "gpu_retirement_qualified": false
+            })
+        ));
+    }
+
     pub(crate) fn configured_for(&self, width: u32, height: u32) -> bool {
         self.configured == Some((width, height))
     }

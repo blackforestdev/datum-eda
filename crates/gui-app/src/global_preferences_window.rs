@@ -253,7 +253,7 @@ impl GlobalPreferencesWindowSurface {
             }
         }
         let view = frame.view();
-        self.renderer.render_with_submission(
+        let rendered = self.renderer.render_with_submission(
             &runtime.device,
             &runtime.queue,
             &view,
@@ -270,7 +270,9 @@ impl GlobalPreferencesWindowSurface {
                 self.surface_transaction
                     .submitted(&mut frame, &runtime.queue, submission)
             },
-        )?;
+        );
+        self.surface_transaction.trace_attachment(&self.renderer);
+        rendered?;
         if runtime.device_health.failed() {
             return Ok(false);
         }

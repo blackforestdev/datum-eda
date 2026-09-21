@@ -1,0 +1,12 @@
+{
+  "status": "unqualified",
+  "scope": "existing KWin virtual backend, private DBus and XDG runtime; no dependency changes",
+  "first_attempt": "xwininfo queried window before mapping; process cleanup completed",
+  "second_attempt": "mapped-state poll corrected, but Datum exited with signal 11 during startup before any native lifecycle action",
+  "effect": "Do not use this environment for S1 qualification; stop native trials and continue independent production ownership work",
+  "logs": [
+    "first-compositor.log",
+    "compositor.log"
+  ],
+  "production_edits": false
+}
