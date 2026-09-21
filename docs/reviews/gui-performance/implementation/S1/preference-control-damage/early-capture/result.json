@@ -1,0 +1,187 @@
+{
+  "binary_sha256": "6d30d8e5d25c63b75678f6166f3909c8ee7f4e30615eb60ce7f4ceb5e578a5ce",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "control_before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 4,
+          "present": 4
+        }
+      },
+      "control_after": {
+        "12582916": {
+          "submit": 2,
+          "present": 2
+        },
+        "12582917": {
+          "submit": 5,
+          "present": 5
+        }
+      },
+      "local": false,
+      "keyboard_after": {
+        "12582916": {
+          "submit": 2,
+          "present": 2
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "keyboard_local": true
+    },
+    {
+      "host": "GLOBAL",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "window": "WindowId(12582917)",
+      "query": "board precision",
+      "before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 1,
+          "present": 1
+        }
+      },
+      "after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 4,
+          "present": 4
+        }
+      },
+      "unmatched_key": "F6",
+      "before_unmatched": {
+        "12582916": {
+          "submit": 2,
+          "present": 2
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "after_unmatched": {
+        "12582916": {
+          "submit": 2,
+          "present": 2
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "scope": "native input to own dialog; Main submission/presentation unchanged; screenshot final text requires visual review"
+    },
+    {
+      "host": "PROJECT",
+      "control_before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 4,
+          "present": 4
+        }
+      },
+      "control_after": {
+        "12582916": {
+          "submit": 2,
+          "present": 2
+        },
+        "12582917": {
+          "submit": 5,
+          "present": 5
+        }
+      },
+      "local": false,
+      "keyboard_after": {
+        "12582916": {
+          "submit": 2,
+          "present": 2
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "keyboard_local": true
+    },
+    {
+      "host": "PROJECT",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "window": "WindowId(12582917)",
+      "query": "board precision",
+      "before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 1,
+          "present": 1
+        }
+      },
+      "after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 4,
+          "present": 4
+        }
+      },
+      "unmatched_key": "F6",
+      "before_unmatched": {
+        "12582916": {
+          "submit": 2,
+          "present": 2
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "after_unmatched": {
+        "12582916": {
+          "submit": 2,
+          "present": 2
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "scope": "native input to own dialog; Main submission/presentation unchanged; screenshot final text requires visual review"
+    }
+  ]
+}

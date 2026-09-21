@@ -31,6 +31,32 @@ pub(crate) enum DialogInputOutcome {
 }
 
 impl DialogInputOutcome {
+    /// Opening a choice or explanation changes only the dialog. Boolean and
+    /// integer activation writes a preference and retains dependent invalidation.
+    pub(crate) fn control_activation(
+        dialog: &datum_gui_protocol::GlobalPreferencesDialogState,
+        key: &str,
+    ) -> Self {
+        use datum_gui_protocol::GlobalPreferenceControlUi;
+        match dialog
+            .rows
+            .iter()
+            .find(|row| row.key == key)
+            .map(|row| &row.control)
+        {
+            Some(
+                GlobalPreferenceControlUi::SingleChoice { .. }
+                | GlobalPreferenceControlUi::Identity { .. }
+                | GlobalPreferenceControlUi::Structured { .. },
+            ) => Self::Dialog,
+            Some(
+                GlobalPreferenceControlUi::Boolean { .. }
+                | GlobalPreferenceControlUi::Integer { .. },
+            ) => Self::Dependents,
+            None => Self::Consumed,
+        }
+    }
+
     pub(crate) fn from_handled(handled: bool, changed: Self) -> Self {
         if handled { changed } else { Self::Unhandled }
     }
@@ -353,6 +379,26 @@ impl App {
                 | HitTarget::GlobalPreferencesSettingName(_)
                 | HitTarget::GlobalPreferencesExplanationClose,
             ) => {}
+            Some(HitTarget::GlobalPreferencesControl(key)) => {
+                let Some(runtime) = &self.runtime else {
+                    return;
+                };
+                let dialog = if project {
+                    &runtime.workspace().ui.project_preferences
+                } else {
+                    &runtime.workspace().ui.global_preferences
+                };
+                let outcome = DialogInputOutcome::control_activation(dialog, key);
+                self.request_dialog_key_redraw(
+                    outcome,
+                    if project {
+                        native_frame_adapters::OwnedHost::Project
+                    } else {
+                        native_frame_adapters::OwnedHost::Global
+                    },
+                );
+                return;
+            }
             Some(_) => {
                 self.request_redraw_if_needed();
                 return;

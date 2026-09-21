@@ -23172,5 +23172,28 @@
       "No whole SH/LF/S1, memory, latency, Wayland, PTY, endurance or temporal acceptance",
       "Resize CPU remains unresolved and nonblocking"
     ]
+  },
+  "s1_preference_control_damage_work": {
+    "status": "bounded production control activation migration; S1 remains in progress",
+    "consumers": [
+      "Global Preferences pointer and keyboard control activation",
+      "Project Preferences pointer and keyboard control activation"
+    ],
+    "shared_component": "DialogInputOutcome::control_activation",
+    "retired_paths": "Unconditional application-wide invalidation when control activation opens a choice or explanation; actual writes keep their existing Dependents outcome.",
+    "proof": {
+      "app_tests": "352 passed, 9 ignored; screenshot integration test ignored",
+      "clippy": "app all targets -D warnings passed",
+      "release": "fresh offline guarded build passed",
+      "native": "X11/Vulkan: both hosts choice pointer activation Main delta 1 baseline -> 0 candidate; keyboard activation Main delta 0 candidate, own dialog submits; F6 zero frames",
+      "positive_control": "Global board precision changed Automatic to Whole units in isolated fixture, screenshot inspected; Main and dialog each submitted/presented once"
+    },
+    "limitations": [
+      "Actual setting-write dependencies remain conservative; this does not close SH-12",
+      "No S1 completion, full input/focus/hit/latency/resource/Wayland/temporal qualification",
+      "Project writes and Global Boolean/Integer native mutation not exercised in this slice",
+      "Resize CPU remains unresolved and nonblocking"
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/preference-control-damage/receipt.json"
   }
 }

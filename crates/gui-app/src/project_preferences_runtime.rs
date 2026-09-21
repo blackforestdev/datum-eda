@@ -572,10 +572,11 @@ impl Runtime {
             Key::Named(NamedKey::Enter | NamedKey::Space)
         );
         match focus {
-            GlobalPreferencesFocus::Control(key) if activate => Outcome::from_handled(
-                self.activate_project_preference_control(&key),
-                Outcome::Dependents,
-            ),
+            GlobalPreferencesFocus::Control(key) if activate => {
+                let damage =
+                    Outcome::control_activation(&self.workspace().ui.project_preferences, &key);
+                Outcome::from_handled(self.activate_project_preference_control(&key), damage)
+            }
             GlobalPreferencesFocus::Reset(key) if activate => {
                 Outcome::from_handled(self.reset_project_preference(&key), Outcome::Dependents)
             }

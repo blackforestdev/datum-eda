@@ -115,10 +115,11 @@ impl Runtime {
             GlobalPreferencesFocus::SettingName(key) if activate => {
                 Outcome::from_handled(self.explain_global_preference(&key), Outcome::Dialog)
             }
-            GlobalPreferencesFocus::Control(key) if activate => Outcome::from_handled(
-                self.activate_global_preference_control(&key),
-                Outcome::Dependents,
-            ),
+            GlobalPreferencesFocus::Control(key) if activate => {
+                let damage =
+                    Outcome::control_activation(&self.workspace().ui.global_preferences, &key);
+                Outcome::from_handled(self.activate_global_preference_control(&key), damage)
+            }
             GlobalPreferencesFocus::Control(key)
                 if matches!(
                     event.logical_key,
