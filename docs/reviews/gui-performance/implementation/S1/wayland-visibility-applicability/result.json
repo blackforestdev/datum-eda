@@ -1,0 +1,43 @@
+{
+  "status": "Explicit absent-platform-signal applicability under E06; hidden recovery is not qualified on Wayland",
+  "source_commit": "cce07ef7dd6e99e7db7e1912d4a97e3d602cc448",
+  "issue": "dat-wayland-visibility-signal-nti",
+  "production_consumers_migrated": [],
+  "competing_paths_retired": [],
+  "controlling_clauses": [
+    "GUI_SHARED_ENGINEERING_CONTRACT E06: platform signals absent on a backend require explicit applicability records.",
+    "REC-01: active time excludes zero extent, known occlusion and suspension. Focus loss alone does not establish hidden state."
+  ],
+  "platform_signal": {
+    "backend": "Wayland",
+    "dependency": "Existing registry winit 0.30.13, unchanged",
+    "implementation": "Wayland Window::is_minimized returns None. No Occluded emission found in the installed Wayland backend; event-loop frame callback suppression is not an exposed visibility state.",
+    "source_sha256": {
+      "src/platform_impl/linux/wayland/window/mod.rs": "30b6c00aa143046e4b1d7277e5fd08ae7ef7f7f084b0c0e62c89e0dda8a5c6c2",
+      "src/platform_impl/linux/wayland/event_loop/mod.rs": "dd1ceefa859550fb109460ff9b536307dfa457069899244da0220c0a81267edb"
+    },
+    "applies_to": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "runtime_observed_hosts": [
+      "MAIN"
+    ]
+  },
+  "native_observation": {
+    "binary_sha256": "174313519a838c079bdf524e806d301ff6507c16cb38b58d796ff7a8bb0558c1",
+    "compositor": "KWin PID/title-filtered temporary script minimizes test window; getWindowInfo independently reports minimized=true, with matching unique caption/resourceClass. Script unloads after operation.",
+    "fault": "Existing opt-in hold-until-retry holds publication of real queue completion after first presentation. No production backend or dependency change.",
+    "result": "No native minimized/occluded event observed. Queue recovery exhausts while KWin still reports minimized. One presentation before/after hidden interval; subsequent native close exits 0 and releases Main ownership.",
+    "interpretation": "Harness detects an unsupported visibility signal and observable limitation; its passed flag is not a product LF-04 pass.",
+    "failed_attempt": "Initial read-side probe expected a PID property absent in getWindowInfo; stopped before minimization and terminated its test process. Corrected lookup uses unique exact caption; mutations still require exact PID/title."
+  },
+  "remaining_limits": [
+    "Wayland minimize/known-occlusion clock-pause qualification unavailable through the existing winit interface. Do not infer pause from no extra presentation or loss of focus.",
+    "X11 minimize proof remains separate; zero-size and application suspend rules still apply when delivered. No global LF-04 or S1 acceptance follows.",
+    "No specification amendment is needed to describe absent signals: E06 already requires this applicability record. Future signal support remains tracked and cannot introduce or change a dependency without PM029 owner authority.",
+    "No renderer code, dependency, backend policy or nonblocking resize exclusion changed."
+  ]
+}
