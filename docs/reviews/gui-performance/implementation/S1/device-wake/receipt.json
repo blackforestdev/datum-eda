@@ -1,0 +1,125 @@
+{
+  "status": "bounded production wait improvement and native recovery regression passed; S1 remains in progress",
+  "selection": {
+    "baseline": "80bbe48e84191b9cc334c321fcbf9bf350ba764b",
+    "source": "crates/gui-app/src/native_device_recovery.rs",
+    "requirements": [
+      "SCH-02",
+      "REC-01",
+      "SH-06",
+      "LF-05"
+    ],
+    "defect": "Pending device creation has an EventLoopProxy-backed waker but additionally requests a 2ms periodic wake. Replace periodic wake with the active-time failure deadline; preserve asynchronous wake, suspension and one-attempt semantics.",
+    "proof": [
+      "pending deadline excludes suspended time and includes elapsed poll time",
+      "existing app tests",
+      "native backend device-loss callback and successful replacement for Main and three auxiliary hosts"
+    ],
+    "limits": [
+      "No CPU numerical claim or full recovery qualification",
+      "Native request may complete synchronously; unit proof covers pending deadline"
+    ]
+  },
+  "source_sha256": "0b51efe8cf805fb0c873a5466daad2cf0eec477bd32221812a28e78c1f24959d",
+  "native": {
+    "binary_sha256": "b1060c9d8ac3a5c444f1acb120284d9c0373d2c2d5138ec3659fa3deb2b2228c",
+    "runs": [
+      {
+        "host": "MAIN",
+        "command": [
+          "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "--board",
+          "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+          "--window-size",
+          "1280x800"
+        ],
+        "attempts": 1,
+        "commits": 1,
+        "workspace_and_terminal_registry_preserved": true,
+        "old_queue_epoch": 1,
+        "new_queue_epoch": 2,
+        "presented_window": "WindowId(12582916)",
+        "passed": true,
+        "exit": 0
+      },
+      {
+        "host": "GLOBAL",
+        "command": [
+          "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "--board",
+          "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+          "--window-size",
+          "1280x800",
+          "--open-global-preferences"
+        ],
+        "attempts": 1,
+        "commits": 1,
+        "workspace_and_terminal_registry_preserved": true,
+        "old_queue_epoch": 1,
+        "new_queue_epoch": 3,
+        "presented_window": "WindowId(12582917)",
+        "passed": true,
+        "exit": 0
+      },
+      {
+        "host": "PROJECT",
+        "command": [
+          "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "--board",
+          "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+          "--window-size",
+          "1280x800",
+          "--open-project-preferences"
+        ],
+        "attempts": 1,
+        "commits": 1,
+        "workspace_and_terminal_registry_preserved": true,
+        "old_queue_epoch": 1,
+        "new_queue_epoch": 3,
+        "presented_window": "WindowId(12582917)",
+        "passed": true,
+        "exit": 0
+      },
+      {
+        "host": "NEW",
+        "command": [
+          "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "--board",
+          "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+          "--window-size",
+          "1280x800",
+          "--open-new-project"
+        ],
+        "attempts": 1,
+        "commits": 1,
+        "workspace_and_terminal_registry_preserved": true,
+        "old_queue_epoch": 1,
+        "new_queue_epoch": 3,
+        "presented_window": "WindowId(12582917)",
+        "passed": true,
+        "exit": 0
+      }
+    ]
+  },
+  "production_consumers": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "shared_owner": "App::service_device_recovery -> Pending::deadline -> NativeFrameCoordinator::wake_at",
+  "retired_path": "2 ms periodic wake while the device-creation future is pending; existing EventWake now requests progress and fixed drawable-active deadline requests failure handling",
+  "verification": {
+    "app": "358 passed, 0 failed, 9 ignored; visual integration ignored",
+    "clippy": "all app targets -D warnings passed",
+    "release": "guarded offline release build passed",
+    "component": "pending deadline includes poll time; hidden state has no deadline; resume uses remaining active budget",
+    "native": "four separate X11 runs, one real device.destroy callback/replacement each, target presents in new queue epoch, workspace/terminal registry diagnostic matches, WM_DELETE_WINDOW exit 0"
+  },
+  "limits": [
+    "Native adapter/device request may complete synchronously; these native runs do not prove a delayed future wake or timeout. Pending deadline proof is component-level.",
+    "No CPU or latency numerical claim, pixel capture, full cache/camera/focus proof, four-host simultaneous fault or broader resource acceptance.",
+    "No historical/native negative control executed for this change.",
+    "S1 SH/LF requirements remain partial; S2-S5 pending. Nonblocking resize qualification unchanged. No dependency or licensing changes."
+  ]
+}

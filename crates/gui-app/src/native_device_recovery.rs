@@ -77,6 +77,12 @@ struct Pending {
     active: Duration,
     since: Option<Instant>,
 }
+impl Pending {
+    fn deadline(&self) -> Option<Instant> {
+        self.since
+            .map(|since| since + Duration::from_secs(2).saturating_sub(self.active))
+    }
+}
 pub(super) struct DeviceRecovery {
     pending: Option<Pending>,
     attempted: bool,
@@ -260,8 +266,11 @@ impl App {
             >= Duration::from_secs(2);
         match result {
             Poll::Pending if !expired => {
+                // The future's EventWake requests progress when ready. Keep only
+                // the active-time failure deadline, rather than polling at 500 Hz.
+                let deadline = pending.deadline();
                 self.device_recovery.pending = Some(pending);
-                Some(Instant::now() + Duration::from_millis(2))
+                deadline
             }
             Poll::Ready(Ok(bundle)) if !expired => {
                 match self.install_replacement_device(bundle) {
@@ -382,6 +391,36 @@ impl App {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn pending_device_wait_preserves_active_deadline_without_periodic_polling() {
+        let start = Instant::now();
+        let mut pending = Pending {
+            future: Box::pin(std::future::pending()),
+            active: Duration::from_millis(750),
+            since: Some(start),
+        };
+        assert_eq!(
+            pending.deadline(),
+            Some(start + Duration::from_millis(1250))
+        );
+        // Time spent in a poll is inside this fixed deadline, not appended to it.
+        let after_poll = start + Duration::from_millis(200);
+        assert_eq!(
+            pending.deadline().unwrap() - after_poll,
+            Duration::from_millis(1050)
+        );
+        pending.active += after_poll - pending.since.take().unwrap();
+        assert_eq!(pending.deadline(), None); // All hosts hidden: no timer.
+        let restored = start + Duration::from_secs(20);
+        pending.since = Some(restored);
+        assert_eq!(
+            pending.deadline(),
+            Some(restored + Duration::from_millis(1050))
+        );
+        pending.active = Duration::from_secs(2);
+        assert_eq!(pending.deadline(), Some(restored));
+    }
+
     #[cfg(target_os = "linux")]
     #[test]
     #[ignore = "requires Vulkan and X11 connection; creates no visible window; run serially"]

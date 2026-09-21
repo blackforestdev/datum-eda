@@ -813,7 +813,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S1/wait-owner/receipt.json"
+        "docs/reviews/gui-performance/implementation/S1/wait-owner/receipt.json",
+        "docs/reviews/gui-performance/implementation/S1/device-wake/receipt.json"
       ]
     },
     {
@@ -1873,7 +1874,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial component proof: Device generation rebind and late-error isolation are component-tested. All-four-host automatic recreation, full cache/data/camera/focus preservation and native fault qualification remain unqualified; the ignored Vulkan callback test is not counted.",
+        "status": "partial: component rebind/isolation and separate native device-loss recovery runs for each of four hosts pass; simultaneous four-host fault, full cache/data/camera/focus and resource qualification remain open",
         "id": "proof_lf_05",
         "positive": "Device loss while all four hosts have work",
         "negative_control": "Recreate separately per host or keep stale GPU keys",
@@ -1925,7 +1926,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz"
+        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
+        "docs/reviews/gui-performance/implementation/S1/device-wake/receipt.json"
       ]
     },
     {
@@ -23757,5 +23759,30 @@
         "S1 and all remaining native/resource requirements remain open; nonblocking resize qualification unchanged"
       ]
     }
+  },
+  "s1_device_wake_work": {
+    "status": "bounded production wait improvement and native recovery regression passed; S1 remains in progress",
+    "production_consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "shared_owner": "App::service_device_recovery -> Pending::deadline -> NativeFrameCoordinator::wake_at",
+    "retired_path": "2 ms periodic wake while the device-creation future is pending; existing EventWake now requests progress and fixed drawable-active deadline requests failure handling",
+    "verification": {
+      "app": "358 passed, 0 failed, 9 ignored; visual integration ignored",
+      "clippy": "all app targets -D warnings passed",
+      "release": "guarded offline release build passed",
+      "component": "pending deadline includes poll time; hidden state has no deadline; resume uses remaining active budget",
+      "native": "four separate X11 runs, one real device.destroy callback/replacement each, target presents in new queue epoch, workspace/terminal registry diagnostic matches, WM_DELETE_WINDOW exit 0"
+    },
+    "limits": [
+      "Native adapter/device request may complete synchronously; these native runs do not prove a delayed future wake or timeout. Pending deadline proof is component-level.",
+      "No CPU or latency numerical claim, pixel capture, full cache/camera/focus proof, four-host simultaneous fault or broader resource acceptance.",
+      "No historical/native negative control executed for this change.",
+      "S1 SH/LF requirements remain partial; S2-S5 pending. Nonblocking resize qualification unchanged. No dependency or licensing changes."
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/device-wake/receipt.json"
   }
 }
