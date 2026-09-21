@@ -2746,14 +2746,15 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial native execution; Main lifecycle passed bounded checks, auxiliary startup invalidated by observed unrequested Escape; complete requirement remains unqualified",
+        "status": "partial qualification: current candidate passes bounded X11 maximize/restore/minimize/resume in all four hosts; memory budgets and broader backend qualification remain open",
         "id": "proof_lf_15",
         "positive": "Maximize/restore/minimize/resume in each native host",
         "negative_control": "Use special unshared native-size path",
         "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
         "observed_artifacts": [
           "docs/reviews/gui-performance/implementation/S1/native-lifecycle/native.json",
-          "docs/reviews/gui-performance/implementation/S1/native-lifecycle/auxiliary-escape.log.gz"
+          "docs/reviews/gui-performance/implementation/S1/native-lifecycle/auxiliary-escape.log.gz",
+          "docs/reviews/gui-performance/implementation/S1/native-lifecycle-resumed/receipt.json"
         ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/LF-15/result.json",
@@ -23129,5 +23130,24 @@
     ],
     "evidence_directory": "docs/reviews/gui-performance/implementation/S1/new-dialog-input",
     "release_binary_sha256": "bedcb25def464f9aaca165615e37eea66f31a68b3eac6c2bc0f734c8e46c7dc0"
+  },
+  "s1_native_lifecycle_resumed_work": {
+    "status": "bounded current-candidate X11 native lifecycle proof passes all four hosts; LF-15 resource and broader qualification remain open",
+    "candidate_commit": "b35fd41e",
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/native-lifecycle-resumed",
+    "receipt": "docs/reviews/gui-performance/implementation/S1/native-lifecycle-resumed/receipt.json",
+    "result": "Actual maximize/restored extents, asserted Iconic state, 400ms no hidden submit/present and fresh resumed presentation passed for each host; restored screenshots reviewed",
+    "correction": "Idle-desktop Escape was reproduced as held X11 keycode 9, cleared and verified. Previous desktop-use uncertainty is resolved; origin of held state remains unknown. Auxiliary minimization must preserve owner focus policy by minimizing owner first.",
+    "limitations": [
+      "One lifecycle cycle per host on X11/Vulkan only",
+      "No memory budget, full LF-15/S1, Wayland, temporal/display or comprehensive resize acceptance",
+      "Process termination used for fixture teardown; not all-host graceful-close proof"
+    ]
   }
 }
