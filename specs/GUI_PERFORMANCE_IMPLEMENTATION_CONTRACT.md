@@ -54,12 +54,28 @@ earlier proven behavior; it is not a destructive reset of shared work.
 
 | ID | Dependency and scope | Required evidence / rollback boundary |
 |---|---|---|
-| S0 | Separate owner execution grant. Existing measurement tooling first; bounded ADM/GPU/ACC counter and fixture admission completion across all hosts | GPU query conformance, count and lifetime accounting, overhead on/off, native Wayland/Xwayland input validity, unchanged production behavior. Remove diagnostic instrumentation independently if it changes the workload. No optimization bundled into measurement repair. |
+| S0 | Separate owner execution grant; pin current source/fixture/environment, select the first bounded S1 change from attributable work or a demonstrated correctness defect, and validate only the measurements used for that selection and its proof | Record production entry points, matched baseline, verified input/final state, applicable counters and their conformance/overhead, relevant static/input regressions, and every outstanding ADM/GPU/ACC obligation with its owning S1–S4 component. No global admission, budget or performance pass follows. Keep measurement repair separable from behavior changes. |
 | S1 | S0 attribution; shared NativeFrameCoordinator, host damage generations, queue/configure coordination and recovery in main and all three auxiliary hosts | SCH/REC and lifecycle rows, per-host production invalidation and input/focus proof, surface-generation/resource accounting. Owner amendment removes completed resize calibration and budget resolution as development prerequisites. Preserve bounded affected-path regression proof; record missing resize temporal evidence as unqualified on the pinned issue. Roll back coherent shared adoption, never leave main/dialog variants with conflicting semantics. |
 | S2 | S0 measurement; use S1 shared interfaces when available without selecting work out of order. Retained world/encoding/screen uploads, text and cache ownership | Warm zero-work counts, equal-size replacement/address reuse, eviction/device reset, painter/AA/text parity and complete byte caps. Separate geometry, text and upload changes into reviewable patches; revert each optimization independently. |
 | S3 | S2 retained resource interfaces. Shared dialog/control profiles and scroll/clip/hit contracts in both Preferences, New Project and main panels | HP11–23, per-adapter input/focus and pass-count proof; retire New Project general backdrop and duplicate control machinery. Preserve legitimate discrete Layers/terminal semantics. Revert controls without changing stored preferences or project-creation authority. |
 | S4 | S1–S3. Terminal adapters, mixed activity/fairness, all-host closure and fault/recovery adoption | PTY byte/state preservation, hidden-render suppression, two-generation glyph bounds, allocation/recovery accounting and serial shared-device multiwindow proof. Concurrent multi-device crash remains separate. Revert rendering adapters without replacing TerminalCore/PTY state. |
 | S5 | Every adopted implementation slice and required admission/method conformance. Final coverage, native owner UX, distinct-reviewer replay and endurance | Run all in-scope requirements on pinned candidate, both daily native backends and supported scale rows; 60-minute/200-cycle/20-recovery contract. Publish excluded temporal/T2/schematic rows as unqualified, never full performance acceptance. Full resize closure additionally requires all temporal/resource rows; no local or initial-scope result closes it. |
+
+S1 owns scheduler/surface generations, redraw/configure/acquire/submit/present
+counts and changed surface-resource lifetime accounting. S2 owns retained
+geometry, draw/upload, shaped-text/cache and allocation-capacity accounting.
+S3 owns dialog/control geometry, text/pass counts and control-cache accounting.
+S4 owns terminal/glyph uploads, hidden work, fairness and remaining all-host
+recovery/teardown accounting. Each bounded patch records production consumers
+migrated and competing paths retired; partially migrated hosts remain explicit.
+Counters needed to prove that patch's invariants are implemented and validated
+with the patch, before its result is accepted. Complete cross-component metrics
+are not prerequisites to an unrelated component migration. Existing validated
+observations and matched before/after state accompany every slice; unexplained
+regressions still block advancement. A numerical claim requires the unchanged
+MET/GPU/ACC/STAT methods, overhead and complete admission/accounting for that
+claim. S5 requires all outstanding in-scope method, admission and accounting
+proof plus all adoption, independent replay and endurance requirements.
 
 S0 chooses the first bounded optimization from measured attributable work and
 correctness defects; the table is dependency planning, not a claim that local
@@ -97,7 +113,7 @@ private generic scheduling/rendering/scroll machinery is not an exception.
 ## Execution and acceptance boundaries
 
 The owner authorized the amended existing S0–S5 contract on2026-09-20. Start
-with S0 measurement conformance and measured selection, preserving the recovered
+with bounded S0 readiness and selection under the amended GPI-S0 clause, preserving the recovered
 candidate checkpoint c8bac0b6 as the implementation starting point. No deletion
 or restart follows from incomplete compliance. Record bounded improvements,
 diagnostic behavior, implementation gaps and any evidence-supported proposed
@@ -137,7 +153,7 @@ record remains history, not a competing live contract.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S0 -->
 
-**GPI-S0.** Complete production measurement conformance, admission counts and matched baseline; document measured optimization priority. Reconcile canonical slice order before any different selection; no scope expansion by inference.
+**GPI-S0.** Pin the matched baseline and first bounded S1 production migration; verify its input/final-state and measurement prerequisites, document attributable selection, and assign remaining ADM/GPU/ACC proof to the components below. Reconcile canonical slice order before any different selection. Completion establishes bounded implementation readiness only, not full measurement closure.
 
 <!-- REQ:GUI-PERFORMANCE-IMPLEMENTATION:GPI-S1 -->
 
@@ -181,3 +197,20 @@ endurance requirements remain. S5 can conclude only its explicitly limited
 non-resize qualification; full resize resource/temporal closure stays on the
 pinned issue. No new kernel investigation or renderer execution is authorized
 by this amendment.
+
+## Owner amendment: component-scoped measurement delivery
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:SEQUENCING-APPROVED -->
+
+On 2026-09-20 the owner approved the presented sequencing delta and directed
+completion of the five implementation slices:
+
+> your next /goal is to complete the next 5 steps as you have presented them. this is your approval of this sequescing amendment. please proceed.
+
+This approves the bounded S0 readiness and S1–S4 component proof allocation above,
+followed by S5 comprehensive in-scope qualification. It supersedes the earlier
+all-host S0 accounting prerequisite, including that reading of GP-045-05,
+E08 and ADM-01. It does not complete S0 or any implementation slice. The existing
+execution grant remains in force. All numerical criteria, affected production
+proof, independent replay, exclusions and owner-only dependency authority remain.
+Frozen specification approval packets and earlier receipts remain historical.

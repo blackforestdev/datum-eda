@@ -241,12 +241,16 @@ prerequisite to the first implementation slice.
 
 | Slice | Consumers and existing paths | Proof required when implemented |
 |---|---|---|
-| S0 measurement closure | All native hosts; existing trace and OS tools | Verified target/input, baseline raw receipts, trace overhead and missing-metric register |
+| S0 bounded readiness | First selected S1 production adapters; existing trace and OS tools | Matched baseline, verified target/input/final state, attributable selection, conformance/overhead for used measurements and an explicit missing-metric register assigned to S1–S4; no global qualification. |
 | S1 shared surface lifecycle and event invalidation | Main runtime and all three dialog instances; shared surface state/scheduling owner; board/schematic camera and interaction handlers; `App::request_redraw_if_needed`; owned dialog dispatch | E10 lifecycle and temporal proof in every host; production no-op and affected-window counts; pointer/focus/capture parity; measured attribution selects bounded changes |
 | S2 retained preparation/upload | `PreparedScene`, retained board/schematic resources, screen-space buffers and encoded draws | Rebuild/upload/encoding counters; identity replacement and eviction negative controls; painter/AA/text parity |
 | S3 shared controls/dialogs | Both Preferences, New Project, Layers, navigator, Inspector, menus/popovers | Dialog-only composition, shared continuous/row adapters, clipping/hit/keyboard tests; remove obsolete duplicated paths |
 | S4 terminal and lifecycle | Terminal host plus every native surface/device | Hidden-work suppression, terminal state/input parity, fair dispatch, bounded fault/recovery and resource release |
 | S5 final adoption/qualification | All preceding consumers, supported scale/backend tiers | Complete HP replay, native owner UX, independent performance replay and endurance |
+
+Measurement sequencing follows the implementation contract's amended S0–S4
+allocation. E07 absolute/relative qualification methods apply whenever those
+claims are made; bounded migration is not whole-product qualification.
 
 Every slice records exact touched paths, dependency, invariant, negative control,
 baseline/candidate receipts and rollback boundary before product edits. Undoing

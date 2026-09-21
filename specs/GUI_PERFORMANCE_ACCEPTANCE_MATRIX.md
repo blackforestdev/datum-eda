@@ -345,8 +345,10 @@ scene builders, surface draw commands and shaped buffer `layout_runs` at their
 existing production preparation boundaries; no alternate scene implementation.
 Record before/after layout, font, layer, pane and DPI changes. Missing counts
 invalidate runtime admission, not become zero. No glyph/visible-count observation
-is fabricated in the present baseline receipt. Counting instrumentation and its
-conformance cases are the first implementation slice, before runtime tier claims.
+is fabricated in the present baseline receipt. Counting instrumentation and conformance are delivered with the production
+components identified in the implementation contract's S0–S4 allocation.
+Counts needed for a bounded patch's proof are due with that patch; full counts
+remain mandatory before runtime tier claims and S5 completion.
 This separates a completely specified method from the results it must produce.
 
 **GPU-01.** The archived identified Intel P630 capability report in
