@@ -1,0 +1,33 @@
+{
+  "status": "observed component negative and restored positive; HP21-02 native qualification remains open",
+  "candidate_commit": "75fd98818df82d4c5689dd4e917d63b045867d40",
+  "production_source": "crates/gui-viewport/src/scroll.rs",
+  "production_sha256": "1d1260caabe0bbf82a39836192b9bff0e3d6275972b513309a7c8463c3668458",
+  "negative_sha256": "fb83a190d092095cec516f4e718702ad62ce229428adbcd5cfd52f9793e7d42b",
+  "patch_sha256": "6c7f8ffe5ff5c0ce7e8d2268dc18b6afefad977a934c66e03c775ba075242134",
+  "isolation": "Detached disposable source copy at /home/bfadmin/Documents/datum-pm045-s3-negative-20260921; active checkout never changed. Exact original source restored byte-for-byte before positive; no third-party or Cargo manifest changes.",
+  "command": "python3 scripts/run_cargo_guarded.py --workload proof --target-dir /home/bfadmin/Documents/datum-eda/target -- cargo test --offline -p datum-gui-viewport --lib -- --test-threads=1",
+  "negative": {
+    "exit": 101,
+    "passed": 45,
+    "failed": 1,
+    "assertion": "old grab cannot move a reflowed thumb",
+    "defect": "Remove only ScrollViewport::layout release of stale capture; keep other behavior/tests unchanged."
+  },
+  "positive": {
+    "exit": 0,
+    "passed": 46,
+    "failed": 0,
+    "source_restored_exactly": true
+  },
+  "environment": {
+    "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11)",
+    "system": "Linux 6.12.107+deb13-amd64 x86_64 GNU/Linux",
+    "topology": "CPU owner tests, serial; no native window or GPU required"
+  },
+  "limits": [
+    "Actual GLOBAL/PROJECT event/focus/DPI/native input and frame proof remain unqualified.",
+    "One component control does not satisfy all prescribed HP21-02 negatives or complete S3.",
+    "No runtime changes, dependency adoption, resize budget or acceptance amendment."
+  ]
+}
