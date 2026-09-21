@@ -279,8 +279,8 @@ The adoption map records the outstanding predicates individually; their original
 acceptance rules, statuses and receipts remain unchanged.
 
 An evidence-based S2 readiness reconciliation must precede S2 completion and S3
-selection. This approval itself completes neither. S2 remains selected and in
-progress until that reconciliation is recorded.
+selection. This approval itself completes neither. The approval transaction kept S2 selected and in progress pending that
+reconciliation, subsequently recorded below.
 
 The amendment changes sequencing, not numerical budgets, dependency authority,
 product behavior, independent replay, endurance or the nonblocking resize scope.
@@ -288,3 +288,21 @@ It does not supply a technical solution for private resource accounting. The
 installed public wgpu allocator report can observe atlas backing allocations on
 the tested Vulkan backend, but snapshots do not establish stable allocation IDs,
 upload events, CPU owned capacities or complete ACC-01/02 qualification.
+
+## S2 bounded implementation readiness
+
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S2-BOUNDED-READY -->
+
+The current production inventory, retired paths, explicit partial limits and
+bounded positive/negative/native proof are reconciled in
+`docs/reviews/gui-performance/implementation/S2/readiness/result.json` and the
+existing adoption map. All four default native hosts consume the shared retained
+resource and text owners. The amended S2 readiness exit is satisfied; GPI-S3 is
+selected for shared dialog/control/scroll/clip/hit migration, including retirement
+of New Project's remaining general backdrop.
+
+The 50 individually carried predicates remain unqualified. Complete S2-owned
+accounting/cap, exact changed-range and shaping/layout implementation is required
+at S4; full qualification remains required at S5. No full byte-budget, native
+backend/scale, independent replay, endurance, schematic admission or resize
+acceptance follows from this bounded readiness disposition.

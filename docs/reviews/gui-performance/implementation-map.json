@@ -3785,7 +3785,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -4100,7 +4100,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -4172,7 +4172,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -4244,7 +4244,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -4302,7 +4302,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -4360,7 +4360,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -4422,7 +4422,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -4627,7 +4627,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -4701,7 +4701,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -4772,7 +4772,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -4846,7 +4846,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -4920,7 +4920,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -4994,7 +4994,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -5766,7 +5766,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the required shaping/layout dependency coverage and related accounting beyond the tested fixed font/layout profiles."
@@ -5845,7 +5845,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting.",
@@ -6145,7 +6145,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -6232,7 +6232,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -13076,7 +13076,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -13142,7 +13142,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -13245,7 +13245,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -13348,7 +13348,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -13411,7 +13411,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -13474,7 +13474,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -13573,7 +13573,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -13672,7 +13672,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -13774,7 +13774,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -13873,7 +13873,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -13972,7 +13972,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -14071,7 +14071,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -14134,7 +14134,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -14233,7 +14233,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -14332,7 +14332,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -14434,7 +14434,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -14536,7 +14536,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -14737,7 +14737,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -14836,7 +14836,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -14935,7 +14935,7 @@
       },
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
@@ -16868,7 +16868,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Remove internal clean-range transfers from large screen updates without reintroducing rejected fragmentation regressions; complete actual upload-boundary accounting. Uniform exact aligned ranges are implemented, not global qualification."
@@ -16940,7 +16940,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -17046,7 +17046,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the required shaping/layout dependency coverage and related accounting beyond the tested fixed font/layout profiles."
@@ -17155,7 +17155,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
           "Complete the required shaping/layout dependency coverage and related accounting beyond the tested fixed font/layout profiles."
@@ -17263,7 +17263,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -17400,7 +17400,7 @@
       "qualification_scope": "initial static/correctness; temporal claims remain deferred",
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -17478,7 +17478,7 @@
       "qualification_scope": "initial static/correctness; temporal claims remain deferred",
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -17559,7 +17559,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -17637,7 +17637,7 @@
       "qualification_scope": "initial static/correctness; temporal claims remain deferred",
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -17715,7 +17715,7 @@
       "qualification_scope": "initial static/correctness; temporal claims remain deferred",
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -17797,7 +17797,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -17878,7 +17878,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -17959,7 +17959,7 @@
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
-        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
         "unfinished_implementation": [],
         "qualification_due": "S5",
@@ -26182,7 +26182,7 @@
     "evidence": "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json"
   },
   "s2_exit_reconciliation": {
-    "status": "Owner-approved six-clause amendment applied; S2 readiness reconciliation pending; S3 not selected.",
+    "status": "Approved exit applied and bounded S2 readiness reviewed; S3 selection follows the recorded readiness transition.",
     "baseline": "73cae904",
     "implementation_gaps": [
       "Complete owned/in-flight accounting and absolute caps, including private text/atlas allocations and uploads",
@@ -26200,11 +26200,11 @@
       "boundary": "Read existing registry sources only. No copied sources, new dependency, Cargo change or complete accounting claim.",
       "wgpu 28 public allocator report": "Actual Vulkan probe observes named atlas backing allocations and drained release without dependency changes. Report lacks stable identity/upload events/CPU payload; see s2_public_allocator_report_probe. This narrows the technical boundary without completing ACC-01/02 or S2 caps."
     },
-    "next_production_choice": "S3 dialog/control migration follows successful amended S2 readiness review; this approval transaction does not select it.",
+    "next_production_choice": "GPI-S3 shared dialog/control/profile migration, beginning with the remaining New Project general backdrop.",
     "proposal": "Historical exact six-clause proposal in commit 74ba0b78",
     "disposition": "Apply the approved sequencing only. No requirement marked passed, no milestone completed, no dependency authority or technical accounting solution inferred.",
     "previous_barrier": "S2 table requires complete byte caps and exact proofs. S0/S1 approvals did not change S2.",
-    "barrier": "Complete bounded S2 readiness reconciliation under the amended table before selecting S3; unfinished implementation remains mandatory at S4 and full qualification at S5.",
+    "barrier": "No remaining amended S2 readiness prerequisite. Carried implementation remains mandatory at S4, full qualification at S5.",
     "owner_response": "Approve the proposed S2 amendment",
     "operative_contract": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#owner-amendment-s2-implementation-exit",
     "carryforward_predicate_ids": [
@@ -26387,5 +26387,70 @@
       "No new dependency, vendoring, font asset, Cargo/license, visual truth, model authority or resize qualification change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json"
+  },
+  "s2_readiness": {
+    "status": "bounded S2 implementation readiness satisfied under owner-approved exit; individual requirement qualification remains partial/unqualified",
+    "evidence": "docs/reviews/gui-performance/implementation/S2/readiness/result.json",
+    "production_consumers_migrated": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "carryforward_predicate_ids": [
+      "AC-05",
+      "HP01-01",
+      "HP02-01",
+      "HP02-02",
+      "HP03-01",
+      "HP03-02",
+      "HP04-01",
+      "HP06-01",
+      "HP06-02",
+      "HP07-01",
+      "HP08-01",
+      "HP08-02",
+      "HP08-03",
+      "HP15-01",
+      "HP15-02",
+      "HP17-01",
+      "HP17-02",
+      "MEM-WORLD-CPU",
+      "MEM-WORLD-HISTORY",
+      "MEM-SHAPED-LOCAL",
+      "MEM-SHAPED-TOTAL",
+      "MEM-LABEL-ENTRIES",
+      "MEM-LABEL-KEYS",
+      "MEM-WIDTH-ENTRIES",
+      "MEM-WIDTH-KEYS",
+      "MEM-WIDTH-PAYLOAD",
+      "MEM-MESH-ENTRIES",
+      "MEM-MESH-CPU",
+      "MEM-MESH-GPU",
+      "MEM-WORLD-GPU",
+      "MEM-SCREEN-GPU",
+      "MEM-REPLACEMENT",
+      "MEM-ATLAS-LOCAL",
+      "MEM-ATLAS-TOTAL",
+      "MEM-STAGING-LOCAL",
+      "MEM-STAGING-TOTAL",
+      "MEM-GPU-TOTAL",
+      "REUSE-SCREEN",
+      "REUSE-WORLD-ALLOC",
+      "REUSE-TEXT-KEY",
+      "REUSE-TEXT-LAYOUT",
+      "REUSE-CONTROL-KEY",
+      "PASS-GEOMETRY",
+      "PASS-BACKGROUND",
+      "PASS-TEXT",
+      "PASS-FOREGROUND",
+      "PASS-MENU-CARD",
+      "PASS-MENU-TEXT",
+      "PASS-COUNTS",
+      "PASS-RESOLVE"
+    ],
+    "implementation_due": "S4",
+    "qualification_due": "S5",
+    "limits": "Bounded shared-owner readiness only; New Project backdrop/dialog-control convergence remains S3, all original row acceptance/test statuses remain unchanged."
   }
 }

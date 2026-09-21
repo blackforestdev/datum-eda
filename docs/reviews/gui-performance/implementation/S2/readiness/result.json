@@ -1,0 +1,225 @@
+{
+  "status": "bounded S2 implementation readiness satisfied under owner-approved exit; individual requirement qualification remains partial/unqualified",
+  "source_commit": "682f9257e9d2c3a69ee57fffc4961d8e595a3450",
+  "authority": "Owner approved exact six-clause proposal 74ba0b78; operative contract in 682f9257, S2-EXIT-APPROVED. This review applies that exit, not the superseded complete-byte-cap prerequisite.",
+  "production_inventory": {
+    "MAIN": "Runtime::render in runtime_present uses ensure_retained_scene and shared Renderer::render_with_submission. runtime_terminal_render composes through renderer-owned preparation. Panes consume the same world/screen/text owners; no per-pane renderer fork.",
+    "GLOBAL": "GlobalPreferencesWindowSurface prepares native Preferences through Renderer-owned controls and uses Renderer::render_with_submission; overlay-only routing shares screen/text/glyph owners.",
+    "PROJECT": "OwnedHost::Project selects the same GlobalPreferencesWindowSurface with project=true/new=false; project preferences data is a thin adapter to shared preparation/rendering.",
+    "NEW": "OwnedHost::New selects the same native surface with new=true. Renderer-owned workspace preparation and controls/text are adopted; general workspace backdrop is deliberately still present for S3 retirement. This is not dialog-profile convergence.",
+    "world": "Four immutable Arc-backed retained vertex/stroke slots use RetainedBuffer/VertexAllocation; ordered batch keys and live bindings own cached world bundles. Main history has shared construction/restoration/admission ownership. Schematic code ownership does not admit schematic performance fixtures.",
+    "screen": "Nine screen streams including Console and surface grids use ScreenBuffer. Fixed screen/camera records use UniformBuffer; changed uniform writes are exact aligned ranges, while large screen internal clean gaps remain unresolved.",
+    "text": "One TextBufferCache/GlyphPreparation transaction serves both draw paths, with exact existing-key lookup, extent reuse, entry retirement, bounded overlay signature and atlas retry protection. Text measurement and Renderer databases share six immutable executable font sources.",
+    "controls": "Renderer owns retained CPU control mesh cache used by GLOBAL/PROJECT/NEW; MAIN uses owner-based preparation but complete Main control-family and scroll/hit/profile convergence belongs to S3."
+  },
+  "retired_competing_paths": [
+    "Repeated Vec copies of retained world vertices/strokes",
+    "Scattered raw screen-buffer replacement/upload decisions for the nine migrated slots",
+    "Raw full-value uniform writes and unused pane uniform/bundle slots",
+    "Duplicated shaped-cache lookup/lifetime policy and stale retry/reindex signatures",
+    "Unconditional overlay glyph preparation and no-op dialog revision invalidation",
+    "Transient New Project control-mesh ownership and independent Main preparation constructors",
+    "Raw six-entry-only Main history without byte admission",
+    "Per-FontSystem copies of six embedded font payloads"
+  ],
+  "bounded_limits": [
+    "Screen snapshots: 256 KiB per slot, nine slots; overlarge streams render without retained snapshot.",
+    "Vertex allocation retained capacity at most four times current live payload; absolute/retiring aggregate budgets remain open.",
+    "Main history: six entries and conservative 64 MiB heap admission with active headroom; shared/pinned/peak/overhead accounting remains incomplete.",
+    "Dialog text: existing 128 buffers/32 KiB key text, spare entry/index capacity retirement; complete shaped payload cap remains open.",
+    "Overlay glyph signature: at most 128 placement records; larger lists render without reuse.",
+    "Widths: existing 256 measurements/64 KiB keys; total owned/thread/process qualification remains open.",
+    "Control mesh: 256 entries/4 MiB CPU payload; complete GPU/aggregate qualification remains open.",
+    "Fonts: six process-shared static sources, 831332 bytes of embedded payload without per-database Vec copies."
+  ],
+  "proof": {
+    "current_gpu_owner_replay": "Three targeted real-GPU tests pass on current code: immutable world replacement/readback/capacity, screen content/range/cap/bypass/clear, and production bundle reuse/order/rebind. Raw logs attached.",
+    "same_code_recent_proof": "Latest shared-font receipt covers 206 renderer tests, 22 ignored, 13 explicit GPU regressions, legacy-copy glyph parity, release/Clippy and four native X11 smokes. Rust source unchanged since that receipt; current release hash matches.",
+    "native_scope": "All four real default renderer hosts start/present/close; Main wheel input included. This is actual native adapter evidence, not complete native static/input/backend/scale/counter qualification.",
+    "negatives": "Individual immutable receipts retain baseline clone/allocation/lookup/range failures, equal-size replacement controls, stale-cache/retry controls, current-frame-layout guard failure and shared-font copy failure. Rejected fragmented screen-write/copy performance experiments remain rejected, not production paths.",
+    "regressions": "No unexplained candidate regression identified in these scoped checks. Existing terminal convergence drift and restart-lineage flake remain separate; full drift/app suite not rerun here. Earlier failed native attempts remain preserved; no missing native/backend proof relabeled passed."
+  },
+  "carryforward_predicate_ids": [
+    "AC-05",
+    "HP01-01",
+    "HP02-01",
+    "HP02-02",
+    "HP03-01",
+    "HP03-02",
+    "HP04-01",
+    "HP06-01",
+    "HP06-02",
+    "HP07-01",
+    "HP08-01",
+    "HP08-02",
+    "HP08-03",
+    "HP15-01",
+    "HP15-02",
+    "HP17-01",
+    "HP17-02",
+    "MEM-WORLD-CPU",
+    "MEM-WORLD-HISTORY",
+    "MEM-SHAPED-LOCAL",
+    "MEM-SHAPED-TOTAL",
+    "MEM-LABEL-ENTRIES",
+    "MEM-LABEL-KEYS",
+    "MEM-WIDTH-ENTRIES",
+    "MEM-WIDTH-KEYS",
+    "MEM-WIDTH-PAYLOAD",
+    "MEM-MESH-ENTRIES",
+    "MEM-MESH-CPU",
+    "MEM-MESH-GPU",
+    "MEM-WORLD-GPU",
+    "MEM-SCREEN-GPU",
+    "MEM-REPLACEMENT",
+    "MEM-ATLAS-LOCAL",
+    "MEM-ATLAS-TOTAL",
+    "MEM-STAGING-LOCAL",
+    "MEM-STAGING-TOTAL",
+    "MEM-GPU-TOTAL",
+    "REUSE-SCREEN",
+    "REUSE-WORLD-ALLOC",
+    "REUSE-TEXT-KEY",
+    "REUSE-TEXT-LAYOUT",
+    "REUSE-CONTROL-KEY",
+    "PASS-GEOMETRY",
+    "PASS-BACKGROUND",
+    "PASS-TEXT",
+    "PASS-FOREGROUND",
+    "PASS-MENU-CARD",
+    "PASS-MENU-TEXT",
+    "PASS-COUNTS",
+    "PASS-RESOLVE"
+  ],
+  "implementation_due": "S4: complete carried S2 accounting/caps, large-screen exact changed ranges and shaping/layout dependency implementation with affected conformance/negative proof. The public allocator snapshot is useful but lacks stable IDs/upload events/CPU payload.",
+  "qualification_due": "S5: every carried predicate including full native replacement/address-reuse/eviction/device reset, static/painter/AA/text/backend/scale and byte-budget qualification, plus independent replay/endurance. Preserve excluded resize/T2/unadmitted schematic scope.",
+  "evidence_reviewed": [
+    {
+      "map_entry": "s2_retained_buffer_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json",
+      "sha256": "eb1453e243b344a826942dd6c963bb0e878352432f6148b720a18d0f3dcbb985"
+    },
+    {
+      "map_entry": "s2_text_cache_owner_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json",
+      "sha256": "31d0dc73fbf5e4752eadcc2859da1c2734278d5f918f5dcf07a3013112c77f1e"
+    },
+    {
+      "map_entry": "s2_screen_upload_owner_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/screen-upload-owner/result.json",
+      "sha256": "5357b16e70475e6aa473da3d9f5b0bfef0992c0254597c33a07cd48be9ac6cb2"
+    },
+    {
+      "map_entry": "s2_glyph_transaction_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/glyph-transaction/result.json",
+      "sha256": "b946dbcf147b149954d1db7d565e89cb0b7b47fcb8812fd810c273615f84c3d5"
+    },
+    {
+      "map_entry": "s2_vertex_allocation_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/vertex-allocation/result.json",
+      "sha256": "8e835c0f6a4443722a49a78708071a8ae667325ada39a31f980391200d0c979b"
+    },
+    {
+      "map_entry": "s2_text_relayout_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/text-relayout/result.json",
+      "sha256": "648c492022b5404bd73e2c41535e1c352202d21106a704d063a61d0ae1c0b09d"
+    },
+    {
+      "map_entry": "s2_text_contribution_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json",
+      "sha256": "9ebd3808101ff3bf42371a5b9ca058542a0b75ab23996794707f5b50b4dee839"
+    },
+    {
+      "map_entry": "s2_control_mesh_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/control-mesh/result.json",
+      "sha256": "21fde983791ea64592c0f6ee1e24e9964c6661a6ed86b990a4c40878630cd701"
+    },
+    {
+      "map_entry": "s2_workspace_control_owner_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/workspace-control-owner/result.json",
+      "sha256": "8793023fac6c56ecf21b21a7836ae64e4120256783f017849010864b720302da"
+    },
+    {
+      "map_entry": "s2_screen_span_trimming_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/screen-span-trimming/result.json",
+      "sha256": "0b87162def25dffc33ae6931f196804cd18f6b4da1323863817d7a6c7801453b"
+    },
+    {
+      "map_entry": "s2_text_lookup_index_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/text-lookup-index/result.json",
+      "sha256": "8737b3e7c1e3b8888f2360e968a2e931c32d64dab4fce71fb3e35b5c79902f06"
+    },
+    {
+      "map_entry": "s2_world_bundle_key_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/world-bundle-key/result.json",
+      "sha256": "1cacd3816f520017de9277bc476be5b3bf12416aa0844792cf06ff00bb732531"
+    },
+    {
+      "map_entry": "s2_uniform_owner_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/uniform-owner/result.json",
+      "sha256": "ca17e5a27be4d98f0d5c0127cebd893ecf3a3a14c467e809559e12da85626679"
+    },
+    {
+      "map_entry": "s2_scene_history_budget_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/scene-history-budget/result.json",
+      "sha256": "7dc4bdec1b1de534ca6c7be401a8c9b0aa21c699b8fd7dc402588c3656dc3b65"
+    },
+    {
+      "map_entry": "s2_text_entry_retirement_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json",
+      "sha256": "fda00d7498b197d781225978abb4e339b100be45ce3463a12fcaae5db24ea425"
+    },
+    {
+      "map_entry": "s2_text_layout_transfer_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/text-layout-transfer/result.json",
+      "sha256": "70f49611c622f34a493c4c099cb7a54497ffffdf7aa4f738461f9129f7d00490"
+    },
+    {
+      "map_entry": "s2_overlay_glyph_reuse_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/overlay-glyph-reuse/result.json",
+      "sha256": "d6bbec0b8550ee1b07e45975916737752d8fd488749c628570c2df2b6b1245a3"
+    },
+    {
+      "map_entry": "s2_uniform_changed_ranges_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/uniform-changed-ranges/result.json",
+      "sha256": "b7993c3fab8bc52181ec4d8c1a1a6fcea0fa4998c7c63c8353bb23c02dd4b924"
+    },
+    {
+      "map_entry": "s2_public_allocator_report_probe",
+      "path": "docs/reviews/gui-performance/implementation/S2/public-allocator-probe/result.json",
+      "sha256": "70a9d2e1e32de7492c9eac6fb859a6574bdc12fdfbdb6bc3e078e5b7a2badd2f"
+    },
+    {
+      "map_entry": "s2_shared_font_bytes_work",
+      "path": "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json",
+      "sha256": "e7423c5d240919d806f0a4d370b3937d68715c16ec55c97a269b2111332e9ed1"
+    }
+  ],
+  "source_sha256": {
+    "crates/gui-app/src/runtime_present.rs": "5b1372b297f97b5cbb4e509086c51a0b593a4b3133e4943f1a4b59377b703a6a",
+    "crates/gui-app/src/runtime_terminal_render.rs": "2fa9ec2237ef5056697fc67e54acac6a0d72be7d57cad9b0d44fb93d5fc7130f",
+    "crates/gui-app/src/native_frame_adapters.rs": "3d528ac6accd13e75c6ef7fcfadad84036f1fc456db67eb6ac230dcb0e9c7252",
+    "crates/gui-app/src/global_preferences_window.rs": "b24a5c02b67acadfa25cfd19519885f957b2e9dd963835d22f37222d989252c5",
+    "crates/gui-app/src/project_preferences_window.rs": "36ae86d461f032950472d9168fe6766471ca6d5afe86b4ff6c6eb3b0ccc0a472",
+    "crates/gui-app/src/new_project_window.rs": "e187b51cf5444f4feb7f143ccac7e3a77da3253a566b1c8ab4496a9b2ed938d8",
+    "crates/gui-app/src/retained_scene_history.rs": "4f2317bf9e48beccb6c3277a80280765d1bc1424519ca0bf50ad887a8fe6e2a8",
+    "crates/gui-render/src/render/renderer_state.rs": "72ae5057ae98f466a7b52603f99d26ff83f5ae44938c03145042042cfeb2c0c5",
+    "crates/gui-render/src/render/frame_preparation.rs": "399c475e8429c4c3ea5dab63342f59b9f15dd783d29f66f488c2eaa6b02c79e3",
+    "crates/gui-render/src/render/gpu_frame.rs": "999c93fd77bc04be89714f60c79212e3d49a1146f373154b71b4340bdb1d2d43",
+    "crates/gui-render/src/render/gpu_overlay.rs": "f12b1a4f32c2777a76f86a9bb44ea86f18aa31602c43e089e0ab48a9b2581525",
+    "crates/gui-render/src/render/gpu_text.rs": "4a02174bc5a434fa4e679d0e5361bf81b173f5bcbdbcd22db87f168c0bd9acb2",
+    "crates/gui-render/src/render/gpu_vertex_upload.rs": "74868daa3027043b56f1a824cfbfa73e31d05960027194d82eaef09a522ba618",
+    "crates/gui-render/src/render/gpu_strokes.rs": "f635cd0ad8695ccf13eab33ad077a987ec3107ba6c3bd67eb77c888b5cd89fc2",
+    "crates/gui-render/src/render/gpu_console.rs": "63011d45d90f959e0516ced25dbab3297a1af7a2d4cad9b90c051f7f2d1cd856",
+    "crates/gui-render/src/render/gpu_surface_pass.rs": "baf7a2bbe2fc7710c6975fdbee48532a199f9428b88ffa1e53fe6b16f23f7e6d",
+    "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs": "0b2850b275fcb0aabf351f811a4f5dcdb77cf00c77798a92626e4740227c0db6",
+    "crates/gui-render/src/render/retained_buffer.rs": "90977e837bfa09ba97888418da231f6f426ed9f6e0f0d7cb5c7584cf44f008bb",
+    "crates/gui-render/src/render/screen_buffer.rs": "06aa77d08756d0a192dc7745e5ec22a8b375fc9a75ce3559456459220a933339",
+    "crates/gui-render/src/render/vertex_allocation.rs": "2d050ee47265f42374df722190f629beaa0a718c4d4c62a6fcde86720fbc07e5",
+    "crates/gui-render/src/render/uniform_buffer.rs": "b634ee36ba6ba76d648d4336b1770b3ccf9ddb86ab2a21338b94b69664d2eb64",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "52f6144e15f8839ff860111f46e51570fe55a11b6c6d94591bf82e70691d3a23",
+    "crates/gui-render/src/render/text_metrics.rs": "90e9d672cf25fbbf3f08aebb7e2c2348713e434c2e86c2330c7f44cce64b3496",
+    "crates/gui-render/src/render/control_mesh.rs": "416582241aec3aee99a88086069fe32c43138778d319d24dc6ebb71085a2d6f6"
+  },
+  "native_binary_sha256": "e9a344cc6fa5d1846b10be2d4b573b4acf4ce9f4c6f4f28e5ca02c012fa44816"
+}
