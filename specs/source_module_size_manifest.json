@@ -701,13 +701,13 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 7794
+        "expanded_lines": 7560
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Full-frame GPU encoding and submission extracted into a normal gpu_frame module; renderer type and remaining logical-include debt stay frozen."
+      "note": "CPU frame composition and renderer-owned control preparation extracted from the scene include into the normal frame_preparation module. Remaining logical-include debt stays frozen."
     },
     "crates/gui-render/src/render/draw_primitives.rs": {
       "kind": "rust-production",

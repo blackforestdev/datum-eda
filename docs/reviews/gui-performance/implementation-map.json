@@ -16713,7 +16713,7 @@
         "TERMINAL",
         "TERM_OVERLAY"
       ],
-      "shared_owner": "Renderer.control_meshes / ControlMeshCache, retained by GLOBAL/PROJECT preparation; other renderer-lifetime consumers remain pending",
+      "shared_owner": "Renderer.control_meshes / ControlMeshCache retained by GLOBAL/PROJECT/NEW; Main preparation passes the owner but nonmodal control families remain pending",
       "implementation_slice": "S2",
       "production_entry_points": [
         "crates/gui-app/src/app_shell.rs",
@@ -16732,7 +16732,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial production adoption: explicit renderer-owned control mesh preparation in GLOBAL/PROJECT. Complete current rounded-contour key, LRU entry/payload caps/bypass, geometry/DPI misses and translation/color reuse verified; rejected DPI/no-reuse controls, actual renderer warm/reset/scale, scanline AA and fractional-scroll GPU proofs pass. Four native smoke cases pass. Main/New Project persistence, other control families, GPU budget and full native/per-adapter qualification remain open.",
+        "status": "Partial production adoption: GLOBAL/PROJECT/NEW retain control meshes. Existing key/cap/AA/scroll proof preserved; New Project actual retained-scene GPU warm/edit/reset parity at 1x/1.5x and rejected transient-owner negative pass. Four native smoke cases pass. Main control families, GPU budget and complete native/per-adapter qualification remain open.",
         "id": "proof_reuse_control_key",
         "positive": "Vary each CTL-01 geometry/style/clip-baked key independently",
         "negative_control": "Omit one required key",
@@ -16758,7 +16758,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S2/control-mesh/result.json"
+        "docs/reviews/gui-performance/implementation/S2/control-mesh/result.json",
+        "docs/reviews/gui-performance/implementation/S2/workspace-control-owner/result.json"
       ]
     },
     {
@@ -25359,19 +25360,21 @@
     ]
   },
   "s2_control_mesh_work": {
-    "status": "Renderer-owned retained rounded controls adopted in GLOBAL/PROJECT; GPI-S2 remains in progress",
+    "status": "Renderer-owned CPU rounded control meshes adopted in GLOBAL/PROJECT/NEW; GPI-S2 remains in progress",
     "evidence": "docs/reviews/gui-performance/implementation/S2/control-mesh/result.json",
     "production_consumers_migrated": [
       "GLOBAL",
-      "PROJECT"
+      "PROJECT",
+      "NEW"
     ],
     "competing_paths_retired": [
       "Repeated fan tessellation on warm Global/Project Preferences preparation",
       "Independent convex-fill generation at shared control call sites; one cached mesh generator now supplies them"
     ],
     "remaining_competing_paths": [
-      "Static PreparedScene construction and Main/New Project compatibility composition currently create temporary caches; their renderer-lifetime retention is not migrated or claimed.",
-      "Frame quads/vertices and clipping are still materialized; GPU control-mesh retention/instancing is not introduced."
+      "Public static PreparedScene compatibility constructors still use a transient cache for standalone callers/tests.",
+      "Main nonmodal control families have not yet adopted this control mesh cache.",
+      "Frame quad/vertex materialization and New Project general backdrop remain; S3 owns composition retirement."
     ],
     "bounds": {
       "entries": 256,
@@ -25381,10 +25384,34 @@
       "boundary": "Complete retained CPU mesh payload bound only. Frame quad/vertex scratch, existing screen GPU streams, total/native/driver memory and the specified GPU control budget are not qualified here."
     },
     "remaining_limitations": [
-      "Persistent cache adoption is GLOBAL/PROJECT only. Main/New Project and other control families remain pending; no global control adoption or S3 completion.",
-      "This retains CPU meshes; frame translation/color/clip materialization and screen uploads still occur under their existing owners. No zero-allocation or numerical speedup claim.",
-      "Full per-adapter key omission/eviction negatives, native shape counters, GPU control capacity and complete resource/backend/scale/endurance qualification remain open.",
-      "Concave/holed authored geometry remains on its existing tessellator. No dependency, vendoring, version/license, visual prototype, typography, engine mutation or resize qualification change."
-    ]
+      "CPU control cache bounds remain the prior 256 entries/4 MiB payload policy; no new budget or GPU retention is introduced.",
+      "GLOBAL/PROJECT retention from the preceding slice is preserved. New Project backdrop and shared scroll/hit/profile convergence remain S3 work.",
+      "Main nonmodal control families, full native counters/resource/backend/scale/endurance qualification, GPU control budget and S2 exit remain open.",
+      "No dependency, vendoring, Cargo, visual prototype, product authority or resize-qualification change."
+    ],
+    "followup_evidence": "docs/reviews/gui-performance/implementation/S2/workspace-control-owner/result.json"
+  },
+  "s2_workspace_control_owner_work": {
+    "status": "New Project retained control ownership adopted; Main preparation uses the owner API; GPI-S2 remains in progress",
+    "production_consumers_migrated": [
+      "NEW: default GlobalPreferencesWindowSurface New Project preparation retains rounded meshes in Renderer.control_meshes",
+      "MAIN: Runtime::build_terminal_prepared_scene now passes its Renderer owner through the same full-frame preparation API; other Main control families are not thereby migrated"
+    ],
+    "competing_paths_retired": [
+      "Per-preparation temporary control cache in the production New Project dialog path",
+      "Static full-frame preparation entry point in the default Main/New Project application call sites"
+    ],
+    "remaining_competing_paths": [
+      "Public static PreparedScene compatibility constructors still use a transient cache for standalone callers/tests.",
+      "Main nonmodal control families have not yet adopted this control mesh cache.",
+      "Frame quad/vertex materialization and New Project general backdrop remain; S3 owns composition retirement."
+    ],
+    "limits": [
+      "CPU control cache bounds remain the prior 256 entries/4 MiB payload policy; no new budget or GPU retention is introduced.",
+      "GLOBAL/PROJECT retention from the preceding slice is preserved. New Project backdrop and shared scroll/hit/profile convergence remain S3 work.",
+      "Main nonmodal control families, full native counters/resource/backend/scale/endurance qualification, GPU control budget and S2 exit remain open.",
+      "No dependency, vendoring, Cargo, visual prototype, product authority or resize-qualification change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S2/workspace-control-owner/result.json"
   }
 }

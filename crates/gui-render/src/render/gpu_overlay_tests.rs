@@ -57,6 +57,14 @@ fn hardware_renderer_with_atlas_limit(
 }
 
 fn capture(renderer: &mut OffscreenRenderer, prepared: &PreparedScene) -> RgbaImage {
+    capture_retained(renderer, prepared, &RetainedScene::empty())
+}
+
+fn capture_retained(
+    renderer: &mut OffscreenRenderer,
+    prepared: &PreparedScene,
+    retained: &RetainedScene,
+) -> RgbaImage {
     let target = renderer.device.create_texture(&wgpu::TextureDescriptor {
         label: Some("dialog-parity-target"),
         size: renderer.extent(),
@@ -74,7 +82,7 @@ fn capture(renderer: &mut OffscreenRenderer, prepared: &PreparedScene) -> RgbaIm
             &renderer.queue,
             &target.create_view(&wgpu::TextureViewDescriptor::default()),
             prepared,
-            &RetainedScene::empty(),
+            retained,
             None,
             renderer.width,
             renderer.height,
@@ -630,3 +638,6 @@ fn renderer_owned_preferences_meshes_stay_warm_and_match_fresh_pixels() {
     assert!(renderer.renderer.control_meshes.builds > 0);
     assert!(cold == capture(&mut renderer, &restored));
 }
+
+#[path = "gpu_control_tests.rs"]
+mod control_tests;
