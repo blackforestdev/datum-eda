@@ -9,6 +9,35 @@ pub(super) type Bundle = (
     wgpu::Queue,
 );
 
+/// Borrowed GPU ownership shared by initial and staged auxiliary construction.
+/// No application/model state or authority is available through this view.
+#[derive(Clone, Copy)]
+pub(super) struct DeviceView<'a> {
+    pub instance: &'a wgpu::Instance,
+    pub adapter: &'a wgpu::Adapter,
+    pub device: &'a wgpu::Device,
+    pub queue: &'a wgpu::Queue,
+    pub config: &'a wgpu::SurfaceConfiguration,
+    pub health: &'a native_device_recovery::DeviceHealth,
+    pub transaction: &'a SurfaceTransaction,
+    pub epoch: u64,
+}
+
+impl Runtime {
+    pub(super) fn native_device_view(&self) -> DeviceView<'_> {
+        DeviceView {
+            instance: &self.instance,
+            adapter: &self.adapter,
+            device: &self.device,
+            queue: &self.queue,
+            config: &self.config,
+            health: &self.device_health,
+            transaction: &self.surface_transaction,
+            epoch: self.measurements.epoch(),
+        }
+    }
+}
+
 pub(super) async fn create(window: std::sync::Arc<Window>) -> Result<Bundle> {
     append_gui_diagnostic_line("wgpu instance create begin");
     let instance = gui_runtime_support::diagnostic_instance();

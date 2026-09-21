@@ -1,0 +1,88 @@
+{
+  "status": "Default device replacement staged across every existing host before publication; bounded fault proof passes, full S1 qualification remains open",
+  "baseline_commit": "0b8e26484578c5bf8f1c435f6765dbd351ee2110",
+  "baseline_problem": "Runtime::replace_native_gpu published Main and destroyed its old device before auxiliary replacement constructors/health checks. An auxiliary-stage error retained new Main GPU state alongside old auxiliary state. Source-verified failure ordering, not a measured baseline runtime trial.",
+  "candidate_source_sha256": {
+    "crates/gui-app/src/native_gpu.rs": "8c4a3217a3fcbc2846fb343b3d713206f66a7ab66788377f114c507f692b4caa",
+    "crates/gui-app/src/native_device_recovery.rs": "b689472f68908a56265786988cef87ac6d62ec2b493eb4f7880f1048a22f2eb1",
+    "crates/gui-app/src/global_preferences_window.rs": "6784bc24207be5fe1f0d5639efa035aa861ec8274ed1b89198a712f5f40054d7"
+  },
+  "candidate_binary_sha256": "8b3ca99f251edac1d9babeb5d8ee63039edbfdc3f14107ef451739395c43f90b",
+  "production_consumers_migrated": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "shared_owners": [
+    "native_gpu::DeviceView supplies only borrowed device/queue/configuration/epoch ownership to both initial and replacement auxiliary construction.",
+    "PreparedDevice owns uncommitted Main GPU resources; App stages auxiliary surfaces from its view and checks shared health before Runtime::commit_native_gpu and host rebind."
+  ],
+  "retired_paths": [
+    "Eager Main replacement/destruction before auxiliary construction succeeds.",
+    "Auxiliary replacement borrowing already-published Runtime GPU state instead of the staged shared generation."
+  ],
+  "verification": {
+    "device_components": "3 passed, 1 ignored (native Vulkan callback test); initial compile failed after mechanical rename accidentally changed gui_runtime_support identifiers; repaired and failure log retained.",
+    "app": "374 passed, 0 failed, 9 ignored.",
+    "release": "Guarded offline release passed.",
+    "native_fault": [
+      {
+        "host": "GLOBAL",
+        "old": 1,
+        "rejected": 3,
+        "retained_after_failure": 1,
+        "committed_after_retry": 5,
+        "staged_surface_drops": 2,
+        "unsubmitted_staging": true,
+        "final_extent": [
+          1200,
+          800
+        ],
+        "close_exit": 0,
+        "main_window_released": true
+      },
+      {
+        "host": "PROJECT",
+        "old": 1,
+        "rejected": 3,
+        "retained_after_failure": 1,
+        "committed_after_retry": 5,
+        "staged_surface_drops": 2,
+        "unsubmitted_staging": true,
+        "final_extent": [
+          1200,
+          800
+        ],
+        "close_exit": 0,
+        "main_window_released": true
+      },
+      {
+        "host": "NEW",
+        "old": 1,
+        "rejected": 3,
+        "retained_after_failure": 1,
+        "committed_after_retry": 5,
+        "staged_surface_drops": 2,
+        "unsubmitted_staging": true,
+        "final_extent": [
+          1200,
+          800
+        ],
+        "close_exit": 0,
+        "main_window_released": true
+      }
+    ],
+    "native_main": "Main-only once device-loss replacement and owned-window teardown pass.",
+    "native_default": "Four hosts pass final extent, completed receipts, three idle seconds without extra presentations and close exit 0.",
+    "drift": "Workspace rustfmt/all-target Clippy, alignment, traceability and dependency authority pass. Full drift stops at existing dat-terminal-convergence-guard-xke focus/font-source-marker checks."
+  },
+  "fault_control": "Existing opt-in DATUM_DIAGNOSTIC_DEVICE_LOSS adds once-fail-staging: inject one DeviceHealth allocation failure after auxiliary GPU construction, before the production shared-health check. Only the backend failure signal is substituted; actual preparation, rejection/drop, error reporting, F5 retry and publication paths run. Default environment does not inject failure.",
+  "limits": [
+    "Eight bounded X11 native cases are not full LF-05/LF-06/S1, Wayland/scale, independent pixel, driver allocation/residency or statistical recovery-budget qualification.",
+    "No deliberately regressed disposable-source replay was built; prescribed negative-control qualification remains open.",
+    "A healthy staged device can still fail asynchronously after commit; existing recovery policy handles later errors. This change makes publication conditional on successful staging, not immune to later backend faults.",
+    "Prior intermittent native close-delivery and surface stalls remain tracked; these passing trials do not close them.",
+    "No dependency/license, authoritative model/terminal mutation, device policy, recovery limit or nonblocking resize exclusion changes."
+  ]
+}
