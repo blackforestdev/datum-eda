@@ -549,7 +549,9 @@ impl Runtime {
             match &event.logical_key {
                 Key::Named(NamedKey::Backspace) => {
                     let dialog = &mut self.session.workspace_mut().ui.project_preferences;
-                    dialog.search_query.pop();
+                    if dialog.search_query.pop().is_none() {
+                        return Outcome::Consumed;
+                    }
                     dialog.scroll_row = 0;
                     self.invalidate_frame();
                     return Outcome::Dialog;
