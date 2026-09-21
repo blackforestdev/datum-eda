@@ -43,38 +43,33 @@ fn measure_uncached(text: &str, size: f32, face: TextFace) -> f32 {
 /// on-canvas UI text render in the Design Book typeface rather than a system
 /// fallback (`docs/gui/DATUM_RENDERING_BOOK.md` §5). Embedded at compile time
 /// from the engine's vendored assets so the GUI never depends on the CWD.
+static DATUM_FONT_BYTES: [&[u8]; 6] = [
+    include_bytes!(
+        "../../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-Regular.ttf"
+    ),
+    include_bytes!(
+        "../../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-Medium.ttf"
+    ),
+    include_bytes!(
+        "../../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-SemiBold.ttf"
+    ),
+    include_bytes!("../../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Regular.ttf"),
+    include_bytes!("../../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Medium.ttf"),
+    include_bytes!("../../../engine/assets/fonts/jetbrains_mono/JetBrainsMono-Regular.ttf"),
+];
+
 pub(super) fn load_datum_fonts(font_system: &mut FontSystem) {
+    // The executable already owns immutable font bytes. Share six small Arc
+    // handles instead of allocating another Vec for every font system/renderer.
+    // Keep load order and per-system databases/shaping caches unchanged.
+    static SOURCES: std::sync::OnceLock<[glyphon::fontdb::Source; 6]> = std::sync::OnceLock::new();
+    let sources = SOURCES.get_or_init(|| {
+        DATUM_FONT_BYTES.map(|bytes| glyphon::fontdb::Source::Binary(std::sync::Arc::new(bytes)))
+    });
     let db = font_system.db_mut();
-    db.load_font_data(
-        include_bytes!(
-            "../../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-Regular.ttf"
-        )
-        .to_vec(),
-    );
-    db.load_font_data(
-        include_bytes!(
-            "../../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-Medium.ttf"
-        )
-        .to_vec(),
-    );
-    db.load_font_data(
-        include_bytes!(
-            "../../../engine/assets/fonts/ibm_plex_sans_condensed/IBMPlexSansCondensed-SemiBold.ttf"
-        )
-        .to_vec(),
-    );
-    db.load_font_data(
-        include_bytes!("../../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Regular.ttf")
-            .to_vec(),
-    );
-    db.load_font_data(
-        include_bytes!("../../../engine/assets/fonts/ibm_plex_mono/IBMPlexMono-Medium.ttf")
-            .to_vec(),
-    );
-    db.load_font_data(
-        include_bytes!("../../../engine/assets/fonts/jetbrains_mono/JetBrainsMono-Regular.ttf")
-            .to_vec(),
-    );
+    for source in sources {
+        db.load_font_source(source.clone());
+    }
 }
 
 pub(super) fn text_attrs(face: TextFace) -> Attrs<'static> {
@@ -153,6 +148,83 @@ pub(super) fn measured_text_run_width_px(text: &str, size: f32, face: TextFace) 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn embedded_font_bytes_are_shared_between_font_systems() {
+        let mut first = FontSystem::new();
+        let mut second = FontSystem::new();
+        load_datum_fonts(&mut first);
+        load_datum_fonts(&mut second);
+        let sources = |fonts: &FontSystem| {
+            let mut sources: Vec<_> = fonts
+                .db()
+                .faces()
+                .filter_map(|face| {
+                    if let glyphon::fontdb::Source::Binary(bytes) = &face.source {
+                        Some((face.post_script_name.clone(), bytes.clone()))
+                    } else {
+                        None
+                    }
+                })
+                .collect();
+            sources.sort_by(|a, b| a.0.cmp(&b.0));
+            sources
+        };
+        let first = sources(&first);
+        let second = sources(&second);
+        assert_eq!(first.len(), 6);
+        assert_eq!(second.len(), 6);
+        let mut bytes = 0;
+        for ((left_name, left), (right_name, right)) in first.iter().zip(&second) {
+            assert_eq!(left_name, right_name);
+            assert!(
+                std::sync::Arc::ptr_eq(left, right),
+                "duplicated font: {left_name}"
+            );
+            assert!(
+                DATUM_FONT_BYTES
+                    .iter()
+                    .any(|embedded| embedded.as_ptr() == left.as_ref().as_ref().as_ptr()),
+                "font source must borrow executable storage"
+            );
+            bytes += left.as_ref().as_ref().len();
+        }
+        eprintln!("embedded font payload shared across font systems: {bytes} bytes");
+    }
+
+    #[test]
+    fn shared_font_sources_match_legacy_copy_shaping() {
+        let mut shared = FontSystem::new();
+        load_datum_fonts(&mut shared);
+        let mut legacy = FontSystem::new();
+        for bytes in DATUM_FONT_BYTES {
+            legacy.db_mut().load_font_data(bytes.to_vec());
+        }
+        let layout = |fonts: &mut FontSystem, face| {
+            let mut buffer = Buffer::new(fonts, Metrics::new(13.0, 13.0 * 1.22));
+            buffer.set_text(
+                fonts,
+                "Datum 123 · µm Ω العربية 漢字",
+                &text_attrs(face),
+                Shaping::Basic,
+                None,
+            );
+            buffer.shape_until_scroll(fonts, false);
+            buffer
+                .layout_runs()
+                .map(|run| (run.line_w.to_bits(), format!("{:?}", run.glyphs)))
+                .collect::<Vec<_>>()
+        };
+        for face in [
+            TextFace::Ui,
+            TextFace::UiMedium,
+            TextFace::UiStrong,
+            TextFace::Mono,
+            TextFace::Terminal,
+        ] {
+            assert_eq!(layout(&mut shared, face), layout(&mut legacy, face));
+        }
+    }
 
     #[test]
     fn exact_measurements_reuse_only_identical_font_size_and_text() {
