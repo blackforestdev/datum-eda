@@ -14064,7 +14064,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/public-allocator-probe/result.json"
+      ]
     },
     {
       "id": "MEM-ATLAS-TOTAL",
@@ -14151,7 +14154,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/public-allocator-probe/result.json"
+      ]
     },
     {
       "id": "MEM-TERM-CPU",
@@ -25632,7 +25638,8 @@
     "technical_observation": {
       "cosmic-text 0.15.0": "Buffer.lines and shape/layout vectors are public, but BufferLine text capacity and AttrsList range storage capacity are private; text() and spans_iter() expose values, not complete allocated capacities.",
       "glyphon 0.10.0": "TextAtlas inner atlases are crate-private; allocation growth and queue.write_texture happen inside the dependency. Public trim/prepare do not report complete allocation/upload events.",
-      "boundary": "Read existing registry sources only. No copied sources, new dependency, Cargo change or complete accounting claim."
+      "boundary": "Read existing registry sources only. No copied sources, new dependency, Cargo change or complete accounting claim.",
+      "wgpu 28 public allocator report": "Actual Vulkan probe observes named atlas backing allocations and drained release without dependency changes. Report lacks stable identity/upload events/CPU payload; see s2_public_allocator_report_probe. This narrows the technical boundary without completing ACC-01/02 or S2 caps."
     },
     "next_production_choice": "S3 shared dialog/profile migration can consume existing shared owners, but current S2 exit prevents selection. The proposal changes that ordering; continuing substantive S2 work remains authorized without it.",
     "proposal": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#proposed-s2-implementation-exit-amendment--pending-owner-review",
@@ -25719,5 +25726,21 @@
       "Pending S2 sequencing amendment remains unapplied. No dependency, third-party source, Cargo/license/font, visual truth, product authority or resize qualification changes."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S2/uniform-changed-ranges/result.json"
+  },
+  "s2_public_allocator_report_probe": {
+    "status": "bounded public-API feasibility result; no runtime migration or requirement closure",
+    "evidence": "docs/reviews/gui-performance/implementation/S2/public-allocator-probe/result.json",
+    "implication": "Installed public APIs can observe private atlas backing allocations on the tested backend. The earlier private-interface observation must not be interpreted as proof that all atlas sizes are unobservable without vendoring. Complete ACC-01/02 and S2 caps still require additional implementation and conformance; this snapshot is not a substitute.",
+    "public_boundary": {
+      "available": "Live named backend suballocations with size/offset, block allocation-index ranges, allocated total and reserved total; generate_allocator_report needs no optional counters feature.",
+      "separate_api": "get_internal_counters requires the counters feature; no Cargo feature changed.",
+      "not_available": "No stable allocation ID or creation/upload event stream; report offsets can be reused and labels are not unique across renderers. No CPU BufferLine/AttrsList capacity, API texture extent/format/mips or physical driver residency from this report. Other backends may return None."
+    },
+    "limits": [
+      "One offscreen Preferences fixture on one existing backend, not all native hosts, all content, pressure/scale/endurance or budget qualification.",
+      "No default-path performance improvement or production instrumentation landed in this probe.",
+      "No sequencing approval inferred. S2 remains selected; pending amendment unchanged.",
+      "No new dependency, vendoring, downloads, registry changes, license/Cargo or resize work."
+    ]
   }
 }

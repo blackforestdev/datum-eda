@@ -1,0 +1,24 @@
+{
+  "status": "bounded public-API feasibility result; no runtime migration or requirement closure",
+  "candidate_commit": "dcb23af92f7373bced2b20901b3bac7f9ee40853",
+  "method": "Temporary ignored test in existing GPU harness calls Device::generate_allocator_report after Renderer creation, Preferences draw, and Renderer drop plus queue submit/drain. Probe script restores original test source in finally. No feature, dependency or registry modification.",
+  "result": "Intel HD Graphics P630 Vulkan report includes two allocations named glyphon atlas totaling 339440 bytes. After Renderer drop and queue completion no such allocation remains. Device allocator retains blocks; live suballocations and reserved blocks differ. See raw stage records.",
+  "public_boundary": {
+    "available": "Live named backend suballocations with size/offset, block allocation-index ranges, allocated total and reserved total; generate_allocator_report needs no optional counters feature.",
+    "separate_api": "get_internal_counters requires the counters feature; no Cargo feature changed.",
+    "not_available": "No stable allocation ID or creation/upload event stream; report offsets can be reused and labels are not unique across renderers. No CPU BufferLine/AttrsList capacity, API texture extent/format/mips or physical driver residency from this report. Other backends may return None."
+  },
+  "implication": "Installed public APIs can observe private atlas backing allocations on the tested backend. The earlier private-interface observation must not be interpreted as proof that all atlas sizes are unobservable without vendoring. Complete ACC-01/02 and S2 caps still require additional implementation and conformance; this snapshot is not a substitute.",
+  "limits": [
+    "One offscreen Preferences fixture on one existing backend, not all native hosts, all content, pressure/scale/endurance or budget qualification.",
+    "No default-path performance improvement or production instrumentation landed in this probe.",
+    "No sequencing approval inferred. S2 remains selected; pending amendment unchanged.",
+    "No new dependency, vendoring, downloads, registry changes, license/Cargo or resize work."
+  ],
+  "registry_source_sha256": {
+    "wgpu-28.0.0/src/api/device.rs": "50bc50737d59ba1988d1859f9f9f10ddedb33b0f9eb6a33253b62297cfe84149",
+    "wgpu-types-28.0.0/src/counters.rs": "e85dc9fa3b52896b35a051de78b2e8d351df5bbf56923aece2d4756c8490fdd0",
+    "wgpu-hal-28.0.1/src/vulkan/device.rs": "4b849b404e5277909ee81b0e317facacdc18cc066e0177c62be52cb152544ee1",
+    "glyphon-0.10.0/src/text_atlas.rs": "69b96c7465ece31c97fd7cc1a7bf59c3aa357115ed07297ade28254ecb5b7e03"
+  }
+}
