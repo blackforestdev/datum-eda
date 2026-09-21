@@ -1,0 +1,62 @@
+{
+  "status": "Default shared queue-admitted retry dispatch; bounded native improvement, S1 still in progress",
+  "baseline_commit": "66023e21c5af211b0b0f5ed5ec0cf601077c5a06",
+  "baseline_binary_sha256": "c82008a8605241d3ed9bc6993eb1073a3fc2823501fe6de2803ce6b186d20c0c",
+  "candidate_binary_sha256": "526bf15feaa0deb1e94d4f2d662838b564aac44d3d891dbfc3d2eccf04e2efbb",
+  "candidate_source_sha256": {
+    "crates/gui-app/src/native_frame_coordinator.rs": "37aa5cd16969231da2e64a38ecd74ad2ae6fa5fbc814b5ade8ce749efd2123c9",
+    "crates/gui-app/src/native_queue_owner.rs": "9376a698f4726d89a72a046adc60decc61ad503c8c1beca1d964ce948a6e0f8b",
+    "crates/gui-app/src/native_queue_progress_tests.rs": "1c4016ba369df74702a4ee08d97354a2c8bb6d2abd1b68e51c988f835b9b60b2",
+    "crates/gui-app/src/native_recovery.rs": "c765bf435cb9828816bfc06f14383558e4b66bf7924b39a14ac0908f5e49c79f",
+    "crates/gui-app/src/native_surface_transaction.rs": "aafa21ab1bb001e07a2e1506738509b6eb6975575b33671080888b663984571d"
+  },
+  "production_consumers_migrated": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "shared_path": "App::service_surface_retries -> QueueOwner read-only retry eligibility -> NativeFrameCoordinator -> Recovery::poll_admitted; SurfaceTransaction::begin_frame remains final admission authority",
+  "retired_paths": [
+    "Timer-only native redraw attempts while the same queue receipt/FIFO reservation still denies work. Existing callback progress and earliest-deadline owner remain in use."
+  ],
+  "production_changes": [
+    "Read-only queue eligibility respects outstanding receipt and FIFO configuration owner without creating or canceling tickets.",
+    "Ineligible retries retain damage and the same two-second active episode while yielding on the existing two-millisecond queue deadline. Actual admission rechecks ownership before configure/acquire.",
+    "Pending queue progress observes minimization even when retry frames are suppressed. No new idle timer or focused-window X11 property query."
+  ],
+  "verification": {
+    "component": "19 queue/recovery tests passed, including new FIFO/read-only eligibility and repeated unadmitted waits without active-budget reset.",
+    "app": "374 passed; 0 failed; 9 ignored.",
+    "release": "Guarded offline release passed.",
+    "native_main": {
+      "baseline": {
+        "wait_queue_frame_attempts": 799,
+        "native_redraw_deliveries": 804,
+        "observed_drawable_active_seconds": 2.0109689235687256
+      },
+      "candidate": {
+        "wait_queue_frame_attempts": 1,
+        "native_redraw_deliveries": 5,
+        "observed_drawable_active_seconds": 2.0144927501678467
+      }
+    },
+    "native_auxiliary": "All three hosts reach bounded failure, dispatch resize without submission, recover with F5, present final 1200x800 extent and complete receipts. Project/New close exit 0. Global final Main close times out after 20 seconds; no Main CloseRequested event in trace.",
+    "native_default": "Four hosts pass final extent, completed queue receipts, three idle seconds without extra presentations and close exit 0.",
+    "drift": "Workspace all-target Clippy, alignment, traceability and dependency gates pass. Full drift stops at existing dat-terminal-convergence-guard-xke focus/font-source-marker failures."
+  },
+  "limits": [
+    "Matched native counts are exact bounded observations, not statistical CPU/GPU/latency or global qualification. Callback polling retains existing two-millisecond cadence.",
+    "Initial suspicion that an already-unfocused Main minimized during queue wait would fail was disproved on the baseline. Both baseline and candidate pause correctly; the improvement is eliminated queue-blocked frame attempts.",
+    "Global fault-trial Main close-delivery timeout recurs from existing held-completion history/dat-main-native-capture-delay-md9; no close reliability fix or acceptance claimed. Failure retained alongside passing healthy and Project/New closes.",
+    "Unfocused pending-queue checks may perform synchronous existing winit X11 property reads. Complete overhead, Wayland/native scales, full configuration/resource/negative-control and S1 qualification remain open.",
+    "No dependency/license, recovery threshold, backend policy or nonblocking resize boundary changes."
+  ],
+  "commands": [
+    "python3 queue_hidden.py /tmp/pm045-queue-hidden-baseline (before edits)",
+    "python3 queue_hidden.py /tmp/pm045-queue-hidden-candidate",
+    "python3 queue_admission_aux.py",
+    "python3 queue_admission_healthy.py"
+  ],
+  "environment": "Existing X11/Xwayland desktop and /tmp/pm045-readiness-x11 per-host fixtures; exact native launch commands and environment in scripts/results; GPU measurement disabled; EDA_CLI_BIN pinned; existing hold-until-retry backend callback-publication fault only."
+}

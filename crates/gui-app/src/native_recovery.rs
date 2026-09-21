@@ -129,6 +129,22 @@ impl Recovery {
             due => (false, due),
         }
     }
+    /// A queue wait needs callback progress, not another native frame attempt.
+    /// Preserve the episode and short wake while admission remains unavailable.
+    pub(crate) fn poll_admitted(
+        &mut self,
+        now: Instant,
+        admitted: bool,
+    ) -> (bool, Option<Instant>) {
+        let result = self.poll(now);
+        if result.0 && !admitted {
+            self.defer(RetryReason::Queue, now);
+            (false, self.poll(now).1)
+        } else {
+            result
+        }
+    }
+
     pub(crate) fn fail(&mut self) {
         self.failed = true;
         self.due = None;
