@@ -23372,5 +23372,30 @@
       "No dependencies, GPU backend, product authority, or resize exclusion changed."
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/retry-modifiers/receipt.json"
+  },
+  "s1_menu_inventory_work": {
+    "status": "default input consumers migrated; S1 remains in progress",
+    "production_consumers": [
+      "MENU keyboard navigation",
+      "MENU pointer hover",
+      "MENU pointer and keyboard activation"
+    ],
+    "shared_owner": "datum_gui_protocol::gui_menu_model::default_gui_menu_model immutable compiled-in OnceLock inventory",
+    "retired_paths": [
+      "Three production owned inventory loads cloning the complete menu tree per input",
+      "Owned menu/item iteration and submenu item clone during activation"
+    ],
+    "production_change": "Borrow shared inventory and item references. Action availability still evaluates the live workspace; only selected focus/submenu strings are owned by session state. No new cache or dependency.",
+    "verification": {
+      "app": "3 menu_keyboard_tests passed; 358 filtered",
+      "protocol": "9 gui_menu_model::tests passed; 112 filtered; includes shared pointer identity/content and isolation from owned edits",
+      "clippy": "all app targets, -D warnings passed"
+    },
+    "limits": [
+      "No native menu latency or allocator measurement claimed",
+      "Menu hover still reads prepared hit geometry; coalesced hover ownership remains to reconcile",
+      "This migration does not close SH/LF predicates, S1, or S2 cache/resource qualification"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/menu-inventory"
   }
 }
