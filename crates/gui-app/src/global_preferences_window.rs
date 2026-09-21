@@ -8,6 +8,21 @@ use super::*;
 pub(super) const DEFAULT_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(960.0, 720.0);
 pub(super) const MIN_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(700.0, 540.0);
 
+/// Input consumption and rendering damage are independent.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum PreferencesKeyOutcome {
+    Unhandled,
+    Consumed,
+    Dialog,
+    Dependents,
+}
+
+impl PreferencesKeyOutcome {
+    pub(crate) fn from_handled(handled: bool, changed: Self) -> Self {
+        if handled { changed } else { Self::Unhandled }
+    }
+}
+
 pub(super) struct GlobalPreferencesWindowSurface {
     surface: wgpu::Surface<'static>,
     window: std::sync::Arc<Window>,
@@ -284,6 +299,31 @@ impl GlobalPreferencesWindowSurface {
 }
 
 impl App {
+    pub(super) fn request_preferences_key_redraw(
+        &mut self,
+        outcome: PreferencesKeyOutcome,
+        project: bool,
+    ) -> bool {
+        match outcome {
+            PreferencesKeyOutcome::Unhandled => return false,
+            PreferencesKeyOutcome::Consumed => {}
+            PreferencesKeyOutcome::Dialog => self.request_preferences_dialog_redraw(project),
+            PreferencesKeyOutcome::Dependents => self.request_redraw_if_needed(),
+        }
+        true
+    }
+
+    fn request_preferences_dialog_redraw(&mut self, project: bool) {
+        let surface = if project {
+            &mut self.project_preferences_surface
+        } else {
+            &mut self.global_preferences_surface
+        };
+        if let Some(surface) = surface {
+            surface.invalidate();
+            self.frames.invalidate(&surface.window);
+        }
+    }
     /// Transient navigation belongs to this dialog. Setting edits may affect
     /// workspace consumers and keep the application-wide invalidation path.
     pub(super) fn request_preferences_target_redraw(
@@ -304,15 +344,7 @@ impl App {
                 return;
             }
         }
-        let surface = if project {
-            &mut self.project_preferences_surface
-        } else {
-            &mut self.global_preferences_surface
-        };
-        if let Some(surface) = surface {
-            surface.invalidate();
-            self.frames.invalidate(&surface.window);
-        }
+        self.request_preferences_dialog_redraw(project);
     }
     /// Scrolling changes only the owned dialog's transient viewport. Coalesced
     /// redraws must not rebuild the main Design window or other owned windows.

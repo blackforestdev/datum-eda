@@ -4,6 +4,9 @@ mod new_project;
 #[path = "global_preferences_product_adapter.rs"]
 mod product_adapter;
 
+#[path = "global_preferences_keyboard.rs"]
+mod keyboard;
+
 use std::collections::BTreeMap;
 
 use anyhow::Result;
@@ -409,153 +412,6 @@ impl Runtime {
         dialog.select_section(&section);
         dialog.scroll_to_row(key);
         self.explain_global_preference(key)
-    }
-
-    pub(super) fn handle_global_preferences_key(&mut self, event: &KeyEvent) -> bool {
-        if !self.workspace().ui.global_preferences.open {
-            return false;
-        }
-        if event.state != ElementState::Pressed {
-            return true;
-        }
-        if matches!(event.logical_key, Key::Named(NamedKey::Escape)) {
-            let dismissal = self
-                .session
-                .workspace_mut()
-                .ui
-                .global_preferences
-                .dismiss_innermost();
-            match dismissal {
-                GlobalPreferencesDismissal::SearchCleared => {
-                    self.announce_global_preferences(
-                        "Preference search cleared.",
-                        AnnouncementPriority::Medium,
-                    );
-                }
-                GlobalPreferencesDismissal::DialogClosed => {
-                    self.set_application_focus(self.global_preferences.return_focus);
-                }
-                GlobalPreferencesDismissal::ChoiceClosed
-                | GlobalPreferencesDismissal::ExplanationClosed => {}
-            }
-            self.invalidate_frame();
-            return true;
-        }
-        if matches!(event.logical_key, Key::Named(NamedKey::Tab)) {
-            self.session
-                .workspace_mut()
-                .ui
-                .global_preferences
-                .advance_focus(self.modifiers.shift_key());
-            self.invalidate_frame();
-            return true;
-        }
-
-        let focus = self.workspace().ui.global_preferences.focus.clone();
-        if focus == GlobalPreferencesFocus::Search {
-            match &event.logical_key {
-                Key::Named(NamedKey::Backspace) => {
-                    let dialog = &mut self.session.workspace_mut().ui.global_preferences;
-                    dialog.search_query.pop();
-                    dialog.scroll_row = 0;
-                    self.invalidate_frame();
-                    self.announce_global_preferences_search_count();
-                    return true;
-                }
-                Key::Named(NamedKey::Enter) => {
-                    let key = {
-                        self.workspace()
-                            .ui
-                            .global_preferences
-                            .visible_rows()
-                            .next()
-                            .map(|row| row.key.clone())
-                    };
-                    if let Some(key) = key {
-                        self.open_global_preference_search_result(&key);
-                    }
-                    return true;
-                }
-                Key::Character(value)
-                    if !self.modifiers.control_key()
-                        && !self.modifiers.alt_key()
-                        && !value.chars().any(char::is_control) =>
-                {
-                    let dialog = &mut self.session.workspace_mut().ui.global_preferences;
-                    dialog.search_query.push_str(value);
-                    dialog.scroll_row = 0;
-                    self.invalidate_frame();
-                    self.announce_global_preferences_search_count();
-                    return true;
-                }
-                _ => {}
-            }
-        }
-
-        let activate = matches!(
-            event.logical_key,
-            Key::Named(NamedKey::Enter | NamedKey::Space)
-        );
-        match focus {
-            GlobalPreferencesFocus::SectionNavigation
-                if matches!(
-                    event.logical_key,
-                    Key::Named(NamedKey::ArrowUp | NamedKey::ArrowLeft)
-                ) =>
-            {
-                self.cycle_global_preferences_section(-1)
-            }
-            GlobalPreferencesFocus::SectionNavigation
-                if matches!(
-                    event.logical_key,
-                    Key::Named(NamedKey::ArrowDown | NamedKey::ArrowRight)
-                ) =>
-            {
-                self.cycle_global_preferences_section(1)
-            }
-            GlobalPreferencesFocus::SettingName(key) if activate => {
-                self.explain_global_preference(&key)
-            }
-            GlobalPreferencesFocus::Control(key) if activate => {
-                self.activate_global_preference_control(&key)
-            }
-            GlobalPreferencesFocus::Control(key)
-                if matches!(
-                    event.logical_key,
-                    Key::Named(NamedKey::ArrowLeft | NamedKey::ArrowUp)
-                ) =>
-            {
-                self.cycle_global_preference_control(&key, -1)
-            }
-            GlobalPreferencesFocus::Control(key)
-                if matches!(
-                    event.logical_key,
-                    Key::Named(NamedKey::ArrowRight | NamedKey::ArrowDown)
-                ) =>
-            {
-                self.cycle_global_preference_control(&key, 1)
-            }
-            GlobalPreferencesFocus::Control(key)
-                if matches!(event.logical_key, Key::Named(NamedKey::Home)) =>
-            {
-                self.choose_global_preference_endpoint(&key, false)
-            }
-            GlobalPreferencesFocus::Control(key)
-                if matches!(event.logical_key, Key::Named(NamedKey::End)) =>
-            {
-                self.choose_global_preference_endpoint(&key, true)
-            }
-            GlobalPreferencesFocus::Reset(key) if activate => self.reset_global_preference(&key),
-            GlobalPreferencesFocus::ExplanationClose if activate => {
-                let ui = &mut self.session.workspace_mut().ui.global_preferences;
-                if let Some(key) = ui.explanation_key.take() {
-                    ui.focus = GlobalPreferencesFocus::SettingName(key);
-                }
-                self.invalidate_frame();
-                true
-            }
-            _ => true,
-        }
     }
 
     fn cycle_global_preferences_section(&mut self, delta: isize) -> bool {

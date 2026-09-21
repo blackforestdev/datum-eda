@@ -249,12 +249,12 @@ pub(crate) fn handle_keyboard_input(app: &mut App, event: &KeyEvent) -> bool {
         app.request_redraw_if_needed();
         return true;
     }
-    if app
+    if let Some(outcome) = app
         .runtime
         .as_mut()
-        .is_some_and(|runtime| runtime.handle_global_preferences_key(event))
+        .map(|runtime| runtime.handle_global_preferences_key(event))
+        && app.request_preferences_key_redraw(outcome, false)
     {
-        app.request_redraw_if_needed();
         return true;
     }
     if app
