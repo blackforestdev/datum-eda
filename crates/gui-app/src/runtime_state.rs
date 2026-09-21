@@ -10,9 +10,10 @@ pub(super) struct Runtime {
     pub(super) device_health: native_device_recovery::DeviceHealth,
     pub(super) queue: wgpu::Queue,
     pub(super) config: wgpu::SurfaceConfiguration,
+    // Drop renderer references before recording host attachment retirement.
+    pub(super) renderer: Renderer,
     pub(super) surface_transaction: SurfaceTransaction,
     pub(super) scale_factor: f32,
-    pub(super) renderer: Renderer,
     pub(super) measurements: native_gpu_measurements::Host,
     pub(super) session: LiveDesignSession,
     /// Camera for the renderer's live board leaf. Pointer and focused commands

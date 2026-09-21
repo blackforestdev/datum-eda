@@ -150,13 +150,30 @@ impl SurfaceTransaction {
         self.texture_active.presented.get() != 0
     }
 
-    pub(crate) fn trace_attachment(&self, renderer: &datum_gui_render::Renderer) {
-        if std::env::var_os("DATUM_GUI_VERBOSE_LOG").is_none() {
-            return;
-        }
+    pub(crate) fn observe_attachment(
+        &self,
+        renderer: &datum_gui_render::Renderer,
+        frame: &NativeSurfaceFrame,
+    ) {
         let Some(attachment) = renderer.surface_attachment_snapshot() else {
             return;
         };
+        assert!(
+            frame
+                .lease
+                .belongs_to(&self.texture_active, self.configuration_generation)
+        );
+        self.queue_owner.observe_attachment(
+            self.queue_host,
+            attachment.owner,
+            attachment.allocation,
+            attachment.payload_bytes,
+            frame.lease.submission_receipt.unwrap_or(0),
+        );
+        if std::env::var_os("DATUM_GUI_VERBOSE_LOG").is_none() {
+            return;
+        }
+        self.queue_owner.trace_attachments();
         let (queue_epoch, _, _) = self.queue_owner.snapshot();
         super::append_gui_diagnostic_line(format!(
             "native surface attachment {}",
@@ -184,6 +201,12 @@ impl SurfaceTransaction {
     }
 
     pub(crate) fn share_queue_with(&mut self, other: &Self) {
+        assert_eq!(
+            self.texture_active.acquired.get(),
+            0,
+            "queue binding must precede acquisition"
+        );
+        assert_eq!(self.in_flight, 0, "queue binding must precede submission");
         self.queue_owner.cancel(self.queue_host);
         self.queue_owner = other.queue_owner.clone();
         self.queue_host = self.queue_owner.register();
@@ -540,7 +563,8 @@ impl crate::App {
 impl Drop for SurfaceTransaction {
     fn drop(&mut self) {
         self.trace_lifecycle("owner_drop");
-        self.queue_owner.cancel(self.queue_host);
+        self.queue_owner.close_host(self.queue_host);
+        self.queue_owner.trace_attachments();
     }
 }
 

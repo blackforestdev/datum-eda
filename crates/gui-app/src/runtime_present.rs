@@ -119,7 +119,8 @@ impl Runtime {
                     .submitted(&mut frame, &self.queue, submission)
             },
         );
-        self.surface_transaction.trace_attachment(&self.renderer);
+        self.surface_transaction
+            .observe_attachment(&self.renderer, &frame);
         rendered?;
         let renderer_elapsed = renderer_started.elapsed();
         append_gui_verbose_diagnostic_line(format!(

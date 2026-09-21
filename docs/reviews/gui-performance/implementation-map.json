@@ -22766,5 +22766,56 @@
       "isolated-first-attempt.log.gz": "650fca834e3098aa2fd5b3f05a47ea9486c788733ef39ec815b5181e939a07eb",
       "isolated-startup-failure.log.gz": "8851213058e4cab930ea2ce88b8952ae4ccaf125afcce2135020810f98ded479"
     }
+  },
+  "s1_attachment_retirement_work": {
+    "status": "default native attachment reference/retirement ledger implemented; native and complete ACC qualification remain open",
+    "baseline_commit": "40bfafa0",
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_owner": "QueueOwner maintains one attachment ledger per shared queue epoch. Each real native render outcome observes its Renderer allocation identity and acquired-frame submission receipt, including renderer errors. The existing queue completion callback retains only ledger metadata and publishes its existing watermark.",
+    "retired_paths": [
+      "Verbose-only attachment observation with no persistent current/retiring ownership",
+      "SurfaceTransaction dropping before its Renderer CPU references",
+      "Closing a host without retaining its attachment accounting through outstanding completion"
+    ],
+    "behavior": [
+      "Current references remain counted after GPU completion until replacement or close; retiring entries remain counted until their own last submission completes",
+      "Replacing an attachment accounts old-plus-new nominal payload overlap and records replacement reason; close records host_closed reason",
+      "One existing completion notification per native frame remains; callback retains no Window, TextureView or Renderer",
+      "Metadata survives the last QueueOwner through the callback; old epoch callbacks cannot mutate a replacement queue ledger",
+      "Unknown payload stays explicit; known nominal payload totals are not driver residency, RSS or complete allocated capacity",
+      "Queue sharing is constrained to before acquisition/submission; both host structs drop Renderer before transaction accounting"
+    ],
+    "verification": {
+      "app": "348 passed, 0 failed, 8 ignored. Four added conformance tests exercise replacement overlap, unknown payload, host closure, last-owner callback lifetime and a late first-host completion that cannot retire a later host submission.",
+      "build_clippy": "Fresh offline release and targeted app/renderer Clippy -D warnings pass",
+      "checks": "Dependency authority, source health and exact formatting pass"
+    },
+    "limits": [
+      "No new native focus-taking or isolated-compositor trial; current desktop/isolated qualification limits remain",
+      "Unit conformance drives the same callback closure and ledger but does not independently qualify native GPU completion timing, memory budgets or every host close scenario",
+      "Ledger covers observed native MSAA references; raw initialization/offscreen screenshot submissions, other GPU allocations and complete driver/RSS accounting remain separate",
+      "Unexecuted callbacks dropped during failed-device teardown are not reported as GPU-completed retirement; explicit whole-device teardown reconciliation remains S4 work",
+      "No complete ACC/LF-07/LF-11/S1 or numeric acceptance claim; resize remains pinned/nonblocking"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/attachment-retirement",
+    "source_sha256": {
+      "crates/gui-app/src/native_attachment_ledger.rs": "129678eff9a28b544f94cc6151b51189ca01ae7cffc026ae3dc19523d65701ef",
+      "crates/gui-app/src/native_queue_owner.rs": "11a774d6bafc592f147be60a89b9a3fabc06aff7686a6528e14e1155ca2f741e",
+      "crates/gui-app/src/native_surface_transaction.rs": "9a85a71eaae51c2de0e91a8e0991a46bef17e6e02f3b57e1042f20ab18d7be46",
+      "crates/gui-app/src/runtime_present.rs": "b1dc8909f9d0ccab896dde229c00a2102fd16cb7c4ce02e5eae25301bec48d7b",
+      "crates/gui-app/src/runtime_state.rs": "ea8de7fc39f66c645b9e4289a2f4bd5233786d577fbc815aecc3386fb7372216",
+      "crates/gui-app/src/global_preferences_window.rs": "eaf2abe394a3d20bfbc4f3cfa4b243b76e400a3d253fecbfd3879f6c45720ca4"
+    },
+    "release_binary_sha256": "4521e7ec8776a96d36bf94db3be30ea3f3e8098832b6e651b09e9984912d92fe",
+    "artifacts_sha256": {
+      "app.log.gz": "c62fb62c00d641cf1c32b3426e4fde4439390db0a41d3768aaa8638c200d74bb",
+      "build.log.gz": "25dad12dce3a466e97b2f14bf79d6ce21bc9f40f7b3a82231aea68c8daed95ea",
+      "clippy.log.gz": "ee277256ef2f1fe9f4d7d4bfdde0b0c8c2dfd7a501a3110d0cce57292142991f"
+    }
   }
 }
