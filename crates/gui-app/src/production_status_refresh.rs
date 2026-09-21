@@ -104,7 +104,13 @@ impl App {
         let mut changed = false;
         let device_due = self.service_device_recovery();
         if let Some(runtime) = &mut self.runtime {
-            changed |= runtime.poll_terminal_output();
+            let output_changed = runtime.poll_terminal_output();
+            // Controlled close drains every owned terminal before exiting. Do
+            // not interleave each remaining batch with another surface acquire;
+            // the initial closing frame and a blocked-shutdown error still draw.
+            changed |= output_changed
+                && (runtime.application_shutdown_started.is_none()
+                    || runtime.application_shutdown_blocked);
             changed |= runtime.poll_scheduled_production_refresh();
             changed |= runtime.poll_console_lifetime();
             if runtime.application_terminal_shutdown_complete() {
@@ -171,11 +177,6 @@ impl Runtime {
             .map(|remaining| Instant::now() + Duration::from_millis(remaining.max(1)))
     }
 
-    pub(super) fn handle_terminal_output_wake(&mut self) -> bool {
-        self.terminal_sessions.acknowledge_output_poll();
-        self.poll_terminal_output()
-    }
-
     pub(super) fn mark_terminal_workspace_refresh_pending(&mut self) {
         self.terminal_workspace_refresh_pending = true;
         self.terminal_production_refresh_attempts = 0;
@@ -240,6 +241,7 @@ impl Runtime {
     }
 
     pub(super) fn poll_terminal_output(&mut self) -> bool {
+        self.terminal_sessions.acknowledge_output_poll();
         let spawn_notices = self
             .terminal_sessions
             .complete_pending_spawns(&mut self.session.workspace_mut().ui.terminal);

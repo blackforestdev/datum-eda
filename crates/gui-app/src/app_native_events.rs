@@ -491,19 +491,12 @@ impl ApplicationHandler for App {
         // Native tokens, rather than this callback's frequency, drive rendering.
         self.dispatch_native_frame_round(event_loop);
         // Include retries created by this round in the single wait decision.
+        // Terminal wakes only make this round runnable. Acknowledge and drain
+        // here, after ready hosts, so a drain cannot requeue itself inside
+        // winit's user-event loop and postpone redraw/input dispatch.
         self.poll_background_work(event_loop);
         self.poll_resize_smoke_start();
         self.request_restored_native_frames();
         event_loop.set_control_flow(self.frames.take_control_flow());
-    }
-
-    fn user_event(&mut self, _event_loop: &ActiveEventLoop, (): ()) {
-        if self
-            .runtime
-            .as_mut()
-            .is_some_and(Runtime::handle_terminal_output_wake)
-        {
-            self.request_workspace_redraw();
-        }
     }
 }

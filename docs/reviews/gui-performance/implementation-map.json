@@ -648,7 +648,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial component proof: Rotating four-host service and ineligible-host yield are component-tested. Native saturated PTY/host coexistence and end-to-end latency remain unqualified.",
+        "status": "partial: bounded parser/byte-order tests plus actual shared event-round adoption. Native Global Preferences flood no longer postpones final extent until producer completion; controlled close no longer redraws each drain batch. Single-trial latency/throughput, other adapters, saturated session/control fairness and acquisition stalls remain unqualified.",
         "id": "proof_sh_05",
         "positive": "Saturate terminal messages while main and auxiliary hosts need service",
         "negative_control": "Drain terminal queue without yield",
@@ -708,7 +708,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz"
+        "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
+        "docs/reviews/gui-performance/implementation/S1/terminal-round/result.json"
       ]
     },
     {
@@ -24075,5 +24076,32 @@
       "Baseline close probe passed without debugger attachment; intermittent close failures were not reproduced there. Resize qualification remains separate/nonblocking."
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/owned-main-window/result.json"
+  },
+  "s1_terminal_round_work": {
+    "status": "Default terminal wake/drain moved to one native round; bounded flood responsiveness and controlled shutdown improved; SH-05/S1 qualification remains partial",
+    "production_consumers_migrated": [
+      "MAIN terminal transport/model background phase",
+      "GLOBAL, PROJECT and NEW share the same native event/frame round; native flood regression exercised GLOBAL"
+    ],
+    "shared_owner": "App::about_to_wait -> dispatch_native_frame_round -> poll_background_work -> one Runtime::poll_terminal_output -> TerminalWakeGate acknowledgement and bounded drain",
+    "retired_paths": [
+      "Terminal parsing and wake acknowledgement inside ApplicationHandler::user_event, which could immediately requeue itself inside winit user-event drain before redraw dispatch.",
+      "Output-driven redraw after each pending terminal batch during controlled shutdown. Initial closing frame and blocked-shutdown error still request presentation; all terminal data/lifecycle draining continues."
+    ],
+    "verification": {
+      "app": "368 passed, 0 failed, 9 ignored; existing byte retention/ordering/time-budget and shutdown tests preserved",
+      "clippy": "app datum-gui binary -D warnings passed",
+      "release": "fresh guarded offline release passed",
+      "native": "One matched Global Preferences six-second PTY flood: baseline final requested extent observed after output ended (8.170s); final candidate observed while output still flowing (0.315s). Baseline and final exit 0. Intermediate candidate exposed shutdown repaint coupling (19 post-close frames and 20-second timeout); final performs one closing presentation, exits and releases Main Window ownership.",
+      "source_health": "passed",
+      "dependency": "authority passed; no dependency/license changes"
+    },
+    "limits": [
+      "Single bounded native trial is not a percentile, full end-to-end latency, all-host flood or numeric budget acceptance. Requested extent uses native presentation counters, not independent pixels. Resize resource/temporal closure is not claimed.",
+      "Backpressured producer delivered 1275750 bytes on baseline versus 283500 on both candidates during the bounded interval. Throughput is lower and not qualified. The change enforces native-round fairness; it does not establish joint throughput/resource acceptance.",
+      "Repeated approximately 0.98-second Main surface acquisition stalls observed in intermediate trace remain unresolved. This slice prevents those frames from delaying every shutdown drain batch; it does not fix the acquisition calls or unrelated missing CloseRequested cases. Existing dat-main-native-capture-delay-md9 updated and open.",
+      "Full saturated multi-session/control fairness, byte/state native replay, full resources and S1/S4 completion remain open."
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/terminal-round/result.json"
   }
 }
