@@ -1,0 +1,353 @@
+{
+  "status": "bounded native production pane split/rebind/close state proof passed",
+  "source_commit": "5e0de3a7f4d1ac8c9aeec67cbfdbacfb9b702420",
+  "binary_sha256": "72b54f21febc46b222211d33c79f268f1d419d9b6123c30bfe40a06c185e273c",
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--board",
+    "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "--window-size",
+    "1280x800",
+    "--initial-layout",
+    "single",
+    "--open-menu",
+    "View"
+  ],
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "production_consumers": [
+    "Main Board pane active camera",
+    "duplicate Board pane warm camera",
+    "Schematic placeholder content rebind",
+    "View native menubar pointer and keyboard routes"
+  ],
+  "retired_paths": "none in this evidence follow-up; checks the 5e0de3a7 shared pane-close transition",
+  "method": "Existing DATUM_ACTION_EVIDENCE opt-in snapshots; X11 native menubar opening and keyboard menu navigation. Each next action waits for current native damage to be presented. No direct Runtime call, Rust event injection, product state patch or added instrumentation.",
+  "steps": [
+    {
+      "action": "view.zoom_in",
+      "focused_pane": 0,
+      "focused_content": "Some(Board)",
+      "focus": "Editor(PaneId(0))",
+      "pane_cameras": [
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.2000000476837158
+          },
+          "content": "Board",
+          "pane": 0
+        }
+      ],
+      "board_camera": {
+        "center_x_nm": 151634208.0,
+        "center_y_nm": 95122896.0,
+        "zoom": 1.2000000476837158
+      },
+      "layout": "WorkspaceLayout { root: Leaf { id: PaneId(0), content: Board }, focused: PaneId(0), zoomed: None, next_id: 1 }"
+    },
+    {
+      "action": "view.split_vertical",
+      "focused_pane": 0,
+      "focused_content": "Some(Board)",
+      "focus": "Editor(PaneId(0))",
+      "pane_cameras": [
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.2000000476837158
+          },
+          "content": "Board",
+          "pane": 0
+        },
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.2000000476837158
+          },
+          "content": "Schematic",
+          "pane": 1
+        }
+      ],
+      "board_camera": {
+        "center_x_nm": 151634208.0,
+        "center_y_nm": 95122896.0,
+        "zoom": 1.2000000476837158
+      },
+      "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Board }, second: Leaf { id: PaneId(1), content: Schematic } }, focused: PaneId(0), zoomed: None, next_id: 2 }"
+    },
+    {
+      "action": "view.focus_next",
+      "focused_pane": 1,
+      "focused_content": "Some(Schematic)",
+      "focus": "Editor(PaneId(1))",
+      "pane_cameras": [
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.2000000476837158
+          },
+          "content": "Board",
+          "pane": 0
+        },
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.2000000476837158
+          },
+          "content": "Schematic",
+          "pane": 1
+        }
+      ],
+      "board_camera": {
+        "center_x_nm": 151634208.0,
+        "center_y_nm": 95122896.0,
+        "zoom": 1.2000000476837158
+      },
+      "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Board }, second: Leaf { id: PaneId(1), content: Schematic } }, focused: PaneId(1), zoomed: None, next_id: 2 }"
+    },
+    {
+      "action": "view.fill_board",
+      "focused_pane": 1,
+      "focused_content": "Some(Board)",
+      "focus": "Editor(PaneId(1))",
+      "pane_cameras": [
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.2000000476837158
+          },
+          "content": "Board",
+          "pane": 0
+        },
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.0
+          },
+          "content": "Board",
+          "pane": 1
+        }
+      ],
+      "board_camera": {
+        "center_x_nm": 151634208.0,
+        "center_y_nm": 95122896.0,
+        "zoom": 1.0
+      },
+      "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Board }, second: Leaf { id: PaneId(1), content: Board } }, focused: PaneId(1), zoomed: None, next_id: 2 }"
+    },
+    {
+      "action": "view.zoom_in",
+      "focused_pane": 1,
+      "focused_content": "Some(Board)",
+      "focus": "Editor(PaneId(1))",
+      "pane_cameras": [
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.2000000476837158
+          },
+          "content": "Board",
+          "pane": 0
+        },
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.2000000476837158
+          },
+          "content": "Board",
+          "pane": 1
+        }
+      ],
+      "board_camera": {
+        "center_x_nm": 151634208.0,
+        "center_y_nm": 95122896.0,
+        "zoom": 1.2000000476837158
+      },
+      "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Board }, second: Leaf { id: PaneId(1), content: Board } }, focused: PaneId(1), zoomed: None, next_id: 2 }"
+    },
+    {
+      "action": "view.zoom_in",
+      "focused_pane": 1,
+      "focused_content": "Some(Board)",
+      "focus": "Editor(PaneId(1))",
+      "pane_cameras": [
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.2000000476837158
+          },
+          "content": "Board",
+          "pane": 0
+        },
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.440000057220459
+          },
+          "content": "Board",
+          "pane": 1
+        }
+      ],
+      "board_camera": {
+        "center_x_nm": 151634208.0,
+        "center_y_nm": 95122896.0,
+        "zoom": 1.440000057220459
+      },
+      "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Board }, second: Leaf { id: PaneId(1), content: Board } }, focused: PaneId(1), zoomed: None, next_id: 2 }"
+    },
+    {
+      "action": "view.focus_prev",
+      "focused_pane": 0,
+      "focused_content": "Some(Board)",
+      "focus": "Editor(PaneId(0))",
+      "pane_cameras": [
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.2000000476837158
+          },
+          "content": "Board",
+          "pane": 0
+        },
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.440000057220459
+          },
+          "content": "Board",
+          "pane": 1
+        }
+      ],
+      "board_camera": {
+        "center_x_nm": 151634208.0,
+        "center_y_nm": 95122896.0,
+        "zoom": 1.2000000476837158
+      },
+      "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Board }, second: Leaf { id: PaneId(1), content: Board } }, focused: PaneId(0), zoomed: None, next_id: 2 }"
+    },
+    {
+      "action": "view.fill_schematic",
+      "focused_pane": 0,
+      "focused_content": "Some(Schematic)",
+      "focus": "Editor(PaneId(0))",
+      "pane_cameras": [
+        {
+          "camera": null,
+          "content": "Schematic",
+          "pane": 0
+        },
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.440000057220459
+          },
+          "content": "Board",
+          "pane": 1
+        }
+      ],
+      "board_camera": {
+        "center_x_nm": 151634208.0,
+        "center_y_nm": 95122896.0,
+        "zoom": 1.440000057220459
+      },
+      "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Schematic }, second: Leaf { id: PaneId(1), content: Board } }, focused: PaneId(0), zoomed: None, next_id: 2 }"
+    },
+    {
+      "action": "view.fill_board",
+      "focused_pane": 0,
+      "focused_content": "Some(Board)",
+      "focus": "Editor(PaneId(0))",
+      "pane_cameras": [
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.2000000476837158
+          },
+          "content": "Board",
+          "pane": 0
+        },
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.440000057220459
+          },
+          "content": "Board",
+          "pane": 1
+        }
+      ],
+      "board_camera": {
+        "center_x_nm": 151634208.0,
+        "center_y_nm": 95122896.0,
+        "zoom": 1.2000000476837158
+      },
+      "layout": "WorkspaceLayout { root: Split { orientation: Vertical, ratio: 0.5, first: Leaf { id: PaneId(0), content: Board }, second: Leaf { id: PaneId(1), content: Board } }, focused: PaneId(0), zoomed: None, next_id: 2 }"
+    },
+    {
+      "action": "view.close_pane",
+      "focused_pane": 1,
+      "focused_content": "Some(Board)",
+      "focus": "Editor(PaneId(1))",
+      "pane_cameras": [
+        {
+          "camera": {
+            "center_x_nm": 151634208.0,
+            "center_y_nm": 95122896.0,
+            "zoom": 1.440000057220459
+          },
+          "content": "Board",
+          "pane": 1
+        }
+      ],
+      "board_camera": {
+        "center_x_nm": 151634208.0,
+        "center_y_nm": 95122896.0,
+        "zoom": 1.440000057220459
+      },
+      "layout": "WorkspaceLayout { root: Leaf { id: PaneId(1), content: Board }, focused: PaneId(1), zoomed: None, next_id: 2 }"
+    }
+  ],
+  "camera_a": {
+    "center_x_nm": 151634208.0,
+    "center_y_nm": 95122896.0,
+    "zoom": 1.2000000476837158
+  },
+  "camera_b": {
+    "center_x_nm": 151634208.0,
+    "center_y_nm": 95122896.0,
+    "zoom": 1.440000057220459
+  },
+  "exit": 0,
+  "observations": [
+    "Split retains original camera exactly",
+    "Duplicate Board takes distinct zoom and focus changes preserve both cameras",
+    "Retargeting one pane to Schematic and back preserves other Board camera exactly",
+    "Closing focused Board leaves one rendered pane, survivor exact camera and application focus Editor of surviving id",
+    "WM_DELETE_WINDOW exits normally"
+  ],
+  "preserved_failed_attempts": [
+    "First script attempted next menu action while prior rendering remained in flight; no matching next View menu state",
+    "Second script read an incomplete concurrently written JSON action record; final runner consumes complete lines only"
+  ],
+  "limits": [
+    "Existing action snapshot enumerates live layout panes, not hidden camera/grid store entries. Closed-entry retirement remains component proof.",
+    "Retargeted pane camera after return is recorded but not accepted as a cold-rebind identity proof. Schematic content is an unresolved placeholder; resolved schematic qualification remains excluded.",
+    "No independent pixel capture, native negative-control replay, full consumer/backend matrix or CPU/latency/resource budget acceptance.",
+    "No production/dependency/license changes in this follow-up. S1 remains open and resize qualification remains nonblocking."
+  ]
+}
