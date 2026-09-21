@@ -91,10 +91,18 @@ pub(super) fn text_attrs(face: TextFace) -> Attrs<'static> {
 const MAX_MEASUREMENTS: usize = 256;
 const MAX_MEASUREMENT_TEXT_BYTES: usize = 64 * 1024;
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum MeasurementKind {
+    Width,
+    WrappedHeight(u32),
+}
+
 #[derive(Default)]
 struct MeasurementCache {
-    entries: std::collections::VecDeque<(String, u32, TextFace, f32)>,
+    entries: std::collections::VecDeque<(String, u32, TextFace, MeasurementKind, f32)>,
     text_bytes: usize,
+    #[cfg(test)]
+    misses: usize,
 }
 
 impl MeasurementCache {
@@ -105,13 +113,32 @@ impl MeasurementCache {
         face: TextFace,
         miss: impl FnOnce() -> f32,
     ) -> f32 {
-        if let Some(index) = self.entries.iter().position(|(label, bits, font, _)| {
-            *bits == size.to_bits() && *font == face && label == text
-        }) {
+        self.measure_kind(text, size, face, MeasurementKind::Width, miss)
+    }
+
+    fn measure_kind(
+        &mut self,
+        text: &str,
+        size: f32,
+        face: TextFace,
+        kind: MeasurementKind,
+        miss: impl FnOnce() -> f32,
+    ) -> f32 {
+        if let Some(index) = self
+            .entries
+            .iter()
+            .position(|(label, bits, font, cached_kind, _)| {
+                *bits == size.to_bits() && *font == face && *cached_kind == kind && label == text
+            })
+        {
             let entry = self.entries.remove(index).expect("matched entry exists");
-            let width = entry.3;
+            let width = entry.4;
             self.entries.push_front(entry);
             return width;
+        }
+        #[cfg(test)]
+        {
+            self.misses += 1;
         }
         let width = miss();
         // Arbitrary user text must not turn scalar measurement reuse into an
@@ -125,7 +152,7 @@ impl MeasurementCache {
             }
             self.text_bytes += text.len();
             self.entries
-                .push_front((text.to_owned(), size.to_bits(), face, width));
+                .push_front((text.to_owned(), size.to_bits(), face, kind, width));
         }
         width
     }
@@ -133,7 +160,7 @@ impl MeasurementCache {
 
 thread_local! {
     // Font inventory/attributes are immutable here; text, exact size and face
-    // fully determine a measurement. Cache hits allocate and shape nothing.
+    // and measurement kind/wrap width determine a measurement. Hits do not shape.
     static MEASUREMENTS: std::cell::RefCell<MeasurementCache> = std::cell::RefCell::default();
 }
 
@@ -145,9 +172,64 @@ pub(super) fn measured_text_run_width_px(text: &str, size: f32, face: TextFace) 
     })
 }
 
+/// Wrapped height uses the same immutable font/metric authority as width.
+/// The effective integer wrap width is a layout dependency, not placement.
+pub(super) fn measured_text_run_height_px(
+    text: &str,
+    width: f32,
+    size: f32,
+    face: TextFace,
+) -> f32 {
+    let width = width.ceil().max(1.0);
+    MEASUREMENTS.with(|cache| {
+        cache.borrow_mut().measure_kind(
+            text,
+            size,
+            face,
+            MeasurementKind::WrappedHeight(width.to_bits()),
+            || {
+                let mut fonts = crate::measure_font_system()
+                    .lock()
+                    .unwrap_or_else(|poisoned| poisoned.into_inner());
+                let line_height = size * 1.22;
+                let mut buffer = Buffer::new(&mut fonts, Metrics::new(size, line_height));
+                buffer.set_size(&mut fonts, Some(width), None);
+                buffer.set_text(&mut fonts, text, &text_attrs(face), Shaping::Basic, None);
+                buffer.shape_until_scroll(&mut fonts, false);
+                buffer.layout_runs().count().max(1) as f32 * line_height
+            },
+        )
+    })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn wrapped_height_reuses_only_matching_layout_dependencies() {
+        MEASUREMENTS.with(|cache| *cache.borrow_mut() = MeasurementCache::default());
+        let text = "A wrapped Console history record with several words.";
+        let height = measured_text_run_height_px(text, 99.25, 12.0, TextFace::Mono);
+        let misses = || MEASUREMENTS.with(|cache| cache.borrow().misses);
+        assert_eq!(misses(), 1);
+        assert_eq!(
+            measured_text_run_height_px(text, 100.0, 12.0, TextFace::Mono),
+            height
+        );
+        assert_eq!(
+            misses(),
+            1,
+            "effective width matches; no buffer or shaping work"
+        );
+        let wide = measured_text_run_height_px(text, 500.0, 12.0, TextFace::Mono);
+        assert!(wide < height);
+        assert_eq!(misses(), 2);
+        measured_text_run_height_px(text, 100.0, 13.0, TextFace::Mono);
+        measured_text_run_height_px(text, 100.0, 12.0, TextFace::Ui);
+        measured_text_run_width_px(text, 12.0, TextFace::Mono);
+        assert_eq!(misses(), 5, "size, face and measurement kind are distinct");
+    }
 
     #[test]
     fn embedded_font_bytes_are_shared_between_font_systems() {
@@ -253,7 +335,12 @@ mod tests {
     fn measurement_cache_bounds_changing_labels_and_keeps_recent_hits() {
         let mut cache = MeasurementCache::default();
         for n in 0..1000 {
-            cache.measure(&format!("label-{n}"), 13.0, TextFace::Ui, || n as f32);
+            let kind = if n % 2 == 0 {
+                MeasurementKind::WrappedHeight(100.0_f32.to_bits())
+            } else {
+                MeasurementKind::Width
+            };
+            cache.measure_kind(&format!("label-{n}"), 13.0, TextFace::Ui, kind, || n as f32);
             assert!(cache.entries.len() <= MAX_MEASUREMENTS);
             assert!(cache.text_bytes <= MAX_MEASUREMENT_TEXT_BYTES);
         }

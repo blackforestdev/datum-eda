@@ -1,0 +1,21 @@
+{
+  "status": "bounded S3 default Console history measurement reuse; full qualification open",
+  "baseline": "dc67ed44109de57c4f411f0548bf7499780bac01",
+  "sources": {
+    "crates/gui-render/src/render/text_metrics.rs": "fcb96af63551c6c3f227f980e3d1ec0b81f4fdd4902d1db50d895514a9d53216",
+    "crates/gui-render/src/datum_console/history_layout.rs": "7c716ccdbbba22baa20803534b49f6a5943c1ec15d356fa61bc43a92fde16b8d"
+  },
+  "production_consumers": [
+    "Main expanded Console history wrapped-row layout",
+    "Existing shared text-width consumers keep their result semantics"
+  ],
+  "shared_owner": "Existing thread-local MeasurementCache and process measuring FontSystem",
+  "retired_path": "Console history private uncached wrapped-height shaping/Buffer construction on every preparation",
+  "behavior": "Extend existing scalar cache key with width-versus-wrapped-height kind and effective ceil/max wrap width. Height retains exact old font, size, Basic shaping and line-height/count method. Existing text/size/face key and fixed font inventory remain. Width and height share one existing 256-entry/64KiB text-key retention budget, with oversize bypass. No shaped buffers retained by this scalar cache.",
+  "proof": {
+    "renderer": "193 renderer library tests pass serially. Existing Console wrap/clip/newline/long-word tests pass through new owner. Exact height test observes one cold miss, zero extra miss for equivalent effective width, and separate width/face/size/kind dependencies. Mixed-kind eviction test preserves shared entry/key caps and recent hit.",
+    "failed_attempt": "Initial compile caught old test references to removed text_height helper and unused root measuring import. Tests migrated to shared API; shared implementation uses existing measuring-font authority; rerun passes without warnings.",
+    "limits": "No numerical timing, native frame/visual/scroll-return or full process/font/shaped-resource accounting claim. Per-thread scalar cache caps are not complete PM045 resource acceptance. Desktop-focus trials remain deferred; S3 stays open."
+  },
+  "evidence": "docs/reviews/gui-performance/implementation/S3/history-height-measurements/result.json"
+}
