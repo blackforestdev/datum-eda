@@ -6549,6 +6549,10 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "INSPECTOR": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s3_scroll_reflow_progress": {
+        "status": "partial shared/default native implementation; native event qualification open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-reflow-capture/result.json"
       }
     },
     {
@@ -26644,5 +26648,25 @@
       "limits": "No actual native per-adapter frame ledger or independent defect injection in this slice. Focus-taking native tests remain deferred pending desktop-use response. This is not full HP11/HP21 or S3 acceptance."
     },
     "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-press-damage/result.json"
+  },
+  "s3_scroll_reflow_capture_work": {
+    "status": "bounded S3 capture correction; full qualification open",
+    "baseline": "8c0b5ecc74e5f62457b1218d0ba33cbcf3909146",
+    "sources": {
+      "crates/gui-viewport/src/scroll.rs": "95a4a32560e303f354d1bfea824ef42147c1a0a29fa307434bcfe49ef2c74c49",
+      "crates/gui-app/src/global_preferences_window.rs": "a8e3ddec3d79d5438aa5cf1cc9e2c7e0530b32e056d032196b6eeb2127eb8ae9"
+    },
+    "production_consumers": [
+      "GLOBAL continuous scroll native adapter",
+      "PROJECT continuous scroll native adapter"
+    ],
+    "retired_path": "Old thumb grab surviving viewport/content reflow or native extent/DPI change",
+    "behavior": "Shared ScrollViewport releases old grab when viewport/content extent changes, preserves capture across identical layouts and clamps offset as before. Native host releases immediately on changed extent/DPI and on section/search/scroll-row/expanded-content identity changes. scrollbar_pressed remains latched until release so cancellation does not forward the old release as a setting click. Focus/close capture cancellation policy unchanged.",
+    "proof": {
+      "viewport": "45 viewport tests pass. Reflow test proves unchanged layout preserves drag, changed viewport/content cancels stale drag without moving offset, and fresh press works.",
+      "app": "Three focused global_preferences_window tests pass and app test binary compiles with new paths.",
+      "limits": "No native DPI/resize/input/final-state qualification or independent negative injection performed. Desktop-use clarification remains pending. No resource/temporal resize acceptance, S3 closure or full HP21 pass."
+    },
+    "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-reflow-capture/result.json"
   }
 }
