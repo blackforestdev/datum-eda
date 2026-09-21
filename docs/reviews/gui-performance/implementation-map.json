@@ -6670,6 +6670,10 @@
       "terminal_component_negatives": {
         "status": "three geometry-boundary negatives each fail intended assertion; byte-restored candidate passes; full requirement open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-clip-negative/result.json"
+      },
+      "s3_terminal_header_progress": {
+        "status": "actual tab/header composition inherits shared ancestor clipping; native/negative qualification open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-header-clipping/result.json"
       }
     },
     {
@@ -6767,6 +6771,10 @@
       "s3_terminal_cell_progress": {
         "status": "cold and retained terminal composition use shared clipping; complete per-adapter qualification open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-cell-clipping/result.json"
+      },
+      "s3_terminal_header_progress": {
+        "status": "actual tab/header composition inherits shared ancestor clipping; native/negative qualification open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-header-clipping/result.json"
       }
     },
     {
@@ -26830,5 +26838,19 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-clip-negative/result.json",
     "limits": "CPU adapter defect sensitivity only. No native input/focus/backend/scale, screenshot, resource, timing, independent reviewer or full HP22/S3 acceptance. Separate cell/text/hit negatives and remaining profiles remain unqualified."
+  },
+  "s3_terminal_header_clipping_work": {
+    "status": "bounded S3 terminal header shared clipping adoption; full qualification open",
+    "production_consumers": [
+      "Main terminal tab strip, drag ghost and new-session action",
+      "Terminal lifecycle/link/clipboard/search header chrome"
+    ],
+    "retired_paths": [
+      "Full-dock-height tab paint and pointer targets",
+      "Unrestricted tab geometry/text/hits crossing into reserved trailing chrome",
+      "Unrestricted trailing header paint/text/hit extents"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-header-clipping/result.json",
+    "limits": "No native focus/input, independent negative, full pixel-parity, performance or resource qualification. Existing narrow main-menu/Inspector crowding outside terminal remains visible and unqualified. S3 remains open. No dependency, license, prototype, PTY/core or sequencing change."
   }
 }

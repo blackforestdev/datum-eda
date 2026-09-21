@@ -1,0 +1,26 @@
+{
+  "status": "bounded S3 terminal header shared clipping adoption; full qualification open",
+  "baseline": "9e25ef77",
+  "sources": {
+    "crates/gui-render/src/terminal_tab_strip.rs": "c9a81cff2b915357be830b3b9728af347fa30250517f8a7dfbf604c340050673",
+    "crates/gui-render/src/terminal_tab_strip_tests.rs": "7b0f3b801662615419bdd06a6c2efd4b6e592bfbfe084cde3579967be788e133"
+  },
+  "production_consumers": [
+    "Main terminal tab strip, drag ghost and new-session action",
+    "Terminal lifecycle/link/clipboard/search header chrome"
+  ],
+  "shared_owner": "render/hit_clipping.rs::clip_content",
+  "retired_paths": [
+    "Full-dock-height tab paint and pointer targets",
+    "Unrestricted tab geometry/text/hits crossing into reserved trailing chrome",
+    "Unrestricted trailing header paint/text/hit extents"
+  ],
+  "behavior": "Use the existing 44px header row as vertical viewport. Clip tab content separately to the width already reserved for tabs; clip trailing chrome to the header. Preserve typography, action order, capture/drag state, lifecycle decisions and PTY/screen ownership. Invisible overflow tabs have no hit target; no new overflow-navigation design introduced.",
+  "proof": {
+    "renderer": "196 final-source renderer library tests passed serially. New actual header regression covers 88/480/1280px widths, ordinary and guarded-close state, paint/text/hit bounds and tab isolation from reserved confirmation space. Existing drag/close/action tests pass.",
+    "clippy": "Renderer library Clippy passes with -D warnings.",
+    "capture": "Temporary first-party example with existing OffscreenRenderer and fixture projection captured normal1280x800 and narrow480x800 layouts. Visually inspected both widths; initial narrow capture exposed tab/confirmation overlap, then separate shared tab clipping removed it. Captures are offscreen static evidence, not native input or GPU-backend qualification. Temporary example removed; source recipe retained as capture-driver.txt.",
+    "capture_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo run --offline -p datum-gui-render --features visual --example pm045_header_capture",
+    "limits": "No native focus/input, independent negative, full pixel-parity, performance or resource qualification. Existing narrow main-menu/Inspector crowding outside terminal remains visible and unqualified. S3 remains open. No dependency, license, prototype, PTY/core or sequencing change."
+  }
+}
