@@ -147,19 +147,22 @@ impl Renderer {
     /// Prepare native attachments before scene uploads and encoding. The host
     /// supplies its existing device-health signal; this does not install another
     /// backend error handler or claim that deferred errors have already arrived.
+    /// Returns whether a new attachment was published for lifetime accounting
+    /// before any later scene-preparation or encoding error can abort the frame.
     pub fn prepare_surface_attachment(
         &mut self,
         device: &wgpu::Device,
         width: u32,
         height: u32,
         healthy: impl FnMut() -> bool,
-    ) -> anyhow::Result<()> {
+    ) -> anyhow::Result<bool> {
+        let previous = self.surface_attachments.allocations;
         self.surface_attachments.ensure_guarded(
             device,
             AttachmentKey::new(width, height, self.msaa_format, self.msaa_samples),
             healthy,
         )?;
-        Ok(())
+        Ok(self.surface_attachments.allocations != previous)
     }
 
     pub fn surface_attachment_snapshot(&self) -> Option<SurfaceAttachmentSnapshot> {

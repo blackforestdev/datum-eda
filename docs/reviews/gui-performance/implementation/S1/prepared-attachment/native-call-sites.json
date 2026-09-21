@@ -1,0 +1,266 @@
+{
+  "baseline": "eb71849688b88de5796f0109db14c105f32a7e9e",
+  "query": "request_redraw\\(|\\.configure\\(|get_current_texture\\(|\\.present\\(|\\.submit\\(|on_submitted_work_done",
+  "roots": [
+    "crates/gui-app/src",
+    "crates/gui-render/src"
+  ],
+  "call_sites": [
+    {
+      "path": "crates/gui-app/src/native_surface_transaction.rs",
+      "line": 235,
+      "code": "surface.configure(device, config);",
+      "classification": "default shared owner",
+      "ownership": "configure/acquire/present guarded by drawability/recovery, queue admission and acquisition lease"
+    },
+    {
+      "path": "crates/gui-app/src/native_surface_transaction.rs",
+      "line": 288,
+      "code": "surface.get_current_texture()",
+      "classification": "default shared owner",
+      "ownership": "configure/acquire/present guarded by drawability/recovery, queue admission and acquisition lease"
+    },
+    {
+      "path": "crates/gui-app/src/native_surface_transaction.rs",
+      "line": 371,
+      "code": "if !self.configure(surface, device, config, health) {",
+      "classification": "default shared owner",
+      "ownership": "configure/acquire/present guarded by drawability/recovery, queue admission and acquisition lease"
+    },
+    {
+      "path": "crates/gui-app/src/native_surface_transaction.rs",
+      "line": 436,
+      "code": ".present();",
+      "classification": "default shared owner",
+      "ownership": "configure/acquire/present guarded by drawability/recovery, queue admission and acquisition lease"
+    },
+    {
+      "path": "crates/gui-app/src/native_queue_owner.rs",
+      "line": 170,
+      "code": "queue.on_submitted_work_done(self.completion_callback(serial, completion));",
+      "classification": "default shared owner",
+      "ownership": "one receipt and completion watermark per native frame; callback retains accounting metadata, not a window"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_present.rs",
+      "line": 172,
+      "code": "self.surface_transaction.present(frame, self.window)?;",
+      "classification": "default adapter",
+      "ownership": "Main present routes through SurfaceTransaction; presented_hits is CPU hit-map publication"
+    },
+    {
+      "path": "crates/gui-app/src/runtime_present.rs",
+      "line": 178,
+      "code": "self.presented_hits.present(prepared);",
+      "classification": "default adapter",
+      "ownership": "Main present routes through SurfaceTransaction; presented_hits is CPU hit-map publication"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_probe.rs",
+      "line": 54,
+      "code": "queue.submit(Some(encoder.finish()))",
+      "classification": "opt-in diagnostic inside shared admission",
+      "ownership": "DATUM_DIAGNOSTIC_NATIVE_FRAME=clear; submission receipt still routed through SurfaceTransaction"
+    },
+    {
+      "path": "crates/gui-app/src/native_device_recovery.rs",
+      "line": 452,
+      "code": "queue.submit([encoder.finish()]);",
+      "classification": "ignored GPU callback test",
+      "ownership": "registered_backend_callback_confirms_destroy_after_prior_error; not default product submission"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_measurements_tests.rs",
+      "line": 149,
+      "code": "queue.submit([encoder.finish()]);",
+      "classification": "GPU measurement conformance tests",
+      "ownership": "not default product submission"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_measurements_tests.rs",
+      "line": 216,
+      "code": "queue.submit([encoder.finish()]);",
+      "classification": "GPU measurement conformance tests",
+      "ownership": "not default product submission"
+    },
+    {
+      "path": "crates/gui-app/src/presented_hit_regions.rs",
+      "line": 68,
+      "code": "hits.present(&mut prepared);",
+      "classification": "CPU hit-map tests",
+      "ownership": "not GPU presentation"
+    },
+    {
+      "path": "crates/gui-app/src/presented_hit_regions.rs",
+      "line": 73,
+      "code": "hits.present(&mut prepared);",
+      "classification": "CPU hit-map tests",
+      "ownership": "not GPU presentation"
+    },
+    {
+      "path": "crates/gui-app/src/presented_hit_regions.rs",
+      "line": 81,
+      "code": "hits.present(&mut replacement);",
+      "classification": "CPU hit-map tests",
+      "ownership": "not GPU presentation"
+    },
+    {
+      "path": "crates/gui-app/src/native_resize_repro.rs",
+      "line": 80,
+      "code": "surface.configure(&device, &config);",
+      "classification": "opt-in independent diagnostic",
+      "ownership": "DATUM_DIAGNOSTIC_MINIMAL_WINDOW=1; returns before product launch; no Datum renderer/product acceptance"
+    },
+    {
+      "path": "crates/gui-app/src/native_resize_repro.rs",
+      "line": 123,
+      "code": "window.request_redraw();",
+      "classification": "opt-in independent diagnostic",
+      "ownership": "DATUM_DIAGNOSTIC_MINIMAL_WINDOW=1; returns before product launch; no Datum renderer/product acceptance"
+    },
+    {
+      "path": "crates/gui-app/src/native_resize_repro.rs",
+      "line": 144,
+      "code": "self.surface.configure(&self.device, &self.config);",
+      "classification": "opt-in independent diagnostic",
+      "ownership": "DATUM_DIAGNOSTIC_MINIMAL_WINDOW=1; returns before product launch; no Datum renderer/product acceptance"
+    },
+    {
+      "path": "crates/gui-app/src/native_resize_repro.rs",
+      "line": 152,
+      "code": ".get_current_texture()",
+      "classification": "opt-in independent diagnostic",
+      "ownership": "DATUM_DIAGNOSTIC_MINIMAL_WINDOW=1; returns before product launch; no Datum renderer/product acceptance"
+    },
+    {
+      "path": "crates/gui-app/src/native_resize_repro.rs",
+      "line": 178,
+      "code": "self.queue.submit([commands]);",
+      "classification": "opt-in independent diagnostic",
+      "ownership": "DATUM_DIAGNOSTIC_MINIMAL_WINDOW=1; returns before product launch; no Datum renderer/product acceptance"
+    },
+    {
+      "path": "crates/gui-app/src/native_resize_repro.rs",
+      "line": 182,
+      "code": "frame.present();",
+      "classification": "opt-in independent diagnostic",
+      "ownership": "DATUM_DIAGNOSTIC_MINIMAL_WINDOW=1; returns before product launch; no Datum renderer/product acceptance"
+    },
+    {
+      "path": "crates/gui-app/src/native_resize_repro.rs",
+      "line": 218,
+      "code": "state.window.request_redraw();",
+      "classification": "opt-in independent diagnostic",
+      "ownership": "DATUM_DIAGNOSTIC_MINIMAL_WINDOW=1; returns before product launch; no Datum renderer/product acceptance"
+    },
+    {
+      "path": "crates/gui-render/src/render/attachment_cost_probe.rs",
+      "line": 48,
+      "code": "queue.submit([encoder.finish()]);",
+      "classification": "ignored diagnostic GPU tests",
+      "ownership": "explicit visual-feature cost probe/readback; not default product submission"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_coordinator.rs",
+      "line": 195,
+      "code": "window.request_redraw();",
+      "classification": "default shared owner",
+      "ownership": "restore, retry, invalidate and frame-finished request boundaries"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_coordinator.rs",
+      "line": 285,
+      "code": "window.request_redraw();",
+      "classification": "default shared owner",
+      "ownership": "restore, retry, invalidate and frame-finished request boundaries"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_coordinator.rs",
+      "line": 357,
+      "code": "window.request_redraw();",
+      "classification": "default shared owner",
+      "ownership": "restore, retry, invalidate and frame-finished request boundaries"
+    },
+    {
+      "path": "crates/gui-app/src/native_frame_coordinator.rs",
+      "line": 466,
+      "code": "window.request_redraw();",
+      "classification": "default shared owner",
+      "ownership": "restore, retry, invalidate and frame-finished request boundaries"
+    },
+    {
+      "path": "crates/gui-app/src/main.rs",
+      "line": 377,
+      "code": "self.queue.submit([encoder.finish()]);",
+      "classification": "visual-feature capture",
+      "ownership": "Runtime::read_visual_texture offscreen readback; not default native submission"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_overlay.rs",
+      "line": 154,
+      "code": "let submission = queue.submit([encoder.finish()]);",
+      "classification": "default renderer inside shared admission",
+      "ownership": "Global/Project overlay-only submission immediately calls on_submitted"
+    },
+    {
+      "path": "crates/gui-render/src/render/gpu_frame.rs",
+      "line": 489,
+      "code": "let submission = queue.submit([command_buffer]);",
+      "classification": "default renderer inside shared admission",
+      "ownership": "Main/New full-scene submission immediately calls on_submitted; offscreen callers use no-op callback"
+    },
+    {
+      "path": "crates/gui-render/src/visual_capture.rs",
+      "line": 223,
+      "code": "self.queue.submit([encoder.finish()]);",
+      "classification": "offscreen capture",
+      "ownership": "capture target/readback, not native surface scheduling"
+    },
+    {
+      "path": "crates/gui-app/src/global_preferences_window.rs",
+      "line": 356,
+      "code": "self.surface_transaction.present(frame, &self.window)?;",
+      "classification": "default shared auxiliary adapter",
+      "ownership": "Global/Project/New route through SurfaceTransaction; presented_hits is CPU hit-map publication"
+    },
+    {
+      "path": "crates/gui-app/src/global_preferences_window.rs",
+      "line": 358,
+      "code": ".present(self.prepared.as_mut().expect(\"prepared frame presented\"));",
+      "classification": "default shared auxiliary adapter",
+      "ownership": "Global/Project/New route through SurfaceTransaction; presented_hits is CPU hit-map publication"
+    }
+  ],
+  "additional_ownership": {
+    "attachment_allocation": "gpu_surface.rs SurfaceAttachments::ensure_guarded is the one default native MSAA attachment allocator; all four hosts prepare through it after surface admission and before scene preparation. Renderer::ensure_msaa reuses the preflight attachment. Other textures (glyph atlas, world resources, captures) are not surface attachment adoption.",
+    "auxiliary_close": "sync_global_preferences_window / sync_project_preferences_window / sync_new_project_window close coordinator host and drop owned surface; SurfaceTransaction::drop closes QueueOwner host accounting. Arc native windows are released when surface/window references drop.",
+    "main_close": "request_controlled_close performs terminal shutdown then event-loop exit; App/Runtime drop runs SurfaceTransaction::drop. Main native window is an existing static leaked reference; this audit does not claim main-window allocation teardown before process exit.",
+    "device_replacement": "Runtime::replace_native_gpu swaps SurfaceTransaction/Renderer/device; auxiliary replacement drops old surface owners; coordinator rebind rejects stale host/device receipts.",
+    "limits": [
+      "Static inventory is not per-call dynamic proof or full S1 adoption acceptance. Existing native evidence exercises full-scene and overlay paths; fault/close races and complete resource budgets remain partial.",
+      "Registry/library-internal queue submissions are outside this Datum-source search. Existing initialization/atlas behavior is not counted as native frame receipts.",
+      "No diagnostics removed or default policy changed by inventory."
+    ]
+  },
+  "source_sha256": {
+    "crates/gui-app/src/app_shell.rs": "8ee5948bb6d0f577d01212c1322f35e1bf1fc32418be86b488e2a34b64643295",
+    "crates/gui-app/src/global_preferences_window.rs": "4410520829d124904869d629f8a5469353a4c1771a389d534133c3413633b7f6",
+    "crates/gui-app/src/main.rs": "f2d5ec42ef6724d9ecbb2b0430d9c6f38de964da05e44cf6804c53f0337c143f",
+    "crates/gui-app/src/native_device_recovery.rs": "0b51efe8cf805fb0c873a5466daad2cf0eec477bd32221812a28e78c1f24959d",
+    "crates/gui-app/src/native_frame_coordinator.rs": "dd6c43212c31cb76d93345cab11c9945e3cdfd9c2e6e053f7f9d1b570de5eef8",
+    "crates/gui-app/src/native_frame_probe.rs": "09434f59ddfb6a6712411604a48cf668b99d1ca19c4456d68cce7cd77067b0c4",
+    "crates/gui-app/src/native_queue_owner.rs": "10d941944236521900cac8e7460a270953de3146310c0e1d95e7ab2f94de5c0b",
+    "crates/gui-app/src/native_resize_repro.rs": "2863a7f291bc8633687b973d8146b8ccb6af7b89b03b5ac5435292b73ce7f831",
+    "crates/gui-app/src/native_surface_transaction.rs": "c60abce7b3f210300d61273048f940d76fd66e37d0a1ae50b10103be206dfe8f",
+    "crates/gui-app/src/new_project_window.rs": "bac1350668963d11c6454a3dd89febe2faa7ae4a5d2196a5b50f087f927314d0",
+    "crates/gui-app/src/presented_hit_regions.rs": "fd2252b8d8c274b33366160b9111eee79bec465d7c7c8642a30049c4133f7953",
+    "crates/gui-app/src/project_preferences_window.rs": "8340b55ad3233f78b7569281d7b60737910eca2ce0311554f16c3c511050210a",
+    "crates/gui-app/src/runtime_present.rs": "54d10623bcfe932923fff21cafe0d0488d1f16298792b0fc0e754c5b3eefba5d",
+    "crates/gui-render/src/render/attachment_cost_probe.rs": "66bdd10c70be42bb1a6e91e740f1ef247b1b76b60106157aa557687b35d6ba08",
+    "crates/gui-render/src/render/gpu_frame.rs": "75fbaa6c9d8009a6cbc4b3e2a24babfe1e76e558d25ba9f8d303c900746907a6",
+    "crates/gui-render/src/render/gpu_measurements_tests.rs": "b66ff2c5562146fa42325f001a89cdd6bc5ec9a8a8b1a36cfa068812944ed27e",
+    "crates/gui-render/src/render/gpu_overlay.rs": "3f4caa0fd7bdcbd08d3a6c2906dfe0ec389279c665e0a2b5d481676c824e68be",
+    "crates/gui-render/src/render/gpu_surface.rs": "09815785479ddfdbdee24ef23e9b1ba72ba3574d8fb59e7c1b954255834a5f7f",
+    "crates/gui-render/src/visual_capture.rs": "0e93d1172f2ede66341ab37f0298dc984f742c0f96dfb0bfc2f039c8172abe9a"
+  }
+}

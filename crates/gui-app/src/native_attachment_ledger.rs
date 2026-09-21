@@ -159,6 +159,26 @@ mod tests {
     }
 
     #[test]
+    fn preparation_abort_releases_unsubmitted_replacement_without_completing_old_work() {
+        let mut ledger = Ledger::default();
+        ledger.observe(allocation(1, Some(1024), 7), 0);
+        // Replacement is now owned before fallible scene preparation, not only
+        // after rendering. No submission is invented for an aborted frame.
+        ledger.observe(allocation(2, Some(2048), 0), 0);
+        let prepared = ledger.snapshot(0);
+        assert_eq!(prepared.current_payload_bytes, 2048);
+        assert_eq!(prepared.retiring_payload_bytes, 1024);
+        assert_eq!(prepared.observed_allocations, 2);
+        ledger.close(1, 0);
+        let aborted = ledger.snapshot(0);
+        assert_eq!(aborted.current_payload_bytes, 0);
+        assert_eq!(aborted.retiring_payload_bytes, 1024);
+        assert_eq!(aborted.completed_retirements, 1);
+        assert_eq!(aborted.allocations[0].allocation, 1);
+        assert!(ledger.snapshot(7).allocations.is_empty());
+    }
+
+    #[test]
     fn replacement_and_close_preserve_bytes_until_their_own_gpu_completion() {
         let mut ledger = Ledger::default();
         ledger.observe(allocation(1, Some(1024), 1), 0);
