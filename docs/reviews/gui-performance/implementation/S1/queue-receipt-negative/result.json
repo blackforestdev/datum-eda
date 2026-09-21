@@ -1,0 +1,26 @@
+{
+  "status": "QueueOwner component negative sensitivity verified; SH-08 native/full qualification remains partial",
+  "source_commit": "bf1f468dc48adfc640617af0595f9d0373cb51dc",
+  "production_consumers_migrated": [],
+  "competing_paths_retired": [],
+  "production_change": "None. Active Rust source unchanged; defect confined to disposable archive of the existing first-party repository.",
+  "positive": "Seven current QueueOwner tests pass before injection and after canonical-source rebuild.",
+  "negative": "Removing only the per-host in-flight receipt admission guard produces Frame instead of Wait in completed_watermark_does_not_complete_later_submission; exactly that assertion fails and six non-target queue-owner regressions pass.",
+  "historical_applicability": "All six first-parent revisions in c01-historical-hunk-review.json lack native_queue_owner.rs and cannot run this owner recipe. Exact cat-file existence results preserved.",
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_queue_owner::tests",
+    "git archive HEAD | tar -x -C target/pm045-queue-negative-source",
+    "Apply only negative.diff to the disposable source file; record hashes.",
+    "CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline --manifest-path target/pm045-queue-negative-source/Cargo.toml -p datum-gui-app --bin datum-gui native_queue_owner::tests",
+    "Observe no Cargo/rustc process, verify source-copy path/hash, remove only that owned disposable source directory, then rerun the active-source command."
+  ],
+  "artifact_recovery": "Shared Cargo target reused the negative test artifact on two active-workspace attempts, including one after active source mtime refresh. Both failures retained and excluded from positive proof. After verified-idle removal of only the disposable source directory, Cargo rebuilt the canonical first-party crates and all seven tests passed. Source bytes and working release binary remained unchanged. No shared cache sweep or package clean. Future disposable-source builds must use a separate owned disk-backed target to avoid this reuse.",
+  "canonical_positive_test_binary_sha256": "fbbc50320e14992eabebcae18e7c4266e405b6797bb934271484a481d3287e29",
+  "release_binary_sha256": "d9efa11c530e6b037872030d649af6cca99668186115bfaf5edf6344f086b2bb",
+  "limits": [
+    "Component-level actual QueueOwner API tests, not native App adapter trials or full SH-08 prescribed all-consumer fault qualification.",
+    "Six non-target queue regressions pass; no claim of exhaustive unaffected application behavior or new full-suite pass.",
+    "No numerical performance, memory budget, new production migration or S1 completion. Pending S1 exit proposal and S2 dependency unchanged.",
+    "No dependency/version/license change, download, third-party vendoring or modified external source. Resize qualification stays nonblocking."
+  ]
+}

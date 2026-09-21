@@ -990,7 +990,8 @@
           "docs/reviews/gui-performance/implementation/S1/presented-hit-ownership/tests.log.gz"
         ],
         "queue_admission_evidence": "docs/reviews/gui-performance/implementation/S1/queue-retry-dispatch/receipt.json",
-        "queue_admission_result": "Default queue-ineligible retries no longer request native frames; Main matched publication-stall trial reduces wait_queue frame attempts 799 to 1 with hidden pause/failure/F5 preserved. All three auxiliary final-state recovery paths pass; one Global-run Main close-delivery timeout retained. Full requirement qualification remains open."
+        "queue_admission_result": "Default queue-ineligible retries no longer request native frames; Main matched publication-stall trial reduces wait_queue frame attempts 799 to 1 with hidden pause/failure/F5 preserved. All three auxiliary final-state recovery paths pass; one Global-run Main close-delivery timeout retained. Full requirement qualification remains open.",
+        "component_negative_control": "Disposable current-source guard removal makes unfinished receipt admission return Frame instead of Wait: one targeted assertion fails, six other queue-owner regressions pass; canonical source rebuild restores seven passes. Native per-consumer and full resource qualification remain open."
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/SH-08/result.json",
       "acceptance_rule": "At most one outstanding frame per host; latest logical state retained, bounded resource bytes.",
@@ -1040,7 +1041,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/queue-receipt-negative/result.json"
+      ]
     },
     {
       "id": "SH-09",
