@@ -1,0 +1,49 @@
+{
+  "status": "Screen and active-surface camera uniform ownership migrated; GPI-S2 remains in progress",
+  "baseline_commit": "5e3d2a35e7e8c520ff161ae45f1b9f0c53b79558",
+  "production_consumers_migrated": [
+    "MAIN and NEW full-frame screen/camera uniform paths",
+    "GLOBAL and PROJECT overlay-only screen uniform path",
+    "Shared Board/schematic surface-camera preparation; schematic workload qualification remains separate"
+  ],
+  "shared_owner": "gpu_data::uniform_buffer::UniformBuffer<T>, owned by Renderer and active surface slots",
+  "change": "Compare exact Pod bytes against one retained value before issuing a uniform queue write. Screen initialization retains its mapped initial value; newly allocated camera slots have no valid snapshot until their first sync. Keep buffer handles stable across updates. Truncate camera slots to active panes, and clear camera slots plus bundle references on dialog-only frames.",
+  "competing_paths_retired": [
+    "Unconditional screen-uniform queue writes in both full and dialog render paths",
+    "Unconditional per-surface camera-uniform writes",
+    "Retaining obsolete camera buffers/bindings after pane removal",
+    "Keeping old world bundles and their camera-binding references on dialog-only frames"
+  ],
+  "bounds": {
+    "screen": "One 16-byte GPU buffer plus one inline optional ScreenUniform value per Renderer; no heap snapshot or history.",
+    "camera": "One 64-byte GPU buffer plus one inline optional SceneUniform value per active surface slot; no history. Shrink truncates live slots; renderer/device replacement drops the owner.",
+    "retirement": "Bundle references may also own camera bindings, so dialog-only transition clears both. GPU completion/driver residency remains outside this bounded proof; dropping host ownership does not assert immediate driver reclamation.",
+    "accounting_scope": "Changed uniform sync queues the full 16/64-byte value. Zero unchanged owner sync writes is proved, not zero total renderer traffic or byte-minimal changed fields. Existing fallback scene bindings and terminal/text uniforms are not migrated by this slice."
+  },
+  "proof": {
+    "gpu": "Actual Renderer on Intel P630/Vulkan: unchanged full-frame screen and camera owners queue zero bytes and preserve pixels. Camera changes queue 64-byte camera values while screen stays warm; changed extent queues screen/camera updates and matches a fresh renderer. Pane closure releases slots/bundles, reopening initializes camera data. Dialog-only transition releases world-camera owners, repeated dialog stays warm, and changed dialog extent matches fresh pixels.",
+    "negative": "Always-upload, ignore-changed-value and omit-pane-retirement mutations each fail the matching real-renderer proof; sources restored byte-for-byte before final positives/build.",
+    "bundle": "Existing real Renderer world-bundle reuse/invalidation proof passes with the new camera-buffer owner, including replacement binding identity and pane release.",
+    "tests": "201 passed, 21 ignored; explicit uniform and bundle GPU proofs run separately. Renderer library/tests visual-feature Clippy and fresh offline release pass.",
+    "native": "Four default-path X11 host startup/presentation/close smokes and Main wheel input pass. No full native upload counters, backend/scale or performance acceptance follows.",
+    "governance": "Source health, dependency authority, parity, traceability, spec/project checks and staged formatting checked before commit. No ceiling changes; existing unrelated terminal convergence drift remains open, full drift not rerun."
+  },
+  "limits": [
+    "MEM-01 complete queue/copy/mapped accounting and exact changed-range qualification remain open; changed uniforms still transfer their full value.",
+    "Only active camera slots and their bundle references are retired here. Other retained world/screen/text resources, native close-time RSS and full in-flight release qualification remain separate.",
+    "Schematic content admission, all-adapter counters, absolute resource ceilings, backend/scale/endurance and S2 completion remain open.",
+    "No dependency, vendoring, Cargo, visual-prototype, product-authority, pass/resolve schedule or resize CPU qualification change. Offscreen extent correctness is not reopening deferred resize qualification."
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_data.rs": "eda677b93ed403bad63bd6af2800f8e18470e858e6a86f369a4c9e8abfa35342",
+    "crates/gui-render/src/render/gpu_frame.rs": "999c93fd77bc04be89714f60c79212e3d49a1146f373154b71b4340bdb1d2d43",
+    "crates/gui-render/src/render/gpu_init.rs": "71829fae082c554ae415670c2ca735447b458fc1401ec35ad471fdca60aa82e5",
+    "crates/gui-render/src/render/gpu_overlay.rs": "f12b1a4f32c2777a76f86a9bb44ea86f18aa31602c43e089e0ab48a9b2581525",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "f19c72627e784410bf21488b294d0b9e548d5c10434eb720af00bf747ad692e0",
+    "crates/gui-render/src/render/gpu_surface_pass.rs": "baf7a2bbe2fc7710c6975fdbee48532a199f9428b88ffa1e53fe6b16f23f7e6d",
+    "crates/gui-render/src/render/renderer_state.rs": "72ae5057ae98f466a7b52603f99d26ff83f5ae44938c03145042042cfeb2c0c5",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "962ac45cafc2f9662a2f5db06d08f41af0b4242870911f7b7c1539b1a531cf18",
+    "crates/gui-render/src/render/uniform_buffer.rs": "cc8073995627f3d4428964c5e35c00e232880af3a6221ffb197a8780f9925439"
+  },
+  "candidate_binary_sha256": "e5ac5f70c69cc9447bd56893b5bb23d1f61e34ec68d5f430a1be89965933eef2"
+}

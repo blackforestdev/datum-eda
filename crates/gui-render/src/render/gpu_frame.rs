@@ -71,13 +71,12 @@ impl Renderer {
         let (surface_grid_vertices, surface_grid_batches) =
             surface_grid_pass::build_surface_grids(prepared);
         self.prepare_surface_uniforms(device, queue, prepared, width, height);
-        queue.write_buffer(
-            &self.uniform_buffer,
-            0,
-            bytemuck::bytes_of(&ScreenUniform {
+        self.uniform_buffer.sync(
+            queue,
+            ScreenUniform {
                 resolution: [width as f32, height as f32],
                 _pad: [0.0, 0.0],
-            }),
+            },
         );
         let upload_started = std::time::Instant::now();
         self.upload_frame_vertices(

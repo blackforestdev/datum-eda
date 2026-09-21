@@ -16393,7 +16393,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial production adoption: nine shared screen streams retain bounded snapshots and GPU capacity. Clean span-edge words no longer upload; actual dialog single-field changes transfer four bytes and match cold/restored pixels. Owner readback, cap/bypass/shrink/reset and rejected untrimmed negative pass. Exact word writes and packed-copy prototypes rejected for diagnostic CPU regressions; internal clean-gap coalescing remains. Full MEM-01 byte-minimal transfer, native counters and qualification stay open.",
+        "status": "Partial production adoption: nine shared screen streams retain bounded snapshots and GPU capacity. Clean span-edge words no longer upload; actual dialog single-field changes transfer four bytes and match cold/restored pixels. Owner readback, cap/bypass/shrink/reset and rejected untrimmed negative pass. Exact word writes and packed-copy prototypes rejected for diagnostic CPU regressions; internal clean-gap coalescing remains. Full MEM-01 byte-minimal transfer, native counters and qualification stay open. Shared screen/camera uniform owners now skip exact-byte repeats; full/dialog pixel and changing-input proof plus always-upload/stale-value/retirement negatives pass. Changed uniforms still upload full values; no byte-minimal or complete native qualification follows.",
         "id": "proof_reuse_screen",
         "positive": "Change one screen/control/text range",
         "negative_control": "Rewrite entire unchanged buffer",
@@ -16420,7 +16420,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/screen-upload-owner/result.json",
-        "docs/reviews/gui-performance/implementation/S2/screen-span-trimming/result.json"
+        "docs/reviews/gui-performance/implementation/S2/screen-span-trimming/result.json",
+        "docs/reviews/gui-performance/implementation/S2/uniform-owner/result.json"
       ]
     },
     {
@@ -25508,5 +25509,33 @@
       "No dependency, vendoring, Cargo, visual-prototype, product-authority, pass/resolve schedule or resize qualification change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S2/world-bundle-key/result.json"
+  },
+  "s2_uniform_owner_work": {
+    "status": "Screen and active-surface camera uniform ownership migrated; GPI-S2 remains in progress",
+    "production_consumers_migrated": [
+      "MAIN and NEW full-frame screen/camera uniform paths",
+      "GLOBAL and PROJECT overlay-only screen uniform path",
+      "Shared Board/schematic surface-camera preparation; schematic workload qualification remains separate"
+    ],
+    "shared_owner": "gpu_data::uniform_buffer::UniformBuffer<T>, owned by Renderer and active surface slots",
+    "competing_paths_retired": [
+      "Unconditional screen-uniform queue writes in both full and dialog render paths",
+      "Unconditional per-surface camera-uniform writes",
+      "Retaining obsolete camera buffers/bindings after pane removal",
+      "Keeping old world bundles and their camera-binding references on dialog-only frames"
+    ],
+    "bounds": {
+      "screen": "One 16-byte GPU buffer plus one inline optional ScreenUniform value per Renderer; no heap snapshot or history.",
+      "camera": "One 64-byte GPU buffer plus one inline optional SceneUniform value per active surface slot; no history. Shrink truncates live slots; renderer/device replacement drops the owner.",
+      "retirement": "Bundle references may also own camera bindings, so dialog-only transition clears both. GPU completion/driver residency remains outside this bounded proof; dropping host ownership does not assert immediate driver reclamation.",
+      "accounting_scope": "Changed uniform sync queues the full 16/64-byte value. Zero unchanged owner sync writes is proved, not zero total renderer traffic or byte-minimal changed fields. Existing fallback scene bindings and terminal/text uniforms are not migrated by this slice."
+    },
+    "limits": [
+      "MEM-01 complete queue/copy/mapped accounting and exact changed-range qualification remain open; changed uniforms still transfer their full value.",
+      "Only active camera slots and their bundle references are retired here. Other retained world/screen/text resources, native close-time RSS and full in-flight release qualification remain separate.",
+      "Schematic content admission, all-adapter counters, absolute resource ceilings, backend/scale/endurance and S2 completion remain open.",
+      "No dependency, vendoring, Cargo, visual-prototype, product-authority, pass/resolve schedule or resize CPU qualification change. Offscreen extent correctness is not reopening deferred resize qualification."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S2/uniform-owner/result.json"
   }
 }
