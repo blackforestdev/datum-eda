@@ -589,11 +589,6 @@ impl App {
                     );
                 }
             }
-            WindowEvent::Focused(false) => {
-                if let Some(surface) = &mut self.global_preferences_surface {
-                    surface.scrollbar_input(ElementState::Released, &mut self.frames);
-                }
-            }
             WindowEvent::CursorLeft { .. } => {
                 if let Some(surface) = &mut self.global_preferences_surface {
                     surface.set_cursor_position(None, &mut self.frames);

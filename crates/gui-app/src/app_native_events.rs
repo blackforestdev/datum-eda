@@ -72,7 +72,25 @@ impl App {
         if self.frames.consume_cancelled_release(window_id, &event) {
             return;
         }
-        if matches!(event, WindowEvent::ScaleFactorChanged { .. }) {
+        if matches!(event, WindowEvent::Focused(false))
+            && self
+                .window
+                .as_ref()
+                .is_some_and(|window| window.id() == window_id)
+            && let Some(runtime) = &mut self.runtime
+        {
+            // Finalize preview geometry before shared capture cancellation clears
+            // drag state. Both operations must run; neither may short-circuit.
+            let split_finished = runtime.finish_terminal_split_drag().is_some();
+            let dock_finished = runtime.finish_dock_resize_drag().is_some();
+            if split_finished || dock_finished {
+                self.request_workspace_redraw();
+            }
+        }
+        if matches!(
+            event,
+            WindowEvent::ScaleFactorChanged { .. } | WindowEvent::Focused(false)
+        ) {
             self.cancel_native_host_gestures(window_id);
         }
         if std::env::var_os("DATUM_GUI_VERBOSE_LOG").is_some()
@@ -222,15 +240,7 @@ impl App {
                 }
                 if let Some(runtime) = &mut self.runtime {
                     runtime.window_focused = focused;
-                    let terminal_split_finished =
-                        !focused && runtime.finish_terminal_split_drag().is_some();
-                    if !focused {
-                        runtime.pan_gesture.cancel();
-                        runtime.cancel_terminal_tab_drag();
-                        runtime.cancel_terminal_text_selection_drag();
-                    }
-                    if !focused && (runtime.clear_interaction_overlay() || terminal_split_finished)
-                    {
+                    if !focused && runtime.clear_interaction_overlay() {
                         self.request_workspace_redraw();
                     }
                 }
