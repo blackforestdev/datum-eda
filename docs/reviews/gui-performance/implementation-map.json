@@ -4504,14 +4504,14 @@
         "BOARD",
         "SCHEMATIC"
       ],
-      "shared_owner": "encoded world E03",
+      "shared_owner": "Renderer.surface_world_bundles / CachedSurfaceBundle, shared Board and schematic encoding",
       "implementation_slice": "S2",
       "production_entry_points": [
         "crates/gui-app/src/pane_cameras.rs",
         "crates/gui-app/src/runtime_camera_pane.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial production adoption: cached encoding keys now own actual ordered batches, without source layer strings. Actual Renderer/wgpu proof verifies camera/metadata/segmentation reuse and painter-order/visibility/buffer/binding invalidation, shrink rebind and closed-pane release. Always-rebuild and omitted-batch-key negatives fail. Four native smoke cases pass. Native per-adapter key/counter proofs, device recreation, full pipeline/baked-clip qualification and complete resource/backend/performance acceptance remain open.",
         "id": "proof_hp06_01",
         "positive": "Camera-only pan/zoom with unchanged encoding dependencies",
         "negative_control": "Always rebuild bundles",
@@ -4549,7 +4549,10 @@
       "consumer_applicability": {
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/world-bundle-key/result.json"
+      ]
     },
     {
       "id": "HP06-02",
@@ -4565,14 +4568,14 @@
         "BOARD",
         "SCHEMATIC"
       ],
-      "shared_owner": "encoded world E03",
+      "shared_owner": "Renderer.surface_world_bundles / CachedSurfaceBundle, shared Board and schematic encoding",
       "implementation_slice": "S2",
       "production_entry_points": [
         "crates/gui-app/src/pane_cameras.rs",
         "crates/gui-app/src/runtime_camera_pane.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial production adoption: cached encoding keys now own actual ordered batches, without source layer strings. Actual Renderer/wgpu proof verifies camera/metadata/segmentation reuse and painter-order/visibility/buffer/binding invalidation, shrink rebind and closed-pane release. Always-rebuild and omitted-batch-key negatives fail. Four native smoke cases pass. Native per-adapter key/counter proofs, device recreation, full pipeline/baked-clip qualification and complete resource/backend/performance acceptance remain open.",
         "id": "proof_hp06_02",
         "positive": "Change resource/pipeline/bind/order/baked clip dependency one at a time",
         "negative_control": "Omit changed encoding key",
@@ -4610,7 +4613,10 @@
       "consumer_applicability": {
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/world-bundle-key/result.json"
+      ]
     },
     {
       "id": "HP07-01",
@@ -25469,5 +25475,38 @@
       "No dependency, vendoring, Cargo, visual-prototype, product-authority, rendering schedule or resize qualification change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S2/text-lookup-index/result.json"
+  },
+  "s2_world_bundle_key_work": {
+    "status": "World bundle identity uses actual encoded batches; GPI-S2 remains in progress",
+    "production_consumers_migrated": [
+      "MAIN world surfaces",
+      "NEW existing general-world backdrop; S3 retirement still pending"
+    ],
+    "shared_owner": "Renderer.surface_world_bundles / CachedSurfaceBundle, shared Board and schematic encoding",
+    "competing_paths_retired": [
+      "Cached clone of every RetainedDrawCommand and its optional layer-name allocation",
+      "Bundle invalidation solely from upstream metadata or segmentation that leaves encoded draws unchanged"
+    ],
+    "remaining_competing_paths": [
+      "World visibility/prepared-command generation is unchanged and still scans source commands. Warm key comparison traverses batchable commands; no constant-time encoding check is claimed."
+    ],
+    "key_and_lifetime": {
+      "variable_dependencies": [
+        "vertex buffer handle",
+        "stroke buffer handle",
+        "camera bind-group handle",
+        "ordered primitive kinds and ranges after adjacent compatible merging"
+      ],
+      "renderer_invariants": "Pipelines, format and sample count are initialized with Renderer and not mutated in the current production path; device replacement creates a new Renderer. Scissor and camera uniform contents remain live outside the bundle. No clipping is baked into the bundle.",
+      "owned_key_payload": "Box<[DrawBatch]> owns no nested allocations or retained spare capacity. The fixture has five source commands after an equivalent split and four batches, totaling 48 owned key bytes. This counts the CPU key only, not opaque WGPU/driver encoding storage.",
+      "bound": "One bundle per current visible surface slot; preparation truncates closed slots. Key length is bounded by that surface command count. No new absolute GPU memory ceiling or full in-flight-resource accounting claim."
+    },
+    "limits": [
+      "HP06/HP07 and S2 are not fully qualified by these bounded proofs. Native per-adapter key negatives, device recreation, complete resource caps and performance replay remain open.",
+      "Shared schematic encoder is code adoption only; resolved schematic workload/visual performance still requires admitted fixtures.",
+      "No global CPU/GPU memory or numerical latency improvement claim follows from compact CPU key payload.",
+      "No dependency, vendoring, Cargo, visual-prototype, product-authority, pass/resolve schedule or resize qualification change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S2/world-bundle-key/result.json"
   }
 }
