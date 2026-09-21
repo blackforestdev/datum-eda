@@ -130,7 +130,7 @@ impl Runtime {
         if event.state != ElementState::Pressed {
             return true;
         }
-        let model = match datum_gui_protocol::load_default_gui_menu_model() {
+        let model = match datum_gui_protocol::gui_menu_model::default_gui_menu_model() {
             Ok(model) => model,
             Err(_) => return true,
         };
@@ -232,17 +232,16 @@ impl Runtime {
         label: &str,
         surface: EntrySurface,
     ) -> bool {
-        let item = datum_gui_protocol::load_default_gui_menu_model()
+        let item = datum_gui_protocol::gui_menu_model::default_gui_menu_model()
             .ok()
             .and_then(|model| {
-                model.menubar.into_iter().find_map(|menu| {
+                model.menubar.iter().find_map(|menu| {
                     if menu.menu == menu_name {
-                        return menu.items.into_iter().find(|item| item.label == label);
+                        return menu.items.iter().find(|item| item.label == label);
                     }
                     menu.submenus
                         .get(menu_name)
                         .and_then(|items| items.iter().find(|item| item.label == label))
-                        .cloned()
                 })
             });
         let Some(item) = item else {
@@ -308,7 +307,7 @@ impl Runtime {
         let Some(HitTarget::MenuItem { menu, label }) = target else {
             return false;
         };
-        let model = match datum_gui_protocol::load_default_gui_menu_model() {
+        let model = match datum_gui_protocol::gui_menu_model::default_gui_menu_model() {
             Ok(model) => model,
             Err(_) => return false,
         };
