@@ -492,14 +492,11 @@ impl Runtime {
             return false;
         };
         let retained_target = {
-            let retained = self.retained_scene.get_or_insert_with(|| {
-                RetainedScene::from_workspace_for_surface(
-                    self.session.workspace(),
-                    self.config.width,
-                    self.config.height,
-                    self.scale_factor,
-                )
-            });
+            self.ensure_retained_scene();
+            let retained = self
+                .retained_scene
+                .as_ref()
+                .expect("retained scene initialized");
             retained
                 .hit_test_authored_world(world_point, self.session.workspace())
                 .cloned()

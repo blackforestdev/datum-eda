@@ -103,7 +103,7 @@ impl Runtime {
             terminal_mouse_button: None,
             modifiers: ModifiersState::empty(),
             retained_scene: None,
-            retained_scene_cache: Vec::new(),
+            retained_scene_cache: RetainedSceneHistory::default(),
             prepared_scene: None,
             presented_hits: Default::default(),
             presented_console_layout: None,

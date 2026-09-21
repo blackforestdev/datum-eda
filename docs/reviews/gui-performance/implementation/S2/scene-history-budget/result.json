@@ -1,0 +1,59 @@
+{
+  "status": "Main derived-scene history has byte admission and active-scene headroom; full world-memory qualification and GPI-S2 remain open",
+  "baseline_commit": "9dd66ba984f11ccb1e1fda623f5bf86db80a8181",
+  "production_consumers_migrated": [
+    "MAIN native rendering",
+    "MAIN lazy prepared-scene construction",
+    "MAIN primary-click and marking-menu world hits",
+    "MAIN authoring target lookup",
+    "MAIN visual capture construction"
+  ],
+  "shared_owner": "RetainedSceneHistory with Runtime::ensure_retained_scene / restore_cached_retained_scene; retained payload inspection in Datum-owned RetainedScene and SpatialHitIndex",
+  "change": "Keep the existing six historical entries maximum and oldest-entry eviction, adding a 64 MiB conservative heap-payload admission budget. Charge cache key strings, boxed sorted layer-key storage, entry-vector capacity, vertex/stroke slices, draw-command capacities/strings and spatial-index capacities/nested paths/strings. Evict before history insertion and reserve headroom after active construction/restoration. Oversized or unaccounted scenes bypass retention and still render. Route every Main construction path through the owner; warm frames with an existing active scene do not traverse payload data.",
+  "competing_paths_retired": [
+    "Raw Vec history policy that limited only entry count",
+    "Independent Main scene constructors in rendering, lazy preparation, pointer/menu/authoring hit resolution and visual capture",
+    "BTreeMap storage in retained cache keys; canonical sorted boxed entries preserve exact key equality with countable storage"
+  ],
+  "bounds": {
+    "historical_entries": 6,
+    "admission_payload_bytes": 67108864,
+    "rule": "History entry heap plus entry-vector capacity and the active scene heap share the budget when the active scene itself fits. An oversized/unknown active scene clears history without dropping or refusing active geometry. All existing cache-key dependencies remain exact.",
+    "counting": "SpatialHitIndex counts region/order/tree-node capacities, shape-vector capacities, layer strings and caller-supplied target payload. Current authored-object targets are supported; unknown target kinds return None and bypass retention. Shared Arc geometry is charged in full per entry, conservatively; this is not unique global ownership accounting.",
+    "scope": "Heap payload excludes inline top-level owners, allocator and Arc control-block overhead, construction scratch, renderer-held references and companion schematic ownership outside Main history. No complete 64 MiB document/process ceiling is claimed. Construction can coexist with old history until the new payload is known.",
+    "release": "Oldest entries are removed under entry/byte pressure; restored entries transfer to active ownership; clear drops entry-vector capacity as well as entries. Authoritative model/session data is never evicted."
+  },
+  "proof": {
+    "owner": "Real retained-scene fixtures verify six-entry behavior, recent recovery with equal geometry, injected small-budget pressure eviction, active headroom, oversized bypass and clearing allocation capacity. These are cache-policy proofs, not a physical 64 MiB native pressure run.",
+    "payload": "Viewport proof deliberately reserves spare shape/string/index capacity and verifies it is charged. Renderer proof covers nonempty geometry and refuses an unknown target payload. Omitting capacity, byte eviction or active headroom each causes its corresponding test to fail; sources restored before final positives/build.",
+    "tests": "Viewport: 44 passed. Renderer: 202 passed, 21 ignored. Full application unit suite: 378 passed, 11 ignored; separate visual-shell integration test remains ignored. Restored targeted capacity proof and history tests pass.",
+    "native": "Fresh offline release passes all four X11 host smoke cases and Main wheel input. Only MAIN history ownership is migrated; auxiliary tests are regressions. Native selection-history pressure, byte counters and rebuild-latency qualification remain open.",
+    "governance": "Workspace Clippy and visual-feature application check pass. Full drift reaches the existing unrelated dat-terminal-convergence-guard-xke failure; no full drift pass claimed. Source health, all 13 policy regression tests, dependency authority, parity, alignment, traceability, spec/project checks and staged formatting checked. Initial unused BTreeMap import warning corrected."
+  },
+  "source_health": {
+    "main_physical_before": 1471,
+    "main_physical_after": 1407,
+    "main_production_ceiling_before": 1450,
+    "main_production_ceiling_after": 1386,
+    "ownership": "Cache-key construction, history admission/eviction/restoration and active scene construction moved into the normal retained_scene_history module. All six Main construction call sites use it; no forwarding-only decomposition or ceiling increase."
+  },
+  "limits": [
+    "The conservative history guard is not full MEM-WORLD-CPU/MEM-WORLD-HISTORY qualification; unique shared/pinned ownership, allocator overhead, construction peaks, native pressure/RSS and total document bounds remain open.",
+    "Active scenes beyond the budget continue rendering with history disabled; this does not grant large-project admission or satisfy an unbounded-input memory contract.",
+    "Companion schematic/native auxiliary resource bounds, per-adapter counters, backend/scale/endurance and S2 completion remain open.",
+    "No dependency, vendoring, Cargo, license, visual-prototype, model mutation, pass/resolve schedule or resize qualification change."
+  ],
+  "source_sha256": {
+    "crates/gui-app/src/interaction_refresh.rs": "0d8b163d86b5f6b68b70aead765e5a38509d6acf761aa18a0d3062ae1d473049",
+    "crates/gui-app/src/main.rs": "01fed146ccaed51fe9f8331d8762c36e00d597b98e8b18154caba98f59dbfb8b",
+    "crates/gui-app/src/runtime_camera_pane.rs": "a4c67f16c07e75f8ee7e8b5bd6cca10fd8ae6a6a1ce67e0b67c2a2c3659133e8",
+    "crates/gui-app/src/runtime_init.rs": "cb6ee210b84140a6167249f99af5beffc39f9306298a9c1389a1cd7f7059c2ab",
+    "crates/gui-app/src/runtime_present.rs": "5b1372b297f97b5cbb4e509086c51a0b593a4b3133e4943f1a4b59377b703a6a",
+    "crates/gui-app/src/runtime_primary_pointer.rs": "b462285f94451a76eeb2dc86e7a49843709fbf37e7dae78d602139f225e1633e",
+    "crates/gui-app/src/runtime_state.rs": "cca6cf505bf2394aed10a4187248e153baf467bc3d8143db00f8c31897f65d81",
+    "crates/gui-render/src/render/scene_retained_access.rs": "95cfaeb192ded97b141c2150394bdedb598bf43ceb300107e39edec3745e8fbf",
+    "crates/gui-viewport/src/hit.rs": "580eb3d3fd648fcec9259b3eb246861d10cd07dde6613e587daecf4c55f484e0",
+    "crates/gui-app/src/retained_scene_history.rs": "4f2317bf9e48beccb6c3277a80280765d1bc1424519ca0bf50ad887a8fe6e2a8"
+  },
+  "candidate_binary_sha256": "f04688d5ee05f41454ba13cac841e65c279e330a47ed28affbc0e25c4a34c024"
+}

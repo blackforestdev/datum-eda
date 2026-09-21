@@ -667,13 +667,13 @@
     "crates/gui-app/src/main.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1450
+        "pre_test_lines": 1386
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Native ApplicationHandler lifecycle, wait-boundary orchestration and input dispatch live in app_native_events.rs; Runtime state and device replacement retain their separate owners. Timing diagnostic policy and emission now live with rendering in runtime_present.rs; main retains selection application and lazily supplies its message."
+      "note": "Retained-scene history, cache-key construction, admission and active-scene restoration/construction now belong to retained_scene_history.rs. Main keeps prepared-scene orchestration; remaining legacy debt stays frozen."
     },
     "crates/gui-protocol/src/kicad_scene_import.rs": {
       "kind": "rust-production",

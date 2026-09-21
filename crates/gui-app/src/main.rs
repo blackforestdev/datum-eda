@@ -20,7 +20,6 @@ use datum_gui_render::{
 };
 use gui_runtime_support::native_surface_transaction::SurfaceTransaction;
 use runtime_state::Runtime;
-use std::collections::BTreeMap;
 use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
@@ -65,6 +64,8 @@ mod project_preferences_runtime;
 mod project_preferences_window;
 mod resize_smoke;
 mod retained_scene_cache_key;
+mod retained_scene_history;
+use retained_scene_history::{RetainedSceneCacheKey, RetainedSceneHistory};
 mod runtime_board_text_edit;
 mod runtime_camera_fit_targets;
 mod runtime_camera_pane;
@@ -145,22 +146,6 @@ const COPY_BYTES_PER_PIXEL: u32 = 4;
 const WGPU_COPY_BYTES_PER_ROW_ALIGNMENT: u32 = 256;
 const ASSISTANT_ACTIVITY_COMMAND: &str =
     "datum-eda context session-activity --session \"$DATUM_SESSION_ID\" --limit 20";
-const RETAINED_SCENE_CACHE_LIMIT: usize = 6;
-#[derive(Debug, Clone, PartialEq, Eq)]
-struct RetainedSceneCacheKey {
-    scene_id: String,
-    source_revision: String,
-    width: u32,
-    height: u32,
-    scale_bits: u32,
-    dock_height_px: u32,
-    show_authored: bool,
-    show_proposed: bool,
-    show_unrouted: bool,
-    dim_unrelated: bool,
-    layer_visibility: BTreeMap<String, bool>,
-    selection: String,
-}
 fn main() -> Result<()> {
     install_gui_panic_hook();
     reset_gui_diagnostic_log();
@@ -293,14 +278,7 @@ impl Runtime {
         let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
         if self.prepared_scene.is_none() {
             self.scene_dirty = false;
-            self.retained_scene.get_or_insert_with(|| {
-                RetainedScene::from_workspace_for_surface(
-                    self.session.workspace(),
-                    self.config.width,
-                    self.config.height,
-                    self.scale_factor,
-                )
-            });
+            self.ensure_retained_scene();
             self.prepared_scene = Some(self.build_terminal_prepared_scene()?);
         }
         if self.schematic_retained_scene.is_none() {
@@ -408,14 +386,7 @@ impl Runtime {
     fn prepared_scene(&mut self) -> &PreparedScene {
         if self.prepared_scene.is_none() {
             self.scene_dirty = false;
-            self.retained_scene.get_or_insert_with(|| {
-                RetainedScene::from_workspace_for_surface(
-                    self.session.workspace(),
-                    self.config.width,
-                    self.config.height,
-                    self.scale_factor,
-                )
-            });
+            self.ensure_retained_scene();
             self.prepared_scene = Some(
                 self.build_terminal_prepared_scene()
                     .expect("approved active TerminalCore snapshot fits production limits"),
@@ -424,38 +395,6 @@ impl Runtime {
         self.prepared_scene
             .as_ref()
             .expect("prepared scene initialized above")
-    }
-
-    fn retained_scene_cache_key(&self) -> RetainedSceneCacheKey {
-        let workspace = self.workspace();
-        RetainedSceneCacheKey {
-            scene_id: workspace.scene.scene_id.clone(),
-            source_revision: workspace.scene.source_revision.clone(),
-            width: self.config.width,
-            height: self.config.height,
-            scale_bits: self.scale_factor.to_bits(),
-            dock_height_px: workspace.ui.effective_dock_height_px(),
-            show_authored: workspace.ui.filters.show_authored,
-            show_proposed: workspace.ui.filters.show_proposed,
-            show_unrouted: workspace.ui.filters.show_unrouted,
-            dim_unrelated: workspace.ui.filters.dim_unrelated,
-            layer_visibility: workspace.ui.filters.layer_visibility.clone(),
-            selection: retained_selection_cache_key(workspace, &workspace.selection),
-        }
-    }
-
-    fn restore_cached_retained_scene(&mut self) -> bool {
-        let key = self.retained_scene_cache_key();
-        if let Some(index) = self
-            .retained_scene_cache
-            .iter()
-            .position(|(cached_key, _)| cached_key == &key)
-        {
-            let (_, retained) = self.retained_scene_cache.remove(index);
-            self.retained_scene = Some(retained);
-            return true;
-        }
-        false
     }
 
     // T0-C01 (DATUM_NATIVE_TERMINAL_SPEC.md) / decision 027 FT-001: there is
@@ -966,14 +905,11 @@ impl Runtime {
 
     fn authoring_target_object_id(&mut self, world: PointNm) -> Option<String> {
         let target = {
-            let retained = self.retained_scene.get_or_insert_with(|| {
-                RetainedScene::from_workspace_for_surface(
-                    self.session.workspace(),
-                    self.config.width,
-                    self.config.height,
-                    self.scale_factor,
-                )
-            });
+            self.ensure_retained_scene();
+            let retained = self
+                .retained_scene
+                .as_ref()
+                .expect("retained scene initialized");
             retained
                 .hit_test_authored_world(world, self.session.workspace())
                 .cloned()
