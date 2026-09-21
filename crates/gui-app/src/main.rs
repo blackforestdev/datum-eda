@@ -993,10 +993,12 @@ impl Runtime {
         if next_focus != self.application_focus() {
             self.set_application_focus(next_focus);
         }
-        self.trace_timing(format!(
-            "select target {target:?} handled={handled} {}ms",
-            started.elapsed().as_millis()
-        ));
+        self.trace_timing(|| {
+            format!(
+                "select target {target:?} handled={handled} {}ms",
+                started.elapsed().as_millis()
+            )
+        });
         handled
     }
 
@@ -1443,12 +1445,6 @@ impl Runtime {
             HitTarget::DockResizeHandle
             | HitTarget::TerminalSplitDivider(_)
             | HitTarget::LayerScrollRegion => false,
-        }
-    }
-
-    fn trace_timing(&self, message: String) {
-        if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
-            eprintln!("[datum-timing] {message}");
         }
     }
 }

@@ -1,0 +1,32 @@
+{
+  "status": "Default timing-message formatting made lazy; no numerical performance or milestone acceptance claim",
+  "baseline_commit": "59ad2a36e0cc7ee0435af0a627cf53918c515fd7",
+  "production_consumers_migrated": [
+    "MAIN redraw timing",
+    "MAIN native presentation timing",
+    "MAIN hit selection timing"
+  ],
+  "diagnostic_consumer_migrated": "Opt-in diagnostic clear frame timing uses the same lazy interface.",
+  "shared_owner": "Runtime::trace_timing in runtime_present.rs accepts FnOnce and invokes formatting only while DATUM_TRACE_TIMING is present. Existing stderr message text and environment semantics preserved.",
+  "competing_paths_retired": [
+    "Four eager trace_timing(format!(...)) call sites, including two on ordinary completed Main frames."
+  ],
+  "structural_extraction": "Timing enablement/emission policy moves from main.rs into existing runtime_present.rs render owner. No forwarding shim; main keeps actual hit selection before supplying its diagnostic closure. main.rs pre-test ceiling ratcheted 1454 to 1450.",
+  "source_sha256": {
+    "crates/gui-app/src/main.rs": "079f64391d0eb1065d655822b394b066a25123cc8214bf12438138273ada2d31",
+    "crates/gui-app/src/runtime_present.rs": "70440a93f8664d52144a117ad2b313ad75e3f1cc4dfb3e56c5b0c88d14cbf537",
+    "crates/gui-app/src/app_frame.rs": "44d26a22a6c21ce6490dd041b89f6727e04cd9d7fb90d61fdf7ebd753069140d"
+  },
+  "verification": {
+    "clippy": "Guarded offline app binary/test Clippy -D warnings passed.",
+    "release": "Guarded offline release build passed.",
+    "native": "Two Main X11 runs (DATUM_TRACE_TIMING absent/present) reached 1200x800, completed receipts, had zero extra presentations over three idle seconds and closed exit 0. Disabled stderr has no timing messages; enabled stderr has runtime render and redraw render messages.",
+    "source_health": "Base-ref HEAD check passes; 13 source-health governance regressions pass; normal source/parity/dependency checks pass.",
+    "drift": "Initial drift passed workspace Clippy then stopped at source-health parity digest after the required size ratchet. Regenerated only that parity row. Rerun passed workspace Clippy, alignment, parity, traceability and dependency authority, then stopped at existing dat-terminal-convergence-guard-xke focus-assignment and font-source-marker failures; full drift is not green."
+  },
+  "limits": [
+    "Source control-flow establishes skipped formatting; no allocator-count, CPU, latency or statistical performance claim. Timestamp collection and other diagnostic paths are unchanged.",
+    "Native runs exercise Main redraw/presentation, not selection target diagnostics or opt-in clear rendering; all migrated callers compile under Clippy.",
+    "No render/scheduler/input/model/backend or dependency/license behavior change. S1 and complete resource/per-adapter qualification remain open; resize stays nonblocking."
+  ]
+}
