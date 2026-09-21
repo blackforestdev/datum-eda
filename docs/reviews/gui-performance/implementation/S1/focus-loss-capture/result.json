@@ -1,0 +1,37 @@
+{
+  "status": "Focus loss enters default shared capture cancellation; full native gesture qualification remains open",
+  "baseline_commit": "ba8c9b3eaaaf591871548dea0d63c9b12690c94e",
+  "issue": "dat-focus-cancel-release-z67",
+  "production_consumers_migrated": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "production_path": "App::handle_native_window_event routes Focused(false) through cancel_native_host_gestures, preserving the coordinator primary-release suppression already used for DPI/recovery. Main finalizes dock/split preview resizing before cancellation; logical focus and model state remain owned by existing adapters.",
+  "competing_paths_retired": [
+    "Separate Global/Project Preferences focus-loss scrollbar-release handlers.",
+    "Main focus-loss pan/tab/text-selection cancellation bypassing the common gesture/release owner.",
+    "New Project focus-loss path with no cancelled-release suppression."
+  ],
+  "verification": {
+    "baseline": "Native X11 press over New Project Cancel, actual focus loss to a separate owned test X window, focus regain and release closes New Project: regression fails.",
+    "candidate": "Same gesture leaves New Project open; a later native pointer event confirms event-loop progress beyond release; a fresh click closes normally and Main closes exit 0.",
+    "app": "375 passed, 0 failed, 10 ignored.",
+    "release": "Guarded offline release passed.",
+    "wayland": "Four hosts pass initial presentation, idle without extra presentations, native close exit 0 and Main ownership release.",
+    "clippy": "Guarded offline app binary/test Clippy -D warnings passed.",
+    "governance": "Source health, dependency authority, traceability, spec parity and project-state checks pass. Full drift not rerun; existing terminal-convergence failures remain recorded in bb758dba."
+  },
+  "source_sha256": {
+    "crates/gui-app/src/app_native_events.rs": "97c7ab43820154e6ca7ce1cc6d8214d6e19ca2173c6cdb98ea7e2af08f9295f4",
+    "crates/gui-app/src/global_preferences_window.rs": "8ac28b8ec25bd6e363d4c79f6fc01bdff4d9f2ddf44e88585f31d8eb87ee34d2",
+    "crates/gui-app/src/project_preferences_window.rs": "36ae86d461f032950472d9168fe6766471ca6d5afe86b4ff6c6eb3b0ccc0a472"
+  },
+  "limits": [
+    "Specific cancelled-release native proof is New Project/X11. Other controls, native Wayland gesture cancellation, DPI/display movement and full S1 focus/resource qualification remain open.",
+    "Main dock/split finishing functions and existing app tests pass; no new native terminal-resize/PTY geometry qualification claimed.",
+    "Baseline recipe was made self-contained by expanding the existing helper definitions it executed; native event sequence unchanged. Candidate adds a one-pixel later native pointer event as a processing barrier before checking the dialog remains open.",
+    "No renderer visual composition, dependency/license, model mutation authority or nonblocking resize scope change."
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--board",
+    "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+    "--window-size",
+    "1280x800",
+    "--open-new-project",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "binary_sha256": "174313519a838c079bdf524e806d301ff6507c16cb38b58d796ff7a8bb0558c1",
+  "closed_by_cancelled_release": true,
+  "passed": false,
+  "error": "focus-cancelled release activated New Project Cancel"
+}
