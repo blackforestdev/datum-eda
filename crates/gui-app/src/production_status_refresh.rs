@@ -102,6 +102,7 @@ fn refresh_workspace_after_terminal_output(
 impl App {
     pub(super) fn poll_background_work(&mut self, event_loop: &ActiveEventLoop) {
         let mut changed = false;
+        let device_due = self.service_device_recovery();
         let mut next_refresh_due = None;
         if let Some(runtime) = &mut self.runtime {
             changed |= runtime.poll_terminal_output();
@@ -134,6 +135,9 @@ impl App {
             }
             Ok(None) => {}
             Err(err) => super::fatal_gui_error(event_loop, "GPU measurement incomplete", err),
+        }
+        if let Some(due) = device_due {
+            next_refresh_due = Some(next_refresh_due.map_or(due, |old| old.min(due)));
         }
         if let Some(next_refresh_due) = next_refresh_due {
             event_loop.set_control_flow(ControlFlow::WaitUntil(next_refresh_due));

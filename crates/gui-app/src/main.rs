@@ -1,3 +1,5 @@
+mod native_device_recovery;
+mod runtime_state;
 use anyhow::{Context, Result};
 use arboard::{Clipboard, GetExtLinux, LinuxClipboardKind, SetExtLinux};
 use clap::Parser;
@@ -17,6 +19,7 @@ use datum_gui_render::{
     TerminalRenderCache,
 };
 use gui_runtime_support::native_surface_transaction::SurfaceTransaction;
+use runtime_state::Runtime;
 use std::collections::BTreeMap;
 use std::io::Write;
 use std::path::{Path, PathBuf};
@@ -289,68 +292,6 @@ impl ApplicationHandler for App {
             self.request_redraw_if_needed();
         }
     }
-}
-
-struct Runtime {
-    window: &'static Window,
-    instance: wgpu::Instance,
-    adapter: wgpu::Adapter,
-    surface: wgpu::Surface<'static>,
-    device: wgpu::Device,
-    queue: wgpu::Queue,
-    config: wgpu::SurfaceConfiguration,
-    surface_transaction: SurfaceTransaction,
-    scale_factor: f32,
-    renderer: Renderer,
-    measurements: native_gpu_measurements::Host,
-    session: LiveDesignSession,
-    /// Camera for the renderer's live board leaf. Pointer and focused commands
-    /// reach it only when their typed pane route names that leaf; schematic and
-    /// additional-pane cameras remain independently warm in `pane_cameras`.
-    camera: CameraState,
-    /// Warm per-leaf view cameras keyed by `PaneId` (decision 021, P2.1b).
-    pane_cameras: PaneCameras,
-    pane_grid_lod: pane_grid_lod::PaneGridLod,
-    last_cursor_pos: Option<(f32, f32)>,
-    pan_gesture: PanGestureState,
-    dock_drag_active: bool,
-    terminal_tab_drag: Option<terminal_tab_drag::TerminalTabDrag>,
-    terminal_tab_drag_release_suppressed: bool,
-    terminal_split_drag: Option<TerminalSplitDividerDrag>,
-    terminal_text_selection_drag: Option<runtime_terminal_pointer::TerminalSelectionPoint>,
-    /// In-progress split divider-drag resize (decision 021), or `None`. Consumer
-    /// view state; never journaled.
-    divider_drag: Option<DividerDrag>,
-    terminal_mouse_button: Option<MouseButton>,
-    modifiers: ModifiersState,
-    retained_scene: Option<RetainedScene>,
-    retained_scene_cache: Vec<(RetainedSceneCacheKey, RetainedScene)>,
-    prepared_scene: Option<PreparedScene>,
-    terminal_render_cache: TerminalRenderCache,
-    terminal_accessibility: terminal_accessibility_bridge::LinuxTerminalAccessibilityBridge,
-    // Lazily retained schematic world geometry; camera-independent geometry
-    // survives frame invalidation and eligible surface-size changes.
-    schematic_retained_scene: Option<RetainedScene>,
-    scene_dirty: bool,
-    terminal_sessions: TerminalSessionRegistry,
-    terminal_launch_context: TerminalLaunchContext,
-    terminal_profiles: terminal_profile::TerminalProfileCatalog,
-    workspace_include_review: bool,
-    terminal_production_refresh_pending: bool,
-    terminal_workspace_refresh_pending: bool,
-    terminal_production_refresh_due: Option<std::time::Instant>,
-    terminal_production_refresh_attempts: u8,
-    clipboard: Option<Clipboard>,
-    pending_terminal_clipboard_write:
-        Option<runtime_terminal_clipboard::PendingTerminalClipboardWrite>,
-    terminal_notification_bridge: runtime_terminal_notifications::TerminalNotificationBridge,
-    window_focused: bool,
-    application_shutdown_started: Option<std::time::Instant>,
-    application_shutdown_blocked: bool,
-    global_preferences_raise_requested: bool,
-    global_preferences: global_preferences_runtime::GlobalPreferencesCoordinator,
-    project_preferences_raise_requested: bool,
-    project_preferences: project_preferences_runtime::ProjectPreferencesCoordinator,
 }
 
 impl Runtime {

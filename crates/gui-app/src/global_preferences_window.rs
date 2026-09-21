@@ -83,9 +83,21 @@ impl GlobalPreferencesWindowSurface {
         self.window.id()
     }
 
+    pub(super) fn replacement(&self, runtime: &Runtime) -> Result<Self> {
+        let mut replacement = Self::new(runtime, self.window.clone(), Some(self.scale_factor))?;
+        replacement.cursor_position = self.cursor_position;
+        replacement.scroll = self.scroll.clone();
+        replacement.scroll.release();
+        replacement.scroll_identity = self.scroll_identity.clone();
+        replacement.scroll_focus = self.scroll_focus.clone();
+        replacement.scroll_expanded = self.scroll_expanded.clone();
+        Ok(replacement)
+    }
+
     pub(super) fn cancel_capture(&mut self) {
         self.scroll.release();
         self.scrollbar_pressed = false;
+        self.window.set_cursor(winit::window::CursorIcon::Default);
     }
 
     pub(super) fn invalidate(&mut self) {
@@ -162,9 +174,15 @@ impl GlobalPreferencesWindowSurface {
         project_preferences: bool,
         new_project: bool,
     ) -> Result<bool> {
-        let Some(frame) =
-            self.surface_transaction
-                .acquire(&self.surface, &runtime.device, &self.config)?
+        if runtime.device_health.failed() {
+            return Ok(false);
+        }
+        let Some(frame) = self.surface_transaction.acquire(
+            &self.surface,
+            &runtime.device,
+            &self.config,
+            &runtime.device_health,
+        )?
         else {
             return Ok(false);
         };
@@ -251,6 +269,9 @@ impl GlobalPreferencesWindowSurface {
             self.config.width,
             self.config.height,
         )?;
+        if runtime.device_health.failed() {
+            return Ok(false);
+        }
         self.window.pre_present_notify();
         frame.present();
         self.surface_transaction.presented(&runtime.queue);
@@ -304,6 +325,11 @@ impl App {
             return Ok(());
         }
 
+        if self.global_preferences_window.is_none() && !self.native_device_available() {
+            // Keep the requested logical window state until replacement finishes.
+            // The close path above remains available on a failed device.
+            return Ok(());
+        }
         if self.global_preferences_window.is_none() {
             let window = std::sync::Arc::new(
                 event_loop.create_window(

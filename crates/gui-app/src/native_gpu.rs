@@ -1,15 +1,15 @@
 //! Shared native device creation and explicit measurement feature admission.
 use super::*;
 
-pub(super) async fn create(
-    window: &'static Window,
-) -> Result<(
+pub(super) type Bundle = (
     wgpu::Instance,
     wgpu::Surface<'static>,
     wgpu::Adapter,
     wgpu::Device,
     wgpu::Queue,
-)> {
+);
+
+pub(super) async fn create(window: &'static Window) -> Result<Bundle> {
     append_gui_diagnostic_line("wgpu instance create begin");
     let instance = gui_runtime_support::diagnostic_instance();
     let surface = instance.create_surface(window).context("create surface")?;

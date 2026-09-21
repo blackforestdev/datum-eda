@@ -164,6 +164,15 @@ impl App {
     }
 
     pub(super) fn service_gpu_measurements(&mut self) -> Result<Option<Instant>> {
+        if self
+            .runtime
+            .as_ref()
+            .is_some_and(|runtime| runtime.device_health.failed())
+        {
+            // Retired renderers emit their bounded incomplete-map receipts on
+            // replacement/drop; never poll mappings on the failed device.
+            return Ok(None);
+        }
         let Some(runtime) = self.runtime.as_mut() else {
             return Ok(None);
         };

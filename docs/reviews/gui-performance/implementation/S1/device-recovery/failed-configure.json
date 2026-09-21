@@ -1,0 +1,38 @@
+{
+  "binary_sha256": "9568aef460746d1636288ee6b4d61da344745c8d42799be93fb46e72d06bbe1a",
+  "runs": [
+    {
+      "host": "MAIN",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--resize-torture-smoke"
+      ],
+      "passed": true,
+      "attempts": 1,
+      "commits": 1,
+      "state_receipts": 1,
+      "unexpected_exit": null
+    },
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--resize-torture-smoke",
+        "--open-global-preferences"
+      ],
+      "passed": false,
+      "attempts": 0,
+      "commits": 0,
+      "state_receipts": 0,
+      "unexpected_exit": 101
+    }
+  ]
+}

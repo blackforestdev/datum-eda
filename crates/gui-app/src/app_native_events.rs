@@ -43,6 +43,7 @@ impl App {
             window_ref,
             launch_state,
             self.args.visual_scale_factor,
+            self.terminal_event_proxy.clone(),
         ))
         .unwrap_or_else(|err| fatal_gui_error(event_loop, "runtime creation failed", err));
         append_gui_diagnostic_line("runtime creation end");
@@ -69,11 +70,18 @@ impl App {
         event: WindowEvent,
     ) {
         self.frames.window_event(window_id, &event);
+        if self
+            .runtime
+            .as_ref()
+            .is_some_and(|runtime| runtime.device_health.failed())
+        {
+            self.frames.fail_device();
+        }
         self.sync_surface_drawability();
         self.measurement_window_event(window_id, &event);
         if matches!(&event, WindowEvent::KeyboardInput { event, .. }
             if event.state == ElementState::Pressed && event.logical_key == Key::Named(NamedKey::F5))
-            && self.frames.manual_retry(window_id)
+            && (self.retry_failed_device() || self.frames.manual_retry(window_id))
         {
             for window in [
                 self.window,
