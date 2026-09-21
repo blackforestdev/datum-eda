@@ -1,5 +1,7 @@
 #[path = "native_frame_probe.rs"]
 pub(crate) mod native_frame_probe;
+#[path = "native_queue_owner.rs"]
+mod native_queue_owner;
 #[path = "native_surface_transaction.rs"]
 pub(crate) mod native_surface_transaction;
 #[path = "phase_probe.rs"]

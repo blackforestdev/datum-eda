@@ -139,6 +139,12 @@ impl NativeFrameCoordinator {
         Self::request(host, self.suspended)
     }
 
+    pub(super) fn is_drawable(&self, window: WindowId) -> bool {
+        self.hosts
+            .get(&window)
+            .is_some_and(|host| Self::drawable(host, self.suspended))
+    }
+
     pub(super) fn close(&mut self, window: WindowId) {
         self.hosts.remove(&window);
     }

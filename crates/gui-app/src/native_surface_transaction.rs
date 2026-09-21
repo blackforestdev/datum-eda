@@ -1,4 +1,4 @@
-//! Opt-in resize transaction candidate shared by every native surface host.
+//! Shared surface acquisition/configuration with opt-in legacy retry diagnostics.
 //! GPU completion is a resource-ownership signal, not compositor display proof.
 use std::sync::{
     Arc,
@@ -7,6 +7,10 @@ use std::sync::{
 use std::time::{Duration, Instant};
 
 pub(crate) struct SurfaceTransaction {
+    queue_owner: super::native_queue_owner::QueueOwner,
+    queue_host: u64,
+    in_flight: u64,
+    drain_started: Option<Instant>,
     enabled: bool,
     drawable: bool,
     configured: Option<(u32, u32)>,
@@ -18,7 +22,7 @@ pub(crate) struct SurfaceTransaction {
 
 impl SurfaceTransaction {
     pub(crate) fn new(
-        config: &wgpu::SurfaceConfiguration,
+        _config: &wgpu::SurfaceConfiguration,
         native_size: winit::dpi::PhysicalSize<u32>,
     ) -> Self {
         let enabled = match std::env::var("DATUM_DIAGNOSTIC_RESIZE_TRANSACTION").as_deref() {
@@ -26,11 +30,16 @@ impl SurfaceTransaction {
             Ok("1") => true,
             other => panic!("invalid DATUM_DIAGNOSTIC_RESIZE_TRANSACTION: {other:?}"),
         };
+        let queue_owner = super::native_queue_owner::QueueOwner::default();
+        let queue_host = queue_owner.register();
         Self {
+            queue_owner,
+            queue_host,
+            in_flight: 0,
+            drain_started: None,
             enabled,
             drawable: native_size.width != 0 && native_size.height != 0,
-            configured: (native_size.width != 0 && native_size.height != 0)
-                .then_some((config.width, config.height)),
+            configured: None,
             completed: Arc::new(AtomicBool::new(true)),
             retry_at: None,
             failures: 0,
@@ -51,14 +60,18 @@ impl SurfaceTransaction {
         }
     }
 
-    pub(crate) fn configure_resize(
-        &mut self,
-        surface: &wgpu::Surface<'_>,
-        device: &wgpu::Device,
-        config: &wgpu::SurfaceConfiguration,
-    ) {
-        if !self.enabled {
-            self.configure(surface, device, config);
+    pub(crate) fn share_queue_with(&mut self, other: &Self) {
+        self.queue_owner.cancel(self.queue_host);
+        self.queue_owner = other.queue_owner.clone();
+        self.queue_host = self.queue_owner.register();
+    }
+
+    pub(crate) fn set_drawable(&mut self, drawable: bool) {
+        self.drawable = drawable;
+        if !drawable {
+            self.queue_owner.cancel(self.queue_host);
+            self.drain_started = None;
+            self.retry_at = None;
         }
     }
 
@@ -74,6 +87,7 @@ impl SurfaceTransaction {
         drop(probe);
         super::append_gui_diagnostic_line("surface configure end");
         self.configured = Some((config.width, config.height));
+        self.queue_owner.configured(self.queue_host);
     }
 
     /// Common acquisition and error classification for every native product host.
@@ -93,9 +107,8 @@ impl SurfaceTransaction {
         match result {
             Ok(frame) => Ok(Some(frame)),
             Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
-                if !self.acquisition_failed(true) {
-                    self.configure(surface, device, config);
-                }
+                self.configured = None;
+                self.acquisition_failed(true);
                 Ok(None)
             }
             Err(wgpu::SurfaceError::Timeout) => {
@@ -116,31 +129,44 @@ impl SurfaceTransaction {
         device: &wgpu::Device,
         config: &wgpu::SurfaceConfiguration,
     ) -> anyhow::Result<bool> {
-        if !self.enabled {
-            return Ok(true);
-        }
         if !self.drawable {
             return Ok(false);
         }
         self.check_retry_budget()?;
-        if self.failures > 0 && self.retry_at.is_some_and(|due| due > Instant::now()) {
+        if self.retry_at.is_some_and(|due| due > Instant::now()) {
             return Ok(false);
         }
-        if !self.completed.load(Ordering::Acquire) {
-            device.poll(wgpu::PollType::Poll)?;
-            if !self.completed.load(Ordering::Acquire) {
-                self.note_gpu_wait()?;
-                // Wake only while a requested frame waits for resource ownership.
-                self.retry_at
-                    .get_or_insert_with(|| Instant::now() + Duration::from_millis(2));
+        let now = Instant::now();
+        device.poll(wgpu::PollType::Poll)?;
+        match self.queue_owner.admit(
+            self.queue_host,
+            self.configured != Some((config.width, config.height)),
+            self.in_flight,
+        ) {
+            super::native_queue_owner::Admission::Wait => {
+                let start = *self.drain_started.get_or_insert(now);
+                super::native_queue_owner::check_drain(start, now)?;
+                self.retry_at = Some(now + Duration::from_millis(2));
                 return Ok(false);
             }
+            super::native_queue_owner::Admission::Configure => {
+                self.configure(surface, device, config);
+                // The next FIFO ticket owns the queue as soon as ours finishes.
+                // Do not submit this host's frame ahead of its configuration.
+                if self
+                    .queue_owner
+                    .admit(self.queue_host, false, self.in_flight)
+                    == super::native_queue_owner::Admission::Wait
+                {
+                    self.retry_at = Some(now + Duration::from_millis(2));
+                    return Ok(false);
+                }
+            }
+            super::native_queue_owner::Admission::Frame => {}
         }
+        self.drain_started = None;
         self.gpu_wait_attempts = 0;
         self.retry_at = None;
-        if self.configured != Some((config.width, config.height)) {
-            self.configure(surface, device, config);
-        }
         Ok(true)
     }
 
@@ -156,12 +182,14 @@ impl SurfaceTransaction {
         Ok(())
     }
 
+    #[cfg(test)]
     fn note_gpu_wait(&mut self) -> anyhow::Result<()> {
         self.gpu_wait_attempts = self.gpu_wait_attempts.saturating_add(1);
         self.check_retry_budget()
     }
 
     pub(crate) fn presented(&mut self, queue: &wgpu::Queue) {
+        self.in_flight = self.queue_owner.submitted(queue);
         if !self.enabled {
             return;
         }
@@ -200,7 +228,33 @@ impl SurfaceTransaction {
 }
 
 impl crate::App {
+    pub(crate) fn sync_surface_drawability(&mut self) {
+        if let (Some(runtime), Some(window)) = (&mut self.runtime, self.window) {
+            runtime
+                .surface_transaction
+                .set_drawable(self.frames.is_drawable(window.id()));
+        }
+        for (surface, window) in [
+            (
+                &mut self.global_preferences_surface,
+                &self.global_preferences_window,
+            ),
+            (
+                &mut self.project_preferences_surface,
+                &self.project_preferences_window,
+            ),
+            (&mut self.new_project_surface, &self.new_project_window),
+        ] {
+            if let (Some(surface), Some(window)) = (surface, window) {
+                surface
+                    .surface_transaction
+                    .set_drawable(self.frames.is_drawable(window.id()));
+            }
+        }
+    }
+
     pub(crate) fn service_surface_retries(&mut self) -> Option<Instant> {
+        self.sync_surface_drawability();
         let now = Instant::now();
         let (redraw, mut next) = self
             .runtime
@@ -235,11 +289,23 @@ impl crate::App {
     }
 }
 
+impl Drop for SurfaceTransaction {
+    fn drop(&mut self) {
+        self.queue_owner.cancel(self.queue_host);
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     fn transaction() -> SurfaceTransaction {
+        let queue_owner = super::super::native_queue_owner::QueueOwner::default();
+        let queue_host = queue_owner.register();
         SurfaceTransaction {
+            queue_owner,
+            queue_host,
+            in_flight: 0,
+            drain_started: None,
             enabled: true,
             drawable: true,
             configured: Some((1280, 800)),
