@@ -23,16 +23,22 @@ impl Runtime {
         self.invalidate_frame();
     }
 
+    pub(super) fn next_application_terminal_shutdown_due(&self) -> Option<Instant> {
+        // Once the blocked state is visible, only explicit Retry starts a new
+        // deadline. Keeping an expired timer here would spin the native loop.
+        self.application_shutdown_started
+            .filter(|_| !self.application_shutdown_blocked)
+            .map(|started| started + Duration::from_millis(GLOBAL_SHUTDOWN_MS))
+    }
+
     pub(super) fn poll_application_terminal_shutdown(&mut self) -> bool {
-        let Some(started) = self.application_shutdown_started else {
+        let Some(due) = self.next_application_terminal_shutdown_due() else {
             return false;
         };
         if self.terminal_sessions.all_sessions_closed() {
             return false;
         }
-        if !self.application_shutdown_blocked
-            && started.elapsed() >= Duration::from_millis(GLOBAL_SHUTDOWN_MS)
-        {
+        if Instant::now() >= due {
             self.application_shutdown_blocked = true;
             let failures = self.terminal_sessions.shutdown_failure_summary();
             let status = format!(
