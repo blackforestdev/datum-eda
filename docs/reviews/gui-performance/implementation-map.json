@@ -3782,6 +3782,18 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "ACC-01/02 exact byte deltas; resource IDs/shared ownership once; key/payload/capacity and opaque driver bytes separate.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -4085,6 +4097,16 @@
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "LAYERS": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Zero extra solves after warmup; cached and uncached hit geometry identical",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -4147,6 +4169,16 @@
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "LAYERS": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Each changed key resolves correct geometry",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -4209,6 +4241,16 @@
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "LAYERS": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Zero extra warm solves in supported set; bounded churn outside it",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -4257,6 +4299,16 @@
       ],
       "consumer_applicability": {
         "MENU": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "One parse per process owner lifetime; zero closed menu preparation",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -4305,6 +4357,16 @@
       ],
       "consumer_applicability": {
         "MENU": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Availability current, other instance independent",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -4357,6 +4419,16 @@
       "consumer_applicability": {
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "INSPECTOR": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Exact identity/aliases preserved with zero candidate-string allocation/copy",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -4552,7 +4624,17 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/world-bundle-key/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Zero eligible world re-encoding; current uniform/scissor",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "HP06-02",
@@ -4616,7 +4698,17 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/world-bundle-key/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Affected encoding rebuilds and exact pixels remain correct",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "HP07-01",
@@ -4677,6 +4769,16 @@
       "consumer_applicability": {
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Painter/layer/primitive/triangle order exact; native pixel parity and draw counts",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -4741,7 +4843,17 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Zero world upload bytes",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "HP08-02",
@@ -4805,7 +4917,17 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Correct new triangle and stroke bytes uploaded; no false identity",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "HP08-03",
@@ -4869,7 +4991,19 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "CPU/GPU lifetime and final resource content correct within budgets",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "HP09-01",
@@ -5629,6 +5763,18 @@
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "MENU": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "INSPECTOR": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the required shaping/layout dependency coverage and related accounting beyond the tested fixed font/layout profiles."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Warm zero shaping; miss correct changed key; uncached width parity",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -5696,6 +5842,19 @@
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "MENU": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "INSPECTOR": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting.",
+          "Complete the required shaping/layout dependency coverage and related accounting beyond the tested fixed font/layout profiles."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Bounded key and payload memory; oversized bypass and ownership release",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -5983,7 +6142,17 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json",
         "docs/reviews/gui-performance/implementation/S2/glyph-transaction/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "No missing/stale text; atlas generation correctly invalidates signature",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "HP17-02",
@@ -6060,7 +6229,17 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json",
         "docs/reviews/gui-performance/implementation/S2/glyph-transaction/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Existing bounded two-generation policy or independently proven equivalent",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "HP18-01",
@@ -12894,7 +13073,19 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/scene-history-budget/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "64MiB total CPU world/history per document; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "MEM-WORLD-HISTORY",
@@ -12948,7 +13139,19 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/scene-history-budget/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "six historical entries plus live references within64MiB; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "MEM-SHAPED-LOCAL",
@@ -13039,7 +13242,19 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json",
         "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "8MiB shaped payload/renderer including keys/vectors/capacities; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "MEM-SHAPED-TOTAL",
@@ -13130,7 +13345,19 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json",
         "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "32MiB shaped payload aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "MEM-LABEL-ENTRIES",
@@ -13181,6 +13408,18 @@
       "consumer_applicability": {
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "128 shaped buffers per renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -13232,6 +13471,18 @@
       "consumer_applicability": {
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "32KiB label key text per renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -13319,6 +13570,18 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "256 width entries/thread with all owner threads enumerated; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -13406,6 +13669,18 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "64KiB width key text/thread; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -13496,7 +13771,19 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "128KiB total owned width payload/thread; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "MEM-MESH-ENTRIES",
@@ -13583,6 +13870,18 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "256 mesh entries/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -13670,6 +13969,18 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "4MiB control mesh CPU/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -13757,6 +14068,18 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "4MiB control mesh GPU/renderer; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -13808,6 +14131,18 @@
       "consumer_applicability": {
         "BOARD": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "SCHEMATIC": "Shared host/input/lifecycle correctness applies now; resolved schematic content performance/geometry/text requires separate real fixture admission and remains unqualified."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "64MiB GPU world/encoded-resource capacities per document; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -13895,6 +14230,18 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "16MiB host-local screen buffers; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -13982,6 +14329,18 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "one old plus one new live cold replacement generation; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -14072,7 +14431,19 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/public-allocator-probe/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "32MiB atlas/renderer actual format/mips/extent; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "MEM-ATLAS-TOTAL",
@@ -14162,7 +14533,19 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/public-allocator-probe/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "128MiB aggregate atlas; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "MEM-TERM-CPU",
@@ -14351,6 +14734,18 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "16MiB staging/scratch per host; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -14438,6 +14833,18 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "64MiB staging/scratch aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -14525,6 +14932,18 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "512MiB all application GPU allocations including attachments and shared resources counted once; aggregate and every subcap apply together; required content cannot be omitted.",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
       }
     },
     {
@@ -16446,7 +16865,19 @@
         "docs/reviews/gui-performance/implementation/S2/screen-span-trimming/result.json",
         "docs/reviews/gui-performance/implementation/S2/uniform-owner/result.json",
         "docs/reviews/gui-performance/implementation/S2/uniform-changed-ranges/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Remove internal clean-range transfers from large screen updates without reintroducing rejected fragmentation regressions; complete actual upload-boundary accounting. Uniform exact aligned ranges are implemented, not global qualification."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Only exact dirty ranges plus documented alignment uploaded",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "REUSE-WORLD-ALLOC",
@@ -16506,7 +16937,17 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/retained-buffer/result.json",
         "docs/reviews/gui-performance/implementation/S2/vertex-allocation/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Zero new world-buffer allocations",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "REUSE-TEXT-KEY",
@@ -16602,7 +17043,19 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-cache-owner/result.json",
         "docs/reviews/gui-performance/implementation/S2/text-lookup-index/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the required shaping/layout dependency coverage and related accounting beyond the tested fixed font/layout profiles."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Shaping changes exactly when semantic shaping key changes",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "REUSE-TEXT-LAYOUT",
@@ -16699,7 +17152,19 @@
         "docs/reviews/gui-performance/implementation/S2/text-relayout/result.json",
         "docs/reviews/gui-performance/implementation/S2/text-layout-transfer/result.json",
         "docs/reviews/gui-performance/implementation/S2/overlay-glyph-reuse/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "S4",
+        "unfinished_implementation": [
+          "Complete the required shaping/layout dependency coverage and related accounting beyond the tested fixed font/layout profiles."
+        ],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Layout correct; unchanged shaping reused; GPU placement/atlas/target current",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "REUSE-CONTROL-KEY",
@@ -16795,7 +17260,17 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/control-mesh/result.json",
         "docs/reviews/gui-performance/implementation/S2/workspace-control-owner/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Correct changed mesh, translated/scissored unchanged mesh reused",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "BUD-WINDOWS-CLOSE-CPU",
@@ -16922,7 +17397,17 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S2/PASS-GEOMETRY/result.json",
       "acceptance_rule": "Geometry contributions and clear/load/store dependencies correctly represented once",
-      "qualification_scope": "initial static/correctness; temporal claims remain deferred"
+      "qualification_scope": "initial static/correctness; temporal claims remain deferred",
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Geometry contributions and clear/load/store dependencies correctly represented once",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "PASS-BACKGROUND",
@@ -16990,7 +17475,17 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S2/PASS-BACKGROUND/result.json",
       "acceptance_rule": "Background pass active only with contributing graphics, before main text",
-      "qualification_scope": "initial static/correctness; temporal claims remain deferred"
+      "qualification_scope": "initial static/correctness; temporal claims remain deferred",
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Background pass active only with contributing graphics, before main text",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "PASS-TEXT",
@@ -17061,7 +17556,17 @@
       "qualification_scope": "initial static/correctness; temporal claims remain deferred",
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Contributing text rendered after geometry/background; no unjustified empty stage",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "PASS-FOREGROUND",
@@ -17129,7 +17634,17 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S2/PASS-FOREGROUND/result.json",
       "acceptance_rule": "Foreground active only for admitted graphics above text",
-      "qualification_scope": "initial static/correctness; temporal claims remain deferred"
+      "qualification_scope": "initial static/correctness; temporal claims remain deferred",
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Foreground active only for admitted graphics above text",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "PASS-MENU-CARD",
@@ -17197,7 +17712,17 @@
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S2/PASS-MENU-CARD/result.json",
       "acceptance_rule": "Card occludes underlying geometry AND text in proper overlay order",
-      "qualification_scope": "initial static/correctness; temporal claims remain deferred"
+      "qualification_scope": "initial static/correctness; temporal claims remain deferred",
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Card occludes underlying geometry AND text in proper overlay order",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "PASS-MENU-TEXT",
@@ -17269,7 +17794,17 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json",
         "docs/reviews/gui-performance/implementation/S2/overlay-glyph-reuse/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Menu text above card only when card and contributing text active",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "PASS-COUNTS",
@@ -17340,7 +17875,17 @@
       "qualification_scope": "initial static/correctness; temporal claims remain deferred",
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Initial graph2+B+F+M+MT maximum6; remove noncontributing stages absent documented dependency; every retained extra stage names resource/ordering reason",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     },
     {
       "id": "PASS-RESOLVE",
@@ -17411,7 +17956,17 @@
       "qualification_scope": "initial static/correctness; temporal claims remain deferred",
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S2/text-contributions/result.json"
-      ]
+      ],
+      "s2_exit_disposition": {
+        "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
+        "readiness": "Not established by this disposition; use the separate amended S2 readiness review.",
+        "implementation_due": "No new implementation defect asserted here; any detected regression still blocks readiness until explained/resolved.",
+        "unfinished_implementation": [],
+        "qualification_due": "S5",
+        "unfinished_qualification": "Exact load/store/resolve compatibility, existing sample quality and atlas lifetime; no painter/fractional-pixel change",
+        "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
+        "status": "Unqualified; original acceptance rule and proof status preserved."
+      }
     }
   ],
   "by_clause": {
@@ -25627,12 +26182,11 @@
     "evidence": "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json"
   },
   "s2_exit_reconciliation": {
-    "status": "review proposal only; S2 remains in progress; S3 pending",
+    "status": "Owner-approved six-clause amendment applied; S2 readiness reconciliation pending; S3 not selected.",
     "baseline": "73cae904",
-    "controlling_barrier": "S2 table requires complete byte caps and exact proofs. S0/S1 approvals did not change S2.",
     "implementation_gaps": [
       "Complete owned/in-flight accounting and absolute caps, including private text/atlas allocations and uploads",
-      "Exact changed-range screen/uniform transfers; internal clean gaps/full changed uniforms still transfer",
+      "Large screen streams still transfer internal clean gaps; exact uniform changed ranges are implemented in dcb23af9 but broader boundary qualification remains open.",
       "Complete shaping/layout dependency coverage"
     ],
     "qualification_gaps": [
@@ -25646,9 +26200,65 @@
       "boundary": "Read existing registry sources only. No copied sources, new dependency, Cargo change or complete accounting claim.",
       "wgpu 28 public allocator report": "Actual Vulkan probe observes named atlas backing allocations and drained release without dependency changes. Report lacks stable identity/upload events/CPU payload; see s2_public_allocator_report_probe. This narrows the technical boundary without completing ACC-01/02 or S2 caps."
     },
-    "next_production_choice": "S3 shared dialog/profile migration can consume existing shared owners, but current S2 exit prevents selection. The proposal changes that ordering; continuing substantive S2 work remains authorized without it.",
-    "proposal": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#proposed-s2-implementation-exit-amendment--pending-owner-review",
-    "disposition": "No requirement satisfied, no step advanced, no technical accounting solution or dependency authority inferred. Proposed S4 implementation and S5 qualification carryforward requires explicit owner approval."
+    "next_production_choice": "S3 dialog/control migration follows successful amended S2 readiness review; this approval transaction does not select it.",
+    "proposal": "Historical exact six-clause proposal in commit 74ba0b78",
+    "disposition": "Apply the approved sequencing only. No requirement marked passed, no milestone completed, no dependency authority or technical accounting solution inferred.",
+    "previous_barrier": "S2 table requires complete byte caps and exact proofs. S0/S1 approvals did not change S2.",
+    "barrier": "Complete bounded S2 readiness reconciliation under the amended table before selecting S3; unfinished implementation remains mandatory at S4 and full qualification at S5.",
+    "owner_response": "Approve the proposed S2 amendment",
+    "operative_contract": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#owner-amendment-s2-implementation-exit",
+    "carryforward_predicate_ids": [
+      "AC-05",
+      "HP01-01",
+      "HP02-01",
+      "HP02-02",
+      "HP03-01",
+      "HP03-02",
+      "HP04-01",
+      "HP06-01",
+      "HP06-02",
+      "HP07-01",
+      "HP08-01",
+      "HP08-02",
+      "HP08-03",
+      "HP15-01",
+      "HP15-02",
+      "HP17-01",
+      "HP17-02",
+      "MEM-WORLD-CPU",
+      "MEM-WORLD-HISTORY",
+      "MEM-SHAPED-LOCAL",
+      "MEM-SHAPED-TOTAL",
+      "MEM-LABEL-ENTRIES",
+      "MEM-LABEL-KEYS",
+      "MEM-WIDTH-ENTRIES",
+      "MEM-WIDTH-KEYS",
+      "MEM-WIDTH-PAYLOAD",
+      "MEM-MESH-ENTRIES",
+      "MEM-MESH-CPU",
+      "MEM-MESH-GPU",
+      "MEM-WORLD-GPU",
+      "MEM-SCREEN-GPU",
+      "MEM-REPLACEMENT",
+      "MEM-ATLAS-LOCAL",
+      "MEM-ATLAS-TOTAL",
+      "MEM-STAGING-LOCAL",
+      "MEM-STAGING-TOTAL",
+      "MEM-GPU-TOTAL",
+      "REUSE-SCREEN",
+      "REUSE-WORLD-ALLOC",
+      "REUSE-TEXT-KEY",
+      "REUSE-TEXT-LAYOUT",
+      "REUSE-CONTROL-KEY",
+      "PASS-GEOMETRY",
+      "PASS-BACKGROUND",
+      "PASS-TEXT",
+      "PASS-FOREGROUND",
+      "PASS-MENU-CARD",
+      "PASS-MENU-TEXT",
+      "PASS-COUNTS",
+      "PASS-RESOLVE"
+    ]
   },
   "s2_text_layout_transfer_work": {
     "status": "production S2 shaped-layout transfer; S2 incomplete and exit amendment remains pending",
