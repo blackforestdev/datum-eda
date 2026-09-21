@@ -1,6 +1,6 @@
 //! Shared surface acquisition/configuration using coordinator-owned recovery.
 //! GPU completion is a resource-ownership signal, not compositor display proof.
-use super::native_recovery::{RecoveryHandle, RetryReason};
+use super::native_recovery::{AcquisitionFailure, RecoveryHandle, RetryReason};
 use std::{cell::Cell, rc::Rc, time::Instant};
 
 pub(crate) struct SurfaceTransaction {
@@ -309,30 +309,30 @@ impl SurfaceTransaction {
                     Ok(Some(frame))
                 }
             }
-            Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
-                self.trace_lifecycle("acquire_lost_or_outdated");
-                self.configured = None;
-                self.recovery
-                    .borrow_mut()
-                    .defer(RetryReason::Acquisition, Instant::now());
-                Ok(None)
-            }
-            Err(wgpu::SurfaceError::Timeout) => {
-                self.trace_lifecycle("acquire_timeout");
-                self.recovery
-                    .borrow_mut()
-                    .defer(RetryReason::Acquisition, Instant::now());
-                super::append_gui_diagnostic_line("surface acquire timeout; frame skipped");
-                Ok(None)
-            }
-            Err(wgpu::SurfaceError::OutOfMemory) => {
-                self.trace_lifecycle("acquire_oom");
-                health.allocation_failed();
-                Ok(None)
-            }
             Err(error) => {
-                self.trace_lifecycle("acquire_other_error");
-                anyhow::bail!("acquire native surface texture: {error}")
+                let action = self
+                    .recovery
+                    .borrow_mut()
+                    .acquisition_failed(&error, Instant::now());
+                match action {
+                    AcquisitionFailure::Reconfigure => {
+                        self.trace_lifecycle("acquire_lost_or_outdated");
+                        self.configured = None;
+                    }
+                    AcquisitionFailure::Retry => {
+                        self.trace_lifecycle("acquire_timeout");
+                        super::append_gui_diagnostic_line("surface acquire timeout; frame skipped");
+                    }
+                    AcquisitionFailure::DeviceAllocation => {
+                        self.trace_lifecycle("acquire_oom");
+                        health.allocation_failed();
+                    }
+                    AcquisitionFailure::Fatal => {
+                        self.trace_lifecycle("acquire_other_error");
+                        anyhow::bail!("acquire native surface texture: {error}");
+                    }
+                }
+                Ok(None)
             }
         }
     }
