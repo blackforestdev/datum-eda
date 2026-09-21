@@ -257,6 +257,7 @@ fn new_session_slot(session: TerminalSession, label: String) -> Result<TerminalS
         columns: 80,
         rows: 24,
         activity: TerminalActivitySummaryCache::default(),
+        pending_drain_output: Vec::new(),
         parked_lane: TerminalLaneState::default(),
         disconnected_reported: false,
         termination_failure_reported: false,

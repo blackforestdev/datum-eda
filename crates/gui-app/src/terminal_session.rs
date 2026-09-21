@@ -47,6 +47,7 @@ pub(super) struct TerminalSessionRegistry {
     next_session_ordinal: usize,
     terminal_wake: TerminalWakeGate,
     next_drain_index: usize,
+    next_apply_index: usize,
     projection_managed: bool,
 }
 
@@ -76,6 +77,8 @@ impl PendingTerminalPlacement {
 struct TerminalSessionSlot {
     session: TerminalSession,
     core: TerminalCoreSessionAdapter,
+    /// Dequeued bytes awaiting a budgeted core application; never bypassed by exit.
+    pending_drain_output: Vec<u8>,
     label: String,
     label_is_explicit: bool,
     status: String,
@@ -157,6 +160,7 @@ impl TerminalSessionRegistry {
                 columns: 80,
                 rows: 24,
                 activity: TerminalActivitySummaryCache::default(),
+                pending_drain_output: Vec::new(),
                 parked_lane: TerminalLaneState::default(),
                 disconnected_reported: false,
                 termination_failure_reported: false,
@@ -177,6 +181,7 @@ impl TerminalSessionRegistry {
             next_session_ordinal: 2,
             terminal_wake,
             next_drain_index: 0,
+            next_apply_index: 0,
             projection_managed: false,
         })
     }

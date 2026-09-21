@@ -9,6 +9,10 @@ use crate::{
     terminal_transport::{GUI_DRAIN_BYTE_LIMIT, GUI_DRAIN_EVENT_LIMIT},
 };
 use datum_gui_protocol::TerminalLaneState;
+use std::time::{Duration, Instant};
+
+const APPLY_BATCH_BYTES: usize = 4 * 1024;
+const DISPATCH_BUDGET: Duration = Duration::from_millis(1);
 
 #[path = "terminal_session_core_events.rs"]
 mod core_events;
@@ -46,18 +50,18 @@ fn flush_output_batch(
     sessions: &mut [TerminalSessionSlot],
     active_index: Option<usize>,
     active_lane: &mut TerminalLaneState,
-    pending: &mut [Vec<u8>],
     report: &mut TerminalDrainReport,
     index: usize,
 ) {
-    let bytes = &mut pending[index];
-    if bytes.is_empty() {
+    if sessions[index].pending_drain_output.is_empty() {
         return;
     }
     let slot = &mut sessions[index];
+    let count = slot.pending_drain_output.len().min(APPLY_BATCH_BYTES);
+    let bytes: Vec<_> = slot.pending_drain_output.drain(..count).collect();
     debug_assert_eq!(slot.core.session_id(), slot.session.session_id());
     debug_assert_eq!(slot.core.context_id(), slot.session.context_id);
-    let _ = record_terminal_output_event(&slot.session, bytes);
+    let _ = record_terminal_output_event(&slot.session, &bytes);
     let is_active = active_index == Some(index);
     if !is_active {
         slot.unread_output = true;
@@ -68,7 +72,7 @@ fn flush_output_batch(
         &mut slot.parked_lane
     };
     lane.latest_notification = None;
-    match slot.core.apply_output(lane, bytes) {
+    match slot.core.apply_output(lane, &bytes) {
         Ok(update) => consume_core_update(&slot.session, lane, report, update),
         Err(error) => report
             .notices
@@ -76,7 +80,7 @@ fn flush_output_batch(
     }
     #[cfg(test)]
     report.serviced.push((index, "apply", bytes.len()));
-    bytes.clear();
+
     report.active_projection_changed |= is_active;
     report.tabs_changed = true;
     #[cfg(test)]
@@ -87,6 +91,15 @@ fn flush_output_batch(
 
 impl TerminalSessionRegistry {
     pub(crate) fn drain_all(&mut self, active_lane: &mut TerminalLaneState) -> TerminalDrainReport {
+        self.drain_with_clock(active_lane, Instant::now)
+    }
+
+    fn drain_with_clock(
+        &mut self,
+        active_lane: &mut TerminalLaneState,
+        mut now: impl FnMut() -> Instant,
+    ) -> TerminalDrainReport {
+        let started = now();
         let mut report = TerminalDrainReport::default();
         if self.sessions.is_empty() {
             return report;
@@ -164,16 +177,41 @@ impl TerminalSessionRegistry {
             }
         }
         let mut idle_visits = 0usize;
-        let mut output_events = 0usize;
-        let mut pending_output = (0..self.sessions.len())
-            .map(|_| Vec::new())
-            .collect::<Vec<_>>();
-        while output_events < GUI_DRAIN_EVENT_LIMIT && idle_visits < self.sessions.len() {
+        // Finish retained batches before dequeuing more bytes. This keeps the
+        // application staging bound at one existing 64 KiB dispatch, even when
+        // a slow parser/log write makes a single batch exceed the time budget.
+        let first_apply = self.next_apply_index;
+        for offset in 0..self.sessions.len() {
+            if now().saturating_duration_since(started) >= DISPATCH_BUDGET {
+                break;
+            }
+            let index = (first_apply + offset) % self.sessions.len();
+            self.next_apply_index = (index + 1) % self.sessions.len();
+            flush_output_batch(
+                &mut self.sessions,
+                visible_active_index,
+                active_lane,
+                &mut report,
+                index,
+            );
+        }
+        let retained = self
+            .sessions
+            .iter()
+            .any(|slot| !slot.pending_drain_output.is_empty());
+        while !retained
+            && report.output_events < GUI_DRAIN_EVENT_LIMIT
+            && report.events < 256
+            && idle_visits < self.sessions.len()
+            && now().saturating_duration_since(started) < DISPATCH_BUDGET
+        {
             let control = (0..self.sessions.len()).find_map(|offset| {
                 let index = (self.next_drain_index + offset) % self.sessions.len();
                 self.sessions[index]
-                    .session
-                    .try_recv_control_event()
+                    .pending_drain_output
+                    .is_empty()
+                    .then(|| self.sessions[index].session.try_recv_control_event())
+                    .flatten()
                     .map(|event| (index, event))
             });
             let index = control
@@ -181,20 +219,7 @@ impl TerminalSessionRegistry {
                 .map_or(self.next_drain_index % self.sessions.len(), |(index, _)| {
                     *index
                 });
-            // A final exit/error must never overtake bytes already dequeued in
-            // this turn. Flush accumulated per-session output before handling
-            // any control event; ordinary tiny-chunk output remains one
-            // parse/style/log operation per touched session per turn.
-            if let Some((control_index, _)) = control.as_ref() {
-                flush_output_batch(
-                    &mut self.sessions,
-                    visible_active_index,
-                    active_lane,
-                    &mut pending_output,
-                    &mut report,
-                    *control_index,
-                );
-            }
+            // Never dequeue a final exit/error ahead of retained bytes.
             let remaining = GUI_DRAIN_BYTE_LIMIT.saturating_sub(report.output_bytes);
             let event = control.map(|(_, event)| event).or_else(|| {
                 (remaining > 0)
@@ -215,10 +240,11 @@ impl TerminalSessionRegistry {
                 TerminalEvent::Output(bytes) => {
                     #[cfg(test)]
                     report.serviced.push((index, "output", bytes.len()));
-                    output_events += 1;
                     report.output_events += 1;
                     report.output_bytes += bytes.len();
-                    pending_output[index].extend_from_slice(&bytes);
+                    self.sessions[index]
+                        .pending_drain_output
+                        .extend_from_slice(&bytes);
                 }
                 TerminalEvent::Exited(code) => {
                     let slot = &mut self.sessions[index];
@@ -286,12 +312,17 @@ impl TerminalSessionRegistry {
                 }
             }
         }
-        for index in 0..self.sessions.len() {
+        let first_apply = self.next_apply_index;
+        for offset in 0..self.sessions.len() {
+            let index = (first_apply + offset) % self.sessions.len();
+            if now().saturating_duration_since(started) >= DISPATCH_BUDGET {
+                break;
+            }
+            self.next_apply_index = (index + 1) % self.sessions.len();
             flush_output_batch(
                 &mut self.sessions,
                 visible_active_index,
                 active_lane,
-                &mut pending_output,
                 &mut report,
                 index,
             );
@@ -303,9 +334,19 @@ impl TerminalSessionRegistry {
         report.pending = self
             .sessions
             .iter()
-            .any(|slot| slot.session.has_pending_event());
+            .any(|slot| !slot.pending_drain_output.is_empty() || slot.session.has_pending_event());
         if report.pending {
             self.request_output_poll();
+        }
+        let elapsed = now().saturating_duration_since(started);
+        if elapsed > DISPATCH_BUDGET {
+            crate::gui_runtime_support::append_gui_verbose_diagnostic_line(format!(
+                "terminal dispatch over budget elapsed_us={} events={} bytes={} pending={}",
+                elapsed.as_micros(),
+                report.events,
+                report.output_bytes,
+                report.pending
+            ));
         }
         report
     }

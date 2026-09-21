@@ -1,0 +1,9 @@
+{
+  "sent_bytes": 229376,
+  "recorded_applied_bytes": 229376,
+  "output_batches": 57,
+  "maximum_batch_bytes": 4096,
+  "over_budget_dispatches": 0,
+  "maximum_over_budget_us": 0,
+  "limits": "Event log byte counts prove applied length, not a full byte-for-byte or displayed-frame oracle; deterministic split-stream tests cover ordering."
+}
