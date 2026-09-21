@@ -225,11 +225,14 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial production invalidation migration; complete native per-consumer zero-unrelated-submission and final-state qualification remain open",
         "id": "proof_sh_01",
         "positive": "W-POINTER/W-SCROLL: change one consumer while other hosts remain clean",
         "negative_control": "Broadcast request_redraw to all hosts",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S1/local-input-invalidation/tests.log.gz"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/SH-01/result.json",
       "acceptance_rule": "Exactly zero induced unrelated-host prepare/submit; intended final state correct.",
@@ -22952,6 +22955,51 @@
       "clippy.log.gz": "cc789f8629a6d1890af05b075d55609e914e7acd139d55f15fc5173d98582684",
       "focused.log.gz": "34ae7bda916df997867acd03363d40efce3444c34bcdb4425621e5e69207ea9c",
       "tests.log.gz": "d3e01a3f20fe7e185c92cb0c17abadd589fac627a7868949a8409745dfba9b18"
+    }
+  },
+  "s1_local_input_invalidation_work": {
+    "status": "14 native input call sites migrated to actual workspace dependents; full SH-01 native qualification remains open",
+    "baseline_commit": "c8644a15",
+    "production_entry": "App::handle_native_window_event in crates/gui-app/src/app_native_events.rs",
+    "migrated_consumers": [
+      "MAIN terminal IME",
+      "MAIN DPI and focus/capture reconciliation",
+      "MAIN cursor leave, terminal tab/split/text drag and mouse reporting",
+      "MAIN hover, pan, divider/dock drag and authoring preview",
+      "MAIN Layers/console/terminal wheel and camera zoom"
+    ],
+    "dependent_hosts": [
+      "MAIN",
+      "NEW legacy workspace backdrop until its S3 dedicated-renderer migration"
+    ],
+    "retired_paths": [
+      "All-window request_redraw_if_needed calls in IME, ScaleFactorChanged, Focused, CursorLeft, CursorMoved and MouseWheel event arms"
+    ],
+    "preserved": [
+      "Input and model processing order, native modal ownership, delta handling and no-op decisions",
+      "Global/Project Preferences state and own local scroll invalidation",
+      "Broader settings, keyboard/button command and application-wide invalidation calls outside this bounded migration",
+      "New Project backdrop invalidation remains intentional, not complete S3 adoption"
+    ],
+    "verification": {
+      "app": "351 passed, 0 failed, 9 ignored",
+      "clippy_build": "Offline all-targets app Clippy -D warnings and fresh release build passed",
+      "source_review": "Inspected native modality gate, shared workspace redraw helper, main and auxiliary scale owners, and migrated call sites; diff changes only the 14 redraw destinations",
+      "checks": "Source health, dependency authority, traceability, spec governance/parity and formatting passed"
+    },
+    "limits": [
+      "Existing tests are regression evidence, not per-consumer native semantic or zero-unrelated-submission qualification",
+      "Focus-taking desktop tests remain stopped pending desktop availability; no numeric performance claim",
+      "Remaining all-window invalidation callers need consumer-specific review; this is not global SH-01 closure",
+      "S1 remains in progress; S2-S5 pending; resize remains pinned and nonblocking"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/local-input-invalidation",
+    "source_sha256": "22ba71a6f4f1cd2827c9281d53e57331e8f92d2464fd389f168ca9953ba4251f",
+    "release_binary_sha256": "8d0415a8e97131ff377862db767376d068624196f484e4aad52bac7908b87e03",
+    "artifacts_sha256": {
+      "build.log.gz": "78a3dcfcf6e217632cb09d21056b82164ee8df8445ac2c087885760ab639a071",
+      "clippy.log.gz": "ccfc555582e1c66d6f8371de317714c8598afa19cac055f4a83749d3dffb07b5",
+      "tests.log.gz": "fa244cf007f3186ccd72cdbb6c4bcb65e0a1dd30150fdd5007b6744ae1ad221d"
     }
   }
 }

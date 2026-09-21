@@ -174,7 +174,7 @@ impl App {
                             winit::dpi::PhysicalSize::new(width, height),
                         );
                     }
-                    self.request_redraw_if_needed();
+                    self.request_workspace_redraw();
                 }
             }
             WindowEvent::Resized(size) => {
@@ -194,7 +194,7 @@ impl App {
                         .map(f64::from)
                         .unwrap_or(scale_factor);
                     runtime.set_scale_factor(scale_factor);
-                    self.request_redraw_if_needed();
+                    self.request_workspace_redraw();
                 }
             }
             WindowEvent::Focused(focused) => {
@@ -218,7 +218,7 @@ impl App {
                     }
                     if !focused && (runtime.clear_interaction_overlay() || terminal_split_finished)
                     {
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                     }
                 }
             }
@@ -234,7 +234,7 @@ impl App {
                         || terminal_hover_cleared
                         || terminal_split_finished
                     {
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                     }
                     self.apply_cursor(None);
                 }
@@ -247,7 +247,7 @@ impl App {
                     let terminal_hover_changed = runtime.update_terminal_tab_hover(next_pos);
                     if runtime.terminal_tab_drag.is_some() {
                         if runtime.advance_terminal_tab_drag(next_pos) || terminal_hover_changed {
-                            self.request_redraw_if_needed();
+                            self.request_workspace_redraw();
                         }
                         self.apply_cursor_icon(winit::window::CursorIcon::Grabbing);
                         return;
@@ -258,7 +258,7 @@ impl App {
                             .terminal_split_cursor_icon(next_pos)
                             .unwrap_or(winit::window::CursorIcon::Default);
                         if changed {
-                            self.request_redraw_if_needed();
+                            self.request_workspace_redraw();
                         }
                         self.apply_cursor_icon(icon);
                         return;
@@ -268,12 +268,12 @@ impl App {
                     }
                     if runtime.advance_terminal_text_selection(next_pos) {
                         self.apply_cursor_icon(winit::window::CursorIcon::Text);
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                         return;
                     }
                     if runtime.report_terminal_mouse_motion() {
                         runtime.clear_interaction_overlay();
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                         return;
                     }
                     let mut changed = runtime.update_menu_hover(next_pos) || terminal_hover_changed;
@@ -300,7 +300,7 @@ impl App {
                     }
                     let pointer_cursor = runtime.pointer_cursor_icon(next_pos);
                     if changed {
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                     }
                     self.apply_cursor_icon(pointer_cursor);
                 }
@@ -312,20 +312,20 @@ impl App {
                         MouseScrollDelta::PixelDelta(pos) => (pos.y as f32) / 20.0,
                     };
                     if runtime.handle_layer_scroll(scroll_lines) {
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                         return;
                     }
                     if runtime.handle_console_history_scroll(scroll_lines) {
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                         return;
                     }
                     if runtime.report_terminal_mouse_wheel(scroll_lines) {
-                        self.request_redraw_if_needed();
+                        self.request_workspace_redraw();
                         return;
                     }
                     if runtime.cursor_in_dock() && scroll_lines.abs() > 0.01 {
                         if runtime.handle_dock_scroll(scroll_lines) {
-                            self.request_redraw_if_needed();
+                            self.request_workspace_redraw();
                         }
                     } else {
                         let zoom_delta = if scroll_lines > 0.0 {
@@ -338,7 +338,7 @@ impl App {
                         if let Some(zoom_delta) = zoom_delta
                             && runtime.handle_zoom(zoom_delta)
                         {
-                            self.request_redraw_if_needed();
+                            self.request_workspace_redraw();
                         }
                     }
                 }
