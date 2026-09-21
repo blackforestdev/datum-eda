@@ -89,12 +89,13 @@ pub(super) struct DeviceRecovery {
     reported: bool,
     inject: bool,
     verify_state: bool,
+    inject_staging_failure: bool,
 }
 impl Default for DeviceRecovery {
     fn default() -> Self {
         let inject = match std::env::var("DATUM_DIAGNOSTIC_DEVICE_LOSS").as_deref() {
             Err(std::env::VarError::NotPresent) | Ok("0") => false,
-            Ok("once") => true,
+            Ok("once" | "once-fail-staging") => true,
             other => panic!("invalid DATUM_DIAGNOSTIC_DEVICE_LOSS: {other:?}"),
         };
         Self {
@@ -103,6 +104,8 @@ impl Default for DeviceRecovery {
             reported: false,
             inject,
             verify_state: inject,
+            inject_staging_failure: std::env::var("DATUM_DIAGNOSTIC_DEVICE_LOSS").as_deref()
+                == Ok("once-fail-staging"),
         }
     }
 }
@@ -112,12 +115,34 @@ impl DeviceRecovery {
         self.pending.is_some()
     }
 }
+struct PreparedDevice {
+    renderer: Renderer,
+    transaction: SurfaceTransaction,
+    bundle: native_gpu::Bundle,
+    config: wgpu::SurfaceConfiguration,
+    measurements: native_gpu_measurements::Host,
+    health: DeviceHealth,
+}
+impl PreparedDevice {
+    fn view(&self) -> native_gpu::DeviceView<'_> {
+        native_gpu::DeviceView {
+            instance: &self.bundle.0,
+            adapter: &self.bundle.2,
+            device: &self.bundle.3,
+            queue: &self.bundle.4,
+            config: &self.config,
+            health: &self.health,
+            transaction: &self.transaction,
+            epoch: self.measurements.epoch(),
+        }
+    }
+}
 impl Runtime {
-    fn replace_native_gpu(
-        &mut self,
+    fn prepare_native_gpu(
+        &self,
         bundle: native_gpu::Bundle,
         wake: winit::event_loop::EventLoopProxy<()>,
-    ) -> Result<()> {
+    ) -> Result<PreparedDevice> {
         let (instance, surface, adapter, device, queue) = bundle;
         let health = DeviceHealth::observe(&device, wake);
         let config = gui_runtime_support::surface_configuration(
@@ -137,9 +162,28 @@ impl Runtime {
             !health.failed(),
             "replacement device failed during renderer initialization"
         );
-        // Only the validated replacement reaches this boundary. Request old
-        // device destruction and nonblocking progress; destroy alone is not a
-        // completed GPU milestone. Its registered callback owns that evidence.
+        let transaction = SurfaceTransaction::new(&self.window, &health);
+        Ok(PreparedDevice {
+            renderer,
+            transaction,
+            bundle: (instance, surface, adapter, device, queue),
+            config,
+            measurements,
+            health,
+        })
+    }
+
+    fn commit_native_gpu(&mut self, prepared: PreparedDevice) {
+        let PreparedDevice {
+            renderer,
+            transaction,
+            bundle: (instance, surface, adapter, device, queue),
+            config,
+            measurements,
+            health,
+        } = prepared;
+        // Only a replacement validated across every live host reaches this
+        // boundary. Destruction alone is not a completed GPU milestone.
         self.device.destroy();
         let _ = self.device.poll(wgpu::PollType::Poll);
         self.instance = instance;
@@ -151,11 +195,11 @@ impl Runtime {
         self.renderer = renderer;
         self.measurements = measurements;
         self.device_health = health;
-        self.surface_transaction = SurfaceTransaction::new(&self.window, &self.device_health);
+        self.surface_transaction = transaction;
         self.invalidate_scene();
-        Ok(())
     }
 }
+
 impl App {
     pub(super) fn native_device_available(&self) -> bool {
         self.runtime
@@ -293,6 +337,12 @@ impl App {
     fn report_device_recovery_failure(&mut self, error: impl std::fmt::Display) {
         if let Some(runtime) = &self.runtime {
             runtime.device_health.mark_failed();
+            append_gui_verbose_diagnostic_line(|| {
+                format!(
+                    "native device replacement retained epoch={}",
+                    runtime.measurements.epoch()
+                )
+            });
         }
         self.frames.fail_device();
         if !self.device_recovery.reported {
@@ -317,28 +367,41 @@ impl App {
                 runtime.terminal_sessions.len(),
             )
         });
-        runtime.replace_native_gpu(bundle, self.terminal_event_proxy.clone())?;
+        let prepared = runtime.prepare_native_gpu(bundle, self.terminal_event_proxy.clone())?;
+        let gpu = prepared.view();
         // Stage all auxiliary GPU state before admitting any host again. Existing
         // windows, settings, scroll offsets and engine/terminal state stay owned.
         let global = self
             .global_preferences_surface
             .as_ref()
-            .map(|surface| surface.replacement(runtime))
+            .map(|surface| surface.replacement(gpu))
             .transpose()?;
         let project = self
             .project_preferences_surface
             .as_ref()
-            .map(|surface| surface.replacement(runtime))
+            .map(|surface| surface.replacement(gpu))
             .transpose()?;
         let new = self
             .new_project_surface
             .as_ref()
-            .map(|surface| surface.replacement(runtime))
+            .map(|surface| surface.replacement(gpu))
             .transpose()?;
+        if self.device_recovery.inject_staging_failure
+            && (global.is_some() || project.is_some() || new.is_some())
+        {
+            self.device_recovery.inject_staging_failure = false;
+            prepared.health.allocation_failed();
+            append_gui_diagnostic_line(format!(
+                "native auxiliary replacement failure injected old_epoch={} staged_epoch={}",
+                runtime.measurements.epoch(),
+                prepared.measurements.epoch()
+            ));
+        }
         anyhow::ensure!(
-            !runtime.device_health.failed(),
+            !prepared.health.failed(),
             "replacement device failed while rebuilding auxiliary renderers"
         );
+        runtime.commit_native_gpu(prepared);
         self.global_preferences_surface = global;
         self.project_preferences_surface = project;
         self.new_project_surface = new;

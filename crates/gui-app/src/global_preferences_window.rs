@@ -94,33 +94,41 @@ impl GlobalPreferencesWindowSurface {
         window: std::sync::Arc<Window>,
         scale_factor_override: Option<f32>,
     ) -> Result<Self> {
-        let surface = runtime
+        Self::new_with_device(runtime.native_device_view(), window, scale_factor_override)
+    }
+
+    fn new_with_device(
+        gpu: native_gpu::DeviceView<'_>,
+        window: std::sync::Arc<Window>,
+        scale_factor_override: Option<f32>,
+    ) -> Result<Self> {
+        let surface = gpu
             .instance
             .create_surface(window.clone())
             .context("create Global Preferences native surface")?;
-        gui_runtime_support::log_surface_identity(&window, &runtime.adapter);
-        let caps = surface.get_capabilities(&runtime.adapter);
+        gui_runtime_support::log_surface_identity(&window, gpu.adapter);
+        let caps = surface.get_capabilities(gpu.adapter);
         let config = gui_runtime_support::surface_configuration(
             &caps,
             window.inner_size(),
-            Some(runtime.config.format),
+            Some(gpu.config.format),
         );
         let format = config.format;
         let mut renderer = Renderer::new(
-            &runtime.device,
-            &runtime.queue,
+            gpu.device,
+            gpu.queue,
             format,
-            select_msaa_samples(&runtime.adapter, format),
+            select_msaa_samples(gpu.adapter, format),
         );
         let measurements = native_gpu_measurements::Host::new(
             &mut renderer,
-            &runtime.device,
-            &runtime.queue,
+            gpu.device,
+            gpu.queue,
             &window,
-            Some(runtime.measurements.epoch()),
+            Some(gpu.epoch),
         )?;
-        let mut surface_transaction = SurfaceTransaction::new(&window, &runtime.device_health);
-        surface_transaction.share_queue_with(&runtime.surface_transaction);
+        let mut surface_transaction = SurfaceTransaction::new(&window, gpu.health);
+        surface_transaction.share_queue_with(gpu.transaction);
         let mut presented_hits =
             gui_runtime_support::presented_hit_regions::PresentedHitRegions::default();
         presented_hits.mark_pending();
@@ -148,8 +156,9 @@ impl GlobalPreferencesWindowSurface {
         self.window.id()
     }
 
-    pub(super) fn replacement(&self, runtime: &Runtime) -> Result<Self> {
-        let mut replacement = Self::new(runtime, self.window.clone(), Some(self.scale_factor))?;
+    pub(super) fn replacement(&self, gpu: native_gpu::DeviceView<'_>) -> Result<Self> {
+        let mut replacement =
+            Self::new_with_device(gpu, self.window.clone(), Some(self.scale_factor))?;
         replacement.cursor_position = self.cursor_position;
         replacement.scroll = self.scroll.clone();
         replacement.scroll.release();
