@@ -24,8 +24,22 @@ pub(super) struct FrameReceipt {
     attempt: u64,
 }
 
+// Counts belong to a host/device generation. Suppression (hidden, recovering,
+// or clean) takes precedence over token coalescing. Native tokens may originate
+// in the compositor, so received is not expected to equal requested.
+#[derive(Debug, Default, serde::Serialize)]
+struct RedrawCounts {
+    requested: u64,
+    coalesced: u64,
+    suppressed: u64,
+    received: u64,
+    duplicate_tokens: u64,
+    presentations: u64,
+}
+
 #[derive(Debug)]
 struct Host {
+    counts: RedrawCounts,
     recovery: RecoveryHandle,
     primary_down: bool,
     suppress_release: bool,
@@ -69,9 +83,13 @@ impl NativeFrameCoordinator {
         if !self.hosts.contains_key(&window) {
             self.order.push_back(window);
         }
+        if let Some(previous) = self.hosts.remove(&window) {
+            previous.trace(window, "replaced");
+        }
         self.hosts.insert(
             window,
             Host {
+                counts: RedrawCounts::default(),
                 recovery,
                 primary_down: false,
                 suppress_release: false,
@@ -309,7 +327,9 @@ impl NativeFrameCoordinator {
     }
 
     pub(super) fn close(&mut self, window: WindowId) {
-        self.hosts.remove(&window);
+        if let Some(host) = self.hosts.remove(&window) {
+            host.trace(window, "closed");
+        }
         self.order.retain(|id| *id != window);
     }
 
@@ -335,12 +355,16 @@ impl NativeFrameCoordinator {
     fn request(host: &mut Host, suspended: bool) -> bool {
         if !Self::drawable(host, suspended)
             || !host.recovery.borrow_mut().ready(Instant::now())
-            || host.pending
-            || host.rendering.is_some()
             || host.damage == host.presented
         {
+            host.counts.suppressed += 1;
             return false;
         }
+        if host.pending || host.rendering.is_some() {
+            host.counts.coalesced += 1;
+            return false;
+        }
+        host.counts.requested += 1;
         host.pending = true;
         host.restore_pending = false;
         true
@@ -350,6 +374,8 @@ impl NativeFrameCoordinator {
     /// manufacture ready frames; duplicate native tokens coalesce until dispatch.
     pub(super) fn redraw_received(&mut self, window: WindowId) {
         if let Some(host) = self.hosts.get_mut(&window) {
+            host.counts.received += 1;
+            host.counts.duplicate_tokens += u64::from(host.ready);
             host.ready = true;
             host.pending = true;
         }
@@ -438,10 +464,32 @@ impl NativeFrameCoordinator {
         if !presented {
             // Recovery owns the retry deadline. Retain damage without turning
             // an acquire failure into an immediate native redraw spin.
+            host.trace(receipt.window, "not_presented");
             return false;
         }
         host.presented = receipt.damage;
-        Self::request(host, self.suspended)
+        host.counts.presentations += 1;
+        let requested = Self::request(host, self.suspended);
+        host.trace(receipt.window, "presented");
+        requested
+    }
+}
+
+impl Host {
+    fn trace(&self, window: WindowId, reason: &str) {
+        crate::gui_runtime_support::append_gui_verbose_diagnostic_line(|| {
+            format!(
+                "native redraw ledger {}",
+                serde_json::json!({
+                    "window": format!("{window:?}"), "reason": reason,
+                    "host_generation": self.generation, "device_generation": self.device_generation,
+                    "damage": self.damage, "presented_damage": self.presented,
+                    "attempts": self.attempt, "pending": self.pending,
+                    "ready": self.ready, "rendering": self.rendering,
+                    "counts": self.counts,
+                })
+            )
+        });
     }
 }
 
@@ -684,12 +732,24 @@ mod tests {
             for _ in 0..100 {
                 assert!(!frames.invalidate_id(window));
             }
+            frames.redraw_received(window);
+            frames.redraw_received(window);
+            let _ = frames.ready_round(Instant::now());
             let first = frames.begin_frame(window).unwrap();
             assert!(!frames.invalidate_id(window));
             assert!(frames.finish(first, true));
             assert!(!frames.invalidate_id(window));
+            frames.redraw_received(window);
+            let _ = frames.ready_round(Instant::now());
             let last = frames.begin_frame(window).unwrap();
             assert!(!frames.finish(last, true));
+            let counts = &frames.hosts[&window].counts;
+            assert_eq!(counts.requested, 2);
+            assert_eq!(counts.coalesced, 102);
+            assert_eq!(counts.suppressed, 1);
+            assert_eq!(counts.received, 3);
+            assert_eq!(counts.duplicate_tokens, 1);
+            assert_eq!(counts.presentations, 2);
             assert_eq!(
                 frames.hosts[&window].damage,
                 frames.hosts[&window].presented
@@ -742,11 +802,15 @@ mod tests {
         frames.register(id, 2, PhysicalSize::new(1280, 800), Default::default());
         let new = frames.begin_frame(id).unwrap();
         assert!(!frames.finish(old, true));
+        assert_eq!(frames.hosts[&id].counts.presentations, 0);
+        assert_eq!(frames.hosts[&id].counts.requested, 0);
         assert_eq!(frames.hosts[&id].rendering, Some(new.attempt));
         assert!(!frames.finish(new, true));
         assert!(frames.invalidate_id(id));
         assert!(!frames.finish(new, true));
         assert!(frames.hosts[&id].pending);
+        assert_eq!(frames.hosts[&id].counts.presentations, 1);
+        assert_eq!(frames.hosts[&id].counts.requested, 1);
     }
 
     #[test]

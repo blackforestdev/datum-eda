@@ -327,11 +327,15 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial production scheduler conformance; native per-consumer semantic input and complete requirement qualification remain open",
         "id": "proof_sh_02",
         "positive": "Input burst during pending redraw",
         "negative_control": "Coalesce input instead of requests",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S1/redraw-counts/focused.log.gz",
+          "docs/reviews/gui-performance/implementation/S1/redraw-counts/tests.log.gz"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/SH-02/result.json",
       "acceptance_rule": "Scheduled/received/coalesced/semantic final state reconcile; no lost wheel/button/PTY/gesture data.",
@@ -1041,11 +1045,15 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial production scheduler conformance; native per-consumer semantic input and complete requirement qualification remain open",
         "id": "proof_sh_09",
         "positive": "Deliver callback from old closed/recreated host/device epoch",
         "negative_control": "Accept old completion identity",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S1/redraw-counts/focused.log.gz",
+          "docs/reviews/gui-performance/implementation/S1/redraw-counts/tests.log.gz"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/SH-09/result.json",
       "acceptance_rule": "No stale resource release, host resurrection, damage clear or reconfigure.",
@@ -22900,6 +22908,50 @@
       "build.log.gz": "987e308bc3ab0e21a19bbb532f0121bc12a529499ab9e9d80edeb8ac8df4b308",
       "clippy.log.gz": "c57e9eb23c3004e8269e1cc55402d75f6abefdb126427ca855a2872dd7ae830e",
       "tests.log.gz": "285638f6b428e9ce763f8151be76e8e204b99b84ff795ab7fbc57659a777d9a5"
+    }
+  },
+  "s1_redraw_counts_work": {
+    "status": "shared production scheduler counts implemented; native semantic input and full SH qualification remain open",
+    "baseline_commit": "399a5879",
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_owner": "NativeFrameCoordinator Host retains six integer counters per host/device generation. Existing request, token delivery and valid completion boundaries update them; verbose-only snapshots accompany frame completion, replacement and closure.",
+    "counter_semantics": {
+      "requested": "True shared request decisions that product wrappers forward to window.request_redraw",
+      "coalesced": "Eligible dirty request held by an existing pending or rendering token",
+      "suppressed": "Request rejected because host is undrawable, recovery not ready or damage already presented; this check precedes coalescing",
+      "received": "Native redraw tokens, including compositor-originated tokens with no application request",
+      "duplicate_tokens": "Native token received while a prior token remains ready for dispatch",
+      "presentations": "Successful current host/device/attempt receipt, not GPU completion or display visibility"
+    },
+    "retired_paths": [
+      "Shared scheduler transitions with no persistent per-generation request/token/coalescing counts"
+    ],
+    "verification": {
+      "focused": "14 scheduler tests passed. Existing four-host burst test now reconciles two requests, 102 coalesced calls, one suppressed clean call, three received tokens, one duplicate and two presentations per host. Existing stale/duplicate completion test verifies replacement counts remain independent.",
+      "app": "351 passed, 0 failed, 9 ignored",
+      "clippy_build": "App all-targets offline Clippy -D warnings and fresh offline release passed",
+      "checks": "Source health, dependency authority, traceability, spec governance/parity and exact formatting passed"
+    },
+    "limits": [
+      "Conformance exercises production scheduler transitions but does not prove native wheel/button/PTY final state or full SH-02/SH-09 adoption",
+      "No new callback, timer, frame snapshot queue or measurement campaign; no numerical overhead or latency claim",
+      "Verbose JSON/file output remains opt-in; counters alone are retained by default",
+      "Compositor-originated and canceled tokens mean received is not assumed equal to requested; pending/ready/rendering and generations accompany snapshots",
+      "Complete native desktop qualification remains open; resize qualification remains pinned and nonblocking; GPI-S1 stays in progress"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/redraw-counts",
+    "source_sha256": "cf84f177c6783dc1333952561e006c1f5c551bf529e030c0f99bd3f86fabe1c0",
+    "release_binary_sha256": "40d857c8cefbeeb3cea3c3dcdfb7ffd8bc844c90148f4cfa319011f5c16a4b15",
+    "artifacts_sha256": {
+      "build.log.gz": "9c7d3ddc9fe25f8a2d3aa7280e61c27631537b2e5d779e742c7273b2bce57325",
+      "clippy.log.gz": "cc789f8629a6d1890af05b075d55609e914e7acd139d55f15fc5173d98582684",
+      "focused.log.gz": "34ae7bda916df997867acd03363d40efce3444c34bcdb4425621e5e69207ea9c",
+      "tests.log.gz": "d3e01a3f20fe7e185c92cb0c17abadd589fac627a7868949a8409745dfba9b18"
     }
   }
 }
