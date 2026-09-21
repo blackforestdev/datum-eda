@@ -252,3 +252,70 @@ fn extent_changes_relayout_cached_shaping_with_fresh_buffer_parity() {
         "rich-style change must shape afresh"
     );
 }
+
+#[test]
+fn indexed_lookup_checks_collisions_and_tracks_retirement() {
+    let mut fonts = FontSystem::new();
+    load_datum_fonts(&mut fonts);
+    let mut cache = TextBufferCache::default();
+    let runs: Vec<_> = (0..160)
+        .map(|index| TextRun {
+            text: format!("indexed label {index}"),
+            ..run()
+        })
+        .collect();
+    cache.begin_frame(Profile::Overlay);
+    let (cold, stats) = cache.indices(&mut fonts, &runs, 1280, 800);
+    assert_eq!(stats.misses, runs.len());
+    cache.key_comparisons = 0;
+    let (warm, stats) = cache.indices(&mut fonts, &runs, 1280, 800);
+    assert_eq!(warm, cold);
+    assert_eq!(stats.hits, runs.len());
+    assert_eq!(cache.key_comparisons, runs.len());
+
+    // Force an unrelated entry into the same fingerprint bucket. The digest
+    // narrows candidates only; accepting it as identity would return row zero.
+    let fingerprint = run_fingerprint(&runs[1]);
+    cache.lookup = vec![(fingerprint, 0), (fingerprint, 1)];
+    cache.key_comparisons = 0;
+    let (matched, _) = cache.indices(&mut fonts, &runs[1..2], 1280, 800);
+    assert_eq!(matched, [1]);
+    assert_eq!(cache.key_comparisons, 2);
+    cache.rebuild_lookup();
+
+    cache.begin_frame(Profile::Overlay);
+    cache.indices(&mut fonts, &runs[159..], 1280, 800);
+    cache.trim_overlay();
+    assert_eq!(cache.entries[0].key.text, runs[159].text);
+    assert_eq!(cache.entries.len(), MAX_OVERLAY_BUFFERS);
+    assert_eq!(cache.lookup.len(), cache.entries.len());
+    assert!(cache.lookup.capacity() <= 4 * MAX_OVERLAY_BUFFERS);
+    eprintln!(
+        "text index retained metadata capacity bytes={}",
+        cache.lookup.capacity() * std::mem::size_of::<(u64, usize)>()
+    );
+    let retained: Vec<_> = cache
+        .entries
+        .iter()
+        .map(|entry| entry.key.text.clone())
+        .collect();
+    for text in retained {
+        let input = TextRun { text, ..run() };
+        let (indices, stats) = cache.indices(&mut fonts, std::slice::from_ref(&input), 1280, 800);
+        assert_eq!(stats.hits, 1);
+        assert_eq!(cache.entries[indices[0]].key.text, input.text);
+    }
+    for _ in 0..2 {
+        cache.begin_frame(Profile::Workspace);
+        let (indices, stats) = cache.indices(&mut fonts, &runs[1..2], 1280, 800);
+        assert_eq!(stats.hits, 1);
+        assert_eq!(cache.entries[indices[0]].key.text, runs[1].text);
+    }
+    assert_eq!(cache.entries.len(), 1);
+    assert_eq!(cache.lookup.len(), 1);
+    assert!(cache.lookup.capacity() <= 4);
+    cache.begin_frame(Profile::Workspace);
+    cache.begin_frame(Profile::Workspace);
+    assert!(cache.lookup.is_empty());
+    assert_eq!(cache.lookup.capacity(), 0);
+}

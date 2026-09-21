@@ -1,0 +1,44 @@
+{
+  "status": "Shared shaped-text lookup indexed in every default renderer; GPI-S2 remains in progress",
+  "baseline_commit": "5c911df9a6a6c16396d09289c083f2b0e176fdd1",
+  "production_consumers_migrated": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "shared_owner": "Renderer.text_buffers / TextBufferCache",
+  "change": "A sorted (shaping fingerprint, entry index) vector narrows candidates before the existing exact key comparison. Hash collisions never establish identity. Extent remains a layout dependency within the same shaping bucket, preserving extent-only relayout reuse. Rebuild the metadata after eviction/reordering and release obsolete capacity. No key text or Buffer payload is duplicated by the index.",
+  "competing_paths_retired": [
+    "Scanning every retained shaped buffer for each label on the default workspace/terminal/dialog paths"
+  ],
+  "remaining_competing_paths": [
+    "Current shaping/layout keys, profiles, glyph preparation and static text width owner remain unchanged. Complete configurable-key/resource qualification stays open."
+  ],
+  "bounds": {
+    "owner": "Same TextBufferCache lifetime as shaped buffers; renderer replacement/closure drops it",
+    "entries": "Exactly one (u64, usize) tuple per live cache entry",
+    "retained_capacity": "After eviction/reordering, at most four times live entry count; empty releases all index capacity. Dialog post-frame 128-entry cap therefore bounds index capacity to 512 tuple slots (8192 bytes on this 64-bit target). Workspace follows its existing two generations/current visible text; no absolute workspace payload cap is newly claimed.",
+    "proof": "160-row fixture trims to 128 retained rows with 2560 metadata-capacity bytes; subsequent workspace retirement shrinks to one entry and then zero capacity. This metadata accounting excludes shaped payload/atlas, which remain separately unqualified."
+  },
+  "proof": {
+    "lookup": "160 distinct warm labels need 160 exact comparisons. Disabling candidate narrowing performs 12880 and fails the operation-count assertion. This is a work-count proof, not native wall-time performance acceptance.",
+    "identity": "Injected colliding fingerprints still select the exact existing key. Omitting exact comparison fails the collision assertion. Existing text/size/face/rich style/extent and placement-only tests pass.",
+    "retirement": "Actual recency reordering, overlay cap, index rebasing and workspace two-generation retirement preserve hits and release index peak capacity.",
+    "renderer": "201 passed, 20 ignored on restored source; final focused owner tests cover the recency reorder extension.",
+    "gpu": "Explicit Intel P630/Vulkan fractional dialog scroll, cached relayout/fresh-pixel parity and shared-atlas retry/cache-reindex proofs pass.",
+    "lint_build_native": "Renderer library/tests visual-feature Clippy and fresh offline release pass. All four native X11 host smokes pass, including Main wheel input. Initial test-only cloned-reference Clippy failure retained and corrected.",
+    "governance": "Source health, dependency authority, evidence traceability, parity, spec/project checks and staged formatting checked before commit. No ceiling or dependency change. Existing unrelated terminal convergence drift remains open; full drift not rerun."
+  },
+  "limits": [
+    "The index accelerates lookup; it does not complete configurable font/language/features keys, shaped allocation accounting, atlas bounds or full REUSE-TEXT-KEY qualification.",
+    "Collision buckets and multiple extents still require exact comparison. Cold insertion shifts sorted metadata, and eviction/reordering rebuilds it; no zero-total-work or numerical application speedup claim.",
+    "Full per-adapter counters, native backend/scale/endurance/resource qualification and S2 completion remain open.",
+    "No dependency, vendoring, Cargo, visual-prototype, product-authority, rendering schedule or resize qualification change."
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/render/text_buffer_cache.rs": "b3a84fba39942bb5987137515a77b093613af1620f81a7238659f96d658736c3",
+    "crates/gui-render/src/render/text_buffer_cache_tests.rs": "574c7aede4dab191d1f6bf79b925c903266b51ab8bb61469f17e1a9120c87dd9"
+  },
+  "candidate_binary_sha256": "4d4abddd8558126f8a5eec9ea0e70b09b2e0644758e275be887394c9c5488a21"
+}
