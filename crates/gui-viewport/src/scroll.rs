@@ -42,8 +42,14 @@ impl ScrollViewport {
         (self.content_height - self.viewport.height).max(0.0)
     }
     pub fn layout(&mut self, viewport: ScreenRectPx, content_height: f32) {
+        let content_height = content_height.max(0.0);
+        if self.viewport != viewport || self.content_height != content_height {
+            // The stored grab belongs to the old thumb geometry. Do not apply
+            // it to a reflowed document; an unchanged layout keeps capture.
+            self.release();
+        }
         self.viewport = viewport;
-        self.content_height = content_height.max(0.0);
+        self.content_height = content_height;
         self.set_offset(self.offset);
         if self.maximum() == 0.0 {
             self.drag_grab = None;
@@ -196,6 +202,37 @@ mod tests {
         assert_eq!(s.offset(), 0.0);
         assert!(s.thumb().is_none());
     }
+    #[test]
+    fn reflow_cancels_old_grab_but_unchanged_layout_preserves_drag() {
+        for change_content in [false, true] {
+            let mut s = scroll();
+            let thumb = s.thumb().unwrap();
+            assert!(s.press(thumb.x, thumb.y + 10.0).consumed);
+            s.layout(s.viewport, s.content_height);
+            assert!(
+                s.drag(100.0),
+                "ordinary frame preparation preserves capture"
+            );
+            let old_offset = s.offset();
+            if change_content {
+                s.layout(s.viewport, 800.0);
+            } else {
+                s.layout(
+                    ScreenRectPx {
+                        height: 300.0,
+                        ..s.viewport
+                    },
+                    1000.0,
+                );
+            }
+            assert!(!s.drag(300.0), "old grab cannot move a reflowed thumb");
+            assert_eq!(s.offset(), old_offset);
+            let thumb = s.thumb().unwrap();
+            assert!(s.press(thumb.x, thumb.y + 10.0).consumed);
+            assert!(s.drag(200.0), "fresh press uses current geometry");
+        }
+    }
+
     #[test]
     fn reveal_moves_only_when_required_and_nonfinite_input_is_ignored() {
         let mut s = scroll();

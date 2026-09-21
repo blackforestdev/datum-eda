@@ -184,6 +184,11 @@ impl GlobalPreferencesWindowSurface {
 
     pub(super) fn resize(&mut self, _runtime: &Runtime, width: u32, height: u32) {
         self.surface_transaction.resize(width, height);
+        if self.config.width != width || self.config.height != height {
+            // Keep scrollbar_pressed until release to consume the old gesture,
+            // but stop applying its grab before the new layout is presented.
+            self.scroll.release();
+        }
         if width == 0 || height == 0 {
             return;
         }
@@ -202,6 +207,7 @@ impl GlobalPreferencesWindowSurface {
         let next = (scale_factor as f32).max(0.01);
         if (self.scale_factor - next).abs() > f32::EPSILON {
             self.scale_factor = next;
+            self.scroll.release();
             self.presented_hits.clear();
             self.invalidate();
         }
@@ -314,6 +320,11 @@ impl GlobalPreferencesWindowSurface {
                     if let Some(key) = key {
                         reveal_row = dialog.visible_rows().position(|row| row.key == key);
                     }
+                }
+                if self.scroll_identity.as_ref() != Some(&identity)
+                    || self.scroll_expanded != expanded
+                {
+                    self.scroll.release();
                 }
                 self.scroll_focus = Some(dialog.focus.clone());
                 self.scroll_expanded = expanded;
