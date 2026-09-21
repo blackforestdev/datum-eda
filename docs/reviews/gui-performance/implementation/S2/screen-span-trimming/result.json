@@ -43,7 +43,7 @@
       "uploaded_bytes": 81904,
       "disposition": "Retains baseline queue-call count and only trims span edges. Diagnostic supports rejecting the regressions, not a numerical application speedup or final method conformance."
     },
-    "reproduction": "Use an isolated checkout of baseline_commit. Apply rejected-word-upload.patch for the word/copy comparison recipes; they read the current candidate and restore it in finally. For trim-comparison use this committed production candidate. Baseline in recipes is git HEAD at execution time, so pin HEAD to baseline_commit when reproducing the paired experiment. Negative recipe operates on the selected trim candidate. Initial copy-probe signature compilation failure is retained; corrected probe passes."
+    "reproduction": "Use an isolated checkout of baseline_commit. Decompress and apply rejected-word-upload.patch.gz for the word/copy comparison recipes; they read the current candidate and restore it in finally. For trim-comparison use this committed production candidate. Baseline in recipes is git HEAD at execution time, so pin HEAD to baseline_commit when reproducing the paired experiment. Negative recipe operates on the selected trim candidate. Initial copy-probe signature compilation failure is retained; corrected probe passes."
   },
   "limits": [
     "MEM-01 exact dirty-range bytes plus alignment is not satisfied by internal-gap coalescing. REUSE-SCREEN remains partial.",
