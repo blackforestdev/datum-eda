@@ -1,0 +1,19 @@
+{
+  "status": "bounded S3 TERM_OVERLAY adoption; full qualification open",
+  "baseline": "64688279",
+  "sources": {
+    "crates/gui-render/src/terminal_clipboard_menu.rs": "6c2c1bd363dc8f1140e8a4076c383a2b2585f6ae13b9e90cd9be0a12290481a9"
+  },
+  "production_consumers": [
+    "Main terminal clipboard/link/profile/theme context menu through render/frame_preparation.rs"
+  ],
+  "shared_owner": "render/hit_clipping.rs::clip_content",
+  "retired_path": "Position-clamped menu with unrestricted geometry, text and clickable row extents",
+  "behavior": "Preserve existing menu position and actions; intersect appended menu geometry, text bounds and hit rectangles with the existing terminal screen viewport. Fully hidden actions have no hit target; partial rows only hit inside their visible area. Earlier frame layers remain outside this appended range.",
+  "proof": {
+    "renderer": "194 renderer library tests passed serially, including new actual-menu narrow-dock test for geometry/text/hit bounds and removal of hidden theme action, and existing normal clipboard/link/profile/theme action tests.",
+    "command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib -- --test-threads=1",
+    "initial_failures": "Two initial test runs each passed 193 and failed the new test on exact floating point rectangle equality (110.6 versus 110.600006). Replaced equality with corner containment checks; production clipping unchanged. Both logs retained.",
+    "limits": "No native input/screenshot, independent negative, timing, full HP22 or all-terminal-profile qualification. No new menu navigation/overflow product behavior. No dependency, license, prototype or terminal core/PTY changes."
+  }
+}

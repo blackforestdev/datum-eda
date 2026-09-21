@@ -6658,6 +6658,10 @@
       "s3_visible_prefix_progress": {
         "status": "shared clipping skips fully visible geometry copies; full native/negative/resource qualification open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/clip-visible-prefix/result.json"
+      },
+      "s3_terminal_menu_progress": {
+        "status": "actual terminal context-menu adapter inherits shared viewport clipping; complete terminal/overlay qualification open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-menu-clipping/result.json"
       }
     },
     {
@@ -6747,6 +6751,10 @@
       "s3_visible_prefix_progress": {
         "status": "shared clipping skips fully visible geometry copies; full native/negative/resource qualification open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/clip-visible-prefix/result.json"
+      },
+      "s3_terminal_menu_progress": {
+        "status": "actual terminal context-menu adapter inherits shared viewport clipping; complete terminal/overlay qualification open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-menu-clipping/result.json"
       }
     },
     {
@@ -26776,5 +26784,14 @@
     "retired_path": "Unconditional split_off allocation and copy of the complete appended geometry layer before clipping",
     "evidence": "docs/reviews/gui-performance/implementation/S3/clip-visible-prefix/result.json",
     "limits": "No new native, timing, allocation-counter or numerical budget qualification. No S3 exit, all-consumer adoption or full HP22 claim. No dependency or prototype changes."
+  },
+  "s3_terminal_menu_clipping_work": {
+    "status": "bounded S3 TERM_OVERLAY adoption; full qualification open",
+    "production_consumers": [
+      "Main terminal clipboard/link/profile/theme context menu through render/frame_preparation.rs"
+    ],
+    "retired_path": "Position-clamped menu with unrestricted geometry, text and clickable row extents",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-menu-clipping/result.json",
+    "limits": "No native input/screenshot, independent negative, timing, full HP22 or all-terminal-profile qualification. No new menu navigation/overflow product behavior. No dependency, license, prototype or terminal core/PTY changes."
   }
 }
