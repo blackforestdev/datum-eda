@@ -667,13 +667,13 @@
     "crates/gui-app/src/main.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1454
+        "pre_test_lines": 1450
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Native ApplicationHandler lifecycle, wait-boundary orchestration and input dispatch live in app_native_events.rs; Runtime state and device replacement retain their separate owners."
+      "note": "Native ApplicationHandler lifecycle, wait-boundary orchestration and input dispatch live in app_native_events.rs; Runtime state and device replacement retain their separate owners. Timing diagnostic policy and emission now live with rendering in runtime_present.rs; main retains selection application and lazily supplies its message."
     },
     "crates/gui-protocol/src/kicad_scene_import.rs": {
       "kind": "rust-production",

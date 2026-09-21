@@ -21,7 +21,7 @@ impl App {
                     false
                 }
             };
-            runtime.trace_timing(format!("redraw render {}ms", started.elapsed().as_millis()));
+            runtime.trace_timing(|| format!("redraw render {}ms", started.elapsed().as_millis()));
             presented
         } else {
             false

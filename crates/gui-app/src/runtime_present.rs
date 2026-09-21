@@ -4,6 +4,12 @@
 use super::*;
 
 impl Runtime {
+    pub(super) fn trace_timing(&self, message: impl FnOnce() -> String) {
+        if std::env::var_os("DATUM_TRACE_TIMING").is_some() {
+            eprintln!("[datum-timing] {}", message());
+        }
+    }
+
     pub(super) fn render(&mut self) -> Result<bool> {
         if self.device_health.failed() {
             return Ok(false);
@@ -40,11 +46,13 @@ impl Runtime {
                 return Ok(false);
             }
             self.present_native_frame(frame)?;
-            self.trace_timing(format!(
-                "runtime render diagnostic_clear=true total={}ms acquire={}ms renderer=0ms",
-                render_started.elapsed().as_millis(),
-                acquire_elapsed.as_millis()
-            ));
+            self.trace_timing(|| {
+                format!(
+                    "runtime render diagnostic_clear=true total={}ms acquire={}ms renderer=0ms",
+                    render_started.elapsed().as_millis(),
+                    acquire_elapsed.as_millis()
+                )
+            });
             return Ok(true);
         }
         if self.renderer.prepare_surface_attachment(
@@ -146,7 +154,7 @@ impl Runtime {
                 render_started.elapsed().as_millis()
             )
         });
-        self.trace_timing(format!(
+        self.trace_timing(|| format!(
             "runtime render total={}ms acquire={}ms scene={}ms retained_build={}ms prepared_build={}ms renderer={}ms present={}ms retained_was_cached={} prepared_was_cached={}",
             render_started.elapsed().as_millis(),
             acquire_elapsed.as_millis(),
