@@ -1,0 +1,42 @@
+{
+  "status": "Cached shaping reused for layout extent changes; GPI-S2 remains in progress",
+  "baseline_commit": "7ba8757166760ddb9f17d51ba0f53ad2646d6e3a",
+  "selection": "TextBufferCache treated width/height changes as full buffer misses and repeated Buffer creation/set_text or set_rich_text, even with identical text/font/style. Existing cosmic-text public Buffer clone and set_size preserve cached ShapeLine data while recalculating layout.",
+  "production_consumers_migrated": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "production_paths": [
+    "Shared TextBufferCache::indices -> ensure_text_buffer in full-frame and dialog-only glyph preparation"
+  ],
+  "competing_paths_retired": [
+    "Unconditional fresh shaping buffer for every layout-extent miss"
+  ],
+  "change": "One cache scan finds an exact layout hit or a matching shape source. On extent-only miss, clone the existing public Buffer cache and relayout at the new extent; only missing text/font/style creates a fresh buffer. Key and frame/entry/key-byte retention semantics remain. Tests moved to an owned child module to satisfy inline-tail source limits; no legacy ceiling raised.",
+  "fixed_profile": "The current renderer loads its font inventory at creation; FontSystem locale/language fallback stays within that owner. Face supplies family/weight/letter spacing; size supplies font/line metrics; shaping is Basic, with existing default wrap/alignment/features. This slice does not introduce configurable language/direction/features or complete future full-key requirements.",
+  "bounds": "No new cache or enlarged budget. Existing entries retain each layout variant under the same workspace two-generation and overlay 128-entry/32-KiB-key limits. Buffer cloning copies cached payload; it is not zero-allocation or shared-payload deduplication.",
+  "proof": {
+    "renderer": "198 passed, 17 ignored on restored source.",
+    "cpu": "Actual font/shape cache: multiple widths produce identical complete glyph debug data and line coordinates/widths to fresh buffers. Two extent variants reuse shape caches; return width and translated clip hit layout cache; size/rich-style changes do not reuse incompatible shape sources.",
+    "negative": "Disabling cross-extent shape-source reuse fails the CPU reuse assertion. Mutated source restored byte-for-byte; final suite/GPU/lint/release built restored source.",
+    "gpu": "Actual dialog captures at four width steps match forced-fresh shaped-cache pixels on Intel P630/Vulkan. Existing shared atlas retry/failure/reindex GPU regression passes.",
+    "native": "Final release X11 MAIN zoom-in/out and GLOBAL/PROJECT/NEW startup/presentation/close smoke pass with exit zero. No native shape-count or resize qualification claim.",
+    "build_lint": "Offline guarded release and renderer library/tests Clippy pass.",
+    "governance": "Source health, dependency authority, parity, traceability/spec/project, diff and staged rustfmt pass. Initial inline-test-tail gate was resolved through the real child test module, without a ceiling change.",
+    "app_scope": "No app source changes or full app suite rerun; known terminal lineage/convergence issues remain open."
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "e5670f8fb46cbc4df2f3784ce020b69d6378c3b809f943755a541cb200e209d9",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "6ceaab46aac02d16540b932a58847c3756c1ee7f5395c14121f40fe9526b878d",
+    "crates/gui-render/src/render/text_buffer_cache_tests.rs": "e36b055157d2698b11e9634a4061f656ff6dc54b21207b6c0d0f862936057313"
+  },
+  "candidate_binary_sha256": "ab598f08dbbc24c278682fa43e1f5058e31cdb1db5b54ee4aecc18ca5a6e022b",
+  "limits": [
+    "Public Buffer cloning preserves already-shaped paragraphs; newly revealed unshaped paragraphs may still shape. No zero-total-shaping, zero-allocation or numerical performance claim.",
+    "Font/language/direction/features key qualification, full shaped-payload/atlas/scratch accounting and caps remain open.",
+    "Native boundary counters, prescribed full per-adapter negatives, backend/scale/endurance and complete S2 acceptance remain open.",
+    "No third-party modifications, downloads, dependencies, versions/licenses, visual prototypes, shaping policy/typography, product mutation or resize qualification changes."
+  ]
+}
