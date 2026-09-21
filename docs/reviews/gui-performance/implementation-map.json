@@ -4313,16 +4313,17 @@
       "shared_owner": "native present boundary",
       "implementation_slice": "S1",
       "production_entry_points": [
-        "crates/gui-app/src/app_shell.rs",
+        "crates/gui-app/src/app_native_events.rs",
         "crates/gui-app/src/global_preferences_window.rs",
-        "crates/gui-app/src/main.rs",
+        "crates/gui-app/src/native_frame_adapters.rs",
+        "crates/gui-app/src/native_frame_coordinator.rs",
+        "crates/gui-app/src/native_surface_transaction.rs",
         "crates/gui-app/src/new_project_window.rs",
         "crates/gui-app/src/project_preferences_window.rs",
-        "crates/gui-app/src/runtime_camera_pane/layout_cache.rs",
-        "crates/gui-app/src/runtime_primary_pointer.rs"
+        "crates/gui-app/src/runtime_present.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial production adoption: all four actual hosts reach SurfaceTransaction::present, which validates host/configuration/submission ownership then calls pre_present_notify before texture.present. Existing all-host native presentation runs cover that production path. Omitted/reordered-notification negative control and backend-specific notification qualification remain missing.",
         "id": "proof_hp05_01",
         "positive": "Present successful frames in four actual adapters",
         "negative_control": "Omit or reorder native notification",
@@ -4354,7 +4355,11 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "NEW": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/owned-main-window/result.json",
+        "docs/reviews/gui-performance/implementation/S1/LF-02/result.json"
+      ]
     },
     {
       "id": "HP05-02",
@@ -4373,16 +4378,17 @@
       "shared_owner": "native present boundary",
       "implementation_slice": "S1",
       "production_entry_points": [
-        "crates/gui-app/src/app_shell.rs",
+        "crates/gui-app/src/app_native_events.rs",
         "crates/gui-app/src/global_preferences_window.rs",
-        "crates/gui-app/src/main.rs",
+        "crates/gui-app/src/native_frame_adapters.rs",
+        "crates/gui-app/src/native_frame_coordinator.rs",
+        "crates/gui-app/src/native_surface_transaction.rs",
         "crates/gui-app/src/new_project_window.rs",
         "crates/gui-app/src/project_preferences_window.rs",
-        "crates/gui-app/src/runtime_camera_pane/layout_cache.rs",
-        "crates/gui-app/src/runtime_primary_pointer.rs"
+        "crates/gui-app/src/runtime_present.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial: existing three Main 60-second idle observations and four-host bounded idle completion runs are executed evidence, not complete MET/GPU/pacing acceptance. Complete family/GPU accounting, negative control and backend/scale qualification remain open; deferred displayed pacing remains unqualified.",
         "id": "proof_hp05_02",
         "positive": "Native idle/pacing under visible changes",
         "negative_control": "Generate uncontrolled native callbacks",
@@ -4414,7 +4420,11 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "NEW": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/main-idle/receipt.json",
+        "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json"
+      ]
     },
     {
       "id": "HP06-01",
@@ -5013,7 +5023,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial production adoption: both actual Preferences MouseWheel adapters call scroll_preferences_window, which invalidates only the selected surface through NativeFrameCoordinator when scroll_wheel changes offset. Exact native changing-wheel scenario and broadcast-redraw negative replay remain unexecuted; other local-input evidence does not substitute for them.",
         "id": "proof_hp11_01",
         "positive": "Changing wheel in each actual Preferences adapter with other hosts open",
         "negative_control": "Broadcast redraw",
@@ -5064,7 +5074,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "partial component proof: executed native_wheel_preserves_fractional_pixels_and_pane_locality covers fractional pixels, bounds, locality and immediate reversal through the production wheel adapter helper. Real per-Preferences event-adapter/native boundary/horizontal-no-op/fractional-reversal scenarios and negative controls remain open.",
         "id": "proof_hp11_02",
         "positive": "Boundary/horizontal no-op then fractional reverse",
         "negative_control": "Request no-op frame or accumulate boundary debt",
@@ -5094,7 +5104,10 @@
       "consumer_applicability": {
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S1/terminal-output-damage/tests.log.gz"
+      ]
     },
     {
       "id": "HP12-01",
@@ -23624,7 +23637,46 @@
       "LF-14"
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
-    "disposition": "Existing current 354-pass app suite covers these named production-owner tests; planned-only descriptions were stale. No test was rerun and no native/resource predicate or milestone is declared complete. LF-02 Lost/Outdated succession, LF-06 allocation failure and LF-12 ordinary coalesced configure remain without specific executed proof in their rows; LF-11 renderer allocation proof requires separate verification. Continue S1 implementation/proof within existing order; S2-S5 remain pending."
+    "disposition": "Existing current 354-pass app suite covers these named production-owner tests; planned-only descriptions were stale. No test was rerun and no native/resource predicate or milestone is declared complete. LF-02 Lost/Outdated succession, LF-06 allocation failure and LF-12 ordinary coalesced configure remain without specific executed proof in their rows; LF-11 renderer allocation proof requires separate verification. Continue S1 implementation/proof within existing order; S2-S5 remain pending.",
+    "current_review": {
+      "source_commit": "156ec47a",
+      "rows_corrected": [
+        "HP05-01",
+        "HP05-02",
+        "HP11-01",
+        "HP11-02"
+      ],
+      "default_native_call_inventory": {
+        "request_redraw": "Four runtime calls in NativeFrameCoordinator; host tokens/damage/recovery/restore own eligibility. No default App/dialog direct redraw bypass found.",
+        "configure_acquire_present": "SurfaceTransaction contains the sole default native configure/get_current_texture/pre_present_notify/SurfaceTexture::present sites. Main uses runtime_present; all three auxiliary adapters use the shared GlobalPreferencesWindowSurface renderer.",
+        "submission": "Main runtime_present and shared auxiliary render route Renderer submission receipts through SurfaceTransaction -> shared QueueOwner. Low-level render/gpu_frame.rs and render/gpu_overlay.rs submit only within the admitted frame path; initialization, offscreen capture and diagnostic measurement calls remain separately scoped, not native frame receipts.",
+        "attachments_close": "Renderer attachment owner is observed by both native render adapters; all auxiliary close adapters remove coordinator host then drop surface ownership; SurfaceTransaction::drop closes queue accounting. Main Arc/App teardown releases Window ownership. Retiring-byte/driver memory qualification is not implied.",
+        "remaining_direct_native_calls": "native_resize_repro.rs has its separate configure/acquire/present/redraw sites only behind DATUM_DIAGNOSTIC_MINIMAL_WINDOW at entry. It remains an opt-in diagnostic, not default shared adoption evidence."
+      },
+      "source_sha256": {
+        "native_frame_coordinator.rs": "dd6c43212c31cb76d93345cab11c9945e3cdfd9c2e6e053f7f9d1b570de5eef8",
+        "native_surface_transaction.rs": "5667c46e014aeccc2db5238d94e58758f3c74a978d6a780933841a451e425236",
+        "native_queue_owner.rs": "9c04b92edfa3624013cb82b5bf54d7503a0520cc0311faacc2540bb30ab00d52",
+        "runtime_present.rs": "2e429306a6ebbe7111b0dc68c85e3c97c9ce2f39fbc54b2d5e3d01344b8be364",
+        "native_frame_adapters.rs": "fe69a13c831948e5efbcb132ac2d38897f316acdeb7d042dc82efc5acb447f2d",
+        "global_preferences_window.rs": "a84ceb6f3034b896ff54a0267936d850d3b7b1a1e4c1a8541da3357ee8fee164",
+        "project_preferences_window.rs": "87f559f285afb16058779cf51ffc7916bbf7c82a06663db7a4fc2f75e1dac2b1",
+        "new_project_window.rs": "e187b51cf5444f4feb7f143ccac7e3a77da3253a566b1c8ab4496a9b2ed938d8",
+        "native_resize_repro.rs": "2863a7f291bc8633687b973d8146b8ccb6af7b89b03b5ac5435292b73ce7f831"
+      },
+      "controlling_boundary": {
+        "S1": "Implementation contract S1 table and GPI-S1 require shared scheduler/host generations/queue/recovery adoption, affected SCH/REC/SH/LF/HP proof, per-host invalidation/input/focus and changed surface-resource accounting. Existing bounded native/component evidence is substantial but missing predicates cannot be promoted by source inventory alone.",
+        "S4": "Contract allocation explicitly retains terminal/glyph uploads, complete hidden work/fairness and remaining all-host recovery/teardown accounting here. These remain obligations; no requirement is silently declared satisfied at S1.",
+        "S5": "Complete cross-component metrics/admission/method conformance, all in-scope native backends/scales, independent replay, owner UX and endurance remain here. They are not a new prerequisite to every bounded S1 patch.",
+        "advancement": "No new authority or dependency approval is needed to continue S1. S2 remains behind the explicit GPI-S1 dependency; current inventory and partial evidence do not establish that exit. No amendment or milestone state change is made."
+      },
+      "remaining_S1_proof_examples": [
+        "Native repeated hide/restore during retry versus active-time preservation (LF-04).",
+        "Exact actual Preferences wheel/no-op/reversal adapter scenarios and negative controls (HP11-01/02).",
+        "Changed surface lifetime/admission composition: competing host configuration, stale callback/close and bounded outstanding resources (SH-07/08/09, LF-07/13)."
+      ],
+      "disposition": "Read-only implementation reconciliation plus corrections to stale evidence labels. No new test/build was run, no code changed, and no native/resource or implementation milestone is declared complete. Historical receipts/limits remain intact; resize stays nonblocking."
+    }
   },
   "s1_acquisition_transition_work": {
     "status": "shared acquisition failure transition adopted; partial LF-02 component conformance",
