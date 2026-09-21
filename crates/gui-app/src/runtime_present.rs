@@ -15,7 +15,7 @@ impl Runtime {
             self.config.width, self.config.height
         ));
         append_gui_verbose_diagnostic_line("render acquire begin");
-        let Some(frame) = self.surface_transaction.acquire(
+        let Some(mut frame) = self.surface_transaction.acquire(
             &self.surface,
             &self.device,
             &self.config,
@@ -29,7 +29,13 @@ impl Runtime {
         append_gui_verbose_diagnostic_line("render acquire end");
         let view = frame.view();
         if gui_runtime_support::native_frame_probe::clear_only() {
-            gui_runtime_support::native_frame_probe::submit_clear(&self.device, &self.queue, &view);
+            let submission = gui_runtime_support::native_frame_probe::submit_clear(
+                &self.device,
+                &self.queue,
+                &view,
+            );
+            self.surface_transaction
+                .submitted(&mut frame, &self.queue, submission);
             drop(probe);
             if self.device_health.failed() {
                 return Ok(false);
@@ -99,7 +105,7 @@ impl Runtime {
         let probe = gui_runtime_support::phase_probe::Probe::start("renderer");
         let renderer_started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line("renderer render begin");
-        self.renderer.render(
+        self.renderer.render_with_submission(
             &self.device,
             &self.queue,
             &view,
@@ -108,6 +114,10 @@ impl Runtime {
             schematic_retained,
             self.config.width,
             self.config.height,
+            &mut |submission| {
+                self.surface_transaction
+                    .submitted(&mut frame, &self.queue, submission)
+            },
         )?;
         let renderer_elapsed = renderer_started.elapsed();
         append_gui_verbose_diagnostic_line(format!(
@@ -147,8 +157,7 @@ impl Runtime {
         let started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line("frame present begin");
         let first_device_frame = !self.surface_transaction.has_presented();
-        self.surface_transaction
-            .present(frame, self.window, &self.queue)?;
+        self.surface_transaction.present(frame, self.window)?;
         if first_device_frame && self.terminal_owns_input() {
             let (x, y, width, height) = self.terminal_ime_cursor_rect();
             self.window.set_ime_cursor_area(

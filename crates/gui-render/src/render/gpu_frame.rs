@@ -14,8 +14,44 @@ impl Renderer {
         width: u32,
         height: u32,
     ) -> anyhow::Result<()> {
+        self.render_with_submission(
+            device,
+            queue,
+            target,
+            prepared,
+            retained,
+            schematic_retained,
+            width,
+            height,
+            &mut |_| {},
+        )
+    }
+
+    /// Native hosts observe the actual frame submission before any fallible
+    /// post-submit measurement collection or presentation can discard the frame.
+    #[allow(clippy::too_many_arguments)]
+    pub fn render_with_submission(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        target: &wgpu::TextureView,
+        prepared: &PreparedScene,
+        retained: &RetainedScene,
+        schematic_retained: Option<&RetainedScene>,
+        width: u32,
+        height: u32,
+        on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
+    ) -> anyhow::Result<()> {
         if prepared.is_overlay_only() {
-            return self.render_overlay_only(device, queue, target, prepared, width, height);
+            return self.render_overlay_only(
+                device,
+                queue,
+                target,
+                prepared,
+                width,
+                height,
+                on_submitted,
+            );
         }
         let mut measurement = self.begin_gpu_measurement()?;
         let render_started = std::time::Instant::now();
@@ -450,7 +486,8 @@ impl Renderer {
         let command_buffer = encoder.finish();
         let finish_elapsed = finish_started.map(|started| started.elapsed());
         let submit_started = std::time::Instant::now();
-        queue.submit([command_buffer]);
+        let submission = queue.submit([command_buffer]);
+        on_submitted(submission);
         self.submit_gpu_measurement(measurement)?;
         let submit_elapsed = submit_started.elapsed();
         if let Some(finish_elapsed) = finish_elapsed {

@@ -20,7 +20,11 @@ pub(crate) fn clear_only() -> bool {
     })
 }
 
-pub(crate) fn submit_clear(device: &wgpu::Device, queue: &wgpu::Queue, target: &wgpu::TextureView) {
+pub(crate) fn submit_clear(
+    device: &wgpu::Device,
+    queue: &wgpu::Queue,
+    target: &wgpu::TextureView,
+) -> wgpu::SubmissionIndex {
     let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
         label: Some("datum-diagnostic-native-clear"),
     });
@@ -47,5 +51,5 @@ pub(crate) fn submit_clear(device: &wgpu::Device, queue: &wgpu::Queue, target: &
             multiview_mask: None,
         });
     }
-    queue.submit(Some(encoder.finish()));
+    queue.submit(Some(encoder.finish()))
 }
