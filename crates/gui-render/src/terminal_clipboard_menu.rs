@@ -28,6 +28,9 @@ pub(super) fn render_terminal_clipboard_menu(
     )
     .screen
     .into();
+    let quad_start = overlay_quads.len();
+    let text_start = overlay_text.len();
+    let hit_start = hit_regions.len();
     let mut items = vec![
         ("COPY", "CTRL+SHIFT+C", HitTarget::TerminalClipboardCopy),
         ("PASTE", "CTRL+SHIFT+V", HitTarget::TerminalClipboardPaste),
@@ -120,11 +123,67 @@ pub(super) fn render_terminal_clipboard_menu(
         );
         hit_regions.push(HitRegion { target, rect: item });
     }
+    crate::hit_clipping::clip_content(
+        overlay_quads,
+        overlay_text,
+        hit_regions,
+        quad_start,
+        text_start,
+        hit_start,
+        screen,
+    );
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn undersized_terminal_menu_clips_paint_text_and_actions_to_screen() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.ui.active_dock_tab = Some(DockTab::Terminal);
+        state.ui.terminal_clipboard_menu = Some(datum_gui_protocol::TerminalClipboardMenuState {
+            anchor_x: f32::MAX,
+            anchor_y: f32::MAX,
+            link: None,
+        });
+        let mut layout = ShellLayout::for_window(1280, 800, Some(260));
+        layout.bottom_strip.width = 160.0;
+        layout.bottom_strip.height = 110.0;
+        let screen: RectPx = terminal_screen_geometry_with_scale(
+            layout.bottom_strip.into(),
+            state.ui.terminal.font_scale_millis,
+        )
+        .screen
+        .into();
+        assert!(screen.width < MENU_WIDTH_PX && screen.height < ITEM_HEIGHT_PX * 4.0);
+        let mut quads = Vec::new();
+        let mut text = Vec::new();
+        let mut hits = Vec::new();
+        render_terminal_clipboard_menu(&state, &layout, &mut quads, &mut text, &mut hits);
+        assert!(!quads.is_empty() && !text.is_empty() && !hits.is_empty());
+        for quad in quads {
+            assert!(quad.points.iter().all(|&(x, y)| screen.contains(x, y)));
+        }
+        for run in text {
+            let bounds = run.clip_bounds.expect("menu text must inherit screen clip");
+            assert!(screen.contains(bounds.x, bounds.y));
+            assert!(screen.contains(bounds.x + bounds.width, bounds.y + bounds.height));
+        }
+        for hit in &hits {
+            assert!(screen.contains(hit.rect.x, hit.rect.y));
+            assert!(screen.contains(hit.rect.x + hit.rect.width, hit.rect.y + hit.rect.height,));
+        }
+        assert!(
+            hits.iter()
+                .any(|hit| hit.target == HitTarget::TerminalClipboardCopy)
+        );
+        assert!(
+            !hits
+                .iter()
+                .any(|hit| hit.target == HitTarget::TerminalThemeNext)
+        );
+    }
 
     #[test]
     fn terminal_context_menu_is_clamped_and_exposes_copy_paste_actions() {
