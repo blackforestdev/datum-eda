@@ -100,7 +100,7 @@ impl Recovery {
             due => (false, due),
         }
     }
-    pub(crate) fn fail_device(&mut self) {
+    pub(crate) fn fail(&mut self) {
         self.failed = true;
         self.due = None;
         self.since = None;
