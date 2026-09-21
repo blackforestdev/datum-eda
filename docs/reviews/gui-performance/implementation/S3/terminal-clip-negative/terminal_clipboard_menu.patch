@@ -1,0 +1,20 @@
+diff --git a/crates/gui-render/src/terminal_clipboard_menu.rs b/crates/gui-render/src/terminal_clipboard_menu.rs
+index 6527bfb3..cc81d51a 100644
+--- a/crates/gui-render/src/terminal_clipboard_menu.rs
++++ b/crates/gui-render/src/terminal_clipboard_menu.rs
+@@ -123,15 +123,6 @@ pub(super) fn render_terminal_clipboard_menu(
+         );
+         hit_regions.push(HitRegion { target, rect: item });
+     }
+-    crate::hit_clipping::clip_content(
+-        overlay_quads,
+-        overlay_text,
+-        hit_regions,
+-        quad_start,
+-        text_start,
+-        hit_start,
+-        screen,
+-    );
+ }
+ 
+ #[cfg(test)]

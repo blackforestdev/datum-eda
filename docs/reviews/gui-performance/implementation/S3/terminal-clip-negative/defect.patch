@@ -1,0 +1,20 @@
+diff --git a/crates/gui-render/src/terminal_core_render.rs b/crates/gui-render/src/terminal_core_render.rs
+index e199e915..ab6d6292 100644
+--- a/crates/gui-render/src/terminal_core_render.rs
++++ b/crates/gui-render/src/terminal_core_render.rs
+@@ -187,15 +187,6 @@ pub(super) fn render_terminal_core_snapshot(
+             }
+         }
+     }
+-    crate::hit_clipping::clip_content(
+-        panel_quads,
+-        text_runs,
+-        hit_regions,
+-        starts.0,
+-        starts.1,
+-        starts.2,
+-        screen,
+-    );
+ }
+ 
+ fn render_ime_preedit(

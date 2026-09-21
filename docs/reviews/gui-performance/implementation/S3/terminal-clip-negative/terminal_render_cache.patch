@@ -1,0 +1,20 @@
+diff --git a/crates/gui-render/src/terminal_render_cache.rs b/crates/gui-render/src/terminal_render_cache.rs
+index ff40ec18..9d1929db 100644
+--- a/crates/gui-render/src/terminal_render_cache.rs
++++ b/crates/gui-render/src/terminal_render_cache.rs
+@@ -245,15 +245,6 @@ impl TerminalSessionRenderCache {
+         self.search_match = lane.search.matched;
+         self.session_id = Some(session_id.to_string());
+         self.scroll_offset = scroll;
+-        crate::hit_clipping::clip_content(
+-            panel_quads,
+-            text_runs,
+-            hit_regions,
+-            starts.0,
+-            starts.1,
+-            starts.2,
+-            screen,
+-        );
+     }
+ }
+ 
