@@ -8,6 +8,8 @@ pub(crate) mod native_recovery;
 pub(crate) mod native_surface_transaction;
 #[path = "phase_probe.rs"]
 pub(crate) mod phase_probe;
+#[path = "presented_hit_regions.rs"]
+pub(crate) mod presented_hit_regions;
 
 use std::fs;
 use std::fs::OpenOptions;

@@ -76,7 +76,7 @@ impl Runtime {
         let direction = if let Some(drag) = self.terminal_split_drag.as_ref() {
             Some(drag.direction)
         } else {
-            let path = match self.prepared_scene().hit_test(pointer.0, pointer.1) {
+            let path = match self.presented_hits.hit_test(pointer.0, pointer.1) {
                 Some(HitTarget::TerminalSplitDivider(path)) => Some(path.clone()),
                 _ => None,
             };
@@ -122,7 +122,7 @@ impl Runtime {
         let Some(pointer) = self.last_cursor_pos else {
             return false;
         };
-        let path = match self.prepared_scene().hit_test(pointer.0, pointer.1) {
+        let path = match self.presented_hits.hit_test(pointer.0, pointer.1) {
             Some(HitTarget::TerminalSplitDivider(path)) => path.clone(),
             _ => return false,
         };
@@ -192,7 +192,7 @@ impl Runtime {
             return Some(winit::window::CursorIcon::Grabbing);
         }
         matches!(
-            self.prepared_scene().hit_test(pointer.0, pointer.1),
+            self.presented_hits.hit_test(pointer.0, pointer.1),
             Some(HitTarget::TerminalSessionTab(_))
         )
         .then_some(winit::window::CursorIcon::Grab)
@@ -202,12 +202,12 @@ impl Runtime {
         let Some(pointer) = self.last_cursor_pos else {
             return false;
         };
-        let prepared = self.prepared_scene();
-        let session_id = terminal_tab_drag_start(prepared.hit_test(pointer.0, pointer.1));
+        let session_id =
+            terminal_tab_drag_start(self.presented_hits.hit_test(pointer.0, pointer.1));
         let Some(session_id) = session_id else {
             return false;
         };
-        let Some(tab_x) = prepared.hit_regions.iter().find_map(|region| {
+        let Some(tab_x) = self.presented_hits.regions().iter().find_map(|region| {
             (region.target == HitTarget::TerminalSessionTab(session_id.clone()))
                 .then_some(region.rect.x)
         }) else {
@@ -221,7 +221,7 @@ impl Runtime {
     }
 
     pub(super) fn advance_terminal_tab_drag(&mut self, pointer: (f32, f32)) -> bool {
-        let target_id = terminal_tab_session(self.prepared_scene().hit_test(pointer.0, pointer.1))
+        let target_id = terminal_tab_session(self.presented_hits.hit_test(pointer.0, pointer.1))
             .map(str::to_string);
         let Some(drag) = &mut self.terminal_tab_drag else {
             return false;
@@ -276,7 +276,7 @@ impl Runtime {
 
     pub(super) fn update_terminal_tab_hover(&mut self, pointer: (f32, f32)) -> bool {
         let next = if pointer.1 >= self.current_layout().bottom_strip.y {
-            hovered_terminal_close_session(self.prepared_scene().hit_test(pointer.0, pointer.1))
+            hovered_terminal_close_session(self.presented_hits.hit_test(pointer.0, pointer.1))
         } else {
             None
         };

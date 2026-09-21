@@ -98,11 +98,10 @@ impl Runtime {
         }
         // Deliberate board-specific branch: the artifact-preview drag is a
         // board-scene overlay affordance; if it consumes the drag, pan is skipped.
-        if route.content == datum_gui_protocol::PaneContent::Board {
-            let prepared = self.prepared_scene().clone();
-            if self.handle_artifact_preview_pan_drag(&prepared, previous, next_cursor_pos) {
-                return true;
-            }
+        if route.content == datum_gui_protocol::PaneContent::Board
+            && self.handle_artifact_preview_pan_drag(previous, next_cursor_pos)
+        {
+            return true;
         }
         let fit = CameraState::fit_to_bounds(&route.bounds);
         CameraEngine::pan_pixels(

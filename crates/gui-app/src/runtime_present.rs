@@ -165,6 +165,9 @@ impl Runtime {
             .prepared_scene
             .as_ref()
             .and_then(PreparedScene::console_overlay_layout);
+        if let Some(prepared) = self.prepared_scene.as_mut() {
+            self.presented_hits.present(prepared);
+        }
         if first_device_frame && self.terminal_owns_input() {
             let (x, y, width, height) = self.terminal_ime_cursor_rect();
             self.window.set_ime_cursor_area(

@@ -189,7 +189,7 @@ impl Runtime {
             return false;
         };
         if !terminal_context_menu_should_open(
-            self.prepared_scene().hit_test(x, y),
+            self.presented_hits.hit_test(x, y),
             MouseButton::Right,
             ElementState::Pressed,
         ) {

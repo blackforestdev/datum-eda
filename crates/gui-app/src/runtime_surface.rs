@@ -23,6 +23,7 @@ impl Runtime {
         ));
         self.scale_factor = next;
         self.presented_console_layout = None;
+        self.presented_hits.clear();
         if matches!(self.workspace().ui.active_dock_tab, Some(DockTab::Terminal)) {
             self.resize_terminal_to_dock();
         }

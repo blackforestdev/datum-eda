@@ -48,6 +48,7 @@ impl Runtime {
 
     pub(super) fn invalidate_surface_size(&mut self) {
         self.presented_console_layout = None;
+        self.presented_hits.clear();
         // Historical entries carry old surface keys. Preserve only live geometry
         // whose construction has no dependency on the reference projection size.
         self.retained_scene_cache.clear();

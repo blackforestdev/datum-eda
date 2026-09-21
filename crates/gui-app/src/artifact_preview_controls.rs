@@ -1,5 +1,5 @@
 use datum_gui_protocol::{ConsoleFeedbackSource, DockTab, SessionCommand};
-use datum_gui_render::{HitTarget, PreparedScene};
+use datum_gui_render::HitTarget;
 
 use super::Runtime;
 
@@ -40,11 +40,10 @@ impl Runtime {
 
     pub(super) fn handle_artifact_preview_pan_drag(
         &mut self,
-        prepared: &PreparedScene,
         previous: (f32, f32),
         next: (f32, f32),
     ) -> bool {
-        let Some(region) = prepared.hit_regions.iter().rev().find(|region| {
+        let Some(region) = self.presented_hits.regions().iter().rev().find(|region| {
             matches!(region.target, HitTarget::ArtifactPreviewViewport)
                 && region.rect.contains(previous.0, previous.1)
         }) else {

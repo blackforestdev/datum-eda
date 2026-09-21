@@ -299,11 +299,7 @@ impl Runtime {
         if self.workspace().ui.active_menu.is_none() {
             return false;
         }
-        let target = self
-            .prepared_scene
-            .as_ref()
-            .and_then(|scene| scene.hit_test(pos.0, pos.1))
-            .cloned();
+        let target = self.presented_hits.hit_test(pos.0, pos.1).cloned();
         let Some(HitTarget::MenuItem { menu, label }) = target else {
             return false;
         };
