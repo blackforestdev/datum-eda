@@ -20,7 +20,7 @@ impl Runtime {
             .retained_scene
             .as_ref()
             .context("retained scene should exist before prepared scene rebuild")?;
-        let mut prepared = PreparedScene::from_workspace_with_terminal_renderer(
+        let mut prepared = self.renderer.prepare_workspace_with_terminal_renderer(
             self.session.workspace(),
             self.config.width,
             self.config.height,

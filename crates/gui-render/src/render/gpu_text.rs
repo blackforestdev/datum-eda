@@ -15,7 +15,7 @@ pub(crate) struct GlyphPreparation {
 }
 
 impl GlyphPreparation {
-    #[cfg(test)]
+    #[cfg(all(test, feature = "visual"))]
     pub(crate) fn is_invalid(&self) -> bool {
         self.prepared.is_none()
     }

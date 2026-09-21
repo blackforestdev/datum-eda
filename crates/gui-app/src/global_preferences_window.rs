@@ -283,7 +283,7 @@ impl GlobalPreferencesWindowSurface {
                     self.config.height,
                     self.scale_factor,
                 ));
-                self.prepared = Some(PreparedScene::from_workspace_with_terminal_renderer(
+                self.prepared = Some(self.renderer.prepare_workspace_with_terminal_renderer(
                     &workspace,
                     self.config.width,
                     self.config.height,

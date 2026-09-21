@@ -1,0 +1,53 @@
+{
+  "status": "New Project retained control ownership adopted; Main preparation uses the owner API; GPI-S2 remains in progress",
+  "baseline_commit": "ed39d50d75f3d7abba0aedb426ad0cf4069903e9",
+  "production_consumers_migrated": [
+    "NEW: default GlobalPreferencesWindowSurface New Project preparation retains rounded meshes in Renderer.control_meshes",
+    "MAIN: Runtime::build_terminal_prepared_scene now passes its Renderer owner through the same full-frame preparation API; other Main control families are not thereby migrated"
+  ],
+  "competing_paths_retired": [
+    "Per-preparation temporary control cache in the production New Project dialog path",
+    "Static full-frame preparation entry point in the default Main/New Project application call sites"
+  ],
+  "remaining_competing_paths": [
+    "Public static PreparedScene compatibility constructors still use a transient cache for standalone callers/tests.",
+    "Main nonmodal control families have not yet adopted this control mesh cache.",
+    "Frame quad/vertex materialization and New Project general backdrop remain; S3 owns composition retirement."
+  ],
+  "change": "Renderer::prepare_workspace_with_terminal_renderer borrows the existing renderer control cache through full-frame CPU preparation to the shared Preferences/New Project primitives. DPI now comes from the active surface. Full-frame composition moved intact into a real frame_preparation module, with only the explicit controls/scale arguments added to its composition body.",
+  "source_health": {
+    "root": "crates/gui-render/src/lib.rs",
+    "expanded_before": 7794,
+    "expanded_after": 7560,
+    "normal_module": "crates/gui-render/src/render/frame_preparation.rs",
+    "ownership": "CPU frame composition and renderer-owned preparation; not forwarding-only fragmentation",
+    "policy": "Exact downward ratchet; no normal or legacy ceiling increase. Source-health and all 13 policy regression tests pass."
+  },
+  "proof": {
+    "renderer": "200 passed, 20 ignored; explicit New Project hardware proof separately passes on Intel P630/Vulkan.",
+    "new_project_gpu": "At 1x and 1.5x, actual renderer preparation builds once and stays warm; form text edits change visible pixels without rebuilding meshes and match fresh compatibility composition. Renderer replacement starts cold and reproduces pixels. Actual retained board scene is rendered, and the test asserts the existing backdrop is preserved.",
+    "negative": "Replacing the renderer cache borrow with a transient cache rejects the owner proof; source restored byte-for-byte before final tests/build.",
+    "app": "Three GlobalPreferencesWindowSurface tests pass.",
+    "native": "Fresh offline release passes all four X11 host startup/present/close smokes and Main zoom-in/out; default backend, measurements disabled. This is not native counter/performance or backend/scale qualification.",
+    "drift": "Workspace Clippy passes after restricting two visual-only test helpers to cfg(test, visual). Initial dead-code lint failure and intermediate stale debt-inventory failure retained; generated inventory reconciled to the exact lower ceiling. Final full drift reaches the previously tracked unrelated terminal convergence gate failure (dat-terminal-convergence-guard-xke). No full drift pass claimed. Source-health policy regressions and dependency authority separately pass."
+  },
+  "limits": [
+    "CPU control cache bounds remain the prior 256 entries/4 MiB payload policy; no new budget or GPU retention is introduced.",
+    "GLOBAL/PROJECT retention from the preceding slice is preserved. New Project backdrop and shared scroll/hit/profile convergence remain S3 work.",
+    "Main nonmodal control families, full native counters/resource/backend/scale/endurance qualification, GPU control budget and S2 exit remain open.",
+    "No dependency, vendoring, Cargo, visual prototype, product authority or resize-qualification change."
+  ],
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_window.rs": "b24a5c02b67acadfa25cfd19519885f957b2e9dd963835d22f37222d989252c5",
+    "crates/gui-app/src/runtime_terminal_render.rs": "2fa9ec2237ef5056697fc67e54acac6a0d72be7d57cad9b0d44fb93d5fc7130f",
+    "crates/gui-render/src/global_preferences_dialog.rs": "4f6cd6e893e902464fb4d64b96c178fb311ef9a8ab8b7b2f1bb8e593c6fd6ddf",
+    "crates/gui-render/src/global_preferences_primitives.rs": "0818b9c5d1e602f69a5cf09b25c1bcc06da42d9f5bc6533b12b97134b648ce11",
+    "crates/gui-render/src/new_project_dialog.rs": "7758018e6e74e8dfc14cfab79be11f076b242d91fc0291fd54003f98d93fbec2",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "dd37a63f8144af111a8ce58d1fa7a73e259917688b5afe0d6124d6131ab8bcf0",
+    "crates/gui-render/src/render/gpu_text.rs": "dd02a38a7ecec6440ff5fa7a8be81fb95e08c23f20ee57bf62682a0b6c8e4160",
+    "crates/gui-render/src/render/scene.rs": "7bb6b27bac51d4e536bf8f739788a5a96e48df23205684723f01034a314d6669",
+    "crates/gui-render/src/render/frame_preparation.rs": "399c475e8429c4c3ea5dab63342f59b9f15dd783d29f66f488c2eaa6b02c79e3",
+    "crates/gui-render/src/render/gpu_control_tests.rs": "a047549d74e81d28a9e544889b338d77b68fb12710f663807d7907ad4e9848f8"
+  },
+  "candidate_binary_sha256": "cbe1954316f1379ddcba836858dc367021a260b30e7750e1a1dda2921368c7ec"
+}

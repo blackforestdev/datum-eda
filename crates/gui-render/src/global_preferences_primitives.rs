@@ -472,7 +472,7 @@ fn control_rect(right: f32, y: f32, width: f32) -> RectPx {
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, feature = "visual"))]
 pub(super) fn push_rounded_rect_fill(
     quads: &mut Vec<Quad>,
     rect: RectPx,

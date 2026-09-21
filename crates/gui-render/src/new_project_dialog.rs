@@ -7,10 +7,13 @@ use crate::global_preferences_primitives::{
 };
 use datum_gui_protocol::{NewProjectFocus, NewProjectUnitsChoice};
 
+#[allow(clippy::too_many_arguments)]
 pub(super) fn render_new_project_dialog(
     state: &ReviewWorkspaceState,
     layout: &ShellLayout,
     native_window: bool,
+    controls: &mut ControlMeshCache,
+    scale: f32,
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
@@ -19,8 +22,7 @@ pub(super) fn render_new_project_dialog(
     if !dialog.open || !native_window {
         return;
     }
-    let mut controls = ControlMeshCache::default();
-    let mut painter = ControlPainter::new(quads, &mut controls, 1.0);
+    let mut painter = ControlPainter::new(quads, controls, scale);
     let quads = &mut painter;
     let window = RectPx {
         x: 0.0,

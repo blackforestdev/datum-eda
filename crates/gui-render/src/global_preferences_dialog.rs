@@ -14,10 +14,13 @@ use datum_gui_protocol::{
     GlobalPreferenceControlUi, GlobalPreferencesFocus, GlobalPreferencesNoticeUi,
 };
 
+#[allow(clippy::too_many_arguments)]
 pub(super) fn render_global_preferences_dialog(
     state: &ReviewWorkspaceState,
     layout: &ShellLayout,
     native_window: bool,
+    controls: &mut ControlMeshCache,
+    scale: f32,
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
@@ -28,6 +31,8 @@ pub(super) fn render_global_preferences_dialog(
             state,
             layout,
             native_window,
+            controls,
+            scale,
             quads,
             text,
             hits,
@@ -35,20 +40,21 @@ pub(super) fn render_global_preferences_dialog(
         return;
     }
 
-    render_preferences_dialog(dialog, layout, quads, text, hits);
+    render_preferences_dialog(dialog, layout, controls, scale, quads, text, hits);
 }
 
 /// Render the shared Project/Global dialog directly, without a workspace scene.
 pub(super) fn render_preferences_dialog(
     dialog: &datum_gui_protocol::GlobalPreferencesDialogState,
     layout: &ShellLayout,
+    controls: &mut ControlMeshCache,
+    scale: f32,
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
 ) {
     let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
-    let mut controls = ControlMeshCache::default();
-    let mut painter = ControlPainter::new(quads, &mut controls, 1.0);
+    let mut painter = ControlPainter::new(quads, controls, scale);
     render_preferences_dialog_scrolled(
         dialog,
         layout,
