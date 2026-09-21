@@ -1,0 +1,202 @@
+{
+  "binary_sha256": "526bf15feaa0deb1e94d4f2d662838b564aac44d3d891dbfc3d2eccf04e2efbb",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--open-global-preferences"
+      ],
+      "steps": [
+        {
+          "name": "top boundary",
+          "button": 4,
+          "repeat": 3,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987227, tv_nsec: 882251664 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987227, tv_nsec: 882550145 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987227, tv_nsec: 892711599 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987227, tv_nsec: 893019073 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987227, tv_nsec: 903043632 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987227, tv_nsec: 903412152 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "horizontal only",
+          "button": 6,
+          "repeat": 3,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987228, tv_nsec: 630744605 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987228, tv_nsec: 631031926 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987228, tv_nsec: 641267198 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987228, tv_nsec: 641620205 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987228, tv_nsec: 651427113 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987228, tv_nsec: 651666736 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "outside viewport",
+          "button": 5,
+          "repeat": 3,
+          "point": [
+            30,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987229, tv_nsec: 380126391 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987229, tv_nsec: 380421547 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987229, tv_nsec: 390361630 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987229, tv_nsec: 390627441 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987229, tv_nsec: 400645450 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987229, tv_nsec: 400907863 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "changing down",
+          "button": 5,
+          "repeat": 1,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987230, tv_nsec: 126351018 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987230, tv_nsec: 126595377 }] window event WindowId(12582917) mouse wheel"
+          ]
+        }
+      ],
+      "passed": false,
+      "error": "('changing down', {'12582916': 1, '12582917': 2}, {'12582916': 1, '12582917': 2})"
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--open-project-preferences"
+      ],
+      "steps": [
+        {
+          "name": "top boundary",
+          "button": 4,
+          "repeat": 3,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987236, tv_nsec: 994744249 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987236, tv_nsec: 994839490 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987237, tv_nsec: 5069759 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987237, tv_nsec: 5336911 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987237, tv_nsec: 15256726 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987237, tv_nsec: 15488159 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "horizontal only",
+          "button": 6,
+          "repeat": 3,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987237, tv_nsec: 738712465 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987237, tv_nsec: 739180544 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987237, tv_nsec: 748758066 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987237, tv_nsec: 748942853 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987237, tv_nsec: 758977550 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987237, tv_nsec: 759096540 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "outside viewport",
+          "button": 5,
+          "repeat": 3,
+          "point": [
+            30,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 5
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987238, tv_nsec: 488029738 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987238, tv_nsec: 488331063 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987238, tv_nsec: 498616824 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987238, tv_nsec: 498846092 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987238, tv_nsec: 508499452 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987238, tv_nsec: 508740389 }] window event WindowId(12582917) mouse wheel"
+          ]
+        }
+      ],
+      "passed": false,
+      "error": "('outside viewport', {'12582916': 1, '12582917': 2}, {'12582916': 1, '12582917': 5})"
+    }
+  ]
+}

@@ -5033,11 +5033,12 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "partial production adoption: both actual Preferences MouseWheel adapters call scroll_preferences_window, which invalidates only the selected surface through NativeFrameCoordinator when scroll_wheel changes offset. Exact native changing-wheel scenario and broadcast-redraw negative replay remain unexecuted; other local-input evidence does not substitute for them.",
+        "status": "Partial: both actual native Preferences event adapters verified for changing line-wheel locality, top/bottom/horizontal/header no-op and immediate reversal with exact event delivery and completed damage. Both recipes fail subsequent synthetic-close cleanup; fractional pixels remain component-only, prescribed negative controls and independent visible final-state/backend/scale qualification remain open.",
         "id": "proof_hp11_01",
         "positive": "Changing wheel in each actual Preferences adapter with other hosts open",
         "negative_control": "Broadcast redraw",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "native_wheel_evidence": "docs/reviews/gui-performance/implementation/S1/preferences-native-wheel/receipt.json"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/HP11-01/result.json",
       "acceptance_rule": "Only owning host prepares/submits",
@@ -5084,11 +5085,12 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "partial component proof: executed native_wheel_preserves_fractional_pixels_and_pane_locality covers fractional pixels, bounds, locality and immediate reversal through the production wheel adapter helper. Real per-Preferences event-adapter/native boundary/horizontal-no-op/fractional-reversal scenarios and negative controls remain open.",
+        "status": "Partial: both actual native Preferences event adapters verified for changing line-wheel locality, top/bottom/horizontal/header no-op and immediate reversal with exact event delivery and completed damage. Both recipes fail subsequent synthetic-close cleanup; fractional pixels remain component-only, prescribed negative controls and independent visible final-state/backend/scale qualification remain open.",
         "id": "proof_hp11_02",
         "positive": "Boundary/horizontal no-op then fractional reverse",
         "negative_control": "Request no-op frame or accumulate boundary debt",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "native_wheel_evidence": "docs/reviews/gui-performance/implementation/S1/preferences-native-wheel/receipt.json"
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/HP11-02/result.json",
       "acceptance_rule": "Zero content frame at true no-op; all deltas/final state retained and reversal immediate",
@@ -23682,7 +23684,7 @@
       },
       "remaining_S1_proof_examples": [
         "LF-04 now has four-host X11 repeated minimize/restore positive evidence; remaining native Wayland, full suspend/occlusion and prescribed negative-control/accounting proof remains open (see s1_minimization_work).",
-        "Exact actual Preferences wheel/no-op/reversal adapter scenarios and negative controls (HP11-01/02).",
+        "HP11-01/02 now have both Preferences native line-wheel/locality/no-op/reversal predicates; fractional native input, prescribed negative controls and independent final-state qualification remain open (s1_native_wheel_work).",
         "Changed surface lifetime/admission composition: competing host configuration, stale callback/close and bounded outstanding resources (SH-07/08/09, LF-07/13)."
       ],
       "disposition": "Read-only implementation reconciliation plus corrections to stale evidence labels. No new test/build was run, no code changed, and no native/resource or implementation milestone is declared complete. Historical receipts/limits remain intact; resize stays nonblocking."
@@ -24317,5 +24319,127 @@
       "python3 queue_admission_healthy.py"
     ],
     "environment": "Existing X11/Xwayland desktop and /tmp/pm045-readiness-x11 per-host fixtures; exact native launch commands and environment in scripts/results; GPU measurement disabled; EDA_CLI_BIN pinned; existing hold-until-retry backend callback-publication fault only."
+  },
+  "s1_native_wheel_work": {
+    "status": "Native wheel positive predicates verified on existing production code; entire recipes fail synthetic-close cleanup; HP11-01/02 remain partial",
+    "source_commit": "851cf3ac3ab738c725c4a9bf3937003e1ece0d16",
+    "binary_sha256": "526bf15feaa0deb1e94d4f2d662838b564aac44d3d891dbfc3d2eccf04e2efbb",
+    "source_sha256": {
+      "crates/gui-app/src/global_preferences_window.rs": "a84ceb6f3034b896ff54a0267936d850d3b7b1a1e4c1a8541da3357ee8fee164",
+      "crates/gui-app/src/project_preferences_window.rs": "87f559f285afb16058779cf51ffc7916bbf7c82a06663db7a4fc2f75e1dac2b1",
+      "crates/gui-app/src/native_frame_coordinator.rs": "37aa5cd16969231da2e64a38ecd74ad2ae6fa5fbc814b5ade8ce749efd2123c9",
+      "crates/gui-render/src/global_preferences_dialog.rs": "85d896055b3a5ba62094a1e09ad6864a7e49b40a6b57c5f989567cc3eb60efed",
+      "crates/gui-render/src/render/preferences_rows.rs": "0afe1a8576195027da483d454f1c9d63c7fc63c6ba65057e527737e66f7d468b",
+      "crates/gui-viewport/src/scroll.rs": "67dec285c9687a8e8e1ddf75aea7c69176d54bc0b0220bcee3898068d896d2d5"
+    },
+    "production_consumers_verified": [
+      "GLOBAL",
+      "PROJECT"
+    ],
+    "production_path": "Actual native MouseWheel event in each Preferences adapter -> App::scroll_preferences_window -> ScrollViewport::wheel -> owning Surface invalidation and NativeFrameCoordinator. No Main presentation from any tested wheel sequence.",
+    "production_changes": "None in this verification slice. Existing shared migration verified; no additional consumers or competing paths retired.",
+    "observations": {
+      "GLOBAL": [
+        {
+          "scenario": "top boundary",
+          "native_wheel_events": 6,
+          "main_presentations": 0,
+          "dialog_presentations": 0
+        },
+        {
+          "scenario": "horizontal only",
+          "native_wheel_events": 6,
+          "main_presentations": 0,
+          "dialog_presentations": 0
+        },
+        {
+          "scenario": "outside viewport",
+          "native_wheel_events": 6,
+          "main_presentations": 0,
+          "dialog_presentations": 0
+        },
+        {
+          "scenario": "changing down",
+          "native_wheel_events": 2,
+          "main_presentations": 0,
+          "dialog_presentations": 1
+        },
+        {
+          "scenario": "down to bottom",
+          "native_wheel_events": 80,
+          "main_presentations": 0,
+          "dialog_presentations": 3
+        },
+        {
+          "scenario": "bottom boundary",
+          "native_wheel_events": 6,
+          "main_presentations": 0,
+          "dialog_presentations": 0
+        },
+        {
+          "scenario": "immediate reversal",
+          "native_wheel_events": 2,
+          "main_presentations": 0,
+          "dialog_presentations": 1
+        }
+      ],
+      "PROJECT": [
+        {
+          "scenario": "top boundary",
+          "native_wheel_events": 6,
+          "main_presentations": 0,
+          "dialog_presentations": 0
+        },
+        {
+          "scenario": "horizontal only",
+          "native_wheel_events": 6,
+          "main_presentations": 0,
+          "dialog_presentations": 0
+        },
+        {
+          "scenario": "outside viewport",
+          "native_wheel_events": 6,
+          "main_presentations": 0,
+          "dialog_presentations": 0
+        },
+        {
+          "scenario": "changing down",
+          "native_wheel_events": 2,
+          "main_presentations": 0,
+          "dialog_presentations": 1
+        },
+        {
+          "scenario": "down to bottom",
+          "native_wheel_events": 80,
+          "main_presentations": 0,
+          "dialog_presentations": 4
+        },
+        {
+          "scenario": "bottom boundary",
+          "native_wheel_events": 6,
+          "main_presentations": 0,
+          "dialog_presentations": 0
+        },
+        {
+          "scenario": "immediate reversal",
+          "native_wheel_events": 2,
+          "main_presentations": 0,
+          "dialog_presentations": 2
+        }
+      ]
+    },
+    "prior_failed_attempts": {
+      "initial": "Used wide-layout search/outside coordinates at 760px, where production chrome switches to narrow layout. Global search was not entered; Project alleged outside point was inside rows. No product defect inferred.",
+      "narrow": "Correct layout coordinates, but fixed delay sampled a late prior-burst Global presentation during the next boundary check; trace contains in-progress frame. Project wheel predicates passed but protocol-close focus wait failed.",
+      "settled": "Waits for exact native event deliveries and completed coordinator damage before counts. All 14 per-host wheel predicates pass, then synthetic Alt+F4 reaches application as keyboard events without CloseRequested; both full recipes report failure and controlled test termination follows."
+    },
+    "limits": [
+      "No complete test-suite pass is claimed for these native recipes; cleanup failures retained.",
+      "Native line-wheel/horizontal delivery only. Fractional pixel preservation remains component-tested in native_wheel_preserves_fractional_pixels_and_pane_locality, not newly native-qualified.",
+      "Presentation counters and completed damage prove application work attribution, not independent displayed-pixel correctness or exact scroll offset.",
+      "Prescribed broadcast/no-op negative replay, all supported backend/scale rows and complete HP11/S1 qualification remain open. No numerical throughput/latency or resize acceptance."
+    ],
+    "environment": "Existing X11 on KDE Wayland/Xwayland; native 760x570 extent; Global search unit in narrow search band (400,118); Project existing Units rows; body (450,260), header control (450,20). Exact commands/flags in recipes/results; EDA_CLI_BIN pinned; GPU measurement disabled; no backend fault injection.",
+    "verification": "No Rust edit or rebuild. Native binary matches existing 851cf3ac release, previously passing 374 app tests and workspace Clippy. Existing global drift failures unchanged; targeted documentation gates required."
   }
 }
