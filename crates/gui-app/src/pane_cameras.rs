@@ -111,6 +111,14 @@ impl PaneCameras {
         self.warm.retain(|id, _| live.contains(id));
     }
 
+    /// Retire the old coordinate-space identity even when the new content has
+    /// no resolved scene yet. Resolution may initialize its camera later.
+    pub(crate) fn retarget(&mut self, pane: PaneId, content: PaneContent) {
+        if self.warm.get(&pane).is_some_and(|(old, _)| *old != content) {
+            self.warm.remove(&pane);
+        }
+    }
+
     /// Reset the store to a single focused leaf with the given active camera —
     /// used when a preset replaces the whole tree with fresh ids.
     pub(crate) fn reset(&mut self, focused: PaneId, content: PaneContent, active: CameraState) {
@@ -270,6 +278,34 @@ mod tests {
         assert_eq!(cameras.camera(closed, PaneContent::Board), None);
         assert_eq!(cameras.camera(survivor, PaneContent::Board), Some(active));
         assert_eq!(cameras.warm.len(), 1);
+    }
+
+    #[test]
+    fn unresolved_retarget_retires_old_identity_and_preserves_other_warm_panes() {
+        let changed = PaneId(1);
+        let survivor = PaneId(2);
+        let mut cameras = PaneCameras::new(changed, PaneContent::Board, cam(3.5));
+        cameras.inherit(survivor, PaneContent::Board, cam(0.75));
+        cameras.retarget(changed, PaneContent::Board);
+        assert_eq!(cameras.camera(changed, PaneContent::Board), Some(cam(3.5)));
+        cameras.retarget(changed, PaneContent::Schematic);
+        assert_eq!(cameras.camera(changed, PaneContent::Board), None);
+        assert_eq!(cameras.camera(changed, PaneContent::Schematic), None);
+        assert_eq!(
+            cameras.camera(survivor, PaneContent::Board),
+            Some(cam(0.75))
+        );
+        // Rebinding back to Board initializes a new identity, rather than
+        // reviving a hidden entry from before the unresolved content change.
+        cameras.retarget(changed, PaneContent::Board);
+        assert_eq!(
+            *cameras.entry_or_insert_with(changed, PaneContent::Board, fit),
+            fit()
+        );
+        assert_eq!(
+            cameras.camera(survivor, PaneContent::Board),
+            Some(cam(0.75))
+        );
     }
 
     #[test]

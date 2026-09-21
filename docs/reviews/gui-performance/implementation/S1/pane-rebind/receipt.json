@@ -1,0 +1,89 @@
+{
+  "status": "production camera identity rebind corrected and bounded native replay passed",
+  "selection": {
+    "baseline": "5fdcdcce11a556120f7589c7c0237d9024428139",
+    "requirement": "GPI-S1 SH-11 / PM023 camera identity / PM045 E02",
+    "defect": "Runtime only invalidates mismatched camera identity when focused_viewport resolves. Unresolved content retains the old bound Board entry; earlier native replay returned that old zoom on Board rebind, unlike resolved content replacement.",
+    "scope": [
+      "crates/gui-app/src/pane_cameras.rs",
+      "crates/gui-app/src/runtime_camera_pane.rs"
+    ],
+    "baseline_evidence": "docs/reviews/gui-performance/implementation/S1/pane-close/native/receipt.json",
+    "proof": [
+      "retarget removes old identity without requiring resolved camera; unrelated pane and same-content bindings stay warm",
+      "native menu replay restores retargeted Board at initial framing while survivor retains exact camera",
+      "app tests, Clippy, release build"
+    ],
+    "limits": [
+      "No new policy for unresolved content; commands remain unavailable and no sibling fallback introduced",
+      "No numeric latency/resource acceptance or resolved schematic proof"
+    ]
+  },
+  "source_sha256": {
+    "crates/gui-app/src/pane_cameras.rs": "4ffc98713d6fef2b255172c0d9b7c9d4687d40aa3a7389312f5e245ddbd2ce0d",
+    "crates/gui-app/src/runtime_camera_pane.rs": "e246460cc4e38a96266ee30e3bb5451ff02267d6d0921f329ab342f1c8ecb188"
+  },
+  "binary_sha256": "a10af32d2a34f5eca7c04c5e5c888edbb02a81ee6f1c755f4715794d95393baf",
+  "production_consumers": [
+    "Main Board/Schematic/Revision pane content rebind through shared PaneCameras owner"
+  ],
+  "production_entry": "View Fill Pane -> Runtime::pane_set_focused_content -> PaneCameras::retarget after outgoing active-camera transfer and before optional viewport resolution",
+  "retired_path": "resolution-dependent retirement of mismatched camera identity",
+  "verification": {
+    "app": "362 passed, 0 failed, 9 ignored; visual integration ignored",
+    "component": "same-content binding stays warm; unresolved retarget removes old entry without initializing another; sibling camera unchanged; Board return initializes fit",
+    "native": {
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--open-menu",
+        "View"
+      ],
+      "old_initial_and_rebound_cameras": [
+        {
+          "center_x_nm": 151634208.0,
+          "center_y_nm": 95122896.0,
+          "zoom": 1.0
+        },
+        {
+          "center_x_nm": 151634208.0,
+          "center_y_nm": 95122896.0,
+          "zoom": 1.2000000476837158
+        }
+      ],
+      "new_initial_and_rebound_cameras": [
+        {
+          "center_x_nm": 151634208.0,
+          "center_y_nm": 95122896.0,
+          "zoom": 1.0
+        },
+        {
+          "center_x_nm": 151634208.0,
+          "center_y_nm": 95122896.0,
+          "zoom": 1.0
+        }
+      ],
+      "survivor": {
+        "center_x_nm": 151634208.0,
+        "center_y_nm": 95122896.0,
+        "zoom": 1.440000057220459
+      },
+      "final_focus_and_close": "surviving pane Editor focus; exit 0"
+    },
+    "clippy": "all app targets -D warnings passed",
+    "release": "fresh guarded offline release passed",
+    "gates": "source health, dependency authority, traceability, spec governance, whitespace"
+  },
+  "failed_attempt": "early-check preserves candidate run whose script inspected View menu before its native click was delivered. Final runner waits for input receipt and a newer presentation.",
+  "limits": [
+    "Baseline native receipt demonstrates prior binding behavior; not an isolated historical C01 defect-injection replay or numerical performance comparison.",
+    "Schematic was unresolved placeholder, not resolved schematic performance qualification. Document replacement, wider consumers/backends and resource budgets remain open.",
+    "Native action trace observes live camera state, not hidden allocation retirement or independently displayed pixels.",
+    "No dependency/license or new view mechanism. PM023 identity and PM045 E02 govern; S1 remains partial and resize exclusions unchanged."
+  ]
+}

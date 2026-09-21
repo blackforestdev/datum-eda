@@ -328,8 +328,9 @@ impl Runtime {
                 (None, None) => {}
             }
         }
-        // Touch the retargeted pane with its new identity. If it previously held a
-        // different surface, `PaneCameras` discards that incompatible camera.
+        // Retire the old binding after stashing the outgoing active camera,
+        // independently of whether the new content has a resolved viewport.
+        self.pane_cameras.retarget(retargeted_pane, content);
         if let Some(route) = self.focused_viewport() {
             let fit = CameraState::fit_to_bounds(&route.bounds);
             if !route.active_board {
