@@ -275,24 +275,12 @@ impl GlobalPreferencesWindowSurface {
         }
         if self.prepared.is_none() {
             if new_project {
-                let mut workspace = runtime.workspace().clone();
-                workspace.ui.global_preferences.open = false;
-                self.retained = Some(RetainedScene::from_workspace_for_surface(
-                    &workspace,
+                self.retained = Some(RetainedScene::empty());
+                self.prepared = Some(self.renderer.prepare_native_new_project(
+                    &runtime.workspace().ui.new_project,
                     self.config.width,
                     self.config.height,
                     self.scale_factor,
-                ));
-                self.prepared = Some(self.renderer.prepare_workspace_with_terminal_renderer(
-                    &workspace,
-                    self.config.width,
-                    self.config.height,
-                    self.scale_factor,
-                    runtime.camera,
-                    self.retained.as_ref().expect("retained scene initialized"),
-                    &[],
-                    None,
-                    true,
                 ));
             } else {
                 let dialog = if project_preferences {

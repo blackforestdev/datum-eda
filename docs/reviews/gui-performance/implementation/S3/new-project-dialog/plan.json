@@ -1,0 +1,18 @@
+{
+  "baseline": "f2072f5e14a96f512ec545ba34a87b1f015e47c4",
+  "paths": {
+    "crates/gui-render/src/new_project_dialog.rs": "7758018e6e74e8dfc14cfab79be11f076b242d91fc0291fd54003f98d93fbec2",
+    "crates/gui-render/src/global_preferences_dialog.rs": "4f6cd6e893e902464fb4d64b96c178fb311ef9a8ab8b7b2f1bb8e593c6fd6ddf",
+    "crates/gui-render/src/render/preferences_scene.rs": "5521b4b612bfbcb6552e5112afe830452fad9fa2c7420feda6abf330af2f2c87",
+    "crates/gui-app/src/global_preferences_window.rs": "b24a5c02b67acadfa25cfd19519885f957b2e9dd963835d22f37222d989252c5",
+    "crates/gui-render/src/render/gpu_control_tests.rs": "a047549d74e81d28a9e544889b338d77b68fb12710f663807d7907ad4e9848f8"
+  },
+  "scope": "NEW default native preparation, shared dialog-only scene envelope; unchanged form painter and authority",
+  "proof": [
+    "dialog payload/hit parity against old full preparation at 1x and 1.5x",
+    "real GPU pixel parity and retained controls",
+    "renderer tests",
+    "release build and native host input smoke"
+  ],
+  "limits": "No S3 exit, complete native/backend/scale or resource acceptance"
+}

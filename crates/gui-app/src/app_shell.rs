@@ -107,21 +107,19 @@ impl App {
         }
     }
 
-    /// Workspace/terminal/console changes do not change either Preferences
-    /// dialog's own state. New Project still projects a workspace backdrop until
-    /// its dedicated S3 renderer migration, so it remains an actual dependent.
+    /// Workspace/terminal/console changes do not change native dialog content.
     pub(super) fn request_workspace_redraw(&mut self) {
         self.request_main_redraw_if_needed();
+    }
+
+    pub(super) fn request_redraw_if_needed(&mut self) {
+        self.request_workspace_redraw();
         if let (Some(surface), Some(window)) =
             (&mut self.new_project_surface, &self.new_project_window)
         {
             surface.invalidate();
             self.frames.invalidate(window);
         }
-    }
-
-    pub(super) fn request_redraw_if_needed(&mut self) {
-        self.request_workspace_redraw();
         if let (Some(surface), Some(window)) = (
             &mut self.global_preferences_surface,
             &self.global_preferences_window,

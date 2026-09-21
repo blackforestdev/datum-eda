@@ -7,9 +7,37 @@ use crate::global_preferences_primitives::{
 };
 use datum_gui_protocol::{NewProjectFocus, NewProjectUnitsChoice};
 
+impl Renderer {
+    /// Compose only the native form using the renderer's shared control owner.
+    pub fn prepare_native_new_project(
+        &mut self,
+        dialog: &datum_gui_protocol::NewProjectDialogState,
+        width: u32,
+        height: u32,
+        scale_factor: f32,
+    ) -> PreparedScene {
+        let scale = scale_factor.max(0.01);
+        let layout = ShellLayout::for_surface(width, height, scale, None);
+        let mut quads = Vec::new();
+        let mut text = Vec::new();
+        let mut hits = Vec::new();
+        render_new_project_dialog(
+            dialog,
+            &layout,
+            true,
+            &mut self.control_meshes,
+            scale,
+            &mut quads,
+            &mut text,
+            &mut hits,
+        );
+        PreparedScene::from_dialog_parts(layout, quads, text, hits, scale)
+    }
+}
+
 #[allow(clippy::too_many_arguments)]
 pub(super) fn render_new_project_dialog(
-    state: &ReviewWorkspaceState,
+    dialog: &datum_gui_protocol::NewProjectDialogState,
     layout: &ShellLayout,
     native_window: bool,
     controls: &mut ControlMeshCache,
@@ -18,7 +46,6 @@ pub(super) fn render_new_project_dialog(
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
 ) {
-    let dialog = &state.ui.new_project;
     if !dialog.open || !native_window {
         return;
     }
