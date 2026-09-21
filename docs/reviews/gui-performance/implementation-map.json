@@ -1284,7 +1284,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial: production pane closure now uses shared focus transition then prunes camera/grid stores; component proof preserves surviving warm state and releases closed ids. Complete native split/rebind/close camera/focus qualification remains open.",
+        "status": "partial native/component proof: real View menu split, duplicate Board zoom/focus, content rebind and close preserve surviving camera and final focus; stores release closed ids in component tests. Native hidden-store retirement, cold-rebind identity, resolved schematic and broader qualification remain open.",
         "id": "proof_sh_11",
         "positive": "Pane split/content rebind/close with warm other cameras",
         "negative_control": "Reuse camera solely by document or reset every camera",
@@ -1340,7 +1340,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S1/pane-close/receipt.json"
+        "docs/reviews/gui-performance/implementation/S1/pane-close/receipt.json",
+        "docs/reviews/gui-performance/implementation/S1/pane-close/native/receipt.json"
       ]
     },
     {
@@ -23878,6 +23879,23 @@
       "SH-11 and S1 remain partial; existing preset reset and content mismatch semantics preserved.",
       "No dependency/license changes, new cache, editor mechanism or visual design. Resize CPU/temporal exclusions unchanged."
     ],
-    "receipt": "docs/reviews/gui-performance/implementation/S1/pane-close/receipt.json"
+    "receipt": "docs/reviews/gui-performance/implementation/S1/pane-close/receipt.json",
+    "native_followup": {
+      "receipt": "docs/reviews/gui-performance/implementation/S1/pane-close/native/receipt.json",
+      "status": "bounded native production pane split/rebind/close state proof passed",
+      "observations": [
+        "Split retains original camera exactly",
+        "Duplicate Board takes distinct zoom and focus changes preserve both cameras",
+        "Retargeting one pane to Schematic and back preserves other Board camera exactly",
+        "Closing focused Board leaves one rendered pane, survivor exact camera and application focus Editor of surviving id",
+        "WM_DELETE_WINDOW exits normally"
+      ],
+      "limits": [
+        "Existing action snapshot enumerates live layout panes, not hidden camera/grid store entries. Closed-entry retirement remains component proof.",
+        "Retargeted pane camera after return is recorded but not accepted as a cold-rebind identity proof. Schematic content is an unresolved placeholder; resolved schematic qualification remains excluded.",
+        "No independent pixel capture, native negative-control replay, full consumer/backend matrix or CPU/latency/resource budget acceptance.",
+        "No production/dependency/license changes in this follow-up. S1 remains open and resize qualification remains nonblocking."
+      ]
+    }
   }
 }
