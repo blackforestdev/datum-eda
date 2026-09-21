@@ -4,7 +4,7 @@ pub(super) struct App {
     pub(super) args: GuiArgs,
     pub(super) device_recovery: native_device_recovery::DeviceRecovery,
     pub(super) frames: native_frame_coordinator::NativeFrameCoordinator,
-    pub(super) window: Option<&'static Window>,
+    pub(super) window: Option<std::sync::Arc<Window>>,
     pub(super) runtime: Option<Runtime>,
     pub(super) global_preferences_window: Option<std::sync::Arc<Window>>,
     pub(super) global_preferences_surface:
@@ -24,6 +24,22 @@ pub(super) struct App {
 }
 
 impl App {
+    pub(super) fn run(mut self, event_loop: EventLoop<()>) -> Result<()> {
+        let result = event_loop.run_app(&mut self).context("failed to run app");
+        // Observe ownership only for existing verbose native proof. This weak
+        // handle cannot keep the window alive during runtime/surface teardown.
+        let window = std::env::var_os("DATUM_GUI_VERBOSE_LOG")
+            .and_then(|_| self.window.as_ref().map(std::sync::Arc::downgrade));
+        drop(self);
+        if let Some(window) = window {
+            append_gui_diagnostic_line(format!(
+                "native Main window ownership released={}",
+                window.strong_count() == 0
+            ));
+        }
+        result
+    }
+
     pub(super) fn request_controlled_close(&mut self, event_loop: &ActiveEventLoop) {
         append_gui_diagnostic_line("close requested");
         if let Some(runtime) = &mut self.runtime {
@@ -78,7 +94,7 @@ impl App {
     pub(super) fn apply_cursor_icon(&mut self, icon: winit::window::CursorIcon) {
         if self.current_cursor != icon {
             self.current_cursor = icon;
-            if let Some(window) = self.window {
+            if let Some(window) = self.window.as_deref() {
                 window.set_cursor(icon);
             }
         }
@@ -86,7 +102,7 @@ impl App {
 
     /// Local damage must not invalidate independent native dialog surfaces.
     pub(super) fn request_main_redraw_if_needed(&mut self) {
-        if let Some(window) = self.window {
+        if let Some(window) = self.window.as_deref() {
             self.frames.invalidate(window);
         }
     }
@@ -126,7 +142,7 @@ impl App {
         if !self.args.kwin_lifecycle_smoke {
             return false;
         }
-        let Some(window) = self.window else {
+        let Some(window) = self.window.as_deref() else {
             return false;
         };
         match self.kwin_lifecycle_smoke_step {

@@ -37,10 +37,10 @@ impl App {
         // Hold chords require raw press/release events; focused rich-text fields
         // may opt into IME explicitly when that ownership model lands.
         window.set_ime_allowed(false);
-        let window_ref: &'static Window = Box::leak(Box::new(window));
+        let window_ref = std::sync::Arc::new(window);
         append_gui_diagnostic_line("runtime creation begin");
         let runtime = pollster::block_on(Runtime::new(
-            window_ref,
+            window_ref.clone(),
             launch_state,
             self.args.visual_scale_factor,
             self.terminal_event_proxy.clone(),
@@ -54,7 +54,7 @@ impl App {
             runtime.surface_transaction.recovery.clone(),
         );
         self.runtime = Some(runtime);
-        self.window = Some(window_ref);
+        self.window = Some(window_ref.clone());
         window_ref.set_visible(true);
         append_gui_diagnostic_line("window visible");
         self.request_redraw_if_needed();
@@ -97,7 +97,7 @@ impl App {
                 || self.frames.manual_retry(window_id))
         {
             for window in [
-                self.window,
+                self.window.as_deref(),
                 self.global_preferences_window.as_deref(),
                 self.project_preferences_window.as_deref(),
                 self.new_project_window.as_deref(),
@@ -138,7 +138,7 @@ impl App {
         else {
             return;
         };
-        if let Some(window) = self.window
+        if let Some(window) = self.window.as_deref()
             && window.id() != window_id
         {
             return;
@@ -171,7 +171,7 @@ impl App {
                 if let Some(runtime) = &mut self.runtime
                     && runtime.handle_terminal_ime(&ime)
                 {
-                    if let Some(window) = self.window {
+                    if let Some(window) = self.window.as_deref() {
                         let (x, y, width, height) = runtime.terminal_ime_cursor_rect();
                         window.set_ime_cursor_area(
                             winit::dpi::PhysicalPosition::new(x, y),

@@ -9,10 +9,12 @@ pub(super) type Bundle = (
     wgpu::Queue,
 );
 
-pub(super) async fn create(window: &'static Window) -> Result<Bundle> {
+pub(super) async fn create(window: std::sync::Arc<Window>) -> Result<Bundle> {
     append_gui_diagnostic_line("wgpu instance create begin");
     let instance = gui_runtime_support::diagnostic_instance();
-    let surface = instance.create_surface(window).context("create surface")?;
+    let surface = instance
+        .create_surface(window.clone())
+        .context("create surface")?;
     append_gui_diagnostic_line("wgpu request adapter begin");
     let adapter = instance
         .request_adapter(&wgpu::RequestAdapterOptions {
@@ -22,7 +24,7 @@ pub(super) async fn create(window: &'static Window) -> Result<Bundle> {
         })
         .await
         .context("request adapter")?;
-    gui_runtime_support::log_surface_identity(window, &adapter);
+    gui_runtime_support::log_surface_identity(&window, &adapter);
     append_gui_diagnostic_line("wgpu request device begin");
     let adapter_format_features =
         wgpu::Features::TEXTURE_ADAPTER_SPECIFIC_FORMAT_FEATURES & adapter.features();

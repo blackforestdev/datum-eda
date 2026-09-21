@@ -1,0 +1,371 @@
+{
+  "status": "Default Main window lifetime migrated to owned references; native release observed; full lifecycle qualification remains partial",
+  "production_consumers_migrated": {
+    "MAIN": "App, Runtime, initial surface and asynchronous device replacement own Arc<Window>; ordinary dispatch/rendering borrows",
+    "GLOBAL": "Parent-window adapter borrows Main owned handle; existing auxiliary Arc unchanged",
+    "PROJECT": "Parent-window adapter borrows Main owned handle; existing auxiliary Arc unchanged",
+    "NEW": "Parent-window adapter borrows Main owned handle; existing auxiliary Arc unchanged"
+  },
+  "shared_owner": "App::run -> App/Runtime/Surface ownership; native_gpu::create takes owned Arc for safe static surface lifetime",
+  "retired_paths": "Main Box::leak and permanent static native-window references. Existing verbose observation uses only Weak after dropping App; no observer retains window.",
+  "verification": {
+    "app": "368 passed, 0 failed, 9 ignored",
+    "clippy": "app datum-gui binary -D warnings passed",
+    "release": "fresh guarded offline release passed",
+    "native": "All four default host runs: final completion/three-second no-frame idle, close exit 0, Main strong references zero after App/runtime/surface teardown. Main device recovery: one replacement, workspace/terminal registry preserved, new queue epoch presentation; replay closes with strong references zero.",
+    "source_health": "passed; existing main.rs pretest ceiling ratcheted down one line to 1454",
+    "dependency": "authority check passed; no dependency or license changes"
+  },
+  "limits": [
+    "Main device first run recovered but close timed out with no close event; retained and not explained by this ownership fix. Replay passed using the same 200ms post-presentation wait; output directory label does not establish a longer settling condition. Existing dat-main-native-capture-delay-md9 remains unresolved.",
+    "Weak strong-count zero proves application Window ownership released; it does not measure driver/compositor allocation retirement or native display latency.",
+    "No simultaneous multi-host device failure, close during pending asynchronous device creation, full resource budgets or LF-07/S1 acceptance claimed.",
+    "Baseline close probe passed without debugger attachment; intermittent close failures were not reproduced there. Resize qualification remains separate/nonblocking."
+  ],
+  "receipt": "docs/reviews/gui-performance/implementation/S1/owned-main-window/result.json",
+  "selection": {
+    "baseline": "fa18171e",
+    "scope": "Default Main native window/surface lifetime ownership",
+    "gap": "Main window permanently leaked with Box::leak, unlike auxiliary Arc-owned windows.",
+    "change": "Main App/Runtime and async device creation use Arc<Window>; wgpu surface owns a cloned handle, ordinary calls borrow. Existing verbose teardown observes weak handle after App drops.",
+    "proof": "Full app regression and four native default-host close/idle checks; Main device recreation retains and then releases same owned window.",
+    "limits": "No claim this resolves intermittent absence of CloseRequested, GPU-driver memory lifetime or complete LF-07 qualification."
+  },
+  "binary_sha256": "cb9835ae3280a99a45c5648893ccc55d0c058c063ce94f02a444e4956bfc6a81",
+  "source_sha256": {
+    "crates/gui-app/src/app_frame.rs": "34d9f3be0bbec527cc7d7f75525ada6d22fad20e7f03f6e973a38016eb4999b5",
+    "crates/gui-app/src/app_native_events.rs": "e602bc896d16e042b01e3f3ccac3e8a605d0e6776fd522597d6255dd4c095aaa",
+    "crates/gui-app/src/app_shell.rs": "3553d33394f5858191823cc081e105a94ff4cf7ec59b8556e17b9f95bea2506c",
+    "crates/gui-app/src/global_preferences_window.rs": "a84ceb6f3034b896ff54a0267936d850d3b7b1a1e4c1a8541da3357ee8fee164",
+    "crates/gui-app/src/main.rs": "015b15ecf61e4af54c1844347c4961574beb368e5a4e4369f550110cc961699b",
+    "crates/gui-app/src/native_device_recovery.rs": "efef53583ac34282a47bdc5ce23b37106d72fe610f00decadea20f097c29b238",
+    "crates/gui-app/src/native_frame_adapters.rs": "fe69a13c831948e5efbcb132ac2d38897f316acdeb7d042dc82efc5acb447f2d",
+    "crates/gui-app/src/native_gpu.rs": "4df8353baa6d3aa82b91f074fab8dc72df2d1369c11ceeeeafcde249d70e9b59",
+    "crates/gui-app/src/native_queue_owner.rs": "9c04b92edfa3624013cb82b5bf54d7503a0520cc0311faacc2540bb30ab00d52",
+    "crates/gui-app/src/native_surface_transaction.rs": "5667c46e014aeccc2db5238d94e58758f3c74a978d6a780933841a451e425236",
+    "crates/gui-app/src/new_project_window.rs": "e187b51cf5444f4feb7f143ccac7e3a77da3253a566b1c8ab4496a9b2ed938d8",
+    "crates/gui-app/src/project_preferences_window.rs": "87f559f285afb16058779cf51ffc7916bbf7c82a06663db7a4fc2f75e1dac2b1",
+    "crates/gui-app/src/resize_smoke.rs": "7a645f17198d2b11f76b1c0161cd0c34fbd872bea627c7f25418e936640b6236",
+    "crates/gui-app/src/runtime_init.rs": "78f073042648030284a784a9cde059461f3d1ccb59dff092d3677df3dbf86956",
+    "crates/gui-app/src/runtime_present.rs": "2e429306a6ebbe7111b0dc68c85e3c97c9ce2f39fbc54b2d5e3d01344b8be364",
+    "crates/gui-app/src/runtime_state.rs": "0e0fb5c56f5ced728b55d4268a45c60d4df98a68c5089e1b61b9c74285ceabb4"
+  },
+  "runs": {
+    "default": [
+      {
+        "host": "MAIN",
+        "command": [
+          "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "--board",
+          "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+          "--window-size",
+          "1280x800"
+        ],
+        "final_present": {
+          "acquire_attempts": 3,
+          "acquired": 3,
+          "active": 0,
+          "configuration_generation": 2,
+          "configure_attempts": 2,
+          "configured_extent": [
+            1200,
+            800
+          ],
+          "discarded": 0,
+          "frame_submission_receipts_issued": 3,
+          "frame_submissions": 3,
+          "gpu_completed_through_receipt": 2,
+          "host": 1,
+          "last_frame_submission_receipt": 3,
+          "last_present_receipt": 3,
+          "presented": 3,
+          "queue_epoch": 1,
+          "reason": "present",
+          "wgpu_submission": "Some(SubmissionIndex { index: 3 })",
+          "window": "WindowId(12582916)"
+        },
+        "completion": [
+          1,
+          3,
+          3
+        ],
+        "idle_seconds": 3,
+        "presentations_before_idle": 3,
+        "presentations_after_idle": 3,
+        "main_presentations": 3,
+        "passed": true,
+        "exit": 0
+      },
+      {
+        "host": "GLOBAL",
+        "command": [
+          "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "--board",
+          "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+          "--window-size",
+          "1280x800",
+          "--open-global-preferences"
+        ],
+        "final_present": {
+          "acquire_attempts": 2,
+          "acquired": 2,
+          "active": 0,
+          "configuration_generation": 2,
+          "configure_attempts": 2,
+          "configured_extent": [
+            1200,
+            800
+          ],
+          "discarded": 0,
+          "frame_submission_receipts_issued": 3,
+          "frame_submissions": 2,
+          "gpu_completed_through_receipt": 2,
+          "host": 2,
+          "last_frame_submission_receipt": 3,
+          "last_present_receipt": 3,
+          "presented": 2,
+          "queue_epoch": 1,
+          "reason": "present",
+          "wgpu_submission": "Some(SubmissionIndex { index: 3 })",
+          "window": "WindowId(12582917)"
+        },
+        "completion": [
+          1,
+          3,
+          3
+        ],
+        "idle_seconds": 3,
+        "presentations_before_idle": 3,
+        "presentations_after_idle": 3,
+        "main_presentations": 1,
+        "passed": true,
+        "exit": 0
+      },
+      {
+        "host": "PROJECT",
+        "command": [
+          "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "--board",
+          "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+          "--window-size",
+          "1280x800",
+          "--open-project-preferences"
+        ],
+        "final_present": {
+          "acquire_attempts": 2,
+          "acquired": 2,
+          "active": 0,
+          "configuration_generation": 2,
+          "configure_attempts": 2,
+          "configured_extent": [
+            1200,
+            800
+          ],
+          "discarded": 0,
+          "frame_submission_receipts_issued": 3,
+          "frame_submissions": 2,
+          "gpu_completed_through_receipt": 2,
+          "host": 2,
+          "last_frame_submission_receipt": 3,
+          "last_present_receipt": 3,
+          "presented": 2,
+          "queue_epoch": 1,
+          "reason": "present",
+          "wgpu_submission": "Some(SubmissionIndex { index: 3 })",
+          "window": "WindowId(12582917)"
+        },
+        "completion": [
+          1,
+          3,
+          3
+        ],
+        "idle_seconds": 3,
+        "presentations_before_idle": 3,
+        "presentations_after_idle": 3,
+        "main_presentations": 1,
+        "passed": true,
+        "exit": 0
+      },
+      {
+        "host": "NEW",
+        "command": [
+          "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "--board",
+          "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+          "--window-size",
+          "1280x800",
+          "--open-new-project"
+        ],
+        "final_present": {
+          "acquire_attempts": 2,
+          "acquired": 2,
+          "active": 0,
+          "configuration_generation": 2,
+          "configure_attempts": 2,
+          "configured_extent": [
+            1200,
+            800
+          ],
+          "discarded": 0,
+          "frame_submission_receipts_issued": 3,
+          "frame_submissions": 2,
+          "gpu_completed_through_receipt": 2,
+          "host": 2,
+          "last_frame_submission_receipt": 3,
+          "last_present_receipt": 3,
+          "presented": 2,
+          "queue_epoch": 1,
+          "reason": "present",
+          "wgpu_submission": "Some(SubmissionIndex { index: 3 })",
+          "window": "WindowId(12582917)"
+        },
+        "completion": [
+          1,
+          3,
+          3
+        ],
+        "idle_seconds": 3,
+        "presentations_before_idle": 3,
+        "presentations_after_idle": 3,
+        "main_presentations": 1,
+        "passed": true,
+        "exit": 0
+      }
+    ],
+    "device-first": [
+      {
+        "host": "MAIN",
+        "command": [
+          "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "--board",
+          "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+          "--window-size",
+          "1280x800"
+        ],
+        "attempts": 1,
+        "commits": 1,
+        "workspace_and_terminal_registry_preserved": true,
+        "old_queue_epoch": 1,
+        "new_queue_epoch": 2,
+        "presented_window": "WindowId(12582916)",
+        "passed": false,
+        "error": "Command '['/home/bfadmin/Documents/datum-eda/target/release/datum-gui', '--board', '/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb', '--window-size', '1280x800']' timed out after 20 seconds"
+      }
+    ],
+    "device-replay": [
+      {
+        "host": "MAIN",
+        "command": [
+          "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "--board",
+          "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+          "--window-size",
+          "1280x800"
+        ],
+        "attempts": 1,
+        "commits": 1,
+        "workspace_and_terminal_registry_preserved": true,
+        "old_queue_epoch": 1,
+        "new_queue_epoch": 2,
+        "presented_window": "WindowId(12582916)",
+        "passed": true,
+        "exit": 0
+      }
+    ],
+    "baseline-close-probe": [
+      {
+        "host": "MAIN",
+        "command": [
+          "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+          "--board",
+          "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+          "--window-size",
+          "1280x800"
+        ],
+        "first_present": {
+          "acquire_attempts": 1,
+          "acquired": 1,
+          "active": 0,
+          "configuration_generation": 1,
+          "configure_attempts": 1,
+          "configured_extent": [
+            1333,
+            833
+          ],
+          "discarded": 0,
+          "frame_submission_receipts_issued": 1,
+          "frame_submissions": 1,
+          "gpu_completed_through_receipt": 0,
+          "host": 1,
+          "last_frame_submission_receipt": 1,
+          "last_present_receipt": 1,
+          "presented": 1,
+          "queue_epoch": 1,
+          "reason": "present",
+          "wgpu_submission": "Some(SubmissionIndex { index: 1 })",
+          "window": "WindowId(12582916)"
+        },
+        "observed_failure_seconds": 2.0001816749572754,
+        "presentations_while_failed": 1,
+        "final_present": {
+          "acquire_attempts": 2,
+          "acquired": 2,
+          "active": 0,
+          "configuration_generation": 2,
+          "configure_attempts": 2,
+          "configured_extent": [
+            1200,
+            800
+          ],
+          "discarded": 0,
+          "frame_submission_receipts_issued": 2,
+          "frame_submissions": 2,
+          "gpu_completed_through_receipt": 1,
+          "host": 1,
+          "last_frame_submission_receipt": 2,
+          "last_present_receipt": 2,
+          "presented": 2,
+          "queue_epoch": 1,
+          "reason": "present",
+          "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+          "window": "WindowId(12582916)"
+        },
+        "completion_after_retry": [
+          1,
+          2,
+          2
+        ],
+        "failed_resize_dispatched_without_submission": true,
+        "passed": true,
+        "exit": 0
+      }
+    ]
+  },
+  "artifacts_sha256": {
+    "baseline-close-probe/MAIN/native.log.gz": "3ca2d87f96ed0a89de3c85ce5dfe5ea3adc8d6da0cd8aef3385b745683c304f6",
+    "baseline-close-probe/MAIN/stderr.log.gz": "a1cb4ef54b4134dc6d3372ebc7d2c10a66acb5daf26d1c7ad364a4ff903e786e",
+    "baseline-close-probe/result.json.gz": "635cba8a2d3065cce6dc4980c56880dab93240109a51378c601e7232e3533c92",
+    "baseline-close-probe/runner.py.gz": "f8490c935ce3c743058e97e9eaa40ebb1f1161430d5e29d732112bf11bdb1873",
+    "build.log.gz": "5b2ff7f50ab2616eb4636fd434db649f912df7f9e5a12becd01c5c154dd9feb0",
+    "clippy.log.gz": "4c963fb92239a1f7ed3d5e08ad63cecc42ef5d54329397d458f35320b23878d1",
+    "default/GLOBAL/native.log.gz": "ba47ab9cd9d3c920ae88f1b2962de6f124b2bcad141061ecf8d5e28d39680685",
+    "default/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "default/MAIN/native.log.gz": "d084cae753d585fe5ae65080f93ecfb88b3bda97fdbb8ac423cca6be40762a41",
+    "default/MAIN/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "default/NEW/native.log.gz": "b058d45032752b53412b9b3b35fae343a452269e5d1971466a95ba269ecfc09d",
+    "default/NEW/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "default/PROJECT/native.log.gz": "e3e8f4ae83f44b8350b65c56afc71d9076b16f351aee2ab1cfbb88a7eb41ac67",
+    "default/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "default/result.json.gz": "79e318e841b83446da7a94352430ac2b8fb606e26d0a15657c5257f293426add",
+    "default/runner.py.gz": "6729b730a001fe61e96922a4882ba1f08c65c8e3e5619445dc3d655388ea859f",
+    "device-first/MAIN/native.log.gz": "596320086cf25d73ad6116a8bad27b3c4436ba22e9a3989c03ca01c65420c9ab",
+    "device-first/MAIN/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "device-first/result.json.gz": "80695be62960436c435a56fd60914478e53e1d3efa8fd7291459c9f75d97a99b",
+    "device-first/runner.py.gz": "9f56fafd1a31b0a7997fe2105b11acc7c4daf992823fba41dab8eb75e637c779",
+    "device-replay/MAIN/native.log.gz": "f0675aa5071794ad0af107f92811d46dbc73f5f13de6ec8179d6e07fcb14f748",
+    "device-replay/MAIN/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "device-replay/result.json.gz": "8f045daa4b0e8f65d71af7940fac73097d3051ecd187c98229df109ef3cb899a",
+    "device-replay/runner.py.gz": "04297c824bd09f874fd298fb883a2d7fccf722fcf95982f7d433326743fffc07",
+    "tests.log.gz": "8bfe8896339ffae5dc4e4a02629576cf5d82f31b9496b6d6a21b3c9dc357cdbe"
+  }
+}

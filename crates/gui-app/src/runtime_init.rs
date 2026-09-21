@@ -3,7 +3,7 @@ use super::*;
 
 impl Runtime {
     pub(super) async fn new(
-        window: &'static Window,
+        window: std::sync::Arc<Window>,
         launch_state: LaunchState,
         scale_factor_override: Option<f32>,
         wake: winit::event_loop::EventLoopProxy<()>,
@@ -47,7 +47,8 @@ impl Runtime {
             PaneContent::Revision(_) => camera,
         };
         let wgpu_started = std::time::Instant::now();
-        let (instance, surface, adapter, device, queue) = native_gpu::create(window).await?;
+        let (instance, surface, adapter, device, queue) =
+            native_gpu::create(window.clone()).await?;
         trace_startup_timing(format!(
             "wgpu init {}ms",
             wgpu_started.elapsed().as_millis()
@@ -67,13 +68,13 @@ impl Runtime {
         append_gui_diagnostic_line("renderer init begin");
         let mut renderer = Renderer::new(&device, &queue, config.format, msaa_samples);
         let measurements =
-            native_gpu_measurements::Host::new(&mut renderer, &device, &queue, window, None)?;
+            native_gpu_measurements::Host::new(&mut renderer, &device, &queue, &window, None)?;
         append_gui_diagnostic_line("renderer init end");
         trace_startup_timing(format!(
             "renderer init {}ms",
             renderer_started.elapsed().as_millis()
         ));
-        let surface_transaction = SurfaceTransaction::new(window, &device_health);
+        let surface_transaction = SurfaceTransaction::new(&window, &device_health);
         let mut runtime = Self {
             window,
             instance,

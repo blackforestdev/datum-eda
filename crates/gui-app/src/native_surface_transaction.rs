@@ -489,7 +489,7 @@ impl SurfaceTransaction {
 
 impl crate::App {
     pub(crate) fn sync_surface_drawability(&mut self) {
-        if let (Some(runtime), Some(window)) = (&mut self.runtime, self.window) {
+        if let (Some(runtime), Some(window)) = (&mut self.runtime, self.window.as_deref()) {
             runtime
                 .surface_transaction
                 .set_drawable(self.frames.is_drawable(window.id()));
@@ -522,7 +522,7 @@ impl crate::App {
         let mut next: Option<Instant> = None;
         let mut failed = Vec::new();
         for window in [
-            self.window,
+            self.window.as_deref(),
             self.global_preferences_window.as_deref(),
             self.project_preferences_window.as_deref(),
             self.new_project_window.as_deref(),
@@ -546,7 +546,7 @@ impl crate::App {
 
     pub(crate) fn cancel_native_host_gestures(&mut self, window: winit::window::WindowId) {
         self.frames.cancel_capture(window);
-        if self.window.is_some_and(|main| main.id() == window)
+        if self.window.as_ref().is_some_and(|main| main.id() == window)
             && let Some(runtime) = &mut self.runtime
         {
             runtime.pan_gesture.cancel();
