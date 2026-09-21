@@ -268,17 +268,20 @@ impl crate::App {
             }
         }
         for window in failed {
-            self.cancel_failed_host_gestures(window);
+            self.cancel_native_host_gestures(window);
         }
         next
     }
 
-    pub(crate) fn cancel_failed_host_gestures(&mut self, window: winit::window::WindowId) {
+    pub(crate) fn cancel_native_host_gestures(&mut self, window: winit::window::WindowId) {
+        self.frames.cancel_capture(window);
         if self.window.is_some_and(|main| main.id() == window)
             && let Some(runtime) = &mut self.runtime
         {
             runtime.pan_gesture.cancel();
             runtime.cancel_terminal_tab_drag();
+            // The host coordinator now consumes the cancelled gesture release.
+            runtime.terminal_tab_drag_release_suppressed = false;
             runtime.cancel_terminal_text_selection_drag();
             runtime.terminal_split_drag = None;
             runtime.divider_drag = None;

@@ -210,7 +210,7 @@ impl App {
             .into_iter()
             .flatten()
             {
-                self.cancel_failed_host_gestures(window);
+                self.cancel_native_host_gestures(window);
             }
             self.device_recovery.attempted = true;
             self.device_recovery.pending = Some(Pending {
