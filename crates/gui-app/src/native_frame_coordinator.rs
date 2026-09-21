@@ -45,6 +45,7 @@ struct Host {
     suppress_release: bool,
     extent: PhysicalSize<u32>,
     occluded: bool,
+    minimized: bool,
     restore_pending: bool,
     generation: u64,
     device_generation: u64,
@@ -112,6 +113,7 @@ impl NativeFrameCoordinator {
                 suppress_release: false,
                 extent,
                 occluded: false,
+                minimized: false,
                 restore_pending: false,
                 generation: self.generation,
                 device_generation,
@@ -126,7 +128,11 @@ impl NativeFrameCoordinator {
     }
 
     fn drawable(host: &Host, suspended: bool) -> bool {
-        !suspended && !host.occluded && host.extent.width != 0 && host.extent.height != 0
+        !suspended
+            && !host.occluded
+            && !host.minimized
+            && host.extent.width != 0
+            && host.extent.height != 0
     }
 
     /// Observe native visibility without applying, dropping or coalescing input.
@@ -153,11 +159,29 @@ impl NativeFrameCoordinator {
         if !changed {
             return;
         }
+        Self::visibility_changed(host, self.suspended);
+    }
+
+    pub(super) fn observe_minimized(&mut self, window: WindowId, minimized: bool) {
+        let Some(host) = self.hosts.get_mut(&window) else {
+            return;
+        };
+        if host.minimized == minimized {
+            return;
+        }
+        host.minimized = minimized;
+        Self::visibility_changed(host, self.suspended);
+        crate::append_gui_verbose_diagnostic_line(|| {
+            format!("native host {window:?} minimized {minimized}")
+        });
+    }
+
+    fn visibility_changed(host: &mut Host, suspended: bool) {
         host.damage = host
             .damage
             .checked_add(1)
             .expect("damage generation exhausted");
-        host.restore_pending = Self::drawable(host, self.suspended);
+        host.restore_pending = Self::drawable(host, suspended);
         host.recovery
             .borrow_mut()
             .set_drawable(host.restore_pending, Instant::now());
@@ -317,6 +341,7 @@ impl NativeFrameCoordinator {
                 host.occluded,
                 host.primary_down,
                 host.suppress_release,
+                host.minimized,
             )
         }) else {
             return;
@@ -326,6 +351,7 @@ impl NativeFrameCoordinator {
         host.occluded = previous.1;
         host.primary_down = previous.2;
         host.suppress_release = previous.3;
+        host.minimized = previous.4;
         host.recovery
             .borrow_mut()
             .set_drawable(Self::drawable(host, self.suspended), Instant::now());

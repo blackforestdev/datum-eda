@@ -80,6 +80,15 @@ impl App {
         {
             append_gui_verbose_diagnostic_line(|| format!("window event {window_id:?} {label}"));
         }
+        if matches!(
+            event,
+            WindowEvent::Focused(_)
+                | WindowEvent::Occluded(_)
+                | WindowEvent::Resized(_)
+                | WindowEvent::RedrawRequested
+        ) {
+            self.observe_native_minimization(window_id);
+        }
         self.frames.window_event(window_id, &event);
         if self
             .runtime
