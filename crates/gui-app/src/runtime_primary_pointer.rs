@@ -96,10 +96,9 @@ impl Runtime {
                 focus_changed = true;
             }
         }
-        let prepared_started = std::time::Instant::now();
+        let hit_started = std::time::Instant::now();
         let prepared_target = self.presented_hits.hit_test(x, y).cloned();
-        let world_point = self.prepared_scene().world_point_at_screen(x, y);
-        let prepared_elapsed = prepared_started.elapsed();
+        let hit_elapsed = hit_started.elapsed();
         if self.terminal_clipboard_menu_active()
             && !matches!(
                 prepared_target.as_ref(),
@@ -118,12 +117,18 @@ impl Runtime {
         }
         if let Some(target) = prepared_target {
             self.trace_click(format!(
-                "primary click ({x:.1}, {y:.1}) prepared target {target:?}; prepare {}ms; dock {:?}",
-                prepared_elapsed.as_millis(),
+                "primary click ({x:.1}, {y:.1}) presented target {target:?}; hit {}ms; dock {:?}",
+                hit_elapsed.as_millis(),
                 self.workspace().ui.active_dock_tab
             ));
             return self.select_hit_target(&target) || focus_changed;
         }
+        // Only a canvas click needs current world projection. Chrome dispatch
+        // above must not rebuild a dirty scene (including terminal snapshots)
+        // merely to compute an unused world point.
+        let prepared_started = std::time::Instant::now();
+        let world_point = self.prepared_scene().world_point_at_screen(x, y);
+        let prepared_elapsed = prepared_started.elapsed();
         if let Some((world_point, SceneSurface::Schematic)) = world_point {
             // UVT-004 resolves a schematic world point and symbol-region hit;
             // selection dispatch remains owned by the established session path.
