@@ -1,0 +1,513 @@
+{
+  "binary_sha256": "526bf15feaa0deb1e94d4f2d662838b564aac44d3d891dbfc3d2eccf04e2efbb",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--open-global-preferences"
+      ],
+      "steps": [
+        {
+          "name": "top boundary",
+          "button": 4,
+          "repeat": 3,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 6
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 6
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987405, tv_nsec: 486695892 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987405, tv_nsec: 486908753 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987405, tv_nsec: 496932122 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987405, tv_nsec: 497154951 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987405, tv_nsec: 507481737 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987405, tv_nsec: 507668188 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "horizontal only",
+          "button": 6,
+          "repeat": 3,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 6
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 6
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987405, tv_nsec: 989913006 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987405, tv_nsec: 990168076 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987406, tv_nsec: 10509933 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987406, tv_nsec: 10765697 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987406, tv_nsec: 11008527 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987406, tv_nsec: 11216091 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "outside viewport",
+          "button": 5,
+          "repeat": 3,
+          "point": [
+            450,
+            20
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 6
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 6
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987406, tv_nsec: 490794330 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987406, tv_nsec: 490883581 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987406, tv_nsec: 501007384 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987406, tv_nsec: 501325635 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987406, tv_nsec: 511310151 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987406, tv_nsec: 511680631 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "changing down",
+          "button": 5,
+          "repeat": 1,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 6
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 7
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987406, tv_nsec: 990479781 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987406, tv_nsec: 990677026 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "down to bottom",
+          "button": 5,
+          "repeat": 40,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 7
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 10
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987407, tv_nsec: 472651403 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987407, tv_nsec: 475240945 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 150509266 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 150693869 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 150860044 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 151025606 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 151189617 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 151353579 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 151532855 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 151696021 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 151859484 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 152022485 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 152186253 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 152349385 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 152512444 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 152675260 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 152838562 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 153001906 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 153165015 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 153327789 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 153490703 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 153659938 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 153824504 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 154030249 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 154199257 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 154405431 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 154602445 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 154828685 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 154996032 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 155161126 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 155352141 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 155516415 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 155679721 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 155842523 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 156016111 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 156178884 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 156341834 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 156504998 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 156667998 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 156830732 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 156993794 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 157156516 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 157318929 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 157481592 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 157643992 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 157806425 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 158001001 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 158175463 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 158338281 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 158501038 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 158663911 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 158826579 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 158988798 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 159151093 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 159313882 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 159476359 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 159643306 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 159791800 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 159940595 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 160089349 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 160242866 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 160391795 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 160540557 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 160689187 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 160838043 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 160986607 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 161135389 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 161284437 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 161433080 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 161581670 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 161730840 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 161879651 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 162044721 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 162198664 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 162347950 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 162496979 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 162645931 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 162794815 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 162943951 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987408, tv_nsec: 163092851 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "bottom boundary",
+          "button": 5,
+          "repeat": 3,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 10
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 10
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987409, tv_nsec: 487906099 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987409, tv_nsec: 488278256 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987409, tv_nsec: 498494166 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987409, tv_nsec: 498645123 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987409, tv_nsec: 508521567 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987409, tv_nsec: 508748757 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "immediate reversal",
+          "button": 4,
+          "repeat": 1,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 10
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 11
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987409, tv_nsec: 994158072 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987409, tv_nsec: 994422603 }] window event WindowId(12582917) mouse wheel"
+          ]
+        }
+      ],
+      "passed": false,
+      "error": "native predicate timeout or process exit None"
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--open-project-preferences"
+      ],
+      "steps": [
+        {
+          "name": "top boundary",
+          "button": 4,
+          "repeat": 3,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987428, tv_nsec: 921562 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987428, tv_nsec: 1196056 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987428, tv_nsec: 11315633 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987428, tv_nsec: 11604022 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987428, tv_nsec: 21553945 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987428, tv_nsec: 21798091 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "horizontal only",
+          "button": 6,
+          "repeat": 3,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987428, tv_nsec: 502923868 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987428, tv_nsec: 503244511 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987428, tv_nsec: 513021920 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987428, tv_nsec: 513314479 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987428, tv_nsec: 523410194 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987428, tv_nsec: 523701810 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "outside viewport",
+          "button": 5,
+          "repeat": 3,
+          "point": [
+            450,
+            20
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987429, tv_nsec: 2252727 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987429, tv_nsec: 2521094 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987429, tv_nsec: 12484285 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987429, tv_nsec: 12713644 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987429, tv_nsec: 22733226 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987429, tv_nsec: 22977943 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "changing down",
+          "button": 5,
+          "repeat": 1,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 2
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 3
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987429, tv_nsec: 506140893 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987429, tv_nsec: 506432876 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "down to bottom",
+          "button": 5,
+          "repeat": 40,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 3
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 7
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987429, tv_nsec: 985839647 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987429, tv_nsec: 986170859 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987429, tv_nsec: 996199379 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987429, tv_nsec: 998993755 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 511768772 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 511972690 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 512174282 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 512394616 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 512609738 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 512777616 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 512931278 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 513072572 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 513214609 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 513396958 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 513598272 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 513777892 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 513939754 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 514123035 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 514263023 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 514402740 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 514543014 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 514682899 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 514822784 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 514970353 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 515110500 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 515250754 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 515390091 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 515529887 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 515669539 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 515808806 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 515947745 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 516086773 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 516225249 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 516365145 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 516504170 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 516643236 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 516787094 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 516926896 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 517066632 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 517205512 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 517344834 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 517485206 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 517625121 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 517764305 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 517903509 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 518087718 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 518227899 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 518367752 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 518506667 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 518651564 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 518791133 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 518930663 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 519069835 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 519208666 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 519348176 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 519487807 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 519626730 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 519766063 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 519905139 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 520044257 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 520182874 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 520321570 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 520474643 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 520614236 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 520754185 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 520893297 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 521032315 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 521171427 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 521310104 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 521449233 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 521588022 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 521727056 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 521865571 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 522034997 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 522174890 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 522313986 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 522458471 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 522597847 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 522736916 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987430, tv_nsec: 522875725 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "bottom boundary",
+          "button": 5,
+          "repeat": 3,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 7
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 7
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987431, tv_nsec: 843172404 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987431, tv_nsec: 843418413 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987431, tv_nsec: 853813617 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987431, tv_nsec: 854209798 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987431, tv_nsec: 864053959 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987431, tv_nsec: 864284553 }] window event WindowId(12582917) mouse wheel"
+          ]
+        },
+        {
+          "name": "immediate reversal",
+          "button": 4,
+          "repeat": 1,
+          "point": [
+            450,
+            260
+          ],
+          "before": {
+            "12582916": 1,
+            "12582917": 7
+          },
+          "after": {
+            "12582916": 1,
+            "12582917": 9
+          },
+          "wheel_events": [
+            "[SystemTime { tv_sec: 1789987432, tv_nsec: 347714683 }] window event WindowId(12582917) mouse wheel",
+            "[SystemTime { tv_sec: 1789987432, tv_nsec: 513115940 }] window event WindowId(12582917) mouse wheel"
+          ]
+        }
+      ],
+      "passed": false,
+      "error": "native predicate timeout or process exit None"
+    }
+  ]
+}
