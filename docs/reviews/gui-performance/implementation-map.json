@@ -22708,5 +22708,63 @@
       "probe.py": "6ad757af3c8fafdb1909fe7f938706db6ceacb35917130afe30288efc386f8c8",
       "trace_probe.py": "0a65a8a860ed50ab5947a5e46021b65a84d642572b38486f16c70a43e15a571d"
     }
+  },
+  "s1_attachment_owner_work": {
+    "status": "default attachment reference ownership consolidated; complete retirement/accounting and S1 qualification remain open",
+    "baseline_commit": "07137540",
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_owner": "SurfaceAttachments holds each MSAA view together with normalized physical extent, format, sample count and stable (owner, allocation) identity. Full-frame and overlay ensure_msaa calls both delegate to it. Each Renderer recreation creates a new owner identity.",
+    "production_paths": [
+      "Runtime::render -> Renderer::render_with_submission -> full or overlay frame -> Renderer::ensure_msaa -> SurfaceAttachments::ensure",
+      "GlobalPreferencesWindowSurface::render (Global/Project/New) -> Renderer::render_with_submission -> full or overlay frame -> same attachment owner"
+    ],
+    "retired_paths": [
+      "Independent Renderer msaa_view and msaa_size fields",
+      "Diagnostic benchmark overwriting size metadata separately from its GPU view"
+    ],
+    "behavior": [
+      "Exact full key controls reuse; equal payload bytes with different extent cannot alias",
+      "View creation precedes replacement of the old reference; existing sample count and rendering passes remain unchanged",
+      "Nominal requested payload uses physical dimensions, format block bytes and samples with checked arithmetic; unsupported sizes/formats remain unknown",
+      "Existing verbose lifecycle channel associates snapshot owner/allocation with native host/window/queue epoch, including renderer-error exits; snapshot is explicitly a current renderer reference, not GPU retirement",
+      "Existing opt-in attachment cost experiment retains its bounded two-extent cache and forced replacement control using coherent attachment objects"
+    ],
+    "verification": {
+      "gpu": "Two focused tests passed, including real Vulkan texture allocation: twenty unchanged ensures reuse one identity; equal-byte different extent increments allocation; forced redundant replacement is detected. CPU checks cover key format/sample/extent and nominal bytes. This is component conformance, not full per-adapter negative qualification.",
+      "app": "344 passed, 0 failed, 8 ignored",
+      "build_clippy": "Fresh offline release and targeted app/renderer Clippy -D warnings pass",
+      "checks": "Dependency authority, source health and exact formatting pass"
+    },
+    "limits": [
+      "No new native trial after desktop input invalidated prior attempts; all-host routing is established by production call-site inventory, not a claim of newly qualified native consumers",
+      "GPU-completion-based retirement, close/device-teardown byte reconciliation and peak replacement capacity remain incomplete; API reference bytes are not driver residency or RSS",
+      "No overall ACC, LF-11, memory budget, static/temporal or S1 completion claim",
+      "Attempt to isolate native lifecycle tests using already-installed KWin virtual/Xwayland failed during startup with signal 11 before lifecycle actions. This used a prior diagnostic working binary, not this attachment candidate; no crash-cause attribution. Environment abandoned without dependency adoption or backend investigation."
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/attachment-owner",
+    "source_sha256": {
+      "crates/gui-render/src/render/gpu_surface.rs": "ea40e2f5ece3cd9eb4dde2b1a4c3620097c5e9a6b03341dd3b7f3742917b9cd7",
+      "crates/gui-render/src/render/renderer_state.rs": "b25d4a913d1cc7842fddd9998362f26a29b64581551e30cf707ebdeb0c286854",
+      "crates/gui-render/src/render/gpu_init.rs": "2aa0cf644c876051c328e5610a8bf2ebd35c06abeb756d05352c653f6434c060",
+      "crates/gui-render/src/render/attachment_cost_probe.rs": "66bdd10c70be42bb1a6e91e740f1ef247b1b76b60106157aa557687b35d6ba08",
+      "crates/gui-app/src/runtime_present.rs": "ae1c89c5b126fd7d64e82ec5bbf00142a2fe12157e37a5f8ec57eaea3666a58a",
+      "crates/gui-app/src/global_preferences_window.rs": "27f222bfb31c4b8ff8f0ac6ed640d6be0f914187d5449f4148d2bdde36ea8636",
+      "crates/gui-app/src/native_surface_transaction.rs": "bf2ce68af842bfd7de609701cf00219f87321486cee14bf58a039f8057516d34"
+    },
+    "release_binary_sha256": "5f1942965ce38d4128daef4f6d09a913876387a27d985fcf82dd1eca67709a21",
+    "artifacts_sha256": {
+      "app.log.gz": "d684f4c04f70a1f2982356e4a2461eaee490f04091f694461576bbd82a7ca7ba",
+      "build.log.gz": "51e84e76954dd9e7683304b032761bde281e5fbf357753920565095f2c799b11",
+      "clippy.log.gz": "c2d4dd12bb5327accdd08f10803ff0cb622c784f167fdf83b646c873a81e0cce",
+      "gpu-tests.log.gz": "9cd5660f8f54b95d69062bf2c365f6a2215f84d92cb63e01262cfdc5646f9d38",
+      "isolated-attempt-summary.json": "7e4104c052403ed3c35e1048a45a0dc81c729aed79d71341922e9a44fe87e5aa",
+      "isolated-first-attempt.log.gz": "650fca834e3098aa2fd5b3f05a47ea9486c788733ef39ec815b5181e939a07eb",
+      "isolated-startup-failure.log.gz": "8851213058e4cab930ea2ce88b8952ae4ccaf125afcce2135020810f98ded479"
+    }
   }
 }
