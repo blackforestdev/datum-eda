@@ -22604,5 +22604,57 @@
       "probe.py": "c74db842b5fdf7fd486e209faf7e57e247d06d618a50675fb9735384c424f3d8",
       "producer.py": "eec54be760cf13c1d5fe820eb5599acdb08bc3324bb83ba1fbcfba85df06e7a2"
     }
+  },
+  "s1_host_render_failure_work": {
+    "status": "ordinary rendering errors pause their native host rather than terminating the process; S1 remains in progress",
+    "baseline_commit": "17654ddd",
+    "consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "production_owner": "NativeFrameCoordinator::render_failed enters the existing shared recovery failure state. Main and every auxiliary render dispatcher use this boundary for errors not already owned by device recovery.",
+    "retired_paths": [
+      "Process-wide fatal_gui_error on ordinary Main render errors",
+      "Process-wide fatal_gui_error on ordinary auxiliary render errors"
+    ],
+    "behavior": [
+      "Retain failed host damage and application state; clear pending/ready/restore tokens until explicit retry",
+      "Existing failure reporter exposes F5 Retry/Close and cancels capture; other hosts remain eligible",
+      "No automatic loop or device recreation for an unclassified host error; device-health failures retain their separate coordinated recovery path",
+      "Explicit screenshot/interaction-smoke failures remain fatal proof errors"
+    ],
+    "verification": {
+      "app": "344 passed, 0 failed, 8 ignored. New coordinator test covers retained damage, peer eligibility, manual retry and late error after close.",
+      "native": "Three actual configurations cover Main plus Global, Project and New. Existing backend fault switch injects Other once per surface; process stays alive with both paused. F5 recovers auxiliary alone, Escape closes modal, then Main F5 produces a frame. Zero automatic retries/device recreations.",
+      "build_clippy": "Fresh offline release and targeted Clippy -D warnings pass",
+      "checks": "Source health and dependency authority pass"
+    },
+    "failed_attempt": "First native recipe targeted Main F5 while the auxiliary modal still owned keyboard input. Auxiliary recovery passed but Main remained paused; recipe failed. Retained trace; corrected recipe closes modal before Main retry, without altering product focus policy.",
+    "limits": [
+      "Native proof injects SurfaceError::Other at the backend-result boundary; it does not force every renderer/measurement error source",
+      "No unsaved-edit, full input/final-state, latency, resource-capacity or complete SH/LF qualification claim",
+      "S1/S4 and pinned resize exclusions remain open; no dependency changes"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/host-render-failure",
+    "source_sha256": {
+      "crates/gui-app/src/app_frame.rs": "45228c32ccc9915b553eb0b0b92620e68e48acae25d20fc23d06550d9f68527c",
+      "crates/gui-app/src/native_frame_adapters.rs": "ee7cac8448b96542e575e1e60410405955d57ee31fbb6e7d433683146c11ec50",
+      "crates/gui-app/src/native_frame_coordinator.rs": "e329bbf853f5b3271d9a6652e993380827d757325b971557f4089197b9886af8",
+      "crates/gui-app/src/native_recovery.rs": "9b1ebb5ee70b5e54064c419d38db760bf94b89b2136862451b588ff8d92a8ddb",
+      "crates/gui-app/src/native_surface_transaction.rs": "c87d8b2b4c242fe5d5b84cfc51a4abedfdcb220d9872c678262afa2674877c86"
+    },
+    "artifacts_sha256": {
+      "GLOBAL-native.log.gz": "69e6047b64e603dd95eaf14ff3982051b8e951f07f2c21b01c97c73c84223295",
+      "NEW-native.log.gz": "ef2cce9f303da0aa7563f1687f18e83d8feb7ee61239c11beb797a54fe25f888",
+      "PROJECT-native.log.gz": "a2ad9b16c70985bdf2a8f21e2fdfa1e95d6e945e84a15b9a3fded7cdce71be9f",
+      "app.log.gz": "09f90b7ac2f816c5968446d6ea7d868f7bc166f2528411bb6889a3b409ab8558",
+      "build.log.gz": "2f1e9078c0fa7c1725e32bea7a828f26d75cd23ad7f25d74a554a392822b3a68",
+      "clippy.log.gz": "81c9c6504337a2bb708774632c6a829cfa56fb165d62316b08776ac6594143b6",
+      "failed-modal-input.log.gz": "9d6c7ce5bcd8fc52a8d286b489223d78f38409b84b59d7ac9efe134f96c563d2",
+      "native.json": "c87e7d17a2349d8947ec888504f79c692c836ec745077195b34acb6babe907fa",
+      "probe.py": "53aca254c9f1080a70898d68672eb93c2a84bd8abbeb1441954cce3305384599"
+    }
   }
 }

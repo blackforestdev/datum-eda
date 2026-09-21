@@ -16,7 +16,10 @@ impl App {
             let presented = match runtime.render() {
                 Ok(presented) => presented,
                 Err(_) if runtime.device_health.failed() => false,
-                Err(error) => fatal_gui_error(event_loop, "render failed", error),
+                Err(error) => {
+                    self.frames.render_failed(window.id(), &error);
+                    false
+                }
             };
             runtime.trace_timing(format!("redraw render {}ms", started.elapsed().as_millis()));
             presented

@@ -106,6 +106,7 @@ impl Drop for TextureLease {
 #[derive(Clone, Copy, Debug)]
 enum InjectedFault {
     LostOnce,
+    OtherOnce,
     Timeout,
     OutOfMemory,
 }
@@ -123,6 +124,7 @@ impl SurfaceTransaction {
         let queue_host = queue_owner.register();
         let injected_fault = match std::env::var("DATUM_DIAGNOSTIC_SURFACE_FAULT").as_deref() {
             Err(std::env::VarError::NotPresent) | Ok("0") => None,
+            Ok("other-once") => Some(InjectedFault::OtherOnce),
             Ok("lost-once") => Some(InjectedFault::LostOnce),
             Ok("timeout") => Some(InjectedFault::Timeout),
             Ok("oom") => Some(InjectedFault::OutOfMemory),
@@ -230,6 +232,10 @@ impl SurfaceTransaction {
                 InjectedFault::LostOnce => {
                     self.injected_fault = None;
                     Err(wgpu::SurfaceError::Lost)
+                }
+                InjectedFault::OtherOnce => {
+                    self.injected_fault = None;
+                    Err(wgpu::SurfaceError::Other)
                 }
                 InjectedFault::Timeout => Err(wgpu::SurfaceError::Timeout),
                 InjectedFault::OutOfMemory => Err(wgpu::SurfaceError::OutOfMemory),

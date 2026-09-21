@@ -252,9 +252,23 @@ impl NativeFrameCoordinator {
         (due, failed)
     }
 
+    /// Stop only this host on a non-device render error. Input state and other
+    /// hosts survive; the ordinary recovery reporter exposes Retry/Close.
+    pub(super) fn render_failed(&mut self, window: WindowId, error: &impl std::fmt::Display) {
+        if let Some(host) = self.hosts.get_mut(&window) {
+            host.recovery.borrow_mut().fail();
+            host.pending = false;
+            host.ready = false;
+            host.restore_pending = false;
+            crate::append_gui_diagnostic_line(format!(
+                "native host {window:?} render error: {error}"
+            ));
+        }
+    }
+
     pub(super) fn fail_device(&mut self) {
         for host in self.hosts.values_mut() {
-            host.recovery.borrow_mut().fail_device();
+            host.recovery.borrow_mut().fail();
             host.pending = false;
             host.ready = false;
             host.rendering = None;
@@ -634,6 +648,30 @@ mod tests {
         frames.set_suspended(false);
         assert!(!frames.take_restore_request(id));
         assert!(frames.begin_frame(id).is_none());
+    }
+
+    #[test]
+    fn render_error_pauses_only_its_host_and_manual_retry_keeps_damage() {
+        let mut frames = NativeFrameCoordinator::default();
+        let failed = WindowId::from(1);
+        let peer = WindowId::from(2);
+        for id in [failed, peer] {
+            frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
+        }
+        let attempt = frames.begin_frame(failed).unwrap();
+        frames.render_failed(failed, &"backend acquisition error");
+        assert!(!frames.finish(attempt, false));
+        assert!(frames.rendering_failed(failed));
+        assert!(frames.begin_frame(failed).is_none());
+        assert!(frames.begin_frame(peer).is_some());
+        assert!(frames.manual_retry(failed));
+        let retry = frames.begin_frame(failed).unwrap();
+        assert_eq!(retry.damage, attempt.damage);
+        assert!(!frames.finish(retry, true));
+        assert_eq!(frames.hosts[&failed].presented, attempt.damage);
+        frames.close(failed);
+        frames.render_failed(failed, &"late error");
+        assert!(!frames.contains_host(failed));
     }
 
     #[test]
