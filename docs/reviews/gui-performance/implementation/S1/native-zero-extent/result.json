@@ -1,0 +1,103 @@
+{
+  "status": "LF-01 positive native-adapter evidence; full requirement and S1 remain partial",
+  "candidate_commit": "3b1e4085815aac98c324859dbb77f37ea07dfc68",
+  "binary_sha256": "9833756fbf2ce26cc2c13d2ebeb23b6840fe718dba759cdd010afa1cc543cb09",
+  "production_consumers_exercised": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "production_consumers_migrated": [],
+  "competing_paths_retired": [],
+  "production_change": "None; bounded verification of existing default shared scheduling/lifecycle Rust.",
+  "production_path": "XSendEvent ConfigureNotify/Expose -> winit X11 WindowEvent -> App native adapter -> NativeFrameCoordinator drawable admission -> Main runtime_present or shared auxiliary surface -> SurfaceTransaction. Restore consumes current host damage.",
+  "environment": {
+    "session": "wayland",
+    "display": ":1",
+    "backend": "X11 under KDE Wayland/Xwayland; default GPU backend, GPU measurements off",
+    "fixture_path": "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+    "fixture_provenance": "Existing S0 readiness board copies; all four identical; recipe uses per-host existing copy."
+  },
+  "source_sha256": {
+    "crates/gui-app/src/app_native_events.rs": "97c7ab43820154e6ca7ce1cc6d8214d6e19ca2173c6cdb98ea7e2af08f9295f4",
+    "crates/gui-app/src/native_frame_coordinator.rs": "1f9ef53eee2aedaff7964487877118f3daff5f4c84eaa6eddcab0bb5c8737d45",
+    "crates/gui-app/src/native_frame_adapters.rs": "3d528ac6accd13e75c6ef7fcfadad84036f1fc456db67eb6ac230dcb0e9c7252",
+    "crates/gui-app/src/native_surface_transaction.rs": "146c5937f2676fe46dd5089a5a8e098b0101752a90a759e4715183ef21dc9d8b",
+    "crates/gui-app/src/runtime_present.rs": "70440a93f8664d52144a117ad2b313ad75e3f1cc4dfb3e56c5b0c88d14cbf537",
+    "crates/gui-app/src/global_preferences_window.rs": "8ac28b8ec25bd6e363d4c79f6fc01bdff4d9f2ddf44e88585f31d8eb87ee34d2",
+    "crates/gui-app/src/project_preferences_window.rs": "36ae86d461f032950472d9168fe6766471ca6d5afe86b4ff6c6eb3b0ccc0a472",
+    "crates/gui-app/src/new_project_window.rs": "e187b51cf5444f4feb7f143ccac7e3a77da3253a566b1c8ab4496a9b2ed938d8"
+  },
+  "observations": [
+    {
+      "host": "MAIN",
+      "trial": "owner-delivery",
+      "zero_interval": "native resize zero -> explicit native redraw -> native restore; no lifecycle operations in interval",
+      "restore_delta": {
+        "configure": 0,
+        "acquire": 1,
+        "submit": 1,
+        "present": 1
+      },
+      "restored_damage": 5,
+      "current_damage": 5,
+      "exit": 0
+    },
+    {
+      "host": "GLOBAL",
+      "trial": "owner-delivery",
+      "zero_interval": "native resize zero -> explicit native redraw -> native restore; no lifecycle operations in interval",
+      "restore_delta": {
+        "configure": 0,
+        "acquire": 1,
+        "submit": 1,
+        "present": 1
+      },
+      "restored_damage": 6,
+      "current_damage": 6,
+      "exit": 0
+    },
+    {
+      "host": "PROJECT",
+      "trial": "owner-delivery",
+      "zero_interval": "native resize zero -> explicit native redraw -> native restore; no lifecycle operations in interval",
+      "restore_delta": {
+        "configure": 0,
+        "acquire": 1,
+        "submit": 1,
+        "present": 1
+      },
+      "restored_damage": 6,
+      "current_damage": 6,
+      "exit": 0
+    },
+    {
+      "host": "NEW",
+      "trial": "new-close-replay",
+      "zero_interval": "native resize zero -> explicit native redraw -> native restore; no lifecycle operations in interval",
+      "restore_delta": {
+        "configure": 0,
+        "acquire": 1,
+        "submit": 1,
+        "present": 1
+      },
+      "restored_damage": 4,
+      "current_damage": 4,
+      "exit": 0
+    }
+  ],
+  "failed_attempts": [
+    "undelivered-mask: StructureNotify selection mask did not deliver expected resize to Main; no product failure inferred.",
+    "owner-delivery NEW: zero/restore assertions passed, auxiliary closed; Main close event absent and process wait timed out. Retained as dat-main-native-capture-delay-md9 evidence; focused replay uses existing PID/title-scoped KWin native close."
+  ],
+  "negative_control": "Not executed; LF-01 prescribed clamp-zero/render defect sensitivity remains open. No historical-baseline or performance comparison claimed.",
+  "limits": [
+    "Synthetic native backend size notification, not a physically zero-sized X11 surface; actual production event adapters/shared owners unchanged.",
+    "One bounded 0.3-second zero interval per passing host. No CPU, driver residency, scanout, temporal, scale-matrix or endurance qualification.",
+    "No screenshot or independent replay; final-state proof is configured extent and current presented damage, not visible-pixel or semantic input-state qualification.",
+    "Existing release binary from 8fba3db2; no rebuild needed for evidence-only change. No new Rust tests run.",
+    "S1 remains in progress, S2-S5 pending; resize qualification remains separately nonblocking."
+  ]
+}
