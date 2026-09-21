@@ -110,8 +110,9 @@ impl App {
         }
 
         // A failed renderer cannot show the outcome of editing input. Keep
-        // lifecycle/close delivery alive while the explicit Retry action above
-        // owns recovery; background engine/terminal processing stays separate.
+        // lifecycle/close and modifier-state delivery alive while Retry owns
+        // recovery. Dropping a Ctrl/Alt/Shift release would leave stale input
+        // state after a successful retry. These updates do not apply edits.
         if self.frames.rendering_failed(window_id)
             && !matches!(
                 &event,
@@ -121,6 +122,7 @@ impl App {
                     | WindowEvent::ScaleFactorChanged { .. }
                     | WindowEvent::Focused(_)
                     | WindowEvent::Occluded(_)
+                    | WindowEvent::ModifiersChanged(_)
                     | WindowEvent::RedrawRequested
             )
         {

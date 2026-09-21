@@ -1,0 +1,10 @@
+{
+  "binary_sha256": "e600bfa4b1d5283a2b1247546af0c43fb8b3ccd7a5f4150732dd984ad2893882",
+  "runs": [
+    {
+      "host": "MAIN",
+      "passed": false,
+      "error": "Command '['/home/bfadmin/Documents/datum-eda/target/release/datum-gui', '--board', '/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb', '--window-size', '1280x800']' timed out after 10 seconds"
+    }
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "binary_sha256": "d703da1e9aeb1c0f51bc255ed371fd1b992ba49e53bec0dacc2f4cf38e2a1920",
+  "runs": [
+    {
+      "host": "MAIN",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800"
+      ],
+      "window": "WindowId(12582916)",
+      "first_episode_attempts": 11,
+      "manual_retry_attempts": 12,
+      "failure_reports": 2,
+      "application_exit": 0,
+      "modifier_sequence": "Ctrl down during recovery, Ctrl up plus ordinary a key after failure, then F5; editing key must not render",
+      "scope": "backend timeout injection; native F5 and WM_DELETE_WINDOW Close; no successful-frame/data-state/resource-budget qualification"
+    },
+    {
+      "host": "GLOBAL",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "window": "WindowId(12582917)",
+      "first_episode_attempts": 12,
+      "manual_retry_attempts": 12,
+      "failure_reports": 2,
+      "application_exit": 0,
+      "modifier_sequence": "Ctrl down during recovery, Ctrl up plus ordinary a key after failure, then F5; editing key must not render",
+      "scope": "backend timeout injection; native F5 and WM_DELETE_WINDOW Close; no successful-frame/data-state/resource-budget qualification"
+    },
+    {
+      "host": "PROJECT",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-project-preferences"
+      ],
+      "window": "WindowId(12582917)",
+      "first_episode_attempts": 12,
+      "manual_retry_attempts": 12,
+      "failure_reports": 2,
+      "application_exit": 0,
+      "modifier_sequence": "Ctrl down during recovery, Ctrl up plus ordinary a key after failure, then F5; editing key must not render",
+      "scope": "backend timeout injection; native F5 and WM_DELETE_WINDOW Close; no successful-frame/data-state/resource-budget qualification"
+    },
+    {
+      "host": "NEW",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-new-project"
+      ],
+      "window": "WindowId(12582917)",
+      "first_episode_attempts": 12,
+      "manual_retry_attempts": 12,
+      "failure_reports": 2,
+      "application_exit": 0,
+      "modifier_sequence": "Ctrl down during recovery, Ctrl up plus ordinary a key after failure, then F5; editing key must not render",
+      "scope": "backend timeout injection; native F5 and WM_DELETE_WINDOW Close; no successful-frame/data-state/resource-budget qualification"
+    }
+  ]
+}

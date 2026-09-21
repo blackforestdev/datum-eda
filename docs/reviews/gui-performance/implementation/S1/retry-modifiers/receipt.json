@@ -1,0 +1,27 @@
+{
+  "status": "bounded production change verified; native post-retry text visual qualification inconclusive",
+  "base_commit": "f2b62a3b",
+  "production_consumers": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "production_change": "Failed-render input guard now permits ModifiersChanged through existing host adapters so Ctrl/Alt/Shift releases keep state current. Editing input remains blocked.",
+  "retired_paths": [
+    "Dropping modifier updates while rendering is paused"
+  ],
+  "verification": {
+    "app": "352 passed, 0 failed, 9 ignored",
+    "clippy": "all targets -D warnings passed",
+    "release": "fresh guarded offline build passed",
+    "native": "Baseline and candidate persistent timeout: all four hosts bounded automatic recovery, no work during paused observation, F5 new bounded episode, WM_DELETE_WINDOW close with exit 0. Candidate includes Ctrl release and blocked editing key during failure."
+  },
+  "limits": [
+    "S1, LF-03 and LF-10 remain incomplete; continuous resize, hidden active-clock, engine/PTY state, resource and latency qualification not established.",
+    "Existing textual error channel is permitted by REC-02 when GPU drawing unavailable; no new graphical failure UI qualification.",
+    "Alt+F4 harness failed to deliver CloseRequested; preserved as failed harness, replaced by native WM_DELETE_WINDOW protocol.",
+    "First one-shot Global text screenshot captured too early. Corrected run also shows partial text and close predicate timeout; native log eventually records final text presentation and close. Both attempts retained as inconclusive visual/responsiveness evidence, not passing successful-retry text proof.",
+    "No dependencies, GPU backend, product authority, or resize exclusion changed."
+  ]
+}
