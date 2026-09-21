@@ -1,0 +1,39 @@
+{
+  "binary_sha256": "d2bea9e1532c808693bc7aa90dfafcbcb27970682ed0b06a5c58b925a00912f3",
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--board",
+    "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "--window-size",
+    "1280x800",
+    "--resize-torture-smoke"
+  ],
+  "observations": [
+    [
+      "1280x900",
+      "1280x900"
+    ],
+    [
+      "1440x900",
+      "1440x900"
+    ],
+    [
+      "1280x800",
+      "1280x800"
+    ],
+    [
+      "1440x800",
+      "1440x800"
+    ],
+    [
+      "1280x900",
+      "1280x900"
+    ],
+    [
+      "1280x800",
+      "1280x800"
+    ]
+  ],
+  "exit": 0,
+  "passed": true
+}

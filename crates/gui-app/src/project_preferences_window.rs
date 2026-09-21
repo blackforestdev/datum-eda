@@ -101,9 +101,7 @@ impl App {
                 {
                     surface.resize(runtime, size.width, size.height);
                 }
-                if let Some(window) = &self.project_preferences_window {
-                    self.frames.invalidate(window);
-                }
+                // The shared extent transition owns the redraw request.
             }
             WindowEvent::ScaleFactorChanged { scale_factor, .. } => {
                 let scale_factor = self
