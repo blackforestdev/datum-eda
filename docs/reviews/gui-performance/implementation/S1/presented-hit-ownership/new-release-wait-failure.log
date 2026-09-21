@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "/tmp/pm045_new_burst_baseline.py", line 48, in <module>
+    until(lambda:'physical=Code(KeyT)' in log.read_text() and log.read_text().rfind('\"reason\":\"present\"')>log.read_text().rfind('physical=Code(KeyT)'),p);time.sleep(1.2)
+    ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/pm045_new_burst_baseline.py", line 17, in until
+    raise AssertionError('native predicate timeout or process exit '+str(p.poll()))
+AssertionError: native predicate timeout or process exit None

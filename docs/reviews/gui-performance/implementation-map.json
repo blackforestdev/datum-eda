@@ -330,14 +330,15 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial production scheduler conformance; native per-consumer semantic input and complete requirement qualification remain open",
+        "status": "partial shared scheduler and native auxiliary button-burst conformance; complete per-consumer wheel/PTY/gesture/final-state qualification remains open",
         "id": "proof_sh_02",
         "positive": "Input burst during pending redraw",
         "negative_control": "Coalesce input instead of requests",
         "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
         "observed_artifacts": [
           "docs/reviews/gui-performance/implementation/S1/redraw-counts/focused.log.gz",
-          "docs/reviews/gui-performance/implementation/S1/redraw-counts/tests.log.gz"
+          "docs/reviews/gui-performance/implementation/S1/redraw-counts/tests.log.gz",
+          "docs/reviews/gui-performance/implementation/S1/presented-hit-ownership/receipt.json"
         ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S1/SH-02/result.json",
@@ -23226,5 +23227,37 @@
       "Resize CPU and temporal qualification remain unresolved and nonblocking; S1 remains in progress"
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/preference-dependencies/receipt.json"
+  },
+  "s1_presented_hit_ownership_work": {
+    "status": "bounded shared native input ownership fix; full SH-02/S1 still open",
+    "production_consumers": [
+      "Global Preferences",
+      "Project Preferences",
+      "New Project"
+    ],
+    "retired_path": "Ordinary invalidation no longer destroys the only usable native dialog hit map before coalesced input completes.",
+    "implementation": "Move prepared hit regions into host-owned presented storage after successful surface presentation. No extra hit-map clone/allocation. Failed frames keep prior presented input map; changed extent/DPI clears incompatible coordinates. Renderer preparation and GPU policy preserved.",
+    "baseline_visual_findings": {
+      "GLOBAL": "FAIL: two click pairs before a frame leave choice list open; second click lost.",
+      "PROJECT": "Failure not established by this baseline screenshot; do not infer it from shared source.",
+      "NEW": "FAIL: Name then Location burst followed by typing places burst in Name; Location click lost."
+    },
+    "candidate_visual_findings": {
+      "GLOBAL": "Choice list closed after both click pairs.",
+      "PROJECT": "Choice list closed after both click pairs.",
+      "NEW": "Name empty; burst correctly entered in Location. Queued replay screenshot is byte-identical to inspected ordinary replay."
+    },
+    "proof": {
+      "tests": "352 app tests passed, 9 ignored; screenshot integration ignored",
+      "clippy": "app all targets -D warnings passed",
+      "build": "fresh guarded offline release passed"
+    },
+    "limitations": [
+      "Native X11 only; not complete pointer/gesture, focus, resize/DPI, failure, PTY or SH-02/S1 qualification",
+      "Presented means application surface presentation, not compositor/display proof",
+      "Main hit ownership unchanged; this migration covers three auxiliary hosts",
+      "Resize CPU remains unresolved and nonblocking"
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/presented-hit-ownership/receipt.json"
   }
 }

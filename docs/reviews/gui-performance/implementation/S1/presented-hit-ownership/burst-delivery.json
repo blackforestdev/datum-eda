@@ -1,0 +1,74 @@
+{
+  "baseline/PROJECT": {
+    "four_button_transitions_before_next_round": true,
+    "events": [
+      "[SystemTime { tv_sec: 1789974363, tv_nsec: 221863405 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974363, tv_nsec: 221972546 }] window event WindowId(12582917) mouse input Left Released",
+      "[SystemTime { tv_sec: 1789974363, tv_nsec: 222113078 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974363, tv_nsec: 222199021 }] window event WindowId(12582917) mouse input Left Released"
+    ]
+  },
+  "baseline/GLOBAL": {
+    "four_button_transitions_before_next_round": true,
+    "events": [
+      "[SystemTime { tv_sec: 1789974354, tv_nsec: 631904743 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974354, tv_nsec: 632017286 }] window event WindowId(12582917) mouse input Left Released",
+      "[SystemTime { tv_sec: 1789974354, tv_nsec: 632190969 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974354, tv_nsec: 632273927 }] window event WindowId(12582917) mouse input Left Released"
+    ]
+  },
+  "candidate/PROJECT": {
+    "four_button_transitions_before_next_round": true,
+    "events": [
+      "[SystemTime { tv_sec: 1789974545, tv_nsec: 157422945 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974545, tv_nsec: 157519545 }] window event WindowId(12582917) mouse input Left Released",
+      "[SystemTime { tv_sec: 1789974545, tv_nsec: 157662243 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974545, tv_nsec: 157748686 }] window event WindowId(12582917) mouse input Left Released"
+    ]
+  },
+  "candidate/GLOBAL": {
+    "four_button_transitions_before_next_round": true,
+    "events": [
+      "[SystemTime { tv_sec: 1789974536, tv_nsec: 607484524 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974536, tv_nsec: 607608013 }] window event WindowId(12582917) mouse input Left Released",
+      "[SystemTime { tv_sec: 1789974536, tv_nsec: 607752678 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974536, tv_nsec: 607824580 }] window event WindowId(12582917) mouse input Left Released"
+    ]
+  },
+  "new-release-wait-failed/NEW": {
+    "four_button_transitions_before_next_round": true,
+    "events": [
+      "[SystemTime { tv_sec: 1789974448, tv_nsec: 155492655 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974448, tv_nsec: 155748839 }] window event WindowId(12582917) mouse input Left Released",
+      "[SystemTime { tv_sec: 1789974448, tv_nsec: 156466184 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974448, tv_nsec: 156693728 }] window event WindowId(12582917) mouse input Left Released"
+    ]
+  },
+  "new-baseline/NEW": {
+    "four_button_transitions_before_next_round": true,
+    "events": [
+      "[SystemTime { tv_sec: 1789974492, tv_nsec: 743052118 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974492, tv_nsec: 743479259 }] window event WindowId(12582917) mouse input Left Released",
+      "[SystemTime { tv_sec: 1789974492, tv_nsec: 744325895 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974492, tv_nsec: 744575311 }] window event WindowId(12582917) mouse input Left Released"
+    ]
+  },
+  "new-candidate/NEW": {
+    "four_button_transitions_before_next_round": false,
+    "events": [
+      "[SystemTime { tv_sec: 1789974560, tv_nsec: 751388482 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974560, tv_nsec: 751604645 }] window event WindowId(12582917) mouse input Left Released",
+      "[SystemTime { tv_sec: 1789974560, tv_nsec: 767454119 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974560, tv_nsec: 767601317 }] window event WindowId(12582917) mouse input Left Released"
+    ]
+  },
+  "new-candidate-queued/NEW": {
+    "four_button_transitions_before_next_round": true,
+    "events": [
+      "[SystemTime { tv_sec: 1789974659, tv_nsec: 914406670 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974659, tv_nsec: 914560724 }] window event WindowId(12582917) mouse input Left Released",
+      "[SystemTime { tv_sec: 1789974659, tv_nsec: 914971323 }] window event WindowId(12582917) mouse input Left Pressed",
+      "[SystemTime { tv_sec: 1789974659, tv_nsec: 915199036 }] window event WindowId(12582917) mouse input Left Released"
+    ]
+  }
+}
