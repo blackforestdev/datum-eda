@@ -3,27 +3,7 @@
 //! counts. Scroll offsets remain record-based consumer state.
 
 use super::{HistoryRow, RectPx, TextFace};
-use crate::{Buffer, Metrics, Shaping, measure_font_system, text_attrs};
-
-fn text_height(text: &str, width: f32, size: f32) -> f32 {
-    let mut fonts = measure_font_system()
-        .lock()
-        .unwrap_or_else(|poisoned| poisoned.into_inner());
-    let line_height = size * 1.22;
-    let mut buffer = Buffer::new(&mut fonts, Metrics::new(size, line_height));
-    // Match text_buffer_extent's integer width and ensure all wrapped lines
-    // participate in measurement, including explicit newlines and long words.
-    buffer.set_size(&mut fonts, Some(width.ceil().max(1.0)), None);
-    buffer.set_text(
-        &mut fonts,
-        text,
-        &text_attrs(TextFace::Mono),
-        Shaping::Basic,
-        None,
-    );
-    buffer.shape_until_scroll(&mut fonts, false);
-    buffer.layout_runs().count().max(1) as f32 * line_height
-}
+use crate::text_metrics::measured_text_run_height_px;
 
 pub(super) fn visible_rows(
     rows: &[HistoryRow],
@@ -40,7 +20,8 @@ pub(super) fn visible_rows(
     let mut selected = Vec::new();
     let mut used = 0.0;
     for (index, row) in rows.iter().enumerate().rev() {
-        let height = text_height(&row.text, width, 11.5 * scale).ceil();
+        let height =
+            measured_text_run_height_px(&row.text, width, 11.5 * scale, TextFace::Mono).ceil();
         let spacing = if selected.is_empty() { 0.0 } else { gap };
         if !selected.is_empty() && used + spacing + height > available {
             break;
@@ -105,7 +86,12 @@ mod tests {
                     for (index, clip) in &visible {
                         assert!(
                             clip.height
-                                >= text_height(&rows[*index].text, clip.width, 11.5 * scale)
+                                >= measured_text_run_height_px(
+                                    &rows[*index].text,
+                                    clip.width,
+                                    11.5 * scale,
+                                    TextFace::Mono
+                                )
                         );
                         assert!(clip.y + clip.height <= bounds.y + bounds.height);
                         assert!(clip.x + clip.width <= bounds.x + bounds.width);
@@ -120,8 +106,14 @@ mod tests {
 
     #[test]
     fn wrapping_counts_newlines_and_long_words_and_bounds_oversized_records() {
-        assert!(text_height("first\nsecond", 200.0, 11.5) > text_height("first", 200.0, 11.5));
-        assert!(text_height(&"X".repeat(100), 100.0, 11.5) > text_height("X", 100.0, 11.5));
+        assert!(
+            measured_text_run_height_px("first\nsecond", 200.0, 11.5, TextFace::Mono)
+                > measured_text_run_height_px("first", 200.0, 11.5, TextFace::Mono)
+        );
+        assert!(
+            measured_text_run_height_px(&"X".repeat(100), 100.0, 11.5, TextFace::Mono)
+                > measured_text_run_height_px("X", 100.0, 11.5, TextFace::Mono)
+        );
         let rows = vec![HistoryRow {
             text: "long message ".repeat(100),
             color: [1.0; 3],
