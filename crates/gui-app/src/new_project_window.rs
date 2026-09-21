@@ -172,9 +172,18 @@ impl App {
                     .as_ref()
                     .and_then(GlobalPreferencesWindowSurface::hit_target);
                 if let (Some(runtime), Some(target)) = (&mut self.runtime, target.as_ref()) {
-                    runtime.activate_new_project_hit(target);
+                    use crate::global_preferences_window::DialogInputOutcome as Outcome;
+                    let changed = match target {
+                        HitTarget::NewProjectCancel | HitTarget::NewProjectCreate => {
+                            Outcome::Dependents
+                        }
+                        HitTarget::NewProjectModal => Outcome::Consumed,
+                        _ => Outcome::Dialog,
+                    };
+                    let outcome =
+                        Outcome::from_handled(runtime.activate_new_project_hit(target), changed);
+                    self.request_dialog_key_redraw(outcome, native_frame_adapters::OwnedHost::New);
                 }
-                self.request_redraw_if_needed();
             }
             WindowEvent::ModifiersChanged(modifiers) => {
                 if let Some(runtime) = &mut self.runtime {
@@ -183,9 +192,9 @@ impl App {
             }
             WindowEvent::KeyboardInput { event, .. } => {
                 if let Some(runtime) = &mut self.runtime {
-                    runtime.handle_new_project_key(&event);
+                    let outcome = runtime.handle_new_project_key(&event);
+                    self.request_dialog_key_redraw(outcome, native_frame_adapters::OwnedHost::New);
                 }
-                self.request_redraw_if_needed();
             }
             _ => {}
         }

@@ -169,7 +169,10 @@ impl App {
             WindowEvent::KeyboardInput { event, .. } => {
                 if let Some(runtime) = &mut self.runtime {
                     let outcome = runtime.handle_project_preferences_key(&event);
-                    self.request_preferences_key_redraw(outcome, true);
+                    self.request_dialog_key_redraw(
+                        outcome,
+                        native_frame_adapters::OwnedHost::Project,
+                    );
                 }
             }
             _ => {}

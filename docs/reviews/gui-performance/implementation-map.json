@@ -23096,5 +23096,38 @@
     ],
     "evidence_directory": "docs/reviews/gui-performance/implementation/S1/workspace-input",
     "release_binary_sha256": "214878287a44fbb0e02f9d7b4d8f70f54c5b66a4df9b107a8b2976c4c0712b64"
+  },
+  "s1_new_dialog_input_work": {
+    "status": "New Project native pointer/keyboard and keyboard-focus entry migrated to shared dialog damage routing; full native qualification remains open",
+    "baseline_commit": "2b1f252c",
+    "consumers": [
+      "NEW",
+      "GLOBAL",
+      "PROJECT"
+    ],
+    "shared_owner": "DialogInputOutcome and App::request_dialog_key_redraw; OwnedHost identifies which of three shared surface adapters to invalidate",
+    "retired_paths": [
+      "All-host invalidation for New Project field typing, focus and unit-preview choices",
+      "Redraw for consumed New Project releases, unmatched keys and modal-background pointer hits",
+      "Preferences-only damage outcome and boolean host selection in shared keyboard invalidation"
+    ],
+    "preserved": [
+      "Create, Cancel and closure retain dependent-window invalidation",
+      "Project creation, preview authority, input ordering and focus restoration unchanged",
+      "Existing New Project general/backdrop renderer retained for S3; workspace changes still invalidate that backdrop"
+    ],
+    "verification": {
+      "app": "351 passed, 0 failed, 9 ignored",
+      "clippy_build": "Fresh offline release and all-targets app Clippy -D warnings passed",
+      "review": "Inspected New Project activation/create/cancel paths and all outcome consumers; modified routing after state application only",
+      "gates": "Source health, dependency authority, traceability, spec governance/parity and formatting passed"
+    },
+    "limits": [
+      "No native pointer/keyboard replay while desktop availability remains unresolved; regression tests are not complete per-consumer final-state or zero-unrelated-submission proof",
+      "Create failure/disabled submission retains conservative broad invalidation; existing cache invalidation unchanged",
+      "S1 remains in progress and S2-S5 pending; resize qualification remains pinned/nonblocking; prior restart-lineage intake remains unresolved"
+    ],
+    "evidence_directory": "docs/reviews/gui-performance/implementation/S1/new-dialog-input",
+    "release_binary_sha256": "bedcb25def464f9aaca165615e37eea66f31a68b3eac6c2bc0f734c8e46c7dc0"
   }
 }
