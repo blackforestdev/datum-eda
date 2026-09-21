@@ -164,29 +164,11 @@ impl GlobalPreferencesWindowSurface {
         project_preferences: bool,
         new_project: bool,
     ) -> Result<bool> {
-        if !self
-            .surface_transaction
-            .begin_frame(&self.surface, &runtime.device, &self.config)?
-        {
+        let Some(frame) =
+            self.surface_transaction
+                .acquire(&self.surface, &runtime.device, &self.config)?
+        else {
             return Ok(false);
-        }
-        let frame = match self.surface.get_current_texture() {
-            Ok(frame) => frame,
-            Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
-                if !self.surface_transaction.acquisition_failed(true) {
-                    self.surface.configure(&runtime.device, &self.config);
-                }
-                self.invalidate();
-                return Ok(false);
-            }
-            Err(wgpu::SurfaceError::Timeout) => {
-                self.surface_transaction.acquisition_failed(false);
-                return Ok(false);
-            }
-            Err(wgpu::SurfaceError::OutOfMemory) => {
-                anyhow::bail!("Global Preferences surface out of memory")
-            }
-            Err(error) => anyhow::bail!("acquire Global Preferences surface texture: {error}"),
         };
         if self.prepared.is_none() {
             if new_project {

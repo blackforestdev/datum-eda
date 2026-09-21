@@ -5,12 +5,6 @@ use super::*;
 
 impl Runtime {
     pub(super) fn render(&mut self) -> Result<bool> {
-        if !self
-            .surface_transaction
-            .begin_frame(&self.surface, &self.device, &self.config)?
-        {
-            return Ok(false);
-        }
         let render_started = std::time::Instant::now();
         let acquire_started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line(format!(
@@ -18,37 +12,11 @@ impl Runtime {
             self.config.width, self.config.height
         ));
         append_gui_verbose_diagnostic_line("render acquire begin");
-        let probe = gui_runtime_support::phase_probe::Probe::start("acquire");
-        let acquired = self.surface.get_current_texture();
-        drop(probe);
-        let frame = match acquired {
-            Ok(frame) => frame,
-            Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
-                append_gui_diagnostic_line(format!(
-                    "surface acquire recovered path requested reconfigure at {}x{}",
-                    self.config.width, self.config.height
-                ));
-                if !self.surface_transaction.acquisition_failed(true) {
-                    let probe =
-                        gui_runtime_support::phase_probe::Probe::start("configure_recovery");
-                    self.surface.configure(&self.device, &self.config);
-                    drop(probe);
-                }
-                self.invalidate_frame();
-                return Ok(false);
-            }
-            Err(wgpu::SurfaceError::Timeout) => {
-                self.surface_transaction.acquisition_failed(false);
-                append_gui_diagnostic_line("surface acquire timeout; frame skipped");
-                self.invalidate_frame();
-                return Ok(false);
-            }
-            Err(wgpu::SurfaceError::OutOfMemory) => {
-                anyhow::bail!("surface out of memory");
-            }
-            Err(err) => {
-                anyhow::bail!("acquire next surface texture: {err}");
-            }
+        let Some(frame) =
+            self.surface_transaction
+                .acquire(&self.surface, &self.device, &self.config)?
+        else {
+            return Ok(false);
         };
         let probe = gui_runtime_support::phase_probe::Probe::start("prepare");
         let acquire_elapsed = acquire_started.elapsed();
