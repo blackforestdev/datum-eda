@@ -1,0 +1,498 @@
+{
+  "status": "Bounded native stalled-completion publication and F5 recovery verified across four hosts; full LF-09/LF-10 qualification remains partial",
+  "production_consumers_verified": [
+    "MAIN",
+    "GLOBAL",
+    "PROJECT",
+    "NEW"
+  ],
+  "production_path": "Actual wgpu completion callback -> QueueOwner watermark -> bounded shared progress failure -> native F5 -> shared retry -> current extent/configure/acquire/present",
+  "production_change": "Opt-in DATUM_DIAGNOSTIC_QUEUE_COMPLETION=hold-until-retry holds publication of genuine delivered completion receipts. Existing Retry releases only those receipts; later callbacks remain live. No driver blocking or invented completion. Default has no held state, no extra callback and no new dependency.",
+  "retired_paths": "None; verifies default shared queue/recovery owners landed in ca9c2b38 through their actual native adapters.",
+  "verification": {
+    "app": "368 passed, 0 failed, 9 ignored; new test proves undelivered later receipt cannot be released by Retry",
+    "clippy": "app datum-gui binary -D warnings passed",
+    "release": "fresh guarded offline release build passed",
+    "native": "All four hosts observed bounded shared failure, resize dispatched with no additional presentation while failed, F5 released actual completion, and current 1200x800 frame completed. Global/Project/New close and focus restoration passed. Main close passed once and timed out in two repeat runs; those logs lack CloseRequested."
+  },
+  "limits": [
+    "Injected publication stall validates application scheduling/admission/retry, not an actually hung GPU driver, callback latency under driver failure, or full callback/allocation/resource budgets.",
+    "First auxiliary attempt expected its own initial presentation; Main had already submitted and correctly blocked auxiliary configure. Preserve failed harness trace and corrected shared-queue observation.",
+    "Main close is not repeatably qualified: one pass and two 20-second close timeouts; processes were terminated after observation. Synchronizing X11 send did not resolve the issue. Existing dat-main-native-capture-delay-md9 remains open; no root cause or resolution claimed.",
+    "No native hidden-time, saturated PTY coexistence, independent pixel/state replay, full resource or S1 completion claim. Resize CPU/temporal exclusions unchanged."
+  ],
+  "receipt": "docs/reviews/gui-performance/implementation/S1/held-completion/result.json",
+  "selection": {
+    "baseline": "ca9c2b38",
+    "scope": "LF-09/LF-10 native stalled shared completion publication and explicit retry",
+    "change": "Opt-in backend callback publication hold; only actually delivered receipts released by F5. Default queue completion mechanism unchanged.",
+    "proof": "All four production hosts: bounded shared failure, native resize dispatch while failed, no new submission until Retry, final current extent and clean close.",
+    "limits": "Does not stall actual driver; no driver-hang latency, full resource or pixel qualification."
+  },
+  "binary_sha256": "cf7952dd93cc70a597754e79bce86f9dc192ea12ed02b7c05118a59731600395",
+  "source_sha256": {
+    "native_queue_owner.rs": "ea377b274a08be6dec96d9a65a17eb7fb398e9ffe78d449f82002aaf769505a4",
+    "native_queue_progress_tests.rs": "0a0592024bd55b1926fe7386a8e98fb1f57b24f7f9230c50936826043af50e67"
+  },
+  "attempts": [
+    {
+      "name": "first",
+      "runs": [
+        {
+          "host": "MAIN",
+          "command": [
+            "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+            "--board",
+            "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+            "--window-size",
+            "1280x800"
+          ],
+          "first_present": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1333,
+              833
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 1,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 0,
+            "host": 1,
+            "last_frame_submission_receipt": 1,
+            "last_present_receipt": 1,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 1 })",
+            "window": "WindowId(12582916)"
+          },
+          "observed_failure_seconds": 2.000209093093872,
+          "presentations_while_failed": 1,
+          "final_present": {
+            "acquire_attempts": 2,
+            "acquired": 2,
+            "active": 0,
+            "configuration_generation": 2,
+            "configure_attempts": 2,
+            "configured_extent": [
+              1200,
+              800
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 2,
+            "frame_submissions": 2,
+            "gpu_completed_through_receipt": 1,
+            "host": 1,
+            "last_frame_submission_receipt": 2,
+            "last_present_receipt": 2,
+            "presented": 2,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+            "window": "WindowId(12582916)"
+          },
+          "completion_after_retry": [
+            1,
+            2,
+            2
+          ],
+          "failed_resize_dispatched_without_submission": true,
+          "passed": true,
+          "exit": 0
+        },
+        {
+          "host": "GLOBAL",
+          "command": [
+            "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+            "--board",
+            "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+            "--window-size",
+            "1280x800",
+            "--open-global-preferences"
+          ],
+          "passed": false,
+          "error": "native predicate timeout or process exit None"
+        }
+      ]
+    },
+    {
+      "name": "corrected",
+      "runs": [
+        {
+          "host": "MAIN",
+          "command": [
+            "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+            "--board",
+            "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+            "--window-size",
+            "1280x800"
+          ],
+          "first_present": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1333,
+              833
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 1,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 0,
+            "host": 1,
+            "last_frame_submission_receipt": 1,
+            "last_present_receipt": 1,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 1 })",
+            "window": "WindowId(12582916)"
+          },
+          "observed_failure_seconds": 2.0004091262817383,
+          "presentations_while_failed": 1,
+          "final_present": {
+            "acquire_attempts": 2,
+            "acquired": 2,
+            "active": 0,
+            "configuration_generation": 2,
+            "configure_attempts": 2,
+            "configured_extent": [
+              1200,
+              800
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 2,
+            "frame_submissions": 2,
+            "gpu_completed_through_receipt": 1,
+            "host": 1,
+            "last_frame_submission_receipt": 2,
+            "last_present_receipt": 2,
+            "presented": 2,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+            "window": "WindowId(12582916)"
+          },
+          "completion_after_retry": [
+            1,
+            2,
+            2
+          ],
+          "failed_resize_dispatched_without_submission": true,
+          "passed": false,
+          "error": "Command '['/home/bfadmin/Documents/datum-eda/target/release/datum-gui', '--board', '/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb', '--window-size', '1280x800']' timed out after 20 seconds"
+        }
+      ]
+    },
+    {
+      "name": "synchronized",
+      "runs": [
+        {
+          "host": "MAIN",
+          "command": [
+            "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+            "--board",
+            "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+            "--window-size",
+            "1280x800"
+          ],
+          "first_present": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1333,
+              833
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 1,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 0,
+            "host": 1,
+            "last_frame_submission_receipt": 1,
+            "last_present_receipt": 1,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 1 })",
+            "window": "WindowId(12582916)"
+          },
+          "observed_failure_seconds": 2.0002200603485107,
+          "presentations_while_failed": 1,
+          "final_present": {
+            "acquire_attempts": 2,
+            "acquired": 2,
+            "active": 0,
+            "configuration_generation": 2,
+            "configure_attempts": 2,
+            "configured_extent": [
+              1200,
+              800
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 2,
+            "frame_submissions": 2,
+            "gpu_completed_through_receipt": 1,
+            "host": 1,
+            "last_frame_submission_receipt": 2,
+            "last_present_receipt": 2,
+            "presented": 2,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+            "window": "WindowId(12582916)"
+          },
+          "completion_after_retry": [
+            1,
+            2,
+            2
+          ],
+          "failed_resize_dispatched_without_submission": true,
+          "passed": false,
+          "error": "Command '['/home/bfadmin/Documents/datum-eda/target/release/datum-gui', '--board', '/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb', '--window-size', '1280x800']' timed out after 20 seconds"
+        }
+      ]
+    },
+    {
+      "name": "auxiliary",
+      "runs": [
+        {
+          "host": "GLOBAL",
+          "command": [
+            "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+            "--board",
+            "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+            "--window-size",
+            "1280x800",
+            "--open-global-preferences"
+          ],
+          "first_present": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1333,
+              833
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 1,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 0,
+            "host": 1,
+            "last_frame_submission_receipt": 1,
+            "last_present_receipt": 1,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 1 })",
+            "window": "WindowId(12582916)"
+          },
+          "observed_failure_seconds": 2.0002949237823486,
+          "presentations_while_failed": 1,
+          "final_present": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1200,
+              800
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 2,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 1,
+            "host": 2,
+            "last_frame_submission_receipt": 2,
+            "last_present_receipt": 2,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+            "window": "WindowId(12582917)"
+          },
+          "completion_after_retry": [
+            1,
+            3,
+            3
+          ],
+          "failed_resize_dispatched_without_submission": true,
+          "passed": true,
+          "exit": 0
+        },
+        {
+          "host": "PROJECT",
+          "command": [
+            "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+            "--board",
+            "/tmp/pm045-readiness-x11/PROJECT/board.kicad_pcb",
+            "--window-size",
+            "1280x800",
+            "--open-project-preferences"
+          ],
+          "first_present": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1333,
+              833
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 1,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 0,
+            "host": 1,
+            "last_frame_submission_receipt": 1,
+            "last_present_receipt": 1,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 1 })",
+            "window": "WindowId(12582916)"
+          },
+          "observed_failure_seconds": 2.0002551078796387,
+          "presentations_while_failed": 1,
+          "final_present": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1200,
+              800
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 2,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 1,
+            "host": 2,
+            "last_frame_submission_receipt": 2,
+            "last_present_receipt": 2,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+            "window": "WindowId(12582917)"
+          },
+          "completion_after_retry": [
+            1,
+            3,
+            3
+          ],
+          "failed_resize_dispatched_without_submission": true,
+          "passed": true,
+          "exit": 0
+        },
+        {
+          "host": "NEW",
+          "command": [
+            "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+            "--board",
+            "/tmp/pm045-readiness-x11/NEW/board.kicad_pcb",
+            "--window-size",
+            "1280x800",
+            "--open-new-project"
+          ],
+          "first_present": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1333,
+              833
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 1,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 0,
+            "host": 1,
+            "last_frame_submission_receipt": 1,
+            "last_present_receipt": 1,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 1 })",
+            "window": "WindowId(12582916)"
+          },
+          "observed_failure_seconds": 2.0002517700195312,
+          "presentations_while_failed": 1,
+          "final_present": {
+            "acquire_attempts": 1,
+            "acquired": 1,
+            "active": 0,
+            "configuration_generation": 1,
+            "configure_attempts": 1,
+            "configured_extent": [
+              1200,
+              800
+            ],
+            "discarded": 0,
+            "frame_submission_receipts_issued": 2,
+            "frame_submissions": 1,
+            "gpu_completed_through_receipt": 1,
+            "host": 2,
+            "last_frame_submission_receipt": 2,
+            "last_present_receipt": 2,
+            "presented": 1,
+            "queue_epoch": 1,
+            "reason": "present",
+            "wgpu_submission": "Some(SubmissionIndex { index: 2 })",
+            "window": "WindowId(12582917)"
+          },
+          "completion_after_retry": [
+            1,
+            3,
+            3
+          ],
+          "failed_resize_dispatched_without_submission": true,
+          "passed": true,
+          "exit": 0
+        }
+      ]
+    }
+  ],
+  "artifacts_sha256": {
+    "auxiliary/GLOBAL/native.log.gz": "0bfc679d4b516fb66add8d035f10db0fec40b14320bad038b0e9a0c493cd67cc",
+    "auxiliary/GLOBAL/stderr.log.gz": "1122d5b3a0fdcccbb2b80208eacd55fd03a22e796931e2ee8d83ad2bc674e943",
+    "auxiliary/NEW/native.log.gz": "e898187e7c468deb5678345960a403b3049d13ee6043d1f3c1a334bfd958962a",
+    "auxiliary/NEW/stderr.log.gz": "1122d5b3a0fdcccbb2b80208eacd55fd03a22e796931e2ee8d83ad2bc674e943",
+    "auxiliary/PROJECT/native.log.gz": "4cad04dcfff3619471db4831d603761a853160df14fa77798fd24591a01adad2",
+    "auxiliary/PROJECT/stderr.log.gz": "77cfaf6b61eda2605f6b1027d7efc2736f527cdf90170dab09e6b2b48a13b083",
+    "auxiliary/result.json.gz": "18174391b39267f42a4016a4876549f940314b260b24b9c1b2ffb8388bef7a65",
+    "auxiliary/runner.py.gz": "9299d4884d17419ba9f127f5ea388b3b33402573921f5820fdeb2966f8abe65f",
+    "build.log.gz": "013883cc8941d1f569aa4934d3180035a8fafaa4743eb1e75b8a28d3c9d17e98",
+    "clippy.log.gz": "58bbe0a6cb59420c5c523fe837272eb5cd4bcac020c4a39374223269cad45254",
+    "corrected/MAIN/native.log.gz": "a92c4e15e42067cff68d708bc2068a648780cbbcdd514404d43dab971886dea8",
+    "corrected/MAIN/stderr.log.gz": "a1cb4ef54b4134dc6d3372ebc7d2c10a66acb5daf26d1c7ad364a4ff903e786e",
+    "corrected/result.json.gz": "6e737fd25d3c35571e80fda83f84cfa982cc85976685e70c2d7d4eecbb28af14",
+    "corrected/runner.py.gz": "dc8d411d4aca77eeb2a9fcf35c8962c34db226072c09f008dfc726285966d66a",
+    "first/GLOBAL/native.log.gz": "f6da9dade0fd605fca39cd5c4ac41b408183d8009b8cd6bf8db755b53b2b2ce0",
+    "first/GLOBAL/stderr.log.gz": "77cfaf6b61eda2605f6b1027d7efc2736f527cdf90170dab09e6b2b48a13b083",
+    "first/MAIN/native.log.gz": "165b338b9ffc70c387bc2e3144a52b855b232f61a2db4067ce7f24f94d3aa932",
+    "first/MAIN/stderr.log.gz": "a1cb4ef54b4134dc6d3372ebc7d2c10a66acb5daf26d1c7ad364a4ff903e786e",
+    "first/result.json.gz": "16ec3c773de03efd6841792756f1a4fadff79b7a59be52b7c5bc258df05a1175",
+    "first/runner.py.gz": "a6242df9f1ed88dfc2e6c15f47ef6198f44f262ecfdb147deb7f0a687f3970ae",
+    "synchronized/MAIN/native.log.gz": "b9760ab8b6342cddc9da55e4879edcb11fb4eaa16ad7ad36221d35dfe6bb51d4",
+    "synchronized/MAIN/stderr.log.gz": "a1cb4ef54b4134dc6d3372ebc7d2c10a66acb5daf26d1c7ad364a4ff903e786e",
+    "synchronized/result.json.gz": "0cd8fa0e4381a086fbe9a179adf96f2b4fdc79a0a4ef693403dd4b7f27411e40",
+    "synchronized/runner.py.gz": "54db6e19e67be30646343504c0d22a365afbd7fe6b43bacd7023110e39cb5f1a",
+    "tests.log.gz": "28f9485d5707098936bbaaf26a3afd076fd78c07d65c0fc0688715f77c011741"
+  }
+}

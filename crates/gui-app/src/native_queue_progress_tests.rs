@@ -187,3 +187,34 @@ fn poll_error_latches_failure_without_fabricating_completion() {
     );
     assert!(owner.retry_progress());
 }
+
+#[test]
+fn diagnostic_retry_releases_only_delivered_receipts_and_keeps_future_callbacks_live() {
+    let owner = QueueOwner::default();
+    owner.0.borrow_mut().held_completion = Some(Arc::new(Mutex::new(HeldCompletion::new())));
+    let start = Instant::now();
+    let (first, completion) = owner.submission_receipt();
+    let first_callback = owner.completion_callback(first, completion.clone());
+    let (second, _) = owner.submission_receipt();
+    let second_callback = owner.completion_callback(second, completion);
+    first_callback();
+    assert_eq!(owner.snapshot().2, 0);
+    assert!(!owner.retry_progress()); // Cannot release before real failure.
+    owner.progress(start, true, || Ok(())).unwrap();
+    assert_eq!(
+        owner
+            .progress(at(start, 2000), true, || panic!("expired"))
+            .unwrap(),
+        (None, true)
+    );
+    assert!(owner.retry_progress());
+    assert_eq!(owner.snapshot().2, first); // Never fabricate second's completion.
+    second_callback();
+    assert_eq!(owner.snapshot().2, second);
+    assert_eq!(
+        owner
+            .progress(at(start, 2001), true, || panic!("complete"))
+            .unwrap(),
+        (None, false)
+    );
+}

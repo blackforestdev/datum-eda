@@ -27,6 +27,7 @@ struct State {
     attachments: Arc<Mutex<attachment::Ledger>>,
     progress: super::native_recovery::Recovery,
     progress_completed: u64,
+    held_completion: Option<Arc<Mutex<HeldCompletion>>>,
 }
 impl Default for State {
     fn default() -> Self {
@@ -44,7 +45,33 @@ impl Default for State {
             attachments: Arc::default(),
             progress: Default::default(),
             progress_completed: 0,
+            held_completion: None,
         }
+    }
+}
+
+/// Opt-in backend-boundary fault. Stores only receipts actually delivered by
+/// wgpu; Retry releases those receipts, never the submitted watermark.
+struct HeldCompletion {
+    holding: bool,
+    actual: u64,
+}
+impl HeldCompletion {
+    fn new() -> Self {
+        Self {
+            holding: true,
+            actual: 0,
+        }
+    }
+    fn delivered(&mut self, serial: u64, published: &AtomicU64) {
+        self.actual = self.actual.max(serial);
+        if !self.holding {
+            published.fetch_max(serial, Ordering::Release);
+        }
+    }
+    fn release(&mut self, published: &AtomicU64) {
+        self.holding = false;
+        published.fetch_max(self.actual, Ordering::Release);
     }
 }
 
@@ -131,12 +158,31 @@ impl QueueOwner {
     }
 
     pub(super) fn retry_progress(&self) -> bool {
-        self.0.borrow_mut().progress.manual_retry()
+        let mut state = self.0.borrow_mut();
+        if !state.progress.manual_retry() {
+            return false;
+        }
+        if let Some(held) = &state.held_completion {
+            held.lock()
+                .expect("held completion poisoned")
+                .release(&state.completed);
+            super::append_gui_diagnostic_line("native queue held completion released by Retry");
+        }
+        true
     }
 
     pub(super) fn with_device_loss(signal: Arc<AtomicBool>) -> Self {
         let owner = Self::default();
         owner.0.borrow_mut().device_lost = signal;
+        match std::env::var("DATUM_DIAGNOSTIC_QUEUE_COMPLETION").as_deref() {
+            Err(std::env::VarError::NotPresent) | Ok("0") => {}
+            Ok("hold-until-retry") => {
+                owner.0.borrow_mut().held_completion =
+                    Some(Arc::new(Mutex::new(HeldCompletion::new())));
+                super::append_gui_diagnostic_line("native queue completion hold enabled");
+            }
+            other => panic!("invalid DATUM_DIAGNOSTIC_QUEUE_COMPLETION: {other:?}"),
+        }
         owner
     }
 
@@ -264,8 +310,15 @@ impl QueueOwner {
         // Keep only accounting metadata alive across last-host closure. The
         // callback still publishes one watermark; no window or GPU view is held.
         let attachments = self.0.borrow().attachments.clone();
+        let held = self.0.borrow().held_completion.clone();
         move || {
-            completion.fetch_max(serial, Ordering::Release);
+            if let Some(held) = held {
+                held.lock()
+                    .expect("held completion poisoned")
+                    .delivered(serial, &completion);
+            } else {
+                completion.fetch_max(serial, Ordering::Release);
+            }
             drop(attachments);
         }
     }
