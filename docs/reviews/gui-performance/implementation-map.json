@@ -25610,5 +25610,28 @@
       "No native backend/scale/endurance, global adoption or RSS/performance claim. No dependency, license, font assets, third-party code or resize qualification change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json"
+  },
+  "s2_exit_reconciliation": {
+    "status": "review proposal only; S2 remains in progress; S3 pending",
+    "baseline": "73cae904",
+    "controlling_barrier": "S2 table requires complete byte caps and exact proofs. S0/S1 approvals did not change S2.",
+    "implementation_gaps": [
+      "Complete owned/in-flight accounting and absolute caps, including private text/atlas allocations and uploads",
+      "Exact changed-range screen/uniform transfers; internal clean gaps/full changed uniforms still transfer",
+      "Complete shaping/layout dependency coverage"
+    ],
+    "qualification_gaps": [
+      "All-consumer native replacement/address-reuse/eviction/device-reset negatives",
+      "Complete painter/AA/text/backend/scale coverage",
+      "Complete resource/counter conformance and budget acceptance"
+    ],
+    "technical_observation": {
+      "cosmic-text 0.15.0": "Buffer.lines and shape/layout vectors are public, but BufferLine text capacity and AttrsList range storage capacity are private; text() and spans_iter() expose values, not complete allocated capacities.",
+      "glyphon 0.10.0": "TextAtlas inner atlases are crate-private; allocation growth and queue.write_texture happen inside the dependency. Public trim/prepare do not report complete allocation/upload events.",
+      "boundary": "Read existing registry sources only. No copied sources, new dependency, Cargo change or complete accounting claim."
+    },
+    "next_production_choice": "S3 shared dialog/profile migration can consume existing shared owners, but current S2 exit prevents selection. The proposal changes that ordering; continuing substantive S2 work remains authorized without it.",
+    "proposal": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#proposed-s2-implementation-exit-amendment--pending-owner-review",
+    "disposition": "No requirement satisfied, no step advanced, no technical accounting solution or dependency authority inferred. Proposed S4 implementation and S5 qualification carryforward requires explicit owner approval."
   }
 }

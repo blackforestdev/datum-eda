@@ -261,3 +261,68 @@ their partial test statuses and now name GPI-S5 as their qualification exit.
 Four pinned resize rows and one deferred temporal HP row retain their exclusions.
 No complete row qualification or performance acceptance follows. S2 may begin
 through the synchronized Frontier transition; S3–S5 remain pending.
+
+## Proposed S2 implementation exit amendment — pending owner review
+
+This section is a review draft, not an operative amendment. The approved S0 and
+S1 changes do not authorize it. GPI-S2 remains in progress and S3 remains pending.
+
+At `73cae904`, the retained world, screen upload, uniform, encoded-batch and shaped
+text owners are production code with bounded receipts in the existing adoption
+map. This is not S2 completion: the table still requires complete byte caps and
+exact cache/replacement/negative proof. Missing work includes implementation, not
+only qualification: complete owned/in-flight byte accounting and caps, exact
+changed-range transfers, and complete shaping/layout dependency coverage.
+
+The installed text dependencies expose some shaped vectors but hide other owned
+capacities and atlas creation/upload boundaries. Public visible counts are not
+complete ACC-01/02 accounting. This observation grants no vendoring, dependency
+change, surrogate accounting pass or acceptance waiver. An authorized technical
+solution is still required; resequencing does not supply that solution.
+
+To allow shared-component migration before these implementation gaps close, the
+smallest proposed transaction is the following six exact clause changes:
+
+1. Replace the **S2 evidence/exit cell** with:
+   > Establish bounded shared-implementation readiness from the default production
+   > consumers of retained world, encoding, screen/uniform upload and shaped-text
+   > ownership; retired competing paths; affected warm/replacement/eviction and
+   > painter/AA/text correctness proofs; and explicit resource limits. Keep each
+   > unfinished implementation and qualification predicate in its existing map
+   > row. Complete accounting/caps, exact changed-range transfers and complete
+   > shaping/layout dependency implementation are S4 exit prerequisites; full
+   > native/replacement/device-reset/negative and budget qualification is required
+   > at S5. Partial limits are not complete byte caps. Unexplained regressions
+   > block readiness. Preserve separately reversible geometry/text/upload patches.
+2. Replace **GPI-S2** with:
+   > Adopt retained geometry/text/encoding/upload ownership and establish bounded
+   > shared-implementation readiness under the S2 table. Preserve unfinished
+   > implementation explicitly for S4 and complete qualification for S5; neither
+   > readiness nor partial cache proof establishes resource-budget acceptance.
+3. Append to the **S4 evidence/exit cell**:
+   > Complete every unfinished S2 accounting/cap, exact changed-range transfer and
+   > shaping/layout dependency implementation carried in the adoption map, with
+   > affected positive/negative and counter-conformance proof. Private dependency
+   > internals remain a technical boundary to resolve within owner-authorized
+   > scope, not a waiver or permission to modify third-party code.
+4. Append to **GPI-S4**:
+   > Complete the unfinished S2 implementation predicates carried by the S2/S4
+   > tables before advancing to S5.
+5. Append to the **S5 evidence/exit cell**:
+   > Close every in-scope qualification predicate carried from S2, including exact
+   > warm/replacement/address-reuse/eviction/device-reset negatives, painter/AA/text
+   > parity, complete byte caps and ACC-01/02 conformance across the required
+   > consumers/configurations. Unfinished implementation at S4 blocks S5 entry;
+   > moving a predicate does not satisfy it.
+6. In the same approval transaction, mirror the changed **GPI-S2/GPI-S4** wording
+   in `specs/active_frontier.json`, regenerate `specs/PROGRESS.md`, and record each
+   outstanding S2 predicate's implementation/qualification disposition in the
+   existing adoption map. A separate evidence-based S2 readiness reconciliation
+   must precede S2 completion and S3 selection; approval alone completes neither.
+
+PM045 GP-045-05 already assigns complete accounting to S1–S4 and final accounting
+qualification to S5; that allocation is preserved. Numerical thresholds, original
+receipts, all required consumers, independent replay, endurance, dependency
+policy, product authority and nonblocking resize exclusions remain unchanged.
+Without approval, retain the current S2 exit and continue S2 implementation; do
+not advance S3 or declare the overall goal blocked merely by this proposal.
