@@ -13037,7 +13037,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json"
+        "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json",
+        "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json"
       ]
     },
     {
@@ -13127,7 +13128,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json"
+        "docs/reviews/gui-performance/implementation/S2/text-entry-retirement/result.json",
+        "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json"
       ]
     },
     {
@@ -13491,7 +13493,10 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json"
+      ]
     },
     {
       "id": "MEM-MESH-ENTRIES",
@@ -25742,5 +25747,35 @@
       "No sequencing approval inferred. S2 remains selected; pending amendment unchanged.",
       "No new dependency, vendoring, downloads, registry changes, license/Cargo or resize work."
     ]
+  },
+  "s2_shared_font_bytes_work": {
+    "status": "default shared embedded-font source adoption; S2 readiness not yet declared",
+    "production_consumers": [
+      "Every native Renderer FontSystem (MAIN/GLOBAL/PROJECT/NEW)",
+      "Shared measuring FontSystem used by layout"
+    ],
+    "owner": "load_datum_fonts with one immutable process-wide six-source array referencing executable font bytes",
+    "retired_path": "Six include_bytes().to_vec() heap payload copies for every renderer/measurement FontSystem",
+    "behavior": "Use existing fontdb Source::Binary with shared Arc handles around static byte slices. Preserve font load order, system discovery, fallback setup, per-FontSystem face database and shaping caches. No font asset or face attributes change.",
+    "bounds": {
+      "sources": 6,
+      "embedded_payload_bytes": 831332,
+      "ownership": "One static byte inventory in the executable; six process-lifetime Arc handles. Font databases clone handles, not font bytes. This removes 831332 bytes of explicit Vec payload copies per FontSystem relative to the old loader, not a measured RSS reduction or complete FontSystem accounting.",
+      "teardown": "Renderer databases drop their references on teardown; executable font bytes and six source handles have process lifetime. No dynamic input grows this inventory."
+    },
+    "proof": {
+      "negative": "Original loader fails cross-FontSystem Arc identity. Initial const inventory failed static-storage pointer proof; changed to one static inventory and all pointers now match it.",
+      "cpu": "206 renderer tests passed, 22 ignored. Shared ownership and executable-storage pointer proof passes for all six fonts. All five TextFace profiles match legacy-copy glyph layout/widths for Latin, Greek, Arabic and CJK text.",
+      "gpu": "13 real GPU regressions pass serially including dialog/full parity at 1x/1.5x, scrolling, layout, atlas pressure/reindex, warm text and uniform ownership.",
+      "native": "Fresh offline release and all four X11 native smokes pass.",
+      "checks": "Renderer visual all-targets Clippy, source health, dependency authority, traceability, parity/spec governance, fresh project selector and formatting checked."
+    },
+    "limits": [
+      "No system-font scan elimination or shared mutable FontSystem introduced.",
+      "No complete font/shaped-cache byte accounting, process RSS improvement or full native budget claim.",
+      "S2 exit amendment approval is reconciled separately; this production slice does not advance S2/S3.",
+      "No new dependency, vendoring, font asset, Cargo/license, visual truth, model authority or resize qualification change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S2/shared-font-bytes/result.json"
   }
 }
