@@ -1,0 +1,9 @@
+{
+  "status": "capture comparison unavailable; no product pass",
+  "source_commit": "62421479",
+  "binary_sha256": "d8aacdbd243ddbed12a40197b1b24ac87233ad3be87b9cab9647ed8f7ce747ad",
+  "environment": "KDE Wayland desktop; test application forced to X11/Xwayland",
+  "x11_root": "ImageMagick import -window root failed, exit 1, no desktop image",
+  "compositor": "Installed Spectacle background active-window capture reported KWin CaptureActiveWindow did not reply. Process returned zero but no compositor.png exists; reject capture as failed.",
+  "disposition": "Keep dat-main-native-capture-delay-md9 open. Cause of stale window captures and delayed Close remains unestablished. Stop repeating native captures under these conditions; continue independent code/component work. No kernel/driver investigation, renderer attribution, native input timing or final-pixel qualification follows."
+}
