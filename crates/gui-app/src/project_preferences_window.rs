@@ -23,7 +23,7 @@ impl App {
                 self.frames.close(surface.window_id());
             }
             self.project_preferences_surface = None;
-            if had_window && let Some(window) = self.window {
+            if had_window && let Some(window) = self.window.as_deref() {
                 window.focus_window();
             }
             return Ok(());
@@ -47,6 +47,7 @@ impl App {
             );
             owned_window_policy::establish_native_owner(
                 self.window
+                    .as_deref()
                     .context("main window must exist before Project Preferences")?,
                 &window,
             )

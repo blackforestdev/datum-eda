@@ -173,8 +173,7 @@ fn main() -> Result<()> {
         return run_offscreen_visual_test(&args);
     }
     let event_loop = EventLoop::new().context("failed to create event loop")?;
-    let mut app = App::new(args, event_loop.create_proxy());
-    event_loop.run_app(&mut app).context("failed to run app")
+    App::new(args, event_loop.create_proxy()).run(event_loop)
 }
 #[cfg(feature = "visual")]
 fn run_offscreen_visual_test(args: &GuiArgs) -> Result<()> {

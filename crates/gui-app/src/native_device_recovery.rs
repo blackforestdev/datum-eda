@@ -132,7 +132,7 @@ impl Runtime {
             select_msaa_samples(&adapter, config.format),
         );
         let measurements =
-            native_gpu_measurements::Host::new(&mut renderer, &device, &queue, self.window, None)?;
+            native_gpu_measurements::Host::new(&mut renderer, &device, &queue, &self.window, None)?;
         anyhow::ensure!(
             !health.failed(),
             "replacement device failed during renderer initialization"
@@ -151,7 +151,7 @@ impl Runtime {
         self.renderer = renderer;
         self.measurements = measurements;
         self.device_health = health;
-        self.surface_transaction = SurfaceTransaction::new(self.window, &self.device_health);
+        self.surface_transaction = SurfaceTransaction::new(&self.window, &self.device_health);
         self.invalidate_scene();
         Ok(())
     }
@@ -220,7 +220,7 @@ impl App {
             return None;
         }
         if !self.device_recovery.attempted {
-            let main_window = runtime.window;
+            let main_window = runtime.window.clone();
             let fault_code = runtime.device_health.failure.load(Ordering::Acquire);
             for window in [
                 Some(main_window.id()),

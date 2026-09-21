@@ -2,7 +2,7 @@
 use super::*;
 
 pub(super) struct Runtime {
-    pub(super) window: &'static Window,
+    pub(super) window: std::sync::Arc<Window>,
     pub(super) instance: wgpu::Instance,
     pub(super) adapter: wgpu::Adapter,
     pub(super) surface: wgpu::Surface<'static>,

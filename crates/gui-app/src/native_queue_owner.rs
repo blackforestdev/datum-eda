@@ -356,7 +356,7 @@ impl crate::App {
         };
         self.frames.fail_device();
         let windows = [
-            self.window,
+            self.window.as_deref(),
             self.global_preferences_window.as_deref(),
             self.project_preferences_window.as_deref(),
             self.new_project_window.as_deref(),
@@ -382,7 +382,7 @@ impl crate::App {
             return false;
         }
         for window in [
-            self.window,
+            self.window.as_deref(),
             self.global_preferences_window.as_deref(),
             self.project_preferences_window.as_deref(),
             self.new_project_window.as_deref(),

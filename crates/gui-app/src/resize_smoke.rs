@@ -69,7 +69,7 @@ impl App {
             return;
         };
         if std::time::Instant::now() >= deadline {
-            if let Some(window) = self.window {
+            if let Some(window) = self.window.as_deref() {
                 self.frames.invalidate(window);
             }
         } else {
@@ -132,11 +132,11 @@ impl App {
                         size.width, size.height
                     ));
                     runtime.resize(size.width, size.height);
-                    self.frames.invalidate(runtime.window);
+                    self.frames.invalidate(&runtime.window);
                 }
                 // A no-op request need not produce a native size event.
                 if observed == (width, height) {
-                    self.frames.invalidate(runtime.window);
+                    self.frames.invalidate(&runtime.window);
                 }
                 // Otherwise None awaits a native Resized event.
                 true

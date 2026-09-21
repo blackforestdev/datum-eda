@@ -169,7 +169,7 @@ impl Runtime {
         let started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line(|| "frame present begin");
         let first_device_frame = !self.surface_transaction.has_presented();
-        self.surface_transaction.present(frame, self.window)?;
+        self.surface_transaction.present(frame, &self.window)?;
         self.presented_console_layout = self
             .prepared_scene
             .as_ref()

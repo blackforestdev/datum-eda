@@ -4,7 +4,7 @@ use super::*;
 
 impl App {
     pub(super) fn redraw_main_window(&mut self, event_loop: &ActiveEventLoop) {
-        let Some(window) = self.window else {
+        let Some(window) = self.window.as_deref() else {
             return;
         };
         let Some(receipt) = self.frames.begin_frame(window.id()) else {

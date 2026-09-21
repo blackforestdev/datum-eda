@@ -1884,7 +1884,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial: component rebind/isolation and separate native device-loss recovery runs for each of four hosts pass; simultaneous four-host fault, full cache/data/camera/focus and resource qualification remain open",
+        "status": "partial: component rebind/isolation and separate native device-loss recovery runs for each of four hosts pass; simultaneous four-host fault, full cache/data/camera/focus and resource qualification remain open Main permanent window leak retired in favor of owned Arc; all four ordinary host closes and one device-recovery replay observe zero strong Main references after teardown. One device-run close timeout retained; driver lifetime and full lifecycle qualification remain open.",
         "id": "proof_lf_05",
         "positive": "Device loss while all four hosts have work",
         "negative_control": "Recreate separately per host or keep stale GPU keys",
@@ -1937,7 +1937,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
-        "docs/reviews/gui-performance/implementation/S1/device-wake/receipt.json"
+        "docs/reviews/gui-performance/implementation/S1/device-wake/receipt.json",
+        "docs/reviews/gui-performance/implementation/S1/owned-main-window/result.json"
       ]
     },
     {
@@ -2079,7 +2080,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "partial component proof: Close-before-completion metadata lifetime, ticket cancellation and receipt-scoped retirement are component-tested. Native callback-after-close/no-late-work and complete memory budgets remain unqualified; metadata tests do not prove driver allocation release. Shared default idle completion now advances through the single minimum-deadline owner; five component regressions and four bounded native healthy-queue idle/close runs passed. Full native fault/deadline/resource qualification remains open.",
+        "status": "partial component proof: Close-before-completion metadata lifetime, ticket cancellation and receipt-scoped retirement are component-tested. Native callback-after-close/no-late-work and complete memory budgets remain unqualified; metadata tests do not prove driver allocation release. Shared default idle completion now advances through the single minimum-deadline owner; five component regressions and four bounded native healthy-queue idle/close runs passed. Full native fault/deadline/resource qualification remains open. Main permanent window leak retired in favor of owned Arc; all four ordinary host closes and one device-recovery replay observe zero strong Main references after teardown. One device-run close timeout retained; driver lifetime and full lifecycle qualification remain open.",
         "id": "proof_lf_07",
         "positive": "Close after submit before callback",
         "negative_control": "Capture strong native-host owner in callback",
@@ -2134,7 +2135,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/main-hit-ownership/chrome-first/tests.log.gz",
         "docs/reviews/gui-performance/implementation/S1/prepared-attachment/receipt.json",
-        "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json"
+        "docs/reviews/gui-performance/implementation/S1/queue-progress/result.json",
+        "docs/reviews/gui-performance/implementation/S1/owned-main-window/result.json"
       ]
     },
     {
@@ -24047,5 +24049,31 @@
       "No native hidden-time, saturated PTY coexistence, independent pixel/state replay, full resource or S1 completion claim. Resize CPU/temporal exclusions unchanged."
     ],
     "receipt": "docs/reviews/gui-performance/implementation/S1/held-completion/result.json"
+  },
+  "s1_owned_main_window_work": {
+    "status": "Default Main window lifetime migrated to owned references; native release observed; full lifecycle qualification remains partial",
+    "production_consumers_migrated": {
+      "MAIN": "App, Runtime, initial surface and asynchronous device replacement own Arc<Window>; ordinary dispatch/rendering borrows",
+      "GLOBAL": "Parent-window adapter borrows Main owned handle; existing auxiliary Arc unchanged",
+      "PROJECT": "Parent-window adapter borrows Main owned handle; existing auxiliary Arc unchanged",
+      "NEW": "Parent-window adapter borrows Main owned handle; existing auxiliary Arc unchanged"
+    },
+    "shared_owner": "App::run -> App/Runtime/Surface ownership; native_gpu::create takes owned Arc for safe static surface lifetime",
+    "retired_paths": "Main Box::leak and permanent static native-window references. Existing verbose observation uses only Weak after dropping App; no observer retains window.",
+    "verification": {
+      "app": "368 passed, 0 failed, 9 ignored",
+      "clippy": "app datum-gui binary -D warnings passed",
+      "release": "fresh guarded offline release passed",
+      "native": "All four default host runs: final completion/three-second no-frame idle, close exit 0, Main strong references zero after App/runtime/surface teardown. Main device recovery: one replacement, workspace/terminal registry preserved, new queue epoch presentation; replay closes with strong references zero.",
+      "source_health": "passed; existing main.rs pretest ceiling ratcheted down one line to 1454",
+      "dependency": "authority check passed; no dependency or license changes"
+    },
+    "limits": [
+      "Main device first run recovered but close timed out with no close event; retained and not explained by this ownership fix. Replay passed using the same 200ms post-presentation wait; output directory label does not establish a longer settling condition. Existing dat-main-native-capture-delay-md9 remains unresolved.",
+      "Weak strong-count zero proves application Window ownership released; it does not measure driver/compositor allocation retirement or native display latency.",
+      "No simultaneous multi-host device failure, close during pending asynchronous device creation, full resource budgets or LF-07/S1 acceptance claimed.",
+      "Baseline close probe passed without debugger attachment; intermittent close failures were not reproduced there. Resize qualification remains separate/nonblocking."
+    ],
+    "receipt": "docs/reviews/gui-performance/implementation/S1/owned-main-window/result.json"
   }
 }

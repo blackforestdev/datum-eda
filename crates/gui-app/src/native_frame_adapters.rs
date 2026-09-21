@@ -17,7 +17,7 @@ impl App {
             if event_loop.exiting() {
                 break;
             }
-            if self.window.is_some_and(|window| window.id() == id) {
+            if self.window.as_ref().is_some_and(|window| window.id() == id) {
                 self.redraw_main_window(event_loop);
             } else if self
                 .global_preferences_window
@@ -43,7 +43,7 @@ impl App {
 
     pub(super) fn request_restored_native_frames(&mut self) {
         for window in [
-            self.window,
+            self.window.as_deref(),
             self.global_preferences_window.as_deref(),
             self.project_preferences_window.as_deref(),
             self.new_project_window.as_deref(),
