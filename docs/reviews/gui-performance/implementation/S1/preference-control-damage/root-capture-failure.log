@@ -1,0 +1,9 @@
+import:  `/tmp/pm045-native-choice-candidate/GLOBAL/desktop.png' @ error/import.c/ImportImageCommand/1289.
+Traceback (most recent call last):
+  File "/tmp/pm045_choice_candidate.py", line 68, in <module>
+    subprocess.run(['import','-window','root',str(case/'desktop.png')],check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['import', '-window', 'root', '/tmp/pm045-native-choice-candidate/GLOBAL/desktop.png']' returned non-zero exit status 1.

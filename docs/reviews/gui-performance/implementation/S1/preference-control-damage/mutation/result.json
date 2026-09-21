@@ -1,0 +1,120 @@
+{
+  "binary_sha256": "2e30c25b39987e47262985d8d7653f9d05aa37ca22283881f3e9a75ba0e57f88",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "control_before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 5,
+          "present": 5
+        }
+      },
+      "control_after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "local": true,
+      "keyboard_after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 9,
+          "present": 9
+        }
+      },
+      "keyboard_local": true
+    },
+    {
+      "host": "GLOBAL",
+      "passed": true,
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/GLOBAL/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--open-global-preferences"
+      ],
+      "window": "WindowId(12582917)",
+      "query": "board precision",
+      "before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 1,
+          "present": 1
+        }
+      },
+      "after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 5,
+          "present": 5
+        }
+      },
+      "unmatched_key": "F6",
+      "before_unmatched": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 9,
+          "present": 9
+        }
+      },
+      "after_unmatched": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 9,
+          "present": 9
+        }
+      },
+      "scope": "native input to own dialog; Main submission/presentation unchanged; screenshot final text requires visual review"
+    }
+  ],
+  "mutation": {
+    "before": {
+      "12582916": {
+        "submit": 1,
+        "present": 1
+      },
+      "12582917": {
+        "submit": 9,
+        "present": 9
+      }
+    },
+    "after": {
+      "12582916": {
+        "submit": 2,
+        "present": 2
+      },
+      "12582917": {
+        "submit": 10,
+        "present": 10
+      }
+    },
+    "key": "Right on board precision control",
+    "scope": "existing setting-write redraw positive control"
+  }
+}

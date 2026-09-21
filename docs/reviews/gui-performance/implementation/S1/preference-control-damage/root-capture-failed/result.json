@@ -1,0 +1,45 @@
+{
+  "binary_sha256": "2e30c25b39987e47262985d8d7653f9d05aa37ca22283881f3e9a75ba0e57f88",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "control_before": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 5,
+          "present": 5
+        }
+      },
+      "control_after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 6,
+          "present": 6
+        }
+      },
+      "local": true,
+      "keyboard_after": {
+        "12582916": {
+          "submit": 1,
+          "present": 1
+        },
+        "12582917": {
+          "submit": 9,
+          "present": 9
+        }
+      },
+      "keyboard_local": true
+    },
+    {
+      "host": "GLOBAL",
+      "passed": false,
+      "error": "Command '['import', '-window', 'root', '/tmp/pm045-native-choice-candidate/GLOBAL/desktop.png']' returned non-zero exit status 1."
+    }
+  ]
+}
