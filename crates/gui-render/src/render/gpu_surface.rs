@@ -84,6 +84,17 @@ impl SurfaceAttachments {
     }
 
     fn ensure(&mut self, device: &wgpu::Device, key: AttachmentKey) -> &wgpu::TextureView {
+        self.ensure_guarded(device, key, || true)
+            .expect("unconditional attachment preparation")
+    }
+
+    fn ensure_guarded(
+        &mut self,
+        device: &wgpu::Device,
+        key: AttachmentKey,
+        mut healthy: impl FnMut() -> bool,
+    ) -> anyhow::Result<&wgpu::TextureView> {
+        anyhow::ensure!(healthy(), "surface attachment preparation on failed device");
         #[cfg(all(test, feature = "visual", target_os = "linux"))]
         let forced = std::mem::take(&mut self.force_replacement);
         #[cfg(not(all(test, feature = "visual", target_os = "linux")))]
@@ -112,23 +123,45 @@ impl SurfaceAttachments {
                 .allocations
                 .checked_add(1)
                 .expect("attachment allocation exhausted");
-            // Allocate before replacing the old reference, as in the recovered
-            // renderer. No empty intermediate attachment or quality reduction.
-            self.current = Some(SurfaceAttachment {
+            anyhow::ensure!(healthy(), "surface attachment allocation failed");
+            let replacement = SurfaceAttachment {
                 key,
                 allocation: self.allocations,
                 view: texture.create_view(&wgpu::TextureViewDescriptor::default()),
-            });
+            };
+            // Backend error callbacks may report allocation/validation failure
+            // during creation. Keep the old reference until this check passes;
+            // the caller aborts before uploads, encoding or submission.
+            anyhow::ensure!(healthy(), "surface attachment replacement failed");
+            self.current = Some(replacement);
         }
-        &self
+        Ok(&self
             .current
             .as_ref()
             .expect("MSAA attachment initialized")
-            .view
+            .view)
     }
 }
 
 impl Renderer {
+    /// Prepare native attachments before scene uploads and encoding. The host
+    /// supplies its existing device-health signal; this does not install another
+    /// backend error handler or claim that deferred errors have already arrived.
+    pub fn prepare_surface_attachment(
+        &mut self,
+        device: &wgpu::Device,
+        width: u32,
+        height: u32,
+        healthy: impl FnMut() -> bool,
+    ) -> anyhow::Result<()> {
+        self.surface_attachments.ensure_guarded(
+            device,
+            AttachmentKey::new(width, height, self.msaa_format, self.msaa_samples),
+            healthy,
+        )?;
+        Ok(())
+    }
+
     pub fn surface_attachment_snapshot(&self) -> Option<SurfaceAttachmentSnapshot> {
         self.surface_attachments.snapshot()
     }
@@ -168,6 +201,53 @@ mod tests {
             SurfaceAttachments::default().owner,
             SurfaceAttachments::default().owner
         );
+    }
+
+    #[cfg(all(feature = "visual", target_os = "linux"))]
+    #[test]
+    fn reported_replacement_failure_keeps_old_attachment_and_allows_fresh_retry() {
+        let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+            backends: wgpu::Backends::VULKAN,
+            ..Default::default()
+        });
+        let adapter =
+            pollster::block_on(instance.request_adapter(&wgpu::RequestAdapterOptions::default()))
+                .unwrap();
+        let (device, _) =
+            pollster::block_on(adapter.request_device(&wgpu::DeviceDescriptor::default())).unwrap();
+        let mut owner = SurfaceAttachments::default();
+        let old_key = AttachmentKey::new(32, 64, wgpu::TextureFormat::Rgba8Unorm, 4);
+        let new_key = AttachmentKey::new(64, 32, old_key.format, old_key.samples);
+        owner.ensure(&device, old_key);
+        let first = owner.snapshot().unwrap();
+        assert!(owner.ensure_guarded(&device, new_key, || false).is_err());
+        assert_eq!(owner.snapshot(), Some(first));
+        // Report failure at texture creation, then at view creation. Neither
+        // failed replacement can publish its identity or drop the prior view.
+        for fail_at in [2_u32, 3] {
+            let mut calls = 0;
+            assert!(
+                owner
+                    .ensure_guarded(&device, new_key, || {
+                        calls += 1;
+                        calls != fail_at
+                    })
+                    .is_err()
+            );
+            let retained = owner.snapshot().unwrap();
+            assert_eq!(retained.allocation, first.allocation);
+            assert_eq!(retained.extent, first.extent);
+            assert_eq!(retained.owner, first.owner);
+            assert_eq!(retained.allocations_created, u64::from(fail_at));
+            owner.ensure(&device, old_key);
+            assert_eq!(owner.snapshot(), Some(retained));
+        }
+        owner.ensure_guarded(&device, new_key, || true).unwrap();
+        let recovered = owner.snapshot().unwrap();
+        assert_eq!(recovered.extent, new_key.extent);
+        assert_eq!(recovered.allocations_created, 4);
+        assert_ne!(recovered.allocation, first.allocation);
+        assert_eq!(recovered.owner, first.owner);
     }
 
     #[cfg(all(feature = "visual", target_os = "linux"))]
