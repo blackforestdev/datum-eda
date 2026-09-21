@@ -12,10 +12,11 @@ pub(super) struct GlobalPreferencesWindowSurface {
     surface: wgpu::Surface<'static>,
     window: std::sync::Arc<Window>,
     config: wgpu::SurfaceConfiguration,
+    // Drop renderer references before recording host attachment retirement.
+    pub(super) renderer: Renderer,
     pub(super) surface_transaction:
         gui_runtime_support::native_surface_transaction::SurfaceTransaction,
     scale_factor: f32,
-    pub(super) renderer: Renderer,
     pub(super) measurements: native_gpu_measurements::Host,
     retained: Option<RetainedScene>,
     prepared: Option<PreparedScene>,
@@ -271,7 +272,8 @@ impl GlobalPreferencesWindowSurface {
                     .submitted(&mut frame, &runtime.queue, submission)
             },
         );
-        self.surface_transaction.trace_attachment(&self.renderer);
+        self.surface_transaction
+            .observe_attachment(&self.renderer, &frame);
         rendered?;
         if runtime.device_health.failed() {
             return Ok(false);
