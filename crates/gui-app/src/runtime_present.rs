@@ -27,16 +27,14 @@ impl Runtime {
         let probe = gui_runtime_support::phase_probe::Probe::start("prepare");
         let acquire_elapsed = acquire_started.elapsed();
         append_gui_verbose_diagnostic_line("render acquire end");
-        let view = frame
-            .texture
-            .create_view(&wgpu::TextureViewDescriptor::default());
+        let view = frame.view();
         if gui_runtime_support::native_frame_probe::clear_only() {
             gui_runtime_support::native_frame_probe::submit_clear(&self.device, &self.queue, &view);
             drop(probe);
             if self.device_health.failed() {
                 return Ok(false);
             }
-            self.present_native_frame(frame);
+            self.present_native_frame(frame)?;
             self.trace_timing(format!(
                 "runtime render diagnostic_clear=true total={}ms acquire={}ms renderer=0ms",
                 render_started.elapsed().as_millis(),
@@ -120,7 +118,7 @@ impl Runtime {
         if self.device_health.failed() {
             return Ok(false);
         }
-        let present_elapsed = self.present_native_frame(frame);
+        let present_elapsed = self.present_native_frame(frame)?;
         append_gui_verbose_diagnostic_line(format!(
             "frame present end {}ms total={}ms",
             present_elapsed.as_millis(),
@@ -141,14 +139,16 @@ impl Runtime {
         Ok(true)
     }
 
-    fn present_native_frame(&mut self, frame: wgpu::SurfaceTexture) -> std::time::Duration {
+    fn present_native_frame(
+        &mut self,
+        frame: gui_runtime_support::native_surface_transaction::NativeSurfaceFrame,
+    ) -> Result<std::time::Duration> {
         let probe = gui_runtime_support::phase_probe::Probe::start("present");
         let started = std::time::Instant::now();
         append_gui_verbose_diagnostic_line("frame present begin");
-        self.window.pre_present_notify();
-        frame.present();
         let first_device_frame = !self.surface_transaction.has_presented();
-        self.surface_transaction.presented(&self.queue);
+        self.surface_transaction
+            .present(frame, self.window, &self.queue)?;
         if first_device_frame && self.terminal_owns_input() {
             let (x, y, width, height) = self.terminal_ime_cursor_rect();
             self.window.set_ime_cursor_area(
@@ -157,6 +157,6 @@ impl Runtime {
             );
         }
         drop(probe);
-        started.elapsed()
+        Ok(started.elapsed())
     }
 }

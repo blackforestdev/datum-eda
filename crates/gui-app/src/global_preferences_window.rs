@@ -252,9 +252,7 @@ impl GlobalPreferencesWindowSurface {
                 ));
             }
         }
-        let view = frame
-            .texture
-            .create_view(&wgpu::TextureViewDescriptor::default());
+        let view = frame.view();
         self.renderer.render(
             &runtime.device,
             &runtime.queue,
@@ -272,9 +270,8 @@ impl GlobalPreferencesWindowSurface {
         if runtime.device_health.failed() {
             return Ok(false);
         }
-        self.window.pre_present_notify();
-        frame.present();
-        self.surface_transaction.presented(&runtime.queue);
+        self.surface_transaction
+            .present(frame, &self.window, &runtime.queue)?;
         Ok(true)
     }
 }

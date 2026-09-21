@@ -1,7 +1,7 @@
 //! Shared surface acquisition/configuration using coordinator-owned recovery.
 //! GPU completion is a resource-ownership signal, not compositor display proof.
 use super::native_recovery::{RecoveryHandle, RetryReason};
-use std::time::Instant;
+use std::{cell::Cell, rc::Rc, time::Instant};
 
 pub(crate) struct SurfaceTransaction {
     injected_fault: Option<InjectedFault>,
@@ -11,6 +11,48 @@ pub(crate) struct SurfaceTransaction {
     pub(crate) recovery: RecoveryHandle,
     drawable: bool,
     configured: Option<(u32, u32)>,
+    configuration_generation: u64,
+    texture_active: Rc<Cell<bool>>,
+}
+
+/// Presentation ownership is deliberately separate from GPU completion. Dropping
+/// an unpresented frame releases acquisition; it does not retire application damage.
+pub(crate) struct NativeSurfaceFrame {
+    // Field order drops the backend texture before releasing the acquisition lease.
+    texture: Option<wgpu::SurfaceTexture>,
+    lease: TextureLease,
+}
+
+impl NativeSurfaceFrame {
+    pub(crate) fn view(&self) -> wgpu::TextureView {
+        self.texture
+            .as_ref()
+            .expect("unconsumed native frame")
+            .texture
+            .create_view(&wgpu::TextureViewDescriptor::default())
+    }
+}
+
+struct TextureLease {
+    active: Rc<Cell<bool>>,
+    generation: u64,
+}
+impl TextureLease {
+    fn acquire(active: &Rc<Cell<bool>>, generation: u64) -> anyhow::Result<Self> {
+        anyhow::ensure!(!active.replace(true), "native surface already acquired");
+        Ok(Self {
+            active: active.clone(),
+            generation,
+        })
+    }
+    fn belongs_to(&self, active: &Rc<Cell<bool>>, generation: u64) -> bool {
+        Rc::ptr_eq(&self.active, active) && self.generation == generation
+    }
+}
+impl Drop for TextureLease {
+    fn drop(&mut self) {
+        self.active.set(false);
+    }
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -48,6 +90,8 @@ impl SurfaceTransaction {
             recovery: RecoveryHandle::default(),
             drawable: native_size.width != 0 && native_size.height != 0,
             configured: None,
+            configuration_generation: 0,
+            texture_active: Rc::default(),
         }
     }
 
@@ -98,6 +142,10 @@ impl SurfaceTransaction {
         if health.failed() {
             return false;
         }
+        self.configuration_generation = self
+            .configuration_generation
+            .checked_add(1)
+            .expect("surface configuration generation exhausted");
         self.configured = Some((config.width, config.height));
         self.queue_owner.configured(self.queue_host);
         true
@@ -111,7 +159,7 @@ impl SurfaceTransaction {
         device: &wgpu::Device,
         config: &wgpu::SurfaceConfiguration,
         health: &crate::native_device_recovery::DeviceHealth,
-    ) -> anyhow::Result<Option<wgpu::SurfaceTexture>> {
+    ) -> anyhow::Result<Option<NativeSurfaceFrame>> {
         if !self.begin_frame(surface, device, config, health)?
             || health.failed()
             || !self.recovery.borrow_mut().ready(Instant::now())
@@ -139,7 +187,10 @@ impl SurfaceTransaction {
         };
         drop(probe);
         match result {
-            Ok(frame) if !health.failed() => Ok(Some(frame)),
+            Ok(frame) if !health.failed() => Ok(Some(NativeSurfaceFrame {
+                texture: Some(frame),
+                lease: TextureLease::acquire(&self.texture_active, self.configuration_generation)?,
+            })),
             Ok(_) => Ok(None),
             Err(wgpu::SurfaceError::Lost | wgpu::SurfaceError::Outdated) => {
                 self.configured = None;
@@ -170,6 +221,10 @@ impl SurfaceTransaction {
         config: &wgpu::SurfaceConfiguration,
         health: &crate::native_device_recovery::DeviceHealth,
     ) -> anyhow::Result<bool> {
+        anyhow::ensure!(
+            !self.texture_active.get(),
+            "cannot configure or acquire while a native surface texture is live"
+        );
         if !self.drawable {
             return Ok(false);
         }
@@ -210,9 +265,31 @@ impl SurfaceTransaction {
         Ok(true)
     }
 
-    pub(crate) fn presented(&mut self, queue: &wgpu::Queue) {
+    /// The sole product notification/presentation boundary for acquired native
+    /// frames. Success retires consumed damage only in the coordinator afterward.
+    pub(crate) fn present(
+        &mut self,
+        mut frame: NativeSurfaceFrame,
+        window: &winit::window::Window,
+        queue: &wgpu::Queue,
+    ) -> anyhow::Result<()> {
+        anyhow::ensure!(
+            frame
+                .lease
+                .belongs_to(&self.texture_active, self.configuration_generation),
+            "native frame belongs to another surface or configuration generation"
+        );
+        window.pre_present_notify();
+        frame
+            .texture
+            .take()
+            .expect("unconsumed native frame")
+            .present();
+        // Release acquisition before a subsequent configure can be admitted.
+        drop(frame);
         self.in_flight = self.queue_owner.submitted(queue);
         self.recovery.borrow_mut().success();
+        Ok(())
     }
 }
 
@@ -312,5 +389,40 @@ impl crate::App {
 impl Drop for SurfaceTransaction {
     fn drop(&mut self) {
         self.queue_owner.cancel(self.queue_host);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn one_acquisition_lease_survives_rejected_overlap_and_releases_on_abort() {
+        let active = Rc::new(Cell::new(false));
+        let first = TextureLease::acquire(&active, 1).unwrap();
+        assert!(active.get());
+        assert!(TextureLease::acquire(&active, 1).is_err());
+        assert!(active.get());
+        drop(first); // Preparation/error exit before presentation.
+        assert!(!active.get());
+        let next = TextureLease::acquire(&active, 2).unwrap();
+        assert!(next.belongs_to(&active, 2));
+        drop(next);
+        assert!(!active.get());
+    }
+
+    #[test]
+    fn foreign_and_retired_generation_frames_cannot_present_or_clear_new_ownership() {
+        let old = Rc::new(Cell::new(false));
+        let replacement = Rc::new(Cell::new(false));
+        let first = TextureLease::acquire(&old, 7).unwrap();
+        let next = TextureLease::acquire(&replacement, 7).unwrap();
+        assert!(!first.belongs_to(&old, 8));
+        assert!(!first.belongs_to(&replacement, 7));
+        assert!(next.belongs_to(&replacement, 7));
+        drop(first);
+        assert!(replacement.get());
+        drop(next);
+        assert!(!replacement.get());
     }
 }
