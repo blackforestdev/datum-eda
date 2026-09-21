@@ -1,0 +1,38 @@
+{
+  "status": "Shared cancellation finalizes retained terminal resize previews; bounded Runtime integration proof passes",
+  "baseline_commit": "a8ee019c865bdcaa2b7142eead09d1cf4f4c6ad1",
+  "issue": "dat-recovery-terminal-geometry-ep2",
+  "production_consumers_migrated": [
+    "MAIN terminal dock and split gestures through focus/DPI/acquisition/queue/device cancellation"
+  ],
+  "shared_owner": "App::cancel_native_host_gestures finalizes terminal split and dock previews before clearing capture; existing Runtime finish methods reconcile terminal geometry and shared workspace invalidation retains damage.",
+  "competing_paths_retired": [
+    "Focus-loss-only finish preamble in App::handle_native_window_event.",
+    "Direct terminal split/dock drag flag clearing in shared cancellation without final geometry reconciliation."
+  ],
+  "verification": {
+    "baseline": "Real Runtime with owned board fixture, hidden X11/Vulkan window and terminal session: dock preview changes required rows 9 -> 16; shared cancellation leaves UI rows 9. Target assertion fails after owned terminal shutdown.",
+    "candidate": "Same Runtime cancellation sequence passes; strengthened fixture additionally verifies an attached session and TerminalCore snapshot. Initial rows 9, preview 16, UI 16, core 16; drag inactive and owned terminal shutdown completes.",
+    "app": "375 passed, zero failed, 11 ignored. New ignored native integration test separately passes.",
+    "release": "Guarded offline release passed.",
+    "clippy": "Guarded offline app binary/tests Clippy -D warnings passed.",
+    "checks": "Source health, spec parity, dependency authority and project state pass. Traceability/spec governance checked with map delta."
+  },
+  "test": "gui_runtime_support::native_surface_transaction::gesture_reconciliation_tests::native_cancellation_commits_terminal_dock_preview_geometry",
+  "native_command": "DATUM_NATIVE_TEST_BOARD=/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb DATUM_GPU_DIAGNOSTIC_BACKEND=vulkan EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/release/datum-eda XDG_CONFIG_HOME=/tmp/pm045-gesture-reconcile-core/config XDG_CACHE_HOME=/tmp/pm045-gesture-reconcile-core/cache python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_cancellation_commits_terminal_dock_preview_geometry -- --ignored --test-threads=1 --nocapture",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "source_sha256": {
+    "crates/gui-app/src/app_native_events.rs": "2e21c2b7cbf6cb049611899fceac8ebdb5569603b0263c753cc368786020b49c",
+    "crates/gui-app/src/native_surface_transaction.rs": "0b9decfa54a726dee6203d3b1bebfd7b96227311ede2d4137e61655eb75f93a1",
+    "crates/gui-app/src/native_gesture_reconciliation_tests.rs": "740fb5884b849f783d4e651ba24bacdfc55c11b8456d74c9514b3e610ead49f2"
+  },
+  "binary_sha256": "89b0169344f8215dc8cf4087bbd7dd496030ff6fc9819d7c1e4d234e8c14c945",
+  "limits": [
+    "Fixture directly invokes real Runtime gesture methods and shared App cancellation with actual native/GPU/terminal infrastructure; it is not native pointer/DPI/fault-event delivery or independent visible-pixel proof.",
+    "Dock preview geometry is checked. Split finalization uses its existing finish method, but no new split/PTy-output/native gesture scenario is claimed.",
+    "TerminalCore/UI geometry and successful resize path are checked; no external stty/kernel-size observation or broad terminal protocol qualification.",
+    "Initial baseline fixture lacked the later attached-session/Core snapshot assertions; its failing UI geometry assertion and gesture sequence are retained.",
+    "No full LF-08/LF-10/S1 acceptance, numerical performance claim, dependency/license, terminal-core authority or visual-truth change. Nonblocking resize and pending S1 exit proposal unchanged.",
+    "Full drift not rerun; existing terminal-convergence guard failures remain recorded."
+  ]
+}

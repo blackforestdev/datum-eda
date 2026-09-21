@@ -570,16 +570,22 @@ impl crate::App {
         if self.window.as_ref().is_some_and(|main| main.id() == window)
             && let Some(runtime) = &mut self.runtime
         {
+            // Preserve the last layout preview and reconcile its terminal size
+            // before cancelling capture on focus/DPI or any recovery path.
+            // Both finalizers must run; neither may short-circuit the other.
+            let split_finished = runtime.finish_terminal_split_drag().is_some();
+            let dock_finished = runtime.finish_dock_resize_drag().is_some();
             runtime.pan_gesture.cancel();
             runtime.cancel_terminal_tab_drag();
             // The host coordinator now consumes the cancelled gesture release.
             runtime.terminal_tab_drag_release_suppressed = false;
             runtime.cancel_terminal_text_selection_drag();
-            runtime.terminal_split_drag = None;
             runtime.divider_drag = None;
-            runtime.dock_drag_active = false;
             runtime.terminal_mouse_button = None;
             self.apply_cursor_icon(winit::window::CursorIcon::Default);
+            if split_finished || dock_finished {
+                self.request_workspace_redraw();
+            }
         }
         for (surface, native) in [
             (
@@ -819,3 +825,7 @@ mod tests {
         assert!(!health.failed());
     }
 }
+
+#[cfg(all(test, target_os = "linux"))]
+#[path = "native_gesture_reconciliation_tests.rs"]
+mod gesture_reconciliation_tests;
