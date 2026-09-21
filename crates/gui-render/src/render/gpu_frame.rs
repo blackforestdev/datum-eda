@@ -329,9 +329,11 @@ impl Renderer {
         let encode_elapsed = encode_started.elapsed();
         self.viewport.update(queue, Resolution { width, height });
         let text_prepare_started = std::time::Instant::now();
-        self.begin_text_buffer_frame();
+        self.text_buffers
+            .begin_frame(text_buffer_cache::Profile::Workspace);
         let (text_buffer_indices, text_cache_stats) =
-            self.cached_text_buffer_indices(&prepared.text_runs, width, height);
+            self.text_buffers
+                .indices(&mut self.font_system, &prepared.text_runs, width, height);
         let text_signature =
             text_prepare_signature(&text_buffer_indices, &prepared.text_runs, width, height);
         let skipped_text_prepare = self
@@ -347,7 +349,7 @@ impl Renderer {
                 &mut self.atlas,
                 &self.viewport,
                 build_text_areas(
-                    &self.text_buffer_cache,
+                    self.text_buffers.entries(),
                     &text_buffer_indices,
                     &prepared.text_runs,
                 ),
@@ -367,7 +369,7 @@ impl Renderer {
                         &mut self.atlas,
                         &self.viewport,
                         build_text_areas(
-                            &self.text_buffer_cache,
+                            self.text_buffers.entries(),
                             &text_buffer_indices,
                             &prepared.text_runs,
                         ),
