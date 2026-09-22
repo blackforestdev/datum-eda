@@ -1,0 +1,122 @@
+{
+  "base_commit": "f57543b8004534ebf18b8bdbd6cf4207547bacaf",
+  "binary_sha256": "b7a2f40786f621b6ac5ae4954109496ef87d508e691dc52c1fc6a50b4f2a9c94",
+  "production": {
+    "status": "Current-release Project1x final focused-search and bottom-scrollbar pixels verified after OS focus-cancellation trial",
+    "production_consumers": [
+      "PROJECT Preferences default native event -> shared scroll/capture/render path"
+    ],
+    "retired_paths": "No production migration. Native recipe now rejects frame-count-only success unless profile-specific final focus and bottom-thumb pixels are captured.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/preferences-final-focus-capture/result.json",
+    "proof": "First run fails semantic gate after19 earlier-state captures despite passing event/count checks. Follow-up passes on second capture: four search border samples match current STATUS_INFO RGB(91,139,208); bottom thumb and top track samples match expected colors. Manual full-image review confirms search caret/focus and final Angle precision row. Same current binary as preceding Global1x visible-state pass.",
+    "limits": "One successful bounded Project1x visual case, not capture reliability, exact numerical offset, timing/performance or all-profile acceptance. First failure retained. Spectacle CaptureActiveScreen returns0 but emits D-Bus reply failure and no image; no compositor capture proof. NEW, other scales/backends, content-change and full HP21/S3 qualification remain open. No dependency/license/prototype/resource/resize change."
+  },
+  "oracle_scope": {
+    "physical_extent": [
+      960,
+      720
+    ],
+    "visual_scale_override": 1,
+    "sample_points": [
+      [
+        229,
+        70
+      ],
+      [
+        300,
+        54
+      ],
+      [
+        600,
+        54
+      ],
+      [
+        940,
+        70
+      ],
+      [
+        954,
+        718
+      ],
+      [
+        954,
+        102
+      ]
+    ],
+    "expected_rgb": [
+      [
+        91,
+        139,
+        208
+      ],
+      [
+        91,
+        139,
+        208
+      ],
+      [
+        91,
+        139,
+        208
+      ],
+      [
+        91,
+        139,
+        208
+      ],
+      [
+        178,
+        184,
+        195
+      ],
+      [
+        24,
+        27,
+        33
+      ]
+    ],
+    "basis": "Existing Preferences painter selects STATUS_INFO and2px border when Search owns focus. Existing current-image track/thumb samples distinguish top from bottom. Oracle is deliberately restricted to this one profile; it is not an independent style authority.",
+    "manual_positive_image": "monitor/focused-search-1.png",
+    "prior_same_binary_global_image": "docs/reviews/gui-performance/implementation/S3/scrollbar-os-focus/persistent/GLOBAL/focused-search-2.png"
+  },
+  "commands": [
+    "PM045_TEST_SCALE=1 PM045_HOSTS=PROJECT python3 /tmp/pm045_scrollbar_os_focus_semantic.py /tmp/pm045-scrollbar-os-focus-semantic",
+    "PM045_TEST_SCALE=1 PM045_HOSTS=PROJECT python3 /tmp/pm045_scrollbar_os_focus_monitor.py /tmp/pm045-scrollbar-os-focus-monitor"
+  ],
+  "artifact_sha256": {
+    "monitor/before.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "monitor/driver.log.gz": "cdb497a38f82f3b301025aa269fade5bbc282288372089aff8eec6d5fc25b9c1",
+    "monitor/driver.py.gz": "66146a08181bac242cf791db480f0d7cfdbadcee2dfe6f81d73098cc779f57c1",
+    "monitor/focused-search-0.png": "1ff6bf4466f9b21a8a292721a0cc11bb7cf9f46c9c82176b9f0261989328a801",
+    "monitor/focused-search-1.png": "1543b529ae64db6bcbe9783af7142d97bb5e1097bca249d42143118ae6e49867",
+    "monitor/monitor-capture.log.gz": "2bd2851aa661829c6dbe09e91fa582e5420b3203e36b7c860eeb76857f4859bd",
+    "monitor/native.log.gz": "56f39c241eddfc33618158e7df15dbbd2f01a3ab963a3c257a927a4c168dbf10",
+    "monitor/result.json": "ba25ab00c6b0bc13e854c846a594edb4fdb9fe575a252011e3ec75f555e1836b",
+    "monitor/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "semantic/before.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/driver.log.gz": "892ca0bedd80da28a9db86061a6f58442efad6f4dae4f9fb767c1bb8b06ec255",
+    "semantic/driver.py.gz": "5d526b2369f429d98afdd844b3011ddc7896b24162acf50738026fce5b977b81",
+    "semantic/focused-search-0.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-1.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-10.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-11.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-12.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-13.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-14.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-15.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-16.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-17.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-18.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-2.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-3.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-4.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-5.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-6.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-7.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-8.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/focused-search-9.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "semantic/native.log.gz": "261bc6571a98afa55682650fa6f1a35a40b7a5d32cb3bff3ae886c1f205afa71",
+    "semantic/result.json": "061a85e50ac8fd669285c84a82b82c8a98df075460d21687c93c54d0287015e9",
+    "semantic/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  }
+}
