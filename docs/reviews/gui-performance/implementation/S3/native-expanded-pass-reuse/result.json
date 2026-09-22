@@ -1,0 +1,21 @@
+{
+  "candidate_base": "780428a69f350edb508c09622a6f69dfe37b1166",
+  "status": "GLOBAL1x expanded-state pass/reuse proof complete; other trials partial or failed",
+  "requirements": [
+    "HP13-01",
+    "HP14-01"
+  ],
+  "observations": {
+    "semantic_GLOBAL1x": "12 dialog measurements each contain only dialog pass; sample count covers pre-dismissal presentations. Six repeated scroll traces have47/48 hits and0 misses. Exactly one observed nonsynthetic Escape press then child presents and remains visible, establishing expansion was open and dismissed.",
+    "initial1": "Both counter trials pass: GLOBAL12 and PROJECT11 single-dialog samples; repeated trace misses0. Before captures lag (GLOBAL shows original Appearance); retain as counter evidence only.",
+    "initial2": "PROJECT counter checks pass; GLOBAL times out before first warm sample. No expanded-state semantic qualification at2x.",
+    "semantic_PROJECT1x": "Times out before first warm sample. Final click5 scripted at1790056864.9146404; negative wheel events logged at1790056890.069 during cleanup after timeout. Preserve delayed delivery, no cause attribution or successful replay.",
+    "next": "Remaining PROJECT/scale expanded semantic qualification requires reliable observed input delivery; do not use pending-frame or old-capture assumptions. Other S3 work remains available."
+  },
+  "limits": "Opt-in existing GPU pass/timing counters on unchanged production binary, X11/Xwayland. Complete expanded-state semantic proof only GLOBAL1x; initial GLOBAL/PROJECT1x and PROJECT2x counter results do not independently prove expansion because captures lag. GLOBAL2x and semantic PROJECT1x warm-cycle timeouts remain unqualified. No default-path speedup, latency, complete resource working-set, native backend/scale matrix or S3 acceptance. No code/dependency/license/prototype/budget/resize change.",
+  "artifact_sha256": {
+    "initial1.tar.gz": "f3577484b40d0e0a8fbe4a6f99931f87a932a8243dfd52dea6339c4d757759e3",
+    "initial2.tar.gz": "9a72f120102c14dd06ded1daf7b05481ee8e03234e148f6f825386d270733c0c",
+    "semantic1.tar.gz": "7f28ff7fb79704e59611bbdccfea9539d976a91bc85933729f82f7e51c64edaa"
+  }
+}
