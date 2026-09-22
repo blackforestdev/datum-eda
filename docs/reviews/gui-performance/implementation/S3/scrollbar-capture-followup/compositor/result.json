@@ -1,0 +1,140 @@
+{
+  "display": ":1",
+  "wayland_display": "wayland-0",
+  "topology": "Owner-confirmed idle desktop X11/Xwayland; native adapter functional trial",
+  "binary_sha256": "01180c4e55ca2ff4b44ee883ee4fd36abf09588b13dc81a7b5a24837ef642abc",
+  "visual_scale_factor": 1.0,
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1.0",
+        "--open-global-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "6291461"
+          ],
+          "monotonic": 805451.03343221,
+          "wall_time": 1790068600.9031024,
+          "server_roundtrip_focus": "6291461",
+          "pointer_after": "X=1414\nY=886\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "windowsize",
+            "6291461",
+            "960",
+            "720"
+          ],
+          "monotonic": 805451.082716672,
+          "wall_time": 1790068600.9523866,
+          "server_roundtrip_focus": "6291461",
+          "pointer_after": "X=1414\nY=886\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "510",
+            "285",
+            "click",
+            "1"
+          ],
+          "monotonic": 805451.504365142,
+          "wall_time": 1790068601.3740342,
+          "server_roundtrip_focus": "6291461",
+          "pointer_after": "X=510\nY=285\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1360",
+            "308",
+            "click",
+            "1"
+          ],
+          "monotonic": 805451.657972128,
+          "wall_time": 1790068601.5276415,
+          "server_roundtrip_focus": "6291461",
+          "pointer_after": "X=1360\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "308"
+          ],
+          "monotonic": 805452.192288254,
+          "wall_time": 1790068602.0619578,
+          "server_roundtrip_focus": "6291461",
+          "pointer_after": "X=1414\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "308",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 805452.524442442,
+          "wall_time": 1790068602.3941114,
+          "server_roundtrip_focus": "6291461",
+          "pointer_after": "X=1414\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "886"
+          ],
+          "monotonic": 805452.789094585,
+          "wall_time": 1790068602.6587644,
+          "server_roundtrip_focus": "6291461",
+          "pointer_after": "X=1414\nY=886\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "886",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 805453.120235065,
+          "wall_time": 1790068602.9899049,
+          "server_roundtrip_focus": "6291461",
+          "pointer_after": "X=1414\nY=886\nSCREEN=0\nWINDOW=6291461\n"
+        }
+      ],
+      "expanded_choice_trigger": "Click current Units control before scrolling; verify captured expansion separately",
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "960",
+        "HEIGHT": "720",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_delivery_confirmed": true,
+      "drag_frames": 1,
+      "settled_frames": 0,
+      "compositor_capture_error": "35-second timeout",
+      "compositor_image_exists": false,
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    }
+  ]
+}
