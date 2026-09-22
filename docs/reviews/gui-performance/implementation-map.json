@@ -8084,7 +8084,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-reduced-motion/result.json",
         "docs/reviews/gui-performance/implementation/S3/continuous-timer-negative/result.json",
         "docs/reviews/gui-performance/implementation/S3/reduced-motion-scales/result.json",
-        "docs/reviews/gui-performance/implementation/S3/wayland-idle-negative/result.json"
+        "docs/reviews/gui-performance/implementation/S3/wayland-idle-negative/result.json",
+        "docs/reviews/gui-performance/implementation/S3/wayland-input-portal/result.json"
       ],
       "s3_native_reduced_motion_progress": {
         "status": "Both native Preferences reduced-motion scroll/idle cases pass",
@@ -8129,6 +8130,16 @@
         "retired_paths": "None; backend-specific replay of existing positive and isolated injected timer.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/wayland-idle-negative/result.json",
         "limits": "Native Wayland1x startup then2s idle, no synthetic input. GUI-written reduced_motion=true configuration; Project flag propagation covered separately by production coordinator tests. This qualifies bounded idle defect sensitivity only, not Wayland scroll/input/hit/static, scale transitions, resource or full HP23/S3 coverage. Timer injection is unchanged from continuous-timer-negative source patch; active source and working binary unchanged. No dependency/license/prototype/budget/resize change."
+      },
+      "s3_wayland_input_portal_progress": {
+        "status": "Installed native input portal available; Start timed out awaiting KDE consent",
+        "production_consumers": [
+          "Future GLOBAL/PROJECT Wayland native input qualification; no input trial executed"
+        ],
+        "retired_paths": "No runtime changes or tool installation. Replaces earlier assumption of no available Wayland injection route with installed portal capability evidence, not a delivery pass.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/wayland-input-portal/result.json",
+        "proof": "System Python Gio available. Installed org.freedesktop.portal.RemoteDesktop reports version2, device mask7, pointer/axis/keyboard methods. CreateSession and SelectDevices(types3) succeed. KWin confirms portal-owned Remote control requested prompt. No Start response before600s; helper closes Session and KWin reports no remaining portal window. No input, screen capture or network session requested/executed.",
+        "limits": "Desktop consent remains required before portal input can run. No Wayland event delivery, fractional scroll, focus, reduced-motion or HP23/S3 qualification follows. Target driver prepared and syntax checked only; revised command-dispatch branch is unexecuted. No new request will be opened automatically. No production/dependency/license/prototype/resource deadline/resize change."
       }
     },
     {
@@ -28299,7 +28310,7 @@
         "HP22-01": "Complete remaining native diagonal/rounded/nested clipping cases per actual consumer. Shared clamp-vertices negative now detected by corrected existing area oracle; preserve original false-pass and terminal call-removal negatives.",
         "HP22-02": "Complete remaining native/GPU profiles. Pinned-header clipping and scrolling negatives now detected by strengthened actual Preferences preparation test; hidden-hit clipping omission already detected. Preserve initial missing-header false pass and existing bounded pinned GPU/native evidence.",
         "HP23-01": "Complete remaining native keyboard/search reveal across section/content/scale profiles. Stale focus after height change now reproduced and fixed in both native Preferences; existing explanation Close fix retained. Native DPI transition remains open.",
-        "HP23-02": "Complete native Wayland scrolling/input and remaining full qualification. Both native backends now have1x idle positive/timer-negative proof; X11 also has reduced-motion scroll/locality positives1/1.5/2 on one binary. Native Wayland idle proof does not establish input or monitor transitions."
+        "HP23-02": "Complete native Wayland scrolling/input and remaining qualification. Installed KDE RemoteDesktop portal supports session/device selection, but Start timed out without desktop consent and closed cleanly; no input sent. Existing both-backend1x idle/timer negative and X11 reduced-motion scroll1/1.5/2 remain bounded evidence. Portal capability does not establish delivery or monitor transitions."
       },
       "next_action": "Complete remaining prescribed negative controls on the current shared owners, paired with their existing positive tests; continue native per-adapter gaps and fix demonstrated defects. Do not invent another shared component solely to avoid remaining proof. GPI-S3 stays selected.",
       "negative_control_scope_review": {
@@ -29181,5 +29192,15 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/clip-hidden-geometry/result.json",
     "proof": "218 renderer tests pass, including four-edge diagonal area and pinned content. Existing GPU dialog parity1pass/258filtered; visual renderer Clippy and fresh release build pass. Source health and dependency authority pass.",
     "limits": "Source-level work/copy removal only; no aggregate allocation or frame-time claim. Rejects only a common outside half-plane; all-outside vertices with a crossing triangle retain exact clipping. Existing all-visible prefix path remains; partly visible suffix incurs additional rejection checks and clipping scratch remains for crossings. No new consumer migration or complete per-consumer native/HP22/S3 qualification. No visual/prototype/dependency/license/resource deadline or resize change."
+  },
+  "s3_wayland_input_portal_probe": {
+    "status": "Installed native input portal available; Start timed out awaiting KDE consent",
+    "production_consumers": [
+      "Future GLOBAL/PROJECT Wayland native input qualification; no input trial executed"
+    ],
+    "retired_paths": "No runtime changes or tool installation. Replaces earlier assumption of no available Wayland injection route with installed portal capability evidence, not a delivery pass.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/wayland-input-portal/result.json",
+    "proof": "System Python Gio available. Installed org.freedesktop.portal.RemoteDesktop reports version2, device mask7, pointer/axis/keyboard methods. CreateSession and SelectDevices(types3) succeed. KWin confirms portal-owned Remote control requested prompt. No Start response before600s; helper closes Session and KWin reports no remaining portal window. No input, screen capture or network session requested/executed.",
+    "limits": "Desktop consent remains required before portal input can run. No Wayland event delivery, fractional scroll, focus, reduced-motion or HP23/S3 qualification follows. Target driver prepared and syntax checked only; revised command-dispatch branch is unexecuted. No new request will be opened automatically. No production/dependency/license/prototype/resource deadline/resize change."
   }
 }

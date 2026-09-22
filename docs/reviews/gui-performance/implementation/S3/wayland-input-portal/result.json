@@ -1,0 +1,31 @@
+{
+  "candidate_base": "40d1f6b1f19ddd57066bdda4011abf550e4b4c3d",
+  "production": {
+    "status": "Installed native input portal available; Start timed out awaiting KDE consent",
+    "production_consumers": [
+      "Future GLOBAL/PROJECT Wayland native input qualification; no input trial executed"
+    ],
+    "retired_paths": "No runtime changes or tool installation. Replaces earlier assumption of no available Wayland injection route with installed portal capability evidence, not a delivery pass.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/wayland-input-portal/result.json",
+    "proof": "System Python Gio available. Installed org.freedesktop.portal.RemoteDesktop reports version2, device mask7, pointer/axis/keyboard methods. CreateSession and SelectDevices(types3) succeed. KWin confirms portal-owned Remote control requested prompt. No Start response before600s; helper closes Session and KWin reports no remaining portal window. No input, screen capture or network session requested/executed.",
+    "limits": "Desktop consent remains required before portal input can run. No Wayland event delivery, fractional scroll, focus, reduced-motion or HP23/S3 qualification follows. Target driver prepared and syntax checked only; revised command-dispatch branch is unexecuted. No new request will be opened automatically. No production/dependency/license/prototype/resource deadline/resize change."
+  },
+  "exit_code": 1,
+  "request_timeout_seconds": 600,
+  "session_closed": true,
+  "portal_windows_after_close": [],
+  "script_note": "Archived probe has a lazy per-action argument lookup correction made while the running session awaited Start. Session negotiation/timeout/close code is the executed code; no input branch was executed. Target driver and owned-window geometry receiver use existing system Gio and qdbus tools only.",
+  "commands": [
+    "/usr/bin/python3 /tmp/pm045_portal_input_probe.py",
+    "/usr/bin/python3 -m py_compile /tmp/pm045_portal_input_probe.py /tmp/pm045_owned_window_geometry.py /tmp/pm045_wayland_portal_target.py",
+    "/usr/bin/python3 /tmp/pm045_owned_window_geometry.py 2106 --any-title",
+    "gdbus introspect --session --dest org.freedesktop.portal.Desktop --object-path /org/freedesktop/portal/desktop"
+  ],
+  "artifact_sha256": {
+    "pm045_portal_input_probe.py.gz": "c64cd9ec4c3b1788b63a1b41467346d967b89db6c61553d09ae1651e28b63882",
+    "pm045_owned_window_geometry.py.gz": "1d46e6004a8ef55e6b481058ec46f8796406c5ed3d6451d2664410f485509560",
+    "remote-desktop-interface.txt": "d4961126fc30e8331b3d0367ce53b73b6077e07a4a1da2be2e0b61b9d65c2ed8",
+    "pm045_wayland_portal_target.py.gz": "35d5ee07b1cbbbb66c739dba7640224935cf4b0a4c68c15d418a7145d645a494",
+    "portal-responses.json": "0ba68bf8c90ece46df1310042020cd9c02453ad441e6612b412632960b0eaf2e"
+  }
+}
