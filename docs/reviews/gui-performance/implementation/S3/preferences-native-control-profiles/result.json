@@ -1,0 +1,196 @@
+{
+  "base_commit": "d75e277c2562d9ad6105b45fc27a747de201687b",
+  "production": {
+    "status": "Both native Preferences retain warm control meshes at1.5/2 visual overrides with defect-sensitive OS scroll trials",
+    "production_consumers": [
+      "GLOBAL Preferences native scrollbar -> shared control-mesh owner",
+      "PROJECT Preferences native scrollbar -> shared control-mesh owner"
+    ],
+    "retired_paths": "None; same production source, release and existing single-defect negative binary as3c05f12e.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/preferences-native-control-profiles/result.json",
+    "proof": "Four positives retain Global23/Project20 builds across bottom/top/bottom at1440x1050 (1.5 override) and1918x1050 (2 override). All four existing cache-lookup-bypass negatives fail with increasing build counts. Project2x final image shows bottom rows and thumb.",
+    "limits": "Visual-scale overrides are not OS monitor/DPI transitions. Actual KWin-constrained extents are recorded, not requested1440x1080/1920x1440. Global1.5/2 images still show Appearance and Project1.5 an earlier top state; their final displayed states remain unqualified. Work-count passes do not establish capture reliability, all controls/settings, fractional input, other backends, byte bounds or full HP16/S3 acceptance. SIGTERM not teardown proof. No source/dependency/license/prototype/resource/resize change."
+  },
+  "binary_sha256": {
+    "positive": "12f00d7e0120265bf200c4ed9465d8e1e3611114da8c19e33e823b8f27f65f60",
+    "negative": "612eb7c2bd973053375751d143ca2604e014994da178727f668eab15e77af148",
+    "restored": "12f00d7e0120265bf200c4ed9465d8e1e3611114da8c19e33e823b8f27f65f60"
+  },
+  "cases": [
+    {
+      "scale_override": "1.5",
+      "mode": "positive",
+      "host": "GLOBAL",
+      "presented_extent": [
+        1440,
+        1050
+      ],
+      "builds": [
+        23,
+        23,
+        23
+      ],
+      "passed": true,
+      "error": null
+    },
+    {
+      "scale_override": "1.5",
+      "mode": "positive",
+      "host": "PROJECT",
+      "presented_extent": [
+        1440,
+        1050
+      ],
+      "builds": [
+        20,
+        20,
+        20
+      ],
+      "passed": true,
+      "error": null
+    },
+    {
+      "scale_override": "1.5",
+      "mode": "negative",
+      "host": "GLOBAL",
+      "presented_extent": [
+        1440,
+        1050
+      ],
+      "builds": [
+        98,
+        120,
+        142
+      ],
+      "passed": false,
+      "error": "AssertionError('warm scrollbar roundtrip retessellated controls')"
+    },
+    {
+      "scale_override": "1.5",
+      "mode": "negative",
+      "host": "PROJECT",
+      "presented_extent": [
+        1440,
+        1050
+      ],
+      "builds": [
+        84,
+        106,
+        128
+      ],
+      "passed": false,
+      "error": "AssertionError('warm scrollbar roundtrip retessellated controls')"
+    },
+    {
+      "scale_override": "2",
+      "mode": "positive",
+      "host": "GLOBAL",
+      "presented_extent": [
+        1918,
+        1050
+      ],
+      "builds": [
+        23,
+        23,
+        23
+      ],
+      "passed": true,
+      "error": null
+    },
+    {
+      "scale_override": "2",
+      "mode": "positive",
+      "host": "PROJECT",
+      "presented_extent": [
+        1918,
+        1050
+      ],
+      "builds": [
+        20,
+        20,
+        20
+      ],
+      "passed": true,
+      "error": null
+    },
+    {
+      "scale_override": "2",
+      "mode": "negative",
+      "host": "GLOBAL",
+      "presented_extent": [
+        1918,
+        1050
+      ],
+      "builds": [
+        86,
+        104,
+        122
+      ],
+      "passed": false,
+      "error": "AssertionError('warm scrollbar roundtrip retessellated controls')"
+    },
+    {
+      "scale_override": "2",
+      "mode": "negative",
+      "host": "PROJECT",
+      "presented_extent": [
+        1918,
+        1050
+      ],
+      "builds": [
+        68,
+        86,
+        104
+      ],
+      "passed": false,
+      "error": "AssertionError('warm scrollbar roundtrip retessellated controls')"
+    }
+  ],
+  "negative_provenance": "docs/reviews/gui-performance/implementation/S3/native-control-build-counts/result.json",
+  "source_verification": "Current four production source hashes and both binaries match preceding pinned counter proof. No active-source or default-binary replacement was needed.",
+  "commands": [
+    "PM045_TEST_SCALE=1.5 python3 /tmp/pm045_native_control_mesh_reuse.py /tmp/pm045-native-control-reuse-1.5",
+    "PM045_TEST_SCALE=1.5 PM045_GUI_BIN=/home/bfadmin/Documents/datum-eda/target/pm045-native-control-proof/negative-gui python3 /tmp/pm045_native_control_mesh_reuse.py /tmp/pm045-native-control-reuse-1.5-negative",
+    "PM045_TEST_SCALE=2 python3 /tmp/pm045_native_control_mesh_reuse.py /tmp/pm045-native-control-reuse-2",
+    "PM045_TEST_SCALE=2 PM045_GUI_BIN=/home/bfadmin/Documents/datum-eda/target/pm045-native-control-proof/negative-gui python3 /tmp/pm045_native_control_mesh_reuse.py /tmp/pm045-native-control-reuse-2-negative"
+  ],
+  "artifact_sha256": {
+    "1.5-negative/GLOBAL/before.png": "a373be17cb4ca3c6d88b5c6cebadb7bfd742b5d074f04a41b052c0d84382bf1f",
+    "1.5-negative/GLOBAL/native.log.gz": "d15ac751b969de639df741bb9fb5cd2cb21c4abd7f33fc3f9af715711d461d91",
+    "1.5-negative/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "1.5-negative/PROJECT/before.png": "dabf91accc3fb0aec696c63ad7684edb122e2018423ca23da496cdc3f4f88324",
+    "1.5-negative/PROJECT/native.log.gz": "5079635c1b7f7e72d4de5f95ef114326c7f730d59d9cd770294b5cb8e883f81c",
+    "1.5-negative/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "1.5-negative/driver.log.gz": "713467b59a22b4d69c8776c6ec23c503acada8d9197cc6a3a289c6c1bdf53dd9",
+    "1.5-negative/result.json": "d2d021d8050155947debe9b1e5bac69075e26299300513a7e596ce4c77e20c38",
+    "1.5-positive/GLOBAL/before.png": "a373be17cb4ca3c6d88b5c6cebadb7bfd742b5d074f04a41b052c0d84382bf1f",
+    "1.5-positive/GLOBAL/bottom.png": "a373be17cb4ca3c6d88b5c6cebadb7bfd742b5d074f04a41b052c0d84382bf1f",
+    "1.5-positive/GLOBAL/native.log.gz": "8777b2fddc56b15de5f9c630202194ec55d0b5b36ff4b8999a96bf4d8d07c520",
+    "1.5-positive/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "1.5-positive/PROJECT/before.png": "dabf91accc3fb0aec696c63ad7684edb122e2018423ca23da496cdc3f4f88324",
+    "1.5-positive/PROJECT/bottom.png": "dabf91accc3fb0aec696c63ad7684edb122e2018423ca23da496cdc3f4f88324",
+    "1.5-positive/PROJECT/native.log.gz": "affa387a4610b889fa1e80e8b138c1b36e309cc19fe61dc24393e81d9db3eba5",
+    "1.5-positive/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "1.5-positive/driver.log.gz": "1ff7f615c66283c799e66dd577cf76322bde986fbc7738110b2a56cb65af758f",
+    "1.5-positive/result.json": "938dba5f53adb3dc64be841603b7b2a5c49aeaa796948515cac4052344cf2a29",
+    "2-negative/GLOBAL/before.png": "4c799502398b8817d9f5f17a48a19b6ca161e1432556b2b5deb06bab465f7664",
+    "2-negative/GLOBAL/native.log.gz": "db98cfac7334eee0cf22466a7b89c8c2c728d1393642bcad2bb64ae33507e0ef",
+    "2-negative/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "2-negative/PROJECT/before.png": "31c6bc1c7c7066e5c98e2fed347ecd8f5b46ef59615eea769bd05cc2381a8fdd",
+    "2-negative/PROJECT/native.log.gz": "bd4c892be55167fa44f9b26ebf7cf028565d97dc29e270d8ebd6cb48bff49fe2",
+    "2-negative/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "2-negative/driver.log.gz": "713467b59a22b4d69c8776c6ec23c503acada8d9197cc6a3a289c6c1bdf53dd9",
+    "2-negative/result.json": "05a06bcd227f85036c738feef1a96c98143c7f111321fdc39d22290e37ec85a6",
+    "2-positive/GLOBAL/before.png": "4c799502398b8817d9f5f17a48a19b6ca161e1432556b2b5deb06bab465f7664",
+    "2-positive/GLOBAL/bottom.png": "4c799502398b8817d9f5f17a48a19b6ca161e1432556b2b5deb06bab465f7664",
+    "2-positive/GLOBAL/native.log.gz": "c6b33033c956835e091e5e8657627be5b5c58290524ab7ef053e9dfb462ae388",
+    "2-positive/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "2-positive/PROJECT/before.png": "31c6bc1c7c7066e5c98e2fed347ecd8f5b46ef59615eea769bd05cc2381a8fdd",
+    "2-positive/PROJECT/bottom.png": "af991d73ee5bb37de5fe1d820c3ade2ba83192c751d03a380e27fce120b49711",
+    "2-positive/PROJECT/native.log.gz": "2ddf3fefa06f7f779dcb6fbbe73a16f044df6f9b055ec5632a2063676711f594",
+    "2-positive/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "2-positive/driver.log.gz": "1ff7f615c66283c799e66dd577cf76322bde986fbc7738110b2a56cb65af758f",
+    "2-positive/result.json": "37112d6869d548c92c3647732178fb6728f5f8d2ec2869478e38f6454cdba201",
+    "driver.py.gz": "0266d1c0bb50d2cadc136349f1a973cd936c03d75e402b4b354ba05135ec7df0"
+  }
+}

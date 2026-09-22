@@ -1,0 +1,353 @@
+{
+  "display": ":1",
+  "wayland_display": "wayland-0",
+  "topology": "Owner-confirmed idle desktop X11/Xwayland; native adapter functional trial",
+  "binary_sha256": "12f00d7e0120265bf200c4ed9465d8e1e3611114da8c19e33e823b8f27f65f60",
+  "visual_scale_factor": 2.0,
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "2.0",
+        "--open-global-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "27262981"
+          ],
+          "monotonic": 808675.764772064,
+          "wall_time": 1790071825.6344442,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=1891\nY=1061\nSCREEN=0\nWINDOW=1024\n"
+        },
+        {
+          "xdotool": [
+            "windowsize",
+            "27262981",
+            "1920",
+            "1440"
+          ],
+          "monotonic": 808675.813847656,
+          "wall_time": 1790071825.6835175,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=1891\nY=1061\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "101",
+            "243",
+            "click",
+            "1"
+          ],
+          "monotonic": 808676.42245939,
+          "wall_time": 1790071826.2921283,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=101\nY=243\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1801",
+            "289",
+            "click",
+            "1"
+          ],
+          "monotonic": 808676.461060905,
+          "wall_time": 1790071826.3307302,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1801\nY=289\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1907",
+            "289"
+          ],
+          "monotonic": 808676.887060285,
+          "wall_time": 1790071826.7567303,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1907\nY=289\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1907",
+            "289",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 808677.31457743,
+          "wall_time": 1790071827.1842465,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1907\nY=289\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1907",
+            "1055"
+          ],
+          "monotonic": 808677.578830897,
+          "wall_time": 1790071827.4485006,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1907\nY=1055\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1907",
+            "289"
+          ],
+          "monotonic": 808677.905150368,
+          "wall_time": 1790071827.7748203,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1907\nY=289\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1907",
+            "1055"
+          ],
+          "monotonic": 808678.422828636,
+          "wall_time": 1790071828.2924986,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1907\nY=1055\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1907",
+            "1055",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 808679.408650624,
+          "wall_time": 1790071829.2783206,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1907\nY=1055\nSCREEN=0\nWINDOW=27262981\n"
+        }
+      ],
+      "setup_presented_extent": [
+        1918,
+        1050
+      ],
+      "expanded_choice_trigger": "Click current Units control before scrolling; verify captured expansion separately",
+      "geometry": {
+        "WINDOW": "27262981",
+        "X": "1",
+        "Y": "29",
+        "WIDTH": "1918",
+        "HEIGHT": "1050",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_delivery_confirmed": true,
+      "drag_frames": 1,
+      "control_mesh_samples": [
+        {
+          "position": "first bottom",
+          "builds": 23,
+          "presentations": 5
+        },
+        {
+          "position": "top",
+          "builds": 23,
+          "presentations": 6
+        },
+        {
+          "position": "second bottom",
+          "builds": 23,
+          "presentations": 7
+        }
+      ],
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "2.0",
+        "--open-project-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "27262981"
+          ],
+          "monotonic": 808682.406886485,
+          "wall_time": 1790071832.2765567,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=1907\nY=1055\nSCREEN=0\nWINDOW=1024\n"
+        },
+        {
+          "xdotool": [
+            "windowsize",
+            "27262981",
+            "1920",
+            "1440"
+          ],
+          "monotonic": 808682.456764645,
+          "wall_time": 1790071832.3264344,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=1907\nY=1055\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1801",
+            "289",
+            "click",
+            "1"
+          ],
+          "monotonic": 808683.067241581,
+          "wall_time": 1790071832.9369106,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1801\nY=289\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1907",
+            "289"
+          ],
+          "monotonic": 808683.480595116,
+          "wall_time": 1790071833.350264,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1907\nY=289\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1907",
+            "289",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 808683.952715705,
+          "wall_time": 1790071833.8223848,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1907\nY=289\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1907",
+            "1055"
+          ],
+          "monotonic": 808684.216062761,
+          "wall_time": 1790071834.085733,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1907\nY=1055\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1907",
+            "289"
+          ],
+          "monotonic": 808685.35401587,
+          "wall_time": 1790071835.2236848,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1907\nY=289\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1907",
+            "1055"
+          ],
+          "monotonic": 808685.363017099,
+          "wall_time": 1790071835.2326863,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1907\nY=1055\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1907",
+            "1055",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 808685.371979753,
+          "wall_time": 1790071835.241649,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1907\nY=1055\nSCREEN=0\nWINDOW=27262981\n"
+        }
+      ],
+      "setup_presented_extent": [
+        1918,
+        1050
+      ],
+      "expanded_choice_trigger": "Click current Units control before scrolling; verify captured expansion separately",
+      "geometry": {
+        "WINDOW": "27262981",
+        "X": "1",
+        "Y": "29",
+        "WIDTH": "1918",
+        "HEIGHT": "1050",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_delivery_confirmed": true,
+      "drag_frames": 1,
+      "control_mesh_samples": [
+        {
+          "position": "first bottom",
+          "builds": 20,
+          "presentations": 4
+        },
+        {
+          "position": "top",
+          "builds": 20,
+          "presentations": 5
+        },
+        {
+          "position": "second bottom",
+          "builds": 20,
+          "presentations": 6
+        }
+      ],
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    }
+  ]
+}
