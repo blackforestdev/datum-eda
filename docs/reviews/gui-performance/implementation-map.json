@@ -6674,6 +6674,10 @@
       "s3_terminal_header_progress": {
         "status": "actual tab/header composition inherits shared ancestor clipping; native/negative qualification open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-header-clipping/result.json"
+      },
+      "s3_native_dialog_surface_progress": {
+        "status": "bounded shared native Preferences root clipping; row remains unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-surface-clipping/result.json"
       }
     },
     {
@@ -6775,6 +6779,10 @@
       "s3_terminal_header_progress": {
         "status": "actual tab/header composition inherits shared ancestor clipping; native/negative qualification open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-header-clipping/result.json"
+      },
+      "s3_native_dialog_surface_progress": {
+        "status": "bounded shared native Preferences root clipping; row remains unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-surface-clipping/result.json"
       }
     },
     {
@@ -26935,5 +26943,20 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/marking-preview-clipping/result.json",
     "limits": "No native, pixel parity, isolated negative, resource or performance qualification. Existing marking preview remains a partial product and its separately scheduled implementation is not advanced. No dependency, license, prototype, command-authority or sequencing change; proposal1bc02aaf remains unapproved."
+  },
+  "s3_native_dialog_surface_clipping_work": {
+    "status": "bounded S3 native-dialog ancestor clipping; full qualification open",
+    "production_consumers": [
+      "GLOBAL via GlobalPreferencesWindowSurface -> prepare_native_preferences_scrolled",
+      "PROJECT via GlobalPreferencesWindowSurface -> prepare_native_preferences_scrolled",
+      "NEW via GlobalPreferencesWindowSurface -> prepare_native_new_project"
+    ],
+    "retired_paths": [
+      "Unbounded native-dialog root geometry and pointer regions",
+      "Layout-rounded root bounds extending beyond exact physical surface at fractional scale",
+      "Implicit-only native-dialog root text clipping"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-surface-clipping/result.json",
+    "limits": "No native input/focus, isolated defect injection, exhaustive profile/scale/backend, resource, timing or full HP22/ADP qualification. Very small dimensions are diagnostics, not admitted native usability. S3 remains open;1bc02aaf remains unapproved. No dependency, license, prototype, numerical-budget or resize-scope amendment."
   }
 }
