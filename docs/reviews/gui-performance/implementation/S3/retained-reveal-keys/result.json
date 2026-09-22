@@ -1,0 +1,112 @@
+{
+  "candidate_base": "1cbfb49fb285667bc71b55f437aca68f3d0c936f",
+  "status": "Shared Preferences retain unchanged reveal keys across frame preparation",
+  "requirements": [
+    "HP12-02",
+    "HP23-01"
+  ],
+  "source_sha256": "a6f96999b3bf83a21eaf212fa795500f1e5fced5e82be23c4f47b5f071147c3a",
+  "binary_sha256": "6e74e588308eea436900282522ac56c31f060f5afb9cd62f5b7d59317e30ddae",
+  "production_change": "Compare section/search/row, expansion and focus against retained values by reference. Clone owned keys only on identity/focus transitions; clone_from expansion keys only when changed. Preserve same reveal and capture-release predicates, including effective resize/DPI focus reset.",
+  "verification": {
+    "app_tests": "380 passed,14 ignored",
+    "release": "passed",
+    "clippy": "-D warnings passed",
+    "native_focus": [
+      {
+        "host": "GLOBAL",
+        "passed": true,
+        "resized_control_focus_pixels": 300,
+        "idle_after_resize_frames": 0
+      },
+      {
+        "host": "PROJECT",
+        "passed": true,
+        "resized_control_focus_pixels": 300,
+        "idle_after_resize_frames": 0
+      }
+    ],
+    "native_expanded": [
+      {
+        "host": "GLOBAL",
+        "passed": false,
+        "error": "AssertionError('predicate timeout')"
+      },
+      {
+        "host": "PROJECT",
+        "passed": true,
+        "measured_presentations": 11,
+        "warm_cache_samples": [
+          {
+            "cycle": 0,
+            "button": "5",
+            "stats": [
+              [
+                "47",
+                "0"
+              ]
+            ]
+          },
+          {
+            "cycle": 0,
+            "button": "4",
+            "stats": [
+              [
+                "46",
+                "0"
+              ]
+            ]
+          },
+          {
+            "cycle": 1,
+            "button": "5",
+            "stats": [
+              [
+                "47",
+                "0"
+              ]
+            ]
+          },
+          {
+            "cycle": 1,
+            "button": "4",
+            "stats": [
+              [
+                "46",
+                "0"
+              ]
+            ]
+          },
+          {
+            "cycle": 2,
+            "button": "5",
+            "stats": [
+              [
+                "47",
+                "0"
+              ]
+            ]
+          },
+          {
+            "cycle": 2,
+            "button": "4",
+            "stats": [
+              [
+                "47",
+                "0"
+              ]
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "limits": "Structural removal of unchanged reveal-key cloning, not measured total allocation or frame-time improvement. Native1x focus shrink passes both hosts; expanded PROJECT passes but GLOBAL press arrives only at timeout cleanup, matching unresolved dat-native-input-delivery-vq7w. Preserve failed trial and keep current Global expanded proof unqualified. Native other profiles/DPI/backend and complete HP12/HP23/S3 remain open. No dependency/license/prototype/budget/resize change.",
+  "artifact_sha256": {
+    "build.log.gz": "2cbdf8c34d9886557b642d7f2f2964ef0cfd93700931d73dd6795bf78bd2394b",
+    "clippy.log.gz": "0ba172d666688f6a078139db7462675797600ab50d70646983d966f7063ebd08",
+    "expanded.tar.gz": "3206973365611aa89db12d059493fd26d5e2a269b0ae316939565169b75aed71",
+    "focus.tar.gz": "b1ae875505802d7b7d6c82359396f883bcadbc1aef9b351d074ba77fe8293cb6",
+    "tests.log.gz": "66fe23d6b2cabc259cba6ff9147f669667ee0fc8e6abe4708cbb6a7669fd2d09"
+  }
+}

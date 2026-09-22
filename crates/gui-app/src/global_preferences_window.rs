@@ -327,20 +327,19 @@ impl GlobalPreferencesWindowSurface {
                 } else {
                     &runtime.workspace().ui.global_preferences
                 };
-                let identity = (
-                    dialog.section_id.clone(),
-                    dialog.search_query.clone(),
-                    dialog.scroll_row,
-                );
-                let mut reveal_row =
-                    (self.scroll_identity.as_ref() != Some(&identity)).then_some(dialog.scroll_row);
-                let expanded = (
-                    dialog.open_choice_key.clone(),
-                    dialog.explanation_key.clone(),
-                );
-                if self.scroll_focus.as_ref() != Some(&dialog.focus)
-                    || self.scroll_expanded != expanded
-                {
+                let identity_changed =
+                    self.scroll_identity
+                        .as_ref()
+                        .is_none_or(|(section, query, row)| {
+                            section != &dialog.section_id
+                                || query != &dialog.search_query
+                                || *row != dialog.scroll_row
+                        });
+                let expanded_changed = self.scroll_expanded.0 != dialog.open_choice_key
+                    || self.scroll_expanded.1 != dialog.explanation_key;
+                let focus_changed = self.scroll_focus.as_ref() != Some(&dialog.focus);
+                let mut reveal_row = identity_changed.then_some(dialog.scroll_row);
+                if focus_changed || expanded_changed {
                     use datum_gui_protocol::GlobalPreferencesFocus;
                     let key = match &dialog.focus {
                         GlobalPreferencesFocus::SettingName(key)
@@ -355,14 +354,24 @@ impl GlobalPreferencesWindowSurface {
                         reveal_row = dialog.visible_rows().position(|row| row.key == key);
                     }
                 }
-                if self.scroll_identity.as_ref() != Some(&identity)
-                    || self.scroll_expanded != expanded
-                {
+                if identity_changed || expanded_changed {
                     self.scroll.release();
                 }
-                self.scroll_focus = Some(dialog.focus.clone());
-                self.scroll_expanded = expanded;
-                self.scroll_identity = Some(identity);
+                // Scrolling rebuilds geometry, but unchanged reveal keys stay owned here.
+                if focus_changed {
+                    self.scroll_focus = Some(dialog.focus.clone());
+                }
+                if expanded_changed {
+                    self.scroll_expanded.0.clone_from(&dialog.open_choice_key);
+                    self.scroll_expanded.1.clone_from(&dialog.explanation_key);
+                }
+                if identity_changed {
+                    self.scroll_identity = Some((
+                        dialog.section_id.clone(),
+                        dialog.search_query.clone(),
+                        dialog.scroll_row,
+                    ));
+                }
                 self.prepared = Some(self.renderer.prepare_native_preferences_scrolled(
                     dialog,
                     self.config.width,
