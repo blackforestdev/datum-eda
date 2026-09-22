@@ -1,0 +1,12 @@
+{
+  "source_commit": "94402793",
+  "binary_sha256": "3d819c9088cb901a66eb4faca602312761465a7135424f2c75d4e6027a4c54e7",
+  "scope": "GLOBAL/PROJECT Units X11/Xwayland1000x750, visual scale1, existing fresh release, GPU measurements off, verbose events on.",
+  "review": {
+    "initial": "Rejected final-target proof: GLOBAL last capture remained at top, PROJECT final capture still at bottom/section. Raw driver success is insufficient.",
+    "slow": "PROJECT expected last control and first row visually confirmed. GLOBAL last target still not demonstrated.",
+    "explicit": "Search clicked before two Shift-Tab events. PROJECT Angle precision control visible and focused at bottom, then Measurement system name focused at top after3Tabs. GLOBAL last-control capture still shows top/section, first-row capture focused correctly. Both idle assertions passed, no full GLOBAL reveal pass.",
+    "next_action": "Trace authoritative GlobalPreferences focus before/after key dispatch and prepared-scene generation; distinguish wrong focus state from stale presentation before changing production behavior."
+  },
+  "limits": "No full HP23/S3 qualification. Raw driver passed fields cover presentation/idle assertions only and are not accepted final-target proof. Global last-control reveal remains unqualified. No inferred owner input, driver/kernel investigation or product fix based solely on these observations. No dependency/license/prototype/budget/resize-scope or sequencing amendment; S3 proposal1bc02aaf remains unapproved."
+}

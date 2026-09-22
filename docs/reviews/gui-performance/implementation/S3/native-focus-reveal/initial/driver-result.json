@@ -1,0 +1,163 @@
+{
+  "display": ":1",
+  "wayland_display": "wayland-0",
+  "topology": "Owner-confirmed idle desktop X11/Xwayland; native adapter functional trial",
+  "binary_sha256": "3d819c9088cb901a66eb4faca602312761465a7135424f2c75d4e6027a4c54e7",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-global-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "27262981"
+          ],
+          "monotonic": 779951.927270806,
+          "wall_time": 1790043101.796943
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "50",
+            "107",
+            "click",
+            "1"
+          ],
+          "monotonic": 779951.993083445,
+          "wall_time": 1790043101.862753
+        },
+        {
+          "xdotool": [
+            "key",
+            "shift+Tab"
+          ],
+          "monotonic": 779952.684400508,
+          "wall_time": 1790043102.55407
+        },
+        {
+          "xdotool": [
+            "key",
+            "Tab"
+          ],
+          "monotonic": 779953.717711726,
+          "wall_time": 1790043103.5873816
+        },
+        {
+          "xdotool": [
+            "key",
+            "Tab"
+          ],
+          "monotonic": 779953.852354183,
+          "wall_time": 1790043103.722024
+        },
+        {
+          "xdotool": [
+            "key",
+            "Tab"
+          ],
+          "monotonic": 779953.987127363,
+          "wall_time": 1790043103.8567972
+        }
+      ],
+      "geometry": {
+        "WINDOW": "27262981",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "last_control_frames": 1,
+      "idle_after_last_frames": 0,
+      "idle_after_first_frames": 0,
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-project-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "27262981"
+          ],
+          "monotonic": 779960.051138174,
+          "wall_time": 1790043109.920808
+        },
+        {
+          "xdotool": [
+            "key",
+            "shift+Tab"
+          ],
+          "monotonic": 779960.692703157,
+          "wall_time": 1790043110.5623727
+        },
+        {
+          "xdotool": [
+            "key",
+            "Tab"
+          ],
+          "monotonic": 779961.693802386,
+          "wall_time": 1790043111.5634723
+        },
+        {
+          "xdotool": [
+            "key",
+            "Tab"
+          ],
+          "monotonic": 779961.828420284,
+          "wall_time": 1790043111.6980903
+        },
+        {
+          "xdotool": [
+            "key",
+            "Tab"
+          ],
+          "monotonic": 779961.96296925,
+          "wall_time": 1790043111.8326392
+        }
+      ],
+      "geometry": {
+        "WINDOW": "27262981",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "last_control_frames": 1,
+      "idle_after_last_frames": 0,
+      "idle_after_first_frames": 0,
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    }
+  ]
+}
