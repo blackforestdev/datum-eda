@@ -1,0 +1,13 @@
+diff --git a/crates/gui-app/src/global_preferences_window.rs b/crates/gui-app/src/global_preferences_window.rs
+index 8cd61902..d579d58f 100644
+--- a/crates/gui-app/src/global_preferences_window.rs
++++ b/crates/gui-app/src/global_preferences_window.rs
+@@ -669,7 +669,7 @@ fn scroll_wheel(
+     }
+     let pixels = match delta {
+         MouseScrollDelta::LineDelta(_, y) => y * 40.0,
+-        MouseScrollDelta::PixelDelta(position) => position.y as f32 / scale,
++        MouseScrollDelta::PixelDelta(position) => position.y as f32 * scale,
+     };
+     scroll.wheel(pixels)
+ }

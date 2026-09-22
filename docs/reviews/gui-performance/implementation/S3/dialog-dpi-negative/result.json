@@ -1,0 +1,13 @@
+{
+  "status": "Prescribed pixel-delta mis-scaling negative detected; byte-restored converter passes",
+  "candidate": "cc043a642e4b59dd522647cc303ea25d45514496",
+  "production_source": "crates/gui-app/src/global_preferences_window.rs",
+  "injection": "Only in disposable detached first-party checkout: replace physical pixel delta division by scale with multiplication. Existing regression and all other sources unchanged. No dependency source modified.",
+  "command": "CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_wheel_preserves_fractional_pixels_and_pane_locality -- --test-threads=1",
+  "negative": "exit101; one intended failure in cumulative logical offset assertion;389 filtered out",
+  "restored": "exit0;one passed;389 filtered out; original bytes verified against active source and temporary checkout clean",
+  "source_sha256": "14b0aa67509f9192dcdfc08abfa69a2c4caa41b5ff2c824fe678ff86776ada64",
+  "patch_sha256": "236697187b01ee5ca8caeedbeb69d416e0958edc58d8575672ca8f8d1f0dac35",
+  "scope": "The actual shared native-surface converter is directly exercised with1/1.5/2x pixel/line deltas, cursor locality and boundary/reversal. Shared GLOBAL/PROJECT/NEW call paths consume it; this test does not deliver OS events or render their windows. No complete HP19, Layers/terminal, native stream, independent replay, S3, performance or resource qualification. Active source and release binary unchanged.",
+  "cleanup": "Disposable checkout restored and removed after proof; shared Cargo target retained without cleaning."
+}
