@@ -1,0 +1,35 @@
+{
+  "status": "bounded shared native focus-key correction; three owned-dialog Escape cases pass",
+  "baseline": "2f5bd9c6fa8f5f6286325d38017abe6616e5e729",
+  "sources": {
+    "crates/gui-app/src/app_native_events.rs": "ea4e0a023314316ded635bdc0b9d5132e4315037b6aa33a3442ed770e62626ad",
+    "crates/gui-app/src/gui_runtime_support.rs": "ff8c096f767689b18e1d064f807ac5694f32bd80b0c4f3db884599de8e272180"
+  },
+  "binary_sha256": "a161b84732d0982d25108accc112268abfec0b0fc52a8ac03b145a5748bed88d",
+  "fixture": {
+    "path": "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+  },
+  "production_consumers": [
+    "Shared native dispatch before MAIN/GLOBAL/PROJECT/NEW keyboard or F5 recovery routing"
+  ],
+  "retired_path": "Treating winit focus-generated held-key presses as fresh command/text activation",
+  "behavior": "Ignore only KeyboardInput presses marked is_synthetic at the shared entry. Existing release/cancellation and ModifiersChanged routes remain. Opt-in verbose labels now include the synthetic flag, wheel delta/phase and modifier state; no new measurement mode or dependency.",
+  "basis": "Installed existing winit0.30.13 event.rs documents focus-generated presses/releases through KeyboardInput.is_synthetic on X11/Windows. Datum previously discarded this distinction. Inspection does not identify the cause of older logs that omitted the flag.",
+  "proof": {
+    "keyboard": "19 keyboard_focus tests pass; integration binary filter matched0tests and is not counted as proof.",
+    "build": "Fresh guarded offline application release build passed in31.02s.",
+    "native": "Same fresh binary on desktop X11/Xwayland, Intel P630/Vulkan. Hold Escape in a separate test-owned X11 window, focus dialog, observe synthetic=true press, release and verify dialog remains focusable/open; send fresh Escape, observe synthetic=false press and native host closed ledger. GLOBAL passes initial recipe; PROJECT and NEW pass corrected activation recipe. Actual case events/commands and logs retained.",
+    "failed_attempt": "Initial PROJECT attempt rejected a focus mismatch before injecting a key; initial overall driver exit1 despite GLOBAL case passing. Corrected only test activation via normal WM request; remaining driver exit0 with PROJECT/NEW passing. No failed run relabeled.",
+    "cleanup": "Own helper windows destroyed and own remaining applications terminated; no test processes remained. This is not Main teardown qualification.",
+    "clippy": "Guarded offline datum-gui binary Clippy passed with -D warnings.",
+    "limits": "No retrospective attribution of old unscripted keys/pointer events, no owner desktop-use conclusion, no full native scroll/focus/backend/scale or S3 acceptance. MAIN shares the guard by call path but was not a native Escape case. No independent guard-removal negative yet. No dependency/license/prototype/budget/resize-scope change;1bc02aaf remains unapproved."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app keyboard_focus -- --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app",
+    "python3 /tmp/pm045_synthetic_focus.py /tmp/pm045-synthetic-focus",
+    "python3 /tmp/pm045_synthetic_focus_remaining.py /tmp/pm045-synthetic-focus-remaining",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-app --bin datum-gui -- -D warnings"
+  ]
+}
