@@ -7065,6 +7065,18 @@
         "retired_paths": "No runtime retirement; scaled native qualification of existing shared paths.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
         "limits": "X11/Xwayland native adapters with existing --visual-scale-factor override1.5/2, not monitor-scale transition or Wayland input qualification. Observed sizes1440x1050 and1918x1050, not requested1440x1080/1920x1440. Four settled search results fit and scheduled wheel interval has0 frames. Clear/scroll intervals produce presentations (2 for Global2x,1 others); pending clear frames may overlap, so no exact per-wheel/latency claim. Failed early baselines and missing Escape retained. Same recorded release binary; no production/dependency/license/prototype/budget/resize change. Remaining control/backend/full S3 qualification stays open."
+      },
+      "s3_owned_dialog_pointer_profiles_progress": {
+        "status": "Shared native dialog dispatcher verified at minimum logical sizes with1/1.5/2 scale overrides",
+        "production_consumers": [
+          "GLOBAL Preferences Units setting",
+          "PROJECT Preferences Units setting",
+          "NEW Project name field"
+        ],
+        "retired_paths": "No production change; replace sole undersized test coverage with retained overflow case plus supported minimum-size profiles. Retire test-host frame registrations and owned surfaces between cases.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer-profiles/result.json",
+        "proof": "12 actual hidden X11/Vulkan surface cases pass through the default production WindowEvent dispatcher. Both Preferences at700x540 logical have scrollbars and reject release click-through across1/1.5/2; all fresh setting clicks activate. New at620x620 logical has no scrollbar and fresh name clicks activate across1/1.5/2. Retained960x480/1x overflow cases verify release suppression for all3. Native test1pass/395filtered; Clippy passed before final diagnostic-only Option formatting.",
+        "limits": "Direct WindowEvent dispatch, not OS event delivery or monitor-scale transitions. Actual requested physical sizes verified. New minimum-size cases do not claim scrollbar coverage; logs record None. No new injected negative or whole GUI/profile/S3 acceptance; preceding e3cd07a0 negative remains bounded historical evidence. Production code and release binary unchanged; no visual/dependency/license/resource/resize or deadline change."
       }
     },
     {
@@ -7325,6 +7337,18 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer/result.json",
         "proof": "Actual hidden X11/Vulkan surfaces and real application dialog state: shared production WindowEvent dispatcher prevents scrollbar-release activation of both Units settings and New Project name; fresh clicks activate. Positive and recompiled restored test pass1/395 filtered; isolated ignored-consumption mutation fails all3 hosts. App380 pass/16 ignored; Clippy and fresh release build pass.",
         "limits": "Dispatcher invoked directly with WindowEvents; not OS-delivered events or ActiveEventLoop delivery proof.960x480/scale1 overflow fixture deliberately below normal product minimum sizes, not supported-layout/profile acceptance. Existing cancellation coordinator remains before host dispatch. No full HP21/S3, native OS/backend/scale, performance/resource or resize acceptance. Product styling, mutation policy, dependency/license and deadlines unchanged."
+      },
+      "s3_owned_dialog_pointer_profiles_progress": {
+        "status": "Shared native dialog dispatcher verified at minimum logical sizes with1/1.5/2 scale overrides",
+        "production_consumers": [
+          "GLOBAL Preferences Units setting",
+          "PROJECT Preferences Units setting",
+          "NEW Project name field"
+        ],
+        "retired_paths": "No production change; replace sole undersized test coverage with retained overflow case plus supported minimum-size profiles. Retire test-host frame registrations and owned surfaces between cases.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer-profiles/result.json",
+        "proof": "12 actual hidden X11/Vulkan surface cases pass through the default production WindowEvent dispatcher. Both Preferences at700x540 logical have scrollbars and reject release click-through across1/1.5/2; all fresh setting clicks activate. New at620x620 logical has no scrollbar and fresh name clicks activate across1/1.5/2. Retained960x480/1x overflow cases verify release suppression for all3. Native test1pass/395filtered; Clippy passed before final diagnostic-only Option formatting.",
+        "limits": "Direct WindowEvent dispatch, not OS event delivery or monitor-scale transitions. Actual requested physical sizes verified. New minimum-size cases do not claim scrollbar coverage; logs record None. No new injected negative or whole GUI/profile/S3 acceptance; preceding e3cd07a0 negative remains bounded historical evidence. Production code and release binary unchanged; no visual/dependency/license/resource/resize or deadline change."
       }
     },
     {
@@ -29071,6 +29095,18 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer/result.json",
     "proof": "Actual hidden X11/Vulkan surfaces and real application dialog state: shared production WindowEvent dispatcher prevents scrollbar-release activation of both Units settings and New Project name; fresh clicks activate. Positive and recompiled restored test pass1/395 filtered; isolated ignored-consumption mutation fails all3 hosts. App380 pass/16 ignored; Clippy and fresh release build pass.",
-    "limits": "Dispatcher invoked directly with WindowEvents; not OS-delivered events or ActiveEventLoop delivery proof.960x480/scale1 overflow fixture deliberately below normal product minimum sizes, not supported-layout/profile acceptance. Existing cancellation coordinator remains before host dispatch. No full HP21/S3, native OS/backend/scale, performance/resource or resize acceptance. Product styling, mutation policy, dependency/license and deadlines unchanged."
+    "limits": "Dispatcher invoked directly with WindowEvents; not OS-delivered events or ActiveEventLoop delivery proof.960x480/scale1 overflow fixture deliberately below normal product minimum sizes, not supported-layout/profile acceptance. Existing cancellation coordinator remains before host dispatch. No full HP21/S3, native OS/backend/scale, performance/resource or resize acceptance. Product styling, mutation policy, dependency/license and deadlines unchanged.",
+    "minimum_size_profiles": {
+      "status": "Shared native dialog dispatcher verified at minimum logical sizes with1/1.5/2 scale overrides",
+      "production_consumers": [
+        "GLOBAL Preferences Units setting",
+        "PROJECT Preferences Units setting",
+        "NEW Project name field"
+      ],
+      "retired_paths": "No production change; replace sole undersized test coverage with retained overflow case plus supported minimum-size profiles. Retire test-host frame registrations and owned surfaces between cases.",
+      "evidence": "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer-profiles/result.json",
+      "proof": "12 actual hidden X11/Vulkan surface cases pass through the default production WindowEvent dispatcher. Both Preferences at700x540 logical have scrollbars and reject release click-through across1/1.5/2; all fresh setting clicks activate. New at620x620 logical has no scrollbar and fresh name clicks activate across1/1.5/2. Retained960x480/1x overflow cases verify release suppression for all3. Native test1pass/395filtered; Clippy passed before final diagnostic-only Option formatting.",
+      "limits": "Direct WindowEvent dispatch, not OS event delivery or monitor-scale transitions. Actual requested physical sizes verified. New minimum-size cases do not claim scrollbar coverage; logs record None. No new injected negative or whole GUI/profile/S3 acceptance; preceding e3cd07a0 negative remains bounded historical evidence. Production code and release binary unchanged; no visual/dependency/license/resource/resize or deadline change."
+    }
   }
 }
