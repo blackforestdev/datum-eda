@@ -1,0 +1,68 @@
+{
+  "base_commit": "5b210550f7e1952b2a4c42d83741572eb650dcf3",
+  "production": {
+    "status": "All three native dialog entry paths cancel focus-lost capture and retire closed hosts in bounded actual-surface tests",
+    "production_consumers": [
+      "GLOBAL Preferences native event entry -> owned pointer dispatcher -> shared surface",
+      "PROJECT Preferences native event entry -> owned pointer dispatcher -> shared surface",
+      "NEW Project native event entry -> owned pointer dispatcher -> shared surface"
+    ],
+    "retired_paths": "No production migration. Test replaces manual host removal with production CloseRequested handling and routes cancellation/fresh clicks through the native entry point.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-entry-cancellation/result.json",
+    "proof": "12 hidden X11/Vulkan host/scale cases pass. Nine cases with a scrollbar establish a changing drag, then Focused(false) clears capture, subsequent motion preserves offset, and trailing release preserves target state; a fresh click still activates. All12 close through handle_native_window_event and retire surface/window/model-open state; nine scrollbar cases close with capture active. Isolated removal of the Focused(false) cancellation branch fails at host0 ownership assertion; recompiled restored candidate passes. App/test Clippy passes.",
+    "limits": "Events supplied directly using a real ActiveEventLoop, not generated/delivered by OS. NEW supported-minimum620x620 cases have no scrollbar (None), so do not claim cancellation there; overflow960x480 covers NEW capture. Negative stops at first Global case and does not independently replay each host. No content-change, physical DPI transition, compositor capture, numerical/resource or full HP21/S3 qualification. Production code/release unchanged; no dependency/license/prototype/resource-deadline/resize change."
+  },
+  "source_sha256": "50773c64cf193abd397ce5f428b47296099ded4db79d38a13a3fbb3abdb19799",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "display": ":1",
+  "positive_command": "env -u WAYLAND_DISPLAY WINIT_UNIX_BACKEND=x11 DATUM_NATIVE_TEST_BOARD=/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb XDG_CONFIG_HOME=/tmp/pm045-native-cancel-config XDG_CACHE_HOME=/tmp/pm045-native-cancel-cache EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/release/datum-eda python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_dialog_scroll_release_cannot_click_through_to_controls -- --ignored --test-threads=1 --nocapture",
+  "clippy_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-app --bin datum-gui --tests -- -D warnings",
+  "negative_and_restored": {
+    "command": [
+      "python3",
+      "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+      "--workload",
+      "proof",
+      "--",
+      "cargo",
+      "test",
+      "--offline",
+      "--manifest-path",
+      "/tmp/pm045-pinned-negative-source/Cargo.toml",
+      "-p",
+      "datum-gui-app",
+      "--bin",
+      "datum-gui",
+      "native_dialog_scroll_release_cannot_click_through_to_controls",
+      "--",
+      "--ignored",
+      "--test-threads=1",
+      "--nocapture"
+    ],
+    "runs": [
+      {
+        "label": "negative",
+        "exit": 101,
+        "binary_sha256": "7e71dcdc2bbf9e2a788de9a11d9950eefa98052b4bcea1cd14457698e33d5b27",
+        "recompiled_app": true
+      },
+      {
+        "label": "restored",
+        "exit": 0,
+        "binary_sha256": "a242c8560a2b81af4691354cccbbfb460ae6781ac51cddde124c7ad923183a58",
+        "recompiled_app": true
+      }
+    ],
+    "restored_source_sha256": "a424cf77878b0613afa6127db26f9045cbae3651a255a694724dc54df1b981fd"
+  },
+  "artifact_sha256": {
+    "clippy.log.gz": "69f10414f8ab9695113eb4aafba399aace1cde0247cf08fc326477e1711336ce",
+    "final-positive.log.gz": "570811018243bea6822476b423d7ab2938a3e24e9c7d1acf26531bfc08ce83dc",
+    "negative-driver.log.gz": "1b65f3eee4a0287024f9dd1b0c914d6abfde2829cc9497ee8ce57af529ee2963",
+    "negative-driver.py.gz": "427bb7f8b2aa555d45609da6ea9c40537baee42fef7b2fd5670fd3b2c2929339",
+    "negative.log.gz": "3be6296e50930bb135dc11ad420a18a819b16e337f57befbe3d0b0cef18190c9",
+    "negative.patch.gz": "25789ceb74d460651fe784c9b7fd8fc33644e87f3dbaa14ee9f1a75cdafeab5e",
+    "positive.log.gz": "a7d916b57df0fbf54cdddf63d7d1d4090877e5a2705b92ab6b4a48d9873e133b",
+    "restored.log.gz": "6800926cbcc8bc6426a27d786985e94f585542bb83ff766f8a45ddc8611b9008"
+  }
+}

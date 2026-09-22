@@ -5,7 +5,7 @@ use std::{
     sync::Arc,
     time::{Duration, Instant},
 };
-use winit::platform::x11::EventLoopBuilderExtX11;
+use winit::platform::{pump_events::EventLoopExtPumpEvents, x11::EventLoopBuilderExtX11};
 
 fn host(index: usize) -> OwnedHost {
     match index {
@@ -38,13 +38,31 @@ fn motion(x: f32, y: f32) -> WindowEvent {
     }
 }
 
+// Supply events to the production native entry point with a real active loop.
+// This intentionally does not claim that the OS generated or delivered them.
+#[allow(deprecated)]
+fn deliver(
+    events: &mut winit::event_loop::EventLoop<()>,
+    app: &mut App,
+    id: WindowId,
+    event: WindowEvent,
+) {
+    let mut pending = Some(event);
+    events.pump_events(Some(Duration::ZERO), |_, active| {
+        if let Some(event) = pending.take() {
+            app.handle_native_window_event(active, id, event);
+        }
+    });
+    assert!(pending.is_none(), "native entry point was exercised");
+}
+
 #[test]
 #[ignore = "requires X11/Vulkan, isolated config and DATUM_NATIVE_TEST_BOARD; run serially"]
 #[allow(deprecated)]
 fn native_dialog_scroll_release_cannot_click_through_to_controls() {
     let board = std::env::var("DATUM_NATIVE_TEST_BOARD").expect("owned real board fixture");
     let args = GuiArgs::try_parse_from(["datum-gui", "--board", &board]).unwrap();
-    let events = winit::event_loop::EventLoop::<()>::with_user_event()
+    let mut events = winit::event_loop::EventLoop::<()>::with_user_event()
         .with_x11()
         .with_any_thread(true)
         .build()
@@ -189,10 +207,46 @@ fn native_dialog_scroll_release_cannot_click_through_to_controls() {
             } else {
                 app.handle_owned_dialog_pointer(host(index), &point);
             }
+            if let Some(thumb) = surface(&app, index).scroll.thumb() {
+                let id = surface(&app, index).window_id();
+                let x = (thumb.x + 1.0) * scale;
+                let y = (thumb.y + 4.0) * scale;
+                deliver(&mut events, &mut app, id, motion(x, y));
+                deliver(&mut events, &mut app, id, primary(ElementState::Pressed));
+                assert!(surface(&app, index).scrollbar_pressed);
+                let before = surface(&app, index).scroll.offset();
+                deliver(&mut events, &mut app, id, motion(x, y + 20.0 * scale));
+                let dragged = surface(&app, index).scroll.offset();
+                assert_ne!(dragged, before, "establish an active drag for host {index}");
+                let was_open = focused(&app);
+                deliver(&mut events, &mut app, id, WindowEvent::Focused(false));
+                assert!(
+                    !surface(&app, index).scrollbar_pressed,
+                    "focus loss must clear capture ownership for host {index}"
+                );
+                deliver(
+                    &mut events,
+                    &mut app,
+                    id,
+                    motion(rect.x + rect.width * 0.5, rect.y + rect.height * 0.5),
+                );
+                assert_eq!(
+                    surface(&app, index).scroll.offset(),
+                    dragged,
+                    "focus loss must cancel the grab for host {index}"
+                );
+                deliver(&mut events, &mut app, id, primary(ElementState::Released));
+                assert_eq!(
+                    focused(&app),
+                    was_open,
+                    "cancelled release must not activate the target for host {index}"
+                );
+            }
             // A fresh ordinary click must still activate the same presented target.
             let was_open = focused(&app);
-            app.handle_owned_dialog_pointer(host(index), &primary(ElementState::Pressed));
-            app.handle_owned_dialog_pointer(host(index), &primary(ElementState::Released));
+            let id = surface(&app, index).window_id();
+            deliver(&mut events, &mut app, id, primary(ElementState::Pressed));
+            deliver(&mut events, &mut app, id, primary(ElementState::Released));
             assert!(
                 (if index == 2 {
                     focused(&app)
@@ -208,21 +262,63 @@ fn native_dialog_scroll_release_cannot_click_through_to_controls() {
                 thumb.map(|_| !failures.contains(&(index, scale, supported_minimum)))
             );
             let id = surface(&app, index).window_id();
-            app.frames.close(id);
-            match index {
-                0 => {
-                    app.global_preferences_surface = None;
-                    app.global_preferences_window = None;
-                }
-                1 => {
-                    app.project_preferences_surface = None;
-                    app.project_preferences_window = None;
-                }
-                _ => {
-                    app.new_project_surface = None;
-                    app.new_project_window = None;
-                }
+            if let Some(thumb) = surface(&app, index).scroll.thumb() {
+                deliver(
+                    &mut events,
+                    &mut app,
+                    id,
+                    motion((thumb.x + 1.0) * scale, (thumb.y + 4.0) * scale),
+                );
+                deliver(&mut events, &mut app, id, primary(ElementState::Pressed));
+                assert!(
+                    surface(&app, index).scrollbar_pressed,
+                    "close must exercise active capture for host {index}"
+                );
             }
+            deliver(&mut events, &mut app, id, WindowEvent::CloseRequested);
+            let (surface_closed, window_closed, model_closed) = match index {
+                0 => (
+                    app.global_preferences_surface.is_none(),
+                    app.global_preferences_window.is_none(),
+                    !app.runtime
+                        .as_ref()
+                        .unwrap()
+                        .workspace()
+                        .ui
+                        .global_preferences
+                        .open,
+                ),
+                1 => (
+                    app.project_preferences_surface.is_none(),
+                    app.project_preferences_window.is_none(),
+                    !app.runtime
+                        .as_ref()
+                        .unwrap()
+                        .workspace()
+                        .ui
+                        .project_preferences
+                        .open,
+                ),
+                _ => (
+                    app.new_project_surface.is_none(),
+                    app.new_project_window.is_none(),
+                    !app.runtime
+                        .as_ref()
+                        .unwrap()
+                        .workspace()
+                        .ui
+                        .new_project
+                        .open,
+                ),
+            };
+            assert!(
+                surface_closed && window_closed && model_closed,
+                "native close must retire host {index} and its model state"
+            );
+            eprintln!(
+                "host={index} scale={scale} native_entry_focus_cancel={:?} native_entry_close=true",
+                thumb.map(|_| true)
+            );
         }
     }
     let runtime = app.runtime.as_mut().unwrap();
