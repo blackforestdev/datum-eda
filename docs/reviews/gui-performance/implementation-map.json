@@ -7701,7 +7701,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared scroll owner has no animation timer and native changed-only damage routes exist. Complete per-host reduced-motion/idle/locality recipe and continuous-timer negative remain unqualified. Project reduced-motion projection now fixed: Global set/reset propagates and Project load/edit/reset/unavailable reconstruction retains the setting. Baseline3 lifecycle failures, candidate380 app tests pass14 ignored. Native reduced-motion and timer negative remain open. Both native1x hosts now pass GUI-written reduced-motion scroll/boundary/reversal,2s zero-frame idle and Main locality. Continuous-timer negative and remaining profiles stay unqualified. Native1x continuous-timer negative now fails both idle oracles with120 Main/120 dialog frames per2s; unchanged binary positives have0 frames. Working binary restored by hash. Remaining backend/scale proof stays open. Both hosts now have bounded native X11 reduced-motion positive recipes at1/1.5/2 overrides on same binary; all idle intervals0 frames and Main only startup. Timer negative remains1x; native Wayland/remaining qualification open.",
+        "status": "Partial: shared scroll owner has no animation timer and native changed-only damage routes exist. Complete per-host reduced-motion/idle/locality recipe and continuous-timer negative remain unqualified. Project reduced-motion projection now fixed: Global set/reset propagates and Project load/edit/reset/unavailable reconstruction retains the setting. Baseline3 lifecycle failures, candidate380 app tests pass14 ignored. Native reduced-motion and timer negative remain open. Both native1x hosts now pass GUI-written reduced-motion scroll/boundary/reversal,2s zero-frame idle and Main locality. Continuous-timer negative and remaining profiles stay unqualified. Native1x continuous-timer negative now fails both idle oracles with120 Main/120 dialog frames per2s; unchanged binary positives have0 frames. Working binary restored by hash. Remaining backend/scale proof stays open. Both hosts now have bounded native X11 reduced-motion positive recipes at1/1.5/2 overrides on same binary; all idle intervals0 frames and Main only startup. Timer negative remains1x; native Wayland/remaining qualification open. Native Wayland1x idle positives now0 frames for both hosts; timer negatives fail with101 dialog frames each. Logs verify native Wayland identities. Scroll/input and remaining profiles stay open.",
         "id": "proof_hp23_02",
         "positive": "Reduced-motion scroll then idle",
         "negative_control": "Run continuous animation timer",
@@ -7762,7 +7762,8 @@
         "docs/reviews/gui-performance/implementation/S3/project-reduced-motion/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-reduced-motion/result.json",
         "docs/reviews/gui-performance/implementation/S3/continuous-timer-negative/result.json",
-        "docs/reviews/gui-performance/implementation/S3/reduced-motion-scales/result.json"
+        "docs/reviews/gui-performance/implementation/S3/reduced-motion-scales/result.json",
+        "docs/reviews/gui-performance/implementation/S3/wayland-idle-negative/result.json"
       ],
       "s3_native_reduced_motion_progress": {
         "status": "Both native Preferences reduced-motion scroll/idle cases pass",
@@ -7796,6 +7797,17 @@
         "retired_paths": "None; bounded scale qualification of existing production owners.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/reduced-motion-scales/result.json",
         "limits": "Bounded native X11/Xwayland positives at override1.5/2; together with native-reduced-motion receipts both hosts have1/1.5/2 positives on same4bf4f0a4 binary. Actual extents are1440x1050 and1918x1050. Static captures can lag; they do not prove exact final pixels or latency. Native Wayland input, monitor-scale transitions and remaining full qualification remain open; timer negative previously proven at1x only. No production/dependency/license/prototype/budget/resize change."
+      },
+      "s3_wayland_idle_negative_progress": {
+        "status": "Native Wayland idle positives and continuous-timer negatives observed for both Preferences hosts",
+        "production_consumers": [
+          "GLOBAL native Wayland Preferences",
+          "PROJECT native Wayland Preferences"
+        ],
+        "shared_owner": "Native frame coordinator / wait dispatch",
+        "retired_paths": "None; backend-specific replay of existing positive and isolated injected timer.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/wayland-idle-negative/result.json",
+        "limits": "Native Wayland1x startup then2s idle, no synthetic input. GUI-written reduced_motion=true configuration; Project flag propagation covered separately by production coordinator tests. This qualifies bounded idle defect sensitivity only, not Wayland scroll/input/hit/static, scale transitions, resource or full HP23/S3 coverage. Timer injection is unchanged from continuous-timer-negative source patch; active source and working binary unchanged. No dependency/license/prototype/budget/resize change."
       }
     },
     {
@@ -27966,7 +27978,7 @@
         "HP22-01": "Complete remaining native diagonal/rounded/nested clipping cases per actual consumer. Shared clamp-vertices negative now detected by corrected existing area oracle; preserve original false-pass and terminal call-removal negatives.",
         "HP22-02": "Complete pinned-header negative and remaining native profiles. Shared hidden-hit clipping omission is now detected; existing pinned GPU return pixels and native scroll trials remain bounded evidence.",
         "HP23-01": "Complete remaining native keyboard/search reveal across section/content/scale profiles. Stale focus after height change now reproduced and fixed in both native Preferences; existing explanation Close fix retained. Native DPI transition remains open.",
-        "HP23-02": "Complete native Wayland and remaining full qualification. Both Preferences X11 reduced-motion scroll/idle/locality positives now pass1/1.5/2 overrides on same binary; continuous16ms timer negative is recorded at1x. Captures/monitor transitions are not qualified by these receipts."
+        "HP23-02": "Complete native Wayland scrolling/input and remaining full qualification. Both native backends now have1x idle positive/timer-negative proof; X11 also has reduced-motion scroll/locality positives1/1.5/2 on one binary. Native Wayland idle proof does not establish input or monitor transitions."
       },
       "next_action": "Complete remaining prescribed negative controls on the current shared owners, paired with their existing positive tests; continue native per-adapter gaps and fix demonstrated defects. Do not invent another shared component solely to avoid remaining proof. GPI-S3 stays selected."
     }
@@ -28608,5 +28620,16 @@
     "retired_paths": "None; bounded scale qualification of existing production owners.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/reduced-motion-scales/result.json",
     "limits": "Bounded native X11/Xwayland positives at override1.5/2; together with native-reduced-motion receipts both hosts have1/1.5/2 positives on same4bf4f0a4 binary. Actual extents are1440x1050 and1918x1050. Static captures can lag; they do not prove exact final pixels or latency. Native Wayland input, monitor-scale transitions and remaining full qualification remain open; timer negative previously proven at1x only. No production/dependency/license/prototype/budget/resize change."
+  },
+  "s3_wayland_idle_negative_work": {
+    "status": "Native Wayland idle positives and continuous-timer negatives observed for both Preferences hosts",
+    "production_consumers": [
+      "GLOBAL native Wayland Preferences",
+      "PROJECT native Wayland Preferences"
+    ],
+    "shared_owner": "Native frame coordinator / wait dispatch",
+    "retired_paths": "None; backend-specific replay of existing positive and isolated injected timer.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/wayland-idle-negative/result.json",
+    "limits": "Native Wayland1x startup then2s idle, no synthetic input. GUI-written reduced_motion=true configuration; Project flag propagation covered separately by production coordinator tests. This qualifies bounded idle defect sensitivity only, not Wayland scroll/input/hit/static, scale transitions, resource or full HP23/S3 coverage. Timer injection is unchanged from continuous-timer-negative source patch; active source and working binary unchanged. No dependency/license/prototype/budget/resize change."
   }
 }

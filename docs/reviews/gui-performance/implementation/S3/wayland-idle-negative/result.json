@@ -1,0 +1,70 @@
+{
+  "candidate_base": "928fc2ec2c8bfdeee05dd1b6c9eb60af8f26d96f",
+  "status": "Native Wayland idle positives and continuous-timer negatives observed for both Preferences hosts",
+  "requirement": "HP23-02",
+  "binary_sha256": {
+    "positive": "4bf4f0a411c175cf61f4204031597092132fdfa8b0f11f47a395e737e33a0317",
+    "negative": "455682bb0fc4505fbe5c831048592dcaa5ff35fc04760ddffc291a22c11ece7d"
+  },
+  "observations": {
+    "positive": [
+      {
+        "host": "GLOBAL",
+        "surface_identities": [
+          "[SystemTime { tv_sec: 1790060158, tv_nsec: 191779227 }] surface identity window=WindowId(94680664353072) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+          "[SystemTime { tv_sec: 1790060158, tv_nsec: 330205279 }] surface identity window=WindowId(94680683505696) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+        ],
+        "idle_frames": {
+          "main": 0,
+          "dialog": 0
+        },
+        "passed": true
+      },
+      {
+        "host": "PROJECT",
+        "surface_identities": [
+          "[SystemTime { tv_sec: 1790060163, tv_nsec: 496710315 }] surface identity window=WindowId(94895009671472) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+          "[SystemTime { tv_sec: 1790060163, tv_nsec: 779399100 }] surface identity window=WindowId(94895008844416) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+        ],
+        "idle_frames": {
+          "main": 0,
+          "dialog": 0
+        },
+        "passed": true
+      }
+    ],
+    "negative": [
+      {
+        "host": "GLOBAL",
+        "surface_identities": [
+          "[SystemTime { tv_sec: 1790060181, tv_nsec: 132514160 }] surface identity window=WindowId(93923322218800) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+          "[SystemTime { tv_sec: 1790060181, tv_nsec: 271672012 }] surface identity window=WindowId(93923332961632) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+        ],
+        "idle_frames": {
+          "main": 91,
+          "dialog": 101
+        },
+        "passed": false
+      },
+      {
+        "host": "PROJECT",
+        "surface_identities": [
+          "[SystemTime { tv_sec: 1790060186, tv_nsec: 461123772 }] surface identity window=WindowId(94642567147120) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\"",
+          "[SystemTime { tv_sec: 1790060186, tv_nsec: 732684242 }] surface identity window=WindowId(94642577105632) window_backend=wayland gpu_backend=Vulkan adapter=\"Intel(R) HD Graphics P630 (KBL GT2)\" device_type=IntegratedGpu driver=\"Intel open-source Mesa driver\" driver_info=\"Mesa 25.0.7-2+deb13u1\""
+        ],
+        "idle_frames": {
+          "main": 100,
+          "dialog": 101
+        },
+        "passed": false
+      }
+    ]
+  },
+  "source_patch_and_build": "docs/reviews/gui-performance/implementation/S3/continuous-timer-negative/result.json",
+  "configuration": "docs/reviews/gui-performance/implementation/S3/native-reduced-motion/setup.tar.gz",
+  "limits": "Native Wayland1x startup then2s idle, no synthetic input. GUI-written reduced_motion=true configuration; Project flag propagation covered separately by production coordinator tests. This qualifies bounded idle defect sensitivity only, not Wayland scroll/input/hit/static, scale transitions, resource or full HP23/S3 coverage. Timer injection is unchanged from continuous-timer-negative source patch; active source and working binary unchanged. No dependency/license/prototype/budget/resize change.",
+  "artifact_sha256": {
+    "negative.tar.gz": "46bbc1b8866beedb584c68315b254f4ef3a58a59d281e656bba2a35a658c109f",
+    "positive.tar.gz": "e895d1100b98c6bab59212ebb5b95b46844c041724b58277c4cedb9eb8d7f641"
+  }
+}
