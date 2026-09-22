@@ -3,6 +3,7 @@ use crate::{GuiArgs, Runtime};
 use clap::Parser;
 use datum_gui_render::HitTarget;
 use std::{sync::Arc, time::Duration};
+use winit::event::MouseScrollDelta;
 use winit::platform::x11::EventLoopBuilderExtX11;
 
 #[test]
@@ -33,8 +34,8 @@ fn native_layers_route_preserves_preparation_camera_and_boundary_damage() {
     let layout = runtime.current_layout();
     let camera = format!("{:?}", runtime.camera);
     runtime.prepared_scene = None;
-    runtime.last_cursor_pos = Some((layout.viewport.x + 20.0, layout.viewport.y + 20.0));
-    assert_eq!(runtime.handle_layer_scroll(-1.0), None);
+    runtime.last_cursor_pos = Some((0.0, 0.0));
+    assert!(!runtime.handle_native_wheel(MouseScrollDelta::LineDelta(0.0, -1.0)));
     assert!(
         runtime.prepared_scene.is_none(),
         "outside Layers must not prepare a scene"
@@ -66,7 +67,7 @@ fn native_layers_route_preserves_preparation_camera_and_boundary_damage() {
         region.y + region.height * 0.5,
     ));
     runtime.scene_dirty = false;
-    assert_eq!(runtime.handle_layer_scroll(-1000.0), Some(true));
+    assert!(runtime.handle_native_wheel(MouseScrollDelta::LineDelta(0.0, -1000.0)));
     assert_eq!(
         runtime.workspace().ui.filters.layer_scroll_offset,
         total - visible
@@ -77,17 +78,29 @@ fn native_layers_route_preserves_preparation_camera_and_boundary_damage() {
         "scroll routing must not prepare a scene"
     );
     runtime.scene_dirty = false;
-    assert_eq!(runtime.handle_layer_scroll(-1000.0), Some(false));
+    assert!(!runtime.handle_native_wheel(MouseScrollDelta::LineDelta(0.0, -1000.0)));
     assert!(
         !runtime.scene_dirty,
         "boundary input must not dirty the scene"
     );
-    assert_eq!(runtime.handle_layer_scroll(1.0), Some(true));
+    assert!(runtime.handle_native_wheel(MouseScrollDelta::LineDelta(0.0, 1.0)));
     assert!(runtime.workspace().ui.filters.layer_scroll_offset < total - visible);
     assert_eq!(
         format!("{:?}", runtime.camera),
         camera,
         "Layers must not mutate camera"
+    );
+
+    // The same native routing entry point must still reach the editor camera.
+    runtime.last_cursor_pos = Some((
+        layout.viewport.x + layout.viewport.width * 0.5,
+        layout.viewport.y + layout.viewport.height * 0.5,
+    ));
+    assert!(runtime.handle_native_wheel(MouseScrollDelta::LineDelta(0.0, 1.0)));
+    assert_ne!(format!("{:?}", runtime.camera), camera);
+    assert!(
+        runtime.prepared_scene.is_none(),
+        "camera route must not prepare Layers"
     );
 
     runtime.begin_application_terminal_shutdown();

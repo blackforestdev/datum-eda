@@ -5149,10 +5149,12 @@
       "production_entry_points": [
         "crates/gui-app/src/pane_cameras.rs",
         "crates/gui-app/src/runtime_camera_pane.rs",
-        "crates/gui-app/src/runtime_revision_workspace.rs"
+        "crates/gui-app/src/runtime_revision_workspace.rs",
+        "crates/gui-app/src/app_native_events.rs",
+        "crates/gui-app/src/native_scroll_input.rs"
       ],
       "test": {
-        "status": "Partial: actual X11/Vulkan Board Runtime route leaves preparation absent outside Layers. Prescribed obsolete-preparation injection fails and restored production passes. Outer native OS event routing remains unqualified.",
+        "status": "Partial: actual X11/Vulkan Board Runtime route leaves preparation absent outside Layers. Prescribed obsolete-preparation injection fails and restored production passes. Outer native OS event routing remains unqualified. Default native routing owner now exercised by actual Board Runtime; ApplicationHandler/OS delivery and prescribed fallthrough negative still unqualified.",
         "id": "proof_hp10_01",
         "positive": "Wheel outside Layers",
         "negative_control": "Prepare Layers/obsolete frame before routing",
@@ -5195,6 +5197,20 @@
         "retired_paths": "No runtime behavior changed; replaces earlier zero-test filter as bounded verification of existing default production routing.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/layers-runtime-route/result.json",
         "limits": "Actual hidden X11/Vulkan Board Runtime with real owner fixture, direct production handle_layer_scroll calls and presented hit publication. Does not deliver OS wheel events or test outer event-dispatch fallthrough. No full HP10/S3/native/backend/scale/resource/performance acceptance. No dependency, license, prototype, sequencing or resize-scope change."
+      },
+      "s3_native_wheel_routing_progress": {
+        "status": "Default Main wheel policy moved into existing native scroll owner; bounded real Runtime routing passes",
+        "production_consumers": [
+          "MAIN Board camera",
+          "LAYERS",
+          "Main console history and terminal wheel routes (preserved; no new native qualification)"
+        ],
+        "shared_owner": "Runtime::handle_native_wheel in native_scroll_input.rs; shared VerticalWheel normalization",
+        "retired_paths": [
+          "Inline consumer routing and zoom policy in App::handle_native_window_event; native dispatcher now applies the shared changed-state result"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-wheel-routing/result.json",
+        "limits": "Real hidden X11/Vulkan Board Runtime receives MouseScrollDelta through the default routing owner, not OS-delivered events or the ApplicationHandler callback. No native redraw-count, fallthrough negative, backend/scale matrix, full HP10/HP19/S3 or performance qualification. Preserves existing consumer priority, row policies, zoom math and damage policy. No styling, dependency/license, resource deadline or resize change."
       }
     },
     {
@@ -5214,10 +5230,12 @@
       "production_entry_points": [
         "crates/gui-app/src/pane_cameras.rs",
         "crates/gui-app/src/runtime_camera_pane.rs",
-        "crates/gui-app/src/runtime_revision_workspace.rs"
+        "crates/gui-app/src/runtime_revision_workspace.rs",
+        "crates/gui-app/src/app_native_events.rs",
+        "crates/gui-app/src/native_scroll_input.rs"
       ],
       "test": {
-        "status": "Partial: actual X11/Vulkan Board Runtime with presented hits verifies effective row capacity, no boundary damage, reversal and unchanged camera. Earlier zero-test filter is superseded by one executed Runtime test. Outer native OS dispatch and fallthrough negative remain unqualified.",
+        "status": "Partial: actual X11/Vulkan Board Runtime with presented hits verifies effective row capacity, no boundary damage, reversal and unchanged camera. Earlier zero-test filter is superseded by one executed Runtime test. Outer native OS dispatch and fallthrough negative remain unqualified. Default native routing owner now exercised by actual Board Runtime; ApplicationHandler/OS delivery and prescribed fallthrough negative still unqualified.",
         "id": "proof_hp10_02",
         "positive": "Wheel inside Layers including visible-capacity limit",
         "negative_control": "Fall through into board zoom",
@@ -5260,6 +5278,20 @@
         "retired_paths": "No runtime behavior changed; replaces earlier zero-test filter as bounded verification of existing default production routing.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/layers-runtime-route/result.json",
         "limits": "Actual hidden X11/Vulkan Board Runtime with real owner fixture, direct production handle_layer_scroll calls and presented hit publication. Does not deliver OS wheel events or test outer event-dispatch fallthrough. No full HP10/S3/native/backend/scale/resource/performance acceptance. No dependency, license, prototype, sequencing or resize-scope change."
+      },
+      "s3_native_wheel_routing_progress": {
+        "status": "Default Main wheel policy moved into existing native scroll owner; bounded real Runtime routing passes",
+        "production_consumers": [
+          "MAIN Board camera",
+          "LAYERS",
+          "Main console history and terminal wheel routes (preserved; no new native qualification)"
+        ],
+        "shared_owner": "Runtime::handle_native_wheel in native_scroll_input.rs; shared VerticalWheel normalization",
+        "retired_paths": [
+          "Inline consumer routing and zoom policy in App::handle_native_window_event; native dispatcher now applies the shared changed-state result"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-wheel-routing/result.json",
+        "limits": "Real hidden X11/Vulkan Board Runtime receives MouseScrollDelta through the default routing owner, not OS-delivered events or the ApplicationHandler callback. No native redraw-count, fallthrough negative, backend/scale matrix, full HP10/HP19/S3 or performance qualification. Preserves existing consumer priority, row policies, zoom math and damage policy. No styling, dependency/license, resource deadline or resize change."
       }
     },
     {
@@ -28029,8 +28061,8 @@
         "docs/reviews/gui-performance/implementation/S3/real-overlay-churn/result.json": "f5639eea843b088c4bfc261c9cf41026826986935754db4b39cda596faefe0f9"
       },
       "remaining_actions": {
-        "HP10-01": "Verify outside-Layers routing through the outer native event dispatcher; actual Board Runtime zero-preparation and prescribed negative are recorded.",
-        "HP10-02": "Verify outer native wheel locality and the fallthrough negative; actual Runtime capacity/boundary/camera behavior is recorded.",
+        "HP10-01": "Complete OS-delivered wheel/no-preparation proof. Default native routing owner now exercised by real Runtime for non-Layers and editor zoom; prior preparation negative retained.",
+        "HP10-02": "Complete OS-delivered wheel locality and prescribed fallthrough negative. Real Runtime now exercises the default routing owner for effective capacity, boundary damage, reversal, camera preservation and editor zoom.",
         "HP12-01": "Complete native forbidden-work attribution and the prescribed workspace/general-world negative against the dialog-only preparation boundary.",
         "HP12-02": "Complete remaining control/focus/partial-row cases and stale presented-transform negative; durable enum scope and post-edit Reset hit are already recorded.",
         "HP13-01": "Complete remaining backend/scale changed-state pass proof and final single-candidate matrix. NEW2x edit/scroll/reveal now has17 dialog-only samples and final Cancel hit; both Preferences1/1.5/2x have bounded expanded receipts across pinned builds. Existing general-pass negative and input/capture failures retained.",
@@ -28743,5 +28775,19 @@
     "retired_paths": "None; protects existing separation between general contour fill and control-only fan topology.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/general-polygon-fan-negative/result.json",
     "limits": "Analytical geometry unit cases through the production general polygon filler: U-notch area10 and square-with-hole area12. Not an authored board fixture, native editor adapter, GPU contour/style/DPI or full HP16/S3 qualification. Control cache and runtime implementation unchanged. One isolated fan substitution fails both cases; all Rust/Cargo source in isolated copy restored byte-for-byte to active tree. No dependency/license/prototype/budget/resize change."
+  },
+  "s3_native_wheel_routing_work": {
+    "status": "Default Main wheel policy moved into existing native scroll owner; bounded real Runtime routing passes",
+    "production_consumers": [
+      "MAIN Board camera",
+      "LAYERS",
+      "Main console history and terminal wheel routes (preserved; no new native qualification)"
+    ],
+    "shared_owner": "Runtime::handle_native_wheel in native_scroll_input.rs; shared VerticalWheel normalization",
+    "retired_paths": [
+      "Inline consumer routing and zoom policy in App::handle_native_window_event; native dispatcher now applies the shared changed-state result"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-wheel-routing/result.json",
+    "limits": "Real hidden X11/Vulkan Board Runtime receives MouseScrollDelta through the default routing owner, not OS-delivered events or the ApplicationHandler callback. No native redraw-count, fallthrough negative, backend/scale matrix, full HP10/HP19/S3 or performance qualification. Preserves existing consumer priority, row policies, zoom math and damage policy. No styling, dependency/license, resource deadline or resize change."
   }
 }

@@ -326,47 +326,10 @@ impl App {
                 }
             }
             WindowEvent::MouseWheel { delta, .. } => {
-                if let Some(runtime) = &mut self.runtime {
-                    let Some(wheel) =
-                        scroll_input::VerticalWheel::from_native(delta, runtime.scale_factor)
-                    else {
-                        return;
-                    };
-                    let scroll_lines = wheel.lines(20.0);
-                    if let Some(changed) = runtime.handle_layer_scroll(scroll_lines) {
-                        if changed {
-                            self.request_workspace_redraw();
-                        }
-                        return;
-                    }
-                    if let Some(changed) = runtime.handle_console_history_scroll(scroll_lines) {
-                        if changed {
-                            self.request_workspace_redraw();
-                        }
-                        return;
-                    }
-                    if runtime.report_terminal_mouse_wheel(scroll_lines) {
-                        self.request_workspace_redraw();
-                        return;
-                    }
-                    if runtime.cursor_in_dock() && scroll_lines.abs() > 0.01 {
-                        if runtime.handle_dock_scroll(scroll_lines) {
-                            self.request_workspace_redraw();
-                        }
-                    } else {
-                        let zoom_delta = if scroll_lines > 0.0 {
-                            Some(1.12_f32.powf(scroll_lines.abs().min(3.0)))
-                        } else if scroll_lines < 0.0 {
-                            Some(0.89_f32.powf(scroll_lines.abs().min(3.0)))
-                        } else {
-                            None
-                        };
-                        if let Some(zoom_delta) = zoom_delta
-                            && runtime.handle_zoom(zoom_delta)
-                        {
-                            self.request_workspace_redraw();
-                        }
-                    }
+                if let Some(runtime) = &mut self.runtime
+                    && runtime.handle_native_wheel(delta)
+                {
+                    self.request_workspace_redraw();
                 }
             }
             WindowEvent::MouseInput {
