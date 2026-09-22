@@ -86,6 +86,33 @@ fn native_dialog_actions_preserve_main_preparation_until_close() {
     );
     assert!(runtime.prepared_scene.is_some());
     assert!(!runtime.scene_dirty);
+    assert!(runtime.choose_global_preference_value("datum.units.system", "imperial"));
+    assert!(
+        runtime.prepared_scene.is_some(),
+        "future-project Units must retain Main preparation"
+    );
+    assert!(!runtime.scene_dirty);
+    assert!(runtime.reset_global_preference("datum.units.system"));
+    assert!(
+        runtime.prepared_scene.is_some(),
+        "future-project Units reset must retain Main preparation"
+    );
+    assert!(!runtime.scene_dirty);
+    assert!(
+        runtime.activate_global_preference_control("datum.accessibility.high_contrast_noncolor")
+    );
+    assert!(
+        runtime
+            .workspace()
+            .ui
+            .global_preferences
+            .high_contrast_noncolor
+    );
+    assert!(
+        runtime.prepared_scene.is_none(),
+        "current paint change must invalidate Main"
+    );
+    assert!(runtime.scene_dirty);
     runtime.close_global_preferences();
     assert!(runtime.prepared_scene.is_none());
     assert!(runtime.scene_dirty);

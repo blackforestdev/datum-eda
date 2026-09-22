@@ -78,6 +78,22 @@ impl Runtime {
         self.trace_action_state();
     }
 
+    /// Use the same paint dependencies as native redraw routing. Future-project
+    /// defaults can commit without evicting the current Main projection.
+    pub(super) fn refresh_global_preference_change(
+        &mut self,
+        before: crate::global_preferences_window::GlobalPreferenceRenderState,
+    ) {
+        use crate::global_preferences_window::DialogInputOutcome;
+        if before.finish(DialogInputOutcome::Dependents, &self.workspace().ui)
+            == DialogInputOutcome::Dialog
+        {
+            self.refresh_dialog_state();
+        } else {
+            self.invalidate_frame();
+        }
+    }
+
     /// Refresh only screen-space interaction chrome. Cursor and hover motion
     /// must never evict the prepared shell or authored board/schematic geometry:
     /// all three are expensive and independent of transient pointer state.

@@ -1,0 +1,69 @@
+{
+  "base_commit": "a84877bb131f15c689682c9bead1501035e9f516",
+  "issue": "dat-global-preference-preparation-1k20",
+  "production": {
+    "status": "Global mutation preparation follows shared actual paint dependencies",
+    "production_consumers": [
+      "GLOBAL pointer Boolean/Integer activation, enum selection and Reset",
+      "GLOBAL keyboard control cycling/endpoints through commit_projected_value"
+    ],
+    "shared_owner": "GlobalPreferenceRenderState shared by native redraw routing and Runtime::refresh_global_preference_change",
+    "retired_paths": [
+      "Unconditional Main preparation eviction/menu accessibility rebuild after every Global preference mutation, including future-project-only defaults"
+    ],
+    "preserved": "Canonical Global product service mutations, notice/accessibility refresh, actual Main paint invalidation, Project mutations and close lifecycle.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json",
+    "limits": "Global preference mutation invalidation only. Existing Project writes, close and current-paint dependency changes retain invalidation. Actual hidden Runtime proves Units edit/reset retention and high-contrast invalidation; fresh native GLOBAL/PROJECT enum edits preserve durable scope. Not all mutations/visible Console states/backend/scale or full S3/performance acceptance. No dependency/license, prototype/style, budget or resize-scope change. The native GLOBAL after-choice capture lags and still shows the earlier dropdown; use durable state and the subsequent Reset hit oracle, not image filenames, for final-state proof."
+  },
+  "verification": {
+    "baseline": "Extended actual Runtime regression fails: future-project Units must retain Main preparation.",
+    "candidate": "Same selected hidden X11/Vulkan Runtime test passes (393 filtered): Units edit and reset preserve preparation/no scene damage; high contrast evicts and damages Main; existing close and local dialog assertions preserved.",
+    "app": "380 passed,14 ignored",
+    "clippy": "App binary/tests -D warnings passed",
+    "release": "Fresh guarded offline release build passed",
+    "native": "Corrected established native edit recipe rerun on candidate: GLOBAL durable Imperial contribution leaves Project Metric; PROJECT Imperial leaves Global head and seed receipt unchanged. Both pass in isolated config/imports.",
+    "native_reset_hit": "Additional actual GLOBAL trial: after Imperial commit, click newly positioned Reset at940,177 removes User contribution and preserves Project. A stale Metric dropdown hit would leave a stored User value, so the oracle distinguishes updated presented hits."
+  },
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_runtime.rs": "857c9876f8453db1f00183292f9c1d86993835ccb6e18c05f2af63f608090d74",
+    "crates/gui-app/src/interaction_refresh.rs": "83e2a2bb3e76c7d0bcbdcef886fdfd280385cf3e468035596606140b44cbdd71",
+    "crates/gui-app/src/native_dialog_refresh_tests.rs": "459d180d78b9db263086d0389a0ca2e55163e7270683d7440bc7cf57ee85117d"
+  },
+  "visual_authority": "No layout/paint change; existing rendered Preferences prototype and native edit captures remain applicable.",
+  "limits": "Global preference mutation invalidation only. Existing Project writes, close and current-paint dependency changes retain invalidation. Actual hidden Runtime proves Units edit/reset retention and high-contrast invalidation; fresh native GLOBAL/PROJECT enum edits preserve durable scope. Not all mutations/visible Console states/backend/scale or full S3/performance acceptance. No dependency/license, prototype/style, budget or resize-scope change. The native GLOBAL after-choice capture lags and still shows the earlier dropdown; use durable state and the subsequent Reset hit oracle, not image filenames, for final-state proof.",
+  "artifact_sha256": {
+    "app.log.gz": "0cfc8684d217bdb09049a2f8fc8dcd3a9d549cb0351ea1ab275a419cb0450a39",
+    "clippy.log.gz": "221ac44b04a9d0516e68a07e6f3ecd58cf88346cb575cb4cc00deeab3f39847d",
+    "native-driver.py": "75c46be9251661db8c6908bbd2ccdab178fc995ce8392c451f3ba77bd4ddd324",
+    "native-reset-driver.py": "9f007988b665e1c34433a3b65f5b2dff4fa34b8cc86086c256864d681195bf8f",
+    "fixed.log.gz": "f29aced93a618ffcda8a45638d43d8f43a0462fea5d32bf788ea009af29b31e6",
+    "baseline.log.gz": "f6f37baa4b9e19ce32ab1bfaa567560a3e4c56f11bffc098e2ba4629ba8ad56d",
+    "build.log.gz": "940abc0ab6e4691a84c8e5486c53a75f1afaaadc1749cd718b20da2ef68ac29e",
+    "native/result.json": "b0c7593f8b7238bb410c96f775ddb065c54a82bd757455ee79ebf419a11b6f37",
+    "native-reset/result.json": "6fbc38946d3bedf8ee8ebc21dd2266c1aae22bf39de9fce4e7bb4203ee510118",
+    "native-reset/GLOBAL/project-after.json": "6be285ecb0fcab2e86dab8e4717aa482eac19e0a56f04488b2c438e669c2ec26",
+    "native-reset/GLOBAL/native.log.gz": "4d9e9565fe0202aee565324b0c028da3e650a79bc1a84564b667c789e13eb0c5",
+    "native-reset/GLOBAL/after-choice.png": "e674ae5acb132f739074126c412fa3fff7cfa5cde587b3d9f63597375b38c33b",
+    "native-reset/GLOBAL/global-after.json": "9e09a360ad914d005e9aa9c3d8611db7b3cc30dc39de2f5bd3f037d587f344cb",
+    "native-reset/GLOBAL/choices.png": "a4f134782fa0e1eee2731cebd1f5bb5a474a0f498734d660240ab3b025ca1719",
+    "native-reset/GLOBAL/global-reset.json": "3887d3329bd0f6efcccecbcaafa856c9e7280d1f14d6959dc0fe309819d0b812",
+    "native-reset/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "native-reset/GLOBAL/project-before.json": "6be285ecb0fcab2e86dab8e4717aa482eac19e0a56f04488b2c438e669c2ec26",
+    "native-reset/GLOBAL/before-choice.png": "a4f134782fa0e1eee2731cebd1f5bb5a474a0f498734d660240ab3b025ca1719",
+    "native/GLOBAL/project-after.json": "6873bb55f63aafcf25517fc8175d18e76cb1639d375b912619e166386e7a19f5",
+    "native/GLOBAL/native.log.gz": "5514451ee257e15348cf95fb7bcf75bff2ae3ee53f96b1c25f1812db0d1b8604",
+    "native/GLOBAL/after-choice.png": "e674ae5acb132f739074126c412fa3fff7cfa5cde587b3d9f63597375b38c33b",
+    "native/GLOBAL/global-after.json": "8318f4826d283c084beaa55486dab9465252c190ab5e5d114da39ea38a18ff08",
+    "native/GLOBAL/choices.png": "a4f134782fa0e1eee2731cebd1f5bb5a474a0f498734d660240ab3b025ca1719",
+    "native/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "native/GLOBAL/project-before.json": "6873bb55f63aafcf25517fc8175d18e76cb1639d375b912619e166386e7a19f5",
+    "native/GLOBAL/before-choice.png": "a4f134782fa0e1eee2731cebd1f5bb5a474a0f498734d660240ab3b025ca1719",
+    "native/PROJECT/project-after.json": "fa7ca18d3ca3077ba7462dbe83132461e6ef96968289853c8567dc70c204a0b5",
+    "native/PROJECT/native.log.gz": "7752cb8338aa252d9a40f40c0b50020d21187e2152c948c64a67cd3df499a16a",
+    "native/PROJECT/after-choice.png": "b4b425affb02f817dd7413f270f6886e2f4292b630f72900aabd8a665a4a63f0",
+    "native/PROJECT/choices.png": "26ec47531054f701852e8ef593e916eb911311303cb88a5975b992393ad6b8ef",
+    "native/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "native/PROJECT/project-before.json": "ad6514ffea64ae4ba75d1a3b3ef1f00b6306f7e08d69ecf143e7c66ef0da01cc",
+    "native/PROJECT/before-choice.png": "ab0a01f212e2ab6343ee3038d409d0c640bd4e2bc9298fa13ef38da54f0997a2"
+  }
+}

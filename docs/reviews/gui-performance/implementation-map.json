@@ -293,6 +293,20 @@
       "s3_dialog_local_refresh_progress": {
         "status": "bounded production cache invalidation convergence; full requirement qualification remains open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-local-refresh/result.json"
+      },
+      "s3_global_mutation_preparation_progress": {
+        "status": "Global mutation preparation follows shared actual paint dependencies",
+        "production_consumers": [
+          "GLOBAL pointer Boolean/Integer activation, enum selection and Reset",
+          "GLOBAL keyboard control cycling/endpoints through commit_projected_value"
+        ],
+        "shared_owner": "GlobalPreferenceRenderState shared by native redraw routing and Runtime::refresh_global_preference_change",
+        "retired_paths": [
+          "Unconditional Main preparation eviction/menu accessibility rebuild after every Global preference mutation, including future-project-only defaults"
+        ],
+        "preserved": "Canonical Global product service mutations, notice/accessibility refresh, actual Main paint invalidation, Project mutations and close lifecycle.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json",
+        "limits": "Global preference mutation invalidation only. Existing Project writes, close and current-paint dependency changes retain invalidation. Actual hidden Runtime proves Units edit/reset retention and high-contrast invalidation; fresh native GLOBAL/PROJECT enum edits preserve durable scope. Not all mutations/visible Console states/backend/scale or full S3/performance acceptance. No dependency/license, prototype/style, budget or resize-scope change. The native GLOBAL after-choice capture lags and still shows the earlier dropdown; use durable state and the subsequent Reset hit oracle, not image filenames, for final-state proof."
       }
     },
     {
@@ -5536,6 +5550,20 @@
         "retired_paths": "No new runtime migration; verifies existing shared control consumers through actual native edits.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-preference-edits/result.json",
         "limits": "One native enum edit per GLOBAL/PROJECT Units window at1x on X11, isolated config/TMPDIR-created import projects from the existing real board fixture. Verifies actual pointer path and durable scope, not all controls, partial rows, keyboard/reset/undo replay, scale/backends or full HP12/S3 qualification. No production code, dependency/license/prototype/budget or resize-scope change. Screenshots are supplementary; persisted state and transaction are the outcome oracle."
+      },
+      "s3_global_mutation_preparation_progress": {
+        "status": "Global mutation preparation follows shared actual paint dependencies",
+        "production_consumers": [
+          "GLOBAL pointer Boolean/Integer activation, enum selection and Reset",
+          "GLOBAL keyboard control cycling/endpoints through commit_projected_value"
+        ],
+        "shared_owner": "GlobalPreferenceRenderState shared by native redraw routing and Runtime::refresh_global_preference_change",
+        "retired_paths": [
+          "Unconditional Main preparation eviction/menu accessibility rebuild after every Global preference mutation, including future-project-only defaults"
+        ],
+        "preserved": "Canonical Global product service mutations, notice/accessibility refresh, actual Main paint invalidation, Project mutations and close lifecycle.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json",
+        "limits": "Global preference mutation invalidation only. Existing Project writes, close and current-paint dependency changes retain invalidation. Actual hidden Runtime proves Units edit/reset retention and high-contrast invalidation; fresh native GLOBAL/PROJECT enum edits preserve durable scope. Not all mutations/visible Console states/backend/scale or full S3/performance acceptance. No dependency/license, prototype/style, budget or resize-scope change. The native GLOBAL after-choice capture lags and still shows the earlier dropdown; use durable state and the subsequent Reset hit oracle, not image filenames, for final-state proof."
       }
     },
     {
@@ -27883,5 +27911,19 @@
     "retired_paths": "No new runtime migration; verifies existing shared control consumers through actual native edits.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-preference-edits/result.json",
     "limits": "One native enum edit per GLOBAL/PROJECT Units window at1x on X11, isolated config/TMPDIR-created import projects from the existing real board fixture. Verifies actual pointer path and durable scope, not all controls, partial rows, keyboard/reset/undo replay, scale/backends or full HP12/S3 qualification. No production code, dependency/license/prototype/budget or resize-scope change. Screenshots are supplementary; persisted state and transaction are the outcome oracle."
+  },
+  "s3_global_mutation_preparation_work": {
+    "status": "Global mutation preparation follows shared actual paint dependencies",
+    "production_consumers": [
+      "GLOBAL pointer Boolean/Integer activation, enum selection and Reset",
+      "GLOBAL keyboard control cycling/endpoints through commit_projected_value"
+    ],
+    "shared_owner": "GlobalPreferenceRenderState shared by native redraw routing and Runtime::refresh_global_preference_change",
+    "retired_paths": [
+      "Unconditional Main preparation eviction/menu accessibility rebuild after every Global preference mutation, including future-project-only defaults"
+    ],
+    "preserved": "Canonical Global product service mutations, notice/accessibility refresh, actual Main paint invalidation, Project mutations and close lifecycle.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json",
+    "limits": "Global preference mutation invalidation only. Existing Project writes, close and current-paint dependency changes retain invalidation. Actual hidden Runtime proves Units edit/reset retention and high-contrast invalidation; fresh native GLOBAL/PROJECT enum edits preserve durable scope. Not all mutations/visible Console states/backend/scale or full S3/performance acceptance. No dependency/license, prototype/style, budget or resize-scope change. The native GLOBAL after-choice capture lags and still shows the earlier dropdown; use durable state and the subsequent Reset hit oracle, not image filenames, for final-state proof."
   }
 }

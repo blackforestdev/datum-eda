@@ -1,0 +1,81 @@
+{
+  "canonicalization_version": 1,
+  "committed_order": 1,
+  "format_version": 1,
+  "generation": 1,
+  "parent_generation": 0,
+  "repository_id": "4508b195-44b3-482f-a965-35b9bddc3a5e",
+  "state": {
+    "installation": {},
+    "receipts": [
+      {
+        "acceptance_id": null,
+        "accepting_actor": null,
+        "actor": "human_gui:bfadmin:datum-gui-1770550:36e32922-72f3-4759-ba80-d5cc58490b54",
+        "actor_kind": "human_gui",
+        "actor_session_id": "datum-gui-1770550",
+        "affected_keys": [
+          "datum.units.system"
+        ],
+        "after_digests": {
+          "user:datum.units.system": "sha256:912564306c6a09336714ba60bb86292514d79ac3b47ee78b61f7556f50ec95fe"
+        },
+        "before_digests": {},
+        "canonical_request_digest": "sha256:3fba95a07cb45735043a3706a85e9c4f91f75e5cb2825dca647af7855036910a",
+        "expected_generation": null,
+        "expected_generation_ref": null,
+        "invocation_id": "36e32922-72f3-4759-ba80-d5cc58490b54",
+        "local_actor_id": "bfadmin",
+        "operation": "CommitPreferenceMutation",
+        "originating_mcp_session": null,
+        "proposal_digest": null,
+        "proposal_id": null,
+        "reason": "Global Preferences control activation",
+        "redacted_keys": [],
+        "request_id": "2bf553f4-99e8-4fd7-a1c3-8be6f1b2182c",
+        "requesting_actor": null,
+        "resulting_generation": 0
+      },
+      {
+        "acceptance_id": null,
+        "accepting_actor": null,
+        "actor": "human_gui:bfadmin:datum-gui-1770550:cb475059-561d-43ad-bbe5-fa600e693808",
+        "actor_kind": "human_gui",
+        "actor_session_id": "datum-gui-1770550",
+        "affected_keys": [
+          "datum.units.system"
+        ],
+        "after_digests": {},
+        "before_digests": {
+          "user:datum.units.system": "sha256:912564306c6a09336714ba60bb86292514d79ac3b47ee78b61f7556f50ec95fe"
+        },
+        "canonical_request_digest": "sha256:03887a43fc139564bcb8cc3527cba2cb07527268e0d2941387fc301d28ee02b0",
+        "expected_generation": 0,
+        "expected_generation_ref": {
+          "canonical_manifest_digest": "sha256:65b8c7d7d0d994649bd6c9358f45a541622ef5f38f567d26770712a2f4158141",
+          "canonicalization_version": 1,
+          "committed_order": 0,
+          "format_version": 1,
+          "generation": 0,
+          "parent_generation": null,
+          "repository_id": "4508b195-44b3-482f-a965-35b9bddc3a5e",
+          "writer_instance": "datum-gui-1770550"
+        },
+        "invocation_id": "cb475059-561d-43ad-bbe5-fa600e693808",
+        "local_actor_id": "bfadmin",
+        "operation": "CommitPreferenceMutation",
+        "originating_mcp_session": null,
+        "proposal_digest": null,
+        "proposal_id": null,
+        "reason": "Global Preferences Reset activation",
+        "redacted_keys": [],
+        "request_id": "a80e57b8-cde0-48b7-83b6-c1f73b7d77db",
+        "requesting_actor": null,
+        "resulting_generation": 1
+      }
+    ],
+    "unknown_envelopes": {},
+    "user": {}
+  },
+  "writer_instance": "datum-gui-1770550"
+}
