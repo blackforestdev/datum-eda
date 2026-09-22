@@ -1,0 +1,916 @@
+{
+  "display": ":1",
+  "wayland_display": "wayland-0",
+  "topology": "Owner-confirmed idle desktop X11/Xwayland; native adapter functional trial",
+  "binary_sha256": "b7a2f40786f621b6ac5ae4954109496ef87d508e691dc52c1fc6a50b4f2a9c94",
+  "visual_scale_factor": 1.0,
+  "runs": [
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1.0",
+        "--open-project-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "27262981"
+          ],
+          "monotonic": 807324.933908255,
+          "wall_time": 1790070474.8035808,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=762\nY=250\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "windowsize",
+            "27262981",
+            "960",
+            "720"
+          ],
+          "monotonic": 807324.982860033,
+          "wall_time": 1790070474.85253,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=762\nY=250\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1360",
+            "308",
+            "click",
+            "1"
+          ],
+          "monotonic": 807325.560851519,
+          "wall_time": 1790070475.4305212,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1360\nY=308\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "308"
+          ],
+          "monotonic": 807325.980127915,
+          "wall_time": 1790070475.8497968,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1414\nY=308\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "308",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 807326.354123591,
+          "wall_time": 1790070476.2237928,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1414\nY=308\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "886"
+          ],
+          "monotonic": 807326.616970931,
+          "wall_time": 1790070476.48664,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1414\nY=886\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "XSetInputFocus": "owned helper",
+          "wall_time": 1790070476.7925339
+        },
+        {
+          "xdotool": [
+            "windowfocus",
+            "--sync",
+            "27262981"
+          ],
+          "monotonic": 807326.953457361,
+          "wall_time": 1790070476.823127,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=1414\nY=886\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "760",
+            "250"
+          ],
+          "monotonic": 807326.968815234,
+          "wall_time": 1790070476.8384845,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=760\nY=250\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "760",
+            "250",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 807327.811943567,
+          "wall_time": 1790070477.6816132,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=760\nY=250\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "762",
+            "250"
+          ],
+          "monotonic": 807327.828621971,
+          "wall_time": 1790070477.6982918,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=762\nY=250\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "762",
+            "250",
+            "click",
+            "1"
+          ],
+          "monotonic": 807328.146003336,
+          "wall_time": 1790070478.0156732,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=762\nY=250\nSCREEN=0\nWINDOW=27262981\n"
+        }
+      ],
+      "setup_presented_extent": [
+        960,
+        720
+      ],
+      "expanded_choice_trigger": "Click current Units control before scrolling; verify captured expansion separately",
+      "geometry": {
+        "WINDOW": "27262981",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "960",
+        "HEIGHT": "720",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_delivery_confirmed": true,
+      "drag_frames": 1,
+      "focus_loss_and_gain_delivered": true,
+      "cancelled_motion_and_release_frames": 0,
+      "cancelled_release_suppressed_before_event_logging": true,
+      "fresh_search_click_frames": 1,
+      "semantic_capture_samples": [
+        {
+          "image": "focused-search-0.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070479.0122159
+        },
+        {
+          "image": "focused-search-1.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070479.6464343
+        },
+        {
+          "image": "focused-search-2.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070480.276374
+        },
+        {
+          "image": "focused-search-3.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070480.8986003
+        },
+        {
+          "image": "focused-search-4.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070481.5208762
+        },
+        {
+          "image": "focused-search-5.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070482.1947908
+        },
+        {
+          "image": "focused-search-6.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070482.8167033
+        },
+        {
+          "image": "focused-search-7.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070483.4985929
+        },
+        {
+          "image": "focused-search-8.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070484.1718066
+        },
+        {
+          "image": "focused-search-9.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070484.845101
+        },
+        {
+          "image": "focused-search-10.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070485.518688
+        },
+        {
+          "image": "focused-search-11.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070486.201725
+        },
+        {
+          "image": "focused-search-12.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070486.8796108
+        },
+        {
+          "image": "focused-search-13.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070487.564106
+        },
+        {
+          "image": "focused-search-14.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070488.2470994
+        },
+        {
+          "image": "focused-search-15.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070488.8814416
+        },
+        {
+          "image": "focused-search-16.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070489.5033567
+        },
+        {
+          "image": "focused-search-17.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070490.187966
+        },
+        {
+          "image": "focused-search-18.png",
+          "sha256": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+          "pixels": [
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              58,
+              65,
+              77
+            ],
+            [
+              31,
+              35,
+              42
+            ],
+            [
+              24,
+              27,
+              33
+            ],
+            [
+              178,
+              184,
+              195
+            ]
+          ],
+          "focused_search_and_bottom_thumb": false,
+          "wall_time": 1790070490.8602693
+        }
+      ],
+      "semantic_capture_pass": false,
+      "passed": false,
+      "error": "AssertionError('final focused-search/bottom-thumb pixels not captured')",
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    }
+  ]
+}
