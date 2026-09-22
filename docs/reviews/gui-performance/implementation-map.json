@@ -6408,7 +6408,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: native dialog rounded and circular controls use shared retained CPU meshes; exact ellipse vertices and warm reuse tested. Isolated production search-ring owner bypass fails intended assertion with200 other tests passing; byte-restored candidate201 pass. Other prescribed controls/consumers/negatives and complete native proof remain open. Shared retained-painter GPU parity now covers72 cases with12 builds; no-reuse defect detected and restored positive observed. Native consumers and independent arc/clip correctness remain unqualified. Scope reconciliation: recorded no-reuse GPU negative detects repeated invariant rounded-contour construction; a separate general-tessellator negative is not an additional shared-owner prerequisite. Functional algorithm separation and native per-consumer proof remain required.",
+        "status": "Partial: default shared control retention and algorithm separation remain implemented. Production build counts now support real X11 reuse checks on release12f00d7e: GLOBAL/PROJECT1/1.5/2 visual-override scroll roundtrips, NEW1x keyboard-focus cycles, MAIN1x File-menu activity. The same isolated cache-lookup-bypass binary fails each corresponding native work assertion; restored release equals the positive hash. Existing shared GPU72-case parity/12-build proof and original search-ring/no-reuse negatives remain supplemental. Stale final captures, remaining consumer/state/fractional/backend/scale and method/resource qualification stay open. Visual overrides do not prove monitor transitions; rectangular Inspector/Menu controls are not a missing mesh migration. No additional general-tessellator negative is imposed beyond the recorded repeated-contour-work alternative. No full HP16 or S3 acceptance.",
         "id": "proof_hp16_01",
         "positive": "Repeat convex rounded controls with translation/clip change",
         "negative_control": "Use general scanline tessellation or repeat arcs",
@@ -7417,7 +7417,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared reflow capture cancellation has isolated component negative proof and default native extent/DPI/identity routes release stale grabs. Complete native release/focus/close/capture-loss/final-target qualification remains open. Bounded94402793 GLOBAL/PROJECT focus-loss cancellation and fresh scrollbar grab now pass natively at1000x750; complete capture and final-target matrix remains open. Shared grab-displacement and stale-reflow negatives now detected; original endpoint-only false-pass retained and regression strengthened. Restored positives pass; native/profile/full acceptance remains open.",
+        "status": "Partial: shared grab-displacement/stale-reflow negatives and viewport/content cancellation remain recorded. Actual hidden native surfaces exercise the outer event entry:9 scrollbar focus cancellations and12 closes, with fresh control activation and a missing-focus-cancellation negative/restored pass. These directly supplied events are not OS delivery. Separate GLOBAL/PROJECT1x X11 OS focus-loss trials on releaseb7a2f407 have event/count proof and separately reviewed final focused-search/bottom-row captures; prior setup, delivery and stale-capture failures remain retained. That release predates the production control counter and is not current12f00d7e single-candidate qualification. Remaining OS NEW, other profiles/backends, native content-change, final-target and capture reliability proof remains open. No full HP21 or S3 acceptance.",
         "id": "proof_hp21_02",
         "positive": "Release/focus/capture loss/close or content resize mid-drag",
         "negative_control": "Keep stale drag capture",
@@ -28334,7 +28334,7 @@
         "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct.",
         "HP20-01": "Complete remaining backend and expanded/other-control scale extent cases. Both Preferences native search/clear now has1/1.5/2x override proof at actual recorded sizes;1x choices/explanations/final-row/minimum-height and shared visible-row negative remain recorded. No monitor-scale transition or latency acceptance.",
         "HP21-01": "Complete remaining OS input/capture/profile/scale qualification. All three default dialog adapters now share pointer dispatch; actual native surfaces detect ignored scrollbar consumption activating Units settings/New name through production WindowEvents, with restored positive. Direct dispatcher proof does not qualify OS delivery. Retain painted-only OS negative and unresolved delivery failures.",
-        "HP21-02": "Complete remaining OS release/capture-loss/close/content-change final-target profiles. Current-release GLOBAL/PROJECT1x OS focus-loss trials have event/count proof and separately verified final focused-search/bottom-row captures; retain stale-capture and delivery failures, no reliability claim. Actual hidden surfaces cover all3 native entry paths with9 scrollbar cancellations,12 closes and missing-cancellation negative/restored pass. OS NEW, other scales/backends, native content-change and remaining displayed-state qualification stay open.",
+        "HP21-02": "Complete remaining OS release/capture-loss/close/content-change final-target profiles. Recorded pre-counter releaseb7a2f407 GLOBAL/PROJECT1x OS focus-loss trials have event/count proof and separately verified final focused-search/bottom-row captures; retain stale-capture and delivery failures, no reliability claim. Actual hidden surfaces cover all3 native entry paths with9 scrollbar cancellations,12 closes and missing-cancellation negative/restored pass. OS NEW, other scales/backends, native content-change and remaining displayed-state qualification stay open. Reconcile/replay final required evidence on one candidate; existing OS focus captures are not release12f00d7e evidence.",
         "HP22-01": "Complete remaining native diagonal/rounded/nested clipping cases per actual consumer. Shared clamp-vertices negative now detected by corrected existing area oracle; preserve original false-pass and terminal call-removal negatives.",
         "HP22-02": "Complete remaining native/GPU profiles. Pinned-header clipping and scrolling negatives now detected by strengthened actual Preferences preparation test; hidden-hit clipping omission already detected. Preserve initial missing-header false pass and existing bounded pinned GPU/native evidence.",
         "HP23-01": "Complete remaining native keyboard/search reveal across section/content/scale profiles. Stale focus after height change now reproduced and fixed in both native Preferences; existing explanation Close fix retained. Native DPI transition remains open.",
@@ -28346,6 +28346,21 @@
         "HP16-01": "Existing row says general scanline OR repeated arcs. Verified retained-control-gpu artifact hashes and patch: bypassing with_mesh lookup calls rounded_fill build closure again, which recomputes rounded_rect_points and its arc vertices. Build-count assertion detects2 vs1; restored positive passes. This is invariant contour-work sensitivity, not independent trigonometric/arc correctness or all native consumer qualification. No additional general-tessellator negative is imposed.",
         "HP21-01": "Retain painted-only pointer negative. Although the individual row offers painted-only OR lost grab displacement, parent GUI_PERFORMANCE_RECOVERY_PLAN.md HP21 explicitly requires painted-only scrollbar and click-through to fail production pointer-event tests. Existing grab-displacement proof does not discharge that stronger parent clause.",
         "unchanged": "All positive functional/native consumer requirements remain. No specification amendment, S3 readiness declaration, resource deadline change or reinterpretation of resize exclusion."
+      },
+      "receipt_summary_reconciliation": {
+        "reviewed_head": "519c911cbe179ab1bd1fae65284ed23b4114cb7c",
+        "scope": "HP16-01 and HP21-02 current test summaries only; not a new S3 exit review or runtime trial. All six supporting receipt artifact hashes reverified.",
+        "control_reuse_binary": "12f00d7e0120265bf200c4ed9465d8e1e3611114da8c19e33e823b8f27f65f60",
+        "os_focus_capture_binary": "b7a2f40786f621b6ac5ae4954109496ef87d508e691dc52c1fc6a50b4f2a9c94",
+        "reviewed_receipts": [
+          "native-control-build-counts",
+          "main-new-native-control-reuse",
+          "preferences-native-control-profiles",
+          "native-entry-cancellation",
+          "scrollbar-os-focus",
+          "preferences-final-focus-capture"
+        ],
+        "limits": "Preserve historical receipt scopes and failures. Native Wayland input still requires a fresh consented portal session; prior session expired and is not live. No gate, deadline, authority or acceptance change."
       }
     }
   },
