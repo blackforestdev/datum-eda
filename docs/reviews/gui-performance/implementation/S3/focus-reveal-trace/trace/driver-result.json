@@ -1,0 +1,225 @@
+{
+  "display": ":1",
+  "wayland_display": "wayland-0",
+  "topology": "Owner-confirmed idle desktop X11/Xwayland; native adapter functional trial",
+  "binary_sha256": "7318ed7b264d8641cd6a417cea40d05314867c1af14e29ac19a866697a4fe3a6",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-global-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "27262981"
+          ],
+          "monotonic": 780253.91620122,
+          "wall_time": 1790043403.785874
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "50",
+            "107",
+            "click",
+            "1"
+          ],
+          "monotonic": 780253.982208833,
+          "wall_time": 1790043403.851879
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "400",
+            "70",
+            "click",
+            "1"
+          ],
+          "monotonic": 780254.508744676,
+          "wall_time": 1790043404.3784146
+        },
+        {
+          "xdotool": [
+            "key",
+            "--delay",
+            "120",
+            "shift+Tab"
+          ],
+          "monotonic": 780255.339120193,
+          "wall_time": 1790043405.2087896
+        },
+        {
+          "xdotool": [
+            "key",
+            "--delay",
+            "120",
+            "shift+Tab"
+          ],
+          "monotonic": 780256.206035204,
+          "wall_time": 1790043406.075705
+        },
+        {
+          "xdotool": [
+            "key",
+            "--delay",
+            "120",
+            "Tab"
+          ],
+          "monotonic": 780257.740947001,
+          "wall_time": 1790043407.6106172
+        },
+        {
+          "xdotool": [
+            "key",
+            "--delay",
+            "120",
+            "Tab"
+          ],
+          "monotonic": 780258.673730042,
+          "wall_time": 1790043408.5433989
+        },
+        {
+          "xdotool": [
+            "key",
+            "--delay",
+            "120",
+            "Tab"
+          ],
+          "monotonic": 780259.606300977,
+          "wall_time": 1790043409.4759698
+        }
+      ],
+      "geometry": {
+        "WINDOW": "27262981",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "last_control_frames": 1,
+      "idle_after_last_frames": 0,
+      "idle_after_first_frames": 0,
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-project-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "27262981"
+          ],
+          "monotonic": 780264.358283744,
+          "wall_time": 1790043414.2279544
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "400",
+            "70",
+            "click",
+            "1"
+          ],
+          "monotonic": 780264.833649737,
+          "wall_time": 1790043414.7033195
+        },
+        {
+          "xdotool": [
+            "key",
+            "--delay",
+            "120",
+            "shift+Tab"
+          ],
+          "monotonic": 780265.716078724,
+          "wall_time": 1790043415.585748
+        },
+        {
+          "xdotool": [
+            "key",
+            "--delay",
+            "120",
+            "shift+Tab"
+          ],
+          "monotonic": 780266.582597468,
+          "wall_time": 1790043416.4522672
+        },
+        {
+          "xdotool": [
+            "key",
+            "--delay",
+            "120",
+            "Tab"
+          ],
+          "monotonic": 780268.117131289,
+          "wall_time": 1790043417.9868011
+        },
+        {
+          "xdotool": [
+            "key",
+            "--delay",
+            "120",
+            "Tab"
+          ],
+          "monotonic": 780269.049714289,
+          "wall_time": 1790043418.9193833
+        },
+        {
+          "xdotool": [
+            "key",
+            "--delay",
+            "120",
+            "Tab"
+          ],
+          "monotonic": 780269.981256693,
+          "wall_time": 1790043419.8509264
+        }
+      ],
+      "geometry": {
+        "WINDOW": "27262981",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "last_control_frames": 1,
+      "idle_after_last_frames": 0,
+      "idle_after_first_frames": 0,
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    }
+  ]
+}

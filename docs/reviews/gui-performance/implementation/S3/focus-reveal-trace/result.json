@@ -1,0 +1,11 @@
+{
+  "source_commit": "8a988744",
+  "production_source": "Same Rust as94402793; temporary trace removed byte-for-byte before restored release build.",
+  "trace_findings": "Global runtime selected Control(datum.units.angle_precision), renderer requested row7 and subsequent offset38. Trace capture showed expected bottom focus. Correct first-row focus also prepared.",
+  "restored_findings": "Both hosts pass explicit-start last/first focus-pixel assertions and idle checks. Restored captures show last control at bottom then first-row label at top. No extra capture retry needed in either host; earlier discrepancies remain unexplained.",
+  "limits": "No full HP23/S3 qualification or retrospective attribution of previous screenshot discrepancies. Temporary trace changed timing; only restored-source retry supports unchanged production behavior. Two fixed focus-color pixels supplement inspected captures, not general visual/accessibility/scale qualification. No independent negative, other adapters/backends or resource/endurance acceptance. No production/dependency/license/prototype/budget/sequencing change;1bc02aaf remains unapproved.",
+  "restored_source_sha256": {
+    "global_preferences_keyboard.rs": "31977d438a7cbde007cadf400e104dffb711e207786142b765c6e5d3e9ca8f9a",
+    "global_preferences_window.rs": "a8e3ddec3d79d5438aa5cf1cc9e2c7e0530b32e056d032196b6eeb2127eb8ae9"
+  }
+}

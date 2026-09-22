@@ -1,0 +1,26 @@
+diff --git a/crates/gui-app/src/global_preferences_keyboard.rs b/crates/gui-app/src/global_preferences_keyboard.rs
+index 15604d2e..abc5f062 100644
+--- a/crates/gui-app/src/global_preferences_keyboard.rs
++++ b/crates/gui-app/src/global_preferences_keyboard.rs
+@@ -9,7 +9,9 @@ impl Runtime {
+         let before = crate::global_preferences_window::GlobalPreferenceRenderState::capture(
+             &self.workspace().ui,
+         );
++        crate::gui_runtime_support::append_gui_verbose_diagnostic_line(|| format!("focus trace key={:?} state={:?} modifiers={:?} before={:?}", event.logical_key, event.state, self.modifiers, self.workspace().ui.global_preferences.focus));
+         let outcome = self.handle_global_preferences_key_inner(event);
++        crate::gui_runtime_support::append_gui_verbose_diagnostic_line(|| format!("focus trace after={:?} outcome={:?}", self.workspace().ui.global_preferences.focus, outcome));
+         before.finish(outcome, &self.workspace().ui)
+     }
+ 
+diff --git a/crates/gui-app/src/global_preferences_window.rs b/crates/gui-app/src/global_preferences_window.rs
+index ada7a3ea..737f2463 100644
+--- a/crates/gui-app/src/global_preferences_window.rs
++++ b/crates/gui-app/src/global_preferences_window.rs
+@@ -326,6 +326,7 @@ impl GlobalPreferencesWindowSurface {
+                 {
+                     self.scroll.release();
+                 }
++                crate::gui_runtime_support::append_gui_verbose_diagnostic_line(|| format!("focus trace prepare project={project_preferences} focus={:?} row={reveal_row:?} offset={}", dialog.focus, self.scroll.offset()));
+                 self.scroll_focus = Some(dialog.focus.clone());
+                 self.scroll_expanded = expanded;
+                 self.scroll_identity = Some(identity);
