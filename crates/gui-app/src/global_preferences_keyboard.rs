@@ -44,7 +44,11 @@ impl Runtime {
                 GlobalPreferencesDismissal::ChoiceClosed
                 | GlobalPreferencesDismissal::ExplanationClosed => {}
             }
-            self.invalidate_frame();
+            if dismissal == GlobalPreferencesDismissal::DialogClosed {
+                self.invalidate_frame();
+            } else {
+                self.refresh_dialog_state();
+            }
             return if dismissal == GlobalPreferencesDismissal::DialogClosed {
                 Outcome::Dependents
             } else {
@@ -57,7 +61,7 @@ impl Runtime {
                 .ui
                 .global_preferences
                 .advance_focus(self.modifiers.shift_key());
-            self.invalidate_frame();
+            self.refresh_dialog_state();
             return Outcome::Dialog;
         }
 
@@ -70,7 +74,7 @@ impl Runtime {
                         return Outcome::Consumed;
                     }
                     dialog.scroll_row = 0;
-                    self.invalidate_frame();
+                    self.refresh_dialog_state();
                     self.announce_global_preferences_search_count();
                     return Outcome::Dialog;
                 }
@@ -96,7 +100,7 @@ impl Runtime {
                         let dialog = &mut self.session.workspace_mut().ui.global_preferences;
                         dialog.search_query.push_str(value);
                         dialog.scroll_row = 0;
-                        self.invalidate_frame();
+                        self.refresh_dialog_state();
                         self.announce_global_preferences_search_count();
                         return Outcome::Dialog;
                     }
@@ -179,7 +183,7 @@ impl Runtime {
                 if let Some(key) = ui.explanation_key.take() {
                     ui.focus = GlobalPreferencesFocus::SettingName(key);
                 }
-                self.invalidate_frame();
+                self.refresh_dialog_state();
                 Outcome::Dialog
             }
             _ => Outcome::Consumed,

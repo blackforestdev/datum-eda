@@ -246,10 +246,10 @@ impl Runtime {
             }
             HitTarget::NewProjectCancel => return self.close_new_project(),
             HitTarget::NewProjectCreate => return self.submit_new_project(),
-            HitTarget::NewProjectModal => {}
+            HitTarget::NewProjectModal => return true,
             _ => return false,
         }
-        self.invalidate_frame();
+        self.refresh_dialog_state();
         true
     }
 
@@ -291,7 +291,7 @@ impl Runtime {
                 .ui
                 .new_project
                 .move_focus(self.modifiers.shift_key());
-            self.invalidate_frame();
+            self.refresh_dialog_state();
             return Outcome::Dialog;
         }
         let focus = self.workspace().ui.new_project.focus;
@@ -302,12 +302,15 @@ impl Runtime {
             match &event.logical_key {
                 Key::Named(NamedKey::Backspace) => {
                     let dialog = &mut self.session.workspace_mut().ui.new_project;
-                    if focus == NewProjectFocus::ProjectName {
-                        dialog.project_name.pop();
+                    let removed = if focus == NewProjectFocus::ProjectName {
+                        dialog.project_name.pop()
                     } else {
-                        dialog.destination.pop();
+                        dialog.destination.pop()
+                    };
+                    if removed.is_none() {
+                        return Outcome::Consumed;
                     }
-                    self.invalidate_frame();
+                    self.refresh_dialog_state();
                     return Outcome::Dialog;
                 }
                 key => {
@@ -320,7 +323,7 @@ impl Runtime {
                         } else {
                             dialog.destination.push_str(value);
                         }
-                        self.invalidate_frame();
+                        self.refresh_dialog_state();
                         return Outcome::Dialog;
                     }
                 }
@@ -345,7 +348,7 @@ impl Runtime {
             };
             self.global_preferences
                 .refresh_new_project_preview(&mut self.session.workspace_mut().ui);
-            self.invalidate_frame();
+            self.refresh_dialog_state();
             return Outcome::Dialog;
         }
         if matches!(
@@ -356,7 +359,7 @@ impl Runtime {
                 NewProjectFocus::RetryGlobal => {
                     self.global_preferences
                         .refresh_new_project_preview(&mut self.session.workspace_mut().ui);
-                    self.invalidate_frame();
+                    self.refresh_dialog_state();
                     Outcome::Dialog
                 }
                 NewProjectFocus::Cancel => {

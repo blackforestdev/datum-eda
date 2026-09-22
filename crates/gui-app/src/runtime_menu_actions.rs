@@ -90,13 +90,13 @@ impl Runtime {
                     .ui
                     .global_preferences
                     .select_section(section_id);
-                self.invalidate_frame();
+                self.refresh_dialog_state();
                 true
             }
             HitTarget::GlobalPreferencesSearch => {
                 self.session.workspace_mut().ui.global_preferences.focus =
                     datum_gui_protocol::GlobalPreferencesFocus::Search;
-                self.invalidate_frame();
+                self.refresh_dialog_state();
                 true
             }
             HitTarget::GlobalPreferencesSettingName(key) => {
@@ -114,7 +114,7 @@ impl Runtime {
                 if let Some(key) = ui.explanation_key.take() {
                     ui.focus = datum_gui_protocol::GlobalPreferencesFocus::SettingName(key);
                 }
-                self.invalidate_frame();
+                self.refresh_dialog_state();
                 true
             }
             HitTarget::MarkingMenuItem { .. } => self.dismiss_marking_menu(),
