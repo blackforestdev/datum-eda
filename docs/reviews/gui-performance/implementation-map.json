@@ -7701,7 +7701,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared scroll owner has no animation timer and native changed-only damage routes exist. Complete per-host reduced-motion/idle/locality recipe and continuous-timer negative remain unqualified. Project reduced-motion projection now fixed: Global set/reset propagates and Project load/edit/reset/unavailable reconstruction retains the setting. Baseline3 lifecycle failures, candidate380 app tests pass14 ignored. Native reduced-motion and timer negative remain open. Both native1x hosts now pass GUI-written reduced-motion scroll/boundary/reversal,2s zero-frame idle and Main locality. Continuous-timer negative and remaining profiles stay unqualified.",
+        "status": "Partial: shared scroll owner has no animation timer and native changed-only damage routes exist. Complete per-host reduced-motion/idle/locality recipe and continuous-timer negative remain unqualified. Project reduced-motion projection now fixed: Global set/reset propagates and Project load/edit/reset/unavailable reconstruction retains the setting. Baseline3 lifecycle failures, candidate380 app tests pass14 ignored. Native reduced-motion and timer negative remain open. Both native1x hosts now pass GUI-written reduced-motion scroll/boundary/reversal,2s zero-frame idle and Main locality. Continuous-timer negative and remaining profiles stay unqualified. Native1x continuous-timer negative now fails both idle oracles with120 Main/120 dialog frames per2s; unchanged binary positives have0 frames. Working binary restored by hash. Remaining backend/scale proof stays open.",
         "id": "proof_hp23_02",
         "positive": "Reduced-motion scroll then idle",
         "negative_control": "Run continuous animation timer",
@@ -7760,7 +7760,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/project-reduced-motion/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-reduced-motion/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-reduced-motion/result.json",
+        "docs/reviews/gui-performance/implementation/S3/continuous-timer-negative/result.json"
       ],
       "s3_native_reduced_motion_progress": {
         "status": "Both native Preferences reduced-motion scroll/idle cases pass",
@@ -7772,6 +7773,17 @@
         "retired_paths": "None; native qualification of existing shared owners after Project reduced-motion projection fix.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-reduced-motion/result.json",
         "limits": "Native X11/Xwayland at1x override using isolated GUI-written reduced_motion=true configuration. Bounded2s idle and present-count locality; not elapsed-latency, comprehensive animation/static/input or all-backend/scale acceptance. Actual Project flag propagation is covered by prior production coordinator tests; native surface has no direct flag diagnostic. Continuous-timer negative and full HP23-02/S3 remain open. No production/dependency/license/prototype/budget/resize change."
+      },
+      "s3_continuous_timer_negative_progress": {
+        "status": "Both native idle oracles detect injected continuous redraw timer",
+        "production_consumers": [
+          "GLOBAL native Preferences",
+          "PROJECT native Preferences"
+        ],
+        "shared_owner": "Existing frame coordinator and native wait dispatch",
+        "retired_paths": "None; controlled defect only in isolated source copy.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/continuous-timer-negative/result.json",
+        "limits": "Native X11/Xwayland1x idle recipe with GUI-written reduced_motion=true. Controlled16ms timer injection in one source file in a local clone; calls existing shared redraw owner and wait policy. No production source changed. This proves idle defect sensitivity, not all scale/backend, timing/statistical, resource or S3 acceptance. Unpinned CLI startup timeouts retained as setup failures. Working release binary restored to positive hash; no dependency/license/prototype/budget/resize change."
       }
     },
     {
@@ -27942,7 +27954,7 @@
         "HP22-01": "Complete remaining native diagonal/rounded/nested clipping cases per actual consumer. Shared clamp-vertices negative now detected by corrected existing area oracle; preserve original false-pass and terminal call-removal negatives.",
         "HP22-02": "Complete pinned-header negative and remaining native profiles. Shared hidden-hit clipping omission is now detected; existing pinned GPU return pixels and native scroll trials remain bounded evidence.",
         "HP23-01": "Complete remaining native keyboard/search reveal across section/content/scale profiles. Stale focus after height change now reproduced and fixed in both native Preferences; existing explanation Close fix retained. Native DPI transition remains open.",
-        "HP23-02": "Complete continuous-timer negative and remaining backend/scale qualification. Both native Preferences1x reduced-motion scroll/idle/locality now pass with GUI-written isolated configuration; service/coordinator propagation and lifecycle preservation proof retained."
+        "HP23-02": "Complete remaining backend/scale qualification. Both native1x reduced-motion scroll/idle/locality positives and continuous16ms timer negative are now recorded; unchanged idle0 versus negative120 frames per host over2s. No full matrix acceptance."
       },
       "next_action": "Complete remaining prescribed negative controls on the current shared owners, paired with their existing positive tests; continue native per-adapter gaps and fix demonstrated defects. Do not invent another shared component solely to avoid remaining proof. GPI-S3 stays selected."
     }
@@ -28562,5 +28574,16 @@
     "retired_paths": "None; native qualification of existing shared owners after Project reduced-motion projection fix.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-reduced-motion/result.json",
     "limits": "Native X11/Xwayland at1x override using isolated GUI-written reduced_motion=true configuration. Bounded2s idle and present-count locality; not elapsed-latency, comprehensive animation/static/input or all-backend/scale acceptance. Actual Project flag propagation is covered by prior production coordinator tests; native surface has no direct flag diagnostic. Continuous-timer negative and full HP23-02/S3 remain open. No production/dependency/license/prototype/budget/resize change."
+  },
+  "s3_continuous_timer_negative_work": {
+    "status": "Both native idle oracles detect injected continuous redraw timer",
+    "production_consumers": [
+      "GLOBAL native Preferences",
+      "PROJECT native Preferences"
+    ],
+    "shared_owner": "Existing frame coordinator and native wait dispatch",
+    "retired_paths": "None; controlled defect only in isolated source copy.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/continuous-timer-negative/result.json",
+    "limits": "Native X11/Xwayland1x idle recipe with GUI-written reduced_motion=true. Controlled16ms timer injection in one source file in a local clone; calls existing shared redraw owner and wait policy. No production source changed. This proves idle defect sensitivity, not all scale/backend, timing/statistical, resource or S3 acceptance. Unpinned CLI startup timeouts retained as setup failures. Working release binary restored to positive hash; no dependency/license/prototype/budget/resize change."
   }
 }
