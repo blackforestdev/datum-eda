@@ -1,0 +1,7 @@
+diff --git a/crates/gui-viewport/src/scroll.rs b/crates/gui-viewport/src/scroll.rs
+index 4b17e0ca..2483d84c 100644
+--- a/crates/gui-viewport/src/scroll.rs
++++ b/crates/gui-viewport/src/scroll.rs
+@@ -133 +133 @@ impl ScrollViewport {
+-            self.drag_grab = Some(y - thumb.y);
++            self.drag_grab = Some(0.0);

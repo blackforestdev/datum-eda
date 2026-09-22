@@ -1,0 +1,29 @@
+{
+  "candidate_base": "1e13b4e12f252442ac17b9c8b6106be83648fe7c",
+  "issue": "dat-scroll-grab-oracle-lc44",
+  "status": "Corrected existing thumb test detects grab displacement; stale reflow capture negative detected",
+  "requirements": [
+    "HP21-01",
+    "HP21-02"
+  ],
+  "observations": {
+    "original-grab": "Forcing stored grab to0 passes original endpoint-only test (1 pass,45 filtered); original restored also passes. Preserve this verified test gap.",
+    "corrected-grab": "Same fault fails stationary pointer must not jump. Restored production passes stationary offset0, midpoint300, endpoint600, release and content shrink assertions (1 pass,45 filtered).",
+    "stale-capture": "Omitting layout release fails old grab cannot move a reflowed thumb. Restore passes1 test/45 filtered, including unchanged-layout preservation and fresh press after viewport/content changes."
+  },
+  "source_sha256": "cd90470f6fd519a881504e27b910466646bd6cba8cb840b8b787330d1ae4aae5",
+  "limits": "Existing shared ScrollViewport component tests only; no OS pointer/native host delivery. Stationary and midpoint assertions strengthen grab preservation beyond clamped endpoints. Reflow test covers viewport/content geometry changes and fresh capture; native close/focus/content identity matrix remains separate. Painted-only scrollbar negative and remaining per-profile/native HP21/S3 qualification stay open. No production behavior/dependency/license/prototype/numerical budget/resize-scope change.",
+  "artifact_sha256": {
+    "corrected-grab-negative.log.gz": "4142af57067175d25f4f3afcfab4fadc4dee692168ef8b080ce47e1685823fbb",
+    "corrected-grab-restored.log.gz": "5ee8841d25eeb2e5e74b6f683b03fd6b702bbce9b670a0d060d3d00466a2f6b3",
+    "corrected-grab.patch": "da29af4e65660747ab6c19f266850d71a0cdba8994d57c9de93a4134d5f65f21",
+    "original-grab-negative.log.gz": "5f01479f1a89dadd89ab384f518ed8fa89809667272af518b6925716d9f5eff6",
+    "original-grab-restored.log.gz": "1e58d499527653cecc362fa0db321f0a4662654bf86152f8b81d39fe742271a7",
+    "original-grab.patch": "76dc125dcf49bc876edf61b1acb26b35942773e69d1608a44bd42dc1c0b608ab",
+    "run-result.json": "36a9460c867dd380331210ab5c2e94b8cda82133134ad1dae0f1d4c1127a14b0",
+    "runner.py": "54afb580316885f93f19a779dac95946d662e67e89f1bc2e4181b35785fafbc9",
+    "stale-capture-negative.log.gz": "e3be3e9343a2af8548fc80a12d6ad3705229845a3eb9ebb9c83007f03fa99c73",
+    "stale-capture-restored.log.gz": "ddef39a2f8d6633d4883cc807c84070dbb5d270b0999bbcd261e22e30a96c79a",
+    "stale-capture.patch": "606435718e7e29d4109e5d37503e4ad7a8be0eddc4fca13b5ab9344f44d6e1f1"
+  }
+}

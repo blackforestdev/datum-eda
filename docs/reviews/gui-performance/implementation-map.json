@@ -6851,7 +6851,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared capture and changed-only damage have component proof and bounded GLOBAL/PROJECT native thumb/page evidence. Current9422e3b7 drag/reversal trial passes both hosts; earlier failed trials remain preserved. Full adapter/profile/scale/negative qualification remains open. Both native Preferences hosts now pass bounded1x Units-choice expansion/scroll/boundary/reversal/collapse at720px and observed563px minimum height. Remaining native matrix and full acceptance stay open.",
+        "status": "Partial: shared capture and changed-only damage have component proof and bounded GLOBAL/PROJECT native thumb/page evidence. Current9422e3b7 drag/reversal trial passes both hosts; earlier failed trials remain preserved. Full adapter/profile/scale/negative qualification remains open. Both native Preferences hosts now pass bounded1x Units-choice expansion/scroll/boundary/reversal/collapse at720px and observed563px minimum height. Remaining native matrix and full acceptance stay open. Shared grab-displacement and stale-reflow negatives now detected; original endpoint-only false-pass retained and regression strengthened. Restored positives pass; native/profile/full acceptance remains open.",
         "id": "proof_hp21_01",
         "positive": "Thumb press/drag at offset and track click",
         "negative_control": "Use painted-only scrollbar or lose grab displacement",
@@ -6906,7 +6906,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-preferences-track/result.json",
         "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
+        "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json"
       ],
       "s3_native_preferences_track_progress": {
         "status": "bounded native Preferences page-track pass; full qualification open",
@@ -6944,6 +6945,16 @@
         "retired_paths": "No new production retirement; native verification of existing shared expanded-content and scrollbar paths.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
         "limits": "X11/Xwayland at1x only, existing release binary2a4cecd6 from recorded Global preparation fix (production sources unchanged since that build). Native scheduled Units expansion, thumb/line boundary/reversal and Escape collapse; no exact fractional-offset or presentation-latency oracle. Requested resize960x400 was clamped to observed960x563; no400px native qualification or resize CPU claim. Search, explanations, other controls/backend/scale and full HP20/HP21/S3 remain open. Capture filenames are not timing/final-state proof. No production change, new consumer migration, dependency/license, prototype or numerical-budget change."
+      },
+      "s3_scroll_capture_negatives_progress": {
+        "status": "Corrected existing thumb test detects grab displacement; stale reflow capture negative detected",
+        "production_consumers": [
+          "Shared ScrollViewport used by GLOBAL/PROJECT/NEW; directly tested component only"
+        ],
+        "shared_owner": "crates/gui-viewport/src/scroll.rs",
+        "retired_paths": "No new runtime retirement; strengthen ineffective endpoint-only test with stationary and midpoint checks.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json",
+        "limits": "Existing shared ScrollViewport component tests only; no OS pointer/native host delivery. Stationary and midpoint assertions strengthen grab preservation beyond clamped endpoints. Reflow test covers viewport/content geometry changes and fresh capture; native close/focus/content identity matrix remains separate. Painted-only scrollbar negative and remaining per-profile/native HP21/S3 qualification stay open. No production behavior/dependency/license/prototype/numerical budget/resize-scope change."
       }
     },
     {
@@ -6968,7 +6979,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared reflow capture cancellation has isolated component negative proof and default native extent/DPI/identity routes release stale grabs. Complete native release/focus/close/capture-loss/final-target qualification remains open. Bounded94402793 GLOBAL/PROJECT focus-loss cancellation and fresh scrollbar grab now pass natively at1000x750; complete capture and final-target matrix remains open.",
+        "status": "Partial: shared reflow capture cancellation has isolated component negative proof and default native extent/DPI/identity routes release stale grabs. Complete native release/focus/close/capture-loss/final-target qualification remains open. Bounded94402793 GLOBAL/PROJECT focus-loss cancellation and fresh scrollbar grab now pass natively at1000x750; complete capture and final-target matrix remains open. Shared grab-displacement and stale-reflow negatives now detected; original endpoint-only false-pass retained and regression strengthened. Restored positives pass; native/profile/full acceptance remains open.",
         "id": "proof_hp21_02",
         "positive": "Release/focus/capture loss/close or content resize mid-drag",
         "negative_control": "Keep stale drag capture",
@@ -7024,8 +7035,19 @@
         "limits": "Bounded focus-loss cancellation and fresh scrollbar target proof only. No full HP21-02 or S3 acceptance, close/DPI/reflow/all-capture/backend/scale matrix, unrelated control target, independent negative, resource/latency or teardown qualification. No new production migration or dependency/license/prototype/budget/resize-scope change. S3 proposal1bc02aaf remains unapproved."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S3/native-scroll-focus-loss/result.json"
-      ]
+        "docs/reviews/gui-performance/implementation/S3/native-scroll-focus-loss/result.json",
+        "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json"
+      ],
+      "s3_scroll_capture_negatives_progress": {
+        "status": "Corrected existing thumb test detects grab displacement; stale reflow capture negative detected",
+        "production_consumers": [
+          "Shared ScrollViewport used by GLOBAL/PROJECT/NEW; directly tested component only"
+        ],
+        "shared_owner": "crates/gui-viewport/src/scroll.rs",
+        "retired_paths": "No new runtime retirement; strengthen ineffective endpoint-only test with stationary and midpoint checks.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json",
+        "limits": "Existing shared ScrollViewport component tests only; no OS pointer/native host delivery. Stationary and midpoint assertions strengthen grab preservation beyond clamped endpoints. Reflow test covers viewport/content geometry changes and fresh capture; native close/focus/content identity matrix remains separate. Painted-only scrollbar negative and remaining per-profile/native HP21/S3 qualification stay open. No production behavior/dependency/license/prototype/numerical budget/resize-scope change."
+      }
     },
     {
       "id": "HP22-01",
@@ -27663,7 +27685,8 @@
         "s3_native_expanded_extent_work": "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
         "s3_native_search_explanation_work": "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
         "s3_control_cache_negatives_work": "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json",
-        "s3_clip_defect_sensitivity_work": "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json"
+        "s3_clip_defect_sensitivity_work": "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json",
+        "s3_scroll_capture_negatives_work": "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json"
       },
       "receipt_sha256": {
         "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json": "7c21f4fb04e937db21bd06d9bd0e9b1d4d0602ccca5cf167def2a77f6d5e9139",
@@ -27681,7 +27704,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json": "8c4e54e5a70f96443bdc67c2f72bfef46497c860ba1a1e16fbbcb89cf23ad407",
         "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json": "99914ecea89ac062c99d8cd6dfa5d3421174971ae622bf634a1296a7a71afb37",
         "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json": "622181f733b2d0dfc81861e13e99d46ad6cdd5e27d183987906e667976fb7a0d",
-        "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json": "9fbd4e780065094e5bfe668c8bcc998a325eea926b2ab54591f79921b7dd0634"
+        "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json": "9fbd4e780065094e5bfe668c8bcc998a325eea926b2ab54591f79921b7dd0634",
+        "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json": "5bf4b50c4a4d7fbfadad1e0fd46f9abbd20ffdc1a6b041350a9a174533485a9a"
       },
       "remaining_actions": {
         "HP10-01": "Verify outside-Layers routing through the outer native event dispatcher; actual Board Runtime zero-preparation and prescribed negative are recorded.",
@@ -27698,8 +27722,8 @@
         "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter.",
         "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct.",
         "HP20-01": "Complete remaining backend/scale and other-control extent cases. Both Preferences1x native Units choices, explanations, four-result search/clear, final row/boundary/reversal and shrink to actual563px minimum are recorded. Shared renderer visible-row negative is recorded.",
-        "HP21-01": "Complete remaining capture/profile/scale cases and grab-displacement/painted-only-scrollbar negative; retain existing native press/drag/track evidence.",
-        "HP21-02": "Complete release/capture-loss/close/content-change final-target cases beyond recorded focus-loss and reflow cancellation tests.",
+        "HP21-01": "Complete remaining capture/profile/scale cases and painted-only-scrollbar negative. Shared grab-displacement negative now detected with stationary/midpoint oracle; preserve existing native press/drag/track evidence.",
+        "HP21-02": "Complete native release/capture-loss/close/content-change final-target matrix. Shared stale-reflow negative now detected and restored viewport/content-change capture tests pass; existing focus-loss and native trials remain bounded.",
         "HP22-01": "Complete remaining native diagonal/rounded/nested clipping cases per actual consumer. Shared clamp-vertices negative now detected by corrected existing area oracle; preserve original false-pass and terminal call-removal negatives.",
         "HP22-02": "Complete pinned-header negative and remaining native profiles. Shared hidden-hit clipping omission is now detected; existing pinned GPU return pixels and native scroll trials remain bounded evidence.",
         "HP23-01": "Complete native keyboard/search result reveal across section/layout/scale changes and stale-focus/extent negative; explanation Close reveal is already fixed and verified.",
@@ -28196,5 +28220,15 @@
     "retired_paths": "No new runtime retirement; replace ineffective diagonal test geometry with discriminating intersection geometry.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json",
     "limits": "Existing shared CPU clipping tests, not native consumer dispatch or GPU pixels. Corrected triangle distinguishes contour intersection from vertex clamping while preserving pinned geometry. Hidden-hit negative detects retained hidden region count; restored test verifies nested text/hit intersections and pinned chrome. Native rounded/diagonal/all-profile coverage, pinned-header negative and full HP22/S3 acceptance remain open. Production clipping unchanged; no dependencies/license/prototype/numerical budget/resize-scope changes."
+  },
+  "s3_scroll_capture_negatives_work": {
+    "status": "Corrected existing thumb test detects grab displacement; stale reflow capture negative detected",
+    "production_consumers": [
+      "Shared ScrollViewport used by GLOBAL/PROJECT/NEW; directly tested component only"
+    ],
+    "shared_owner": "crates/gui-viewport/src/scroll.rs",
+    "retired_paths": "No new runtime retirement; strengthen ineffective endpoint-only test with stationary and midpoint checks.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json",
+    "limits": "Existing shared ScrollViewport component tests only; no OS pointer/native host delivery. Stationary and midpoint assertions strengthen grab preservation beyond clamped endpoints. Reflow test covers viewport/content geometry changes and fresh capture; native close/focus/content identity matrix remains separate. Painted-only scrollbar negative and remaining per-profile/native HP21/S3 qualification stay open. No production behavior/dependency/license/prototype/numerical budget/resize-scope change."
   }
 }

@@ -1,0 +1,79 @@
+{
+  "results": [
+    {
+      "case": "original-grab",
+      "command": [
+        "python3",
+        "/tmp/pm045-scroll-negatives/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "--manifest-path",
+        "/tmp/pm045-scroll-negatives/Cargo.toml",
+        "-p",
+        "datum-gui-viewport",
+        "--lib",
+        "thumb_endpoints_drag_page_and_resize_share_content_bounds",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "negative_exit": 0,
+      "restored_exit": 0,
+      "source_sha256": "1d1260caabe0bbf82a39836192b9bff0e3d6275972b513309a7c8463c3668458"
+    },
+    {
+      "case": "corrected-grab",
+      "command": [
+        "python3",
+        "/tmp/pm045-scroll-negatives/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "--manifest-path",
+        "/tmp/pm045-scroll-negatives/Cargo.toml",
+        "-p",
+        "datum-gui-viewport",
+        "--lib",
+        "thumb_endpoints_drag_page_and_resize_share_content_bounds",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "negative_exit": 101,
+      "restored_exit": 0,
+      "source_sha256": "cd90470f6fd519a881504e27b910466646bd6cba8cb840b8b787330d1ae4aae5"
+    },
+    {
+      "case": "stale-capture",
+      "command": [
+        "python3",
+        "/tmp/pm045-scroll-negatives/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "--manifest-path",
+        "/tmp/pm045-scroll-negatives/Cargo.toml",
+        "-p",
+        "datum-gui-viewport",
+        "--lib",
+        "reflow_cancels_old_grab_but_unchanged_layout_preserves_drag",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "negative_exit": 101,
+      "restored_exit": 0,
+      "source_sha256": "cd90470f6fd519a881504e27b910466646bd6cba8cb840b8b787330d1ae4aae5"
+    }
+  ]
+}
