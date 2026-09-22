@@ -1,0 +1,24 @@
+diff --git a/crates/gui-render/src/global_preferences_primitives.rs b/crates/gui-render/src/global_preferences_primitives.rs
+index 93504b7a..1267bc0f 100644
+--- a/crates/gui-render/src/global_preferences_primitives.rs
++++ b/crates/gui-render/src/global_preferences_primitives.rs
+@@ -172,7 +172,8 @@ pub(super) fn draw_header_chip(
+ }
+ 
+ pub(super) fn draw_search_icon(x: f32, y: f32, quads: &mut ControlPainter<'_>) {
+-    quads.ellipse_fill(
++    push_projected_ellipse(
++        quads,
+         RectPx {
+             x,
+             y,
+@@ -182,7 +183,8 @@ pub(super) fn draw_search_icon(x: f32, y: f32, quads: &mut ControlPainter<'_>) {
+         TEXT_MUTED,
+         16,
+     );
+-    quads.ellipse_fill(
++    push_projected_ellipse(
++        quads,
+         RectPx {
+             x: x + 2.0,
+             y: y + 2.0,

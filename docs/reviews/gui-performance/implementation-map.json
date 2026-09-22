@@ -5907,7 +5907,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: native dialog rounded and circular controls use the shared retained CPU mesh owner; warm reuse and exact ellipse vertices tested. MAIN/INSPECTOR/MENU family inventory, prescribed negative and full native per-adapter proof remain open.",
+        "status": "Partial: native dialog rounded and circular controls use shared retained CPU meshes; exact ellipse vertices and warm reuse tested. Isolated production search-ring owner bypass fails intended assertion with200 other tests passing; byte-restored candidate201 pass. Other prescribed controls/consumers/negatives and complete native proof remain open.",
         "id": "proof_hp16_01",
         "positive": "Repeat convex rounded controls with translation/clip change",
         "negative_control": "Use general scanline tessellation or repeat arcs",
@@ -5948,7 +5948,12 @@
       },
       "s3_ellipse_progress": {
         "status": "partial GLOBAL/PROJECT/NEW circular-control adoption; full row remains unqualified",
-        "evidence": "docs/reviews/gui-performance/implementation/S3/ellipse-control-retention/result.json"
+        "evidence": "docs/reviews/gui-performance/implementation/S3/ellipse-control-retention/result.json",
+        "component_negative_proof": {
+          "status": "isolated production search-ring adoption negative fails; byte-restored candidate passes",
+          "evidence": "docs/reviews/gui-performance/implementation/S3/ellipse-control-negative/result.json",
+          "limits": "Supports HP16-01 shared search-icon adoption. Does not independently qualify all GLOBAL/PROJECT/NEW controls or MAIN/INSPECTOR/MENU, native event adapters, complete resource caps, negative matrix or performance budgets. Existing201CPU/13GPU positive evidence remains separately recorded. S3 remains open and1bc02aaf remains unapproved."
+        }
       }
     },
     {
@@ -26982,7 +26987,12 @@
       "Direct per-preparation ellipse tessellation in search icons, Boolean switch knobs and New Project radio controls"
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/ellipse-control-retention/result.json",
-    "limits": "No global MAIN/INSPECTOR/MENU control-family adoption claim, complete resource caps, native input/focus, isolated negative, full backend/scale/performance acceptance or S3 exit. S3 resource proposal1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
+    "limits": "No global MAIN/INSPECTOR/MENU control-family adoption claim, complete resource caps, native input/focus, isolated negative, full backend/scale/performance acceptance or S3 exit. S3 resource proposal1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change.",
+    "component_negative_proof": {
+      "status": "isolated production search-ring adoption negative fails; byte-restored candidate passes",
+      "evidence": "docs/reviews/gui-performance/implementation/S3/ellipse-control-negative/result.json",
+      "limits": "Supports HP16-01 shared search-icon adoption. Does not independently qualify all GLOBAL/PROJECT/NEW controls or MAIN/INSPECTOR/MENU, native event adapters, complete resource caps, negative matrix or performance budgets. Existing201CPU/13GPU positive evidence remains separately recorded. S3 remains open and1bc02aaf remains unapproved."
+    }
   },
   "s3_exit_reconciliation": {
     "status": "S3 exit not satisfied; bounded implementation/evidence reconciliation only",
