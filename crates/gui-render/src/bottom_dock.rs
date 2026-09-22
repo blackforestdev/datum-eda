@@ -10,7 +10,6 @@ use super::{
 };
 use crate::design_tokens;
 use crate::terminal_tab_strip::render_terminal_tab_strip;
-use taffy::prelude::*;
 
 #[path = "terminal_block_elements.rs"]
 pub(super) mod terminal_block_elements;
@@ -27,122 +26,9 @@ pub(super) const TERMINAL_SELECTION_FG: [f32; 3] = design_tokens::chrome::TEXT_P
 pub(super) const TERMINAL_SEARCH_BG: [f32; 3] = [0.34, 0.25, 0.08];
 pub(super) const TERMINAL_SEARCH_ALL_BG: [f32; 3] = [0.23, 0.19, 0.08];
 
-#[derive(Debug, Clone, Copy)]
-struct BottomDockLayout {
-    // Retained for the solver contract test; the seated tab is now sized to its
-    // measured label directly in render_bottom_tabs.
-    #[allow(dead_code)]
-    terminal_tab: RectPx,
-    handle: RectPx,
-    content: RectPx,
-}
-
 pub(super) struct TerminalRenderInput<'a> {
     pub(super) panes: &'a [crate::TerminalPaneRenderState],
     pub(super) cache: Option<&'a mut crate::TerminalRenderCache>,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum BottomDockNode {
-    Terminal,
-}
-
-fn solve_bottom_dock_layout_with_taffy(layout: &ShellLayout) -> Option<BottomDockLayout> {
-    let strip = layout.bottom_strip;
-    let tab_height = (strip.height - 16.0).max(1.0);
-    let tab_width = 120.0_f32;
-    let tab_gap = 8.0_f32;
-    let row_x = strip.x + 12.0;
-    let row_y = strip.y + 8.0;
-
-    let mut taffy: TaffyTree<()> = TaffyTree::new();
-    let mut nodes = Vec::new();
-    let mut add_tab = |kind: BottomDockNode| -> Option<()> {
-        let node = taffy
-            .new_leaf(Style {
-                size: Size {
-                    width: length(tab_width),
-                    height: length(tab_height),
-                },
-                ..Default::default()
-            })
-            .ok()?;
-        nodes.push((kind, node));
-        Some(())
-    };
-    add_tab(BottomDockNode::Terminal)?;
-
-    let children = nodes.iter().map(|(_, node)| *node).collect::<Vec<_>>();
-    let root = taffy
-        .new_with_children(
-            Style {
-                display: Display::Flex,
-                flex_direction: FlexDirection::Row,
-                gap: Size {
-                    width: length(tab_gap),
-                    height: length(0.0),
-                },
-                size: Size {
-                    width: length((strip.width - 24.0).max(1.0)),
-                    height: length(tab_height),
-                },
-                ..Default::default()
-            },
-            &children,
-        )
-        .ok()?;
-    taffy.compute_layout(root, Size::MAX_CONTENT).ok()?;
-
-    let rect_for = |kind: BottomDockNode| -> Option<RectPx> {
-        let node = nodes.iter().find(|(node_kind, _)| *node_kind == kind)?.1;
-        let solved = taffy.layout(node).ok()?;
-        Some(RectPx {
-            x: row_x + solved.location.x,
-            y: row_y + solved.location.y,
-            width: solved.size.width,
-            height: solved.size.height,
-        })
-    };
-
-    Some(BottomDockLayout {
-        terminal_tab: rect_for(BottomDockNode::Terminal)?,
-        handle: RectPx {
-            x: strip.x,
-            y: strip.y,
-            width: strip.width,
-            height: 6.0,
-        },
-        content: RectPx {
-            x: strip.x + 12.0,
-            y: strip.y + 44.0,
-            width: (strip.width - 24.0).max(1.0),
-            height: (strip.height - 56.0).max(0.0),
-        },
-    })
-}
-
-fn fallback_bottom_dock_layout(layout: &ShellLayout) -> BottomDockLayout {
-    let strip = layout.bottom_strip;
-    BottomDockLayout {
-        terminal_tab: RectPx {
-            x: strip.x + 12.0,
-            y: strip.y + 8.0,
-            width: 120.0,
-            height: strip.height - 16.0,
-        },
-        handle: RectPx {
-            x: strip.x,
-            y: strip.y,
-            width: strip.width,
-            height: 6.0,
-        },
-        content: RectPx {
-            x: strip.x + 12.0,
-            y: strip.y + 44.0,
-            width: strip.width - 24.0,
-            height: (strip.height - 56.0).max(0.0),
-        },
-    }
 }
 
 pub(super) fn render_bottom_tabs(
@@ -153,8 +39,6 @@ pub(super) fn render_bottom_tabs(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) {
-    let dock_layout = solve_bottom_dock_layout_with_taffy(layout)
-        .unwrap_or_else(|| fallback_bottom_dock_layout(layout));
     let strip = layout.bottom_strip;
     // Single top-edge hairline on the dock strip.
     panel_quads.push(Quad::from_rect(
@@ -171,13 +55,18 @@ pub(super) fn render_bottom_tabs(
     let Some(active_tab) = state.ui.active_dock_tab else {
         return;
     };
-    let handle_rect = dock_layout.handle;
+    let root_geometry =
+        terminal_screen_geometry_with_scale(strip.into(), state.ui.terminal.font_scale_millis);
+    let handle_rect = RectPx {
+        height: 6.0,
+        ..strip
+    };
     panel_quads.push(Quad::from_rect(handle_rect, PANEL_CARD_BORDER));
     hit_regions.push(HitRegion {
         target: HitTarget::DockResizeHandle,
         rect: handle_rect,
     });
-    let content_rect = dock_layout.content;
+    let content_rect: RectPx = root_geometry.content.into();
     panel_quads.push(Quad::from_rect(content_rect, PANEL_BG));
     push_rect_border(panel_quads, content_rect, PANEL_CARD_BORDER, 1.0);
     match active_tab {
@@ -186,10 +75,6 @@ pub(super) fn render_bottom_tabs(
             // row/column authority — the same shared geometry the PTY resize
             // path uses (datum_gui_viewport::terminal_screen_geometry), so the
             // rows drawn here always equal the rows the PTY was told.
-            let root_geometry = terminal_screen_geometry_with_scale(
-                layout.bottom_strip.into(),
-                state.ui.terminal.font_scale_millis,
-            );
             if let Some(terminal_render) = terminal_render {
                 if let Some(cache) = terminal_render.cache {
                     let active_layout =
@@ -295,31 +180,60 @@ mod tests {
     use super::*;
 
     #[test]
-    fn bottom_dock_tabs_are_solver_backed_and_non_overlapping() {
-        let shell = ShellLayout::for_window(1280, 800, Some(220));
-        let layout =
-            solve_bottom_dock_layout_with_taffy(&shell).expect("bottom dock layout should solve");
-
-        assert!(layout.content.y > layout.terminal_tab.y);
-        assert!(layout.content.x >= shell.bottom_strip.x);
-        assert!(
-            layout.content.x + layout.content.width
-                <= shell.bottom_strip.x + shell.bottom_strip.width
-        );
+    fn closed_dock_has_no_content_or_resize_hits() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.ui.active_dock_tab = None;
+        let shell = ShellLayout::for_window(1280, 800, None);
+        let (mut quads, mut text, mut hits) = (Vec::new(), Vec::new(), Vec::new());
+        render_bottom_tabs(&state, None, &shell, &mut quads, &mut text, &mut hits);
+        assert!(!hits.iter().any(|hit| matches!(
+            hit.target,
+            HitTarget::DockResizeHandle | HitTarget::TerminalScreen
+        )));
     }
 
     #[test]
-    fn shared_terminal_geometry_agrees_with_dock_content_rect() {
-        // T0-C02 guard: the shared geometry derives the dock content rect from
-        // the bottom strip with the same constants the dock solver uses; if
-        // either side drifts, renderer and PTY budgets diverge again.
-        for dock_height in [120, 220, 320] {
-            let shell = ShellLayout::for_window(1280, 800, Some(dock_height));
-            let solved = solve_bottom_dock_layout_with_taffy(&shell)
-                .expect("bottom dock layout should solve");
-            let geometry = datum_gui_viewport::terminal_screen_geometry(shell.bottom_strip.into());
-            let content: RectPx = geometry.content.into();
-            assert_eq!(content, solved.content, "dock {dock_height}px");
+    fn rendered_dock_content_uses_shared_terminal_geometry() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.ui.active_dock_tab = Some(DockTab::Terminal);
+        for width in [1, 24, 1280] {
+            for dock_height in [120, 220, 320] {
+                for scale in [1.0, 1.5, 2.0] {
+                    for font_scale in [750, 1000, 2000] {
+                        state.ui.terminal.font_scale_millis = font_scale;
+                        let shell = ShellLayout::for_surface(width, 800, scale, Some(dock_height));
+                        let geometry = terminal_screen_geometry_with_scale(
+                            shell.bottom_strip.into(),
+                            font_scale,
+                        );
+                        let (mut quads, mut text, mut hits) = (Vec::new(), Vec::new(), Vec::new());
+                        render_bottom_tabs(&state, None, &shell, &mut quads, &mut text, &mut hits);
+                        let expected = Quad::from_rect(geometry.content.into(), PANEL_BG);
+                        assert!(
+                            quads.iter().any(|quad| quad.points == expected.points
+                                && quad.color == expected.color),
+                            "painted content disagrees with shared geometry: width={width} dock={dock_height} scale={scale} font={font_scale}"
+                        );
+                        assert!(
+                            hits.iter()
+                                .any(|hit| hit.target == HitTarget::TerminalScreen
+                                    && hit.rect == geometry.screen.into())
+                        );
+                        let handle = hits
+                            .iter()
+                            .find(|hit| hit.target == HitTarget::DockResizeHandle)
+                            .unwrap()
+                            .rect;
+                        assert_eq!(
+                            handle,
+                            RectPx {
+                                height: 6.0,
+                                ..shell.bottom_strip
+                            }
+                        );
+                    }
+                }
+            }
         }
     }
 
