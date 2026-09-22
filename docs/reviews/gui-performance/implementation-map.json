@@ -6733,7 +6733,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared full-content extent and thumb owner used by both Preferences. Existing renderer test now checks final-setting reachability at matching1/1.5/2x sizes and preserves narrow clipping coverage. Visible-row-only extent fault fails; restored production passes. Native search/choice/explanation/final-row/resize matrix remains open. Inspector is currently non-scrolling.",
+        "status": "Partial: shared full-content extent and thumb owner used by both Preferences. Existing renderer test now checks final-setting reachability at matching1/1.5/2x sizes and preserves narrow clipping coverage. Visible-row-only extent fault fails; restored production passes. Native search/choice/explanation/final-row/resize matrix remains open. Inspector is currently non-scrolling. Both native Preferences hosts now pass bounded1x Units-choice expansion/scroll/boundary/reversal/collapse at720px and observed563px minimum height. Remaining native matrix and full acceptance stay open.",
         "id": "proof_hp20_01",
         "positive": "Short/final-row content, search/expanded choices/explanations then resize",
         "negative_control": "Compute extent from visible rows",
@@ -6776,8 +6776,20 @@
         "limits": "Actual shared Preferences renderer fixture; matching960x240 logical windows at1/1.5/2x plus original960x240 physical1.5x narrow clipping case. No OS input or native windows. Search/choice/explanation/resize matrix and full HP20/S3 qualification remain open; Inspector has no current scroll adapter. No production behavior, dependency/license, prototype, numerical budget or resize-scope change."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json"
-      ]
+        "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json"
+      ],
+      "s3_native_expanded_extent_progress": {
+        "status": "Four bounded native expanded-choice trials pass: GLOBAL/PROJECT at720px and native-minimum563px heights",
+        "production_consumers": [
+          "GLOBAL native Preferences",
+          "PROJECT native Preferences"
+        ],
+        "shared_owner": "Shared native Preferences surface -> render/preferences_rows.rs -> ScrollViewport",
+        "retired_paths": "No new production retirement; native verification of existing shared expanded-content and scrollbar paths.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
+        "limits": "X11/Xwayland at1x only, existing release binary2a4cecd6 from recorded Global preparation fix (production sources unchanged since that build). Native scheduled Units expansion, thumb/line boundary/reversal and Escape collapse; no exact fractional-offset or presentation-latency oracle. Requested resize960x400 was clamped to observed960x563; no400px native qualification or resize CPU claim. Search, explanations, other controls/backend/scale and full HP20/HP21/S3 remain open. Capture filenames are not timing/final-state proof. No production change, new consumer migration, dependency/license, prototype or numerical-budget change."
+      }
     },
     {
       "id": "HP21-01",
@@ -6801,7 +6813,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared capture and changed-only damage have component proof and bounded GLOBAL/PROJECT native thumb/page evidence. Current9422e3b7 drag/reversal trial passes both hosts; earlier failed trials remain preserved. Full adapter/profile/scale/negative qualification remains open.",
+        "status": "Partial: shared capture and changed-only damage have component proof and bounded GLOBAL/PROJECT native thumb/page evidence. Current9422e3b7 drag/reversal trial passes both hosts; earlier failed trials remain preserved. Full adapter/profile/scale/negative qualification remains open. Both native Preferences hosts now pass bounded1x Units-choice expansion/scroll/boundary/reversal/collapse at720px and observed563px minimum height. Remaining native matrix and full acceptance stay open.",
         "id": "proof_hp21_01",
         "positive": "Thumb press/drag at offset and track click",
         "negative_control": "Use painted-only scrollbar or lose grab displacement",
@@ -6855,7 +6867,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-preferences-track/result.json",
-        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
+        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json"
       ],
       "s3_native_preferences_track_progress": {
         "status": "bounded native Preferences page-track pass; full qualification open",
@@ -6882,6 +6895,17 @@
       "s3_dialog_dpi_coordinates_progress": {
         "status": "production coordinate correction and bounded scale evidence; full acceptance open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
+      },
+      "s3_native_expanded_extent_progress": {
+        "status": "Four bounded native expanded-choice trials pass: GLOBAL/PROJECT at720px and native-minimum563px heights",
+        "production_consumers": [
+          "GLOBAL native Preferences",
+          "PROJECT native Preferences"
+        ],
+        "shared_owner": "Shared native Preferences surface -> render/preferences_rows.rs -> ScrollViewport",
+        "retired_paths": "No new production retirement; native verification of existing shared expanded-content and scrollbar paths.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
+        "limits": "X11/Xwayland at1x only, existing release binary2a4cecd6 from recorded Global preparation fix (production sources unchanged since that build). Native scheduled Units expansion, thumb/line boundary/reversal and Escape collapse; no exact fractional-offset or presentation-latency oracle. Requested resize960x400 was clamped to observed960x563; no400px native qualification or resize CPU claim. Search, explanations, other controls/backend/scale and full HP20/HP21/S3 remain open. Capture filenames are not timing/final-state proof. No production change, new consumer migration, dependency/license, prototype or numerical-budget change."
       }
     },
     {
@@ -27563,7 +27587,8 @@
         "s3_native_preference_edits_work": "docs/reviews/gui-performance/implementation/S3/native-preference-edits/result.json",
         "s3_global_mutation_preparation_work": "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json",
         "s3_wheel_input_negatives_work": "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json",
-        "s3_preferences_extent_negative_work": "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json"
+        "s3_preferences_extent_negative_work": "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json",
+        "s3_native_expanded_extent_work": "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json"
       },
       "receipt_sha256": {
         "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json": "7c21f4fb04e937db21bd06d9bd0e9b1d4d0602ccca5cf167def2a77f6d5e9139",
@@ -27577,7 +27602,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-preference-edits/result.json": "d8528dd04ef2bacc9e24f78b18da2d67b00de39eff94ee3971063285dcd45fe5",
         "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json": "a9c3cbf00ec0731bcfded36e99ee3da73442a9e5c073f81814bd5f104d9f94b2",
         "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json": "eae1fafd5b8f366f5d2ca5cfc5f0560dc500c5bd16e7a94cd16734584eb03d0f",
-        "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json": "0585e0e132197934f58ea1891dfe4f4178ccb81e70695a304d5987919d32fafd"
+        "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json": "0585e0e132197934f58ea1891dfe4f4178ccb81e70695a304d5987919d32fafd",
+        "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json": "8c4e54e5a70f96443bdc67c2f72bfef46497c860ba1a1e16fbbcb89cf23ad407"
       },
       "remaining_actions": {
         "HP10-01": "Verify outside-Layers routing through the outer native event dispatcher; actual Board Runtime zero-preparation and prescribed negative are recorded.",
@@ -27593,7 +27619,7 @@
         "HP16-03": "Complete bounded control working-set eviction and pin-indefinitely negative. Full GPU/in-flight/aggregate bounds follow S4/S5 resource associations.",
         "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter.",
         "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct.",
-        "HP20-01": "Complete native search/choice/explanation/final-row/size extent matrix on actual scroll consumers. Shared Preferences final-row renderer oracle and prescribed visible-row-only extent negative are recorded.",
+        "HP20-01": "Complete remaining native search/explanation/other-control and backend/scale extent cases. Both Preferences Units-choice expansion, final row, boundary/reversal and shrink to actual563px minimum pass at1x. Shared renderer visible-row negative is recorded.",
         "HP21-01": "Complete remaining capture/profile/scale cases and grab-displacement/painted-only-scrollbar negative; retain existing native press/drag/track evidence.",
         "HP21-02": "Complete release/capture-loss/close/content-change final-target cases beyond recorded focus-loss and reflow cancellation tests.",
         "HP22-01": "Complete clamp-vertices negative and remaining native diagonal/rounded/nested clip cases per actual consumer; preserve existing terminal call-removal negatives.",
@@ -28050,5 +28076,16 @@
     "retired_paths": "No new runtime retirement; validates full-content extent already used before visible-row clipping.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json",
     "limits": "Actual shared Preferences renderer fixture; matching960x240 logical windows at1/1.5/2x plus original960x240 physical1.5x narrow clipping case. No OS input or native windows. Search/choice/explanation/resize matrix and full HP20/S3 qualification remain open; Inspector has no current scroll adapter. No production behavior, dependency/license, prototype, numerical budget or resize-scope change."
+  },
+  "s3_native_expanded_extent_work": {
+    "status": "Four bounded native expanded-choice trials pass: GLOBAL/PROJECT at720px and native-minimum563px heights",
+    "production_consumers": [
+      "GLOBAL native Preferences",
+      "PROJECT native Preferences"
+    ],
+    "shared_owner": "Shared native Preferences surface -> render/preferences_rows.rs -> ScrollViewport",
+    "retired_paths": "No new production retirement; native verification of existing shared expanded-content and scrollbar paths.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
+    "limits": "X11/Xwayland at1x only, existing release binary2a4cecd6 from recorded Global preparation fix (production sources unchanged since that build). Native scheduled Units expansion, thumb/line boundary/reversal and Escape collapse; no exact fractional-offset or presentation-latency oracle. Requested resize960x400 was clamped to observed960x563; no400px native qualification or resize CPU claim. Search, explanations, other controls/backend/scale and full HP20/HP21/S3 remain open. Capture filenames are not timing/final-state proof. No production change, new consumer migration, dependency/license, prototype or numerical-budget change."
   }
 }

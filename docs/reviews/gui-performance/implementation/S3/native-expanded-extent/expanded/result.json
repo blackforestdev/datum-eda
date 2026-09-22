@@ -1,0 +1,327 @@
+{
+  "display": ":1",
+  "wayland_display": "wayland-0",
+  "topology": "Owner-confirmed idle desktop X11/Xwayland; native adapter functional trial",
+  "binary_sha256": "2a4cecd633d28582df98fbe95b99fa7828bc6823804d1409fb58ad6da1263418",
+  "visual_scale_factor": 1.0,
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1.0",
+        "--open-global-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "6291461"
+          ],
+          "monotonic": 792000.995824707,
+          "wall_time": 1790055150.8654947,
+          "pointer_after": "X=1256\nY=368\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "windowsize",
+            "6291461",
+            "960",
+            "720"
+          ],
+          "monotonic": 792001.063356853,
+          "wall_time": 1790055150.933026,
+          "pointer_after": "X=1256\nY=368\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "510",
+            "285",
+            "click",
+            "1"
+          ],
+          "monotonic": 792001.477437686,
+          "wall_time": 1790055151.3471072,
+          "pointer_after": "X=510\nY=285\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1360",
+            "308",
+            "click",
+            "1"
+          ],
+          "monotonic": 792001.610445378,
+          "wall_time": 1790055151.4801154,
+          "pointer_after": "X=1360\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "308"
+          ],
+          "monotonic": 792002.158120164,
+          "wall_time": 1790055152.0277903,
+          "pointer_after": "X=1414\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "308",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 792002.555001364,
+          "wall_time": 1790055152.4246707,
+          "pointer_after": "X=1414\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "886"
+          ],
+          "monotonic": 792002.826662491,
+          "wall_time": 1790055152.6963322,
+          "pointer_after": "X=1414\nY=886\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "886",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 792003.167244312,
+          "wall_time": 1790055153.036914,
+          "pointer_after": "X=1414\nY=886\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "760",
+            "478"
+          ],
+          "monotonic": 792003.562929984,
+          "wall_time": 1790055153.4325993,
+          "pointer_after": "X=760\nY=478\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "760",
+            "478",
+            "click",
+            "5"
+          ],
+          "monotonic": 792003.779729357,
+          "wall_time": 1790055153.6493995,
+          "pointer_after": "X=760\nY=478\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "760",
+            "478",
+            "click",
+            "4"
+          ],
+          "monotonic": 792004.166506449,
+          "wall_time": 1790055154.0361764,
+          "pointer_after": "X=760\nY=478\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "key",
+            "Escape"
+          ],
+          "monotonic": 792004.657752473,
+          "wall_time": 1790055154.5274215,
+          "pointer_after": "X=760\nY=478\nSCREEN=0\nWINDOW=6291461\n"
+        }
+      ],
+      "expanded_choice_trigger": "Click current Units control before scrolling; verify captured expansion separately",
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "960",
+        "HEIGHT": "720",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_frames": 1,
+      "boundary_frames": 0,
+      "reverse_frames": 1,
+      "collapse_frames": 1,
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1.0",
+        "--open-project-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "6291461"
+          ],
+          "monotonic": 792008.238093071,
+          "wall_time": 1790055158.1077642,
+          "pointer_after": "X=1256\nY=368\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "windowsize",
+            "6291461",
+            "960",
+            "720"
+          ],
+          "monotonic": 792008.311183979,
+          "wall_time": 1790055158.180854,
+          "pointer_after": "X=1256\nY=368\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1360",
+            "308",
+            "click",
+            "1"
+          ],
+          "monotonic": 792008.732857318,
+          "wall_time": 1790055158.6025264,
+          "pointer_after": "X=1360\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "308"
+          ],
+          "monotonic": 792009.269966375,
+          "wall_time": 1790055159.1396358,
+          "pointer_after": "X=1414\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "308",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 792009.649016008,
+          "wall_time": 1790055159.518685,
+          "pointer_after": "X=1414\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "886"
+          ],
+          "monotonic": 792009.917271903,
+          "wall_time": 1790055159.786943,
+          "pointer_after": "X=1414\nY=886\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1414",
+            "886",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 792010.250468463,
+          "wall_time": 1790055160.1201394,
+          "pointer_after": "X=1414\nY=886\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "760",
+            "478"
+          ],
+          "monotonic": 792010.645614867,
+          "wall_time": 1790055160.515284,
+          "pointer_after": "X=760\nY=478\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "760",
+            "478",
+            "click",
+            "5"
+          ],
+          "monotonic": 792010.865727242,
+          "wall_time": 1790055160.735397,
+          "pointer_after": "X=760\nY=478\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "760",
+            "478",
+            "click",
+            "4"
+          ],
+          "monotonic": 792011.251487928,
+          "wall_time": 1790055161.1211581,
+          "pointer_after": "X=760\nY=478\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "key",
+            "Escape"
+          ],
+          "monotonic": 792011.794218017,
+          "wall_time": 1790055161.663887,
+          "pointer_after": "X=760\nY=478\nSCREEN=0\nWINDOW=6291461\n"
+        }
+      ],
+      "expanded_choice_trigger": "Click current Units control before scrolling; verify captured expansion separately",
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "960",
+        "HEIGHT": "720",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_frames": 1,
+      "boundary_frames": 0,
+      "reverse_frames": 1,
+      "collapse_frames": 1,
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    }
+  ]
+}
