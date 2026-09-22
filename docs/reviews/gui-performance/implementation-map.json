@@ -7249,7 +7249,8 @@
         "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
         "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json",
-        "docs/reviews/gui-performance/implementation/S3/painted-scrollbar-native-negative/result.json"
+        "docs/reviews/gui-performance/implementation/S3/painted-scrollbar-native-negative/result.json",
+        "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer/result.json"
       ],
       "s3_native_preferences_track_progress": {
         "status": "bounded native Preferences page-track pass; full qualification open",
@@ -7308,6 +7309,22 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/painted-scrollbar-native-negative/result.json",
         "proof": "Initial positive: both hosts press0 presentations, delivered drag1, release0. Negative: both confirm delivered drag then fail exact no-changed-dialog assertion when scrollbar_input is disabled but rendering unchanged. Restored release/source hashes match positive; Global replay again drags1 then release times out, Project drag motion arrives at cleanup after timeout.",
         "limits": "X11 scale1,960x720 only. Parent-required painted-only production pointer negative is observed with paired initial positives, but restored native replays remain failed and dat-native-input-delivery-vq7w stays open. Global initial screenshot is stale Appearance; Project visibly retains painted Units scrollbar. No exact final offset/static freshness, setting click-through, teardown, other profiles, full HP21/S3, timing/resource or resize acceptance. No runtime/dependency/license/prototype/resource deadline change."
+      },
+      "s3_owned_dialog_pointer_progress": {
+        "status": "Three default native dialogs share pointer dispatch and scrollbar-before-hit consumption",
+        "production_consumers": [
+          "GLOBAL Preferences native window event adapter",
+          "PROJECT Preferences native window event adapter",
+          "NEW Project native window event adapter"
+        ],
+        "shared_owner": "App::handle_owned_dialog_pointer in owned_dialog_pointer.rs",
+        "retired_paths": [
+          "Three duplicated CursorMoved/CursorLeft/left-button/wheel dispatch blocks",
+          "Preferences-only scroll_preferences_window forwarding path"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer/result.json",
+        "proof": "Actual hidden X11/Vulkan surfaces and real application dialog state: shared production WindowEvent dispatcher prevents scrollbar-release activation of both Units settings and New Project name; fresh clicks activate. Positive and recompiled restored test pass1/395 filtered; isolated ignored-consumption mutation fails all3 hosts. App380 pass/16 ignored; Clippy and fresh release build pass.",
+        "limits": "Dispatcher invoked directly with WindowEvents; not OS-delivered events or ActiveEventLoop delivery proof.960x480/scale1 overflow fixture deliberately below normal product minimum sizes, not supported-layout/profile acceptance. Existing cancellation coordinator remains before host dispatch. No full HP21/S3, native OS/backend/scale, performance/resource or resize acceptance. Product styling, mutation policy, dependency/license and deadlines unchanged."
       }
     },
     {
@@ -28215,7 +28232,7 @@
         "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter.",
         "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct.",
         "HP20-01": "Complete remaining backend and expanded/other-control scale extent cases. Both Preferences native search/clear now has1/1.5/2x override proof at actual recorded sizes;1x choices/explanations/final-row/minimum-height and shared visible-row negative remain recorded. No monitor-scale transition or latency acceptance.",
-        "HP21-01": "Complete remaining capture/profile/scale and setting click-through cases. Both native X11 Preferences now detect painted-only input omission with initial positives; restored release/motion delivery failures remain explicit. Shared grab-displacement negative, native drag and track evidence retained. No full pointer qualification from these bounded trials.",
+        "HP21-01": "Complete remaining OS input/capture/profile/scale qualification. All three default dialog adapters now share pointer dispatch; actual native surfaces detect ignored scrollbar consumption activating Units settings/New name through production WindowEvents, with restored positive. Direct dispatcher proof does not qualify OS delivery. Retain painted-only OS negative and unresolved delivery failures.",
         "HP21-02": "Complete native release/capture-loss/close/content-change final-target matrix. Shared stale-reflow negative now detected and restored viewport/content-change capture tests pass; existing focus-loss and native trials remain bounded.",
         "HP22-01": "Complete remaining native diagonal/rounded/nested clipping cases per actual consumer. Shared clamp-vertices negative now detected by corrected existing area oracle; preserve original false-pass and terminal call-removal negatives.",
         "HP22-02": "Complete remaining native/GPU profiles. Pinned-header clipping and scrolling negatives now detected by strengthened actual Preferences preparation test; hidden-hit clipping omission already detected. Preserve initial missing-header false pass and existing bounded pinned GPU/native evidence.",
@@ -29039,5 +29056,21 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/choice-measurement-labels/result.json",
     "proof": "218 renderer tests pass; existing GPU dialog parity test passes1 with258 filtered; fresh guarded offline release build passes. Source health and dependency authority pass.",
     "limits": "Removes one temporary String allocation per available SingleChoice preparation by source inspection. No aggregate allocation or frame-time measurement. Unavailable formatting, text-run ownership, shaping cache and labels/geometry remain unchanged. No new native qualification, full HP14/S3 acceptance, prototype/dependency/license/resource deadline or resize change."
+  },
+  "s3_owned_dialog_pointer_work": {
+    "status": "Three default native dialogs share pointer dispatch and scrollbar-before-hit consumption",
+    "production_consumers": [
+      "GLOBAL Preferences native window event adapter",
+      "PROJECT Preferences native window event adapter",
+      "NEW Project native window event adapter"
+    ],
+    "shared_owner": "App::handle_owned_dialog_pointer in owned_dialog_pointer.rs",
+    "retired_paths": [
+      "Three duplicated CursorMoved/CursorLeft/left-button/wheel dispatch blocks",
+      "Preferences-only scroll_preferences_window forwarding path"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer/result.json",
+    "proof": "Actual hidden X11/Vulkan surfaces and real application dialog state: shared production WindowEvent dispatcher prevents scrollbar-release activation of both Units settings and New Project name; fresh clicks activate. Positive and recompiled restored test pass1/395 filtered; isolated ignored-consumption mutation fails all3 hosts. App380 pass/16 ignored; Clippy and fresh release build pass.",
+    "limits": "Dispatcher invoked directly with WindowEvents; not OS-delivered events or ActiveEventLoop delivery proof.960x480/scale1 overflow fixture deliberately below normal product minimum sizes, not supported-layout/profile acceptance. Existing cancellation coordinator remains before host dispatch. No full HP21/S3, native OS/backend/scale, performance/resource or resize acceptance. Product styling, mutation policy, dependency/license and deadlines unchanged."
   }
 }

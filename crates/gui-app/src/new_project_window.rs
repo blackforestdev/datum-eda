@@ -117,6 +117,9 @@ impl App {
         event_loop: &ActiveEventLoop,
         event: WindowEvent,
     ) {
+        if self.handle_owned_dialog_pointer(native_frame_adapters::OwnedHost::New, &event) {
+            return;
+        }
         match event {
             WindowEvent::CloseRequested | WindowEvent::Destroyed => {
                 if let Some(runtime) = &mut self.runtime {
@@ -146,55 +149,6 @@ impl App {
                 }
                 if let Some(window) = &self.new_project_window {
                     self.frames.invalidate(window);
-                }
-            }
-            WindowEvent::CursorMoved { position, .. } => {
-                if let Some(surface) = &mut self.new_project_surface {
-                    surface.set_cursor_position(
-                        Some((position.x as f32, position.y as f32)),
-                        &mut self.frames,
-                    );
-                }
-            }
-            WindowEvent::CursorLeft { .. } => {
-                if let Some(surface) = &mut self.new_project_surface {
-                    surface.set_cursor_position(None, &mut self.frames);
-                }
-            }
-            WindowEvent::MouseInput {
-                state,
-                button: MouseButton::Left,
-                ..
-            } => {
-                if self
-                    .new_project_surface
-                    .as_mut()
-                    .is_some_and(|surface| surface.scrollbar_input(state, &mut self.frames))
-                    || state != ElementState::Released
-                {
-                    return;
-                }
-                let target = self
-                    .new_project_surface
-                    .as_ref()
-                    .and_then(GlobalPreferencesWindowSurface::hit_target);
-                if let (Some(runtime), Some(target)) = (&mut self.runtime, target.as_ref()) {
-                    use crate::global_preferences_window::DialogInputOutcome as Outcome;
-                    let changed = match target {
-                        HitTarget::NewProjectCancel | HitTarget::NewProjectCreate => {
-                            Outcome::Dependents
-                        }
-                        HitTarget::NewProjectModal => Outcome::Consumed,
-                        _ => Outcome::Dialog,
-                    };
-                    let outcome =
-                        Outcome::from_handled(runtime.activate_new_project_hit(target), changed);
-                    self.request_dialog_key_redraw(outcome, native_frame_adapters::OwnedHost::New);
-                }
-            }
-            WindowEvent::MouseWheel { delta, .. } => {
-                if let Some(surface) = &mut self.new_project_surface {
-                    surface.scroll_wheel(delta, &mut self.frames);
                 }
             }
             WindowEvent::ModifiersChanged(modifiers) => {

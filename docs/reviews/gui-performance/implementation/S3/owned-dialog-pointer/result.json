@@ -1,0 +1,67 @@
+{
+  "candidate_base": "cca0f74475bbe1261222fbd89b4631c5952528b2",
+  "production": {
+    "status": "Three default native dialogs share pointer dispatch and scrollbar-before-hit consumption",
+    "production_consumers": [
+      "GLOBAL Preferences native window event adapter",
+      "PROJECT Preferences native window event adapter",
+      "NEW Project native window event adapter"
+    ],
+    "shared_owner": "App::handle_owned_dialog_pointer in owned_dialog_pointer.rs",
+    "retired_paths": [
+      "Three duplicated CursorMoved/CursorLeft/left-button/wheel dispatch blocks",
+      "Preferences-only scroll_preferences_window forwarding path"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer/result.json",
+    "proof": "Actual hidden X11/Vulkan surfaces and real application dialog state: shared production WindowEvent dispatcher prevents scrollbar-release activation of both Units settings and New Project name; fresh clicks activate. Positive and recompiled restored test pass1/395 filtered; isolated ignored-consumption mutation fails all3 hosts. App380 pass/16 ignored; Clippy and fresh release build pass.",
+    "limits": "Dispatcher invoked directly with WindowEvents; not OS-delivered events or ActiveEventLoop delivery proof.960x480/scale1 overflow fixture deliberately below normal product minimum sizes, not supported-layout/profile acceptance. Existing cancellation coordinator remains before host dispatch. No full HP21/S3, native OS/backend/scale, performance/resource or resize acceptance. Product styling, mutation policy, dependency/license and deadlines unchanged."
+  },
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_window.rs": "5c35e7bc178b901b2d53a99294b843c5c460bdef1879c12b65472b35f94e9f1f",
+    "crates/gui-app/src/project_preferences_window.rs": "3657f681916088e55e83eda27986ea58594702aac4bc6a60fbfd6b2c6020c97d",
+    "crates/gui-app/src/new_project_window.rs": "6ba218159b83a5a182932f8b135a3743c3249c8ce03c880b075ebf6398c9c039",
+    "crates/gui-app/src/owned_dialog_pointer.rs": "81b54d7bf949fdcd86c2b63f078ccf7dc0ac3b6448dbf7408d8824c840cb45ab",
+    "crates/gui-app/src/owned_dialog_pointer_tests.rs": "4a8c05ba7fd56e9ebdc60596f20e71424f2853b2943d1ef1f4239b066f589797"
+  },
+  "release_binary_sha256": "b6f270469696cc6aaa05c265374760f3d9cb92ab1e02899ce2425f5779c77586",
+  "restored_test_binary_sha256": "b2942c5df69e7a92a167bbd204950077b41f48f2cb011257389f4e4fccd41d17",
+  "source_restoration": "All tracked Rust/Cargo files plus new modules in isolated copy verified byte-identical to active after mutation restoration. Active production code was never injected.",
+  "retained_failed_attempts": [
+    "Initial search-field positive/negative trials preceded strengthening to actual Units controls.",
+    "First strengthened trial retained stale search-focus assertion and failed; corrected to observe actual Units open_choice_key.",
+    "First restored invocation reused injected executable in shared target without compiling despite restored source. Retain log and hash; touched owned source mtime to force app recompilation, then restored1pass. Future isolated negative builds need separately owned disk-backed target or explicitly verified rebuild provenance."
+  ],
+  "stale_binary": {
+    "sha256": "f6d69934ba7cdfd5104e07abc4067afe68ea5d8959ca06a61406938dfe4545d5",
+    "path": "target/debug/deps/datum_gui-c118320a3ba3ec9f",
+    "note": "Shared target reused injected test binary without compilation on active-source restore; both source copies contain correct consumption."
+  },
+  "environment": {
+    "WINIT_UNIX_BACKEND": "x11",
+    "WAYLAND_DISPLAY": "unset",
+    "DATUM_NATIVE_TEST_BOARD": "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "EDA_CLI_BIN": "/home/bfadmin/Documents/datum-eda/target/release/datum-eda",
+    "XDG_CONFIG_HOME": "isolated /tmp/pm045-shared-pointer-*-config",
+    "XDG_CACHE_HOME": "isolated /tmp/pm045-shared-pointer-*-cache"
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_dialog_scroll_release_cannot_click_through_to_controls -- --ignored --test-threads=1 --nocapture",
+    "CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline --manifest-path /tmp/pm045-pinned-negative-source/Cargo.toml -p datum-gui-app --bin datum-gui native_dialog_scroll_release_cannot_click_through_to_controls -- --ignored --test-threads=1 --nocapture",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui -- --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-app --bin datum-gui --tests -- -D warnings",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app --bin datum-gui"
+  ],
+  "artifact_sha256": {
+    "initial-negative.log.gz": "adc99618007fa38ecc751c6aade24c9a3da764a643e104c77c0bf21b0ac332f2",
+    "clippy.log.gz": "5b7961c3e0e31efafcbdab62774c6f1e6fdf44291b81aad5357ae84dd4824eea",
+    "release.log.gz": "4ea7115c8c0c336fd8559e6ec40b02477cd671cdc7f187ed0b93b8b322bc10a5",
+    "native.log.gz": "a1f1b119a70c4f9117eec0f0cb921a6c83fee7eaa54bb0879c23e5df7948d38a",
+    "stale-binary.log.gz": "3870d202f0698ec2a9c9666304d3873000986fda9cac7075de9707d167084d4d",
+    "stale-oracle.log.gz": "7d924c3517d70f39d29a66bf17a6b45b97c56a199d42f5ac56820d4faa5b6398",
+    "restored.log.gz": "089a10ba638e03d90f3b9495d1985787595fd0d1d4ff247c5c6a473ccaba6312",
+    "initial-native.log.gz": "3c9c4ff44beca4506cad1406433984b8e2a6e4aee0aefa08b8718ba36c11c158",
+    "tests.log.gz": "5fc3440852853c6b413e099c70e8468bdbce11fcf4275f11ab259ec547537f4e",
+    "negative.log.gz": "f92a7d90febb4db85fdd48ee0894da52ca888ce154f1eef00e5812994393901e",
+    "negative.patch.gz": "5cbba705e0b1e8bc381aa4727bc5e1a338e7046bd5cf88a9165cc279d998d69c"
+  }
+}
