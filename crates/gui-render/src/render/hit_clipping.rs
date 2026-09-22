@@ -46,6 +46,25 @@ pub(crate) fn clip_content(
     // merely having all vertices outside would incorrectly discard crossings.
     quads
         .extract_if(quad_start.., |quad| {
+            if quad.points.iter().all(|&(x, y)| viewport.contains(x, y)) {
+                return false;
+            }
+            let [a, b, c, d] = quad.points;
+            if a.1 == b.1 && b.0 == c.0 && c.1 == d.1 && d.0 == a.0 {
+                // Clip rectangular controls in place. They never need the
+                // scratch suffix reserved for crossing triangle contours.
+                let rect = RectPx {
+                    x: a.0.min(c.0),
+                    y: a.1.min(c.1),
+                    width: (c.0 - a.0).abs(),
+                    height: (c.1 - a.1).abs(),
+                };
+                if let Some(visible) = rect.intersect(viewport) {
+                    *quad = Quad::from_rect(visible, quad.color);
+                    return false;
+                }
+                return true;
+            }
             quad.points.iter().all(|&(x, _)| x < viewport.x)
                 || quad
                     .points
@@ -58,7 +77,7 @@ pub(crate) fn clip_content(
                     .all(|&(_, y)| y > viewport.y + viewport.height)
         })
         .for_each(drop);
-    // Culling can expose another visible prefix. Keep that in place as well;
+    // Culling and rectangle clipping can expose another visible prefix;
     // split_off(len) allocates nothing when only hidden quads needed removal.
     let quad_start = quads[quad_start..]
         .iter()
@@ -68,20 +87,6 @@ pub(crate) fn clip_content(
     for quad in original {
         if quad.points.iter().all(|&(x, y)| viewport.contains(x, y)) {
             quads.push(quad);
-            continue;
-        }
-        let [a, b, c, d] = quad.points;
-        if a.1 == b.1 && b.0 == c.0 && c.1 == d.1 && d.0 == a.0 {
-            // Preserve one-quad encoding for the common axis-aligned control.
-            let rect = RectPx {
-                x: a.0.min(c.0),
-                y: a.1.min(c.1),
-                width: (c.0 - a.0).abs(),
-                height: (c.1 - a.1).abs(),
-            };
-            if let Some(visible) = rect.intersect(viewport) {
-                quads.push(Quad::from_rect(visible, quad.color));
-            }
             continue;
         }
         for indices in [[0, 1, 2], [0, 2, 3]] {
@@ -155,6 +160,58 @@ pub(crate) fn clip_content(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn rectangular_suffix_clips_in_place_and_preserves_visible_encoding() {
+        let viewport = RectPx {
+            x: 0.0,
+            y: 0.0,
+            width: 10.0,
+            height: 10.0,
+        };
+        let pinned = Quad::from_rect(
+            RectPx {
+                x: -20.0,
+                ..viewport
+            },
+            [0.1; 3],
+        );
+        let crossing = Quad {
+            points: [(12.0, -2.0), (4.0, -2.0), (4.0, 6.0), (12.0, 6.0)],
+            color: [0.2; 3],
+        };
+        let visible = Quad {
+            points: [(8.0, 2.0), (2.0, 2.0), (2.0, 8.0), (8.0, 8.0)],
+            color: [0.3; 3],
+        };
+        let hidden = Quad::from_rect(
+            RectPx {
+                x: 20.0,
+                ..viewport
+            },
+            [0.4; 3],
+        );
+        let mut quads = vec![pinned, crossing, hidden, visible, crossing];
+        clip_content(
+            &mut quads,
+            &mut Vec::new(),
+            &mut Vec::new(),
+            1,
+            0,
+            0,
+            viewport,
+        );
+        let clipped = Quad::from_rect(
+            RectPx {
+                x: 4.0,
+                y: 0.0,
+                width: 6.0,
+                height: 6.0,
+            },
+            crossing.color,
+        );
+        assert_eq!(quads, [pinned, clipped, visible, clipped]);
+    }
 
     #[test]
     fn four_edge_clip_preserves_triangle_area_and_pinned_content() {

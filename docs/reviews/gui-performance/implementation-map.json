@@ -7625,7 +7625,8 @@
         "docs/reviews/gui-performance/implementation/S3/shell-identity-clipping/result.json",
         "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
         "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json",
-        "docs/reviews/gui-performance/implementation/S3/clip-hidden-geometry/result.json"
+        "docs/reviews/gui-performance/implementation/S3/clip-hidden-geometry/result.json",
+        "docs/reviews/gui-performance/implementation/S3/rectangle-clip/result.json"
       ],
       "s3_shell_content_clipping_progress": {
         "status": "bounded S3 Main placeholder/status shared clipping adoption; full qualification open",
@@ -7706,6 +7707,15 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/clip-hidden-geometry/result.json",
         "proof": "218 renderer tests pass, including four-edge diagonal area and pinned content. Existing GPU dialog parity1pass/258filtered; visual renderer Clippy and fresh release build pass. Source health and dependency authority pass.",
         "limits": "Source-level work/copy removal only; no aggregate allocation or frame-time claim. Rejects only a common outside half-plane; all-outside vertices with a crossing triangle retain exact clipping. Existing all-visible prefix path remains; partly visible suffix incurs additional rejection checks and clipping scratch remains for crossings. No new consumer migration or complete per-consumer native/HP22/S3 qualification. No visual/prototype/dependency/license/resource deadline or resize change."
+      },
+      "s3_rectangle_clip_progress": {
+        "production_consumers": [
+          "Existing shared clip_content callers: both Preferences, New Project, Inspector, Project/Layers, Revision, Console/terminal, Main menus and shell chrome"
+        ],
+        "change": "Intersect crossing axis-aligned rectangles in the existing in-place suffix filter before scratch extraction. Preserve fully visible vertex encoding and pinned prefix; crossing diagonal/rounded triangles retain exact clipping. Rectangle-only suffixes no longer require temporary quad vector allocation/copy.",
+        "retired_paths": "Removed rectangle re-encoding from the allocated triangle-processing suffix; no new consumer migration or competing semantic path.",
+        "proof": "219 renderer unit tests pass, including reversed-winding rectangle clipping and unchanged visible encoding/order. Existing GPU control parity passes1 test/259 filtered (72 scale/placement/clip cases). Visual renderer Clippy passes; fresh release build passes. Current binary Global1x native content-change/trailing-release/fresh-click trial passes, with exactly one canonical persisted Reduced Motion mutation. Source-policy13 tests pass.",
+        "limits": "Structural work removal, not measured latency or full allocation-budget qualification. Mixed crossing triangle suffixes still allocate scratch. Native test covers one Global1x X11 semantic input case and does not qualify final pixels, all consumers, backend/scale matrix or full HP22/S3. No dependency/license/prototype/numerical-budget/resize-scope changes; S3 remains active."
       }
     },
     {
