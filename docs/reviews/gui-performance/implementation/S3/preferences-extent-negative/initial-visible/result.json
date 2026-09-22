@@ -1,0 +1,24 @@
+{
+  "command": [
+    "python3",
+    "/tmp/pm045-extent-negative/scripts/run_cargo_guarded.py",
+    "--workload",
+    "proof",
+    "--",
+    "cargo",
+    "test",
+    "--offline",
+    "--manifest-path",
+    "/tmp/pm045-extent-negative/Cargo.toml",
+    "-p",
+    "datum-gui-render",
+    "--lib",
+    "continuous_scroll_clips_rows_and_hits_with_stable_content_bounds",
+    "--",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "source_sha256": "8b0767941549640281af7014d24d4c3d75c9315ade0be9701ad9408f475cf79e",
+  "negative_exit": 101,
+  "restored_exit": 101
+}

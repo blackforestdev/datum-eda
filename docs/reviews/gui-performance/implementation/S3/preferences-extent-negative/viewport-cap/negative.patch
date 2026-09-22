@@ -1,0 +1,7 @@
+diff --git a/crates/gui-render/src/render/preferences_rows.rs b/crates/gui-render/src/render/preferences_rows.rs
+index 45e41bb2..e2ec775c 100644
+--- a/crates/gui-render/src/render/preferences_rows.rs
++++ b/crates/gui-render/src/render/preferences_rows.rs
+@@ -70 +70 @@ pub(super) fn render_rows(
+-    scroll.layout(viewport, total);
++    scroll.layout(viewport, total.min(viewport.height));

@@ -1,0 +1,7 @@
+diff --git a/crates/gui-render/src/render/preferences_rows.rs b/crates/gui-render/src/render/preferences_rows.rs
+index 45e41bb2..39547bc8 100644
+--- a/crates/gui-render/src/render/preferences_rows.rs
++++ b/crates/gui-render/src/render/preferences_rows.rs
+@@ -70 +70 @@ pub(super) fn render_rows(
+-    scroll.layout(viewport, total);
++    let total = starts.iter().filter(|(top, group, height, _, _)| *top + group + height > scroll.offset() && *top < scroll.offset() + viewport.height).map(|(_, group, height, _, _)| group + height).sum(); scroll.layout(viewport, total);
