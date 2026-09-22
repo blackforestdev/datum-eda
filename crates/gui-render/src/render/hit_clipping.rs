@@ -90,6 +90,13 @@ pub(crate) fn clip_content(
             continue;
         }
         for indices in [[0, 1, 2], [0, 2, 3]] {
+            let [a, b, c] = indices.map(|index| quad.points[index]);
+            // Triangle-encoded controls repeat a vertex in the empty half.
+            // It covers no samples; skip its clipping and output allocation.
+            // Exact equality preserves even arbitrarily thin real triangles.
+            if a == b || b == c || a == c {
+                continue;
+            }
             // A triangle clipped against a rectangle has at most seven vertices.
             let mut polygon = [(0.0, 0.0); 8];
             for (out, index) in indices.into_iter().enumerate() {
@@ -160,6 +167,41 @@ pub(crate) fn clip_content(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn clipped_triangle_encoding_emits_only_visible_area() {
+        let mut quads = vec![Quad {
+            points: [(-2.0, 0.0), (2.0, 0.0), (2.0, 4.0), (2.0, 4.0)],
+            color: [0.5; 3],
+        }];
+        clip_content(
+            &mut quads,
+            &mut Vec::new(),
+            &mut Vec::new(),
+            0,
+            0,
+            0,
+            RectPx {
+                x: 0.0,
+                y: 0.0,
+                width: 4.0,
+                height: 4.0,
+            },
+        );
+        // The remaining trapezoid needs two triangles, with area six.
+        // A triangle encoded as a quad must not add its empty second half.
+        assert_eq!(quads.len(), 2);
+        let area: f32 = quads
+            .iter()
+            .map(|quad| {
+                let [a, b, c, _] = quad.points;
+                let area = ((b.0 - a.0) * (c.1 - a.1) - (b.1 - a.1) * (c.0 - a.0)).abs() * 0.5;
+                assert!(area > 0.0);
+                area
+            })
+            .sum();
+        assert_eq!(area, 6.0);
+    }
 
     #[test]
     fn rectangular_suffix_clips_in_place_and_preserves_visible_encoding() {
