@@ -5827,7 +5827,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-publication/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-both-hosts/result.json",
         "docs/reviews/gui-performance/implementation/S3/borrowed-control-labels/result.json",
-        "docs/reviews/gui-performance/implementation/S3/preferences-row-layout/result.json"
+        "docs/reviews/gui-performance/implementation/S3/preferences-row-layout/result.json",
+        "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json"
       ],
       "s3_explanation_focus_reveal_progress": {
         "status": "Shared explanation Close focus reveal implemented in default GLOBAL/PROJECT surfaces",
@@ -5938,7 +5939,18 @@
         "proof": "Existing218 renderer tests pass, including control and unavailable-state coverage. Existing GPU single-pass/general-dialog pixel parity passes1 test/258 filtered. Renderer visual library/tests Clippy and fresh release GUI build pass.",
         "limits": "Source-level removal of one redundant temporary String copy per available label (an allocation for nonempty labels), not measured total allocations or frame-time improvement. TextRun still owns text; unavailable suffix formatting and integer formatting remain. No new native qualification, complete resource accounting or HP14/S3 acceptance. No styling/prototype/dependency/license, resource deadline or resize-scope change."
       },
-      "s3_row_layout_progress": "Matched baseline and candidate renderer suites each pass218 tests. Existing hardware dialog GPU parity passes1 test/258 filtered. Visual renderer Clippy and fresh release application build pass. Structural removal of temporary work, not a measured frame-time or complete allocation-budget claim. One layout Vec remains; text and hit targets retain required owned data. GPU parity paths share preparation and do not independently qualify every native profile. Existing native capture/input gaps, S3 exit and S4/S5 obligations remain open. No dependency/license/prototype/resize boundary change."
+      "s3_row_layout_progress": "Matched baseline and candidate renderer suites each pass218 tests. Existing hardware dialog GPU parity passes1 test/258 filtered. Visual renderer Clippy and fresh release application build pass. Structural removal of temporary work, not a measured frame-time or complete allocation-budget claim. One layout Vec remains; text and hit targets retain required owned data. GPU parity paths share preparation and do not independently qualify every native profile. Existing native capture/input gaps, S3 exit and S4/S5 obligations remain open. No dependency/license/prototype/resize boundary change.",
+      "s3_project_explanation_keyboard": {
+        "production_consumers": [
+          "Project Preferences focused setting-name keyboard activation"
+        ],
+        "retired_paths": [
+          "Project SettingName Enter/Space no-op branch; both now reuse existing Project pointer explanation action"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json",
+        "proof": "X11/Xwayland 1x Enter and Space each open explanation after real thumb drag; trailing-release typing produces zero frames; fresh click plus typing produces frames. Inspected captures contain the opened explanation. Longer-wait Enter replay has inspected final precision search with four matching rows.",
+        "limits": "Initial Enter/Space final images lag state; preserve them. Longer-wait Enter replay verifies final fresh-search pixels only. Intermediate after-release capture remains inconsistent; no general capture reliability, complete focus/capture or temporal acceptance. One native backend and 1x visual override at accepted 960x720 only; no Wayland, monitor transition, full HP21/HP23 or S3 acceptance. Frame counts are bounded event-response evidence, not complete control/focus state or performance qualification. Harness SIGTERM cleanup is not native close/teardown acceptance. No preference mutation, dependency/license, prototype, numerical budget, sequencing or resize-scope change."
+      }
     },
     {
       "id": "HP13-01",
@@ -7783,7 +7795,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-content-change-entry/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-content-drawability/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-content-retry/result.json",
-        "docs/reviews/gui-performance/implementation/S3/unlocked-content-visual/result.json"
+        "docs/reviews/gui-performance/implementation/S3/unlocked-content-visual/result.json",
+        "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json"
       ],
       "s3_scroll_capture_negatives_progress": {
         "status": "Corrected existing thumb test detects grab displacement; stale reflow capture negative detected",
@@ -7821,6 +7834,17 @@
       "s3_native_entry_backends_progress": {
         "proof": "Same test binary passes both native backends:12 Wayland host/profile closes with10 scrollbar focus-cancel/fresh-control cases, and12 X11 closes with9 scrollbar cases. Global/Project/New all enter production native event routing on real native surfaces. Source-policy13 tests and workspace Clippy pass. No production source/release change.",
         "limits": "WindowEvents are supplied directly using a real ActiveEventLoop, not OS-generated input. Wayland2x requested1400x1080 (Preferences) and1240x1240 (New) were constrained to heights1050; assert renderer configuration equals accepted extent and retain unavailable requested-size rows as unqualified. Visual scale override does not prove monitor transitions. Initial exact-size assertion failure retained. No new negative replay, screenshots, timing/resource/OS delivery or complete HP21/S3 acceptance. Existing X11 missing-cancellation negative remains earlier evidence. Production releasebcbe537b unchanged; no dependency/license/prototype/resource-deadline/resize change."
+      },
+      "s3_project_explanation_keyboard": {
+        "production_consumers": [
+          "Project Preferences focused setting-name keyboard activation"
+        ],
+        "retired_paths": [
+          "Project SettingName Enter/Space no-op branch; both now reuse existing Project pointer explanation action"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json",
+        "proof": "X11/Xwayland 1x Enter and Space each open explanation after real thumb drag; trailing-release typing produces zero frames; fresh click plus typing produces frames. Inspected captures contain the opened explanation. Longer-wait Enter replay has inspected final precision search with four matching rows.",
+        "limits": "Initial Enter/Space final images lag state; preserve them. Longer-wait Enter replay verifies final fresh-search pixels only. Intermediate after-release capture remains inconsistent; no general capture reliability, complete focus/capture or temporal acceptance. One native backend and 1x visual override at accepted 960x720 only; no Wayland, monitor transition, full HP21/HP23 or S3 acceptance. Frame counts are bounded event-response evidence, not complete control/focus state or performance qualification. Harness SIGTERM cleanup is not native close/teardown acceptance. No preference mutation, dependency/license, prototype, numerical budget, sequencing or resize-scope change."
       }
     },
     {
@@ -8291,7 +8315,8 @@
         "docs/reviews/gui-performance/implementation/S3/focus-reflow/result.json",
         "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json",
         "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json",
-        "docs/reviews/gui-performance/implementation/S3/search-byte-fast-path/result.json"
+        "docs/reviews/gui-performance/implementation/S3/search-byte-fast-path/result.json",
+        "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json"
       ],
       "s3_focus_reveal_trace_progress": {
         "status": "bounded GLOBAL/PROJECT unchanged-production keyboard reveal pass after runtime trace; full qualification open",
@@ -8382,6 +8407,17 @@
         "retired_paths": "General slice-window comparison for single-byte search queries, replaced by direct byte scan; no new cache.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/search-byte-fast-path/result.json",
         "limits": "Bounded field-matcher diagnostic over135 actual catalog strings and six queries, four alternating-order rounds of10000 iterations. Excludes rendering, complete visible_rows short-circuiting, query normalization, native input and full STAT/ADM conformance. No GUI speed, numerical budget or full HP12/HP23/S3 acceptance. Integer formatting still allocates; multi-byte queries retain borrowed window matching. No dependencies, prototype, license or resize-scope change."
+      },
+      "s3_project_explanation_keyboard": {
+        "production_consumers": [
+          "Project Preferences focused setting-name keyboard activation"
+        ],
+        "retired_paths": [
+          "Project SettingName Enter/Space no-op branch; both now reuse existing Project pointer explanation action"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json",
+        "proof": "X11/Xwayland 1x Enter and Space each open explanation after real thumb drag; trailing-release typing produces zero frames; fresh click plus typing produces frames. Inspected captures contain the opened explanation. Longer-wait Enter replay has inspected final precision search with four matching rows.",
+        "limits": "Initial Enter/Space final images lag state; preserve them. Longer-wait Enter replay verifies final fresh-search pixels only. Intermediate after-release capture remains inconsistent; no general capture reliability, complete focus/capture or temporal acceptance. One native backend and 1x visual override at accepted 960x720 only; no Wayland, monitor transition, full HP21/HP23 or S3 acceptance. Frame counts are bounded event-response evidence, not complete control/focus state or performance qualification. Harness SIGTERM cleanup is not native close/teardown acceptance. No preference mutation, dependency/license, prototype, numerical budget, sequencing or resize-scope change."
       }
     },
     {
@@ -29988,5 +30024,16 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-split-guard/result.json",
     "status": "Split guard passes; full drift stops later at committed-HEAD core adapter failures. S3 unchanged."
+  },
+  "s3_project_explanation_keyboard_work": {
+    "production_consumers": [
+      "Project Preferences focused setting-name keyboard activation"
+    ],
+    "retired_paths": [
+      "Project SettingName Enter/Space no-op branch; both now reuse existing Project pointer explanation action"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json",
+    "proof": "X11/Xwayland 1x Enter and Space each open explanation after real thumb drag; trailing-release typing produces zero frames; fresh click plus typing produces frames. Inspected captures contain the opened explanation. Longer-wait Enter replay has inspected final precision search with four matching rows.",
+    "limits": "Initial Enter/Space final images lag state; preserve them. Longer-wait Enter replay verifies final fresh-search pixels only. Intermediate after-release capture remains inconsistent; no general capture reliability, complete focus/capture or temporal acceptance. One native backend and 1x visual override at accepted 960x720 only; no Wayland, monitor transition, full HP21/HP23 or S3 acceptance. Frame counts are bounded event-response evidence, not complete control/focus state or performance qualification. Harness SIGTERM cleanup is not native close/teardown acceptance. No preference mutation, dependency/license, prototype, numerical budget, sequencing or resize-scope change."
   }
 }

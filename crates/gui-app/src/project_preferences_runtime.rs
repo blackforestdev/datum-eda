@@ -578,6 +578,13 @@ impl Runtime {
             Key::Named(NamedKey::Enter | NamedKey::Space)
         );
         match focus {
+            GlobalPreferencesFocus::SettingName(key) if activate => Outcome::from_handled(
+                self.activate_project_preferences_hit_target(
+                    &HitTarget::GlobalPreferencesSettingName(key),
+                )
+                .unwrap_or(false),
+                Outcome::Dialog,
+            ),
             GlobalPreferencesFocus::Control(key) if activate => {
                 let damage =
                     Outcome::control_activation(&self.workspace().ui.project_preferences, &key);
