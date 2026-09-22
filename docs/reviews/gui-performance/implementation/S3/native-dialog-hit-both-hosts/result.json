@@ -1,0 +1,35 @@
+{
+  "candidate_base": "7c13a2b5285cfc0922bd7a1c75299bf7bc687a93",
+  "production": {
+    "status": "Both actual Preferences surfaces now detect the isolated stale-scale defect",
+    "production_consumers": [
+      "GLOBAL Preferences owned native surface",
+      "PROJECT Preferences owned native surface"
+    ],
+    "retired_paths": "No runtime changes. Test no longer aborts before Project or owned PTY teardown when Global stale-scale detection fails.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-both-hosts/result.json",
+    "proof": "Positive and restored runs each pass1 test/394 filtered. Negative reports stale hits independently for GLOBAL and PROJECT at1.5,2,1 scale transitions, after both paths and owned terminal shutdown complete.",
+    "limits": "Direct surface methods on actual hidden X11/Vulkan windows, not OS-delivered pointer/DPI/resize events or real monitor transitions. Search-target publication only. Remaining control/focus/partial-row, backend and full HP12/S3 qualification stays open. Runtime, dependency/license, prototype, resource deadlines and resize exclusions unchanged."
+  },
+  "verification": {
+    "positive": "1 passed,394 filtered",
+    "negative": "0 passed,1 failed,394 filtered; GLOBAL1.5/2/1 and PROJECT1.5/2/1 stale hits observed",
+    "restored": "1 passed,394 filtered; isolated Rust/Cargo source byte-identical to active"
+  },
+  "source_sha256": {
+    "crates/gui-app/src/native_dialog_hit_tests.rs": "4c98c77b798cd4cae5fb1463f013d6bcd0a1d717bd2724dc057cc3fd2992bc88",
+    "crates/gui-app/src/global_preferences_window.rs": "98dde5fcd91060ccb22da06819ffea96050515e50c35b945819a1a5a8ac6881d"
+  },
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "commands": [
+    "env XDG_CONFIG_HOME=/tmp/pm045-dialog-hit-both-config XDG_CACHE_HOME=/tmp/pm045-dialog-hit-both-cache EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/release/datum-eda DATUM_NATIVE_TEST_BOARD=/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_preferences_hits_reject -- --ignored --test-threads=1",
+    "env CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target XDG_CONFIG_HOME=/tmp/pm045-dialog-hit-both-negative-config XDG_CACHE_HOME=/tmp/pm045-dialog-hit-both-negative-cache EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/release/datum-eda DATUM_NATIVE_TEST_BOARD=/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline --manifest-path /tmp/pm045-pinned-negative-source/Cargo.toml -p datum-gui-app --bin datum-gui native_preferences_hits_reject -- --ignored --test-threads=1",
+    "env CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target XDG_CONFIG_HOME=/tmp/pm045-dialog-hit-both-restored-config XDG_CACHE_HOME=/tmp/pm045-dialog-hit-both-restored-cache EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/release/datum-eda DATUM_NATIVE_TEST_BOARD=/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline --manifest-path /tmp/pm045-pinned-negative-source/Cargo.toml -p datum-gui-app --bin datum-gui native_preferences_hits_reject -- --ignored --test-threads=1"
+  ],
+  "artifact_sha256": {
+    "positive.log.gz": "cff87645733bc0ab5b13c43c68951b553da25616a8839c40f2b17e39f37a92d9",
+    "restored.log.gz": "571e1834b9a2e7b4c75e0524a680435b9aae066d81581bc89f5b04bf628b4468",
+    "negative.log.gz": "88718061d11fa4f0485d54e45a8b1807ede9ac13f9fafb31da4c50b55863c01f",
+    "negative.patch.gz": "0f925114e5987e04641cd240d15bf9aaf878ad84f86289a885f424ac70d91bf8"
+  }
+}

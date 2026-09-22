@@ -29,6 +29,7 @@ fn native_preferences_hits_reject_old_scale_and_extent_until_presented() {
     );
     let launch = args.load_launch_state(Some(wake.clone())).unwrap();
     let mut runtime = pollster::block_on(Runtime::new(window, launch, Some(1.0), wake)).unwrap();
+    let mut stale_scale_hits = Vec::new();
     for project in [false, true] {
         if project {
             runtime.open_project_preferences();
@@ -80,10 +81,9 @@ fn native_preferences_hits_reject_old_scale_and_extent_until_presented() {
         for scale in [1.5, 2.0, 1.0] {
             target(&mut surface);
             surface.set_scale_factor(scale);
-            assert!(
-                surface.hit_target().is_none(),
-                "old-scale hits must be rejected before presentation"
-            );
+            if surface.hit_target().is_some() {
+                stale_scale_hits.push((if project { "PROJECT" } else { "GLOBAL" }, scale));
+            }
             present(&mut surface);
             target(&mut surface);
         }
@@ -111,4 +111,9 @@ fn native_preferences_hits_reject_old_scale_and_extent_until_presented() {
         );
         std::thread::sleep(Duration::from_millis(10));
     }
+    // Complete both host paths and owned PTY teardown before reporting a defect.
+    assert!(
+        stale_scale_hits.is_empty(),
+        "old-scale hits survived before presentation: {stale_scale_hits:?}"
+    );
 }
