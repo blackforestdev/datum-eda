@@ -212,6 +212,7 @@ pub(super) fn render_new_project_dialog(
         y += 30.0;
     }
 
+    let summary_starts = (quads.len(), text.len(), hits.len());
     let summary_height = 34.0 + dialog.units_summary.len().max(1) as f32 * 23.0 + 48.0;
     let summary = RectPx {
         x: inset,
@@ -306,6 +307,15 @@ pub(super) fn render_new_project_dialog(
         target: HitTarget::NewProjectUnitsSummary,
         rect: summary,
     });
+    crate::hit_clipping::clip_content(
+        quads,
+        text,
+        hits,
+        summary_starts.0,
+        summary_starts.1,
+        summary_starts.2,
+        summary,
+    );
     y = summary.y + summary.height + 12.0;
 
     if dialog.refusal.is_some() && dialog.units_choice == NewProjectUnitsChoice::Global {
@@ -482,6 +492,54 @@ mod tests {
             None,
             true,
         )
+    }
+
+    #[test]
+    fn long_summary_text_uses_the_summary_group_ancestor() {
+        let mut dialog = NewProjectDialogState::default();
+        dialog.open = true;
+        dialog.source_summary = "Source ".repeat(60);
+        dialog.source_detail = "generation ".repeat(60);
+        dialog.units_summary = vec![NewProjectUnitsSummaryRow {
+            key: "datum.units.system".into(),
+            label: "Measurement system".into(),
+            value: "An intentionally long displayed value ".repeat(10),
+        }];
+        for width in [240, 760] {
+            let layout = ShellLayout::for_surface(width, 720, 1.0, None);
+            let mut quads = Vec::new();
+            let mut text = Vec::new();
+            let mut hits = Vec::new();
+            render_new_project_dialog(
+                &dialog,
+                &layout,
+                true,
+                &mut ControlMeshCache::default(),
+                1.0,
+                &mut quads,
+                &mut text,
+                &mut hits,
+            );
+            let summary = hits
+                .iter()
+                .find(|hit| hit.target == HitTarget::NewProjectUnitsSummary)
+                .expect("summary remains one target")
+                .rect;
+            for run in text.iter().filter(|run| {
+                run.text == dialog.source_summary
+                    || run.text == dialog.units_summary[0].value
+                    || run.text == dialog.units_summary[0].label
+            }) {
+                assert_eq!(run.clip_bounds, Some(summary));
+            }
+            assert!(text.iter().any(|run| run.text == dialog.source_summary));
+            assert_eq!(
+                hits.iter()
+                    .filter(|hit| hit.target == HitTarget::NewProjectCreate)
+                    .count(),
+                1
+            );
+        }
     }
 
     #[test]
