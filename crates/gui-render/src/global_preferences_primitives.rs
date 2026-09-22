@@ -412,9 +412,13 @@ pub(super) fn draw_preference_control(
                 .find(|(candidate, _)| candidate == value)
                 .map(|(_, label)| label.as_str())
                 .unwrap_or(value);
-            let unavailable = format!("{label} · unavailable");
+            let measured_label = if available {
+                std::borrow::Cow::Borrowed(label)
+            } else {
+                std::borrow::Cow::Owned(format!("{label} · unavailable"))
+            };
             let width = (measured_text_run_width_px(
-                if available { label } else { &unavailable },
+                &measured_label,
                 design_tokens::typography::CAPTION_SIZE,
                 TextFace::Ui,
             ) + 34.0)

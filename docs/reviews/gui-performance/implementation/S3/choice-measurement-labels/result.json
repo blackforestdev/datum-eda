@@ -1,0 +1,30 @@
+{
+  "candidate_base": "af788331ea91e6d2e0263cc48f07f1b884527cba",
+  "production": {
+    "status": "Default shared choice width measurement borrows available labels",
+    "production_consumers": [
+      "GLOBAL Preferences SingleChoice controls",
+      "PROJECT Preferences SingleChoice controls"
+    ],
+    "shared_owner": "global_preferences_primitives::draw_preference_control",
+    "retired_paths": [
+      "Unconditional formatting of unused unavailable suffix during available-choice width measurement"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/choice-measurement-labels/result.json",
+    "proof": "218 renderer tests pass; existing GPU dialog parity test passes1 with258 filtered; fresh guarded offline release build passes. Source health and dependency authority pass.",
+    "limits": "Removes one temporary String allocation per available SingleChoice preparation by source inspection. No aggregate allocation or frame-time measurement. Unavailable formatting, text-run ownership, shaping cache and labels/geometry remain unchanged. No new native qualification, full HP14/S3 acceptance, prototype/dependency/license/resource deadline or resize change."
+  },
+  "source_before_sha256": "3d8bdca7045293c8c3495b3fb2e2094cdac76d91e3c44e2ea9eee065f3924d32",
+  "source_after_sha256": "93d592abb96169dd3b48d3eca4691e03ed97bcfaf3f466da30aa631dad0fe8ec",
+  "release_binary_sha256": "ffef814b8a06cb667e34ecc02865c8c22f28564ea0a3ea667f192da93e016a35",
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --features visual --lib dialog_single_pass_matches_general_renderer_pixels -- --ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app --bin datum-gui"
+  ],
+  "artifact_sha256": {
+    "release.log.gz": "855d9241a98ce32f96ce8788b663f792595ac6e9107c8733194db6a9f8470efd",
+    "tests.log.gz": "6faac063f035c658d7a93ca61bb1c5f38182fcac8a6c142ac6090fb4cb0b3388",
+    "gpu.log.gz": "0a127642715f35a2b5771ed2b2826fceb60a92f95e687bce30e35614760e8a3a"
+  }
+}
