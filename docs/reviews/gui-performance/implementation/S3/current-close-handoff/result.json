@@ -1,0 +1,190 @@
+{
+  "candidate_commit": "a7477cba",
+  "binary_sha256": "465e2be2385ccc1dae0e3dbbe361effed20301dffa90a322059daeb88b1e582b",
+  "status": "Bounded current-candidate X11 OS-input replay; not full HP21 or S3 qualification",
+  "profiles": [
+    {
+      "host": "GLOBAL",
+      "scale_override": 1.5,
+      "actual_extent": [
+        1200,
+        720
+      ],
+      "passed": true
+    },
+    {
+      "host": "PROJECT",
+      "scale_override": 1.5,
+      "actual_extent": [
+        1200,
+        720
+      ],
+      "passed": true
+    },
+    {
+      "host": "GLOBAL",
+      "scale_override": 2.0,
+      "actual_extent": [
+        1600,
+        960
+      ],
+      "passed": true
+    },
+    {
+      "host": "PROJECT",
+      "scale_override": 2.0,
+      "actual_extent": [
+        1600,
+        960
+      ],
+      "passed": true
+    },
+    {
+      "host": "NEW",
+      "scale_override": 2.0,
+      "actual_extent": [
+        1280,
+        800
+      ],
+      "passed": true
+    }
+  ],
+  "fixture": {
+    "path": "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+  },
+  "environment": "Existing desktop :1, X11/Xwayland, persistent XTest input; visual scale overrides are not physical monitor DPI transitions. Exact commands/actions/extents in raw per-profile result.json.",
+  "proof": "All five trials establish a delivered scrollbar drag, close the owned dialog while primary is held, suppress its trailing release on Main (zero presentations), then accept a fresh File menu click and Escape (one presentation each).",
+  "production_consumers": [
+    "GLOBAL Preferences",
+    "PROJECT Preferences",
+    "NEW Project",
+    "Main close-handoff receiver"
+  ],
+  "retired_paths": "No new migration in this replay; verifies preserved shared coordinator release suppression after shared shell/panel/dock changes.",
+  "negative_control": "No new negative replay in this batch; earlier close-handoff baseline failure remains historical evidence, not a matched current-candidate negative.",
+  "limitations": [
+    "Captured before.png files preserved but not reviewed in this replay; no final-pixel or visual acceptance claimed.",
+    "xdotool destruction-time BadWindow warnings retained in raw logs; owned-window and follow-up assertions passed.",
+    "Preferences driver uses Shift press/release after pointer-only moves; intermittent delivery issue remains open.",
+    "Cleanup uses SIGTERM, not teardown qualification.",
+    "No Wayland OS-input, full native matrix, endurance, resource/budget, dependency or resize qualification."
+  ],
+  "artifacts": [
+    {
+      "path": "close-1_5/result.json",
+      "sha256": "70463056d200c684b81d792c4bbec1442c4bace32fabbddc4c423d8cebc7eb66",
+      "uncompressed_sha256": "70463056d200c684b81d792c4bbec1442c4bace32fabbddc4c423d8cebc7eb66"
+    },
+    {
+      "path": "close-1_5/driver.log.gz",
+      "sha256": "1ced6da2e784b3399b1c1e4fe3a7102ad3b9e1018ccde7af202101e32f326db3",
+      "uncompressed_sha256": "88ffbe92a2f9b7c23766a883252d38742f48a001444ac7e897b7657fbc87c4b3"
+    },
+    {
+      "path": "close-1_5/GLOBAL/native.log.gz",
+      "sha256": "1b4b004addf88bd8a0b8c01057132a7cba1b45035cb9f0461f663b9c01e96612",
+      "uncompressed_sha256": "3e78957f0cb3314f872cec66fd8fb0f49671fef405610f3cce04a3151ec5d373"
+    },
+    {
+      "path": "close-1_5/GLOBAL/stderr.log.gz",
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "close-1_5/GLOBAL/before.png",
+      "sha256": "bfb92d7c38902b64815d384b7e53c7ee82515950cd02c75d2f2dbf140bc3fa42",
+      "uncompressed_sha256": "bfb92d7c38902b64815d384b7e53c7ee82515950cd02c75d2f2dbf140bc3fa42"
+    },
+    {
+      "path": "close-1_5/PROJECT/native.log.gz",
+      "sha256": "6aeb5b3fa8188708ccd310fa330ae0f38657b5a85547cd03da428374c1640b80",
+      "uncompressed_sha256": "7cf5b91e403e230e4a040c465f9a36371cd890d0bd66f461b24e3f290737dbb2"
+    },
+    {
+      "path": "close-1_5/PROJECT/stderr.log.gz",
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "close-1_5/PROJECT/before.png",
+      "sha256": "0d850913f726b396a1682c06b013858d0245fef3b7d1eadcf9b9342c718a0cec",
+      "uncompressed_sha256": "0d850913f726b396a1682c06b013858d0245fef3b7d1eadcf9b9342c718a0cec"
+    },
+    {
+      "path": "close-2/result.json",
+      "sha256": "768499371adc9d4c5e63be54d883edb353f831796988971da859c4dc3f4b5e38",
+      "uncompressed_sha256": "768499371adc9d4c5e63be54d883edb353f831796988971da859c4dc3f4b5e38"
+    },
+    {
+      "path": "close-2/driver.log.gz",
+      "sha256": "0b4859ff96fa22e85bc91fc881ad40899486a5a8238315857b95739166f1a5ed",
+      "uncompressed_sha256": "cf0172b9ff284a723ad94448c1da0df7adaa30353b357cefa0980e474b1b01a2"
+    },
+    {
+      "path": "close-2/GLOBAL/native.log.gz",
+      "sha256": "0acec2653f01f9ce145ca57d4e98a79cbf00b76752e112c1dd3b52589a69b983",
+      "uncompressed_sha256": "2c9eb2c7abd5b5372b3854ee5b7b0dc67389127cf2e8439c0370f910fbc31116"
+    },
+    {
+      "path": "close-2/GLOBAL/stderr.log.gz",
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "close-2/GLOBAL/before.png",
+      "sha256": "bcff7323e6a7beee99ed040c637b603495cffa689248f7f84923301211a6ac1d",
+      "uncompressed_sha256": "bcff7323e6a7beee99ed040c637b603495cffa689248f7f84923301211a6ac1d"
+    },
+    {
+      "path": "close-2/PROJECT/native.log.gz",
+      "sha256": "c9765217764a3ce8e9bbe6df6b891b1672be8c5db75f60b1f4e7799dfb37ffb5",
+      "uncompressed_sha256": "ff3fe2fb4d37bf0063dd0df2ffc6c1c8fb3984251e0dc0288a63f62c4f46e5ba"
+    },
+    {
+      "path": "close-2/PROJECT/stderr.log.gz",
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "close-2/PROJECT/before.png",
+      "sha256": "1c61aefd75b9e37e13f715a17b0cd40baaa11d7deb8c1fddcfd94932f418c95c",
+      "uncompressed_sha256": "1c61aefd75b9e37e13f715a17b0cd40baaa11d7deb8c1fddcfd94932f418c95c"
+    },
+    {
+      "path": "new-close-2/result.json",
+      "sha256": "71cca6870bcb3bc01c84227ef1c5cea595073bd8c3f088211ee427b5774009e4",
+      "uncompressed_sha256": "71cca6870bcb3bc01c84227ef1c5cea595073bd8c3f088211ee427b5774009e4"
+    },
+    {
+      "path": "new-close-2/driver.log.gz",
+      "sha256": "530999995ff0a4943a4f3b21d567566f1245f2c23cd2c1436f617bc4ec5e766b",
+      "uncompressed_sha256": "3f7f86a41fe0a7a4ef2756bfcb45d748065e1381a156f996948f71293126eb67"
+    },
+    {
+      "path": "new-close-2/NEW/native.log.gz",
+      "sha256": "e4ad76f6ffdb7e8ab02d594315d94c89cbdfbd9c272fb51f0e87674bb46c0e6e",
+      "uncompressed_sha256": "1c444004620eb1d21809da4eeae5ac32b850caf9e504b0969d667cbdc4a584f8"
+    },
+    {
+      "path": "new-close-2/NEW/stderr.log.gz",
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "new-close-2/NEW/before.png",
+      "sha256": "b1c48eb109d01841c24926198ce3bae12cc9d021f6a9a0a4b90771c7498fa302",
+      "uncompressed_sha256": "b1c48eb109d01841c24926198ce3bae12cc9d021f6a9a0a4b90771c7498fa302"
+    },
+    {
+      "path": "pm045_native_close_release_motion_barrier.py.gz",
+      "sha256": "1fcd7602263810867b18ec63c51e909742bbf0cb521e31614109b8fcad7aa226",
+      "uncompressed_sha256": "262bb8b318890ad30b3d00ada97fdf157c75a236a19eb083ef27c35b8c632d23"
+    },
+    {
+      "path": "pm045_native_new_close_release_target_extent.py.gz",
+      "sha256": "99b50bf19f9bbfcaf4745dd21afc4cee2ca400c207dd9dfc0e587e716adee915",
+      "uncompressed_sha256": "40a6e893c784d5bc0f6f6bd2d0b92fb04c1daa0cecd67447d2453383db4ecc80"
+    }
+  ]
+}
