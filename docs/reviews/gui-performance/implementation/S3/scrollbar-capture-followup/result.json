@@ -1,0 +1,42 @@
+{
+  "base_commit": "cb6ab892",
+  "binary_sha256": "01180c4e55ca2ff4b44ee883ee4fd36abf09588b13dc81a7b5a24837ef642abc",
+  "production": {
+    "status": "Bounded capture discrepancy follow-up; native visual qualification remains open",
+    "production_consumers": [
+      "GLOBAL Preferences shared native pointer/scroll/render path"
+    ],
+    "retired_paths": "None; no production code or dependency changes.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/scrollbar-capture-followup/result.json",
+    "proof": "Two current-release 1x X11 trials each report delivered drag with one presentation and zero press/release presentations. First run retains initial Appearance pixels across all six captures. Second run later captures visibly reach final Angle precision row and bottom thumb without additional app presentations. Alternate Spectacle window-under-cursor capture times out after35 seconds with no image.",
+    "limits": "This distinguishes capture observations from app presentation counts in these runs; it does not establish a reliable capture mechanism, exact numerical offset, root cause, or complete native acceptance. Driver passed means only event/count assertions passed. No S3 exit, resource qualification, resize investigation or visual-policy change."
+  },
+  "visual_review": {
+    "settled": "All captures show initial Appearance page; a longer delay alone is insufficient.",
+    "compositor": "bottom-4.png shows Units final Angle precision row and thumb at bottom. bottom-2/3/4 are identical. No compositor image obtained."
+  },
+  "next_action": "Require semantic final-state image review for subsequent native scrollbar trials; do not accept driver event/count pass as visual proof or repeat unmodified compositor timeout probes.",
+  "artifact_sha256": {
+    "compositor/before.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "compositor/bottom-1.png": "9d2428c3739fd2eb3f8f2483a330313191cb95d36dfbbeaf71050d548c7656cb",
+    "compositor/bottom-2.png": "ad2948d8d30404b4330010cb51e3bcb0baf3aed7426b34f7e21d827e39970003",
+    "compositor/bottom-3.png": "ad2948d8d30404b4330010cb51e3bcb0baf3aed7426b34f7e21d827e39970003",
+    "compositor/bottom-4.png": "ad2948d8d30404b4330010cb51e3bcb0baf3aed7426b34f7e21d827e39970003",
+    "compositor/bottom.png": "ba61ce906e695efbb14f36768c089239b513a3d0cb08b01178115189b0530b8c",
+    "compositor/native.log.gz": "a5e06c203345b65f646a83f370f0b9f1f17105e2eeeca66d8043a28db91efc5d",
+    "compositor/result.json": "12e855ca4ce98c2e02112512ad3fb291851e6edac25f0fd047663dc52dd4a2b9",
+    "compositor/spectacle.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "compositor/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "compositor-driver.py.gz": "5df16aa6c62ab69c1d21865e846e2fc91bade5f9fcd2353da16a520e5700142c",
+    "settled/before.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "settled/bottom-1.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "settled/bottom-2.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "settled/bottom-3.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "settled/bottom-4.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "settled/bottom.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "settled/native.log.gz": "38e8508e00fa3c7a039ee0a1d9e04040eedd61f66202356dec1d43896eee248a",
+    "settled/result.json": "2475a132815a5954cca944990fbaffecdb2d865e1c0995b6089ce09b4bf3db3c",
+    "settled/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "settled-driver.py.gz": "87a638f416dfad6103fcc3943914e81424e435260fc7383488089c68332325c5"
+  }
+}

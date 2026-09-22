@@ -7285,7 +7285,8 @@
         "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json",
         "docs/reviews/gui-performance/implementation/S3/painted-scrollbar-native-negative/result.json",
         "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer/result.json",
-        "docs/reviews/gui-performance/implementation/S3/current-scrollbar-x11/result.json"
+        "docs/reviews/gui-performance/implementation/S3/current-scrollbar-x11/result.json",
+        "docs/reviews/gui-performance/implementation/S3/scrollbar-capture-followup/result.json"
       ],
       "s3_native_preferences_track_progress": {
         "status": "bounded native Preferences page-track pass; full qualification open",
@@ -7383,7 +7384,8 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/current-scrollbar-x11/result.json",
         "proof": "All6 trials on release01180c4e pass: actual thumb press/release each0 new dialog presentations, delivered drag1; raw lifecycle audit shows0 Main presentations after thumb press. Accepted extents960x720,1440x1050,1918x1050 are recorded.",
         "limits": "X11/Xwayland only, visual overrides not monitor transitions. Compositor constrained larger requested dimensions. Counts and event delivery alone do not establish exact scroll offset or causal attribution of every changed frame. Inspected1x Global bottom PNG shows earlier top-of-content state; Project shows bottom rows. Capture freshness/displayed final state stays unqualified. Remaining profiles/native qualification and dat-native-input-delivery-vq7w remain open despite these passes. SIGTERM cleanup is not teardown qualification. No full HP21/S3/performance/resource/resize acceptance or dependency/visual-policy change."
-      }
+      },
+      "s3_capture_followup_progress": "Two current-release 1x X11 trials each report delivered drag with one presentation and zero press/release presentations. First run retains initial Appearance pixels across all six captures. Second run later captures visibly reach final Angle precision row and bottom thumb without additional app presentations. Alternate Spectacle window-under-cursor capture times out after35 seconds with no image. This distinguishes capture observations from app presentation counts in these runs; it does not establish a reliable capture mechanism, exact numerical offset, root cause, or complete native acceptance. Driver passed means only event/count assertions passed. No S3 exit, resource qualification, resize investigation or visual-policy change."
     },
     {
       "id": "HP21-02",
@@ -29225,5 +29227,15 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/current-scrollbar-x11/result.json",
     "proof": "All6 trials on release01180c4e pass: actual thumb press/release each0 new dialog presentations, delivered drag1; raw lifecycle audit shows0 Main presentations after thumb press. Accepted extents960x720,1440x1050,1918x1050 are recorded.",
     "limits": "X11/Xwayland only, visual overrides not monitor transitions. Compositor constrained larger requested dimensions. Counts and event delivery alone do not establish exact scroll offset or causal attribution of every changed frame. Inspected1x Global bottom PNG shows earlier top-of-content state; Project shows bottom rows. Capture freshness/displayed final state stays unqualified. Remaining profiles/native qualification and dat-native-input-delivery-vq7w remain open despite these passes. SIGTERM cleanup is not teardown qualification. No full HP21/S3/performance/resource/resize acceptance or dependency/visual-policy change."
+  },
+  "s3_scrollbar_capture_followup_work": {
+    "status": "Bounded capture discrepancy follow-up; native visual qualification remains open",
+    "production_consumers": [
+      "GLOBAL Preferences shared native pointer/scroll/render path"
+    ],
+    "retired_paths": "None; no production code or dependency changes.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/scrollbar-capture-followup/result.json",
+    "proof": "Two current-release 1x X11 trials each report delivered drag with one presentation and zero press/release presentations. First run retains initial Appearance pixels across all six captures. Second run later captures visibly reach final Angle precision row and bottom thumb without additional app presentations. Alternate Spectacle window-under-cursor capture times out after35 seconds with no image.",
+    "limits": "This distinguishes capture observations from app presentation counts in these runs; it does not establish a reliable capture mechanism, exact numerical offset, root cause, or complete native acceptance. Driver passed means only event/count assertions passed. No S3 exit, resource qualification, resize investigation or visual-policy change."
   }
 }
