@@ -1,0 +1,26 @@
+{
+  "candidate_base": "1a06d19fc7a61c4f7dc06fc72150fc28c5ad6e2d",
+  "status": "Shared Preferences search compares borrowed fields without lowercase copies",
+  "requirements": [
+    "HP12-02",
+    "HP23-01"
+  ],
+  "production_change": "visible_rows borrows trimmed query and performs ASCII-insensitive byte-window matching across labels, descriptions, keys, aliases and control values. Renderer, accessibility and keyboard navigation inherit one predicate.",
+  "source_sha256": "9cbc0b7383a2e865e415be13f49f2a2adbd36531d8340e04cc0ebccb05966eae",
+  "binary_sha256": "fd10c50fa5e11864c7814a980c45ab14a96d86eb2c278338f3c390a803c4e275",
+  "verification": {
+    "protocol": "1 passed,121 filtered; mixed ASCII/non-ASCII/empty/longer/substrings",
+    "app": "380 passed,14 ignored; existing cross-section search now mixed case with surrounding whitespace",
+    "release": "passed",
+    "clippy": "-D warnings passed",
+    "native": "Both1x hosts show four precision results for PrEcIsIoN; fitting-result wheel0 frames, clearing search restores wheel1 frame. Both captures inspected."
+  },
+  "limits": "Structural removal of lowercase String copies, not a measured CPU/frame-time or complete allocation claim. Integer value-plus-suffix formatting remains. ASCII-only folding preserved, not expanded Unicode normalization. Native X11/Xwayland1x search/clear is bounded; remaining backend/scale, full search/focus/HP12/HP23/S3 qualification open. No dependency/license/prototype/budget/resize change.",
+  "artifact_sha256": {
+    "app.log.gz": "1565eebba982bc5db52e9fd5d880bbf3a9d658f1706bc76717a983a90d8bfac4",
+    "build.log.gz": "b7741dc1ebc444799567e3d40e35a099fc33ab54b6fd10fd6d081aafb0170f51",
+    "clippy.log.gz": "ab7657d9b60ec4ca69c541a295d4538890ea0ab9322498bc741eff57564c43a3",
+    "native.tar.gz": "de20d9756f2da3eb22b2d83875f2f0180251a8ebdd0f147ce049cc88ed4c1a7c",
+    "protocol.log.gz": "7a812de77ebf38c24abaec813bb9619d7a1430f749ea22fca84ab937bb5f4b8c"
+  }
+}

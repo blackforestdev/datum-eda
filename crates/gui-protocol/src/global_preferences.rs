@@ -150,17 +150,17 @@ impl GlobalPreferencesDialogState {
     }
 
     pub fn visible_rows(&self) -> impl Iterator<Item = &GlobalPreferenceRowUi> {
-        let query = self.search_query.trim().to_ascii_lowercase();
+        let query = self.search_query.trim();
         self.rows.iter().filter(move |row| {
             (query.is_empty() && row.section_id == self.section_id)
                 || (!query.is_empty()
-                    && (row.label.to_ascii_lowercase().contains(&query)
-                        || row.description.to_ascii_lowercase().contains(&query)
-                        || row.key.to_ascii_lowercase().contains(&query)
+                    && (contains_ascii_case_insensitive(&row.label, query)
+                        || contains_ascii_case_insensitive(&row.description, query)
+                        || contains_ascii_case_insensitive(&row.key, query)
                         || row
                             .aliases
                             .iter()
-                            .any(|alias| alias.to_ascii_lowercase().contains(&query))
+                            .any(|alias| contains_ascii_case_insensitive(alias, query))
                         || match &row.control {
                             GlobalPreferenceControlUi::Boolean {
                                 off_label,
@@ -168,23 +168,21 @@ impl GlobalPreferencesDialogState {
                                 ..
                             } => [off_label, on_label]
                                 .iter()
-                                .any(|label| label.to_ascii_lowercase().contains(&query)),
+                                .any(|label| contains_ascii_case_insensitive(label, query)),
                             GlobalPreferenceControlUi::SingleChoice { choices, .. } => {
                                 choices.iter().any(|(value, label)| {
-                                    value.to_ascii_lowercase().contains(&query)
-                                        || label.to_ascii_lowercase().contains(&query)
+                                    contains_ascii_case_insensitive(value, query)
+                                        || contains_ascii_case_insensitive(label, query)
                                 })
                             }
                             GlobalPreferenceControlUi::Integer { value, suffix, .. } => {
-                                format!("{value}{suffix}")
-                                    .to_ascii_lowercase()
-                                    .contains(&query)
+                                contains_ascii_case_insensitive(&format!("{value}{suffix}"), query)
                             }
                             GlobalPreferenceControlUi::Identity { value, .. } => value
                                 .as_deref()
-                                .is_some_and(|value| value.to_ascii_lowercase().contains(&query)),
+                                .is_some_and(|value| contains_ascii_case_insensitive(value, query)),
                             GlobalPreferenceControlUi::Structured { value_summary, .. } => {
-                                value_summary.to_ascii_lowercase().contains(&query)
+                                contains_ascii_case_insensitive(value_summary, query)
                             }
                         }))
         })
@@ -449,6 +447,35 @@ impl GlobalPreferencesDialogState {
             self.open = false;
             self.reset_transient_view();
             GlobalPreferencesDismissal::DialogClosed
+        }
+    }
+}
+
+// Preserve ASCII-only case folding without copying every searchable field.
+fn contains_ascii_case_insensitive(text: &str, query: &str) -> bool {
+    query.is_empty()
+        || text
+            .as_bytes()
+            .windows(query.len())
+            .any(|candidate| candidate.eq_ignore_ascii_case(query.as_bytes()))
+}
+
+#[cfg(test)]
+mod search_tests {
+    use super::contains_ascii_case_insensitive;
+
+    #[test]
+    fn borrowed_search_preserves_ascii_and_utf8_substring_rules() {
+        for (text, query, expected) in [
+            ("Board Precision", "pReCiSiOn", true),
+            ("µm display", "µM", true),
+            ("ÄBC", "äbc", false),
+            ("ÄBC", "Äbc", true),
+            ("a", "longer", false),
+            ("", "", true),
+            ("µm", "m", true),
+        ] {
+            assert_eq!(contains_ascii_case_insensitive(text, query), expected);
         }
     }
 }

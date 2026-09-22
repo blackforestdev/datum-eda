@@ -100,7 +100,7 @@ fn projection_preserves_the_accepted_slice_while_full_catalog_work_remains_stage
             .count(),
         3
     );
-    ui.global_preferences.search_query = "Board precision".to_owned();
+    ui.global_preferences.search_query = "  BoArD PrEcIsIoN  ".to_owned();
     let cross_section_results = ui.global_preferences.visible_rows().collect::<Vec<_>>();
     assert_eq!(cross_section_results.len(), 1);
     assert_eq!(cross_section_results[0].section_id, "units");
