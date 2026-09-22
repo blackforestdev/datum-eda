@@ -1,9 +1,10 @@
 use super::{
     BoardSurfaceRole, PANEL_CARD_BORDER, PaneRect, Quad, REVIEW_ROW_ACTIVE_BG, RectPx, ShellLayout,
     TEXT_ACCENT, TEXT_MUTED, TEXT_PRIMARY, TextFace, TextRun, VIEWPORT_BG, board_surface_color,
-    design_tokens, draw_text, draw_text_clipped, ellipse_points, estimated_text_run_width_px,
-    inset_rect, push_convex_polygon_fill, push_rect_border,
+    design_tokens, draw_text, draw_text_clipped, estimated_text_run_width_px, inset_rect,
+    push_rect_border,
 };
+use crate::global_preferences_primitives::ControlPainter;
 
 /// Render the workspace pane tiling described by the `WorkspaceLayout` tree:
 /// walk its leaf set (generalized to N leaves, nested H/V splits, and zoom) and
@@ -22,7 +23,7 @@ pub(super) fn render_viewport_panes(
     layout: &ShellLayout,
     workspace: &datum_gui_protocol::WorkspaceLayout,
     has_schematic_scene: bool,
-    panel_quads: &mut Vec<Quad>,
+    panel_quads: &mut ControlPainter<'_>,
     text_runs: &mut Vec<TextRun>,
 ) {
     let panes = layout.viewport_panes(workspace);
@@ -183,7 +184,7 @@ fn render_pane_header(
     title: &str,
     tools: &[&str],
     focused: bool,
-    panel_quads: &mut Vec<Quad>,
+    panel_quads: &mut ControlPainter<'_>,
     text_runs: &mut Vec<TextRun>,
 ) {
     let header = pane.header;
@@ -333,15 +334,36 @@ fn render_pane_header(
             width: 7.0,
             height: 7.0,
         };
-        let dot_points = ellipse_points(
-            (dot.x + dot.width * 0.5, dot.y + dot.height * 0.5),
-            dot.width,
-            dot.height,
-            0.0,
-            20,
-        );
-        push_convex_polygon_fill(panel_quads, &dot_points, TEXT_ACCENT);
+        panel_quads.convex_ellipse_fill(dot, TEXT_ACCENT, 24);
         let pane_frame = inset_rect(pane.frame, 1.0, 1.0, 1.0, 1.0);
         push_rect_border(panel_quads, pane_frame, TEXT_ACCENT, 1.5);
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::global_preferences_primitives::ControlMeshCache;
+
+    #[test]
+    fn production_pane_headers_reuse_the_shared_focus_indicator() {
+        let state = datum_gui_protocol::load_fixture_workspace_state();
+        let mut cache = ControlMeshCache::default();
+        for width in [1280, 1281, 1400] {
+            let layout = ShellLayout::for_surface(width, 800, 1.0, None);
+            let mut quads = Vec::new();
+            render_viewport_panes(
+                &layout,
+                &state.ui.layout,
+                false,
+                &mut ControlPainter::new(&mut quads, &mut cache, 1.0),
+                &mut Vec::new(),
+            );
+            assert!(!quads.is_empty());
+            assert_eq!(
+                cache.builds, 1,
+                "pane relocation must not retessellate the dot"
+            );
+        }
     }
 }

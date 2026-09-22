@@ -86,7 +86,16 @@ impl PreparedScene {
         panel_quads.push(Quad::from_rect(layout.status_bar, PANEL_BG));
         viewport_underlay_quads.push(Quad::from_rect(layout.viewport, VIEWPORT_BG));
 
-        render_phase1_shell_chrome(state, &layout, &mut panel_quads, &mut text_runs);
+        render_phase1_shell_chrome(
+            state,
+            &layout,
+            &mut crate::global_preferences_primitives::ControlPainter::new(
+                &mut panel_quads,
+                controls,
+                scale,
+            ),
+            &mut text_runs,
+        );
         menu_chrome::render_menu_bar(
             state,
             &layout,

@@ -5954,6 +5954,10 @@
           "evidence": "docs/reviews/gui-performance/implementation/S3/ellipse-control-negative/result.json",
           "limits": "Supports HP16-01 shared search-icon adoption. Does not independently qualify all GLOBAL/PROJECT/NEW controls or MAIN/INSPECTOR/MENU, native event adapters, complete resource caps, negative matrix or performance budgets. Existing201CPU/13GPU positive evidence remains separately recorded. S3 remains open and1bc02aaf remains unapproved."
         }
+      },
+      "s3_pane_indicator_progress": {
+        "status": "partial MAIN focused-pane indicator adoption; full row remains unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/pane-indicator-retention/result.json"
       }
     },
     {
@@ -6028,6 +6032,10 @@
       "s3_ellipse_progress": {
         "status": "partial GLOBAL/PROJECT/NEW circular-control adoption; full row remains unqualified",
         "evidence": "docs/reviews/gui-performance/implementation/S3/ellipse-control-retention/result.json"
+      },
+      "s3_pane_indicator_progress": {
+        "status": "partial MAIN focused-pane indicator adoption; full row remains unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/pane-indicator-retention/result.json"
       }
     },
     {
@@ -6102,6 +6110,10 @@
       "s3_ellipse_progress": {
         "status": "partial GLOBAL/PROJECT/NEW circular-control adoption; full row remains unqualified",
         "evidence": "docs/reviews/gui-performance/implementation/S3/ellipse-control-retention/result.json"
+      },
+      "s3_pane_indicator_progress": {
+        "status": "partial MAIN focused-pane indicator adoption; full row remains unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/pane-indicator-retention/result.json"
       }
     },
     {
@@ -27012,5 +27024,17 @@
       }
     ],
     "scope": "20 S3 map rows reconciled; no acceptance rule, lifecycle, authorization, qualification deadline or earlier receipt changed. S3 stays in progress; S4/S5 pending."
+  },
+  "s3_pane_indicator_retention_work": {
+    "status": "bounded S3 MAIN pane-indicator control adoption; full HP16 qualification open",
+    "production_consumers": [
+      "MAIN focused Board/Schematic/Revision pane header indicator"
+    ],
+    "retired_paths": [
+      "Per-frame ellipse_points allocation/trigonometry and convex-fan generation for the Main focused-pane dot",
+      "Main pane chrome accepting only raw quad output instead of the existing renderer control owner"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/pane-indicator-retention/result.json",
+    "limits": "No full MAIN/INSPECTOR/MENU family adoption, native focus, isolated negative for this indicator, complete resource accounting/caps or numerical performance acceptance. Per-frame translated vertex materialization remains. S3 stays open;1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
   }
 }
