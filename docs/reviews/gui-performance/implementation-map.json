@@ -5461,7 +5461,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial: both native Preferences use dialog-only preparation and empty retained world; current renderer regression checks no retained-world resolve and no workspace output. Complete per-host forbidden-work counters and prescribed workspace-clone negative remain open.",
+        "status": "Partial: both native Preferences use dialog-only preparation and empty retained world. Existing shared renderer positive and general-world negative/restored test now distinguish forbidden retained resolution. Complete per-host forbidden-work attribution remains open; fixture titles do not establish both native adapters.",
         "id": "proof_hp12_01",
         "positive": "Prepare each Preferences sections/expanded choices at scale/scroll",
         "negative_control": "Clone workspace or invoke general world path",
@@ -5513,11 +5513,22 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/dialog-empty-scene/result.json",
-        "docs/reviews/gui-performance/implementation/S3/dialog-local-refresh/result.json"
+        "docs/reviews/gui-performance/implementation/S3/dialog-local-refresh/result.json",
+        "docs/reviews/gui-performance/implementation/S3/preferences-world-negative/result.json"
       ],
       "s3_dialog_local_refresh_progress": {
         "status": "bounded production cache invalidation convergence; full requirement qualification remains open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-local-refresh/result.json"
+      },
+      "s3_preferences_world_negative_progress": {
+        "status": "Existing shared Preferences preparation test detects forbidden retained-world preparation",
+        "production_consumers": [
+          "GLOBAL and PROJECT use PreparedScene::from_native_preferences_cached through their shared renderer owner"
+        ],
+        "retired_paths": "No production or test changes; execute existing prescribed general-world negative in isolated source copy.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/preferences-world-negative/result.json",
+        "proof": "Existing positive and explicitly recompiled restored renderer test each1pass/217filtered. Inject RetainedScene::from_workspace using the existing repository workspace fixture into shared dialog preparation: retained resolve count2vs1 fails. All tracked isolated Rust/Cargo sources byte-restored; negative and restored binary hashes differ.",
+        "limits": "Shared renderer-owner CPU proof. Existing positive uses one Preferences fixture with Global/Project titles, scroll rows and1/1.5 scale; negative aborts at first profile. Not both native-host accounting, OS input, every section, workspace-clone detection, hidden-terminal/full-shell attribution or full HP12/S3 acceptance. Requirement permits clone workspace OR general world path; this executes the latter. No production/dependency/license/prototype/resource/resize or sequencing change."
       }
     },
     {
@@ -28255,7 +28266,7 @@
       "remaining_actions": {
         "HP10-01": "Complete OS-delivered wheel/no-preparation proof. Default native routing owner now exercised by real Runtime for non-Layers and editor zoom; prior preparation negative retained.",
         "HP10-02": "Complete exact native final-offset/capture qualification and remaining profiles. Existing actual Runtime test now detects consumed Layers input incorrectly dispatching board zoom, with restored positive. Retain bounded X11 OS wheel/locality/clean-close pass and earlier input/capture failures; no full acceptance from direct Runtime negative.",
-        "HP12-01": "Complete native forbidden-work attribution and the prescribed workspace/general-world negative against the dialog-only preparation boundary.",
+        "HP12-01": "Complete native per-host forbidden-work attribution across required states. Existing shared Preferences preparation test now detects injected general-world preparation (resolve count2vs1) and restored positive passes. This satisfies the shared-owner general-world negative alternative, not workspace-clone/hidden-terminal/full-shell or both-host native accounting.",
         "HP12-02": "Complete remaining control/focus/partial-row and OS transition cases. Actual GLOBAL/PROJECT surface publication/scale/extent positives and both-host scale-clear negative/restored pass now recorded; durable enum scope and post-edit Reset hit retained.",
         "HP13-01": "Complete remaining backend/scale changed-state pass proof and final single-candidate matrix. NEW2x edit/scroll/reveal now has17 dialog-only samples and final Cancel hit; both Preferences1/1.5/2x have bounded expanded receipts across pinned builds. Existing general-pass negative and input/capture failures retained.",
         "HP13-02": "Complete native controlling visual/backend/scale coverage. Prescribed text-behind-card negative is now detected by existing GPU parity test with restored positive; requirement permits reduced AA OR text behind card, so no additional AA negative is imposed. Existing GPU regressions remain bounded evidence.",
@@ -29129,5 +29140,15 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/layers-zoom-fallthrough-negative/result.json",
     "proof": "Positive and explicitly recompiled restored native Runtime test each1pass/395filtered. Isolated faulty consumed-Layers dispatch into zoom_focused_view changes camera zoom1.0 to1.12 and fails intended camera assertion. Full tracked Rust/Cargo source copy byte-restored; negative/restored executable hashes differ.",
     "limits": "Negative deliberately dispatches consumed Layers input to focused-board zoom; merely removing early return would still face pointer viewport guards. Direct native Runtime wheel invocation, not OS-delivered input or displayed final-offset proof. Existing OS evidence and unresolved input/capture failures remain. No full HP10/S3 acceptance, production behavior, dependency/license/prototype/resource deadline or resize change."
+  },
+  "s3_preferences_world_negative_work": {
+    "status": "Existing shared Preferences preparation test detects forbidden retained-world preparation",
+    "production_consumers": [
+      "GLOBAL and PROJECT use PreparedScene::from_native_preferences_cached through their shared renderer owner"
+    ],
+    "retired_paths": "No production or test changes; execute existing prescribed general-world negative in isolated source copy.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/preferences-world-negative/result.json",
+    "proof": "Existing positive and explicitly recompiled restored renderer test each1pass/217filtered. Inject RetainedScene::from_workspace using the existing repository workspace fixture into shared dialog preparation: retained resolve count2vs1 fails. All tracked isolated Rust/Cargo sources byte-restored; negative and restored binary hashes differ.",
+    "limits": "Shared renderer-owner CPU proof. Existing positive uses one Preferences fixture with Global/Project titles, scroll rows and1/1.5 scale; negative aborts at first profile. Not both native-host accounting, OS input, every section, workspace-clone detection, hidden-terminal/full-shell attribution or full HP12/S3 acceptance. Requirement permits clone workspace OR general world path; this executes the latter. No production/dependency/license/prototype/resource/resize or sequencing change."
   }
 }
