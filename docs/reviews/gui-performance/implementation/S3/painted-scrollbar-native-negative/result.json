@@ -53,6 +53,20 @@
     "negative/GLOBAL/before.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
     "negative/PROJECT/native.log.gz": "b25dfd576bd9a07a5be629f7b6fdec00239873e4432b7d3be624fd4ca71bfa47",
     "negative/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
-    "negative/PROJECT/before.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7"
+    "negative/PROJECT/before.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "connection-hold/driver.py.gz": "2380241103ef7040f5f549a466adf0d35c5964a65d833df48aa7040c237a7786",
+    "connection-hold/result.json": "49c0206d31c0e17f9346290511088711fa98db3802b7ccd6c1508cc6fb1c11e0",
+    "connection-hold/GLOBAL/native.log.gz": "8a4722f78603282d504d5209f0a2182181068ead6b66a72768d28b6cbd462629",
+    "connection-hold/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "connection-hold/GLOBAL/before.png": "ba61ce906e695efbb14f36768c089239b513a3d0cb08b01178115189b0530b8c",
+    "connection-hold/GLOBAL/bottom.png": "9d2428c3739fd2eb3f8f2483a330313191cb95d36dfbbeaf71050d548c7656cb",
+    "connection-hold/PROJECT/native.log.gz": "b49ae1cf1dc279d6895fe6fcb7d409316039fa04322a0a258baf8243c80b3723",
+    "connection-hold/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "connection-hold/PROJECT/before.png": "11f6281b1fcf92276872066a641d2ecf8237396b211642bc23fe31a86022f6df"
+  },
+  "connection_hold_followup": {
+    "command": "PM045_TEST_SCALE=1 PM045_GUI_BIN=/home/bfadmin/Documents/datum-eda/target/pm045-painted-scrollbar-proof/positive-gui python3 /tmp/pm045_native_painted_scrollbar_connection.py /tmp/pm045-painted-scrollbar-connection",
+    "exit_code": 1,
+    "result": "Bounded unchanged-positive replay with xdotool sleep0.15 before same-connection focus roundtrip: GLOBAL passes press/drag/release; PROJECT times out before initial thumb press delivery. Connection hold does not resolve native delivery. No renderer scheduling change or qualification claim."
   }
 }
