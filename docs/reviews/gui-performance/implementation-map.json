@@ -5516,7 +5516,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial: shared control/hit composition and physical clipping tests pass; actual GLOBAL/PROJECT native enum edits now verify durable scope through committed Global generation and canonical Project transaction. Full control/focus/partial-row/backend/scale and stale-transform negative qualification remains open. Initial missed-control setup retained separately. Actual hidden GLOBAL/PROJECT surfaces now verify publication and stale-scale/extent rejection. Shared scale-clear negative fails in GLOBAL and restored both-host positive passes; independent PROJECT negative/OS transitions remain unqualified.",
+        "status": "Partial: actual GLOBAL/PROJECT durable enum scope and shared control composition retained. Both actual owned surfaces now verify presented search hits and stale scale/extent rejection; shared scale-clear removal is detected independently in both hosts, and restored positive passes. Full controls/focus/partial-row/backend and OS scale-transition qualification remain open.",
         "id": "proof_hp12_02",
         "positive": "Edit controls and hit partial rows",
         "negative_control": "Reuse stale hit transform",
@@ -5569,7 +5569,8 @@
         "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json",
         "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json",
         "docs/reviews/gui-performance/implementation/S3/search-byte-fast-path/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-publication/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-publication/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-both-hosts/result.json"
       ],
       "s3_explanation_focus_reveal_progress": {
         "status": "Shared explanation Close focus reveal implemented in default GLOBAL/PROJECT surfaces",
@@ -5654,6 +5655,17 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-publication/result.json",
         "proof": "Real hidden X11/Vulkan surfaces render both dialog states. Ordinary invalidation keeps presented search hit;1->1.5->2->1 scale changes reject old hit before presentation and publish replacement; changed extent clears hit, unchanged extent retains it. Removing only scale-change clear fails intended old-scale assertion; byte-restored source passes.",
         "limits": "Production surface methods invoked directly, not OS pointer/DPI/resize events or monitor transitions. Negative aborts in GLOBAL before PROJECT; independent PROJECT negative remains unqualified. Search target only, no native focus/partial-row/edit/static parity, full HP12/S3 or resize-performance acceptance. Runtime, dependencies/licenses, prototypes, resource deadlines and resize exclusions unchanged."
+      },
+      "s3_native_dialog_hit_both_hosts_progress": {
+        "status": "Both actual Preferences surfaces now detect the isolated stale-scale defect",
+        "production_consumers": [
+          "GLOBAL Preferences owned native surface",
+          "PROJECT Preferences owned native surface"
+        ],
+        "retired_paths": "No runtime changes. Test no longer aborts before Project or owned PTY teardown when Global stale-scale detection fails.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-both-hosts/result.json",
+        "proof": "Positive and restored runs each pass1 test/394 filtered. Negative reports stale hits independently for GLOBAL and PROJECT at1.5,2,1 scale transitions, after both paths and owned terminal shutdown complete.",
+        "limits": "Direct surface methods on actual hidden X11/Vulkan windows, not OS-delivered pointer/DPI/resize events or real monitor transitions. Search-target publication only. Remaining control/focus/partial-row, backend and full HP12/S3 qualification stays open. Runtime, dependency/license, prototype, resource deadlines and resize exclusions unchanged."
       }
     },
     {
@@ -28110,7 +28122,7 @@
         "HP10-01": "Complete OS-delivered wheel/no-preparation proof. Default native routing owner now exercised by real Runtime for non-Layers and editor zoom; prior preparation negative retained.",
         "HP10-02": "Complete native final-state/input/close qualification and prescribed fallthrough negative. Bounded OS wheel locality, zero boundary presentations, reversal and unchanged board crop are observed; three failed complete trials remain explicit. Real Runtime proves effective capacity and camera routing.",
         "HP12-01": "Complete native forbidden-work attribution and the prescribed workspace/general-world negative against the dialog-only preparation boundary.",
-        "HP12-02": "Complete remaining control/focus/partial-row and OS transition cases, plus independent PROJECT stale-transform negative. Actual GLOBAL/PROJECT surface publication/scale/extent positives and GLOBAL scale-clear negative now recorded; durable enum scope and post-edit Reset hit retained.",
+        "HP12-02": "Complete remaining control/focus/partial-row and OS transition cases. Actual GLOBAL/PROJECT surface publication/scale/extent positives and both-host scale-clear negative/restored pass now recorded; durable enum scope and post-edit Reset hit retained.",
         "HP13-01": "Complete remaining backend/scale changed-state pass proof and final single-candidate matrix. NEW2x edit/scroll/reveal now has17 dialog-only samples and final Cancel hit; both Preferences1/1.5/2x have bounded expanded receipts across pinned builds. Existing general-pass negative and input/capture failures retained.",
         "HP13-02": "Complete prescribed AA/painter-order negative and native visual/backend/scale coverage; existing14 GPU regressions remain bounded evidence.",
         "HP14-01": "Complete remaining settings/backend warm-reuse cases and final single-candidate qualification. Both Preferences1/1.5/2x expanded trials now have six zero-miss samples and semantic expansion proof; prior failure and one-frame negative retained. Full resource precondition stays S4/S5.",
@@ -28868,5 +28880,16 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-publication/result.json",
     "proof": "Real hidden X11/Vulkan surfaces render both dialog states. Ordinary invalidation keeps presented search hit;1->1.5->2->1 scale changes reject old hit before presentation and publish replacement; changed extent clears hit, unchanged extent retains it. Removing only scale-change clear fails intended old-scale assertion; byte-restored source passes.",
     "limits": "Production surface methods invoked directly, not OS pointer/DPI/resize events or monitor transitions. Negative aborts in GLOBAL before PROJECT; independent PROJECT negative remains unqualified. Search target only, no native focus/partial-row/edit/static parity, full HP12/S3 or resize-performance acceptance. Runtime, dependencies/licenses, prototypes, resource deadlines and resize exclusions unchanged."
+  },
+  "s3_native_dialog_hit_both_hosts_work": {
+    "status": "Both actual Preferences surfaces now detect the isolated stale-scale defect",
+    "production_consumers": [
+      "GLOBAL Preferences owned native surface",
+      "PROJECT Preferences owned native surface"
+    ],
+    "retired_paths": "No runtime changes. Test no longer aborts before Project or owned PTY teardown when Global stale-scale detection fails.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-both-hosts/result.json",
+    "proof": "Positive and restored runs each pass1 test/394 filtered. Negative reports stale hits independently for GLOBAL and PROJECT at1.5,2,1 scale transitions, after both paths and owned terminal shutdown complete.",
+    "limits": "Direct surface methods on actual hidden X11/Vulkan windows, not OS-delivered pointer/DPI/resize events or real monitor transitions. Search-target publication only. Remaining control/focus/partial-row, backend and full HP12/S3 qualification stays open. Runtime, dependency/license, prototype, resource deadlines and resize exclusions unchanged."
   }
 }
