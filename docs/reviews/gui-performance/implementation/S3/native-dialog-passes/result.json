@@ -1,0 +1,34 @@
+{
+  "base_commit": "c9a40c8187f311b228c231bd6a3c1eefa2f22864",
+  "production": {
+    "status": "Native dialog pass names and redundant-general-path negative verified",
+    "production_consumers": [
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "shared_owner": "Renderer::render_overlay_only and existing native owned-window render dispatch",
+    "retired_paths": "No new runtime retirement; verifies existing dialog-only adoption and detects reintroduction of the general multi-pass path.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-passes/result.json",
+    "limits": "Fresh startup/default dialog states only, GLOBAL/PROJECT/NEW on native Wayland and X11. Existing opt-in timestamp query pass labels used as bounded encoding-path evidence, not performance/overhead or default instrumentation adoption. Source review establishes single resolve attachment. No expanded-state/full scale, independent replay, pixel/input, resource or full S3 qualification; no source, dependency, prototype, budget or resize change."
+  },
+  "verification": {
+    "native": "All6 host/backend cases passed. GLOBAL/PROJECT/NEW samples contain only dialog; Wayland2 startup samples/host, X11one/host. Full raw logs and measured pass names retained.",
+    "negative": "Existing production GPU measurement/pixel regression fails at expected dialog pass-name assertion when fast path is bypassed in a disposable checkout: observed scene/menu-background/menu-text instead of dialog. Empty general text pass is skipped.",
+    "restored": "Same selected GPU regression passes after byte-restoring production source in the same disposable checkout.",
+    "resolve_source": "gpu_overlay.rs contains one begin_render_pass with one resolve_target. General gpu_frame.rs contains the historical scene/text/menu-background/menu-text passes and resolve attachments."
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "999c93fd77bc04be89714f60c79212e3d49a1146f373154b71b4340bdb1d2d43",
+    "crates/gui-render/src/render/gpu_overlay.rs": "f12b1a4f32c2777a76f86a9bb44ea86f18aa31602c43e089e0ab48a9b2581525",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "48d428e7db2a5673b8ecf47cbfd18d5498d840f399ae3c450c7ecf015b4b59cd"
+  },
+  "limits": "Fresh startup/default dialog states only, GLOBAL/PROJECT/NEW on native Wayland and X11. Existing opt-in timestamp query pass labels used as bounded encoding-path evidence, not performance/overhead or default instrumentation adoption. Source review establishes single resolve attachment. No expanded-state/full scale, independent replay, pixel/input, resource or full S3 qualification; no source, dependency, prototype, budget or resize change.",
+  "artifact_sha256": {
+    "native-results.json": "b72ade81af61a2e541670738dbd43a96b24cbcbfec5efe425edc6b571795334e",
+    "native-driver.py": "fb11dae41db254251148705fdc33f2bfd71890e509c20b6f3832fceae5ef0c2f",
+    "restored.log.gz": "f918619c36d85d5c5258506fbac26b2707318e1ba58288d97d660de2430afd6a",
+    "negative.patch": "d38ad82be80d2793bfdb6092b6efd545a699410e7ca8aaba6a75f8649100a42d",
+    "negative.log.gz": "33d01075571b804b7321547a0b7603c9f29ec5f236c6b30c49ac950d5308c2f5"
+  }
+}
