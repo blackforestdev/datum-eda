@@ -6450,7 +6450,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial: shared Preferences adapter leaves physical pixel delta unscaled and converts line40logicalpx once; existing component test covers fractional scale. Layers/terminal retain their row policies. Full required per-adapter scale/hit-target oracles and scaling negative remain open.",
+        "status": "Partial: shared dialog adapter converts physical cursor/pixel deltas to logical once and uses40logicalpx line steps. Existing1/1.5/2x regression now rejects a production mis-scaling injection and passes after byte restoration. Bounded Preferences native scale trials are recorded separately; full native stream/hit and Layers/terminal qualification remain open.",
         "id": "proof_hp19_01",
         "positive": "Physical pixel/line deltas at1x/1.5x/2x and corresponding hits",
         "negative_control": "Double-scale pixels or invert sign",
@@ -6496,8 +6496,16 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
-      ]
+        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
+        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-negative/result.json"
+      ],
+      "s3_dialog_dpi_negative": {
+        "status": "Prescribed pixel-delta mis-scaling negative detected; byte-restored converter passes",
+        "production_target": "Shared native dialog physical-to-logical wheel converter",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-dpi-negative/result.json",
+        "retired_paths": "No new runtime migration; verifies the production DPI correction already landed in3bc06974.",
+        "limits": "The actual shared native-surface converter is directly exercised with1/1.5/2x pixel/line deltas, cursor locality and boundary/reversal. Shared GLOBAL/PROJECT/NEW call paths consume it; this test does not deliver OS events or render their windows. No complete HP19, Layers/terminal, native stream, independent replay, S3, performance or resource qualification. Active source and release binary unchanged."
+      }
     },
     {
       "id": "HP20-01",
@@ -27594,5 +27602,12 @@
     "retired_paths": "No new production path retired in this read-only reconciliation. Resolves the outstanding classification of Main/Inspector/Menu fixed rectangles versus retained curved controls.",
     "finding": "No additional rectangle-control cache migration is required by HP16 rounded-control arc/general-tessellator predicate in this inspected inventory. Preserve direct primitives and the authored geometry algorithms. Proceed with actual outstanding qualification/implementation requirements, not a fabricated rectangle cache project.",
     "limits": "No new Rust/native/performance proof, full HP16 acceptance, dependency, prototype, budget or sequencing change. S3 remains in progress."
+  },
+  "s3_dialog_dpi_negative": {
+    "status": "Prescribed pixel-delta mis-scaling negative detected; byte-restored converter passes",
+    "production_target": "Shared native dialog physical-to-logical wheel converter",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-dpi-negative/result.json",
+    "retired_paths": "No new runtime migration; verifies the production DPI correction already landed in3bc06974.",
+    "limits": "The actual shared native-surface converter is directly exercised with1/1.5/2x pixel/line deltas, cursor locality and boundary/reversal. Shared GLOBAL/PROJECT/NEW call paths consume it; this test does not deliver OS events or render their windows. No complete HP19, Layers/terminal, native stream, independent replay, S3, performance or resource qualification. Active source and release binary unchanged."
   }
 }
