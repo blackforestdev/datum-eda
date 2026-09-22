@@ -6585,7 +6585,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared reflow capture cancellation has isolated component negative proof and default native extent/DPI/identity routes release stale grabs. Complete native release/focus/close/capture-loss/final-target qualification remains open.",
+        "status": "Partial: shared reflow capture cancellation has isolated component negative proof and default native extent/DPI/identity routes release stale grabs. Complete native release/focus/close/capture-loss/final-target qualification remains open. Bounded94402793 GLOBAL/PROJECT focus-loss cancellation and fresh scrollbar grab now pass natively at1000x750; complete capture and final-target matrix remains open.",
         "id": "proof_hp21_02",
         "positive": "Release/focus/capture loss/close or content resize mid-drag",
         "negative_control": "Keep stale drag capture",
@@ -6628,7 +6628,21 @@
       "component_negative_proof": {
         "status": "reflow-owner negative fails, restored positive passes; native qualification open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-reflow-negative/result.json"
-      }
+      },
+      "s3_native_scroll_focus_loss_progress": {
+        "status": "bounded GLOBAL/PROJECT native focus-loss scroll cancellation pass; full qualification open",
+        "production_consumers": [
+          "GLOBAL Preferences shared native gesture cancellation and ScrollViewport",
+          "PROJECT Preferences shared native gesture cancellation and ScrollViewport"
+        ],
+        "retired_paths": "No new migration; exercises existing focus-loss cancellation and subsequent fresh scrollbar routing.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-scroll-focus-loss/result.json",
+        "proof": "Both hosts: old grab movement/release cause zero presentations and unchanged RGB pixels; fresh grab presents once and reaches bottom. Focus transitions and fresh target verified in logs/captures.",
+        "limits": "Bounded focus-loss cancellation and fresh scrollbar target proof only. No full HP21-02 or S3 acceptance, close/DPI/reflow/all-capture/backend/scale matrix, unrelated control target, independent negative, resource/latency or teardown qualification. No new production migration or dependency/license/prototype/budget/resize-scope change. S3 proposal1bc02aaf remains unapproved."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/native-scroll-focus-loss/result.json"
+      ]
     },
     {
       "id": "HP22-01",
@@ -27183,5 +27197,16 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-preferences-track/result.json",
     "proof": "Fresh release94402793. Both directions present once per dialog; each release presents zero. Actual target/coordinates confirmed; six screenshots inspected and exact whole-window RGB return checked.",
     "limits": "Bounded page-track evidence only, not complete HP21/HP22 or S3 qualification. No capture-loss/focus/close, arbitrary grab displacement, hidden-control click-through, independent negative, backend/scale matrix, latency/resource or teardown acceptance. Historical failures remain unchanged. Pending S3 proposal1bc02aaf remains unapproved."
+  },
+  "s3_native_scroll_focus_loss_work": {
+    "status": "bounded GLOBAL/PROJECT native focus-loss scroll cancellation pass; full qualification open",
+    "production_consumers": [
+      "GLOBAL Preferences shared native gesture cancellation and ScrollViewport",
+      "PROJECT Preferences shared native gesture cancellation and ScrollViewport"
+    ],
+    "retired_paths": "No new migration; exercises existing focus-loss cancellation and subsequent fresh scrollbar routing.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-scroll-focus-loss/result.json",
+    "proof": "Both hosts: old grab movement/release cause zero presentations and unchanged RGB pixels; fresh grab presents once and reaches bottom. Focus transitions and fresh target verified in logs/captures.",
+    "limits": "Bounded focus-loss cancellation and fresh scrollbar target proof only. No full HP21-02 or S3 acceptance, close/DPI/reflow/all-capture/backend/scale matrix, unrelated control target, independent negative, resource/latency or teardown qualification. No new production migration or dependency/license/prototype/budget/resize-scope change. S3 proposal1bc02aaf remains unapproved."
   }
 }
