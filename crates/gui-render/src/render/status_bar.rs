@@ -3,7 +3,7 @@
 // interaction-overlay wiring. A real `#[path] mod` child of the crate root
 // (declared in `scene.rs`), so it reaches the crate-root render helpers, colour
 // constants, and layout types via `use super::*` exactly as the inline code did.
-// Behaviour is unchanged — a verbatim move.
+// Paint is clipped through the shared ancestor owner after segment layout.
 
 use super::*;
 
@@ -34,6 +34,7 @@ pub(crate) fn render_status_bar(
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
 ) {
+    let starts = (panel_quads.len(), text_runs.len());
     let sb = layout.status_bar;
     // Single top-edge hairline (no boxed 4-side border).
     panel_quads.push(Quad::from_rect(
@@ -160,5 +161,46 @@ pub(crate) fn render_status_bar(
             TextFace::Mono,
             text_runs,
         );
+    }
+    crate::hit_clipping::clip_content(
+        panel_quads,
+        text_runs,
+        &mut Vec::new(),
+        starts.0,
+        starts.1,
+        0,
+        sb,
+    );
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn actual_status_segments_share_strip_bounds_at_constrained_extents() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.supervision.checks.finding_count = 17;
+        for width in [1, 50, 320, 1280] {
+            let layout = ShellLayout::for_surface(width, 800, 1.0, None);
+            let mut quads = Vec::new();
+            let mut text = Vec::new();
+            render_status_bar(&state, &layout, &mut quads, &mut text);
+            let bounds = layout.status_bar;
+            for quad in &quads {
+                for &(x, y) in &quad.points {
+                    assert!(bounds.contains(x, y));
+                }
+            }
+            for run in &text {
+                let clip = run.clip_bounds.expect("status ancestor clip");
+                assert!(clip.x >= bounds.x && clip.x + clip.width <= bounds.x + bounds.width);
+                assert!(clip.y >= bounds.y && clip.y + clip.height <= bounds.y + bounds.height);
+            }
+            if width == 1280 {
+                assert!(text.iter().any(|run| run.text == "DRC 17"));
+                assert!(text.iter().any(|run| run.text == "focus"));
+            }
+        }
     }
 }

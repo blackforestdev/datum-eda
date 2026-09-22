@@ -152,6 +152,7 @@ fn render_pane_placeholder(
     panel_quads: &mut Vec<Quad>,
     text_runs: &mut Vec<TextRun>,
 ) {
+    let starts = (panel_quads.len(), text_runs.len());
     let canvas = RectPx {
         x: pane.frame.x,
         y: pane.header.y + pane.header.height,
@@ -171,6 +172,15 @@ fn render_pane_placeholder(
         TEXT_MUTED,
         TextFace::Mono,
         text_runs,
+    );
+    crate::hit_clipping::clip_content(
+        panel_quads,
+        text_runs,
+        &mut Vec::new(),
+        starts.0,
+        starts.1,
+        0,
+        canvas,
     );
 }
 
@@ -359,6 +369,42 @@ fn render_pane_header(
 mod tests {
     use super::*;
     use crate::global_preferences_primitives::ControlMeshCache;
+
+    #[test]
+    fn placeholder_captions_stay_in_their_own_canvas() {
+        for width in [1.0, 25.0, 800.0] {
+            let pane = PaneRect {
+                frame: RectPx {
+                    x: 30.0,
+                    y: 40.0,
+                    width,
+                    height: 200.0,
+                },
+                header: RectPx {
+                    x: 30.0,
+                    y: 40.0,
+                    width,
+                    height: 31.0,
+                },
+                scene: RectPx {
+                    x: 46.0,
+                    y: 82.0,
+                    width: (width - 32.0).max(0.0),
+                    height: 142.0,
+                },
+            };
+            let mut quads = Vec::new();
+            let mut text = Vec::new();
+            render_pane_placeholder(&pane, "Inactive · click to focus", &mut quads, &mut text);
+            assert!(!text.is_empty());
+            for run in &text {
+                let clip = run.clip_bounds.expect("placeholder ancestor clip");
+                assert!(clip.x >= pane.frame.x && clip.x + clip.width <= pane.frame.x + width);
+                assert!(clip.y >= pane.header.y + pane.header.height);
+                assert!(clip.y + clip.height <= pane.frame.y + pane.frame.height);
+            }
+        }
+    }
 
     #[test]
     fn constrained_pane_headers_clip_all_paint_without_clipping_the_focus_frame() {
