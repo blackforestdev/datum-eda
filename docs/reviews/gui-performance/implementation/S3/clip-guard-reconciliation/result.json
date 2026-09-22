@@ -1,0 +1,51 @@
+{
+  "scope": "GPI-S3 supporting reconciliation for already-migrated shared hit clipping",
+  "production_consumers": [
+    "Editor hit suffix clipping shared owner; production code unchanged in this follow-up"
+  ],
+  "retired_paths": [
+    "Guard requiring obsolete retain_mut/index loop syntax after extract_if suffix migration."
+  ],
+  "guard_changes": [
+    "Check only clip_new_hit_regions body, not unrelated content clipping.",
+    "Require clamped suffix start, suffix extraction, viewport intersection, stored clipped rectangle and consumed extraction iterator."
+  ],
+  "verification": {
+    "guard_tests": "11 passed; missing-marker negative variants and unrelated-owner substitution detected.",
+    "current_guard": "Five remaining focus/font/text-cache failures; no full convergence pass.",
+    "source_health": "2223 source files,13 policy tests passed",
+    "drift": "Workspace formatting/Clippy and preceding gates pass; stops at five unchanged focus/font/text-cache failures. Three old clipping-loop failures resolved, no full drift pass."
+  },
+  "native_attempt": {
+    "consumer": "PROJECT explanation expansion while held",
+    "outcome": "Inconclusive: thumb-press frame check failed (4 ->17 frames) with a series of received pointer positions not commanded by this driver. Focus-taking trials stopped and owned process closed. No product defect or desktop-use attribution.",
+    "next_condition": "Owner confirms desktop availability before more native input. Independent work continued."
+  },
+  "limits": [
+    "No new production migration, native content-change pass, HP22 or S3 acceptance.",
+    "Full guard remains red; remaining five checks not waived or declared harmless.",
+    "No dependency, style/prototype, sequencing or resize change."
+  ],
+  "artifacts": {
+    "convergence.log.gz": {
+      "raw_sha256": "b6f1fbb4a32a9f7d9ba428cb06ebcd0c66d3164847b5564e70ce005e1e4e6006",
+      "sha256": "81f75c43689f60d36e4f6667de7d5385a1720f512908a80f5144ce29b7ea64a6"
+    },
+    "native-failed-result.json.gz": {
+      "raw_sha256": "3fcc1317cc28cba6cfee002ffaf8bdc9b780c45a433cb48ff033691fd5d7ae6c",
+      "sha256": "39d23f85cf6d5827a578becd817afd5f369964c521bcbc4144f7636bf19b5175"
+    },
+    "native-failed.log.gz": {
+      "raw_sha256": "736c135f02968657e4957a000f7e3e730e000eac8549fdd53ebb66be16d1eb58",
+      "sha256": "ebefb9f60a6dc1596de6d1a79a70976775a6f2aa372434e4ce6eca2198cd31d7"
+    },
+    "native-driver.py.gz": {
+      "raw_sha256": "289876d48e0543445ef504dee471a3e1490ba667b710128ce7100d25c210a8bb",
+      "sha256": "2dc1d60bce6ab5767b2083e36c6cd1e5f1748e9569d3f4bff775218577c04487"
+    },
+    "drift.log.gz": {
+      "raw_sha256": "df877c8378be9b591fa27c375e54ea2b4e13ffda3ff138182b938bd9cfe27866",
+      "sha256": "f39d13b9e9e811928cdca3f2a5bc1011d5f900c7ad99bc407208bb7d269557c0"
+    }
+  }
+}
