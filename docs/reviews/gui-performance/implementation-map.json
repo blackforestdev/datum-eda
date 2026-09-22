@@ -6579,6 +6579,21 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-dpi-negative/result.json",
         "retired_paths": "No new runtime migration; verifies the production DPI correction already landed in3bc06974.",
         "limits": "The actual shared native-surface converter is directly exercised with1/1.5/2x pixel/line deltas, cursor locality and boundary/reversal. Shared GLOBAL/PROJECT/NEW call paths consume it; this test does not deliver OS events or render their windows. No complete HP19, Layers/terminal, native stream, independent replay, S3, performance or resource qualification. Active source and release binary unchanged."
+      },
+      "s3_terminal_wheel_bounds_progress": {
+        "status": "Production terminal wheel adapter adopts shared effective discrete-row bounds and changed-only damage",
+        "production_consumers": [
+          "TERMINAL active Main dock scrollback and mouse-report wheel adapter"
+        ],
+        "shared_owner": "datum_gui_viewport::scroll::scrolled_row_offset; existing terminal_screen_geometry visible row count",
+        "retired_paths": [
+          "Private total-row-only clamp that allowed stored offsets beyond visible scrollback",
+          "Unconditional Main invalidation at terminal scroll boundaries",
+          "Zero vertical or non-finite wheel input treated as vertical terminal mouse action"
+        ],
+        "preserved": "One row per scrollback wheel event, backward-from-live-screen offset, terminal state and PTY write authority. Existing native dock route consumes local wheel events.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-wheel-bounds/result.json",
+        "limits": "Default Main dock terminal scrollback only. Hidden X11/Vulkan Runtime test proves local boundary damage and effective offset bounds; OS wheel delivery, nonempty-history reversal, mouse-report bytes, backend/scale and full HP19/S3 qualification remain open. No layout/style, PTY/parser/selection authority, dependencies/license, numerical budget or resize-scope change."
       }
     },
     {
@@ -27725,5 +27740,20 @@
     "retired_paths": "No runtime behavior changed; replaces earlier zero-test filter as bounded verification of existing default production routing.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/layers-runtime-route/result.json",
     "limits": "Actual hidden X11/Vulkan Board Runtime with real owner fixture, direct production handle_layer_scroll calls and presented hit publication. Does not deliver OS wheel events or test outer event-dispatch fallthrough. No full HP10/S3/native/backend/scale/resource/performance acceptance. No dependency, license, prototype, sequencing or resize-scope change."
+  },
+  "s3_terminal_wheel_bounds_work": {
+    "status": "Production terminal wheel adapter adopts shared effective discrete-row bounds and changed-only damage",
+    "production_consumers": [
+      "TERMINAL active Main dock scrollback and mouse-report wheel adapter"
+    ],
+    "shared_owner": "datum_gui_viewport::scroll::scrolled_row_offset; existing terminal_screen_geometry visible row count",
+    "retired_paths": [
+      "Private total-row-only clamp that allowed stored offsets beyond visible scrollback",
+      "Unconditional Main invalidation at terminal scroll boundaries",
+      "Zero vertical or non-finite wheel input treated as vertical terminal mouse action"
+    ],
+    "preserved": "One row per scrollback wheel event, backward-from-live-screen offset, terminal state and PTY write authority. Existing native dock route consumes local wheel events.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-wheel-bounds/result.json",
+    "limits": "Default Main dock terminal scrollback only. Hidden X11/Vulkan Runtime test proves local boundary damage and effective offset bounds; OS wheel delivery, nonempty-history reversal, mouse-report bytes, backend/scale and full HP19/S3 qualification remain open. No layout/style, PTY/parser/selection authority, dependencies/license, numerical budget or resize-scope change."
   }
 }

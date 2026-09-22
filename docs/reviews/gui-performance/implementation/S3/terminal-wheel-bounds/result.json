@@ -1,0 +1,41 @@
+{
+  "base_commit": "6c5aa982b63843b3ba53db763de25da71c1f9f68",
+  "issue": "dat-terminal-wheel-bounds-8v77",
+  "production": {
+    "status": "Production terminal wheel adapter adopts shared effective discrete-row bounds and changed-only damage",
+    "production_consumers": [
+      "TERMINAL active Main dock scrollback and mouse-report wheel adapter"
+    ],
+    "shared_owner": "datum_gui_viewport::scroll::scrolled_row_offset; existing terminal_screen_geometry visible row count",
+    "retired_paths": [
+      "Private total-row-only clamp that allowed stored offsets beyond visible scrollback",
+      "Unconditional Main invalidation at terminal scroll boundaries",
+      "Zero vertical or non-finite wheel input treated as vertical terminal mouse action"
+    ],
+    "preserved": "One row per scrollback wheel event, backward-from-live-screen offset, terminal state and PTY write authority. Existing native dock route consumes local wheel events.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-wheel-bounds/result.json",
+    "limits": "Default Main dock terminal scrollback only. Hidden X11/Vulkan Runtime test proves local boundary damage and effective offset bounds; OS wheel delivery, nonempty-history reversal, mouse-report bytes, backend/scale and full HP19/S3 qualification remain open. No layout/style, PTY/parser/selection authority, dependencies/license, numerical budget or resize-scope change."
+  },
+  "verification": {
+    "baseline": "New actual Runtime boundary regression fails on old code: bottom boundary must not redraw.",
+    "candidate": "1 selected hidden X11/Vulkan Runtime test passes, 391 filtered. Checks bottom/top boundary, finite/no-op handling, current effective maximum. Reversal branch is conditional on initial history and is not claimed as qualified.",
+    "app": "378 passed, 14 ignored (includes new native Layers and terminal tests); no failures",
+    "clippy": "App binary/tests -D warnings passed",
+    "release": "Fresh guarded offline release build passed",
+    "mouse_report_guard": "Production source checked and app suite/Clippy pass; no active mouse-report PTY byte test claimed."
+  },
+  "visual_authority": "No paint or style changes. Existing rendered PM045 terminal/prototype references remain controlling guidance; no new visual qualification claimed.",
+  "source_sha256": {
+    "crates/gui-app/src/artifact_preview_controls.rs": "3060f08b944831a82db7e2bfbc1574c044396976b4a85482d080d034e318da16",
+    "crates/gui-app/src/runtime_terminal_pointer.rs": "b6dda840f9242a551d8e3c60c81741f968ce73f84caa09225390349019b620da",
+    "crates/gui-app/src/native_terminal_scroll_tests.rs": "a4510bc78267d330c00e8614d1588655c694b7e66dbec9c23d32266810c3e858"
+  },
+  "limits": "Default Main dock terminal scrollback only. Hidden X11/Vulkan Runtime test proves local boundary damage and effective offset bounds; OS wheel delivery, nonempty-history reversal, mouse-report bytes, backend/scale and full HP19/S3 qualification remain open. No layout/style, PTY/parser/selection authority, dependencies/license, numerical budget or resize-scope change.",
+  "artifact_sha256": {
+    "positive.log.gz": "496c3e8d721cd9605bd40f5fd41b661338a98b14d3e5f7dbc1b8e80200c8f803",
+    "app.log.gz": "3ddbdd1e6964adfb753e2410aa714e587b638c018cb159a8f33d12cdfff685d6",
+    "clippy.log.gz": "5b8e3ec513b78de58eab345021261e38f5bd11a9a4b151c1336b53eb86ae40ed",
+    "baseline.log.gz": "98c9c497d8e0afd287010760e036d962e5a75b579429691e527977f770675b98",
+    "build.log.gz": "bd6da5db95f5743afe461bfd4e8fdbdc12a0c45734bdcc7045f8102e38eaca66"
+  }
+}

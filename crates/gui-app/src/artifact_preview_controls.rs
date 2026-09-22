@@ -60,23 +60,33 @@ impl Runtime {
     }
 
     pub(super) fn handle_dock_scroll(&mut self, scroll_lines: f32) -> bool {
-        let Some(active) = self.workspace().ui.active_dock_tab else {
+        if self.workspace().ui.active_dock_tab != Some(DockTab::Terminal)
+            || !scroll_lines.is_finite()
+            || scroll_lines.abs() <= 0.01
+        {
             return false;
-        };
-        let delta = if scroll_lines > 0.0 { 1_usize } else { 0_usize };
-        let terminal_row_count = self.terminal_sessions.active_render_row_count();
-        let ui = &mut self.session.workspace_mut().ui;
-        match active {
-            DockTab::Terminal => {
-                if scroll_lines > 0.0 {
-                    ui.terminal.scroll_offset =
-                        (ui.terminal.scroll_offset + delta).min(terminal_row_count);
-                } else {
-                    ui.terminal.scroll_offset = ui.terminal.scroll_offset.saturating_sub(1);
-                }
-            }
         }
-        self.invalidate_frame();
-        true
+        let total = self.terminal_sessions.active_render_row_count();
+        let visible = usize::from(self.terminal_screen_geometry().rows);
+        let offset = &mut self.session.workspace_mut().ui.terminal.scroll_offset;
+        let before = datum_gui_viewport::scroll::scrolled_row_offset(*offset, total, visible, 0.0);
+        // Scrollback counts backward from the live screen, one row per wheel
+        // event. Share effective bounds without changing terminal row authority.
+        let next = datum_gui_viewport::scroll::scrolled_row_offset(
+            before,
+            total,
+            visible,
+            -scroll_lines.signum(),
+        );
+        *offset = next;
+        let changed = next != before;
+        if changed {
+            self.invalidate_frame();
+        }
+        changed
     }
 }
+
+#[cfg(test)]
+#[path = "native_terminal_scroll_tests.rs"]
+mod native_terminal_scroll_tests;
