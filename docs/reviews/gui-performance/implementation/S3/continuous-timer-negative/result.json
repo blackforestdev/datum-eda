@@ -1,0 +1,58 @@
+{
+  "candidate_base": "ea5f0e989182bc62c95413d9c766c40ac6d912e4",
+  "status": "Both native idle oracles detect injected continuous redraw timer",
+  "requirement": "HP23-02",
+  "positive_binary_sha256": "4bf4f0a411c175cf61f4204031597092132fdfa8b0f11f47a395e737e33a0317",
+  "negative_binary_sha256": "455682bb0fc4505fbe5c831048592dcaa5ff35fc04760ddffc291a22c11ece7d",
+  "restored_working_binary_sha256": "4bf4f0a411c175cf61f4204031597092132fdfa8b0f11f47a395e737e33a0317",
+  "injection_source": "crates/gui-app/src/app_native_events.rs",
+  "source_scope": "Only this file differs from candidate_base in local clone; active production checkout unchanged.",
+  "build_command": "CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target python3 /tmp/pm045-timer-negative-source/scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release --manifest-path /tmp/pm045-timer-negative-source/Cargo.toml -p datum-gui-app",
+  "observations": {
+    "positive": [
+      {
+        "host": "GLOBAL",
+        "idle_frames": {
+          "main": 0,
+          "dialog": 0
+        },
+        "passed": true
+      },
+      {
+        "host": "PROJECT",
+        "idle_frames": {
+          "main": 0,
+          "dialog": 0
+        },
+        "passed": true
+      }
+    ],
+    "negative": [
+      {
+        "host": "GLOBAL",
+        "idle_frames": {
+          "main": 120,
+          "dialog": 120
+        },
+        "passed": false
+      },
+      {
+        "host": "PROJECT",
+        "idle_frames": {
+          "main": 120,
+          "dialog": 120
+        },
+        "passed": false
+      }
+    ]
+  },
+  "fixture_configuration": "GUI-written isolated configuration preserved in S3/native-reduced-motion/setup.tar.gz; each trial copied it. Corrected driver pins existing release CLI.",
+  "limits": "Native X11/Xwayland1x idle recipe with GUI-written reduced_motion=true. Controlled16ms timer injection in one source file in a local clone; calls existing shared redraw owner and wait policy. No production source changed. This proves idle defect sensitivity, not all scale/backend, timing/statistical, resource or S3 acceptance. Unpinned CLI startup timeouts retained as setup failures. Working release binary restored to positive hash; no dependency/license/prototype/budget/resize change.",
+  "artifact_sha256": {
+    "build.log.gz": "9170d25f8c12e7a2614e2dc00810bfee385b3b25a2c93393ae2d12fab3e5ef42",
+    "negative.patch.gz": "dcae5112b2d432a7f907e2bccfadf54b0acd40196a1b2090b247ac98f7c68c00",
+    "negative.tar.gz": "012a8a7683a7e4a437a5d16fbae3d83692e50ac4d2a37eaed149efa4b5f5125c",
+    "positive.tar.gz": "58b1cd3eb98e40bbf865c5b2bc4037018da834a0452e58cb714e3cfd6d7b63bc",
+    "unpinned-cli.tar.gz": "347f314d76d1d70198b942e7595f6a0038a56cbb4d8f845b09b7fa4719814249"
+  }
+}
