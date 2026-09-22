@@ -3,7 +3,10 @@
 use super::*;
 #[path = "render/control_mesh.rs"]
 mod control_mesh;
+#[path = "render/input_text.rs"]
+mod input_text;
 pub(crate) use control_mesh::{ControlMeshCache, ControlPainter};
+pub(crate) use input_text::{InputTextLayout, paint_input_text};
 
 const ROUNDED_RECT_CORNER_SEGMENTS: usize = 4;
 

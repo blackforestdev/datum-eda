@@ -1,0 +1,114 @@
+{
+  "display": ":1",
+  "wayland_display": "wayland-0",
+  "topology": "Owner-confirmed idle desktop X11/Xwayland; ordinary capture only; no drag qualification",
+  "binary_sha256": "953f94b31368ddbb642fff8cd059ce0cfe3351788d3b5844026c4823238f001c",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-global-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "6291461"
+          ],
+          "monotonic": 784032.165852377,
+          "wall_time": 1790047182.0355244,
+          "pointer_after": "X=960\nY=478\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "510",
+            "285",
+            "click",
+            "1"
+          ],
+          "monotonic": 784032.245566006,
+          "wall_time": 1790047182.1152358,
+          "pointer_after": "X=510\nY=285\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1454",
+            "308"
+          ],
+          "monotonic": 784032.784369888,
+          "wall_time": 1790047182.6540396,
+          "pointer_after": "X=1454\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        }
+      ],
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-project-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "6291461"
+          ],
+          "monotonic": 784035.831676277,
+          "wall_time": 1790047185.7013464,
+          "pointer_after": "X=1454\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1454",
+            "308"
+          ],
+          "monotonic": 784036.321342709,
+          "wall_time": 1790047186.1910129,
+          "pointer_after": "X=1454\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        }
+      ],
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    }
+  ]
+}

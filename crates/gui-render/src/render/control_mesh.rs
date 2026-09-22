@@ -83,6 +83,10 @@ impl<'a> ControlPainter<'a> {
         Self { quads, cache, dpi }
     }
 
+    pub(crate) fn scale_factor(&self) -> f32 {
+        self.dpi
+    }
+
     pub(crate) fn rounded_fill(&mut self, rect: RectPx, color: [f32; 3], radius: f32, border: f32) {
         let radius = radius.max(0.0).min(rect.width * 0.5).min(rect.height * 0.5);
         let key = Key {

@@ -5470,6 +5470,11 @@
       "s3_focus_key_replay_progress": {
         "status": "actual GLOBAL/PROJECT/NEW synthetic-versus-fresh Escape focus cases pass; complete row remains unqualified",
         "evidence": "docs/reviews/gui-performance/implementation/S3/focus-key-replay/result.json"
+      },
+      "s3_shared_input_text_progress": {
+        "status": "default shared single-line input text/caret painting with stable layout extent",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/shared-input-text/result.json",
+        "limits": "Bounded shared input painting only. Native burst typing remains inconclusive (dat-native-new-project-typing-capture-xgt); initial GLOBAL scroll timed out after drag/release, PROJECT passed. No full input/minimum-width/scale/backend, resource/negative or S3 qualification. No dependency/license, prototype, sequencing or nonblocking resize change."
       }
     },
     {
@@ -6853,6 +6858,11 @@
         ],
         "evidence": "docs/reviews/gui-performance/implementation/S3/control-label-layout/result.json",
         "limits": "Bounded GLOBAL/PROJECT/NEW shared control-label adoption; full native input, long-label pixel, negative/resource and S3 qualification remain open. S3 amendment remains unapproved; no dependency/license/prototype/budget change, resize remains nonblocking."
+      },
+      "s3_shared_input_text_progress": {
+        "status": "default shared single-line input text/caret painting with stable layout extent",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/shared-input-text/result.json",
+        "limits": "Bounded shared input painting only. Native burst typing remains inconclusive (dat-native-new-project-typing-capture-xgt); initial GLOBAL scroll timed out after drag/release, PROJECT passed. No full input/minimum-width/scale/backend, resource/negative or S3 qualification. No dependency/license, prototype, sequencing or nonblocking resize change."
       }
     },
     {
@@ -27410,5 +27420,19 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-drag-delivery/result.json",
     "proof": "Both hosts: press/release and boundary wheel zero presentations; drag and reverse one each. All six captures RGB identical to committed native-preferences-scroll baselines. Bottom capture inspected; final row visible.",
     "limits": "Bounded1x X11 native scroll evidence only. No complete S3, input/scale/backend matrix, latency, private-resource, hidden-control or independent-negative acceptance. Prior failed trials remain preserved. Two input-method changes were combined; cause of prior missing drag events remains unproven. No runtime, dependency/license, prototype, budget or sequencing change; resize remains nonblocking."
+  },
+  "s3_shared_input_text_work": {
+    "status": "default shared single-line input text/caret painting with stable layout extent",
+    "production_consumers": [
+      "GLOBAL/PROJECT Preferences search fields",
+      "NEW Project name and destination fields"
+    ],
+    "retired_paths": [
+      "Separate text/caret measurement and painting implementations in Preferences and New Project",
+      "Input text painting outside field content bounds or a partial second line inside the field"
+    ],
+    "preserved": "Existing field/control geometry, spacing profiles, placeholder focus gap, New Project92-character truncation, caret dimensions, colors, fonts and input/hit authority. Layout extent follows the shared painter scale and remains independent of ancestor visibility.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/shared-input-text/result.json",
+    "limits": "Bounded shared input painting only. Native burst typing remains inconclusive (dat-native-new-project-typing-capture-xgt); initial GLOBAL scroll timed out after drag/release, PROJECT passed. No full input/minimum-width/scale/backend, resource/negative or S3 qualification. No dependency/license, prototype, sequencing or nonblocking resize change."
   }
 }

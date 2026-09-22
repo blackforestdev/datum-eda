@@ -88,3 +88,43 @@ fn new_project_controls_retain_meshes_and_match_cold_composition() {
         assert!(actual == capture_retained(&mut renderer, &reset, &retained));
     }
 }
+
+#[test]
+#[ignore = "requires local GPU; bounded production input clipping proof"]
+fn new_project_long_name_paints_only_inside_its_field() {
+    let mut renderer = hardware_renderer(760, 750);
+    let mut dialog = datum_gui_protocol::NewProjectDialogState {
+        open: true,
+        ..Default::default()
+    };
+    let empty = renderer
+        .renderer
+        .prepare_native_new_project(&dialog, 760, 750, 1.0);
+    let before = capture(&mut renderer, &empty);
+    dialog.project_name = "W".repeat(90);
+    let filled = renderer
+        .renderer
+        .prepare_native_new_project(&dialog, 760, 750, 1.0);
+    let field = filled
+        .hit_regions
+        .iter()
+        .find(|hit| hit.target == crate::HitTarget::NewProjectName)
+        .expect("name field")
+        .rect;
+    let after = capture(&mut renderer, &filled);
+    assert_ne!(before, after);
+    for y in 0..750 {
+        for x in 0..760 {
+            if !field.contains(x as f32, y as f32) || y as f32 >= field.y + 28.0 {
+                assert_eq!(
+                    before.get_pixel(x, y),
+                    after.get_pixel(x, y),
+                    "field overflow at {x},{y}"
+                );
+            }
+        }
+    }
+    if let Ok(path) = std::env::var("DATUM_INPUT_TEXT_CAPTURE") {
+        after.save(path).unwrap();
+    }
+}

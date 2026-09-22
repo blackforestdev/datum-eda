@@ -1,0 +1,51 @@
+{
+  "base_commit": "c75ae56f",
+  "production": {
+    "status": "default shared single-line input text/caret painting with stable layout extent",
+    "production_consumers": [
+      "GLOBAL/PROJECT Preferences search fields",
+      "NEW Project name and destination fields"
+    ],
+    "retired_paths": [
+      "Separate text/caret measurement and painting implementations in Preferences and New Project",
+      "Input text painting outside field content bounds or a partial second line inside the field"
+    ],
+    "preserved": "Existing field/control geometry, spacing profiles, placeholder focus gap, New Project92-character truncation, caret dimensions, colors, fonts and input/hit authority. Layout extent follows the shared painter scale and remains independent of ancestor visibility.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/shared-input-text/result.json",
+    "limits": "Bounded shared input painting only. Native burst typing remains inconclusive (dat-native-new-project-typing-capture-xgt); initial GLOBAL scroll timed out after drag/release, PROJECT passed. No full input/minimum-width/scale/backend, resource/negative or S3 qualification. No dependency/license, prototype, sequencing or nonblocking resize change."
+  },
+  "proof": {
+    "renderer_tests": 211,
+    "gpu_tests": 14,
+    "backend": "Intel P630 Vulkan serial",
+    "clippy": "renderer lib/tests -D warnings pass",
+    "release": "fresh guarded offline optimized application build pass",
+    "known_value_gpu": "Actual production New Project renderer with90-W project name at760x750. Changed pixels confined to name field; lower field strip identical, enforcing one visible line. Initial capture exposed a partial second line; retained initial-wrapped.png and inspected corrected known-long.png. This bypasses native input and is not typing qualification.",
+    "native_normal": "Final GLOBAL/PROJECT/NEW1000x750 ordinary captures RGB identical to prior committed baselines. No drag/typing acceptance follows from ordinary captures.",
+    "native_input": "Rapid270-W and slower90-W recipes produced much shorter visible strings; slower native log records90 non-synthetic presses and presented damage93. Cause is unproven; intake issue dat-native-new-project-typing-capture-xgt records the discrepancy. Initial GLOBAL scroll attempt timed out after drag/release; PROJECT passed. Preserve these attempts without qualification.",
+    "source_health": "base-ref HEAD check passes; no legacy ceiling changes"
+  },
+  "visual_review": {
+    "sources": [
+      {
+        "path": "docs/gui/prototypes/preferences-window.html",
+        "sha256": "d9b2d814b8c1f2ac273039a574b3a038700b909cf109ee47f1c3c2f5e1ce7895"
+      },
+      {
+        "path": "docs/gui/prototypes/start-page-study.html",
+        "sha256": "4922cbc0812b35a258a8bb2d79c270e38c1048021640f5ee7cd3d795d733a587"
+      }
+    ],
+    "rendered_references": [
+      "docs/reviews/gui-performance/implementation/S3/control-label-layout/preferences-prototype.png",
+      "docs/reviews/gui-performance/implementation/S3/new-project-summary-clipping/prototype.png"
+    ],
+    "disposition": "Previously rendered current relevant prototype studies guide the compact single-line field hierarchy and focus treatment. Preserve native spacing profiles; no pixel-exact prototype mandate, HTML edit, new product behavior or reserved setting activation."
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/input_text.rs": "923aa93fd07f094ae7be63464efd228b63a91a11a9e0b69a2055f35bae50dbcc",
+    "crates/gui-render/src/global_preferences_dialog.rs": "35eeb3a1c9c1de9e084d0d454e636dcc1454a2882cd573d24f5d41d70507a375",
+    "crates/gui-render/src/new_project_dialog.rs": "743379e9e114473f7e5184c4712635dff9ead602cbc2149ad21240660ae16af8"
+  },
+  "limits": "Bounded shared input painting only. Native burst typing remains inconclusive (dat-native-new-project-typing-capture-xgt); initial GLOBAL scroll timed out after drag/release, PROJECT passed. No full input/minimum-width/scale/backend, resource/negative or S3 qualification. No dependency/license, prototype, sequencing or nonblocking resize change."
+}
