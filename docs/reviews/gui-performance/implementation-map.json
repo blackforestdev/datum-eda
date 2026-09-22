@@ -7771,7 +7771,8 @@
         "docs/reviews/gui-performance/implementation/S3/close-release-handoff/result.json",
         "docs/reviews/gui-performance/implementation/S3/close-release-profiles/result.json",
         "docs/reviews/gui-performance/implementation/S3/close-release-profiles/project-2-followup/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-entry-backends/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-entry-backends/result.json",
+        "docs/reviews/gui-performance/implementation/S3/current-close-handoff/result.json"
       ],
       "s3_scroll_capture_negatives_progress": {
         "status": "Corrected existing thumb test detects grab displacement; stale reflow capture negative detected",
@@ -29753,5 +29754,71 @@
     "preserved": "Measured terminal tab strip, existing resize handle, normal content geometry, terminal cell/split/PTY authority and painting order. Collapsed content width now follows shared zero-width clamp instead of private one-pixel clamp.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/dock-shared-geometry/result.json",
     "limits": "Structural retirement and actual-rendered-geometry regression, not numerical CPU/resource or complete native pixel/HP/S3 qualification. Very narrow test extents are deterministic geometry cases, not supported native window-size acceptance. No dependency/license/prototype/budget/deadline or resize-qualification change."
+  },
+  "s3_current_close_handoff_work": {
+    "production_consumers": [
+      "GLOBAL Preferences",
+      "PROJECT Preferences",
+      "NEW Project",
+      "Main close-handoff receiver"
+    ],
+    "retired_paths": "No new migration in this replay; verifies preserved shared coordinator release suppression after shared shell/panel/dock changes.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/current-close-handoff/result.json",
+    "proof": "All five trials establish a delivered scrollbar drag, close the owned dialog while primary is held, suppress its trailing release on Main (zero presentations), then accept a fresh File menu click and Escape (one presentation each).",
+    "profiles": [
+      {
+        "host": "GLOBAL",
+        "scale_override": 1.5,
+        "actual_extent": [
+          1200,
+          720
+        ],
+        "passed": true
+      },
+      {
+        "host": "PROJECT",
+        "scale_override": 1.5,
+        "actual_extent": [
+          1200,
+          720
+        ],
+        "passed": true
+      },
+      {
+        "host": "GLOBAL",
+        "scale_override": 2.0,
+        "actual_extent": [
+          1600,
+          960
+        ],
+        "passed": true
+      },
+      {
+        "host": "PROJECT",
+        "scale_override": 2.0,
+        "actual_extent": [
+          1600,
+          960
+        ],
+        "passed": true
+      },
+      {
+        "host": "NEW",
+        "scale_override": 2.0,
+        "actual_extent": [
+          1280,
+          800
+        ],
+        "passed": true
+      }
+    ],
+    "limits": [
+      "Captured before.png files preserved but not reviewed in this replay; no final-pixel or visual acceptance claimed.",
+      "xdotool destruction-time BadWindow warnings retained in raw logs; owned-window and follow-up assertions passed.",
+      "Preferences driver uses Shift press/release after pointer-only moves; intermittent delivery issue remains open.",
+      "Cleanup uses SIGTERM, not teardown qualification.",
+      "No Wayland OS-input, full native matrix, endurance, resource/budget, dependency or resize qualification.",
+      "Current-candidate negative replay remains missing; S3 stays in progress."
+    ]
   }
 }
