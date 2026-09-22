@@ -1,0 +1,38 @@
+{
+  "candidate_base": "1f11e6f3fee455cc824abd18fbc704815e582349",
+  "production": {
+    "status": "Actual GLOBAL/PROJECT surface publication and stale coordinate rejection pass; shared scale-clear negative detected",
+    "production_consumers": [
+      "GLOBAL Preferences owned native surface",
+      "PROJECT Preferences owned native surface"
+    ],
+    "retired_paths": "No runtime migration; new regression exercises existing shared surface rendering, hit publication, scale/extent invalidation and ordinary-damage retention.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-publication/result.json",
+    "proof": "Real hidden X11/Vulkan surfaces render both dialog states. Ordinary invalidation keeps presented search hit;1->1.5->2->1 scale changes reject old hit before presentation and publish replacement; changed extent clears hit, unchanged extent retains it. Removing only scale-change clear fails intended old-scale assertion; byte-restored source passes.",
+    "limits": "Production surface methods invoked directly, not OS pointer/DPI/resize events or monitor transitions. Negative aborts in GLOBAL before PROJECT; independent PROJECT negative remains unqualified. Search target only, no native focus/partial-row/edit/static parity, full HP12/S3 or resize-performance acceptance. Runtime, dependencies/licenses, prototypes, resource deadlines and resize exclusions unchanged."
+  },
+  "verification": {
+    "positive": "1 passed,394 filtered; both actual dialog surfaces",
+    "negative": "0 passed,1 failed,394 filtered; old-scale hits must be rejected before presentation",
+    "restored": "1 passed,394 filtered; all isolated Rust/Cargo source bytes restored to active",
+    "clippy": "GUI app binary/tests -D warnings passed"
+  },
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_window.rs": "98dde5fcd91060ccb22da06819ffea96050515e50c35b945819a1a5a8ac6881d",
+    "crates/gui-app/src/native_dialog_hit_tests.rs": "19b1e81f5b917b34f60e2966d09d2190d47869f600f0401c713f8019b90c5b7f"
+  },
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "commands": [
+    "env XDG_CONFIG_HOME=/tmp/pm045-dialog-hit-config XDG_CACHE_HOME=/tmp/pm045-dialog-hit-cache EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/release/datum-eda DATUM_NATIVE_TEST_BOARD=/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_preferences_hits_reject -- --ignored --test-threads=1",
+    "env CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target XDG_CONFIG_HOME=/tmp/pm045-dialog-hit-negative-config XDG_CACHE_HOME=/tmp/pm045-dialog-hit-negative-cache EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/release/datum-eda DATUM_NATIVE_TEST_BOARD=/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline --manifest-path /tmp/pm045-pinned-negative-source/Cargo.toml -p datum-gui-app --bin datum-gui native_preferences_hits_reject -- --ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-app --bin datum-gui --tests -- -D warnings"
+  ],
+  "restored_command_note": "Same isolated command with config/cache suffix restored instead of negative.",
+  "artifact_sha256": {
+    "positive.log.gz": "1652ca2e21f7dd2760b7b5e2a245a64c6c7ece79078aaf84abefa28ce7b619b5",
+    "restored.log.gz": "a65f99c17249e5f09ee85f7f098f5a2ad3353ceaf162cec71f77e0d738c8b445",
+    "negative.log.gz": "1ef5e7f1d38401083c9f459e55523802a4430c04acca00c3c25a9668ce91d1f3",
+    "negative.patch.gz": "1d280fea2c3f2c95c22dc5081ace850238fba627732e7a4c2aeaa8ecb46d65e1",
+    "clippy.log.gz": "c2cad5d8609c3f4562b31d70921b1f6e2390c6da70b5d66b46988c134a7c1c20"
+  }
+}
