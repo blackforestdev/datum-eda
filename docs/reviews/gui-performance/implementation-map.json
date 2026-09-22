@@ -29978,5 +29978,15 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/shared-owner-guard/result.json",
     "status": "Convergence guard passes; full drift now stops at separate committed-HEAD terminal split guard failure. No S3 completion."
+  },
+  "s3_native_split_guard_work": {
+    "production_consumers": [
+      "Existing native Main split event owner; no new migration"
+    ],
+    "retired_paths": [
+      "Guard reading native pointer handlers from pre-extraction main.rs"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-split-guard/result.json",
+    "status": "Split guard passes; full drift stops later at committed-HEAD core adapter failures. S3 unchanged."
   }
 }

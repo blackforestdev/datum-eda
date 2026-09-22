@@ -21,6 +21,14 @@ def valid_sources() -> dict[str, str]:
 
 
 class TerminalSplitBoundaryTest(unittest.TestCase):
+    def test_native_event_owner_cannot_be_replaced_by_main_markers(self) -> None:
+        sources = valid_sources()
+        sources["main"] += sources["native_events"]
+        sources["native_events"] = ""
+        failures = guard.check_sources(sources)
+        self.assertIn("terminal split pointer-motion routing boundary is missing", failures)
+        self.assertTrue(any("native_events ownership" in failure for failure in failures))
+
     def test_current_tree_passes(self) -> None:
         self.assertEqual([], guard.check_sources(valid_sources()))
 

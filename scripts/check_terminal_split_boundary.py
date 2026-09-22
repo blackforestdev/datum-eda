@@ -9,6 +9,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 PATHS = {
     "main": "crates/gui-app/src/main.rs",
+    "native_events": "crates/gui-app/src/app_native_events.rs",
     "primary_button": "crates/gui-app/src/runtime_primary_button.rs",
     "input": "crates/gui-app/src/terminal_input.rs",
     "controls": "crates/gui-app/src/terminal_session_controls.rs",
@@ -51,6 +52,8 @@ def check_sources(sources: dict[str, str]) -> list[str]:
             "TerminalKeyAction::SplitRight =>",
             "TerminalKeyAction::SplitDown =>",
             "HitTarget::TerminalPaneScreen(session_id)",
+        ),
+        "native_events": (
             "handle_primary_button_press()",
             "advance_terminal_split_drag(next_pos)",
             "finish_terminal_split_drag()",
@@ -111,7 +114,7 @@ def check_sources(sources: dict[str, str]) -> list[str]:
     if finish.count("resize_terminal_to_dock") != 1:
         failures.append("terminal split drag release must commit exactly one PTY resize")
 
-    main = sources.get("main", "")
+    native_events = sources.get("native_events", "")
     primary_button = sources.get("primary_button", "")
     press = function_body(
         primary_button,
@@ -122,7 +125,7 @@ def check_sources(sources: dict[str, str]) -> list[str]:
         failures.append("terminal split primary-press routing boundary is missing")
     elif press.find("begin_terminal_split_drag") > press.find("report_terminal_mouse_button"):
         failures.append("mouse-aware child can consume terminal split-divider press")
-    move = function_body(main, "WindowEvent::CursorMoved", "WindowEvent::MouseWheel")
+    move = function_body(native_events, "WindowEvent::CursorMoved", "WindowEvent::MouseWheel")
     if not move:
         failures.append("terminal split pointer-motion routing boundary is missing")
     elif move.find("advance_terminal_split_drag") > move.find("report_terminal_mouse_motion"):

@@ -1,0 +1,33 @@
+{
+  "scope": "GPI-S3 verification follow-up for existing native event extraction; no production change",
+  "production_consumers": [
+    "Actual native Main terminal split pointer routes in app_native_events.rs"
+  ],
+  "retired_paths": [
+    "Requiring extracted press/drag/release handlers inside main.rs"
+  ],
+  "verification": {
+    "split": "5 tests pass; missing native owner fails even with duplicate markers in main. Existing motion-no-PTY-resize and one-release-resize checks preserved.",
+    "source_health": "2223 files and13 policy tests pass",
+    "drift": "Formatting/Clippy, convergence, split, transport and core gates pass; stops at two core adapter marker/order failures. Reproduced with HEAD7211a015 source reader; dat-core-adapter-guard-lpcr records follow-up."
+  },
+  "limits": [
+    "No new production/native performance proof or S3 acceptance.",
+    "Focus-taking input remains stopped pending owner availability.",
+    "No dependency, prototype/style, resource deadline or resize changes."
+  ],
+  "artifacts": {
+    "drift.log.gz": {
+      "raw_sha256": "f04de1c1ee1e7f9238a9e84ae74ca563239b74432de34b1be9815667457c72a2",
+      "sha256": "e3ecb93e36b7c378b3804a8fa842f36e29fc65786daffe0fcd3c4cab4cdca913"
+    },
+    "core-adapter-head.json.gz": {
+      "raw_sha256": "cab661ef3121d6a6f93157d90611837c3b528f44f1cf3c1c85e55e4c79219ba1",
+      "sha256": "dbe0ce742293ddf75ec99c8edaeed66a4eb60479ed8a6841d4a768c34ae0c319"
+    },
+    "guarded-drift.sh.gz": {
+      "raw_sha256": "6e3ad193c76c688aba9f176865f750d61f60e6097496274f111b49a3b237f45d",
+      "sha256": "16c23f0258ffe9a0757524064627a9669a7e42d6372bcabf4e816e33c64ca429"
+    }
+  }
+}
