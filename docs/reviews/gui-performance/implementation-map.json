@@ -7468,7 +7468,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/native-scroll-focus-loss/result.json",
-        "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json"
+        "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-entry-cancellation/result.json"
       ],
       "s3_scroll_capture_negatives_progress": {
         "status": "Corrected existing thumb test detects grab displacement; stale reflow capture negative detected",
@@ -7479,7 +7480,8 @@
         "retired_paths": "No new runtime retirement; strengthen ineffective endpoint-only test with stationary and midpoint checks.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json",
         "limits": "Existing shared ScrollViewport component tests only; no OS pointer/native host delivery. Stationary and midpoint assertions strengthen grab preservation beyond clamped endpoints. Reflow test covers viewport/content geometry changes and fresh capture; native close/focus/content identity matrix remains separate. Painted-only scrollbar negative and remaining per-profile/native HP21/S3 qualification stay open. No production behavior/dependency/license/prototype/numerical budget/resize-scope change."
-      }
+      },
+      "s3_native_entry_cancellation_progress": "12 hidden X11/Vulkan host/scale cases pass. Nine cases with a scrollbar establish a changing drag, then Focused(false) clears capture, subsequent motion preserves offset, and trailing release preserves target state; a fresh click still activates. All12 close through handle_native_window_event and retire surface/window/model-open state; nine scrollbar cases close with capture active. Isolated removal of the Focused(false) cancellation branch fails at host0 ownership assertion; recompiled restored candidate passes. App/test Clippy passes. Events supplied directly using a real ActiveEventLoop, not generated/delivered by OS. NEW supported-minimum620x620 cases have no scrollbar (None), so do not claim cancellation there; overflow960x480 covers NEW capture. Negative stops at first Global case and does not independently replay each host. No content-change, physical DPI transition, compositor capture, numerical/resource or full HP21/S3 qualification. Production code/release unchanged; no dependency/license/prototype/resource-deadline/resize change."
     },
     {
       "id": "HP22-01",
@@ -28322,7 +28324,7 @@
         "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct.",
         "HP20-01": "Complete remaining backend and expanded/other-control scale extent cases. Both Preferences native search/clear now has1/1.5/2x override proof at actual recorded sizes;1x choices/explanations/final-row/minimum-height and shared visible-row negative remain recorded. No monitor-scale transition or latency acceptance.",
         "HP21-01": "Complete remaining OS input/capture/profile/scale qualification. All three default dialog adapters now share pointer dispatch; actual native surfaces detect ignored scrollbar consumption activating Units settings/New name through production WindowEvents, with restored positive. Direct dispatcher proof does not qualify OS delivery. Retain painted-only OS negative and unresolved delivery failures.",
-        "HP21-02": "Complete native release/capture-loss/close/content-change final-target matrix. Shared stale-reflow negative now detected and restored viewport/content-change capture tests pass; existing focus-loss and native trials remain bounded.",
+        "HP21-02": "Complete OS release/capture-loss/close/content-change final-target matrix. Actual hidden X11 surfaces now exercise all3 native event entry paths:9 scrollbar focus cancellations,12 native closes (9 during capture), fresh control clicks, and missing-focus-cancellation negative/restored pass. Direct supplied events are not OS delivery. Shared stale-reflow negative and viewport/content-change capture tests remain bounded; native content-change and displayed-state qualification stay open.",
         "HP22-01": "Complete remaining native diagonal/rounded/nested clipping cases per actual consumer. Shared clamp-vertices negative now detected by corrected existing area oracle; preserve original false-pass and terminal call-removal negatives.",
         "HP22-02": "Complete remaining native/GPU profiles. Pinned-header clipping and scrolling negatives now detected by strengthened actual Preferences preparation test; hidden-hit clipping omission already detected. Preserve initial missing-header false pass and existing bounded pinned GPU/native evidence.",
         "HP23-01": "Complete remaining native keyboard/search reveal across section/content/scale profiles. Stale focus after height change now reproduced and fixed in both native Preferences; existing explanation Close fix retained. Native DPI transition remains open.",
@@ -29250,5 +29252,17 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/preferences-row-layout/result.json",
     "proof": "Matched baseline and candidate renderer suites each pass218 tests. Existing hardware dialog GPU parity passes1 test/258 filtered. Visual renderer Clippy and fresh release application build pass.",
     "limits": "Structural removal of temporary work, not a measured frame-time or complete allocation-budget claim. One layout Vec remains; text and hit targets retain required owned data. GPU parity paths share preparation and do not independently qualify every native profile. Existing native capture/input gaps, S3 exit and S4/S5 obligations remain open. No dependency/license/prototype/resize boundary change."
+  },
+  "s3_native_entry_cancellation_work": {
+    "status": "All three native dialog entry paths cancel focus-lost capture and retire closed hosts in bounded actual-surface tests",
+    "production_consumers": [
+      "GLOBAL Preferences native event entry -> owned pointer dispatcher -> shared surface",
+      "PROJECT Preferences native event entry -> owned pointer dispatcher -> shared surface",
+      "NEW Project native event entry -> owned pointer dispatcher -> shared surface"
+    ],
+    "retired_paths": "No production migration. Test replaces manual host removal with production CloseRequested handling and routes cancellation/fresh clicks through the native entry point.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-entry-cancellation/result.json",
+    "proof": "12 hidden X11/Vulkan host/scale cases pass. Nine cases with a scrollbar establish a changing drag, then Focused(false) clears capture, subsequent motion preserves offset, and trailing release preserves target state; a fresh click still activates. All12 close through handle_native_window_event and retire surface/window/model-open state; nine scrollbar cases close with capture active. Isolated removal of the Focused(false) cancellation branch fails at host0 ownership assertion; recompiled restored candidate passes. App/test Clippy passes.",
+    "limits": "Events supplied directly using a real ActiveEventLoop, not generated/delivered by OS. NEW supported-minimum620x620 cases have no scrollbar (None), so do not claim cancellation there; overflow960x480 covers NEW capture. Negative stops at first Global case and does not independently replay each host. No content-change, physical DPI transition, compositor capture, numerical/resource or full HP21/S3 qualification. Production code/release unchanged; no dependency/license/prototype/resource-deadline/resize change."
   }
 }
