@@ -1,0 +1,39 @@
+{
+  "candidate_base": "13d234ddbf12a65726555b89b804fc1b64ef2926",
+  "status": "Both native Preferences preserve focused last control after height change",
+  "requirement": "HP23-01",
+  "issue": "dat-dialog-focus-reflow-3q33",
+  "source_sha256": "76307aaaa2b9c71d2c1298283075963b38e82a0ce845479239e8c43abe0e2262",
+  "binary_sha256": "ed2dd62b51e5abf99a991b543b6c6447e5bdc40358cd348beb8709e124cb385f",
+  "production_change": "Clear Preferences focus reveal identity on effective size or scale change in the shared native host. Next preparation selects the focused row against current layout. Ordinary input invalidation and unchanged geometry retain reveal state.",
+  "baseline": "Both hosts fail same native recipe:0 focused-control border pixels after resize. Original binary/source at candidate_base retained by history and baseline receipt.",
+  "candidate": "Final rebuilt patch passes both hosts:300 focused-control border pixels after resize and zero idle presentations. Intermediate candidate also passed but included redundant New Project focus reset; that reset was removed because renderer already handles reflow.",
+  "verification": {
+    "app_tests": "380 passed,14 ignored on initial candidate before removing redundant New Project reset",
+    "release": "Final release build passed",
+    "clippy": "Final clippy -D warnings passed",
+    "native": [
+      {
+        "host": "GLOBAL",
+        "passed": true,
+        "focus_pixels": 300,
+        "idle_frames": 0
+      },
+      {
+        "host": "PROJECT",
+        "passed": true,
+        "focus_pixels": 300,
+        "idle_frames": 0
+      }
+    ]
+  },
+  "limits": "Native X11/Xwayland Preferences at 1x: keyboard focus on last Units control, height shrink from1000x750 to1000x563, visible focus ring and zero idle frames. Native DPI transitions, New Project, remaining content/search/backend profiles and full HP23/S3 are not qualified. New Project already reveals on renderer reflow and has no change. No dependency, licensing, visual styling, numerical budget or resize CPU qualification change.",
+  "artifact_sha256": {
+    "app-tests.log.gz": "c632df4d147f3933e6891d9b6d4d47000262ff39d34858dd15015706cb259fa9",
+    "baseline.tar.gz": "142194b7bc02147c085204702789baf780c60df90fca084897ccecc9c2412813",
+    "build.log.gz": "84a3e9211f1601b9a92a97a1238b5c6e49a7ceabaab08f744285dbdfdf575c6e",
+    "candidate.tar.gz": "e6ae0851fb327c6594e472903d6f0c37fdf6a107307e52bf500c714559e6789d",
+    "clippy.log.gz": "39acda1624b77fef8718efaa347b6866cba8b0607f4e379e0cd5b7b9d18d9940",
+    "final.tar.gz": "eadee3db77b478c9ee06ecdc67f1eb82d593d11cd0809dabd76e86918fd1758f"
+  }
+}

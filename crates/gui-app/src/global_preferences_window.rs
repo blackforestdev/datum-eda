@@ -205,6 +205,8 @@ impl GlobalPreferencesWindowSurface {
         }
         self.config.width = width;
         self.config.height = height;
+        // The same focused control may be outside the reflowed viewport.
+        self.scroll_focus = None;
         self.presented_hits.clear();
         self.invalidate();
     }
@@ -214,6 +216,7 @@ impl GlobalPreferencesWindowSurface {
         if (self.scale_factor - next).abs() > f32::EPSILON {
             self.scale_factor = next;
             self.scroll.release();
+            self.scroll_focus = None;
             self.presented_hits.clear();
             self.invalidate();
         }
