@@ -5713,6 +5713,18 @@
         ],
         "evidence": "docs/reviews/gui-performance/implementation/S3/control-label-layout/result.json",
         "limits": "Bounded GLOBAL/PROJECT/NEW shared control-label adoption; full native input, long-label pixel, negative/resource and S3 qualification remain open. S3 amendment remains unapproved; no dependency/license/prototype/budget change, resize remains nonblocking."
+      },
+      "s3_resource_carryforward": {
+        "resource_rows": [
+          "MEM-SHAPED-LOCAL",
+          "MEM-SHAPED-TOTAL",
+          "MEM-LABEL-ENTRIES",
+          "MEM-LABEL-KEYS"
+        ],
+        "implementation_deadline": "GPI-S4",
+        "qualification_deadline": "GPI-S5",
+        "status": "Unqualified; only complete S2-owned resource dependencies move. Other S3 proof remains required.",
+        "owner_evidence": "EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S3-RESOURCE-APPROVED"
       }
     },
     {
@@ -5736,7 +5748,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial: retained text entry/key limits and eviction paths exist, but complete shaped/atlas/scratch ownership, caps and release proof remain unresolved. Approved S2 carryforward does not by itself amend this S3 exit predicate; proposal1bc02aaf remains unapproved.",
+        "status": "Partial: retained text entry/key limits and eviction paths exist, but complete shaped/atlas/scratch ownership, caps and release proof remain unresolved. Owner-approved S3 clarification carries only complete S2-owned resource implementation to S4 and qualification to S5; bounded behavior and other S3 proof remain required.",
         "id": "proof_hp14_02",
         "positive": "Churn labels/evict/close/reopen",
         "negative_control": "Bound key bytes but retain unbounded shaped payload",
@@ -5774,6 +5786,23 @@
       "consumer_applicability": {
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s3_resource_carryforward": {
+        "resource_rows": [
+          "MEM-SHAPED-LOCAL",
+          "MEM-SHAPED-TOTAL",
+          "MEM-LABEL-ENTRIES",
+          "MEM-LABEL-KEYS",
+          "MEM-ATLAS-LOCAL",
+          "MEM-ATLAS-TOTAL",
+          "MEM-STAGING-LOCAL",
+          "MEM-STAGING-TOTAL",
+          "MEM-REPLACEMENT"
+        ],
+        "implementation_deadline": "GPI-S4",
+        "qualification_deadline": "GPI-S5",
+        "status": "Unqualified; only complete S2-owned resource dependencies move. Other S3 proof remains required.",
+        "owner_evidence": "EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S3-RESOURCE-APPROVED"
       }
     },
     {
@@ -6190,6 +6219,18 @@
       "s3_pane_indicator_progress": {
         "status": "partial MAIN focused-pane indicator adoption; full row remains unqualified",
         "evidence": "docs/reviews/gui-performance/implementation/S3/pane-indicator-retention/result.json"
+      },
+      "s3_resource_carryforward": {
+        "resource_rows": [
+          "MEM-MESH-ENTRIES",
+          "MEM-MESH-CPU",
+          "MEM-MESH-GPU",
+          "MEM-REPLACEMENT"
+        ],
+        "implementation_deadline": "GPI-S4",
+        "qualification_deadline": "GPI-S5",
+        "status": "Unqualified; only complete S2-owned resource dependencies move. Other S3 proof remains required.",
+        "owner_evidence": "EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S3-RESOURCE-APPROVED"
       }
     },
     {
@@ -27187,37 +27228,6 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/main-menu-clipping/result.json",
     "limits": "No native focus/input, full pixel parity, independent negative, timing or resource qualification. Existing constrained-window title/Inspector crowding is outside this menu clipping change. No dependency, license, prototype, action authority, acceptance or sequencing change."
   },
-  "proposed_s3_resource_dependency_clarification": {
-    "status": "prepared for owner review; not approved; existing S3 exit remains controlling",
-    "contract": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#proposed-s3-shared-resource-dependency-clarification--not-approved",
-    "proposed_resource_dependencies": {
-      "HP14-01": [
-        "MEM-SHAPED-LOCAL",
-        "MEM-SHAPED-TOTAL",
-        "MEM-LABEL-ENTRIES",
-        "MEM-LABEL-KEYS"
-      ],
-      "HP14-02": [
-        "MEM-SHAPED-LOCAL",
-        "MEM-SHAPED-TOTAL",
-        "MEM-LABEL-ENTRIES",
-        "MEM-LABEL-KEYS",
-        "MEM-ATLAS-LOCAL",
-        "MEM-ATLAS-TOTAL",
-        "MEM-STAGING-LOCAL",
-        "MEM-STAGING-TOTAL",
-        "MEM-REPLACEMENT"
-      ],
-      "HP16-03": [
-        "MEM-MESH-ENTRIES",
-        "MEM-MESH-CPU",
-        "MEM-MESH-GPU",
-        "MEM-REPLACEMENT"
-      ]
-    },
-    "on_approval": "Apply only the proposed S3 table evidence-cell replacement. Record complete S2-owned resource implementation due S4 and resource qualification due S5 for these associations; preserve every original acceptance rule and unqualified status. Conduct a separate S3 exit review before selecting S4.",
-    "unchanged": "All other S3 implementation/warm-reuse/input/focus/pass/negative predicates remain required. No numerical, dependency, native-qualification, independent-replay, endurance or resize waiver."
-  },
   "s3_current_native_attempt": {
     "status": "fresh release build passed; native input attempt aborted and unqualified",
     "evidence": "docs/reviews/gui-performance/implementation/S3/current-native-attempt/result.json",
@@ -27296,8 +27306,8 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/exit-reconciliation/result.json",
     "exit_obstacles": [
       {
-        "kind": "explicit specification prerequisite / pending owner disposition",
-        "detail": "S3 still requires full HP11-23 proof before S4. Complete HP14-01/02 and HP16-03 resource dependencies overlap implementation expressly due atS4. Exact narrow clarification1bc02aaf remains unapproved; operative S3 clause unchanged."
+        "kind": "resolved specification sequencing conflict",
+        "detail": "Owner approved exact 1bc02aaf clarification. Operative S3 evidence cell carries only named complete S2 resource dependencies to S4 implementation/S5 qualification; remaining S3 exit proof is still required."
       },
       {
         "kind": "missing qualification / input delivery condition",
@@ -27305,10 +27315,10 @@
       },
       {
         "kind": "technical implementation boundary",
-        "detail": "Existing public dependency APIs have not provided complete shaped/atlas/scratch accounting. Current wgpu allocator snapshots are insufficient. No owner authority exists for modifying/vendoring dependencies; sequencing approval would not solve this technical boundary."
+        "detail": "Existing public dependency APIs have not provided complete shaped/atlas/scratch accounting. Current wgpu allocator snapshots are insufficient. No owner authority exists for modifying/vendoring dependencies; sequencing approval does not solve this technical boundary."
       }
     ],
-    "scope": "20 S3 map rows reconciled; no acceptance rule, lifecycle, authorization, qualification deadline or earlier receipt changed. S3 stays in progress; S4/S5 pending.",
+    "scope": "20 S3 map rows retain original acceptance rules and partial statuses. Only named resource dependencies follow the approved clarification. S3 stays in progress; S4/S5 pending.",
     "latest_native_focus_evidence": {
       "status": "bounded shared native focus-key correction; three owned-dialog Escape cases pass",
       "production_consumers": [
@@ -27609,5 +27619,39 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-dpi-negative/result.json",
     "retired_paths": "No new runtime migration; verifies the production DPI correction already landed in3bc06974.",
     "limits": "The actual shared native-surface converter is directly exercised with1/1.5/2x pixel/line deltas, cursor locality and boundary/reversal. Shared GLOBAL/PROJECT/NEW call paths consume it; this test does not deliver OS events or render their windows. No complete HP19, Layers/terminal, native stream, independent replay, S3, performance or resource qualification. Active source and release binary unchanged."
+  },
+  "s3_resource_dependency_clarification": {
+    "status": "Owner approved exact proposal 1bc02aaf; operative S3 table updated; S3 exit remains incomplete",
+    "contract": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#owner-amendment-s3-shared-resource-dependency-clarification",
+    "unchanged": "All other S3 implementation/warm-reuse/input/focus/pass/negative predicates remain required. No numerical, dependency, native-qualification, independent-replay, endurance or resize waiver.",
+    "owner_response": "Approve the exact S3 clarification",
+    "proposal_commit": "1bc02aaf",
+    "resource_dependencies": {
+      "HP14-01": [
+        "MEM-SHAPED-LOCAL",
+        "MEM-SHAPED-TOTAL",
+        "MEM-LABEL-ENTRIES",
+        "MEM-LABEL-KEYS"
+      ],
+      "HP14-02": [
+        "MEM-SHAPED-LOCAL",
+        "MEM-SHAPED-TOTAL",
+        "MEM-LABEL-ENTRIES",
+        "MEM-LABEL-KEYS",
+        "MEM-ATLAS-LOCAL",
+        "MEM-ATLAS-TOTAL",
+        "MEM-STAGING-LOCAL",
+        "MEM-STAGING-TOTAL",
+        "MEM-REPLACEMENT"
+      ],
+      "HP16-03": [
+        "MEM-MESH-ENTRIES",
+        "MEM-MESH-CPU",
+        "MEM-MESH-GPU",
+        "MEM-REPLACEMENT"
+      ]
+    },
+    "implementation_deadline": "GPI-S4",
+    "qualification_deadline": "GPI-S5"
   }
 }
