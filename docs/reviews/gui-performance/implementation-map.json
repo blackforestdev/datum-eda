@@ -5133,7 +5133,7 @@
         "crates/gui-app/src/runtime_revision_workspace.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: current Board route rejects outside-Layers input before row inspection and does not prepare a Layers scene. Existing shared row-math proof is not an actual native Board preparation-count oracle; prescribed route negative remains open.",
         "id": "proof_hp10_01",
         "positive": "Wheel outside Layers",
         "negative_control": "Prepare Layers/obsolete frame before routing",
@@ -5189,7 +5189,7 @@
         "crates/gui-app/src/runtime_revision_workspace.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: production Layers adapter uses last-presented capacity and shared bounded discrete row arithmetic with changed-only damage. Prior app filter matched zero tests, so it proves compilation only. Native effective-row/camera-locality and boundary negative proof remain open.",
         "id": "proof_hp10_02",
         "positive": "Wheel inside Layers including visible-capacity limit",
         "negative_control": "Fall through into board zoom",
@@ -5358,7 +5358,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: both native Preferences use dialog-only preparation and empty retained world; current renderer regression checks no retained-world resolve and no workspace output. Complete per-host forbidden-work counters and prescribed workspace-clone negative remain open.",
         "id": "proof_hp12_01",
         "positive": "Prepare each Preferences sections/expanded choices at scale/scroll",
         "negative_control": "Clone workspace or invoke general world path",
@@ -5414,7 +5414,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: shared dialog/control/hit composition has component parity and physical-surface clipping tests. Actual settings effects and full per-host input/focus/partial-row/scale parity remain unqualified; recent native attempts failed or aborted.",
         "id": "proof_hp12_02",
         "positive": "Edit controls and hit partial rows",
         "negative_control": "Reuse stale hit transform",
@@ -5474,7 +5474,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: current overlay-only source has one contributing pass and one MSAA resolve, and default native dialogs select this path. Full per-host native pass-count oracle and redundant-pass negative remain open; pixel parity alone does not pass this row.",
         "id": "proof_hp13_01",
         "positive": "Render equivalent dialog-only frame",
         "negative_control": "Add historical redundant four-pass resolve path",
@@ -5547,7 +5547,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial:13 current hardware GPU regressions include exact Preferences/New Project legacy pixels, rounded AA and fractional scroll. Full controlling native visual/backend/scale qualification and prescribed negative remain open.",
         "id": "proof_hp13_02",
         "positive": "Compare edges/text/order at fractional positions",
         "negative_control": "Reduce AA or move text behind card",
@@ -5617,7 +5617,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: shared renderer fractional scroll-away/return test observes zero warm label misses for its bounded fixture. Complete shaped/atlas/scratch working-set accounting, both native adapters and one-frame-cache negative remain unqualified; no full working-set pass.",
         "id": "proof_hp14_01",
         "positive": "Scroll away/return unchanged labels within128 buffers AND32KiB key text AND applicable8MiB shaped payload/renderer and aggregate limits",
         "negative_control": "Keep only one-frame cache",
@@ -5678,7 +5678,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: retained text entry/key limits and eviction paths exist, but complete shaped/atlas/scratch ownership, caps and release proof remain unresolved. Approved S2 carryforward does not by itself amend this S3 exit predicate; proposal1bc02aaf remains unapproved.",
         "id": "proof_hp14_02",
         "positive": "Churn labels/evict/close/reopen",
         "negative_control": "Bound key bytes but retain unbounded shaped payload",
@@ -6295,7 +6295,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: existing shared ScrollViewport and Preferences input component evidence preserve fractional deltas and reversal. Complete per-native-host scheduled stream/final-offset and rounded-row negative proof remain open. Inspector currently has no scroll adapter and gains no scroll qualification from clipping.",
         "id": "proof_hp18_01",
         "positive": "Repeated sub-threshold pixel/line deltas and rapid reversal",
         "negative_control": "Round every event to row or discard residual",
@@ -6357,7 +6357,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: shared Preferences adapter leaves physical pixel delta unscaled and converts line40logicalpx once; existing component test covers fractional scale. Layers/terminal retain their row policies. Full required per-adapter scale/hit-target oracles and scaling negative remain open.",
         "id": "proof_hp19_01",
         "positive": "Physical pixel/line deltas at1x/1.5x/2x and corresponding hits",
         "negative_control": "Double-scale pixels or invert sign",
@@ -6420,7 +6420,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: shared content-minus-viewport bounds and thumb logic are used by both Preferences; renderer tests cover fitting content and stable continuous extents. Native search/expansion/final-row/size matrix and prescribed negative remain open. Inspector is currently non-scrolling.",
         "id": "proof_hp20_01",
         "positive": "Short/final-row content, search/expanded choices/explanations then resize",
         "negative_control": "Compute extent from visible rows",
@@ -6475,7 +6475,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: shared thumb/page capture separates consumption from damage and actual Preferences dispatch consumes scrollbar input. Component proof exists; recent GLOBAL/PROJECT native recipes failed/aborted and establish no complete click-through/grab/page pass.",
         "id": "proof_hp21_01",
         "positive": "Thumb press/drag at offset and track click",
         "negative_control": "Use painted-only scrollbar or lose grab displacement",
@@ -6538,7 +6538,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: shared reflow capture cancellation has isolated component negative proof and default native extent/DPI/identity routes release stale grabs. Complete native release/focus/close/capture-loss/final-target qualification remains open.",
         "id": "proof_hp21_02",
         "positive": "Release/focus/capture loss/close or content resize mid-drag",
         "negative_control": "Keep stale drag capture",
@@ -6612,7 +6612,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: shared contour/text/hit clipping adopted in Preferences, Inspector, Revision and terminal profiles, with exact native-dialog surface bounds. Component geometry proofs and three isolated terminal negatives exist. Full per-consumer native/diagonal/rounded/negative coverage remains open.",
         "id": "proof_hp22_01",
         "positive": "Partially visible diagonal/rounded controls and nested clips",
         "negative_control": "Clamp vertices instead of clipping",
@@ -6721,7 +6721,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: hardware fractional Preferences scroll test checks pinned pixels and exact return to top; shared clipped hits and reserved scrollbar width are implemented. Complete per-consumer native hidden-control/pinned-chrome qualification remains open.",
         "id": "proof_hp22_02",
         "positive": "Pinned search/chrome and scrollbar near text then return top",
         "negative_control": "Scroll pinned header or let hidden region hit",
@@ -6819,7 +6819,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Implemented in shared Preferences preparation: current focus/search/expansion identity selects reveal row and current layout clamps bounds. Full native keyboard/search/DPI/content final-target qualification is not executed successfully; Inspector has no current scroll/focus-reveal adapter.",
         "id": "proof_hp23_01",
         "positive": "Keyboard search navigation across sections and changed DPI/size/content",
         "negative_control": "Keep stale focus/extent",
@@ -6878,7 +6878,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: shared scroll owner has no animation timer and native changed-only damage routes exist. Complete per-host reduced-motion/idle/locality recipe and continuous-timer negative remain unqualified.",
         "id": "proof_hp23_02",
         "positive": "Reduced-motion scroll then idle",
         "negative_control": "Run continuous animation timer",
@@ -26983,5 +26983,24 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/ellipse-control-retention/result.json",
     "limits": "No global MAIN/INSPECTOR/MENU control-family adoption claim, complete resource caps, native input/focus, isolated negative, full backend/scale/performance acceptance or S3 exit. S3 resource proposal1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
+  },
+  "s3_exit_reconciliation": {
+    "status": "S3 exit not satisfied; bounded implementation/evidence reconciliation only",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/exit-reconciliation/result.json",
+    "exit_obstacles": [
+      {
+        "kind": "explicit specification prerequisite / pending owner disposition",
+        "detail": "S3 still requires full HP11-23 proof before S4. Complete HP14-01/02 and HP16-03 resource dependencies overlap implementation expressly due atS4. Exact narrow clarification1bc02aaf remains unapproved; operative S3 clause unchanged."
+      },
+      {
+        "kind": "missing qualification / input delivery condition",
+        "detail": "Per-adapter native input/focus/pass counts, backend/scale/pixel/final-state coverage and prescribed negatives remain incomplete. Owner reauthorized idle-desktop testing; resumed attempts timed out/aborted with additional unattributed input. No conclusion about owner desktop use, no test pass, no revoked authorization."
+      },
+      {
+        "kind": "technical implementation boundary",
+        "detail": "Existing public dependency APIs have not provided complete shaped/atlas/scratch accounting. Current wgpu allocator snapshots are insufficient. No owner authority exists for modifying/vendoring dependencies; sequencing approval would not solve this technical boundary."
+      }
+    ],
+    "scope": "20 S3 map rows reconciled; no acceptance rule, lifecycle, authorization, qualification deadline or earlier receipt changed. S3 stays in progress; S4/S5 pending."
   }
 }

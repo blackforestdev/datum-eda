@@ -1,0 +1,104 @@
+{
+  "status": "S3 exit not satisfied; bounded implementation/evidence reconciliation only",
+  "candidate": "8252e8a9390a711e6bd4eec67ee3d860d2290275",
+  "source_inventory": {
+    "crates/gui-app/src/global_preferences_window.rs": "a8e3ddec3d79d5438aa5cf1cc9e2c7e0530b32e056d032196b6eeb2127eb8ae9",
+    "crates/gui-app/src/project_preferences_window.rs": "36ae86d461f032950472d9168fe6766471ca6d5afe86b4ff6c6eb3b0ccc0a472",
+    "crates/gui-app/src/new_project_window.rs": "e187b51cf5444f4feb7f143ccac7e3a77da3253a566b1c8ab4496a9b2ed938d8",
+    "crates/gui-app/src/runtime_revision_workspace.rs": "82003f66e99b89e852a369986ef84a5abef7d58937dbb7998810fdafb6b19fa1",
+    "crates/gui-app/src/app_native_events.rs": "7c01534a1965abb4f9662314f196ace5054255fc2ac78a1a8dd2e80a1dc1a98d",
+    "crates/gui-viewport/src/scroll.rs": "1d1260caabe0bbf82a39836192b9bff0e3d6275972b513309a7c8463c3668458",
+    "crates/gui-render/src/render/preferences_scene.rs": "922b834f27591aa3772e56ca3eda287749a564a1c92da868bfdd998f69b5b617",
+    "crates/gui-render/src/render/preferences_rows.rs": "40ad9c022c8ac64e7fbc739ac50b90e6f72683283a8903b6925a46815ccb8e7b",
+    "crates/gui-render/src/render/control_mesh.rs": "bca6f8cc9d16b4a7a7af72a3ff6561aec3b9488f59dfbbd5eb677d35a6872008",
+    "crates/gui-render/src/render/gpu_overlay.rs": "f12b1a4f32c2777a76f86a9bb44ea86f18aa31602c43e089e0ab48a9b2581525",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "48d428e7db2a5673b8ecf47cbfd18d5498d840f399ae3c450c7ecf015b4b59cd",
+    "crates/gui-render/src/side_panels/inspector_dispatch.rs": "24847ae1f4874a98cd2dde9c6062b606cecd373091da22881e33e91d4a1aa914",
+    "crates/gui-render/src/side_panels/render_project_filters.rs": "b71badac25435a08227cdb1f3b5f6bf43d9d4aa65793877e095fdba8e65bb745",
+    "crates/gui-render/src/revision_workspace.rs": "f0a26e9b3f41a4da113d2e7e6292680223c52900971b6f8a17f90c6983dbff9e",
+    "crates/gui-render/src/terminal_core_render.rs": "312f85218833c56e98d44161860b1b923a8aef8b54878c483fff8dd00e4b823c",
+    "crates/gui-render/src/terminal_render_cache.rs": "fff915979f0f27f9d2a5f3227467a316301a640803163f434194304f8755819f",
+    "crates/gui-render/src/terminal_tab_strip.rs": "c9a81cff2b915357be830b3b9728af347fa30250517f8a7dfbf604c340050673",
+    "crates/gui-render/src/terminal_clipboard_menu.rs": "6c2c1bd363dc8f1140e8a4076c383a2b2585f6ae13b9e90cd9be0a12290481a9",
+    "crates/gui-render/src/menu_chrome.rs": "417f2652addb7ec700f8ec4d286457f2885b5b6341103de41d0a1f90f4ea18ac",
+    "crates/gui-render/src/datum_console.rs": "f9032df8056856322a56122aa8dc57028bec9a5f98c0125d5a6af825271d8cb2"
+  },
+  "review_scope": "Current S3 production call paths,20 map predicates and existing receipts. Prior receipts remain immutable historical observations; no test rerun, full consumer qualification or new performance result is asserted.",
+  "implemented": [
+    "GLOBAL/PROJECT native dialog-only data preparation, shared ScrollViewport/control mesh owner, root/content clip and presented hit routing.",
+    "NEW native dialog-only preparation: former workspace clone/world/full-shell backdrop path retired; rounded and circular controls share retained owner.",
+    "Main existing Revision, Project/Layers, selection/check/evidence Inspector, menu, Console and terminal content/header/context-menu profiles inherit shared clip helpers. This inventory does not qualify every input path or absent product capability.",
+    "Layers retains discrete rows and uses last-presented capacity/shared row arithmetic. Terminal retains TerminalCore row/snapshot/PTY authority.",
+    "Preferences circular/search/switch and New Project radio tessellation now uses the same bounded owner as rounded controls. Main rectangular control families are not proven migrated merely because the preparation API receives the owner."
+  ],
+  "remaining_implementation_boundaries": [
+    "Complete shaped-label/atlas/scratch/control GPU/in-flight accounting and caps are not implemented or qualified in full. Fifty S2 predicates remain individually carried to S4 implementation/S5 qualification.",
+    "Main/Inspector/Menu HP16 family inventory and exact applicability still require complete review; no global control-family adoption claim.",
+    "Inspector has current selection/check/evidence clipping but no ScrollViewport. Its approved profile says shared control/ScrollViewport when scrolling; partial product scope does not authorize claiming missing scroll behavior as tested.",
+    "Static PreparedScene compatibility APIs retain transient caches and the general composition comparator. Production native adapters use renderer-owned APIs; existence of compatibility helpers alone is not a competing default path."
+  ],
+  "exit_obstacles": [
+    {
+      "kind": "explicit specification prerequisite / pending owner disposition",
+      "detail": "S3 still requires full HP11-23 proof before S4. Complete HP14-01/02 and HP16-03 resource dependencies overlap implementation expressly due atS4. Exact narrow clarification1bc02aaf remains unapproved; operative S3 clause unchanged."
+    },
+    {
+      "kind": "missing qualification / input delivery condition",
+      "detail": "Per-adapter native input/focus/pass counts, backend/scale/pixel/final-state coverage and prescribed negatives remain incomplete. Owner reauthorized idle-desktop testing; resumed attempts timed out/aborted with additional unattributed input. No conclusion about owner desktop use, no test pass, no revoked authorization."
+    },
+    {
+      "kind": "technical implementation boundary",
+      "detail": "Existing public dependency APIs have not provided complete shaped/atlas/scratch accounting. Current wgpu allocator snapshots are insufficient. No owner authority exists for modifying/vendoring dependencies; sequencing approval would not solve this technical boundary."
+    }
+  ],
+  "not_blockers": [
+    "Deferred resize CPU/temporal qualification remains nonblocking.",
+    "No repeated implementation approval is required for already authorized S3 production work.",
+    "GPU timestamp opt-in measurements and helper tests are not global/default-path performance acceptance."
+  ],
+  "row_review": {
+    "HP10-01": "Partial: current Board route rejects outside-Layers input before row inspection and does not prepare a Layers scene. Existing shared row-math proof is not an actual native Board preparation-count oracle; prescribed route negative remains open.",
+    "HP10-02": "Partial: production Layers adapter uses last-presented capacity and shared bounded discrete row arithmetic with changed-only damage. Prior app filter matched zero tests, so it proves compilation only. Native effective-row/camera-locality and boundary negative proof remain open.",
+    "HP12-01": "Partial: both native Preferences use dialog-only preparation and empty retained world; current renderer regression checks no retained-world resolve and no workspace output. Complete per-host forbidden-work counters and prescribed workspace-clone negative remain open.",
+    "HP12-02": "Partial: shared dialog/control/hit composition has component parity and physical-surface clipping tests. Actual settings effects and full per-host input/focus/partial-row/scale parity remain unqualified; recent native attempts failed or aborted.",
+    "HP13-01": "Partial: current overlay-only source has one contributing pass and one MSAA resolve, and default native dialogs select this path. Full per-host native pass-count oracle and redundant-pass negative remain open; pixel parity alone does not pass this row.",
+    "HP13-02": "Partial:13 current hardware GPU regressions include exact Preferences/New Project legacy pixels, rounded AA and fractional scroll. Full controlling native visual/backend/scale qualification and prescribed negative remain open.",
+    "HP14-01": "Partial: shared renderer fractional scroll-away/return test observes zero warm label misses for its bounded fixture. Complete shaped/atlas/scratch working-set accounting, both native adapters and one-frame-cache negative remain unqualified; no full working-set pass.",
+    "HP14-02": "Partial: retained text entry/key limits and eviction paths exist, but complete shaped/atlas/scratch ownership, caps and release proof remain unresolved. Approved S2 carryforward does not by itself amend this S3 exit predicate; proposal1bc02aaf remains unapproved.",
+    "HP16-01": "Partial: native dialog rounded and circular controls use the shared retained CPU mesh owner; warm reuse and exact ellipse vertices tested. MAIN/INSPECTOR/MENU family inventory, prescribed negative and full native per-adapter proof remain open.",
+    "HP16-02": "Partial: exact circular-control vertices preserve prior contour at fractional placements;13 hardware GPU regressions pass including Preferences/New Project legacy pixel parity and rounded AA. Full consumer/backend/scale/negative/native qualification remains open.",
+    "HP16-03": "Partial: shared256-entry/4MiB CPU mesh-payload LRU/bypass tests pass for the extended contour key. Complete GPU/in-flight/aggregate accounting and release budgets remain unqualified; no full byte-cap pass.",
+    "HP18-01": "Partial: existing shared ScrollViewport and Preferences input component evidence preserve fractional deltas and reversal. Complete per-native-host scheduled stream/final-offset and rounded-row negative proof remain open. Inspector currently has no scroll adapter and gains no scroll qualification from clipping.",
+    "HP19-01": "Partial: shared Preferences adapter leaves physical pixel delta unscaled and converts line40logicalpx once; existing component test covers fractional scale. Layers/terminal retain their row policies. Full required per-adapter scale/hit-target oracles and scaling negative remain open.",
+    "HP20-01": "Partial: shared content-minus-viewport bounds and thumb logic are used by both Preferences; renderer tests cover fitting content and stable continuous extents. Native search/expansion/final-row/size matrix and prescribed negative remain open. Inspector is currently non-scrolling.",
+    "HP21-01": "Partial: shared thumb/page capture separates consumption from damage and actual Preferences dispatch consumes scrollbar input. Component proof exists; recent GLOBAL/PROJECT native recipes failed/aborted and establish no complete click-through/grab/page pass.",
+    "HP21-02": "Partial: shared reflow capture cancellation has isolated component negative proof and default native extent/DPI/identity routes release stale grabs. Complete native release/focus/close/capture-loss/final-target qualification remains open.",
+    "HP22-01": "Partial: shared contour/text/hit clipping adopted in Preferences, Inspector, Revision and terminal profiles, with exact native-dialog surface bounds. Component geometry proofs and three isolated terminal negatives exist. Full per-consumer native/diagonal/rounded/negative coverage remains open.",
+    "HP22-02": "Partial: hardware fractional Preferences scroll test checks pinned pixels and exact return to top; shared clipped hits and reserved scrollbar width are implemented. Complete per-consumer native hidden-control/pinned-chrome qualification remains open.",
+    "HP23-01": "Implemented in shared Preferences preparation: current focus/search/expansion identity selects reveal row and current layout clamps bounds. Full native keyboard/search/DPI/content final-target qualification is not executed successfully; Inspector has no current scroll/focus-reveal adapter.",
+    "HP23-02": "Partial: shared scroll owner has no animation timer and native changed-only damage routes exist. Complete per-host reduced-motion/idle/locality recipe and continuous-timer negative remain unqualified."
+  },
+  "evidence": {
+    "s3_new_project_dialog_work": "docs/reviews/gui-performance/implementation/S3/new-project-dialog/result.json",
+    "s3_shared_content_clipping_work": "docs/reviews/gui-performance/implementation/S3/shared-content-clipping/result.json",
+    "s3_inspector_clipping_work": "docs/reviews/gui-performance/implementation/S3/inspector-clipping/result.json",
+    "s3_project_layers_clipping_work": "docs/reviews/gui-performance/implementation/S3/project-layers-clipping/result.json",
+    "s3_scroll_press_damage_work": "docs/reviews/gui-performance/implementation/S3/scroll-press-damage/result.json",
+    "s3_scroll_reflow_capture_work": "docs/reviews/gui-performance/implementation/S3/scroll-reflow-capture/result.json",
+    "s3_layers_effective_scroll_work": "docs/reviews/gui-performance/implementation/S3/layers-effective-scroll/result.json",
+    "s3_console_history_bounds_work": "docs/reviews/gui-performance/implementation/S3/console-history-bounds/result.json",
+    "s3_history_height_measurements_work": "docs/reviews/gui-performance/implementation/S3/history-height-measurements/result.json",
+    "s3_clip_visible_prefix_work": "docs/reviews/gui-performance/implementation/S3/clip-visible-prefix/result.json",
+    "s3_terminal_menu_clipping_work": "docs/reviews/gui-performance/implementation/S3/terminal-menu-clipping/result.json",
+    "s3_terminal_cell_clipping_work": "docs/reviews/gui-performance/implementation/S3/terminal-cell-clipping/result.json",
+    "s3_terminal_clipping_negative_work": "docs/reviews/gui-performance/implementation/S3/terminal-clip-negative/result.json",
+    "s3_terminal_header_clipping_work": "docs/reviews/gui-performance/implementation/S3/terminal-header-clipping/result.json",
+    "s3_main_menu_clipping_work": "docs/reviews/gui-performance/implementation/S3/main-menu-clipping/result.json",
+    "s3_current_native_attempt": "docs/reviews/gui-performance/implementation/S3/current-native-attempt/result.json",
+    "s3_console_ancestor_clipping_work": "docs/reviews/gui-performance/implementation/S3/console-ancestor-clipping/result.json",
+    "s3_marking_preview_clipping_work": "docs/reviews/gui-performance/implementation/S3/marking-preview-clipping/result.json",
+    "s3_native_dialog_surface_clipping_work": "docs/reviews/gui-performance/implementation/S3/native-dialog-surface-clipping/result.json",
+    "s3_ellipse_control_retention_work": "docs/reviews/gui-performance/implementation/S3/ellipse-control-retention/result.json"
+  },
+  "next_action": "Resolve the pending S3 resource dependency disposition and complete outstanding applicable functional/native/negative qualification under the controlling exit. Continue bounded production fixes only where current code demonstrates an actual remaining requirement; do not substitute repeated small migrations or partial helper passes for S3 readiness. S4/S5 remain unselected."
+}
