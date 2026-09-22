@@ -6964,7 +6964,20 @@
       "s3_focus_key_replay_progress": {
         "status": "actual GLOBAL/PROJECT/NEW synthetic-versus-fresh Escape focus cases pass; complete row remains unqualified",
         "evidence": "docs/reviews/gui-performance/implementation/S3/focus-key-replay/result.json"
-      }
+      },
+      "s3_native_focus_reveal_progress": {
+        "status": "PROJECT bounded native reveal observed; GLOBAL last-control reveal unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-focus-reveal/result.json",
+        "production_consumers": [
+          "GLOBAL/PROJECT existing shared ScrollViewport keyboard reveal"
+        ],
+        "retired_paths": "None; investigation/proof only.",
+        "limits": "No full HP23/S3 qualification. Raw driver passed fields cover presentation/idle assertions only and are not accepted final-target proof. Global last-control reveal remains unqualified. No inferred owner input, driver/kernel investigation or product fix based solely on these observations. No dependency/license/prototype/budget/resize-scope or sequencing amendment; S3 proposal1bc02aaf remains unapproved.",
+        "next_action": "Trace authoritative GlobalPreferences focus before/after key dispatch and prepared-scene generation; distinguish wrong focus state from stale presentation before changing production behavior."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/native-focus-reveal/result.json"
+      ]
     },
     {
       "id": "HP23-02",
@@ -27208,5 +27221,15 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-scroll-focus-loss/result.json",
     "proof": "Both hosts: old grab movement/release cause zero presentations and unchanged RGB pixels; fresh grab presents once and reaches bottom. Focus transitions and fresh target verified in logs/captures.",
     "limits": "Bounded focus-loss cancellation and fresh scrollbar target proof only. No full HP21-02 or S3 acceptance, close/DPI/reflow/all-capture/backend/scale matrix, unrelated control target, independent negative, resource/latency or teardown qualification. No new production migration or dependency/license/prototype/budget/resize-scope change. S3 proposal1bc02aaf remains unapproved."
+  },
+  "s3_native_focus_reveal_work": {
+    "status": "PROJECT bounded native reveal observed; GLOBAL last-control reveal unqualified",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-focus-reveal/result.json",
+    "production_consumers": [
+      "GLOBAL/PROJECT existing shared ScrollViewport keyboard reveal"
+    ],
+    "retired_paths": "None; investigation/proof only.",
+    "limits": "No full HP23/S3 qualification. Raw driver passed fields cover presentation/idle assertions only and are not accepted final-target proof. Global last-control reveal remains unqualified. No inferred owner input, driver/kernel investigation or product fix based solely on these observations. No dependency/license/prototype/budget/resize-scope or sequencing amendment; S3 proposal1bc02aaf remains unapproved.",
+    "next_action": "Trace authoritative GlobalPreferences focus before/after key dispatch and prepared-scene generation; distinguish wrong focus state from stale presentation before changing production behavior."
   }
 }

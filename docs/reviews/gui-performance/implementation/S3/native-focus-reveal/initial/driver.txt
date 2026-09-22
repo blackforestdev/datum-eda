@@ -1,0 +1,66 @@
+import os,subprocess,time,json,re,hashlib,sys
+from pathlib import Path
+root=Path('/home/bfadmin/Documents/datum-eda');out=Path(sys.argv[1]);out.mkdir(exist_ok=False)
+assert os.environ.get('DISPLAY')
+report={'display':os.environ['DISPLAY'],'wayland_display':os.environ.get('WAYLAND_DISPLAY'),'topology':'Owner-confirmed idle desktop X11/Xwayland; native adapter functional trial','binary_sha256':hashlib.sha256((root/'target/release/datum-gui').read_bytes()).hexdigest(),'runs':[]}
+for host,flag in [('GLOBAL','--open-global-preferences'),('PROJECT','--open-project-preferences')]:
+ case=out/host;case.mkdir();log=case/'native.log';log.write_text('');actions=[]
+ env=os.environ.copy()
+ for key in list(env):
+  if key.startswith(('DATUM_DIAGNOSTIC_','DATUM_GPU_DIAGNOSTIC_')):env.pop(key)
+ env.pop('WAYLAND_DISPLAY',None)
+ env.update(EDA_CLI_BIN=str(root/'target/release/datum-eda'),DATUM_GPU_MEASUREMENTS='0',DATUM_GUI_VERBOSE_LOG='1',DATUM_GUI_LOG=str(log),WINIT_UNIX_BACKEND='x11',XDG_CONFIG_HOME=str(case/'config'),XDG_CACHE_HOME=str(case/'cache'))
+ cmd=[str(root/'target/release/datum-gui'),'--board','/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb','--window-size','1280x800','--initial-layout','single','--visual-scale-factor','1',flag]
+ result={'host':host,'command':cmd,'actions':actions}
+ with (case/'stderr.log').open('w') as stderr:
+  p=subprocess.Popen(cmd,cwd=root,env=env,stdout=stderr,stderr=stderr)
+  def wait(fn):
+   end=time.monotonic()+25
+   while time.monotonic()<end:
+    assert p.poll() is None,('process exited',p.returncode)
+    value=fn()
+    if value:return value
+    time.sleep(.03)
+   raise AssertionError('predicate timeout')
+  pointer=['0','0']
+  def xdo(*args):
+   if args[0]=='mousemove':
+    pointer[:]=[args[3],args[4]]
+   elif args[0] in ('mousedown','mouseup','click'):
+    args=('mousemove','--window',wid,*pointer,*args)
+   actions.append({'xdotool':args,'monotonic':time.monotonic(),'wall_time':time.time()});subprocess.run(['xdotool',*args],env=env,check=True,timeout=8)
+  try:
+   ids=wait(lambda: (v if len(v)==2 else None) if (v:=re.findall(r'surface identity window=WindowId\((\d+)\)',log.read_text())) else None)
+   wid=ids[-1];key='WindowId('+wid+')'
+   def count():
+    data=log.read_text();lines=data.splitlines() if data.endswith('\n') else data.splitlines()[:-1]
+    return sum(json.loads(s.split('native_surface_lifecycle ',1)[1]).get('reason')=='present' and json.loads(s.split('native_surface_lifecycle ',1)[1]).get('window')==key for s in lines if 'native_surface_lifecycle ' in s)
+   def event_count(event):return log.read_text().count('window event '+key+' '+event)
+   wait(lambda:count()>0);time.sleep(.4)
+   xdo('windowactivate','--sync',wid)
+   if host=='GLOBAL':
+    before=count();xdo('mousemove','--window',wid,'50','107','click','1');wait(lambda:count()>before)
+   time.sleep(.4)
+   geometry=subprocess.check_output(['xdotool','getwindowgeometry','--shell',wid],env=env,text=True)
+   dims=dict(line.split('=',1) for line in geometry.splitlines() if '=' in line);width=int(dims['WIDTH']);height=int(dims['HEIGHT'])
+   result['geometry']=dims
+   def capture(name):
+    subprocess.run(['import','-window',wid,str(case/(name+'.png'))],env=env,check=True,timeout=8)
+   capture('before')
+   before=count();xdo('key','shift+Tab');wait(lambda:count()>before);time.sleep(.3);capture('last-control')
+   result['last_control_frames']=count()-before
+   before=count();time.sleep(.5);assert count()==before,'keyboard reveal did not idle'
+   result['idle_after_last_frames']=0
+   for _ in range(3):
+    before=count();xdo('key','Tab');wait(lambda:count()>before);time.sleep(.1)
+   time.sleep(.3);capture('first-row')
+   before=count();time.sleep(.5);assert count()==before,'first-row reveal did not idle'
+   result['idle_after_first_frames']=0
+   result['passed']=True;print(host,'PASS',flush=True)
+  except Exception as e:
+   result.update(passed=False,error=repr(e));print(host,repr(e),flush=True)
+  finally:
+   if p.poll() is None:p.terminate();p.wait(timeout=10)
+   result['cleanup']='Harness SIGTERM; no teardown qualification'
+   report['runs'].append(result);(out/'result.json').write_text(json.dumps(report,indent=2)+'\n')
+assert all(r['passed'] for r in report['runs'])
