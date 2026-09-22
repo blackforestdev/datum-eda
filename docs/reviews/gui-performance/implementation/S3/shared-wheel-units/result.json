@@ -1,0 +1,52 @@
+{
+  "base_commit": "c9737beea83efb01d1bb39b4409c3848f8c6ac46",
+  "issue": "dat-main-wheel-scale-0u8k",
+  "production": {
+    "status": "All four default native hosts consume one wheel-unit converter",
+    "production_consumers": [
+      "MAIN wheel dispatch for Layers, Console, terminal and pointer-pane zoom",
+      "GLOBAL Preferences continuous scroll",
+      "PROJECT Preferences continuous scroll",
+      "NEW shared form scroll"
+    ],
+    "shared_owner": "app_native_events::scroll_input::VerticalWheel",
+    "retired_paths": [
+      "Main fixed physical-pixel division without host scale",
+      "Independent dialog physical/line conversion match"
+    ],
+    "preserved": "Line units pass unchanged to Main discrete adapters; Main profile remains20 logical pixels per line, dialogs40. Continuous fractions and sign preserved. Horizontal-only and nonfinite input stops before vertical dispatch.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/shared-wheel-units/result.json",
+    "limits": "Shared converter tests establish physical/logical unit behavior at1/1.5/2x and existing native Preferences adapter test preserves fractional/pane locality. Actual X11 native trial covers GLOBAL/PROJECT line events at1.5x; it does not deliver touchpad physical pixels, test Main/NEW OS routes or complete HP19/S3. Captures are inspected for appearance but known capture lag prevents using filenames as final-state proof. No dependency/license, visual style, numerical budget or resize-scope change."
+  },
+  "verification": {
+    "app": "380 passed,14 ignored; includes new cross-scale converter and unsupported-input tests plus existing actual Preferences fractional/locality adapter regression",
+    "clippy": "App binary/tests -D warnings passed",
+    "release": "Fresh guarded offline release build passed",
+    "native": "Both GLOBAL/PROJECT at1.5x: thumb press0frames, drag1, bottom boundary0, reverse1; delivered-event and lifecycle logs retained. Main/NEW native OS qualification not claimed."
+  },
+  "before_after": "At2x,80 physical pixels previously became4 Main line units; shared conversion yields40 logical pixels and2 line units. Existing1x and line-event policy retained. This is unit normalization, not a numerical performance measurement.",
+  "visual_authority": "Existing rendered Preferences guide in S3/control-label-layout/preferences-prototype.png remains applicable. Native PROJECT capture inspected; no paint/style change or full visual parity claim.",
+  "source_sha256": {
+    "crates/gui-app/src/native_scroll_input.rs": "3cd5706661c79c66219f433a8ad87fcb0e844f0d96b70823a6fc3de167ca251d",
+    "crates/gui-app/src/app_native_events.rs": "f9bf9a3668d45580d6a5e11270a031d748fe45c10179c9476e9b5c5e79a612e1",
+    "crates/gui-app/src/global_preferences_window.rs": "152b0d1254f0f7cd48b1628567ba7f600d9c9c49ff0a102f2c8a26a05aaccbdd"
+  },
+  "limits": "Shared converter tests establish physical/logical unit behavior at1/1.5/2x and existing native Preferences adapter test preserves fractional/pane locality. Actual X11 native trial covers GLOBAL/PROJECT line events at1.5x; it does not deliver touchpad physical pixels, test Main/NEW OS routes or complete HP19/S3. Captures are inspected for appearance but known capture lag prevents using filenames as final-state proof. No dependency/license, visual style, numerical budget or resize-scope change.",
+  "artifact_sha256": {
+    "app.log.gz": "7196fdcf180a9bf79bbbbd07d343bc1e84cf868d6863ebff278bfc9cffd7f7fc",
+    "clippy.log.gz": "ab49c2386dfac1c8df901b2d115ba3aa05520fc5810c19bb99865b6c866cf1d6",
+    "native-driver.py": "23badc8621f0a37c977696ba3625f2220338da3141bc2eb44402cde1b669af2d",
+    "build.log.gz": "a165b593a0ac0c1b7fcf537f738abb245e5d172995e31c9ad7ad1ee9f8216a84",
+    "native/result.json": "0336954fb2ea5de3b6edea8910558d526df63ca598d9394dc3aea0396686f14e",
+    "native/GLOBAL/native.log.gz": "6625ba64687461ff2bacd5bece548f1c1ded53e37389a4c2038361162985f66a",
+    "native/GLOBAL/reverse.png": "d1e0287cc5e9ef99c0386aaf8256afe969ca7df43c452a210ba16fce33161d4c",
+    "native/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "native/GLOBAL/before.png": "a373be17cb4ca3c6d88b5c6cebadb7bfd742b5d074f04a41b052c0d84382bf1f",
+    "native/GLOBAL/bottom.png": "05376e2e598a4339aa98b021e1f6d56723ad8e1d443799da630b78e2bf05943a",
+    "native/PROJECT/native.log.gz": "fae424c245cd89091e7134b843cefc9dfc514ed98dc17310da4a845ca030ac9d",
+    "native/PROJECT/reverse.png": "a365a0a7c2b1443457951d05825c5b2a97c5cc18d9e085e2d92045f0fb378bb4",
+    "native/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "native/PROJECT/before.png": "dabf91accc3fb0aec696c63ad7684edb122e2018423ca23da496cdc3f4f88324",
+    "native/PROJECT/bottom.png": "ce6052c2225ed6f5920c3cab07a89c22892bd01e951baf5a6b3ae56a332868ee"
+  }
+}
