@@ -49,6 +49,7 @@ pub(crate) fn draw_text(
         color,
         face,
         clip_bounds: None,
+        layout_size: None,
     });
 }
 
@@ -80,6 +81,7 @@ pub(crate) fn draw_rich_text(
         color,
         face,
         clip_bounds: None,
+        layout_size: None,
     });
 }
 
@@ -104,6 +106,7 @@ pub(crate) fn draw_text_clipped(
         color,
         face,
         clip_bounds: Some(clip_bounds),
+        layout_size: None,
     });
 }
 

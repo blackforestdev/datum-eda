@@ -1,4 +1,5 @@
 use super::*;
+use crate::text_buffer_cache::text_buffer_key;
 
 #[test]
 fn terminal_face_shapes_box_drawing_and_powerline_without_notdef() {
@@ -132,6 +133,7 @@ fn terminal_rich_span_colors_participate_in_the_buffer_cache_key() {
         color: TEXT_PANEL_VALUE,
         face: TextFace::Terminal,
         clip_bounds: None,
+        layout_size: None,
     };
     let original = text_buffer_key(&run, 1280, 768);
     run.rich_spans[0].color = TEXT_SECONDARY;

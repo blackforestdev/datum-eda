@@ -496,15 +496,17 @@ mod tests {
 
     #[test]
     fn long_summary_text_uses_the_summary_group_ancestor() {
-        let mut dialog = NewProjectDialogState::default();
-        dialog.open = true;
-        dialog.source_summary = "Source ".repeat(60);
-        dialog.source_detail = "generation ".repeat(60);
-        dialog.units_summary = vec![NewProjectUnitsSummaryRow {
-            key: "datum.units.system".into(),
-            label: "Measurement system".into(),
-            value: "An intentionally long displayed value ".repeat(10),
-        }];
+        let dialog = NewProjectDialogState {
+            open: true,
+            source_summary: "Source ".repeat(60),
+            source_detail: "generation ".repeat(60),
+            units_summary: vec![NewProjectUnitsSummaryRow {
+                key: "datum.units.system".into(),
+                label: "Measurement system".into(),
+                value: "An intentionally long displayed value ".repeat(10),
+            }],
+            ..Default::default()
+        };
         for width in [240, 760] {
             let layout = ShellLayout::for_surface(width, 720, 1.0, None);
             let mut quads = Vec::new();

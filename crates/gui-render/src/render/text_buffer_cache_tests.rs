@@ -11,6 +11,7 @@ fn run() -> TextRun {
         color: TEXT_PRIMARY,
         face: TextFace::Ui,
         clip_bounds: None,
+        layout_size: None,
     }
 }
 
@@ -375,4 +376,22 @@ fn relayout_moves_unused_entries_but_preserves_current_frame_layouts() {
         assert_eq!(cache.entries[first[0]].key.width_px, 90);
         assert_eq!(cache.entries[second[0]].key.width_px, 210);
     }
+}
+
+#[test]
+fn explicit_layout_extent_survives_visibility_changes() {
+    let mut label = run();
+    label.layout_size = Some((100.0, 30.0));
+    let expected = text_buffer_key(&label, 960, 300);
+    for visible_height in [30.0, 29.75, 5.0] {
+        label.clip_bounds = Some(RectPx {
+            x: 25.5,
+            y: 60.0,
+            width: 78.0,
+            height: visible_height,
+        });
+        assert_eq!(text_buffer_key(&label, 960, 300), expected);
+    }
+    label.layout_size = Some((120.0, 30.0));
+    assert_ne!(text_buffer_key(&label, 960, 300), expected);
 }

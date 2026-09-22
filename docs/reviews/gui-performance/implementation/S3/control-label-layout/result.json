@@ -1,0 +1,45 @@
+{
+  "base_commit": "2c82793a",
+  "production": {
+    "status": "bounded shared control-label clipping with stable layout during ancestor clipping",
+    "production_consumers": [
+      "GLOBAL/PROJECT shared choice controls and row/reset/action buttons",
+      "NEW Retry/Cancel/Create buttons"
+    ],
+    "retired_paths": [
+      "Choice labels painting across the dropdown affordance or outside the control",
+      "Button labels painting beyond their control",
+      "Visible clip height used as layout height for these labels during scrolling"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/control-label-layout/result.json",
+    "limits": "Bounded GLOBAL/PROJECT/NEW shared control-label adoption; full native input, long-label pixel, negative/resource and S3 qualification remain open. S3 amendment remains unapproved; no dependency/license/prototype/budget change, resize remains nonblocking."
+  },
+  "proof": {
+    "renderer_tests": 210,
+    "gpu": "Final13 serial Intel P630 Vulkan GPU regressions pass, including fractional scroll warm reuse and exact return pixels",
+    "clippy": "Final renderer -D warnings passes",
+    "release": "fresh offline optimized app build passes",
+    "native": "GLOBAL/PROJECT initial and NEW normal1000x750 captures RGB identical to committed baselines; inspected GLOBAL and NEW",
+    "native_input_failure": "Both GLOBAL/PROJECT trials timed out waiting for drag presentation after recorded press. Logs contain no subsequent drag cursor event. No causal attribution or input qualification claimed. Preserved raw logs/actions and failed result. Driver: ../native-preferences-scroll/driver.txt",
+    "initial_regression": "First GPU suite12passed/1failed: unchanged labels incurred one cache miss during warm fractional scroll. Explicit layout size independent of clip fixes this; same suite13pass. Initial Clippy unused imports corrected via test-local imports.",
+    "source_health": "Text key/extent functions moved from geometry into existing shared text_buffer_cache module; text identity/signature tests extracted. Geometry pre-test1250->1215, root expanded ceiling7560->7375, tests physical1159->1070. Source-health base-ref HEAD passes;13 policy regression tests pass.",
+    "native_baselines": [
+      "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/GLOBAL/before.png",
+      "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/PROJECT/before.png",
+      "docs/reviews/gui-performance/implementation/S3/new-project-summary-clipping/after.png"
+    ],
+    "drift": "Full drift command attempted offline. Initial run caught prior New Project test initializer lint; corrected without runtime change. Second run passes workspace/all-target Clippy then stops at five terminal convergence source checks. Disposable git archive of unchanged HEAD2c82793a reproduces the identical five failures; baseline guard/raw drift logs preserved. No full drift pass. Existing focus/font issue dat-terminal-convergence-guard-xke remains open."
+  },
+  "visual_review": {
+    "prototype": "docs/gui/prototypes/preferences-window.html",
+    "sha256": "d9b2d814b8c1f2ac273039a574b3a038700b909cf109ee47f1c3c2f5e1ce7895",
+    "render": "preferences-prototype.png; installed Chromium, inspected ordinary/changed-value foundation regions",
+    "construction": "Existing select/button padding, arrow placement, dimensions and focus geometry preserved. Shared ancestor clipping follows E05. Current header distinguishes11 active descriptors from historical catalog; no reserved setting activation. Prototype serves visual guidance, not exact parity mandate. New Project rendered reference retained in ../new-project-summary-clipping/prototype.png."
+  },
+  "limits": "Bounded GLOBAL/PROJECT/NEW shared control-label adoption; full native input, long-label pixel, negative/resource and S3 qualification remain open. S3 amendment remains unapproved; no dependency/license/prototype/budget change, resize remains nonblocking.",
+  "source_sha256": {
+    "crates/gui-render/src/global_preferences_primitives.rs": "2c3d32e3714e7a990dfd5dc48e5dc772649bbd3f459c06c63ebe86aef52ef3c5",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "78b2c76da77bb4b87bee651c8d92f2f99658cc192f7fac10ec52a53b211e1cd1",
+    "crates/gui-render/src/render/types.rs": "6261148852514d7ea80b45c1bd0c2172d4b7eee66796c6c14ff26d4e6d26a455"
+  }
+}

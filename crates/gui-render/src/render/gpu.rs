@@ -13,8 +13,6 @@ mod gpu_console;
 mod gpu_vertex_upload;
 #[path = "terminal_graphics.rs"]
 mod terminal_graphics;
-#[path = "text_buffer_cache.rs"]
-mod text_buffer_cache;
 
 #[path = "gpu_init.rs"]
 mod gpu_init;
