@@ -63,6 +63,7 @@ pub(super) struct NativeFrameCoordinator {
     generation: u64,
     hosts: HashMap<WindowId, Host>,
     suspended: bool,
+    closed_primary_release: bool,
     wake_deadline: Option<Instant>,
     order: VecDeque<WindowId>,
 }
@@ -258,12 +259,14 @@ impl NativeFrameCoordinator {
         {
             match state {
                 ElementState::Pressed => {
+                    self.closed_primary_release = false;
                     host.primary_down = true;
                     host.suppress_release = false;
                 }
                 ElementState::Released => {
                     host.primary_down = false;
-                    return std::mem::take(&mut host.suppress_release);
+                    let closed = std::mem::take(&mut self.closed_primary_release);
+                    return std::mem::take(&mut host.suppress_release) || closed;
                 }
             }
         }
@@ -389,6 +392,10 @@ impl NativeFrameCoordinator {
 
     pub(super) fn close(&mut self, window: WindowId) {
         if let Some(host) = self.hosts.remove(&window) {
+            // The OS can deliver a held button's release to another owned
+            // window after this one disappears. Keep its cancellation alive
+            // until that release, or a fresh press, reaches a surviving host.
+            self.closed_primary_release |= host.primary_down || host.suppress_release;
             host.trace(window, "closed");
         }
         self.order.retain(|id| *id != window);
@@ -620,7 +627,7 @@ mod tests {
     }
 
     #[test]
-    fn missing_cancelled_release_does_not_poison_new_gesture_or_reopened_host() {
+    fn fresh_press_clears_cancellation_but_reopened_host_consumes_old_release() {
         let mut frames = NativeFrameCoordinator::default();
         let id = WindowId::from(1);
         frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
@@ -632,7 +639,25 @@ mod tests {
         frames.cancel_capture(id);
         frames.close(id);
         frames.register(id, 1, PhysicalSize::new(1280, 800), Default::default());
-        assert!(!frames.consume_cancelled_release(id, &primary(ElementState::Released)));
+        assert!(frames.consume_cancelled_release(id, &primary(ElementState::Released)));
+    }
+
+    #[test]
+    fn closed_capture_release_cannot_activate_a_surviving_host() {
+        let mut frames = NativeFrameCoordinator::default();
+        let main = WindowId::from(1);
+        let dialog = WindowId::from(2);
+        frames.register(main, 1, PhysicalSize::new(1280, 800), Default::default());
+        for release_delivered in [true, false] {
+            frames.register(dialog, 1, PhysicalSize::new(960, 720), Default::default());
+            frames.consume_cancelled_release(dialog, &primary(ElementState::Pressed));
+            frames.close(dialog);
+            if release_delivered {
+                assert!(frames.consume_cancelled_release(main, &primary(ElementState::Released)));
+            }
+            assert!(!frames.consume_cancelled_release(main, &primary(ElementState::Pressed)));
+            assert!(!frames.consume_cancelled_release(main, &primary(ElementState::Released)));
+        }
     }
 
     #[test]
