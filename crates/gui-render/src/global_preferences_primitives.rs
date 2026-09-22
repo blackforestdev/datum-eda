@@ -479,17 +479,6 @@ fn control_rect(right: f32, y: f32, width: f32) -> RectPx {
     }
 }
 
-#[cfg(all(test, feature = "visual"))]
-pub(super) fn push_rounded_rect_fill(
-    quads: &mut Vec<Quad>,
-    rect: RectPx,
-    color: [f32; 3],
-    radius: f32,
-) {
-    let mut cache = ControlMeshCache::default();
-    ControlPainter::new(quads, &mut cache, 1.0).rounded_fill(rect, color, radius, 0.0);
-}
-
 /// Shared native-dialog scrollbar paint; geometry and capture come from one owner.
 pub(super) fn paint_scrollbar(
     scroll: &datum_gui_viewport::scroll::ScrollViewport,

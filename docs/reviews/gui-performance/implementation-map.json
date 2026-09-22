@@ -6290,7 +6290,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: native dialog rounded and circular controls use shared retained CPU meshes; exact ellipse vertices and warm reuse tested. Isolated production search-ring owner bypass fails intended assertion with200 other tests passing; byte-restored candidate201 pass. Other prescribed controls/consumers/negatives and complete native proof remain open.",
+        "status": "Partial: native dialog rounded and circular controls use shared retained CPU meshes; exact ellipse vertices and warm reuse tested. Isolated production search-ring owner bypass fails intended assertion with200 other tests passing; byte-restored candidate201 pass. Other prescribed controls/consumers/negatives and complete native proof remain open. Shared retained-painter GPU parity now covers72 cases with12 builds; no-reuse defect detected and restored positive observed. Native consumers and independent arc/clip correctness remain unqualified.",
         "id": "proof_hp16_01",
         "positive": "Repeat convex rounded controls with translation/clip change",
         "negative_control": "Use general scanline tessellation or repeat arcs",
@@ -6359,7 +6359,19 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json"
-      ]
+      ],
+      "s3_retained_control_gpu_progress": {
+        "status": "Retained rounded control GPU parity and no-reuse negative pass at shared-owner scope",
+        "production_consumers": [
+          "Shared ControlPainter::rounded_fill and shared content clipping; direct GPU test, not native consumer adapter qualification"
+        ],
+        "retired_paths": [
+          "Test-only rounded-fill wrapper that created a new cache on every draw"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/retained-control-gpu/result.json",
+        "proof": "72 GPU comparisons: four shape cases, three fractional placements, clipped/unclipped and three DPI cache keys. Exact scanline-reference pixels;12 builds. Isolated no-reuse defect fails second-draw build assertion; byte-restored source passes.",
+        "limits": "DPI values exercise cache identity, not native monitor transitions or scaled surface profiles. Both paths use shared arc generation and clipping, so this is fan-versus-scanline parity and reuse proof, not independent arc/clip correctness. No native adapter, actual complete working set, GPU resource accounting, frame-time or full HP16/S3 qualification. Runtime, dependency/license, prototype, resource deadlines and resize scope unchanged."
+      }
     },
     {
       "id": "HP16-02",
@@ -6391,7 +6403,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: exact circular-control vertices preserve prior contour at fractional placements;13 hardware GPU regressions pass including Preferences/New Project legacy pixel parity and rounded AA. Full consumer/backend/scale/negative/native qualification remains open. Current shared CPU cache prescribed incomplete-DPI-key and disabled-eviction negatives are detected; byte-restored positives pass. This is component evidence, not full native/GPU/accounting qualification. General filler analytical concave/holed cases pass and incorrect first-vertex fan fails both. Actual authored-board/native contour/style/DPI qualification remains open.",
+        "status": "Partial: exact circular-control vertices preserve prior contour at fractional placements;13 hardware GPU regressions pass including Preferences/New Project legacy pixel parity and rounded AA. Full consumer/backend/scale/negative/native qualification remains open. Current shared CPU cache prescribed incomplete-DPI-key and disabled-eviction negatives are detected; byte-restored positives pass. This is component evidence, not full native/GPU/accounting qualification. General filler analytical concave/holed cases pass and incorrect first-vertex fan fails both. Actual authored-board/native contour/style/DPI qualification remains open. Shared retained-painter GPU parity now covers72 cases with12 builds; no-reuse defect detected and restored positive observed. Native consumers and independent arc/clip correctness remain unqualified.",
         "id": "proof_hp16_02",
         "positive": "Change dimensions/radius/style/DPI then concave/holed authored content",
         "negative_control": "Reuse incomplete key or force fan for holes",
@@ -6461,6 +6473,18 @@
         "retired_paths": "None; protects existing separation between general contour fill and control-only fan topology.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/general-polygon-fan-negative/result.json",
         "limits": "Analytical geometry unit cases through the production general polygon filler: U-notch area10 and square-with-hole area12. Not an authored board fixture, native editor adapter, GPU contour/style/DPI or full HP16/S3 qualification. Control cache and runtime implementation unchanged. One isolated fan substitution fails both cases; all Rust/Cargo source in isolated copy restored byte-for-byte to active tree. No dependency/license/prototype/budget/resize change."
+      },
+      "s3_retained_control_gpu_progress": {
+        "status": "Retained rounded control GPU parity and no-reuse negative pass at shared-owner scope",
+        "production_consumers": [
+          "Shared ControlPainter::rounded_fill and shared content clipping; direct GPU test, not native consumer adapter qualification"
+        ],
+        "retired_paths": [
+          "Test-only rounded-fill wrapper that created a new cache on every draw"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/retained-control-gpu/result.json",
+        "proof": "72 GPU comparisons: four shape cases, three fractional placements, clipped/unclipped and three DPI cache keys. Exact scanline-reference pixels;12 builds. Isolated no-reuse defect fails second-draw build assertion; byte-restored source passes.",
+        "limits": "DPI values exercise cache identity, not native monitor transitions or scaled surface profiles. Both paths use shared arc generation and clipping, so this is fan-versus-scanline parity and reuse proof, not independent arc/clip correctness. No native adapter, actual complete working set, GPU resource accounting, frame-time or full HP16/S3 qualification. Runtime, dependency/license, prototype, resource deadlines and resize scope unchanged."
       }
     },
     {
@@ -28079,7 +28103,7 @@
         "HP13-02": "Complete prescribed AA/painter-order negative and native visual/backend/scale coverage; existing14 GPU regressions remain bounded evidence.",
         "HP14-01": "Complete remaining settings/backend warm-reuse cases and final single-candidate qualification. Both Preferences1/1.5/2x expanded trials now have six zero-miss samples and semantic expansion proof; prior failure and one-frame negative retained. Full resource precondition stays S4/S5.",
         "HP14-02": "Complete remaining working-set/negative and native coverage. Real shaped cache churn and both native Preferences 1x close/reopen are recorded; cold misses do not prove full resource release. Complete owned accounting/cap/release retains existing S4/S5 deadlines.",
-        "HP16-01": "Complete rounded-control repeat/translation/clip proof across actual applicable consumers and remaining prescribed arc/tessellator negatives; preserve fixed-rectangle classification.",
+        "HP16-01": "Complete actual native consumer repeat/translation/clip proof and independent arc/general-tessellator negatives. Shared painter GPU72-case pixel parity,12 builds and isolated no-reuse negative/restored pass are now recorded. Preserve fixed-rectangle classification.",
         "HP16-02": "Complete actual authored-board/native contour/style/DPI qualification. General filler analytical concave/holed area cases and fan negative now recorded; existing cache key-field/DPI-key negative retained. Unit contours do not qualify native authored consumers.",
         "HP16-03": "Reconcile actual native control working-set evidence with recorded bounded CPU LRU/bypass/byte eviction and pin-indefinitely negative. Full CPU metadata/GPU/in-flight/aggregate bounds remain S4/S5 resource dependencies.",
         "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter.",
@@ -28809,5 +28833,17 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/layers-os-wheel/result.json",
     "proof": "Actual OS wheel logs identify Main and line direction. All three attempts have zero top/bottom boundary presentations and positive down/reversal presentations. Settled attempt also passes exact RGB board-crop equality across Layers steps and editor zoom change. Inspected captures show bounded last rows18-24 of24 and reverse17-23; later capture16-22 demonstrates capture freshness remains limited.",
     "limits": "No complete native trial pass: initial capture retains hover highlight, second trial times out at Alt+F4 close after all wheel assertions, third times out awaiting all editor-wheel events. All failures preserved. Capture/compositor delivery remains unqualified; no single-event/one-frame assertion, exact native state offset, native preparation count, prescribed fallthrough negative, Wayland/scale matrix, whole-board camera proof, latency or HP10/S3 acceptance. Existing dat-native-input-delivery-vq7w remains open. No production/dependency/license/prototype/budget/resize changes."
+  },
+  "s3_retained_control_gpu_work": {
+    "status": "Retained rounded control GPU parity and no-reuse negative pass at shared-owner scope",
+    "production_consumers": [
+      "Shared ControlPainter::rounded_fill and shared content clipping; direct GPU test, not native consumer adapter qualification"
+    ],
+    "retired_paths": [
+      "Test-only rounded-fill wrapper that created a new cache on every draw"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/retained-control-gpu/result.json",
+    "proof": "72 GPU comparisons: four shape cases, three fractional placements, clipped/unclipped and three DPI cache keys. Exact scanline-reference pixels;12 builds. Isolated no-reuse defect fails second-draw build assertion; byte-restored source passes.",
+    "limits": "DPI values exercise cache identity, not native monitor transitions or scaled surface profiles. Both paths use shared arc generation and clipping, so this is fan-versus-scanline parity and reuse proof, not independent arc/clip correctness. No native adapter, actual complete working set, GPU resource accounting, frame-time or full HP16/S3 qualification. Runtime, dependency/license, prototype, resource deadlines and resize scope unchanged."
   }
 }
