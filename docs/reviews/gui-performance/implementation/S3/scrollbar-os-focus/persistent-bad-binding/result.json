@@ -1,0 +1,125 @@
+{
+  "display": ":1",
+  "wayland_display": "wayland-0",
+  "topology": "Owner-confirmed idle desktop X11/Xwayland; native adapter functional trial",
+  "binary_sha256": "b7a2f40786f621b6ac5ae4954109496ef87d508e691dc52c1fc6a50b4f2a9c94",
+  "visual_scale_factor": 1.0,
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1.0",
+        "--open-global-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "27262981"
+          ],
+          "monotonic": 807119.030879464,
+          "wall_time": 1790070268.9005513,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=762\nY=250\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "windowsize",
+            "27262981",
+            "960",
+            "720"
+          ],
+          "monotonic": 807119.082954974,
+          "wall_time": 1790070268.952625,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=762\nY=250\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "510",
+            "285",
+            "click",
+            "1"
+          ],
+          "monotonic": 807119.664900308,
+          "wall_time": 1790070269.5345695
+        }
+      ],
+      "setup_presented_extent": [
+        960,
+        720
+      ],
+      "passed": false,
+      "error": "ArgumentError(\"argument 1: TypeError: 'dict' object cannot be interpreted as ctypes.c_void_p\")",
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1.0",
+        "--open-project-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "27262981"
+          ],
+          "monotonic": 807122.121875291,
+          "wall_time": 1790070271.9915457,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=762\nY=250\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "windowsize",
+            "27262981",
+            "960",
+            "720"
+          ],
+          "monotonic": 807122.170269822,
+          "wall_time": 1790070272.0399399,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=762\nY=250\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1360",
+            "308",
+            "click",
+            "1"
+          ],
+          "monotonic": 807122.753595925,
+          "wall_time": 1790070272.6232657
+        }
+      ],
+      "setup_presented_extent": [
+        960,
+        720
+      ],
+      "passed": false,
+      "error": "ArgumentError(\"argument 1: TypeError: 'dict' object cannot be interpreted as ctypes.c_void_p\")",
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    }
+  ]
+}
