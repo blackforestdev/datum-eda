@@ -1,0 +1,37 @@
+{
+  "base_commit": "e73109dae3cbb29a569512c93452e35e7a14af73",
+  "sources": {
+    "crates/gui-render/src/render/preferences_scene.rs": "e39707654372db3ef5f64ee49fcbdba0d7eec9f36b6958bbfe679173d25586b3",
+    "crates/gui-render/src/render/new_project_scene.rs": "0e6458132693d6812c0334e5300145c4e53a0b1312654d254bc117acedbfe6e3"
+  },
+  "production_consumers": [
+    "Global Preferences native preparation",
+    "Project Preferences native preparation",
+    "New Project native preparation"
+  ],
+  "shared_owner": "PreparedScene::native_dialog_layout in render/preferences_scene.rs",
+  "retired_paths": "Both native preparation entries stop calling ShellLayout::for_surface -> for_window -> solve_shell_layout_with_taffy. Native dialog preparation no longer constructs/solves the unused six-leaf-plus-root editor grid; both Preferences and New share rounded extent construction.",
+  "proof": "219 renderer tests pass. Existing Preferences legacy comparison retains identical vertices/text/hits across profiles; New constrained form compares native layout against old shell layout at1/1.5/2x and retains reveal tests. All native profiles assert empty editor regions and physical clip/hit bounds. GPU dialog parity passes1 test/259 filtered against general and legacy rendering. Workspace Clippy, fresh release and13 source-policy tests pass. New binarybcbe537b native Global/Project1.5x and New2x scrollbar close/release/fresh Main click replays pass.",
+  "limits": "Structural removal of native editor-shell solver work, not a numerical CPU/allocation budget or full HP12/HP13 acceptance. ShellLayout remains the prepared-scene envelope; status-edge arithmetic retained for exact dialog geometry. Main editor still uses its governed shell solver. No new solver-counter conformance or isolated shell-solver negative replay. Remaining S3 native/backend/visual/resource qualification stays open. No dependency/license/prototype/resize change.",
+  "binary_sha256": "bcbe537b192d4a7d0ee7213c03ee2f9b51c2b70180d8c693a2c8b4b41a083686",
+  "native_drivers": [
+    "docs/reviews/gui-performance/implementation/S3/close-release-profiles/project-2-followup/driver.py.gz",
+    "docs/reviews/gui-performance/implementation/S3/close-release-handoff/pm045_native_new_close_release_target_extent.py.gz"
+  ],
+  "drift": "Complete drift attempt stops at same eight pre-existing terminal convergence source-pattern failures after workspace Clippy and preceding gates pass. Existing dat-terminal-convergence-guard-xke remains open; later gates unrun. No guard changes.",
+  "artifacts": {
+    "build.log.gz": "c946969e86c1761ccfa559b6b96a67cb0a7ea7844b019dc1b71db0c88b89d58d",
+    "drift.log.gz": "87165ed7689f4db6f36dec39976b7b2043ef421d6b322f265ed1582f514ff507",
+    "final-tests.log.gz": "9a3948c7e72e65ecc63ab4d0c44d1a799121953864915c890d302f261dfeb963",
+    "gpu.log.gz": "5ba54675bf43e81e2ee950f44b7663df553da73960cba9a4bb4bad66ef87d117",
+    "new/NEW/native.log.gz": "f597bc4a90fbf22e877ca92da0508cd7c7071140edfe1980d9d94ed2748c99d0",
+    "new/NEW/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "new/result.json.gz": "95bfbb53b080e7046fab9a19399037c0ef3e0f47b5ba71111c4ed85b7acd7486",
+    "preferences/GLOBAL/native.log.gz": "950e4979c592b56d6a4203945c9d62e445dbeb882febf494029c019ff6c4774d",
+    "preferences/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "preferences/PROJECT/native.log.gz": "858eee6d9342a35f93932a727fa110cf4c7b2bb9325ad01b0bbecf4c171935e6",
+    "preferences/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "preferences/result.json.gz": "2f4b53f99c7ecf53e7a4585ae5c0f894909fd0c46aa44ce4a0842120d45da37d",
+    "source-policy.log.gz": "ee77f03ea22ecd2fe7ff8f647741760f27adcfacaf1e075feb3edd8430cde350"
+  }
+}

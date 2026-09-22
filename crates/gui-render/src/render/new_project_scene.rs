@@ -31,7 +31,7 @@ impl Renderer {
         reveal_focus: bool,
     ) -> PreparedScene {
         let scale = scale_factor.max(0.01);
-        let layout = ShellLayout::for_surface(width, height, scale, None);
+        let layout = PreparedScene::native_dialog_layout(width, height, scale);
         let (mut quads, mut text, mut hits) = (Vec::new(), Vec::new(), Vec::new());
         render_new_project_dialog_scrolled(
             dialog,
@@ -164,11 +164,23 @@ mod tests {
         };
         for scale in [1.0, 1.5, 2.0] {
             dialog.focus = NewProjectFocus::ProjectName;
-            let layout = ShellLayout::for_surface(
-                (960.0 * scale) as u32,
-                (400.0 * scale) as u32,
+            let width = (960.0 * scale) as u32;
+            let height = (400.0 * scale) as u32;
+            let layout = PreparedScene::native_dialog_layout(width, height, scale);
+            let legacy_layout = ShellLayout::for_surface(width, height, scale, None);
+            let (mut legacy_quads, mut legacy_text, mut legacy_hits) =
+                (Vec::new(), Vec::new(), Vec::new());
+            render_new_project_dialog_scrolled(
+                &dialog,
+                &legacy_layout,
+                true,
+                &mut ControlMeshCache::default(),
                 scale,
-                None,
+                &mut legacy_quads,
+                &mut legacy_text,
+                &mut legacy_hits,
+                &mut ScrollViewport::default(),
+                true,
             );
             let mut cache = ControlMeshCache::default();
             let mut scroll = ScrollViewport::default();
@@ -182,6 +194,7 @@ mod tests {
                     (q, t, h)
                 };
             let first = render(&dialog, &mut scroll, true);
+            assert_eq!(first, (legacy_quads, legacy_text, legacy_hits));
             assert!(scroll.maximum() > 0.0);
             assert!(
                 !first

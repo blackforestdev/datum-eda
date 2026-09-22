@@ -64,7 +64,7 @@ impl PreparedScene {
         controls: &mut ControlMeshCache,
     ) -> Self {
         let scale = scale_factor.max(0.01);
-        let layout = ShellLayout::for_surface(width, height, scale, None);
+        let layout = Self::native_dialog_layout(width, height, scale);
         let mut quads = Vec::new();
         let mut text = Vec::new();
         let mut hits = Vec::new();
@@ -78,6 +78,40 @@ impl PreparedScene {
             reveal_row,
         );
         Self::from_dialog_parts(layout, quads, text, hits, scale, (width, height))
+    }
+
+    /// Native dialogs have no editor sidebars, dock or pane layout to solve.
+    /// Keep the rounded logical extent and status-edge arithmetic used by the
+    /// existing dialog painters, while leaving unrelated shell regions empty.
+    pub(crate) fn native_dialog_layout(width: u32, height: u32, scale: f32) -> ShellLayout {
+        let scale = scale.max(0.01);
+        let width = (width as f32 / scale).round().max(1.0);
+        let height = (height as f32 / scale).round().max(1.0);
+        let status_height = design_tokens::spacing::SP_06 + design_tokens::spacing::SP_01;
+        let empty = RectPx {
+            x: 0.0,
+            y: 0.0,
+            width: 0.0,
+            height: 0.0,
+        };
+        ShellLayout {
+            top_menu_bar: RectPx { width, ..empty },
+            viewport: RectPx {
+                width,
+                height,
+                ..empty
+            },
+            left_sidebar: empty,
+            right_sidebar: empty,
+            bottom_strip: empty,
+            status_bar: RectPx {
+                x: 0.0,
+                y: height - status_height,
+                width,
+                height: status_height,
+            },
+        }
+        .scale_by(scale)
     }
 
     /// Shared native-dialog envelope: no hidden workspace preparation or hits.
@@ -245,7 +279,7 @@ mod tests {
             };
             for profile in ["Global Preferences", "Project Preferences", "New Project"] {
                 let scene = if profile == "New Project" {
-                    let layout = ShellLayout::for_surface(width, height, scale, None);
+                    let layout = PreparedScene::native_dialog_layout(width, height, scale);
                     let (mut quads, mut text, mut hits) = (Vec::new(), Vec::new(), Vec::new());
                     crate::new_project_dialog::render_new_project_dialog(
                         &state.ui.new_project,
@@ -274,6 +308,9 @@ mod tests {
                         scale,
                     )
                 };
+                assert_eq!(scene.layout.left_sidebar.width, 0.0);
+                assert_eq!(scene.layout.right_sidebar.width, 0.0);
+                assert_eq!(scene.layout.bottom_strip.height, 0.0);
                 assert!(!scene.menu_overlay_vertices.is_empty());
                 assert!(!scene.hit_regions.is_empty());
                 for vertex in &scene.menu_overlay_vertices {
