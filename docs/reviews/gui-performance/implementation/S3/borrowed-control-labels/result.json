@@ -1,0 +1,32 @@
+{
+  "candidate_base": "671ed72a81134244f55a4001f76a1012ad956147",
+  "production": {
+    "status": "Default choice/toggle preparation borrows available labels until TextRun ownership",
+    "production_consumers": [
+      "GLOBAL Preferences choice and boolean controls",
+      "PROJECT Preferences choice and boolean controls"
+    ],
+    "shared_owner": "global_preferences_primitives::draw_choice_control and draw_boolean_control; existing draw_text/draw_text_clipped TextRun ownership",
+    "retired_paths": [
+      "Intermediate label.to_owned() in both available-control painters, immediately followed by another String copy in the shared text-run constructor"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/borrowed-control-labels/result.json",
+    "proof": "Existing218 renderer tests pass, including control and unavailable-state coverage. Existing GPU single-pass/general-dialog pixel parity passes1 test/258 filtered. Renderer visual library/tests Clippy and fresh release GUI build pass.",
+    "limits": "Source-level removal of one redundant temporary String copy per available label (an allocation for nonempty labels), not measured total allocations or frame-time improvement. TextRun still owns text; unavailable suffix formatting and integer formatting remain. No new native qualification, complete resource accounting or HP14/S3 acceptance. No styling/prototype/dependency/license, resource deadline or resize-scope change."
+  },
+  "source_before_sha256": "f6779f6d3670de4762ccc38bf948880ffaf06b0e4396d55b06e636dff67b34e1",
+  "source_after_sha256": "3d8bdca7045293c8c3495b3fb2e2094cdac76d91e3c44e2ea9eee065f3924d32",
+  "release_binary_sha256": "551ebfd9287ee21bfdb3c2c66f33c808f6452161a0dd6a60d4462da2e33fdc74",
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib -- --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --features visual --lib dialog_single_pass_matches_general_renderer_pixels -- --ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-render --features visual --lib --tests -- -D warnings",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app --bin datum-gui"
+  ],
+  "artifact_sha256": {
+    "clippy.log.gz": "b3ddcc9005f3d89fd59b9c76f30ee92e2d15e830fb2cc1e7195e188f5a321357",
+    "release.log.gz": "ef653eacd58de1d2599862dc5653278cb8af683bbc3e945845e6bd5e335023f2",
+    "tests.log.gz": "61c2a5d8315f7c28cdef1ef2d50998bb53ca3700f2e802ef7be912bb50cae93b",
+    "gpu.log.gz": "665c89d374777e1fe1b6913a307d64053fad714386247ad51e3cd7156e9425ec"
+  }
+}

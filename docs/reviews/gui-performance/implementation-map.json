@@ -5570,7 +5570,8 @@
         "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json",
         "docs/reviews/gui-performance/implementation/S3/search-byte-fast-path/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-publication/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-both-hosts/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-both-hosts/result.json",
+        "docs/reviews/gui-performance/implementation/S3/borrowed-control-labels/result.json"
       ],
       "s3_explanation_focus_reveal_progress": {
         "status": "Shared explanation Close focus reveal implemented in default GLOBAL/PROJECT surfaces",
@@ -5666,6 +5667,20 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-both-hosts/result.json",
         "proof": "Positive and restored runs each pass1 test/394 filtered. Negative reports stale hits independently for GLOBAL and PROJECT at1.5,2,1 scale transitions, after both paths and owned terminal shutdown complete.",
         "limits": "Direct surface methods on actual hidden X11/Vulkan windows, not OS-delivered pointer/DPI/resize events or real monitor transitions. Search-target publication only. Remaining control/focus/partial-row, backend and full HP12/S3 qualification stays open. Runtime, dependency/license, prototype, resource deadlines and resize exclusions unchanged."
+      },
+      "s3_borrowed_control_labels_progress": {
+        "status": "Default choice/toggle preparation borrows available labels until TextRun ownership",
+        "production_consumers": [
+          "GLOBAL Preferences choice and boolean controls",
+          "PROJECT Preferences choice and boolean controls"
+        ],
+        "shared_owner": "global_preferences_primitives::draw_choice_control and draw_boolean_control; existing draw_text/draw_text_clipped TextRun ownership",
+        "retired_paths": [
+          "Intermediate label.to_owned() in both available-control painters, immediately followed by another String copy in the shared text-run constructor"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/borrowed-control-labels/result.json",
+        "proof": "Existing218 renderer tests pass, including control and unavailable-state coverage. Existing GPU single-pass/general-dialog pixel parity passes1 test/258 filtered. Renderer visual library/tests Clippy and fresh release GUI build pass.",
+        "limits": "Source-level removal of one redundant temporary String copy per available label (an allocation for nonempty labels), not measured total allocations or frame-time improvement. TextRun still owns text; unavailable suffix formatting and integer formatting remain. No new native qualification, complete resource accounting or HP14/S3 acceptance. No styling/prototype/dependency/license, resource deadline or resize-scope change."
       }
     },
     {
@@ -5998,7 +6013,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/native-expanded-pass-reuse/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-project2-replay/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-project2-replay/result.json",
+        "docs/reviews/gui-performance/implementation/S3/borrowed-control-labels/result.json"
       ],
       "s3_native_pass_roundtrip_progress": {
         "status": "Four additional native expanded pass/reuse cases pass; PROJECT2x delivery failure retained",
@@ -6020,6 +6036,20 @@
         "retired_paths": "None; bounded replay of existing shared production owners.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-project2-replay/result.json",
         "limits": "Native X11/Xwayland with2x override at actual1918x1050, opt-in existing GPU/cache diagnostics. Six bounded Preferences host/scale cases now have successful receipts across different pinned builds; this is not a single-candidate full matrix. Initial capture lags expansion; exactly one delivered nonsynthetic Escape plus presentation and surviving dialog supplies the expansion oracle. Previous nondelivery failure and dat-native-input-delivery-vq7w remain open. No default-path performance, monitor-DPI transition, Wayland input, full resource or S3 acceptance. No production, dependency, license, prototype, budget or resize change."
+      },
+      "s3_borrowed_control_labels_progress": {
+        "status": "Default choice/toggle preparation borrows available labels until TextRun ownership",
+        "production_consumers": [
+          "GLOBAL Preferences choice and boolean controls",
+          "PROJECT Preferences choice and boolean controls"
+        ],
+        "shared_owner": "global_preferences_primitives::draw_choice_control and draw_boolean_control; existing draw_text/draw_text_clipped TextRun ownership",
+        "retired_paths": [
+          "Intermediate label.to_owned() in both available-control painters, immediately followed by another String copy in the shared text-run constructor"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/borrowed-control-labels/result.json",
+        "proof": "Existing218 renderer tests pass, including control and unavailable-state coverage. Existing GPU single-pass/general-dialog pixel parity passes1 test/258 filtered. Renderer visual library/tests Clippy and fresh release GUI build pass.",
+        "limits": "Source-level removal of one redundant temporary String copy per available label (an allocation for nonempty labels), not measured total allocations or frame-time improvement. TextRun still owns text; unavailable suffix formatting and integer formatting remain. No new native qualification, complete resource accounting or HP14/S3 acceptance. No styling/prototype/dependency/license, resource deadline or resize-scope change."
       }
     },
     {
@@ -28891,5 +28921,19 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-both-hosts/result.json",
     "proof": "Positive and restored runs each pass1 test/394 filtered. Negative reports stale hits independently for GLOBAL and PROJECT at1.5,2,1 scale transitions, after both paths and owned terminal shutdown complete.",
     "limits": "Direct surface methods on actual hidden X11/Vulkan windows, not OS-delivered pointer/DPI/resize events or real monitor transitions. Search-target publication only. Remaining control/focus/partial-row, backend and full HP12/S3 qualification stays open. Runtime, dependency/license, prototype, resource deadlines and resize exclusions unchanged."
+  },
+  "s3_borrowed_control_labels_work": {
+    "status": "Default choice/toggle preparation borrows available labels until TextRun ownership",
+    "production_consumers": [
+      "GLOBAL Preferences choice and boolean controls",
+      "PROJECT Preferences choice and boolean controls"
+    ],
+    "shared_owner": "global_preferences_primitives::draw_choice_control and draw_boolean_control; existing draw_text/draw_text_clipped TextRun ownership",
+    "retired_paths": [
+      "Intermediate label.to_owned() in both available-control painters, immediately followed by another String copy in the shared text-run constructor"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/borrowed-control-labels/result.json",
+    "proof": "Existing218 renderer tests pass, including control and unavailable-state coverage. Existing GPU single-pass/general-dialog pixel parity passes1 test/258 filtered. Renderer visual library/tests Clippy and fresh release GUI build pass.",
+    "limits": "Source-level removal of one redundant temporary String copy per available label (an allocation for nonempty labels), not measured total allocations or frame-time improvement. TextRun still owns text; unavailable suffix formatting and integer formatting remain. No new native qualification, complete resource accounting or HP14/S3 acceptance. No styling/prototype/dependency/license, resource deadline or resize-scope change."
   }
 }
