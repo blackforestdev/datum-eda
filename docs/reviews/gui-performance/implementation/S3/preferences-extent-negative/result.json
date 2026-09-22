@@ -1,0 +1,32 @@
+{
+  "candidate_base": "606ebe092d1fe1445a12c80a8fab1cb31c023099",
+  "status": "Visible-row-only extent negative detected; restored production renderer passes strengthened existing test",
+  "requirement": "HP20-01",
+  "observations": {
+    "viewport-cap": "Initial simpler fault caps content at viewport height: existing maximum>0 assertion fails, byte-restored original test passes.",
+    "initial-visible": "Visible-row sum fails new final-setting hit oracle. Initial restored trial also fails because assertion was incorrectly applied to fixed240 physicalpx at1.5x; retain failure, no production defect inferred.",
+    "corrected-visible": "Preserve original narrow clipping scenario; add matching logical240px heights at1.5/2x. Require final setting hit at full-height end. Visible-row sum fails this oracle (1 failed,214 filtered); restored production passes (1 passed,214 filtered)."
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/preferences_rows.rs": "8b0767941549640281af7014d24d4c3d75c9315ade0be9701ad9408f475cf79e",
+    "crates/gui-render/src/render/preferences_scene.rs": "a21a5630537c77173b9d84143d5109fa4ae0dbe392cf5e8c9300817163a1da20"
+  },
+  "limits": "Actual shared Preferences renderer fixture; matching960x240 logical windows at1/1.5/2x plus original960x240 physical1.5x narrow clipping case. No OS input or native windows. Search/choice/explanation/resize matrix and full HP20/S3 qualification remain open; Inspector has no current scroll adapter. No production behavior, dependency/license, prototype, numerical budget or resize-scope change.",
+  "artifact_sha256": {
+    "corrected-visible/negative.log.gz": "8d58cd7cfac18810199d9f756897afa415fe5f0089b982d0a5437d4dbbf1f2fd",
+    "corrected-visible/negative.patch": "e67131e96675e887a8b65121d7d6ba85332ef6e6c93fcde7ddaf3d49a73dc134",
+    "corrected-visible/restored.log.gz": "7182bd16be0a517daab305c21ac8e769cd06a51b2b7975c95f9144c51141336d",
+    "corrected-visible/result.json": "bc96bb32710fbfecacc715ebd2c3830d96ae4e04160db858f727837991bed322",
+    "corrected-visible/runner.py": "c55ef40380b94066185de5ff09a5f90e43df546e621fcb82380755158ad5fb29",
+    "initial-visible/negative.log.gz": "80ab8c2ad1f51abdd1dd409c54d2bea0afb323d08d8fdde4d4d991c5a863b338",
+    "initial-visible/negative.patch": "e67131e96675e887a8b65121d7d6ba85332ef6e6c93fcde7ddaf3d49a73dc134",
+    "initial-visible/restored.log.gz": "785abde20447b5bc28677ab8f7f41a1b4c72def30f2c47a0e9d8be4e699f2818",
+    "initial-visible/result.json": "cf227091053ae9015f0bd5c2083f7e5d4365c51630b82fdefe82f6bbcc3846b7",
+    "initial-visible/runner.py": "9383528bc02c87a5b565fc0c76d586a6825cdf010186599c62288e04b98cc60a",
+    "viewport-cap/negative.log.gz": "47e1bd96eb7ed75c9c48fbdeda2156ad56a39b19a848687d0170660c11884d5e",
+    "viewport-cap/negative.patch": "26ed01d9a3aca23be85c442d6e3de0702de8e9c1cd60ebb134443036bf72dee5",
+    "viewport-cap/restored.log.gz": "1ce1a413f99cc28c7391d28056e8704b9059fe01f077120fda1f08ce7e76a1ab",
+    "viewport-cap/result.json": "bc96bb32710fbfecacc715ebd2c3830d96ae4e04160db858f727837991bed322",
+    "viewport-cap/runner.py": "0dd5cbaf77d85ba8380f73e8fca5b0546f359c2a412b0328639a07010da51a02"
+  }
+}

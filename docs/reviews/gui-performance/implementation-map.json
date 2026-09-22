@@ -6733,7 +6733,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared content-minus-viewport bounds and thumb logic are used by both Preferences; renderer tests cover fitting content and stable continuous extents. Native search/expansion/final-row/size matrix and prescribed negative remain open. Inspector is currently non-scrolling.",
+        "status": "Partial: shared full-content extent and thumb owner used by both Preferences. Existing renderer test now checks final-setting reachability at matching1/1.5/2x sizes and preserves narrow clipping coverage. Visible-row-only extent fault fails; restored production passes. Native search/choice/explanation/final-row/resize matrix remains open. Inspector is currently non-scrolling.",
         "id": "proof_hp20_01",
         "positive": "Short/final-row content, search/expanded choices/explanations then resize",
         "negative_control": "Compute extent from visible rows",
@@ -6764,7 +6764,20 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "INSPECTOR": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s3_preferences_extent_negative_progress": {
+        "status": "Visible-row-only extent negative detected; restored production renderer passes strengthened existing test",
+        "production_consumers": [
+          "GLOBAL/PROJECT shared Preferences renderer; fixture invocation only"
+        ],
+        "shared_owner": "render/preferences_rows.rs -> ScrollViewport",
+        "retired_paths": "No new runtime retirement; validates full-content extent already used before visible-row clipping.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json",
+        "limits": "Actual shared Preferences renderer fixture; matching960x240 logical windows at1/1.5/2x plus original960x240 physical1.5x narrow clipping case. No OS input or native windows. Search/choice/explanation/resize matrix and full HP20/S3 qualification remain open; Inspector has no current scroll adapter. No production behavior, dependency/license, prototype, numerical budget or resize-scope change."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json"
+      ]
     },
     {
       "id": "HP21-01",
@@ -27549,7 +27562,8 @@
         "s3_native_label_reuse_work": "docs/reviews/gui-performance/implementation/S3/native-label-reuse/result.json",
         "s3_native_preference_edits_work": "docs/reviews/gui-performance/implementation/S3/native-preference-edits/result.json",
         "s3_global_mutation_preparation_work": "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json",
-        "s3_wheel_input_negatives_work": "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json"
+        "s3_wheel_input_negatives_work": "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json",
+        "s3_preferences_extent_negative_work": "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json"
       },
       "receipt_sha256": {
         "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json": "7c21f4fb04e937db21bd06d9bd0e9b1d4d0602ccca5cf167def2a77f6d5e9139",
@@ -27562,7 +27576,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-label-reuse/result.json": "4c9d90cc68ea50370d92ba15900e8c7f8af2428085e67faf132d6d10c3ea4366",
         "docs/reviews/gui-performance/implementation/S3/native-preference-edits/result.json": "d8528dd04ef2bacc9e24f78b18da2d67b00de39eff94ee3971063285dcd45fe5",
         "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json": "a9c3cbf00ec0731bcfded36e99ee3da73442a9e5c073f81814bd5f104d9f94b2",
-        "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json": "eae1fafd5b8f366f5d2ca5cfc5f0560dc500c5bd16e7a94cd16734584eb03d0f"
+        "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json": "eae1fafd5b8f366f5d2ca5cfc5f0560dc500c5bd16e7a94cd16734584eb03d0f",
+        "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json": "0585e0e132197934f58ea1891dfe4f4178ccb81e70695a304d5987919d32fafd"
       },
       "remaining_actions": {
         "HP10-01": "Verify outside-Layers routing through the outer native event dispatcher; actual Board Runtime zero-preparation and prescribed negative are recorded.",
@@ -27578,7 +27593,7 @@
         "HP16-03": "Complete bounded control working-set eviction and pin-indefinitely negative. Full GPU/in-flight/aggregate bounds follow S4/S5 resource associations.",
         "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter.",
         "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct.",
-        "HP20-01": "Complete search/choice/explanation/final-row/size extent cases and visible-rows-only extent negative on actual scroll consumers.",
+        "HP20-01": "Complete native search/choice/explanation/final-row/size extent matrix on actual scroll consumers. Shared Preferences final-row renderer oracle and prescribed visible-row-only extent negative are recorded.",
         "HP21-01": "Complete remaining capture/profile/scale cases and grab-displacement/painted-only-scrollbar negative; retain existing native press/drag/track evidence.",
         "HP21-02": "Complete release/capture-loss/close/content-change final-target cases beyond recorded focus-loss and reflow cancellation tests.",
         "HP22-01": "Complete clamp-vertices negative and remaining native diagonal/rounded/nested clip cases per actual consumer; preserve existing terminal call-removal negatives.",
@@ -28025,5 +28040,15 @@
     "retired_paths": "No new production retirement; verifies the existing fractional input and shared wheel-unit implementations.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json",
     "limits": "Direct shared Preferences adapter invocation at1/1.5/2x; no OS event delivery or rendered host. GLOBAL/PROJECT/NEW consume this adapter; Main shares the converter but its dispatch and discrete Layers/terminal policies are not exercised here. Native fractional stream/final-offset, remaining host/hit/backend coverage and full HP18/HP19/S3 qualification remain open. No production change, new consumer migration, dependency/license, visual/prototype, numerical budget or resize-scope change."
+  },
+  "s3_preferences_extent_negative_work": {
+    "status": "Visible-row-only extent negative detected; restored production renderer passes strengthened existing test",
+    "production_consumers": [
+      "GLOBAL/PROJECT shared Preferences renderer; fixture invocation only"
+    ],
+    "shared_owner": "render/preferences_rows.rs -> ScrollViewport",
+    "retired_paths": "No new runtime retirement; validates full-content extent already used before visible-row clipping.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json",
+    "limits": "Actual shared Preferences renderer fixture; matching960x240 logical windows at1/1.5/2x plus original960x240 physical1.5x narrow clipping case. No OS input or native windows. Search/choice/explanation/resize matrix and full HP20/S3 qualification remain open; Inspector has no current scroll adapter. No production behavior, dependency/license, prototype, numerical budget or resize-scope change."
   }
 }

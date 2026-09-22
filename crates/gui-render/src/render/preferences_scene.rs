@@ -353,12 +353,17 @@ mod tests {
     fn continuous_scroll_clips_rows_and_hits_with_stable_content_bounds() {
         let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
         let dialog = &state.ui.global_preferences;
-        for scale in [1.0, 1.5] {
+        for (width, height, scale) in [
+            (960, 240, 1.0),
+            (960, 240, 1.5),
+            (1440, 360, 1.5),
+            (1920, 480, 2.0),
+        ] {
             let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
             let before = PreparedScene::from_native_preferences_scrolled(
                 dialog,
-                960,
-                240,
+                width,
+                height,
                 scale,
                 &mut scroll,
                 None,
@@ -374,8 +379,8 @@ mod tests {
             assert!(scroll.wheel(-0.25));
             let after = PreparedScene::from_native_preferences_scrolled(
                 dialog,
-                960,
-                240,
+                width,
+                height,
                 scale,
                 &mut scroll,
                 None,
@@ -391,13 +396,24 @@ mod tests {
             scroll.set_offset(scroll.maximum());
             let bottom = PreparedScene::from_native_preferences_scrolled(
                 dialog,
-                960,
-                240,
+                width,
+                height,
                 scale,
                 &mut scroll,
                 None,
             );
             assert_eq!(scroll.content_height, total);
+            // The original narrow 1.5x case clips within the final row.
+            // At matching logical sizes, its control must be reachable at end.
+            if height as f32 / scale >= 240.0 {
+                let last_key = &dialog.visible_rows().last().unwrap().key;
+                assert!(
+                    bottom.hit_regions.iter().any(|hit| {
+                        hit.target == HitTarget::GlobalPreferencesControl(last_key.clone())
+                    }),
+                    "scrolling to the end must reach the final setting"
+                );
+            }
             for hit in &bottom.hit_regions {
                 if matches!(
                     hit.target,
