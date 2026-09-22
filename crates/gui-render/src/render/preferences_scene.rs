@@ -149,6 +149,7 @@ impl PreparedScene {
 }
 
 impl Renderer {
+    /// Scroll state is in logical pixels; the resulting paint and hit regions are physical.
     pub fn prepare_native_preferences_scrolled(
         &mut self,
         dialog: &datum_gui_protocol::GlobalPreferencesDialogState,
@@ -350,7 +351,7 @@ mod tests {
                 .find(|run| run.text == "Console feedback duration")
                 .unwrap()
                 .y;
-            assert_eq!(row_y - moved_y, 0.25);
+            assert_eq!(row_y - moved_y, 0.25 * scale);
             assert_eq!(scroll.content_height, total);
             scroll.set_offset(scroll.maximum());
             let bottom = PreparedScene::from_native_preferences_scrolled(
@@ -369,9 +370,10 @@ mod tests {
                         | HitTarget::GlobalPreferencesControl(_)
                         | HitTarget::GlobalPreferencesReset(_)
                 ) {
-                    assert!(hit.rect.y >= scroll.viewport.y);
+                    assert!(hit.rect.y >= scroll.viewport.y * scale);
                     assert!(
-                        hit.rect.y + hit.rect.height <= scroll.viewport.y + scroll.viewport.height
+                        hit.rect.y + hit.rect.height
+                            <= (scroll.viewport.y + scroll.viewport.height) * scale
                     );
                 }
             }

@@ -553,7 +553,7 @@ impl ShellLayout {
             .map(|leaf| leaf.rect.scene)
     }
 
-    fn scale_by(self, scale: f32) -> Self {
+    pub(crate) fn scale_by(self, scale: f32) -> Self {
         Self {
             top_menu_bar: self.top_menu_bar.scale_by(scale),
             viewport: self.viewport.scale_by(scale),
