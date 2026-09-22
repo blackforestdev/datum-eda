@@ -1,0 +1,197 @@
+[
+  {
+    "host": "GLOBAL",
+    "command": [
+      "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "--board",
+      "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+      "--window-size",
+      "1280x800",
+      "--initial-layout",
+      "single",
+      "--open-global-preferences",
+      "--visual-scale-factor",
+      "1"
+    ],
+    "actions": [
+      {
+        "args": [
+          "windowactivate",
+          "--sync",
+          "6291461"
+        ],
+        "time": 1790051163.3742454
+      },
+      {
+        "args": [
+          "windowsize",
+          "--sync",
+          "6291461",
+          "1000",
+          "540"
+        ],
+        "time": 1790051163.439155
+      },
+      {
+        "args": [
+          "mousemove",
+          "510",
+          "285"
+        ],
+        "time": 1790051164.1638396
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051164.3226573
+      },
+      {
+        "args": [
+          "mousemove",
+          "1454",
+          "308"
+        ],
+        "time": 1790051164.6449418
+      },
+      {
+        "args": [
+          "mousedown",
+          "1"
+        ],
+        "time": 1790051164.8540697
+      },
+      {
+        "args": [
+          "mousemove",
+          "1454",
+          "733"
+        ],
+        "time": 1790051165.0711029
+      },
+      {
+        "args": [
+          "mouseup",
+          "1"
+        ],
+        "time": 1790051165.3389597
+      },
+      {
+        "args": [
+          "mousemove",
+          "760",
+          "674"
+        ],
+        "time": 1790051165.7270272
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051165.8855686
+      }
+    ],
+    "binary_sha256": "f31b00cf15df765de73c31916b560ca8aff0f9921638bf873e4895f428b82625",
+    "geometry": {
+      "WINDOW": 6291461,
+      "X": 460,
+      "Y": 178,
+      "WIDTH": 1000,
+      "HEIGHT": 563,
+      "SCREEN": 0
+    },
+    "passed_recipe": true
+  },
+  {
+    "host": "PROJECT",
+    "command": [
+      "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "--board",
+      "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+      "--window-size",
+      "1280x800",
+      "--initial-layout",
+      "single",
+      "--open-project-preferences",
+      "--visual-scale-factor",
+      "1"
+    ],
+    "actions": [
+      {
+        "args": [
+          "windowactivate",
+          "--sync",
+          "6291461"
+        ],
+        "time": 1790051168.697637
+      },
+      {
+        "args": [
+          "windowsize",
+          "--sync",
+          "6291461",
+          "1000",
+          "540"
+        ],
+        "time": 1790051168.7621913
+      },
+      {
+        "args": [
+          "mousemove",
+          "1454",
+          "308"
+        ],
+        "time": 1790051169.485803
+      },
+      {
+        "args": [
+          "mousedown",
+          "1"
+        ],
+        "time": 1790051169.6948628
+      },
+      {
+        "args": [
+          "mousemove",
+          "1454",
+          "733"
+        ],
+        "time": 1790051169.91212
+      },
+      {
+        "args": [
+          "mouseup",
+          "1"
+        ],
+        "time": 1790051170.1663706
+      },
+      {
+        "args": [
+          "mousemove",
+          "760",
+          "674"
+        ],
+        "time": 1790051170.5540366
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051170.7080965
+      }
+    ],
+    "binary_sha256": "f31b00cf15df765de73c31916b560ca8aff0f9921638bf873e4895f428b82625",
+    "geometry": {
+      "WINDOW": 6291461,
+      "X": 460,
+      "Y": 178,
+      "WIDTH": 1000,
+      "HEIGHT": 563,
+      "SCREEN": 0
+    },
+    "passed_recipe": true
+  }
+]
