@@ -1,0 +1,106 @@
+{
+  "display": ":1",
+  "wayland_display": "wayland-0",
+  "topology": "Owner-confirmed idle desktop X11/Xwayland; native adapter functional trial",
+  "binary_sha256": "01792f2cf40c2b7a8e6821b53fd0848cad028eeb9a6c084721329b7c418c45e0",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-global-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "27262981"
+          ],
+          "monotonic": 776430.246048975,
+          "wall_time": 1790039580.1157205
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "50",
+            "107",
+            "click",
+            "1"
+          ],
+          "monotonic": 776430.311564697,
+          "wall_time": 1790039580.1812341
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "994",
+            "130"
+          ],
+          "monotonic": 776430.830773913,
+          "wall_time": 1790039580.7004428
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "994",
+            "130",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 776431.200447334,
+          "wall_time": 1790039581.0701165
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "994",
+            "738"
+          ],
+          "monotonic": 776431.459545519,
+          "wall_time": 1790039581.3292155
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "994",
+            "738",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 776431.800774871,
+          "wall_time": 1790039581.670444
+        }
+      ],
+      "geometry": {
+        "WINDOW": "27262981",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_frames": 2,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    }
+  ]
+}

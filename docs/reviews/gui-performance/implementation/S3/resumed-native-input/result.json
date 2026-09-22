@@ -1,0 +1,29 @@
+{
+  "status": "release build passed; resumed native attempts fail or abort, qualification remains open",
+  "source_commit": "3fe7ccc77da65c5bfcad898a8915d2b798668362",
+  "binary_sha256": "01792f2cf40c2b7a8e6821b53fd0848cad028eeb9a6c084721329b7c418c45e0",
+  "fixture": {
+    "path": "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+  },
+  "owner_direction": "Desktop is idle; native input tests may continue",
+  "build_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app",
+  "build_result": "exit0; release completed in5m37s",
+  "environment": "Desktop Wayland session, DISPLAY=:1; test app forced X11/Xwayland; Intel HD Graphics P630 IntegratedGpu, Vulkan, Mesa25.0.7-2+deb13u1; requested visual scale1; actual Preferences client1000x750; isolated XDG config/cache per host; GPU measurements disabled",
+  "attempts": [
+    {
+      "command": "python3 /tmp/pm045_s3_resumed_scroll.py /tmp/pm045-s3-resumed-scroll",
+      "exit_code": 1,
+      "result": "GLOBAL recorded zero thumb press/release redraw, one drag frame and zero bottom boundary frames, then timed out on reversal. PROJECT recorded zero press redraw then timed out on drag. Logs contain input outside requested targets; these observations do not pass the recipes."
+    },
+    {
+      "command": "python3 /tmp/pm045_s3_paired_scroll.py /tmp/pm045-s3-paired-scroll",
+      "exit_code": 130,
+      "result": "Paired move+button delivery retry aborted during GLOBAL release wait after unscripted AltLeft presses and pointer positions. Its result file lacks passed field; it is not success. PROJECT not run."
+    }
+  ],
+  "visual_review": "Inspected initial GLOBAL before/bottom and PROJECT before. GLOBAL visibly scrolls to final angle-precision row while header/rail remain pinned. This is limited capture evidence, not full pixel parity or native input qualification. Other saved captures are retained raw failed-attempt artifacts.",
+  "interpretation": "The source of additional input is unknown. These logs do not establish owner desktop use. Input delivery to the intended host is unreliable in these attempts; no kernel/compositor investigation performed. Further focus-taking retries stopped for this turn. Existing owner authorization is not revoked.",
+  "cleanup": "Both drivers terminated their own application in finally; no driver or datum-gui process remained. No teardown qualification.",
+  "limits": "No S3 advancement or HP11/HP21/HP22 pass. No new dependency, license, production code, numerical budget or sequencing change. S3 proposal1bc02aaf remains unapproved."
+}
