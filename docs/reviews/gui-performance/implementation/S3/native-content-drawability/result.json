@@ -1,0 +1,93 @@
+{
+  "base_commit": "e93ba5487989a155dbfde238a337fce13da1f273",
+  "source": "crates/gui-app/src/owned_dialog_pointer_tests.rs",
+  "source_sha256": "57d2563a2a850834ea349772db3285d71113021b21a3f87109c69c89fa0d95f2",
+  "status": "Preserved native-test pacing correction; replay qualification blocked by currently locked desktop",
+  "production_consumers": [
+    "GLOBAL Preferences native frame/input owners",
+    "PROJECT Preferences native frame/input owners"
+  ],
+  "retired_paths": "Test-only synthetic RedrawRequested tokens and backend skip; the existing native test now pumps actual redraw/resize events and services native queue progress for both backends. Production code unchanged.",
+  "observations": [
+    "Isolated test tracing reaches second frame submit before forced presentation stops returning; timeout exits124 after45s, owned process group terminated and disposable source restored.",
+    "Installed winit0.30.13 source was read in its existing registry location: Wayland skips native redraw delivery while a frame callback is requested. No third-party source copied into the repository or modified.",
+    "Candidate uses real native redraw delivery and AboutToWait dispatch, plus existing queue progress. Wayland returns a bounded content-presentation timeout instead of forcing the next presentation.",
+    "Owned-PID KWin activation trial also reaches bounded timeout. Successful activation is not proof of an unlocked or displaying desktop.",
+    "Current ScreenSaver.GetActive returns true. Lock timing for earlier trials is unknown; do not infer it from the raw GetActiveTime value.",
+    "Native tests stopped pending owner unlock/availability. No new compositor/input/visual or native content-change pass is claimed."
+  ],
+  "verification": {
+    "compile": "Current test source compiles through native test build and workspace Clippy; no native functional acceptance while locked.",
+    "source_health": "2223 files pass;13 policy tests pass",
+    "drift": "Workspace format/Clippy and preceding checks pass; full drift stops at same eight existing GUI agent/terminal convergence failures.",
+    "release": "No application release rebuilt or production changes; existing GEFN-preserving release untouched."
+  },
+  "issue": "dat-native-content-presentation-qo9y",
+  "limits": [
+    "Native repeated-presentation behavior must be replayed on an unlocked drawable desktop. This correction is not closure of the issue or HP21/S3.",
+    "Earlier X11/Wayland passes remain evidence for their recorded source/binary only. Pointer events in this regression are supplied, not OS input.",
+    "No retrospective attribution to lock state, graphics driver or kernel. No benchmark campaign, production polling loop, dependency addition, prototype edit, sequencing amendment or resize qualification."
+  ],
+  "artifacts": [
+    {
+      "path": "pm045_wayland_content_localize.py.gz",
+      "sha256": "86859320a1787c71b457be987f59459a0db4b7cc584851794f3bb9650b390aa8",
+      "uncompressed_sha256": "b6d30c80f29a4ca7a26c1fe4058f047b5f57f264511d76a7a199cffed0f9ed64"
+    },
+    {
+      "path": "pm045-content-localize.log.gz",
+      "sha256": "b8603243658ac86a764e095b47fe6b781d95f5b36fc6105c25db12cd2726c8d8",
+      "uncompressed_sha256": "d6135ae2c6742b8cb986fc60dc165e71bbc5653a44e4ecfc810e36895d169fce"
+    },
+    {
+      "path": "pm045-content-localize-native.log.gz",
+      "sha256": "d76825848fdb60ef3115b406327bd8977bf9a32d5627ad684b52b430159513d9",
+      "uncompressed_sha256": "5e7770dfce519af111522e8fbd3ab559eaadca1ea49b55773a3d408b692e2f4a"
+    },
+    {
+      "path": "pm045-content-localize-result.json",
+      "sha256": "d1cc70aa96c4737727b5ea308555db7ef8820bf5bacb12e2080fa98e6f730b0d",
+      "uncompressed_sha256": "d1cc70aa96c4737727b5ea308555db7ef8820bf5bacb12e2080fa98e6f730b0d"
+    },
+    {
+      "path": "pm045-content-paced-wayland.log.gz",
+      "sha256": "404dc0f85f85d2f0295b071e143f4603eada82960edd8d7e949a8a9ed8a98502",
+      "uncompressed_sha256": "9601e8669a462d25a5cf50eb178c9965a2bbb6ae4ee580fc5c383d57a5ae812b"
+    },
+    {
+      "path": "pm045_content_visible_replay.py.gz",
+      "sha256": "023faeca7051cece7b631344b3e60450e47577cd7b51bebb7ac0307e62d30130",
+      "uncompressed_sha256": "23ae8606a2cc14e288c2a9423ad9ade141e99aa0820a6bd47064022c6419a026"
+    },
+    {
+      "path": "pm045-content-visible.log.gz",
+      "sha256": "b348cc9100ee511432417b6015d6c85e8bab6db65fb48397c86b22592d9420c2",
+      "uncompressed_sha256": "c7edb11c5cb2d3c350fb8097f7c9518c2b46ffe4815f8a07ef6a1c6d89877944"
+    },
+    {
+      "path": "pm045-content-visible-result.json",
+      "sha256": "dab22ab4209322f19ea99c6d7655bf6d5fc3daa0a9e18befa62664faebbb53c0",
+      "uncompressed_sha256": "dab22ab4209322f19ea99c6d7655bf6d5fc3daa0a9e18befa62664faebbb53c0"
+    },
+    {
+      "path": "pm045_owned_window_geometry.py.gz",
+      "sha256": "1d46e6004a8ef55e6b481058ec46f8796406c5ed3d6451d2664410f485509560",
+      "uncompressed_sha256": "4c7928ca60d07a3e10bac5144fc5b9beea96760d1c23b1a3a9721cb3a3e17f55"
+    },
+    {
+      "path": "pm045-desktop-drawability.json",
+      "sha256": "d09bf7f945ed247ae41706bdb0c5c7361ec26127c279e620a30ae42adc029800",
+      "uncompressed_sha256": "d09bf7f945ed247ae41706bdb0c5c7361ec26127c279e620a30ae42adc029800"
+    },
+    {
+      "path": "pm045-content-native-pacing-drift.log.gz",
+      "sha256": "0ed8781a27fa06304ff588a161bb041c2c425ba67297db48f369ba0e797609bb",
+      "uncompressed_sha256": "2f7f84dfa3734577046fff64803d91e4faafd312c90120c2cf2aa28bda8136bc"
+    },
+    {
+      "path": "pm045-content-native-pacing-source-policy.log.gz",
+      "sha256": "4bf3b26295a6f45703ce244c9f059ba90fe6836e8b94c7ffb71c21636c49f6b0",
+      "uncompressed_sha256": "234d2255208f010cd2d926d69ee5dbfc4e1bc25c92738044b3bef6981a5c1d29"
+    }
+  ]
+}
