@@ -1,0 +1,12 @@
+diff --git a/crates/gui-viewport/src/scroll.rs b/crates/gui-viewport/src/scroll.rs
+index 4b17e0ca..46aa4a8b 100644
+--- a/crates/gui-viewport/src/scroll.rs
++++ b/crates/gui-viewport/src/scroll.rs
+@@ -133 +133 @@ impl ScrollViewport {
+-            self.drag_grab = Some(y - thumb.y);
++            self.drag_grab = Some(0.0);
+@@ -219,0 +220,4 @@ mod tests {
++        assert!(!s.drag(t.y + 20.0), "stationary pointer must not jump");
++        assert_eq!(s.offset(), 0.0);
++        assert!(s.drag(t.y + 140.0));
++        assert_eq!(s.offset(), 300.0, "midpoint must preserve thumb grab");

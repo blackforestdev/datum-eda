@@ -217,6 +217,10 @@ mod tests {
                 changed: false
             }
         );
+        assert!(!s.drag(t.y + 20.0), "stationary pointer must not jump");
+        assert_eq!(s.offset(), 0.0);
+        assert!(s.drag(t.y + 140.0));
+        assert_eq!(s.offset(), 300.0, "midpoint must preserve thumb grab");
         assert!(s.drag(320.0));
         assert_eq!(s.offset(), 600.0);
         assert_eq!(s.thumb().unwrap().y + t.height, 460.0);
