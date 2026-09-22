@@ -1,0 +1,85 @@
+{
+  "candidate_commit": "6fdd6f90b7819859e4c1f8c982e4af1b546bfacc",
+  "production": {
+    "status": "Bounded native X11 Layers wheel predicates observed; all complete-run attempts remain failed",
+    "production_consumers": [
+      "MAIN Board Layers native OS wheel dispatch"
+    ],
+    "retired_paths": "No new runtime migration; exercises default shared native wheel owner landed in 6fdd6f90.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/layers-os-wheel/result.json",
+    "proof": "Actual OS wheel logs identify Main and line direction. All three attempts have zero top/bottom boundary presentations and positive down/reversal presentations. Settled attempt also passes exact RGB board-crop equality across Layers steps and editor zoom change. Inspected captures show bounded last rows18-24 of24 and reverse17-23; later capture16-22 demonstrates capture freshness remains limited.",
+    "limits": "No complete native trial pass: initial capture retains hover highlight, second trial times out at Alt+F4 close after all wheel assertions, third times out awaiting all editor-wheel events. All failures preserved. Capture/compositor delivery remains unqualified; no single-event/one-frame assertion, exact native state offset, native preparation count, prescribed fallthrough negative, Wayland/scale matrix, whole-board camera proof, latency or HP10/S3 acceptance. Existing dat-native-input-delivery-vq7w remains open. No production/dependency/license/prototype/budget/resize changes."
+  },
+  "binary_sha256": "e71f8a4b8527224e9b7d415342361a63f1857d65b60a4d3cba5355cfe90d2112",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "environment": {
+    "backend": "X11 on existing desktop",
+    "visual_scale_override": 1,
+    "capture_extent": [
+      1333,
+      833
+    ],
+    "gpu_measurements": false,
+    "verbose_lifecycle": true,
+    "isolated_config_cache": true
+  },
+  "commands": [
+    "python3 /tmp/pm045_main_layers_os.py /tmp/pm045-main-layers-os",
+    "python3 /tmp/pm045_main_layers_os_settled.py /tmp/pm045-main-layers-os-settled",
+    "python3 /tmp/pm045_main_layers_os_close.py /tmp/pm045-main-layers-os-close"
+  ],
+  "observed_predicates": {
+    "boundary_presentations": [
+      0,
+      0
+    ],
+    "settled_step_presentations": [
+      0,
+      2,
+      4,
+      0,
+      2,
+      1
+    ],
+    "settled_board_crop_equal": [
+      400,
+      150,
+      900,
+      500
+    ],
+    "all_complete_runs_passed": false
+  },
+  "artifact_sha256": {
+    "settled/native.log.gz": "e74ff9661fe982ad52477968e9d3095e01d22b3907c27cdf443f54596bf73824",
+    "settled/editor-zoom.png": "9a6f9b41df26b994bf60dbf60add1b369bfface839ffd2d88621e00054fa4b4c",
+    "settled/bottom-boundary.png": "caaea4e6511098378636f926a18fdd533ec5dfb42605dc7a700448d317bc9a44",
+    "settled/down.png": "2ef2f7e15a74e164481f8574a63642366f98cbde845674329d05e59e494664a4",
+    "settled/driver.py.gz": "e76c9ce9ebc700077133d58a6d3ecfc75c57b76ba90441be9ac50b2f4921d322",
+    "settled/top-boundary.png": "42c030f69c64a555384d919acba6ca9465a5f94a9b508302e63378cd01edd5d1",
+    "settled/reverse.png": "2606e8a3183e1c57cc2a08e06598b744c102772e70c295dc5c2bc8ed938b8d21",
+    "settled/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "settled/initial.png": "42c030f69c64a555384d919acba6ca9465a5f94a9b508302e63378cd01edd5d1",
+    "settled/to-bottom.png": "caaea4e6511098378636f926a18fdd533ec5dfb42605dc7a700448d317bc9a44",
+    "settled/result.json": "54718c7c177fcf5821996a549656c6fba5ce5f182cd6bb5bab2d5897fffcb289",
+    "close-attempt/native.log.gz": "e2108d4741e4538c8c6fb6e60aed648a5ef94972627858e907ded71fee9687cd",
+    "close-attempt/bottom-boundary.png": "caaea4e6511098378636f926a18fdd533ec5dfb42605dc7a700448d317bc9a44",
+    "close-attempt/down.png": "1e05fb790b159e766a35c8aca4f6415c676a548da179fccd1c3abf39499c7c38",
+    "close-attempt/driver.py.gz": "8014ca9099d179e80c33befe7ad0ef000a64c8ba450dbe989809c8af115775e8",
+    "close-attempt/top-boundary.png": "42c030f69c64a555384d919acba6ca9465a5f94a9b508302e63378cd01edd5d1",
+    "close-attempt/reverse.png": "d71e655423fe0152c72bbd4607dcea1d02c4a0289d9e5ffb1aff8b266bd2b7ad",
+    "close-attempt/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "close-attempt/initial.png": "532a3b2a1f48937226eba870b2dcc9c43aba667f78435f638acf0f9639e24145",
+    "close-attempt/to-bottom.png": "caaea4e6511098378636f926a18fdd533ec5dfb42605dc7a700448d317bc9a44",
+    "close-attempt/result.json": "a0ae0fdb7e5630cb004c3504c1e024d29188647ee97b22c87bc376a3ee8f7156",
+    "initial/native.log.gz": "9388a8a16b13ae1c6c37cbecd2fb2d99a966acfa34144793b704c0c9318ebff1",
+    "initial/bottom-boundary.png": "caaea4e6511098378636f926a18fdd533ec5dfb42605dc7a700448d317bc9a44",
+    "initial/down.png": "1e05fb790b159e766a35c8aca4f6415c676a548da179fccd1c3abf39499c7c38",
+    "initial/driver.py.gz": "09737dd92cf5cedfd5ccde10520d5aa6c2d718cd14bc501615eae3ed0a6e8b3c",
+    "initial/top-boundary.png": "42c030f69c64a555384d919acba6ca9465a5f94a9b508302e63378cd01edd5d1",
+    "initial/reverse.png": "d71e655423fe0152c72bbd4607dcea1d02c4a0289d9e5ffb1aff8b266bd2b7ad",
+    "initial/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "initial/initial.png": "714bfa62d7c150b611665bce136ef1cb5ee144f88c62f26dac2f4f03da8731e0",
+    "initial/to-bottom.png": "caaea4e6511098378636f926a18fdd533ec5dfb42605dc7a700448d317bc9a44",
+    "initial/result.json": "b4d93bdd368ea15ed560dda449795d641b09794cd8d57be90af4afdfbb3cd5cc"
+  }
+}
