@@ -1,0 +1,15 @@
+{
+  "production_consumers": [
+    "Project Preferences native dialog -> shared coordinator close -> Main release dispatch"
+  ],
+  "retired_paths": [],
+  "binary_sha256": "05964b9eef7d26ea2958d9120aae2769837d33881c6680f59d6addd544a6aac3",
+  "proof": "Project2x1600x960 on unchanged release05964b9e passes delivered scrollbar drag, OS WM_DELETE_WINDOW close and closed ledger, zero Main presentations from trailing release, then one each from fresh File click/Escape. Pointer-only moves now include an explicit Shift press/release sequence; raw events and driver retained.",
+  "limits": "One successful follow-up, not proof of delivery reliability or cause. Prior Project2x cleanup-only drag delivery failure remains retained; dat-native-input-delivery-vq7w stays open. Shift sequence changes test inputs, not production code. No Wayland, monitor DPI transition, visual capture, resource retirement or full HP21/S3 qualification. No consumer migration, retired production path, dependency/license/prototype/resize change.",
+  "artifacts": {
+    "driver.py.gz": "1fcd7602263810867b18ec63c51e909742bbf0cb521e31614109b8fcad7aa226",
+    "native.log.gz": "28a850655f49ecc704097155a83fdc36527e17bd7a798a09676ef5e6e500c745",
+    "stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "trial.json.gz": "b25f1c346189026b0eb214fb391bad2b8aabfd9910e6fd8ec974c63d23d76264"
+  }
+}
