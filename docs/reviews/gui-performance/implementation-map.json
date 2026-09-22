@@ -5980,7 +5980,10 @@
         "id": "proof_hp13_01",
         "positive": "Render equivalent dialog-only frame",
         "negative_control": "Add historical redundant four-pass resolve path",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S3/wayland-consolidated-input/result.json"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S3/HP13-01/result.json",
       "acceptance_rule": "Exactly one contributing dialog pass/at most one MSAA resolve",
@@ -6208,7 +6211,10 @@
         "id": "proof_hp14_01",
         "positive": "Scroll away/return unchanged labels within128 buffers AND32KiB key text AND applicable8MiB shaped payload/renderer and aggregate limits",
         "negative_control": "Keep only one-frame cache",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S3/wayland-consolidated-input/result.json"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S3/HP14-01/result.json",
       "acceptance_rule": "Zero additional shaping/buffer creation after warmup within all stated entry/key/payload working-set bounds; out-of-set eviction is cold work, not failed warm reuse.",
@@ -7159,7 +7165,10 @@
         "id": "proof_hp18_01",
         "positive": "Repeated sub-threshold pixel/line deltas and rapid reversal",
         "negative_control": "Round every event to row or discard residual",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S3/wayland-consolidated-input/result.json"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S3/HP18-01/result.json",
       "acceptance_rule": "Every finite delta contributes until clamp, exact expected offset",
@@ -7245,7 +7254,10 @@
         "id": "proof_hp19_01",
         "positive": "Physical pixel/line deltas at1x/1.5x/2x and corresponding hits",
         "negative_control": "Double-scale pixels or invert sign",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S3/wayland-consolidated-input/result.json"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S3/HP19-01/result.json",
       "acceptance_rule": "Convert physical once, line40logicalpx once where applicable; row adapter preserves own line semantics; final target correct",
@@ -8261,7 +8273,10 @@
         "id": "proof_hp23_01",
         "positive": "Keyboard search navigation across sections and changed DPI/size/content",
         "negative_control": "Keep stale focus/extent",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S3/wayland-consolidated-input/result.json"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S3/HP23-01/result.json",
       "acceptance_rule": "Reveal correct focused row with clamped current bounds",
@@ -8446,7 +8461,10 @@
         "id": "proof_hp23_02",
         "positive": "Reduced-motion scroll then idle",
         "negative_control": "Run continuous animation timer",
-        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested"
+        "entry": "Actual consumer adapter -> shared production owner; backend-only injection where fault is requested",
+        "observed_artifacts": [
+          "docs/reviews/gui-performance/implementation/S3/wayland-consolidated-input/result.json"
+        ]
       },
       "evidence_artifact": "docs/reviews/gui-performance/implementation/S3/HP23-02/result.json",
       "acceptance_rule": "Motion policy respected, no app idle loop, route local to real host",
@@ -28715,24 +28733,24 @@
         "HP10-02": "Complete exact native final-offset/capture qualification and remaining profiles. Existing actual Runtime test now detects consumed Layers input incorrectly dispatching board zoom, with restored positive. Retain bounded X11 OS wheel/locality/clean-close pass and earlier input/capture failures; no full acceptance from direct Runtime negative. Current real Runtime Main/Layers physical-line equivalence and Layers scaling negative now recorded for both backends/three overrides; OS dispatch, final pixels and terminal/remaining qualification stay open.",
         "HP12-01": "Complete native per-host forbidden-work attribution across required states. Existing shared Preferences preparation test now detects injected general-world preparation (resolve count2vs1) and restored positive passes. This satisfies the shared-owner general-world negative alternative, not workspace-clone/hidden-terminal/full-shell or both-host native accounting. Native Preferences/New preparation now bypasses the full editor Taffy layout through one shared native extent owner; geometry/hits, GPU parity and three native host replays pass. This structural retirement does not supply full forbidden-work accounting or its isolated negative.",
         "HP12-02": "Complete remaining control/focus/partial-row and OS transition cases. Actual GLOBAL/PROJECT surface publication/scale/extent positives and both-host scale-clear negative/restored pass now recorded; durable enum scope and post-edit Reset hit retained.",
-        "HP13-01": "Complete genuinely missing backend/scale changed-state pass proof; credit the recorded per-host pass receipts. Final single-candidate matrix is S5, not a reason to repeat unchanged S3 cases. NEW2x edit/scroll/reveal now has17 dialog-only samples and final Cancel hit; both Preferences1/1.5/2x have bounded expanded receipts across pinned builds. Existing general-pass negative and input/capture failures retained.",
+        "HP13-01": "Complete genuinely missing backend/scale changed-state pass proof; credit the recorded per-host pass receipts. Final single-candidate matrix is S5, not a reason to repeat unchanged S3 cases. NEW2x edit/scroll/reveal now has17 dialog-only samples and final Cancel hit; both Preferences1/1.5/2x have bounded expanded receipts across pinned builds. Existing general-pass negative and input/capture failures retained. Consolidated Wayland Global/Project trial adds31 measured dialog-only frames on binary752671ce; no new Main frame in any wheel interval.",
         "HP13-02": "Complete native controlling visual/backend/scale coverage. Prescribed text-behind-card negative is now detected by existing GPU parity test with restored positive; requirement permits reduced AA OR text behind card, so no additional AA negative is imposed. Existing GPU regressions remain bounded evidence.",
-        "HP14-01": "Complete genuinely missing settings/backend warm-reuse cases; credit existing warm/eviction and negative receipts. Final single-candidate qualification remains S5. Both Preferences1/1.5/2x expanded trials now have six zero-miss samples and semantic expansion proof; prior failure and one-frame negative retained. Full resource precondition stays S4/S5.",
+        "HP14-01": "Complete genuinely missing settings/backend warm-reuse cases; credit existing warm/eviction and negative receipts. Final single-candidate qualification remains S5. Both Preferences1/1.5/2x expanded trials now have six zero-miss samples and semantic expansion proof; prior failure and one-frame negative retained. Full resource precondition stays S4/S5. Consolidated Wayland Global/Project OS wheel trial adds four warm zero-miss changed frames per host (48/47 hits respectively).",
         "HP14-02": "Complete remaining working-set/negative and native coverage. Real shaped cache churn and both native Preferences 1x close/reopen are recorded; cold misses do not prove full resource release. Complete owned accounting/cap/release retains existing S4/S5 deadlines.",
         "HP16-01": "Complete remaining consumer/backend/scale/fractional translation/clip and displayed-state proof. Same-release GLOBAL/PROJECT1/1.5/2 visual-override OS scroll, NEW1x focus cycle and MAIN1x File-menu activity retain stable production build totals; existing lookup-bypass negatives fail corresponding native work assertions. Larger-scale Preferences accepted extents are1440x1050/1918x1050. Retain stale captures and unqualified NEW final focus; visual overrides are not monitor transitions. Shared GPU72-case parity and Inspector/Menu direct-rectangle classification remain bounded; no extra general-tessellator negative prerequisite.",
         "HP16-02": "Complete actual authored-board/native contour/style/DPI qualification. General filler analytical concave/holed area cases and fan negative now recorded; existing cache key-field/DPI-key negative retained. Unit contours do not qualify native authored consumers.",
         "HP16-03": "Reconcile actual native control working-set evidence with recorded bounded CPU LRU/bypass/byte eviction and pin-indefinitely negative. Full CPU metadata/GPU/in-flight/aggregate bounds remain S4/S5 resource dependencies.",
-        "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter. Both-backend dialog native-entry offset oracle now passes24 cases with supplied physical/line deltas. Complete timed OS input/remaining consumer and displayed-state proof; supplied-event success does not replace them.",
-        "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct. Both-backend dialog native-entry offset oracle now passes24 cases with supplied physical/line deltas. Complete timed OS input/remaining consumer and displayed-state proof; supplied-event success does not replace them. Prescribed double-scale defect now detected through actual Global native entry at1.5x on both backends; restored positives cover all dialog profiles. Preserve distinction from OS-delivered and independent other-consumer negatives. Current real Runtime Main/Layers physical-line equivalence and Layers scaling negative now recorded for both backends/three overrides; OS dispatch, final pixels and terminal/remaining qualification stay open. Terminal real-PTY history is now mandatory: native Runtime one-row physical/line policy, local no-op boundaries and camera/preparation isolation pass on both backends at1/1.5/2 overrides. Both1.5x physical-sign negatives fail and explicitly recompiled normal positives pass; OS delivery, pixels and mouse-report bytes remain open.",
+        "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter. Both-backend dialog native-entry offset oracle now passes24 cases with supplied physical/line deltas. Complete timed OS input/remaining consumer and displayed-state proof; supplied-event success does not replace them. Both hosts now have actual Wayland OS pixel-wheel reversal including +/-0.2625 physical pixels, outward boundary no-op and immediate reverse frame; exact final offset and timed stream remain open.",
+        "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct. Both-backend dialog native-entry offset oracle now passes24 cases with supplied physical/line deltas. Complete timed OS input/remaining consumer and displayed-state proof; supplied-event success does not replace them. Prescribed double-scale defect now detected through actual Global native entry at1.5x on both backends; restored positives cover all dialog profiles. Preserve distinction from OS-delivered and independent other-consumer negatives. Current real Runtime Main/Layers physical-line equivalence and Layers scaling negative now recorded for both backends/three overrides; OS dispatch, final pixels and terminal/remaining qualification stay open. Terminal real-PTY history is now mandatory: native Runtime one-row physical/line policy, local no-op boundaries and camera/preparation isolation pass on both backends at1/1.5/2 overrides. Both1.5x physical-sign negatives fail and explicitly recompiled normal positives pass; OS delivery, pixels and mouse-report bytes remain open. Actual Wayland OS physical-wheel delivery and fresh-target semantic outcomes now recorded for both Preferences with output scale1.05/visual override1; no other-scale conversion qualification.",
         "HP20-01": "Complete remaining backend and expanded/other-control scale extent cases. Both Preferences native search/clear now has1/1.5/2x override proof at actual recorded sizes;1x choices/explanations/final-row/minimum-height and shared visible-row negative remain recorded. No monitor-scale transition or latency acceptance.",
         "HP21-01": "Complete remaining OS input/capture/profile/scale qualification. All three default dialog adapters now share pointer dispatch; actual native surfaces detect ignored scrollbar consumption activating Units settings/New name through production WindowEvents, with restored positive. Direct dispatcher proof does not qualify OS delivery. Retain painted-only OS negative and unresolved delivery failures. Both-backend current native entry proof is recorded:24 closes,19 scrollbar focus cancellation cases across accepted extents. OS delivery, unavailable Wayland2x requested sizes and remaining qualification stay open.",
         "HP21-02": "Complete remaining OS release/capture-loss/close/content-change final-target profiles. Recorded pre-counter releaseb7a2f407 GLOBAL/PROJECT1x OS focus-loss trials have event/count proof and separately verified final focused-search/bottom-row captures; retain stale-capture and delivery failures, no reliability claim. Actual hidden surfaces cover all3 native entry paths with9 scrollbar cancellations,12 closes and missing-cancellation negative/restored pass. OS NEW, other scales/backends, native content-change and remaining displayed-state qualification stay open. Credit the recorded OS focus evidence to its actual source/binary; do not demand a new replay solely for a later unrelated commit. Final pinned-candidate replay is S5; affected-code regressions still require proof. Global1x content-change now has current12f00d7e OS delivery and persisted-setting final-target proof; remaining content-change hosts/profiles, independent negative and displayed-state proof stay open. Current05964b9e close-to-Main handoff now passes Global/Project1x and New2x, with baseline Global defect detection. Other required OS profile/backend gaps remain open; final-candidate replay belongs to S5. Same-release close handoff now additionally passes Global/Project1.5x, Global2x and New1.5x; Project2x follow-up now passes with explicit Shift input after pointer-only moves; retain prior timeout and unresolved delivery reliability. Required remaining backend/profile/visual qualification stays open. Both-backend current native entry proof is recorded:24 closes,19 scrollbar focus cancellation cases across accepted extents. OS delivery, unavailable Wayland2x requested sizes and remaining qualification stay open. Current pinned a7477cba additionally passes Global1.5/2x content-change/trailing-release with canonical persisted-setting oracle. The inspected2x capture remains stale; root-capture comparison failed. Other hosts/backends, current negative and displayed-state qualification remain open. Eight current X11 native-entry Preferences content-change cases now prove grab cancellation, trailing-release suppression and fresh Search focus with presented replacement hits. Isolated release-suppression defect produces actual click-through; restored positive passes. Events supplied directly. The earlier Wayland repeated-presentation failure is retained (dat-native-content-presentation-qo9y). OS delivery, other content-change profiles and displayed-state proof remain required. Owner unlocked; baseline failed without logging but passed with verbose logging. The helper now services production surface retries and passes all eight content-change cases on each backend without verbose logging. Actual KDE Wayland Global1x OS drag/section-change/release/fresh Reset produced a canonical Reset receipt; Project run proves delivery only. Remaining OS profiles, visual evidence and full qualification remain required. Do not attribute older failures to lock state without evidence. Fresh unlocked pinned-a7477cba Global X11 trials at1/1.5/2 now have inspected Units-before/Appearance-after-release captures with Reduced motion Off and a later persisted true value from fresh click. Historical stale images remain preserved; these three final-state captures are now bounded positive evidence. Other hosts/backends and full visual acceptance remain open.",
         "HP22-01": "Complete remaining native diagonal/rounded/nested clipping cases per actual consumer. Shared clamp-vertices negative now detected by corrected existing area oracle; preserve original false-pass and terminal call-removal negatives.",
         "HP22-02": "Complete remaining native/GPU profiles. Pinned-header clipping and scrolling negatives now detected by strengthened actual Preferences preparation test; hidden-hit clipping omission already detected. Preserve initial missing-header false pass and existing bounded pinned GPU/native evidence.",
-        "HP23-01": "Complete remaining native keyboard/search reveal across section/content/scale profiles. Stale focus after height change now reproduced and fixed in both native Preferences; existing explanation Close fix retained. Native DPI transition remains open.",
-        "HP23-02": "Complete timed native Wayland scrolling/final-offset and remaining qualification. KDE input-only session consent now succeeded: Global/Project received real pointer/wheel events; Global content-change/release/fresh Reset has semantic receipt. The session closed cleanly. Earlier consent timeout remains historical. Existing both-backend1x idle/timer negative and X11 reduced-motion scroll1/1.5/2 remain bounded evidence. No W-SCROLL rate/duration, visual or monitor-transition qualification follows."
+        "HP23-01": "Complete remaining native keyboard/search reveal across section/content/scale profiles. Stale focus after height change now reproduced and fixed in both native Preferences; existing explanation Close fix retained. Native DPI transition remains open. Current Project explanation keyboard fix additionally exercised through Wayland OS Tab/Enter; nested Escape dismisses explanation then closes dialog and restores Main focus. Exact displayed query/pixels remain unverified.",
+        "HP23-02": "Complete timed native Wayland scrolling/final-offset and remaining qualification. KDE input-only session consent now succeeded: Global/Project received real pointer/wheel events; Global content-change/release/fresh Reset has semantic receipt. The session closed cleanly. Earlier consent timeout remains historical. Existing both-backend1x idle/timer negative and X11 reduced-motion scroll1/1.5/2 remain bounded evidence. No W-SCROLL rate/duration, visual or monitor-transition qualification follows. Consolidated Wayland Global/Project trial now records five OS wheel events per host, warm dialog-local updates and14.93/17.59 seconds with no Main/dialog frames. Timed W-SCROLL, exact final offsets, visual and other-profile qualification remain open; existing timer negatives remain credited."
       },
-      "next_action": "Complete remaining S3 per-adapter input/final-state, pass attribution and controlling visual proof. Use existing successful defect-sensitivity receipts at their stated scope; rerun when affected implementation changes or final qualification requires it, rather than repeating obsolete missing-evidence tasks. Wayland OS input needs a consented desktop session; exact W-SCROLL and displayed-state gaps remain. Do not add an unrelated component to avoid these prerequisites. GPI-S3 stays selected; resource carry remains limited to the approved HP14-01/02 and HP16-03 dependencies.",
+      "next_action": "Reconcile remaining S3 functional/native/profile gaps against recorded receipts; the consolidated Global/Project Wayland OS wheel/local-idle batch is now recorded. Do not repeat this bounded case solely for an unrelated later commit; timed/final-state and missing consumer/profile predicates remain required.",
       "negative_control_scope_review": {
         "HP13-02": "Existing row says reduce AA OR move text behind card. Recorded painter-order failure/restored positive covers this shared-owner alternative; native controlling visual parity stays required.",
         "HP16-01": "Existing row says general scanline OR repeated arcs. Verified retained-control-gpu artifact hashes and patch: bypassing with_mesh lookup calls rounded_fill build closure again, which recomputes rounded_rect_points and its arc vertices. Build-count assertion detects2 vs1; restored positive passes. This is invariant contour-work sensitivity, not independent trigonometric/arc correctness or all native consumer qualification. No additional general-tessellator negative is imposed.",
@@ -30048,5 +30066,39 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/project-explanation-key/result.json",
     "proof": "X11/Xwayland 1x Enter and Space each open explanation after real thumb drag; trailing-release typing produces zero frames; fresh click plus typing produces frames. Inspected captures contain the opened explanation. Longer-wait Enter replay has inspected final precision search with four matching rows.",
     "limits": "Initial Enter/Space final images lag state; preserve them. Longer-wait Enter replay verifies final fresh-search pixels only. Intermediate after-release capture remains inconsistent; no general capture reliability, complete focus/capture or temporal acceptance. One native backend and 1x visual override at accepted 960x720 only; no Wayland, monitor transition, full HP21/HP23 or S3 acceptance. Frame counts are bounded event-response evidence, not complete control/focus state or performance qualification. Harness SIGTERM cleanup is not native close/teardown acceptance. No preference mutation, dependency/license, prototype, numerical budget, sequencing or resize-scope change."
+  },
+  "s3_wayland_consolidated_input_work": {
+    "production_consumers": [
+      "Global Preferences",
+      "Project Preferences"
+    ],
+    "retired_paths": [],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/wayland-consolidated-input/result.json",
+    "proof": {
+      "wheel_frames_per_host": [
+        1,
+        1,
+        0,
+        1,
+        1
+      ],
+      "unrelated_main_frames_per_wheel_interval": 0,
+      "warm_text_cache_misses": 0,
+      "global_idle_seconds": 14.932744264602661,
+      "project_idle_seconds": 17.592320203781128,
+      "idle_frame_delta": 0,
+      "dialog_only_measured_frames": 31,
+      "global_fresh_target": "Canonical isolated preference mutation reduced_motion true -> false",
+      "project_fresh_target": "Enter opens explanation state; first Escape leaves dialog alive and presents; second closes/destroys dialog and restores Main focus"
+    },
+    "limits": [
+      "Five OS wheel events per host, not timed 30-second/120-Hz W-SCROLL or exact final-offset readback.",
+      "No screenshot/pixel, antialiasing, other-scale or monitor-transition qualification. Output scale1.05 and visual override1 are distinct.",
+      "Text cache hit/miss and opt-in GPU pass counters do not establish complete resource accounting, budgets or default-path speedup.",
+      "Project nested Escape behavior is a semantic explanation-state oracle, not proof of exact displayed search text.",
+      "Initial Global startup received unscripted pointer movement and focus loss; retain failed delivery and one owned-window restart without attributing cause.",
+      "Owned process SIGTERM is cleanup, not overall application teardown qualification. Project dialog native closure and Main focus are separately observed.",
+      "No new Rust migration or competing path retirement in this proof batch; it qualifies existing default shared consumers only. Full S3 exit remains open."
+    ]
   }
 }

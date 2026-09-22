@@ -1,0 +1,186 @@
+{
+  "GLOBAL": {
+    "binary_sha256": "752671ced86eb708797ba2d001f493d23d3d62fc3f5f6273c05352113e1107fe",
+    "accepted_extents": {
+      "WindowId(94783824884944)": [
+        1344,
+        840
+      ],
+      "WindowId(94783839025344)": [
+        1008,
+        756
+      ]
+    },
+    "wheel_intervals": [
+      {
+        "start": 1790120887.6785204,
+        "end": 1790120916.857826,
+        "received": "delta=PixelDelta(PhysicalPosition { x: -0.0, y: 12.600000000000001 }) phase=Started",
+        "main_frames": 0,
+        "dialog_frames": 1,
+        "text_cache_hits_misses": [
+          [
+            48,
+            0
+          ]
+        ]
+      },
+      {
+        "start": 1790120916.857826,
+        "end": 1790120917.9621563,
+        "received": "delta=PixelDelta(PhysicalPosition { x: -0.0, y: -12.600000000000001 }) phase=Moved",
+        "main_frames": 0,
+        "dialog_frames": 1,
+        "text_cache_hits_misses": [
+          [
+            48,
+            0
+          ]
+        ]
+      },
+      {
+        "start": 1790120917.9621563,
+        "end": 1790120919.06746,
+        "received": "delta=PixelDelta(PhysicalPosition { x: -0.0, y: -12.600000000000001 }) phase=Moved",
+        "main_frames": 0,
+        "dialog_frames": 0,
+        "text_cache_hits_misses": []
+      },
+      {
+        "start": 1790120919.06746,
+        "end": 1790120920.1717105,
+        "received": "delta=PixelDelta(PhysicalPosition { x: -0.0, y: 0.2625 }) phase=Moved",
+        "main_frames": 0,
+        "dialog_frames": 1,
+        "text_cache_hits_misses": [
+          [
+            48,
+            0
+          ]
+        ]
+      },
+      {
+        "start": 1790120920.1717105,
+        "end": 1790120922.1717105,
+        "received": "delta=PixelDelta(PhysicalPosition { x: -0.0, y: -0.2625 }) phase=Moved",
+        "main_frames": 0,
+        "dialog_frames": 1,
+        "text_cache_hits_misses": [
+          [
+            48,
+            0
+          ]
+        ]
+      }
+    ],
+    "idle_seconds": 14.932744264602661,
+    "idle_frame_delta": {
+      "main": 0,
+      "dialog": 0
+    },
+    "dialog_presentations": 15,
+    "measured_dialog_only_frames": 15,
+    "all_wheel_frames_warm": true,
+    "fresh_target": {
+      "search": "reduced motion",
+      "action": "Tab Tab Enter",
+      "generation_values": [
+        true,
+        false
+      ],
+      "receipt_operation": "CommitPreferenceMutation",
+      "receipt_reason": "Global Preferences control activation",
+      "scope": "isolated test configuration"
+    }
+  },
+  "PROJECT": {
+    "binary_sha256": "752671ced86eb708797ba2d001f493d23d3d62fc3f5f6273c05352113e1107fe",
+    "accepted_extents": {
+      "WindowId(94854354314448)": [
+        1344,
+        840
+      ],
+      "WindowId(94854371473440)": [
+        1008,
+        756
+      ]
+    },
+    "wheel_intervals": [
+      {
+        "start": 1790121006.7700562,
+        "end": 1790121018.131355,
+        "received": "delta=PixelDelta(PhysicalPosition { x: -0.0, y: 12.600000000000001 }) phase=Started",
+        "main_frames": 0,
+        "dialog_frames": 1,
+        "text_cache_hits_misses": [
+          [
+            47,
+            0
+          ]
+        ]
+      },
+      {
+        "start": 1790121018.131355,
+        "end": 1790121019.235843,
+        "received": "delta=PixelDelta(PhysicalPosition { x: -0.0, y: -12.600000000000001 }) phase=Moved",
+        "main_frames": 0,
+        "dialog_frames": 1,
+        "text_cache_hits_misses": [
+          [
+            47,
+            0
+          ]
+        ]
+      },
+      {
+        "start": 1790121019.235843,
+        "end": 1790121020.3417203,
+        "received": "delta=PixelDelta(PhysicalPosition { x: -0.0, y: -12.600000000000001 }) phase=Moved",
+        "main_frames": 0,
+        "dialog_frames": 0,
+        "text_cache_hits_misses": []
+      },
+      {
+        "start": 1790121020.3417203,
+        "end": 1790121021.4460273,
+        "received": "delta=PixelDelta(PhysicalPosition { x: -0.0, y: 0.2625 }) phase=Moved",
+        "main_frames": 0,
+        "dialog_frames": 1,
+        "text_cache_hits_misses": [
+          [
+            47,
+            0
+          ]
+        ]
+      },
+      {
+        "start": 1790121021.4460273,
+        "end": 1790121023.4460273,
+        "received": "delta=PixelDelta(PhysicalPosition { x: -0.0, y: -0.2625 }) phase=Moved",
+        "main_frames": 0,
+        "dialog_frames": 1,
+        "text_cache_hits_misses": [
+          [
+            47,
+            0
+          ]
+        ]
+      }
+    ],
+    "idle_seconds": 17.592320203781128,
+    "idle_frame_delta": {
+      "main": 0,
+      "dialog": 0
+    },
+    "dialog_presentations": 16,
+    "measured_dialog_only_frames": 16,
+    "all_wheel_frames_warm": true,
+    "fresh_target": {
+      "search": "precision",
+      "action": "Tab Enter then Escape then Escape",
+      "first_escape": "dialog presents and remains open",
+      "second_escape": "dialog closes/destroys and Main receives focus",
+      "limit": "semantic dismissal oracle, not rendered pixels or proof of exact search text"
+    }
+  }
+}

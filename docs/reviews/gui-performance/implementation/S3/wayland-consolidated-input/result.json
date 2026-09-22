@@ -1,0 +1,113 @@
+{
+  "status": "bounded native Wayland evidence; S3 remains in progress",
+  "candidate_head": "2955d39b",
+  "production_fix_commit": "2967517a",
+  "binary_sha256": "752671ced86eb708797ba2d001f493d23d3d62fc3f5f6273c05352113e1107fe",
+  "production_consumers": [
+    "Global Preferences",
+    "Project Preferences"
+  ],
+  "retired_paths": [],
+  "environment": {
+    "window_backend": "Wayland",
+    "gpu_backend": "Vulkan",
+    "gpu": "Intel P630",
+    "mesa": "25.0.7",
+    "output_physical": [
+      1920,
+      1080
+    ],
+    "output_logical": [
+      1829,
+      1029
+    ],
+    "output_scale": 1.05,
+    "visual_scale_override": 1,
+    "input": "KDE RemoteDesktop portal, owner-approved input only; devices3, clipboard false; explicit session close recorded",
+    "instrumentation": [
+      "DATUM_GPU_MEASUREMENTS=1",
+      "DATUM_TRACE_TIMING=1",
+      "verbose native event log"
+    ]
+  },
+  "proof": {
+    "wheel_frames_per_host": [
+      1,
+      1,
+      0,
+      1,
+      1
+    ],
+    "unrelated_main_frames_per_wheel_interval": 0,
+    "warm_text_cache_misses": 0,
+    "global_idle_seconds": 14.932744264602661,
+    "project_idle_seconds": 17.592320203781128,
+    "idle_frame_delta": 0,
+    "dialog_only_measured_frames": 31,
+    "global_fresh_target": "Canonical isolated preference mutation reduced_motion true -> false",
+    "project_fresh_target": "Enter opens explanation state; first Escape leaves dialog alive and presents; second closes/destroys dialog and restores Main focus"
+  },
+  "limitations": [
+    "Five OS wheel events per host, not timed 30-second/120-Hz W-SCROLL or exact final-offset readback.",
+    "No screenshot/pixel, antialiasing, other-scale or monitor-transition qualification. Output scale1.05 and visual override1 are distinct.",
+    "Text cache hit/miss and opt-in GPU pass counters do not establish complete resource accounting, budgets or default-path speedup.",
+    "Project nested Escape behavior is a semantic explanation-state oracle, not proof of exact displayed search text.",
+    "Initial Global startup received unscripted pointer movement and focus loss; retain failed delivery and one owned-window restart without attributing cause.",
+    "Owned process SIGTERM is cleanup, not overall application teardown qualification. Project dialog native closure and Main focus are separately observed.",
+    "No new Rust migration or competing path retirement in this proof batch; it qualifies existing default shared consumers only. Full S3 exit remains open."
+  ],
+  "artifacts": {
+    "global-interrupted-result.json.gz": {
+      "source_sha256": "195d27540c9eb8df6070c93d5d7b529dc2382008a29a6f80c51d21e3e8ec1a9a",
+      "source_bytes": 2090
+    },
+    "global-interrupted-native.log.gz": {
+      "source_sha256": "4068bf3e0f7658404cd4c06bbb304fc386500b9b3306825cac6ee633d1c0c038",
+      "source_bytes": 37675
+    },
+    "global-interrupted-stderr.log.gz": {
+      "source_sha256": "2b1fec6e56dff5f182afa012b10977f7e82da4ea8631f6dec850d98c46e2233c",
+      "source_bytes": 2692
+    },
+    "global-result.json.gz": {
+      "source_sha256": "a660713a631b13f770c8555fce510f032445a38c1259dd537cbba1aee3d4ea79",
+      "source_bytes": 13522
+    },
+    "global-native.log.gz": {
+      "source_sha256": "638abf1f8547e371dec83afe674db4fa6fd7611cab7d042f3a61e2b686e9c834",
+      "source_bytes": 86977
+    },
+    "global-stderr.log.gz": {
+      "source_sha256": "adf9ed00f765889c465b2572a51e7e6558bf5f0975434cbd09ac0eac9dafa310",
+      "source_bytes": 3439
+    },
+    "project-result.json.gz": {
+      "source_sha256": "a9149e977624f2eb99b7107d7dbb54701245b80333086fcedca0060698dfe222",
+      "source_bytes": 17114
+    },
+    "project-native.log.gz": {
+      "source_sha256": "46d083831c14aa717e4a10a980d56d370a35dd2f414572469956563a34b4ada1",
+      "source_bytes": 99717
+    },
+    "project-stderr.log.gz": {
+      "source_sha256": "0e617e4d4422b480d52307d22fbf72593c094bbe9c67f8e11047733bb193b40d",
+      "source_bytes": 4407
+    },
+    "portal-driver.py.gz": {
+      "source_sha256": "86f6c31db8b5ceff4f07d2dea9f9fd6909e6c8f20c4be92044a695f549bfb907",
+      "source_bytes": 2983
+    },
+    "target-driver.py.gz": {
+      "source_sha256": "b6c0647a960861e869e37f10fc099f889956fa51423036fddf039dd0480bc4b7",
+      "source_bytes": 3452
+    },
+    "analyzer.py.gz": {
+      "source_sha256": "6c97cd16d78a6a9b7223dc38435ef620eb32a59ed0474e004994c6a404299d23",
+      "source_bytes": 5305
+    },
+    "portal-result.json.gz": {
+      "source_sha256": "93af59fd19612152d70bad13519b32cf12d4667586dc9279c38fd7b1e000411b",
+      "source_bytes": 17445
+    }
+  }
+}
