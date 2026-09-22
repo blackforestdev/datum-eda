@@ -294,13 +294,15 @@ TextFace::Terminal;
 if run.face != TextFace::Terminal { run.size *= scale; }
 '''
         cache = """
-fn begin_text_buffer_frame() { entry.last_used_frame = 1; }
+fn begin_frame() { retain_recent_text_buffers(); entry.last_used_frame = 1; }
 fn animated_agent_text_cache_retains_only_two_visible_generations() {}
 fn ensure_text_buffer() { buffer.set_rich_text(); }
 """
         render_gpu = """
-self.begin_text_buffer_frame();
-self.cached_text_buffer_indices();
+self.prepare_frame_text(device, queue, prepared, width, height, false);
+self.prepare_frame_text(device, queue, prepared, width, height, true);
+self.text_buffers.begin_frame(profile);
+self.text_buffers.indices();
 """
         bottom_dock = """
 TERMINAL_FONT_SIZE_PX: f32 = 12.0;
@@ -339,6 +341,19 @@ fn render_cursor() {}
         )
         self.assertEqual([], failures)
 
+        begin = "self.text_buffers.begin_frame(profile);"
+        for broken in (
+            render_gpu + begin,
+            render_gpu.replace(begin, "") + begin,
+            render_gpu.replace("width, height, false)", "width, height, missing)"),
+            render_gpu.replace("width, height, true)", "width, height, missing)"),
+        ):
+            failures = []
+            guard.check_agent_tui_runtime(
+                main, primary_button, runtime_dock, drain, geometry, cache,
+                broken, bottom_dock, terminal_font_tests, terminal_core_render, failures,
+            )
+            self.assertTrue(failures, "generation/caller defects must be detected")
         failures = []
         guard.check_agent_tui_runtime(
             main.replace(
@@ -368,7 +383,7 @@ fn render_cursor() {}
             cache.replace("last_used_frame", "unbounded_generation").replace(
                 "set_rich_text", "set_text"
             ),
-            render_gpu.replace("self.begin_text_buffer_frame();\n", ""),
+            render_gpu.replace("self.text_buffers.begin_frame(profile);\n", ""),
             bottom_dock,
             terminal_font_tests.replace(
                 "styled_terminal_colors_share_one_shaping_origin", "removed"

@@ -29968,5 +29968,15 @@
       "Full guard remains red; remaining five checks not waived or declared harmless.",
       "No dependency, style/prototype, sequencing or resize change."
     ]
+  },
+  "s3_shared_owner_guard_work": {
+    "production_consumers": [
+      "Existing shared text/font/focus owners; no new production migration"
+    ],
+    "retired_paths": [
+      "Stale guard source inventory and old text-cache method markers"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/shared-owner-guard/result.json",
+    "status": "Convergence guard passes; full drift now stops at separate committed-HEAD terminal split guard failure. No S3 completion."
   }
 }

@@ -1,0 +1,38 @@
+{
+  "scope": "Existing convergence guard reconciliation following PM045 shared owners; no production mutation",
+  "production_consumers": [
+    "Workspace/terminal and dialog shared text preparation/cache",
+    "Shared font loader; existing application focus authority"
+  ],
+  "retired_paths": [
+    "Guard reading relocated font loader only from geometry.rs",
+    "Guard requiring obsolete begin_text_buffer_frame method instead of TextBufferCache::begin_frame",
+    "Omitting gpu_text/gpu_overlay and separated cache tests from source inventory",
+    "Counting cfg(test) menus/tests.rs fixture as a production focus writer"
+  ],
+  "observations": [
+    "Actual remaining production focus assignments are initialization and set_application_focus. menus.rs declares its fixture with cfg(test); include tests.rs in existing dedicated-test exclusion convention.",
+    "Embedded JetBrains Mono bytes live in shared text_metrics.rs; geometry retains Terminal face and device-pixel scaling check.",
+    "Shared gpu_text begins generation before indices lookup; workspace and overlay renderer paths each call shared preparation once. Cache retains recent workspace generations; existing100000-label two-generation regression remains present."
+  ],
+  "verification": {
+    "guard": "11 tests pass, including duplicate generation, generation after lookup and removed full-frame/overlay caller cases; current convergence guard passes.",
+    "source_health": "2223 files checked; no Rust edit or fresh native result.",
+    "drift": "Formatting/Clippy and convergence pass; later terminal split current-tree test fails four missing markers, reproduced on committed HEAD inputs. dat-terminal-split-guard-8zlq tracks follow-up."
+  },
+  "limits": [
+    "Source guard passage is not new runtime/native/performance or S3 acceptance.",
+    "No bypass, golden/digest relaxation or dependency/license/prototype/style/resize change.",
+    "Native input remains stopped after uncommanded motion; awaiting owner availability."
+  ],
+  "artifacts": {
+    "drift.log.gz": {
+      "raw_sha256": "c42c3db975fb62bc9f3eb218011ed50ea3d680de58831edb7fb82580210cff53",
+      "sha256": "7da8fd0c03bfe8d85e50b601753c59dedc4f02f7bab7babe7f8ee8cd65d2882d"
+    },
+    "terminal-split-head.json.gz": {
+      "raw_sha256": "b87d31db9171a2843e25be2b3a36500dab3060c919bcb4deead25970108116f2",
+      "sha256": "12a3960f3ec1be41d0ca8f1af65f7c6311401245c223c46fb4ba063813f55295"
+    }
+  }
+}

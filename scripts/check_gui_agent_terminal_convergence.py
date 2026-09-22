@@ -222,18 +222,23 @@ def check_agent_tui_runtime(
     if "if run.face != TextFace::Terminal" not in render_geometry:
         failures.append("HiDPI text scaling must preserve the terminal device-pixel grid")
     for marker in (
-        "begin_text_buffer_frame",
+        "fn begin_frame(",
+        "retain_recent_text_buffers",
         "last_used_frame",
         "animated_agent_text_cache_retains_only_two_visible_generations",
     ):
         if marker not in text_cache:
             failures.append(f"terminal text-cache bound is missing {marker}")
-    begin_at = render_gpu.find("self.begin_text_buffer_frame();")
-    lookup_at = render_gpu.find("self.cached_text_buffer_indices(")
-    if render_gpu.count("self.begin_text_buffer_frame();") != 1:
+    begin_at = render_gpu.find("self.text_buffers.begin_frame(")
+    lookup = re.search(r"self\.text_buffers\s*\.indices\(", render_gpu)
+    lookup_at = lookup.start() if lookup else -1
+    if render_gpu.count("self.text_buffers.begin_frame(") != 1:
         failures.append("renderer must begin exactly one text-cache generation per frame")
     elif lookup_at < 0 or begin_at > lookup_at:
         failures.append("renderer must prune text buffers before cache lookup")
+    for profile in ("false", "true"):
+        if render_gpu.count(f"self.prepare_frame_text(device, queue, prepared, width, height, {profile})") != 1:
+            failures.append(f"renderer must enter shared text preparation once for overlay_only={profile}")
     for marker in ("draw_rich_text", "selection_contains", "render_cursor"):
         if marker not in terminal_core_render:
             failures.append(f"TerminalCore renderer is missing {marker}")
@@ -475,7 +480,7 @@ def main() -> int:
     focus_mutation_sources = "\n".join(
         path.read_text(encoding="utf-8")
         for path in sorted((ROOT / "crates/gui-app/src").rglob("*.rs"))
-        if not path.name.endswith("_tests.rs")
+        if path.name != "tests.rs" and not path.name.endswith("_tests.rs")
     )
     bottom_dock = BOTTOM_DOCK.read_text()
     launcher = LAUNCHER.read_text() if LAUNCHER.exists() else ""
@@ -493,11 +498,11 @@ def main() -> int:
         + TERMINAL_DRAIN_TESTS.read_text()
         + TERMINAL_CLOSE_TESTS.read_text()
     )
-    render_geometry = RENDER_GEOMETRY.read_text()
-    text_buffer_cache = TEXT_BUFFER_CACHE.read_text()
+    render_geometry = RENDER_GEOMETRY.read_text() + RENDER_GEOMETRY.with_name("text_metrics.rs").read_text()
+    text_buffer_cache = TEXT_BUFFER_CACHE.read_text() + TEXT_BUFFER_CACHE.with_name("text_buffer_cache_tests.rs").read_text()
     # Full-frame encoding is a normal child module after the resize diagnostic
     # extraction; retain the same generation-count invariant across both files.
-    render_gpu = RENDER_GPU.read_text() + RENDER_GPU.with_name("gpu_frame.rs").read_text()
+    render_gpu = "\n".join(RENDER_GPU.with_name(name).read_text() for name in ("gpu.rs", "gpu_frame.rs", "gpu_overlay.rs", "gpu_text.rs"))
     terminal_font_tests = TERMINAL_FONT_TESTS.read_text()
     terminal_core_render = TERMINAL_CORE_RENDER.read_text()
     terminal_core_render_tests = TERMINAL_CORE_RENDER_TESTS.read_text()
