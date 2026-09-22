@@ -77,17 +77,35 @@ impl PreparedScene {
             scroll,
             reveal_row,
         );
-        Self::from_dialog_parts(layout, quads, text, hits, scale)
+        Self::from_dialog_parts(layout, quads, text, hits, scale, (width, height))
     }
 
     /// Shared native-dialog envelope: no hidden workspace preparation or hits.
     pub(crate) fn from_dialog_parts(
         layout: ShellLayout,
-        quads: Vec<Quad>,
+        mut quads: Vec<Quad>,
         mut text: Vec<TextRun>,
-        hits: Vec<HitRegion>,
+        mut hits: Vec<HitRegion>,
         scale: f32,
+        surface_size: (u32, u32),
     ) -> Self {
+        // Layout rounds logical extents before scaling. The native surface is
+        // the final ancestor, including the fractional edge that can differ
+        // from that rounded layout. Paint and pointer targets share its bounds.
+        crate::hit_clipping::clip_content(
+            &mut quads,
+            &mut text,
+            &mut hits,
+            0,
+            0,
+            0,
+            RectPx {
+                x: 0.0,
+                y: 0.0,
+                width: surface_size.0 as f32,
+                height: surface_size.1 as f32,
+            },
+        );
         if (scale - 1.0).abs() > f32::EPSILON {
             scale_text_run_sizes(&mut text, scale);
         }
@@ -188,7 +206,18 @@ mod tests {
                     );
                     assert_eq!(retained_scene_resolve_count(), before);
                     assert_eq!(dialog.menu_overlay_vertices, legacy.menu_overlay_vertices);
-                    assert_eq!(dialog.menu_overlay_text_runs, legacy.menu_overlay_text_runs);
+                    let surface = RectPx {
+                        x: 0.0,
+                        y: 0.0,
+                        width: width as f32,
+                        height: height as f32,
+                    };
+                    let mut legacy_text = legacy.menu_overlay_text_runs.clone();
+                    for run in &mut legacy_text {
+                        // The old GPU path implicitly clipped at the surface.
+                        run.clip_bounds = run.clip_bounds.unwrap_or(surface).intersect(surface);
+                    }
+                    assert_eq!(dialog.menu_overlay_text_runs, legacy_text);
                     assert!(legacy.hit_regions.ends_with(&dialog.hit_regions));
                     assert!(!dialog.hit_regions.is_empty());
                     assert!(dialog.surface_passes.is_empty());
@@ -197,6 +226,73 @@ mod tests {
                     assert!(dialog.text_runs.is_empty());
                     assert!(dialog.terminal_graphics.is_empty());
                     assert!(dialog.console_overlay_vertices.is_empty());
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn native_dialog_profiles_share_exact_physical_surface_bounds() {
+        let mut state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+        state.ui.new_project.open = true;
+        for (width, height, scale) in [(257, 179, 1.0), (1001, 751, 1.5), (961, 721, 2.0)] {
+            let surface = RectPx {
+                x: 0.0,
+                y: 0.0,
+                width: width as f32,
+                height: height as f32,
+            };
+            for profile in ["Global Preferences", "Project Preferences", "New Project"] {
+                let scene = if profile == "New Project" {
+                    let layout = ShellLayout::for_surface(width, height, scale, None);
+                    let (mut quads, mut text, mut hits) = (Vec::new(), Vec::new(), Vec::new());
+                    crate::new_project_dialog::render_new_project_dialog(
+                        &state.ui.new_project,
+                        &layout,
+                        true,
+                        &mut ControlMeshCache::default(),
+                        scale,
+                        &mut quads,
+                        &mut text,
+                        &mut hits,
+                    );
+                    PreparedScene::from_dialog_parts(
+                        layout,
+                        quads,
+                        text,
+                        hits,
+                        scale,
+                        (width, height),
+                    )
+                } else {
+                    state.ui.global_preferences.title = profile.into();
+                    PreparedScene::from_native_preferences(
+                        &state.ui.global_preferences,
+                        width,
+                        height,
+                        scale,
+                    )
+                };
+                assert!(!scene.menu_overlay_vertices.is_empty());
+                assert!(!scene.hit_regions.is_empty());
+                for vertex in &scene.menu_overlay_vertices {
+                    assert!(
+                        surface.contains(vertex.pos[0], vertex.pos[1]),
+                        "{profile}: {vertex:?}"
+                    );
+                }
+                for run in &scene.menu_overlay_text_runs {
+                    let clip = run
+                        .clip_bounds
+                        .expect("native surface is the outer text clip");
+                    assert!(surface.contains(clip.x, clip.y));
+                    assert!(surface.contains(clip.x + clip.width, clip.y + clip.height));
+                }
+                for hit in &scene.hit_regions {
+                    assert!(surface.contains(hit.rect.x, hit.rect.y));
+                    assert!(
+                        surface.contains(hit.rect.x + hit.rect.width, hit.rect.y + hit.rect.height)
+                    );
                 }
             }
         }

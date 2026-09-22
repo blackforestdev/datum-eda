@@ -1,0 +1,40 @@
+{
+  "status": "bounded S3 native-dialog ancestor clipping; full qualification open",
+  "baseline": "c7e849d9150897caed49971e8f1cf797b253eb2d",
+  "sources": {
+    "crates/gui-render/src/render/preferences_scene.rs": "922b834f27591aa3772e56ca3eda287749a564a1c92da868bfdd998f69b5b617",
+    "crates/gui-render/src/new_project_dialog.rs": "bf049829e2fd642d2e87c0ccd19cadb7104bcffe4fc2af74a48089fc0d891aa5",
+    "crates/gui-render/src/render/gpu_control_tests.rs": "8a07b247909af89585b5634586b6a8f5f86c3e05c37d08e535e8ccbaa8a179e4",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "48d428e7db2a5673b8ecf47cbfd18d5498d840f399ae3c450c7ecf015b4b59cd"
+  },
+  "baseline_sources": {
+    "crates/gui-render/src/render/preferences_scene.rs": "06bbf666d82ba8b317d25e46c894110b6081ff8a9703feb9b97eeb30a5d57b25",
+    "crates/gui-render/src/new_project_dialog.rs": "4c1418d5a8dafb27c4159d2262c7a72d77bc474fb2f2a11a4d44b15e0879328f",
+    "crates/gui-render/src/render/gpu_control_tests.rs": "265d279f3fced0f16ea6c1d72cf671d8b3d305f57c64be06a6dda8b073364399",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "5519275001930fe2cf554039655790d020cba60c6af237c412a539a954757754"
+  },
+  "production_consumers": [
+    "GLOBAL via GlobalPreferencesWindowSurface -> prepare_native_preferences_scrolled",
+    "PROJECT via GlobalPreferencesWindowSurface -> prepare_native_preferences_scrolled",
+    "NEW via GlobalPreferencesWindowSurface -> prepare_native_new_project"
+  ],
+  "shared_owner": "PreparedScene::from_dialog_parts -> render/hit_clipping.rs::clip_content",
+  "retired_paths": [
+    "Unbounded native-dialog root geometry and pointer regions",
+    "Layout-rounded root bounds extending beyond exact physical surface at fractional scale",
+    "Implicit-only native-dialog root text clipping"
+  ],
+  "behavior": "Pass exact configured physical dimensions to the common dialog envelope. Shared clipping intersects geometry, nested text clips and hit targets before vertex conversion. Fully visible geometry retains the shared fast path. Existing layout, control state, scrolling, settings and Project genesis authority are preserved. No workspace backdrop is introduced.",
+  "proof": {
+    "renderer": "200 library tests pass serially. New regression uses production Preferences composition (Global fixture with Global/Project title variants) and production New Project composition at257x179/1x,1001x751/1.5x,961x721/2x; vertices, nested text bounds and hit bounds all stay within physical surface. This is component proof, not independent native Project settings coverage.",
+    "gpu": "13 explicit GPU regressions pass serially on Intel HD Graphics P630 IntegratedGpu/Vulkan. Preferences now compares against the unmodified legacy general composition pixels at960x720/1x and1050x810/1.5x. New Project compares unmodified legacy pixels at960x720/1x and1.5x, while existing cold/warm/edited/reset mesh tests remain passing. Existing pass, text, atlas and upload regressions pass.",
+    "failures": "Two CPU test compilations used incorrect function paths; one visual test compilation lacked a qualified RectPx path. Corrected test-only references; logs retained. These compile failures are not negative-control proof.",
+    "clippy": "Guarded offline renderer library Clippy passed with -D warnings. Traceability, spec governance, source health, project-state and dependency-authority checks pass.",
+    "limits": "No native input/focus, isolated defect injection, exhaustive profile/scale/backend, resource, timing or full HP22/ADP qualification. Very small dimensions are diagnostics, not admitted native usability. S3 remains open;1bc02aaf remains unapproved. No dependency, license, prototype, numerical-budget or resize-scope amendment."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib -- --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --features visual --lib gpu_overlay_tests -- --ignored --test-threads=1 --nocapture",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-render --lib -- -D warnings"
+  ]
+}

@@ -97,6 +97,7 @@ fn dialog_single_pass_matches_general_renderer_pixels() {
     let mut state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     for (width, height, scale) in [(960, 720, 1.0), (1050, 810, 1.5)] {
         let mut renderer = hardware_renderer(width, height);
+        let retained = RetainedScene::from_workspace_for_surface(&state, width, height, scale);
         for row in [0, 1, 2, 0] {
             state.ui.global_preferences.scroll_row = row;
             let prepared = PreparedScene::from_native_preferences(
@@ -137,6 +138,21 @@ fn dialog_single_pass_matches_general_renderer_pixels() {
             assert!(
                 actual == expected,
                 "dialog pixels differ at row {row}, scale {scale}"
+            );
+            let legacy = PreparedScene::from_workspace_with_terminal_renderer(
+                &state,
+                width,
+                height,
+                scale,
+                CameraState::fit_to_bounds(&state.scene.bounds),
+                &retained,
+                &[],
+                None,
+                true,
+            );
+            assert!(
+                actual == capture_retained(&mut renderer, &legacy, &retained),
+                "native surface clipping must preserve legacy dialog pixels"
             );
         }
     }

@@ -38,7 +38,7 @@ fn new_project_controls_retain_meshes_and_match_cold_composition() {
                 .renderer
                 .prepare_native_new_project(&state.ui.new_project, 960, 720, scale);
         assert_eq!(renderer.renderer.control_meshes.builds, builds);
-        let fresh = PreparedScene::from_workspace_with_terminal_renderer(
+        let mut fresh = PreparedScene::from_workspace_with_terminal_renderer(
             &state,
             960,
             720,
@@ -49,6 +49,16 @@ fn new_project_controls_retain_meshes_and_match_cold_composition() {
             None,
             true,
         );
+        let legacy_pixels = capture_retained(&mut renderer, &fresh, &retained);
+        let surface = crate::RectPx {
+            x: 0.0,
+            y: 0.0,
+            width: 960.0,
+            height: 720.0,
+        };
+        for run in &mut fresh.menu_overlay_text_runs {
+            run.clip_bounds = run.clip_bounds.unwrap_or(surface).intersect(surface);
+        }
         assert_eq!(edited.menu_overlay_vertices, fresh.menu_overlay_vertices);
         assert_eq!(edited.menu_overlay_text_runs, fresh.menu_overlay_text_runs);
         let modal_start = fresh
@@ -62,7 +72,7 @@ fn new_project_controls_retain_meshes_and_match_cold_composition() {
             actual != baseline,
             "editing the field changes visible pixels"
         );
-        assert!(actual == capture_retained(&mut renderer, &fresh, &retained));
+        assert!(actual == legacy_pixels);
         renderer.renderer = Renderer::new(
             &renderer.device,
             &renderer.queue,

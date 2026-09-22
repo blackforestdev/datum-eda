@@ -31,7 +31,7 @@ impl Renderer {
             &mut text,
             &mut hits,
         );
-        PreparedScene::from_dialog_parts(layout, quads, text, hits, scale)
+        PreparedScene::from_dialog_parts(layout, quads, text, hits, scale, (width, height))
     }
 }
 
