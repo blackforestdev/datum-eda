@@ -1,0 +1,153 @@
+[
+  {
+    "host": "GLOBAL",
+    "command": [
+      "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "--board",
+      "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+      "--window-size",
+      "1280x800",
+      "--initial-layout",
+      "single",
+      "--open-global-preferences",
+      "--visual-scale-factor",
+      "1"
+    ],
+    "actions": [
+      {
+        "args": [
+          "windowactivate",
+          "--sync",
+          "6291461"
+        ],
+        "time": 1790053630.7578568
+      },
+      {
+        "args": [
+          "windowsize",
+          "--sync",
+          "6291461",
+          "1000",
+          "750"
+        ],
+        "time": 1790053630.822213
+      },
+      {
+        "args": [
+          "mousemove",
+          "510",
+          "285"
+        ],
+        "time": 1790053631.336578
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790053631.465611
+      },
+      {
+        "args": [
+          "mousemove",
+          "1400",
+          "308"
+        ],
+        "time": 1790053632.0004983
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790053632.1243584
+      },
+      {
+        "args": [
+          "mousemove",
+          "1360",
+          "378"
+        ],
+        "time": 1790053632.711011
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790053632.8349547
+      }
+    ],
+    "binary_sha256": "14f04e569b21579b8ce8a6461b4efa8c28ebfc28198df1037b6cb0f8b69e8bbd",
+    "scope_proof": "Global User contribution imperial; existing Project document unchanged",
+    "passed": true
+  },
+  {
+    "host": "PROJECT",
+    "command": [
+      "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "--board",
+      "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+      "--window-size",
+      "1280x800",
+      "--initial-layout",
+      "single",
+      "--open-project-preferences",
+      "--visual-scale-factor",
+      "1"
+    ],
+    "actions": [
+      {
+        "args": [
+          "windowactivate",
+          "--sync",
+          "6291461"
+        ],
+        "time": 1790053635.953384
+      },
+      {
+        "args": [
+          "windowsize",
+          "--sync",
+          "6291461",
+          "1000",
+          "750"
+        ],
+        "time": 1790053636.0186539
+      },
+      {
+        "args": [
+          "mousemove",
+          "1400",
+          "308"
+        ],
+        "time": 1790053636.955324
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790053637.079293
+      },
+      {
+        "args": [
+          "mousemove",
+          "1360",
+          "378"
+        ],
+        "time": 1790053637.6142278
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790053637.7381442
+      }
+    ],
+    "binary_sha256": "14f04e569b21579b8ce8a6461b4efa8c28ebfc28198df1037b6cb0f8b69e8bbd",
+    "scope_proof": "Project Working Units imperial; Project identity/seed receipt and Global head unchanged",
+    "passed": true
+  }
+]

@@ -1,0 +1,64 @@
+{
+  "base_commit": "b1bc74c6d4c085e117b2a780f9ebc73770d6558f",
+  "production": {
+    "status": "Native Preferences choice edits verify durable Global versus Project scope",
+    "production_consumers": [
+      "GLOBAL native choice control",
+      "PROJECT native choice control"
+    ],
+    "shared_owner": "Shared Preferences painted/presented hit geometry; existing native Runtime control dispatch to Global product service or Project commit_prepared",
+    "retired_paths": "No new runtime migration; verifies existing shared control consumers through actual native edits.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-preference-edits/result.json",
+    "limits": "One native enum edit per GLOBAL/PROJECT Units window at1x on X11, isolated config/TMPDIR-created import projects from the existing real board fixture. Verifies actual pointer path and durable scope, not all controls, partial rows, keyboard/reset/undo replay, scale/backends or full HP12/S3 qualification. No production code, dependency/license/prototype/budget or resize-scope change. Screenshots are supplementary; persisted state and transaction are the outcome oracle."
+  },
+  "verification": {
+    "GLOBAL": "Pointer selects Metric->Imperial. Committed Global User generation value imperial; entire existing Project document remains unchanged and metric.",
+    "PROJECT": "Pointer selects Metric->Imperial. Project Working Units imperial; UUID/seed receipt and Global preference head unchanged. Final canonical manual transaction contains only set_project_display_units and its inverse metric profile. Undo availability is recorded, not replayed.",
+    "initial_failure": "Both initial clicks at900,130 missed the Metric button, whose rendered left edge is909. No choices capture or mutation; timeout preserved. Corrected940,130 reaches actual control, then900,200 selects Imperial.",
+    "native": "Both corrected cases passed; screenshots and state snapshots inspected. No Rust build/test rerun because no production source changed."
+  },
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_window.rs": "152b0d1254f0f7cd48b1628567ba7f600d9c9c49ff0a102f2c8a26a05aaccbdd",
+    "crates/gui-app/src/project_preferences_window.rs": "36ae86d461f032950472d9168fe6766471ca6d5afe86b4ff6c6eb3b0ccc0a472",
+    "crates/gui-app/src/global_preferences_runtime.rs": "98eb9d68bf2a9bdf51143249be0e784e417e08c6649e1402af53cdef6a721531",
+    "crates/gui-app/src/project_preferences_runtime.rs": "3908b17cd48189285093b45137f3adcd5ca2edcdc6aa886cdfb498ca7698e13f",
+    "crates/gui-render/src/render/preferences_rows.rs": "8b0767941549640281af7014d24d4c3d75c9315ade0be9701ad9408f475cf79e"
+  },
+  "project_journal_source": {
+    "sha256": "24d80f116ff5ee20677ac9fa2402da4def45d9a7d8583dd0afb1e03e329a5632",
+    "records": 3,
+    "retained": "Exact final transaction line; earlier import records are outside the control-edit proof."
+  },
+  "visual_authority": "Existing rendered Preferences prototype remains guidance. Actual control width verified in native before image and post-edit Project state inspected. No prototype edit/style decision.",
+  "limits": "One native enum edit per GLOBAL/PROJECT Units window at1x on X11, isolated config/TMPDIR-created import projects from the existing real board fixture. Verifies actual pointer path and durable scope, not all controls, partial rows, keyboard/reset/undo replay, scale/backends or full HP12/S3 qualification. No production code, dependency/license/prototype/budget or resize-scope change. Screenshots are supplementary; persisted state and transaction are the outcome oracle.",
+  "artifact_sha256": {
+    "missed-control-driver.py": "9b1e4f18459805d58b19929d6ad71e32d268ccda11893424fb76e464d3ef837f",
+    "project-final-transaction.json": "09390b29fa078aff00ec842554fa2b2bf9a04884ab230930e8bff2b6dd9cc743",
+    "native-driver.py": "75c46be9251661db8c6908bbd2ccdab178fc995ce8392c451f3ba77bd4ddd324",
+    "corrected/result.json": "49625d25fd9570dfe9656d0e5a6ee591943a5d978bc3282d1930aead75323cf4",
+    "missed-control/result.json": "fccddbb94b5081ef68d42529593ec4e58b68b7b9cf843b98097f3e76fef23664",
+    "missed-control/GLOBAL/native.log.gz": "3f8637a6706d298fd7bd9001b8f12f4e5bfcd9dfd83644d7038855be4fc5752d",
+    "missed-control/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "missed-control/GLOBAL/project-before.json": "3883c3b03f0e6ec3103b19497332ab871b6bebda790b476fdc8ff3a2610c62d5",
+    "missed-control/GLOBAL/before-choice.png": "a4f134782fa0e1eee2731cebd1f5bb5a474a0f498734d660240ab3b025ca1719",
+    "missed-control/PROJECT/native.log.gz": "05e25e7ccbbb452a440f4f33c70280e2b62f86ce1f06c106f4a489fe8a6f9e5f",
+    "missed-control/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "missed-control/PROJECT/project-before.json": "fdd008bf3d8d6e7f153df37e882f036506bcff87ddb56c89d058c5ab0d686f95",
+    "missed-control/PROJECT/before-choice.png": "ab0a01f212e2ab6343ee3038d409d0c640bd4e2bc9298fa13ef38da54f0997a2",
+    "corrected/GLOBAL/project-after.json": "a30d7ba3a4eb1cc474cb482705a56d4d9b4daafe1cc55321f4249ffe374d9a0e",
+    "corrected/GLOBAL/native.log.gz": "5d7f5920d874cf5284e655bf40ecf930f857bd63ba19f769077a4fafc0972de1",
+    "corrected/GLOBAL/after-choice.png": "08141992eb18e82cf0c74ff9cf02b8a968f363ff675aa19ee320448c75804fe1",
+    "corrected/GLOBAL/global-after.json": "e928d4da67a18d7cec9237478349f7f4de6a710cd5baa259988f2459bd4f100c",
+    "corrected/GLOBAL/choices.png": "e674ae5acb132f739074126c412fa3fff7cfa5cde587b3d9f63597375b38c33b",
+    "corrected/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "corrected/GLOBAL/project-before.json": "a30d7ba3a4eb1cc474cb482705a56d4d9b4daafe1cc55321f4249ffe374d9a0e",
+    "corrected/GLOBAL/before-choice.png": "a4f134782fa0e1eee2731cebd1f5bb5a474a0f498734d660240ab3b025ca1719",
+    "corrected/PROJECT/project-after.json": "be39cd954706052a12004b53f2e7884cde64fd8943192741966c0f1b3bb2014b",
+    "corrected/PROJECT/native.log.gz": "2b7f1c01f60dded12ae18f8a4fc437e0531f85bb934b54f6b30517b468cdb120",
+    "corrected/PROJECT/after-choice.png": "b4b425affb02f817dd7413f270f6886e2f4292b630f72900aabd8a665a4a63f0",
+    "corrected/PROJECT/choices.png": "26ec47531054f701852e8ef593e916eb911311303cb88a5975b992393ad6b8ef",
+    "corrected/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "corrected/PROJECT/project-before.json": "c8e877361c41a79cc4597556c9ffc0087f75aac43e488987a2bfb1fe09f532cc",
+    "corrected/PROJECT/before-choice.png": "ab0a01f212e2ab6343ee3038d409d0c640bd4e2bc9298fa13ef38da54f0997a2"
+  }
+}

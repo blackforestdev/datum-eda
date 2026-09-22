@@ -1,0 +1,49 @@
+{
+  "canonicalization_version": 1,
+  "committed_order": 0,
+  "format_version": 1,
+  "generation": 0,
+  "parent_generation": null,
+  "repository_id": "61112d9c-1030-4290-b122-54bcc915296b",
+  "state": {
+    "installation": {},
+    "receipts": [
+      {
+        "acceptance_id": null,
+        "accepting_actor": null,
+        "actor": "human_gui:bfadmin:datum-gui-1764569:d8acd5f0-7d7f-4237-b3d7-71ec149b01e8",
+        "actor_kind": "human_gui",
+        "actor_session_id": "datum-gui-1764569",
+        "affected_keys": [
+          "datum.units.system"
+        ],
+        "after_digests": {
+          "user:datum.units.system": "sha256:912564306c6a09336714ba60bb86292514d79ac3b47ee78b61f7556f50ec95fe"
+        },
+        "before_digests": {},
+        "canonical_request_digest": "sha256:156d4e9333cd0d20dc9c80026fb0e3ae5c4c0b2ac6f495b2aa2835fcb4cb43ce",
+        "expected_generation": null,
+        "expected_generation_ref": null,
+        "invocation_id": "d8acd5f0-7d7f-4237-b3d7-71ec149b01e8",
+        "local_actor_id": "bfadmin",
+        "operation": "CommitPreferenceMutation",
+        "originating_mcp_session": null,
+        "proposal_digest": null,
+        "proposal_id": null,
+        "reason": "Global Preferences control activation",
+        "redacted_keys": [],
+        "request_id": "5c705c53-4db6-4f80-8a76-513fe3669b52",
+        "requesting_actor": null,
+        "resulting_generation": 0
+      }
+    ],
+    "unknown_envelopes": {},
+    "user": {
+      "datum.units.system": {
+        "schema_version": 1,
+        "value": "imperial"
+      }
+    }
+  },
+  "writer_instance": "datum-gui-1764569"
+}

@@ -1,0 +1,123 @@
+[
+  {
+    "host": "GLOBAL",
+    "command": [
+      "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "--board",
+      "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+      "--window-size",
+      "1280x800",
+      "--initial-layout",
+      "single",
+      "--open-global-preferences",
+      "--visual-scale-factor",
+      "1"
+    ],
+    "actions": [
+      {
+        "args": [
+          "windowactivate",
+          "--sync",
+          "6291461"
+        ],
+        "time": 1790053540.9311671
+      },
+      {
+        "args": [
+          "windowsize",
+          "--sync",
+          "6291461",
+          "1000",
+          "750"
+        ],
+        "time": 1790053540.998169
+      },
+      {
+        "args": [
+          "mousemove",
+          "510",
+          "285"
+        ],
+        "time": 1790053541.5166497
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790053541.6538274
+      },
+      {
+        "args": [
+          "mousemove",
+          "1360",
+          "308"
+        ],
+        "time": 1790053542.1905813
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790053542.3146348
+      }
+    ],
+    "binary_sha256": "14f04e569b21579b8ce8a6461b4efa8c28ebfc28198df1037b6cb0f8b69e8bbd",
+    "passed": false,
+    "error": "AssertionError('predicate timeout')"
+  },
+  {
+    "host": "PROJECT",
+    "command": [
+      "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "--board",
+      "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+      "--window-size",
+      "1280x800",
+      "--initial-layout",
+      "single",
+      "--open-project-preferences",
+      "--visual-scale-factor",
+      "1"
+    ],
+    "actions": [
+      {
+        "args": [
+          "windowactivate",
+          "--sync",
+          "6291461"
+        ],
+        "time": 1790053580.013747
+      },
+      {
+        "args": [
+          "windowsize",
+          "--sync",
+          "6291461",
+          "1000",
+          "750"
+        ],
+        "time": 1790053580.078733
+      },
+      {
+        "args": [
+          "mousemove",
+          "1360",
+          "308"
+        ],
+        "time": 1790053581.015313
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790053581.1391478
+      }
+    ],
+    "binary_sha256": "14f04e569b21579b8ce8a6461b4efa8c28ebfc28198df1037b6cb0f8b69e8bbd",
+    "passed": false,
+    "error": "AssertionError('predicate timeout')"
+  }
+]

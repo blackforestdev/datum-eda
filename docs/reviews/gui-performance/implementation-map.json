@@ -5460,7 +5460,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial: shared dialog/control/hit composition has component parity and physical-surface clipping tests. Actual settings effects and full per-host input/focus/partial-row/scale parity remain unqualified; recent native attempts failed or aborted.",
+        "status": "Partial: shared control/hit composition and physical clipping tests pass; actual GLOBAL/PROJECT native enum edits now verify durable scope through committed Global generation and canonical Project transaction. Full control/focus/partial-row/backend/scale and stale-transform negative qualification remains open. Initial missed-control setup retained separately.",
         "id": "proof_hp12_02",
         "positive": "Edit controls and hit partial rows",
         "negative_control": "Reuse stale hit transform",
@@ -5525,6 +5525,17 @@
         ],
         "evidence": "docs/reviews/gui-performance/implementation/S3/explanation-focus-reveal/result.json",
         "limits": "Bounded explanation-focus adoption in GLOBAL/PROJECT. Native X11 test uses one scale and actual 1000x563 window; CPU tests cover first/last rows at 1/1.5/2x. Native captures can lag actions; filenames are not state/timing proof. No complete HP12/HP23/S3, backend, resource or performance acceptance. No dependencies, prototype edits, numerical budgets or resize-scope change."
+      },
+      "s3_native_preference_edits_progress": {
+        "status": "Native Preferences choice edits verify durable Global versus Project scope",
+        "production_consumers": [
+          "GLOBAL native choice control",
+          "PROJECT native choice control"
+        ],
+        "shared_owner": "Shared Preferences painted/presented hit geometry; existing native Runtime control dispatch to Global product service or Project commit_prepared",
+        "retired_paths": "No new runtime migration; verifies existing shared control consumers through actual native edits.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-preference-edits/result.json",
+        "limits": "One native enum edit per GLOBAL/PROJECT Units window at1x on X11, isolated config/TMPDIR-created import projects from the existing real board fixture. Verifies actual pointer path and durable scope, not all controls, partial rows, keyboard/reset/undo replay, scale/backends or full HP12/S3 qualification. No production code, dependency/license/prototype/budget or resize-scope change. Screenshots are supplementary; persisted state and transaction are the outcome oracle."
       }
     },
     {
@@ -27861,5 +27872,16 @@
     "preserved": "Default cache/layout/glyph/submit behavior; general-frame diagnostic stats retain workspace semantics. Existing DATUM_TRACE_TIMING opt-in now includes actual dialog cache hits/misses.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-label-reuse/result.json",
     "limits": "Bounded actual GLOBAL/PROJECT Units native X11 scroll cycles at1x, tracing enabled; no extra lookup used to warm before measurement. Not all settings/expanded states/backends/scales, resource/counter-overhead conformance or full HP14/S3 acceptance. Complete resource dependencies remain due at S4/S5. No dependency/license/prototype/style, budget or resize-scope change. Known capture lag means images are not timing/final-state proof."
+  },
+  "s3_native_preference_edits_work": {
+    "status": "Native Preferences choice edits verify durable Global versus Project scope",
+    "production_consumers": [
+      "GLOBAL native choice control",
+      "PROJECT native choice control"
+    ],
+    "shared_owner": "Shared Preferences painted/presented hit geometry; existing native Runtime control dispatch to Global product service or Project commit_prepared",
+    "retired_paths": "No new runtime migration; verifies existing shared control consumers through actual native edits.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-preference-edits/result.json",
+    "limits": "One native enum edit per GLOBAL/PROJECT Units window at1x on X11, isolated config/TMPDIR-created import projects from the existing real board fixture. Verifies actual pointer path and durable scope, not all controls, partial rows, keyboard/reset/undo replay, scale/backends or full HP12/S3 qualification. No production code, dependency/license/prototype/budget or resize-scope change. Screenshots are supplementary; persisted state and transaction are the outcome oracle."
   }
 }
