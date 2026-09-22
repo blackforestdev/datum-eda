@@ -1,0 +1,26 @@
+{
+  "status": "bounded S3 CONSOLE ancestor clipping adoption; full qualification open",
+  "baseline": "19d2df9c",
+  "sources": {
+    "crates/gui-render/src/datum_console.rs": "f9032df8056856322a56122aa8dc57028bec9a5f98c0125d5a6af825271d8cb2"
+  },
+  "production_consumers": [
+    "Main output-only Console feedback overlay",
+    "Expanded Console history and filter controls in the focused pane"
+  ],
+  "shared_owner": "render/hit_clipping.rs::clip_content",
+  "retired_paths": [
+    "Unrestricted Console overlay geometry and hit extents",
+    "History header/filter paint and pointer targets without panel ancestor clipping",
+    "History title painting underneath crowded filter chips"
+  ],
+  "behavior": "Clip appended history geometry/text/hits to its panel, then intersect the Console overlay with its focused pane body. Preserve per-row text clips, journal/feedback authority, discrete history offset, filter actions and focus policy. Restrict title clip to space preceding filter chips without changing normal layout.",
+  "proof": {
+    "renderer": "198 renderer library tests pass serially, including new crowded history panel geometry/text/hit containment and title/filter separation. Existing focus-pane/scale, history, journal and text-clip tests pass.",
+    "prechange_gpu": "All13 existing hardware GPU overlay regressions passed on baseline19d2df9c/Intel P630 Vulkan before this Console change. Candidate replay recorded separately after completion.",
+    "capture": "Normal1280x800 and narrow700x300 offscreen captures visually inspected. Preserve initial narrow title/filter overlap and corrected image. Existing fixture and OffscreenRenderer only; temporary example removed and recipe retained. No desktop input.",
+    "limits": "No native input/focus, independent negative, full Console pixel-parity, timing or resource qualification. Constrained capture is a geometry diagnostic, not admitted native-window usability. No terminal/PTy authority, dependency, license, prototype or sequencing change. Proposal1bc02aaf remains unapproved; S3 stays open.",
+    "candidate_gpu": "All13 existing hardware GPU overlay regressions pass on final Console source/Intel P630 Vulkan, serially. Covers dialog pixels, fractional scroll/pinned chrome, control meshes, uploads, text reuse/retry/pressure and pass contribution; not a dedicated Console pixel-parity oracle.",
+    "clippy": "Guarded offline renderer library Clippy passed with -D warnings."
+  }
+}

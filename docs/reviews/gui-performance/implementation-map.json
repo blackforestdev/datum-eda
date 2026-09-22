@@ -26902,5 +26902,19 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/current-native-attempt/result.json",
     "limits": "No native input/focus, scrolling, pass-count, teardown, daily-backend or resource acceptance. Driver exit130 is an abort, not a pass. No application process from this attempt remained after cleanup.",
     "next_native_condition": "Controlled desktop input and verified driver delivery are required before native qualification; no further focus-taking tests while unscripted input persists."
+  },
+  "s3_console_ancestor_clipping_work": {
+    "status": "bounded S3 CONSOLE ancestor clipping adoption; full qualification open",
+    "production_consumers": [
+      "Main output-only Console feedback overlay",
+      "Expanded Console history and filter controls in the focused pane"
+    ],
+    "retired_paths": [
+      "Unrestricted Console overlay geometry and hit extents",
+      "History header/filter paint and pointer targets without panel ancestor clipping",
+      "History title painting underneath crowded filter chips"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/console-ancestor-clipping/result.json",
+    "limits": "No native input/focus, independent negative, full Console pixel-parity, timing or resource qualification. Constrained capture is a geometry diagnostic, not admitted native-window usability. No terminal/PTy authority, dependency, license, prototype or sequencing change. Proposal1bc02aaf remains unapproved; S3 stays open."
   }
 }

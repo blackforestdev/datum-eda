@@ -1,0 +1,10 @@
+use datum_gui_render::visual_capture::OffscreenRenderer;
+fn main() -> anyhow::Result<()> {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.console.set_history_expanded(true);
+    for (width, height) in [(1280, 800), (700, 300)] {
+        let mut renderer = OffscreenRenderer::new(width, height)?;
+        renderer.render_workspace(&state, None)?.save(format!("/tmp/pm045-console-{width}.png"))?;
+    }
+    Ok(())
+}
