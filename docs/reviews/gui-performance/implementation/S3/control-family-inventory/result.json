@@ -1,0 +1,103 @@
+{
+  "candidate": "46aa8d98c4bfcd1c56c865752a89efb6c589ab53",
+  "status": "Existing HP16 production control-family inventory reconciled; acceptance remains partial",
+  "scope": "Read-only geometry-owner/call-path review across the six existing HP16 consumers. This is not a full product semantic audit, new implementation, new benchmark or fresh test run.",
+  "families": [
+    {
+      "consumers": [
+        "GLOBAL",
+        "PROJECT"
+      ],
+      "family": "Search fields, buttons, single-choice boxes and switches",
+      "path": "GlobalPreferencesWindowSurface::render -> Renderer::prepare_native_preferences_scrolled -> shared dialog/primitives -> ControlPainter",
+      "geometry": "RoundedRect and Ellipse meshes retained by renderer ControlMeshCache; live placement/color/clip; scale remains in identity."
+    },
+    {
+      "consumers": [
+        "NEW"
+      ],
+      "family": "Name/destination fields, footer/retry buttons, Units radio indicators",
+      "path": "GlobalPreferencesWindowSurface::render -> Renderer::prepare_native_new_project_scrolled -> new_project_dialog -> shared primitives/ControlPainter",
+      "geometry": "Same RoundedRect/Ellipse cache as Preferences. New form scroll paints track/thumb via shared fixed rectangles."
+    },
+    {
+      "consumers": [
+        "MAIN"
+      ],
+      "family": "Focused-pane circular indicator",
+      "path": "Runtime::build_terminal_prepared_scene -> Renderer::prepare_workspace_with_terminal_renderer -> from_workspace_with_controls -> render_viewport_panes -> ControlPainter::convex_ellipse_fill",
+      "geometry": "Renderer-owned ConvexEllipse fan; perimeter-origin winding retained. Existing production_pane_headers_reuse_the_shared_focus_indicator regression covers three changing widths with one mesh build."
+    },
+    {
+      "consumers": [
+        "MAIN"
+      ],
+      "family": "Shell/header fills, identity pill, dividers, pane outlines and rectangular controls",
+      "path": "frame_preparation -> pane_chrome/shell_identity -> Quad::from_rect and push_rect_border",
+      "geometry": "Direct four-point rectangles; border emits four such rectangles. No invariant arcs or general polygon fill call. Adding a mesh-cache lookup for these fixed primitives is not a missing rounded-control migration."
+    },
+    {
+      "consumers": [
+        "INSPECTOR"
+      ],
+      "family": "Selection/title pill, section bands, review badges and cards",
+      "path": "frame_preparation -> side_panels::render_side_panels -> inspector dispatch/render_inspector/render_review/panel_chrome -> fixed rectangles/borders",
+      "geometry": "Same direct rectangle/border primitives and shared text. Partial product content remains partial; source inventory does not supply absent scrolling or Inspector functionality."
+    },
+    {
+      "consumers": [
+        "MENU"
+      ],
+      "family": "Menubar highlights, submenu cards/rows and marking/action popups",
+      "path": "frame_preparation -> menu_chrome / marking_menu -> fixed rectangles/borders, text and hit regions",
+      "geometry": "Same direct rectangle/border primitives. Menu glyphs are text, not CPU-generated rounded contours. No general concave/holed tessellator or repeated arc construction in inspected control paths."
+    }
+  ],
+  "excluded_paths": [
+    {
+      "path": "render/pads_and_layers.rs rounded_rect_points/ellipse_points and draw_primitives/geometry general polygon fills",
+      "reason": "Authored pad/design geometry; valid world algorithms must remain. They are not a competing GUI control implementation."
+    },
+    {
+      "path": "global_preferences_primitives::push_rounded_rect_fill",
+      "reason": "Compiled only under cfg(all(test, feature=\"visual\")); transient cache is a visual comparator, not a default native entry."
+    },
+    {
+      "path": "Static PreparedScene compatibility methods",
+      "reason": "May allocate transient caches for compatibility/test callers. Default native adapters call Renderer-owned entries as traced above."
+    }
+  ],
+  "remaining_proof": [
+    "HP16-01 per-consumer native tessellation/reuse and prescribed negative coverage remain incomplete. Existing search-ring negative and pane-header helper proof cannot imply global native qualification.",
+    "HP16-02 full backend/scale/AA/fractional-position coverage remains incomplete.",
+    "HP16-03 complete GPU/in-flight/resource accounting and caps remain unqualified; pending S3 dependency clarification is not approved."
+  ],
+  "decision": "No additional rectangle-control cache migration is required by HP16 rounded-control arc/general-tessellator predicate in this inspected inventory. Preserve direct primitives and the authored geometry algorithms. Proceed with actual outstanding qualification/implementation requirements, not a fabricated rectangle cache project.",
+  "verification": "Source search across renderer for contour constructors, trigonometry, polygon fills and control-owner entry points; reviewed shared primitive definitions and native/renderer call sites. No fresh Rust test or native acceptance claimed. Existing214CPU/14GPU/378app proof belongs to preceding new-project-form-scroll receipt.",
+  "source_sha256": {
+    "crates/gui-app/src/runtime_terminal_render.rs": "2fa9ec2237ef5056697fc67e54acac6a0d72be7d57cad9b0d44fb93d5fc7130f",
+    "crates/gui-app/src/global_preferences_window.rs": "14b0aa67509f9192dcdfc08abfa69a2c4caa41b5ff2c824fe678ff86776ada64",
+    "crates/gui-render/src/render/frame_preparation.rs": "2e488840235a86bb84ac823f07c4d613177202277f8818b7c2c42603561886c4",
+    "crates/gui-render/src/render/control_mesh.rs": "823c9d3aea5c009cbdcbd8c01010a3bf5916150c510774caf292723517323235",
+    "crates/gui-render/src/render/pane_chrome.rs": "e74b361d42872003b859508418472a6b0e3d4e66cb0b31d38cc2b33b1a84537b",
+    "crates/gui-render/src/render/shell_identity.rs": "0d7acef56c382cf8f228af87bc39dd51393650bfff4eda788380ed95fb4bed2c",
+    "crates/gui-render/src/render/types.rs": "6261148852514d7ea80b45c1bd0c2172d4b7eee66796c6c14ff26d4e6d26a455",
+    "crates/gui-render/src/render/geometry.rs": "1a245b5fa8cb4567c39104066adde3d14faa74d6c21b1d8c793be70c3a89b5d6",
+    "crates/gui-render/src/render/pads_and_layers.rs": "23609d1ca4552d8f0110fcd083a0cdcf8fbd170c9c5df164ad896c03a94fd7b4",
+    "crates/gui-render/src/render/draw_primitives.rs": "afbdc5fa98231e203cf06818d794fcd655f95476e4c672350ff762591597884c",
+    "crates/gui-render/src/global_preferences_primitives.rs": "b2a13a904bcfd86690c86aa5f3c99a95172168c015057318d01cd390b5326ee8",
+    "crates/gui-render/src/global_preferences_dialog.rs": "deb6b1bac584e5b658efbf38ca4f6f3847cc91d2cc2a190ae835969452aec1f7",
+    "crates/gui-render/src/new_project_dialog.rs": "856cd9e0961e5d3044634fc06933b8b95e9289a6555d680784cf0fae2fd843b6",
+    "crates/gui-render/src/render/new_project_scene.rs": "6a19c7d2226899d27363328e41f07faca1ce1ed12db8c92b35fa5477618b0c7d",
+    "crates/gui-render/src/menu_chrome.rs": "417f2652addb7ec700f8ec4d286457f2885b5b6341103de41d0a1f90f4ea18ac",
+    "crates/gui-render/src/marking_menu.rs": "fafb1193b90ea76b703be43efbfa6ce2c831ebe730e7efb15be0854eca60e834",
+    "crates/gui-render/src/side_panels/helpers.rs": "8520fc046f8e0318bac5ab46864ded0dfb27c081d1f7ae598081de0d73d25047",
+    "crates/gui-render/src/side_panels/inspector_dispatch.rs": "24847ae1f4874a98cd2dde9c6062b606cecd373091da22881e33e91d4a1aa914",
+    "crates/gui-render/src/side_panels/layer_scroll.rs": "3dbf3e130e343da351e5fb83ebff3e61884df029d6d2923df661e63682095d0e",
+    "crates/gui-render/src/side_panels/layout.rs": "ef3e2b76afa2d808cbdadf92ae09cd41777cf2e0f356e8c0165ca2b1ba68a323",
+    "crates/gui-render/src/side_panels/panel_chrome.rs": "33e44c21d674d24086d41f804adff72e904f528e41d50c6c7199d89ae742cb38",
+    "crates/gui-render/src/side_panels/render_inspector.rs": "a4143378c0fac6a06f8b423d37782f8a154d3c39b50de00ddadc6fce1a5359e4",
+    "crates/gui-render/src/side_panels/render_project_filters.rs": "b71badac25435a08227cdb1f3b5f6bf43d9d4aa65793877e095fdba8e65bb745",
+    "crates/gui-render/src/side_panels/render_review.rs": "2d55101827e7b8d9d17e89bfc9715820f1a464221e4151543436ac8c094e153e"
+  }
+}

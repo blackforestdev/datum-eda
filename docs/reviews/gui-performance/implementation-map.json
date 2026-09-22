@@ -6016,7 +6016,25 @@
       "s3_pane_indicator_progress": {
         "status": "partial MAIN focused-pane indicator adoption; full row remains unqualified",
         "evidence": "docs/reviews/gui-performance/implementation/S3/pane-indicator-retention/result.json"
-      }
+      },
+      "s3_control_family_inventory": {
+        "status": "Existing HP16 production control-family inventory reconciled; acceptance remains partial",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json",
+        "production_consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "NEW",
+          "MAIN",
+          "INSPECTOR",
+          "MENU"
+        ],
+        "retired_paths": "No new production path retired in this read-only reconciliation. Resolves the outstanding classification of Main/Inspector/Menu fixed rectangles versus retained curved controls.",
+        "finding": "No additional rectangle-control cache migration is required by HP16 rounded-control arc/general-tessellator predicate in this inspected inventory. Preserve direct primitives and the authored geometry algorithms. Proceed with actual outstanding qualification/implementation requirements, not a fabricated rectangle cache project.",
+        "limits": "No new Rust/native/performance proof, full HP16 acceptance, dependency, prototype, budget or sequencing change. S3 remains in progress."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json"
+      ]
     },
     {
       "id": "HP16-02",
@@ -27291,6 +27309,21 @@
       "retired_path": "Treating winit focus-generated held-key presses as fresh command/text activation",
       "evidence": "docs/reviews/gui-performance/implementation/S3/focus-key-replay/result.json",
       "limits": "No retrospective attribution of old unscripted keys/pointer events, no owner desktop-use conclusion, no full native scroll/focus/backend/scale or S3 acceptance. MAIN shares the guard by call path but was not a native Escape case. No independent guard-removal negative yet. No dependency/license/prototype/budget/resize-scope change;1bc02aaf remains unapproved."
+    },
+    "latest_control_family_inventory": {
+      "status": "Existing HP16 production control-family inventory reconciled; acceptance remains partial",
+      "evidence": "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json",
+      "production_consumers": [
+        "GLOBAL",
+        "PROJECT",
+        "NEW",
+        "MAIN",
+        "INSPECTOR",
+        "MENU"
+      ],
+      "retired_paths": "No new production path retired in this read-only reconciliation. Resolves the outstanding classification of Main/Inspector/Menu fixed rectangles versus retained curved controls.",
+      "finding": "No additional rectangle-control cache migration is required by HP16 rounded-control arc/general-tessellator predicate in this inspected inventory. Preserve direct primitives and the authored geometry algorithms. Proceed with actual outstanding qualification/implementation requirements, not a fabricated rectangle cache project.",
+      "limits": "No new Rust/native/performance proof, full HP16 acceptance, dependency, prototype, budget or sequencing change. S3 remains in progress."
     }
   },
   "s3_pane_indicator_retention_work": {
@@ -27546,5 +27579,20 @@
     "preserved": "Same form order/spacing and unchanged fitted1x pixels. Header remains fixed. Existing ScrollViewport owns clamping, drag, reflow cancellation and focus reveal; physical input conversion and final paint/hit scaling remain shared. Existing retained meshes, settings and project creation authority unchanged. The static compatibility entry delegates to the same composition with temporary scroll state; native production owns persistent state.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/new-project-form-scroll/result.json",
     "limits": "Bounded S3 migration, not complete S3 or global adoption. Native proof is X11/Xwayland at visual scale2 and1280x800; no actual monitor scale transition, full backend/input/negative/resource/teardown qualification. Actual project creation was not invoked. Existing form body is small bounded content; no claim of hidden-row preparation elimination. No dependency/license, prototype, resource-budget, sequencing or nonblocking resize change."
+  },
+  "s3_control_family_inventory": {
+    "status": "Existing HP16 production control-family inventory reconciled; acceptance remains partial",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json",
+    "production_consumers": [
+      "GLOBAL",
+      "PROJECT",
+      "NEW",
+      "MAIN",
+      "INSPECTOR",
+      "MENU"
+    ],
+    "retired_paths": "No new production path retired in this read-only reconciliation. Resolves the outstanding classification of Main/Inspector/Menu fixed rectangles versus retained curved controls.",
+    "finding": "No additional rectangle-control cache migration is required by HP16 rounded-control arc/general-tessellator predicate in this inspected inventory. Preserve direct primitives and the authored geometry algorithms. Proceed with actual outstanding qualification/implementation requirements, not a fabricated rectangle cache project.",
+    "limits": "No new Rust/native/performance proof, full HP16 acceptance, dependency, prototype, budget or sequencing change. S3 remains in progress."
   }
 }
