@@ -1,0 +1,29 @@
+{
+  "base_commit": "597ba55d",
+  "production": {
+    "status": "bounded S3 Main placeholder/status shared clipping adoption; full qualification open",
+    "production_consumers": [
+      "MAIN non-live pane placeholder canvas/caption",
+      "MAIN segmented status bar including focus/tool/selection/layers/revision/DRC"
+    ],
+    "retired_paths": [
+      "Unbounded centered placeholder caption paint across adjacent panes",
+      "Unbounded status segment geometry/text outside the status strip"
+    ],
+    "preserved": "Caption centering, status segment placement/content, retained scene selection, and existing input routing. Shared clipping restricts output without a new layout or private clip implementation.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/shell-content-clipping/result.json",
+    "limits": "No native narrow-pane/status-bar, exact legacy pixel, isolated negative-control or full HP22/S3 qualification. Status segment overlap inside the strip is unchanged. These paint functions emit no HitRegion; layout-derived input routing remains unchanged. S3 proposal1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
+  },
+  "proof": {
+    "renderer_tests": 206,
+    "gpu_regression_tests": 13,
+    "gpu_backend": "Intel HD Graphics P630 Vulkan; serial",
+    "clippy": "passed with -D warnings",
+    "adapter_regressions": "Actual placeholder widths1/25/800 and actual status layout widths1/50/320/1280. Text ancestor and geometry bounds asserted; ordinary-width focus and DRC content retained."
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/pane_chrome.rs": "e74b361d42872003b859508418472a6b0e3d4e66cb0b31d38cc2b33b1a84537b",
+    "crates/gui-render/src/render/status_bar.rs": "0ec7c91db0037f4ff9230b8a70b580dec2d1827125e90d74c276ceab237dd0ed"
+  },
+  "limits": "No native narrow-pane/status-bar, exact legacy pixel, isolated negative-control or full HP22/S3 qualification. Status segment overlap inside the strip is unchanged. These paint functions emit no HitRegion; layout-derived input routing remains unchanged. S3 proposal1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
+}
