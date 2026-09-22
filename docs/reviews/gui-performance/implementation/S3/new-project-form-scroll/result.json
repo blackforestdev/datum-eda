@@ -1,0 +1,43 @@
+{
+  "base_commit": "3bc069744d024fca86d3b008890b1cc18c606b13",
+  "production": {
+    "status": "New Project overflow uses shared native ScrollViewport, clipping and focus reveal",
+    "production_consumers": [
+      "NEW form body including fields, Units choices/summary, retry and footer actions",
+      "Shared GLOBAL/PROJECT/NEW surface wheel and thumb event owner",
+      "GLOBAL/PROJECT/NEW shared scrollbar painter"
+    ],
+    "retired_paths": [
+      "Unreachable below-surface New Project controls in a constrained HiDPI window",
+      "NEW ignoring wheel/thumb press input while displaying overflowing form content",
+      "Preferences-only wheel application logic now owned once by the shared native surface",
+      "Separate Preferences scrollbar paint loop; all three native dialog profiles now call the same painter"
+    ],
+    "preserved": "Same form order/spacing and unchanged fitted1x pixels. Header remains fixed. Existing ScrollViewport owns clamping, drag, reflow cancellation and focus reveal; physical input conversion and final paint/hit scaling remain shared. Existing retained meshes, settings and project creation authority unchanged. The static compatibility entry delegates to the same composition with temporary scroll state; native production owns persistent state.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/new-project-form-scroll/result.json",
+    "limits": "Bounded S3 migration, not complete S3 or global adoption. Native proof is X11/Xwayland at visual scale2 and1280x800; no actual monitor scale transition, full backend/input/negative/resource/teardown qualification. Actual project creation was not invoked. Existing form body is small bounded content; no claim of hidden-row preparation elimination. No dependency/license, prototype, resource-budget, sequencing or nonblocking resize change."
+  },
+  "proof": {
+    "renderer_cpu": "214 passed;0failed, including real form composition at1/1.5/2x: footer full hit height, hidden controls removed, pinned header, stable no-op and return to Name",
+    "gpu": "14 serial Intel P630 Vulkan tests passed",
+    "app": "378passed;12ignored;0failed",
+    "clippy": "renderer/app libs, app binary and tests -D warnings passed",
+    "release": "fresh offline optimized app build passed",
+    "native": "2x1280x800: thumb press/release and bottom-boundary wheel zero presentations; drag one. Keyboard revealed Name and Cancel; click at revealed Cancel closed owned window. Captures and script preserved.",
+    "fitted_visual": "1000x7501x native RGB exactly equals preserved S3/shared-input-text/new-normal.png",
+    "initial_failure": "Extracted compatibility wrapper initially too private to re-export; widened only to crate visibility and reran successfully. Shared painter initially followed an existing test module; Clippy required moving it above tests, then passed.",
+    "governance": "Traceability28 routes, source health2188 files, spec governance313 specs, project state59 items, parity20 inventories and dependency authority passed."
+  },
+  "visual_authority": "Reinspected rendered start-page-study New Project Units form from S3/new-project-summary-clipping/prototype.png; current HTML last change62fec36b. Preserve form grouping/order and footer controls. Shared continuous overflow is a bounded adaptation for constrained windows, not activation of the deferred Start page or an HTML modification.",
+  "issue": "dat-new-project-hidpi-footer-vmm",
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_window.rs": "14b0aa67509f9192dcdfc08abfa69a2c4caa41b5ff2c824fe678ff86776ada64",
+    "crates/gui-app/src/new_project_window.rs": "fa9ce9a9238b85d98cd053dde822f99371e6037086ac38f7141430de75ffdc23",
+    "crates/gui-render/src/global_preferences_primitives.rs": "b2a13a904bcfd86690c86aa5f3c99a95172168c015057318d01cd390b5326ee8",
+    "crates/gui-render/src/new_project_dialog.rs": "856cd9e0961e5d3044634fc06933b8b95e9289a6555d680784cf0fae2fd843b6",
+    "crates/gui-render/src/render/preferences_rows.rs": "446fc15e9535f1ed8a7e224f0966431d13045cf00d1436784f15234f033c7cd8",
+    "crates/gui-render/src/render/new_project_scene.rs": "6a19c7d2226899d27363328e41f07faca1ce1ed12db8c92b35fa5477618b0c7d"
+  },
+  "release_binary_sha256": "f31b00cf15df765de73c31916b560ca8aff0f9921638bf873e4895f428b82625",
+  "limits": "Bounded S3 migration, not complete S3 or global adoption. Native proof is X11/Xwayland at visual scale2 and1280x800; no actual monitor scale transition, full backend/input/negative/resource/teardown qualification. Actual project creation was not invoked. Existing form body is small bounded content; no claim of hidden-row preparation elimination. No dependency/license, prototype, resource-budget, sequencing or nonblocking resize change."
+}

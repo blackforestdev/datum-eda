@@ -7,36 +7,12 @@ use crate::global_preferences_primitives::{
 };
 use datum_gui_protocol::{NewProjectFocus, NewProjectUnitsChoice};
 
-impl Renderer {
-    /// Compose only the native form using the renderer's shared control owner.
-    pub fn prepare_native_new_project(
-        &mut self,
-        dialog: &datum_gui_protocol::NewProjectDialogState,
-        width: u32,
-        height: u32,
-        scale_factor: f32,
-    ) -> PreparedScene {
-        let scale = scale_factor.max(0.01);
-        let layout = ShellLayout::for_surface(width, height, scale, None);
-        let mut quads = Vec::new();
-        let mut text = Vec::new();
-        let mut hits = Vec::new();
-        render_new_project_dialog(
-            dialog,
-            &layout,
-            true,
-            &mut self.control_meshes,
-            scale,
-            &mut quads,
-            &mut text,
-            &mut hits,
-        );
-        PreparedScene::from_dialog_parts(layout, quads, text, hits, scale, (width, height))
-    }
-}
+#[path = "render/new_project_scene.rs"]
+mod scene;
+pub(super) use scene::render_new_project_dialog;
 
 #[allow(clippy::too_many_arguments)]
-pub(super) fn render_new_project_dialog(
+fn render_new_project_dialog_scrolled(
     dialog: &datum_gui_protocol::NewProjectDialogState,
     layout: &ShellLayout,
     native_window: bool,
@@ -45,6 +21,8 @@ pub(super) fn render_new_project_dialog(
     quads: &mut Vec<Quad>,
     text: &mut Vec<TextRun>,
     hits: &mut Vec<HitRegion>,
+    scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
+    reveal_focus: bool,
 ) {
     if !dialog.open || !native_window {
         return;
@@ -98,6 +76,7 @@ pub(super) fn render_new_project_dialog(
         text,
     );
 
+    let body_starts = (quads.len(), text.len(), hits.len());
     let inset = 18.0;
     let field_width = window.width - inset * 2.0;
     let mut y = header.height + 14.0;
@@ -376,6 +355,18 @@ pub(super) fn render_new_project_dialog(
         target: HitTarget::NewProjectCreate,
         rect: create,
     });
+    scene::finish_body(
+        dialog,
+        window,
+        header.height,
+        y + 32.0 + inset,
+        quads,
+        text,
+        hits,
+        body_starts,
+        scroll,
+        reveal_focus,
+    );
     crate::global_preferences_dialog::dialog_coordinates::scale_output(
         quads, text, hits, starts, scale,
     );

@@ -490,6 +490,29 @@ pub(super) fn push_rounded_rect_fill(
     ControlPainter::new(quads, &mut cache, 1.0).rounded_fill(rect, color, radius, 0.0);
 }
 
+/// Shared native-dialog scrollbar paint; geometry and capture come from one owner.
+pub(super) fn paint_scrollbar(
+    scroll: &datum_gui_viewport::scroll::ScrollViewport,
+    quads: &mut Vec<Quad>,
+) {
+    for (rect, color) in [
+        (scroll.track(), design_tokens::chrome::SURFACE_01),
+        (scroll.thumb(), TEXT_SECONDARY),
+    ] {
+        if let Some(r) = rect {
+            quads.push(Quad::from_rect(
+                RectPx {
+                    x: r.x,
+                    y: r.y,
+                    width: r.width,
+                    height: r.height,
+                },
+                color,
+            ));
+        }
+    }
+}
+
 #[cfg(test)]
 mod label_bounds_tests {
     use super::*;

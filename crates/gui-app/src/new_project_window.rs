@@ -162,10 +162,18 @@ impl App {
                 }
             }
             WindowEvent::MouseInput {
-                state: ElementState::Released,
+                state,
                 button: MouseButton::Left,
                 ..
             } => {
+                if self
+                    .new_project_surface
+                    .as_mut()
+                    .is_some_and(|surface| surface.scrollbar_input(state, &mut self.frames))
+                    || state != ElementState::Released
+                {
+                    return;
+                }
                 let target = self
                     .new_project_surface
                     .as_ref()
@@ -182,6 +190,11 @@ impl App {
                     let outcome =
                         Outcome::from_handled(runtime.activate_new_project_hit(target), changed);
                     self.request_dialog_key_redraw(outcome, native_frame_adapters::OwnedHost::New);
+                }
+            }
+            WindowEvent::MouseWheel { delta, .. } => {
+                if let Some(surface) = &mut self.new_project_surface {
+                    surface.scroll_wheel(delta, &mut self.frames);
                 }
             }
             WindowEvent::ModifiersChanged(modifiers) => {

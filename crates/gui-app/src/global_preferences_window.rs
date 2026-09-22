@@ -82,6 +82,10 @@ pub(super) struct GlobalPreferencesWindowSurface {
     presented_hits: gui_runtime_support::presented_hit_regions::PresentedHitRegions,
     cursor_position: Option<(f32, f32)>,
     scroll: datum_gui_viewport::scroll::ScrollViewport,
+    new_project_focus: Option<(
+        datum_gui_protocol::NewProjectFocus,
+        datum_gui_protocol::NewProjectUnitsChoice,
+    )>,
     scroll_identity: Option<(String, String, usize)>,
     scrollbar_pressed: bool,
     scroll_focus: Option<datum_gui_protocol::GlobalPreferencesFocus>,
@@ -147,6 +151,7 @@ impl GlobalPreferencesWindowSurface {
             presented_hits,
             cursor_position: None,
             scroll: Default::default(),
+            new_project_focus: None,
             scroll_identity: None,
             scrollbar_pressed: false,
             scroll_focus: None,
@@ -165,6 +170,7 @@ impl GlobalPreferencesWindowSurface {
         replacement.cursor_position = self.cursor_position;
         replacement.scroll = self.scroll.clone();
         replacement.scroll.release();
+        replacement.new_project_focus = self.new_project_focus;
         replacement.scroll_identity = self.scroll_identity.clone();
         replacement.scroll_focus = self.scroll_focus.clone();
         replacement.scroll_expanded = self.scroll_expanded.clone();
@@ -227,6 +233,22 @@ impl GlobalPreferencesWindowSurface {
         }
     }
 
+    pub(super) fn scroll_wheel(
+        &mut self,
+        delta: MouseScrollDelta,
+        frames: &mut native_frame_coordinator::NativeFrameCoordinator,
+    ) {
+        if scroll_wheel(
+            &mut self.scroll,
+            self.cursor_position,
+            self.scale_factor,
+            delta,
+        ) {
+            self.invalidate();
+            frames.invalidate(&self.window);
+        }
+    }
+
     pub(super) fn scrollbar_input(
         &mut self,
         state: ElementState,
@@ -284,11 +306,17 @@ impl GlobalPreferencesWindowSurface {
         }
         if self.prepared.is_none() {
             if new_project {
-                self.prepared = Some(self.renderer.prepare_native_new_project(
+                let dialog = &runtime.workspace().ui.new_project;
+                let focus = (dialog.focus, dialog.units_choice);
+                let reveal_focus = self.new_project_focus != Some(focus);
+                self.new_project_focus = Some(focus);
+                self.prepared = Some(self.renderer.prepare_native_new_project_scrolled(
                     &runtime.workspace().ui.new_project,
                     self.config.width,
                     self.config.height,
                     self.scale_factor,
+                    &mut self.scroll,
+                    reveal_focus,
                 ));
             } else {
                 let dialog = if project_preferences {
@@ -457,15 +485,7 @@ impl App {
         let Some(surface) = surface else {
             return;
         };
-        if scroll_wheel(
-            &mut surface.scroll,
-            surface.cursor_position,
-            surface.scale_factor,
-            delta,
-        ) {
-            surface.invalidate();
-            self.frames.invalidate(&surface.window);
-        }
+        surface.scroll_wheel(delta, &mut self.frames);
     }
 
     pub(super) fn sync_global_preferences_window(
