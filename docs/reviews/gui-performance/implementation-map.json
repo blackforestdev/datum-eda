@@ -27457,23 +27457,14 @@
     }
   },
   "s3_exit_reconciliation": {
-    "status": "S3 exit not satisfied; bounded implementation/evidence reconciliation only",
-    "evidence": "docs/reviews/gui-performance/implementation/S3/exit-reconciliation/result.json",
+    "status": "S3 production migrations have bounded consumer evidence; functional exit qualification remains incomplete. Current reconciliation supersedes obsolete obstacle descriptions, not historical receipts.",
     "exit_obstacles": [
       {
-        "kind": "resolved specification sequencing conflict",
-        "detail": "Owner approved exact 1bc02aaf clarification. Operative S3 evidence cell carries only named complete S2 resource dependencies to S4 implementation/S5 qualification; remaining S3 exit proof is still required."
-      },
-      {
-        "kind": "missing qualification / input delivery condition",
-        "detail": "Per-adapter native input/focus/pass counts, backend/scale/pixel/final-state coverage and prescribed negatives remain incomplete. Owner reauthorized idle-desktop testing; resumed attempts timed out/aborted with additional unattributed input. No conclusion about owner desktop use, no test pass, no revoked authorization."
-      },
-      {
-        "kind": "technical implementation boundary",
-        "detail": "Existing public dependency APIs have not provided complete shaped/atlas/scratch accounting. Current wgpu allocator snapshots are insufficient. No owner authority exists for modifying/vendoring dependencies; sequencing approval does not solve this technical boundary."
+        "kind": "remaining S3 functional qualification",
+        "detail": "Complete the exact per-predicate actions in current_review.remaining_actions, preserving positive/negative/native consumer scope. New regressions still block advancement; successful helper or opt-in observations do not complete all consumers."
       }
     ],
-    "scope": "20 S3 map rows retain original acceptance rules and partial statuses. Only named resource dependencies follow the approved clarification. S3 stays in progress; S4/S5 pending.",
+    "scope": "No predicate marked passed, no acceptance rule changed, no S3 completion or S4 selection. Resource associations and original failed receipts remain intact.",
     "latest_native_focus_evidence": {
       "status": "bounded shared native focus-key correction; three owned-dialog Escape cases pass",
       "production_consumers": [
@@ -27497,6 +27488,79 @@
       "retired_paths": "No new production path retired in this read-only reconciliation. Resolves the outstanding classification of Main/Inspector/Menu fixed rectangles versus retained curved controls.",
       "finding": "No additional rectangle-control cache migration is required by HP16 rounded-control arc/general-tessellator predicate in this inspected inventory. Preserve direct primitives and the authored geometry algorithms. Proceed with actual outstanding qualification/implementation requirements, not a fabricated rectangle cache project.",
       "limits": "No new Rust/native/performance proof, full HP16 acceptance, dependency, prototype, budget or sequencing change. S3 remains in progress."
+    },
+    "historical_evidence": "docs/reviews/gui-performance/implementation/S3/exit-reconciliation/result.json",
+    "resolved_obstacles": [
+      {
+        "kind": "owner sequencing disposition",
+        "evidence": "specs/GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md#owner-amendment-s3-shared-resource-dependency-clarification",
+        "detail": "Exact1bc02aaf S3 clarification applied in9908766d. Only complete named S2 resource dependencies move to S4 implementation/S5 qualification."
+      },
+      {
+        "kind": "control family classification",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json",
+        "detail": "Main/Inspector/Menu fixed rectangle primitives are classified; no missing general-tessellator-to-control-cache migration inferred from these rectangles."
+      },
+      {
+        "kind": "blanket native input condition",
+        "detail": "Historical native failures remain evidence, but later pass-count, scroll/reversal, warm-label and durable-scope/fresh-hit native trials succeeded. No current blanket desktop/input blocker is established."
+      }
+    ],
+    "carried_technical_boundary": {
+      "implementation_deadline": "GPI-S4",
+      "qualification_deadline": "GPI-S5",
+      "detail": "Complete S2-owned shaped/atlas/scratch/control GPU/in-flight accounting and caps remain unresolved within existing public APIs. Approved sequencing does not solve this or authorize third-party changes; it is not a prerequisite for remaining S3 functional proof."
+    },
+    "current_review": {
+      "candidate": "24aa966a58b6cdc4f0d289c79c67cb57f7d19368",
+      "review_scope": "Current20 S3 predicate statuses and recent recorded production/native/negative evidence, not new runtime qualification. Historical exit receipt remains immutable.",
+      "reviewed_receipts": {
+        "s3_control_family_inventory": "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json",
+        "s3_explanation_focus_reveal_work": "docs/reviews/gui-performance/implementation/S3/explanation-focus-reveal/result.json",
+        "s3_layers_runtime_route_work": "docs/reviews/gui-performance/implementation/S3/layers-runtime-route/result.json",
+        "s3_terminal_wheel_bounds_work": "docs/reviews/gui-performance/implementation/S3/terminal-wheel-bounds/result.json",
+        "s3_shared_wheel_units_work": "docs/reviews/gui-performance/implementation/S3/shared-wheel-units/result.json",
+        "s3_native_dialog_passes_work": "docs/reviews/gui-performance/implementation/S3/native-dialog-passes/result.json",
+        "s3_label_history_negative_work": "docs/reviews/gui-performance/implementation/S3/label-history-negative/result.json",
+        "s3_native_label_reuse_work": "docs/reviews/gui-performance/implementation/S3/native-label-reuse/result.json",
+        "s3_native_preference_edits_work": "docs/reviews/gui-performance/implementation/S3/native-preference-edits/result.json",
+        "s3_global_mutation_preparation_work": "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json"
+      },
+      "receipt_sha256": {
+        "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json": "7c21f4fb04e937db21bd06d9bd0e9b1d4d0602ccca5cf167def2a77f6d5e9139",
+        "docs/reviews/gui-performance/implementation/S3/explanation-focus-reveal/result.json": "77a5b9fe29324ea6c8e6f7ec0f4a87d723404dd64285c05aa820d07f172528bb",
+        "docs/reviews/gui-performance/implementation/S3/layers-runtime-route/result.json": "5407525321592c489b70d4b73b7fae2ad9492cb7823a337fbd462348b8919923",
+        "docs/reviews/gui-performance/implementation/S3/terminal-wheel-bounds/result.json": "8ef65097b287aa4430a5e1b378972cb10416dd86c0a1a94568fb6eebec9922e3",
+        "docs/reviews/gui-performance/implementation/S3/shared-wheel-units/result.json": "e3d9da5fd0d6371da55af940a60f17e6244b484b2ed031404bad18cb5aab7983",
+        "docs/reviews/gui-performance/implementation/S3/native-dialog-passes/result.json": "38db446fc313ecf4cad3011188908a1fcdfdb448877132d31dc5977361b31cd0",
+        "docs/reviews/gui-performance/implementation/S3/label-history-negative/result.json": "dd810bab6be582513dcac1956acb615bec164e0e88a0b7555bdc6741aeb2fb07",
+        "docs/reviews/gui-performance/implementation/S3/native-label-reuse/result.json": "4c9d90cc68ea50370d92ba15900e8c7f8af2428085e67faf132d6d10c3ea4366",
+        "docs/reviews/gui-performance/implementation/S3/native-preference-edits/result.json": "d8528dd04ef2bacc9e24f78b18da2d67b00de39eff94ee3971063285dcd45fe5",
+        "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json": "a9c3cbf00ec0731bcfded36e99ee3da73442a9e5c073f81814bd5f104d9f94b2"
+      },
+      "remaining_actions": {
+        "HP10-01": "Verify outside-Layers routing through the outer native event dispatcher; actual Board Runtime zero-preparation and prescribed negative are recorded.",
+        "HP10-02": "Verify outer native wheel locality and the fallthrough negative; actual Runtime capacity/boundary/camera behavior is recorded.",
+        "HP12-01": "Complete native forbidden-work attribution and the prescribed workspace/general-world negative against the dialog-only preparation boundary.",
+        "HP12-02": "Complete remaining control/focus/partial-row cases and stale presented-transform negative; durable enum scope and post-edit Reset hit are already recorded.",
+        "HP13-01": "Extend recorded startup pass proof to changed/expanded dialog states and required scale coverage; redundant general-pass negative is recorded.",
+        "HP13-02": "Complete prescribed AA/painter-order negative and native visual/backend/scale coverage; existing14 GPU regressions remain bounded evidence.",
+        "HP14-01": "Complete remaining settings/expanded/backend/scale warm-reuse cases; both native Units adapters and one-frame negative are recorded. Full resource precondition remains S4/S5.",
+        "HP14-02": "Verify bounded label churn/eviction/close/reopen behavior at implemented limits. Complete accounting/cap/release proof follows named S4/S5 resource associations.",
+        "HP16-01": "Complete rounded-control repeat/translation/clip proof across actual applicable consumers and remaining prescribed arc/tessellator negatives; preserve fixed-rectangle classification.",
+        "HP16-02": "Complete dimension/radius/style/DPI invalidation and authored concave/holed separation proof, including incomplete-key/fan negative and applicable native profiles.",
+        "HP16-03": "Complete bounded control working-set eviction and pin-indefinitely negative. Full GPU/in-flight/aggregate bounds follow S4/S5 resource associations.",
+        "HP18-01": "Complete native fractional/reversal stream with final-offset oracle and round/discard-residual negative. Inspector has no current scrolling adapter.",
+        "HP19-01": "Verify current shared wheel converter negative and remaining Main/NEW/Layers/terminal physical-pixel/hit cases at1/1.5/2x; keep native line-event proof distinct.",
+        "HP20-01": "Complete search/choice/explanation/final-row/size extent cases and visible-rows-only extent negative on actual scroll consumers.",
+        "HP21-01": "Complete remaining capture/profile/scale cases and grab-displacement/painted-only-scrollbar negative; retain existing native press/drag/track evidence.",
+        "HP21-02": "Complete release/capture-loss/close/content-change final-target cases beyond recorded focus-loss and reflow cancellation tests.",
+        "HP22-01": "Complete clamp-vertices negative and remaining native diagonal/rounded/nested clip cases per actual consumer; preserve existing terminal call-removal negatives.",
+        "HP22-02": "Complete hidden-hit/pinned-header negative and remaining native profiles; existing pinned GPU return pixels and native scroll trials are recorded.",
+        "HP23-01": "Complete native keyboard/search result reveal across section/layout/scale changes and stale-focus/extent negative; explanation Close reveal is already fixed and verified.",
+        "HP23-02": "Complete both native Preferences reduced-motion scroll/idle/locality recipe and continuous-timer negative; existing boundary-frame checks are narrower."
+      },
+      "next_action": "Complete remaining prescribed negative controls on the current shared owners, paired with their existing positive tests; continue native per-adapter gaps and fix demonstrated defects. Do not invent another shared component solely to avoid remaining proof. GPI-S3 stays selected."
     }
   },
   "s3_pane_indicator_retention_work": {
