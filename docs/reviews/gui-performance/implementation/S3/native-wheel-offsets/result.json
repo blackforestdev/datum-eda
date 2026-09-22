@@ -1,0 +1,61 @@
+{
+  "base_commit": "e200b78b45164ab6ce0c33636b729a62d7c78017",
+  "source": "crates/gui-app/src/owned_dialog_pointer_tests.rs",
+  "source_sha256": "5ba8fd0fdf1c29969a94a82ef780b36a6255a2bbfdc9f23bbb33dfbe6804a987",
+  "test_binary_sha256": "2b79d43b3e2cfbe3f2b79d2ae6269ec9a96e03d1b59748a45809b5fff9418111",
+  "production_consumers": [
+    "Global Preferences native wheel dispatch -> shared converter/scroll owner",
+    "Project Preferences native wheel dispatch -> shared converter/scroll owner",
+    "New Project native wheel dispatch -> shared converter/scroll owner"
+  ],
+  "retired_paths": [],
+  "proof": "Existing real-surface native input test now checks every supplied wheel delta against an independent logical-offset arithmetic oracle. Quarter-pixel deltas divide by scale once; quarter-line deltas move10 logical pixels. Forward/reverse sequences, bottom clamp/outward/reversal and horizontal-only pixel input retain expected offsets; restore original offset before existing control/capture/close assertions.12 host/profile cases pass on each of X11 and Wayland using one test binary. Workspace Clippy and13 source-policy tests pass.",
+  "limits": "Supplied WindowEvents through production entry, not OS-generated/delivered wheel streams.79 bounded wheel assertions per case, not timed30s/120Hz W-SCROLL or native monitor-scale movement. Maximum is read from actual laid-out viewport; this does not independently qualify extent computation. Original offset is restored without an extra presentation before existing target tests; no intermediate scrolled-pixel acceptance. First Wayland attempt stalls after first offset sequence at extra hidden-window presentation and exits124 under90s timeout; obsolete extra presentation removed, failure retained. No new isolated converter negative. Main/Layers/terminal and remaining native/profile qualification stay open. No production/dependency/license/prototype/resource-deadline/resize changes.",
+  "observations": {
+    "wayland": {
+      "offset_cases": 12,
+      "close_cases": 12,
+      "samples": [
+        "host=0 scale=1 native_entry_fractional_pixels_lines_boundaries=true maximum=308",
+        "host=1 scale=1 native_entry_fractional_pixels_lines_boundaries=true maximum=308",
+        "host=2 scale=1 native_entry_fractional_pixels_lines_boundaries=true maximum=82",
+        "host=0 scale=1 native_entry_fractional_pixels_lines_boundaries=true maximum=296",
+        "host=1 scale=1 native_entry_fractional_pixels_lines_boundaries=true maximum=296",
+        "host=2 scale=1 native_entry_fractional_pixels_lines_boundaries=true maximum=0",
+        "host=0 scale=1.5 native_entry_fractional_pixels_lines_boundaries=true maximum=296",
+        "host=1 scale=1.5 native_entry_fractional_pixels_lines_boundaries=true maximum=296",
+        "host=2 scale=1.5 native_entry_fractional_pixels_lines_boundaries=true maximum=0",
+        "host=0 scale=2 native_entry_fractional_pixels_lines_boundaries=true maximum=311",
+        "host=1 scale=2 native_entry_fractional_pixels_lines_boundaries=true maximum=311",
+        "host=2 scale=2 native_entry_fractional_pixels_lines_boundaries=true maximum=37"
+      ]
+    },
+    "x11": {
+      "offset_cases": 12,
+      "close_cases": 12,
+      "samples": [
+        "host=0 scale=1 native_entry_fractional_pixels_lines_boundaries=true maximum=308",
+        "host=1 scale=1 native_entry_fractional_pixels_lines_boundaries=true maximum=308",
+        "host=2 scale=1 native_entry_fractional_pixels_lines_boundaries=true maximum=82",
+        "host=0 scale=1 native_entry_fractional_pixels_lines_boundaries=true maximum=296",
+        "host=1 scale=1 native_entry_fractional_pixels_lines_boundaries=true maximum=296",
+        "host=2 scale=1 native_entry_fractional_pixels_lines_boundaries=true maximum=0",
+        "host=0 scale=1.5 native_entry_fractional_pixels_lines_boundaries=true maximum=296",
+        "host=1 scale=1.5 native_entry_fractional_pixels_lines_boundaries=true maximum=296",
+        "host=2 scale=1.5 native_entry_fractional_pixels_lines_boundaries=true maximum=0",
+        "host=0 scale=2 native_entry_fractional_pixels_lines_boundaries=true maximum=296",
+        "host=1 scale=2 native_entry_fractional_pixels_lines_boundaries=true maximum=296",
+        "host=2 scale=2 native_entry_fractional_pixels_lines_boundaries=true maximum=0"
+      ]
+    }
+  },
+  "command": "DATUM_NATIVE_TEST_BACKEND={x11|wayland} DATUM_NATIVE_TEST_BOARD=/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb XDG_CONFIG_HOME=<isolated> XDG_CACHE_HOME=<isolated> EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/release/datum-eda timeout 90s python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_dialog_scroll_release_cannot_click_through_to_controls -- --ignored --test-threads=1 --nocapture",
+  "drift": "Same eight pre-existing terminal convergence guard source-pattern failures stop full drift after workspace Clippy and preceding gates pass; later gates unrun. No checker changes.",
+  "artifacts": {
+    "drift.log.gz": "6ade425edc098c3394f01bf96e21a18698b69731d69af973c4307121bda6ecfc",
+    "source-policy.log.gz": "973bc9c16a3d732af7b4c1f7e2983ec03d9bc74235bfd6e06e4c60878e35e436",
+    "wayland-timeout.log.gz": "1458ab46a031e243012eeac355ca14b14db8eec990bfef79e31f44305bfab645",
+    "wayland.log.gz": "8e08b93405201efed343cb92692e3ccb1947746722b852582529a9847a4a83b9",
+    "x11.log.gz": "26fa323c558097f2456fbab3c6cf9befd9f442659f931814a4973a5efcbee58d"
+  }
+}

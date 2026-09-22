@@ -6934,7 +6934,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared adapter preserves fractional input, pane locality, line units, boundaries and reversal at1/1.5/2x; integral-pixel rounding negative fails and byte-restored positive passes. Native scheduled fractional stream/final-offset remains open. Inspector has no current scroll adapter.",
+        "status": "Partial: shared adapter preserves fractional input, pane locality, line units, boundaries and reversal at1/1.5/2x; integral-pixel rounding negative fails and byte-restored positive passes. Native scheduled fractional stream/final-offset remains open. Inspector has no current scroll adapter. Bounded supplied-event offset oracle now passes all three real native dialog hosts across12 accepted profiles on each X11/Wayland. Per-delta fractional pixel/line accumulation, clamp/reversal and horizontal-only pixels checked; not OS delivery, timed W-SCROLL, intermediate pixels or Main/Layers/terminal qualification.",
         "id": "proof_hp18_01",
         "positive": "Repeated sub-threshold pixel/line deltas and rapid reversal",
         "negative_control": "Round every event to row or discard residual",
@@ -6981,8 +6981,19 @@
         "limits": "Direct shared Preferences adapter invocation at1/1.5/2x; no OS event delivery or rendered host. GLOBAL/PROJECT/NEW consume this adapter; Main shares the converter but its dispatch and discrete Layers/terminal policies are not exercised here. Native fractional stream/final-offset, remaining host/hit/backend coverage and full HP18/HP19/S3 qualification remain open. No production change, new consumer migration, dependency/license, visual/prototype, numerical budget or resize-scope change."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json"
-      ]
+        "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-wheel-offsets/result.json"
+      ],
+      "s3_native_wheel_offsets_progress": {
+        "production_consumers": [
+          "Global Preferences native wheel dispatch -> shared converter/scroll owner",
+          "Project Preferences native wheel dispatch -> shared converter/scroll owner",
+          "New Project native wheel dispatch -> shared converter/scroll owner"
+        ],
+        "retired_paths": [],
+        "proof": "Existing real-surface native input test now checks every supplied wheel delta against an independent logical-offset arithmetic oracle. Quarter-pixel deltas divide by scale once; quarter-line deltas move10 logical pixels. Forward/reverse sequences, bottom clamp/outward/reversal and horizontal-only pixel input retain expected offsets; restore original offset before existing control/capture/close assertions.12 host/profile cases pass on each of X11 and Wayland using one test binary. Workspace Clippy and13 source-policy tests pass.",
+        "limits": "Supplied WindowEvents through production entry, not OS-generated/delivered wheel streams.79 bounded wheel assertions per case, not timed30s/120Hz W-SCROLL or native monitor-scale movement. Maximum is read from actual laid-out viewport; this does not independently qualify extent computation. Original offset is restored without an extra presentation before existing target tests; no intermediate scrolled-pixel acceptance. First Wayland attempt stalls after first offset sequence at extra hidden-window presentation and exits124 under90s timeout; obsolete extra presentation removed, failure retained. No new isolated converter negative. Main/Layers/terminal and remaining native/profile qualification stay open. No production/dependency/license/prototype/resource-deadline/resize changes."
+      }
     },
     {
       "id": "HP19-01",
@@ -7009,7 +7020,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial: all four hosts consume the shared wheel converter with Main20/dialog40 logical-pixel line policies. Current converter mis-scaling negative fails; byte-restored adapter passes at1/1.5/2x. GLOBAL/PROJECT1.5x native line boundary/reversal evidence remains distinct. Physical OS stream, Main/NEW native dispatch and remaining hit/profile/backend qualification remain open. Both native Preferences settled search/clear trials now pass at override1.5/2x with actual sizes recorded. Native monitor-scale/Wayland/remaining profile and latency qualification remain open.",
+        "status": "Partial: all four hosts consume the shared wheel converter with Main20/dialog40 logical-pixel line policies. Current converter mis-scaling negative fails; byte-restored adapter passes at1/1.5/2x. GLOBAL/PROJECT1.5x native line boundary/reversal evidence remains distinct. Physical OS stream, Main/NEW native dispatch and remaining hit/profile/backend qualification remain open. Both native Preferences settled search/clear trials now pass at override1.5/2x with actual sizes recorded. Native monitor-scale/Wayland/remaining profile and latency qualification remain open. Bounded supplied-event offset oracle now passes all three real native dialog hosts across12 accepted profiles on each X11/Wayland. Per-delta fractional pixel/line accumulation, clamp/reversal and horizontal-only pixels checked; not OS delivery, timed W-SCROLL, intermediate pixels or Main/Layers/terminal qualification.",
         "id": "proof_hp19_01",
         "positive": "Physical pixel/line deltas at1x/1.5x/2x and corresponding hits",
         "negative_control": "Double-scale pixels or invert sign",
@@ -7058,7 +7069,8 @@
         "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
         "docs/reviews/gui-performance/implementation/S3/dialog-dpi-negative/result.json",
         "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-wheel-offsets/result.json"
       ],
       "s3_dialog_dpi_negative": {
         "status": "Prescribed pixel-delta mis-scaling negative detected; byte-restored converter passes",
@@ -7131,6 +7143,16 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer-profiles/result.json",
         "proof": "12 actual hidden X11/Vulkan surface cases pass through the default production WindowEvent dispatcher. Both Preferences at700x540 logical have scrollbars and reject release click-through across1/1.5/2; all fresh setting clicks activate. New at620x620 logical has no scrollbar and fresh name clicks activate across1/1.5/2. Retained960x480/1x overflow cases verify release suppression for all3. Native test1pass/395filtered; Clippy passed before final diagnostic-only Option formatting.",
         "limits": "Direct WindowEvent dispatch, not OS event delivery or monitor-scale transitions. Actual requested physical sizes verified. New minimum-size cases do not claim scrollbar coverage; logs record None. No new injected negative or whole GUI/profile/S3 acceptance; preceding e3cd07a0 negative remains bounded historical evidence. Production code and release binary unchanged; no visual/dependency/license/resource/resize or deadline change."
+      },
+      "s3_native_wheel_offsets_progress": {
+        "production_consumers": [
+          "Global Preferences native wheel dispatch -> shared converter/scroll owner",
+          "Project Preferences native wheel dispatch -> shared converter/scroll owner",
+          "New Project native wheel dispatch -> shared converter/scroll owner"
+        ],
+        "retired_paths": [],
+        "proof": "Existing real-surface native input test now checks every supplied wheel delta against an independent logical-offset arithmetic oracle. Quarter-pixel deltas divide by scale once; quarter-line deltas move10 logical pixels. Forward/reverse sequences, bottom clamp/outward/reversal and horizontal-only pixel input retain expected offsets; restore original offset before existing control/capture/close assertions.12 host/profile cases pass on each of X11 and Wayland using one test binary. Workspace Clippy and13 source-policy tests pass.",
+        "limits": "Supplied WindowEvents through production entry, not OS-generated/delivered wheel streams.79 bounded wheel assertions per case, not timed30s/120Hz W-SCROLL or native monitor-scale movement. Maximum is read from actual laid-out viewport; this does not independently qualify extent computation. Original offset is restored without an extra presentation before existing target tests; no intermediate scrolled-pixel acceptance. First Wayland attempt stalls after first offset sequence at extra hidden-window presentation and exits124 under90s timeout; obsolete extra presentation removed, failure retained. No new isolated converter negative. Main/Layers/terminal and remaining native/profile qualification stay open. No production/dependency/license/prototype/resource-deadline/resize changes."
       }
     },
     {
@@ -28398,8 +28420,8 @@
         "HP16-01": "Complete remaining consumer/backend/scale/fractional translation/clip and displayed-state proof. Same-release GLOBAL/PROJECT1/1.5/2 visual-override OS scroll, NEW1x focus cycle and MAIN1x File-menu activity retain stable production build totals; existing lookup-bypass negatives fail corresponding native work assertions. Larger-scale Preferences accepted extents are1440x1050/1918x1050. Retain stale captures and unqualified NEW final focus; visual overrides are not monitor transitions. Shared GPU72-case parity and Inspector/Menu direct-rectangle classification remain bounded; no extra general-tessellator negative prerequisite.",
         "HP16-02": "Complete actual authored-board/native contour/style/DPI qualification. General filler analytical concave/holed area cases and fan negative now recorded; existing cache key-field/DPI-key negative retained. Unit contours do not qualify native authored consumers.",
         "HP16-03": "Reconcile actual native control working-set evidence with recorded bounded CPU LRU/bypass/byte eviction and pin-indefinitely negative. Full CPU metadata/GPU/in-flight/aggregate bounds remain S4/S5 resource dependencies.",
-        "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter.",
-        "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct.",
+        "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter. Both-backend dialog native-entry offset oracle now passes24 cases with supplied physical/line deltas. Complete timed OS input/remaining consumer and displayed-state proof; supplied-event success does not replace them.",
+        "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct. Both-backend dialog native-entry offset oracle now passes24 cases with supplied physical/line deltas. Complete timed OS input/remaining consumer and displayed-state proof; supplied-event success does not replace them.",
         "HP20-01": "Complete remaining backend and expanded/other-control scale extent cases. Both Preferences native search/clear now has1/1.5/2x override proof at actual recorded sizes;1x choices/explanations/final-row/minimum-height and shared visible-row negative remain recorded. No monitor-scale transition or latency acceptance.",
         "HP21-01": "Complete remaining OS input/capture/profile/scale qualification. All three default dialog adapters now share pointer dispatch; actual native surfaces detect ignored scrollbar consumption activating Units settings/New name through production WindowEvents, with restored positive. Direct dispatcher proof does not qualify OS delivery. Retain painted-only OS negative and unresolved delivery failures. Both-backend current native entry proof is recorded:24 closes,19 scrollbar focus cancellation cases across accepted extents. OS delivery, unavailable Wayland2x requested sizes and remaining qualification stay open.",
         "HP21-02": "Complete remaining OS release/capture-loss/close/content-change final-target profiles. Recorded pre-counter releaseb7a2f407 GLOBAL/PROJECT1x OS focus-loss trials have event/count proof and separately verified final focused-search/bottom-row captures; retain stale-capture and delivery failures, no reliability claim. Actual hidden surfaces cover all3 native entry paths with9 scrollbar cancellations,12 closes and missing-cancellation negative/restored pass. OS NEW, other scales/backends, native content-change and remaining displayed-state qualification stay open. Reconcile/replay final required evidence on one candidate; existing OS focus captures are not release12f00d7e evidence. Global1x content-change now has current12f00d7e OS delivery and persisted-setting final-target proof; remaining content-change hosts/profiles, independent negative and displayed-state proof stay open. Current05964b9e close-to-Main handoff now passes Global/Project1x and New2x, with baseline Global defect detection. Other OS profiles/backends and final-candidate reconciliation remain open. Same-release close handoff now additionally passes Global/Project1.5x, Global2x and New1.5x; Project2x follow-up now passes with explicit Shift input after pointer-only moves; retain prior timeout and unresolved delivery reliability. Required remaining backend/profile/visual qualification stays open. Both-backend current native entry proof is recorded:24 closes,19 scrollbar focus cancellation cases across accepted extents. OS delivery, unavailable Wayland2x requested sizes and remaining qualification stay open.",

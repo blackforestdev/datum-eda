@@ -38,6 +38,88 @@ fn motion(x: f32, y: f32) -> WindowEvent {
     }
 }
 
+// Compare every delivered delta with an independent logical-offset oracle.
+fn verify_wheel_offsets(
+    events: &mut winit::event_loop::EventLoop<()>,
+    app: &mut App,
+    index: usize,
+    scale: f32,
+) {
+    let owned = surface(app, index);
+    let id = owned.window_id();
+    let original = owned.scroll.offset();
+    let viewport = owned.scroll.viewport;
+    let maximum = owned.scroll.maximum();
+    deliver(
+        events,
+        app,
+        id,
+        motion(
+            (viewport.x + viewport.width * 0.5) * scale,
+            (viewport.y + viewport.height * 0.5) * scale,
+        ),
+    );
+    let mut wheel = |delta, expected: f32| {
+        deliver(
+            events,
+            app,
+            id,
+            WindowEvent::MouseWheel {
+                device_id: winit::event::DeviceId::dummy(),
+                delta,
+                phase: winit::event::TouchPhase::Moved,
+            },
+        );
+        let actual = surface(app, index).scroll.offset();
+        assert!(
+            (actual - expected).abs() < 0.0001,
+            "host={index} scale={scale} wheel={delta:?}: expected={expected}, actual={actual}"
+        );
+    };
+    let pixel = |y| MouseScrollDelta::PixelDelta(winit::dpi::PhysicalPosition::new(0.0, y));
+    for pixels in [true, false] {
+        wheel(pixel(4096.0), 0.0);
+        let mut expected = 0.0;
+        let step = if pixels { 0.25 / scale } else { 10.0 };
+        for direction in [-1.0, 1.0] {
+            for _ in 0..16 {
+                expected = (expected - direction * step).clamp(0.0, maximum);
+                let delta = if pixels {
+                    pixel(f64::from(direction) * 0.25)
+                } else {
+                    MouseScrollDelta::LineDelta(0.0, direction * 0.25)
+                };
+                wheel(delta, expected);
+            }
+        }
+        wheel(pixel(-4096.0), maximum);
+        for direction in [-1.0, -1.0, 1.0] {
+            let delta = if pixels {
+                pixel(f64::from(direction) * 0.25)
+            } else {
+                MouseScrollDelta::LineDelta(0.0, direction * 0.25)
+            };
+            wheel(
+                delta,
+                if direction < 0.0 {
+                    maximum
+                } else {
+                    (maximum - step).max(0.0)
+                },
+            );
+        }
+        wheel(pixel(4096.0), 0.0);
+        wheel(
+            MouseScrollDelta::PixelDelta(winit::dpi::PhysicalPosition::new(40.0, 0.0)),
+            0.0,
+        );
+    }
+    wheel(pixel(-f64::from(original * scale)), original);
+    eprintln!(
+        "host={index} scale={scale} native_entry_fractional_pixels_lines_boundaries=true maximum={maximum}"
+    );
+}
+
 // Supply events to the production native entry point with a real active loop.
 // This intentionally does not claim that the OS generated or delivered them.
 #[allow(deprecated)]
@@ -189,6 +271,7 @@ fn native_dialog_scroll_release_cannot_click_through_to_controls() {
                     app.new_project_surface = Some(owned);
                 }
             }
+            verify_wheel_offsets(&mut events, &mut app, index, scale);
             let focused = |app: &App| {
                 let ui = &app.runtime.as_ref().unwrap().workspace().ui;
                 match index {
