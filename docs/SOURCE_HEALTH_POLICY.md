@@ -56,6 +56,12 @@ app cache is retired. The renderer root include expansion falls from 7,375 to
 7,191 lines with an exact downward ceiling; the new owner stays within normal
 budgets. The root module map and existing panel solvers remain unchanged.
 
+PM045 S3 Project panel retention extracts its Taffy row solver into
+`gui-render/src/side_panels/project_layout.rs`, with a bounded two-entry cache
+keyed only by geometry inputs. `side_panels.rs` keeps its 52-line module root;
+its include expansion falls from 1,393 to 1,261 lines. The exact ceiling ratchets
+downward; Inspector and Layers row solvers remain separate and unchanged.
+
 ## What Counts as Structural Evidence
 
 Qualifying evidence names the ownership moved, the real module boundary created,
