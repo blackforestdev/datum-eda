@@ -5348,7 +5348,7 @@
         "crates/gui-app/src/native_scroll_input.rs"
       ],
       "test": {
-        "status": "Partial: actual X11/Vulkan Board Runtime route leaves preparation absent outside Layers. Prescribed obsolete-preparation injection fails and restored production passes. Outer native OS event routing remains unqualified. Default native routing owner now exercised by actual Board Runtime; ApplicationHandler/OS delivery and prescribed fallthrough negative still unqualified.",
+        "status": "Partial: actual Board Runtime outside-Layers routing leaves preparation absent; the prescribed obsolete-preparation injection fails and restored production passes. The related consumed-Layers fallthrough negative is also recorded under HP10-02 and is not missing. Complete OS-delivered board-route/no-preparation attribution remains unqualified; neither direct Runtime test establishes that outer native proof.",
         "id": "proof_hp10_01",
         "positive": "Wheel outside Layers",
         "negative_control": "Prepare Layers/obsolete frame before routing",
@@ -5405,7 +5405,11 @@
         ],
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-wheel-routing/result.json",
         "limits": "Real hidden X11/Vulkan Board Runtime receives MouseScrollDelta through the default routing owner, not OS-delivered events or the ApplicationHandler callback. No native redraw-count, fallthrough negative, backend/scale matrix, full HP10/HP19/S3 or performance qualification. Preserves existing consumer priority, row policies, zoom math and damage policy. No styling, dependency/license, resource deadline or resize change."
-      }
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/layers-runtime-route/result.json",
+        "docs/reviews/gui-performance/implementation/S3/layers-zoom-fallthrough-negative/result.json"
+      ]
     },
     {
       "id": "HP10-02",
@@ -5960,7 +5964,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial: both native Preferences have semantic expanded-choice proof at1/1.5x; GLOBAL also at2x. All recorded successful samples use only dialog pass, and six repeated scroll traces per case have0 cache misses. PROJECT2x, NEW changed states, remaining settings/backend/control coverage and full acceptance remain open. Input delivery issue dat-native-input-delivery-vq7w retains failures; resource qualification remains S4/S5. Project2x replay now passes on current rebuilt binary:11 dialog-only samples,6 zero-miss warm samples and semantic expansion dismissal. Earlier input nondelivery remains unresolved; full qualification stays open. Native NEW2x changed-state trial now records17 dialog-only samples through typing/clearing, constrained scrolling and keyboard reveal; Cancel hit closes. Capture freshness and remaining profiles stay unqualified.",
+        "status": "Partial: recorded X11 Preferences expanded-state trials cover both hosts at1/1.5/2x with dialog-only pass samples. Project2x has11 dialog-only presentations; New Project2x has17 through editing, scrolling and reveal, with Cancel closing. These later results supersede the earlier missing-Project2x/New-state descriptions. They do not establish remaining native settings/control/backend coverage, current final-candidate qualification or fresh final pixels. Earlier input/capture failures remain preserved; full acceptance stays open.",
         "id": "proof_hp13_01",
         "positive": "Render equivalent dialog-only frame",
         "negative_control": "Add historical redundant four-pass resolve path",
@@ -6188,7 +6192,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial: both native Preferences have semantic expanded-choice proof at1/1.5x; GLOBAL also at2x. All recorded successful samples use only dialog pass, and six repeated scroll traces per case have0 cache misses. PROJECT2x, NEW changed states, remaining settings/backend/control coverage and full acceptance remain open. Input delivery issue dat-native-input-delivery-vq7w retains failures; resource qualification remains S4/S5. Project2x replay now passes on current rebuilt binary:11 dialog-only samples,6 zero-miss warm samples and semantic expansion dismissal. Earlier input nondelivery remains unresolved; full qualification stays open.",
+        "status": "Partial: recorded X11 expanded Preferences trials cover both hosts at1/1.5/2x with six zero-text-cache-miss warm samples per successful case. Project2x warm reuse is recorded and is not missing. These are bounded cache observations, not complete private shaping/allocation accounting or all settings/backend working-set qualification. Complete resource implementation remains due at S4 and qualification at S5; full native qualification and earlier delivery failures remain open.",
         "id": "proof_hp14_01",
         "positive": "Scroll away/return unchanged labels within128 buffers AND32KiB key text AND applicable8MiB shaped payload/renderer and aggregate limits",
         "negative_control": "Keep only one-frame cache",
@@ -8396,7 +8400,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared scroll owner has no animation timer and native changed-only damage routes exist. Complete per-host reduced-motion/idle/locality recipe and continuous-timer negative remain unqualified. Project reduced-motion projection now fixed: Global set/reset propagates and Project load/edit/reset/unavailable reconstruction retains the setting. Baseline3 lifecycle failures, candidate380 app tests pass14 ignored. Native reduced-motion and timer negative remain open. Both native1x hosts now pass GUI-written reduced-motion scroll/boundary/reversal,2s zero-frame idle and Main locality. Continuous-timer negative and remaining profiles stay unqualified. Native1x continuous-timer negative now fails both idle oracles with120 Main/120 dialog frames per2s; unchanged binary positives have0 frames. Working binary restored by hash. Remaining backend/scale proof stays open. Both hosts now have bounded native X11 reduced-motion positive recipes at1/1.5/2 overrides on same binary; all idle intervals0 frames and Main only startup. Timer negative remains1x; native Wayland/remaining qualification open. Native Wayland1x idle positives now0 frames for both hosts; timer negatives fail with101 dialog frames each. Logs verify native Wayland identities. Scroll/input and remaining profiles stay open.",
+        "status": "Partial: reduced-motion propagation and shared changed-only scroll behavior are implemented. Both Preferences hosts have bounded X11 reduced-motion scroll/idle/locality positives at1/1.5/2 overrides. The1x continuous-timer negative is recorded: both X11 idle oracles fail with120 Main/120 dialog frames per2s, while positives have0. Native Wayland1x idle positives have0 frames; injected timer negatives have101 dialog frames per2s. The timer negative is not missing. Wayland OS scrolling/input, remaining profiles and full qualification remain open; native idle evidence does not establish input delivery or monitor transitions.",
         "id": "proof_hp23_02",
         "positive": "Reduced-motion scroll then idle",
         "negative_control": "Run continuous animation timer",
@@ -28686,7 +28690,7 @@
         "HP23-01": "Complete remaining native keyboard/search reveal across section/content/scale profiles. Stale focus after height change now reproduced and fixed in both native Preferences; existing explanation Close fix retained. Native DPI transition remains open.",
         "HP23-02": "Complete native Wayland scrolling/input and remaining qualification. Installed KDE RemoteDesktop portal supports session/device selection, but Start timed out without desktop consent and closed cleanly; no input sent. Existing both-backend1x idle/timer negative and X11 reduced-motion scroll1/1.5/2 remain bounded evidence. Portal capability does not establish delivery or monitor transitions."
       },
-      "next_action": "Complete remaining prescribed negative controls on the current shared owners, paired with their existing positive tests; continue native per-adapter gaps and fix demonstrated defects. Do not invent another shared component solely to avoid remaining proof. GPI-S3 stays selected.",
+      "next_action": "Complete remaining S3 per-adapter input/final-state, pass attribution and controlling visual proof. Use existing successful defect-sensitivity receipts at their stated scope; rerun when affected implementation changes or final qualification requires it, rather than repeating obsolete missing-evidence tasks. Wayland OS input needs a consented desktop session; exact W-SCROLL and displayed-state gaps remain. Do not add an unrelated component to avoid these prerequisites. GPI-S3 stays selected; resource carry remains limited to the approved HP14-01/02 and HP16-03 dependencies.",
       "negative_control_scope_review": {
         "HP13-02": "Existing row says reduce AA OR move text behind card. Recorded painter-order failure/restored positive covers this shared-owner alternative; native controlling visual parity stays required.",
         "HP16-01": "Existing row says general scanline OR repeated arcs. Verified retained-control-gpu artifact hashes and patch: bypassing with_mesh lookup calls rounded_fill build closure again, which recomputes rounded_rect_points and its arc vertices. Build-count assertion detects2 vs1; restored positive passes. This is invariant contour-work sensitivity, not independent trigonometric/arc correctness or all native consumer qualification. No additional general-tessellator negative is imposed.",
@@ -28707,6 +28711,22 @@
           "preferences-final-focus-capture"
         ],
         "limits": "Preserve historical receipt scopes and failures. Native Wayland input still requires a fresh consented portal session; prior session expired and is not live. No gate, deadline, authority or acceptance change."
+      },
+      "status_summary_reconciliation": {
+        "reviewed_head": "3a6801e0e873780c61529a0647541e9f177c3167",
+        "scope": "Correct stale current summaries for HP10-01, HP13-01, HP14-01 and HP23-02 only; not a new full S3 exit review or new runtime qualification.",
+        "reviewed_receipt_sha256": {
+          "docs/reviews/gui-performance/implementation/S3/layers-runtime-route/result.json": "5407525321592c489b70d4b73b7fae2ad9492cb7823a337fbd462348b8919923",
+          "docs/reviews/gui-performance/implementation/S3/layers-zoom-fallthrough-negative/result.json": "4d551531035999cadce14e6c31808612ed0b5a40457400c11c6a24a5b76ae62f",
+          "docs/reviews/gui-performance/implementation/S3/native-project2-replay/result.json": "4554bc557ea2512ed7706b5ce7323a7b64edbd2d95425f3e7689e263860e3ba9",
+          "docs/reviews/gui-performance/implementation/S3/new-changed-pass/result.json": "11f71b78ce2c69b08d824b4df6a62909f72431a1e02410df812f8b08f706ca41",
+          "docs/reviews/gui-performance/implementation/S3/continuous-timer-negative/result.json": "8d4010136b2abbb543d0938a6e8985932b888d4bcb85ba988b9e95705d2260a5",
+          "docs/reviews/gui-performance/implementation/S3/wayland-idle-negative/result.json": "4443c29eec3e9b983187d9e08190bd2e27dc65e6e95333ca0596385b059b55e4"
+        },
+        "raw_artifact_hashes_verified": 19,
+        "semantic_checks": "Read actual failing/restored Layers logs; inspect native Project2/New2 raw result.json inside archives (11/17 dialog-only presentations, Project six zero-miss samples); inspect both-backend timer raw positive/negative results. Historical receipts and failures unchanged.",
+        "effect": "Remove already disproven missing-evidence statements, keeping every row partial and original acceptance rules. No negative replay is newly required merely because an unrelated later commit exists; affected-code regressions and final S5 pinned-candidate proof remain required.",
+        "blocking_boundary": "GPI-S3 still requires remaining per-adapter functional/native/visual proof before S4. Current Wayland OS injection needs desktop consent; repeated-presentation harness gap is dat-native-content-presentation-qo9y. Only HP14-01/02 and HP16-03 complete resource dependencies have approved S4/S5 resequencing. No new authority or specification amendment is asserted."
       }
     }
   },
