@@ -1,0 +1,26 @@
+{
+  "candidate_base": "8f75bd5a63045eeb35f6cf256b52519e80855994",
+  "status": "Project Preferences inherits and preserves reduced-motion preference",
+  "requirement": "HP23-02",
+  "issue": "dat-project-reduced-motion-laxa",
+  "production_change": "Shared Global live-consumer projection supplies Project reduced_motion; Project normal and unavailable row reconstruction retain it instead of forcing false.",
+  "verification": {
+    "baseline": "All3 existing Project lifecycle tests fail added reduced_motion preservation assertions",
+    "candidate": "380 app tests pass,14 ignored; Project load/migrate/edit/reset/unavailable preservation and Global set/reset propagation included",
+    "release": "passed",
+    "clippy": "-D warnings passed"
+  },
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_projection.rs": "01e903286199d165d3705889f56aee7c203691410acc1448a2e5477296eb0ced",
+    "crates/gui-app/src/project_preferences_runtime.rs": "68b2dca719c03bf3c8010e6b96e27e144cd65ea7c4f2166443285eef4671176c",
+    "crates/gui-app/src/global_preferences_runtime_tests.rs": "f7421da5d7cad484a2181b801249a3cb2ce8af9960be986282a1eb58084de635",
+    "crates/gui-app/src/project_preferences_runtime_tests.rs": "2dd7261c17785bd9d733791b6ba13c3c42fe1554b75b7b943e15a2e44cd1fff9"
+  },
+  "limits": "Actual Global preference-service and Project coordinator lifecycle proof; not native reduced-motion scrolling/idle/locality or continuous-timer negative qualification. Current Preferences scrolling is immediate for either setting, so this fixes projected authority, not an observed animation or speed defect. Project Units seed, values, journal and mutation authority stay independent of Global defaults. No dependency/license/prototype/budget/resize change.",
+  "artifact_sha256": {
+    "baseline.log.gz": "6192256effd1b6a6f81ee21044c2d1f9d983fdacefd2bed61d398b268943ca66",
+    "build.log.gz": "88bd2e8f3e1fbc5b6ba9f97b7f7c046b6a30d3844ca34a6ad1d34188df69420b",
+    "clippy.log.gz": "4a25a3a62e6a7012d828254de55726fa3f954007765753a532e41dbbf920269a",
+    "tests.log.gz": "4986e27c7164d3a238cd015d57b3a429e8606e34ea0c20322b1380f4e5e4edd1"
+  }
+}

@@ -65,7 +65,9 @@ fn project_surface_reads_v2_product_genesis_receipt_without_migration() {
 
     let mut coordinator = ProjectPreferencesCoordinator::new();
     let mut dialog = GlobalPreferencesDialogState::project_units_default();
+    dialog.reduced_motion = true;
     coordinator.load_or_migrate(&root, &mut dialog).unwrap();
+    assert!(dialog.reduced_motion);
     assert_eq!(dialog.rows.len(), 8);
     assert!(dialog.rows.iter().all(|row| row.writable && !row.changed));
     assert_eq!(
@@ -84,8 +86,10 @@ fn project_surface_migrates_edits_resets_and_refuses_stale_writes() {
     let schematic_before = std::fs::read(root.join("schematic/schematic.json")).unwrap();
     let mut coordinator = ProjectPreferencesCoordinator::new();
     let mut dialog = GlobalPreferencesDialogState::project_units_default();
+    dialog.reduced_motion = true;
 
     coordinator.load_or_migrate(&root, &mut dialog).unwrap();
+    assert!(dialog.reduced_motion);
     assert_eq!(dialog.rows.len(), 8);
     assert!(dialog.rows.iter().all(|row| row.section_id == "units"));
     assert!(dialog.rows.iter().all(|row| row.writable));
@@ -100,6 +104,7 @@ fn project_surface_migrates_edits_resets_and_refuses_stale_writes() {
             &mut dialog,
         )
         .unwrap();
+    assert!(dialog.reduced_motion);
     let changed = ProjectResolver::new(&root).resolve().unwrap();
     assert_eq!(changed.journal.len(), 2);
     assert_eq!(
@@ -117,6 +122,7 @@ fn project_surface_migrates_edits_resets_and_refuses_stale_writes() {
     assert!(board_row.reset_description.contains("does not read Global"));
 
     coordinator.reset(BOARD_LENGTH_KEY, &mut dialog).unwrap();
+    assert!(dialog.reduced_motion);
     let reset = ProjectResolver::new(&root).resolve().unwrap();
     assert_eq!(reset.journal.len(), 3);
     assert_eq!(
@@ -171,9 +177,11 @@ fn invalid_project_units_open_as_preserved_disabled_evidence() {
     let before = std::fs::read(&manifest_path).unwrap();
     let mut coordinator = ProjectPreferencesCoordinator::new();
     let mut dialog = GlobalPreferencesDialogState::project_units_default();
+    dialog.reduced_motion = true;
 
     let error = coordinator.load_or_migrate(&root, &mut dialog).unwrap_err();
     coordinator.publish_unavailable(&root, &error, &mut dialog);
+    assert!(dialog.reduced_motion);
     assert_eq!(dialog.rows.len(), 8);
     assert!(dialog.rows.iter().all(|row| !row.writable));
     assert!(

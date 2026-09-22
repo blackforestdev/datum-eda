@@ -273,6 +273,9 @@ pub(super) fn apply_live_consumers(
         })
         .expect("validated Console duration has a total consumer mapping");
     ui.console.set_duration_preference(duration);
+    // Accessibility is device-wide even when Units values are Project-owned.
+    ui.project_preferences.reduced_motion =
+        bool_consumer_value(surface, rows, PreferenceLiveConsumer::ReducedMotion);
     let high_contrast =
         bool_consumer_value(surface, rows, PreferenceLiveConsumer::HighContrastNonColor);
     if high_contrast {
