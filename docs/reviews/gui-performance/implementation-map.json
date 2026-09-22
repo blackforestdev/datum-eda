@@ -5523,7 +5523,8 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
+        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
+        "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json"
       ],
       "s3_explanation_focus_reveal_progress": {
         "status": "Shared explanation Close focus reveal implemented in default GLOBAL/PROJECT surfaces",
@@ -5564,6 +5565,17 @@
         "preserved": "Canonical Global product service mutations, notice/accessibility refresh, actual Main paint invalidation, Project mutations and close lifecycle.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json",
         "limits": "Global preference mutation invalidation only. Existing Project writes, close and current-paint dependency changes retain invalidation. Actual hidden Runtime proves Units edit/reset retention and high-contrast invalidation; fresh native GLOBAL/PROJECT enum edits preserve durable scope. Not all mutations/visible Console states/backend/scale or full S3/performance acceptance. No dependency/license, prototype/style, budget or resize-scope change. The native GLOBAL after-choice capture lags and still shows the earlier dropdown; use durable state and the subsequent Reset hit oracle, not image filenames, for final-state proof."
+      },
+      "s3_retained_reveal_keys_progress": {
+        "status": "Shared Preferences retain unchanged reveal keys across frame preparation",
+        "production_consumers": [
+          "GLOBAL native Preferences",
+          "PROJECT native Preferences"
+        ],
+        "shared_owner": "GlobalPreferencesWindowSurface retained scroll/focus identity",
+        "retired_paths": "Unconditional per-preparation section/search/expansion/focus key cloning replaced by borrowed comparisons and transition-only ownership updates.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json",
+        "limits": "Structural removal of unchanged reveal-key cloning, not measured total allocation or frame-time improvement. Native1x focus shrink passes both hosts; expanded PROJECT passes but GLOBAL press arrives only at timeout cleanup, matching unresolved dat-native-input-delivery-vq7w. Preserve failed trial and keep current Global expanded proof unqualified. Native other profiles/DPI/backend and complete HP12/HP23/S3 remain open. No dependency/license/prototype/budget/resize change."
       }
     },
     {
@@ -7595,7 +7607,8 @@
         "docs/reviews/gui-performance/implementation/S3/focus-reveal-trace/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
-        "docs/reviews/gui-performance/implementation/S3/focus-reflow/result.json"
+        "docs/reviews/gui-performance/implementation/S3/focus-reflow/result.json",
+        "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json"
       ],
       "s3_focus_reveal_trace_progress": {
         "status": "bounded GLOBAL/PROJECT unchanged-production keyboard reveal pass after runtime trace; full qualification open",
@@ -7653,6 +7666,17 @@
         "retired_paths": "Stale focus reveal identity after effective size/DPI changes; unchanged-size and ordinary input paths retain current behavior.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/focus-reflow/result.json",
         "limits": "Native X11/Xwayland Preferences at 1x: keyboard focus on last Units control, height shrink from1000x750 to1000x563, visible focus ring and zero idle frames. Native DPI transitions, New Project, remaining content/search/backend profiles and full HP23/S3 are not qualified. New Project already reveals on renderer reflow and has no change. No dependency, licensing, visual styling, numerical budget or resize CPU qualification change."
+      },
+      "s3_retained_reveal_keys_progress": {
+        "status": "Shared Preferences retain unchanged reveal keys across frame preparation",
+        "production_consumers": [
+          "GLOBAL native Preferences",
+          "PROJECT native Preferences"
+        ],
+        "shared_owner": "GlobalPreferencesWindowSurface retained scroll/focus identity",
+        "retired_paths": "Unconditional per-preparation section/search/expansion/focus key cloning replaced by borrowed comparisons and transition-only ownership updates.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json",
+        "limits": "Structural removal of unchanged reveal-key cloning, not measured total allocation or frame-time improvement. Native1x focus shrink passes both hosts; expanded PROJECT passes but GLOBAL press arrives only at timeout cleanup, matching unresolved dat-native-input-delivery-vq7w. Preserve failed trial and keep current Global expanded proof unqualified. Native other profiles/DPI/backend and complete HP12/HP23/S3 remain open. No dependency/license/prototype/budget/resize change."
       }
     },
     {
@@ -28481,5 +28505,16 @@
     "retired_paths": "None in this proof slice; verifies already-retired general backdrop stays absent through form changes.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/new-changed-pass/result.json",
     "limits": "Native New Project X11/Xwayland at2x override, actual1280x800, existing opt-in GPU measurements. Typed/cleared name, constrained form drag/boundary, keyboard reveal and final Cancel hit. No project created. Edited-name capture shows earlier PM0 prefix despite logged delivery of five characters; captures do not qualify final text timing. No full text/static parity, other scale/backend, AA/painter, resource or S3 qualification. No production paths changed, dependency/license/prototype/budget or resize-scope change."
+  },
+  "s3_retained_reveal_keys_work": {
+    "status": "Shared Preferences retain unchanged reveal keys across frame preparation",
+    "production_consumers": [
+      "GLOBAL native Preferences",
+      "PROJECT native Preferences"
+    ],
+    "shared_owner": "GlobalPreferencesWindowSurface retained scroll/focus identity",
+    "retired_paths": "Unconditional per-preparation section/search/expansion/focus key cloning replaced by borrowed comparisons and transition-only ownership updates.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json",
+    "limits": "Structural removal of unchanged reveal-key cloning, not measured total allocation or frame-time improvement. Native1x focus shrink passes both hosts; expanded PROJECT passes but GLOBAL press arrives only at timeout cleanup, matching unresolved dat-native-input-delivery-vq7w. Preserve failed trial and keep current Global expanded proof unqualified. Native other profiles/DPI/backend and complete HP12/HP23/S3 remain open. No dependency/license/prototype/budget/resize change."
   }
 }
