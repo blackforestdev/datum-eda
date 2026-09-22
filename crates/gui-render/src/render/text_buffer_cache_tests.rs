@@ -111,6 +111,75 @@ fn real_shaped_cache_reuses_placement_changes_and_retires_old_workspace_rows() {
     );
 }
 
+#[test]
+fn real_overlay_cache_bounds_churn_and_rebuilds_evicted_labels() {
+    let mut fonts = FontSystem::new();
+    load_datum_fonts(&mut fonts);
+    let mut cache = TextBufferCache::default();
+    let mut label = run();
+    for index in 0..160 {
+        label.text = format!("Preference label {index}");
+        cache.begin_frame(Profile::Overlay);
+        assert_eq!(
+            cache
+                .indices(&mut fonts, &[label.clone()], 1280, 800)
+                .1
+                .misses,
+            1
+        );
+        cache.trim_overlay();
+        assert!(cache.entries().len() <= MAX_OVERLAY_BUFFERS);
+    }
+    assert_eq!(cache.entries().len(), MAX_OVERLAY_BUFFERS);
+    cache.begin_frame(Profile::Overlay);
+    assert_eq!(
+        cache
+            .indices(&mut fonts, &[label.clone()], 1280, 800)
+            .1
+            .misses,
+        0
+    );
+    label.text = "Preference label 0".into();
+    assert_eq!(
+        cache
+            .indices(&mut fonts, &[label.clone()], 1280, 800)
+            .1
+            .misses,
+        1
+    );
+    for index in 0..80 {
+        label.text = format!("{index}: {}", "long preference description ".repeat(20));
+        cache.begin_frame(Profile::Overlay);
+        cache.indices(&mut fonts, &[label.clone()], 1280, 800);
+        cache.trim_overlay();
+        assert!(
+            cache
+                .entries()
+                .iter()
+                .map(|entry| entry.key.text.len())
+                .sum::<usize>()
+                <= MAX_OVERLAY_TEXT_BYTES
+        );
+    }
+    assert!(cache.entries().len() < MAX_OVERLAY_BUFFERS);
+    cache.begin_frame(Profile::Overlay);
+    let (indices, warm) = cache.indices(&mut fonts, &[label.clone()], 1280, 800);
+    assert_eq!(warm.misses, 0);
+    assert_eq!(cache.entries()[indices[0]].key.text, label.text);
+    assert!(
+        cache.entries()[indices[0]]
+            .buffer
+            .layout_runs()
+            .next()
+            .is_some()
+    );
+    // Recreating this owner must not inherit retired labels or lookup indices.
+    cache = TextBufferCache::default();
+    assert!(cache.entries().is_empty());
+    cache.begin_frame(Profile::Overlay);
+    assert_eq!(cache.indices(&mut fonts, &[label], 1280, 800).1.misses, 1);
+}
+
 #[derive(Debug)]
 struct SimulatedBuffer {
     key: String,

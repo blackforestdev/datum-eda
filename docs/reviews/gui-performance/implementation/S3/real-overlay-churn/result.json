@@ -1,0 +1,28 @@
+{
+  "candidate_base": "8768d0ef14ef3b69135a737ac1ded38b621e1baa",
+  "status": "Real shaped overlay cache churn and reconstruction proof passes",
+  "requirement": "HP14-02",
+  "observations": [
+    "160 unique labels fill then respect128-entry retention; recent label hits and earliest evicted label rebuilds.",
+    "80 distinct long labels force32KiB key-text eviction before entry cap; retained count drops below128.",
+    "Post-trim lookup returns the requested key and a Buffer with real layout runs.",
+    "Recreating cache has no retained entries and prior label incurs a miss; FontSystem intentionally remains shared."
+  ],
+  "verification": {
+    "focused": "1 passed,215 filtered",
+    "cache_suite": "9 passed,207 filtered",
+    "commands": [
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib real_overlay_cache_bounds_churn_and_rebuilds_evicted_labels -- --test-threads=1 --nocapture",
+      "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib text_buffer_cache::tests -- --test-threads=1 --nocapture"
+    ]
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/text_buffer_cache.rs": "78b2c76da77bb4b87bee651c8d92f2f99658cc192f7fac10ec52a53b211e1cd1",
+    "crates/gui-render/src/render/text_buffer_cache_tests.rs": "98f1fda28f704ed9964b14a376b81c2138218a6462c539828cbcb620d894e581"
+  },
+  "limits": "Direct real TextBufferCache with Datum fonts and shaped Buffer objects, not native window event dispatch or GPU atlas qualification. Plain labels only:128 retained entries and32KiB retained key text, not complete owned memory. Reset recreates only this cache; shared FontSystem remains alive. Actual host close/reopen, rich-span working sets, allocator/atlas/scratch/in-flight and full HP14/S3 remain open under existing S4/S5 resource associations. No production behavior/dependency/license/prototype/budget/resize change.",
+  "artifact_sha256": {
+    "cache-suite.log.gz": "1f42b48e417b38f3dac4b8a85e641869d9b732a8a4dc54e82b27c750d248ba38",
+    "focused.log.gz": "41fafdafd43409f13ee35445ba90fe15ddb00650baa9300839d1d42a5945e1d4"
+  }
+}
