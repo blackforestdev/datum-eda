@@ -26916,5 +26916,18 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/console-ancestor-clipping/result.json",
     "limits": "No native input/focus, independent negative, full Console pixel-parity, timing or resource qualification. Constrained capture is a geometry diagnostic, not admitted native-window usability. No terminal/PTy authority, dependency, license, prototype or sequencing change. Proposal1bc02aaf remains unapproved; S3 stays open."
+  },
+  "s3_marking_preview_clipping_work": {
+    "status": "bounded S3 existing marking-preview clipping adoption; marking-menu product milestone unchanged",
+    "production_consumers": [
+      "Existing Main marking-menu preview composition via render/frame_preparation.rs",
+      "Existing missing-menu/error preview"
+    ],
+    "retired_paths": [
+      "Unclipped marking-preview geometry/text/hits after anchor clamping",
+      "Fixed-radius/label clamp bounds that invert and panic in small viewports"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/marking-preview-clipping/result.json",
+    "limits": "No native, pixel parity, isolated negative, resource or performance qualification. Existing marking preview remains a partial product and its separately scheduled implementation is not advanced. No dependency, license, prototype, command-authority or sequencing change; proposal1bc02aaf remains unapproved."
   }
 }

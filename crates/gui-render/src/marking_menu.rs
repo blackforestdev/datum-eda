@@ -24,6 +24,26 @@ pub(super) fn render_marking_menu(
     let Some(preview) = state.ui.marking_menu.as_ref() else {
         return;
     };
+    let starts = (panel_quads.len(), text_runs.len(), hit_regions.len());
+    render_preview(preview, layout, panel_quads, text_runs, hit_regions);
+    crate::hit_clipping::clip_content(
+        panel_quads,
+        text_runs,
+        hit_regions,
+        starts.0,
+        starts.1,
+        starts.2,
+        layout.viewport,
+    );
+}
+
+fn render_preview(
+    preview: &MarkingMenuState,
+    layout: &ShellLayout,
+    panel_quads: &mut Vec<Quad>,
+    text_runs: &mut Vec<TextRun>,
+    hit_regions: &mut Vec<HitRegion>,
+) {
     let model = match marking_menu_model() {
         Ok(model) => model,
         Err(err) => {
@@ -260,11 +280,11 @@ fn slot_rect(anchor: (f32, f32), slot: &str, bounds: RectPx) -> RectPx {
     };
     let x = (anchor.0 + dx - MARKING_LABEL_WIDTH * 0.5).clamp(
         bounds.x + 4.0,
-        bounds.x + bounds.width - MARKING_LABEL_WIDTH - 4.0,
+        (bounds.x + bounds.width - MARKING_LABEL_WIDTH - 4.0).max(bounds.x + 4.0),
     );
     let y = (anchor.1 + dy - MARKING_LABEL_HEIGHT * 0.5).clamp(
         bounds.y + 4.0,
-        bounds.y + bounds.height - MARKING_LABEL_HEIGHT - 4.0,
+        (bounds.y + bounds.height - MARKING_LABEL_HEIGHT - 4.0).max(bounds.y + 4.0),
     );
     RectPx {
         x,
@@ -275,14 +295,16 @@ fn slot_rect(anchor: (f32, f32), slot: &str, bounds: RectPx) -> RectPx {
 }
 
 fn clamp_anchor(preview: &MarkingMenuState, bounds: RectPx) -> (f32, f32) {
+    let margin_x = MARKING_RADIUS.min(bounds.width.max(0.0) * 0.5);
+    let margin_y = MARKING_RADIUS.min(bounds.height.max(0.0) * 0.5);
     (
         (preview.anchor_x_px as f32).clamp(
-            bounds.x + MARKING_RADIUS,
-            bounds.x + bounds.width - MARKING_RADIUS,
+            bounds.x + margin_x,
+            bounds.x + bounds.width.max(0.0) - margin_x,
         ),
         (preview.anchor_y_px as f32).clamp(
-            bounds.y + MARKING_RADIUS,
-            bounds.y + bounds.height - MARKING_RADIUS,
+            bounds.y + margin_y,
+            bounds.y + bounds.height.max(0.0) - margin_y,
         ),
     )
 }
@@ -299,4 +321,68 @@ fn marking_icon_set() -> Result<&'static GuiIconSet, &'static str> {
         .get_or_init(|| load_default_gui_icon_set().map_err(|err| err.to_string()))
         .as_ref()
         .map_err(String::as_str)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn constrained_marking_preview_and_error_share_visible_bounds() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        let mut layout = ShellLayout::for_window(1280, 800, None);
+        for (width, height) in [(100.0, 70.0), (20.0, 20.0), (0.0, 0.0)] {
+            layout.viewport = RectPx {
+                x: 40.0,
+                y: 50.0,
+                width,
+                height,
+            };
+            for key in ["pcb.component", "missing-preview"] {
+                state.ui.marking_menu = Some(MarkingMenuState {
+                    menu_key: key.into(),
+                    target_object_id: None,
+                    anchor_x_px: -500,
+                    anchor_y_px: 1000,
+                    preview_slot: Some("N".into()),
+                    gesture_dx_px: 90,
+                    gesture_dy_px: -72,
+                });
+                let mut quads = Vec::new();
+                let mut text = Vec::new();
+                let mut hits = Vec::new();
+                render_marking_menu(&state, &layout, &mut quads, &mut text, &mut hits);
+                for quad in quads {
+                    assert!(
+                        quad.points
+                            .iter()
+                            .all(|&(x, y)| layout.viewport.contains(x, y))
+                    );
+                }
+                for run in text {
+                    let clip = run.clip_bounds.unwrap();
+                    assert!(layout.viewport.contains(clip.x, clip.y));
+                    assert!(
+                        layout
+                            .viewport
+                            .contains(clip.x + clip.width, clip.y + clip.height)
+                    );
+                }
+                if key == "pcb.component" && width > 0.0 {
+                    assert!(!hits.is_empty());
+                }
+                if width == 0.0 {
+                    assert!(hits.is_empty());
+                }
+                for hit in hits {
+                    assert!(layout.viewport.contains(hit.rect.x, hit.rect.y));
+                    assert!(
+                        layout
+                            .viewport
+                            .contains(hit.rect.x + hit.rect.width, hit.rect.y + hit.rect.height)
+                    );
+                }
+            }
+        }
+    }
 }

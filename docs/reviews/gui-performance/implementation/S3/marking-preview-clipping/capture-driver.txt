@@ -1,0 +1,14 @@
+use datum_gui_render::visual_capture::OffscreenRenderer;
+fn main() -> anyhow::Result<()> {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.marking_menu = Some(datum_gui_protocol::MarkingMenuState {
+        menu_key: "pcb.component".into(), target_object_id: None,
+        anchor_x_px: 400, anchor_y_px: 100, preview_slot: Some("N".into()),
+        gesture_dx_px: 90, gesture_dy_px: -72,
+    });
+    for (width, height) in [(1280, 800), (700, 200)] {
+        let mut renderer = OffscreenRenderer::new(width, height)?;
+        renderer.render_workspace(&state, None)?.save(format!("/tmp/pm045-marking-{width}.png"))?;
+    }
+    Ok(())
+}
