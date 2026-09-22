@@ -1,6 +1,9 @@
 //! Preferences row composition and continuous viewport clipping.
 use super::*;
 
+const SETTING_HEIGHT: f32 = 58.0;
+const PROVENANCE_HEIGHT: f32 = 28.0;
+
 #[allow(clippy::too_many_arguments)]
 pub(super) fn render_rows(
     dialog: &datum_gui_protocol::GlobalPreferencesDialogState,
@@ -60,13 +63,29 @@ pub(super) fn render_rows(
         } else {
             0.0
         };
-        let height = 86.0 + choices as f32 * 28.0 + explanation;
+        let height = SETTING_HEIGHT + PROVENANCE_HEIGHT + choices as f32 * 28.0 + explanation;
         starts.push((total, group, height, choices, explanation));
         total += group + height;
     }
     scroll.layout(viewport, total);
     if let Some(index) = reveal_row {
-        if index == 0 {
+        if dialog.focus == GlobalPreferencesFocus::ExplanationClose
+            && dialog.explanation_key.as_ref() == visible.get(index).map(|row| &row.key)
+            && let Some((top, group, height, _, explanation_height)) = starts.get(index)
+        {
+            // Reveal the focused button, including when the expanded row is
+            // taller than the viewport. Paint uses this same layout below.
+            let (_, close) = explanation_bounds(
+                RectPx {
+                    x: content_x,
+                    y: top + group,
+                    width: content_width,
+                    height: *height,
+                },
+                *explanation_height,
+            );
+            scroll.reveal(close.y, close.y + close.height);
+        } else if index == 0 {
             scroll.set_offset(0.0);
         } else if let Some((top, group, height, _, _)) = starts.get(index) {
             scroll.reveal(*top, top + group + height);
@@ -88,8 +107,8 @@ pub(super) fn render_rows(
             break;
         }
         let explained = explanation_height > 0.0;
-        let setting_height = 58.0;
-        let provenance_height = 28.0;
+        let setting_height = SETTING_HEIGHT;
+        let provenance_height = PROVENANCE_HEIGHT;
         let choice_height = choice_count as f32 * 28.0;
         if search_group_height > 0.0 {
             let section_label = dialog
@@ -294,12 +313,7 @@ pub(super) fn render_rows(
             }
         }
         if explained {
-            let explanation = RectPx {
-                x: row_rect.x + 18.0,
-                y: provenance.y + provenance.height + 8.0,
-                width: row_rect.width - 36.0,
-                height: explanation_height - 16.0,
-            };
+            let (explanation, close_explanation) = explanation_bounds(row_rect, explanation_height);
             quads.push(Quad::from_rect(
                 explanation,
                 design_tokens::chrome::SURFACE_02,
@@ -315,12 +329,6 @@ pub(super) fn render_rows(
                     text,
                 );
             }
-            let close_explanation = RectPx {
-                x: explanation.x + explanation.width - 58.0,
-                y: explanation.y + explanation.height - 24.0,
-                width: 50.0,
-                height: 20.0,
-            };
             button(
                 "Close",
                 close_explanation,
@@ -350,4 +358,21 @@ pub(super) fn render_rows(
         },
     );
     crate::global_preferences_primitives::paint_scrollbar(scroll, quads);
+}
+
+/// One row layout fragment supplies both paint/hit bounds and focus reveal.
+fn explanation_bounds(row: RectPx, height: f32) -> (RectPx, RectPx) {
+    let explanation = RectPx {
+        x: row.x + 18.0,
+        y: row.y + SETTING_HEIGHT + PROVENANCE_HEIGHT + 8.0,
+        width: row.width - 36.0,
+        height: height - 16.0,
+    };
+    let close = RectPx {
+        x: explanation.x + explanation.width - 58.0,
+        y: explanation.y + explanation.height - 24.0,
+        width: 50.0,
+        height: 20.0,
+    };
+    (explanation, close)
 }

@@ -5492,7 +5492,22 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
-      ]
+      ],
+      "s3_explanation_focus_reveal_progress": {
+        "status": "Shared explanation Close focus reveal implemented in default GLOBAL/PROJECT surfaces",
+        "production_consumers": [
+          "GLOBAL Preferences",
+          "PROJECT Preferences"
+        ],
+        "shared_owner": "GlobalPreferencesWindowSurface focus-to-row mapping; preferences_rows explanation_bounds and ScrollViewport::reveal",
+        "retired_paths": [
+          "ExplanationClose omitted from native focus-to-row reveal",
+          "Whole-row reveal unable to expose the focused Close button when expanded row exceeds viewport",
+          "Independent explanation paint and reveal geometry"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/explanation-focus-reveal/result.json",
+        "limits": "Bounded explanation-focus adoption in GLOBAL/PROJECT. Native X11 test uses one scale and actual 1000x563 window; CPU tests cover first/last rows at 1/1.5/2x. Native captures can lag actions; filenames are not state/timing proof. No complete HP12/HP23/S3, backend, resource or performance acceptance. No dependencies, prototype edits, numerical budgets or resize-scope change."
+      }
     },
     {
       "id": "HP13-01",
@@ -7185,6 +7200,21 @@
         ],
         "retired_paths": "None; temporary observation removed and production sources restored.",
         "limits": "No full HP23/S3 qualification or retrospective attribution of previous screenshot discrepancies. Temporary trace changed timing; only restored-source retry supports unchanged production behavior. Two fixed focus-color pixels supplement inspected captures, not general visual/accessibility/scale qualification. No independent negative, other adapters/backends or resource/endurance acceptance. No production/dependency/license/prototype/budget/sequencing change;1bc02aaf remains unapproved."
+      },
+      "s3_explanation_focus_reveal_progress": {
+        "status": "Shared explanation Close focus reveal implemented in default GLOBAL/PROJECT surfaces",
+        "production_consumers": [
+          "GLOBAL Preferences",
+          "PROJECT Preferences"
+        ],
+        "shared_owner": "GlobalPreferencesWindowSurface focus-to-row mapping; preferences_rows explanation_bounds and ScrollViewport::reveal",
+        "retired_paths": [
+          "ExplanationClose omitted from native focus-to-row reveal",
+          "Whole-row reveal unable to expose the focused Close button when expanded row exceeds viewport",
+          "Independent explanation paint and reveal geometry"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/explanation-focus-reveal/result.json",
+        "limits": "Bounded explanation-focus adoption in GLOBAL/PROJECT. Native X11 test uses one scale and actual 1000x563 window; CPU tests cover first/last rows at 1/1.5/2x. Native captures can lag actions; filenames are not state/timing proof. No complete HP12/HP23/S3, backend, resource or performance acceptance. No dependencies, prototype edits, numerical budgets or resize-scope change."
       }
     },
     {
@@ -27653,5 +27683,20 @@
     },
     "implementation_deadline": "GPI-S4",
     "qualification_deadline": "GPI-S5"
+  },
+  "s3_explanation_focus_reveal_work": {
+    "status": "Shared explanation Close focus reveal implemented in default GLOBAL/PROJECT surfaces",
+    "production_consumers": [
+      "GLOBAL Preferences",
+      "PROJECT Preferences"
+    ],
+    "shared_owner": "GlobalPreferencesWindowSurface focus-to-row mapping; preferences_rows explanation_bounds and ScrollViewport::reveal",
+    "retired_paths": [
+      "ExplanationClose omitted from native focus-to-row reveal",
+      "Whole-row reveal unable to expose the focused Close button when expanded row exceeds viewport",
+      "Independent explanation paint and reveal geometry"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/explanation-focus-reveal/result.json",
+    "limits": "Bounded explanation-focus adoption in GLOBAL/PROJECT. Native X11 test uses one scale and actual 1000x563 window; CPU tests cover first/last rows at 1/1.5/2x. Native captures can lag actions; filenames are not state/timing proof. No complete HP12/HP23/S3, backend, resource or performance acceptance. No dependencies, prototype edits, numerical budgets or resize-scope change."
   }
 }

@@ -300,6 +300,41 @@ mod tests {
     }
 
     #[test]
+    fn focused_explanation_close_is_revealed_even_when_its_row_is_taller_than_viewport() {
+        let mut state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+        let dialog = &mut state.ui.global_preferences;
+        let keys: Vec<_> = dialog.visible_rows().map(|row| row.key.clone()).collect();
+        assert!(!keys.is_empty());
+        for scale in [1.0, 1.5, 2.0] {
+            for index in [0, keys.len() - 1] {
+                dialog.explanation_key = Some(keys[index].clone());
+                dialog.open_choice_key = None;
+                dialog.focus = GlobalPreferencesFocus::ExplanationClose;
+                let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
+                let scene = PreparedScene::from_native_preferences_scrolled(
+                    dialog,
+                    (960.0 * scale) as u32,
+                    (240.0 * scale) as u32,
+                    scale,
+                    &mut scroll,
+                    Some(index),
+                );
+                let close = scene
+                    .hit_regions
+                    .iter()
+                    .find(|hit| hit.target == HitTarget::GlobalPreferencesExplanationClose)
+                    .expect("focused explanation Close must remain visible")
+                    .rect;
+                assert_eq!(close.height, 20.0 * scale);
+                assert!(close.y >= scroll.viewport.y * scale);
+                assert!(
+                    close.y + close.height <= (scroll.viewport.y + scroll.viewport.height) * scale
+                );
+            }
+        }
+    }
+
+    #[test]
     fn fitting_content_does_not_scroll_past_its_end() {
         let mut state = crate::global_preferences_dialog_tests::state_with_preferences_open();
         let before =

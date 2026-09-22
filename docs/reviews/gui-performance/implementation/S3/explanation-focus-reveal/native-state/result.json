@@ -1,0 +1,251 @@
+[
+  {
+    "host": "GLOBAL",
+    "command": [
+      "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "--board",
+      "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+      "--window-size",
+      "1280x800",
+      "--initial-layout",
+      "single",
+      "--open-global-preferences",
+      "--visual-scale-factor",
+      "1"
+    ],
+    "actions": [
+      {
+        "args": [
+          "windowactivate",
+          "--sync",
+          "6291461"
+        ],
+        "time": 1790051676.9743567
+      },
+      {
+        "args": [
+          "windowsize",
+          "--sync",
+          "6291461",
+          "1000",
+          "540"
+        ],
+        "time": 1790051677.039488
+      },
+      {
+        "args": [
+          "mousemove",
+          "510",
+          "285"
+        ],
+        "time": 1790051677.7594876
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051677.9136364
+      },
+      {
+        "args": [
+          "mousemove",
+          "1454",
+          "308"
+        ],
+        "time": 1790051678.2409494
+      },
+      {
+        "args": [
+          "mousedown",
+          "1"
+        ],
+        "time": 1790051678.450683
+      },
+      {
+        "args": [
+          "mousemove",
+          "1454",
+          "733"
+        ],
+        "time": 1790051678.6679256
+      },
+      {
+        "args": [
+          "mouseup",
+          "1"
+        ],
+        "time": 1790051678.968783
+      },
+      {
+        "args": [
+          "mousemove",
+          "760",
+          "674"
+        ],
+        "time": 1790051679.3567111
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051679.515087
+      },
+      {
+        "args": [
+          "mousemove",
+          "1398",
+          "731"
+        ],
+        "time": 1790051680.152926
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051680.3113854
+      },
+      {
+        "args": [
+          "key",
+          "Escape"
+        ],
+        "time": 1790051680.9438903
+      }
+    ],
+    "binary_sha256": "6ed805544ac79b8da7a92e10cd1e81554d10965a8f750705ac8a3589d6daf68c",
+    "geometry": {
+      "WINDOW": 6291461,
+      "X": 460,
+      "Y": 178,
+      "WIDTH": 1000,
+      "HEIGHT": 563,
+      "SCREEN": 0
+    },
+    "close_click_frames": 1,
+    "single_escape_closes_dialog_after_close_click": true,
+    "escape_delivery": [
+      "[SystemTime { tv_sec: 1790051680, tv_nsec: 947335297 }] window event WindowId(6291461) keyboard physical=Code(Escape) logical=Named(Escape) state=Pressed repeat=false text=Some(\"\\u{1b}\") synthetic=false"
+    ],
+    "passed_recipe": true
+  },
+  {
+    "host": "PROJECT",
+    "command": [
+      "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "--board",
+      "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+      "--window-size",
+      "1280x800",
+      "--initial-layout",
+      "single",
+      "--open-project-preferences",
+      "--visual-scale-factor",
+      "1"
+    ],
+    "actions": [
+      {
+        "args": [
+          "windowactivate",
+          "--sync",
+          "6291461"
+        ],
+        "time": 1790051683.2045176
+      },
+      {
+        "args": [
+          "windowsize",
+          "--sync",
+          "6291461",
+          "1000",
+          "540"
+        ],
+        "time": 1790051683.2690544
+      },
+      {
+        "args": [
+          "mousemove",
+          "1454",
+          "308"
+        ],
+        "time": 1790051683.9928987
+      },
+      {
+        "args": [
+          "mousedown",
+          "1"
+        ],
+        "time": 1790051684.2021594
+      },
+      {
+        "args": [
+          "mousemove",
+          "1454",
+          "733"
+        ],
+        "time": 1790051684.419355
+      },
+      {
+        "args": [
+          "mouseup",
+          "1"
+        ],
+        "time": 1790051684.6870482
+      },
+      {
+        "args": [
+          "mousemove",
+          "760",
+          "674"
+        ],
+        "time": 1790051685.0652866
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051685.2192247
+      },
+      {
+        "args": [
+          "mousemove",
+          "1398",
+          "731"
+        ],
+        "time": 1790051685.8531516
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051686.006927
+      },
+      {
+        "args": [
+          "key",
+          "Escape"
+        ],
+        "time": 1790051686.6389952
+      }
+    ],
+    "binary_sha256": "6ed805544ac79b8da7a92e10cd1e81554d10965a8f750705ac8a3589d6daf68c",
+    "geometry": {
+      "WINDOW": 6291461,
+      "X": 460,
+      "Y": 178,
+      "WIDTH": 1000,
+      "HEIGHT": 563,
+      "SCREEN": 0
+    },
+    "close_click_frames": 1,
+    "single_escape_closes_dialog_after_close_click": true,
+    "escape_delivery": [
+      "[SystemTime { tv_sec: 1790051686, tv_nsec: 641825883 }] window event WindowId(6291461) keyboard physical=Code(Escape) logical=Named(Escape) state=Pressed repeat=false text=Some(\"\\u{1b}\") synthetic=false"
+    ],
+    "passed_recipe": true
+  }
+]

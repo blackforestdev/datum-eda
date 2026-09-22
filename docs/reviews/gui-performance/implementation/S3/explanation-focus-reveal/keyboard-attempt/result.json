@@ -1,0 +1,178 @@
+[
+  {
+    "host": "GLOBAL",
+    "command": [
+      "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "--board",
+      "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+      "--window-size",
+      "1280x800",
+      "--initial-layout",
+      "single",
+      "--open-global-preferences",
+      "--visual-scale-factor",
+      "1"
+    ],
+    "actions": [
+      {
+        "args": [
+          "windowactivate",
+          "--sync",
+          "6291461"
+        ],
+        "time": 1790051046.9709833
+      },
+      {
+        "args": [
+          "windowsize",
+          "--sync",
+          "6291461",
+          "1000",
+          "540"
+        ],
+        "time": 1790051047.0364416
+      },
+      {
+        "args": [
+          "mousemove",
+          "510",
+          "285"
+        ],
+        "time": 1790051047.664985
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051047.8318691
+      },
+      {
+        "args": [
+          "mousemove",
+          "860",
+          "248"
+        ],
+        "time": 1790051048.198686
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051048.3575685
+      },
+      {
+        "args": [
+          "key",
+          "shift+Tab"
+        ],
+        "time": 1790051048.675653
+      },
+      {
+        "args": [
+          "key",
+          "shift+Tab"
+        ],
+        "time": 1790051049.1882565
+      },
+      {
+        "args": [
+          "key",
+          "shift+Tab"
+        ],
+        "time": 1790051050.1945672
+      },
+      {
+        "args": [
+          "key",
+          "Return"
+        ],
+        "time": 1790051051.3285277
+      }
+    ],
+    "binary_sha256": "f31b00cf15df765de73c31916b560ca8aff0f9921638bf873e4895f428b82625",
+    "passed_recipe": true
+  },
+  {
+    "host": "PROJECT",
+    "command": [
+      "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "--board",
+      "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+      "--window-size",
+      "1280x800",
+      "--initial-layout",
+      "single",
+      "--open-project-preferences",
+      "--visual-scale-factor",
+      "1"
+    ],
+    "actions": [
+      {
+        "args": [
+          "windowactivate",
+          "--sync",
+          "6291461"
+        ],
+        "time": 1790051054.677234
+      },
+      {
+        "args": [
+          "windowsize",
+          "--sync",
+          "6291461",
+          "1000",
+          "540"
+        ],
+        "time": 1790051054.7421763
+      },
+      {
+        "args": [
+          "mousemove",
+          "860",
+          "248"
+        ],
+        "time": 1790051055.4673626
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051055.6260376
+      },
+      {
+        "args": [
+          "key",
+          "shift+Tab"
+        ],
+        "time": 1790051055.943406
+      },
+      {
+        "args": [
+          "key",
+          "shift+Tab"
+        ],
+        "time": 1790051056.2105181
+      },
+      {
+        "args": [
+          "key",
+          "shift+Tab"
+        ],
+        "time": 1790051056.8877013
+      },
+      {
+        "args": [
+          "key",
+          "Return"
+        ],
+        "time": 1790051058.0284493
+      }
+    ],
+    "binary_sha256": "f31b00cf15df765de73c31916b560ca8aff0f9921638bf873e4895f428b82625",
+    "passed_recipe": false,
+    "error": "AssertionError('predicate timeout')"
+  }
+]

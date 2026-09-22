@@ -343,6 +343,9 @@ impl GlobalPreferencesWindowSurface {
                         GlobalPreferencesFocus::SettingName(key)
                         | GlobalPreferencesFocus::Control(key)
                         | GlobalPreferencesFocus::Reset(key) => Some(key.as_str()),
+                        GlobalPreferencesFocus::ExplanationClose => {
+                            dialog.explanation_key.as_deref()
+                        }
                         _ => None,
                     };
                     if let Some(key) = key {

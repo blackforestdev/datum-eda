@@ -1,0 +1,229 @@
+[
+  {
+    "host": "GLOBAL",
+    "command": [
+      "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "--board",
+      "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+      "--window-size",
+      "1280x800",
+      "--initial-layout",
+      "single",
+      "--open-global-preferences",
+      "--visual-scale-factor",
+      "1"
+    ],
+    "actions": [
+      {
+        "args": [
+          "windowactivate",
+          "--sync",
+          "6291461"
+        ],
+        "time": 1790051287.3392024
+      },
+      {
+        "args": [
+          "windowsize",
+          "--sync",
+          "6291461",
+          "1000",
+          "540"
+        ],
+        "time": 1790051287.404368
+      },
+      {
+        "args": [
+          "mousemove",
+          "510",
+          "285"
+        ],
+        "time": 1790051288.1267772
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051288.2805572
+      },
+      {
+        "args": [
+          "mousemove",
+          "1454",
+          "308"
+        ],
+        "time": 1790051288.6055717
+      },
+      {
+        "args": [
+          "mousedown",
+          "1"
+        ],
+        "time": 1790051288.8149548
+      },
+      {
+        "args": [
+          "mousemove",
+          "1454",
+          "733"
+        ],
+        "time": 1790051289.0237367
+      },
+      {
+        "args": [
+          "mouseup",
+          "1"
+        ],
+        "time": 1790051289.6108675
+      },
+      {
+        "args": [
+          "mousemove",
+          "760",
+          "674"
+        ],
+        "time": 1790051289.9837003
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051290.1375341
+      },
+      {
+        "args": [
+          "mousemove",
+          "1398",
+          "731"
+        ],
+        "time": 1790051290.7724578
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051290.926263
+      }
+    ],
+    "binary_sha256": "6ed805544ac79b8da7a92e10cd1e81554d10965a8f750705ac8a3589d6daf68c",
+    "geometry": {
+      "WINDOW": 6291461,
+      "X": 460,
+      "Y": 178,
+      "WIDTH": 1000,
+      "HEIGHT": 563,
+      "SCREEN": 0
+    },
+    "close_click_frames": 1,
+    "passed_recipe": true
+  },
+  {
+    "host": "PROJECT",
+    "command": [
+      "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "--board",
+      "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+      "--window-size",
+      "1280x800",
+      "--initial-layout",
+      "single",
+      "--open-project-preferences",
+      "--visual-scale-factor",
+      "1"
+    ],
+    "actions": [
+      {
+        "args": [
+          "windowactivate",
+          "--sync",
+          "6291461"
+        ],
+        "time": 1790051293.8017683
+      },
+      {
+        "args": [
+          "windowsize",
+          "--sync",
+          "6291461",
+          "1000",
+          "540"
+        ],
+        "time": 1790051293.866409
+      },
+      {
+        "args": [
+          "mousemove",
+          "1454",
+          "308"
+        ],
+        "time": 1790051294.5909538
+      },
+      {
+        "args": [
+          "mousedown",
+          "1"
+        ],
+        "time": 1790051294.8000605
+      },
+      {
+        "args": [
+          "mousemove",
+          "1454",
+          "733"
+        ],
+        "time": 1790051295.0168822
+      },
+      {
+        "args": [
+          "mouseup",
+          "1"
+        ],
+        "time": 1790051295.317375
+      },
+      {
+        "args": [
+          "mousemove",
+          "760",
+          "674"
+        ],
+        "time": 1790051295.6942143
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051295.8479621
+      },
+      {
+        "args": [
+          "mousemove",
+          "1398",
+          "731"
+        ],
+        "time": 1790051296.483517
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790051296.6373281
+      }
+    ],
+    "binary_sha256": "6ed805544ac79b8da7a92e10cd1e81554d10965a8f750705ac8a3589d6daf68c",
+    "geometry": {
+      "WINDOW": 6291461,
+      "X": 460,
+      "Y": 178,
+      "WIDTH": 1000,
+      "HEIGHT": 563,
+      "SCREEN": 0
+    },
+    "close_click_frames": 1,
+    "passed_recipe": true
+  }
+]
