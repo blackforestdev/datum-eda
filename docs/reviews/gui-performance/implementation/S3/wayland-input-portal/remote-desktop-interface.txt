@@ -1,0 +1,77 @@
+  interface org.freedesktop.portal.RemoteDesktop {
+    methods:
+      @org.qtproject.QtDBus.QtTypeName.In0("QVariantMap")
+      CreateSession(in  a{sv} options,
+                    out o handle);
+      @org.qtproject.QtDBus.QtTypeName.In1("QVariantMap")
+      SelectDevices(in  o session_handle,
+                    in  a{sv} options,
+                    out o handle);
+      @org.qtproject.QtDBus.QtTypeName.In2("QVariantMap")
+      Start(in  o session_handle,
+            in  s parent_window,
+            in  a{sv} options,
+            out o handle);
+      @org.qtproject.QtDBus.QtTypeName.In1("QVariantMap")
+      NotifyPointerMotion(in  o session_handle,
+                          in  a{sv} options,
+                          in  d dx,
+                          in  d dy);
+      @org.qtproject.QtDBus.QtTypeName.In1("QVariantMap")
+      NotifyPointerMotionAbsolute(in  o session_handle,
+                                  in  a{sv} options,
+                                  in  u stream,
+                                  in  d x,
+                                  in  d y);
+      @org.qtproject.QtDBus.QtTypeName.In1("QVariantMap")
+      NotifyPointerButton(in  o session_handle,
+                          in  a{sv} options,
+                          in  i button,
+                          in  u state);
+      @org.qtproject.QtDBus.QtTypeName.In1("QVariantMap")
+      NotifyPointerAxis(in  o session_handle,
+                        in  a{sv} options,
+                        in  d dx,
+                        in  d dy);
+      @org.qtproject.QtDBus.QtTypeName.In1("QVariantMap")
+      NotifyPointerAxisDiscrete(in  o session_handle,
+                                in  a{sv} options,
+                                in  u axis,
+                                in  i steps);
+      @org.qtproject.QtDBus.QtTypeName.In1("QVariantMap")
+      NotifyKeyboardKeycode(in  o session_handle,
+                            in  a{sv} options,
+                            in  i keycode,
+                            in  u state);
+      @org.qtproject.QtDBus.QtTypeName.In1("QVariantMap")
+      NotifyKeyboardKeysym(in  o session_handle,
+                           in  a{sv} options,
+                           in  i keysym,
+                           in  u state);
+      @org.qtproject.QtDBus.QtTypeName.In1("QVariantMap")
+      NotifyTouchDown(in  o session_handle,
+                      in  a{sv} options,
+                      in  u stream,
+                      in  u slot,
+                      in  d x,
+                      in  d y);
+      @org.qtproject.QtDBus.QtTypeName.In1("QVariantMap")
+      NotifyTouchMotion(in  o session_handle,
+                        in  a{sv} options,
+                        in  u stream,
+                        in  u slot,
+                        in  d x,
+                        in  d y);
+      @org.qtproject.QtDBus.QtTypeName.In1("QVariantMap")
+      NotifyTouchUp(in  o session_handle,
+                    in  a{sv} options,
+                    in  u slot);
+      @org.qtproject.QtDBus.QtTypeName.In1("QVariantMap")
+      ConnectToEIS(in  o session_handle,
+                   in  a{sv} options,
+                   out h fd);
+    signals:
+    properties:
+      readonly u AvailableDeviceTypes = 7;
+      readonly u version = 2;
+  };

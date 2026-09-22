@@ -1,0 +1,45 @@
+[
+  {
+    "time": 1790067335.6078916,
+    "kind": "request",
+    "method": "CreateSession",
+    "handle": "/org/freedesktop/portal/desktop/request/1_2297/pm045_1790067335_create"
+  },
+  {
+    "time": 1790067335.758893,
+    "kind": "response",
+    "method": "CreateSession",
+    "code": 0,
+    "result": {
+      "session_handle": "/org/freedesktop/portal/desktop/session/1_2297/pm045_1790067335_session"
+    }
+  },
+  {
+    "time": 1790067335.762233,
+    "kind": "request",
+    "method": "SelectDevices",
+    "handle": "/org/freedesktop/portal/desktop/request/1_2297/pm045_1790067335_select"
+  },
+  {
+    "time": 1790067335.8630369,
+    "kind": "response",
+    "method": "SelectDevices",
+    "code": 0,
+    "result": {}
+  },
+  {
+    "time": 1790067335.8669522,
+    "kind": "request",
+    "method": "Start",
+    "handle": "/org/freedesktop/portal/desktop/request/1_2297/pm045_1790067335_start"
+  },
+  {
+    "time": 1790067935.8690648,
+    "kind": "error",
+    "message": "TimeoutError('Start consent/response timeout')"
+  },
+  {
+    "time": 1790067935.8728724,
+    "kind": "closed"
+  }
+]
