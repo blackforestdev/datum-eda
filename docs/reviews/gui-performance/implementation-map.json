@@ -7284,7 +7284,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
         "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json",
         "docs/reviews/gui-performance/implementation/S3/painted-scrollbar-native-negative/result.json",
-        "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer/result.json"
+        "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer/result.json",
+        "docs/reviews/gui-performance/implementation/S3/current-scrollbar-x11/result.json"
       ],
       "s3_native_preferences_track_progress": {
         "status": "bounded native Preferences page-track pass; full qualification open",
@@ -7371,6 +7372,17 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer-profiles/result.json",
         "proof": "12 actual hidden X11/Vulkan surface cases pass through the default production WindowEvent dispatcher. Both Preferences at700x540 logical have scrollbars and reject release click-through across1/1.5/2; all fresh setting clicks activate. New at620x620 logical has no scrollbar and fresh name clicks activate across1/1.5/2. Retained960x480/1x overflow cases verify release suppression for all3. Native test1pass/395filtered; Clippy passed before final diagnostic-only Option formatting.",
         "limits": "Direct WindowEvent dispatch, not OS event delivery or monitor-scale transitions. Actual requested physical sizes verified. New minimum-size cases do not claim scrollbar coverage; logs record None. No new injected negative or whole GUI/profile/S3 acceptance; preceding e3cd07a0 negative remains bounded historical evidence. Production code and release binary unchanged; no visual/dependency/license/resource/resize or deadline change."
+      },
+      "s3_current_scrollbar_x11_progress": {
+        "status": "Both default Preferences pass bounded current-binary X11 pointer delivery/presentation checks at1/1.5/2 overrides",
+        "production_consumers": [
+          "GLOBAL Preferences default native pointer dispatcher",
+          "PROJECT Preferences default native pointer dispatcher"
+        ],
+        "retired_paths": "No production change; current-binary OS verification after shared pointer migration and hidden-geometry culling. Earlier failed deliveries remain retained.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/current-scrollbar-x11/result.json",
+        "proof": "All6 trials on release01180c4e pass: actual thumb press/release each0 new dialog presentations, delivered drag1; raw lifecycle audit shows0 Main presentations after thumb press. Accepted extents960x720,1440x1050,1918x1050 are recorded.",
+        "limits": "X11/Xwayland only, visual overrides not monitor transitions. Compositor constrained larger requested dimensions. Counts and event delivery alone do not establish exact scroll offset or causal attribution of every changed frame. Inspected1x Global bottom PNG shows earlier top-of-content state; Project shows bottom rows. Capture freshness/displayed final state stays unqualified. Remaining profiles/native qualification and dat-native-input-delivery-vq7w remain open despite these passes. SIGTERM cleanup is not teardown qualification. No full HP21/S3/performance/resource/resize acceptance or dependency/visual-policy change."
       }
     },
     {
@@ -29202,5 +29214,16 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/wayland-input-portal/result.json",
     "proof": "System Python Gio available. Installed org.freedesktop.portal.RemoteDesktop reports version2, device mask7, pointer/axis/keyboard methods. CreateSession and SelectDevices(types3) succeed. KWin confirms portal-owned Remote control requested prompt. No Start response before600s; helper closes Session and KWin reports no remaining portal window. No input, screen capture or network session requested/executed.",
     "limits": "Desktop consent remains required before portal input can run. No Wayland event delivery, fractional scroll, focus, reduced-motion or HP23/S3 qualification follows. Target driver prepared and syntax checked only; revised command-dispatch branch is unexecuted. No new request will be opened automatically. No production/dependency/license/prototype/resource deadline/resize change."
+  },
+  "s3_current_scrollbar_x11_work": {
+    "status": "Both default Preferences pass bounded current-binary X11 pointer delivery/presentation checks at1/1.5/2 overrides",
+    "production_consumers": [
+      "GLOBAL Preferences default native pointer dispatcher",
+      "PROJECT Preferences default native pointer dispatcher"
+    ],
+    "retired_paths": "No production change; current-binary OS verification after shared pointer migration and hidden-geometry culling. Earlier failed deliveries remain retained.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/current-scrollbar-x11/result.json",
+    "proof": "All6 trials on release01180c4e pass: actual thumb press/release each0 new dialog presentations, delivered drag1; raw lifecycle audit shows0 Main presentations after thumb press. Accepted extents960x720,1440x1050,1918x1050 are recorded.",
+    "limits": "X11/Xwayland only, visual overrides not monitor transitions. Compositor constrained larger requested dimensions. Counts and event delivery alone do not establish exact scroll offset or causal attribution of every changed frame. Inspected1x Global bottom PNG shows earlier top-of-content state; Project shows bottom rows. Capture freshness/displayed final state stays unqualified. Remaining profiles/native qualification and dat-native-input-delivery-vq7w remain open despite these passes. SIGTERM cleanup is not teardown qualification. No full HP21/S3/performance/resource/resize acceptance or dependency/visual-policy change."
   }
 }

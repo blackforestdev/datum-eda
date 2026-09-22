@@ -1,0 +1,154 @@
+{
+  "candidate_base": "3da30b4176ad06356de0e7389f22ec75e7260e02",
+  "production": {
+    "status": "Both default Preferences pass bounded current-binary X11 pointer delivery/presentation checks at1/1.5/2 overrides",
+    "production_consumers": [
+      "GLOBAL Preferences default native pointer dispatcher",
+      "PROJECT Preferences default native pointer dispatcher"
+    ],
+    "retired_paths": "No production change; current-binary OS verification after shared pointer migration and hidden-geometry culling. Earlier failed deliveries remain retained.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/current-scrollbar-x11/result.json",
+    "proof": "All6 trials on release01180c4e pass: actual thumb press/release each0 new dialog presentations, delivered drag1; raw lifecycle audit shows0 Main presentations after thumb press. Accepted extents960x720,1440x1050,1918x1050 are recorded.",
+    "limits": "X11/Xwayland only, visual overrides not monitor transitions. Compositor constrained larger requested dimensions. Counts and event delivery alone do not establish exact scroll offset or causal attribution of every changed frame. Inspected1x Global bottom PNG shows earlier top-of-content state; Project shows bottom rows. Capture freshness/displayed final state stays unqualified. Remaining profiles/native qualification and dat-native-input-delivery-vq7w remain open despite these passes. SIGTERM cleanup is not teardown qualification. No full HP21/S3/performance/resource/resize acceptance or dependency/visual-policy change."
+  },
+  "binary_sha256": "01180c4e55ca2ff4b44ee883ee4fd36abf09588b13dc81a7b5a24837ef642abc",
+  "cases": [
+    {
+      "host": "GLOBAL",
+      "visual_scale_override": "1",
+      "accepted_geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "960",
+        "HEIGHT": "720",
+        "SCREEN": "0"
+      },
+      "main_presents_from_thumb_press_to_log_end": 0,
+      "thumb_press_frames": 0,
+      "drag_delivery_confirmed": true,
+      "drag_frames": 1,
+      "driver_passed": true
+    },
+    {
+      "host": "PROJECT",
+      "visual_scale_override": "1",
+      "accepted_geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "960",
+        "HEIGHT": "720",
+        "SCREEN": "0"
+      },
+      "main_presents_from_thumb_press_to_log_end": 0,
+      "thumb_press_frames": 0,
+      "drag_delivery_confirmed": true,
+      "drag_frames": 1,
+      "driver_passed": true
+    },
+    {
+      "host": "GLOBAL",
+      "visual_scale_override": "1.5",
+      "accepted_geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "29",
+        "WIDTH": "1440",
+        "HEIGHT": "1050",
+        "SCREEN": "0"
+      },
+      "main_presents_from_thumb_press_to_log_end": 0,
+      "thumb_press_frames": 0,
+      "drag_delivery_confirmed": true,
+      "drag_frames": 1,
+      "driver_passed": true
+    },
+    {
+      "host": "PROJECT",
+      "visual_scale_override": "1.5",
+      "accepted_geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "29",
+        "WIDTH": "1440",
+        "HEIGHT": "1050",
+        "SCREEN": "0"
+      },
+      "main_presents_from_thumb_press_to_log_end": 0,
+      "thumb_press_frames": 0,
+      "drag_delivery_confirmed": true,
+      "drag_frames": 1,
+      "driver_passed": true
+    },
+    {
+      "host": "GLOBAL",
+      "visual_scale_override": "2",
+      "accepted_geometry": {
+        "WINDOW": "6291461",
+        "X": "1",
+        "Y": "29",
+        "WIDTH": "1918",
+        "HEIGHT": "1050",
+        "SCREEN": "0"
+      },
+      "main_presents_from_thumb_press_to_log_end": 0,
+      "thumb_press_frames": 0,
+      "drag_delivery_confirmed": true,
+      "drag_frames": 1,
+      "driver_passed": true
+    },
+    {
+      "host": "PROJECT",
+      "visual_scale_override": "2",
+      "accepted_geometry": {
+        "WINDOW": "6291461",
+        "X": "1",
+        "Y": "29",
+        "WIDTH": "1918",
+        "HEIGHT": "1050",
+        "SCREEN": "0"
+      },
+      "main_presents_from_thumb_press_to_log_end": 0,
+      "thumb_press_frames": 0,
+      "drag_delivery_confirmed": true,
+      "drag_frames": 1,
+      "driver_passed": true
+    }
+  ],
+  "commands": [
+    "PM045_TEST_SCALE=1 python3 /tmp/pm045_native_painted_scrollbar.py /tmp/pm045-current-scrollbar-x11",
+    "PM045_TEST_SCALE=1.5 python3 /tmp/pm045_native_painted_scrollbar.py /tmp/pm045-current-scrollbar-x11-1.5",
+    "PM045_TEST_SCALE=2 python3 /tmp/pm045_native_painted_scrollbar.py /tmp/pm045-current-scrollbar-x11-2"
+  ],
+  "artifact_sha256": {
+    "driver.py.gz": "c9fa30e663a0aaef7d47116f2d378816bc4c710034914980a655db802e4f1e88",
+    "1/result.json": "1891097f1d14b2911d5db833c86760790b48d1e37249776b0b5ee22af5cff9ae",
+    "1.5/result.json": "f9162fa38fb5a73294cc45f3d9279cd87d7c9de69b46b552df276a62f73e72b6",
+    "2/result.json": "a022622d208c732bd68394c9dc5f91c21c3184a74319835d40bad626d31b8f57",
+    "2/GLOBAL/native.log.gz": "2f8b4c3eb151859011ff78b89c03d88e2222570fc1130710ee41a0adeee3f684",
+    "2/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "2/GLOBAL/before.png": "4c799502398b8817d9f5f17a48a19b6ca161e1432556b2b5deb06bab465f7664",
+    "2/GLOBAL/bottom.png": "b68166f0b3f85ecb1995b4371d781e8b923517cb05eabcae570e284bdb6544b8",
+    "2/PROJECT/native.log.gz": "b1cf1ee762d3b86fa7f035194bfd6c2743d6a43688935ae717fa0360d8b9cb14",
+    "2/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "2/PROJECT/before.png": "31c6bc1c7c7066e5c98e2fed347ecd8f5b46ef59615eea769bd05cc2381a8fdd",
+    "2/PROJECT/bottom.png": "af991d73ee5bb37de5fe1d820c3ade2ba83192c751d03a380e27fce120b49711",
+    "1.5/GLOBAL/native.log.gz": "51c252250576b1cabdff0f427bc0759e28f248bc1e1a7cb6b8ad2c67ac3085eb",
+    "1.5/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "1.5/GLOBAL/before.png": "a373be17cb4ca3c6d88b5c6cebadb7bfd742b5d074f04a41b052c0d84382bf1f",
+    "1.5/GLOBAL/bottom.png": "90386263317ba49b411e7f1c74094c17578db2b2097478c6cd08af59937883a3",
+    "1.5/PROJECT/native.log.gz": "c48d82ae5799d342cb2daee9b9c8ac069c0b9698cc96ba6bef45c61110449477",
+    "1.5/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "1.5/PROJECT/before.png": "dabf91accc3fb0aec696c63ad7684edb122e2018423ca23da496cdc3f4f88324",
+    "1.5/PROJECT/bottom.png": "a1f90820db81bcaa18d8264e89235a6af27612c7c00058f7415f0277a15b6d28",
+    "1/GLOBAL/native.log.gz": "6af05f95345b10edbb28fc97bb35045c82ec2dc7c33d085f3ae01128f511b161",
+    "1/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "1/GLOBAL/before.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "1/GLOBAL/bottom.png": "9d2428c3739fd2eb3f8f2483a330313191cb95d36dfbbeaf71050d548c7656cb",
+    "1/PROJECT/native.log.gz": "019b1535e30a9cc7fd4a65c5b553dc635d8df1f8143e350577fc5c86cea92368",
+    "1/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "1/PROJECT/before.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "1/PROJECT/bottom.png": "1ff6bf4466f9b21a8a292721a0cc11bb7cf9f46c9c82176b9f0261989328a801"
+  }
+}
