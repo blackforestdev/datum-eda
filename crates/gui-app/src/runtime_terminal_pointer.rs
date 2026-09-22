@@ -137,7 +137,10 @@ impl Runtime {
     }
 
     pub(super) fn report_terminal_mouse_wheel(&mut self, scroll_lines: f32) -> bool {
-        if !self.terminal_mouse_reporting_active() {
+        if !scroll_lines.is_finite()
+            || scroll_lines == 0.0
+            || !self.terminal_mouse_reporting_active()
+        {
             return false;
         }
         let Some(position) = self.terminal_mouse_position() else {
