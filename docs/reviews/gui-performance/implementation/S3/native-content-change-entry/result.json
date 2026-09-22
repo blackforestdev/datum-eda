@@ -1,0 +1,186 @@
+{
+  "baseline_commit": "95ec6de90a468d51e922e20c8dec9c8f2433bb41",
+  "source": "crates/gui-app/src/owned_dialog_pointer_tests.rs",
+  "source_sha256": "99627c626a3ff92a2b24407e06adc51064f57b2e02d1a4368227838ef13efd5d",
+  "fixture": {
+    "path": "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+  },
+  "status": "Bounded X11 native-entry content-change proof; Wayland content-change remains explicitly unqualified",
+  "production_consumers": [
+    "GLOBAL Preferences pointer entry and content invalidation",
+    "PROJECT Preferences pointer entry and content invalidation"
+  ],
+  "production_path": "App::handle_native_window_event -> shared owned dialog pointer; App::activate_preferences_target changes explanation while held; native frame coordinator dispatches at AboutToWait; GlobalPreferencesWindowSurface renders and publishes replacement hits before subsequent pointer input.",
+  "retired_paths": "No production paths changed. Existing native regression gains a content-change case through production owners.",
+  "profiles": [
+    "host=0 scale=1 native_content_change_grab_cancel=true release_suppressed=true fresh_click=true actual=PhysicalSize { width: 960, height: 480 }",
+    "host=1 scale=1 native_content_change_grab_cancel=true release_suppressed=true fresh_click=true actual=PhysicalSize { width: 960, height: 480 }",
+    "host=0 scale=1 native_content_change_grab_cancel=true release_suppressed=true fresh_click=true actual=PhysicalSize { width: 700, height: 540 }",
+    "host=1 scale=1 native_content_change_grab_cancel=true release_suppressed=true fresh_click=true actual=PhysicalSize { width: 700, height: 540 }",
+    "host=0 scale=1.5 native_content_change_grab_cancel=true release_suppressed=true fresh_click=true actual=PhysicalSize { width: 1050, height: 810 }",
+    "host=1 scale=1.5 native_content_change_grab_cancel=true release_suppressed=true fresh_click=true actual=PhysicalSize { width: 1050, height: 810 }",
+    "host=0 scale=2 native_content_change_grab_cancel=true release_suppressed=true fresh_click=true actual=PhysicalSize { width: 1400, height: 1051 }",
+    "host=1 scale=2 native_content_change_grab_cancel=true release_suppressed=true fresh_click=true actual=PhysicalSize { width: 1400, height: 1051 }"
+  ],
+  "proof": "Eight X11 cases establish a changing drag, expand Measurement system explanation via the existing application action, publish replacement geometry, preserve offset under further motion, suppress release over Search, and allow fresh click to focus Search. Existing both-backend pointer/focus/close regression still passes.",
+  "negative": "Disposable-source defect clears scrollbar_pressed on content change. X11 native entry fails because trailing release focuses Search instead of preserving ExplanationClose. Recompiled normal root passes eight cases. Final binary hashes, exact commands and compiled-input digest are in pm045-content-entry-behavior-result.json. Negative stops at first Global case; no independent Project negative claimed.",
+  "failed_attempts": [
+    "Initial regression sent RedrawRequested without dispatching the native frame round; stale grab assertion failed before testing a presented content change.",
+    "Dispatching hidden windows produced no replacement presentation; visibility handling added.",
+    "Units choice control was not visible under the expanded explanation; target changed to the presented pinned Search field with exact focus assertions.",
+    "First isolated negative Wayland trial blocked during repeated visible presentation; owned test process was terminated after approximately80 seconds. Copy restored in finally.",
+    "Normal Wayland trial with dispatch restricted to AboutToWait also blocked; owned process terminated. No production root cause inferred.",
+    "Earlier negative stopped at an internal ownership assertion. Final negative instead reaches observable click-through failure; raw earlier attempts retained."
+  ],
+  "wayland_issue": "dat-native-content-presentation-qo9y",
+  "verification": {
+    "native": "X11 extended and Wayland existing regression each1 passed,392 filtered; Wayland explicitly prints UNQUALIFIED for new content-change cases",
+    "source_health": "2223 files pass; policy13 tests pass; dedicated test file remains below700-line budget",
+    "drift": "Workspace formatting/Clippy and preceding gates pass; full drift stops at existing eight GUI agent/terminal convergence failures (dat-terminal-convergence-guard-xke). No full-green claim."
+  },
+  "limitations": [
+    "Native windows and real GPU presentation; pointer events supplied directly, not generated/delivered by OS. Content change uses the production application action, not a native keyboard event.",
+    "No screenshots/pixel acceptance or independent displayed-state oracle. Existing OS/capture issues remain open.",
+    "Only Preferences content changes; New Project existing pointer/focus/close coverage unchanged. Wayland content-change is not qualified or waived.",
+    "Actual post-map extents recorded separately; visual overrides are not physical monitor DPI transitions.",
+    "No production behavior, dependency/license, prototype, resource-deadline, numerical budget or resize qualification change. S3 stays active."
+  ],
+  "artifacts": [
+    {
+      "path": "pm045-content-entry-behavior-driver.log.gz",
+      "sha256": "3aa3108b22719fb8f87026f633532c962da956890cff603d2020799a04fb88ce",
+      "uncompressed_sha256": "294233c870e340bf22aa92f36669bfacbb5def29eee12f4d7466ae01af8855f6"
+    },
+    {
+      "path": "pm045-content-entry-behavior-negative-x11.log.gz",
+      "sha256": "7ec5b2d7b674018e076520c79688f013106d575471ba02bd884b09e99299d8ae",
+      "uncompressed_sha256": "b10634511bd09ae1ccbe7badc4e2d0571c8dac8817d71fd033840961cfe2f8b4"
+    },
+    {
+      "path": "pm045-content-entry-behavior-restored-wayland.log.gz",
+      "sha256": "6f8052867fdf1d53618ec94c4343fb8fab9d5498b8505d712298e94596876095",
+      "uncompressed_sha256": "4c09007fd68e8f903900293f10950dca5f1608bdcdbae4ccd1150a0522330653"
+    },
+    {
+      "path": "pm045-content-entry-behavior-restored-x11.log.gz",
+      "sha256": "6abe8edd4cff04d782d8b068421253bf4fd6a8139db1d90ca72cf28f0020058c",
+      "uncompressed_sha256": "c93358f10686cca2b3a31d01676c7913dd964686ec36b8a67869064f9c3f2ccd"
+    },
+    {
+      "path": "pm045-content-entry-drift.log.gz",
+      "sha256": "cf5f4b93a4b9a20fc18996a517b08e070bc324c183aac3148840de35fe39d7c7",
+      "uncompressed_sha256": "9a1f0effba46a065cec332cbd983cd5c4b5e8efd5a31ac78bf73ac6563ca34c7"
+    },
+    {
+      "path": "pm045-content-entry-final-drift.log.gz",
+      "sha256": "69befed0068421c8215f7ceafbbe925a09e0df2167c0c3e1f686230a3acdfb86",
+      "uncompressed_sha256": "99e3c00e60535d6558ddecf149f7d3414c3dc9db2f6830ef92a4460b66d68f3f"
+    },
+    {
+      "path": "pm045-content-entry-final-driver.log.gz",
+      "sha256": "3aa3108b22719fb8f87026f633532c962da956890cff603d2020799a04fb88ce",
+      "uncompressed_sha256": "294233c870e340bf22aa92f36669bfacbb5def29eee12f4d7466ae01af8855f6"
+    },
+    {
+      "path": "pm045-content-entry-final-negative-x11.log.gz",
+      "sha256": "56b809afacb1728a71e1edf13bbeff740bf6ad59273db901352bebbd5be866b7",
+      "uncompressed_sha256": "5297502614deefd166c6811aa7ab63849e45181d5857271f5d30f76ee36d924b"
+    },
+    {
+      "path": "pm045-content-entry-final-restored-wayland.log.gz",
+      "sha256": "0aef3f16a5e51f08feb7470989d2f9858d7233f7e05fe4e591560aff285406b4",
+      "uncompressed_sha256": "32ddce850573773c4d7fb5baca841bdc60b84c3f093784a4b9c7888cdd40c595"
+    },
+    {
+      "path": "pm045-content-entry-final-restored-x11.log.gz",
+      "sha256": "0250f294fce26a7b22471fc4431a91e6323532c827ebbb55001a9b6efd271bec",
+      "uncompressed_sha256": "616f2206d3682b3c92caa70689ac8315a7eb397967b87b15845f592f13685076"
+    },
+    {
+      "path": "pm045-content-entry-negative-driver.log.gz",
+      "sha256": "05f6aeb218d730a6d7358680ceb7b68cd2fda824f00463bf11e871dbc3a9aec7",
+      "uncompressed_sha256": "14b10b62544c1c9693586235c1120faf84c03aac5e560af293ea03ac4767be78"
+    },
+    {
+      "path": "pm045-content-entry-source-policy.log.gz",
+      "sha256": "4ba58f8737c0abff9fae6bf58a7d9a4a6384886c8f75f6f2cacc47081635a3e0",
+      "uncompressed_sha256": "0330efc81373d8427bb23e8ccea906786a15382cd4b45cc7e6646130301df73c"
+    },
+    {
+      "path": "pm045-content-entry-wayland-round.log.gz",
+      "sha256": "fda970fb4fcc13b5fda9c683173f38c7616543f125d95c13b9f3717e03250d84",
+      "uncompressed_sha256": "1957ec52eb03aa36f72f4bd4655e3dfa87639d9d04f5cac3534241dea9a8207a"
+    },
+    {
+      "path": "pm045-content-entry-x11-final.log.gz",
+      "sha256": "c9f7842dd2ca13fffa4a8bb6c22428840609fe1e02a4e0ebba3e11f373eef692",
+      "uncompressed_sha256": "fa9a7b5749a0b7c5e13b16c1a32b6e0e230a041c3197a90c55242fcaae7d152c"
+    },
+    {
+      "path": "pm045-content-entry-x11-round.log.gz",
+      "sha256": "cb02f4e0ff17e950f74323e29842b7a7dd1cdc11408d3efbcbdee09347e96d72",
+      "uncompressed_sha256": "b370ef78466d249b02b492988648e79976e4a13d2d79a395790e728b533237d6"
+    },
+    {
+      "path": "pm045-content-entry-x11-search.log.gz",
+      "sha256": "f742c8c04311a038be3f7d6a24ebe8d43c546357bc2924700ec22de80b84b7fe",
+      "uncompressed_sha256": "ee87ac41a64eb9b9c6c7047c18063b7c279aff909d587ebb29292e746a7f2426"
+    },
+    {
+      "path": "pm045-content-entry-x11-visible.log.gz",
+      "sha256": "0b6ce50439d8ef1d647386bf328ae4dcd6ae840089ae9b308c620eda51634235",
+      "uncompressed_sha256": "6ac8340ec121be9aa89993f5a40f1b22773c74aa2fbbcb32eab3f04a279ce604"
+    },
+    {
+      "path": "pm045-content-entry-x11.log.gz",
+      "sha256": "ca78cda55b2c4b1584c91590bcb9ed6b047463d384048106e375e90cfba2bff1",
+      "uncompressed_sha256": "d1991e2450149f3c62ad22aa216e7d3886830e229353f55fca679cf88c8d42ff"
+    },
+    {
+      "path": "pm045-content-negative-negative-wayland.log.gz",
+      "sha256": "0c1dc4d0cc4f3329e5c7952054f9453bd92ca841e9ad14b37a9499ecd6ffa952",
+      "uncompressed_sha256": "becdc2ef665292ecaaf3fc40a21f6d9e978f2010fc82f8a87717c2575e03dda8"
+    },
+    {
+      "path": "pm045-content-negative-negative-x11.log.gz",
+      "sha256": "a9b90ddcd0df05cfeffa09e3dd715ec8924dd1722b5d7e3469a9266e9b88122c",
+      "uncompressed_sha256": "2a561c7d0637325de4c826a2d984ecab9ff8b2d7a4fb8fc9900c1a3fe0727320"
+    },
+    {
+      "path": "pm045_content_entry_behavior.py.gz",
+      "sha256": "628e8920c3836cd45249d4dac0f1d4444318a81ce0d0934c07a71633d276d2d7",
+      "uncompressed_sha256": "46d1265dee5debc0f78697571780b3beae17bc53a4be94faf359c282311a6fa5"
+    },
+    {
+      "path": "pm045_content_entry_final.py.gz",
+      "sha256": "cd7253a78b6d3a0aef9927fec36a94fdb16bbc290c7ffab0bd47e456f2fe6bf2",
+      "uncompressed_sha256": "10fd7b776db9082b048c56400f6be17fcf1e3dc3bfc7eba2757fe3562c9f5754"
+    },
+    {
+      "path": "pm045_content_entry_negative.py.gz",
+      "sha256": "c5003f1e19ba1d4cee86f360230e360308f0c48070781fcb223358f1fc4121b4",
+      "uncompressed_sha256": "d073ecbb2d989f5a5c53d738cc87abb00198d52d17e95947432376fd366ae840"
+    },
+    {
+      "path": "pm045-content-entry-behavior.patch.gz",
+      "sha256": "c5e219abbe4be0d0b1f63a2f7982a4be00b4b64aecc5589aa8987fd356d56cb6",
+      "uncompressed_sha256": "49010bede7dabb5cb6005c74985626ee176edb7b87ec4a8d3cf9b0f64dc6cb74"
+    },
+    {
+      "path": "pm045-content-entry-negative-negative.patch.gz",
+      "sha256": "c5e219abbe4be0d0b1f63a2f7982a4be00b4b64aecc5589aa8987fd356d56cb6",
+      "uncompressed_sha256": "49010bede7dabb5cb6005c74985626ee176edb7b87ec4a8d3cf9b0f64dc6cb74"
+    },
+    {
+      "path": "pm045-content-entry-behavior-result.json",
+      "sha256": "885da50bd969db9eef763f45ab218172c2e9514fd74f93d9004cd6706489074f",
+      "uncompressed_sha256": "885da50bd969db9eef763f45ab218172c2e9514fd74f93d9004cd6706489074f"
+    },
+    {
+      "path": "pm045-content-entry-negative-negative-result.json",
+      "sha256": "a742fff2c277169247f6227b8999cf996a3ae2547347c4de838378e2a4815aa1",
+      "uncompressed_sha256": "a742fff2c277169247f6227b8999cf996a3ae2547347c4de838378e2a4815aa1"
+    }
+  ]
+}

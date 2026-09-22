@@ -1,0 +1,90 @@
+{
+  "compiled_input_digest": "c4aa27e0adde92867a97160dd017779fe0cb6f0b9aae8851c279a0ced1e7382d",
+  "compiled_input_count": 1849,
+  "copy_synced": [
+    "crates/gui-app/src/owned_dialog_pointer_tests.rs"
+  ],
+  "source_sha256": "54c800eb1a02ce475a473cf5cec887fdccfdb9185d6df1649fa9bdac84131587",
+  "runs": [
+    {
+      "label": "negative-x11",
+      "backend": "x11",
+      "exit": 101,
+      "command": [
+        "python3",
+        "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "--manifest-path",
+        "/tmp/pm045-pinned-negative-source/Cargo.toml",
+        "-p",
+        "datum-gui-app",
+        "--bin",
+        "datum-gui",
+        "native_dialog_scroll_release_cannot_click_through_to_controls",
+        "--",
+        "--ignored",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "binary_sha256": "e55dcc43901c34ac7df67279f45c3c3556797c24e980cda0f75452a684fd76a5",
+      "recompiled_app": true
+    },
+    {
+      "label": "restored-x11",
+      "backend": "x11",
+      "exit": 0,
+      "command": [
+        "python3",
+        "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "-p",
+        "datum-gui-app",
+        "--bin",
+        "datum-gui",
+        "native_dialog_scroll_release_cannot_click_through_to_controls",
+        "--",
+        "--ignored",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "binary_sha256": "faaf9117df36038d567b25bfb37dbe39922076be0190d15f3c9c69919412a7f6",
+      "recompiled_app": true
+    },
+    {
+      "label": "restored-wayland",
+      "backend": "wayland",
+      "exit": 0,
+      "command": [
+        "python3",
+        "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "-p",
+        "datum-gui-app",
+        "--bin",
+        "datum-gui",
+        "native_dialog_scroll_release_cannot_click_through_to_controls",
+        "--",
+        "--ignored",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "binary_sha256": "faaf9117df36038d567b25bfb37dbe39922076be0190d15f3c9c69919412a7f6",
+      "recompiled_app": false
+    }
+  ]
+}

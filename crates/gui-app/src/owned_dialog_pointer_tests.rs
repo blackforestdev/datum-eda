@@ -120,6 +120,128 @@ fn verify_wheel_offsets(
     );
 }
 
+fn present_changed_content(
+    events: &mut winit::event_loop::EventLoop<()>,
+    app: &mut App,
+    index: usize,
+) {
+    // The earlier pointer-only cases use hidden windows. Present this content
+    // change visibly so the native frame owner can admit the redraw normally.
+    surface(app, index).window.set_visible(true);
+    let id = surface(app, index).window_id();
+    let deadline = Instant::now() + Duration::from_secs(5);
+    while !surface(app, index)
+        .prepared
+        .as_ref()
+        .is_some_and(|prepared| prepared.hit_regions.is_empty())
+    {
+        let physical = surface(app, index).window.inner_size();
+        let config = &surface(app, index).config;
+        if (config.width, config.height) != (physical.width, physical.height) {
+            deliver(events, app, id, WindowEvent::Resized(physical));
+        }
+        deliver(events, app, id, WindowEvent::RedrawRequested);
+        #[allow(deprecated)]
+        events.pump_events(Some(Duration::ZERO), |event, active| {
+            if matches!(event, winit::event::Event::AboutToWait) {
+                app.dispatch_native_frame_round(active);
+            }
+        });
+        assert!(
+            Instant::now() < deadline,
+            "changed content presentation timeout"
+        );
+        std::thread::sleep(Duration::from_millis(10));
+    }
+}
+
+// Changing expanded content must retire the grab without giving its release
+// to a newly presented control. Use the real mutation, redraw and pointer routes.
+fn verify_content_change_capture(
+    events: &mut winit::event_loop::EventLoop<()>,
+    app: &mut App,
+    index: usize,
+    scale: f32,
+) {
+    if index == 2 {
+        return;
+    }
+    present_changed_content(events, app, index);
+    let thumb = surface(app, index)
+        .scroll
+        .thumb()
+        .expect("expanded Preferences overflow");
+    let id = surface(app, index).window_id();
+    let x = (thumb.x + 1.0) * scale;
+    let y = (thumb.y + 4.0) * scale;
+    deliver(events, app, id, motion(x, y));
+    deliver(events, app, id, primary(ElementState::Pressed));
+    assert!(surface(app, index).scrollbar_pressed);
+    let before = surface(app, index).scroll.offset();
+    deliver(events, app, id, motion(x, y + 20.0 * scale));
+    assert_ne!(surface(app, index).scroll.offset(), before);
+    let key = "datum.units.system";
+    app.activate_preferences_target(
+        Some(&HitTarget::GlobalPreferencesSettingName(key.into())),
+        index == 1,
+    );
+    present_changed_content(events, app, index);
+    let owned = surface(app, index);
+    assert!(
+        owned.prepared.is_some(),
+        "changed content must be presented"
+    );
+    let offset = owned.scroll.offset();
+    assert_eq!(owned.scroll_expanded.1.as_deref(), Some(key));
+    let target = HitTarget::GlobalPreferencesSearch;
+    let rect = owned
+        .presented_hits
+        .regions()
+        .iter()
+        .find(|hit| hit.target == target)
+        .expect("newly presented control")
+        .rect;
+    deliver(
+        events,
+        app,
+        id,
+        motion(rect.x + rect.width * 0.5, rect.y + rect.height * 0.5),
+    );
+    assert_eq!(
+        surface(app, index).scroll.offset(),
+        offset,
+        "content change must cancel stale grab for host {index}"
+    );
+    let focused = |app: &App| {
+        let ui = &app.runtime.as_ref().unwrap().workspace().ui;
+        let dialog = if index == 1 {
+            &ui.project_preferences
+        } else {
+            &ui.global_preferences
+        };
+        dialog.focus.clone()
+    };
+    let before = focused(app);
+    assert_ne!(before, datum_gui_protocol::GlobalPreferencesFocus::Search);
+    deliver(events, app, id, primary(ElementState::Released));
+    assert_eq!(
+        focused(app),
+        before,
+        "content-change release clicked through for host {index}"
+    );
+    deliver(events, app, id, primary(ElementState::Pressed));
+    deliver(events, app, id, primary(ElementState::Released));
+    assert_eq!(
+        focused(app),
+        datum_gui_protocol::GlobalPreferencesFocus::Search,
+        "fresh click after content change for host {index}"
+    );
+    eprintln!(
+        "host={index} scale={scale} native_content_change_grab_cancel=true release_suppressed=true fresh_click=true actual={:?}",
+        surface(app, index).window.inner_size()
+    );
+}
+
 // Supply events to the production native entry point with a real active loop.
 // This intentionally does not claim that the OS generated or delivered them.
 #[allow(deprecated)]
@@ -360,6 +482,16 @@ fn native_dialog_scroll_release_cannot_click_through_to_controls() {
                 thumb.is_some(),
                 thumb.map(|_| !failures.contains(&(index, scale, supported_minimum)))
             );
+            if backend == "x11" {
+                verify_content_change_capture(&mut events, &mut app, index, scale);
+            } else if index != 2 {
+                // dat-native-content-presentation-qo9y: repeated visible presentation
+                // blocks this supplied-event Wayland harness. Existing pointer,
+                // focus and close coverage below remains active and required.
+                eprintln!(
+                    "host={index} scale={scale} native_content_change=UNQUALIFIED backend={backend}"
+                );
+            }
             let id = surface(&app, index).window_id();
             if let Some(thumb) = surface(&app, index).scroll.thumb() {
                 deliver(
