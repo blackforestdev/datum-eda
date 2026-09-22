@@ -5590,7 +5590,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial: both native Preferences have semantic expanded-choice proof at1/1.5x; GLOBAL also at2x. All recorded successful samples use only dialog pass, and six repeated scroll traces per case have0 cache misses. PROJECT2x, NEW changed states, remaining settings/backend/control coverage and full acceptance remain open. Input delivery issue dat-native-input-delivery-vq7w retains failures; resource qualification remains S4/S5. Project2x replay now passes on current rebuilt binary:11 dialog-only samples,6 zero-miss warm samples and semantic expansion dismissal. Earlier input nondelivery remains unresolved; full qualification stays open.",
+        "status": "Partial: both native Preferences have semantic expanded-choice proof at1/1.5x; GLOBAL also at2x. All recorded successful samples use only dialog pass, and six repeated scroll traces per case have0 cache misses. PROJECT2x, NEW changed states, remaining settings/backend/control coverage and full acceptance remain open. Input delivery issue dat-native-input-delivery-vq7w retains failures; resource qualification remains S4/S5. Project2x replay now passes on current rebuilt binary:11 dialog-only samples,6 zero-miss warm samples and semantic expansion dismissal. Earlier input nondelivery remains unresolved; full qualification stays open. Native NEW2x changed-state trial now records17 dialog-only samples through typing/clearing, constrained scrolling and keyboard reveal; Cancel hit closes. Capture freshness and remaining profiles stay unqualified.",
         "id": "proof_hp13_01",
         "positive": "Render equivalent dialog-only frame",
         "negative_control": "Add historical redundant four-pass resolve path",
@@ -5664,7 +5664,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/native-expanded-pass-reuse/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-project2-replay/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-project2-replay/result.json",
+        "docs/reviews/gui-performance/implementation/S3/new-changed-pass/result.json"
       ],
       "s3_native_pass_roundtrip_progress": {
         "status": "Four additional native expanded pass/reuse cases pass; PROJECT2x delivery failure retained",
@@ -5686,6 +5687,16 @@
         "retired_paths": "None; bounded replay of existing shared production owners.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-project2-replay/result.json",
         "limits": "Native X11/Xwayland with2x override at actual1918x1050, opt-in existing GPU/cache diagnostics. Six bounded Preferences host/scale cases now have successful receipts across different pinned builds; this is not a single-candidate full matrix. Initial capture lags expansion; exactly one delivered nonsynthetic Escape plus presentation and surviving dialog supplies the expansion oracle. Previous nondelivery failure and dat-native-input-delivery-vq7w remain open. No default-path performance, monitor-DPI transition, Wayland input, full resource or S3 acceptance. No production, dependency, license, prototype, budget or resize change."
+      },
+      "s3_new_changed_pass_progress": {
+        "status": "Native New Project changed-state dialog-only pass proof succeeds",
+        "production_consumers": [
+          "NEW native form"
+        ],
+        "shared_owner": "GlobalPreferencesWindowSurface -> prepare_native_new_project_scrolled -> dialog renderer",
+        "retired_paths": "None in this proof slice; verifies already-retired general backdrop stays absent through form changes.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/new-changed-pass/result.json",
+        "limits": "Native New Project X11/Xwayland at2x override, actual1280x800, existing opt-in GPU measurements. Typed/cleared name, constrained form drag/boundary, keyboard reveal and final Cancel hit. No project created. Edited-name capture shows earlier PM0 prefix despite logged delivery of five characters; captures do not qualify final text timing. No full text/static parity, other scale/backend, AA/painter, resource or S3 qualification. No production paths changed, dependency/license/prototype/budget or resize-scope change."
       }
     },
     {
@@ -27867,7 +27878,7 @@
         "HP10-02": "Verify outer native wheel locality and the fallthrough negative; actual Runtime capacity/boundary/camera behavior is recorded.",
         "HP12-01": "Complete native forbidden-work attribution and the prescribed workspace/general-world negative against the dialog-only preparation boundary.",
         "HP12-02": "Complete remaining control/focus/partial-row cases and stale presented-transform negative; durable enum scope and post-edit Reset hit are already recorded.",
-        "HP13-01": "Complete NEW changed-state and remaining backend pass proof. Both Preferences1/1.5/2x have bounded expanded semantic/pass receipts across pinned builds; full single-candidate matrix remains open. Preserve general-pass negative and dat-native-input-delivery-vq7w failure.",
+        "HP13-01": "Complete remaining backend/scale changed-state pass proof and final single-candidate matrix. NEW2x edit/scroll/reveal now has17 dialog-only samples and final Cancel hit; both Preferences1/1.5/2x have bounded expanded receipts across pinned builds. Existing general-pass negative and input/capture failures retained.",
         "HP13-02": "Complete prescribed AA/painter-order negative and native visual/backend/scale coverage; existing14 GPU regressions remain bounded evidence.",
         "HP14-01": "Complete remaining settings/backend warm-reuse cases and final single-candidate qualification. Both Preferences1/1.5/2x expanded trials now have six zero-miss samples and semantic expansion proof; prior failure and one-frame negative retained. Full resource precondition stays S4/S5.",
         "HP14-02": "Complete remaining working-set/negative and native coverage. Real shaped cache churn and both native Preferences 1x close/reopen are recorded; cold misses do not prove full resource release. Complete owned accounting/cap/release retains existing S4/S5 deadlines.",
@@ -28460,5 +28471,15 @@
     "retired_paths": "None; bounded replay of existing shared production owners.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-project2-replay/result.json",
     "limits": "Native X11/Xwayland with2x override at actual1918x1050, opt-in existing GPU/cache diagnostics. Six bounded Preferences host/scale cases now have successful receipts across different pinned builds; this is not a single-candidate full matrix. Initial capture lags expansion; exactly one delivered nonsynthetic Escape plus presentation and surviving dialog supplies the expansion oracle. Previous nondelivery failure and dat-native-input-delivery-vq7w remain open. No default-path performance, monitor-DPI transition, Wayland input, full resource or S3 acceptance. No production, dependency, license, prototype, budget or resize change."
+  },
+  "s3_new_changed_pass_work": {
+    "status": "Native New Project changed-state dialog-only pass proof succeeds",
+    "production_consumers": [
+      "NEW native form"
+    ],
+    "shared_owner": "GlobalPreferencesWindowSurface -> prepare_native_new_project_scrolled -> dialog renderer",
+    "retired_paths": "None in this proof slice; verifies already-retired general backdrop stays absent through form changes.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/new-changed-pass/result.json",
+    "limits": "Native New Project X11/Xwayland at2x override, actual1280x800, existing opt-in GPU measurements. Typed/cleared name, constrained form drag/boundary, keyboard reveal and final Cancel hit. No project created. Edited-name capture shows earlier PM0 prefix despite logged delivery of five characters; captures do not qualify final text timing. No full text/static parity, other scale/backend, AA/painter, resource or S3 qualification. No production paths changed, dependency/license/prototype/budget or resize-scope change."
   }
 }
