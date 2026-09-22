@@ -94,10 +94,11 @@ impl Runtime {
             .count();
         let total = self.workspace().scene.layers.len();
         let offset = &mut self.session.workspace_mut().ui.filters.layer_scroll_offset;
-        let before = datum_gui_viewport::scroll::scrolled_row_offset(*offset, total, visible, 0.0);
+        let before = *offset;
         let next =
             datum_gui_viewport::scroll::scrolled_row_offset(before, total, visible, scroll_lines);
         *offset = next;
+        // Extent reconciliation changes stored state even at a wheel boundary.
         let changed = next != before;
         if changed {
             self.invalidate_frame();

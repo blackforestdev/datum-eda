@@ -48,6 +48,16 @@ fn native_terminal_scrollback_boundaries_do_not_redraw() {
     );
     assert_eq!(runtime.workspace().ui.terminal.scroll_offset, maximum);
     assert!(!runtime.scene_dirty);
+    // History/capacity changes can leave an old offset beyond today's extent.
+    // An outward wheel still changes that state when it clamps back into range.
+    runtime.session.workspace_mut().ui.terminal.scroll_offset = maximum + 1;
+    assert!(
+        runtime.handle_dock_scroll(1.0),
+        "clamping stale scrollback must redraw"
+    );
+    assert_eq!(runtime.workspace().ui.terminal.scroll_offset, maximum);
+    assert!(runtime.scene_dirty);
+    runtime.scene_dirty = false;
     for delta in [0.0, f32::NAN, f32::INFINITY, f32::NEG_INFINITY] {
         assert!(!runtime.handle_dock_scroll(delta));
         assert_eq!(runtime.workspace().ui.terminal.scroll_offset, maximum);

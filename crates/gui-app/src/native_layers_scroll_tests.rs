@@ -105,6 +105,21 @@ fn native_layers_route_preserves_preparation_camera_and_boundary_damage() {
         !runtime.scene_dirty,
         "boundary input must not dirty the scene"
     );
+    runtime
+        .session
+        .workspace_mut()
+        .ui
+        .filters
+        .layer_scroll_offset = total - visible + 1;
+    assert!(runtime.handle_native_wheel(MouseScrollDelta::LineDelta(0.0, -1.0)));
+    assert_eq!(
+        runtime.workspace().ui.filters.layer_scroll_offset,
+        total - visible
+    );
+    assert!(
+        runtime.scene_dirty,
+        "clamping stale Layers offset must redraw"
+    );
     assert!(runtime.handle_native_wheel(MouseScrollDelta::LineDelta(0.0, 1.0)));
     assert!(runtime.workspace().ui.filters.layer_scroll_offset < total - visible);
     assert_eq!(
