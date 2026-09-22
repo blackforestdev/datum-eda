@@ -1,0 +1,37 @@
+{
+  "value": {
+    "schema_version": 1,
+    "value": true
+  },
+  "receipts": [
+    {
+      "acceptance_id": null,
+      "accepting_actor": null,
+      "actor": "human_gui:bfadmin:datum-gui-2047982:1106ed12-e147-4de6-b8e8-835fece70f8c",
+      "actor_kind": "human_gui",
+      "actor_session_id": "datum-gui-2047982",
+      "affected_keys": [
+        "datum.accessibility.reduced_motion"
+      ],
+      "after_digests": {
+        "user:datum.accessibility.reduced_motion": "sha256:c9b24459fc6dff5159847b167149980078b2ec1919b76d38b6b4b823995a94fd"
+      },
+      "before_digests": {},
+      "canonical_request_digest": "sha256:d22703d55370bef279288bf734f314afdf91d2681a799c34160cf559992224dc",
+      "expected_generation": null,
+      "expected_generation_ref": null,
+      "invocation_id": "1106ed12-e147-4de6-b8e8-835fece70f8c",
+      "local_actor_id": "bfadmin",
+      "operation": "CommitPreferenceMutation",
+      "originating_mcp_session": null,
+      "proposal_digest": null,
+      "proposal_id": null,
+      "reason": "Global Preferences control activation",
+      "redacted_keys": [],
+      "request_id": "d8f01243-f92e-4d69-be08-0e046a2f609e",
+      "requesting_actor": null,
+      "resulting_generation": 0
+    }
+  ],
+  "source_manifest_sha256": "fb26900fb081e71f81db4ed056dcb38243713938a52b9bf2c9eea416f227e5cd"
+}

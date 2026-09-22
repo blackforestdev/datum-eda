@@ -1,0 +1,151 @@
+{
+  "candidate_commit": "7cab39f8",
+  "production_source_commit": "a7477cba",
+  "binary_sha256": "465e2be2385ccc1dae0e3dbbe361effed20301dffa90a322059daeb88b1e582b",
+  "status": "Two bounded native OS-input content-change checks pass; root-capture comparison fails; no visual/full HP21 acceptance",
+  "profiles": [
+    {
+      "host": "GLOBAL",
+      "scale_override": 1.5,
+      "actual_extent": [
+        1440,
+        1050
+      ],
+      "passed": true,
+      "error": null
+    },
+    {
+      "host": "GLOBAL",
+      "scale_override": 2.0,
+      "actual_extent": [
+        1918,
+        1050
+      ],
+      "passed": true,
+      "error": null
+    },
+    {
+      "host": "GLOBAL",
+      "scale_override": 1.5,
+      "actual_extent": [
+        1440,
+        1050
+      ],
+      "passed": false,
+      "error": "CalledProcessError(1, ['import', '-window', 'root', '-crop', '1440x1050+460+29', '/tmp/pm045-s3-content-root-capture/GLOBAL/after-release-root.png'])"
+    }
+  ],
+  "production_path": "X11 WindowEvent -> owned dialog pointer -> GlobalPreferencesWindowSurface scrollbar capture; ArrowUp changes Global Preferences section, shared surface releases grab while retaining scrollbar_pressed until release; fresh control activates canonical preference mutation.",
+  "retired_paths": "None in this verification-only change; existing shared content-change capture behavior preserved.",
+  "proof": "At1.5/2 overrides, delivered scrollbar drag then ArrowUp changes Units to Appearance while primary held. Release over Reduced motion creates no preferences generation. Fresh click writes exactly one CommitPreferenceMutation affecting datum.accessibility.reduced_motion=true. Raw results contain commands, actions, actual extents and frame counts; selected persisted setting/receipt retained.",
+  "limitations": [
+    "Only Global Preferences. Project/New content-change profiles, Wayland OS input, current independent negative and full HP21/S3 qualification remain open.",
+    "2x after-release window capture was visually inspected: still shows Units although canonical fresh-click mutation selects Appearance Reduced motion. Capture cannot prove final displayed state. No conclusion about capture transport versus presentation defect.",
+    "One root-window capture comparison returned ImageMagick exit1 before the fresh-click step; failed trial retained, no successful pixel comparison. No further capture/driver investigation performed.",
+    "Persistent XTest with explicit Shift press/release after pointer-only moves; no delivery reliability acceptance.",
+    "Scale overrides are not monitor DPI transitions; actual compositor-clamped extents1440x1050/1918x1050.",
+    "SIGTERM cleanup is not teardown acceptance. No numerical/resource/dependency/resize qualification."
+  ],
+  "artifacts": [
+    {
+      "path": "1_5/result.json",
+      "sha256": "41a410d18ff31f0626acf39afafb368580566e79541848e4b6587e5564602bd5",
+      "uncompressed_sha256": "41a410d18ff31f0626acf39afafb368580566e79541848e4b6587e5564602bd5"
+    },
+    {
+      "path": "1_5/driver.log.gz",
+      "sha256": "4bd45c42011f67888fdd1e4319b551f695c37ed68065c6f763723c1505d85f7b",
+      "uncompressed_sha256": "7372bc5593410a2a4f455591581de2d7f7b6b4e42eb44a17beaf96d162148372"
+    },
+    {
+      "path": "1_5/before.png",
+      "sha256": "a373be17cb4ca3c6d88b5c6cebadb7bfd742b5d074f04a41b052c0d84382bf1f",
+      "uncompressed_sha256": "a373be17cb4ca3c6d88b5c6cebadb7bfd742b5d074f04a41b052c0d84382bf1f"
+    },
+    {
+      "path": "1_5/after-release.png",
+      "sha256": "05376e2e598a4339aa98b021e1f6d56723ad8e1d443799da630b78e2bf05943a",
+      "uncompressed_sha256": "05376e2e598a4339aa98b021e1f6d56723ad8e1d443799da630b78e2bf05943a"
+    },
+    {
+      "path": "1_5/native.log.gz",
+      "sha256": "0fb2ff7d6ccfcaf858cd68cf2b8bf5d8dca44bd087100167b83a6fa5eac365d0",
+      "uncompressed_sha256": "dd27efb4c6ceb5a6627c2fe3dd5af0f435080e8ef9bbe4726f648dcfc8b82db2"
+    },
+    {
+      "path": "1_5/stderr.log.gz",
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "2/result.json",
+      "sha256": "191b1de71f563bc41ce5dafaf0432a76b55019caea3d0edcb8631aed77d17ef8",
+      "uncompressed_sha256": "191b1de71f563bc41ce5dafaf0432a76b55019caea3d0edcb8631aed77d17ef8"
+    },
+    {
+      "path": "2/driver.log.gz",
+      "sha256": "4bd45c42011f67888fdd1e4319b551f695c37ed68065c6f763723c1505d85f7b",
+      "uncompressed_sha256": "7372bc5593410a2a4f455591581de2d7f7b6b4e42eb44a17beaf96d162148372"
+    },
+    {
+      "path": "2/before.png",
+      "sha256": "4c799502398b8817d9f5f17a48a19b6ca161e1432556b2b5deb06bab465f7664",
+      "uncompressed_sha256": "4c799502398b8817d9f5f17a48a19b6ca161e1432556b2b5deb06bab465f7664"
+    },
+    {
+      "path": "2/after-release.png",
+      "sha256": "2cf0c94a7984f28aad57c1e089487355fb36e6a33f9d973539341c525ad12ab0",
+      "uncompressed_sha256": "2cf0c94a7984f28aad57c1e089487355fb36e6a33f9d973539341c525ad12ab0"
+    },
+    {
+      "path": "2/native.log.gz",
+      "sha256": "553fc988602a622914a7241e6aecde49f0c80d3fe5432669083a690252cd48b0",
+      "uncompressed_sha256": "b1405af8bb5e6c09cdc8a6099b42fad972f9bfc91035e2d67d81877760e879f5"
+    },
+    {
+      "path": "2/stderr.log.gz",
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "root-capture-failed/result.json",
+      "sha256": "5826f68ac312d724dad388068250adcb03f561a896cc00c72a65ffcd67c8eff1",
+      "uncompressed_sha256": "5826f68ac312d724dad388068250adcb03f561a896cc00c72a65ffcd67c8eff1"
+    },
+    {
+      "path": "root-capture-failed/driver.log.gz",
+      "sha256": "f706af42420516713862f2870d55547d4002e45b8bcf5910a01e981b3f1c6e66",
+      "uncompressed_sha256": "80443cc8df69a97950b1a4f0a2980096ff35ac15b45e0d10852830f0fc57a806"
+    },
+    {
+      "path": "root-capture-failed/before.png",
+      "sha256": "a373be17cb4ca3c6d88b5c6cebadb7bfd742b5d074f04a41b052c0d84382bf1f",
+      "uncompressed_sha256": "a373be17cb4ca3c6d88b5c6cebadb7bfd742b5d074f04a41b052c0d84382bf1f"
+    },
+    {
+      "path": "root-capture-failed/after-release.png",
+      "sha256": "05376e2e598a4339aa98b021e1f6d56723ad8e1d443799da630b78e2bf05943a",
+      "uncompressed_sha256": "05376e2e598a4339aa98b021e1f6d56723ad8e1d443799da630b78e2bf05943a"
+    },
+    {
+      "path": "root-capture-failed/native.log.gz",
+      "sha256": "cb5e665484898e6b08edc1bc81e15a490d9df9d789c3ad383ebe133803224900",
+      "uncompressed_sha256": "01c62e76cf3e08414bf20222841dd1906959280a7d2c1abd94cbb210402dd576"
+    },
+    {
+      "path": "root-capture-failed/stderr.log.gz",
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "uncompressed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "pm045_native_content_change_scaled.py.gz",
+      "sha256": "e74ef4edaaa96d43cfc041a19a44fc03adf79a83186128a0c93d9a5742321074",
+      "uncompressed_sha256": "b6874d9a73a254c0f80a25c745148f612faada68f95119fe9dc65b4f225d3db2"
+    },
+    {
+      "path": "pm045_native_content_change_root_capture.py.gz",
+      "sha256": "d91f22a63ae933cbdc5d2e93aa73c91b6f814b161bd7bcc252ae856a60ac9ad0",
+      "uncompressed_sha256": "aa5c114f926048ae6d4a8610b71df992fd86e5f75dee823feae4068abc676731"
+    }
+  ]
+}
