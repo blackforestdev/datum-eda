@@ -1,0 +1,13 @@
+diff --git a/crates/gui-render/src/render/control_mesh.rs b/crates/gui-render/src/render/control_mesh.rs
+index efd6edeb..159b9570 100644
+--- a/crates/gui-render/src/render/control_mesh.rs
++++ b/crates/gui-render/src/render/control_mesh.rs
+@@ -97 +97 @@ impl<'a> ControlPainter<'a> {
+-            dpi: self.dpi.to_bits(),
++            dpi: 1.0_f32.to_bits(),
+@@ -136 +136 @@ impl<'a> ControlPainter<'a> {
+-            dpi: self.dpi.to_bits(),
++            dpi: 1.0_f32.to_bits(),
+@@ -167 +167 @@ impl<'a> ControlPainter<'a> {
+-            dpi: self.dpi.to_bits(),
++            dpi: 1.0_f32.to_bits(),

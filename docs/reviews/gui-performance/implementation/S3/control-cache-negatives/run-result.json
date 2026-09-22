@@ -1,0 +1,53 @@
+{
+  "source_sha256": "823c9d3aea5c009cbdcbd8c01010a3bf5916150c510774caf292723517323235",
+  "results": [
+    {
+      "case": "incomplete-key",
+      "command": [
+        "python3",
+        "/tmp/pm045-control-negatives/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "--manifest-path",
+        "/tmp/pm045-control-negatives/Cargo.toml",
+        "-p",
+        "datum-gui-render",
+        "--lib",
+        "placement_and_color_reuse_control_mesh_but_geometry_and_dpi_miss",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "negative_exit": 101,
+      "restored_exit": 0
+    },
+    {
+      "case": "pinned-entries",
+      "command": [
+        "python3",
+        "/tmp/pm045-control-negatives/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "--manifest-path",
+        "/tmp/pm045-control-negatives/Cargo.toml",
+        "-p",
+        "datum-gui-render",
+        "--lib",
+        "control_mesh_keys_bounds_and_lru_are_complete",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "negative_exit": 101,
+      "restored_exit": 0
+    }
+  ]
+}

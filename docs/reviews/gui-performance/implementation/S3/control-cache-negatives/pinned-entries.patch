@@ -1,0 +1,7 @@
+diff --git a/crates/gui-render/src/render/control_mesh.rs b/crates/gui-render/src/render/control_mesh.rs
+index efd6edeb..2e107e31 100644
+--- a/crates/gui-render/src/render/control_mesh.rs
++++ b/crates/gui-render/src/render/control_mesh.rs
+@@ -65 +65 @@ impl ControlMeshCache {
+-        while self.entries.len() >= MAX_ENTRIES || self.payload_bytes + bytes > MAX_PAYLOAD_BYTES {
++        while false {

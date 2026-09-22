@@ -6203,7 +6203,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: exact circular-control vertices preserve prior contour at fractional placements;13 hardware GPU regressions pass including Preferences/New Project legacy pixel parity and rounded AA. Full consumer/backend/scale/negative/native qualification remains open.",
+        "status": "Partial: exact circular-control vertices preserve prior contour at fractional placements;13 hardware GPU regressions pass including Preferences/New Project legacy pixel parity and rounded AA. Full consumer/backend/scale/negative/native qualification remains open. Current shared CPU cache prescribed incomplete-DPI-key and disabled-eviction negatives are detected; byte-restored positives pass. This is component evidence, not full native/GPU/accounting qualification.",
         "id": "proof_hp16_02",
         "positive": "Change dimensions/radius/style/DPI then concave/holed authored content",
         "negative_control": "Reuse incomplete key or force fan for holes",
@@ -6249,7 +6249,20 @@
       "s3_pane_indicator_progress": {
         "status": "partial MAIN focused-pane indicator adoption; full row remains unqualified",
         "evidence": "docs/reviews/gui-performance/implementation/S3/pane-indicator-retention/result.json"
-      }
+      },
+      "s3_control_cache_negatives_progress": {
+        "status": "Incomplete DPI key and indefinite entry retention negatives detected; both byte-restored tests pass",
+        "production_consumers": [
+          "Renderer-owned ControlMeshCache/ControlPainter shared by native controls; directly tested component only"
+        ],
+        "shared_owner": "render/control_mesh.rs",
+        "retired_paths": "No new production retirement; verifies existing complete key and bounded CPU retention.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json",
+        "limits": "Direct existing shared CPU control cache/painter tests, not actual native consumer dispatch or GPU pixels. DPI negative detects5 builds instead of6; it does not establish a visible contour defect. Disabled eviction detects257 entries instead of256. Restored test also exercises LRU touch, oversized bypass and CPU payload eviction. Full authored concave/holed separation, native/profile coverage and HP16 acceptance remain open. Complete CPU metadata/GPU/in-flight/aggregate accounting remains S4 implementation/S5 qualification under owner clarification. No active Rust/dependency/license/prototype/budget/resize change."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json"
+      ]
     },
     {
       "id": "HP16-03",
@@ -6281,7 +6294,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared256-entry/4MiB CPU mesh-payload LRU/bypass tests pass for the extended contour key. Complete GPU/in-flight/aggregate accounting and release budgets remain unqualified; no full byte-cap pass.",
+        "status": "Partial: shared256-entry/4MiB CPU mesh-payload LRU/bypass tests pass for the extended contour key. Complete GPU/in-flight/aggregate accounting and release budgets remain unqualified; no full byte-cap pass. Current shared CPU cache prescribed incomplete-DPI-key and disabled-eviction negatives are detected; byte-restored positives pass. This is component evidence, not full native/GPU/accounting qualification.",
         "id": "proof_hp16_03",
         "positive": "Exceed mesh working set",
         "negative_control": "Pin every cached mesh indefinitely",
@@ -6339,7 +6352,20 @@
         "qualification_deadline": "GPI-S5",
         "status": "Unqualified; only complete S2-owned resource dependencies move. Other S3 proof remains required.",
         "owner_evidence": "EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S3-RESOURCE-APPROVED"
-      }
+      },
+      "s3_control_cache_negatives_progress": {
+        "status": "Incomplete DPI key and indefinite entry retention negatives detected; both byte-restored tests pass",
+        "production_consumers": [
+          "Renderer-owned ControlMeshCache/ControlPainter shared by native controls; directly tested component only"
+        ],
+        "shared_owner": "render/control_mesh.rs",
+        "retired_paths": "No new production retirement; verifies existing complete key and bounded CPU retention.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json",
+        "limits": "Direct existing shared CPU control cache/painter tests, not actual native consumer dispatch or GPU pixels. DPI negative detects5 builds instead of6; it does not establish a visible contour defect. Disabled eviction detects257 entries instead of256. Restored test also exercises LRU touch, oversized bypass and CPU payload eviction. Full authored concave/holed separation, native/profile coverage and HP16 acceptance remain open. Complete CPU metadata/GPU/in-flight/aggregate accounting remains S4 implementation/S5 qualification under owner clarification. No active Rust/dependency/license/prototype/budget/resize change."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json"
+      ]
     },
     {
       "id": "HP17-01",
@@ -27613,7 +27639,8 @@
         "s3_wheel_input_negatives_work": "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json",
         "s3_preferences_extent_negative_work": "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json",
         "s3_native_expanded_extent_work": "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
-        "s3_native_search_explanation_work": "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json"
+        "s3_native_search_explanation_work": "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
+        "s3_control_cache_negatives_work": "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json"
       },
       "receipt_sha256": {
         "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json": "7c21f4fb04e937db21bd06d9bd0e9b1d4d0602ccca5cf167def2a77f6d5e9139",
@@ -27629,7 +27656,8 @@
         "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json": "eae1fafd5b8f366f5d2ca5cfc5f0560dc500c5bd16e7a94cd16734584eb03d0f",
         "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json": "0585e0e132197934f58ea1891dfe4f4178ccb81e70695a304d5987919d32fafd",
         "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json": "8c4e54e5a70f96443bdc67c2f72bfef46497c860ba1a1e16fbbcb89cf23ad407",
-        "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json": "99914ecea89ac062c99d8cd6dfa5d3421174971ae622bf634a1296a7a71afb37"
+        "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json": "99914ecea89ac062c99d8cd6dfa5d3421174971ae622bf634a1296a7a71afb37",
+        "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json": "622181f733b2d0dfc81861e13e99d46ad6cdd5e27d183987906e667976fb7a0d"
       },
       "remaining_actions": {
         "HP10-01": "Verify outside-Layers routing through the outer native event dispatcher; actual Board Runtime zero-preparation and prescribed negative are recorded.",
@@ -27641,8 +27669,8 @@
         "HP14-01": "Complete remaining settings/expanded/backend/scale warm-reuse cases; both native Units adapters and one-frame negative are recorded. Full resource precondition remains S4/S5.",
         "HP14-02": "Verify bounded label churn/eviction/close/reopen behavior at implemented limits. Complete accounting/cap/release proof follows named S4/S5 resource associations.",
         "HP16-01": "Complete rounded-control repeat/translation/clip proof across actual applicable consumers and remaining prescribed arc/tessellator negatives; preserve fixed-rectangle classification.",
-        "HP16-02": "Complete dimension/radius/style/DPI invalidation and authored concave/holed separation proof, including incomplete-key/fan negative and applicable native profiles.",
-        "HP16-03": "Complete bounded control working-set eviction and pin-indefinitely negative. Full GPU/in-flight/aggregate bounds follow S4/S5 resource associations.",
+        "HP16-02": "Complete authored concave/holed separation and fan negative plus applicable native contour/style/DPI profiles. Existing key-field test and current incomplete-DPI-key negative/restored painter positive are recorded.",
+        "HP16-03": "Reconcile actual native control working-set evidence with recorded bounded CPU LRU/bypass/byte eviction and pin-indefinitely negative. Full CPU metadata/GPU/in-flight/aggregate bounds remain S4/S5 resource dependencies.",
         "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter.",
         "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct.",
         "HP20-01": "Complete remaining backend/scale and other-control extent cases. Both Preferences1x native Units choices, explanations, four-result search/clear, final row/boundary/reversal and shrink to actual563px minimum are recorded. Shared renderer visible-row negative is recorded.",
@@ -28124,5 +28152,15 @@
     "retired_paths": "No new retirement; verifies existing shared content identity, extent and focus reconciliation.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
     "limits": "Both native Preferences hosts, X11/Xwayland1x960x720, recorded unchanged release binary2a4cecd6. Actual scheduled explanation/search input and presentation counts, not an exact fractional offset, latency, complete backend/scale/control matrix or full HP20/HP23/S3 acceptance. Earlier Escape nondelivery remains unexplained; focus reactivation is a harness prerequisite in corrected trials, not evidence of an application focus defect or desktop use. Capture filenames do not prove timing. No production behavior, dependency/license, prototype, numerical-budget, S4/S5 resource or nonblocking resize-scope change."
+  },
+  "s3_control_cache_negatives_work": {
+    "status": "Incomplete DPI key and indefinite entry retention negatives detected; both byte-restored tests pass",
+    "production_consumers": [
+      "Renderer-owned ControlMeshCache/ControlPainter shared by native controls; directly tested component only"
+    ],
+    "shared_owner": "render/control_mesh.rs",
+    "retired_paths": "No new production retirement; verifies existing complete key and bounded CPU retention.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json",
+    "limits": "Direct existing shared CPU control cache/painter tests, not actual native consumer dispatch or GPU pixels. DPI negative detects5 builds instead of6; it does not establish a visible contour defect. Disabled eviction detects257 entries instead of256. Restored test also exercises LRU touch, oversized bypass and CPU payload eviction. Full authored concave/holed separation, native/profile coverage and HP16 acceptance remain open. Complete CPU metadata/GPU/in-flight/aggregate accounting remains S4 implementation/S5 qualification under owner clarification. No active Rust/dependency/license/prototype/budget/resize change."
   }
 }
