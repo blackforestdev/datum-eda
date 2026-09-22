@@ -1,0 +1,53 @@
+{
+  "candidate_base": "56da2b6c8d90a87c2c8527ecf5c20efd9e0c40e8",
+  "status": "Four bounded native expanded-choice trials pass: GLOBAL/PROJECT at720px and native-minimum563px heights",
+  "requirements": [
+    "HP20-01",
+    "HP21-01"
+  ],
+  "observations": {
+    "missed-control": "Both attempts timed out after click940,130; inspected Project capture has button ending near930. Preserve failures.",
+    "expanded": "Click900,130 opens Units choices; both inspected before captures show Metric/Imperial. Each host:0 thumb-press frames,1 drag,0 bottom-boundary,1 reversal,1 collapse. Bottom captures show final Angle precision row and thumb endpoint.",
+    "resized": "Request960x400 while expanded; both native geometries960x563. Same frame outcomes as720px trial. Inspected bottom captures show final row; pinned search/header remains above clipped rows.",
+    "binary": "SHA256 matches recorded global-mutation-preparation/native/result.json; only test/evidence changes since last production build.",
+    "cleanup": "Harness SIGTERM; no teardown qualification."
+  },
+  "limits": "X11/Xwayland at1x only, existing release binary2a4cecd6 from recorded Global preparation fix (production sources unchanged since that build). Native scheduled Units expansion, thumb/line boundary/reversal and Escape collapse; no exact fractional-offset or presentation-latency oracle. Requested resize960x400 was clamped to observed960x563; no400px native qualification or resize CPU claim. Search, explanations, other controls/backend/scale and full HP20/HP21/S3 remain open. Capture filenames are not timing/final-state proof. No production change, new consumer migration, dependency/license, prototype or numerical-budget change.",
+  "artifact_sha256": {
+    "expanded/GLOBAL/before.png": "9d2428c3739fd2eb3f8f2483a330313191cb95d36dfbbeaf71050d548c7656cb",
+    "expanded/GLOBAL/bottom.png": "ad2948d8d30404b4330010cb51e3bcb0baf3aed7426b34f7e21d827e39970003",
+    "expanded/GLOBAL/collapsed.png": "092e9eaeea2db79aea70fa511753d5c2c822920d19f4ee88319ff32598d91099",
+    "expanded/GLOBAL/native.log.gz": "289c919cca3375f1af39dee43a8f491a4b0775e80222c631379d633e9c3fdd71",
+    "expanded/GLOBAL/reverse.png": "7042c44241612771ea4e9bdf2f6436089041c2fb11e1d4007119ba82dfceb3c5",
+    "expanded/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "expanded/PROJECT/before.png": "11f6281b1fcf92276872066a641d2ecf8237396b211642bc23fe31a86022f6df",
+    "expanded/PROJECT/bottom.png": "1ff6bf4466f9b21a8a292721a0cc11bb7cf9f46c9c82176b9f0261989328a801",
+    "expanded/PROJECT/collapsed.png": "ca5305becca5cfeb2ecb469c83b0954b1f97c5c8dc67a157c7839d9ddde2767e",
+    "expanded/PROJECT/native.log.gz": "dca1c1c7bdc713ea998762b1e1d3f735b043f42467cee2f6bf7eeb3409dec86a",
+    "expanded/PROJECT/reverse.png": "a778273f30adf5f0dc1273f426fd2db227c21e63360af09156ff58f8cde3ab8f",
+    "expanded/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "expanded/driver.py": "514fe1b1f07e98ce29e366aac5d0c411e7d0e10b3a2c3a5e6f00f1597e442cab",
+    "expanded/result.json": "d1fcbcb15ebd23e20dc111caf2cd563ef3cf1b6363d37e75af869f8dbb9098ff",
+    "missed-control/GLOBAL/native.log.gz": "4250cf9fb8255a96aeba253905b69793a6ed987e136065b32f135159d6eb8b2c",
+    "missed-control/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "missed-control/PROJECT/native.log.gz": "2b366cfa098fa8015e1b90b714a855e311abe21ae22887896db13af790e9b4b2",
+    "missed-control/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "missed-control/driver.py": "c6bd78e18c8ae36968bfc1062815d39b8f119b0c4bd0a46290db86a0a01a2b6f",
+    "missed-control/project-debug.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "missed-control/result.json": "df13cc844cdb244c8e1a32682258efc6e736620814cf406e096b5b5d0598a003",
+    "resized/GLOBAL/before.png": "0edcef23deedea9029b91f390fdca2c4e54df7cd3848a680b4d0db036745becf",
+    "resized/GLOBAL/bottom.png": "44856bb8483d528f62601fdb71c287dbf5d88d50c6353b6ce9e626406621f0e8",
+    "resized/GLOBAL/collapsed.png": "2e6b7f75528fbcfac3a9f4fe4a687eaf1fcad99698a30032fa347e0ad15b1240",
+    "resized/GLOBAL/native.log.gz": "56ba5f24da9fd15b9f134a52258f2c87336ae379a4b7d97291c74bc71e9cb4bf",
+    "resized/GLOBAL/reverse.png": "c4d05d20c5261301d1ea795f4249546a32b073d4269c259a9537607dab047122",
+    "resized/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "resized/PROJECT/before.png": "163689a2000c961a4bc397e275aaed8d66bd192986663caa54e6ad959b46527c",
+    "resized/PROJECT/bottom.png": "a1c7a22c542fb8f0fd724431a7334958efe703a4a48107c1f9e112e07be880a1",
+    "resized/PROJECT/collapsed.png": "f79e8ac3598fff44f53b5cf4e7d534eeef072cbec1c6a10068b94e365d9f2c92",
+    "resized/PROJECT/native.log.gz": "7f7f94aabd0d712289350d1be89d94863e7081c1eea70f678ecc42d6d48d0dac",
+    "resized/PROJECT/reverse.png": "b512b169c974da8ad01ff7c885516e7ef3d6c0933396229418032489c246ed86",
+    "resized/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "resized/driver.py": "e6802b1b38407743d854f13391632dd62ee5d93a84c6f0ee27464005325e39fa",
+    "resized/result.json": "61b9ec78501cab581ac07b44f50c510a98411d5f0bb32fbf558cccf9d49d4b75"
+  }
+}
