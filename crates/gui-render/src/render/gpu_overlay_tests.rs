@@ -158,51 +158,8 @@ fn dialog_single_pass_matches_general_renderer_pixels() {
     }
 }
 
-#[test]
-#[ignore = "requires local GPU; run explicitly with the visual feature"]
-fn rounded_control_fans_match_scanline_pixels() {
-    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
-    let mut renderer = hardware_renderer(960, 720);
-    let mut prepared =
-        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
-    prepared.menu_overlay_text_runs.clear();
-    for (width, height, radius) in [
-        (140.0, 28.0, 4.0),
-        (24.0, 24.0, 12.0),
-        (37.5, 19.5, 3.0),
-        (200.0, 50.0, 0.0),
-    ] {
-        for offset in [0.0, 0.25, 0.5] {
-            let rect = crate::RectPx {
-                x: 40.0 + offset,
-                y: 40.0 + offset,
-                width,
-                height,
-            };
-            let mut old = Vec::new();
-            crate::push_projected_polygon_fill(
-                &mut old,
-                &crate::global_preferences_primitives::rounded_rect_points(rect, radius),
-                [0.3, 0.5, 0.7],
-            );
-            prepared.menu_overlay_vertices = crate::gpu_data::quads_to_vertices(&old);
-            let expected = capture(&mut renderer, &prepared);
-            let mut new = Vec::new();
-            crate::global_preferences_primitives::push_rounded_rect_fill(
-                &mut new,
-                rect,
-                [0.3, 0.5, 0.7],
-                radius,
-            );
-            prepared.menu_overlay_vertices = crate::gpu_data::quads_to_vertices(&new);
-            let actual = capture(&mut renderer, &prepared);
-            assert!(
-                actual == expected,
-                "rounded control changed for {rect:?}, radius {radius}"
-            );
-        }
-    }
-}
+#[path = "control_gpu_tests.rs"]
+mod control_gpu_tests;
 
 #[test]
 #[ignore = "requires local GPU; run explicitly with the visual feature"]

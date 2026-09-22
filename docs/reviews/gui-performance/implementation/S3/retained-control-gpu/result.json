@@ -1,0 +1,37 @@
+{
+  "candidate_base": "20b7fa79387744e647717f571dd78e7ffa4989c6",
+  "production": {
+    "status": "Retained rounded control GPU parity and no-reuse negative pass at shared-owner scope",
+    "production_consumers": [
+      "Shared ControlPainter::rounded_fill and shared content clipping; direct GPU test, not native consumer adapter qualification"
+    ],
+    "retired_paths": [
+      "Test-only rounded-fill wrapper that created a new cache on every draw"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/retained-control-gpu/result.json",
+    "proof": "72 GPU comparisons: four shape cases, three fractional placements, clipped/unclipped and three DPI cache keys. Exact scanline-reference pixels;12 builds. Isolated no-reuse defect fails second-draw build assertion; byte-restored source passes.",
+    "limits": "DPI values exercise cache identity, not native monitor transitions or scaled surface profiles. Both paths use shared arc generation and clipping, so this is fan-versus-scanline parity and reuse proof, not independent arc/clip correctness. No native adapter, actual complete working set, GPU resource accounting, frame-time or full HP16/S3 qualification. Runtime, dependency/license, prototype, resource deadlines and resize scope unchanged."
+  },
+  "verification": {
+    "positive": "1 passed,258 filtered",
+    "negative": "0 passed,1 failed,258 filtered; placement/clip must reuse mesh:2 vs1",
+    "restored": "1 passed,258 filtered; all isolated Rust/Cargo sources restored byte-identical to active"
+  },
+  "adapter_observed_in_negative": "Intel HD Graphics P630 (KBL GT2), IntegratedGpu, Vulkan",
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --features visual --lib rounded_control_fans_match_scanline_pixels -- --ignored --test-threads=1",
+    "env CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline --manifest-path /tmp/pm045-pinned-negative-source/Cargo.toml -p datum-gui-render --features visual --lib rounded_control_fans_match_scanline_pixels -- --ignored --test-threads=1"
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/global_preferences_primitives.rs": "f6779f6d3670de4762ccc38bf948880ffaf06b0e4396d55b06e636dff67b34e1",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "53bf82db175ff99d88d18075db17a1a940634b47e7ef7806b2481fe039f46093",
+    "crates/gui-render/src/render/control_gpu_tests.rs": "8d5a0990ea5afba4eea145b2d735425ea5074924275f5311d359de7f3a875aee",
+    "crates/gui-render/src/render/control_mesh.rs": "823c9d3aea5c009cbdcbd8c01010a3bf5916150c510774caf292723517323235"
+  },
+  "artifact_sha256": {
+    "restored.log.gz": "413097e4fdcd685c871358a7ae773e72bc833850d80c131eabcf89e4f81fcc9b",
+    "gpu.log.gz": "00e19b5f1d637cbd61bfc79ea9cdf267175be675106326ba37f38764896a5396",
+    "negative.log.gz": "23e446f119a9c05cbcb4c9d953a507d883e878b388589971df13f7c386fb957e",
+    "negative.patch.gz": "2047c15ef290ba720c484970193d653e9538523883a27137e611f98abbd82109"
+  }
+}
