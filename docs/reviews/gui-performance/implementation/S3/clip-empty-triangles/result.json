@@ -1,0 +1,73 @@
+{
+  "scope": "GPI-S3 shared production clipping optimization; HP16/HP22 supporting proof",
+  "source_base": "67ea0aff",
+  "production_owner": "crates/gui-render/src/render/hit_clipping.rs::clip_content",
+  "production_consumers": [
+    "GLOBAL/PROJECT Preferences and NEW native content clipping",
+    "MAIN menus, Project/Layers, Inspector, Revision, Console and terminal existing shared clip adapters"
+  ],
+  "migration": "Existing consumers inherit the changed shared owner; no additional adapter migration or opt-in path.",
+  "retired_path": "Clipping and emitting the repeated-vertex empty half of a crossing triangle-encoded quad.",
+  "behavior": "Exact repeated-vertex equality skips only zero-area input triangles before clipping; visible contour interpolation, text/hits, painter order and thin distinct-vertex triangles unchanged.",
+  "proof": {
+    "baseline": "New trapezoid area/output oracle fails: four emitted quads instead of two.",
+    "renderer": "231 passed; candidate emits two quads, visible area6.",
+    "gpu": "Existing72-profile rounded-control fan versus scanline parity passes on Intel HD Graphics P630 Vulkan; three scales, fractional placements and clips.",
+    "release": "Fresh offline guarded release build passes.",
+    "native": "Global X11 content-change/release/fresh-click passes on fresh release. Both960x720 captured states compare with zero differing pixels to pinned-a7477cba unlocked-content-visual baseline; post-release Appearance/Off image inspected.",
+    "drift": "Workspace formatting/Clippy and preceding gates pass; full battery stops at eight existing terminal-convergence marker failures, dat-terminal-convergence-guard-xke. No full drift pass.",
+    "source_health": "2223 files and13 policy tests pass",
+    "governance": "Evidence/specification/parity/project-state/dependency gates pass."
+  },
+  "limits": [
+    "No global CPU/frame improvement percentage; only removed structural work demonstrated.",
+    "Full native all-consumer/scale, S3 visual/functional exit and S4/S5 resource/qualification remain incomplete.",
+    "No dependency, prototype, style, sequencing or resize-scope changes."
+  ],
+  "artifacts": {
+    "before.log.gz": {
+      "raw_sha256": "b4d4c8c1904428865405aea549c8e412fd2a95a91d970d7b3055d61430e3e128",
+      "sha256": "415c61e20dec2eb66653a3a4f64448dbd7d75a3342df068d5da667a174062faa"
+    },
+    "after.log.gz": {
+      "raw_sha256": "ff88efcfbd13f0a6aafcf8dfb173386018d7da7e5a8a6620b8e22b7f8585ac83",
+      "sha256": "fae4d38ba0ca07221acd3d7841709d3ed67e6b6b9dfabf20b33855c4ab9b0c77"
+    },
+    "gpu.log.gz": {
+      "raw_sha256": "5d42e5160c5ff46cf4054e034932e392d7bdbe3500088bf1dd9b83f89c24b968",
+      "sha256": "8db00f0d966579af15a316fa46f6b865a20b26b08c23abb71e2f9e893cdc99ba"
+    },
+    "release.log.gz": {
+      "raw_sha256": "e5020248849fdf4eede78513788314e9ee5c247bd4fd878c6f324793f836a55a",
+      "sha256": "fb3e238aef850c8285e62daf0f9829c5b51569d98653fa971c242443462083b6"
+    },
+    "native.log.gz": {
+      "raw_sha256": "52644124d1a7e5fb25eaf4ed893e23586ecbd9c0f1079ba6f410808ec448374d",
+      "sha256": "8533d1963f7dca69b40f51ddb566460d0626bcbb8944f67ddeefe430faa5e449"
+    },
+    "native-result.json.gz": {
+      "raw_sha256": "6c3e35ae9dbb800c20b6f3344d12c1a6c7eb730748319eaaba8fefcbb43cb34d",
+      "sha256": "c8b5b531ad1c4708eec3aa0da6e366c03f149ccd51405ca01d806b7df68dd04d"
+    },
+    "pixel-comparison.json.gz": {
+      "raw_sha256": "6e7d6b9a94c4415fe6b4e2979646f9cf92c01a4d3eae08b50bb63e56ba94f617",
+      "sha256": "7a2a028e5c9ed35227fb3d40ed7984803c300aad589170cd3548b287baf6d24a"
+    },
+    "native-driver.py.gz": {
+      "raw_sha256": "b6874d9a73a254c0f80a25c745148f612faada68f95119fe9dc65b4f225d3db2",
+      "sha256": "e74ef4edaaa96d43cfc041a19a44fc03adf79a83186128a0c93d9a5742321074"
+    },
+    "before.png": {
+      "sha256": "ba61ce906e695efbb14f36768c089239b513a3d0cb08b01178115189b0530b8c"
+    },
+    "after-release.png": {
+      "sha256": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96"
+    },
+    "drift.log.gz": {
+      "raw_sha256": "dc5e353a25ffc578cbe5b71b75ad8382396e87212c713e8726fcafabaec5fa82",
+      "sha256": "d61623b31b8363ff0a785edcdf415527195e81c5c5b7f9dc94bcbb0308590c00"
+    }
+  },
+  "release_binary_sha256": "52a75f2e9e106c92a0af0189c2f1f63c9756f23af6c61dde16b12fdad5dedfbb",
+  "source_sha256": "0f0462eab94b2236be1b898e1a9e98059f065b3dd2f4fdaaafb32c8952d6ab82"
+}

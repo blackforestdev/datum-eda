@@ -6711,7 +6711,8 @@
         "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-control-build-counts/result.json",
         "docs/reviews/gui-performance/implementation/S3/main-new-native-control-reuse/result.json",
-        "docs/reviews/gui-performance/implementation/S3/preferences-native-control-profiles/result.json"
+        "docs/reviews/gui-performance/implementation/S3/preferences-native-control-profiles/result.json",
+        "docs/reviews/gui-performance/implementation/S3/clip-empty-triangles/result.json"
       ],
       "s3_retained_control_gpu_progress": {
         "status": "Retained rounded control GPU parity and no-reuse negative pass at shared-owner scope",
@@ -7951,7 +7952,8 @@
         "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json",
         "docs/reviews/gui-performance/implementation/S3/clip-hidden-geometry/result.json",
         "docs/reviews/gui-performance/implementation/S3/rectangle-clip/result.json",
-        "docs/reviews/gui-performance/implementation/S3/dock-shared-geometry/result.json"
+        "docs/reviews/gui-performance/implementation/S3/dock-shared-geometry/result.json",
+        "docs/reviews/gui-performance/implementation/S3/clip-empty-triangles/result.json"
       ],
       "s3_shell_content_clipping_progress": {
         "status": "bounded S3 Main placeholder/status shared clipping adoption; full qualification open",
@@ -29937,6 +29939,20 @@
       "X11/Xwayland only; visual override scales are not monitor transitions; requested sizes constrained by desktop at larger scales.",
       "Historical stale captures remain valid failure records; no retrospective cause attribution.",
       "Cleanup by owned process termination is not teardown qualification."
+    ]
+  },
+  "s3_clip_empty_triangles_work": {
+    "production_consumers": [
+      "GLOBAL/PROJECT Preferences and NEW native content clipping",
+      "MAIN menus, Project/Layers, Inspector, Revision, Console and terminal existing shared clip adapters"
+    ],
+    "retired_paths": "Clipping and emitting the repeated-vertex empty half of a crossing triangle-encoded quad.",
+    "migration": "Existing consumers inherit the changed shared owner; no additional adapter migration or opt-in path.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/clip-empty-triangles/result.json",
+    "limits": [
+      "No global CPU/frame improvement percentage; only removed structural work demonstrated.",
+      "Full native all-consumer/scale, S3 visual/functional exit and S4/S5 resource/qualification remain incomplete.",
+      "No dependency, prototype, style, sequencing or resize-scope changes."
     ]
   }
 }
