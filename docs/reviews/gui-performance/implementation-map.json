@@ -6725,7 +6725,23 @@
       "s3_native_dialog_surface_progress": {
         "status": "bounded shared native Preferences root clipping; row remains unqualified",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-surface-clipping/result.json"
-      }
+      },
+      "s3_pane_header_clipping_progress": {
+        "status": "bounded S3 default Main pane header shared clipping adoption; full qualification open",
+        "production_consumers": [
+          "MAIN Board/Schematic/Revision pane headers via render_viewport_panes -> render_pane_header"
+        ],
+        "retired_paths": [
+          "Unrestricted pane glyph, border and focus-dot paint outside narrow header bounds",
+          "Header tool text lacking shared ancestor intersection"
+        ],
+        "preserved": "Existing title content-right clipping and tool culling retain focus-dot spacing. Pane-wide focus frame is emitted after header clipping. Existing retained control owner and normal geometry remain.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/pane-header-clipping/result.json",
+        "limits": "No native narrow-pane, exact legacy pixel, isolated clip-removal negative, per-adapter input/focus or full HP22/S3 qualification. Header emits no HitRegion; layout-derived input routing is unchanged. Pending S3 proposal1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/pane-header-clipping/result.json"
+      ]
     },
     {
       "id": "HP22-02",
@@ -27102,5 +27118,18 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json",
     "proof": "Both hosts: thumb press/release and boundary wheel cause zero presentations; drag and reverse each cause one. Event target/direction confirmed. Inspected screenshots and RGB comparisons show unchanged header/search/navigation and byte-exact RGB return to initial whole-window pixels.",
     "limits": "No full HP21/HP22 or S3 acceptance. No page-track, hidden-control click-through, capture-loss, scale/backend matrix, latency, resource, teardown or independent negative-control qualification. Earlier failed/aborted attempts remain unchanged. This pass does not establish the cause of prior unexplained input. S3 proposal 1bc02aaf remains unapproved."
+  },
+  "s3_pane_header_clipping_work": {
+    "status": "bounded S3 default Main pane header shared clipping adoption; full qualification open",
+    "production_consumers": [
+      "MAIN Board/Schematic/Revision pane headers via render_viewport_panes -> render_pane_header"
+    ],
+    "retired_paths": [
+      "Unrestricted pane glyph, border and focus-dot paint outside narrow header bounds",
+      "Header tool text lacking shared ancestor intersection"
+    ],
+    "preserved": "Existing title content-right clipping and tool culling retain focus-dot spacing. Pane-wide focus frame is emitted after header clipping. Existing retained control owner and normal geometry remain.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/pane-header-clipping/result.json",
+    "limits": "No native narrow-pane, exact legacy pixel, isolated clip-removal negative, per-adapter input/focus or full HP22/S3 qualification. Header emits no HitRegion; layout-derived input routing is unchanged. Pending S3 proposal1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
   }
 }
