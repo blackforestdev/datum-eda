@@ -6524,7 +6524,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial: shared dialog adapter converts physical cursor/pixel deltas to logical once and uses40logicalpx line steps. Existing1/1.5/2x regression now rejects a production mis-scaling injection and passes after byte restoration. Bounded Preferences native scale trials are recorded separately; full native stream/hit and Layers/terminal qualification remain open.",
+        "status": "Partial: all four native hosts share physical-to-logical wheel conversion, preserving Main20/dialog40 logical-pixel line policies. Cross-scale converter tests and existing fractional/locality adapter regression pass. GLOBAL/PROJECT1.5x native line-event boundary/reversal passes. Physical OS stream, Main/NEW native dispatch, complete hit/profile/backend and prescribed current shared-owner negative remain open.",
         "id": "proof_hp19_01",
         "positive": "Physical pixel/line deltas at1x/1.5x/2x and corresponding hits",
         "negative_control": "Double-scale pixels or invert sign",
@@ -6594,6 +6594,23 @@
         "preserved": "One row per scrollback wheel event, backward-from-live-screen offset, terminal state and PTY write authority. Existing native dock route consumes local wheel events.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-wheel-bounds/result.json",
         "limits": "Default Main dock terminal scrollback only. Hidden X11/Vulkan Runtime test proves local boundary damage and effective offset bounds; OS wheel delivery, nonempty-history reversal, mouse-report bytes, backend/scale and full HP19/S3 qualification remain open. No layout/style, PTY/parser/selection authority, dependencies/license, numerical budget or resize-scope change."
+      },
+      "s3_shared_wheel_units_progress": {
+        "status": "All four default native hosts consume one wheel-unit converter",
+        "production_consumers": [
+          "MAIN wheel dispatch for Layers, Console, terminal and pointer-pane zoom",
+          "GLOBAL Preferences continuous scroll",
+          "PROJECT Preferences continuous scroll",
+          "NEW shared form scroll"
+        ],
+        "shared_owner": "app_native_events::scroll_input::VerticalWheel",
+        "retired_paths": [
+          "Main fixed physical-pixel division without host scale",
+          "Independent dialog physical/line conversion match"
+        ],
+        "preserved": "Line units pass unchanged to Main discrete adapters; Main profile remains20 logical pixels per line, dialogs40. Continuous fractions and sign preserved. Horizontal-only and nonfinite input stops before vertical dispatch.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/shared-wheel-units/result.json",
+        "limits": "Shared converter tests establish physical/logical unit behavior at1/1.5/2x and existing native Preferences adapter test preserves fractional/pane locality. Actual X11 native trial covers GLOBAL/PROJECT line events at1.5x; it does not deliver touchpad physical pixels, test Main/NEW OS routes or complete HP19/S3. Captures are inspected for appearance but known capture lag prevents using filenames as final-state proof. No dependency/license, visual style, numerical budget or resize-scope change."
       }
     },
     {
@@ -27755,5 +27772,22 @@
     "preserved": "One row per scrollback wheel event, backward-from-live-screen offset, terminal state and PTY write authority. Existing native dock route consumes local wheel events.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/terminal-wheel-bounds/result.json",
     "limits": "Default Main dock terminal scrollback only. Hidden X11/Vulkan Runtime test proves local boundary damage and effective offset bounds; OS wheel delivery, nonempty-history reversal, mouse-report bytes, backend/scale and full HP19/S3 qualification remain open. No layout/style, PTY/parser/selection authority, dependencies/license, numerical budget or resize-scope change."
+  },
+  "s3_shared_wheel_units_work": {
+    "status": "All four default native hosts consume one wheel-unit converter",
+    "production_consumers": [
+      "MAIN wheel dispatch for Layers, Console, terminal and pointer-pane zoom",
+      "GLOBAL Preferences continuous scroll",
+      "PROJECT Preferences continuous scroll",
+      "NEW shared form scroll"
+    ],
+    "shared_owner": "app_native_events::scroll_input::VerticalWheel",
+    "retired_paths": [
+      "Main fixed physical-pixel division without host scale",
+      "Independent dialog physical/line conversion match"
+    ],
+    "preserved": "Line units pass unchanged to Main discrete adapters; Main profile remains20 logical pixels per line, dialogs40. Continuous fractions and sign preserved. Horizontal-only and nonfinite input stops before vertical dispatch.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/shared-wheel-units/result.json",
+    "limits": "Shared converter tests establish physical/logical unit behavior at1/1.5/2x and existing native Preferences adapter test preserves fractional/pane locality. Actual X11 native trial covers GLOBAL/PROJECT line events at1.5x; it does not deliver touchpad physical pixels, test Main/NEW OS routes or complete HP19/S3. Captures are inspected for appearance but known capture lag prevents using filenames as final-state proof. No dependency/license, visual style, numerical budget or resize-scope change."
   }
 }

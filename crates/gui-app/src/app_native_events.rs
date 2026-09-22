@@ -1,6 +1,9 @@
 //! Native input/event dispatch; input state is applied before redraw effects.
 use super::*;
 
+#[path = "native_scroll_input.rs"]
+pub(crate) mod scroll_input;
+
 impl App {
     pub(super) fn resume_native(&mut self, event_loop: &ActiveEventLoop) {
         self.frames.set_suspended(false);
@@ -324,10 +327,12 @@ impl App {
             }
             WindowEvent::MouseWheel { delta, .. } => {
                 if let Some(runtime) = &mut self.runtime {
-                    let scroll_lines = match delta {
-                        MouseScrollDelta::LineDelta(_, y) => y,
-                        MouseScrollDelta::PixelDelta(pos) => (pos.y as f32) / 20.0,
+                    let Some(wheel) =
+                        scroll_input::VerticalWheel::from_native(delta, runtime.scale_factor)
+                    else {
+                        return;
                     };
+                    let scroll_lines = wheel.lines(20.0);
                     if let Some(changed) = runtime.handle_layer_scroll(scroll_lines) {
                         if changed {
                             self.request_workspace_redraw();

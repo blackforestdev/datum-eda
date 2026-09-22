@@ -670,11 +670,12 @@ fn scroll_wheel(
     {
         return false;
     }
-    let pixels = match delta {
-        MouseScrollDelta::LineDelta(_, y) => y * 40.0,
-        MouseScrollDelta::PixelDelta(position) => position.y as f32 / scale,
+    let Some(wheel) =
+        crate::app_native_events::scroll_input::VerticalWheel::from_native(delta, scale)
+    else {
+        return false;
     };
-    scroll.wheel(pixels)
+    scroll.wheel(wheel.pixels(40.0))
 }
 
 #[cfg(test)]
