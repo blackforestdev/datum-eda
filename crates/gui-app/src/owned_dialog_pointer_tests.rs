@@ -129,29 +129,40 @@ fn present_changed_content(
     // change visibly so the native frame owner can admit the redraw normally.
     surface(app, index).window.set_visible(true);
     let id = surface(app, index).window_id();
+    surface(app, index).window.request_redraw();
     let deadline = Instant::now() + Duration::from_secs(5);
     while !surface(app, index)
         .prepared
         .as_ref()
         .is_some_and(|prepared| prepared.hit_regions.is_empty())
     {
-        let physical = surface(app, index).window.inner_size();
-        let config = &surface(app, index).config;
-        if (config.width, config.height) != (physical.width, physical.height) {
-            deliver(events, app, id, WindowEvent::Resized(physical));
-        }
-        deliver(events, app, id, WindowEvent::RedrawRequested);
+        // Native redraw delivery observes compositor frame-callback pacing.
+        // Inventing another token here can block Wayland presentation while
+        // the callback needed to release it is waiting in this event loop.
         #[allow(deprecated)]
-        events.pump_events(Some(Duration::ZERO), |event, active| {
-            if matches!(event, winit::event::Event::AboutToWait) {
-                app.dispatch_native_frame_round(active);
-            }
-        });
+        events.pump_events(
+            Some(Duration::from_millis(10)),
+            |event, active| match event {
+                winit::event::Event::WindowEvent { window_id, event }
+                    if window_id == id
+                        && matches!(
+                            event,
+                            WindowEvent::Resized(_) | WindowEvent::RedrawRequested
+                        ) =>
+                {
+                    app.handle_native_window_event(active, window_id, event);
+                }
+                winit::event::Event::AboutToWait => {
+                    app.dispatch_native_frame_round(active);
+                    app.service_native_queue_progress();
+                }
+                _ => {}
+            },
+        );
         assert!(
             Instant::now() < deadline,
-            "changed content presentation timeout"
+            "changed content presentation timeout; requires an unlocked drawable desktop"
         );
-        std::thread::sleep(Duration::from_millis(10));
     }
 }
 
@@ -261,7 +272,7 @@ fn deliver(
 }
 
 #[test]
-#[ignore = "requires native Vulkan, isolated config and DATUM_NATIVE_TEST_BOARD; run serially"]
+#[ignore = "requires unlocked desktop, native Vulkan, isolated config and DATUM_NATIVE_TEST_BOARD; run serially"]
 #[allow(deprecated)]
 fn native_dialog_scroll_release_cannot_click_through_to_controls() {
     let board = std::env::var("DATUM_NATIVE_TEST_BOARD").expect("owned real board fixture");
@@ -482,16 +493,7 @@ fn native_dialog_scroll_release_cannot_click_through_to_controls() {
                 thumb.is_some(),
                 thumb.map(|_| !failures.contains(&(index, scale, supported_minimum)))
             );
-            if backend == "x11" {
-                verify_content_change_capture(&mut events, &mut app, index, scale);
-            } else if index != 2 {
-                // dat-native-content-presentation-qo9y: repeated visible presentation
-                // blocks this supplied-event Wayland harness. Existing pointer,
-                // focus and close coverage below remains active and required.
-                eprintln!(
-                    "host={index} scale={scale} native_content_change=UNQUALIFIED backend={backend}"
-                );
-            }
+            verify_content_change_capture(&mut events, &mut app, index, scale);
             let id = surface(&app, index).window_id();
             if let Some(thumb) = surface(&app, index).scroll.thumb() {
                 deliver(

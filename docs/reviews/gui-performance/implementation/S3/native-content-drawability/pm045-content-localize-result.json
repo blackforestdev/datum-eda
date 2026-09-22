@@ -1,0 +1,29 @@
+{
+  "command": [
+    "timeout",
+    "--signal=TERM",
+    "--kill-after=5s",
+    "45s",
+    "python3",
+    "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+    "--workload",
+    "proof",
+    "--",
+    "cargo",
+    "test",
+    "--offline",
+    "--manifest-path",
+    "/tmp/pm045-pinned-negative-source/Cargo.toml",
+    "-p",
+    "datum-gui-app",
+    "--bin",
+    "datum-gui",
+    "native_dialog_scroll_release_cannot_click_through_to_controls",
+    "--",
+    "--ignored",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "exit": 124,
+  "test_source_sha256": "c712db81a3bfa379802a232153e87fd650da3fe752ef2ae3b674e3ba1556259d"
+}
