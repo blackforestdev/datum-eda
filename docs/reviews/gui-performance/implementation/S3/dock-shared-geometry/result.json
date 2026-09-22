@@ -1,0 +1,98 @@
+{
+  "base_commit": "505ee185c89701f07e1f3ad626fad9dcac78d4bc",
+  "production_consumers": [
+    "Main bottom-dock content background",
+    "Main terminal root and split rendering geometry"
+  ],
+  "shared_owner": "datum_gui_viewport::terminal_screen_geometry_with_scale",
+  "retired_paths": [
+    "BottomDockLayout and unused terminal_tab solver result",
+    "Taffy tab tree/solve performed even for closed dock",
+    "Private dock content rectangle and fallback formula"
+  ],
+  "preserved": "Actual tab strip remains measured by render_terminal_tab_strip. Resize handle still uses the existing six-pixel strip. Content geometry for normal supported windows, terminal screen/split/PTY authority, painter order and font metrics remain unchanged.",
+  "correctness_change": "Collapsed content widths follow the shared max(0) clamp instead of the private solver max(1). This fixes agreement with shared terminal geometry; narrow deterministic inputs are not native minimum-window qualification.",
+  "proof": "Original production fails the new actual-render content agreement at width1/dock120/scale1/font750. Candidate230 renderer tests pass. Actual dock paint/content and TerminalScreen/resize hit checks cover81 width/dock/DPI/font profiles; closed dock has no content/resize targets. Isolated one-pixel content displacement fails the target geometry assertion; restored renderer explicitly recompiles and passes. Native real-PTY terminal Runtime routing passes X11/Wayland1.5 at1918x1050. Fresh release build passed.",
+  "negative": {
+    "compiled_input_digest": "ee56d1a42f027ac2c43930deeaa64214a90257ec5c4d132325f1ecd91d77930b",
+    "compiled_input_count": 1849,
+    "runs": [
+      {
+        "label": "negative",
+        "binary_sha256": "ffd29f818d61f37838bbbf2d74ad1bdb532b684fa659d5c92455f010bb60ef86",
+        "exit": 101,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "/tmp/pm045-pinned-negative-source/Cargo.toml",
+          "-p",
+          "datum-gui-render",
+          "--lib",
+          "rendered_dock_content_uses_shared_terminal_geometry",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "renderer_recompiled": true
+      },
+      {
+        "label": "restored",
+        "binary_sha256": "efb4f198094925e751adbabcf853eec560d0f6ba60a82b1b7f69441311ce72ab",
+        "exit": 0,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "-p",
+          "datum-gui-render",
+          "--lib",
+          "rendered_dock_content_uses_shared_terminal_geometry",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "renderer_recompiled": true
+      }
+    ]
+  },
+  "failed_attempts": "First negative runner adaptation commented out hash initialization and failed with NameError before source injection or compilation. Initialization repaired; successful actual negative/restored runs and final driver retained.",
+  "limits": "Structural unused-work retirement and geometry agreement, not numerical GUI speed/allocation/resource or full HP/S3 acceptance. Native Runtime input is supplied, not OS delivery or final-pixel qualification. No new dependencies/licenses/prototypes, budget/deadline or nonblocking resize-scope change.",
+  "source_sha256": "d52581a7f8f00935881ea199c4f2161548d827d177fce1dddba381469e7f2dc1",
+  "release_sha256": "465e2be2385ccc1dae0e3dbbe361effed20301dffa90a322059daeb88b1e582b",
+  "commands": {
+    "renderer": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib",
+    "baseline": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib rendered_dock_content_uses_shared_terminal_geometry",
+    "release": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app --bin datum-gui",
+    "drift": "CARGO_NET_OFFLINE=true bash scripts/run_drift_gates.sh"
+  },
+  "artifacts": {
+    "pm045-dock-geometry-build.log.gz": "854414698c959b66f6895524cb3080661d55bbd105f9df952b3732d8bf1dc977",
+    "pm045-dock-geometry-native-wayland-1.5.log.gz": "b73279247a0f2767aab4cd14d8e34e4239690e3dd90a13da44dbbd24426b7bab",
+    "pm045-dock-geometry-native-x11-1.5.log.gz": "65572528d21554080a0417958145d67675bed9d7bc2d5b88e527068da8fa72fc",
+    "pm045-dock-geometry-restored.log.gz": "dc3ff40f81959b255bebaae759940d37e8f46a43de4f1b38b3bc9fb8395b5baf",
+    "pm045-dock-geometry-negative.log.gz": "6ea66d1606e2750431bd8641ba97586399a81764364092af8ec46a1fc115026c",
+    "pm045-dock-geometry-policy.log.gz": "787a326245226521c367457a5aaee85d2194820f68e13093587c7cb7cd46344d",
+    "pm045-dock-geometry-renderer.log.gz": "0fe1be423869e0a28b9836cba158601e52ad34fa049ba98e47a30f78dac18ad6",
+    "pm045-dock-geometry-baseline.log.gz": "4d8299d84f101671a7dd121bc581e08499fe98ae0396b2118f3076dc23d9e7f8",
+    "pm045_dock_geometry_negative.py.gz": "7479361dd3fe2735c8b39f274713a0d15e03e8f46110cd625291dbcb4b0b3d81",
+    "pm045_dock_geometry_native.py.gz": "07eb0d34fce849063a540a3dff12edbca3c1dc09bb52b1ae20450768928f030e",
+    "pm045-dock-geometry-negative.patch.gz": "161433936f6b7ffa68a7bca5eb28b03464573561fb23c397fd75bad41e4b1646",
+    "pm045-dock-geometry-negative-result.json.gz": "3d944d1cd5f766cb626e2866b11273e77f49a3399ce83f45568b40f5bc74e3f6",
+    "pm045-dock-geometry-native-results.json.gz": "859d77b4c943bbca83a0878d00b20e3cad0a241390fdeaabeeb2cd98af09dbad",
+    "pm045-dock-geometry-baseline-sha.json.gz": "a56f709b534d88967cb5eb616b2f1004798812f8c69ad1456df4cab5f499ce31",
+    "drift.log.gz": "6f300dd56c52eaf49c4132d391ab50e819c4e8087c3d00853031741ef37beb28"
+  },
+  "verification": "Workspace Clippy,13 source-policy tests, source-health HEAD comparison, dependency authority, traceability, spec governance/parity and project state pass. Full drift stops at the same eight pre-existing GUI agent/terminal convergence source-pattern failures tracked by dat-terminal-convergence-guard-xke; later gates unrun."
+}

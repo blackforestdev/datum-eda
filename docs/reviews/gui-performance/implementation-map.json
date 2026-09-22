@@ -4089,7 +4089,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed Main frame/retained preparation and Runtime input now share the same two-entry shell cache. Cached/uncached geometry and real preparation-entry warm-solve tests pass; isolated cache bypass fails, restored positive passes. Full qualification remains open. Project panel now retains unchanged geometry in a two-entry renderer cache, with fresh-solver and actual preparation/label-update tests; full qualification remains open. Layers retains unchanged row geometry and allocation through the common two-entry layout cache policy also used by Shell/Project. Actual preparation updates labels/hit identity correctly; full qualification remains open. Inspector outer/detail preparation now uses shared bounded layout retention; fresh geometry and actual warm preparation with updated value text pass. Full qualification remains open.",
+        "status": "planned; not executed Main frame/retained preparation and Runtime input now share the same two-entry shell cache. Cached/uncached geometry and real preparation-entry warm-solve tests pass; isolated cache bypass fails, restored positive passes. Full qualification remains open. Project panel now retains unchanged geometry in a two-entry renderer cache, with fresh-solver and actual preparation/label-update tests; full qualification remains open. Layers retains unchanged row geometry and allocation through the common two-entry layout cache policy also used by Shell/Project. Actual preparation updates labels/hit identity correctly; full qualification remains open. Inspector outer/detail preparation now uses shared bounded layout retention; fresh geometry and actual warm preparation with updated value text pass. Full qualification remains open. Dock retires its unused tab Taffy solve and private content rectangle; open content shares terminal geometry, closed dock skips that work. Actual paint/hit geometry and collapsed-width regression are bounded supporting evidence; full qualification remains open.",
         "id": "proof_hp01_01",
         "positive": "Repeat stationary-layout pointer/hit routes",
         "negative_control": "Force uncached solve",
@@ -4136,7 +4136,8 @@
         "docs/reviews/gui-performance/implementation/S3/shared-shell-layout/result.json",
         "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json",
         "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
-        "docs/reviews/gui-performance/implementation/S3/inspector-layout-retention/result.json"
+        "docs/reviews/gui-performance/implementation/S3/inspector-layout-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S3/dock-shared-geometry/result.json"
       ],
       "s3_shared_shell_layout": {
         "production_consumers": [
@@ -4189,6 +4190,20 @@
         "preserved": "Existing solver/fallback, row order/heights, selection/value text, clipping and partial Inspector product scope. Two entries for each of outer/detail owners, not an aggregate cap.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/inspector-layout-retention/result.json",
         "limits": "CPU actual-preparation and geometry proof plus native Main routing smoke; no complete native Inspector control/selection/pixel qualification, numerical CPU/resource or HP01/02/S3 acceptance. No prototype/dependency/license/deadline or resize change."
+      },
+      "s3_dock_shared_geometry": {
+        "production_consumers": [
+          "Main bottom dock content and resize handle",
+          "Main terminal root/split rendering using shared terminal geometry"
+        ],
+        "shared_owner": "datum_gui_viewport::terminal_screen_geometry_with_scale, consumed once per open dock",
+        "retired_paths": [
+          "Taffy tree/solve for an unused terminal_tab rectangle, including closed-dock work",
+          "Private dock content/fallback rectangles competing with terminal geometry"
+        ],
+        "preserved": "Measured terminal tab strip, existing resize handle, normal content geometry, terminal cell/split/PTY authority and painting order. Collapsed content width now follows shared zero-width clamp instead of private one-pixel clamp.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/dock-shared-geometry/result.json",
+        "limits": "Structural retirement and actual-rendered-geometry regression, not numerical CPU/resource or complete native pixel/HP/S3 qualification. Very narrow test extents are deterministic geometry cases, not supported native window-size acceptance. No dependency/license/prototype/budget/deadline or resize-qualification change."
       }
     },
     {
@@ -7825,7 +7840,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial: shared contour/text/hit clipping adopted in Preferences, Inspector, Revision and terminal profiles, with exact native-dialog surface bounds. Component geometry proofs and three isolated terminal negatives exist. Full per-consumer native/diagonal/rounded/negative coverage remains open. Shared clip negatives now detect contour vertex clamping and omitted hidden-hit clipping; byte-restored positives pass. Original diagonal false-pass retained and fixture corrected. Native/full qualification remains open.",
+        "status": "Partial: shared contour/text/hit clipping adopted in Preferences, Inspector, Revision and terminal profiles, with exact native-dialog surface bounds. Component geometry proofs and three isolated terminal negatives exist. Full per-consumer native/diagonal/rounded/negative coverage remains open. Shared clip negatives now detect contour vertex clamping and omitted hidden-hit clipping; byte-restored positives pass. Original diagonal false-pass retained and fixture corrected. Native/full qualification remains open. Dock retires its unused tab Taffy solve and private content rectangle; open content shares terminal geometry, closed dock skips that work. Actual paint/hit geometry and collapsed-width regression are bounded supporting evidence; full qualification remains open.",
         "id": "proof_hp22_01",
         "positive": "Partially visible diagonal/rounded controls and nested clips",
         "negative_control": "Clamp vertices instead of clipping",
@@ -7924,7 +7939,8 @@
         "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
         "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json",
         "docs/reviews/gui-performance/implementation/S3/clip-hidden-geometry/result.json",
-        "docs/reviews/gui-performance/implementation/S3/rectangle-clip/result.json"
+        "docs/reviews/gui-performance/implementation/S3/rectangle-clip/result.json",
+        "docs/reviews/gui-performance/implementation/S3/dock-shared-geometry/result.json"
       ],
       "s3_shell_content_clipping_progress": {
         "status": "bounded S3 Main placeholder/status shared clipping adoption; full qualification open",
@@ -8014,6 +8030,20 @@
         "retired_paths": "Removed rectangle re-encoding from the allocated triangle-processing suffix; no new consumer migration or competing semantic path.",
         "proof": "219 renderer unit tests pass, including reversed-winding rectangle clipping and unchanged visible encoding/order. Existing GPU control parity passes1 test/259 filtered (72 scale/placement/clip cases). Visual renderer Clippy passes; fresh release build passes. Current binary Global1x native content-change/trailing-release/fresh-click trial passes, with exactly one canonical persisted Reduced Motion mutation. Source-policy13 tests pass.",
         "limits": "Structural work removal, not measured latency or full allocation-budget qualification. Mixed crossing triangle suffixes still allocate scratch. Native test covers one Global1x X11 semantic input case and does not qualify final pixels, all consumers, backend/scale matrix or full HP22/S3. No dependency/license/prototype/numerical-budget/resize-scope changes; S3 remains active."
+      },
+      "s3_dock_shared_geometry": {
+        "production_consumers": [
+          "Main bottom dock content and resize handle",
+          "Main terminal root/split rendering using shared terminal geometry"
+        ],
+        "shared_owner": "datum_gui_viewport::terminal_screen_geometry_with_scale, consumed once per open dock",
+        "retired_paths": [
+          "Taffy tree/solve for an unused terminal_tab rectangle, including closed-dock work",
+          "Private dock content/fallback rectangles competing with terminal geometry"
+        ],
+        "preserved": "Measured terminal tab strip, existing resize handle, normal content geometry, terminal cell/split/PTY authority and painting order. Collapsed content width now follows shared zero-width clamp instead of private one-pixel clamp.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/dock-shared-geometry/result.json",
+        "limits": "Structural retirement and actual-rendered-geometry regression, not numerical CPU/resource or complete native pixel/HP/S3 qualification. Very narrow test extents are deterministic geometry cases, not supported native window-size acceptance. No dependency/license/prototype/budget/deadline or resize-qualification change."
       }
     },
     {
@@ -29709,5 +29739,19 @@
     "preserved": "Existing solver/fallback, row order/heights, selection/value text, clipping and partial Inspector product scope. Two entries for each of outer/detail owners, not an aggregate cap.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/inspector-layout-retention/result.json",
     "limits": "CPU actual-preparation and geometry proof plus native Main routing smoke; no complete native Inspector control/selection/pixel qualification, numerical CPU/resource or HP01/02/S3 acceptance. No prototype/dependency/license/deadline or resize change."
+  },
+  "s3_dock_shared_geometry_work": {
+    "production_consumers": [
+      "Main bottom dock content and resize handle",
+      "Main terminal root/split rendering using shared terminal geometry"
+    ],
+    "shared_owner": "datum_gui_viewport::terminal_screen_geometry_with_scale, consumed once per open dock",
+    "retired_paths": [
+      "Taffy tree/solve for an unused terminal_tab rectangle, including closed-dock work",
+      "Private dock content/fallback rectangles competing with terminal geometry"
+    ],
+    "preserved": "Measured terminal tab strip, existing resize handle, normal content geometry, terminal cell/split/PTY authority and painting order. Collapsed content width now follows shared zero-width clamp instead of private one-pixel clamp.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/dock-shared-geometry/result.json",
+    "limits": "Structural retirement and actual-rendered-geometry regression, not numerical CPU/resource or complete native pixel/HP/S3 qualification. Very narrow test extents are deterministic geometry cases, not supported native window-size acceptance. No dependency/license/prototype/budget/deadline or resize-qualification change."
   }
 }
