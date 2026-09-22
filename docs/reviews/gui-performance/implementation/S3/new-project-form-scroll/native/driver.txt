@@ -1,0 +1,57 @@
+import os,subprocess,time,re,json,hashlib
+from pathlib import Path
+root=Path('/home/bfadmin/Documents/datum-eda');out=Path('/tmp/pm045-new-form-scroll-native-final');out.mkdir()
+log=out/'native.log';log.write_text('');actions=[]
+env=os.environ.copy();env.pop('WAYLAND_DISPLAY',None)
+env.update(WINIT_UNIX_BACKEND='x11',DATUM_GUI_VERBOSE_LOG='1',DATUM_GUI_LOG=str(log),XDG_CONFIG_HOME=str(out/'config'),XDG_CACHE_HOME=str(out/'cache'),DATUM_GPU_MEASUREMENTS='0')
+cmd=[str(root/'target/release/datum-gui'),'--board','/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb','--window-size','1280x800','--initial-layout','single','--open-new-project','--visual-scale-factor','2']
+report={'command':cmd,'binary_sha256':hashlib.sha256((root/'target/release/datum-gui').read_bytes()).hexdigest(),'actions':actions}
+with (out/'stderr.log').open('w') as err:
+ p=subprocess.Popen(cmd,env=env,cwd=root,stdout=err,stderr=err)
+ def wait(fn):
+  end=time.monotonic()+20
+  while time.monotonic()<end:
+   assert p.poll() is None,('process exited',p.returncode)
+   value=fn()
+   if value:return value
+   time.sleep(.04)
+  raise AssertionError('predicate timeout')
+ def xdo(*args):
+  actions.append({'args':args,'time':time.time()})
+  subprocess.run(['xdotool',*args],check=True,timeout=8,env=env)
+ def geometry():
+  s=subprocess.check_output(['xdotool','getwindowgeometry','--shell',wid],text=True,env=env)
+  return {k:int(v) for k,v in (line.split('=',1) for line in s.splitlines())}
+ def move(x,y):
+  g=geometry();xdo('mousemove',str(g['X']+x),str(g['Y']+y));time.sleep(.15)
+ def capture(name):
+  subprocess.run(['import','-window',wid,str(out/(name+'.png'))],check=True,timeout=8,env=env)
+ try:
+  ids=wait(lambda: v if len(v:=re.findall(r'surface identity window=WindowId\((\d+)\)',log.read_text()))==2 else None)
+  wid=ids[-1];key='WindowId('+wid+')'
+  def count():
+   lines=log.read_text().splitlines()
+   return sum(json.loads(s.split('native_surface_lifecycle ',1)[1]).get('reason')=='present' and json.loads(s.split('native_surface_lifecycle ',1)[1]).get('window')==key for s in lines if 'native_surface_lifecycle ' in s and s.endswith('}'))
+  wait(lambda:count()>0);xdo('windowactivate','--sync',wid);xdo('windowsize','--sync',wid,'1280','800');time.sleep(.6)
+  g=geometry();report['geometry']=g;w,h=g['WIDTH'],g['HEIGHT'];capture('initial')
+  move(w-10,150);before=count();xdo('mousedown','1');time.sleep(.25);assert count()==before
+  move(w-10,h-10);wait(lambda:count()>before);time.sleep(.3);report['drag_frames']=count()-before
+  before=count();xdo('mouseup','1');time.sleep(.2);assert count()==before;capture('drag-footer')
+  move(w//2,h//2);before=count();xdo('click','5');time.sleep(.3);assert count()==before;report['boundary_frames']=0
+  # Empty form skips disabled Create: Shift-Tab selects Cancel, then Tab returns to Name.
+  before=count();xdo('key','shift+Tab');wait(lambda:count()>before);time.sleep(.2)
+  before=count();xdo('key','Tab');wait(lambda:count()>before);time.sleep(.2);capture('name-revealed')
+  for _ in range(4):
+   before=count();xdo('key','Tab');wait(lambda:count()>before);time.sleep(.15)
+  capture('keyboard-footer')
+  # Cancel is revealed at the viewport bottom; hit the center of its existing 88x32 logical box.
+  move(w-320,h-32);xdo('click','1')
+  def closed():
+   q=subprocess.run(['xdotool','search','--onlyvisible','--pid',str(p.pid)],text=True,capture_output=True,env=env)
+   return wid not in q.stdout.splitlines()
+  wait(closed);report['cancel_closed']=True;report['passed']=True
+ except Exception as e:report.update(passed=False,error=repr(e));raise
+ finally:
+  subprocess.run(['xdotool','mouseup','1'],env=env,timeout=8)
+  if p.poll() is None:p.terminate();p.wait(timeout=10)
+  (out/'result.json').write_text(json.dumps(report,indent=2)+'\n')

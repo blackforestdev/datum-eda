@@ -349,20 +349,5 @@ pub(super) fn render_rows(
             height: viewport.height,
         },
     );
-    for (rect, color) in [
-        (scroll.track(), design_tokens::chrome::SURFACE_01),
-        (scroll.thumb(), TEXT_SECONDARY),
-    ] {
-        if let Some(r) = rect {
-            quads.push(Quad::from_rect(
-                RectPx {
-                    x: r.x,
-                    y: r.y,
-                    width: r.width,
-                    height: r.height,
-                },
-                color,
-            ));
-        }
-    }
+    crate::global_preferences_primitives::paint_scrollbar(scroll, quads);
 }
