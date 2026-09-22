@@ -153,7 +153,7 @@ impl ProjectPreferencesCoordinator {
             open_choice_key: None,
             focus: GlobalPreferencesFocus::SectionNavigation,
             notice: Some(GlobalPreferencesNoticeUi::PreservedUnreadable(reason)),
-            reduced_motion: false,
+            reduced_motion: dialog.reduced_motion,
             high_contrast_noncolor: false,
         };
         self.project_root = None;
@@ -277,7 +277,7 @@ impl ProjectPreferencesCoordinator {
             open_choice_key,
             focus,
             notice: None,
-            reduced_motion: false,
+            reduced_motion: dialog.reduced_motion,
             high_contrast_noncolor: false,
         };
         self.project_root = Some(root.to_path_buf());

@@ -313,6 +313,12 @@ fn every_visible_value_updates_its_declared_live_consumer() {
         )
         .unwrap();
     assert!(ui.global_preferences.reduced_motion);
+    assert!(ui.project_preferences.reduced_motion);
+    coordinator
+        .reset("datum.accessibility.reduced_motion", &mut ui)
+        .unwrap();
+    assert!(!ui.global_preferences.reduced_motion);
+    assert!(!ui.project_preferences.reduced_motion);
     assert_eq!(before.finish(Damage::Dependents, &ui), Damage::Dialog);
 
     coordinator
