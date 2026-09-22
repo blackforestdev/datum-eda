@@ -1,0 +1,280 @@
+{
+  "binary_sha256": "551ebfd9287ee21bfdb3c2c66f33c808f6452161a0dd6a60d4462da2e33fdc74",
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--board",
+    "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "--window-size",
+    "1280x800",
+    "--initial-layout",
+    "single",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "steps": [
+    {
+      "name": "top-boundary",
+      "before": 3,
+      "after": 3,
+      "events": [
+        "[SystemTime { tv_sec: 1790063787, tv_nsec: 87323272 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, 1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063787, tv_nsec: 87469883 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, 1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063787, tv_nsec: 157773585 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, 1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063787, tv_nsec: 158398101 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, 1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063787, tv_nsec: 228240560 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, 1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063787, tv_nsec: 228752923 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, 1.0) phase=Moved"
+      ]
+    },
+    {
+      "name": "down",
+      "before": 3,
+      "after": 4,
+      "events": [
+        "[SystemTime { tv_sec: 1790063788, tv_nsec: 275146618 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063788, tv_nsec: 275306754 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved"
+      ]
+    },
+    {
+      "name": "to-bottom",
+      "before": 4,
+      "after": 12,
+      "events": [
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 332044686 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 332193581 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 402678152 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 403080937 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 472865255 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 473218718 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 543196217 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 543538697 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 613514796 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 613998722 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 683827359 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 684189153 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 754153097 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 754516403 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 824702398 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 825096342 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 894684766 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 895019647 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 965022042 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063789, tv_nsec: 965375997 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 35384421 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 35746643 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 105777821 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 106187448 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 175888760 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 176227128 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 246451283 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 246798836 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 316526163 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 316866200 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 386950098 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 387274194 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 457240751 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 457610499 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 527595066 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 527956770 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 597875124 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 598267606 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 668132891 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 668499296 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 738440526 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 738766922 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 808715761 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 809064335 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 879055014 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 879664803 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 949326824 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063790, tv_nsec: 949743066 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 19825089 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 20166590 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 90044318 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 90389091 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 160320026 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 160642885 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 230793484 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 231143452 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 300973145 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 301376819 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 371303066 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 371611869 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 441574133 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 441995912 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 511877854 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 512253866 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 582213015 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 582553079 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 652451100 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 652817111 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 722590698 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 722698998 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 793146568 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 793521227 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 863513371 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 863891663 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 934043421 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063791, tv_nsec: 934400096 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 4035999 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 4355763 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 74400935 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 74734642 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 144658201 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 145008818 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 214847733 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 215173100 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 285267104 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 285644953 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 355602320 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 356013596 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 425878073 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 426197360 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 496220819 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 496556012 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 566524830 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 566811751 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 636944963 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 637293784 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 707174704 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 707500824 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 777431530 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063792, tv_nsec: 777855467 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved"
+      ]
+    },
+    {
+      "name": "bottom-boundary",
+      "before": 12,
+      "after": 12,
+      "events": [
+        "[SystemTime { tv_sec: 1790063793, tv_nsec: 827802933 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063793, tv_nsec: 827923666 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063793, tv_nsec: 898380894 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063793, tv_nsec: 898737576 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063793, tv_nsec: 968905612 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063793, tv_nsec: 969218294 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, -1.0) phase=Moved"
+      ]
+    },
+    {
+      "name": "reverse",
+      "before": 12,
+      "after": 13,
+      "events": [
+        "[SystemTime { tv_sec: 1790063795, tv_nsec: 12131809 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, 1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063795, tv_nsec: 12319701 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, 1.0) phase=Moved"
+      ]
+    },
+    {
+      "name": "editor-zoom",
+      "before": 14,
+      "after": 15,
+      "events": [
+        "[SystemTime { tv_sec: 1790063796, tv_nsec: 603118137 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, 1.0) phase=Moved",
+        "[SystemTime { tv_sec: 1790063796, tv_nsec: 603553760 }] window event WindowId(6291460) mouse wheel delta=LineDelta(0.0, 1.0) phase=Moved"
+      ]
+    }
+  ],
+  "input_focus_roundtrips": [
+    {
+      "args": [
+        "windowactivate",
+        "--sync",
+        "6291460"
+      ],
+      "focus": "6291460"
+    },
+    {
+      "args": [
+        "mousemove",
+        "--window",
+        "6291460",
+        "100",
+        "550"
+      ],
+      "focus": "6291460"
+    },
+    {
+      "args": [
+        "click",
+        "--repeat",
+        "3",
+        "--delay",
+        "70",
+        "4"
+      ],
+      "focus": "6291460"
+    },
+    {
+      "args": [
+        "click",
+        "--repeat",
+        "1",
+        "--delay",
+        "70",
+        "5"
+      ],
+      "focus": "6291460"
+    },
+    {
+      "args": [
+        "click",
+        "--repeat",
+        "50",
+        "--delay",
+        "70",
+        "5"
+      ],
+      "focus": "6291460"
+    },
+    {
+      "args": [
+        "click",
+        "--repeat",
+        "3",
+        "--delay",
+        "70",
+        "5"
+      ],
+      "focus": "6291460"
+    },
+    {
+      "args": [
+        "click",
+        "--repeat",
+        "1",
+        "--delay",
+        "70",
+        "4"
+      ],
+      "focus": "6291460"
+    },
+    {
+      "args": [
+        "mousemove",
+        "--window",
+        "6291460",
+        "800",
+        "350"
+      ],
+      "focus": "6291460"
+    },
+    {
+      "args": [
+        "click",
+        "--repeat",
+        "1",
+        "--delay",
+        "70",
+        "4"
+      ],
+      "focus": "6291460"
+    }
+  ],
+  "unchanged_board_crop": [
+    400,
+    150,
+    900,
+    500
+  ],
+  "passed": true,
+  "exit": 0
+}

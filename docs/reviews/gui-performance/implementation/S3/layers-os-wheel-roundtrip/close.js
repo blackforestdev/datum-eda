@@ -1,0 +1,1 @@
+for (const w of workspace.windowList()) { if (Number(w.pid) === 1873412 && w.caption === "Datum EDA") w.closeWindow(); }
