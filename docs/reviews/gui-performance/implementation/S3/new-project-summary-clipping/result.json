@@ -1,0 +1,31 @@
+{
+  "base_commit": "67362dfe",
+  "production": {
+    "status": "bounded default NEW Units summary shared ancestor clipping",
+    "production_consumers": [
+      "NEW render_new_project_dialog Units summary geometry/text/hit group"
+    ],
+    "retired_paths": [
+      "Summary descendants relying only on outer native-window clipping"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/new-project-summary-clipping/result.json",
+    "limits": "Bounded NEW summary adoption only; full native narrow/input/negative/resource and S3 qualification remain open. No dependency, license, prototype or sequencing amendment; resize remains nonblocking."
+  },
+  "proof": {
+    "renderer_tests": 208,
+    "serial_gpu_tests": 13,
+    "clippy": "pass -D warnings",
+    "fresh_release_build": "pass offline",
+    "native_capture": "1000x750 X11; before/after RGB identical; inspected after capture",
+    "regression": "Actual adapter at widths240/760 with long source/value strings inherits summary ancestor; Create target preserved"
+  },
+  "visual_review": {
+    "prototype": "docs/gui/prototypes/start-page-study.html",
+    "revision": "62fec36b September 6 New Project Units genesis form GP-CM03",
+    "sha256": "4922cbc0812b35a258a8bb2d79c270e38c1048021640f5ee7cd3d795d733a587",
+    "render": "prototype.png; rendered with installed Chromium, inspected alongside native form",
+    "disposition": "Use newer relevant prototype as visual guidance, not pixel-exact authority. Preserve compact form hierarchy, grouped Units summary and footer. E05 supplies ancestor clipping; no new styling or interaction decision."
+  },
+  "source_sha256": "e5ad7a7c7e1114039904f70b67a8b30b7b39e9178a3e6cdf010d52df15b947a2",
+  "limits": "Bounded NEW summary adoption only; full native narrow/input/negative/resource and S3 qualification remain open. No dependency, license, prototype or sequencing amendment; resize remains nonblocking."
+}

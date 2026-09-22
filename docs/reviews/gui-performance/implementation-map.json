@@ -27312,5 +27312,16 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/shell-identity-clipping/result.json",
     "limits": "No full MAIN/HP22/S3 adoption, native narrow-window, high-contrast pixel, exact legacy pixel or isolated negative qualification. Existing placement/overlap within each strip is unchanged. No hit-authority, dependency/license, prototype, budget or nonblocking resize-scope change. S3 proposal1bc02aaf remains unapproved.",
     "visual_authority_review": "Board-editor .menubar/.brand/.pill and .status reconciled with GUI design spec and deferred status-bar guidance; exact sources and limitations in receipt. PM045 E05 supplies ancestor clipping. No new status contents, overflow navigation or full prototype parity claim."
+  },
+  "s3_new_project_summary_clipping_work": {
+    "status": "bounded default NEW Units summary shared ancestor clipping",
+    "production_consumers": [
+      "NEW render_new_project_dialog Units summary geometry/text/hit group"
+    ],
+    "retired_paths": [
+      "Summary descendants relying only on outer native-window clipping"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/new-project-summary-clipping/result.json",
+    "limits": "Bounded NEW summary adoption only; full native narrow/input/negative/resource and S3 qualification remain open. No dependency, license, prototype or sequencing amendment; resize remains nonblocking."
   }
 }
