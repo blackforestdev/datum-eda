@@ -1,0 +1,30 @@
+{
+  "candidate_base": "9b5ce121bb9d6558ba47e40454922fb2c5738938",
+  "issue": "dat-clip-diagonal-oracle-p4ad",
+  "status": "Corrected existing diagonal oracle detects forbidden clamping; hidden-hit negative also detected",
+  "requirements": [
+    "HP22-01",
+    "HP22-02"
+  ],
+  "observations": {
+    "original-clamp": "Original area8 fixture passes with forbidden vertex clamping (1 pass,214 filtered). Restored original also passes; this is a verified test gap, not rendering acceptance.",
+    "corrected-clamp": "Change triangle endpoints6 to8: true viewport intersection area14, clamped triangle area8. Fault now fails intended area assertion (1 failed,214 filtered); restored production passes1.",
+    "hidden-hits": "Omit shared hit clipping call: existing test fails3 retained hits versus2. Restored production passes1,214 filtered.",
+    "source": "Final restored file matches active candidate; only existing test fixture/assertion changed."
+  },
+  "source_sha256": "78b50c9b65cda51572ef896d2cd1efd0b81d60572e5ff9c0c1ee75f7588be384",
+  "limits": "Existing shared CPU clipping tests, not native consumer dispatch or GPU pixels. Corrected triangle distinguishes contour intersection from vertex clamping while preserving pinned geometry. Hidden-hit negative detects retained hidden region count; restored test verifies nested text/hit intersections and pinned chrome. Native rounded/diagonal/all-profile coverage, pinned-header negative and full HP22/S3 acceptance remain open. Production clipping unchanged; no dependencies/license/prototype/numerical budget/resize-scope changes.",
+  "artifact_sha256": {
+    "corrected-clamp-negative.log.gz": "888ceaceede91d2258b9388ce95a0f862dca09606f108eee03fcd5d4a75f4dec",
+    "corrected-clamp-restored.log.gz": "28076dee6b458caf2467a756a04d7d704f60cbfdccf5c0a94ad53cc70cfeb330",
+    "corrected-clamp.patch": "aa1832557452b556e8afabaedb3270c20b41a6deece3f8dbffcb67f8df50a066",
+    "hidden-hits-negative.log.gz": "01c90c5f327143a9d10a1329550f4e99eb911e0df4fd8b060205f2252387b6a8",
+    "hidden-hits-restored.log.gz": "7d7f2d7fb349f1d3352c7e74949f21ab8bbb60778d8e973f93cf565cf3f147e0",
+    "hidden-hits.patch": "97dd0b5e05520a135b01899ef718db841ac591c8b3bbdb34ae9810242f1b4775",
+    "original-clamp-negative.log.gz": "42b45e45a0776a93a7ad92e01c193ab850af8d7d2ad039ffb77ce9f7718568f5",
+    "original-clamp-restored.log.gz": "df7b8cabd6ba8486239a711fa46a3e3a075dd1d1376547024e04e04146ddff3f",
+    "original-clamp.patch": "ed7fc7b1445f1897d3bbf6d4d7b8e23e5dbad1945b2ae9102ee89e7a0a6c1c8c",
+    "run-result.json": "c534769e2864126213ff28bbf3cff39ba5f893993622d5ff6fe9cf15ac638451",
+    "runner.py": "3f2b830d3ab7713436f37c2dc6cbc0fda4c6f0b12dd2f5cebb58761c55b22775"
+  }
+}
