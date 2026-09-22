@@ -6496,7 +6496,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared thumb/page capture separates consumption from damage and actual Preferences dispatch consumes scrollbar input. Component proof exists; recent GLOBAL/PROJECT native recipes failed/aborted and establish no complete click-through/grab/page pass. Subsequent b64af50d GLOBAL/PROJECT Units native drag/boundary/reversal trial passes with delivered target/direction and exact return pixels; this bounded pass does not complete the row or supersede earlier failed attempts.",
+        "status": "Partial: shared thumb/page capture separates consumption from damage and actual Preferences dispatch consumes scrollbar input. Component proof exists; recent GLOBAL/PROJECT native recipes failed/aborted and establish no complete click-through/grab/page pass. Subsequent b64af50d GLOBAL/PROJECT Units native drag/boundary/reversal trial passes with delivered target/direction and exact return pixels; this bounded pass does not complete the row or supersede earlier failed attempts. Subsequent94402793 native page-track down/up passes for GLOBAL/PROJECT Units at1000x750 with exact return pixels and zero release presentations; full click-through/grab/negative matrix remains open.",
         "id": "proof_hp21_01",
         "positive": "Thumb press/drag at offset and track click",
         "negative_control": "Use painted-only scrollbar or lose grab displacement",
@@ -6548,8 +6548,20 @@
         "limits": "No full HP21/HP22 or S3 acceptance. No page-track, hidden-control click-through, capture-loss, scale/backend matrix, latency, resource, teardown or independent negative-control qualification. Earlier failed/aborted attempts remain unchanged. This pass does not establish the cause of prior unexplained input. S3 proposal 1bc02aaf remains unapproved."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json"
-      ]
+        "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-preferences-track/result.json"
+      ],
+      "s3_native_preferences_track_progress": {
+        "status": "bounded native Preferences page-track pass; full qualification open",
+        "production_consumers": [
+          "GLOBAL Units ScrollViewport native adapter",
+          "PROJECT Units ScrollViewport native adapter"
+        ],
+        "retired_paths": "No new production migration; qualifies existing shared page-track and changed-only damage paths at this extent.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-preferences-track/result.json",
+        "proof": "Fresh release94402793. Both directions present once per dialog; each release presents zero. Actual target/coordinates confirmed; six screenshots inspected and exact whole-window RGB return checked.",
+        "limits": "Bounded page-track evidence only, not complete HP21/HP22 or S3 qualification. No capture-loss/focus/close, arbitrary grab displacement, hidden-control click-through, independent negative, backend/scale matrix, latency/resource or teardown acceptance. Historical failures remain unchanged. Pending S3 proposal1bc02aaf remains unapproved."
+      }
     },
     {
       "id": "HP21-02",
@@ -27160,5 +27172,16 @@
     "preserved": "Caption centering, status segment placement/content, retained scene selection, and existing input routing. Shared clipping restricts output without a new layout or private clip implementation.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/shell-content-clipping/result.json",
     "limits": "No native narrow-pane/status-bar, exact legacy pixel, isolated negative-control or full HP22/S3 qualification. Status segment overlap inside the strip is unchanged. These paint functions emit no HitRegion; layout-derived input routing remains unchanged. S3 proposal1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
+  },
+  "s3_native_preferences_track_work": {
+    "status": "bounded native Preferences page-track pass; full qualification open",
+    "production_consumers": [
+      "GLOBAL Units ScrollViewport native adapter",
+      "PROJECT Units ScrollViewport native adapter"
+    ],
+    "retired_paths": "No new production migration; qualifies existing shared page-track and changed-only damage paths at this extent.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-preferences-track/result.json",
+    "proof": "Fresh release94402793. Both directions present once per dialog; each release presents zero. Actual target/coordinates confirmed; six screenshots inspected and exact whole-window RGB return checked.",
+    "limits": "Bounded page-track evidence only, not complete HP21/HP22 or S3 qualification. No capture-loss/focus/close, arbitrary grab displacement, hidden-control click-through, independent negative, backend/scale matrix, latency/resource or teardown acceptance. Historical failures remain unchanged. Pending S3 proposal1bc02aaf remains unapproved."
   }
 }

@@ -1,0 +1,269 @@
+{
+  "display": ":1",
+  "wayland_display": "wayland-0",
+  "topology": "Owner-confirmed idle desktop X11/Xwayland; native adapter functional trial",
+  "binary_sha256": "3d819c9088cb901a66eb4faca602312761465a7135424f2c75d4e6027a4c54e7",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-global-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "31457285"
+          ],
+          "monotonic": 779686.231727283,
+          "wall_time": 1790042836.1014023
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "31457285",
+            "50",
+            "107",
+            "click",
+            "1"
+          ],
+          "monotonic": 779686.298050378,
+          "wall_time": 1790042836.1677198
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "31457285",
+            "994",
+            "744"
+          ],
+          "monotonic": 779686.823764523,
+          "wall_time": 1790042836.6934345
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "31457285",
+            "994",
+            "744",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 779687.199299658,
+          "wall_time": 1790042837.0689692
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "31457285",
+            "994",
+            "744",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 779687.459811078,
+          "wall_time": 1790042837.3294811
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "31457285",
+            "994",
+            "105"
+          ],
+          "monotonic": 779687.8939583,
+          "wall_time": 1790042837.7636275
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "31457285",
+            "994",
+            "105",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 779688.103042719,
+          "wall_time": 1790042837.9727128
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "31457285",
+            "994",
+            "105",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 779688.37262223,
+          "wall_time": 1790042838.2422922
+        }
+      ],
+      "geometry": {
+        "WINDOW": "31457285",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "page_down_frames": 1,
+      "page_down_release_frames": 0,
+      "page_up_frames": 1,
+      "page_up_release_frames": 0,
+      "exact_return_pixels": true,
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-project-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "27262981"
+          ],
+          "monotonic": 779691.858169054,
+          "wall_time": 1790042841.7278395
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "994",
+            "744"
+          ],
+          "monotonic": 779692.333463986,
+          "wall_time": 1790042842.203134
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "994",
+            "744",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 779692.708421077,
+          "wall_time": 1790042842.5780907
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "994",
+            "744",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 779692.999683607,
+          "wall_time": 1790042842.869354
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "994",
+            "105"
+          ],
+          "monotonic": 779693.433842757,
+          "wall_time": 1790042843.303512
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "994",
+            "105",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 779693.642841502,
+          "wall_time": 1790042843.5125117
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "27262981",
+            "994",
+            "105",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 779693.902994285,
+          "wall_time": 1790042843.7726638
+        }
+      ],
+      "geometry": {
+        "WINDOW": "27262981",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "page_down_frames": 1,
+      "page_down_release_frames": 0,
+      "page_up_frames": 1,
+      "page_up_release_frames": 0,
+      "exact_return_pixels": true,
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    }
+  ],
+  "source_commit": "94402793",
+  "scope": "Actual GLOBAL/PROJECT Units adapters, native X11/Xwayland, actual1000x750 client, requested visual scale1; GPU measurements disabled, verbose native logging enabled.",
+  "review": "All six captures inspected: page-down exposes final Angle precision row; page-up restores initial content and thumb. Logs confirm presses/releases at actual dialog WindowIds and track coordinates994,744 and994,105. Both directions present once; releases present zero. Driver RGB comparison verifies exact whole-window return. No settings popup visible; no stored-preference mutation audit performed.",
+  "limits": "Bounded page-track evidence only, not complete HP21/HP22 or S3 qualification. No capture-loss/focus/close, arbitrary grab displacement, hidden-control click-through, independent negative, backend/scale matrix, latency/resource or teardown acceptance. Historical failures remain unchanged. Pending S3 proposal1bc02aaf remains unapproved.",
+  "artifact_sha256": {
+    "GLOBAL/before.png": "a4f134782fa0e1eee2731cebd1f5bb5a474a0f498734d660240ab3b025ca1719",
+    "GLOBAL/bottom.png": "ddaa1c9e17e1040857f3aad35acf1162e880ed34fcb9271826e224b75a31e143",
+    "GLOBAL/native.log.gz": "ac701a98da2255606fc5285257e3e81a39da367bc749cb543688bc09add9ba3c",
+    "GLOBAL/reverse.png": "a4f134782fa0e1eee2731cebd1f5bb5a474a0f498734d660240ab3b025ca1719",
+    "GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "PROJECT/before.png": "ab0a01f212e2ab6343ee3038d409d0c640bd4e2bc9298fa13ef38da54f0997a2",
+    "PROJECT/bottom.png": "1cbb1a7e4f1604009c9284af9466239e24e43b3eab3c7f890251ef651f72f079",
+    "PROJECT/native.log.gz": "8b50dc602fbea44c726ab67ea24a4d23a1d9ef6045cc189b4437221d70738365",
+    "PROJECT/reverse.png": "ab0a01f212e2ab6343ee3038d409d0c640bd4e2bc9298fa13ef38da54f0997a2",
+    "PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "driver.txt": "a190e152d1ed677dcb591ab98df17b092de6292615d79a20020bc25887ea7617",
+    "release.log.gz": "e821db59163f34aab0a679b4d9f5df7818bcd2fd080d976648da227d7e16edd3"
+  }
+}
