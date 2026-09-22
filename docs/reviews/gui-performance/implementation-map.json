@@ -5525,7 +5525,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
         "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json",
-        "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json"
+        "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json",
+        "docs/reviews/gui-performance/implementation/S3/search-byte-fast-path/result.json"
       ],
       "s3_explanation_focus_reveal_progress": {
         "status": "Shared explanation Close focus reveal implemented in default GLOBAL/PROJECT surfaces",
@@ -5588,6 +5589,17 @@
         "retired_paths": "Per-call lowercase query and per-field lowercase label/description/key/alias/control-value copies. Integer formatting remains.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json",
         "limits": "Structural removal of lowercase String copies, not a measured CPU/frame-time or complete allocation claim. Integer value-plus-suffix formatting remains. ASCII-only folding preserved, not expanded Unicode normalization. Native X11/Xwayland1x search/clear is bounded; remaining backend/scale, full search/focus/HP12/HP23/S3 qualification open. No dependency/license/prototype/budget/resize change."
+      },
+      "s3_search_byte_fast_path_progress": {
+        "status": "Single-byte Preferences search uses direct case-insensitive byte scan",
+        "production_consumers": [
+          "GLOBAL Preferences search",
+          "PROJECT Preferences search"
+        ],
+        "shared_owner": "GlobalPreferencesDialogState::visible_rows shared matcher",
+        "retired_paths": "General slice-window comparison for single-byte search queries, replaced by direct byte scan; no new cache.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/search-byte-fast-path/result.json",
+        "limits": "Bounded field-matcher diagnostic over135 actual catalog strings and six queries, four alternating-order rounds of10000 iterations. Excludes rendering, complete visible_rows short-circuiting, query normalization, native input and full STAT/ADM conformance. No GUI speed, numerical budget or full HP12/HP23/S3 acceptance. Integer formatting still allocates; multi-byte queries retain borrowed window matching. No dependencies, prototype, license or resize-scope change."
       }
     },
     {
@@ -7621,7 +7633,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
         "docs/reviews/gui-performance/implementation/S3/focus-reflow/result.json",
         "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json",
-        "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json"
+        "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json",
+        "docs/reviews/gui-performance/implementation/S3/search-byte-fast-path/result.json"
       ],
       "s3_focus_reveal_trace_progress": {
         "status": "bounded GLOBAL/PROJECT unchanged-production keyboard reveal pass after runtime trace; full qualification open",
@@ -7701,6 +7714,17 @@
         "retired_paths": "Per-call lowercase query and per-field lowercase label/description/key/alias/control-value copies. Integer formatting remains.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json",
         "limits": "Structural removal of lowercase String copies, not a measured CPU/frame-time or complete allocation claim. Integer value-plus-suffix formatting remains. ASCII-only folding preserved, not expanded Unicode normalization. Native X11/Xwayland1x search/clear is bounded; remaining backend/scale, full search/focus/HP12/HP23/S3 qualification open. No dependency/license/prototype/budget/resize change."
+      },
+      "s3_search_byte_fast_path_progress": {
+        "status": "Single-byte Preferences search uses direct case-insensitive byte scan",
+        "production_consumers": [
+          "GLOBAL Preferences search",
+          "PROJECT Preferences search"
+        ],
+        "shared_owner": "GlobalPreferencesDialogState::visible_rows shared matcher",
+        "retired_paths": "General slice-window comparison for single-byte search queries, replaced by direct byte scan; no new cache.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/search-byte-fast-path/result.json",
+        "limits": "Bounded field-matcher diagnostic over135 actual catalog strings and six queries, four alternating-order rounds of10000 iterations. Excludes rendering, complete visible_rows short-circuiting, query normalization, native input and full STAT/ADM conformance. No GUI speed, numerical budget or full HP12/HP23/S3 acceptance. Integer formatting still allocates; multi-byte queries retain borrowed window matching. No dependencies, prototype, license or resize-scope change."
       }
     },
     {
@@ -28666,5 +28690,16 @@
     "retired_paths": "Per-call lowercase query and per-field lowercase label/description/key/alias/control-value copies. Integer formatting remains.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json",
     "limits": "Structural removal of lowercase String copies, not a measured CPU/frame-time or complete allocation claim. Integer value-plus-suffix formatting remains. ASCII-only folding preserved, not expanded Unicode normalization. Native X11/Xwayland1x search/clear is bounded; remaining backend/scale, full search/focus/HP12/HP23/S3 qualification open. No dependency/license/prototype/budget/resize change."
+  },
+  "s3_search_byte_fast_path_work": {
+    "status": "Single-byte Preferences search uses direct case-insensitive byte scan",
+    "production_consumers": [
+      "GLOBAL Preferences search",
+      "PROJECT Preferences search"
+    ],
+    "shared_owner": "GlobalPreferencesDialogState::visible_rows shared matcher",
+    "retired_paths": "General slice-window comparison for single-byte search queries, replaced by direct byte scan; no new cache.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/search-byte-fast-path/result.json",
+    "limits": "Bounded field-matcher diagnostic over135 actual catalog strings and six queries, four alternating-order rounds of10000 iterations. Excludes rendering, complete visible_rows short-circuiting, query normalization, native input and full STAT/ADM conformance. No GUI speed, numerical budget or full HP12/HP23/S3 acceptance. Integer formatting still allocates; multi-byte queries retain borrowed window matching. No dependencies, prototype, license or resize-scope change."
   }
 }
