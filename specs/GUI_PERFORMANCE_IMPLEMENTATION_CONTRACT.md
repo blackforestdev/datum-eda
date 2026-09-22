@@ -57,7 +57,7 @@ earlier proven behavior; it is not a destructive reset of shared work.
 | S0 | Separate owner execution grant; pin current source/fixture/environment, select the first bounded S1 change from attributable work or a demonstrated correctness defect, and validate only the measurements used for that selection and its proof | Record production entry points, matched baseline, verified input/final state, applicable counters and their conformance/overhead, relevant static/input regressions, and every outstanding ADM/GPU/ACC obligation with its owning S1–S4 component. No global admission, budget or performance pass follows. Keep measurement repair separable from behavior changes. |
 | S1 | S0 attribution; shared NativeFrameCoordinator, host damage generations, queue/configure coordination and recovery in main and all three auxiliary hosts | Establish implementation readiness from the current production call-site inventory for all four native hosts, retired competing default paths, shared-owner correctness regressions, actual per-host native adapter evidence, and implemented surface-generation/submission/attachment-lifetime accounting. Preserve bounded affected-change positive/negative evidence and all failed attempts; an unexplained regression still blocks advancement. Record each unfinished SH/LF/affected-HP predicate in its existing map row. Outstanding prescribed per-row negative-control replays, complete native final-state/static/input/focus coverage, backend/scale coverage and full resource/method qualification become explicit S5 exit prerequisites. They remain unqualified, not satisfied by S1 readiness. Rollback preserves coherent shared adoption. Resize qualification stays separately nonblocking. |
 | S2 | S0 measurement; use S1 shared interfaces when available without selecting work out of order. Retained world/encoding/screen uploads, text and cache ownership | Establish bounded shared-implementation readiness from the default production consumers of retained world, encoding, screen/uniform upload and shaped-text ownership; retired competing paths; affected warm/replacement/eviction and painter/AA/text correctness proofs; and explicit resource limits. Keep each unfinished implementation and qualification predicate in its existing map row. Complete accounting/caps, exact changed-range transfers and complete shaping/layout dependency implementation are S4 exit prerequisites; full native/replacement/device-reset/negative and budget qualification is required at S5. Partial limits are not complete byte caps. Unexplained regressions block readiness. Preserve separately reversible geometry/text/upload patches. |
-| S3 | S2 retained resource interfaces. Shared dialog/control profiles and scroll/clip/hit contracts in both Preferences, New Project and main panels | HP11–23, per-adapter input/focus and pass-count proof; retire New Project general backdrop and duplicate control machinery. Preserve legitimate discrete Layers/terminal semantics. Revert controls without changing stored preferences or project-creation authority. |
+| S3 | S2 retained resource interfaces. Shared dialog/control profiles and scroll/clip/hit contracts in both Preferences, New Project and main panels | HP11–23, per-adapter input/focus and pass-count proof; retire New Project general backdrop and duplicate control machinery. Preserve legitimate discrete Layers/terminal semantics. Revert controls without changing stored preferences or project-creation authority. Only the complete S2-owned resource accounting/cap dependencies of HP14-01, HP14-02 and HP16-03 follow the approved S4 implementation and S5 qualification deadlines. S3 still requires shared production adoption, bounded warm reuse/eviction behavior and the other functional/input/focus/pass predicates at explicitly recorded current limits. Complete resource bounds, including the working-set resource precondition of HP14-01, remain unqualified until S5; implementation must be complete at S4. Record these resource dependencies individually against the existing MEM rows in the adoption map without changing acceptance rules or marking them passed. No other S3 predicate moves, and unexplained regressions still prevent advancement. |
 | S4 | S1–S3. Terminal adapters, mixed activity/fairness, all-host closure and fault/recovery adoption | PTY byte/state preservation, hidden-render suppression, two-generation glyph bounds, allocation/recovery accounting and serial shared-device multiwindow proof. Concurrent multi-device crash remains separate. Revert rendering adapters without replacing TerminalCore/PTY state. Complete every unfinished S2 accounting/cap, exact changed-range transfer and shaping/layout dependency implementation carried in the adoption map, with affected positive/negative and counter-conformance proof. Private dependency internals remain a technical boundary to resolve within owner-authorized scope, not a waiver or permission to modify third-party code. |
 | S5 | Every adopted implementation slice and required admission/method conformance. Final coverage, native owner UX, distinct-reviewer replay and endurance | Run all in-scope requirements on pinned candidate, both daily native backends and supported scale rows; 60-minute/200-cycle/20-recovery contract. Publish excluded temporal/T2/schematic rows as unqualified, never full performance acceptance. Full resize closure additionally requires all temporal/resource rows; no local or initial-scope result closes it. Close every in-scope SH/LF/affected-HP predicate carried from S1, including prescribed negative controls and native final-state/static/input/focus and complete resource/method proof. S1 readiness does not waive any such result. Close every in-scope qualification predicate carried from S2, including exact warm/replacement/address-reuse/eviction/device-reset negatives, painter/AA/text parity, complete byte caps and ACC-01/02 conformance across the required consumers/configurations. Unfinished implementation at S4 blocks S5 entry; moving a predicate does not satisfy it. |
 
@@ -307,25 +307,21 @@ at S4; full qualification remains required at S5. No full byte-budget, native
 backend/scale, independent replay, endurance, schematic admission or resize
 acceptance follows from this bounded readiness disposition.
 
-## Proposed S3 shared-resource dependency clarification — not approved
+## Owner amendment: S3 shared-resource dependency clarification
 
-The S3 table still requires HP11–23 proof before S4. HP14-01/02 require
-complete shaped-label/atlas/scratch bounds, and HP16-03 requires complete
-control-mesh resource bounds. These reference the same S2-owned resources whose
-unfinished accounting/cap implementation the approved S2/S4 tables explicitly
-carry to S4, with qualification at S5. The current S3 wording therefore demands
-proof of those resources before their approved implementation deadline. The
-S2 readiness receipt and the original map rows still correctly mark them open.
+<!-- EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S3-RESOURCE-APPROVED -->
 
-Proposed exact replacement for the S3 table's **Required evidence / rollback
-boundary** cell, leaving its dependency/scope cell and all other clauses intact:
+The owner approved the exact pending clarification in commit `1bc02aaf`:
 
-> HP11–23, per-adapter input/focus and pass-count proof; retire New Project general backdrop and duplicate control machinery. Preserve legitimate discrete Layers/terminal semantics. Revert controls without changing stored preferences or project-creation authority. Only the complete S2-owned resource accounting/cap dependencies of HP14-01, HP14-02 and HP16-03 follow the approved S4 implementation and S5 qualification deadlines. S3 still requires shared production adoption, bounded warm reuse/eviction behavior and the other functional/input/focus/pass predicates at explicitly recorded current limits. Complete resource bounds, including the working-set resource precondition of HP14-01, remain unqualified until S5; implementation must be complete at S4. Record these resource dependencies individually against the existing MEM rows in the adoption map without changing acceptance rules or marking them passed. No other S3 predicate moves, and unexplained regressions still prevent advancement.
+> Approve the exact S3 clarification
 
-The pending map entry `proposed_s3_resource_dependency_clarification` identifies
-the exact resource-row associations. Approval would apply the cell above and
-record those associations as operative, followed by a separate evidence-based
-S3 exit review. It would not complete S3, waive its remaining native/negative
-proof, authorize S4 selection immediately, solve private resource accounting,
-change numerical budgets, authorize dependencies or alter resize exclusions.
-Until explicit owner approval, the existing S3 table remains controlling.
+The S3 table's required-evidence cell now applies that exact replacement. Only
+complete S2-owned resource accounting/cap dependencies of HP14-01, HP14-02 and
+HP16-03 move to S4 implementation and S5 qualification. The existing adoption
+map records their individual MEM associations, retaining original acceptance
+rules and partial statuses. All other S3 functional/native/negative proof remains
+required before S4; a separate evidence-based exit review must precede selection.
+
+This approval does not complete S3, qualify resource bounds, solve private
+resource accounting, authorize dependencies, change numerical budgets or alter
+the nonblocking resize exclusion. S3 remains selected and in progress.
