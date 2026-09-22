@@ -1,0 +1,87 @@
+{
+  "candidate_base": "aa2762cfb5904bcf9cc6992d837e57483ad4b303",
+  "status": "Native New Project changed-state dialog-only pass proof succeeds",
+  "requirements": [
+    "HP13-01"
+  ],
+  "binary_sha256": "ed2dd62b51e5abf99a991b543b6c6447e5bdc40358cd348beb8709e124cb385f",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "observations": {
+    "geometry": {
+      "WINDOW": 6291461,
+      "X": 564,
+      "Y": 178,
+      "WIDTH": 1280,
+      "HEIGHT": 800,
+      "SCREEN": 0
+    },
+    "drag_frames": 1,
+    "boundary_frames": 0,
+    "measured_presentations": 17,
+    "dialog_pass_names": [
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ]
+    ],
+    "cancel_closed": true
+  },
+  "failed_attempts": [
+    "Initial driver appended getwindowfocus to greedy xdotool type, which typed it into the form. Invalid setup, not product defect; no project created.",
+    "Corrected command trial sampled scrollbar baseline before late text presentation settled. Press zero-frame assertion failed; not qualified scroll damage.",
+    "Settled trial waits final Digit5 release and five Backspace releases plus1.5s quiet presentations, then verifies press/release and boundary counts."
+  ],
+  "limits": "Native New Project X11/Xwayland at2x override, actual1280x800, existing opt-in GPU measurements. Typed/cleared name, constrained form drag/boundary, keyboard reveal and final Cancel hit. No project created. Edited-name capture shows earlier PM0 prefix despite logged delivery of five characters; captures do not qualify final text timing. No full text/static parity, other scale/backend, AA/painter, resource or S3 qualification. No production paths changed, dependency/license/prototype/budget or resize-scope change.",
+  "artifact_sha256": {
+    "invalid-command.tar.gz": "b74adbb4f2dc416c767dfb8e072314cb3b919a4d10075d7082cf77e3c5c07ea5",
+    "settled.tar.gz": "734592a99748afa5aa7594dc2364751a5a63f12e1605c48ec4df5f944cbf6af9",
+    "unsettled.tar.gz": "fae1aa1635a4f54ba43680becb574b5c23b12a97a3e72a04b75c38258cc13523"
+  }
+}
