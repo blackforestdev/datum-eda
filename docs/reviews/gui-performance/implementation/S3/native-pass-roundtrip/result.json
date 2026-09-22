@@ -1,0 +1,53 @@
+{
+  "candidate_base": "ee9afc4e644a9b7e5b8552d1a63ee02da04d84fa",
+  "issue": "dat-native-input-delivery-vq7w",
+  "status": "Four additional native expanded pass/reuse cases pass; PROJECT2x delivery failure retained",
+  "requirements": [
+    "HP13-01",
+    "HP14-01"
+  ],
+  "successful_cases": {
+    "PROJECT1x": {
+      "samples": 11,
+      "size": [
+        960,
+        720
+      ]
+    },
+    "GLOBAL2x": {
+      "samples": 12,
+      "size": [
+        1918,
+        1050
+      ]
+    },
+    "GLOBAL1.5x": {
+      "samples": 12,
+      "size": [
+        1440,
+        1050
+      ]
+    },
+    "PROJECT1.5x": {
+      "samples": 11,
+      "size": [
+        1440,
+        1050
+      ]
+    }
+  },
+  "observations": {
+    "passes": "Every recorded sample in each successful case has only dialog pass; sample count covers presentations before dismissal.",
+    "reuse": "Six repeated scroll traces per successful case have0 misses; observed hits32..48 depending on actual viewport.",
+    "semantic": "Each successful case observes exactly one nonsynthetic Escape press, child presentation and continuing visibility, proving expansion dismissed rather than dialog closed.",
+    "failure": "PROJECT2x passed press/drag but timed out waiting for release delivery despite successful input command and read-only getwindowfocus reply. Roundtrip does not reliably solve delivery.",
+    "bounded_code_review": "Normal Datum about_to_wait selects shared Wait/deadlines; synchronous device waits found in explicit smoke path, not ordinary handler. Existing installed winit0.30.13 X11 has_pending calls XPending before polling. This does not identify failure cause; no dependency source copied or changed."
+  },
+  "limits": "Native X11/Xwayland, override scales1/1.5/2, opt-in existing pass/cache counters. Four successful added cases plus previous GLOBAL1x establish5 of6 bounded Preferences expanded-choice cases; PROJECT2x remains unqualified after release-delivery timeout. Driver adds read-only X server roundtrip, not a reliable fix or root-cause proof. Captures lag; expansion uses exactly one observed nonsynthetic Escape with surviving dialog/presentation. No default-path performance, latency, monitor-DPI transition, Wayland input, full resource or S3 acceptance. Production/dependency/license/prototype/budget/resize unchanged.",
+  "artifact_sha256": {
+    "both15.tar.gz": "710deb0de3948f426b9e807f22a64a62a34f2a67383090e3d98742c9ae6a2ed5",
+    "global2.tar.gz": "0ec9a95678e479687eeb2d167d35b0c8e895b52f613ee5b97888873df476afcc",
+    "project1.tar.gz": "351e192652c506a0eb10b420356573e7c69573f2d4227926a4bbc08f00ac20b9",
+    "project2-failed.tar.gz": "acc00dbf03b8af045bb3178c0d118b57906b2aa16d4aaa396f0e235b3641df1c"
+  }
+}
