@@ -1,0 +1,160 @@
+{
+  "base_commit": "c1f29b228a0ee56cf2b84b4eb33d7d819b97af98",
+  "production_consumers": [
+    "Main terminal discrete scrollback through Runtime::handle_native_wheel -> handle_dock_scroll -> shared scrolled_row_offset"
+  ],
+  "retired_paths": "Existing native test no longer silently skips reversal when startup history is empty. No production path retired in this verification slice.",
+  "proof": "Owned shell produces128 numbered lines through actual PTY. Test requires nonempty scrollback, verifies one row per line/physical event for +/-0.25 and +/-8 line equivalents, both local boundaries, unchanged board camera, no scene preparation, stale-offset damage and owned shutdown. All six backend/scale invocations pass. Isolated physical sign inversion fails the intended first physical reverse-scroll assertion on both backends at1.5; copy source restored, root app explicitly recompiled and both positives pass.",
+  "profiles": [
+    "backend=wayland scale=1.5 accepted=1918x1050 rows=138 visible=16 maximum=122 physical_line_one_row_and_boundary_match=true",
+    "backend=wayland scale=1 accepted=1280x800 rows=145 visible=9 maximum=136 physical_line_one_row_and_boundary_match=true",
+    "backend=wayland scale=2 accepted=1918x1050 rows=131 visible=23 maximum=108 physical_line_one_row_and_boundary_match=true",
+    "backend=x11 scale=1.5 accepted=1918x1050 rows=138 visible=16 maximum=122 physical_line_one_row_and_boundary_match=true",
+    "backend=x11 scale=1 accepted=1280x800 rows=145 visible=9 maximum=136 physical_line_one_row_and_boundary_match=true",
+    "backend=x11 scale=2 accepted=1918x1050 rows=131 visible=23 maximum=108 physical_line_one_row_and_boundary_match=true"
+  ],
+  "negative": {
+    "compiled_input_digest": "4af14561368b9fa811997f19618733a7618055b559e84cfa830031d573e93280",
+    "compiled_input_count": 1845,
+    "copy_synced": [
+      "crates/gui-app/src/artifact_preview_controls.rs",
+      "crates/gui-app/src/native_layers_scroll_tests.rs",
+      "crates/gui-app/src/native_terminal_scroll_tests.rs",
+      "crates/gui-app/src/runtime_revision_workspace.rs"
+    ],
+    "source_sha256": "db9a3c9fa282386bcca80dfbea27615bb331323a3994ff15826960fba9bab8e5",
+    "runs": [
+      {
+        "label": "negative-x11",
+        "backend": "x11",
+        "exit": 101,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "/tmp/pm045-pinned-negative-source/Cargo.toml",
+          "-p",
+          "datum-gui-app",
+          "--bin",
+          "datum-gui",
+          "native_terminal_scrollback_boundaries_do_not_redraw",
+          "--",
+          "--ignored",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "binary_sha256": "9c107926155dbbc6ce9dc9ec5a1101f9f7ca6daf1c77fed0a4477aa90a9175e9",
+        "recompiled_app": true
+      },
+      {
+        "label": "negative-wayland",
+        "backend": "wayland",
+        "exit": 101,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "/tmp/pm045-pinned-negative-source/Cargo.toml",
+          "-p",
+          "datum-gui-app",
+          "--bin",
+          "datum-gui",
+          "native_terminal_scrollback_boundaries_do_not_redraw",
+          "--",
+          "--ignored",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "binary_sha256": "9c107926155dbbc6ce9dc9ec5a1101f9f7ca6daf1c77fed0a4477aa90a9175e9",
+        "recompiled_app": false
+      },
+      {
+        "label": "restored-x11",
+        "backend": "x11",
+        "exit": 0,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "-p",
+          "datum-gui-app",
+          "--bin",
+          "datum-gui",
+          "native_terminal_scrollback_boundaries_do_not_redraw",
+          "--",
+          "--ignored",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "binary_sha256": "6e675075124ba8bc8d19592e1bf6408a9bf6a8d8cccb71fca37e80855ad6016a",
+        "recompiled_app": true
+      },
+      {
+        "label": "restored-wayland",
+        "backend": "wayland",
+        "exit": 0,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "-p",
+          "datum-gui-app",
+          "--bin",
+          "datum-gui",
+          "native_terminal_scrollback_boundaries_do_not_redraw",
+          "--",
+          "--ignored",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "binary_sha256": "6e675075124ba8bc8d19592e1bf6408a9bf6a8d8cccb71fca37e80855ad6016a",
+        "recompiled_app": false
+      }
+    ]
+  },
+  "source_sha256": "72a6ba28a8a9716c92933521e3661e3604876f3b868da68020bfc968e250fc75",
+  "release_sha256_unchanged": "ed78a31934f70dca36d799015fbcadb59ec89753199f82dfe5c98a09fe7184e2",
+  "limits": "Real native backend Runtime and PTY with supplied wheel deltas, not OS event delivery, outer App dispatch, visible final pixels, terminal mouse-report bytes or monitor DPI transition. Scale uses Runtime override; actual accepted extents recorded. No W-SCROLL timing, full HP19/S3 qualification, resource/latency or global adoption claim. Production Rust/release behavior unchanged in this slice. No dependencies/licenses/prototypes/budgets or nonblocking resize scope changed.",
+  "artifacts": {
+    "pm045-terminal-wheel-proof-restored-wayland.log.gz": "a2eaa94b4b9fbe449bb28cdb2cc16f1283f4fa1062472b8325cec8251dc67c8c",
+    "pm045-terminal-wheel-proof-restored-x11.log.gz": "11befcd51289c9f249b74f1d792069e4bb365212ba891a2c15eabebdb42edbad",
+    "pm045-terminal-wheel-proof-negative-wayland.log.gz": "366105be599037af211141130e19db21697697b7404f05656d812ee89207e383",
+    "pm045-terminal-wheel-proof-negative-x11.log.gz": "89a92f712713cf41365d9ca6700dc8d0a10fea820d88eea28cf77f565aa826cf",
+    "pm045-terminal-wheel-policy.log.gz": "78c3038f5d614d2207b04c394c430999fcc164c4c35aeec6485779f0e7caa5a4",
+    "pm045-terminal-wheel-wayland-2.log.gz": "f9c74addc97d435e274e92c24b692f88fad9ee360dc3eb4ca16d113b03b51a01",
+    "pm045-terminal-wheel-wayland-1.5.log.gz": "0ae72c83f4c9c5e2d66157a6845293772f7795a6ff8581c9476d7d3491997a9a",
+    "pm045-terminal-wheel-wayland-1.log.gz": "8a850f31b52c9411ae2fb0d3047c37de2a507646e810ac6a6bf4e6af7319f1d0",
+    "pm045-terminal-wheel-x11-2.log.gz": "96d68988b6b0d7e6d7f1b9e0b344a0891b25daa6295e11ac964ae019c8d0c843",
+    "pm045-terminal-wheel-x11-1.5.log.gz": "6751c0adcdeee139c5095a4b5a43cb7c3ce79eca5cbfa1ab232ee5a457f5f382",
+    "pm045-terminal-wheel-x11-1.log.gz": "a0a8f08cbeaeef989e593a2009121997f1b05c1f88e5d07e6eb8b837b6e0689b",
+    "pm045_terminal_wheel_profiles.py.gz": "9333c948a495f949f643498a5c934a877349d83e58a39cf6d8378d820f9e98c5",
+    "pm045_terminal_wheel_negative.py.gz": "4706b03cf9df45b428cc4243f9f9f0736421e407b1dabf984b7458784302db5f",
+    "pm045-terminal-wheel-results.json.gz": "0432a9c954ca2d962840d0de2b9eaeeb8b1bf232ebe75e9bd2094b52bdc8b71a",
+    "pm045-terminal-wheel-negative-result.json.gz": "ac7f1b788a4fe6ba437d4d93c357ef4020ca29689232713fad15565fa8da1008",
+    "pm045-terminal-wheel-negative.patch.gz": "335774650f350c91cb6381f569247f8cc2b2637713eb3acfbcbd819bd1256187",
+    "drift.log.gz": "9728d19de4c5b3dcc9dfb16e39178bed89856aa71f369ac6a8f21a0ff0fe2397"
+  },
+  "verification": "Workspace Clippy,13 source-policy tests, source health, dependency authority, traceability, spec governance/parity and project state pass. Full drift stops at the same eight existing GUI agent/terminal convergence source-pattern failures; later gates unrun. No production release rebuild needed for this test-only change."
+}
