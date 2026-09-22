@@ -6863,6 +6863,11 @@
         "status": "default shared single-line input text/caret painting with stable layout extent",
         "evidence": "docs/reviews/gui-performance/implementation/S3/shared-input-text/result.json",
         "limits": "Bounded shared input painting only. Native burst typing remains inconclusive (dat-native-new-project-typing-capture-xgt); initial GLOBAL scroll timed out after drag/release, PROJECT passed. No full input/minimum-width/scale/backend, resource/negative or S3 qualification. No dependency/license, prototype, sequencing or nonblocking resize change."
+      },
+      "s3_clip_suffix_progress": {
+        "status": "shared clipping visits only appended text/hit ranges",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/clip-suffix/result.json",
+        "limits": "Bounded shared-owner optimization; no newly qualified adapter or full HP22/S3 acceptance. Native capture freshness, per-adapter input/negative/resource qualification remain open. No measured frame-time claim, dependency/license, prototype, budget, sequencing or nonblocking resize change."
       }
     },
     {
@@ -27444,5 +27449,20 @@
     "retired_paths": "No runtime path retired. Count-only trace removed byte-for-byte; production release rebuilt. Existing GPU regression now exercises sequential edits before comparing final output with a fresh renderer.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/typing-capture-reconciliation/result.json",
     "limits": "Capture freshness/presentation timing and full native input qualification remain unresolved. Later clipped output cannot alone distinguish every long string. No compositor image was obtained; no whole-field or whole-window GPU/native parity claim. No S3 exit, runtime/dependency/license/prototype/budget/resize amendment."
+  },
+  "s3_clip_suffix_work": {
+    "status": "shared clipping visits only appended text/hit ranges",
+    "production_consumers": [
+      "GLOBAL/PROJECT Preferences rows and content",
+      "NEW Units summary",
+      "MAIN pane/status/menu/marking/Console composition",
+      "Inspector, Project/Layers, Revision and terminal adapters already using clip_content"
+    ],
+    "retired_paths": [
+      "Whole-vector text/hit walks that checked and skipped every earlier prefix entry on each appended layer"
+    ],
+    "preserved": "Same ancestor intersection, hidden-entry removal, order, geometry contour path, pinned prefix and caller API. Fully consume ranged Vec extraction; clamp out-of-range text/hit starts to preserve previous no-op behavior.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/clip-suffix/result.json",
+    "limits": "Bounded shared-owner optimization; no newly qualified adapter or full HP22/S3 acceptance. Native capture freshness, per-adapter input/negative/resource qualification remain open. No measured frame-time claim, dependency/license, prototype, budget, sequencing or nonblocking resize change."
   }
 }
