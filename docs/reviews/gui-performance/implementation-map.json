@@ -5907,7 +5907,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: native dialog rounded and circular controls use the shared retained CPU mesh owner; warm reuse and exact ellipse vertices tested. MAIN/INSPECTOR/MENU family inventory, prescribed negative and full native per-adapter proof remain open.",
         "id": "proof_hp16_01",
         "positive": "Repeat convex rounded controls with translation/clip change",
         "negative_control": "Use general scanline tessellation or repeat arcs",
@@ -5945,6 +5945,10 @@
         "MAIN": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "INSPECTOR": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "MENU": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s3_ellipse_progress": {
+        "status": "partial GLOBAL/PROJECT/NEW circular-control adoption; full row remains unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/ellipse-control-retention/result.json"
       }
     },
     {
@@ -5977,7 +5981,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: exact circular-control vertices preserve prior contour at fractional placements;13 hardware GPU regressions pass including Preferences/New Project legacy pixel parity and rounded AA. Full consumer/backend/scale/negative/native qualification remains open.",
         "id": "proof_hp16_02",
         "positive": "Change dimensions/radius/style/DPI then concave/holed authored content",
         "negative_control": "Reuse incomplete key or force fan for holes",
@@ -6015,6 +6019,10 @@
         "MAIN": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "INSPECTOR": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "MENU": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s3_ellipse_progress": {
+        "status": "partial GLOBAL/PROJECT/NEW circular-control adoption; full row remains unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/ellipse-control-retention/result.json"
       }
     },
     {
@@ -6047,7 +6055,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "planned; not executed",
+        "status": "Partial: shared256-entry/4MiB CPU mesh-payload LRU/bypass tests pass for the extended contour key. Complete GPU/in-flight/aggregate accounting and release budgets remain unqualified; no full byte-cap pass.",
         "id": "proof_hp16_03",
         "positive": "Exceed mesh working set",
         "negative_control": "Pin every cached mesh indefinitely",
@@ -6085,6 +6093,10 @@
         "MAIN": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "INSPECTOR": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "MENU": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s3_ellipse_progress": {
+        "status": "partial GLOBAL/PROJECT/NEW circular-control adoption; full row remains unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/ellipse-control-retention/result.json"
       }
     },
     {
@@ -26958,5 +26970,18 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-surface-clipping/result.json",
     "limits": "No native input/focus, isolated defect injection, exhaustive profile/scale/backend, resource, timing or full HP22/ADP qualification. Very small dimensions are diagnostics, not admitted native usability. S3 remains open;1bc02aaf remains unapproved. No dependency, license, prototype, numerical-budget or resize-scope amendment."
+  },
+  "s3_ellipse_control_retention_work": {
+    "status": "bounded S3 circular control mesh adoption; complete HP16 qualification open",
+    "production_consumers": [
+      "GLOBAL Preferences search-icon rings and Boolean switch knobs",
+      "PROJECT Preferences search-icon rings through the same dialog profile",
+      "NEW Project units radio controls"
+    ],
+    "retired_paths": [
+      "Direct per-preparation ellipse tessellation in search icons, Boolean switch knobs and New Project radio controls"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/ellipse-control-retention/result.json",
+    "limits": "No global MAIN/INSPECTOR/MENU control-family adoption claim, complete resource caps, native input/focus, isolated negative, full backend/scale/performance acceptance or S3 exit. S3 resource proposal1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
   }
 }

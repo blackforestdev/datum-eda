@@ -1,0 +1,31 @@
+{
+  "status": "bounded S3 circular control mesh adoption; complete HP16 qualification open",
+  "baseline": "8fef7938c8cb9a2a4da09963919507f21fb0a71f",
+  "sources": {
+    "crates/gui-render/src/render/control_mesh.rs": "bca6f8cc9d16b4a7a7af72a3ff6561aec3b9488f59dfbbd5eb677d35a6872008",
+    "crates/gui-render/src/global_preferences_primitives.rs": "4e63150bf82cdd6d9cdb36006f110ebba8da9ba0546570e40ac3eaa7df5cc90e",
+    "crates/gui-render/src/new_project_dialog.rs": "1ef274726384f15833b0891ddccc11fe112aa749d2504d5e29f0a7bca845ef35"
+  },
+  "production_consumers": [
+    "GLOBAL Preferences search-icon rings and Boolean switch knobs",
+    "PROJECT Preferences search-icon rings through the same dialog profile",
+    "NEW Project units radio controls"
+  ],
+  "shared_owner": "Renderer.control_meshes -> ControlPainter -> ControlMeshCache",
+  "retired_paths": [
+    "Direct per-preparation ellipse tessellation in search icons, Boolean switch knobs and New Project radio controls"
+  ],
+  "behavior": "Reuse centered ellipse triangle offsets through the existing shared control-mesh cache. Add contour kind to the key to separate ellipses from rounded rectangles. Preserve16-segment triangles, exact center-relative floating-point additions, painter order, live placement/color, clipping, settings and project-creation authority. Shared materialization handles both mesh kinds. Authored geometry keeps the existing general ellipse/tessellation helpers.",
+  "bounds": "Existing256-entry/4MiB retained CPU mesh-payload limit and LRU/bypass policy shared by both shape kinds; no additional cache. Keys/metadata remain distinct from payload. Complete GPU/in-flight/aggregate caps and accounting remain unqualified.",
+  "proof": {
+    "cpu": "201 renderer tests pass serially. New regression matches cached output exactly against prior uncached ellipse vertices at6/10/14px and31.25x12.75 dimensions, normal/fractional/negative placement and changed color; warm placements do not rebuild. Actual search-icon adapter retains exactly two ring meshes across repeated movement. Degenerate width produces no geometry/cache build. Existing entry/payload/LRU/bypass tests pass with the added contour-kind key dimension.",
+    "gpu": "13 explicit serial hardware GPU regressions pass on Intel HD Graphics P630 IntegratedGpu/Vulkan, including Preferences/New Project legacy pixel parity, actual renderer cold/warm/edit/reset mesh reuse and existing rounded-control AA comparisons.",
+    "clippy": "Guarded offline renderer library Clippy passed with -D warnings.",
+    "limitations": "No global MAIN/INSPECTOR/MENU control-family adoption claim, complete resource caps, native input/focus, isolated negative, full backend/scale/performance acceptance or S3 exit. S3 resource proposal1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib -- --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --features visual --lib gpu_overlay_tests -- --ignored --test-threads=1 --nocapture",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-render --lib -- -D warnings"
+  ]
+}

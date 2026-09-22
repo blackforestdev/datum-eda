@@ -172,8 +172,7 @@ pub(super) fn draw_header_chip(
 }
 
 pub(super) fn draw_search_icon(x: f32, y: f32, quads: &mut ControlPainter<'_>) {
-    push_projected_ellipse(
-        quads,
+    quads.ellipse_fill(
         RectPx {
             x,
             y,
@@ -183,8 +182,7 @@ pub(super) fn draw_search_icon(x: f32, y: f32, quads: &mut ControlPainter<'_>) {
         TEXT_MUTED,
         16,
     );
-    push_projected_ellipse(
-        quads,
+    quads.ellipse_fill(
         RectPx {
             x: x + 2.0,
             y: y + 2.0,
@@ -289,8 +287,7 @@ pub(super) fn draw_boolean_control(
     if !available {
         push_dashed_rect_border(quads, switch, design_tokens::chrome::BORDER_STRONG);
     }
-    push_projected_ellipse(
-        quads,
+    quads.ellipse_fill(
         RectPx {
             x: switch.x + if value { 21.0 } else { 3.0 },
             y: switch.y + 3.0,

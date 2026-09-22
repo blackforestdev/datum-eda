@@ -8,7 +8,14 @@ const MAX_ENTRIES: usize = 256;
 const MAX_PAYLOAD_BYTES: usize = 4 * 1024 * 1024;
 
 #[derive(Clone, Copy, PartialEq, Eq)]
+enum MeshKind {
+    RoundedRect,
+    Ellipse,
+}
+
+#[derive(Clone, Copy, PartialEq, Eq)]
 struct Key {
+    kind: MeshKind,
     dimensions: [u32; 2],
     radius: u32,
     border: u32,
@@ -78,6 +85,7 @@ impl<'a> ControlPainter<'a> {
     pub(crate) fn rounded_fill(&mut self, rect: RectPx, color: [f32; 3], radius: f32, border: f32) {
         let radius = radius.max(0.0).min(rect.width * 0.5).min(rect.height * 0.5);
         let key = Key {
+            kind: MeshKind::RoundedRect,
             dimensions: [rect.width.to_bits(), rect.height.to_bits()],
             radius: radius.to_bits(),
             border: border.to_bits(),
@@ -86,38 +94,77 @@ impl<'a> ControlPainter<'a> {
             segments: ROUNDED_RECT_CORNER_SEGMENTS as u32,
             style_generation: 0,
         };
+        self.paint_mesh(key, (rect.x, rect.y), color, || {
+            let points = rounded_rect_points(
+                RectPx {
+                    x: 0.0,
+                    y: 0.0,
+                    ..rect
+                },
+                radius,
+            );
+            (1..points.len() - 1)
+                .step_by(2)
+                .map(|index| {
+                    [
+                        points[0],
+                        points[index],
+                        points[index + 1],
+                        points[(index + 2).min(points.len() - 1)],
+                    ]
+                })
+                .collect::<Vec<_>>()
+                .into_boxed_slice()
+        });
+    }
+
+    pub(crate) fn ellipse_fill(&mut self, rect: RectPx, color: [f32; 3], segments: u32) {
+        if rect.width <= 0.5 || rect.height <= 0.5 || segments < 3 {
+            return;
+        }
+        let (rx, ry) = (rect.width * 0.5, rect.height * 0.5);
+        let key = Key {
+            kind: MeshKind::Ellipse,
+            dimensions: [rect.width.to_bits(), rect.height.to_bits()],
+            radius: 0,
+            border: 0,
+            dpi: self.dpi.to_bits(),
+            contour_revision: 1,
+            segments,
+            style_generation: 0,
+        };
+        // Keep offsets relative to the center so translation performs exactly
+        // the same floating-point additions as the original ellipse painter.
+        self.paint_mesh(key, (rect.x + rx, rect.y + ry), color, || {
+            let step = std::f32::consts::TAU / segments as f32;
+            let mut previous = (rx, 0.0);
+            (1..=segments)
+                .map(|i| {
+                    let angle = step * i as f32;
+                    let next = (rx * angle.cos(), ry * angle.sin());
+                    let points = [(0.0, 0.0), previous, next, next];
+                    previous = next;
+                    points
+                })
+                .collect::<Vec<_>>()
+                .into_boxed_slice()
+        });
+    }
+
+    fn paint_mesh(
+        &mut self,
+        key: Key,
+        origin: (f32, f32),
+        color: [f32; 3],
+        build: impl FnOnce() -> Mesh,
+    ) {
         let quads = &mut self.quads;
-        self.cache.with_mesh(
-            key,
-            || {
-                let points = rounded_rect_points(
-                    RectPx {
-                        x: 0.0,
-                        y: 0.0,
-                        ..rect
-                    },
-                    radius,
-                );
-                (1..points.len() - 1)
-                    .step_by(2)
-                    .map(|index| {
-                        [
-                            points[0],
-                            points[index],
-                            points[index + 1],
-                            points[(index + 2).min(points.len() - 1)],
-                        ]
-                    })
-                    .collect::<Vec<_>>()
-                    .into_boxed_slice()
-            },
-            |mesh| {
-                quads.extend(mesh.iter().map(|points| Quad {
-                    points: points.map(|(x, y)| (rect.x + x, rect.y + y)),
-                    color,
-                }));
-            },
-        );
+        self.cache.with_mesh(key, build, |mesh| {
+            quads.extend(mesh.iter().map(|points| Quad {
+                points: points.map(|(x, y)| (origin.0 + x, origin.1 + y)),
+                color,
+            }));
+        });
     }
 }
 
@@ -139,6 +186,7 @@ mod tests {
 
     fn key(n: u32) -> Key {
         Key {
+            kind: MeshKind::RoundedRect,
             dimensions: [n, 1],
             radius: 2,
             border: 3,
@@ -150,10 +198,60 @@ mod tests {
     }
 
     #[test]
+    fn ellipse_meshes_preserve_uncached_vertices_and_reuse_across_placement_and_color() {
+        let mut cache = ControlMeshCache::default();
+        for (width, height) in [(6.0, 6.0), (10.0, 10.0), (14.0, 14.0), (31.25, 12.75)] {
+            let builds = cache.builds;
+            for (x, y, color) in [
+                (0.0, 0.0, [0.2; 3]),
+                (228.25, 54.75, [0.8; 3]),
+                (-10.125, 700.5, [0.5; 3]),
+            ] {
+                let rect = RectPx {
+                    x,
+                    y,
+                    width,
+                    height,
+                };
+                let mut expected = Vec::new();
+                push_projected_ellipse(&mut expected, rect, color, 16);
+                let mut actual = Vec::new();
+                ControlPainter::new(&mut actual, &mut cache, 1.5).ellipse_fill(rect, color, 16);
+                assert_eq!(actual, expected, "cached contour changes at {rect:?}");
+                assert_eq!(cache.builds, builds + 1, "placement/color must stay live");
+            }
+        }
+        let mut output = Vec::new();
+        let builds = cache.builds;
+        ControlPainter::new(&mut output, &mut cache, 1.5).ellipse_fill(
+            RectPx {
+                x: 0.0,
+                y: 0.0,
+                width: 0.5,
+                height: 14.0,
+            },
+            [1.0; 3],
+            16,
+        );
+        assert!(output.is_empty());
+        assert_eq!(cache.builds, builds);
+
+        let mut cache = ControlMeshCache::default();
+        for x in [20.0, 20.25, 400.0] {
+            crate::global_preferences_primitives::draw_search_icon(
+                x,
+                40.5,
+                &mut ControlPainter::new(&mut output, &mut cache, 1.0),
+            );
+            assert_eq!(cache.builds, 2, "production search rings must remain warm");
+        }
+    }
+
+    #[test]
     fn control_mesh_keys_bounds_and_lru_are_complete() {
         let mut cache = ControlMeshCache::default();
         let mesh = || vec![[(0.0, 0.0); 4]; 3].into_boxed_slice();
-        for field in 0..8 {
+        for field in 0..9 {
             let mut changed = key(0);
             match field {
                 0 => changed.dimensions[0] += 1,
@@ -163,12 +261,13 @@ mod tests {
                 4 => changed.dpi += 1,
                 5 => changed.contour_revision += 1,
                 6 => changed.segments += 1,
-                _ => changed.style_generation += 1,
+                7 => changed.style_generation += 1,
+                _ => changed.kind = MeshKind::Ellipse,
             }
             cache.with_mesh(changed, mesh, |_| {});
             cache.with_mesh(changed, || panic!("warm mesh rebuilt"), |_| {});
         }
-        assert_eq!(cache.builds, 8);
+        assert_eq!(cache.builds, 9);
         cache = ControlMeshCache::default();
         for n in 0..MAX_ENTRIES as u32 {
             cache.with_mesh(key(n), mesh, |_| {});

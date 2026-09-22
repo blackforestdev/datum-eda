@@ -170,8 +170,7 @@ pub(super) fn render_new_project_dialog(
         if choice_focus {
             push_rect_border(quads, rect, design_tokens::chrome::STATUS_INFO, 1.0);
         }
-        push_projected_ellipse(
-            quads,
+        quads.ellipse_fill(
             RectPx {
                 x: rect.x + 8.0,
                 y: rect.y + 8.0,
@@ -186,8 +185,7 @@ pub(super) fn render_new_project_dialog(
             16,
         );
         if dialog.units_choice != choice {
-            push_projected_ellipse(
-                quads,
+            quads.ellipse_fill(
                 RectPx {
                     x: rect.x + 11.0,
                     y: rect.y + 11.0,
