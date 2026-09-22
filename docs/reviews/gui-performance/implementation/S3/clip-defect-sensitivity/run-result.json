@@ -1,0 +1,79 @@
+{
+  "results": [
+    {
+      "case": "original-clamp",
+      "command": [
+        "python3",
+        "/tmp/pm045-clip-negatives/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "--manifest-path",
+        "/tmp/pm045-clip-negatives/Cargo.toml",
+        "-p",
+        "datum-gui-render",
+        "--lib",
+        "four_edge_clip_preserves_triangle_area_and_pinned_content",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "negative_exit": 0,
+      "restored_exit": 0,
+      "source_sha256": "98216a48d7151175b92a3f3f88859972f108115d497b6f9ebae618c9040bea6e"
+    },
+    {
+      "case": "corrected-clamp",
+      "command": [
+        "python3",
+        "/tmp/pm045-clip-negatives/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "--manifest-path",
+        "/tmp/pm045-clip-negatives/Cargo.toml",
+        "-p",
+        "datum-gui-render",
+        "--lib",
+        "four_edge_clip_preserves_triangle_area_and_pinned_content",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "negative_exit": 101,
+      "restored_exit": 0,
+      "source_sha256": "78b50c9b65cda51572ef896d2cd1efd0b81d60572e5ff9c0c1ee75f7588be384"
+    },
+    {
+      "case": "hidden-hits",
+      "command": [
+        "python3",
+        "/tmp/pm045-clip-negatives/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "--manifest-path",
+        "/tmp/pm045-clip-negatives/Cargo.toml",
+        "-p",
+        "datum-gui-render",
+        "--lib",
+        "descendant_text_and_hits_intersect_both_axes_without_touching_chrome",
+        "--",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "negative_exit": 101,
+      "restored_exit": 0,
+      "source_sha256": "78b50c9b65cda51572ef896d2cd1efd0b81d60572e5ff9c0c1ee75f7588be384"
+    }
+  ]
+}

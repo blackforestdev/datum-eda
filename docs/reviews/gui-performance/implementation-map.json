@@ -7056,7 +7056,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial: shared contour/text/hit clipping adopted in Preferences, Inspector, Revision and terminal profiles, with exact native-dialog surface bounds. Component geometry proofs and three isolated terminal negatives exist. Full per-consumer native/diagonal/rounded/negative coverage remains open.",
+        "status": "Partial: shared contour/text/hit clipping adopted in Preferences, Inspector, Revision and terminal profiles, with exact native-dialog surface bounds. Component geometry proofs and three isolated terminal negatives exist. Full per-consumer native/diagonal/rounded/negative coverage remains open. Shared clip negatives now detect contour vertex clamping and omitted hidden-hit clipping; byte-restored positives pass. Original diagonal false-pass retained and fixture corrected. Native/full qualification remains open.",
         "id": "proof_hp22_01",
         "positive": "Partially visible diagonal/rounded controls and nested clips",
         "negative_control": "Clamp vertices instead of clipping",
@@ -7152,7 +7152,8 @@
         "docs/reviews/gui-performance/implementation/S3/pane-header-clipping/result.json",
         "docs/reviews/gui-performance/implementation/S3/shell-content-clipping/result.json",
         "docs/reviews/gui-performance/implementation/S3/shell-identity-clipping/result.json",
-        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
+        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
+        "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json"
       ],
       "s3_shell_content_clipping_progress": {
         "status": "bounded S3 Main placeholder/status shared clipping adoption; full qualification open",
@@ -7208,6 +7209,16 @@
       "s3_dialog_dpi_coordinates_progress": {
         "status": "production coordinate correction and bounded scale evidence; full acceptance open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
+      },
+      "s3_clip_defect_sensitivity_progress": {
+        "status": "Corrected existing diagonal oracle detects forbidden clamping; hidden-hit negative also detected",
+        "production_consumers": [
+          "Shared clip_content/clip_new_hit_regions; direct component tests only"
+        ],
+        "shared_owner": "render/hit_clipping.rs",
+        "retired_paths": "No new runtime retirement; replace ineffective diagonal test geometry with discriminating intersection geometry.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json",
+        "limits": "Existing shared CPU clipping tests, not native consumer dispatch or GPU pixels. Corrected triangle distinguishes contour intersection from vertex clamping while preserving pinned geometry. Hidden-hit negative detects retained hidden region count; restored test verifies nested text/hit intersections and pinned chrome. Native rounded/diagonal/all-profile coverage, pinned-header negative and full HP22/S3 acceptance remain open. Production clipping unchanged; no dependencies/license/prototype/numerical budget/resize-scope changes."
       }
     },
     {
@@ -7239,7 +7250,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial: hardware fractional Preferences scroll test checks pinned pixels and exact return to top; shared clipped hits and reserved scrollbar width are implemented. Complete per-consumer native hidden-control/pinned-chrome qualification remains open. Subsequent b64af50d GLOBAL/PROJECT Units native drag/boundary/reversal trial passes with delivered target/direction and exact return pixels; this bounded pass does not complete the row or supersede earlier failed attempts.",
+        "status": "Partial: hardware fractional Preferences scroll test checks pinned pixels and exact return to top; shared clipped hits and reserved scrollbar width are implemented. Complete per-consumer native hidden-control/pinned-chrome qualification remains open. Subsequent b64af50d GLOBAL/PROJECT Units native drag/boundary/reversal trial passes with delivered target/direction and exact return pixels; this bounded pass does not complete the row or supersede earlier failed attempts. Shared clip negatives now detect contour vertex clamping and omitted hidden-hit clipping; byte-restored positives pass. Original diagonal false-pass retained and fixture corrected. Native/full qualification remains open.",
         "id": "proof_hp22_02",
         "positive": "Pinned search/chrome and scrollbar near text then return top",
         "negative_control": "Scroll pinned header or let hidden region hit",
@@ -7326,7 +7337,8 @@
         "limits": "No full HP21/HP22 or S3 acceptance. No page-track, hidden-control click-through, capture-loss, scale/backend matrix, latency, resource, teardown or independent negative-control qualification. Earlier failed/aborted attempts remain unchanged. This pass does not establish the cause of prior unexplained input. S3 proposal 1bc02aaf remains unapproved."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json",
+        "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json"
       ],
       "s3_native_drag_delivery_progress": {
         "status": "bounded native drag/reversal proof for current shared control-label production implementation",
@@ -7338,6 +7350,16 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-drag-delivery/result.json",
         "proof": "Both hosts: press/release and boundary wheel zero presentations; drag and reverse one each. All six captures RGB identical to committed native-preferences-scroll baselines. Bottom capture inspected; final row visible.",
         "limits": "Bounded1x X11 native scroll evidence only. No complete S3, input/scale/backend matrix, latency, private-resource, hidden-control or independent-negative acceptance. Prior failed trials remain preserved. Two input-method changes were combined; cause of prior missing drag events remains unproven. No runtime, dependency/license, prototype, budget or sequencing change; resize remains nonblocking."
+      },
+      "s3_clip_defect_sensitivity_progress": {
+        "status": "Corrected existing diagonal oracle detects forbidden clamping; hidden-hit negative also detected",
+        "production_consumers": [
+          "Shared clip_content/clip_new_hit_regions; direct component tests only"
+        ],
+        "shared_owner": "render/hit_clipping.rs",
+        "retired_paths": "No new runtime retirement; replace ineffective diagonal test geometry with discriminating intersection geometry.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json",
+        "limits": "Existing shared CPU clipping tests, not native consumer dispatch or GPU pixels. Corrected triangle distinguishes contour intersection from vertex clamping while preserving pinned geometry. Hidden-hit negative detects retained hidden region count; restored test verifies nested text/hit intersections and pinned chrome. Native rounded/diagonal/all-profile coverage, pinned-header negative and full HP22/S3 acceptance remain open. Production clipping unchanged; no dependencies/license/prototype/numerical budget/resize-scope changes."
       }
     },
     {
@@ -27640,7 +27662,8 @@
         "s3_preferences_extent_negative_work": "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json",
         "s3_native_expanded_extent_work": "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
         "s3_native_search_explanation_work": "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
-        "s3_control_cache_negatives_work": "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json"
+        "s3_control_cache_negatives_work": "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json",
+        "s3_clip_defect_sensitivity_work": "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json"
       },
       "receipt_sha256": {
         "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json": "7c21f4fb04e937db21bd06d9bd0e9b1d4d0602ccca5cf167def2a77f6d5e9139",
@@ -27657,7 +27680,8 @@
         "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json": "0585e0e132197934f58ea1891dfe4f4178ccb81e70695a304d5987919d32fafd",
         "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json": "8c4e54e5a70f96443bdc67c2f72bfef46497c860ba1a1e16fbbcb89cf23ad407",
         "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json": "99914ecea89ac062c99d8cd6dfa5d3421174971ae622bf634a1296a7a71afb37",
-        "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json": "622181f733b2d0dfc81861e13e99d46ad6cdd5e27d183987906e667976fb7a0d"
+        "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json": "622181f733b2d0dfc81861e13e99d46ad6cdd5e27d183987906e667976fb7a0d",
+        "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json": "9fbd4e780065094e5bfe668c8bcc998a325eea926b2ab54591f79921b7dd0634"
       },
       "remaining_actions": {
         "HP10-01": "Verify outside-Layers routing through the outer native event dispatcher; actual Board Runtime zero-preparation and prescribed negative are recorded.",
@@ -27676,8 +27700,8 @@
         "HP20-01": "Complete remaining backend/scale and other-control extent cases. Both Preferences1x native Units choices, explanations, four-result search/clear, final row/boundary/reversal and shrink to actual563px minimum are recorded. Shared renderer visible-row negative is recorded.",
         "HP21-01": "Complete remaining capture/profile/scale cases and grab-displacement/painted-only-scrollbar negative; retain existing native press/drag/track evidence.",
         "HP21-02": "Complete release/capture-loss/close/content-change final-target cases beyond recorded focus-loss and reflow cancellation tests.",
-        "HP22-01": "Complete clamp-vertices negative and remaining native diagonal/rounded/nested clip cases per actual consumer; preserve existing terminal call-removal negatives.",
-        "HP22-02": "Complete hidden-hit/pinned-header negative and remaining native profiles; existing pinned GPU return pixels and native scroll trials are recorded.",
+        "HP22-01": "Complete remaining native diagonal/rounded/nested clipping cases per actual consumer. Shared clamp-vertices negative now detected by corrected existing area oracle; preserve original false-pass and terminal call-removal negatives.",
+        "HP22-02": "Complete pinned-header negative and remaining native profiles. Shared hidden-hit clipping omission is now detected; existing pinned GPU return pixels and native scroll trials remain bounded evidence.",
         "HP23-01": "Complete native keyboard/search result reveal across section/layout/scale changes and stale-focus/extent negative; explanation Close reveal is already fixed and verified.",
         "HP23-02": "Complete both native Preferences reduced-motion scroll/idle/locality recipe and continuous-timer negative; existing boundary-frame checks are narrower."
       },
@@ -28162,5 +28186,15 @@
     "retired_paths": "No new production retirement; verifies existing complete key and bounded CPU retention.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json",
     "limits": "Direct existing shared CPU control cache/painter tests, not actual native consumer dispatch or GPU pixels. DPI negative detects5 builds instead of6; it does not establish a visible contour defect. Disabled eviction detects257 entries instead of256. Restored test also exercises LRU touch, oversized bypass and CPU payload eviction. Full authored concave/holed separation, native/profile coverage and HP16 acceptance remain open. Complete CPU metadata/GPU/in-flight/aggregate accounting remains S4 implementation/S5 qualification under owner clarification. No active Rust/dependency/license/prototype/budget/resize change."
+  },
+  "s3_clip_defect_sensitivity_work": {
+    "status": "Corrected existing diagonal oracle detects forbidden clamping; hidden-hit negative also detected",
+    "production_consumers": [
+      "Shared clip_content/clip_new_hit_regions; direct component tests only"
+    ],
+    "shared_owner": "render/hit_clipping.rs",
+    "retired_paths": "No new runtime retirement; replace ineffective diagonal test geometry with discriminating intersection geometry.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json",
+    "limits": "Existing shared CPU clipping tests, not native consumer dispatch or GPU pixels. Corrected triangle distinguishes contour intersection from vertex clamping while preserving pinned geometry. Hidden-hit negative detects retained hidden region count; restored test verifies nested text/hit intersections and pinned chrome. Native rounded/diagonal/all-profile coverage, pinned-header negative and full HP22/S3 acceptance remain open. Production clipping unchanged; no dependencies/license/prototype/numerical budget/resize-scope changes."
   }
 }

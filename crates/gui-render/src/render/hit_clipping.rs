@@ -152,7 +152,7 @@ mod tests {
         let mut quads = vec![
             pinned,
             Quad {
-                points: [(-2.0, -2.0), (6.0, -2.0), (-2.0, 6.0), (-2.0, 6.0)],
+                points: [(-2.0, -2.0), (8.0, -2.0), (-2.0, 8.0), (-2.0, 8.0)],
                 color: [0.5; 3],
             },
         ];
@@ -175,8 +175,10 @@ mod tests {
             }
         }
         assert!(
-            (area - 8.0).abs() < 0.0001,
-            "clipped diagonal must not become a rectangle: {area}"
+            // Correct intersection removes only the upper-right triangle (area2).
+            // Clamping original vertices instead creates a triangle of area8.
+            (area - 14.0).abs() < 0.0001,
+            "clipped diagonal must preserve intersection area: {area}"
         );
     }
 

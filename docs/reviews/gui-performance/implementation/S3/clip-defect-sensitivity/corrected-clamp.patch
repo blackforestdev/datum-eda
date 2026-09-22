@@ -1,0 +1,70 @@
+diff --git a/crates/gui-render/src/render/hit_clipping.rs b/crates/gui-render/src/render/hit_clipping.rs
+index d67fe8dc..424a5f0c 100644
+--- a/crates/gui-render/src/render/hit_clipping.rs
++++ b/crates/gui-render/src/render/hit_clipping.rs
+@@ -65,54 +65 @@ pub(crate) fn clip_content(
+-        for indices in [[0, 1, 2], [0, 2, 3]] {
+-            // A triangle clipped against a rectangle has at most seven vertices.
+-            let mut polygon = [(0.0, 0.0); 8];
+-            for (out, index) in indices.into_iter().enumerate() {
+-                polygon[out] = quad.points[index];
+-            }
+-            let mut len = 3;
+-            for (axis, edge, lower) in [
+-                (0, viewport.x, true),
+-                (0, viewport.x + viewport.width, false),
+-                (1, viewport.y, true),
+-                (1, viewport.y + viewport.height, false),
+-            ] {
+-                if len == 0 {
+-                    break;
+-                }
+-                let mut output = [(0.0, 0.0); 8];
+-                let mut count = 0;
+-                let value = |p: (f32, f32)| if axis == 0 { p.0 } else { p.1 };
+-                let inside = |p| {
+-                    if lower {
+-                        value(p) >= edge
+-                    } else {
+-                        value(p) <= edge
+-                    }
+-                };
+-                let mut previous = polygon[len - 1];
+-                for &current in &polygon[..len] {
+-                    if inside(previous) != inside(current) {
+-                        let t = (edge - value(previous)) / (value(current) - value(previous));
+-                        let point = if axis == 0 {
+-                            (edge, previous.1 + t * (current.1 - previous.1))
+-                        } else {
+-                            (previous.0 + t * (current.0 - previous.0), edge)
+-                        };
+-                        output[count] = point;
+-                        count += 1;
+-                    }
+-                    if inside(current) {
+-                        output[count] = current;
+-                        count += 1;
+-                    }
+-                    previous = current;
+-                }
+-                polygon = output;
+-                len = count;
+-            }
+-            for i in 1..len.saturating_sub(1) {
+-                quads.push(Quad {
+-                    points: [polygon[0], polygon[i], polygon[i + 1], polygon[i + 1]],
+-                    color: quad.color,
+-                });
+-            }
+-        }
++        quads.push(Quad { points: quad.points.map(|(x,y)| (x.clamp(viewport.x, viewport.x + viewport.width), y.clamp(viewport.y, viewport.y + viewport.height))), color: quad.color });
+@@ -155 +102 @@ mod tests {
+-                points: [(-2.0, -2.0), (6.0, -2.0), (-2.0, 6.0), (-2.0, 6.0)],
++                points: [(-2.0, -2.0), (8.0, -2.0), (-2.0, 8.0), (-2.0, 8.0)],
+@@ -178,2 +125,4 @@ mod tests {
+-            (area - 8.0).abs() < 0.0001,
+-            "clipped diagonal must not become a rectangle: {area}"
++            // Correct intersection removes only the upper-right triangle (area2).
++            // Clamping original vertices instead creates a triangle of area8.
++            (area - 14.0).abs() < 0.0001,
++            "clipped diagonal must preserve intersection area: {area}"
