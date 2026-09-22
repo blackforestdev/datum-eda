@@ -1,3 +1,6 @@
+#[path = "text_buffer_cache.rs"]
+mod text_buffer_cache;
+
 #[path = "text_metrics.rs"]
 mod text_metrics;
 use text_metrics::{load_datum_fonts, measure_font_system, measured_text_run_width_px, text_attrs};
@@ -1121,44 +1124,6 @@ fn truncate_text(text: &str, max_chars: usize) -> String {
         .rev()
         .collect();
     format!("{head}...{tail}")
-}
-
-fn text_buffer_key(run: &TextRun, width: u32, height: u32) -> TextBufferKey {
-    let (width_px, height_px) = text_buffer_extent(run, width, height);
-    TextBufferKey {
-        text: run.text.clone(),
-        rich_spans: run
-            .rich_spans
-            .iter()
-            .map(|span| TextBufferSpanKey {
-                text: span.text.clone(),
-                color_bits: span.color.map(f32::to_bits),
-                bold: span.bold,
-                italic: span.italic,
-            })
-            .collect(),
-        size_bits: run.size.to_bits(),
-        face: run.face,
-        width_px,
-        height_px,
-    }
-}
-
-fn text_buffer_extent(run: &TextRun, surface_width: u32, surface_height: u32) -> (u32, u32) {
-    let max_width = surface_width.max(1);
-    let max_height = surface_height.max(1);
-    let width = run.clip_bounds.map_or_else(
-        || estimated_text_run_width_px(&run.text, run.size, run.face),
-        |bounds| bounds.width.ceil().max(1.0),
-    );
-    let height = run.clip_bounds.map_or_else(
-        || run.size * 1.55 + 6.0,
-        |bounds| bounds.height.ceil().max(1.0),
-    );
-    (
-        (width.ceil() as u32).clamp(1, max_width),
-        (height.ceil() as u32).clamp(1, max_height),
-    )
 }
 
 fn estimated_text_run_width_px(text: &str, size: f32, face: TextFace) -> f32 {

@@ -331,6 +331,8 @@ struct TextRun {
     color: [f32; 3],
     face: TextFace,
     clip_bounds: Option<RectPx>,
+    // Stable layout extent; ancestor clipping changes visibility only.
+    layout_size: Option<(f32, f32)>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]

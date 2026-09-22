@@ -701,13 +701,13 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 7560
+        "expanded_lines": 7375
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "CPU frame composition and renderer-owned control preparation extracted from the scene include into the normal frame_preparation module. Remaining logical-include debt stays frozen."
+      "note": "Text buffer key and layout extent ownership extracted into the shared text_buffer_cache module. Remaining source debt retains exact downward limits."
     },
     "crates/gui-render/src/render/draw_primitives.rs": {
       "kind": "rust-production",
@@ -723,13 +723,13 @@
     "crates/gui-render/src/render/geometry.rs": {
       "kind": "rust-production",
       "limits": {
-        "pre_test_lines": 1250
+        "pre_test_lines": 1215
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Rust production module exceeds the normal authored production limit before inline tests."
+      "note": "Text buffer key and layout extent ownership extracted into the shared text_buffer_cache module. Remaining source debt retains exact downward limits."
     },
     "crates/gui-render/src/render/pads_and_layers.rs": {
       "kind": "rust-production",
@@ -756,13 +756,13 @@
     "crates/gui-render/src/render/tests.rs": {
       "kind": "rust-test",
       "limits": {
-        "file_lines": 1178
+        "file_lines": 1070
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Dedicated Rust test module exceeds the normal authored test-file limit."
+      "note": "Text identity and signature tests extracted into a normal test module; remaining test debt ratcheted downward."
     },
     "crates/gui-render/src/side_panels.rs": {
       "kind": "rust-production",

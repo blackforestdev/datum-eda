@@ -5677,6 +5677,20 @@
       "consumer_applicability": {
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s3_control_label_layout_progress": {
+        "status": "bounded shared control-label clipping with stable layout during ancestor clipping",
+        "production_consumers": [
+          "GLOBAL/PROJECT shared choice controls and row/reset/action buttons",
+          "NEW Retry/Cancel/Create buttons"
+        ],
+        "retired_paths": [
+          "Choice labels painting across the dropdown affordance or outside the control",
+          "Button labels painting beyond their control",
+          "Visible clip height used as layout height for these labels during scrolling"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/control-label-layout/result.json",
+        "limits": "Bounded GLOBAL/PROJECT/NEW shared control-label adoption; full native input, long-label pixel, negative/resource and S3 qualification remain open. S3 amendment remains unapproved; no dependency/license/prototype/budget change, resize remains nonblocking."
       }
     },
     {
@@ -6814,6 +6828,20 @@
         ],
         "evidence": "docs/reviews/gui-performance/implementation/S3/shell-identity-clipping/result.json",
         "limits": "No full MAIN/HP22/S3 adoption, native narrow-window, high-contrast pixel, exact legacy pixel or isolated negative qualification. Existing placement/overlap within each strip is unchanged. No hit-authority, dependency/license, prototype, budget or nonblocking resize-scope change. S3 proposal1bc02aaf remains unapproved."
+      },
+      "s3_control_label_layout_progress": {
+        "status": "bounded shared control-label clipping with stable layout during ancestor clipping",
+        "production_consumers": [
+          "GLOBAL/PROJECT shared choice controls and row/reset/action buttons",
+          "NEW Retry/Cancel/Create buttons"
+        ],
+        "retired_paths": [
+          "Choice labels painting across the dropdown affordance or outside the control",
+          "Button labels painting beyond their control",
+          "Visible clip height used as layout height for these labels during scrolling"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/control-label-layout/result.json",
+        "limits": "Bounded GLOBAL/PROJECT/NEW shared control-label adoption; full native input, long-label pixel, negative/resource and S3 qualification remain open. S3 amendment remains unapproved; no dependency/license/prototype/budget change, resize remains nonblocking."
       }
     },
     {
@@ -27323,5 +27351,19 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/new-project-summary-clipping/result.json",
     "limits": "Bounded NEW summary adoption only; full native narrow/input/negative/resource and S3 qualification remain open. No dependency, license, prototype or sequencing amendment; resize remains nonblocking."
+  },
+  "s3_control_label_layout_work": {
+    "status": "bounded shared control-label clipping with stable layout during ancestor clipping",
+    "production_consumers": [
+      "GLOBAL/PROJECT shared choice controls and row/reset/action buttons",
+      "NEW Retry/Cancel/Create buttons"
+    ],
+    "retired_paths": [
+      "Choice labels painting across the dropdown affordance or outside the control",
+      "Button labels painting beyond their control",
+      "Visible clip height used as layout height for these labels during scrolling"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/control-label-layout/result.json",
+    "limits": "Bounded GLOBAL/PROJECT/NEW shared control-label adoption; full native input, long-label pixel, negative/resource and S3 qualification remain open. S3 amendment remains unapproved; no dependency/license/prototype/budget change, resize remains nonblocking."
   }
 }

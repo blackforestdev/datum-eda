@@ -231,15 +231,20 @@ pub(super) fn draw_choice_control(
     } else {
         format!("{label} · unavailable")
     };
-    draw_text(
+    draw_text_clipped(
         &visible_label,
         rect.x + 12.0,
         rect.y + 8.0,
         design_tokens::typography::CAPTION_SIZE,
         if available { TEXT_PRIMARY } else { TEXT_MUTED },
         TextFace::Ui,
+        RectPx {
+            width: (rect.width - if available { 22.0 } else { 0.0 }).max(0.0),
+            ..rect
+        },
         text,
     );
+    text.last_mut().expect("choice label").layout_size = Some((rect.width, rect.height));
     if available {
         draw_text(
             "v",
@@ -350,15 +355,17 @@ pub(super) fn button(
         quads.push(Quad::from_rect(rect, design_tokens::chrome::SURFACE_02));
         push_dashed_rect_border(quads, rect, border);
     }
-    draw_text(
+    draw_text_clipped(
         label,
         rect.x + 9.0,
         rect.y + (rect.height - design_tokens::typography::CAPTION_SIZE) * 0.5 - 1.0,
         design_tokens::typography::CAPTION_SIZE,
         if available { TEXT_PRIMARY } else { TEXT_MUTED },
         TextFace::Ui,
+        rect,
         text,
     );
+    text.last_mut().expect("button label").layout_size = Some((rect.width, rect.height));
 }
 
 pub(super) fn draw_preference_control(
@@ -478,4 +485,50 @@ pub(super) fn push_rounded_rect_fill(
 ) {
     let mut cache = ControlMeshCache::default();
     ControlPainter::new(quads, &mut cache, 1.0).rounded_fill(rect, color, radius, 0.0);
+}
+
+#[cfg(test)]
+mod label_bounds_tests {
+    use super::*;
+
+    #[test]
+    fn long_control_labels_preserve_choice_affordance_and_button_bounds() {
+        let mut cache = ControlMeshCache::default();
+        let mut quads = Vec::new();
+        let mut text = Vec::new();
+        let rect = RectPx {
+            x: 25.5,
+            y: 10.25,
+            width: 100.0,
+            height: 30.0,
+        };
+        for available in [true, false] {
+            text.clear();
+            draw_choice_control(
+                &"long value ".repeat(30),
+                rect,
+                true,
+                available,
+                &mut ControlPainter::new(&mut quads, &mut cache, 1.5),
+                &mut text,
+            );
+            let bounds = text[0].clip_bounds.expect("choice value is bounded");
+            assert_eq!(bounds.x, rect.x);
+            assert_eq!(bounds.width, if available { 78.0 } else { 100.0 });
+            assert_eq!(
+                text.iter().filter(|run| run.text == "v").count(),
+                usize::from(available)
+            );
+            text.clear();
+            button(
+                &"long action ".repeat(30),
+                rect,
+                true,
+                available,
+                &mut ControlPainter::new(&mut quads, &mut cache, 1.5),
+                &mut text,
+            );
+            assert_eq!(text[0].clip_bounds, Some(rect));
+        }
+    }
 }

@@ -42,6 +42,13 @@ Rust modules. `gui-render/src/side_panels.rs` drops from 91 to 52 physical lines
 and from 1,685 to 1,393 expanded lines; its remaining include debt stays open
 with an exact downward ceiling. Panel clipping uses the shared content owner.
 
+PM045 S3 control-label layout moved text-buffer keys and layout extents from
+`render/geometry.rs` into the existing shared `text_buffer_cache` module. Its
+pre-test lines decrease from 1,250 to 1,215; the root expanded ceiling becomes
+7,375. Text identity/signature tests move into their own test module, reducing
+`render/tests.rs` from 1,159 to 1,070 lines. All three limits ratchet downward;
+remaining debt stays open.
+
 ## What Counts as Structural Evidence
 
 Qualifying evidence names the ownership moved, the real module boundary created,
