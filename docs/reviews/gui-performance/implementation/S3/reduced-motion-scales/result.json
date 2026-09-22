@@ -1,0 +1,106 @@
+{
+  "candidate_base": "b3455317b64aca1f0de787929adfa0f1ff77be98",
+  "status": "Both Preferences reduced-motion positives pass at remaining scale overrides",
+  "requirement": "HP23-02",
+  "binary_sha256": "4bf4f0a411c175cf61f4204031597092132fdfa8b0f11f47a395e737e33a0317",
+  "observations": [
+    {
+      "scale": 1.5,
+      "main_total_presentations": 1,
+      "host": "GLOBAL",
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "29",
+        "WIDTH": "1440",
+        "HEIGHT": "1050",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_frames": 1,
+      "boundary_frames": 0,
+      "reverse_frames": 1,
+      "idle_frames": {
+        "dialog": 0,
+        "main": 0
+      },
+      "one_escape_dismisses_expansion_without_closing_dialog": true,
+      "passed": true
+    },
+    {
+      "scale": 1.5,
+      "main_total_presentations": 1,
+      "host": "PROJECT",
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "29",
+        "WIDTH": "1440",
+        "HEIGHT": "1050",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_frames": 1,
+      "boundary_frames": 0,
+      "reverse_frames": 1,
+      "idle_frames": {
+        "dialog": 0,
+        "main": 0
+      },
+      "one_escape_dismisses_expansion_without_closing_dialog": true,
+      "passed": true
+    },
+    {
+      "scale": 2,
+      "main_total_presentations": 1,
+      "host": "GLOBAL",
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "1",
+        "Y": "29",
+        "WIDTH": "1918",
+        "HEIGHT": "1050",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_frames": 1,
+      "boundary_frames": 0,
+      "reverse_frames": 1,
+      "idle_frames": {
+        "dialog": 0,
+        "main": 0
+      },
+      "one_escape_dismisses_expansion_without_closing_dialog": true,
+      "passed": true
+    },
+    {
+      "scale": 2,
+      "main_total_presentations": 1,
+      "host": "PROJECT",
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "1",
+        "Y": "29",
+        "WIDTH": "1918",
+        "HEIGHT": "1050",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_frames": 1,
+      "boundary_frames": 0,
+      "reverse_frames": 1,
+      "idle_frames": {
+        "dialog": 0,
+        "main": 0
+      },
+      "one_escape_dismisses_expansion_without_closing_dialog": true,
+      "passed": true
+    }
+  ],
+  "configuration": "GUI-written reduced_motion=true; retained setup in S3/native-reduced-motion/setup.tar.gz",
+  "limits": "Bounded native X11/Xwayland positives at override1.5/2; together with native-reduced-motion receipts both hosts have1/1.5/2 positives on same4bf4f0a4 binary. Actual extents are1440x1050 and1918x1050. Static captures can lag; they do not prove exact final pixels or latency. Native Wayland input, monitor-scale transitions and remaining full qualification remain open; timer negative previously proven at1x only. No production/dependency/license/prototype/budget/resize change.",
+  "artifact_sha256": {
+    "15.tar.gz": "5d8c5f6944ad3c75f9421472f3e0ce9569e5305bf135ec12b4e0a2e5680fdb1e",
+    "2.tar.gz": "3a9b0c77ebe84d13eee1cc451fe1c57a4826d76c16278c4254f7dc1060ad5f82"
+  }
+}
