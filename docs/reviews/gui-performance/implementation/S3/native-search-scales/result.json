@@ -1,0 +1,46 @@
+{
+  "candidate_base": "40b4d5eb4493100b0e184c3494dd91c07ce3670f",
+  "status": "Both native Preferences search/clear transitions pass at1.5x and2x after bounded input/presentation settling",
+  "requirements": [
+    "HP19-01",
+    "HP20-01",
+    "HP23-01"
+  ],
+  "successful_runs": [
+    {
+      "archive": "settled15.tar.gz",
+      "host": "GLOBAL",
+      "scale": 1.5
+    },
+    {
+      "archive": "project15.tar.gz",
+      "host": "PROJECT",
+      "scale": 1.5
+    },
+    {
+      "archive": "both2.tar.gz",
+      "host": "GLOBAL",
+      "scale": 2
+    },
+    {
+      "archive": "both2.tar.gz",
+      "host": "PROJECT",
+      "scale": 2
+    }
+  ],
+  "observations": {
+    "initial15_and_focused15": "Both hosts falsely attributed late search presentation to wheel; capture still old. Raw Global focused15 log has last search presentation before native wheel event. Do not infer extent/hit defect.",
+    "settled15": "Wait for final KeyN delivery and2s quiet presentation interval: GLOBAL passes; PROJECT fitting wheel passes but Escape event absent and clear times out.",
+    "project15": "Explicit activation before Escape completes the remaining PROJECT case.",
+    "both2": "Both pass; inspected captures show precision,4 grouped rows, no scrollbar and scaled controls. Record actual1918x1050 surface.",
+    "scope": "No native input latency, monitor DPI transition, whole-window prototype parity, or remaining backend/profile acceptance follows from settled-state proof."
+  },
+  "limits": "X11/Xwayland native adapters with existing --visual-scale-factor override1.5/2, not monitor-scale transition or Wayland input qualification. Observed sizes1440x1050 and1918x1050, not requested1440x1080/1920x1440. Four settled search results fit and scheduled wheel interval has0 frames. Clear/scroll intervals produce presentations (2 for Global2x,1 others); pending clear frames may overlap, so no exact per-wheel/latency claim. Failed early baselines and missing Escape retained. Same recorded release binary; no production/dependency/license/prototype/budget/resize change. Remaining control/backend/full S3 qualification stays open.",
+  "artifact_sha256": {
+    "both2.tar.gz": "6d1ac90d5f9edbf0f7c8cec763f36166e749a9bc6a06b8988417404d389d7059",
+    "focused15.tar.gz": "1980be826e0ae7a06dbe478f25615a7005beb0ae14040e53824a192d85d878a0",
+    "initial15.tar.gz": "bba625b552e94f1148f6e635c41791b47b1b5592bc946f2bc6e08b411189245e",
+    "project15.tar.gz": "df178d82d35a39bbf43a549d84f675dd4e0876a50bd3913723bb7a610857d9cf",
+    "settled15.tar.gz": "fc1754fd0a2c22f40339578d5285e3d15646c8cfa7226657831c2c995c9f051c"
+  }
+}
