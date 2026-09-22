@@ -5706,7 +5706,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial: existing shared renderer fractional scroll-away/return test observes zero warm label misses. Prescribed one-frame-cache negative now fails with3 misses and byte-restored production passes. Both native adapters and full working-set resource conformance remain unqualified; resource implementation due S4 and qualification S5 under approved clarification.",
+        "status": "Partial: shared renderer warm-scroll and one-frame-cache negative pass/fail as prescribed; both actual GLOBAL/PROJECT Units native X11 adapters now show0 misses over three down/up cycles using actual rendered-frame cache statistics. Complete settings/expanded/backend/scale and working-set resource conformance remain unqualified; resource implementation due S4 and qualification S5.",
         "id": "proof_hp14_01",
         "positive": "Scroll away/return unchanged labels within128 buffers AND32KiB key text AND applicable8MiB shaped payload/renderer and aggregate limits",
         "negative_control": "Keep only one-frame cache",
@@ -5780,6 +5780,20 @@
         "retired_paths": "No new production retirement. Verifies preserved bounded multi-frame overlay label history against one-frame eviction.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/label-history-negative/result.json",
         "limits": "Existing shared Preferences renderer fixture at960x300/1x on P630 Vulkan, two bounded fractional scroll cycles. Detects loss of label history and verifies restored warm reuse, pinned chrome and exact return pixels. Not both native preference event adapters or complete working-set resource conformance; HP14 resource dependencies remain required at S4/S5. No default Rust change, dependency modification, numerical performance/budget, prototype or resize-scope change."
+      },
+      "s3_native_label_reuse_progress": {
+        "status": "Default dialog trace work made lazy; actual native warm text reuse verified",
+        "production_consumers": [
+          "GLOBAL/PROJECT/NEW shared dialog-only renderer"
+        ],
+        "shared_owner": "Renderer::render_overlay_only and prepare_frame_text",
+        "retired_paths": [
+          "Unconditional dialog diagnostic Instant creation and string formatting when tracing is disabled",
+          "Discarded actual overlay cache stats replaced by empty workspace stats on dialog-only frames"
+        ],
+        "preserved": "Default cache/layout/glyph/submit behavior; general-frame diagnostic stats retain workspace semantics. Existing DATUM_TRACE_TIMING opt-in now includes actual dialog cache hits/misses.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-label-reuse/result.json",
+        "limits": "Bounded actual GLOBAL/PROJECT Units native X11 scroll cycles at1x, tracing enabled; no extra lookup used to warm before measurement. Not all settings/expanded states/backends/scales, resource/counter-overhead conformance or full HP14/S3 acceptance. Complete resource dependencies remain due at S4/S5. No dependency/license/prototype/style, budget or resize-scope change. Known capture lag means images are not timing/final-state proof."
       }
     },
     {
@@ -27833,5 +27847,19 @@
     "retired_paths": "No new production retirement. Verifies preserved bounded multi-frame overlay label history against one-frame eviction.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/label-history-negative/result.json",
     "limits": "Existing shared Preferences renderer fixture at960x300/1x on P630 Vulkan, two bounded fractional scroll cycles. Detects loss of label history and verifies restored warm reuse, pinned chrome and exact return pixels. Not both native preference event adapters or complete working-set resource conformance; HP14 resource dependencies remain required at S4/S5. No default Rust change, dependency modification, numerical performance/budget, prototype or resize-scope change."
+  },
+  "s3_native_label_reuse_work": {
+    "status": "Default dialog trace work made lazy; actual native warm text reuse verified",
+    "production_consumers": [
+      "GLOBAL/PROJECT/NEW shared dialog-only renderer"
+    ],
+    "shared_owner": "Renderer::render_overlay_only and prepare_frame_text",
+    "retired_paths": [
+      "Unconditional dialog diagnostic Instant creation and string formatting when tracing is disabled",
+      "Discarded actual overlay cache stats replaced by empty workspace stats on dialog-only frames"
+    ],
+    "preserved": "Default cache/layout/glyph/submit behavior; general-frame diagnostic stats retain workspace semantics. Existing DATUM_TRACE_TIMING opt-in now includes actual dialog cache hits/misses.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-label-reuse/result.json",
+    "limits": "Bounded actual GLOBAL/PROJECT Units native X11 scroll cycles at1x, tracing enabled; no extra lookup used to warm before measurement. Not all settings/expanded states/backends/scales, resource/counter-overhead conformance or full HP14/S3 acceptance. Complete resource dependencies remain due at S4/S5. No dependency/license/prototype/style, budget or resize-scope change. Known capture lag means images are not timing/final-state proof."
   }
 }
