@@ -1,0 +1,12 @@
+{
+  "status": "fresh release build passed; native input attempt aborted and unqualified",
+  "source_commit": "1bc02aaf",
+  "production_source_commit": "96f5bd57",
+  "binary_sha256": "28745fab777aca48f9642c9a66a9df6e8f90b822f9cb0ad40f04d3e01c7ad005",
+  "build_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app",
+  "native_command": "python3 /tmp/pm045_s3_addressed_scroll.py /tmp/pm045-s3-addressed-scroll",
+  "attempt": "GLOBAL launched on desktop X11/Xwayland. XSendEvent was addressed only to owned window; driver windowactivate branch is a no-op and no pointer warp was requested. Intended Units click did not establish a presentation change; addressed input delivery was not verified. Logs then showed many pointer positions and Alt key events not sent by the driver. Aborted driver with SIGINT; its finally block terminated owned application. PROJECT was not run.",
+  "scope": "No native input/focus, scrolling, pass-count, teardown, daily-backend or resource acceptance. Driver exit130 is an abort, not a pass. No application process from this attempt remained after cleanup.",
+  "desktop_observation": "Read-only idle reporting unavailable: KDE GetSessionIdleTime unsupported and desktop Xwayland lacks MIT-SCREEN-SAVER. Actual unscripted events make this trial unusable. Further focus-taking tests stopped.",
+  "pending_authority": "S3 resource clarification in1bc02aaf remains proposed, not approved. Automatic goal continuation is not owner approval. No S3 completion or S4 selection."
+}
