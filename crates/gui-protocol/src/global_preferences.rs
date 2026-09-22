@@ -453,11 +453,18 @@ impl GlobalPreferencesDialogState {
 
 // Preserve ASCII-only case folding without copying every searchable field.
 fn contains_ascii_case_insensitive(text: &str, query: &str) -> bool {
-    query.is_empty()
-        || text
+    match query.as_bytes() {
+        [] => true,
+        // First-character searches should not pay for a slice comparison per byte.
+        [byte] => text
+            .as_bytes()
+            .iter()
+            .any(|candidate| candidate.eq_ignore_ascii_case(byte)),
+        query => text
             .as_bytes()
             .windows(query.len())
-            .any(|candidate| candidate.eq_ignore_ascii_case(query.as_bytes()))
+            .any(|candidate| candidate.eq_ignore_ascii_case(query)),
+    }
 }
 
 #[cfg(test)]
@@ -468,6 +475,8 @@ mod search_tests {
     fn borrowed_search_preserves_ascii_and_utf8_substring_rules() {
         for (text, query, expected) in [
             ("Board Precision", "pReCiSiOn", true),
+            ("Board Precision", "P", true),
+            ("Board Precision", "z", false),
             ("µm display", "µM", true),
             ("ÄBC", "äbc", false),
             ("ÄBC", "Äbc", true),

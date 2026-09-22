@@ -1,0 +1,25 @@
+{
+  "candidate_base": "034bd7e099f045d63d32aa425d6c3b16dbba3921",
+  "status": "Single-byte Preferences search uses direct case-insensitive byte scan",
+  "requirements": [
+    "HP12-02",
+    "HP23-01"
+  ],
+  "source_sha256": "796c1a5189f9c16a15168803737f4ef379d6aeebacb4f192d05a98808d39925b",
+  "observations": "Initial window matcher was slower than allocating lowercase reference for single-character p in this probe. Direct byte scan removed that observed slowdown; all match counts agree. Raw timings retained without GUI performance acceptance.",
+  "verification": {
+    "semantic": "1 passed,121 filtered; added uppercase single-byte and absent-byte cases",
+    "release": "passed",
+    "clippy": "-D warnings passed",
+    "probe_command": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo run --offline --release --manifest-path /tmp/pm045-search-cost/Cargo.toml --target-dir /home/bfadmin/Documents/datum-eda/target/pm045-search-cost"
+  },
+  "limits": "Bounded field-matcher diagnostic over135 actual catalog strings and six queries, four alternating-order rounds of10000 iterations. Excludes rendering, complete visible_rows short-circuiting, query normalization, native input and full STAT/ADM conformance. No GUI speed, numerical budget or full HP12/HP23/S3 acceptance. Integer formatting still allocates; multi-byte queries retain borrowed window matching. No dependencies, prototype, license or resize-scope change.",
+  "artifact_sha256": {
+    "after.log.gz": "0bec6f81364809baa2ea020dca46ce188c63a6c8f73597d41d2031c7ddd160ad",
+    "before.log.gz": "9256c40f1acad70983b4a9b771b8fce49ca3e683fd34a458ef1afb52a1a184a1",
+    "build.log.gz": "b68014c9184dcec3bcdd7f71f66e5cd456cf6047eab4265ea6c481adc27d5b1d",
+    "clippy.log.gz": "7dd6c4a0237cc8d395d2b2c2e42145a3aee2ac31e9286fdc1a12120c8e244269",
+    "probe.tar.gz": "cb43b362f2ceaf0e66a1caa3d1b976e041a36d602a46e9c3b596c528c477df95",
+    "semantic.log.gz": "ba9fecf14b0a365b01f138e64f6dc71774f60aab8c2740fd4f1ed4ba7aebffe4"
+  }
+}
