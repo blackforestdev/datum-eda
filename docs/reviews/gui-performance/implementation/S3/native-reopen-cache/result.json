@@ -1,0 +1,83 @@
+{
+  "candidate_base": "f4a56382a10f1dd9a78c1310264ef025750e53ae",
+  "status": "Both native Preferences close/reopen cache checks pass",
+  "requirement": "HP14-02",
+  "binary_sha256": "2a4cecd633d28582df98fbe95b99fa7828bc6823804d1409fb58ad6da1263418",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "verification": [
+    {
+      "host": "GLOBAL",
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "before_close_warm_text_stats": [
+        [
+          "47",
+          "0"
+        ]
+      ],
+      "closed_window": "6291461",
+      "reopened_geometry": {
+        "WINDOW": "6291496",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "reopened_window": "6291496",
+      "first_reopened_text_stats": [
+        "17",
+        "30"
+      ],
+      "old_window_visible_after_reopen": false,
+      "passed": true
+    },
+    {
+      "host": "PROJECT",
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "before_close_warm_text_stats": [
+        [
+          "46",
+          "0"
+        ]
+      ],
+      "closed_window": "6291461",
+      "reopened_geometry": {
+        "WINDOW": "6291496",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "reopened_window": "6291496",
+      "first_reopened_text_stats": [
+        "17",
+        "29"
+      ],
+      "old_window_visible_after_reopen": false,
+      "passed": true
+    }
+  ],
+  "failed_attempts": "Initial trial reopened both hosts but incorrectly required zero hits in a cold frame; duplicate labels legitimately hit within that frame. Corrected trial compares a warm zero-miss frame to cold misses at matching dimensions. Menu discovery is setup only. Both prior receipts preserved.",
+  "visual_review": "Inspected both reopened captures: expected Units rows, scope header, navigation and scroll chrome are present. Static captures do not establish temporal qualification.",
+  "limits": "Native X11/Xwayland at 1x override, 1000x750, existing release binary and opt-in timing diagnostics. No new production consumers or competing paths retired. Cold misses and distinct window identities corroborate renderer-cache recreation; they do not measure complete FontSystem, atlas, allocator, scratch, GPU or in-flight release. Full resource implementation remains S4 and qualification S5. Remaining working-set/native/backend and S3 exit proof stays open. No performance, dependency, license, prototype, budget or resize change.",
+  "artifact_sha256": {
+    "corrected.tar.gz": "be51413d064da538a7c552781023e9e760de9c292869632fdbee3988dbcd6bb5",
+    "invalid-zero-hit-assumption.tar.gz": "ab6236060cb5fac3c2fd6767ca2992982753b4f33a41741d92a6db26c4561282",
+    "menu-setup.tar.gz": "3f82db369806c52b593b493d9026e71a4df401521a56e6b0fb3b6b3aea37fa48"
+  }
+}

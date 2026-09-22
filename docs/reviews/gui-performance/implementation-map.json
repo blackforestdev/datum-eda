@@ -5908,7 +5908,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial: real shaped overlay cache now tested through entry/key-text churn, eviction/rebuild, valid post-retirement lookup and cold cache reconstruction.9 cache tests pass. Actual native close/reopen and complete resource accounting/cap/release qualification remain open with S4 implementation/S5 qualification resource carryforward.",
+        "status": "Partial: real cache churn/reconstruction tests pass; both native Preferences at 1x close and reopen to distinct windows with cold text misses after warm zero-miss frames at matching dimensions. Complete resource accounting/cap/release remains unqualified under S4 implementation/S5 qualification; remaining working-set and native coverage stays open.",
         "id": "proof_hp14_02",
         "positive": "Churn labels/evict/close/reopen",
         "negative_control": "Bound key bytes but retain unbounded shaped payload",
@@ -5975,8 +5975,20 @@
         "limits": "Direct real TextBufferCache with Datum fonts and shaped Buffer objects, not native window event dispatch or GPU atlas qualification. Plain labels only:128 retained entries and32KiB retained key text, not complete owned memory. Reset recreates only this cache; shared FontSystem remains alive. Actual host close/reopen, rich-span working sets, allocator/atlas/scratch/in-flight and full HP14/S3 remain open under existing S4/S5 resource associations. No production behavior/dependency/license/prototype/budget/resize change."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S3/real-overlay-churn/result.json"
-      ]
+        "docs/reviews/gui-performance/implementation/S3/real-overlay-churn/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-reopen-cache/result.json"
+      ],
+      "s3_native_reopen_cache_progress": {
+        "status": "Both native Preferences close/reopen cache checks pass",
+        "production_consumers": [
+          "GLOBAL native Preferences",
+          "PROJECT native Preferences"
+        ],
+        "shared_owner": "GlobalPreferencesWindowSurface -> Renderer -> TextBufferCache",
+        "retired_paths": "None in this verification slice; exercise existing close and reconstruction ownership.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-reopen-cache/result.json",
+        "limits": "Native X11/Xwayland at 1x override, 1000x750, existing release binary and opt-in timing diagnostics. No new production consumers or competing paths retired. Cold misses and distinct window identities corroborate renderer-cache recreation; they do not measure complete FontSystem, atlas, allocator, scratch, GPU or in-flight release. Full resource implementation remains S4 and qualification S5. Remaining working-set/native/backend and S3 exit proof stays open. No performance, dependency, license, prototype, budget or resize change."
+      }
     },
     {
       "id": "HP15-01",
@@ -27824,7 +27836,7 @@
         "HP13-01": "Complete PROJECT2x, NEW changed-state and remaining backend pass proof. Both Preferences1/1.5x and GLOBAL2x now have expanded semantic/pass evidence; preserve existing general-pass negative and dat-native-input-delivery-vq7w failure.",
         "HP13-02": "Complete prescribed AA/painter-order negative and native visual/backend/scale coverage; existing14 GPU regressions remain bounded evidence.",
         "HP14-01": "Complete PROJECT2x and remaining settings/backend warm-reuse cases with observed input delivery. Both Preferences1/1.5x and GLOBAL2x expanded trials have6 zero-miss samples and semantic expansion proof; one-frame negative recorded. Full resource precondition stays S4/S5.",
-        "HP14-02": "Complete actual native close/reopen and remaining working-set/negative cases. Real shaped cache now proves bounded128-entry/32KiB key-text churn, lookup after eviction and cold reconstruction; full owned accounting/cap/release follows existing S4/S5 associations.",
+        "HP14-02": "Complete remaining working-set/negative and native coverage. Real shaped cache churn and both native Preferences 1x close/reopen are recorded; cold misses do not prove full resource release. Complete owned accounting/cap/release retains existing S4/S5 deadlines.",
         "HP16-01": "Complete rounded-control repeat/translation/clip proof across actual applicable consumers and remaining prescribed arc/tessellator negatives; preserve fixed-rectangle classification.",
         "HP16-02": "Complete authored concave/holed separation and fan negative plus applicable native contour/style/DPI profiles. Existing key-field test and current incomplete-DPI-key negative/restored painter positive are recorded.",
         "HP16-03": "Reconcile actual native control working-set evidence with recorded bounded CPU LRU/bypass/byte eviction and pin-indefinitely negative. Full CPU metadata/GPU/in-flight/aggregate bounds remain S4/S5 resource dependencies.",
@@ -28382,5 +28394,16 @@
     "retired_paths": "No runtime retirement. Add real-cache proof alongside existing simulated-entry helper coverage.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/real-overlay-churn/result.json",
     "limits": "Direct real TextBufferCache with Datum fonts and shaped Buffer objects, not native window event dispatch or GPU atlas qualification. Plain labels only:128 retained entries and32KiB retained key text, not complete owned memory. Reset recreates only this cache; shared FontSystem remains alive. Actual host close/reopen, rich-span working sets, allocator/atlas/scratch/in-flight and full HP14/S3 remain open under existing S4/S5 resource associations. No production behavior/dependency/license/prototype/budget/resize change."
+  },
+  "s3_native_reopen_cache_work": {
+    "status": "Both native Preferences close/reopen cache checks pass",
+    "production_consumers": [
+      "GLOBAL native Preferences",
+      "PROJECT native Preferences"
+    ],
+    "shared_owner": "GlobalPreferencesWindowSurface -> Renderer -> TextBufferCache",
+    "retired_paths": "None in this verification slice; exercise existing close and reconstruction ownership.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-reopen-cache/result.json",
+    "limits": "Native X11/Xwayland at 1x override, 1000x750, existing release binary and opt-in timing diagnostics. No new production consumers or competing paths retired. Cold misses and distinct window identities corroborate renderer-cache recreation; they do not measure complete FontSystem, atlas, allocator, scratch, GPU or in-flight release. Full resource implementation remains S4 and qualification S5. Remaining working-set/native/backend and S3 exit proof stays open. No performance, dependency, license, prototype, budget or resize change."
   }
 }
