@@ -1,0 +1,104 @@
+{
+  "base_commit": "bf0bfef0cd608d8b269ef5774b5dea5767c99795",
+  "production_consumers": [
+    "Global/Project/New native dialogs -> shared NativeFrameCoordinator -> Main release dispatch"
+  ],
+  "retired_paths": [],
+  "proof": "Same release05964b9e: Global/Project1.5x at1200x720, Global2x at1600x960 and New1.5x at1280x800 pass OS protocol close during a delivered scrollbar drag. Each logs CloseRequested/closed, consumes trailing release over Main File with0 frames, then fresh click/Escape each present1. These four cases supplement prior Global/Project1x and New2x proof.",
+  "limits": "Project2x remains unqualified: drag motion only logged at25-second cleanup, before close trial could run (existing dat-native-input-delivery-vq7w symptom). Initial narrower-window1.5x both-host setup failed because old control coordinate lay outside test window; corrected width-relative coordinate passes. X window enumeration emits transient BadWindow during destruction; independent closed ledger and Main interactions checked. No new production migration/retirement, build, negative injection or full HP21/S3/backend/monitor-transition/visual/resource acceptance. Visual override scales only. No dependency/license/prototype/resize-scope change.",
+  "samples": [
+    {
+      "host": "GLOBAL",
+      "passed": false,
+      "setup_presented_extent": [
+        1200,
+        720
+      ],
+      "trial": "setup-failure",
+      "scale": 1.5
+    },
+    {
+      "host": "PROJECT",
+      "passed": false,
+      "setup_presented_extent": [
+        1200,
+        720
+      ],
+      "trial": "setup-failure",
+      "scale": 1.5
+    },
+    {
+      "host": "GLOBAL",
+      "passed": true,
+      "setup_presented_extent": [
+        1200,
+        720
+      ],
+      "trial": "preferences-1.5",
+      "scale": 1.5
+    },
+    {
+      "host": "PROJECT",
+      "passed": true,
+      "setup_presented_extent": [
+        1200,
+        720
+      ],
+      "trial": "preferences-1.5",
+      "scale": 1.5
+    },
+    {
+      "host": "GLOBAL",
+      "passed": true,
+      "setup_presented_extent": [
+        1600,
+        960
+      ],
+      "trial": "preferences-2",
+      "scale": 2.0
+    },
+    {
+      "host": "PROJECT",
+      "passed": false,
+      "setup_presented_extent": [
+        1600,
+        960
+      ],
+      "trial": "preferences-2",
+      "scale": 2.0
+    },
+    {
+      "host": "NEW",
+      "passed": true,
+      "setup_presented_extent": [
+        1280,
+        800
+      ],
+      "trial": "new-1.5",
+      "scale": 1.5
+    }
+  ],
+  "new_driver": "docs/reviews/gui-performance/implementation/S3/close-release-handoff/pm045_native_new_close_release_target_extent.py.gz",
+  "artifacts": {
+    "new-1.5/NEW/native.log.gz": "e3cf1bac7ecdbba2b923acd4ad2ae661a41e0996cb87bec056a79912d8435350",
+    "new-1.5/NEW/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "new-1.5/result.json.gz": "65e4cc3b82a848d459329fc4ef9672bce116251db468835807428bc25c175b83",
+    "pm045_native_close_release_profiles.py.gz": "a21314c813026d8f74c8facb1083bacebbf3b17db860d561f52e44a9f03846a7",
+    "pm045_native_close_release_profiles_bounds.py.gz": "21f8b17bfcb73f00fa36276e1e4beb8b0e24ee6ae3d14e7840dc310767043044",
+    "preferences-1.5/GLOBAL/native.log.gz": "f3f41a95ad63fd10ff520163a749baa4f49ac6dfc55e2e5196678507abde2fa5",
+    "preferences-1.5/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "preferences-1.5/PROJECT/native.log.gz": "6eabc3596fdc75d63ee9bf2ffa06741edb3a44ccc2103c0134a91ca00301d419",
+    "preferences-1.5/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "preferences-1.5/result.json.gz": "d0ec12bda62abacfe1202816fe53d4a3aaa177327d3e5f62d25598d782f854fc",
+    "preferences-2/GLOBAL/native.log.gz": "285127331290b9a890a2d174e11c3016445c1706501a3846b70efd2121bc2d6e",
+    "preferences-2/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "preferences-2/PROJECT/native.log.gz": "a24356df4b32c95aa3347e699ac431be02ab5e4d57366f6bd02b845e9af0bc15",
+    "preferences-2/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "preferences-2/result.json.gz": "06c8bc4bd542ec06bc8a58e1d9b3961e48c1f88546688078a720dce551f09171",
+    "setup-failure/GLOBAL/native.log.gz": "a0ba6f9443c366590c271af2ccd2c5fbcb0792fe97bf4afa180713dd38d1174d",
+    "setup-failure/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "setup-failure/PROJECT/native.log.gz": "d6dfb598a91da9bb60537b7cfc8234cd2642f63a4fa32240d8dae6924b8dac0c",
+    "setup-failure/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "setup-failure/result.json.gz": "81744f4507770c24d9bd012d1914d8c545cffec9c854449afdf2a7e29e3df97e"
+  }
+}
