@@ -1,0 +1,65 @@
+{
+  "base_commit": "3c05f12e87d26d00f60bf11d32362207d5276c8c",
+  "production": {
+    "status": "MAIN and NEW1x default native control reuse verified with real OS input and existing cache-bypass negative",
+    "production_consumers": [
+      "NEW native keyboard focus -> shared form/control preparation",
+      "MAIN native File menu pointer/Escape events -> shared pane-focus control painter"
+    ],
+    "retired_paths": "None; production source and normal release unchanged from3c05f12e. Reuse previously pinned single-defect negative binary; no additional build or active-source injection.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/main-new-native-control-reuse/result.json",
+    "proof": "NEW delivers10 non-synthetic Tab releases with changed native presentations; second five-step cycle stays at14 control builds and produces0 Main preparations/presentations. Its negative rises72/81/90/99/108 in that cycle and fails. MAIN opens/closes File twice with native pointer/Escape delivery; control builds stay1 while negative rises4/5/6/7 and fails. Main open/closed captures visually confirm menu states. Normal release SHA remains unchanged.",
+    "limits": "Bounded1x X11 scenarios only. NEW final capture shows earlier UnitsSummary focus rather than final expected Name; no final-focus/capture reliability claim. Main counts describe shared pane-focus mesh during menu activity; rectangular menu controls remain direct primitives, not newly cached meshes. No Inspector selection-state, all-profile/backend/fractional/AA, resource/method or full HP16/S3 acceptance. SIGTERM not teardown proof. No dependency/license/prototype/resize or sequencing change."
+  },
+  "binary_sha256": {
+    "positive": "12f00d7e0120265bf200c4ed9465d8e1e3611114da8c19e33e823b8f27f65f60",
+    "negative": "612eb7c2bd973053375751d143ca2604e014994da178727f668eab15e77af148"
+  },
+  "negative_provenance": "docs/reviews/gui-performance/implementation/S3/native-control-build-counts/result.json",
+  "negative_patch": "docs/reviews/gui-performance/implementation/S3/native-control-build-counts/negative.patch.gz",
+  "source_verification": "All four production source hashes in preceding counter receipt match current files; normal release and single-defect negative binary hashes match preceding pinned proof. Negative process uses separate binary and never replaces normal release.",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "commands": [
+    "python3 /tmp/pm045_new_control_mesh_reuse.py /tmp/pm045-new-control-reuse",
+    "PM045_GUI_BIN=/home/bfadmin/Documents/datum-eda/target/pm045-native-control-proof/negative-gui python3 /tmp/pm045_new_control_mesh_reuse.py /tmp/pm045-new-control-reuse-negative",
+    "python3 /tmp/pm045_main_control_mesh_reuse.py /tmp/pm045-main-control-reuse",
+    "PM045_GUI_BIN=/home/bfadmin/Documents/datum-eda/target/pm045-native-control-proof/negative-gui python3 /tmp/pm045_main_control_mesh_reuse.py /tmp/pm045-main-control-reuse-negative"
+  ],
+  "native_visual_review": {
+    "main": "main-positive/open-1.png shows File open; main-positive/closed.png shows it closed on the real board.",
+    "new": "new-positive/cycle-1.png shows UnitsSummary outline, so no final Name-focus pass follows from event/count proof."
+  },
+  "artifact_sha256": {
+    "main-driver.py.gz": "bc61990faae36f6eb4ac2865d636c84564ba07ebc5dde903f1c66a898a94d43c",
+    "main-negative/driver.log.gz": "740bccf53dc6cafb6052de68edb04739f7dce841098b1a080b3e64027970d11c",
+    "main-negative/initial.png": "816e5af9c171c56bc23216b300089aa08491346d3b93c402c0771bc86d241b70",
+    "main-negative/native.log.gz": "4b007bd7926af55b8992f61e6de454b8e3d87fdbf81e27228c159891fbaf5b87",
+    "main-negative/open-0.png": "816e5af9c171c56bc23216b300089aa08491346d3b93c402c0771bc86d241b70",
+    "main-negative/open-1.png": "ca469f7175fe9d39528682c673b1d2bb8cffe0bad83b121b3fa0f86c93141b00",
+    "main-negative/result.json": "c0b16faa2c74d2173a4df120245504ad623beb4daf6f35f667695e40bccb6809",
+    "main-negative/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "main-positive/closed.png": "816e5af9c171c56bc23216b300089aa08491346d3b93c402c0771bc86d241b70",
+    "main-positive/driver.log.gz": "2f99c9552e9bdf31b1f42688f575fd10fb4ceb9cbd94b385ffd18f155d1c3589",
+    "main-positive/initial.png": "816e5af9c171c56bc23216b300089aa08491346d3b93c402c0771bc86d241b70",
+    "main-positive/native.log.gz": "3ae89205c1f7c9cdb8ea45ecb4909f72d13c122f788426c41c58e1f579aac1ed",
+    "main-positive/open-0.png": "816e5af9c171c56bc23216b300089aa08491346d3b93c402c0771bc86d241b70",
+    "main-positive/open-1.png": "ca469f7175fe9d39528682c673b1d2bb8cffe0bad83b121b3fa0f86c93141b00",
+    "main-positive/result.json": "cb92acf2624e34d1fe2cb9ffcfb9fefdb7f56fda2eb2a395ee52b697d1d99c7f",
+    "main-positive/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "new-driver.py.gz": "85a8fed432226bfcd119dccb6cb36cca4c3851a627f301470e30969e283d7145",
+    "new-negative/cycle-0.png": "8d2b4ff93675f04cbb736fe085cea46cdedd261f68300283b7b15b1b7d2e1ee1",
+    "new-negative/cycle-1.png": "940a5cb821e8fbd2be4c7140645f1ec1e80f89bb125fe1343758f8a8641c70a4",
+    "new-negative/driver.log.gz": "5a805818634f821bf0fa448f1ab4fdcb8facb6216d866b826b1d0d70dcb352b2",
+    "new-negative/initial.png": "8d2b4ff93675f04cbb736fe085cea46cdedd261f68300283b7b15b1b7d2e1ee1",
+    "new-negative/native.log.gz": "cbf49803e5a576da73989b7120601a990f8a2a38c1dfb324e68a8be8f0c5bac5",
+    "new-negative/result.json": "2960694972263f11f9f11c8c0acaa09dc6f0989224da75c1c0bf469ab5c76deb",
+    "new-negative/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "new-positive/cycle-0.png": "8d2b4ff93675f04cbb736fe085cea46cdedd261f68300283b7b15b1b7d2e1ee1",
+    "new-positive/cycle-1.png": "940a5cb821e8fbd2be4c7140645f1ec1e80f89bb125fe1343758f8a8641c70a4",
+    "new-positive/driver.log.gz": "e7a83ee52e270abc6123a1953bf9ebba2d53ba3ede8f2341c087ae27aa1568ad",
+    "new-positive/initial.png": "8d2b4ff93675f04cbb736fe085cea46cdedd261f68300283b7b15b1b7d2e1ee1",
+    "new-positive/native.log.gz": "9dbfa5e80b93706b2dcc4397ab8b1ae6f3e6bdc43f99be2fd3eacbb2227c81e1",
+    "new-positive/result.json": "5193118780482bff6e32e63ccd87f36ef07e289afc457e2cf539ac1fab4eb64c",
+    "new-positive/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64"
+  }
+}
