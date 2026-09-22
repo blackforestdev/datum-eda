@@ -5235,7 +5235,7 @@
         "crates/gui-app/src/native_scroll_input.rs"
       ],
       "test": {
-        "status": "Partial: actual Board Runtime/default native routing tests verify capacity, boundary damage, reversal and camera separation. Native OS trials observe zero boundary presentations, scrolling/reversal and bounded board-crop stability; all full trials retain capture/close/input failures. Complete native qualification and prescribed fallthrough negative remain open.",
+        "status": "Partial: real Runtime proves effective capacity, boundary damage, reversal and camera separation. Current native X11 scale1 replay passes logged OS wheel/locality predicates and clean close with explicit focus roundtrips. Prior failures retained; exact displayed final offset/capture freshness, other profiles and prescribed fallthrough negative remain unqualified.",
         "id": "proof_hp10_02",
         "positive": "Wheel inside Layers including visible-capacity limit",
         "negative_control": "Fall through into board zoom",
@@ -5302,7 +5302,20 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/layers-os-wheel/result.json",
         "proof": "Actual OS wheel logs identify Main and line direction. All three attempts have zero top/bottom boundary presentations and positive down/reversal presentations. Settled attempt also passes exact RGB board-crop equality across Layers steps and editor zoom change. Inspected captures show bounded last rows18-24 of24 and reverse17-23; later capture16-22 demonstrates capture freshness remains limited.",
         "limits": "No complete native trial pass: initial capture retains hover highlight, second trial times out at Alt+F4 close after all wheel assertions, third times out awaiting all editor-wheel events. All failures preserved. Capture/compositor delivery remains unqualified; no single-event/one-frame assertion, exact native state offset, native preparation count, prescribed fallthrough negative, Wayland/scale matrix, whole-board camera proof, latency or HP10/S3 acceptance. Existing dat-native-input-delivery-vq7w remains open. No production/dependency/license/prototype/budget/resize changes."
-      }
+      },
+      "s3_layers_os_wheel_roundtrip_progress": {
+        "status": "Bounded Main native X11 wheel/locality/close replay passes with explicit input focus roundtrips",
+        "production_consumers": [
+          "MAIN Board/Layers native wheel dispatcher"
+        ],
+        "retired_paths": "No new runtime migration; tests shared native wheel owner using existing xdotool and KWin window-close facilities.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/layers-os-wheel-roundtrip/result.json",
+        "proof": "All scripted input connections confirm Main focus. Top/bottom wheel boundaries produce0 presentations; down and reversal each1; editor wheel1 and changed board pixels. Layers actions preserve exact RGB board crop400,150,900,500. Close exits0 and logs Main ownership released.",
+        "limits": "One current-binary X11 run at scale override1 and actual1333x833. Captured reverse list still shows previous rows, so exact displayed final offset/capture freshness remains unqualified. No root cause or closure of prior input failures, no one-OS-event/one-frame guarantee, native preparation counts, fallthrough negative, Wayland/other scales, full HP10/S3 or latency/resource acceptance. Three prior failed trials remain preserved; dat-native-input-delivery-vq7w remains open. No runtime/prototype/dependency/license/budget/resize changes."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/layers-os-wheel-roundtrip/result.json"
+      ]
     },
     {
       "id": "HP11-01",
@@ -28150,7 +28163,7 @@
       },
       "remaining_actions": {
         "HP10-01": "Complete OS-delivered wheel/no-preparation proof. Default native routing owner now exercised by real Runtime for non-Layers and editor zoom; prior preparation negative retained.",
-        "HP10-02": "Complete native final-state/input/close qualification and prescribed fallthrough negative. Bounded OS wheel locality, zero boundary presentations, reversal and unchanged board crop are observed; three failed complete trials remain explicit. Real Runtime proves effective capacity and camera routing.",
+        "HP10-02": "Complete exact native final-offset/capture qualification, remaining profiles and prescribed fallthrough negative. Current X11 scale1 OS replay passes zero boundary presentations, scrolling/reversal, unchanged board crop, editor zoom and clean close; prior input/capture failures remain explicit. Real Runtime proves effective capacity and camera routing.",
         "HP12-01": "Complete native forbidden-work attribution and the prescribed workspace/general-world negative against the dialog-only preparation boundary.",
         "HP12-02": "Complete remaining control/focus/partial-row and OS transition cases. Actual GLOBAL/PROJECT surface publication/scale/extent positives and both-host scale-clear negative/restored pass now recorded; durable enum scope and post-edit Reset hit retained.",
         "HP13-01": "Complete remaining backend/scale changed-state pass proof and final single-candidate matrix. NEW2x edit/scroll/reveal now has17 dialog-only samples and final Cancel hit; both Preferences1/1.5/2x have bounded expanded receipts across pinned builds. Existing general-pass negative and input/capture failures retained.",
@@ -28935,5 +28948,15 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/borrowed-control-labels/result.json",
     "proof": "Existing218 renderer tests pass, including control and unavailable-state coverage. Existing GPU single-pass/general-dialog pixel parity passes1 test/258 filtered. Renderer visual library/tests Clippy and fresh release GUI build pass.",
     "limits": "Source-level removal of one redundant temporary String copy per available label (an allocation for nonempty labels), not measured total allocations or frame-time improvement. TextRun still owns text; unavailable suffix formatting and integer formatting remain. No new native qualification, complete resource accounting or HP14/S3 acceptance. No styling/prototype/dependency/license, resource deadline or resize-scope change."
+  },
+  "s3_layers_os_wheel_roundtrip_work": {
+    "status": "Bounded Main native X11 wheel/locality/close replay passes with explicit input focus roundtrips",
+    "production_consumers": [
+      "MAIN Board/Layers native wheel dispatcher"
+    ],
+    "retired_paths": "No new runtime migration; tests shared native wheel owner using existing xdotool and KWin window-close facilities.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/layers-os-wheel-roundtrip/result.json",
+    "proof": "All scripted input connections confirm Main focus. Top/bottom wheel boundaries produce0 presentations; down and reversal each1; editor wheel1 and changed board pixels. Layers actions preserve exact RGB board crop400,150,900,500. Close exits0 and logs Main ownership released.",
+    "limits": "One current-binary X11 run at scale override1 and actual1333x833. Captured reverse list still shows previous rows, so exact displayed final offset/capture freshness remains unqualified. No root cause or closure of prior input failures, no one-OS-event/one-frame guarantee, native preparation counts, fallthrough negative, Wayland/other scales, full HP10/S3 or latency/resource acceptance. Three prior failed trials remain preserved; dat-native-input-delivery-vq7w remains open. No runtime/prototype/dependency/license/budget/resize changes."
   }
 }

@@ -1,0 +1,39 @@
+{
+  "candidate_commit": "375805c5068c4d9f0927bd59b40bd203e5f73441",
+  "production": {
+    "status": "Bounded Main native X11 wheel/locality/close replay passes with explicit input focus roundtrips",
+    "production_consumers": [
+      "MAIN Board/Layers native wheel dispatcher"
+    ],
+    "retired_paths": "No new runtime migration; tests shared native wheel owner using existing xdotool and KWin window-close facilities.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/layers-os-wheel-roundtrip/result.json",
+    "proof": "All scripted input connections confirm Main focus. Top/bottom wheel boundaries produce0 presentations; down and reversal each1; editor wheel1 and changed board pixels. Layers actions preserve exact RGB board crop400,150,900,500. Close exits0 and logs Main ownership released.",
+    "limits": "One current-binary X11 run at scale override1 and actual1333x833. Captured reverse list still shows previous rows, so exact displayed final offset/capture freshness remains unqualified. No root cause or closure of prior input failures, no one-OS-event/one-frame guarantee, native preparation counts, fallthrough negative, Wayland/other scales, full HP10/S3 or latency/resource acceptance. Three prior failed trials remain preserved; dat-native-input-delivery-vq7w remains open. No runtime/prototype/dependency/license/budget/resize changes."
+  },
+  "binary_sha256": "551ebfd9287ee21bfdb3c2c66f33c808f6452161a0dd6a60d4462da2e33fdc74",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "command": "python3 /tmp/pm045_main_layers_os_roundtrip.py /tmp/pm045-main-layers-os-roundtrip",
+  "native_step_presentations": [
+    0,
+    1,
+    8,
+    0,
+    1,
+    1
+  ],
+  "input_delivery_note": "Added getwindowfocus on the same xdotool invocation after each input action. Uses KWin closeWindow on the owned PID/title. Passing with this protocol does not prove causal attribution of earlier failures.",
+  "artifact_sha256": {
+    "native.log.gz": "0abf4f85e657d828ccfc56cf6df278713d45abdc79310daa56bd10b20abd62f3",
+    "editor-zoom.png": "9a6f9b41df26b994bf60dbf60add1b369bfface839ffd2d88621e00054fa4b4c",
+    "bottom-boundary.png": "caaea4e6511098378636f926a18fdd533ec5dfb42605dc7a700448d317bc9a44",
+    "down.png": "1e05fb790b159e766a35c8aca4f6415c676a548da179fccd1c3abf39499c7c38",
+    "driver.py.gz": "d73ee27a04d9008571e02c6252d0870fbac9e89a3cc80f5a1d4e1f128aec4bf1",
+    "native-result.json": "ad1879ff9d0b5e5fdfc95ab57343d18f3dce96da77f9d3dd703217166b41a17f",
+    "top-boundary.png": "42c030f69c64a555384d919acba6ca9465a5f94a9b508302e63378cd01edd5d1",
+    "reverse.png": "d71e655423fe0152c72bbd4607dcea1d02c4a0289d9e5ffb1aff8b266bd2b7ad",
+    "stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "close.js": "9e922cca226bd0708a6318b9d05b141a9827c37ed3b33a4c6da9a816ca6b2734",
+    "initial.png": "42c030f69c64a555384d919acba6ca9465a5f94a9b508302e63378cd01edd5d1",
+    "to-bottom.png": "caaea4e6511098378636f926a18fdd533ec5dfb42605dc7a700448d317bc9a44"
+  }
+}
