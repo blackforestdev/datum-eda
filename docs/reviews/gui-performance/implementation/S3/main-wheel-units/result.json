@@ -1,0 +1,157 @@
+{
+  "base_commit": "77dd2f9945324c7455ffb7f8861a4fbbcfb11fc8",
+  "source": "crates/gui-app/src/native_layers_scroll_tests.rs",
+  "source_sha256": "3938584e848b2f4e3d3c75e7878e7b2c91f9af2e7ea54e023de8981a1096c998",
+  "production_consumers": [
+    "Main Board Runtime native wheel route -> Layers discrete row adapter",
+    "Main Board Runtime native wheel route -> pointer-selected board camera"
+  ],
+  "retired_paths": [],
+  "proof": "Real Board Runtime test passes X11/Wayland at1/1.5/2x override: Layers quarter/1.25-line inputs preserve ceil-to-row policy and match equivalent physical pixels; corresponding camera increments match physical/line input in both directions. Layers leaves camera unchanged; boundary/outside no-op and prepared-scene-cache assertions retained. Isolated double physical scaling fails Layers1.5x on both backends (one row instead of two). Copy restored; normal root app explicitly recompiled and both1.5x tests pass. Workspace Clippy/source-policy13 and relevant gates pass.",
+  "limits": "Direct Runtime::handle_native_wheel calls on real native-host Runtime, not OS delivery or the outer App WindowEvent dispatcher. Layers geometry/hit regions prepared and published for test; no actual Main scrolled-pixel or native final-target capture acceptance. Camera is reset to its initial view between equivalent input comparisons; authored board unchanged. Width/height1280x800 at1x,1918x1050 at1.5/2x; overrides are not OS monitor transitions. Negative stops in Layers before camera comparisons, so no independent camera negative claimed. Terminal/console, timed workloads and full HP10/HP19/S3 remain open. Production source/release unchanged; no dependency/license/prototype/resource/resize change.",
+  "observations": [
+    "test runtime_revision_workspace::native_layers_scroll_tests::native_layers_route_preserves_preparation_camera_and_boundary_damage ... backend=x11 scale=1 accepted=1280x800 visible_layers=6 total_layers=24 physical_line_rows_camera_match=true",
+    "test runtime_revision_workspace::native_layers_scroll_tests::native_layers_route_preserves_preparation_camera_and_boundary_damage ... backend=x11 scale=1.5 accepted=1918x1050 visible_layers=14 total_layers=24 physical_line_rows_camera_match=true",
+    "test runtime_revision_workspace::native_layers_scroll_tests::native_layers_route_preserves_preparation_camera_and_boundary_damage ... backend=x11 scale=2 accepted=1918x1050 visible_layers=12 total_layers=24 physical_line_rows_camera_match=true",
+    "test runtime_revision_workspace::native_layers_scroll_tests::native_layers_route_preserves_preparation_camera_and_boundary_damage ... backend=wayland scale=1 accepted=1280x800 visible_layers=6 total_layers=24 physical_line_rows_camera_match=true",
+    "test runtime_revision_workspace::native_layers_scroll_tests::native_layers_route_preserves_preparation_camera_and_boundary_damage ... backend=wayland scale=1.5 accepted=1918x1050 visible_layers=14 total_layers=24 physical_line_rows_camera_match=true",
+    "test runtime_revision_workspace::native_layers_scroll_tests::native_layers_route_preserves_preparation_camera_and_boundary_damage ... backend=wayland scale=2 accepted=1918x1050 visible_layers=12 total_layers=24 physical_line_rows_camera_match=true"
+  ],
+  "negative_runs": {
+    "compiled_input_digest": "10f18f832e8f3cb4f4f36c1cc8d88964f8d3c3ac146fa84e591ca21ac0bcac59",
+    "compiled_input_count": 1845,
+    "copy_synced": [
+      "crates/gui-app/src/native_layers_scroll_tests.rs"
+    ],
+    "source_sha256": "db9a3c9fa282386bcca80dfbea27615bb331323a3994ff15826960fba9bab8e5",
+    "runs": [
+      {
+        "label": "negative-x11",
+        "backend": "x11",
+        "exit": 101,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "/tmp/pm045-pinned-negative-source/Cargo.toml",
+          "-p",
+          "datum-gui-app",
+          "--bin",
+          "datum-gui",
+          "native_layers_route_preserves_preparation_camera_and_boundary_damage",
+          "--",
+          "--ignored",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "binary_sha256": "1320d3c68cf5e13a74f7e045dde76ca603062a0996c0f2f0e8518c8854b71818",
+        "recompiled_app": true
+      },
+      {
+        "label": "negative-wayland",
+        "backend": "wayland",
+        "exit": 101,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "/tmp/pm045-pinned-negative-source/Cargo.toml",
+          "-p",
+          "datum-gui-app",
+          "--bin",
+          "datum-gui",
+          "native_layers_route_preserves_preparation_camera_and_boundary_damage",
+          "--",
+          "--ignored",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "binary_sha256": "1320d3c68cf5e13a74f7e045dde76ca603062a0996c0f2f0e8518c8854b71818",
+        "recompiled_app": false
+      },
+      {
+        "label": "restored-x11",
+        "backend": "x11",
+        "exit": 0,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "-p",
+          "datum-gui-app",
+          "--bin",
+          "datum-gui",
+          "native_layers_route_preserves_preparation_camera_and_boundary_damage",
+          "--",
+          "--ignored",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "binary_sha256": "9712e57da2c09792edbf6252d3ebe56d034b3ae90e2970635fd3b77fb1be730c",
+        "recompiled_app": true
+      },
+      {
+        "label": "restored-wayland",
+        "backend": "wayland",
+        "exit": 0,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "-p",
+          "datum-gui-app",
+          "--bin",
+          "datum-gui",
+          "native_layers_route_preserves_preparation_camera_and_boundary_damage",
+          "--",
+          "--ignored",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "binary_sha256": "9712e57da2c09792edbf6252d3ebe56d034b3ae90e2970635fd3b77fb1be730c",
+        "recompiled_app": false
+      }
+    ]
+  },
+  "drift": "Full drift stops at same eight pre-existing terminal convergence guard source-pattern failures after workspace Clippy/preceding gates pass; later gates unrun.",
+  "artifacts": {
+    "drift.log.gz": "1111869f82ec86a782501b1cc0cce9b49b5a678f40f8c6899a87e76441c24f43",
+    "negative-driver.py.gz": "493c715c6a2d67cdc5890b9278382f1d1615ff6f5584f1c12be983ab3f7604b2",
+    "negative-runs.json.gz": "d61bf86da69b8add5495f5ba306b20df4c2254cb97e285e0d38a994ba01711a9",
+    "negative-wayland.log.gz": "1a0feaa05cd7b3f5777ccb8ed505f8b3754f45fc8ff9ef21b75ac18e171575b6",
+    "negative-x11.log.gz": "6709b2db208cae704804e54c33c18b1f96f9cc763478e4eadb1b015767d9cf7d",
+    "negative.patch.gz": "3f3257850e196363fa469c3fcac42d1aa878a7b2db239bdd4f97d4248dd8e78f",
+    "profiles-driver.py.gz": "53d5d6ab08684de8ab15535b804ce3d92bb803c36e260478d2a40baa3411849c",
+    "restored-wayland.log.gz": "7d90633567bd735671f04450b1b6b1fb5f2169d861c615e47494337c8a701cd1",
+    "restored-x11.log.gz": "bb6cf7213f57fc17ca68eab02472b022740d19d533f9e161b53e1844f562a7a1",
+    "source-policy.log.gz": "674e463ffe67edf569972d25fb107486b4165c9ef492b62f7f8cb13354ecfcd4",
+    "wayland-1.5.log.gz": "bfe7bd4dc9b6b6b1263a04d61cfe9509ee5d331627782f5f176caa8a3e43c9e9",
+    "wayland-1.log.gz": "260b28c2e649ce999e8281ddae2dbd2501e614071e59c6cbe7d5f740730e36d9",
+    "wayland-2.log.gz": "493d5688a48b2932e9c98b749b3709fd1d86630419a51044e1f74fb00548c29a",
+    "x11-1.5.log.gz": "ae79723f75581beb1ad3323ec93ee9b86d1efdc93ab76f25657cf5a5c19aa076",
+    "x11-1.log.gz": "b96f86507cad09b9dcfa52011e6112817781baee047e210de22bc87e0bf810bb",
+    "x11-2.log.gz": "b6dc37993773515a575faf680678edc103475b409c257af1fcf5e20328a13cb2"
+  }
+}
