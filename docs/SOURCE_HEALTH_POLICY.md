@@ -68,6 +68,12 @@ bounded two-entry cache implementation; Layers retains its row vector by shared
 ownership. The side-panel include ceiling falls from 1,261 to 1,160 lines;
 its root remains 52 lines and Inspector layout remains unchanged.
 
+PM045 S3 Inspector geometry retention extracts its outer and detail solvers into
+`gui-render/src/side_panels/inspector_layout.rs`, using the shared layout cache
+policy. The side-panel include ceiling falls from 1,160 to 1,011 lines;
+the root remains 52 lines. Inspector composition remains include debt; solver
+extraction and cache adoption do not close that remaining ownership work.
+
 ## What Counts as Structural Evidence
 
 Qualifying evidence names the ownership moved, the real module boundary created,

@@ -127,7 +127,8 @@
       "adoption_slice": "S3",
       "profile": "shared control/ScrollViewport when scrolling",
       "production_entry_points": [
-        "crates/gui-app/src/runtime_primary_pointer.rs"
+        "crates/gui-app/src/runtime_primary_pointer.rs",
+        "crates/gui-render/src/side_panels/inspector_layout.rs"
       ],
       "retirement": "Retire private generic clip/hit rules; preserve selection/check/evidence authority and partial product scope.",
       "common_requirements": "All SH/LF/AC requirements apply through this consumer's host; per-consumer rows additionally apply."
@@ -4088,7 +4089,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed Main frame/retained preparation and Runtime input now share the same two-entry shell cache. Cached/uncached geometry and real preparation-entry warm-solve tests pass; isolated cache bypass fails, restored positive passes. Full qualification remains open. Project panel now retains unchanged geometry in a two-entry renderer cache, with fresh-solver and actual preparation/label-update tests; full qualification remains open. Layers retains unchanged row geometry and allocation through the common two-entry layout cache policy also used by Shell/Project. Actual preparation updates labels/hit identity correctly; full qualification remains open.",
+        "status": "planned; not executed Main frame/retained preparation and Runtime input now share the same two-entry shell cache. Cached/uncached geometry and real preparation-entry warm-solve tests pass; isolated cache bypass fails, restored positive passes. Full qualification remains open. Project panel now retains unchanged geometry in a two-entry renderer cache, with fresh-solver and actual preparation/label-update tests; full qualification remains open. Layers retains unchanged row geometry and allocation through the common two-entry layout cache policy also used by Shell/Project. Actual preparation updates labels/hit identity correctly; full qualification remains open. Inspector outer/detail preparation now uses shared bounded layout retention; fresh geometry and actual warm preparation with updated value text pass. Full qualification remains open.",
         "id": "proof_hp01_01",
         "positive": "Repeat stationary-layout pointer/hit routes",
         "negative_control": "Force uncached solve",
@@ -4134,7 +4135,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/shared-shell-layout/result.json",
         "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json",
-        "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json"
+        "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S3/inspector-layout-retention/result.json"
       ],
       "s3_shared_shell_layout": {
         "production_consumers": [
@@ -4173,6 +4175,20 @@
         "preserved": "Each component retains its own two typed entries through one cache policy; not a two-entry aggregate cap. Layers geometry is Arc-owned; current layer order/labels/visibility/offset/hits remain prepared from live state. Same original row solver and clipping.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
         "limits": "Bounded structural reuse and actual preparation/label/hit tests, not numerical frame-time or aggregate resource acceptance. No OS/final-pixel/full HP01/02/S3 qualification. Inspector solvers and layer sorting remain unchanged; resource accounting deadlines and nonblocking resize exclusion remain."
+      },
+      "s3_inspector_layout_retention": {
+        "production_consumers": [
+          "Main Inspector outer panel geometry",
+          "Main Inspector existing review/detail row geometry"
+        ],
+        "shared_owner": "render/shell_layout/cache.rs typed two-entry policy; side_panels/inspector_layout.rs semantic keys/solvers",
+        "retired_paths": [
+          "Per-frame unchanged Inspector outer Taffy tree/solve",
+          "Per-frame unchanged Inspector detail row tree/solve"
+        ],
+        "preserved": "Existing solver/fallback, row order/heights, selection/value text, clipping and partial Inspector product scope. Two entries for each of outer/detail owners, not an aggregate cap.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/inspector-layout-retention/result.json",
+        "limits": "CPU actual-preparation and geometry proof plus native Main routing smoke; no complete native Inspector control/selection/pixel qualification, numerical CPU/resource or HP01/02/S3 acceptance. No prototype/dependency/license/deadline or resize change."
       }
     },
     {
@@ -4203,7 +4219,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed Main frame/retained preparation and Runtime input now share the same two-entry shell cache. Cached/uncached geometry and real preparation-entry warm-solve tests pass; isolated cache bypass fails, restored positive passes. Full qualification remains open. Project panel now retains unchanged geometry in a two-entry renderer cache, with fresh-solver and actual preparation/label-update tests; full qualification remains open. Layers retains unchanged row geometry and allocation through the common two-entry layout cache policy also used by Shell/Project. Actual preparation updates labels/hit identity correctly; full qualification remains open.",
+        "status": "planned; not executed Main frame/retained preparation and Runtime input now share the same two-entry shell cache. Cached/uncached geometry and real preparation-entry warm-solve tests pass; isolated cache bypass fails, restored positive passes. Full qualification remains open. Project panel now retains unchanged geometry in a two-entry renderer cache, with fresh-solver and actual preparation/label-update tests; full qualification remains open. Layers retains unchanged row geometry and allocation through the common two-entry layout cache policy also used by Shell/Project. Actual preparation updates labels/hit identity correctly; full qualification remains open. Inspector outer/detail preparation now uses shared bounded layout retention; fresh geometry and actual warm preparation with updated value text pass. Full qualification remains open.",
         "id": "proof_hp02_01",
         "positive": "Vary width/height/DPI/dock height independently",
         "negative_control": "Omit one layout key",
@@ -4249,7 +4265,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/shared-shell-layout/result.json",
         "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json",
-        "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json"
+        "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S3/inspector-layout-retention/result.json"
       ],
       "s3_shared_shell_layout": {
         "production_consumers": [
@@ -4288,6 +4305,20 @@
         "preserved": "Each component retains its own two typed entries through one cache policy; not a two-entry aggregate cap. Layers geometry is Arc-owned; current layer order/labels/visibility/offset/hits remain prepared from live state. Same original row solver and clipping.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
         "limits": "Bounded structural reuse and actual preparation/label/hit tests, not numerical frame-time or aggregate resource acceptance. No OS/final-pixel/full HP01/02/S3 qualification. Inspector solvers and layer sorting remain unchanged; resource accounting deadlines and nonblocking resize exclusion remain."
+      },
+      "s3_inspector_layout_retention": {
+        "production_consumers": [
+          "Main Inspector outer panel geometry",
+          "Main Inspector existing review/detail row geometry"
+        ],
+        "shared_owner": "render/shell_layout/cache.rs typed two-entry policy; side_panels/inspector_layout.rs semantic keys/solvers",
+        "retired_paths": [
+          "Per-frame unchanged Inspector outer Taffy tree/solve",
+          "Per-frame unchanged Inspector detail row tree/solve"
+        ],
+        "preserved": "Existing solver/fallback, row order/heights, selection/value text, clipping and partial Inspector product scope. Two entries for each of outer/detail owners, not an aggregate cap.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/inspector-layout-retention/result.json",
+        "limits": "CPU actual-preparation and geometry proof plus native Main routing smoke; no complete native Inspector control/selection/pixel qualification, numerical CPU/resource or HP01/02/S3 acceptance. No prototype/dependency/license/deadline or resize change."
       }
     },
     {
@@ -4318,7 +4349,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed Main frame/retained preparation and Runtime input now share the same two-entry shell cache. Cached/uncached geometry and real preparation-entry warm-solve tests pass; isolated cache bypass fails, restored positive passes. Full qualification remains open. Project panel now retains unchanged geometry in a two-entry renderer cache, with fresh-solver and actual preparation/label-update tests; full qualification remains open. Layers retains unchanged row geometry and allocation through the common two-entry layout cache policy also used by Shell/Project. Actual preparation updates labels/hit identity correctly; full qualification remains open.",
+        "status": "planned; not executed Main frame/retained preparation and Runtime input now share the same two-entry shell cache. Cached/uncached geometry and real preparation-entry warm-solve tests pass; isolated cache bypass fails, restored positive passes. Full qualification remains open. Project panel now retains unchanged geometry in a two-entry renderer cache, with fresh-solver and actual preparation/label-update tests; full qualification remains open. Layers retains unchanged row geometry and allocation through the common two-entry layout cache policy also used by Shell/Project. Actual preparation updates labels/hit identity correctly; full qualification remains open. Inspector outer/detail preparation now uses shared bounded layout retention; fresh geometry and actual warm preparation with updated value text pass. Full qualification remains open.",
         "id": "proof_hp02_02",
         "positive": "Alternate shell/terminal within two-entry working set then churn",
         "negative_control": "Evict on every alternating query",
@@ -4364,7 +4395,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/shared-shell-layout/result.json",
         "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json",
-        "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json"
+        "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S3/inspector-layout-retention/result.json"
       ],
       "s3_shared_shell_layout": {
         "production_consumers": [
@@ -4403,6 +4435,20 @@
         "preserved": "Each component retains its own two typed entries through one cache policy; not a two-entry aggregate cap. Layers geometry is Arc-owned; current layer order/labels/visibility/offset/hits remain prepared from live state. Same original row solver and clipping.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
         "limits": "Bounded structural reuse and actual preparation/label/hit tests, not numerical frame-time or aggregate resource acceptance. No OS/final-pixel/full HP01/02/S3 qualification. Inspector solvers and layer sorting remain unchanged; resource accounting deadlines and nonblocking resize exclusion remain."
+      },
+      "s3_inspector_layout_retention": {
+        "production_consumers": [
+          "Main Inspector outer panel geometry",
+          "Main Inspector existing review/detail row geometry"
+        ],
+        "shared_owner": "render/shell_layout/cache.rs typed two-entry policy; side_panels/inspector_layout.rs semantic keys/solvers",
+        "retired_paths": [
+          "Per-frame unchanged Inspector outer Taffy tree/solve",
+          "Per-frame unchanged Inspector detail row tree/solve"
+        ],
+        "preserved": "Existing solver/fallback, row order/heights, selection/value text, clipping and partial Inspector product scope. Two entries for each of outer/detail owners, not an aggregate cap.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/inspector-layout-retention/result.json",
+        "limits": "CPU actual-preparation and geometry proof plus native Main routing smoke; no complete native Inspector control/selection/pixel qualification, numerical CPU/resource or HP01/02/S3 acceptance. No prototype/dependency/license/deadline or resize change."
       }
     },
     {
@@ -29649,5 +29695,19 @@
     "preserved": "Each component retains its own two typed entries through one cache policy; not a two-entry aggregate cap. Layers geometry is Arc-owned; current layer order/labels/visibility/offset/hits remain prepared from live state. Same original row solver and clipping.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
     "limits": "Bounded structural reuse and actual preparation/label/hit tests, not numerical frame-time or aggregate resource acceptance. No OS/final-pixel/full HP01/02/S3 qualification. Inspector solvers and layer sorting remain unchanged; resource accounting deadlines and nonblocking resize exclusion remain."
+  },
+  "s3_inspector_layout_retention_work": {
+    "production_consumers": [
+      "Main Inspector outer panel geometry",
+      "Main Inspector existing review/detail row geometry"
+    ],
+    "shared_owner": "render/shell_layout/cache.rs typed two-entry policy; side_panels/inspector_layout.rs semantic keys/solvers",
+    "retired_paths": [
+      "Per-frame unchanged Inspector outer Taffy tree/solve",
+      "Per-frame unchanged Inspector detail row tree/solve"
+    ],
+    "preserved": "Existing solver/fallback, row order/heights, selection/value text, clipping and partial Inspector product scope. Two entries for each of outer/detail owners, not an aggregate cap.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/inspector-layout-retention/result.json",
+    "limits": "CPU actual-preparation and geometry proof plus native Main routing smoke; no complete native Inspector control/selection/pixel qualification, numerical CPU/resource or HP01/02/S3 acceptance. No prototype/dependency/license/deadline or resize change."
   }
 }
