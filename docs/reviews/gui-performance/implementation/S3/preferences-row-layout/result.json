@@ -1,0 +1,33 @@
+{
+  "base_commit": "b479dcbd1df3cb20b8ce12e55818af0b4535de6c",
+  "source": "crates/gui-render/src/render/preferences_rows.rs",
+  "baseline_source_sha256": "8b0767941549640281af7014d24d4c3d75c9315ade0be9701ad9408f475cf79e",
+  "candidate_source_sha256": "5a69f05e0f3cd6d75ac1e7f4c350c943c12f054b4bffbb98f85f0ba220a4ed91",
+  "release_binary_sha256": "b7a2f40786f621b6ac5ae4954109496ef87d508e691dc52c1fc6a50b4f2a9c94",
+  "production": {
+    "status": "Default shared Preferences row preparation uses one layout collection and borrowed focus comparisons",
+    "production_consumers": [
+      "GLOBAL native Preferences -> prepare_native_preferences_scrolled -> shared render_rows",
+      "PROJECT native Preferences -> prepare_native_preferences_scrolled -> shared render_rows"
+    ],
+    "retired_paths": "Removed parallel visible-row/start-layout vectors and transient owned setting-key construction for SettingName, Control and Reset focus comparisons. No new consumer migration; existing shared default consumers improved.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/preferences-row-layout/result.json",
+    "proof": "Matched baseline and candidate renderer suites each pass218 tests. Existing hardware dialog GPU parity passes1 test/258 filtered. Visual renderer Clippy and fresh release application build pass.",
+    "limits": "Structural removal of temporary work, not a measured frame-time or complete allocation-budget claim. One layout Vec remains; text and hit targets retain required owned data. GPU parity paths share preparation and do not independently qualify every native profile. Existing native capture/input gaps, S3 exit and S4/S5 obligations remain open. No dependency/license/prototype/resize boundary change."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib (baseline and candidate)",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib --features visual dialog_single_pass_matches_general_renderer_pixels -- --ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-render --lib --features visual -- -D warnings",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app"
+  ],
+  "failed_attempt": "Initial release command used binary name datum-gui as package ID and exited101 before compilation. Corrected to existing package datum-gui-app; both logs retained.",
+  "artifact_sha256": {
+    "baseline.log.gz": "f8329e5692cccb0c71ffdfc6007f350c4dba9fa18a3efc5cc0a84ccb7a9e669f",
+    "candidate.log.gz": "95d2159036eac053ec2cbba9040695f5fe4bf00af014f73a7897e3b5c63319bc",
+    "clippy.log.gz": "881ba66d10970de943e3f99db59b53e5819e367e56b0f4de0199afe3cfaa4fc3",
+    "gpu.log.gz": "578227ff26e37849ff6df5fde560851a7ca324f35a6ed16e9c8ce82cd1013864",
+    "release-corrected.log.gz": "db8c51ea93ca5acc17418cd65a82df31e4a6dcd88e72aa526be40e5ec20ef49e",
+    "release.log.gz": "f74ce6af605b021b350096271ed661ecbb1379111dedd862c41de74d96be9f1f"
+  }
+}
