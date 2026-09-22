@@ -188,7 +188,7 @@ def check(root: Path) -> list[str]:
     ordered = (
         "debug_assert_eq!(slot.core.session_id(), slot.session.session_id())",
         "debug_assert_eq!(slot.core.context_id(), slot.session.context_id)",
-        "slot.core.apply_output(lane, bytes)",
+        "slot.core.apply_output(lane, &bytes)",
         "slot.core.finish(lane)",
     )
     for marker in ordered:
@@ -196,7 +196,7 @@ def check(root: Path) -> list[str]:
             failures.append(f"PTY/core lifecycle boundary lacks marker: {marker}")
     if "apply_bytes_with_responses" in drain:
         failures.append("production drain must not feed the provisional parser")
-    if drain.find(ordered[0]) > drain.find(ordered[2]):
+    if any(drain.find(identity) > drain.find(ordered[2]) for identity in ordered[:2]):
         failures.append("session/context identity must be checked before applying PTY output")
     if "session.write_bytes(&response)" not in core_events:
         failures.append("PTY/core lifecycle boundary lacks reply-write ownership")

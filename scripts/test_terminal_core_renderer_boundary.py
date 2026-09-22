@@ -48,8 +48,8 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
             encoding="utf-8",
         )
         (root / guard.GPU).write_text(
-            "encode_terminal_graphics(&mut encoder, &msaa_view, target, false)\n"
-            "encode_terminal_graphics(&mut encoder, &msaa_view, target, true)\n",
+            "encode_terminal_graphics(&mut encoder, &msaa_view, target, false, measurement.as_mut(),)\n"
+            "encode_terminal_graphics(&mut encoder, &msaa_view, target, true, measurement.as_mut(),)\n",
             encoding="utf-8",
         )
         (root / guard.SCENE).write_text(
@@ -66,7 +66,7 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
             "mod runtime_terminal_render;\n", encoding="utf-8"
         )
         (root / guard.APP / "runtime_terminal_render.rs").write_text(
-            "take_active_tab_render_states( from_workspace_with_terminal_renderer( "
+            "take_active_tab_render_states( prepare_workspace_with_terminal_renderer( "
             "Some(&mut self.terminal_render_cache)\n",
             encoding="utf-8",
         )
@@ -111,11 +111,13 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
         self.assertTrue(self.mutate(guard.CORE_RENDER, "\n", "\nuse TerminalScreen;\n"))
 
     def test_image_dpi_and_runtime_wiring_mutations_fail(self) -> None:
+        self.assertTrue(self.mutate(guard.GPU, "target, false,", "target, true,"))
+        self.assertTrue(self.mutate(guard.SCENE, "terminal_panes: &[crate::TerminalPaneRenderState]", ""))
         self.assertTrue(self.mutate(guard.GRAPHICS, "queue.write_texture(", ""))
         self.assertTrue(
             self.mutate(
                 guard.GPU,
-                "encode_terminal_graphics(&mut encoder, &msaa_view, target, true)",
+                "encode_terminal_graphics(&mut encoder, &msaa_view, target, true, measurement.as_mut(),)",
                 "",
             )
         )
