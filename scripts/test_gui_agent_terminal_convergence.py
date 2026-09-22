@@ -588,7 +588,17 @@ pub enum ApplicationFocus { Editor(PaneId), Terminal, Overlay }
 let scene_hit_start = prepared.hit_regions.len();
 hit_clipping::clip_new_hit_regions();
 """
-        clipping = "hit_regions.retain_mut; index < first_new_region; index += 1; region.rect.intersect(viewport);"
+        clipping = """
+pub(super) fn clip_new_hit_regions() {
+    let start = first_new_region.min(hit_regions.len());
+    hit_regions.extract_if(start.., |region| {
+        if let Some(rect) = region.rect.intersect(viewport) {
+            region.rect = rect;
+            false
+        } else { true }
+    }).for_each(drop);
+}
+"""
         focus_tests = """
 fn non_mouse_child_click_selects_terminal_and_tab_never_cycles_editor_panes() {
     workspace_action_should_fire(); terminal_tab_sequence();
@@ -606,7 +616,7 @@ fn mouse_reporting_press_selects_same_terminal_authority_before_forwarding() {}
         guard.check_terminal_hit_ownership(
             layout.replace("intersect", "overlap"),
             scene.replace("hit_clipping::clip_new_hit_regions", "leave_unclipped"),
-            clipping.replace("hit_regions.retain_mut", "hit_regions.iter"),
+            clipping.replace(".extract_if(start.., |region|", ".iter().map(|region|"),
             focus_tests.replace("terminal_tab_sequence", "pane_focus_next"),
             "",
             failures,
@@ -620,10 +630,24 @@ fn mouse_reporting_press_selects_same_terminal_authority_before_forwarding() {}
             "terminal focus convergence proof is missing terminal_tab_sequence", failures
         )
         self.assertIn("adversarial editor-hit ownership proof is missing", failures)
-        for marker in ("hit_regions.retain_mut", "index < first_new_region", "index += 1", "region.rect.intersect(viewport)"):
+        for marker in (
+            "let start = first_new_region.min(hit_regions.len());",
+            ".extract_if(start.., |region|",
+            "region.rect.intersect(viewport)",
+            "region.rect = rect;",
+            ".for_each(drop);",
+        ):
             failures = []
             guard.check_terminal_hit_ownership(layout, scene, clipping.replace(marker, "removed"), focus_tests, hit_tests, failures)
             self.assertIn(f"editor scene hit clipping is missing {marker}", failures)
+
+        failures = []
+        guard.check_terminal_hit_ownership(
+            layout, scene,
+            clipping.replace("clip_new_hit_regions", "unrelated_content_clip"),
+            focus_tests, hit_tests, failures,
+        )
+        self.assertTrue(failures, "an unrelated clipper cannot stand in for editor hits")
 
 
     def test_deleted_provisional_grid_cannot_return_anywhere(self) -> None:

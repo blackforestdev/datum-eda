@@ -29954,5 +29954,19 @@
       "Full native all-consumer/scale, S3 visual/functional exit and S4/S5 resource/qualification remain incomplete.",
       "No dependency, prototype, style, sequencing or resize-scope changes."
     ]
+  },
+  "s3_clip_guard_reconciliation_work": {
+    "production_consumers": [
+      "Editor hit suffix clipping shared owner; production code unchanged in this follow-up"
+    ],
+    "retired_paths": [
+      "Guard requiring obsolete retain_mut/index loop syntax after extract_if suffix migration."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/clip-guard-reconciliation/result.json",
+    "limits": [
+      "No new production migration, native content-change pass, HP22 or S3 acceptance.",
+      "Full guard remains red; remaining five checks not waived or declared harmless.",
+      "No dependency, style/prototype, sequencing or resize change."
+    ]
   }
 }

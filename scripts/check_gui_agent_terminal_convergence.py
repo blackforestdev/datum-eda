@@ -124,8 +124,19 @@ def check_terminal_hit_ownership(
     for marker in ("scene_hit_start", "hit_clipping::clip_new_hit_regions"):
         if marker not in render_scene:
             failures.append(f"editor scene hit clipping is missing {marker}")
-    for marker in ("hit_regions.retain_mut", "index < first_new_region", "index += 1", "region.rect.intersect(viewport)"):
-        if marker not in hit_clipping:
+    # Inspect the shared hit owner itself: content clipping elsewhere in the
+    # file must not satisfy a missing editor-hit boundary. extract_if preserves
+    # the pinned prefix and must be consumed to actually remove hidden hits.
+    hit_owner = hit_clipping.split("pub(super) fn clip_new_hit_regions(", 1)
+    hit_owner = hit_owner[1].split("\n}", 1)[0] if len(hit_owner) == 2 else ""
+    for marker in (
+        "let start = first_new_region.min(hit_regions.len());",
+        ".extract_if(start.., |region|",
+        "region.rect.intersect(viewport)",
+        "region.rect = rect;",
+        ".for_each(drop);",
+    ):
+        if marker not in hit_owner:
             failures.append(f"editor scene hit clipping is missing {marker}")
     for marker in (
         "non_mouse_child_click_selects_terminal_and_tab_never_cycles_editor_panes",
