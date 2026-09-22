@@ -9,19 +9,18 @@ pub(super) fn clip_new_hit_regions(
     first_new_region: usize,
     viewport: RectPx,
 ) {
-    let mut index = 0;
-    hit_regions.retain_mut(|region| {
-        let keep = if index < first_new_region {
-            true
-        } else if let Some(rect) = region.rect.intersect(viewport) {
-            region.rect = rect;
-            true
-        } else {
-            false
-        };
-        index += 1;
-        keep
-    });
+    // Visit only the appended suffix; pinned layers can contain many entries.
+    let start = first_new_region.min(hit_regions.len());
+    hit_regions
+        .extract_if(start.., |region| {
+            if let Some(rect) = region.rect.intersect(viewport) {
+                region.rect = rect;
+                false
+            } else {
+                true
+            }
+        })
+        .for_each(drop);
 }
 
 /// Clip one appended content layer without touching pinned chrome before it.
@@ -118,19 +117,16 @@ pub(crate) fn clip_content(
             }
         }
     }
-    let mut index = 0;
-    text.retain_mut(|run| {
-        let keep = if index < text_start {
-            true
-        } else if let Some(bounds) = run.clip_bounds.unwrap_or(viewport).intersect(viewport) {
+    let start = text_start.min(text.len());
+    text.extract_if(start.., |run| {
+        if let Some(bounds) = run.clip_bounds.unwrap_or(viewport).intersect(viewport) {
             run.clip_bounds = Some(bounds);
-            true
-        } else {
             false
-        };
-        index += 1;
-        keep
-    });
+        } else {
+            true
+        }
+    })
+    .for_each(drop);
     clip_new_hit_regions(hits, hit_start, viewport);
 }
 
@@ -229,5 +225,64 @@ mod tests {
         assert_eq!(text[1].clip_bounds, child.intersect(viewport));
         assert_eq!(hits[1].rect, child.intersect(viewport).unwrap());
         assert!(!hits[1].rect.contains(35.0, 15.0));
+    }
+
+    #[test]
+    fn suffix_clipping_preserves_order_after_consecutive_removals() {
+        let viewport = RectPx {
+            x: 0.0,
+            y: 0.0,
+            width: 20.0,
+            height: 20.0,
+        };
+        let hidden = RectPx {
+            x: 30.0,
+            ..viewport
+        };
+        let mut text = Vec::new();
+        let mut hits = Vec::new();
+        for (label, bounds) in [
+            ("pinned", hidden),
+            ("hidden1", hidden),
+            ("hidden2", hidden),
+            ("visible", viewport),
+        ] {
+            crate::draw_text_clipped(
+                label,
+                bounds.x,
+                bounds.y,
+                12.0,
+                [1.0; 3],
+                crate::TextFace::Ui,
+                bounds,
+                &mut text,
+            );
+            hits.push(HitRegion {
+                target: crate::HitTarget::GlobalPreferencesControl(label.into()),
+                rect: bounds,
+            });
+        }
+        clip_content(&mut Vec::new(), &mut text, &mut hits, 0, 1, 1, viewport);
+        assert_eq!(
+            text.iter().map(|run| run.text.as_str()).collect::<Vec<_>>(),
+            ["pinned", "visible"]
+        );
+        assert_eq!(hits.len(), 2);
+        assert_eq!(hits[0].rect, hidden);
+        assert_eq!(
+            hits[1].target,
+            crate::HitTarget::GlobalPreferencesControl("visible".into())
+        );
+        let saved = (text.clone(), hits.clone());
+        clip_content(
+            &mut Vec::new(),
+            &mut text,
+            &mut hits,
+            0,
+            usize::MAX,
+            usize::MAX,
+            viewport,
+        );
+        assert_eq!((text, hits), saved);
     }
 }
