@@ -767,13 +767,13 @@
     "crates/gui-render/src/side_panels.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 1393
+        "expanded_lines": 1261
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Literal include! root exceeds the normal recursively expanded logical-module limit; textual splitting is not architectural decomposition."
+      "note": "Project panel Taffy solve and bounded layout retention extracted into side_panels/project_layout.rs; remaining side-panel include debt keeps exact downward ceiling."
     },
     "crates/gui-render/src/side_panels/render_inspector.rs": {
       "kind": "rust-production",

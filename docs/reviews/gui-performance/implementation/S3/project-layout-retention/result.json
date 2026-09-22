@@ -1,0 +1,109 @@
+{
+  "base_commit": "396058ade4bab8addb9c6194f8812e051bcc9f2d",
+  "production_consumers": [
+    "Main Project panel (NAV) preparation",
+    "Layers sibling extent from Project layout"
+  ],
+  "shared_owner": "side_panels/project_layout.rs",
+  "retired_paths": "Project panel per-frame Taffy tree and solve for unchanged geometry inputs. No renderer-wide panel solve claim.",
+  "key": [
+    "full left rectangle",
+    "attention rows capped at2",
+    "selected review action presence",
+    "import notice presence",
+    "command status presence"
+  ],
+  "retention": "Two fixed entries per UI thread; failed solves retain previous fallback behavior and are not cached. Stores only ProjectPanelLayout rectangles, no workspace or strings.",
+  "preserved": "Exact extracted Taffy tree, node order, spacing, fallback and painting/hit paths. Labels remain fresh; row geometry depends on presence/count, not text values.",
+  "proof": "226 renderer tests pass. Cached/fresh solver parity covers four panel rectangles, three attention counts and all eight net/import/status presence combinations. Two-entry alternation/eviction test passes. Actual PreparedScene repeated preparation solves once; project rename updates the painted label with no extra solve. Isolated cache bypass fails the actual-preparation warm assertion; restored renderer explicitly recompiles and passes. Native Layers physical/line/camera/boundary test passes on both X11/Wayland1.5 at1918x1050. Fresh release build passed.",
+  "negative": {
+    "compiled_input_digest": "8ad21e8c4d31d10a05dbd5307fd9602594fb6bff01797173a292f2d64f9e6ef9",
+    "compiled_input_count": 1846,
+    "runs": [
+      {
+        "label": "negative",
+        "binary_sha256": "fe55bca19bd0a4f2f7c16d6f442aebe64c31f1f3a722e39c2060ac2e9b5eebc9",
+        "exit": 101,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "/tmp/pm045-pinned-negative-source/Cargo.toml",
+          "-p",
+          "datum-gui-render",
+          "--lib",
+          "actual_frame_preparation_reuses_project_geometry",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "renderer_recompiled": true
+      },
+      {
+        "label": "restored",
+        "binary_sha256": "e76a51b49bb20f005a1549e07e6bfa17e76841a008d857fad17afbb2f4cd6a9e",
+        "exit": 0,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "-p",
+          "datum-gui-render",
+          "--lib",
+          "actual_frame_preparation_reuses_project_geometry",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "renderer_recompiled": true
+      }
+    ]
+  },
+  "source_health": {
+    "side_panels_root_lines": 52,
+    "include_expansion_before": 1393,
+    "include_expansion_after": 1261,
+    "check": "--base-ref HEAD passed;13 policy tests pass"
+  },
+  "failed_attempts": "Initial test referenced project_name on the workspace instead of scene.project_name; compiler rejected it before execution. Corrected test uses actual painted scene label; raw compile failure retained.",
+  "limits": "Structural reduction of unchanged Project preparation work, not a measured GUI speed or complete allocation/resource claim. Native test supplies Runtime deltas; no OS delivery, final pixel, full HP01/02/S3 or monitor-DPI qualification. Inspector/Filters/detail solvers remain unchanged. Navigator remains a partial product. No dependency/license/prototype/budget/deadline or nonblocking resize scope change.",
+  "source_sha256": {
+    "crates/gui-render/src/side_panels/layout.rs": "dc39f84c90412939d1e140d67334c7d833f4341e90ebdcc389f6cacda4f07e15",
+    "crates/gui-render/src/side_panels/project_layout.rs": "ff09f84be18503cbd6e133230473b11552e47f1d7f5d340e2b2cee2509935614"
+  },
+  "release_sha256": "3b803b1258d649a09752a04beda75a1e98f1b0e7098bca21b49e0a9be5b23b35",
+  "commands": {
+    "renderer": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib",
+    "release": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app --bin datum-gui",
+    "drift": "CARGO_NET_OFFLINE=true bash scripts/run_drift_gates.sh"
+  },
+  "artifacts": {
+    "pm045-project-layout-build.log.gz": "4b0fd1b1839816c3e40f720329a108544ce9535a80ba83a091d804cb864e9132",
+    "pm045-project-layout-policy.log.gz": "15b46705ae3e6be3f3e0642338676037c81ff23d6e53550eda6856cfa57377e9",
+    "pm045-project-layout-native-wayland-1.5.log.gz": "83d42f29bac147bbbd2c4e8c7370db99f6af4c64dc2874da50d693c140da38e6",
+    "pm045-project-layout-native-x11-1.5.log.gz": "06819ec61202f07039208bece78e1962c66a72f074eccabd595d54ae73ecce24",
+    "pm045-project-layout-restored.log.gz": "8ffe3dc4d73b615978ff93d86e61cd40de04c69891644e52585f96f16f566e19",
+    "pm045-project-layout-negative.log.gz": "baacabb8fdb7444f2819cfd8b518b156ef4bc91f1d20f5f8dac5d77bfba9713f",
+    "pm045-project-layout-renderer.log.gz": "2f21cf1cd3437c85f2ace4d16d1d05060e89f50856e7c2d8b3d687b36f53c6f3",
+    "pm045-project-layout-initial-compile.log.gz": "931c16ba426b7fa7faa534575ee5d2f9568bdf13793fd6d20edaf465ef946de5",
+    "pm045-project-layout-tests.log.gz": "931c16ba426b7fa7faa534575ee5d2f9568bdf13793fd6d20edaf465ef946de5",
+    "pm045_project_layout_native.py.gz": "ef01dc0f1805241d31a07987203d689e508cd442dfd7b2272431816ba9449653",
+    "pm045_project_layout_negative.py.gz": "d1b7f34d6ecb292d3af5c1cf3b4ae77ac19ea620bf170aeb33ac2dace43a3588",
+    "pm045-project-layout-negative.patch.gz": "4dd30d33657fb3e8aedfd41c4677d1c67ccfdef4c6828817f3299b45a9d3cab9",
+    "pm045-project-layout-negative-result.json.gz": "3575092205566a10650d5ed9f30997a98f45a89bb8d5b0bd5e8c7a48fad03070",
+    "pm045-project-layout-native-results.json.gz": "b3d528d2c1f44258c228ac67587290aff91dab81e797dd1360cdb0c7070187eb",
+    "drift.log.gz": "ec2a9c40b0f38b64969aad964b41a880b62b6b703a41a769cb8852f1c7d95e4f"
+  },
+  "verification": "Workspace Clippy,13 source-policy tests, source-health HEAD comparison, dependency authority, traceability, spec governance/parity and project state pass. Full drift stops at the same eight pre-existing GUI agent/terminal convergence source-pattern failures tracked by dat-terminal-convergence-guard-xke; later gates unrun."
+}
