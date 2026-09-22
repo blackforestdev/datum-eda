@@ -50,7 +50,7 @@ fn dock_height_for_state(state: &ReviewWorkspaceState) -> Option<u32> {
 fn render_phase1_shell_chrome(
     state: &ReviewWorkspaceState,
     layout: &ShellLayout,
-    panel_quads: &mut Vec<Quad>,
+    panel_quads: &mut global_preferences_primitives::ControlPainter<'_>,
     text_runs: &mut Vec<TextRun>,
 ) {
     // Menu bar carries only a bottom hairline (Design Book .menubar

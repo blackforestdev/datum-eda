@@ -1,0 +1,32 @@
+{
+  "status": "bounded S3 MAIN pane-indicator control adoption; full HP16 qualification open",
+  "baseline": "6a7ce912116334e1a9b1d462fed675730c945508",
+  "sources": {
+    "crates/gui-render/src/render/control_mesh.rs": "c37fbc14fd23c0fc69cd2728c0863596f4073cb1df09afcdf93ce9f26adc6935",
+    "crates/gui-render/src/render/control_mesh_tests.rs": "bc1a78b0555fcbe0e4681fab1974b63946edca0cdc7897e6437edd6478a50dea",
+    "crates/gui-render/src/render/frame_preparation.rs": "2e488840235a86bb84ac823f07c4d613177202277f8818b7c2c42603561886c4",
+    "crates/gui-render/src/render/scene.rs": "2e9b41ca9348a89a96009eb824fe12583ad071447799283dfc18a34015669fe0",
+    "crates/gui-render/src/render/pane_chrome.rs": "52d950ea35b3a1841dcaeccc05faeff8f6be7dfe0a618313ea3a8e06a6c00b9e"
+  },
+  "production_consumers": [
+    "MAIN focused Board/Schematic/Revision pane header indicator"
+  ],
+  "call_path": "Renderer-owned workspace preparation -> render_phase1_shell_chrome -> render_viewport_panes -> render_pane_header -> ControlPainter::convex_ellipse_fill -> shared ControlMeshCache",
+  "retired_paths": [
+    "Per-frame ellipse_points allocation/trigonometry and convex-fan generation for the Main focused-pane dot",
+    "Main pane chrome accepting only raw quad output instead of the existing renderer control owner"
+  ],
+  "behavior": "Retain the existing perimeter-anchored ellipse fan with its actual24segments (legacy request20 was clamped to24). Keep contour kind in the shared key and live center translation/color. Preserve exact prior triangle positions/order. Existing center-fan radio/switch controls keep their separate contour kind. Both share one existing renderer cache and materialization path; no new cache or larger limit.",
+  "proof": {
+    "renderer": "203 renderer library tests pass before and after test-file extraction. New exact-vertex comparison uses prior ellipse_points plus convex fill at ordinary/fractional/negative positions. Production pane-header regression retains one dot mesh while moving/resizing pane geometry across1280/1281/1400 widths.",
+    "gpu": "13 explicit serial Intel P630/Vulkan GPU regressions pass, including existing workspace/dialog pixel, text, upload, AA and control reuse paths. This is supporting regression evidence, not a native Main focus-input or all-profile visual pass.",
+    "clippy": "Guarded offline renderer library Clippy passed with -D warnings.",
+    "source_health": "Initial gate rejected374-line inline test tail (limit350). Move existing complete test module into control_mesh_tests.rs; qualified test names and predicates preserved,203 tests replayed successfully. Source health and spec parity pass.",
+    "limits": "No full MAIN/INSPECTOR/MENU family adoption, native focus, isolated negative for this indicator, complete resource accounting/caps or numerical performance acceptance. Per-frame translated vertex materialization remains. S3 stays open;1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib -- --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --features visual --lib gpu_overlay_tests -- --ignored --test-threads=1 --nocapture",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-render --lib -- -D warnings"
+  ]
+}
