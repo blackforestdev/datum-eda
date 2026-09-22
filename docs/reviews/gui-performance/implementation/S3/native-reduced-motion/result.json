@@ -1,0 +1,58 @@
+{
+  "candidate_base": "9f9530ae9b3528885194e6edd98ccef2d14da0f6",
+  "status": "Both native Preferences reduced-motion scroll/idle cases pass",
+  "requirement": "HP23-02",
+  "binary_sha256": "4bf4f0a411c175cf61f4204031597092132fdfa8b0f11f47a395e737e33a0317",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "setup": "Native Global search/control toggle writes reduced_motion=true in test-owned configuration. Stored generation and inspected On screenshot retained. Each trial receives a copy of this configuration.",
+  "observations": [
+    {
+      "host": "GLOBAL",
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "960",
+        "HEIGHT": "720",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_frames": 1,
+      "boundary_frames": 0,
+      "reverse_frames": 1,
+      "idle_frames": {
+        "dialog": 0,
+        "main": 0
+      },
+      "measured_presentations": 12,
+      "one_escape_dismisses_expansion_without_closing_dialog": true
+    },
+    {
+      "host": "PROJECT",
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "960",
+        "HEIGHT": "720",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_frames": 1,
+      "boundary_frames": 0,
+      "reverse_frames": 1,
+      "idle_frames": {
+        "dialog": 0,
+        "main": 0
+      },
+      "measured_presentations": 12,
+      "one_escape_dismisses_expansion_without_closing_dialog": true
+    }
+  ],
+  "locality": "Each native log contains exactly1 Main startup presentation and13 dialog presentations; no Main presentation during dialog actions. Both2s idle intervals show0 Main and0 dialog frames.",
+  "limits": "Native X11/Xwayland at1x override using isolated GUI-written reduced_motion=true configuration. Bounded2s idle and present-count locality; not elapsed-latency, comprehensive animation/static/input or all-backend/scale acceptance. Actual Project flag propagation is covered by prior production coordinator tests; native surface has no direct flag diagnostic. Continuous-timer negative and full HP23-02/S3 remain open. No production/dependency/license/prototype/budget/resize change.",
+  "artifact_sha256": {
+    "scroll.tar.gz": "76ef88679927bcab27e02042461a903af8d3a00b4d5783100c4df48c885f2811",
+    "setup.tar.gz": "aa1c82d36ecf8e8a0334ad48214afbe3d7bbf29495c8ef04aff095149f65af02"
+  }
+}
