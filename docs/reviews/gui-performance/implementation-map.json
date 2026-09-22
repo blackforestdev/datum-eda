@@ -6638,7 +6638,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial: all four hosts consume the shared wheel converter with Main20/dialog40 logical-pixel line policies. Current converter mis-scaling negative fails; byte-restored adapter passes at1/1.5/2x. GLOBAL/PROJECT1.5x native line boundary/reversal evidence remains distinct. Physical OS stream, Main/NEW native dispatch and remaining hit/profile/backend qualification remain open.",
+        "status": "Partial: all four hosts consume the shared wheel converter with Main20/dialog40 logical-pixel line policies. Current converter mis-scaling negative fails; byte-restored adapter passes at1/1.5/2x. GLOBAL/PROJECT1.5x native line boundary/reversal evidence remains distinct. Physical OS stream, Main/NEW native dispatch and remaining hit/profile/backend qualification remain open. Both native Preferences settled search/clear trials now pass at override1.5/2x with actual sizes recorded. Native monitor-scale/Wayland/remaining profile and latency qualification remain open.",
         "id": "proof_hp19_01",
         "positive": "Physical pixel/line deltas at1x/1.5x/2x and corresponding hits",
         "negative_control": "Double-scale pixels or invert sign",
@@ -6686,7 +6686,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
         "docs/reviews/gui-performance/implementation/S3/dialog-dpi-negative/result.json",
-        "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json"
+        "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json"
       ],
       "s3_dialog_dpi_negative": {
         "status": "Prescribed pixel-delta mis-scaling negative detected; byte-restored converter passes",
@@ -6736,6 +6737,17 @@
         "retired_paths": "No new production retirement; verifies the existing fractional input and shared wheel-unit implementations.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json",
         "limits": "Direct shared Preferences adapter invocation at1/1.5/2x; no OS event delivery or rendered host. GLOBAL/PROJECT/NEW consume this adapter; Main shares the converter but its dispatch and discrete Layers/terminal policies are not exercised here. Native fractional stream/final-offset, remaining host/hit/backend coverage and full HP18/HP19/S3 qualification remain open. No production change, new consumer migration, dependency/license, visual/prototype, numerical budget or resize-scope change."
+      },
+      "s3_native_search_scales_progress": {
+        "status": "Both native Preferences search/clear transitions pass at1.5x and2x after bounded input/presentation settling",
+        "production_consumers": [
+          "GLOBAL native Preferences",
+          "PROJECT native Preferences"
+        ],
+        "shared_owner": "Native shared Preferences surface, search input and ScrollViewport",
+        "retired_paths": "No runtime retirement; scaled native qualification of existing shared paths.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
+        "limits": "X11/Xwayland native adapters with existing --visual-scale-factor override1.5/2, not monitor-scale transition or Wayland input qualification. Observed sizes1440x1050 and1918x1050, not requested1440x1080/1920x1440. Four settled search results fit and scheduled wheel interval has0 frames. Clear/scroll intervals produce presentations (2 for Global2x,1 others); pending clear frames may overlap, so no exact per-wheel/latency claim. Failed early baselines and missing Escape retained. Same recorded release binary; no production/dependency/license/prototype/budget/resize change. Remaining control/backend/full S3 qualification stays open."
       }
     },
     {
@@ -6759,7 +6771,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared full-content extent and thumb owner used by both Preferences. Existing renderer test now checks final-setting reachability at matching1/1.5/2x sizes and preserves narrow clipping coverage. Visible-row-only extent fault fails; restored production passes. Native search/choice/explanation/final-row/resize matrix remains open. Inspector is currently non-scrolling. Both native Preferences hosts now pass bounded1x Units-choice expansion/scroll/boundary/reversal/collapse at720px and observed563px minimum height. Remaining native matrix and full acceptance stay open. Both native hosts now pass bounded1x four-result search/fitting-content/clear-restores-scroll and explanation expansion/boundary/reversal/collapse with observed Escape delivery. Earlier nondelivery failures retained; full matrix remains open.",
+        "status": "Partial: shared full-content extent and thumb owner used by both Preferences. Existing renderer test now checks final-setting reachability at matching1/1.5/2x sizes and preserves narrow clipping coverage. Visible-row-only extent fault fails; restored production passes. Native search/choice/explanation/final-row/resize matrix remains open. Inspector is currently non-scrolling. Both native Preferences hosts now pass bounded1x Units-choice expansion/scroll/boundary/reversal/collapse at720px and observed563px minimum height. Remaining native matrix and full acceptance stay open. Both native hosts now pass bounded1x four-result search/fitting-content/clear-restores-scroll and explanation expansion/boundary/reversal/collapse with observed Escape delivery. Earlier nondelivery failures retained; full matrix remains open. Both native Preferences settled search/clear trials now pass at override1.5/2x with actual sizes recorded. Native monitor-scale/Wayland/remaining profile and latency qualification remain open.",
         "id": "proof_hp20_01",
         "positive": "Short/final-row content, search/expanded choices/explanations then resize",
         "negative_control": "Compute extent from visible rows",
@@ -6804,7 +6816,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json"
       ],
       "s3_native_expanded_extent_progress": {
         "status": "Four bounded native expanded-choice trials pass: GLOBAL/PROJECT at720px and native-minimum563px heights",
@@ -6827,6 +6840,17 @@
         "retired_paths": "No new retirement; verifies existing shared content identity, extent and focus reconciliation.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
         "limits": "Both native Preferences hosts, X11/Xwayland1x960x720, recorded unchanged release binary2a4cecd6. Actual scheduled explanation/search input and presentation counts, not an exact fractional offset, latency, complete backend/scale/control matrix or full HP20/HP23/S3 acceptance. Earlier Escape nondelivery remains unexplained; focus reactivation is a harness prerequisite in corrected trials, not evidence of an application focus defect or desktop use. Capture filenames do not prove timing. No production behavior, dependency/license, prototype, numerical-budget, S4/S5 resource or nonblocking resize-scope change."
+      },
+      "s3_native_search_scales_progress": {
+        "status": "Both native Preferences search/clear transitions pass at1.5x and2x after bounded input/presentation settling",
+        "production_consumers": [
+          "GLOBAL native Preferences",
+          "PROJECT native Preferences"
+        ],
+        "shared_owner": "Native shared Preferences surface, search input and ScrollViewport",
+        "retired_paths": "No runtime retirement; scaled native qualification of existing shared paths.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
+        "limits": "X11/Xwayland native adapters with existing --visual-scale-factor override1.5/2, not monitor-scale transition or Wayland input qualification. Observed sizes1440x1050 and1918x1050, not requested1440x1080/1920x1440. Four settled search results fit and scheduled wheel interval has0 frames. Clear/scroll intervals produce presentations (2 for Global2x,1 others); pending clear frames may overlap, so no exact per-wheel/latency claim. Failed early baselines and missing Escape retained. Same recorded release binary; no production/dependency/license/prototype/budget/resize change. Remaining control/backend/full S3 qualification stays open."
       }
     },
     {
@@ -7406,7 +7430,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Implemented in shared Preferences preparation: current focus/search/expansion identity selects reveal row and current layout clamps bounds. Full native keyboard/search/DPI/content final-target qualification is not executed successfully; Inspector has no current scroll/focus-reveal adapter. Both native hosts now pass bounded1x four-result search/fitting-content/clear-restores-scroll and explanation expansion/boundary/reversal/collapse with observed Escape delivery. Earlier nondelivery failures retained; full matrix remains open.",
+        "status": "Implemented in shared Preferences preparation: current focus/search/expansion identity selects reveal row and current layout clamps bounds. Full native keyboard/search/DPI/content final-target qualification is not executed successfully; Inspector has no current scroll/focus-reveal adapter. Both native hosts now pass bounded1x four-result search/fitting-content/clear-restores-scroll and explanation expansion/boundary/reversal/collapse with observed Escape delivery. Earlier nondelivery failures retained; full matrix remains open. Both native Preferences settled search/clear trials now pass at override1.5/2x with actual sizes recorded. Native monitor-scale/Wayland/remaining profile and latency qualification remain open.",
         "id": "proof_hp23_01",
         "positive": "Keyboard search navigation across sections and changed DPI/size/content",
         "negative_control": "Keep stale focus/extent",
@@ -7459,7 +7483,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/native-focus-reveal/result.json",
         "docs/reviews/gui-performance/implementation/S3/focus-reveal-trace/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json"
       ],
       "s3_focus_reveal_trace_progress": {
         "status": "bounded GLOBAL/PROJECT unchanged-production keyboard reveal pass after runtime trace; full qualification open",
@@ -7495,6 +7520,17 @@
         "retired_paths": "No new retirement; verifies existing shared content identity, extent and focus reconciliation.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
         "limits": "Both native Preferences hosts, X11/Xwayland1x960x720, recorded unchanged release binary2a4cecd6. Actual scheduled explanation/search input and presentation counts, not an exact fractional offset, latency, complete backend/scale/control matrix or full HP20/HP23/S3 acceptance. Earlier Escape nondelivery remains unexplained; focus reactivation is a harness prerequisite in corrected trials, not evidence of an application focus defect or desktop use. Capture filenames do not prove timing. No production behavior, dependency/license, prototype, numerical-budget, S4/S5 resource or nonblocking resize-scope change."
+      },
+      "s3_native_search_scales_progress": {
+        "status": "Both native Preferences search/clear transitions pass at1.5x and2x after bounded input/presentation settling",
+        "production_consumers": [
+          "GLOBAL native Preferences",
+          "PROJECT native Preferences"
+        ],
+        "shared_owner": "Native shared Preferences surface, search input and ScrollViewport",
+        "retired_paths": "No runtime retirement; scaled native qualification of existing shared paths.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
+        "limits": "X11/Xwayland native adapters with existing --visual-scale-factor override1.5/2, not monitor-scale transition or Wayland input qualification. Observed sizes1440x1050 and1918x1050, not requested1440x1080/1920x1440. Four settled search results fit and scheduled wheel interval has0 frames. Clear/scroll intervals produce presentations (2 for Global2x,1 others); pending clear frames may overlap, so no exact per-wheel/latency claim. Failed early baselines and missing Escape retained. Same recorded release binary; no production/dependency/license/prototype/budget/resize change. Remaining control/backend/full S3 qualification stays open."
       }
     },
     {
@@ -27686,7 +27722,8 @@
         "s3_native_search_explanation_work": "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
         "s3_control_cache_negatives_work": "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json",
         "s3_clip_defect_sensitivity_work": "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json",
-        "s3_scroll_capture_negatives_work": "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json"
+        "s3_scroll_capture_negatives_work": "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json",
+        "s3_native_search_scales_work": "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json"
       },
       "receipt_sha256": {
         "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json": "7c21f4fb04e937db21bd06d9bd0e9b1d4d0602ccca5cf167def2a77f6d5e9139",
@@ -27705,7 +27742,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json": "99914ecea89ac062c99d8cd6dfa5d3421174971ae622bf634a1296a7a71afb37",
         "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json": "622181f733b2d0dfc81861e13e99d46ad6cdd5e27d183987906e667976fb7a0d",
         "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json": "9fbd4e780065094e5bfe668c8bcc998a325eea926b2ab54591f79921b7dd0634",
-        "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json": "5bf4b50c4a4d7fbfadad1e0fd46f9abbd20ffdc1a6b041350a9a174533485a9a"
+        "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json": "5bf4b50c4a4d7fbfadad1e0fd46f9abbd20ffdc1a6b041350a9a174533485a9a",
+        "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json": "840cb0c47b34e295a27a70fe3c3c08cda992015480123ebd680e3b7e15b5ffe2"
       },
       "remaining_actions": {
         "HP10-01": "Verify outside-Layers routing through the outer native event dispatcher; actual Board Runtime zero-preparation and prescribed negative are recorded.",
@@ -27721,7 +27759,7 @@
         "HP16-03": "Reconcile actual native control working-set evidence with recorded bounded CPU LRU/bypass/byte eviction and pin-indefinitely negative. Full CPU metadata/GPU/in-flight/aggregate bounds remain S4/S5 resource dependencies.",
         "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter.",
         "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct.",
-        "HP20-01": "Complete remaining backend/scale and other-control extent cases. Both Preferences1x native Units choices, explanations, four-result search/clear, final row/boundary/reversal and shrink to actual563px minimum are recorded. Shared renderer visible-row negative is recorded.",
+        "HP20-01": "Complete remaining backend and expanded/other-control scale extent cases. Both Preferences native search/clear now has1/1.5/2x override proof at actual recorded sizes;1x choices/explanations/final-row/minimum-height and shared visible-row negative remain recorded. No monitor-scale transition or latency acceptance.",
         "HP21-01": "Complete remaining capture/profile/scale cases and painted-only-scrollbar negative. Shared grab-displacement negative now detected with stationary/midpoint oracle; preserve existing native press/drag/track evidence.",
         "HP21-02": "Complete native release/capture-loss/close/content-change final-target matrix. Shared stale-reflow negative now detected and restored viewport/content-change capture tests pass; existing focus-loss and native trials remain bounded.",
         "HP22-01": "Complete remaining native diagonal/rounded/nested clipping cases per actual consumer. Shared clamp-vertices negative now detected by corrected existing area oracle; preserve original false-pass and terminal call-removal negatives.",
@@ -28230,5 +28268,16 @@
     "retired_paths": "No new runtime retirement; strengthen ineffective endpoint-only test with stationary and midpoint checks.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json",
     "limits": "Existing shared ScrollViewport component tests only; no OS pointer/native host delivery. Stationary and midpoint assertions strengthen grab preservation beyond clamped endpoints. Reflow test covers viewport/content geometry changes and fresh capture; native close/focus/content identity matrix remains separate. Painted-only scrollbar negative and remaining per-profile/native HP21/S3 qualification stay open. No production behavior/dependency/license/prototype/numerical budget/resize-scope change."
+  },
+  "s3_native_search_scales_work": {
+    "status": "Both native Preferences search/clear transitions pass at1.5x and2x after bounded input/presentation settling",
+    "production_consumers": [
+      "GLOBAL native Preferences",
+      "PROJECT native Preferences"
+    ],
+    "shared_owner": "Native shared Preferences surface, search input and ScrollViewport",
+    "retired_paths": "No runtime retirement; scaled native qualification of existing shared paths.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
+    "limits": "X11/Xwayland native adapters with existing --visual-scale-factor override1.5/2, not monitor-scale transition or Wayland input qualification. Observed sizes1440x1050 and1918x1050, not requested1440x1080/1920x1440. Four settled search results fit and scheduled wheel interval has0 frames. Clear/scroll intervals produce presentations (2 for Global2x,1 others); pending clear frames may overlap, so no exact per-wheel/latency claim. Failed early baselines and missing Escape retained. Same recorded release binary; no production/dependency/license/prototype/budget/resize change. Remaining control/backend/full S3 qualification stays open."
   }
 }
