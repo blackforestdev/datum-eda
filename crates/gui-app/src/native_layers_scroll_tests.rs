@@ -73,6 +73,11 @@ fn native_layers_route_preserves_preparation_camera_and_boundary_damage() {
         total - visible
     );
     assert!(runtime.scene_dirty);
+    assert_eq!(
+        format!("{:?}", runtime.camera),
+        camera,
+        "changing Layers wheel must not fall through into board zoom"
+    );
     assert!(
         runtime.prepared_scene.is_none(),
         "scroll routing must not prepare a scene"

@@ -1,0 +1,40 @@
+{
+  "candidate_base": "6e05abb064e4a0bdde951d7e13b85a0e541f0999",
+  "production": {
+    "status": "Actual Runtime Layers wheel test detects forbidden board zoom dispatch",
+    "production_consumers": [
+      "MAIN Board Layers default Runtime::handle_native_wheel route"
+    ],
+    "retired_paths": "No runtime change. Existing real-board test now checks camera immediately after the changing Layers event, before boundary and editor cases.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/layers-zoom-fallthrough-negative/result.json",
+    "proof": "Positive and explicitly recompiled restored native Runtime test each1pass/395filtered. Isolated faulty consumed-Layers dispatch into zoom_focused_view changes camera zoom1.0 to1.12 and fails intended camera assertion. Full tracked Rust/Cargo source copy byte-restored; negative/restored executable hashes differ.",
+    "limits": "Negative deliberately dispatches consumed Layers input to focused-board zoom; merely removing early return would still face pointer viewport guards. Direct native Runtime wheel invocation, not OS-delivered input or displayed final-offset proof. Existing OS evidence and unresolved input/capture failures remain. No full HP10/S3 acceptance, production behavior, dependency/license/prototype/resource deadline or resize change."
+  },
+  "test_binary_sha256": {
+    "positive": "52e12e060e65b32eb5a6dd4fcb5b0494794edea94a859127a568986c78b716fb",
+    "negative": "1873edc57c91b56a6e18b258826401d51ed4c5408c1be3a3f8f78e6a6d43f550",
+    "restored": "1a18e8435e2f948a16ba4195885776b786944cf53a92599ec6b6acc99c2ae313"
+  },
+  "source_sha256": {
+    "crates/gui-app/src/native_scroll_input.rs": "db9a3c9fa282386bcca80dfbea27615bb331323a3994ff15826960fba9bab8e5",
+    "crates/gui-app/src/native_layers_scroll_tests.rs": "88a363fe50ce077c5e9149ddf8af087677fae8585477479ffc1b5c99a6d2ffb1"
+  },
+  "environment": {
+    "WINIT_UNIX_BACKEND": "x11",
+    "WAYLAND_DISPLAY": "unset",
+    "DATUM_NATIVE_TEST_BOARD": "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "EDA_CLI_BIN": "/home/bfadmin/Documents/datum-eda/target/release/datum-eda",
+    "XDG_CONFIG_HOME": "/tmp/pm045-layers-fallthrough-{positive,negative,restored}-config",
+    "XDG_CACHE_HOME": "/tmp/pm045-layers-fallthrough-{positive,negative,restored}-cache"
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_layers_route_preserves_preparation_camera_and_boundary_damage -- --ignored --test-threads=1 --nocapture",
+    "CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline --manifest-path /tmp/pm045-pinned-negative-source/Cargo.toml -p datum-gui-app --bin datum-gui native_layers_route_preserves_preparation_camera_and_boundary_damage -- --ignored --test-threads=1 --nocapture (same command for negative and restored source)"
+  ],
+  "artifact_sha256": {
+    "positive.log.gz": "f32750efd6c7e67c7f89a18a09492fe1e4fbcccd75bcb1942e610574a8139456",
+    "restored.log.gz": "9f86861d228000e485a0d3b23c9a44f8475e001aa05402dbce0bd54d4df5d56f",
+    "negative.log.gz": "ca8ea8d8f7dfb26538c5d486f592c52e5e089414bd610edd600c724aafe6247b",
+    "negative.patch.gz": "1e85dc7d5d35b152f24a3e881dc7ac99192030d072b492bbadb7ef531d342760"
+  }
+}

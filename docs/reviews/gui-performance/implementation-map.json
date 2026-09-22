@@ -5235,7 +5235,7 @@
         "crates/gui-app/src/native_scroll_input.rs"
       ],
       "test": {
-        "status": "Partial: real Runtime proves effective capacity, boundary damage, reversal and camera separation. Current native X11 scale1 replay passes logged OS wheel/locality predicates and clean close with explicit focus roundtrips. Prior failures retained; exact displayed final offset/capture freshness, other profiles and prescribed fallthrough negative remain unqualified.",
+        "status": "Partial: real Runtime proves effective capacity, boundary damage, reversal and camera separation. Current native X11 scale1 replay passes logged OS wheel/locality predicates and clean close with explicit focus roundtrips. Prior failures retained; exact displayed final offset/capture freshness, other profiles remain unqualified. Prescribed forbidden board-zoom dispatch now detected by existing actual Runtime test, with recompiled restored positive; OS/profile/full acceptance remains open.",
         "id": "proof_hp10_02",
         "positive": "Wheel inside Layers including visible-capacity limit",
         "negative_control": "Fall through into board zoom",
@@ -5314,8 +5314,19 @@
         "limits": "One current-binary X11 run at scale override1 and actual1333x833. Captured reverse list still shows previous rows, so exact displayed final offset/capture freshness remains unqualified. No root cause or closure of prior input failures, no one-OS-event/one-frame guarantee, native preparation counts, fallthrough negative, Wayland/other scales, full HP10/S3 or latency/resource acceptance. Three prior failed trials remain preserved; dat-native-input-delivery-vq7w remains open. No runtime/prototype/dependency/license/budget/resize changes."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S3/layers-os-wheel-roundtrip/result.json"
-      ]
+        "docs/reviews/gui-performance/implementation/S3/layers-os-wheel-roundtrip/result.json",
+        "docs/reviews/gui-performance/implementation/S3/layers-zoom-fallthrough-negative/result.json"
+      ],
+      "s3_layers_zoom_fallthrough_negative_progress": {
+        "status": "Actual Runtime Layers wheel test detects forbidden board zoom dispatch",
+        "production_consumers": [
+          "MAIN Board Layers default Runtime::handle_native_wheel route"
+        ],
+        "retired_paths": "No runtime change. Existing real-board test now checks camera immediately after the changing Layers event, before boundary and editor cases.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/layers-zoom-fallthrough-negative/result.json",
+        "proof": "Positive and explicitly recompiled restored native Runtime test each1pass/395filtered. Isolated faulty consumed-Layers dispatch into zoom_focused_view changes camera zoom1.0 to1.12 and fails intended camera assertion. Full tracked Rust/Cargo source copy byte-restored; negative/restored executable hashes differ.",
+        "limits": "Negative deliberately dispatches consumed Layers input to focused-board zoom; merely removing early return would still face pointer viewport guards. Direct native Runtime wheel invocation, not OS-delivered input or displayed final-offset proof. Existing OS evidence and unresolved input/capture failures remain. No full HP10/S3 acceptance, production behavior, dependency/license/prototype/resource deadline or resize change."
+      }
     },
     {
       "id": "HP11-01",
@@ -28243,7 +28254,7 @@
       },
       "remaining_actions": {
         "HP10-01": "Complete OS-delivered wheel/no-preparation proof. Default native routing owner now exercised by real Runtime for non-Layers and editor zoom; prior preparation negative retained.",
-        "HP10-02": "Complete exact native final-offset/capture qualification, remaining profiles and prescribed fallthrough negative. Current X11 scale1 OS replay passes zero boundary presentations, scrolling/reversal, unchanged board crop, editor zoom and clean close; prior input/capture failures remain explicit. Real Runtime proves effective capacity and camera routing.",
+        "HP10-02": "Complete exact native final-offset/capture qualification and remaining profiles. Existing actual Runtime test now detects consumed Layers input incorrectly dispatching board zoom, with restored positive. Retain bounded X11 OS wheel/locality/clean-close pass and earlier input/capture failures; no full acceptance from direct Runtime negative.",
         "HP12-01": "Complete native forbidden-work attribution and the prescribed workspace/general-world negative against the dialog-only preparation boundary.",
         "HP12-02": "Complete remaining control/focus/partial-row and OS transition cases. Actual GLOBAL/PROJECT surface publication/scale/extent positives and both-host scale-clear negative/restored pass now recorded; durable enum scope and post-edit Reset hit retained.",
         "HP13-01": "Complete remaining backend/scale changed-state pass proof and final single-candidate matrix. NEW2x edit/scroll/reveal now has17 dialog-only samples and final Cancel hit; both Preferences1/1.5/2x have bounded expanded receipts across pinned builds. Existing general-pass negative and input/capture failures retained.",
@@ -29108,5 +29119,15 @@
       "proof": "12 actual hidden X11/Vulkan surface cases pass through the default production WindowEvent dispatcher. Both Preferences at700x540 logical have scrollbars and reject release click-through across1/1.5/2; all fresh setting clicks activate. New at620x620 logical has no scrollbar and fresh name clicks activate across1/1.5/2. Retained960x480/1x overflow cases verify release suppression for all3. Native test1pass/395filtered; Clippy passed before final diagnostic-only Option formatting.",
       "limits": "Direct WindowEvent dispatch, not OS event delivery or monitor-scale transitions. Actual requested physical sizes verified. New minimum-size cases do not claim scrollbar coverage; logs record None. No new injected negative or whole GUI/profile/S3 acceptance; preceding e3cd07a0 negative remains bounded historical evidence. Production code and release binary unchanged; no visual/dependency/license/resource/resize or deadline change."
     }
+  },
+  "s3_layers_zoom_fallthrough_negative_work": {
+    "status": "Actual Runtime Layers wheel test detects forbidden board zoom dispatch",
+    "production_consumers": [
+      "MAIN Board Layers default Runtime::handle_native_wheel route"
+    ],
+    "retired_paths": "No runtime change. Existing real-board test now checks camera immediately after the changing Layers event, before boundary and editor cases.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/layers-zoom-fallthrough-negative/result.json",
+    "proof": "Positive and explicitly recompiled restored native Runtime test each1pass/395filtered. Isolated faulty consumed-Layers dispatch into zoom_focused_view changes camera zoom1.0 to1.12 and fails intended camera assertion. Full tracked Rust/Cargo source copy byte-restored; negative/restored executable hashes differ.",
+    "limits": "Negative deliberately dispatches consumed Layers input to focused-board zoom; merely removing early return would still face pointer viewport guards. Direct native Runtime wheel invocation, not OS-delivered input or displayed final-offset proof. Existing OS evidence and unresolved input/capture failures remain. No full HP10/S3 acceptance, production behavior, dependency/license/prototype/resource deadline or resize change."
   }
 }
