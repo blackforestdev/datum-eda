@@ -5606,7 +5606,8 @@
         "docs/reviews/gui-performance/implementation/S3/search-byte-fast-path/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-publication/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-dialog-hit-both-hosts/result.json",
-        "docs/reviews/gui-performance/implementation/S3/borrowed-control-labels/result.json"
+        "docs/reviews/gui-performance/implementation/S3/borrowed-control-labels/result.json",
+        "docs/reviews/gui-performance/implementation/S3/preferences-row-layout/result.json"
       ],
       "s3_explanation_focus_reveal_progress": {
         "status": "Shared explanation Close focus reveal implemented in default GLOBAL/PROJECT surfaces",
@@ -5716,7 +5717,8 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/borrowed-control-labels/result.json",
         "proof": "Existing218 renderer tests pass, including control and unavailable-state coverage. Existing GPU single-pass/general-dialog pixel parity passes1 test/258 filtered. Renderer visual library/tests Clippy and fresh release GUI build pass.",
         "limits": "Source-level removal of one redundant temporary String copy per available label (an allocation for nonempty labels), not measured total allocations or frame-time improvement. TextRun still owns text; unavailable suffix formatting and integer formatting remain. No new native qualification, complete resource accounting or HP14/S3 acceptance. No styling/prototype/dependency/license, resource deadline or resize-scope change."
-      }
+      },
+      "s3_row_layout_progress": "Matched baseline and candidate renderer suites each pass218 tests. Existing hardware dialog GPU parity passes1 test/258 filtered. Visual renderer Clippy and fresh release application build pass. Structural removal of temporary work, not a measured frame-time or complete allocation-budget claim. One layout Vec remains; text and hit targets retain required owned data. GPU parity paths share preparation and do not independently qualify every native profile. Existing native capture/input gaps, S3 exit and S4/S5 obligations remain open. No dependency/license/prototype/resize boundary change."
     },
     {
       "id": "HP13-01",
@@ -29237,5 +29239,16 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/scrollbar-capture-followup/result.json",
     "proof": "Two current-release 1x X11 trials each report delivered drag with one presentation and zero press/release presentations. First run retains initial Appearance pixels across all six captures. Second run later captures visibly reach final Angle precision row and bottom thumb without additional app presentations. Alternate Spectacle window-under-cursor capture times out after35 seconds with no image.",
     "limits": "This distinguishes capture observations from app presentation counts in these runs; it does not establish a reliable capture mechanism, exact numerical offset, root cause, or complete native acceptance. Driver passed means only event/count assertions passed. No S3 exit, resource qualification, resize investigation or visual-policy change."
+  },
+  "s3_preferences_row_layout_work": {
+    "status": "Default shared Preferences row preparation uses one layout collection and borrowed focus comparisons",
+    "production_consumers": [
+      "GLOBAL native Preferences -> prepare_native_preferences_scrolled -> shared render_rows",
+      "PROJECT native Preferences -> prepare_native_preferences_scrolled -> shared render_rows"
+    ],
+    "retired_paths": "Removed parallel visible-row/start-layout vectors and transient owned setting-key construction for SettingName, Control and Reset focus comparisons. No new consumer migration; existing shared default consumers improved.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/preferences-row-layout/result.json",
+    "proof": "Matched baseline and candidate renderer suites each pass218 tests. Existing hardware dialog GPU parity passes1 test/258 filtered. Visual renderer Clippy and fresh release application build pass.",
+    "limits": "Structural removal of temporary work, not a measured frame-time or complete allocation-budget claim. One layout Vec remains; text and hit targets retain required owned data. GPU parity paths share preparation and do not independently qualify every native profile. Existing native capture/input gaps, S3 exit and S4/S5 obligations remain open. No dependency/license/prototype/resize boundary change."
   }
 }

@@ -17,7 +17,37 @@ pub(super) fn render_rows(
     scroll: &mut datum_gui_viewport::scroll::ScrollViewport,
     reveal_row: Option<usize>,
 ) {
-    let visible: Vec<_> = dialog.visible_rows().collect();
+    let mut total = 0.0;
+    let mut section = None;
+    let visible: Vec<_> = dialog
+        .visible_rows()
+        .map(|row| {
+            let group =
+                if !dialog.search_query.is_empty() && section != Some(row.section_id.as_str()) {
+                    22.0
+                } else {
+                    0.0
+                };
+            section = Some(row.section_id.as_str());
+            let choices = match &row.control {
+                GlobalPreferenceControlUi::SingleChoice { choices, .. }
+                    if dialog.open_choice_key.as_deref() == Some(row.key.as_str()) =>
+                {
+                    choices.len()
+                }
+                _ => 0,
+            };
+            let explanation = if dialog.explanation_key.as_deref() == Some(row.key.as_str()) {
+                96.0
+            } else {
+                0.0
+            };
+            let height = SETTING_HEIGHT + PROVENANCE_HEIGHT + choices as f32 * 28.0 + explanation;
+            let top = total;
+            total += group + height;
+            (row, top, group, height, choices, explanation)
+        })
+        .collect();
     if !dialog.search_query.is_empty() {
         draw_text(
             &format!(
@@ -40,38 +70,11 @@ pub(super) fn render_rows(
         width: content_width,
         height: (card.y + card.height - y).max(0.0),
     };
-    let mut starts = Vec::with_capacity(visible.len());
-    let mut total = 0.0;
-    let mut section = None;
-    for row in &visible {
-        let group = if !dialog.search_query.is_empty() && section != Some(row.section_id.as_str()) {
-            22.0
-        } else {
-            0.0
-        };
-        section = Some(row.section_id.as_str());
-        let choices = match &row.control {
-            GlobalPreferenceControlUi::SingleChoice { choices, .. }
-                if dialog.open_choice_key.as_deref() == Some(row.key.as_str()) =>
-            {
-                choices.len()
-            }
-            _ => 0,
-        };
-        let explanation = if dialog.explanation_key.as_deref() == Some(row.key.as_str()) {
-            96.0
-        } else {
-            0.0
-        };
-        let height = SETTING_HEIGHT + PROVENANCE_HEIGHT + choices as f32 * 28.0 + explanation;
-        starts.push((total, group, height, choices, explanation));
-        total += group + height;
-    }
     scroll.layout(viewport, total);
     if let Some(index) = reveal_row {
         if dialog.focus == GlobalPreferencesFocus::ExplanationClose
-            && dialog.explanation_key.as_ref() == visible.get(index).map(|row| &row.key)
-            && let Some((top, group, height, _, explanation_height)) = starts.get(index)
+            && dialog.explanation_key.as_ref() == visible.get(index).map(|(row, ..)| &row.key)
+            && let Some((_, top, group, height, _, explanation_height)) = visible.get(index)
         {
             // Reveal the focused button, including when the expanded row is
             // taller than the viewport. Paint uses this same layout below.
@@ -87,7 +90,7 @@ pub(super) fn render_rows(
             scroll.reveal(close.y, close.y + close.height);
         } else if index == 0 {
             scroll.set_offset(0.0);
-        } else if let Some((top, group, height, _, _)) = starts.get(index) {
+        } else if let Some((_, top, group, height, _, _)) = visible.get(index) {
             scroll.reveal(*top, top + group + height);
         }
     }
@@ -96,9 +99,7 @@ pub(super) fn render_rows(
     let t_start = text.len();
     let h_start = hits.len();
     let content_width = content_width - if scroll.track().is_some() { 11.0 } else { 0.0 };
-    for (row, (top, search_group_height, row_height, choice_count, explanation_height)) in
-        visible.into_iter().zip(starts)
-    {
+    for (row, top, search_group_height, row_height, choice_count, explanation_height) in visible {
         y = viewport.y + top - scroll.offset();
         if y + search_group_height + row_height <= viewport.y {
             continue;
@@ -160,10 +161,7 @@ pub(super) fn render_rows(
             TextFace::UiStrong,
             text,
         );
-        if focus_is(
-            dialog,
-            &GlobalPreferencesFocus::SettingName(row.key.clone()),
-        ) {
+        if matches!(&dialog.focus, GlobalPreferencesFocus::SettingName(key) if key == &row.key) {
             push_rect_border(quads, name_rect, design_tokens::chrome::STATUS_INFO, 2.0);
         }
         hits.push(HitRegion {
@@ -189,7 +187,8 @@ pub(super) fn render_rows(
         let control_right = reset.map_or(setting_rect.x + setting_rect.width - 18.0, |rect| {
             rect.x - 10.0
         });
-        let focused_control = focus_is(dialog, &GlobalPreferencesFocus::Control(row.key.clone()));
+        let focused_control =
+            matches!(&dialog.focus, GlobalPreferencesFocus::Control(key) if key == &row.key);
         let control = draw_preference_control(
             &row.control,
             control_right,
@@ -209,7 +208,7 @@ pub(super) fn render_rows(
             button(
                 "Reset",
                 reset,
-                focus_is(dialog, &GlobalPreferencesFocus::Reset(row.key.clone())),
+                matches!(&dialog.focus, GlobalPreferencesFocus::Reset(key) if key == &row.key),
                 true,
                 quads,
                 text,
