@@ -1,0 +1,31 @@
+import os,subprocess,time,re,json
+from pathlib import Path
+root=Path('/home/bfadmin/Documents/datum-eda');out=Path('/tmp/pm045-typing-capture');out.mkdir(exist_ok=True);log=out/'app.log';log.write_text('')
+env=os.environ.copy();env.pop('WAYLAND_DISPLAY',None);env.update(WINIT_UNIX_BACKEND='x11',DATUM_GUI_VERBOSE_LOG='1',DATUM_GUI_LOG=str(log),XDG_CONFIG_HOME=str(out/'config'),XDG_CACHE_HOME=str(out/'cache'))
+with (out/'app-stderr.log').open('w') as err:
+ p=subprocess.Popen([str(root/'target/release/datum-gui'),'--board','/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb','--window-size','1280x800','--initial-layout','board-schematic','--open-new-project','--visual-scale-factor','1'],env=env,cwd=root,stdout=err,stderr=err)
+ try:
+  deadline=time.monotonic()+20
+  while True:
+   assert p.poll() is None
+   ids=re.findall(r'surface identity window=WindowId\((\d+)\)',log.read_text())
+   if len(ids)==2:break
+   assert time.monotonic()<deadline;time.sleep(.1)
+  wid=ids[-1]
+  for w,h in [(1000,750)]:
+   subprocess.run(['xdotool','windowsize','--sync',wid,str(w),str(h)],check=True,timeout=5);time.sleep(1)
+   subprocess.run(['import','-window',wid,str(out/f'new-app-input-{w}.png')],check=True,timeout=8)
+  subprocess.run(['xdotool','windowsize','--sync',wid,'760','750'],check=True,timeout=8)
+  subprocess.run(['xdotool','windowactivate','--sync',wid],check=True,timeout=8)
+  subprocess.run(['xdotool','type','--clearmodifiers','--delay','20','W'*90],check=True,timeout=15)
+  time.sleep(2.0)
+  subprocess.run(['import','-window',wid,str(out/'new-input-long.png')],check=True,timeout=8)
+  geo=subprocess.check_output(['xdotool','getwindowgeometry','--shell',wid],text=True)
+  d=dict(line.split('=',1) for line in geo.splitlines() if '=' in line)
+  crop=f"{d['WIDTH']}x{d['HEIGHT']}+{d['X']}+{d['Y']}"
+  subprocess.run(['import','-window','root','-crop',crop,str(out/'desktop-crop.png')],check=True,timeout=8)
+  time.sleep(3)
+  subprocess.run(['import','-window',wid,str(out/'later-window.png')],check=True,timeout=8)
+
+ finally:
+  if p.poll() is None:p.terminate();p.wait(timeout=10)

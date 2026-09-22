@@ -1,0 +1,23 @@
+{
+  "base_commit": "9afba8fd",
+  "production": {
+    "status": "bounded native typing state and capture discrepancy reconciliation",
+    "production_consumers": [
+      "NEW native project-name state -> shared input painter -> native surface"
+    ],
+    "retired_paths": "No runtime path retired. Count-only trace removed byte-for-byte; production release rebuilt. Existing GPU regression now exercises sequential edits before comparing final output with a fresh renderer.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/typing-capture-reconciliation/result.json",
+    "limits": "Capture freshness/presentation timing and full native input qualification remain unresolved. Later clipped output cannot alone distinguish every long string. No compositor image was obtained; no whole-field or whole-window GPU/native parity claim. No S3 exit, runtime/dependency/license/prototype/budget/resize amendment."
+  },
+  "proof": {
+    "state_trace": "90 accepted-character lengths, ending at90; final prepared dialog length90. Trace capture remained short. Raw count-only trace retained; both app files restored exactly.",
+    "gpu": "Extended existing production New Project test:1/2/3/79/90-character sequence final pixels equal fresh90-character renderer. One explicitly run hardware GPU test passes.",
+    "restored_native": "Restored production binary logs90 delivered non-synthetic KeyW presses. Early window capture is short; later capture shows long value. Text/caret interior [172,60,738,86] RGB exactly equals prior known90-W production GPU image.",
+    "comparison_limits": "Whole field [168,56,742,90] differs at40 pixels, maximum channel delta59, at border. Interior comparison excludes border; no whole-field parity. Clipped visible text does not independently count all90 characters.",
+    "capture_failures": "ImageMagick X11 root capture returned nonzero. Installed Spectacle active-window request returned process0 but no output image and logged KWin D-Bus reply failure. No compositor capture or confirmation obtained.",
+    "build": "Guarded offline traced release then byte-restored production release both pass. No temporary instrumentation remains.",
+    "issue": "dat-native-new-project-typing-capture-xgt remains open; initial captures do not demonstrate input loss in this case."
+  },
+  "known_gpu_reference": "docs/reviews/gui-performance/implementation/S3/shared-input-text/known-long.png",
+  "limits": "Capture freshness/presentation timing and full native input qualification remain unresolved. Later clipped output cannot alone distinguish every long string. No compositor image was obtained; no whole-field or whole-window GPU/native parity claim. No S3 exit, runtime/dependency/license/prototype/budget/resize amendment."
+}

@@ -27433,6 +27433,16 @@
     ],
     "preserved": "Existing field/control geometry, spacing profiles, placeholder focus gap, New Project92-character truncation, caret dimensions, colors, fonts and input/hit authority. Layout extent follows the shared painter scale and remains independent of ancestor visibility.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/shared-input-text/result.json",
-    "limits": "Bounded shared input painting only. Native burst typing remains inconclusive (dat-native-new-project-typing-capture-xgt); initial GLOBAL scroll timed out after drag/release, PROJECT passed. No full input/minimum-width/scale/backend, resource/negative or S3 qualification. No dependency/license, prototype, sequencing or nonblocking resize change."
+    "limits": "Bounded shared input painting only. Native burst typing remains inconclusive (dat-native-new-project-typing-capture-xgt); initial GLOBAL scroll timed out after drag/release, PROJECT passed. No full input/minimum-width/scale/backend, resource/negative or S3 qualification. No dependency/license, prototype, sequencing or nonblocking resize change.",
+    "typing_followup": "docs/reviews/gui-performance/implementation/S3/typing-capture-reconciliation/result.json"
+  },
+  "s3_typing_capture_reconciliation_work": {
+    "status": "bounded native typing state and capture discrepancy reconciliation",
+    "production_consumers": [
+      "NEW native project-name state -> shared input painter -> native surface"
+    ],
+    "retired_paths": "No runtime path retired. Count-only trace removed byte-for-byte; production release rebuilt. Existing GPU regression now exercises sequential edits before comparing final output with a fresh renderer.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/typing-capture-reconciliation/result.json",
+    "limits": "Capture freshness/presentation timing and full native input qualification remain unresolved. Later clipped output cannot alone distinguish every long string. No compositor image was obtained; no whole-field or whole-window GPU/native parity claim. No S3 exit, runtime/dependency/license/prototype/budget/resize amendment."
   }
 }

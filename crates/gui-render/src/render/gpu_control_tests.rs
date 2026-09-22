@@ -101,6 +101,13 @@ fn new_project_long_name_paints_only_inside_its_field() {
         .renderer
         .prepare_native_new_project(&dialog, 760, 750, 1.0);
     let before = capture(&mut renderer, &empty);
+    for count in [1, 2, 3, 79] {
+        dialog.project_name = "W".repeat(count);
+        let step = renderer
+            .renderer
+            .prepare_native_new_project(&dialog, 760, 750, 1.0);
+        let _ = capture(&mut renderer, &step);
+    }
     dialog.project_name = "W".repeat(90);
     let filled = renderer
         .renderer
@@ -112,6 +119,19 @@ fn new_project_long_name_paints_only_inside_its_field() {
         .expect("name field")
         .rect;
     let after = capture(&mut renderer, &filled);
+    renderer.renderer = Renderer::new(
+        &renderer.device,
+        &renderer.queue,
+        OUTPUT_FORMAT,
+        DEFAULT_MSAA_SAMPLES,
+    );
+    let fresh = renderer
+        .renderer
+        .prepare_native_new_project(&dialog, 760, 750, 1.0);
+    assert!(
+        after == capture(&mut renderer, &fresh),
+        "edit sequence must match fresh final state"
+    );
     assert_ne!(before, after);
     for y in 0..750 {
         for x in 0..760 {
