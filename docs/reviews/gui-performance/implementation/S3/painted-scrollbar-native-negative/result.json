@@ -1,0 +1,58 @@
+{
+  "candidate_base": "715c2b9a05dd0c3898fe0b06d817089272a52c46",
+  "production": {
+    "status": "Both real native Preferences adapters detect painted-only scrollbar defect; input delivery qualification remains open",
+    "production_consumers": [
+      "GLOBAL Preferences actual OS press/drag/release dispatcher",
+      "PROJECT Preferences actual OS press/drag/release dispatcher"
+    ],
+    "retired_paths": "No production changes; existing OS driver narrowed to scrollbar gestures and one isolated no-input handler variant.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/painted-scrollbar-native-negative/result.json",
+    "proof": "Initial positive: both hosts press0 presentations, delivered drag1, release0. Negative: both confirm delivered drag then fail exact no-changed-dialog assertion when scrollbar_input is disabled but rendering unchanged. Restored release/source hashes match positive; Global replay again drags1 then release times out, Project drag motion arrives at cleanup after timeout.",
+    "limits": "X11 scale1,960x720 only. Parent-required painted-only production pointer negative is observed with paired initial positives, but restored native replays remain failed and dat-native-input-delivery-vq7w stays open. Global initial screenshot is stale Appearance; Project visibly retains painted Units scrollbar. No exact final offset/static freshness, setting click-through, teardown, other profiles, full HP21/S3, timing/resource or resize acceptance. No runtime/dependency/license/prototype/resource deadline change."
+  },
+  "binary_sha256": {
+    "positive-gui": "551ebfd9287ee21bfdb3c2c66f33c808f6452161a0dd6a60d4462da2e33fdc74",
+    "negative-gui": "64cab6d82bbf2e61389b7504ee2c3a56882a5389c48870ec8a6c87231d50a62d",
+    "datum-gui": "551ebfd9287ee21bfdb3c2c66f33c808f6452161a0dd6a60d4462da2e33fdc74"
+  },
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_window.rs": "98dde5fcd91060ccb22da06819ffea96050515e50c35b945819a1a5a8ac6881d"
+  },
+  "source_restoration": "All tracked Rust/Cargo files in isolated source copy verified byte-equal to active; shared release atomically restored from pinned positive and hash verified before negative trials.",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "commands": [
+    "PM045_TEST_SCALE=1 python3 /tmp/pm045_native_painted_scrollbar.py /tmp/pm045-painted-scrollbar-positive",
+    "env CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --manifest-path /tmp/pm045-pinned-negative-source/Cargo.toml --release -p datum-gui-app --bin datum-gui",
+    "PM045_TEST_SCALE=1 PM045_GUI_BIN=/home/bfadmin/Documents/datum-eda/target/pm045-painted-scrollbar-proof/negative-gui python3 /tmp/pm045_native_painted_scrollbar.py /tmp/pm045-painted-scrollbar-negative",
+    "PM045_TEST_SCALE=1 PM045_GUI_BIN=/home/bfadmin/Documents/datum-eda/target/pm045-painted-scrollbar-proof/positive-gui python3 /tmp/pm045_native_painted_scrollbar.py /tmp/pm045-painted-scrollbar-restored"
+  ],
+  "artifact_sha256": {
+    "negative-build.log.gz": "f785a0982b1fbc4607543860b1ea735a55794e21cb0e648a3cff5e3e6b3e15ae",
+    "driver.py.gz": "c9fa30e663a0aaef7d47116f2d378816bc4c710034914980a655db802e4f1e88",
+    "negative.patch.gz": "0d9427a2ed9dd66b94cedceb39c7e91132647a9c155a341ecb94dac2bd10499f",
+    "negative/result.json": "7919e736263a898a5e9bf52b4a2cdc5004f3a4a7f6988e3f0f607324376099b5",
+    "restored/result.json": "a18dff9a088c6dbbcab3031e9c10c8f510acb23a7a658412a8e1a4e0663a5000",
+    "positive/result.json": "6fd063f1d2ee87bca901f0ca4e00faaa372bf71ddca8d09ea565c8279b635937",
+    "positive/GLOBAL/native.log.gz": "96aaeac6f35834b382a5fa9327e2e0af94d3fd2f9e90f61670e59740f8033aa5",
+    "positive/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "positive/GLOBAL/before.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "positive/GLOBAL/bottom.png": "ba61ce906e695efbb14f36768c089239b513a3d0cb08b01178115189b0530b8c",
+    "positive/PROJECT/native.log.gz": "9e051c33e5dd482d1663516cf2086ec17ee4c2c68575f617cbc6661b2c4252ab",
+    "positive/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "positive/PROJECT/before.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "positive/PROJECT/bottom.png": "1ff6bf4466f9b21a8a292721a0cc11bb7cf9f46c9c82176b9f0261989328a801",
+    "restored/GLOBAL/native.log.gz": "ba475eadd676880dc6b67cfbab741d653a0eb4552bc6cac9ee73a391660140f0",
+    "restored/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "restored/GLOBAL/before.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "restored/PROJECT/native.log.gz": "fb26a0a80087ab6085fe37ce49ba1be586534feab69f814bdd949a045245a22c",
+    "restored/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "restored/PROJECT/before.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "negative/GLOBAL/native.log.gz": "bd68584624a57c96cc2caa79958f5c5cbe9a6c2d9386b8db52c7c0d718393e4a",
+    "negative/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "negative/GLOBAL/before.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "negative/PROJECT/native.log.gz": "b25dfd576bd9a07a5be629f7b6fdec00239873e4432b7d3be624fd4ca71bfa47",
+    "negative/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "negative/PROJECT/before.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7"
+  }
+}
