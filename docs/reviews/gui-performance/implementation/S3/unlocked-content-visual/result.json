@@ -1,0 +1,127 @@
+{
+  "scope": "GPI-S3 Global Preferences content-change final-state visual follow-up",
+  "production_consumers": [
+    "GLOBAL existing shared dialog/scroll/capture/hit paths"
+  ],
+  "retired_paths": [],
+  "source_candidate": "a7477cba; no production changes since",
+  "runs": [
+    {
+      "visual_scale_override": 1,
+      "physical_extent": [
+        960,
+        720
+      ],
+      "release_mutations": 0,
+      "fresh_click_reduced_motion": true,
+      "binary_sha256": "465e2be2385ccc1dae0e3dbbe361effed20301dffa90a322059daeb88b1e582b"
+    },
+    {
+      "visual_scale_override": 1.5,
+      "physical_extent": [
+        1440,
+        1050
+      ],
+      "release_mutations": 0,
+      "fresh_click_reduced_motion": true,
+      "binary_sha256": "465e2be2385ccc1dae0e3dbbe361effed20301dffa90a322059daeb88b1e582b"
+    },
+    {
+      "visual_scale_override": 2,
+      "physical_extent": [
+        1918,
+        1050
+      ],
+      "release_mutations": 0,
+      "fresh_click_reduced_motion": true,
+      "binary_sha256": "465e2be2385ccc1dae0e3dbbe361effed20301dffa90a322059daeb88b1e582b"
+    }
+  ],
+  "visual_observations": [
+    "Inspected actual before/after images: Units before, Appearance after held-drag section change and release, at all three override scales. Reduced motion remains Off after release. Separate canonical persisted-setting oracle confirms a later fresh click changes it to true.",
+    "Header, section sidebar and pinned search remain visible; Appearance rows and control labels are readable at actual accepted sizes. This resolves stale-capture uncertainty for these three fresh trials only."
+  ],
+  "guide_consulted": {
+    "path": "docs/gui/prototypes/preferences-window.html",
+    "sha256": "d9b2d814b8c1f2ac273039a574b3a038700b909cf109ee47f1c3c2f5e1ce7895",
+    "method": "Installed Chromium rendered local HTML at1280x900; ordinary-state region inspected as visual guidance, not a new pixel golden or authority change.",
+    "limitations": "Prototype visibly labels historical foundation/comparative material; no full catalog, authority reconciliation or product acceptance inferred."
+  },
+  "limits": [
+    "No production/style/prototype/dependency edit or new migration.",
+    "No full S3, all-host/backend, W-SCROLL, monitor-DPI transition, antialiasing/pixel-difference or independent owner acceptance.",
+    "X11/Xwayland only; visual override scales are not monitor transitions; requested sizes constrained by desktop at larger scales.",
+    "Historical stale captures remain valid failure records; no retrospective cause attribution.",
+    "Cleanup by owned process termination is not teardown qualification."
+  ],
+  "artifacts": {
+    "1-before.png": {
+      "sha256": "ba61ce906e695efbb14f36768c089239b513a3d0cb08b01178115189b0530b8c",
+      "raw_sha256": "ba61ce906e695efbb14f36768c089239b513a3d0cb08b01178115189b0530b8c"
+    },
+    "1-after-release.png": {
+      "sha256": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+      "raw_sha256": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96"
+    },
+    "1-native.log.gz": {
+      "sha256": "0ae8e39256c6286d8a7dab3933ee4533cbdca7fe86ec47fd8d9a4883e6d4919f",
+      "raw_sha256": "e7f0dfc4943e9d1248d58337bb9958b8b319d1dcf1a856bbc851326e2df64077"
+    },
+    "1-stderr.log.gz": {
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "1-result.json.gz": {
+      "sha256": "fb984521d38cfe1b37a9f3ab91b4221eb2bc295af86b970171ed6f6d382c0b22",
+      "raw_sha256": "ae98fb75febcf98e01cd470af7d69bd607e94aa94535dad3297f8f68f7f7412a"
+    },
+    "1.5-before.png": {
+      "sha256": "90386263317ba49b411e7f1c74094c17578db2b2097478c6cd08af59937883a3",
+      "raw_sha256": "90386263317ba49b411e7f1c74094c17578db2b2097478c6cd08af59937883a3"
+    },
+    "1.5-after-release.png": {
+      "sha256": "a373be17cb4ca3c6d88b5c6cebadb7bfd742b5d074f04a41b052c0d84382bf1f",
+      "raw_sha256": "a373be17cb4ca3c6d88b5c6cebadb7bfd742b5d074f04a41b052c0d84382bf1f"
+    },
+    "1.5-native.log.gz": {
+      "sha256": "dc5aa96cb4fe0479dbb8305b5b462f72a5d7db8d5f3335285731506044776dca",
+      "raw_sha256": "1f7b17d9a95fe4aee06a1a1f48d7978aeb76c73d2cf6dbd77912f5f40fd0fb04"
+    },
+    "1.5-stderr.log.gz": {
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "1.5-result.json.gz": {
+      "sha256": "554c8ff21cf531156a193dad54638ddc751dcf6be4c0fa70ec7a624f0cfa4ce6",
+      "raw_sha256": "ec438f06ee5cf3f0ab6dcb02954f2df120ab874a67cb425abe63ae6c0aa5d17b"
+    },
+    "2-before.png": {
+      "sha256": "7d520476c39797fdb07b5eba8fe7614c56b977824db2d4b89164cb2303e49bca",
+      "raw_sha256": "7d520476c39797fdb07b5eba8fe7614c56b977824db2d4b89164cb2303e49bca"
+    },
+    "2-after-release.png": {
+      "sha256": "4c799502398b8817d9f5f17a48a19b6ca161e1432556b2b5deb06bab465f7664",
+      "raw_sha256": "4c799502398b8817d9f5f17a48a19b6ca161e1432556b2b5deb06bab465f7664"
+    },
+    "2-native.log.gz": {
+      "sha256": "6699002d0d0bc758ae69df19ed936b3f03e54daee301504686ecf6743362232e",
+      "raw_sha256": "bee850c15708449b305837ea9c4dda5bdba499e7cc3fc9ffa1b7033ddec483c4"
+    },
+    "2-stderr.log.gz": {
+      "sha256": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+      "raw_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "2-result.json.gz": {
+      "sha256": "8ae53931f60e62d6e6c4fdcf87030ea374b22c349effce0c0311d68262ea6115",
+      "raw_sha256": "95d20076a472a8e68821042519de9164bd993879ee459785e7636fbe866e68fb"
+    },
+    "driver.py.gz": {
+      "sha256": "e74ef4edaaa96d43cfc041a19a44fc03adf79a83186128a0c93d9a5742321074",
+      "raw_sha256": "b6874d9a73a254c0f80a25c745148f612faada68f95119fe9dc65b4f225d3db2"
+    },
+    "rendered-guide.png": {
+      "sha256": "713acc33ca4f4f9c95afb23c7346171482dca3002dcdc6f48bc1dadac4950ac6",
+      "raw_sha256": "713acc33ca4f4f9c95afb23c7346171482dca3002dcdc6f48bc1dadac4950ac6"
+    }
+  }
+}
