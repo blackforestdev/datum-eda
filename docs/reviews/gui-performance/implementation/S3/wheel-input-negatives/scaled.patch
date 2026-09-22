@@ -1,0 +1,13 @@
+diff --git a/crates/gui-app/src/native_scroll_input.rs b/crates/gui-app/src/native_scroll_input.rs
+index 4f0b8cda..bc6568fa 100644
+--- a/crates/gui-app/src/native_scroll_input.rs
++++ b/crates/gui-app/src/native_scroll_input.rs
+@@ -12,7 +12,7 @@ impl VerticalWheel {
+         let normalized = match delta {
+             MouseScrollDelta::LineDelta(_, y) => Self::Lines(y),
+             MouseScrollDelta::PixelDelta(position) if scale.is_finite() && scale > 0.0 => {
+-                Self::LogicalPixels((position.y / f64::from(scale)) as f32)
++                Self::LogicalPixels((position.y * f64::from(scale)) as f32)
+             }
+             MouseScrollDelta::PixelDelta(_) => return None,
+         };

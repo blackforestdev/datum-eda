@@ -1,0 +1,63 @@
+{
+  "candidate": "097f1a16f2cd79ff91e58e7236b85305c4c97bc3",
+  "status": "Two intended negatives detected; each byte-restored positive passes",
+  "requirements": [
+    "HP18-01",
+    "HP19-01"
+  ],
+  "test": "global_preferences_window::tests::native_wheel_preserves_fractional_pixels_and_pane_locality",
+  "results": {
+    "command": [
+      "python3",
+      "/tmp/pm045-wheel-negatives/scripts/run_cargo_guarded.py",
+      "--workload",
+      "proof",
+      "--",
+      "cargo",
+      "test",
+      "--offline",
+      "--manifest-path",
+      "/tmp/pm045-wheel-negatives/Cargo.toml",
+      "-p",
+      "datum-gui-app",
+      "--bin",
+      "datum-gui",
+      "native_wheel_preserves_fractional_pixels_and_pane_locality",
+      "--",
+      "--test-threads=1",
+      "--nocapture"
+    ],
+    "results": [
+      {
+        "case": "rounded",
+        "path": "crates/gui-app/src/global_preferences_window.rs",
+        "source_sha256": "152b0d1254f0f7cd48b1628567ba7f600d9c9c49ff0a102f2c8a26a05aaccbdd",
+        "negative_exit": 101,
+        "restored_exit": 0
+      },
+      {
+        "case": "scaled",
+        "path": "crates/gui-app/src/native_scroll_input.rs",
+        "source_sha256": "3cd5706661c79c66219f433a8ad87fcb0e844f0d96b70823a6fc3de167ca251d",
+        "negative_exit": 101,
+        "restored_exit": 0
+      }
+    ]
+  },
+  "observations": {
+    "rounded": "Rounding logical motion to integral pixels discards -0.25 physical delta; first changed assertion fails at global_preferences_window.rs:725.",
+    "scaled": "Multiplication by host scale instead of division fails accumulated offset assertion at global_preferences_window.rs:732 (1.5x).",
+    "restored": "Each run:1 passed,0 failed,393 filtered. Both original source hashes match active checkout after restoration."
+  },
+  "limits": "Direct shared Preferences adapter invocation at1/1.5/2x; no OS event delivery or rendered host. GLOBAL/PROJECT/NEW consume this adapter; Main shares the converter but its dispatch and discrete Layers/terminal policies are not exercised here. Native fractional stream/final-offset, remaining host/hit/backend coverage and full HP18/HP19/S3 qualification remain open. No production change, new consumer migration, dependency/license, visual/prototype, numerical budget or resize-scope change.",
+  "artifact_sha256": {
+    "rounded-negative.log.gz": "5ec735c14e258b2f023e2720a5fb86b799665b6d61043d2ddc395cce8576f4a9",
+    "rounded-restored.log.gz": "a4940f0bc6aade7b4ec8208d441f889c353b8094b3ca97014da5b0f4dde7db53",
+    "rounded.patch": "7b667a80dce9d86fca7fdb4e8f3a7bd0235901742ac53f82accc53c61b74b980",
+    "run-result.json": "77b373f0ed43c72f020d4d5819f4d6f0bf5568c289480c0dc1747434a0381fcb",
+    "runner.py": "84bfea035340e4c236d3250eb18c9dd372c4ce965cd29a24fc8097ff63075912",
+    "scaled-negative.log.gz": "fa4f42dcda3d523aa572d80517cb56d2d3901e5ab78d0f2bfeb92c0f5125f412",
+    "scaled-restored.log.gz": "490640bf9f068ed03264d1ae3736147584fcd0e1e2043c61875e8f1544f69b37",
+    "scaled.patch": "441de807eb427564328312949a498aa2c983705ac260710ef42f6194cfc3b4e0"
+  }
+}

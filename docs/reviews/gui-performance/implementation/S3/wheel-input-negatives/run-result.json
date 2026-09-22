@@ -1,0 +1,38 @@
+{
+  "command": [
+    "python3",
+    "/tmp/pm045-wheel-negatives/scripts/run_cargo_guarded.py",
+    "--workload",
+    "proof",
+    "--",
+    "cargo",
+    "test",
+    "--offline",
+    "--manifest-path",
+    "/tmp/pm045-wheel-negatives/Cargo.toml",
+    "-p",
+    "datum-gui-app",
+    "--bin",
+    "datum-gui",
+    "native_wheel_preserves_fractional_pixels_and_pane_locality",
+    "--",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "results": [
+    {
+      "case": "rounded",
+      "path": "crates/gui-app/src/global_preferences_window.rs",
+      "source_sha256": "152b0d1254f0f7cd48b1628567ba7f600d9c9c49ff0a102f2c8a26a05aaccbdd",
+      "negative_exit": 101,
+      "restored_exit": 0
+    },
+    {
+      "case": "scaled",
+      "path": "crates/gui-app/src/native_scroll_input.rs",
+      "source_sha256": "3cd5706661c79c66219f433a8ad87fcb0e844f0d96b70823a6fc3de167ca251d",
+      "negative_exit": 101,
+      "restored_exit": 0
+    }
+  ]
+}
