@@ -5514,7 +5514,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/dialog-empty-scene/result.json",
         "docs/reviews/gui-performance/implementation/S3/dialog-local-refresh/result.json",
-        "docs/reviews/gui-performance/implementation/S3/preferences-world-negative/result.json"
+        "docs/reviews/gui-performance/implementation/S3/preferences-world-negative/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-dialog-layout/result.json"
       ],
       "s3_dialog_local_refresh_progress": {
         "status": "bounded production cache invalidation convergence; full requirement qualification remains open",
@@ -5529,6 +5530,17 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/preferences-world-negative/result.json",
         "proof": "Existing positive and explicitly recompiled restored renderer test each1pass/217filtered. Inject RetainedScene::from_workspace using the existing repository workspace fixture into shared dialog preparation: retained resolve count2vs1 fails. All tracked isolated Rust/Cargo sources byte-restored; negative and restored binary hashes differ.",
         "limits": "Shared renderer-owner CPU proof. Existing positive uses one Preferences fixture with Global/Project titles, scroll rows and1/1.5 scale; negative aborts at first profile. Not both native-host accounting, OS input, every section, workspace-clone detection, hidden-terminal/full-shell attribution or full HP12/S3 acceptance. Requirement permits clone workspace OR general world path; this executes the latter. No production/dependency/license/prototype/resource/resize or sequencing change."
+      },
+      "s3_native_dialog_layout_progress": {
+        "production_consumers": [
+          "Global Preferences native preparation",
+          "Project Preferences native preparation",
+          "New Project native preparation"
+        ],
+        "shared_owner": "PreparedScene::native_dialog_layout in render/preferences_scene.rs",
+        "retired_paths": "Both native preparation entries stop calling ShellLayout::for_surface -> for_window -> solve_shell_layout_with_taffy. Native dialog preparation no longer constructs/solves the unused six-leaf-plus-root editor grid; both Preferences and New share rounded extent construction.",
+        "proof": "219 renderer tests pass. Existing Preferences legacy comparison retains identical vertices/text/hits across profiles; New constrained form compares native layout against old shell layout at1/1.5/2x and retains reveal tests. All native profiles assert empty editor regions and physical clip/hit bounds. GPU dialog parity passes1 test/259 filtered against general and legacy rendering. Workspace Clippy, fresh release and13 source-policy tests pass. New binarybcbe537b native Global/Project1.5x and New2x scrollbar close/release/fresh Main click replays pass.",
+        "limits": "Structural removal of native editor-shell solver work, not a numerical CPU/allocation budget or full HP12/HP13 acceptance. ShellLayout remains the prepared-scene envelope; status-edge arithmetic retained for exact dialog geometry. Main editor still uses its governed shell solver. No new solver-counter conformance or isolated shell-solver negative replay. Remaining S3 native/backend/visual/resource qualification stays open. No dependency/license/prototype/resize change."
       }
     },
     {
@@ -5819,7 +5831,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-expanded-pass-reuse/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-project2-replay/result.json",
-        "docs/reviews/gui-performance/implementation/S3/new-changed-pass/result.json"
+        "docs/reviews/gui-performance/implementation/S3/new-changed-pass/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-dialog-layout/result.json"
       ],
       "s3_native_pass_roundtrip_progress": {
         "status": "Four additional native expanded pass/reuse cases pass; PROJECT2x delivery failure retained",
@@ -5851,6 +5864,17 @@
         "retired_paths": "None in this proof slice; verifies already-retired general backdrop stays absent through form changes.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/new-changed-pass/result.json",
         "limits": "Native New Project X11/Xwayland at2x override, actual1280x800, existing opt-in GPU measurements. Typed/cleared name, constrained form drag/boundary, keyboard reveal and final Cancel hit. No project created. Edited-name capture shows earlier PM0 prefix despite logged delivery of five characters; captures do not qualify final text timing. No full text/static parity, other scale/backend, AA/painter, resource or S3 qualification. No production paths changed, dependency/license/prototype/budget or resize-scope change."
+      },
+      "s3_native_dialog_layout_progress": {
+        "production_consumers": [
+          "Global Preferences native preparation",
+          "Project Preferences native preparation",
+          "New Project native preparation"
+        ],
+        "shared_owner": "PreparedScene::native_dialog_layout in render/preferences_scene.rs",
+        "retired_paths": "Both native preparation entries stop calling ShellLayout::for_surface -> for_window -> solve_shell_layout_with_taffy. Native dialog preparation no longer constructs/solves the unused six-leaf-plus-root editor grid; both Preferences and New share rounded extent construction.",
+        "proof": "219 renderer tests pass. Existing Preferences legacy comparison retains identical vertices/text/hits across profiles; New constrained form compares native layout against old shell layout at1/1.5/2x and retains reveal tests. All native profiles assert empty editor regions and physical clip/hit bounds. GPU dialog parity passes1 test/259 filtered against general and legacy rendering. Workspace Clippy, fresh release and13 source-policy tests pass. New binarybcbe537b native Global/Project1.5x and New2x scrollbar close/release/fresh Main click replays pass.",
+        "limits": "Structural removal of native editor-shell solver work, not a numerical CPU/allocation budget or full HP12/HP13 acceptance. ShellLayout remains the prepared-scene envelope; status-edge arithmetic retained for exact dialog geometry. Main editor still uses its governed shell solver. No new solver-counter conformance or isolated shell-solver negative replay. Remaining S3 native/backend/visual/resource qualification stays open. No dependency/license/prototype/resize change."
       }
     },
     {
@@ -28355,7 +28379,7 @@
       "remaining_actions": {
         "HP10-01": "Complete OS-delivered wheel/no-preparation proof. Default native routing owner now exercised by real Runtime for non-Layers and editor zoom; prior preparation negative retained.",
         "HP10-02": "Complete exact native final-offset/capture qualification and remaining profiles. Existing actual Runtime test now detects consumed Layers input incorrectly dispatching board zoom, with restored positive. Retain bounded X11 OS wheel/locality/clean-close pass and earlier input/capture failures; no full acceptance from direct Runtime negative.",
-        "HP12-01": "Complete native per-host forbidden-work attribution across required states. Existing shared Preferences preparation test now detects injected general-world preparation (resolve count2vs1) and restored positive passes. This satisfies the shared-owner general-world negative alternative, not workspace-clone/hidden-terminal/full-shell or both-host native accounting.",
+        "HP12-01": "Complete native per-host forbidden-work attribution across required states. Existing shared Preferences preparation test now detects injected general-world preparation (resolve count2vs1) and restored positive passes. This satisfies the shared-owner general-world negative alternative, not workspace-clone/hidden-terminal/full-shell or both-host native accounting. Native Preferences/New preparation now bypasses the full editor Taffy layout through one shared native extent owner; geometry/hits, GPU parity and three native host replays pass. This structural retirement does not supply full forbidden-work accounting or its isolated negative.",
         "HP12-02": "Complete remaining control/focus/partial-row and OS transition cases. Actual GLOBAL/PROJECT surface publication/scale/extent positives and both-host scale-clear negative/restored pass now recorded; durable enum scope and post-edit Reset hit retained.",
         "HP13-01": "Complete remaining backend/scale changed-state pass proof and final single-candidate matrix. NEW2x edit/scroll/reveal now has17 dialog-only samples and final Cancel hit; both Preferences1/1.5/2x have bounded expanded receipts across pinned builds. Existing general-pass negative and input/capture failures retained.",
         "HP13-02": "Complete native controlling visual/backend/scale coverage. Prescribed text-behind-card negative is now detected by existing GPU parity test with restored positive; requirement permits reduced AA OR text behind card, so no additional AA negative is imposed. Existing GPU regressions remain bounded evidence.",
