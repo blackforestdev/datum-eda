@@ -1,0 +1,26 @@
+{
+  "binary_sha256": "cc9b72bb2b72044f3e5ffce3ffac304102780a55d0fc39dc7652c679039bdc0f",
+  "display": ":1",
+  "cases": [
+    {
+      "host": "NEW",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-new-project"
+      ],
+      "passed": true,
+      "dialog": 31457285,
+      "synthetic_escape_ignored": true,
+      "fresh_escape_closed_dialog": true,
+      "cleanup": "Harness SIGTERM of remaining Main; no Main teardown qualification"
+    }
+  ]
+}

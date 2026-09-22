@@ -75,7 +75,8 @@ pub(super) struct GlobalPreferencesWindowSurface {
         gui_runtime_support::native_surface_transaction::SurfaceTransaction,
     scale_factor: f32,
     pub(super) measurements: native_gpu_measurements::Host,
-    retained: Option<RetainedScene>,
+    // Dialog hosts never contain world geometry; retain this immutable envelope.
+    empty_scene: RetainedScene,
     prepared: Option<PreparedScene>,
     // Input keeps targeting the last presented geometry while damage coalesces.
     presented_hits: gui_runtime_support::presented_hit_regions::PresentedHitRegions,
@@ -141,7 +142,7 @@ impl GlobalPreferencesWindowSurface {
             scale_factor: scale_factor_override.unwrap_or_else(|| window.scale_factor() as f32),
             renderer,
             measurements,
-            retained: None,
+            empty_scene: RetainedScene::empty(),
             prepared: None,
             presented_hits,
             cursor_position: None,
@@ -177,7 +178,6 @@ impl GlobalPreferencesWindowSurface {
     }
 
     pub(super) fn invalidate(&mut self) {
-        self.retained = None;
         self.prepared = None;
         self.presented_hits.mark_pending();
     }
@@ -282,7 +282,6 @@ impl GlobalPreferencesWindowSurface {
         }
         if self.prepared.is_none() {
             if new_project {
-                self.retained = Some(RetainedScene::empty());
                 self.prepared = Some(self.renderer.prepare_native_new_project(
                     &runtime.workspace().ui.new_project,
                     self.config.width,
@@ -295,7 +294,6 @@ impl GlobalPreferencesWindowSurface {
                 } else {
                     &runtime.workspace().ui.global_preferences
                 };
-                self.retained = Some(RetainedScene::empty());
                 let identity = (
                     dialog.section_id.clone(),
                     dialog.search_query.clone(),
@@ -347,9 +345,7 @@ impl GlobalPreferencesWindowSurface {
             self.prepared
                 .as_ref()
                 .context("Global Preferences prepared scene must exist")?,
-            self.retained
-                .as_ref()
-                .context("Global Preferences retained scene must exist")?,
+            &self.empty_scene,
             None,
             self.config.width,
             self.config.height,
