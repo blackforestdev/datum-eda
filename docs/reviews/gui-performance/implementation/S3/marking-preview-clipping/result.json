@@ -1,0 +1,23 @@
+{
+  "status": "bounded S3 existing marking-preview clipping adoption; marking-menu product milestone unchanged",
+  "baseline": "a45d53ae",
+  "sources": {
+    "crates/gui-render/src/marking_menu.rs": "fafb1193b90ea76b703be43efbfa6ce2c831ebe730e7efb15be0854eca60e834"
+  },
+  "production_consumers": [
+    "Existing Main marking-menu preview composition via render/frame_preparation.rs",
+    "Existing missing-menu/error preview"
+  ],
+  "shared_owner": "render/hit_clipping.rs::clip_content",
+  "retired_paths": [
+    "Unclipped marking-preview geometry/text/hits after anchor clamping",
+    "Fixed-radius/label clamp bounds that invert and panic in small viewports"
+  ],
+  "behavior": "Keep ordinary anchor/slot geometry; constrain anchor margins to available half-extents and keep slot clamp ranges ordered. The default preview adapter clips every outcome, including error paths, through the shared viewport owner. Closed preview returns before clipping work. No new commands, gestures, actions or marking-menu product scope.",
+  "proof": {
+    "renderer": "199 renderer library tests passed serially, including real and missing-menu previews at100x70,20x20,0x0 with offscreen anchors and nonzero trail. Checks no panic, visible geometry/text/hits, live partial hits and zero-area inertness. Existing manifest-item/no-command-target regression passes.",
+    "clippy": "Guarded offline renderer library Clippy passed with -D warnings.",
+    "capture": "Existing offscreen renderer captures at1280x800 and700x200 visually inspected. The constrained full-frame capture renders without the former inverted clamp. Existing preview label/header/slot overlap remains visible; no preview UX acceptance claimed. Temporary capture example removed; recipe retained.",
+    "limits": "No native, pixel parity, isolated negative, resource or performance qualification. Existing marking preview remains a partial product and its separately scheduled implementation is not advanced. No dependency, license, prototype, command-authority or sequencing change; proposal1bc02aaf remains unapproved."
+  }
+}
