@@ -100,7 +100,9 @@
       "profile": "shared clip/conversion + discrete row adapter",
       "production_entry_points": [
         "crates/gui-app/src/runtime_revision_workspace.rs",
-        "crates/gui-render/src/side_panels/project_layout.rs"
+        "crates/gui-render/src/side_panels/project_layout.rs",
+        "crates/gui-render/src/side_panels/filters_layout.rs",
+        "crates/gui-render/src/render/shell_layout/cache.rs"
       ],
       "retirement": "Retire mismatched requested/effective scroll limits; retain meaningful first-row semantics.",
       "common_requirements": "All SH/LF/AC requirements apply through this consumer's host; per-consumer rows additionally apply."
@@ -4086,7 +4088,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed Main frame/retained preparation and Runtime input now share the same two-entry shell cache. Cached/uncached geometry and real preparation-entry warm-solve tests pass; isolated cache bypass fails, restored positive passes. Full qualification remains open. Project panel now retains unchanged geometry in a two-entry renderer cache, with fresh-solver and actual preparation/label-update tests; full qualification remains open.",
+        "status": "planned; not executed Main frame/retained preparation and Runtime input now share the same two-entry shell cache. Cached/uncached geometry and real preparation-entry warm-solve tests pass; isolated cache bypass fails, restored positive passes. Full qualification remains open. Project panel now retains unchanged geometry in a two-entry renderer cache, with fresh-solver and actual preparation/label-update tests; full qualification remains open. Layers retains unchanged row geometry and allocation through the common two-entry layout cache policy also used by Shell/Project. Actual preparation updates labels/hit identity correctly; full qualification remains open.",
         "id": "proof_hp01_01",
         "positive": "Repeat stationary-layout pointer/hit routes",
         "negative_control": "Force uncached solve",
@@ -4131,7 +4133,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/shared-shell-layout/result.json",
-        "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json"
+        "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json"
       ],
       "s3_shared_shell_layout": {
         "production_consumers": [
@@ -4156,6 +4159,20 @@
         "retired_paths": "Per-frame Project row Taffy tree/solve when panel rectangle and capped attention-row count/net/import/status presence are unchanged. Preserve fresh labels and all remaining panel solvers.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json",
         "limits": "Two-entry layout retention only. Same Taffy row solver/fallback and style; normal module budgets. No full native pixel, HP01/02/S3, aggregate memory, numerical CPU or resize qualification. Existing native navigator remains partial."
+      },
+      "s3_layers_layout_retention": {
+        "production_consumers": [
+          "Main Layers row geometry",
+          "Shell and Project layout retention policy"
+        ],
+        "shared_owner": "crates/gui-render/src/render/shell_layout/cache.rs",
+        "retired_paths": [
+          "Per-frame Layers Taffy row tree/solve and row-vector allocation for unchanged rectangle/effective row count",
+          "Separate Shell and Project two-entry cache implementations"
+        ],
+        "preserved": "Each component retains its own two typed entries through one cache policy; not a two-entry aggregate cap. Layers geometry is Arc-owned; current layer order/labels/visibility/offset/hits remain prepared from live state. Same original row solver and clipping.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
+        "limits": "Bounded structural reuse and actual preparation/label/hit tests, not numerical frame-time or aggregate resource acceptance. No OS/final-pixel/full HP01/02/S3 qualification. Inspector solvers and layer sorting remain unchanged; resource accounting deadlines and nonblocking resize exclusion remain."
       }
     },
     {
@@ -4186,7 +4203,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed Main frame/retained preparation and Runtime input now share the same two-entry shell cache. Cached/uncached geometry and real preparation-entry warm-solve tests pass; isolated cache bypass fails, restored positive passes. Full qualification remains open. Project panel now retains unchanged geometry in a two-entry renderer cache, with fresh-solver and actual preparation/label-update tests; full qualification remains open.",
+        "status": "planned; not executed Main frame/retained preparation and Runtime input now share the same two-entry shell cache. Cached/uncached geometry and real preparation-entry warm-solve tests pass; isolated cache bypass fails, restored positive passes. Full qualification remains open. Project panel now retains unchanged geometry in a two-entry renderer cache, with fresh-solver and actual preparation/label-update tests; full qualification remains open. Layers retains unchanged row geometry and allocation through the common two-entry layout cache policy also used by Shell/Project. Actual preparation updates labels/hit identity correctly; full qualification remains open.",
         "id": "proof_hp02_01",
         "positive": "Vary width/height/DPI/dock height independently",
         "negative_control": "Omit one layout key",
@@ -4231,7 +4248,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/shared-shell-layout/result.json",
-        "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json"
+        "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json"
       ],
       "s3_shared_shell_layout": {
         "production_consumers": [
@@ -4256,6 +4274,20 @@
         "retired_paths": "Per-frame Project row Taffy tree/solve when panel rectangle and capped attention-row count/net/import/status presence are unchanged. Preserve fresh labels and all remaining panel solvers.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json",
         "limits": "Two-entry layout retention only. Same Taffy row solver/fallback and style; normal module budgets. No full native pixel, HP01/02/S3, aggregate memory, numerical CPU or resize qualification. Existing native navigator remains partial."
+      },
+      "s3_layers_layout_retention": {
+        "production_consumers": [
+          "Main Layers row geometry",
+          "Shell and Project layout retention policy"
+        ],
+        "shared_owner": "crates/gui-render/src/render/shell_layout/cache.rs",
+        "retired_paths": [
+          "Per-frame Layers Taffy row tree/solve and row-vector allocation for unchanged rectangle/effective row count",
+          "Separate Shell and Project two-entry cache implementations"
+        ],
+        "preserved": "Each component retains its own two typed entries through one cache policy; not a two-entry aggregate cap. Layers geometry is Arc-owned; current layer order/labels/visibility/offset/hits remain prepared from live state. Same original row solver and clipping.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
+        "limits": "Bounded structural reuse and actual preparation/label/hit tests, not numerical frame-time or aggregate resource acceptance. No OS/final-pixel/full HP01/02/S3 qualification. Inspector solvers and layer sorting remain unchanged; resource accounting deadlines and nonblocking resize exclusion remain."
       }
     },
     {
@@ -4286,7 +4318,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "planned; not executed Main frame/retained preparation and Runtime input now share the same two-entry shell cache. Cached/uncached geometry and real preparation-entry warm-solve tests pass; isolated cache bypass fails, restored positive passes. Full qualification remains open. Project panel now retains unchanged geometry in a two-entry renderer cache, with fresh-solver and actual preparation/label-update tests; full qualification remains open.",
+        "status": "planned; not executed Main frame/retained preparation and Runtime input now share the same two-entry shell cache. Cached/uncached geometry and real preparation-entry warm-solve tests pass; isolated cache bypass fails, restored positive passes. Full qualification remains open. Project panel now retains unchanged geometry in a two-entry renderer cache, with fresh-solver and actual preparation/label-update tests; full qualification remains open. Layers retains unchanged row geometry and allocation through the common two-entry layout cache policy also used by Shell/Project. Actual preparation updates labels/hit identity correctly; full qualification remains open.",
         "id": "proof_hp02_02",
         "positive": "Alternate shell/terminal within two-entry working set then churn",
         "negative_control": "Evict on every alternating query",
@@ -4331,7 +4363,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/shared-shell-layout/result.json",
-        "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json"
+        "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json",
+        "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json"
       ],
       "s3_shared_shell_layout": {
         "production_consumers": [
@@ -4356,6 +4389,20 @@
         "retired_paths": "Per-frame Project row Taffy tree/solve when panel rectangle and capped attention-row count/net/import/status presence are unchanged. Preserve fresh labels and all remaining panel solvers.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json",
         "limits": "Two-entry layout retention only. Same Taffy row solver/fallback and style; normal module budgets. No full native pixel, HP01/02/S3, aggregate memory, numerical CPU or resize qualification. Existing native navigator remains partial."
+      },
+      "s3_layers_layout_retention": {
+        "production_consumers": [
+          "Main Layers row geometry",
+          "Shell and Project layout retention policy"
+        ],
+        "shared_owner": "crates/gui-render/src/render/shell_layout/cache.rs",
+        "retired_paths": [
+          "Per-frame Layers Taffy row tree/solve and row-vector allocation for unchanged rectangle/effective row count",
+          "Separate Shell and Project two-entry cache implementations"
+        ],
+        "preserved": "Each component retains its own two typed entries through one cache policy; not a two-entry aggregate cap. Layers geometry is Arc-owned; current layer order/labels/visibility/offset/hits remain prepared from live state. Same original row solver and clipping.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
+        "limits": "Bounded structural reuse and actual preparation/label/hit tests, not numerical frame-time or aggregate resource acceptance. No OS/final-pixel/full HP01/02/S3 qualification. Inspector solvers and layer sorting remain unchanged; resource accounting deadlines and nonblocking resize exclusion remain."
       }
     },
     {
@@ -29588,5 +29635,19 @@
     "retired_paths": "Per-frame Project row Taffy tree/solve when panel rectangle and capped attention-row count/net/import/status presence are unchanged. Preserve fresh labels and all remaining panel solvers.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/project-layout-retention/result.json",
     "limits": "Two-entry layout retention only. Same Taffy row solver/fallback and style; normal module budgets. No full native pixel, HP01/02/S3, aggregate memory, numerical CPU or resize qualification. Existing native navigator remains partial."
+  },
+  "s3_layers_layout_retention_work": {
+    "production_consumers": [
+      "Main Layers row geometry",
+      "Shell and Project layout retention policy"
+    ],
+    "shared_owner": "crates/gui-render/src/render/shell_layout/cache.rs",
+    "retired_paths": [
+      "Per-frame Layers Taffy row tree/solve and row-vector allocation for unchanged rectangle/effective row count",
+      "Separate Shell and Project two-entry cache implementations"
+    ],
+    "preserved": "Each component retains its own two typed entries through one cache policy; not a two-entry aggregate cap. Layers geometry is Arc-owned; current layer order/labels/visibility/offset/hits remain prepared from live state. Same original row solver and clipping.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/layers-layout-retention/result.json",
+    "limits": "Bounded structural reuse and actual preparation/label/hit tests, not numerical frame-time or aggregate resource acceptance. No OS/final-pixel/full HP01/02/S3 qualification. Inspector solvers and layer sorting remain unchanged; resource accounting deadlines and nonblocking resize exclusion remain."
   }
 }

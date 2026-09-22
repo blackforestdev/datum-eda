@@ -1,3 +1,7 @@
+#[path = "filters_layout.rs"]
+mod filters_layout;
+use filters_layout::solve_filters_panel_layout_with_taffy;
+
 #[path = "project_layout.rs"]
 mod project_layout;
 use project_layout::solve_project_panel_layout_with_taffy;
@@ -18,7 +22,7 @@ struct ProjectPanelLayout {
     last_status: Option<RectPx>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 struct FiltersPanelLayout {
     authored: RectPx,
     proposed: RectPx,
@@ -49,20 +53,6 @@ pub(super) struct RightPanelLayout {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum RightPanelNode {
     Inspector,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum FiltersPanelNode {
-    Authored,
-    Proposed,
-    Unrouted,
-    DimUnrelated,
-    Layer(usize),
-    ActiveSummary,
-    LayersSummary,
-    FocusSummary,
-    OutputsSummary,
-    Gap,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -211,97 +201,6 @@ fn fallback_project_panel_layout(state: &ReviewWorkspaceState, left: RectPx) -> 
             height: UI_ROW_NOTICE,
         }),
     }
-}
-
-fn solve_filters_panel_layout_with_taffy(
-    state: &ReviewWorkspaceState,
-    filters_rect: RectPx,
-) -> Option<FiltersPanelLayout> {
-    let content_x = filters_rect.x + UI_CARD_PADDING_X;
-    let content_y = filters_rect.y + UI_CARD_CONTENT_TOP;
-    let content_width = (filters_rect.width - UI_CARD_PADDING_X * 2.0).max(1.0);
-    // Layers/review-filter rows sit on a 25px rhythm (Design Book --row) so the
-    // 13px name + 13px swatch center comfortably.
-    let row_h = 25.0_f32;
-    let summary_height = 62.0;
-    let fixed_height = 4.0 * row_h + UI_STACK_GAP_MEDIUM + summary_height + UI_CARD_CONTENT_BOTTOM;
-    let available_layer_height =
-        (filters_rect.height - UI_CARD_CONTENT_TOP - fixed_height).max(row_h);
-    let max_layer_rows = (available_layer_height / row_h).floor().max(1.0) as usize;
-    let layer_count = state.scene.layers.len().min(max_layer_rows);
-
-    let mut taffy: TaffyTree<()> = TaffyTree::new();
-    let mut nodes = Vec::new();
-    let mut add_node = |kind: FiltersPanelNode, height: f32| -> Option<()> {
-        let node = taffy
-            .new_leaf(Style {
-                size: Size {
-                    width: length(content_width),
-                    height: length(height),
-                },
-                ..Default::default()
-            })
-            .ok()?;
-        nodes.push((kind, node));
-        Some(())
-    };
-
-    add_node(FiltersPanelNode::Authored, row_h)?;
-    add_node(FiltersPanelNode::Proposed, row_h)?;
-    add_node(FiltersPanelNode::Unrouted, row_h)?;
-    add_node(FiltersPanelNode::DimUnrelated, row_h)?;
-    for index in 0..layer_count {
-        add_node(FiltersPanelNode::Layer(index), row_h)?;
-    }
-    add_node(FiltersPanelNode::Gap, UI_STACK_GAP_MEDIUM)?;
-    add_node(FiltersPanelNode::ActiveSummary, 18.0)?;
-    add_node(FiltersPanelNode::LayersSummary, 16.0)?;
-    add_node(FiltersPanelNode::FocusSummary, 16.0)?;
-    add_node(FiltersPanelNode::OutputsSummary, 16.0)?;
-
-    let children = nodes.iter().map(|(_, node)| *node).collect::<Vec<_>>();
-    let root = taffy
-        .new_with_children(
-            Style {
-                display: Display::Flex,
-                flex_direction: FlexDirection::Column,
-                size: Size {
-                    width: length(content_width),
-                    height: Dimension::AUTO,
-                },
-                ..Default::default()
-            },
-            &children,
-        )
-        .ok()?;
-    taffy.compute_layout(root, Size::MAX_CONTENT).ok()?;
-
-    let rect_for = |kind: FiltersPanelNode| -> Option<RectPx> {
-        let node = nodes.iter().find(|(node_kind, _)| *node_kind == kind)?.1;
-        let layout = taffy.layout(node).ok()?;
-        Some(RectPx {
-            x: content_x + layout.location.x,
-            y: content_y + layout.location.y,
-            width: layout.size.width,
-            height: layout.size.height,
-        })
-    };
-    let mut layer_rows = Vec::with_capacity(layer_count);
-    for index in 0..layer_count {
-        layer_rows.push(rect_for(FiltersPanelNode::Layer(index))?);
-    }
-
-    Some(FiltersPanelLayout {
-        authored: rect_for(FiltersPanelNode::Authored)?,
-        proposed: rect_for(FiltersPanelNode::Proposed)?,
-        unrouted: rect_for(FiltersPanelNode::Unrouted)?,
-        dim_unrelated: rect_for(FiltersPanelNode::DimUnrelated)?,
-        layer_rows,
-        active_summary: rect_for(FiltersPanelNode::ActiveSummary),
-        layers_summary: rect_for(FiltersPanelNode::LayersSummary)?,
-        focus_summary: rect_for(FiltersPanelNode::FocusSummary)?,
-        outputs_summary: rect_for(FiltersPanelNode::OutputsSummary)?,
-    })
 }
 
 fn filter_hit_rect(row: RectPx) -> RectPx {

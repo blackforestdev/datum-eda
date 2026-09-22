@@ -62,6 +62,12 @@ keyed only by geometry inputs. `side_panels.rs` keeps its 52-line module root;
 its include expansion falls from 1,393 to 1,261 lines. The exact ceiling ratchets
 downward; Inspector and Layers row solvers remain separate and unchanged.
 
+PM045 S3 Layers geometry retention moves its row solver into
+`gui-render/src/side_panels/filters_layout.rs`. Shell, Project and Layers use one
+bounded two-entry cache implementation; Layers retains its row vector by shared
+ownership. The side-panel include ceiling falls from 1,261 to 1,160 lines;
+its root remains 52 lines and Inspector layout remains unchanged.
+
 ## What Counts as Structural Evidence
 
 Qualifying evidence names the ownership moved, the real module boundary created,

@@ -1,0 +1,114 @@
+{
+  "base_commit": "2d3b1485c552a0a48b64d3fb80345db95c35605d",
+  "production_consumers": [
+    "Main Layers row preparation",
+    "Shell layout reuse",
+    "Project panel layout reuse"
+  ],
+  "shared_owner": "render/shell_layout/cache.rs LayoutCache<K,V>",
+  "retired_paths": [
+    "Unchanged Layers Taffy tree/row-vector rebuilding",
+    "Duplicated Shell and Project two-entry lookup/eviction algorithms"
+  ],
+  "retention": "Each adapter has its own two typed entries through one shared cache policy. Layers entries hold Arc<FiltersPanelLayout>; warm returns share its row vector, no vector clone. Geometry key is full rectangle and effective layer count. No workspace/labels retained.",
+  "preserved": "Original solver nodes, capacity arithmetic and all painting/hit/clipping code. Labels, order, visibility and scroll offset remain live inputs to painting. Inspector/detail solves and layer sorting remain unchanged.",
+  "proof": "228 renderer tests pass, including prior Shell/Project key/eviction and actual preparation regressions. Eighty Layers rectangle/count cases match fresh solves and repeated lookup preserves Arc identity. Actual preparation reuses Layers geometry while changed label appears and hit identity remains stable. Isolated shared-cache bypass fails the final Layers warm-solve assertion after label/hit assertions pass; restored root renderer explicitly rebuilds and passes. Native24-layer Board Runtime physical/line/camera/boundary tests pass on X11/Wayland1.5 at1918x1050. Fresh release build passed.",
+  "negative": {
+    "compiled_input_digest": "e526f8aa944d4c7ab8ebcbee35955b170052e2dd399c064b74d89beb95960cfe",
+    "compiled_input_count": 1848,
+    "runs": [
+      {
+        "label": "negative",
+        "binary_sha256": "0f5e400f6467c1af616d1ac40a33d9febca28b6d3c44713eb3f06f095897fa47",
+        "exit": 101,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "/tmp/pm045-pinned-negative-source/Cargo.toml",
+          "-p",
+          "datum-gui-render",
+          "--lib",
+          "actual_frame_reuses_layer_geometry_but_updates_labels",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "renderer_recompiled": true
+      },
+      {
+        "label": "restored",
+        "binary_sha256": "422e9ffd837225fba046ec41cee9352bfaeb614573eb053d8a5aa1cbcf16e6ef",
+        "exit": 0,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "-p",
+          "datum-gui-render",
+          "--lib",
+          "actual_frame_reuses_layer_geometry_but_updates_labels",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "renderer_recompiled": true
+      }
+    ]
+  },
+  "failed_attempts": [
+    "Initial generic cache module lookup resolved to render/cache.rs; explicit module path fixed compilation.",
+    "Initial renderer test assumed bundled fixture had scrollable layers; original and reduced-height attempts both failed because it has one layer. Final unit test verifies warm geometry and live label/hit identity; existing actual24-layer native fixture covers scrolling. No fabricated layers or fixture edits."
+  ],
+  "source_health": {
+    "side_panels_root": 52,
+    "include_expansion_before": 1261,
+    "include_expansion_after": 1160,
+    "policy_tests": 13,
+    "base_comparison": "HEAD passed"
+  },
+  "limits": "Per-adapter two-entry retention is not a two-entry aggregate memory cap. Structural tree/vector reuse, not measured GUI speed, complete allocation/resource accounting or full HP01/02/S3 acceptance. Native supplied Runtime input is not OS delivery, final pixels or monitor DPI qualification. No dependencies/licenses/prototypes/budgets/deadlines or nonblocking resize-scope change.",
+  "source_sha256": {
+    "crates/gui-render/src/render/shell_layout/cache.rs": "8c9b402df5d04a8cf6556c6394f72b8ef89973824ecf0b3fe4e8e2e0a0d6c987",
+    "crates/gui-render/src/render/shell_layout.rs": "82c7b84f58d75d4442042ad268f89c22d86d15492d9a2bc84535a23669bdef14",
+    "crates/gui-render/src/side_panels/layout.rs": "b505adc5a97e9781b6797496c838d72dd2af90f8f033fbfcd59acb8392bad39f",
+    "crates/gui-render/src/side_panels/project_layout.rs": "2d78f9dd18b990067d53416e563c8a19aa501214604d345cdac7aabe2a4d3b4b",
+    "crates/gui-render/src/side_panels/filters_layout.rs": "d29ebcb90561e905c6f31b3541fc209b268b62f6838e8fb7527e6eabe71c0100"
+  },
+  "release_sha256": "74302e7e144e378e3a7ef685f538a7195663f0cd16f7236868d7175162749e8e",
+  "commands": {
+    "renderer": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib",
+    "release": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app --bin datum-gui",
+    "drift": "CARGO_NET_OFFLINE=true bash scripts/run_drift_gates.sh"
+  },
+  "artifacts": {
+    "pm045-layers-layout-build.log.gz": "37be1f35d5d0eaa06dc46a6471d559799c50b8b592878e828b696d2afedd3d9e",
+    "pm045-layers-layout-native-wayland-1.5.log.gz": "2b8dd17babdaf303548b405a71fb22d5a2ac618846cc32708da8c14b73152809",
+    "pm045-layers-layout-native-x11-1.5.log.gz": "403b583161544763892122eee8628690085122aa672104aa8deae6e083a1e70c",
+    "pm045-layers-layout-restored.log.gz": "1819e89ef9f5834e12ca6a5d3b1783d7fd31b77613d9b125a0cb7a246c34c4b2",
+    "pm045-layers-layout-negative.log.gz": "24fe715be7d39e8a9b0fbcba54f211a36d07cbefac892ec939e4093582955e58",
+    "pm045-layers-layout-shorter-scroll.log.gz": "eb061e3553af2d7eff0108b2e9135c07674142a8adb414f18d49414d4fc6ff2e",
+    "pm045-layers-layout-initial-scroll.log.gz": "5205b0a79f4388fe7018785dfbc461f3fb09a150bbf791fff358573f69d7c38c",
+    "pm045-layers-layout-initial-compile.log.gz": "1da12a17b7e1ab3d22882839283ff534545453f11dbad9ecd809d3fbc775980b",
+    "pm045-layers-layout-policy.log.gz": "092d3c2da73b11e0e342cb2ca1518febac923b568af1f0dab296ecd35ea98e5e",
+    "pm045-layers-layout-renderer.log.gz": "57fea4a01ef1ffe74f6ad7dd16f8c1fc37cff42ed404de53a91c36f65d99057e",
+    "pm045_layers_layout_negative.py.gz": "db89172edd197d7310f591416e84e95480b2b1ee0c189419f6d4a03815785452",
+    "pm045_layers_layout_native.py.gz": "653dd2e0290692379c1f02ca0dcc35a7bd2a48841a54b616fda0dd7c96aefd21",
+    "pm045-layers-layout-negative.patch.gz": "a58eb99806c299cd053eac7ef775f0c96b1733f47c94493f4bd4d499f2851771",
+    "pm045-layers-layout-negative-result.json.gz": "b9d962ffcd1f6622e40898511e1fd75bcbf7045403bd77f93f0c0ff21bd3b988",
+    "pm045-layers-layout-native-results.json.gz": "b3d528d2c1f44258c228ac67587290aff91dab81e797dd1360cdb0c7070187eb",
+    "drift.log.gz": "0eb20021b07fee45a2289e8c0757b282b1dc9cf00e2c583115a940b8397b715c"
+  },
+  "verification": "Workspace Clippy,13 source-policy tests, source-health HEAD comparison, dependency authority, traceability, spec governance/parity and project state pass. Full drift stops at the same eight pre-existing GUI agent/terminal convergence source-pattern failures (dat-terminal-convergence-guard-xke); later gates unrun."
+}

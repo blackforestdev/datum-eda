@@ -11,26 +11,9 @@ struct LayoutKey {
     dock_height: Option<u32>,
 }
 
-#[derive(Default)]
-struct LayoutCache {
-    entries: [Option<(LayoutKey, ShellLayout)>; 2],
-    next: usize,
-}
-
-impl LayoutCache {
-    fn resolve(&mut self, key: LayoutKey, solve: impl FnOnce() -> ShellLayout) -> ShellLayout {
-        for (previous, layout) in self.entries.iter().flatten() {
-            if *previous == key {
-                return layout.clone();
-            }
-        }
-        record_solve();
-        let layout = solve();
-        self.entries[self.next] = Some((key, layout.clone()));
-        self.next = (self.next + 1) % self.entries.len();
-        layout
-    }
-}
+#[path = "shell_layout/cache.rs"]
+pub(crate) mod cache;
+type LayoutCache = cache::LayoutCache<LayoutKey, ShellLayout>;
 
 thread_local! {
     // The solver is a pure function of the key: identical geometry can be shared
@@ -61,6 +44,7 @@ impl ShellLayout {
     }
 
     fn uncached_surface(key: LayoutKey) -> Self {
+        record_solve();
         let scale = f32::from_bits(key.scale_bits).max(0.01);
         let logical_width = ((key.width as f32) / scale).round().max(1.0) as u32;
         let logical_height = ((key.height as f32) / scale).round().max(1.0) as u32;

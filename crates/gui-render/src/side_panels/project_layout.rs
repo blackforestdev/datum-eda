@@ -26,25 +26,7 @@ impl LayoutKey {
     }
 }
 
-#[derive(Default)]
-struct LayoutCache {
-    entries: [Option<(LayoutKey, ProjectPanelLayout)>; 2],
-    next: usize,
-}
-
-impl LayoutCache {
-    fn resolve(&mut self, key: LayoutKey) -> Option<ProjectPanelLayout> {
-        for (previous, layout) in self.entries.iter().flatten() {
-            if *previous == key {
-                return Some(layout.clone());
-            }
-        }
-        let layout = solve(key)?;
-        self.entries[self.next] = Some((key, layout.clone()));
-        self.next = (self.next + 1) % self.entries.len();
-        Some(layout)
-    }
-}
+type LayoutCache = crate::shell_layout::cache::LayoutCache<LayoutKey, ProjectPanelLayout>;
 
 thread_local! {
     static CACHE: RefCell<LayoutCache> = RefCell::new(LayoutCache::default());
@@ -54,11 +36,8 @@ pub(super) fn solve_project_panel_layout_with_taffy(
     state: &ReviewWorkspaceState,
     left: RectPx,
 ) -> Option<ProjectPanelLayout> {
-    CACHE.with(|cache| {
-        cache
-            .borrow_mut()
-            .resolve(LayoutKey::from_state(state, left))
-    })
+    let key = LayoutKey::from_state(state, left);
+    CACHE.with(|cache| cache.borrow_mut().try_resolve(key, || solve(key)))
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -245,9 +224,9 @@ mod tests {
                     };
                     let expected = solve(key).unwrap();
                     for _ in 0..2 {
-                        assert_eq!(cache.resolve(key).unwrap(), expected);
+                        assert_eq!(cache.try_resolve(key, || solve(key)).unwrap(), expected);
                     }
-                    assert!(cache.entries.iter().flatten().count() <= 2);
+                    assert!(cache.len() <= 2);
                 }
             }
         }
@@ -277,7 +256,7 @@ mod tests {
             .take(100)
             .chain([third, base])
         {
-            cache.resolve(key).unwrap();
+            cache.try_resolve(key, || solve(key)).unwrap();
         }
         assert_eq!(SOLVES.with(|count| count.get()), 4);
     }
