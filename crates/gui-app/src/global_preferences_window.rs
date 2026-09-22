@@ -7,6 +7,8 @@
 use super::*;
 #[path = "global_preferences_damage.rs"]
 mod damage;
+#[path = "owned_dialog_pointer.rs"]
+mod pointer;
 pub(crate) use damage::GlobalPreferenceRenderState;
 pub(super) const DEFAULT_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(960.0, 720.0);
 pub(super) const MIN_PREFERENCES_SIZE: LogicalSize<f64> = LogicalSize::new(700.0, 540.0);
@@ -489,20 +491,6 @@ impl App {
             },
         );
     }
-    /// Scrolling changes only the owned dialog's transient viewport. Coalesced
-    /// redraws must not rebuild the main Design window or other owned windows.
-    pub(super) fn scroll_preferences_window(&mut self, delta: MouseScrollDelta, project: bool) {
-        let surface = if project {
-            &mut self.project_preferences_surface
-        } else {
-            &mut self.global_preferences_surface
-        };
-        let Some(surface) = surface else {
-            return;
-        };
-        surface.scroll_wheel(delta, &mut self.frames);
-    }
-
     pub(super) fn sync_global_preferences_window(
         &mut self,
         event_loop: &ActiveEventLoop,
@@ -583,6 +571,9 @@ impl App {
         event_loop: &ActiveEventLoop,
         event: WindowEvent,
     ) {
+        if self.handle_owned_dialog_pointer(native_frame_adapters::OwnedHost::Global, &event) {
+            return;
+        }
         match event {
             WindowEvent::CloseRequested | WindowEvent::Destroyed => {
                 if let Some(runtime) = &mut self.runtime {
@@ -613,41 +604,6 @@ impl App {
                 if let Some(window) = &self.global_preferences_window {
                     self.frames.invalidate(window);
                 }
-            }
-            WindowEvent::CursorMoved { position, .. } => {
-                if let Some(surface) = &mut self.global_preferences_surface {
-                    surface.set_cursor_position(
-                        Some((position.x as f32, position.y as f32)),
-                        &mut self.frames,
-                    );
-                }
-            }
-            WindowEvent::CursorLeft { .. } => {
-                if let Some(surface) = &mut self.global_preferences_surface {
-                    surface.set_cursor_position(None, &mut self.frames);
-                }
-            }
-            WindowEvent::MouseInput {
-                state,
-                button: MouseButton::Left,
-                ..
-            } => {
-                if self
-                    .global_preferences_surface
-                    .as_mut()
-                    .is_some_and(|surface| surface.scrollbar_input(state, &mut self.frames))
-                    || state != ElementState::Released
-                {
-                    return;
-                }
-                let target = self
-                    .global_preferences_surface
-                    .as_ref()
-                    .and_then(GlobalPreferencesWindowSurface::hit_target);
-                self.activate_preferences_target(target.as_ref(), false);
-            }
-            WindowEvent::MouseWheel { delta, .. } => {
-                self.scroll_preferences_window(delta, false);
             }
             WindowEvent::ModifiersChanged(modifiers) => {
                 if let Some(runtime) = &mut self.runtime {

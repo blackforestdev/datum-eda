@@ -86,6 +86,9 @@ impl App {
         event_loop: &ActiveEventLoop,
         event: WindowEvent,
     ) {
+        if self.handle_owned_dialog_pointer(native_frame_adapters::OwnedHost::Project, &event) {
+            return;
+        }
         match event {
             WindowEvent::CloseRequested | WindowEvent::Destroyed => {
                 if let Some(runtime) = &mut self.runtime {
@@ -116,41 +119,6 @@ impl App {
                 if let Some(window) = &self.project_preferences_window {
                     self.frames.invalidate(window);
                 }
-            }
-            WindowEvent::CursorMoved { position, .. } => {
-                if let Some(surface) = &mut self.project_preferences_surface {
-                    surface.set_cursor_position(
-                        Some((position.x as f32, position.y as f32)),
-                        &mut self.frames,
-                    );
-                }
-            }
-            WindowEvent::CursorLeft { .. } => {
-                if let Some(surface) = &mut self.project_preferences_surface {
-                    surface.set_cursor_position(None, &mut self.frames);
-                }
-            }
-            WindowEvent::MouseInput {
-                state,
-                button: MouseButton::Left,
-                ..
-            } => {
-                if self
-                    .project_preferences_surface
-                    .as_mut()
-                    .is_some_and(|surface| surface.scrollbar_input(state, &mut self.frames))
-                    || state != ElementState::Released
-                {
-                    return;
-                }
-                let target = self
-                    .project_preferences_surface
-                    .as_ref()
-                    .and_then(GlobalPreferencesWindowSurface::hit_target);
-                self.activate_preferences_target(target.as_ref(), true);
-            }
-            WindowEvent::MouseWheel { delta, .. } => {
-                self.scroll_preferences_window(delta, true);
             }
             WindowEvent::ModifiersChanged(modifiers) => {
                 if let Some(runtime) = &mut self.runtime {
