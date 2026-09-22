@@ -5551,7 +5551,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial: current overlay-only source has one contributing pass and one MSAA resolve, and default native dialogs select this path. Full per-host native pass-count oracle and redundant-pass negative remain open; pixel parity alone does not pass this row.",
+        "status": "Bounded native proof: GLOBAL/PROJECT/NEW startup frames report only dialog on Wayland and X11; source has one contributing pass/one resolve attachment. Existing GPU regression rejects forced general multi-pass path and passes after byte restoration. Expanded-state/scale and independent/full S3 qualification remain open; no timing/resource acceptance.",
         "id": "proof_hp13_01",
         "positive": "Render equivalent dialog-only frame",
         "negative_control": "Add historical redundant four-pass resolve path",
@@ -5598,6 +5598,18 @@
       "s3_new_project_progress": {
         "status": "partial; default native backdrop retired; full acceptance remains unqualified",
         "evidence": "docs/reviews/gui-performance/implementation/S3/new-project-dialog/result.json"
+      },
+      "s3_native_dialog_passes_progress": {
+        "status": "Native dialog pass names and redundant-general-path negative verified",
+        "production_consumers": [
+          "GLOBAL",
+          "PROJECT",
+          "NEW"
+        ],
+        "shared_owner": "Renderer::render_overlay_only and existing native owned-window render dispatch",
+        "retired_paths": "No new runtime retirement; verifies existing dialog-only adoption and detects reintroduction of the general multi-pass path.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-passes/result.json",
+        "limits": "Fresh startup/default dialog states only, GLOBAL/PROJECT/NEW on native Wayland and X11. Existing opt-in timestamp query pass labels used as bounded encoding-path evidence, not performance/overhead or default instrumentation adoption. Source review establishes single resolve attachment. No expanded-state/full scale, independent replay, pixel/input, resource or full S3 qualification; no source, dependency, prototype, budget or resize change."
       }
     },
     {
@@ -27789,5 +27801,17 @@
     "preserved": "Line units pass unchanged to Main discrete adapters; Main profile remains20 logical pixels per line, dialogs40. Continuous fractions and sign preserved. Horizontal-only and nonfinite input stops before vertical dispatch.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/shared-wheel-units/result.json",
     "limits": "Shared converter tests establish physical/logical unit behavior at1/1.5/2x and existing native Preferences adapter test preserves fractional/pane locality. Actual X11 native trial covers GLOBAL/PROJECT line events at1.5x; it does not deliver touchpad physical pixels, test Main/NEW OS routes or complete HP19/S3. Captures are inspected for appearance but known capture lag prevents using filenames as final-state proof. No dependency/license, visual style, numerical budget or resize-scope change."
+  },
+  "s3_native_dialog_passes_work": {
+    "status": "Native dialog pass names and redundant-general-path negative verified",
+    "production_consumers": [
+      "GLOBAL",
+      "PROJECT",
+      "NEW"
+    ],
+    "shared_owner": "Renderer::render_overlay_only and existing native owned-window render dispatch",
+    "retired_paths": "No new runtime retirement; verifies existing dialog-only adoption and detects reintroduction of the general multi-pass path.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-passes/result.json",
+    "limits": "Fresh startup/default dialog states only, GLOBAL/PROJECT/NEW on native Wayland and X11. Existing opt-in timestamp query pass labels used as bounded encoding-path evidence, not performance/overhead or default instrumentation adoption. Source review establishes single resolve attachment. No expanded-state/full scale, independent replay, pixel/input, resource or full S3 qualification; no source, dependency, prototype, budget or resize change."
   }
 }

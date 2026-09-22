@@ -1,0 +1,13 @@
+diff --git a/crates/gui-render/src/render/gpu_frame.rs b/crates/gui-render/src/render/gpu_frame.rs
+index 47e9adcc..ff023ead 100644
+--- a/crates/gui-render/src/render/gpu_frame.rs
++++ b/crates/gui-render/src/render/gpu_frame.rs
+@@ -42,7 +42,7 @@ impl Renderer {
+         height: u32,
+         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
+     ) -> anyhow::Result<()> {
+-        if prepared.is_overlay_only() {
++        if false && prepared.is_overlay_only() { // prescribed redundant general-pass negative
+             return self.render_overlay_only(
+                 device,
+                 queue,
