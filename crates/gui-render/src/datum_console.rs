@@ -19,6 +19,7 @@ pub(super) fn render_datum_console(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) -> Option<ConsoleOverlayLayout> {
+    let starts = (quads.len(), text_runs.len(), hit_regions.len());
     let record = state.ui.console.visible_latest();
     if record.is_none() && !state.ui.console.history_expanded() {
         return None;
@@ -115,6 +116,15 @@ pub(super) fn render_datum_console(
         None
     };
 
+    crate::hit_clipping::clip_content(
+        quads,
+        text_runs,
+        hit_regions,
+        starts.0,
+        starts.1,
+        starts.2,
+        body,
+    );
     Some(ConsoleOverlayLayout {
         pane_id: focused.id,
         pane_body: body,
@@ -134,6 +144,7 @@ fn render_history(
     text_runs: &mut Vec<TextRun>,
     hit_regions: &mut Vec<HitRegion>,
 ) -> RectPx {
+    let starts = (quads.len(), text_runs.len(), hit_regions.len());
     let gap = 6.0 * scale;
     let width = (520.0 * scale).min((body.width - 24.0 * scale).max(1.0));
     let max_height = 170.0 * scale;
@@ -153,6 +164,9 @@ fn render_history(
     };
     quads.push(Quad::from_rect(header, design_tokens::chrome::SURFACE_02));
     push_border(quads, panel, design_tokens::chrome::BORDER_STRONG, scale);
+    let chip_w = 48.0 * scale;
+    let chip_gap = 5.0 * scale;
+    let mut chip_x = panel.x + panel.width - 11.0 * scale - chip_w * 3.0 - chip_gap * 2.0;
     draw_text_clipped(
         "SESSION HISTORY",
         panel.x + 11.0 * scale,
@@ -160,7 +174,10 @@ fn render_history(
         10.5,
         design_tokens::chrome::TEXT_SECONDARY,
         TextFace::UiStrong,
-        header,
+        RectPx {
+            width: (chip_x - panel.x - chip_gap).max(0.0),
+            ..header
+        },
         text_runs,
     );
     hit_regions.push(HitRegion {
@@ -168,14 +185,11 @@ fn render_history(
         rect: header,
     });
 
-    let chip_w = 48.0 * scale;
-    let chip_gap = 5.0 * scale;
     let chips = [
         (ConsoleHistoryFilter::All, "all"),
         (ConsoleHistoryFilter::Operations, "ops"),
         (ConsoleHistoryFilter::Errors, "errors"),
     ];
-    let mut chip_x = panel.x + panel.width - 11.0 * scale - chip_w * 3.0 - chip_gap * 2.0;
     for (filter, label) in chips {
         let chip = RectPx {
             x: chip_x,
@@ -239,6 +253,15 @@ fn render_history(
             text_runs,
         );
     }
+    crate::hit_clipping::clip_content(
+        quads,
+        text_runs,
+        hit_regions,
+        starts.0,
+        starts.1,
+        starts.2,
+        panel,
+    );
     panel
 }
 
@@ -474,6 +497,41 @@ mod tests {
         assert!(inner.y >= outer.y);
         assert!(inner.x + inner.width <= outer.x + outer.width + 0.01);
         assert!(inner.y + inner.height <= outer.y + outer.height + 0.01);
+    }
+
+    #[test]
+    fn narrow_console_history_clips_controls_to_panel_and_pane() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.ui.console.set_history_expanded(true);
+        let shell = ShellLayout::for_window(700, 300, None);
+        let mut quads = Vec::new();
+        let mut text = Vec::new();
+        let mut hits = Vec::new();
+        let layout =
+            render_datum_console(&state, &shell, 1.0, &mut quads, &mut text, &mut hits).unwrap();
+        let panel = layout.history_panel.unwrap();
+        assert!(panel.width < 200.0, "exercise crowded filter chips");
+        assert!(!quads.is_empty() && !text.is_empty() && !hits.is_empty());
+        assert!(
+            !text.iter().any(|run| run.text == "SESSION HISTORY"),
+            "crowded title must not overpaint filters"
+        );
+        for quad in quads {
+            assert!(
+                quad.points
+                    .iter()
+                    .all(|&(x, y)| panel.contains(x, y) && layout.pane_body.contains(x, y))
+            );
+        }
+        for run in text {
+            let clip = run.clip_bounds.unwrap();
+            assert_inside(clip, panel);
+            assert_inside(clip, layout.pane_body);
+        }
+        for hit in hits {
+            assert_inside(hit.rect, panel);
+            assert_inside(hit.rect, layout.pane_body);
+        }
     }
 
     #[test]
