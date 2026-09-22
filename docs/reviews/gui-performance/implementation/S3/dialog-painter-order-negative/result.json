@@ -1,0 +1,28 @@
+{
+  "candidate_base": "10a0644be3a2ee717b2af922bd764bb57efecae7",
+  "production": {
+    "status": "Prescribed text-behind-card negative detected by existing GPU dialog parity test",
+    "production_consumers": [
+      "Shared overlay-only renderer using existing prepared Preferences dialog; direct hardware GPU proof"
+    ],
+    "retired_paths": "No production or test changes; validates existing single-pass painter order against general path.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-painter-order-negative/result.json",
+    "proof": "Single isolated move of text draw before card geometry fails dialog pixels differ at row0/scale1. Byte-restored source passes1 test/258 filtered, covering existing1x and1.5x prepared profiles and warm/general/legacy comparisons.",
+    "limits": "HP13-02 negative is reduce AA OR move text behind card; this executes the latter without requiring an additional AA mutation. Native controlling visual/backend/scale qualification remains open. Direct prepared Preferences scenario does not qualify every native consumer or full S3. No runtime/dependency/license/prototype/resource deadline/resize change."
+  },
+  "verification": {
+    "negative": "0 passed,1 intended pixel-parity failure,258 filtered",
+    "restored": "1 passed,258 filtered; all isolated tracked Rust/Cargo bytes match active source"
+  },
+  "adapter": "Intel HD Graphics P630 (KBL GT2), IntegratedGpu, Vulkan",
+  "command": "env CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline --manifest-path /tmp/pm045-pinned-negative-source/Cargo.toml -p datum-gui-render --features visual --lib dialog_single_pass_matches_general_renderer_pixels -- --ignored --test-threads=1",
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_overlay.rs": "4a63ed226ea68abdedf076ebfc2340b89f397acb04ac1e37a374a09391f26f4b",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "53bf82db175ff99d88d18075db17a1a940634b47e7ef7806b2481fe039f46093"
+  },
+  "artifact_sha256": {
+    "restored.log.gz": "c734f4d632ca9c8016b1bb20cba8212521523c245bc114e97b9343b1dc1994dd",
+    "negative.log.gz": "cc177bb533cbf09680401dcbb46fac605a0c07a0fe2a40e9df26b86d4827cc4f",
+    "negative.patch.gz": "ac989d002246be97e87f1b9d9a35a2498f9af948d0f05ee1d3bd1e8ecdaddddd"
+  }
+}

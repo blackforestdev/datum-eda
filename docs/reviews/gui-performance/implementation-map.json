@@ -5853,7 +5853,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial:13 current hardware GPU regressions include exact Preferences/New Project legacy pixels, rounded AA and fractional scroll. Full controlling native visual/backend/scale qualification and prescribed negative remain open.",
+        "status": "Partial: existing hardware GPU parity regressions retained. Prescribed text-behind-card negative now fails exact pixel comparison and byte-restored source passes. This satisfies the shared-owner negative alternative, not native controlling visual/backend/scale qualification or all consumer coverage.",
         "id": "proof_hp13_02",
         "positive": "Compare edges/text/order at fractional positions",
         "negative_control": "Reduce AA or move text behind card",
@@ -5900,7 +5900,20 @@
       "s3_new_project_progress": {
         "status": "partial; default native backdrop retired; full acceptance remains unqualified",
         "evidence": "docs/reviews/gui-performance/implementation/S3/new-project-dialog/result.json"
-      }
+      },
+      "s3_dialog_painter_order_negative_progress": {
+        "status": "Prescribed text-behind-card negative detected by existing GPU dialog parity test",
+        "production_consumers": [
+          "Shared overlay-only renderer using existing prepared Preferences dialog; direct hardware GPU proof"
+        ],
+        "retired_paths": "No production or test changes; validates existing single-pass painter order against general path.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-painter-order-negative/result.json",
+        "proof": "Single isolated move of text draw before card geometry fails dialog pixels differ at row0/scale1. Byte-restored source passes1 test/258 filtered, covering existing1x and1.5x prepared profiles and warm/general/legacy comparisons.",
+        "limits": "HP13-02 negative is reduce AA OR move text behind card; this executes the latter without requiring an additional AA mutation. Native controlling visual/backend/scale qualification remains open. Direct prepared Preferences scenario does not qualify every native consumer or full S3. No runtime/dependency/license/prototype/resource deadline/resize change."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/dialog-painter-order-negative/result.json"
+      ]
     },
     {
       "id": "HP14-01",
@@ -28167,7 +28180,7 @@
         "HP12-01": "Complete native forbidden-work attribution and the prescribed workspace/general-world negative against the dialog-only preparation boundary.",
         "HP12-02": "Complete remaining control/focus/partial-row and OS transition cases. Actual GLOBAL/PROJECT surface publication/scale/extent positives and both-host scale-clear negative/restored pass now recorded; durable enum scope and post-edit Reset hit retained.",
         "HP13-01": "Complete remaining backend/scale changed-state pass proof and final single-candidate matrix. NEW2x edit/scroll/reveal now has17 dialog-only samples and final Cancel hit; both Preferences1/1.5/2x have bounded expanded receipts across pinned builds. Existing general-pass negative and input/capture failures retained.",
-        "HP13-02": "Complete prescribed AA/painter-order negative and native visual/backend/scale coverage; existing14 GPU regressions remain bounded evidence.",
+        "HP13-02": "Complete native controlling visual/backend/scale coverage. Prescribed text-behind-card negative is now detected by existing GPU parity test with restored positive; requirement permits reduced AA OR text behind card, so no additional AA negative is imposed. Existing GPU regressions remain bounded evidence.",
         "HP14-01": "Complete remaining settings/backend warm-reuse cases and final single-candidate qualification. Both Preferences1/1.5/2x expanded trials now have six zero-miss samples and semantic expansion proof; prior failure and one-frame negative retained. Full resource precondition stays S4/S5.",
         "HP14-02": "Complete remaining working-set/negative and native coverage. Real shaped cache churn and both native Preferences 1x close/reopen are recorded; cold misses do not prove full resource release. Complete owned accounting/cap/release retains existing S4/S5 deadlines.",
         "HP16-01": "Complete actual native consumer repeat/translation/clip proof and independent arc/general-tessellator negatives. Shared painter GPU72-case pixel parity,12 builds and isolated no-reuse negative/restored pass are now recorded. Preserve fixed-rectangle classification.",
@@ -28958,5 +28971,15 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/layers-os-wheel-roundtrip/result.json",
     "proof": "All scripted input connections confirm Main focus. Top/bottom wheel boundaries produce0 presentations; down and reversal each1; editor wheel1 and changed board pixels. Layers actions preserve exact RGB board crop400,150,900,500. Close exits0 and logs Main ownership released.",
     "limits": "One current-binary X11 run at scale override1 and actual1333x833. Captured reverse list still shows previous rows, so exact displayed final offset/capture freshness remains unqualified. No root cause or closure of prior input failures, no one-OS-event/one-frame guarantee, native preparation counts, fallthrough negative, Wayland/other scales, full HP10/S3 or latency/resource acceptance. Three prior failed trials remain preserved; dat-native-input-delivery-vq7w remains open. No runtime/prototype/dependency/license/budget/resize changes."
+  },
+  "s3_dialog_painter_order_negative_work": {
+    "status": "Prescribed text-behind-card negative detected by existing GPU dialog parity test",
+    "production_consumers": [
+      "Shared overlay-only renderer using existing prepared Preferences dialog; direct hardware GPU proof"
+    ],
+    "retired_paths": "No production or test changes; validates existing single-pass painter order against general path.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-painter-order-negative/result.json",
+    "proof": "Single isolated move of text draw before card geometry fails dialog pixels differ at row0/scale1. Byte-restored source passes1 test/258 filtered, covering existing1x and1.5x prepared profiles and warm/general/legacy comparisons.",
+    "limits": "HP13-02 negative is reduce AA OR move text behind card; this executes the latter without requiring an additional AA mutation. Native controlling visual/backend/scale qualification remains open. Direct prepared Preferences scenario does not qualify every native consumer or full S3. No runtime/dependency/license/prototype/resource deadline/resize change."
   }
 }
