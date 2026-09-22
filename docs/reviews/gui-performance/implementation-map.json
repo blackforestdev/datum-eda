@@ -6349,7 +6349,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: exact circular-control vertices preserve prior contour at fractional placements;13 hardware GPU regressions pass including Preferences/New Project legacy pixel parity and rounded AA. Full consumer/backend/scale/negative/native qualification remains open. Current shared CPU cache prescribed incomplete-DPI-key and disabled-eviction negatives are detected; byte-restored positives pass. This is component evidence, not full native/GPU/accounting qualification.",
+        "status": "Partial: exact circular-control vertices preserve prior contour at fractional placements;13 hardware GPU regressions pass including Preferences/New Project legacy pixel parity and rounded AA. Full consumer/backend/scale/negative/native qualification remains open. Current shared CPU cache prescribed incomplete-DPI-key and disabled-eviction negatives are detected; byte-restored positives pass. This is component evidence, not full native/GPU/accounting qualification. General filler analytical concave/holed cases pass and incorrect first-vertex fan fails both. Actual authored-board/native contour/style/DPI qualification remains open.",
         "id": "proof_hp16_02",
         "positive": "Change dimensions/radius/style/DPI then concave/holed authored content",
         "negative_control": "Reuse incomplete key or force fan for holes",
@@ -6407,8 +6407,19 @@
         "limits": "Direct existing shared CPU control cache/painter tests, not actual native consumer dispatch or GPU pixels. DPI negative detects5 builds instead of6; it does not establish a visible contour defect. Disabled eviction detects257 entries instead of256. Restored test also exercises LRU touch, oversized bypass and CPU payload eviction. Full authored concave/holed separation, native/profile coverage and HP16 acceptance remain open. Complete CPU metadata/GPU/in-flight/aggregate accounting remains S4 implementation/S5 qualification under owner clarification. No active Rust/dependency/license/prototype/budget/resize change."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json"
-      ]
+        "docs/reviews/gui-performance/implementation/S3/control-cache-negatives/result.json",
+        "docs/reviews/gui-performance/implementation/S3/general-polygon-fan-negative/result.json"
+      ],
+      "s3_general_polygon_fan_negative_progress": {
+        "status": "General concave and holed filler tests detect incorrect fan substitution",
+        "production_consumers": [
+          "General polygon fill implementation, exercised directly with analytical contours"
+        ],
+        "shared_owner": "push_world_polygon_fill_contours; separate from ControlMeshCache convex fans",
+        "retired_paths": "None; protects existing separation between general contour fill and control-only fan topology.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/general-polygon-fan-negative/result.json",
+        "limits": "Analytical geometry unit cases through the production general polygon filler: U-notch area10 and square-with-hole area12. Not an authored board fixture, native editor adapter, GPU contour/style/DPI or full HP16/S3 qualification. Control cache and runtime implementation unchanged. One isolated fan substitution fails both cases; all Rust/Cargo source in isolated copy restored byte-for-byte to active tree. No dependency/license/prototype/budget/resize change."
+      }
     },
     {
       "id": "HP16-03",
@@ -28027,7 +28038,7 @@
         "HP14-01": "Complete remaining settings/backend warm-reuse cases and final single-candidate qualification. Both Preferences1/1.5/2x expanded trials now have six zero-miss samples and semantic expansion proof; prior failure and one-frame negative retained. Full resource precondition stays S4/S5.",
         "HP14-02": "Complete remaining working-set/negative and native coverage. Real shaped cache churn and both native Preferences 1x close/reopen are recorded; cold misses do not prove full resource release. Complete owned accounting/cap/release retains existing S4/S5 deadlines.",
         "HP16-01": "Complete rounded-control repeat/translation/clip proof across actual applicable consumers and remaining prescribed arc/tessellator negatives; preserve fixed-rectangle classification.",
-        "HP16-02": "Complete authored concave/holed separation and fan negative plus applicable native contour/style/DPI profiles. Existing key-field test and current incomplete-DPI-key negative/restored painter positive are recorded.",
+        "HP16-02": "Complete actual authored-board/native contour/style/DPI qualification. General filler analytical concave/holed area cases and fan negative now recorded; existing cache key-field/DPI-key negative retained. Unit contours do not qualify native authored consumers.",
         "HP16-03": "Reconcile actual native control working-set evidence with recorded bounded CPU LRU/bypass/byte eviction and pin-indefinitely negative. Full CPU metadata/GPU/in-flight/aggregate bounds remain S4/S5 resource dependencies.",
         "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter.",
         "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct.",
@@ -28722,5 +28733,15 @@
     "retired_paths": "No runtime path retirement; removes false-pass gap in existing scroll regression by requiring pinned search presence and unchanged hit/text layout.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/pinned-search-negative/result.json",
     "limits": "Existing actual Preferences preparation regression at four size/scale cases, not native window dispatch or complete GPU pixel/static qualification. Only test strengthened in active checkout; injected clipping/translation live in isolated source copy and are restored. Other consumers/native profiles and full HP22/S3 remain open. No production behavior, dependency/license/prototype/budget/resize change."
+  },
+  "s3_general_polygon_fan_negative_work": {
+    "status": "General concave and holed filler tests detect incorrect fan substitution",
+    "production_consumers": [
+      "General polygon fill implementation, exercised directly with analytical contours"
+    ],
+    "shared_owner": "push_world_polygon_fill_contours; separate from ControlMeshCache convex fans",
+    "retired_paths": "None; protects existing separation between general contour fill and control-only fan topology.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/general-polygon-fan-negative/result.json",
+    "limits": "Analytical geometry unit cases through the production general polygon filler: U-notch area10 and square-with-hole area12. Not an authored board fixture, native editor adapter, GPU contour/style/DPI or full HP16/S3 qualification. Control cache and runtime implementation unchanged. One isolated fan substitution fails both cases; all Rust/Cargo source in isolated copy restored byte-for-byte to active tree. No dependency/license/prototype/budget/resize change."
   }
 }

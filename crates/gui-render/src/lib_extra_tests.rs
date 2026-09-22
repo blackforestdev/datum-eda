@@ -496,3 +496,60 @@ fn inferred_component_body_geometry_handles_quarter_turn_parts() {
         "quarter-turn body should stay tall, got {width}x{height}"
     );
 }
+
+fn polygon_fill_area(outer: &[(i64, i64)], holes: &[Vec<(i64, i64)>]) -> f64 {
+    let points = |ring: &[(i64, i64)]| {
+        ring.iter()
+            .map(|&(x, y)| PointNm {
+                x: x * 1_000_000,
+                y: y * 1_000_000,
+            })
+            .collect::<Vec<_>>()
+    };
+    let mut quads = Vec::new();
+    push_world_polygon_fill_contours(
+        &mut quads,
+        &points(outer),
+        &holes.iter().map(|ring| points(ring)).collect::<Vec<_>>(),
+        [1.0; 3],
+    );
+    assert!(!quads.is_empty());
+    quads
+        .iter()
+        .map(|quad| {
+            let p = &quad.points;
+            (0..4)
+                .map(|i| {
+                    let (x, y) = p[i];
+                    let (nx, ny) = p[(i + 1) % 4];
+                    f64::from(x) * f64::from(ny) - f64::from(y) * f64::from(nx)
+                })
+                .sum::<f64>()
+                .abs()
+                / 2_000_000_000_000.0
+        })
+        .sum()
+}
+
+#[test]
+fn general_polygon_fill_preserves_concave_notch() {
+    // A U contour is not star-shaped from its first vertex: a control fan overlaps the notch.
+    let outer = [
+        (0, 0),
+        (4, 0),
+        (4, 4),
+        (3, 4),
+        (3, 1),
+        (1, 1),
+        (1, 4),
+        (0, 4),
+    ];
+    assert!((polygon_fill_area(&outer, &[]) - 10.0).abs() < 0.000001);
+}
+
+#[test]
+fn general_polygon_fill_preserves_hole() {
+    let outer = [(0, 0), (4, 0), (4, 4), (0, 4)];
+    let holes = [vec![(1, 1), (3, 1), (3, 3), (1, 3)]];
+    assert!((polygon_fill_area(&outer, &holes) - 12.0).abs() < 0.000001);
+}
