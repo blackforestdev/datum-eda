@@ -1,0 +1,16 @@
+{
+  "status": "isolated production search-ring adoption negative fails; byte-restored candidate passes",
+  "candidate": "824cd2dfd0914bb9e3384cc994addefd0dfff199",
+  "changed_source": "crates/gui-render/src/global_preferences_primitives.rs",
+  "hashes": {
+    "baseline_sha256": "4e63150bf82cdd6d9cdb36006f110ebba8da9ba0546570e40ac3eaa7df5cc90e",
+    "injected_sha256": "958673909c5397e95c3c7833b85690a2cd77ffc85140df993939276b6f7a4236",
+    "patch_sha256": "1e4fb2705eff5df4eefb36dce19b80006002061bd1f13637882666f07fe4ea83"
+  },
+  "injection": "In disposable detached first-party source copy, replace only the two cached ellipse_fill calls in draw_search_icon with the prior push_projected_ellipse path. Keep tests, other production paths and fixture unchanged. No dependency source modified.",
+  "command": "CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib -- --test-threads=1",
+  "negative_result": "exit101;200 pass,1 intended failure: ellipse_meshes_preserve_uncached_vertices_and_reuse_across_placement_and_color, production search rings must remain warm, observed0 retained ring builds versus expected2. This demonstrates detection of bypassing the shared production owner; it is not a timing measurement.",
+  "restored_result": "Exact original source bytes restored and hash verified; disposable worktree clean. Same command exit0,201 pass.",
+  "cleanup": "Disposable worktree removed after successful restore/replay. Active checkout was never injected; shared Cargo artifacts retained without cleaning.",
+  "scope": "Supports HP16-01 shared search-icon adoption. Does not independently qualify all GLOBAL/PROJECT/NEW controls or MAIN/INSPECTOR/MENU, native event adapters, complete resource caps, negative matrix or performance budgets. Existing201CPU/13GPU positive evidence remains separately recorded. S3 remains open and1bc02aaf remains unapproved."
+}
