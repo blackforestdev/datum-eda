@@ -155,6 +155,9 @@ fn present_changed_content(
                 winit::event::Event::AboutToWait => {
                     app.dispatch_native_frame_round(active);
                     app.service_native_queue_progress();
+                    // Match the production wait boundary: completed queue work
+                    // must also rearm a surface deferred by admission/recovery.
+                    app.service_surface_retries();
                 }
                 _ => {}
             },

@@ -1,0 +1,83 @@
+{
+  "scope": "GPI-S3 bounded Preferences native regression and actual Wayland input; no production change or S3 exit",
+  "source_base": "83a817c34769ef180fa5a226a226c159725cfc58",
+  "test_source_sha256": "bf18f0d80f0aba9f169ff7a826de96741d09f36de893ab2709b6e4d765d2590c",
+  "change": "Native content-change helper services existing surface retries after frame dispatch and queue completion, matching production wait-boundary admission. Retires test-only omission; release binary unchanged.",
+  "proof": {
+    "wayland": {
+      "host_profiles": 12,
+      "content_change_profiles": 8
+    },
+    "x11": {
+      "host_profiles": 12,
+      "content_change_profiles": 8
+    }
+  },
+  "observations": [
+    "Unmodified helper fails without verbose logging on unlocked desktop, yet passes with verbose logging. This is timing-sensitive evidence, not proof that every historic failure has the same cause.",
+    "Corrected helper passes both backends without verbose logging, including all eight content-change cases each. Events are supplied to native entry; this is not OS delivery.",
+    "Separate real KDE input-only session granted devices=3 and was explicitly closed. Global Preferences OS drag/change/release/fresh Reset has semantic receipt; Project establishes delivery only."
+  ],
+  "limits": [
+    "No deterministic admission-deferral negative added; retain timing-sensitive baseline failure.",
+    "No full W-SCROLL rate/duration, native visual, all adapter, resource, independent review, endurance or S3 acceptance.",
+    "No dependency, prototype, production rendering, sequencing or resize change."
+  ],
+  "artifacts": {
+    "wayland-positive.log.gz": {
+      "raw_sha256": "38ea10222047976110160defc7dea252b94056752b6736839bca892125f82269",
+      "compressed_sha256": "cc3be0da7c691030a79c7e5479e496e6258ea73900147d9414b7747436e4dbe6"
+    },
+    "x11-positive.log.gz": {
+      "raw_sha256": "c4612cb7b55fda611bf992bd12cefa4f5d11136fe8db78c6cc6b2cd9b293e3c4",
+      "compressed_sha256": "ffe7195ecdcd521b6d8505557453ace386b440047de3b90104426d87785001a3"
+    },
+    "wayland-before-failed.log.gz": {
+      "raw_sha256": "34ae434ca7037ea396cc658224dc7bb55cdfd0cc46e06d78cbbd4f6d0ea61f0b",
+      "compressed_sha256": "96ffc05b868c956cb7a02210a50a38eeccb751184af9786ea1288b19abb7de69"
+    },
+    "wayland-before-verbose-pass.log.gz": {
+      "raw_sha256": "02d3d9f02f4507949677302486b4f276d8e8e3ff23a4ede2dc99020104637205",
+      "compressed_sha256": "f00c1d30897687eb5a7e21ffc33fd7ed7ee47ffb5fb04cfc592b8eaccdaaa05b"
+    },
+    "global-os-input-result.json.gz": {
+      "raw_sha256": "29ddd1ff8668b445f3e147956720dc8511c64841b16f304be3690936864292f9",
+      "compressed_sha256": "6f000b75424a00d982725ba0f1f7d047142683fca243347815ce372b8c098802"
+    },
+    "global-os-input-native.log.gz": {
+      "raw_sha256": "aa28034c4300ce7eb3909b505335643a590e563b1f943801575060e1779fa62c",
+      "compressed_sha256": "4adf7685a4835a240afd91ff0f4ad7605ec83387b7aa49cae0a13fea941fcc12"
+    },
+    "project-delivery-result.json.gz": {
+      "raw_sha256": "d8d05c67eca16cee71b9806d060e4da63519d5c5d918f1729f91334893b9414b",
+      "compressed_sha256": "77d289abc52e24dad28f4bc0257963ea9fffe353b8a35ffc165bc781529e7a74"
+    },
+    "portal-session.json.gz": {
+      "raw_sha256": "ac554c2b143f6ae2ab86054344c986c2fb137b5d9d26b624519aaf398ca31955",
+      "compressed_sha256": "e3f40fc5aa0f411cb68b46c00d8d49b01a742d4b952f45a82521c45a44af8b6b"
+    },
+    "portal-driver.py.gz": {
+      "raw_sha256": "2ef90c63f158db6aebe53f991afd3c9f0d665a640f15d9666a8f4d064ba11f18",
+      "compressed_sha256": "208c21f30324ea52e9ffe5ae88777bde48696b1c518a56cb17da4f3e0c195512"
+    },
+    "target-driver.py.gz": {
+      "raw_sha256": "e3a84cd63e7fb57ed7dc84b17878ba90abfec44e242261bd84006f40a6aa1aab",
+      "compressed_sha256": "c98609430ebd58e8615ebad3b3b8f417df4d15371c627c56769ec43ca88f070f"
+    },
+    "drift.log.gz": {
+      "raw_sha256": "37d5caddce5e4162ec71ac9dfc5ab0af53fbfa55f941dd67a2cb0d8ca21378ff",
+      "compressed_sha256": "f9359ca40de1c6295e94ff38789bf3bb68a3c090d78d603e75578ab7d0a18552"
+    }
+  },
+  "test_binary_sha256": "d0cceb6ec84c41eca6bae26c52a6b2a8bcd7d2be08e25ecca1e7f50e18f987e9",
+  "verification": {
+    "source_health": "2223 files passed",
+    "source_health_tests": "13 passed",
+    "traceability": "28 routes passed",
+    "spec_governance": "313 classified passed",
+    "spec_parity": "20 inventories passed",
+    "project_state": "59 items passed",
+    "dependency_authority": "PASS",
+    "drift": "Workspace formatting and Clippy passed; battery stops at the same eight existing terminal-convergence source-marker failures (dat-terminal-convergence-guard-xke). No full drift pass."
+  }
+}
