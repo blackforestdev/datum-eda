@@ -6076,6 +6076,20 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/borrowed-control-labels/result.json",
         "proof": "Existing218 renderer tests pass, including control and unavailable-state coverage. Existing GPU single-pass/general-dialog pixel parity passes1 test/258 filtered. Renderer visual library/tests Clippy and fresh release GUI build pass.",
         "limits": "Source-level removal of one redundant temporary String copy per available label (an allocation for nonempty labels), not measured total allocations or frame-time improvement. TextRun still owns text; unavailable suffix formatting and integer formatting remain. No new native qualification, complete resource accounting or HP14/S3 acceptance. No styling/prototype/dependency/license, resource deadline or resize-scope change."
+      },
+      "s3_choice_measurement_labels_progress": {
+        "status": "Default shared choice width measurement borrows available labels",
+        "production_consumers": [
+          "GLOBAL Preferences SingleChoice controls",
+          "PROJECT Preferences SingleChoice controls"
+        ],
+        "shared_owner": "global_preferences_primitives::draw_preference_control",
+        "retired_paths": [
+          "Unconditional formatting of unused unavailable suffix during available-choice width measurement"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/choice-measurement-labels/result.json",
+        "proof": "218 renderer tests pass; existing GPU dialog parity test passes1 with258 filtered; fresh guarded offline release build passes. Source health and dependency authority pass.",
+        "limits": "Removes one temporary String allocation per available SingleChoice preparation by source inspection. No aggregate allocation or frame-time measurement. Unavailable formatting, text-run ownership, shaping cache and labels/geometry remain unchanged. No new native qualification, full HP14/S3 acceptance, prototype/dependency/license/resource deadline or resize change."
       }
     },
     {
@@ -29011,5 +29025,19 @@
     "proof": "Initial positive: both hosts press0 presentations, delivered drag1, release0. Negative: both confirm delivered drag then fail exact no-changed-dialog assertion when scrollbar_input is disabled but rendering unchanged. Restored release/source hashes match positive; Global replay again drags1 then release times out, Project drag motion arrives at cleanup after timeout.",
     "limits": "X11 scale1,960x720 only. Parent-required painted-only production pointer negative is observed with paired initial positives, but restored native replays remain failed and dat-native-input-delivery-vq7w stays open. Global initial screenshot is stale Appearance; Project visibly retains painted Units scrollbar. No exact final offset/static freshness, setting click-through, teardown, other profiles, full HP21/S3, timing/resource or resize acceptance. No runtime/dependency/license/prototype/resource deadline change.",
     "connection_hold_followup": "Bounded unchanged-positive replay with xdotool sleep0.15 before same-connection focus roundtrip: GLOBAL passes press/drag/release; PROJECT times out before initial thumb press delivery. Connection hold does not resolve native delivery. No renderer scheduling change or qualification claim."
+  },
+  "s3_choice_measurement_labels_work": {
+    "status": "Default shared choice width measurement borrows available labels",
+    "production_consumers": [
+      "GLOBAL Preferences SingleChoice controls",
+      "PROJECT Preferences SingleChoice controls"
+    ],
+    "shared_owner": "global_preferences_primitives::draw_preference_control",
+    "retired_paths": [
+      "Unconditional formatting of unused unavailable suffix during available-choice width measurement"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/choice-measurement-labels/result.json",
+    "proof": "218 renderer tests pass; existing GPU dialog parity test passes1 with258 filtered; fresh guarded offline release build passes. Source health and dependency authority pass.",
+    "limits": "Removes one temporary String allocation per available SingleChoice preparation by source inspection. No aggregate allocation or frame-time measurement. Unavailable formatting, text-run ownership, shaping cache and labels/geometry remain unchanged. No new native qualification, full HP14/S3 acceptance, prototype/dependency/license/resource deadline or resize change."
   }
 }
