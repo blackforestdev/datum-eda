@@ -6537,7 +6537,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: existing shared ScrollViewport and Preferences input component evidence preserve fractional deltas and reversal. Complete per-native-host scheduled stream/final-offset and rounded-row negative proof remain open. Inspector currently has no scroll adapter and gains no scroll qualification from clipping.",
+        "status": "Partial: shared adapter preserves fractional input, pane locality, line units, boundaries and reversal at1/1.5/2x; integral-pixel rounding negative fails and byte-restored positive passes. Native scheduled fractional stream/final-offset remains open. Inspector has no current scroll adapter.",
         "id": "proof_hp18_01",
         "positive": "Repeated sub-threshold pixel/line deltas and rapid reversal",
         "negative_control": "Round every event to row or discard residual",
@@ -6572,7 +6572,20 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "INSPECTOR": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s3_wheel_input_negatives_progress": {
+        "status": "Two intended negatives detected; each byte-restored positive passes",
+        "production_consumers": [
+          "GLOBAL/PROJECT/NEW shared Preferences/form scroll adapter; direct invocation only"
+        ],
+        "shared_owner": "global_preferences_window::scroll_wheel -> app_native_events::scroll_input::VerticalWheel -> ScrollViewport",
+        "retired_paths": "No new production retirement; verifies the existing fractional input and shared wheel-unit implementations.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json",
+        "limits": "Direct shared Preferences adapter invocation at1/1.5/2x; no OS event delivery or rendered host. GLOBAL/PROJECT/NEW consume this adapter; Main shares the converter but its dispatch and discrete Layers/terminal policies are not exercised here. Native fractional stream/final-offset, remaining host/hit/backend coverage and full HP18/HP19/S3 qualification remain open. No production change, new consumer migration, dependency/license, visual/prototype, numerical budget or resize-scope change."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json"
+      ]
     },
     {
       "id": "HP19-01",
@@ -6599,7 +6612,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial: all four native hosts share physical-to-logical wheel conversion, preserving Main20/dialog40 logical-pixel line policies. Cross-scale converter tests and existing fractional/locality adapter regression pass. GLOBAL/PROJECT1.5x native line-event boundary/reversal passes. Physical OS stream, Main/NEW native dispatch, complete hit/profile/backend and prescribed current shared-owner negative remain open.",
+        "status": "Partial: all four hosts consume the shared wheel converter with Main20/dialog40 logical-pixel line policies. Current converter mis-scaling negative fails; byte-restored adapter passes at1/1.5/2x. GLOBAL/PROJECT1.5x native line boundary/reversal evidence remains distinct. Physical OS stream, Main/NEW native dispatch and remaining hit/profile/backend qualification remain open.",
         "id": "proof_hp19_01",
         "positive": "Physical pixel/line deltas at1x/1.5x/2x and corresponding hits",
         "negative_control": "Double-scale pixels or invert sign",
@@ -6646,7 +6659,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
-        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-negative/result.json"
+        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-negative/result.json",
+        "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json"
       ],
       "s3_dialog_dpi_negative": {
         "status": "Prescribed pixel-delta mis-scaling negative detected; byte-restored converter passes",
@@ -6686,6 +6700,16 @@
         "preserved": "Line units pass unchanged to Main discrete adapters; Main profile remains20 logical pixels per line, dialogs40. Continuous fractions and sign preserved. Horizontal-only and nonfinite input stops before vertical dispatch.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/shared-wheel-units/result.json",
         "limits": "Shared converter tests establish physical/logical unit behavior at1/1.5/2x and existing native Preferences adapter test preserves fractional/pane locality. Actual X11 native trial covers GLOBAL/PROJECT line events at1.5x; it does not deliver touchpad physical pixels, test Main/NEW OS routes or complete HP19/S3. Captures are inspected for appearance but known capture lag prevents using filenames as final-state proof. No dependency/license, visual style, numerical budget or resize-scope change."
+      },
+      "s3_wheel_input_negatives_progress": {
+        "status": "Two intended negatives detected; each byte-restored positive passes",
+        "production_consumers": [
+          "GLOBAL/PROJECT/NEW shared Preferences/form scroll adapter; direct invocation only"
+        ],
+        "shared_owner": "global_preferences_window::scroll_wheel -> app_native_events::scroll_input::VerticalWheel -> ScrollViewport",
+        "retired_paths": "No new production retirement; verifies the existing fractional input and shared wheel-unit implementations.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json",
+        "limits": "Direct shared Preferences adapter invocation at1/1.5/2x; no OS event delivery or rendered host. GLOBAL/PROJECT/NEW consume this adapter; Main shares the converter but its dispatch and discrete Layers/terminal policies are not exercised here. Native fractional stream/final-offset, remaining host/hit/backend coverage and full HP18/HP19/S3 qualification remain open. No production change, new consumer migration, dependency/license, visual/prototype, numerical budget or resize-scope change."
       }
     },
     {
@@ -27524,7 +27548,8 @@
         "s3_label_history_negative_work": "docs/reviews/gui-performance/implementation/S3/label-history-negative/result.json",
         "s3_native_label_reuse_work": "docs/reviews/gui-performance/implementation/S3/native-label-reuse/result.json",
         "s3_native_preference_edits_work": "docs/reviews/gui-performance/implementation/S3/native-preference-edits/result.json",
-        "s3_global_mutation_preparation_work": "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json"
+        "s3_global_mutation_preparation_work": "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json",
+        "s3_wheel_input_negatives_work": "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json"
       },
       "receipt_sha256": {
         "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json": "7c21f4fb04e937db21bd06d9bd0e9b1d4d0602ccca5cf167def2a77f6d5e9139",
@@ -27536,7 +27561,8 @@
         "docs/reviews/gui-performance/implementation/S3/label-history-negative/result.json": "dd810bab6be582513dcac1956acb615bec164e0e88a0b7555bdc6741aeb2fb07",
         "docs/reviews/gui-performance/implementation/S3/native-label-reuse/result.json": "4c9d90cc68ea50370d92ba15900e8c7f8af2428085e67faf132d6d10c3ea4366",
         "docs/reviews/gui-performance/implementation/S3/native-preference-edits/result.json": "d8528dd04ef2bacc9e24f78b18da2d67b00de39eff94ee3971063285dcd45fe5",
-        "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json": "a9c3cbf00ec0731bcfded36e99ee3da73442a9e5c073f81814bd5f104d9f94b2"
+        "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json": "a9c3cbf00ec0731bcfded36e99ee3da73442a9e5c073f81814bd5f104d9f94b2",
+        "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json": "eae1fafd5b8f366f5d2ca5cfc5f0560dc500c5bd16e7a94cd16734584eb03d0f"
       },
       "remaining_actions": {
         "HP10-01": "Verify outside-Layers routing through the outer native event dispatcher; actual Board Runtime zero-preparation and prescribed negative are recorded.",
@@ -27550,8 +27576,8 @@
         "HP16-01": "Complete rounded-control repeat/translation/clip proof across actual applicable consumers and remaining prescribed arc/tessellator negatives; preserve fixed-rectangle classification.",
         "HP16-02": "Complete dimension/radius/style/DPI invalidation and authored concave/holed separation proof, including incomplete-key/fan negative and applicable native profiles.",
         "HP16-03": "Complete bounded control working-set eviction and pin-indefinitely negative. Full GPU/in-flight/aggregate bounds follow S4/S5 resource associations.",
-        "HP18-01": "Complete native fractional/reversal stream with final-offset oracle and round/discard-residual negative. Inspector has no current scrolling adapter.",
-        "HP19-01": "Verify current shared wheel converter negative and remaining Main/NEW/Layers/terminal physical-pixel/hit cases at1/1.5/2x; keep native line-event proof distinct.",
+        "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter.",
+        "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct.",
         "HP20-01": "Complete search/choice/explanation/final-row/size extent cases and visible-rows-only extent negative on actual scroll consumers.",
         "HP21-01": "Complete remaining capture/profile/scale cases and grab-displacement/painted-only-scrollbar negative; retain existing native press/drag/track evidence.",
         "HP21-02": "Complete release/capture-loss/close/content-change final-target cases beyond recorded focus-loss and reflow cancellation tests.",
@@ -27989,5 +28015,15 @@
     "preserved": "Canonical Global product service mutations, notice/accessibility refresh, actual Main paint invalidation, Project mutations and close lifecycle.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json",
     "limits": "Global preference mutation invalidation only. Existing Project writes, close and current-paint dependency changes retain invalidation. Actual hidden Runtime proves Units edit/reset retention and high-contrast invalidation; fresh native GLOBAL/PROJECT enum edits preserve durable scope. Not all mutations/visible Console states/backend/scale or full S3/performance acceptance. No dependency/license, prototype/style, budget or resize-scope change. The native GLOBAL after-choice capture lags and still shows the earlier dropdown; use durable state and the subsequent Reset hit oracle, not image filenames, for final-state proof."
+  },
+  "s3_wheel_input_negatives_work": {
+    "status": "Two intended negatives detected; each byte-restored positive passes",
+    "production_consumers": [
+      "GLOBAL/PROJECT/NEW shared Preferences/form scroll adapter; direct invocation only"
+    ],
+    "shared_owner": "global_preferences_window::scroll_wheel -> app_native_events::scroll_input::VerticalWheel -> ScrollViewport",
+    "retired_paths": "No new production retirement; verifies the existing fractional input and shared wheel-unit implementations.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json",
+    "limits": "Direct shared Preferences adapter invocation at1/1.5/2x; no OS event delivery or rendered host. GLOBAL/PROJECT/NEW consume this adapter; Main shares the converter but its dispatch and discrete Layers/terminal policies are not exercised here. Native fractional stream/final-offset, remaining host/hit/backend coverage and full HP18/HP19/S3 qualification remain open. No production change, new consumer migration, dependency/license, visual/prototype, numerical budget or resize-scope change."
   }
 }

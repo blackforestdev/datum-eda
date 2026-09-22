@@ -1,0 +1,13 @@
+diff --git a/crates/gui-app/src/global_preferences_window.rs b/crates/gui-app/src/global_preferences_window.rs
+index dd3c6028..54704273 100644
+--- a/crates/gui-app/src/global_preferences_window.rs
++++ b/crates/gui-app/src/global_preferences_window.rs
+@@ -675,7 +675,7 @@ fn scroll_wheel(
+     else {
+         return false;
+     };
+-    scroll.wheel(wheel.pixels(40.0))
++    scroll.wheel(wheel.pixels(40.0).round())
+ }
+ 
+ #[cfg(test)]
