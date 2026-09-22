@@ -5590,7 +5590,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial: both native Preferences have semantic expanded-choice proof at1/1.5x; GLOBAL also at2x. All recorded successful samples use only dialog pass, and six repeated scroll traces per case have0 cache misses. PROJECT2x, NEW changed states, remaining settings/backend/control coverage and full acceptance remain open. Input delivery issue dat-native-input-delivery-vq7w retains failures; resource qualification remains S4/S5.",
+        "status": "Partial: both native Preferences have semantic expanded-choice proof at1/1.5x; GLOBAL also at2x. All recorded successful samples use only dialog pass, and six repeated scroll traces per case have0 cache misses. PROJECT2x, NEW changed states, remaining settings/backend/control coverage and full acceptance remain open. Input delivery issue dat-native-input-delivery-vq7w retains failures; resource qualification remains S4/S5. Project2x replay now passes on current rebuilt binary:11 dialog-only samples,6 zero-miss warm samples and semantic expansion dismissal. Earlier input nondelivery remains unresolved; full qualification stays open.",
         "id": "proof_hp13_01",
         "positive": "Render equivalent dialog-only frame",
         "negative_control": "Add historical redundant four-pass resolve path",
@@ -5663,7 +5663,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/native-expanded-pass-reuse/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-project2-replay/result.json"
       ],
       "s3_native_pass_roundtrip_progress": {
         "status": "Four additional native expanded pass/reuse cases pass; PROJECT2x delivery failure retained",
@@ -5675,6 +5676,16 @@
         "retired_paths": "No runtime retirement; existing native pass/reuse proof extended with read-only driver synchronization.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json",
         "limits": "Native X11/Xwayland, override scales1/1.5/2, opt-in existing pass/cache counters. Four successful added cases plus previous GLOBAL1x establish5 of6 bounded Preferences expanded-choice cases; PROJECT2x remains unqualified after release-delivery timeout. Driver adds read-only X server roundtrip, not a reliable fix or root-cause proof. Captures lag; expansion uses exactly one observed nonsynthetic Escape with surviving dialog/presentation. No default-path performance, latency, monitor-DPI transition, Wayland input, full resource or S3 acceptance. Production/dependency/license/prototype/budget/resize unchanged."
+      },
+      "s3_native_project2_replay_progress": {
+        "status": "Project Preferences2x native expanded pass/reuse replay passes",
+        "production_consumers": [
+          "PROJECT native Preferences"
+        ],
+        "shared_owner": "Native dialog pass and TextBufferCache",
+        "retired_paths": "None; bounded replay of existing shared production owners.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-project2-replay/result.json",
+        "limits": "Native X11/Xwayland with2x override at actual1918x1050, opt-in existing GPU/cache diagnostics. Six bounded Preferences host/scale cases now have successful receipts across different pinned builds; this is not a single-candidate full matrix. Initial capture lags expansion; exactly one delivered nonsynthetic Escape plus presentation and surviving dialog supplies the expansion oracle. Previous nondelivery failure and dat-native-input-delivery-vq7w remain open. No default-path performance, monitor-DPI transition, Wayland input, full resource or S3 acceptance. No production, dependency, license, prototype, budget or resize change."
       }
     },
     {
@@ -5771,7 +5782,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial: both native Preferences have semantic expanded-choice proof at1/1.5x; GLOBAL also at2x. All recorded successful samples use only dialog pass, and six repeated scroll traces per case have0 cache misses. PROJECT2x, NEW changed states, remaining settings/backend/control coverage and full acceptance remain open. Input delivery issue dat-native-input-delivery-vq7w retains failures; resource qualification remains S4/S5.",
+        "status": "Partial: both native Preferences have semantic expanded-choice proof at1/1.5x; GLOBAL also at2x. All recorded successful samples use only dialog pass, and six repeated scroll traces per case have0 cache misses. PROJECT2x, NEW changed states, remaining settings/backend/control coverage and full acceptance remain open. Input delivery issue dat-native-input-delivery-vq7w retains failures; resource qualification remains S4/S5. Project2x replay now passes on current rebuilt binary:11 dialog-only samples,6 zero-miss warm samples and semantic expansion dismissal. Earlier input nondelivery remains unresolved; full qualification stays open.",
         "id": "proof_hp14_01",
         "positive": "Scroll away/return unchanged labels within128 buffers AND32KiB key text AND applicable8MiB shaped payload/renderer and aggregate limits",
         "negative_control": "Keep only one-frame cache",
@@ -5873,7 +5884,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/native-expanded-pass-reuse/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-project2-replay/result.json"
       ],
       "s3_native_pass_roundtrip_progress": {
         "status": "Four additional native expanded pass/reuse cases pass; PROJECT2x delivery failure retained",
@@ -5885,6 +5897,16 @@
         "retired_paths": "No runtime retirement; existing native pass/reuse proof extended with read-only driver synchronization.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json",
         "limits": "Native X11/Xwayland, override scales1/1.5/2, opt-in existing pass/cache counters. Four successful added cases plus previous GLOBAL1x establish5 of6 bounded Preferences expanded-choice cases; PROJECT2x remains unqualified after release-delivery timeout. Driver adds read-only X server roundtrip, not a reliable fix or root-cause proof. Captures lag; expansion uses exactly one observed nonsynthetic Escape with surviving dialog/presentation. No default-path performance, latency, monitor-DPI transition, Wayland input, full resource or S3 acceptance. Production/dependency/license/prototype/budget/resize unchanged."
+      },
+      "s3_native_project2_replay_progress": {
+        "status": "Project Preferences2x native expanded pass/reuse replay passes",
+        "production_consumers": [
+          "PROJECT native Preferences"
+        ],
+        "shared_owner": "Native dialog pass and TextBufferCache",
+        "retired_paths": "None; bounded replay of existing shared production owners.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-project2-replay/result.json",
+        "limits": "Native X11/Xwayland with2x override at actual1918x1050, opt-in existing GPU/cache diagnostics. Six bounded Preferences host/scale cases now have successful receipts across different pinned builds; this is not a single-candidate full matrix. Initial capture lags expansion; exactly one delivered nonsynthetic Escape plus presentation and surviving dialog supplies the expansion oracle. Previous nondelivery failure and dat-native-input-delivery-vq7w remain open. No default-path performance, monitor-DPI transition, Wayland input, full resource or S3 acceptance. No production, dependency, license, prototype, budget or resize change."
       }
     },
     {
@@ -27845,9 +27867,9 @@
         "HP10-02": "Verify outer native wheel locality and the fallthrough negative; actual Runtime capacity/boundary/camera behavior is recorded.",
         "HP12-01": "Complete native forbidden-work attribution and the prescribed workspace/general-world negative against the dialog-only preparation boundary.",
         "HP12-02": "Complete remaining control/focus/partial-row cases and stale presented-transform negative; durable enum scope and post-edit Reset hit are already recorded.",
-        "HP13-01": "Complete PROJECT2x, NEW changed-state and remaining backend pass proof. Both Preferences1/1.5x and GLOBAL2x now have expanded semantic/pass evidence; preserve existing general-pass negative and dat-native-input-delivery-vq7w failure.",
+        "HP13-01": "Complete NEW changed-state and remaining backend pass proof. Both Preferences1/1.5/2x have bounded expanded semantic/pass receipts across pinned builds; full single-candidate matrix remains open. Preserve general-pass negative and dat-native-input-delivery-vq7w failure.",
         "HP13-02": "Complete prescribed AA/painter-order negative and native visual/backend/scale coverage; existing14 GPU regressions remain bounded evidence.",
-        "HP14-01": "Complete PROJECT2x and remaining settings/backend warm-reuse cases with observed input delivery. Both Preferences1/1.5x and GLOBAL2x expanded trials have6 zero-miss samples and semantic expansion proof; one-frame negative recorded. Full resource precondition stays S4/S5.",
+        "HP14-01": "Complete remaining settings/backend warm-reuse cases and final single-candidate qualification. Both Preferences1/1.5/2x expanded trials now have six zero-miss samples and semantic expansion proof; prior failure and one-frame negative retained. Full resource precondition stays S4/S5.",
         "HP14-02": "Complete remaining working-set/negative and native coverage. Real shaped cache churn and both native Preferences 1x close/reopen are recorded; cold misses do not prove full resource release. Complete owned accounting/cap/release retains existing S4/S5 deadlines.",
         "HP16-01": "Complete rounded-control repeat/translation/clip proof across actual applicable consumers and remaining prescribed arc/tessellator negatives; preserve fixed-rectangle classification.",
         "HP16-02": "Complete authored concave/holed separation and fan negative plus applicable native contour/style/DPI profiles. Existing key-field test and current incomplete-DPI-key negative/restored painter positive are recorded.",
@@ -28428,5 +28450,15 @@
     "retired_paths": "Stale focus reveal identity after effective size/DPI changes; unchanged-size and ordinary input paths retain current behavior.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/focus-reflow/result.json",
     "limits": "Native X11/Xwayland Preferences at 1x: keyboard focus on last Units control, height shrink from1000x750 to1000x563, visible focus ring and zero idle frames. Native DPI transitions, New Project, remaining content/search/backend profiles and full HP23/S3 are not qualified. New Project already reveals on renderer reflow and has no change. No dependency, licensing, visual styling, numerical budget or resize CPU qualification change."
+  },
+  "s3_native_project2_replay_work": {
+    "status": "Project Preferences2x native expanded pass/reuse replay passes",
+    "production_consumers": [
+      "PROJECT native Preferences"
+    ],
+    "shared_owner": "Native dialog pass and TextBufferCache",
+    "retired_paths": "None; bounded replay of existing shared production owners.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-project2-replay/result.json",
+    "limits": "Native X11/Xwayland with2x override at actual1918x1050, opt-in existing GPU/cache diagnostics. Six bounded Preferences host/scale cases now have successful receipts across different pinned builds; this is not a single-candidate full matrix. Initial capture lags expansion; exactly one delivered nonsynthetic Escape plus presentation and surviving dialog supplies the expansion oracle. Previous nondelivery failure and dat-native-input-delivery-vq7w remain open. No default-path performance, monitor-DPI transition, Wayland input, full resource or S3 acceptance. No production, dependency, license, prototype, budget or resize change."
   }
 }
