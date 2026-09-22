@@ -83,6 +83,15 @@ impl App {
         {
             append_gui_verbose_diagnostic_line(|| format!("window event {window_id:?} {label}"));
         }
+        // On X11, focus gain can replay presses for already-held keys. Those
+        // synchronize key state; they are not fresh text/command activation.
+        // Keep releases and ModifiersChanged flowing through their existing
+        // cancellation/state paths, including across owned dialog focus.
+        if matches!(&event, WindowEvent::KeyboardInput { event, is_synthetic: true, .. }
+            if event.state == ElementState::Pressed)
+        {
+            return;
+        }
         if matches!(
             event,
             WindowEvent::Focused(_)

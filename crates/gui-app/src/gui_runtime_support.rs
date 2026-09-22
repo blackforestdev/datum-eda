@@ -80,16 +80,24 @@ pub(crate) fn window_event_diagnostic_label(event: &WindowEvent) -> Option<Strin
         WindowEvent::MouseInput { state, button, .. } => {
             Some(format!("mouse input {button:?} {state:?}"))
         }
-        WindowEvent::MouseWheel { .. } => Some("mouse wheel".to_string()),
+        WindowEvent::MouseWheel { delta, phase, .. } => {
+            Some(format!("mouse wheel delta={delta:?} phase={phase:?}"))
+        }
         WindowEvent::CursorMoved { position, .. } => {
             Some(format!("cursor moved {:.2},{:.2}", position.x, position.y))
         }
-        WindowEvent::KeyboardInput { event, .. } => Some(format!(
-            "keyboard physical={:?} logical={:?} state={:?} repeat={} text={:?}",
-            event.physical_key, event.logical_key, event.state, event.repeat, event.text
+        WindowEvent::KeyboardInput {
+            event,
+            is_synthetic,
+            ..
+        } => Some(format!(
+            "keyboard physical={:?} logical={:?} state={:?} repeat={} text={:?} synthetic={is_synthetic}",
+            event.physical_key, event.logical_key, event.state, event.repeat, event.text,
         )),
         WindowEvent::Ime(ime) => Some(format!("ime {ime:?}")),
-        WindowEvent::ModifiersChanged(_) => Some("modifiers changed".to_string()),
+        WindowEvent::ModifiersChanged(modifiers) => {
+            Some(format!("modifiers changed {:?}", modifiers.state()))
+        }
         _ => None,
     }
 }

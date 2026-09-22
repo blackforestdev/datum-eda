@@ -5448,6 +5448,10 @@
       "consumer_applicability": {
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s3_focus_key_replay_progress": {
+        "status": "actual GLOBAL/PROJECT/NEW synthetic-versus-fresh Escape focus cases pass; complete row remains unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/focus-key-replay/result.json"
       }
     },
     {
@@ -6871,6 +6875,10 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "INSPECTOR": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s3_focus_key_replay_progress": {
+        "status": "actual GLOBAL/PROJECT/NEW synthetic-versus-fresh Escape focus cases pass; complete row remains unqualified",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/focus-key-replay/result.json"
       }
     },
     {
@@ -26938,7 +26946,7 @@
     "status": "fresh release build passed; native input attempt aborted and unqualified",
     "evidence": "docs/reviews/gui-performance/implementation/S3/current-native-attempt/result.json",
     "limits": "No native input/focus, scrolling, pass-count, teardown, daily-backend or resource acceptance. Driver exit130 is an abort, not a pass. No application process from this attempt remained after cleanup.",
-    "next_native_condition": "Controlled desktop input and verified driver delivery are required before native qualification; no further focus-taking tests while unscripted input persists.",
+    "next_native_condition": "Owner authorization remains operative. New flag-aware focus trials distinguish synthetic held-key replay from fresh input; three owned-dialog Escape cases now pass. Validate actual target/delta/final state for subsequent bounded trials; old wheel attempts remain failed/unqualified and unscripted log events alone do not establish owner desktop use.",
     "resumed_owner_authorized_attempt": {
       "status": "release build passed; resumed native attempts fail or abort, qualification remains open",
       "evidence": "docs/reviews/gui-performance/implementation/S3/resumed-native-input/result.json",
@@ -27023,7 +27031,16 @@
         "detail": "Existing public dependency APIs have not provided complete shaped/atlas/scratch accounting. Current wgpu allocator snapshots are insufficient. No owner authority exists for modifying/vendoring dependencies; sequencing approval would not solve this technical boundary."
       }
     ],
-    "scope": "20 S3 map rows reconciled; no acceptance rule, lifecycle, authorization, qualification deadline or earlier receipt changed. S3 stays in progress; S4/S5 pending."
+    "scope": "20 S3 map rows reconciled; no acceptance rule, lifecycle, authorization, qualification deadline or earlier receipt changed. S3 stays in progress; S4/S5 pending.",
+    "latest_native_focus_evidence": {
+      "status": "bounded shared native focus-key correction; three owned-dialog Escape cases pass",
+      "production_consumers": [
+        "Shared native dispatch before MAIN/GLOBAL/PROJECT/NEW keyboard or F5 recovery routing"
+      ],
+      "retired_path": "Treating winit focus-generated held-key presses as fresh command/text activation",
+      "evidence": "docs/reviews/gui-performance/implementation/S3/focus-key-replay/result.json",
+      "limits": "No retrospective attribution of old unscripted keys/pointer events, no owner desktop-use conclusion, no full native scroll/focus/backend/scale or S3 acceptance. MAIN shares the guard by call path but was not a native Escape case. No independent guard-removal negative yet. No dependency/license/prototype/budget/resize-scope change;1bc02aaf remains unapproved."
+    }
   },
   "s3_pane_indicator_retention_work": {
     "status": "bounded S3 MAIN pane-indicator control adoption; full HP16 qualification open",
@@ -27036,5 +27053,14 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/pane-indicator-retention/result.json",
     "limits": "No full MAIN/INSPECTOR/MENU family adoption, native focus, isolated negative for this indicator, complete resource accounting/caps or numerical performance acceptance. Per-frame translated vertex materialization remains. S3 stays open;1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
+  },
+  "s3_focus_key_replay_work": {
+    "status": "bounded shared native focus-key correction; three owned-dialog Escape cases pass",
+    "production_consumers": [
+      "Shared native dispatch before MAIN/GLOBAL/PROJECT/NEW keyboard or F5 recovery routing"
+    ],
+    "retired_path": "Treating winit focus-generated held-key presses as fresh command/text activation",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/focus-key-replay/result.json",
+    "limits": "No retrospective attribution of old unscripted keys/pointer events, no owner desktop-use conclusion, no full native scroll/focus/backend/scale or S3 acceptance. MAIN shares the guard by call path but was not a native Escape case. No independent guard-removal negative yet. No dependency/license/prototype/budget/resize-scope change;1bc02aaf remains unapproved."
   }
 }
