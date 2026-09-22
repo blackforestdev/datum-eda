@@ -1,0 +1,99 @@
+{
+  "board": "board/board.json",
+  "forward_annotation_review": {},
+  "name": "board Datum Workspace",
+  "pools": [],
+  "project_display_units": {
+    "angle_precision": "decimal_1",
+    "board_length": "follow_system",
+    "board_length_precision": "automatic",
+    "drill_hole": "follow_system",
+    "drill_hole_precision": "automatic",
+    "schematic_geometry": "follow_system",
+    "schematic_geometry_precision": "automatic",
+    "system": "metric"
+  },
+  "project_units_seed_receipt": {
+    "creation_actor": {
+      "invocation_id": "f3d8b1f2-a292-48af-90be-b785c774ac0d",
+      "kind": "human_cli",
+      "local_actor_id": "bfadmin",
+      "session_id": "cli:1764228:db295c05-4f38-4bdf-b68a-8665a45c1ac3"
+    },
+    "genesis_request_digest": "sha256:048f8b3ee49ecf8a5df345e3786615079a037227737e19b0eaa1438e2fc7fccf",
+    "genesis_request_id": "4319e6de-0849-45d2-8562-44836d2f896b",
+    "items": [
+      {
+        "copied_value": "metric",
+        "descriptor_schema_version": 1,
+        "effective_source": "factory_default",
+        "key": "datum.units.system",
+        "provenance": "factory_default \u00b7 global \u00b7 this_device"
+      },
+      {
+        "copied_value": "follow_system",
+        "descriptor_schema_version": 1,
+        "effective_source": "factory_default",
+        "key": "datum.units.board_length",
+        "provenance": "factory_default \u00b7 global \u00b7 this_device"
+      },
+      {
+        "copied_value": "automatic",
+        "descriptor_schema_version": 1,
+        "effective_source": "factory_default",
+        "key": "datum.units.board_length_precision",
+        "provenance": "factory_default \u00b7 global \u00b7 this_device"
+      },
+      {
+        "copied_value": "follow_system",
+        "descriptor_schema_version": 1,
+        "effective_source": "factory_default",
+        "key": "datum.units.drill_hole",
+        "provenance": "factory_default \u00b7 global \u00b7 this_device"
+      },
+      {
+        "copied_value": "automatic",
+        "descriptor_schema_version": 1,
+        "effective_source": "factory_default",
+        "key": "datum.units.drill_hole_precision",
+        "provenance": "factory_default \u00b7 global \u00b7 this_device"
+      },
+      {
+        "copied_value": "follow_system",
+        "descriptor_schema_version": 1,
+        "effective_source": "factory_default",
+        "key": "datum.units.schematic_geometry",
+        "provenance": "factory_default \u00b7 global \u00b7 this_device"
+      },
+      {
+        "copied_value": "automatic",
+        "descriptor_schema_version": 1,
+        "effective_source": "factory_default",
+        "key": "datum.units.schematic_geometry_precision",
+        "provenance": "factory_default \u00b7 global \u00b7 this_device"
+      },
+      {
+        "copied_value": "decimal_1",
+        "descriptor_schema_version": 1,
+        "effective_source": "factory_default",
+        "key": "datum.units.angle_precision",
+        "provenance": "factory_default \u00b7 global \u00b7 this_device"
+      }
+    ],
+    "profile_digest": "sha256:40e6befc77f222c6b6f8ce591c8c6317e3f257ff20e838efee2c84c5f3a5356a",
+    "project_id": "4d0062a3-9ecc-4244-a550-3d5a1a13e1f9",
+    "schema_name": "datum.project.units_seed_receipt",
+    "schema_version": 2,
+    "seed_application_digest": "sha256:1d6e8837cc90dbb0c27cb2d79728a02853c200939ea1ebb3c22ffa7c49b2bedb",
+    "source": {
+      "defaults_profile_id": "datum.units.factory.v1",
+      "generation": null,
+      "kind": "global"
+    },
+    "units_seed_catalog_digest": "sha256:898781d26cfd7ade7c981e310d052a5f201729daeb011c7da3c216758706c6f2"
+  },
+  "rules": "rules/rules.json",
+  "schema_version": 1,
+  "schematic": "schematic/schematic.json",
+  "uuid": "4d0062a3-9ecc-4244-a550-3d5a1a13e1f9"
+}
