@@ -44,3 +44,11 @@ pub struct Renderer {
     pub(super) msaa_samples: u32,
     pub(super) measurements: Option<gpu_measurements::GpuMeasurements>,
 }
+
+impl Renderer {
+    /// Cumulative control-mesh builds for this owner, saturating at usize::MAX.
+    /// Cache hits do not increment it; this is work count, not resource accounting.
+    pub fn control_mesh_build_count(&self) -> usize {
+        self.control_meshes.builds
+    }
+}

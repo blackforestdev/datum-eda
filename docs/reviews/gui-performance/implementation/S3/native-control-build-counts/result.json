@@ -1,0 +1,86 @@
+{
+  "base_commit": "4b3f45203d816ad834163fa63df9eca0c2f68ad4",
+  "production": {
+    "status": "Existing control-mesh owner build counter available in production and existing opt-in native diagnostics",
+    "production_consumers": [
+      "MAIN native preparation via Runtime::build_terminal_prepared_scene",
+      "GLOBAL/PROJECT/NEW native preparation via GlobalPreferencesWindowSurface::render"
+    ],
+    "retired_paths": "Removed test-only availability of the existing miss/build counter; cache retention and tessellation algorithms unchanged. No new consumer migration. No formatting/logging with verbose diagnostics disabled; cache hits do not update the counter.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-control-build-counts/result.json",
+    "proof": "218 renderer tests, app/test Clippy and release build pass. Real X11 GLOBAL/PROJECT1x OS scrollbar roundtrips retain build totals23/20 across bottom/top/bottom. Isolated lookup bypass fails both hosts with102/124/148 and94/116/140 builds. Restored release SHA matches positive exactly and both native positives repeat.",
+    "limits": "Cumulative count belongs to one renderer lifetime and saturates at usize::MAX; a saturated/reset series cannot qualify work deltas. Work count only, not CPU/GPU bytes or complete ACC/method/overhead qualification. Existing cache-build tests and native negative provide bounded count sensitivity, not global counter admission. MAIN/NEW are instrumented but not newly qualified; remaining consumer/backend/scale/fractional and resource proofs remain open. No visual/layout/dependency/license/resize change or full S3 acceptance."
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/control_mesh.rs": {
+      "baseline": "823c9d3aea5c009cbdcbd8c01010a3bf5916150c510774caf292723517323235",
+      "candidate": "f7458895b422400c859b09db6c448f8dcfec2ff9ebbc12692479d6e70c53aa65"
+    },
+    "crates/gui-render/src/render/renderer_state.rs": {
+      "baseline": "72ae5057ae98f466a7b52603f99d26ff83f5ae44938c03145042042cfeb2c0c5",
+      "candidate": "74ca923fbe2210a424d5ea901af6d9cdf605049971f623fa65eb2335e5aa24db"
+    },
+    "crates/gui-app/src/global_preferences_window.rs": {
+      "baseline": "5c35e7bc178b901b2d53a99294b843c5c460bdef1879c12b65472b35f94e9f1f",
+      "candidate": "54c800eb1a02ce475a473cf5cec887fdccfdb9185d6df1649fa9bdac84131587"
+    },
+    "crates/gui-app/src/runtime_terminal_render.rs": {
+      "baseline": "2fa9ec2237ef5056697fc67e54acac6a0d72be7d57cad9b0d44fb93d5fc7130f",
+      "candidate": "7a9b85f54be0f1a1970fc20802216c180eadf6193376677c6dab9cad6a5397ef"
+    }
+  },
+  "binary_sha256": {
+    "positive": "12f00d7e0120265bf200c4ed9465d8e1e3611114da8c19e33e823b8f27f65f60",
+    "negative": "612eb7c2bd973053375751d143ca2604e014994da178727f668eab15e77af148",
+    "restored": "12f00d7e0120265bf200c4ed9465d8e1e3611114da8c19e33e823b8f27f65f60"
+  },
+  "negative_build_command": "CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release --manifest-path /tmp/pm045-pinned-negative-source/Cargo.toml -p datum-gui-app",
+  "native_commands": [
+    "PM045_TEST_SCALE=1 python3 /tmp/pm045_native_control_mesh_reuse.py /tmp/pm045-native-control-reuse",
+    "PM045_TEST_SCALE=1 PM045_GUI_BIN=/home/bfadmin/Documents/datum-eda/target/pm045-native-control-proof/negative-gui python3 /tmp/pm045_native_control_mesh_reuse.py /tmp/pm045-native-control-reuse-negative",
+    "PM045_TEST_SCALE=1 python3 /tmp/pm045_native_control_mesh_reuse.py /tmp/pm045-native-control-reuse-restored"
+  ],
+  "verification_commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-app --bin datum-gui --tests -- -D warnings",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app"
+  ],
+  "restoration": "Disposable source restored byte-for-byte; owned active source mtime touched to require root renderer/application rebuild. Build log confirms both normal repository crates compiled. Restored binary equals pinned positive SHA, not injected binary. Active source never held negative.",
+  "artifact_sha256": {
+    "clippy.log.gz": "cf3884e6c9640b29c2def4304124d09c25eedab9127ed27f1498b6f7b7bf4374",
+    "driver.py.gz": "0266d1c0bb50d2cadc136349f1a973cd936c03d75e402b4b354ba05135ec7df0",
+    "negative/GLOBAL/before.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "negative/GLOBAL/native.log.gz": "649e4bdd7d385fa753ba3cfc049603dfb464daa65c06d99f72491728b561013f",
+    "negative/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "negative/PROJECT/before.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "negative/PROJECT/native.log.gz": "3ff2a43210d1ea6410c23663aa6dc189c870d6abb984717768ebde4322fc4c68",
+    "negative/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "negative/driver.log.gz": "713467b59a22b4d69c8776c6ec23c503acada8d9197cc6a3a289c6c1bdf53dd9",
+    "negative/result.json": "2c1a70a99ebbf3b58ef3479a196a20e4cc28698542fb75d48cac15ca13a3485b",
+    "negative-build.log.gz": "62f914c9274acf143bcbf436f0c7a3da60cbf7061601c9c57133fdf38fff43a9",
+    "negative.patch.gz": "4ff463cf7c8996194774b479b722e2ba36b9abcdf31839ea18fbd18f2d56d299",
+    "positive/GLOBAL/before.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "positive/GLOBAL/bottom.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "positive/GLOBAL/native.log.gz": "e33821a1052e115039b1353349b4f05f7f2a2dd8c48dfe99a273280eb3113194",
+    "positive/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "positive/PROJECT/before.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "positive/PROJECT/bottom.png": "1ff6bf4466f9b21a8a292721a0cc11bb7cf9f46c9c82176b9f0261989328a801",
+    "positive/PROJECT/native.log.gz": "6a547f1f34eedd26378d6bfc5fc6189e64a3a76719d5cec03d60c6efb5413b5f",
+    "positive/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "positive/driver.log.gz": "1ff7f615c66283c799e66dd577cf76322bde986fbc7738110b2a56cb65af758f",
+    "positive/result.json": "f0349ba921a2f0e2b1b67bf978b793694640105ff282c8d61ff0692fd6d67a53",
+    "release.log.gz": "11b571c30a27bbcd74712d66ee6eef5e1f8027f15bffe2ff8fd1eed79841ba6a",
+    "renderer-tests.log.gz": "9e8d9e34ddd6260edeae60c0825874d371d6f523b1179e827d43b79b38f0f1eb",
+    "restored/GLOBAL/before.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "restored/GLOBAL/bottom.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "restored/GLOBAL/native.log.gz": "87c3e02e830929987b2e91185df3ccaf8b0cd4633d2b8e80dcbb80d8b199528f",
+    "restored/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "restored/PROJECT/before.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "restored/PROJECT/bottom.png": "1ff6bf4466f9b21a8a292721a0cc11bb7cf9f46c9c82176b9f0261989328a801",
+    "restored/PROJECT/native.log.gz": "ecf8b9f6bd70de0a20446f53d0fd7d1bd227a243aedd09d195f7272a921019f8",
+    "restored/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "restored/driver.log.gz": "1ff7f615c66283c799e66dd577cf76322bde986fbc7738110b2a56cb65af758f",
+    "restored/result.json": "dd091fac42253ea45bcdcd7dd437f2e49d9840140625c517414cb7729916e660",
+    "restored-build.log.gz": "35c15dad7ab6bd1c36e89bf5ac6701dfe93ddfead4eb0536d591ff8f6d79abe0"
+  }
+}

@@ -383,6 +383,13 @@ impl GlobalPreferencesWindowSurface {
                     reveal_row,
                 ));
             }
+            append_gui_verbose_diagnostic_line(|| {
+                format!(
+                    "native control_meshes window={:?} builds={}",
+                    self.window.id(),
+                    self.renderer.control_mesh_build_count()
+                )
+            });
         }
         let view = frame.view();
         let rendered = self.renderer.render_with_submission(

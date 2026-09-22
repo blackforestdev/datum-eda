@@ -35,7 +35,6 @@ struct Entry {
 pub(crate) struct ControlMeshCache {
     entries: VecDeque<Entry>,
     payload_bytes: usize,
-    #[cfg(test)]
     pub(crate) builds: usize,
 }
 
@@ -52,10 +51,7 @@ impl ControlMeshCache {
             consume(&self.entries.front().expect("retained hit").mesh);
             return;
         }
-        #[cfg(test)]
-        {
-            self.builds += 1;
-        }
+        self.builds = self.builds.saturating_add(1);
         let mesh = build();
         let bytes = std::mem::size_of_val(mesh.as_ref());
         if bytes > MAX_PAYLOAD_BYTES {

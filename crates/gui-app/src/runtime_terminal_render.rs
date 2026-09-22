@@ -35,6 +35,13 @@ impl Runtime {
             prepared.set_schematic_camera(camera);
         }
         self.apply_prepared_grid_lod(&mut prepared);
+        append_gui_verbose_diagnostic_line(|| {
+            format!(
+                "native control_meshes window={:?} builds={}",
+                self.window.id(),
+                self.renderer.control_mesh_build_count()
+            )
+        });
         self.presented_hits.mark_pending();
         Ok(prepared)
     }
