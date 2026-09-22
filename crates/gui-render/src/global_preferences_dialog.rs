@@ -2,6 +2,8 @@
 
 use super::*;
 
+#[path = "render/dialog_coordinates.rs"]
+pub(super) mod dialog_coordinates;
 #[path = "render/preferences_rows.rs"]
 mod preferences_rows;
 #[path = "render/preferences_scene.rs"]
@@ -79,6 +81,10 @@ fn render_preferences_dialog_scrolled(
     if !dialog.open {
         return;
     }
+
+    let scale = quads.scale_factor();
+    let layout = layout.clone().scale_by(1.0 / scale);
+    let starts = (quads.len(), text.len(), hits.len());
 
     let window = RectPx {
         x: 0.0,
@@ -376,6 +382,7 @@ fn render_preferences_dialog_scrolled(
         scroll,
         reveal_row,
     );
+    dialog_coordinates::scale_output(quads, text, hits, starts, scale);
 }
 
 fn focus_is(

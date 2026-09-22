@@ -25,7 +25,7 @@ pub(crate) fn paint_input_text(
     }
     let input_x = bounds.x + layout.left;
     let empty = value.is_empty();
-    let line_height = design_tokens::typography::BODY_SIZE * quads.scale_factor() * 1.22;
+    let line_height = design_tokens::typography::BODY_SIZE * 1.22;
     let text_bounds = RectPx {
         x: input_x.min(bounds.x + bounds.width),
         width: (bounds.width - layout.left - layout.right).max(0.0),

@@ -5485,7 +5485,14 @@
         "status": "default shared single-line input text/caret painting with stable layout extent",
         "evidence": "docs/reviews/gui-performance/implementation/S3/shared-input-text/result.json",
         "limits": "Bounded shared input painting only. Native burst typing remains inconclusive (dat-native-new-project-typing-capture-xgt); initial GLOBAL scroll timed out after drag/release, PROJECT passed. No full input/minimum-width/scale/backend, resource/negative or S3 qualification. No dependency/license, prototype, sequencing or nonblocking resize change."
-      }
+      },
+      "s3_dialog_dpi_coordinates_progress": {
+        "status": "production coordinate correction and bounded scale evidence; full acceptance open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
+      ]
     },
     {
       "id": "HP13-01",
@@ -6465,7 +6472,14 @@
       "s3_layers_scroll_progress": {
         "status": "partial actual Layers adapter adoption; native qualification remains open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/layers-effective-scroll/result.json"
-      }
+      },
+      "s3_dialog_dpi_coordinates_progress": {
+        "status": "production coordinate correction and bounded scale evidence; full acceptance open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
+      ]
     },
     {
       "id": "HP20-01",
@@ -6596,7 +6610,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-preferences-track/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-preferences-track/result.json",
+        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
       ],
       "s3_native_preferences_track_progress": {
         "status": "bounded native Preferences page-track pass; full qualification open",
@@ -6619,6 +6634,10 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-drag-delivery/result.json",
         "proof": "Both hosts: press/release and boundary wheel zero presentations; drag and reverse one each. All six captures RGB identical to committed native-preferences-scroll baselines. Bottom capture inspected; final row visible.",
         "limits": "Bounded1x X11 native scroll evidence only. No complete S3, input/scale/backend matrix, latency, private-resource, hidden-control or independent-negative acceptance. Prior failed trials remain preserved. Two input-method changes were combined; cause of prior missing drag events remains unproven. No runtime, dependency/license, prototype, budget or sequencing change; resize remains nonblocking."
+      },
+      "s3_dialog_dpi_coordinates_progress": {
+        "status": "production coordinate correction and bounded scale evidence; full acceptance open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
       }
     },
     {
@@ -6826,7 +6845,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/pane-header-clipping/result.json",
         "docs/reviews/gui-performance/implementation/S3/shell-content-clipping/result.json",
-        "docs/reviews/gui-performance/implementation/S3/shell-identity-clipping/result.json"
+        "docs/reviews/gui-performance/implementation/S3/shell-identity-clipping/result.json",
+        "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
       ],
       "s3_shell_content_clipping_progress": {
         "status": "bounded S3 Main placeholder/status shared clipping adoption; full qualification open",
@@ -6878,6 +6898,10 @@
         "status": "shared clipping visits only appended text/hit ranges",
         "evidence": "docs/reviews/gui-performance/implementation/S3/clip-suffix/result.json",
         "limits": "Bounded shared-owner optimization; no newly qualified adapter or full HP22/S3 acceptance. Native capture freshness, per-adapter input/negative/resource qualification remain open. No measured frame-time claim, dependency/license, prototype, budget, sequencing or nonblocking resize change."
+      },
+      "s3_dialog_dpi_coordinates_progress": {
+        "status": "production coordinate correction and bounded scale evidence; full acceptance open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json"
       }
     },
     {
@@ -27490,5 +27514,20 @@
     "preserved": "Dialog accessibility refresh and existing action trace; owned dialog surface invalidation through existing App dispatch. Open/close and actual preference/project mutations retain dependent invalidation and canonical writers. No layout/style change.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-local-refresh/result.json",
     "limits": "Native Runtime fixture proves selected local pointer/choice actions retain populated Main preparation and close invalidates it. It does not exercise OS keyboard delivery, all actions, actual dialog presentation, zero unrelated submissions, pixel parity or full HP12/SH-01/S3 acceptance. No numeric speedup, dependency/license, prototype, sequencing, resource-budget or nonblocking resize change."
+  },
+  "s3_dialog_dpi_coordinates_work": {
+    "status": "shared logical dialog composition with one physical paint/hit transform and inverse native scroll input",
+    "production_consumers": [
+      "GLOBAL and PROJECT Preferences chrome/rows/control/text/hit composition",
+      "NEW form/control/text/hit composition",
+      "GLOBAL/PROJECT native wheel, thumb press and drag adapters"
+    ],
+    "retired_paths": [
+      "Scaling only dialog font sizes while leaving logical control metrics in a physical ShellLayout",
+      "Using physical pointer/wheel deltas directly with dialog logical scroll geometry"
+    ],
+    "preserved": "Existing 1x visual grammar and spacing, shared retained control meshes, frame/font finalization, clipping, focus and setting/project mutation authority. DPI remains in mesh identity; logical dimensions plus DPI determine physical contour dimensions.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
+    "limits": "S3 remains open. Native functional trials use X11/Xwayland and visual-scale override, not real monitor scale transitions. Desktop clamps requested window extents; record actual geometry. Four Preferences cases pass bounded drag/boundary/reversal checks. GLOBAL2x receives duplicate wheel events and reversal presents twice, not one. No full scheduled-input, exact offset, native pixel, keyboard, backend, resource or negative-control qualification. NEW2x footer clipped at constrained height: dat-new-project-hidpi-footer-vmm stays open. No dependency/license/prototype/sequencing/resize-budget change."
   }
 }

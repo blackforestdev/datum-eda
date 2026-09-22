@@ -49,6 +49,8 @@ pub(super) fn render_new_project_dialog(
     if !dialog.open || !native_window {
         return;
     }
+    let layout = layout.clone().scale_by(1.0 / scale);
+    let starts = (quads.len(), text.len(), hits.len());
     let mut painter = ControlPainter::new(quads, controls, scale);
     let quads = &mut painter;
     let window = RectPx {
@@ -374,6 +376,9 @@ pub(super) fn render_new_project_dialog(
         target: HitTarget::NewProjectCreate,
         rect: create,
     });
+    crate::global_preferences_dialog::dialog_coordinates::scale_output(
+        quads, text, hits, starts, scale,
+    );
 }
 
 #[allow(clippy::too_many_arguments)]

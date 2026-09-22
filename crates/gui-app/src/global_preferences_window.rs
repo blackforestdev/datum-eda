@@ -220,7 +220,7 @@ impl GlobalPreferencesWindowSurface {
     ) {
         self.cursor_position = position;
         if let Some((_, y)) = position
-            && self.scroll.drag(y)
+            && self.scroll.drag(y / self.scale_factor)
         {
             self.invalidate();
             frames.invalidate(&self.window);
@@ -239,7 +239,9 @@ impl GlobalPreferencesWindowSurface {
         let Some((x, y)) = self.cursor_position else {
             return false;
         };
-        let outcome = self.scroll.press(x, y);
+        let outcome = self
+            .scroll
+            .press(x / self.scale_factor, y / self.scale_factor);
         self.scrollbar_pressed = outcome.consumed;
         if outcome.changed {
             self.invalidate();
@@ -636,6 +638,7 @@ fn scroll_wheel(
     let Some((x, y)) = cursor else {
         return false;
     };
+    let (x, y) = (x / scale, y / scale);
     let viewport = scroll.viewport;
     if x < viewport.x
         || x > viewport.x + viewport.width
@@ -645,8 +648,8 @@ fn scroll_wheel(
         return false;
     }
     let pixels = match delta {
-        MouseScrollDelta::LineDelta(_, y) => y * 40.0 * scale,
-        MouseScrollDelta::PixelDelta(position) => position.y as f32,
+        MouseScrollDelta::LineDelta(_, y) => y * 40.0,
+        MouseScrollDelta::PixelDelta(position) => position.y as f32 / scale,
     };
     scroll.wheel(pixels)
 }
@@ -682,39 +685,61 @@ mod tests {
 
     #[test]
     fn native_wheel_preserves_fractional_pixels_and_pane_locality() {
-        let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
-        scroll.layout(
-            datum_gui_viewport::ScreenRectPx {
-                x: 210.0,
-                y: 100.0,
-                width: 750.0,
-                height: 440.0,
-            },
-            800.0,
-        );
-        let tiny = MouseScrollDelta::PixelDelta(winit::dpi::PhysicalPosition::new(0.0, -0.25));
-        for _ in 0..100 {
-            assert!(scroll_wheel(&mut scroll, Some((400.0, 200.0)), 1.5, tiny));
+        for scale in [1.0, 1.5, 2.0] {
+            let mut scroll = datum_gui_viewport::scroll::ScrollViewport::default();
+            scroll.layout(
+                datum_gui_viewport::ScreenRectPx {
+                    x: 210.0,
+                    y: 100.0,
+                    width: 750.0,
+                    height: 440.0,
+                },
+                800.0,
+            );
+            let tiny = MouseScrollDelta::PixelDelta(winit::dpi::PhysicalPosition::new(0.0, -0.25));
+            for _ in 0..100 {
+                assert!(scroll_wheel(
+                    &mut scroll,
+                    Some((400.0 * scale, 200.0 * scale)),
+                    scale,
+                    tiny
+                ));
+            }
+            assert!((scroll.offset() - 25.0 / scale).abs() < 0.001);
+            assert!(!scroll_wheel(
+                &mut scroll,
+                Some((50.0 * scale, 200.0 * scale)),
+                scale,
+                tiny
+            ));
+            assert!(!scroll_wheel(
+                &mut scroll,
+                Some((400.0 * scale, 50.0 * scale)),
+                scale,
+                tiny
+            ));
+            assert!(!scroll_wheel(&mut scroll, None, scale, tiny));
+            assert!(scroll_wheel(
+                &mut scroll,
+                Some((400.0 * scale, 200.0 * scale)),
+                scale,
+                MouseScrollDelta::LineDelta(0.0, -0.5)
+            ));
+            assert!((scroll.offset() - (25.0 / scale + 20.0)).abs() < 0.001);
+            scroll.set_offset(scroll.maximum());
+            assert!(!scroll_wheel(
+                &mut scroll,
+                Some((400.0 * scale, 200.0 * scale)),
+                scale,
+                tiny
+            ));
+            assert!(scroll_wheel(
+                &mut scroll,
+                Some((400.0 * scale, 200.0 * scale)),
+                scale,
+                MouseScrollDelta::LineDelta(0.0, 0.5)
+            ));
         }
-        assert_eq!(scroll.offset(), 25.0);
-        assert!(!scroll_wheel(&mut scroll, Some((50.0, 200.0)), 1.5, tiny));
-        assert!(!scroll_wheel(&mut scroll, Some((400.0, 50.0)), 1.5, tiny));
-        assert!(!scroll_wheel(&mut scroll, None, 1.5, tiny));
-        assert!(scroll_wheel(
-            &mut scroll,
-            Some((400.0, 200.0)),
-            1.5,
-            MouseScrollDelta::LineDelta(0.0, -0.5)
-        ));
-        assert_eq!(scroll.offset(), 55.0);
-        scroll.set_offset(scroll.maximum());
-        assert!(!scroll_wheel(&mut scroll, Some((400.0, 200.0)), 1.5, tiny));
-        assert!(scroll_wheel(
-            &mut scroll,
-            Some((400.0, 200.0)),
-            1.5,
-            MouseScrollDelta::LineDelta(0.0, 0.5)
-        ));
     }
 
     #[test]

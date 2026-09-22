@@ -1,0 +1,45 @@
+{
+  "base_commit": "fdaec707700511f4fc59ba6294f4847d7a2194be",
+  "production": {
+    "status": "shared logical dialog composition with one physical paint/hit transform and inverse native scroll input",
+    "production_consumers": [
+      "GLOBAL and PROJECT Preferences chrome/rows/control/text/hit composition",
+      "NEW form/control/text/hit composition",
+      "GLOBAL/PROJECT native wheel, thumb press and drag adapters"
+    ],
+    "retired_paths": [
+      "Scaling only dialog font sizes while leaving logical control metrics in a physical ShellLayout",
+      "Using physical pointer/wheel deltas directly with dialog logical scroll geometry"
+    ],
+    "preserved": "Existing 1x visual grammar and spacing, shared retained control meshes, frame/font finalization, clipping, focus and setting/project mutation authority. DPI remains in mesh identity; logical dimensions plus DPI determine physical contour dimensions.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
+    "limits": "S3 remains open. Native functional trials use X11/Xwayland and visual-scale override, not real monitor scale transitions. Desktop clamps requested window extents; record actual geometry. Four Preferences cases pass bounded drag/boundary/reversal checks. GLOBAL2x receives duplicate wheel events and reversal presents twice, not one. No full scheduled-input, exact offset, native pixel, keyboard, backend, resource or negative-control qualification. NEW2x footer clipped at constrained height: dat-new-project-hidpi-footer-vmm stays open. No dependency/license/prototype/sequencing/resize-budget change."
+  },
+  "proof": {
+    "renderer_cpu": "213 passed; 0 failed",
+    "gpu": "14 serial Intel P630 Vulkan tests passed",
+    "app": "378 passed; 12 ignored; 0 failed",
+    "clippy": "renderer/app lib, binary and tests -D warnings passed",
+    "release": "fresh offline optimized application build passed",
+    "native": "GLOBAL/PROJECT at1.5x and2x: each thumb press/release and boundary wheel zero presentations, drag one; reversal one except GLOBAL2x two. Native log records two +1 wheel events for that latter reversal. Both hosts at both scales passed recipe predicates. No exact one-event/one-frame claim.",
+    "visual": "Inspected initial malformed1.5x Project capture, corrected1.5x Project capture, corrected2x Global bottom, and2x New form. Header/control proportions corrected; NEW constrained-height footer limitation retained.",
+    "governance": "Traceability28 routes, source health2187 files, spec governance313 specs, project state59 items, parity20 inventories and dependency authority passed."
+  },
+  "failed_attempts": [
+    "Initial1.5x recipe on baseline times out: scaled pointer assumptions do not match old unscaled hit layout; taller Project content also fits and has no thumb. Capture reveals font/geometry mismatch. Candidate recipe requests960x720 logical extents; actual WM-limited dimensions recorded.",
+    "First Rust compile fails private helper visibility; corrected within owning module. First CPU run212pass/1fail because old scroll assertion compared logical offset directly with physical displacement; test now asserts scaled physical displacement and physical clip bounds.",
+    "First GPU command omitted existing visual feature and ran0tests; not counted. Corrected command runs14."
+  ],
+  "visual_authority": "Existing rendered preferences-window.html and start-page-study.html guidance retained (S3/control-label-layout/preferences-prototype.png and S3/new-project-summary-clipping/prototype.png). DPI transform preserves 1x proportions; no prototype edits or new visual grammar.",
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_window.rs": "9081b85abc2e7468d3567843dd58b05a21adacab95c59d8eb403c3784ce44a69",
+    "crates/gui-render/src/global_preferences_dialog.rs": "deb6b1bac584e5b658efbf38ca4f6f3847cc91d2cc2a190ae835969452aec1f7",
+    "crates/gui-render/src/new_project_dialog.rs": "04950c2b27dd23b8abd085f8c6d9b1921f116451a754f655a8227f840104a5cb",
+    "crates/gui-render/src/render/input_text.rs": "2060777a7f42847acc8a08f46f673ecdc868b37eee2932ed6a28848f44a987cf",
+    "crates/gui-render/src/render/layout.rs": "1229c94965bc42b5f23041bf01e43e21ab048ded6d38b1cade117e18a4e66a38",
+    "crates/gui-render/src/render/preferences_scene.rs": "b4ccf65e36274bd740b47f70d2a8733d5e6f6e406db1152ba8cb2bd23c91d05c",
+    "crates/gui-render/src/render/dialog_coordinates.rs": "109dc61c81c15b5c31e71592a7a74084eb45cd7a241d8fe9f13ddb9e8976c03b"
+  },
+  "release_binary_sha256": "87439af66a5d1fa8e061eaf2371a21dd764c8c89d21c40b56e89f6302ab92ad6",
+  "limits": "S3 remains open. Native functional trials use X11/Xwayland and visual-scale override, not real monitor scale transitions. Desktop clamps requested window extents; record actual geometry. Four Preferences cases pass bounded drag/boundary/reversal checks. GLOBAL2x receives duplicate wheel events and reversal presents twice, not one. No full scheduled-input, exact offset, native pixel, keyboard, backend, resource or negative-control qualification. NEW2x footer clipped at constrained height: dat-new-project-hidpi-footer-vmm stays open. No dependency/license/prototype/sequencing/resize-budget change."
+}
