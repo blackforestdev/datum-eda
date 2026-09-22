@@ -1,0 +1,315 @@
+{
+  "display": ":1",
+  "wayland_display": "wayland-0",
+  "topology": "Owner-confirmed idle desktop X11/Xwayland; native adapter functional trial",
+  "binary_sha256": "a161b84732d0982d25108accc112268abfec0b0fc52a8ac03b145a5748bed88d",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-global-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "6291461"
+          ],
+          "monotonic": 778966.929746548,
+          "wall_time": 1790042116.7994192
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "50",
+            "107",
+            "click",
+            "1"
+          ],
+          "monotonic": 778966.995688987,
+          "wall_time": 1790042116.8653593
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "994",
+            "130"
+          ],
+          "monotonic": 778967.521373824,
+          "wall_time": 1790042117.3910441
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "994",
+            "130",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 778967.964267405,
+          "wall_time": 1790042117.8339365
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "994",
+            "738"
+          ],
+          "monotonic": 778968.223279722,
+          "wall_time": 1790042118.09295
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "994",
+            "738",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 778968.566764301,
+          "wall_time": 1790042118.4364345
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "500",
+            "300"
+          ],
+          "monotonic": 778968.942449358,
+          "wall_time": 1790042118.8121183
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "500",
+            "300",
+            "click",
+            "5"
+          ],
+          "monotonic": 778969.147393015,
+          "wall_time": 1790042119.017063
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "500",
+            "300",
+            "click",
+            "4"
+          ],
+          "monotonic": 778969.513913382,
+          "wall_time": 1790042119.3835833
+        }
+      ],
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_frames": 1,
+      "boundary_frames": 0,
+      "reverse_frames": 1,
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification",
+      "pixel_review": {
+        "whole_image_return_exact": true,
+        "header_search_unchanged": true,
+        "navigation_unchanged": true,
+        "scroll_difference_bounds": [
+          210,
+          100,
+          998,
+          750
+        ],
+        "visual_inspection": "Before/bottom/reverse inspected: bottom reveals full final Angle precision row; reverse restores first row and initial scrollbar placement."
+      },
+      "release_frames": 0,
+      "event_review": "Native log confirms dialog WindowId(6291461), thumb press/release, drag coordinates and wheel LineDelta(0,-1) then LineDelta(0,1). Two logged wheel events per scripted click; this is not a one-event delivery assertion. No focus loss during tested gesture."
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-project-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "6291461"
+          ],
+          "monotonic": 778972.800541882,
+          "wall_time": 1790042122.6702118
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "994",
+            "130"
+          ],
+          "monotonic": 778973.276619643,
+          "wall_time": 1790042123.1462896
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "994",
+            "130",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 778973.651538781,
+          "wall_time": 1790042123.5212083
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "994",
+            "738"
+          ],
+          "monotonic": 778973.911127237,
+          "wall_time": 1790042123.7807972
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "994",
+            "738",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 778974.252771836,
+          "wall_time": 1790042124.122442
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "500",
+            "300"
+          ],
+          "monotonic": 778974.636088398,
+          "wall_time": 1790042124.5057573
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "500",
+            "300",
+            "click",
+            "5"
+          ],
+          "monotonic": 778974.840851788,
+          "wall_time": 1790042124.710522
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "--window",
+            "6291461",
+            "500",
+            "300",
+            "click",
+            "4"
+          ],
+          "monotonic": 778975.207372027,
+          "wall_time": 1790042125.077042
+        }
+      ],
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_frames": 1,
+      "boundary_frames": 0,
+      "reverse_frames": 1,
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification",
+      "pixel_review": {
+        "whole_image_return_exact": true,
+        "header_search_unchanged": true,
+        "navigation_unchanged": true,
+        "scroll_difference_bounds": [
+          210,
+          100,
+          998,
+          750
+        ],
+        "visual_inspection": "Before/bottom/reverse inspected: bottom reveals full final Angle precision row; reverse restores first row and initial scrollbar placement."
+      },
+      "release_frames": 0,
+      "event_review": "Native log confirms dialog WindowId(6291461), thumb press/release, drag coordinates and wheel LineDelta(0,-1) then LineDelta(0,1). Two logged wheel events per scripted click; this is not a one-event delivery assertion. No focus loss during tested gesture."
+    }
+  ],
+  "source_commit": "b64af50d",
+  "scope": "Bounded existing GLOBAL/PROJECT Units native scroll adapters; X11/Xwayland, 1000x750 actual client extent, requested visual scale 1. GPU measurements disabled; verbose event/lifecycle logging enabled.",
+  "limits": "No full HP21/HP22 or S3 acceptance. No page-track, hidden-control click-through, capture-loss, scale/backend matrix, latency, resource, teardown or independent negative-control qualification. Earlier failed/aborted attempts remain unchanged. This pass does not establish the cause of prior unexplained input. S3 proposal 1bc02aaf remains unapproved.",
+  "artifact_sha256": {
+    "GLOBAL/before.png": "a4f134782fa0e1eee2731cebd1f5bb5a474a0f498734d660240ab3b025ca1719",
+    "GLOBAL/bottom.png": "ddaa1c9e17e1040857f3aad35acf1162e880ed34fcb9271826e224b75a31e143",
+    "GLOBAL/native.log.gz": "8baaafb382a67e3d6b30e0420b7b1814464c2261fd6e939333bc44b2a558c76f",
+    "GLOBAL/reverse.png": "a4f134782fa0e1eee2731cebd1f5bb5a474a0f498734d660240ab3b025ca1719",
+    "GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "PROJECT/before.png": "ab0a01f212e2ab6343ee3038d409d0c640bd4e2bc9298fa13ef38da54f0997a2",
+    "PROJECT/bottom.png": "1cbb1a7e4f1604009c9284af9466239e24e43b3eab3c7f890251ef651f72f079",
+    "PROJECT/native.log.gz": "eebdca3c36f5af8536107ee87958823a550366a806e2563385973141941035cf",
+    "PROJECT/reverse.png": "ab0a01f212e2ab6343ee3038d409d0c640bd4e2bc9298fa13ef38da54f0997a2",
+    "PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "driver.txt": "d0e7458a232c85238cc3ee8b9e40eb9c0bb761814301f702385d0e2973b278ff"
+  }
+}

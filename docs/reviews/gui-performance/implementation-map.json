@@ -6496,7 +6496,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared thumb/page capture separates consumption from damage and actual Preferences dispatch consumes scrollbar input. Component proof exists; recent GLOBAL/PROJECT native recipes failed/aborted and establish no complete click-through/grab/page pass.",
+        "status": "Partial: shared thumb/page capture separates consumption from damage and actual Preferences dispatch consumes scrollbar input. Component proof exists; recent GLOBAL/PROJECT native recipes failed/aborted and establish no complete click-through/grab/page pass. Subsequent b64af50d GLOBAL/PROJECT Units native drag/boundary/reversal trial passes with delivered target/direction and exact return pixels; this bounded pass does not complete the row or supersede earlier failed attempts.",
         "id": "proof_hp21_01",
         "positive": "Thumb press/drag at offset and track click",
         "negative_control": "Use painted-only scrollbar or lose grab displacement",
@@ -6535,7 +6535,21 @@
       "s3_scroll_press_progress": {
         "status": "partial; changed-only default adapter damage implemented; native counters unqualified",
         "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-press-damage/result.json"
-      }
+      },
+      "s3_native_preferences_scroll_progress": {
+        "status": "Bounded native GLOBAL/PROJECT Units scroll pass after focus-key guard; complete adapter qualification remains open",
+        "production_consumers": [
+          "GLOBAL Preferences Units",
+          "PROJECT Preferences Units"
+        ],
+        "retired_path": "No new production migration in this evidence follow-up; verifies existing shared ScrollViewport capture, damage and clipped presentation paths.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json",
+        "proof": "Both hosts: thumb press/release and boundary wheel cause zero presentations; drag and reverse each cause one. Event target/direction confirmed. Inspected screenshots and RGB comparisons show unchanged header/search/navigation and byte-exact RGB return to initial whole-window pixels.",
+        "limits": "No full HP21/HP22 or S3 acceptance. No page-track, hidden-control click-through, capture-loss, scale/backend matrix, latency, resource, teardown or independent negative-control qualification. Earlier failed/aborted attempts remain unchanged. This pass does not establish the cause of prior unexplained input. S3 proposal 1bc02aaf remains unapproved."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json"
+      ]
     },
     {
       "id": "HP21-02",
@@ -6742,7 +6756,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial: hardware fractional Preferences scroll test checks pinned pixels and exact return to top; shared clipped hits and reserved scrollbar width are implemented. Complete per-consumer native hidden-control/pinned-chrome qualification remains open.",
+        "status": "Partial: hardware fractional Preferences scroll test checks pinned pixels and exact return to top; shared clipped hits and reserved scrollbar width are implemented. Complete per-consumer native hidden-control/pinned-chrome qualification remains open. Subsequent b64af50d GLOBAL/PROJECT Units native drag/boundary/reversal trial passes with delivered target/direction and exact return pixels; this bounded pass does not complete the row or supersede earlier failed attempts.",
         "id": "proof_hp22_02",
         "positive": "Pinned search/chrome and scrollbar near text then return top",
         "negative_control": "Scroll pinned header or let hidden region hit",
@@ -6816,7 +6830,21 @@
       "s3_native_dialog_surface_progress": {
         "status": "bounded shared native Preferences root clipping; row remains unqualified",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-surface-clipping/result.json"
-      }
+      },
+      "s3_native_preferences_scroll_progress": {
+        "status": "Bounded native GLOBAL/PROJECT Units scroll pass after focus-key guard; complete adapter qualification remains open",
+        "production_consumers": [
+          "GLOBAL Preferences Units",
+          "PROJECT Preferences Units"
+        ],
+        "retired_path": "No new production migration in this evidence follow-up; verifies existing shared ScrollViewport capture, damage and clipped presentation paths.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json",
+        "proof": "Both hosts: thumb press/release and boundary wheel cause zero presentations; drag and reverse each cause one. Event target/direction confirmed. Inspected screenshots and RGB comparisons show unchanged header/search/navigation and byte-exact RGB return to initial whole-window pixels.",
+        "limits": "No full HP21/HP22 or S3 acceptance. No page-track, hidden-control click-through, capture-loss, scale/backend matrix, latency, resource, teardown or independent negative-control qualification. Earlier failed/aborted attempts remain unchanged. This pass does not establish the cause of prior unexplained input. S3 proposal 1bc02aaf remains unapproved."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json"
+      ]
     },
     {
       "id": "HP23-01",
@@ -26952,7 +26980,8 @@
       "evidence": "docs/reviews/gui-performance/implementation/S3/resumed-native-input/result.json",
       "limits": "No S3 advancement or HP11/HP21/HP22 pass. No new dependency, license, production code, numerical budget or sequencing change. S3 proposal1bc02aaf remains unapproved.",
       "input_observation": "The source of additional input is unknown. These logs do not establish owner desktop use. Input delivery to the intended host is unreliable in these attempts; no kernel/compositor investigation performed. Further focus-taking retries stopped for this turn. Existing owner authorization is not revoked."
-    }
+    },
+    "latest_bounded_scroll_evidence": "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json"
   },
   "s3_console_ancestor_clipping_work": {
     "status": "bounded S3 CONSOLE ancestor clipping adoption; full qualification open",
@@ -27062,5 +27091,16 @@
     "retired_path": "Treating winit focus-generated held-key presses as fresh command/text activation",
     "evidence": "docs/reviews/gui-performance/implementation/S3/focus-key-replay/result.json",
     "limits": "No retrospective attribution of old unscripted keys/pointer events, no owner desktop-use conclusion, no full native scroll/focus/backend/scale or S3 acceptance. MAIN shares the guard by call path but was not a native Escape case. No independent guard-removal negative yet. No dependency/license/prototype/budget/resize-scope change;1bc02aaf remains unapproved."
+  },
+  "s3_native_preferences_scroll_work": {
+    "status": "Bounded native GLOBAL/PROJECT Units scroll pass after focus-key guard; complete adapter qualification remains open",
+    "production_consumers": [
+      "GLOBAL Preferences Units",
+      "PROJECT Preferences Units"
+    ],
+    "retired_path": "No new production migration in this evidence follow-up; verifies existing shared ScrollViewport capture, damage and clipped presentation paths.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json",
+    "proof": "Both hosts: thumb press/release and boundary wheel cause zero presentations; drag and reverse each cause one. Event target/direction confirmed. Inspected screenshots and RGB comparisons show unchanged header/search/navigation and byte-exact RGB return to initial whole-window pixels.",
+    "limits": "No full HP21/HP22 or S3 acceptance. No page-track, hidden-control click-through, capture-loss, scale/backend matrix, latency, resource, teardown or independent negative-control qualification. Earlier failed/aborted attempts remain unchanged. This pass does not establish the cause of prior unexplained input. S3 proposal 1bc02aaf remains unapproved."
   }
 }
