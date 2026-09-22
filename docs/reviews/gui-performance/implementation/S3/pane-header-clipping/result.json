@@ -1,0 +1,26 @@
+{
+  "base_commit": "8d0023ed",
+  "production": {
+    "status": "bounded S3 default Main pane header shared clipping adoption; full qualification open",
+    "production_consumers": [
+      "MAIN Board/Schematic/Revision pane headers via render_viewport_panes -> render_pane_header"
+    ],
+    "retired_paths": [
+      "Unrestricted pane glyph, border and focus-dot paint outside narrow header bounds",
+      "Header tool text lacking shared ancestor intersection"
+    ],
+    "preserved": "Existing title content-right clipping and tool culling retain focus-dot spacing. Pane-wide focus frame is emitted after header clipping. Existing retained control owner and normal geometry remain.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/pane-header-clipping/result.json",
+    "limits": "No native narrow-pane, exact legacy pixel, isolated clip-removal negative, per-adapter input/focus or full HP22/S3 qualification. Header emits no HitRegion; layout-derived input routing is unchanged. Pending S3 proposal1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
+  },
+  "proof": {
+    "renderer_tests": 204,
+    "gpu_regression_tests": 13,
+    "gpu_backend": "Intel HD Graphics P630 Vulkan; serial",
+    "clippy": "passed with -D warnings",
+    "adapter_regression": "Actual render_pane_header for focused/unfocused widths1/12/28/100/800 at fractional origin. All header geometry/text bounded, pane focus frame preserved below header. Existing actual pane cache reuse test still passes.",
+    "failed_attempts": "Two test-only compiler errors from incorrect TextRun field names; retained initial/second logs. Correct field is clip_bounds."
+  },
+  "source_sha256": "80249e1ecd49ff97c26990e94aafb0733e8dea27275fb4fb59a225ca46e305b8",
+  "limits": "No native narrow-pane, exact legacy pixel, isolated clip-removal negative, per-adapter input/focus or full HP22/S3 qualification. Header emits no HitRegion; layout-derived input routing is unchanged. Pending S3 proposal1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
+}

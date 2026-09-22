@@ -187,6 +187,8 @@ fn render_pane_header(
     panel_quads: &mut ControlPainter<'_>,
     text_runs: &mut Vec<TextRun>,
 ) {
+    let quad_start = panel_quads.len();
+    let text_start = text_runs.len();
     let header = pane.header;
     // Focused pane: lightened header background (~#16181f). Unfocused: a darker,
     // recessed fill (BG_BASE) so it reads as the passive document.
@@ -335,6 +337,19 @@ fn render_pane_header(
             height: 7.0,
         };
         panel_quads.convex_ellipse_fill(dot, TEXT_ACCENT, 24);
+    }
+    // All header paint shares one ancestor bound, including glyphs and the
+    // focus indicator. The pane-wide focus frame remains outside this clip.
+    crate::hit_clipping::clip_content(
+        panel_quads,
+        text_runs,
+        &mut Vec::new(),
+        quad_start,
+        text_start,
+        0,
+        header,
+    );
+    if focused {
         let pane_frame = inset_rect(pane.frame, 1.0, 1.0, 1.0, 1.0);
         push_rect_border(panel_quads, pane_frame, TEXT_ACCENT, 1.5);
     }
@@ -344,6 +359,61 @@ fn render_pane_header(
 mod tests {
     use super::*;
     use crate::global_preferences_primitives::ControlMeshCache;
+
+    #[test]
+    fn constrained_pane_headers_clip_all_paint_without_clipping_the_focus_frame() {
+        for width in [1.0, 12.0, 28.0, 100.0, 800.0] {
+            for focused in [false, true] {
+                let header = RectPx {
+                    x: 30.25,
+                    y: 40.5,
+                    width,
+                    height: 31.0,
+                };
+                let pane = PaneRect {
+                    header,
+                    frame: RectPx {
+                        height: 200.0,
+                        ..header
+                    },
+                    scene: header,
+                };
+                let mut quads = Vec::new();
+                let mut text = Vec::new();
+                let mut cache = ControlMeshCache::default();
+                render_pane_header(
+                    &pane,
+                    "Board · Layout",
+                    &["S", "M", "R", "V", "Z"],
+                    focused,
+                    &mut ControlPainter::new(&mut quads, &mut cache, 1.0),
+                    &mut text,
+                );
+                // The final four border quads belong to the whole pane.
+                let header_end = quads.len() - if focused { 4 } else { 0 };
+                for quad in &quads[..header_end] {
+                    for &(x, y) in &quad.points {
+                        assert!(x >= header.x && x <= header.x + header.width);
+                        assert!(y >= header.y && y <= header.y + header.height);
+                    }
+                }
+                for run in &text {
+                    let clip = run
+                        .clip_bounds
+                        .expect("header text must share ancestor clip");
+                    assert!(clip.x >= header.x && clip.x + clip.width <= header.x + header.width);
+                    assert!(clip.y >= header.y && clip.y + clip.height <= header.y + header.height);
+                }
+                if focused {
+                    assert!(quads[header_end..].iter().any(|quad| {
+                        quad.points
+                            .iter()
+                            .any(|&(_, y)| y > header.y + header.height)
+                    }));
+                }
+            }
+        }
+    }
 
     #[test]
     fn production_pane_headers_reuse_the_shared_focus_indicator() {
