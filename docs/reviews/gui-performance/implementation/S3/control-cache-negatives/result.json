@@ -1,0 +1,24 @@
+{
+  "candidate_base": "ee2c552f885fda984de35e662c2dd90faf495f01",
+  "status": "Incomplete DPI key and indefinite entry retention negatives detected; both byte-restored tests pass",
+  "requirements": [
+    "HP16-02",
+    "HP16-03"
+  ],
+  "observations": {
+    "incomplete-key": "Replace all three painter DPI key values with1x; existing rounded control geometry/DPI miss test fails5 versus6 builds. Restore:1 pass,214 filtered.",
+    "pinned-entries": "Disable eviction loop; existing working-set test fails257 versus256 entries. Restore:1 pass,214 filtered, including byte eviction and oversized bypass.",
+    "source": "Byte-restored control_mesh.rs matches active checkout; no active source mutation."
+  },
+  "limits": "Direct existing shared CPU control cache/painter tests, not actual native consumer dispatch or GPU pixels. DPI negative detects5 builds instead of6; it does not establish a visible contour defect. Disabled eviction detects257 entries instead of256. Restored test also exercises LRU touch, oversized bypass and CPU payload eviction. Full authored concave/holed separation, native/profile coverage and HP16 acceptance remain open. Complete CPU metadata/GPU/in-flight/aggregate accounting remains S4 implementation/S5 qualification under owner clarification. No active Rust/dependency/license/prototype/budget/resize change.",
+  "artifact_sha256": {
+    "incomplete-key-negative.log.gz": "ec7416c5cf1baa9042f3ef944ac07713ee27a0a0370e84d74d450b81b51b3a0f",
+    "incomplete-key-restored.log.gz": "24868b65fe20f323e773cf7466a5a46e7e45a70266d7f92113a44a6b628df78a",
+    "incomplete-key.patch": "f7d3e72b73b01be01ed36076c42b246839ab493b706153ff8c6aeefc90352904",
+    "pinned-entries-negative.log.gz": "06afc04753abb0658157cb060d11f3e257fea30a25798c820a61ac43b48798b9",
+    "pinned-entries-restored.log.gz": "35176304a86036abe2463f6b37f9cf8566e1780b089a0ef06d2f7d6540b36111",
+    "pinned-entries.patch": "388d8d48a3e17ba2533a2040ca255d481f50bcf144cd5ff5a4c73ff6d8a53959",
+    "run-result.json": "6ef9b7c0592babb66e87590a1de9a0723559ffe33ce9847db5ce5382d77f0934",
+    "runner.py": "ea20858cea85d9ade0cda5dbd6874792e3673c58be93495a38ca7ca33218141f"
+  }
+}
