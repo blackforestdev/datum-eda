@@ -230,9 +230,9 @@ pub(super) fn draw_choice_control(
         push_dashed_rect_border(quads, rect, design_tokens::chrome::BORDER_STRONG);
     }
     let visible_label = if available {
-        label.to_owned()
+        std::borrow::Cow::Borrowed(label)
     } else {
-        format!("{label} · unavailable")
+        std::borrow::Cow::Owned(format!("{label} · unavailable"))
     };
     draw_text_clipped(
         &visible_label,
@@ -310,9 +310,9 @@ pub(super) fn draw_boolean_control(
         16,
     );
     let visible_label = if available {
-        label.to_owned()
+        std::borrow::Cow::Borrowed(label)
     } else {
-        format!("{label} · unavailable")
+        std::borrow::Cow::Owned(format!("{label} · unavailable"))
     };
     draw_text(
         &visible_label,
