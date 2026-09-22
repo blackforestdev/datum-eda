@@ -6785,7 +6785,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/pane-header-clipping/result.json",
-        "docs/reviews/gui-performance/implementation/S3/shell-content-clipping/result.json"
+        "docs/reviews/gui-performance/implementation/S3/shell-content-clipping/result.json",
+        "docs/reviews/gui-performance/implementation/S3/shell-identity-clipping/result.json"
       ],
       "s3_shell_content_clipping_progress": {
         "status": "bounded S3 Main placeholder/status shared clipping adoption; full qualification open",
@@ -6800,6 +6801,19 @@
         "preserved": "Caption centering, status segment placement/content, retained scene selection, and existing input routing. Shared clipping restricts output without a new layout or private clip implementation.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/shell-content-clipping/result.json",
         "limits": "No native narrow-pane/status-bar, exact legacy pixel, isolated negative-control or full HP22/S3 qualification. Status segment overlap inside the strip is unchanged. These paint functions emit no HitRegion; layout-derived input routing remains unchanged. S3 proposal1bc02aaf remains unapproved. No dependency/license/prototype/budget/resize-scope change."
+      },
+      "s3_shell_identity_clipping_progress": {
+        "status": "bounded S3 Main brand/revision and high-contrast notice clipping adoption",
+        "production_consumers": [
+          "MAIN brand/revision identity strip",
+          "MAIN high-contrast status notice"
+        ],
+        "retired_paths": [
+          "Unrestricted brand/revision geometry/text beyond top menu ancestor",
+          "High-contrast status notice without status-strip text bounds"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/shell-identity-clipping/result.json",
+        "limits": "No full MAIN/HP22/S3 adoption, native narrow-window, high-contrast pixel, exact legacy pixel or isolated negative qualification. Existing placement/overlap within each strip is unchanged. No hit-authority, dependency/license, prototype, budget or nonblocking resize-scope change. S3 proposal1bc02aaf remains unapproved."
       }
     },
     {
@@ -27284,5 +27298,19 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-empty-scene/result.json",
     "limits": "No full HP12/HP13/S3, resource caps, native backend/scale matrix or numerical performance acceptance. No new world scene, changes to dialog preparation/hits, device recovery, dependency/license, prototypes, budgets or nonblocking resize scope. Pending S3 proposal1bc02aaf remains unapproved."
+  },
+  "s3_shell_identity_clipping_work": {
+    "status": "bounded S3 Main brand/revision and high-contrast notice clipping adoption",
+    "production_consumers": [
+      "MAIN brand/revision identity strip",
+      "MAIN high-contrast status notice"
+    ],
+    "retired_paths": [
+      "Unrestricted brand/revision geometry/text beyond top menu ancestor",
+      "High-contrast status notice without status-strip text bounds"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/shell-identity-clipping/result.json",
+    "limits": "No full MAIN/HP22/S3 adoption, native narrow-window, high-contrast pixel, exact legacy pixel or isolated negative qualification. Existing placement/overlap within each strip is unchanged. No hit-authority, dependency/license, prototype, budget or nonblocking resize-scope change. S3 proposal1bc02aaf remains unapproved.",
+    "visual_authority_review": "Board-editor .menubar/.brand/.pill and .status reconciled with GUI design spec and deferred status-bar guidance; exact sources and limitations in receipt. PM045 E05 supplies ancestor clipping. No new status contents, overflow navigation or full prototype parity claim."
   }
 }
