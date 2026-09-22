@@ -1,0 +1,133 @@
+{
+  "base_commit": "fb2f2d53a6b236838272a9bcf6f152352de217d6",
+  "production_consumers": [
+    "Global native entry -> dialog wheel routing -> shared VerticalWheel normalization (negative detection)",
+    "Global/Project/New native entries (restored positive cases)"
+  ],
+  "retired_paths": [],
+  "proof": "Isolated first-party source copy matched1845 tracked crate/Cargo inputs to current source; only defect divides physical wheel y by scale squared instead of scale. Same negative binary fails on X11 and Wayland at Global1.5x quarter-pixel input: expected0.16666667, actual0.11111111. Restore copy source, force actual active-source app recompilation and pass both native test invocations (24 accepted host/profile cases). Working source unchanged; releasebcbe537b unchanged.",
+  "limits": "Supplied events through production entry on actual surfaces, not OS delivery. Negative stops at first Global1.5x mismatch on each backend, not independent Project/New negatives or Main/Layers/terminal qualification. Restored test binarybdedf707 passes both backends but is not claimed byte-identical to prior2b79d43b. Compiled source identity and explicit app recompilation recorded. No timing/resource/visual/W-SCROLL or complete HP19/S3 acceptance. No new production migration/retirement, dependency/license/prototype or resize-scope change.",
+  "source_sha256": "db9a3c9fa282386bcca80dfbea27615bb331323a3994ff15826960fba9bab8e5",
+  "compiled_input_digest": "784c299c0b6eb3246f2c983acf559d35a3c963d7e3cb96ef946fe5e82ec0d96c",
+  "compiled_input_count": 1845,
+  "release_binary_sha256": "bcbe537b192d4a7d0ee7213c03ee2f9b51c2b70180d8c693a2c8b4b41a083686",
+  "runs": [
+    {
+      "label": "negative-x11",
+      "backend": "x11",
+      "exit": 101,
+      "command": [
+        "python3",
+        "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "--manifest-path",
+        "/tmp/pm045-pinned-negative-source/Cargo.toml",
+        "-p",
+        "datum-gui-app",
+        "--bin",
+        "datum-gui",
+        "native_dialog_scroll_release_cannot_click_through_to_controls",
+        "--",
+        "--ignored",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "binary_sha256": "ac26f5f0f30ecfa6e6d6912364fd7a22b98cdc8378b116b9ad8a20eff88c7875",
+      "recompiled_app": true
+    },
+    {
+      "label": "negative-wayland",
+      "backend": "wayland",
+      "exit": 101,
+      "command": [
+        "python3",
+        "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "--manifest-path",
+        "/tmp/pm045-pinned-negative-source/Cargo.toml",
+        "-p",
+        "datum-gui-app",
+        "--bin",
+        "datum-gui",
+        "native_dialog_scroll_release_cannot_click_through_to_controls",
+        "--",
+        "--ignored",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "binary_sha256": "ac26f5f0f30ecfa6e6d6912364fd7a22b98cdc8378b116b9ad8a20eff88c7875",
+      "recompiled_app": false
+    },
+    {
+      "label": "restored-x11",
+      "backend": "x11",
+      "exit": 0,
+      "command": [
+        "python3",
+        "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "-p",
+        "datum-gui-app",
+        "--bin",
+        "datum-gui",
+        "native_dialog_scroll_release_cannot_click_through_to_controls",
+        "--",
+        "--ignored",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "binary_sha256": "bdedf707324349faf5bc7ca84f81b73238f8f89e98f9241828e2de80da29c9f0",
+      "recompiled_app": true
+    },
+    {
+      "label": "restored-wayland",
+      "backend": "wayland",
+      "exit": 0,
+      "command": [
+        "python3",
+        "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+        "--workload",
+        "proof",
+        "--",
+        "cargo",
+        "test",
+        "--offline",
+        "-p",
+        "datum-gui-app",
+        "--bin",
+        "datum-gui",
+        "native_dialog_scroll_release_cannot_click_through_to_controls",
+        "--",
+        "--ignored",
+        "--test-threads=1",
+        "--nocapture"
+      ],
+      "binary_sha256": "bdedf707324349faf5bc7ca84f81b73238f8f89e98f9241828e2de80da29c9f0",
+      "recompiled_app": false
+    }
+  ],
+  "artifacts": {
+    "driver.py.gz": "93a7ec3b106f28b71524188d3360e1d60b2a76055579a73d2bd8bd6e198e30fa",
+    "negative-wayland.log.gz": "8a5c5cd7e7276c025dc665997237b2028dbe0355c02ede11c6f6af9ed04bf13b",
+    "negative-x11.log.gz": "936bbd893f3e6339445839f5a330918b93f9974ac9c176eef98cb7e2506358bb",
+    "negative.patch.gz": "3f3257850e196363fa469c3fcac42d1aa878a7b2db239bdd4f97d4248dd8e78f",
+    "restored-wayland.log.gz": "29a3a65c215bad5bc05796d404b9f9e4b22771ecebfa83ae3d273408b4a91045",
+    "restored-x11.log.gz": "1d86071fbada910cb6b3b648920c2208c1e962d38f59a79d9408b56bebbbc984",
+    "runs.json.gz": "a7c29f7ac52157829f69d293436997e2ea3afd46b6f2c689d1917a7f7d4d5f57"
+  }
+}
