@@ -1,0 +1,58 @@
+{
+  "base_commit": "fe6da37fa0ea1214feb5562b7db89b75a9896ba8",
+  "production_consumers": [
+    "Main dock terminal scrollback",
+    "Main Layers sidebar"
+  ],
+  "shared_owner": "datum_gui_viewport::scroll::scrolled_row_offset",
+  "retired_paths": "Both adapters no longer pre-clamp their before-state before checking for damage; compare the shared bounded result with the actual stored offset. Removes redundant shared-bound calculation.",
+  "preserved": "Terminal one row per event; Layers ceil(line magnitude); local boundary no-ops, camera routing and terminal/PTY authority.",
+  "proof": "Both new stale-offset assertions fail against their original production adapters and pass with the fixes. Existing hidden X11 Runtime tests use real board and native renderer at1x. Layers enters through handle_native_wheel; terminal test calls handle_dock_scroll. Final app suite381 passed/16 ignored; workspace Clippy and13 source-health policy tests passed. Fresh release build passed; release artifact compiled, not separately replayed.",
+  "limits": "Tests deliberately set stored offset one row beyond actual current maximum; no OS resize/history replacement sequence or visible stale-frame reproduction is claimed. Nonempty terminal history branch remains conditional. No new physical-wheel/Wayland/scale/native-pixel/negative-control qualification, numerical performance claim or S3 exit. No dependencies, style/prototype or resize qualification change. Historical original adapter failure is bounded regression evidence, not the prescribed HP19 scaling negative.",
+  "drift": "Full attempt stopped at the same eight existing GUI agent/terminal convergence source-pattern failures after workspace Clippy and preceding gates passed. Later gates unrun; dat-terminal-convergence-guard-xke remains open.",
+  "sources": {
+    "crates/gui-app/src/artifact_preview_controls.rs": {
+      "base": "3060f08b944831a82db7e2bfbc1574c044396976b4a85482d080d034e318da16",
+      "candidate": "879533cfbe03587a0d0a0f26a9efda2f2585fe83ae4d8cb2dcb3dcca3d906e1b"
+    },
+    "crates/gui-app/src/runtime_revision_workspace.rs": {
+      "base": "fae9da1bb104c463d09a6ff1512a43a5501433a679e910f5e5e16c2d58c9417c",
+      "candidate": "b1221a4305a02b2c873793326ae543035b66b023f13a4a2ad510ab8eaba030c6"
+    },
+    "crates/gui-app/src/native_layers_scroll_tests.rs": {
+      "base": "3938584e848b2f4e3d3c75e7878e7b2c91f9af2e7ea54e023de8981a1096c998",
+      "candidate": "efabe026b45fa688aba975bed116fe26dfc9b29bd55619113425f96986607436"
+    },
+    "crates/gui-app/src/native_terminal_scroll_tests.rs": {
+      "base": "a4510bc78267d330c00e8614d1588655c694b7e66dbec9c23d32266810c3e858",
+      "candidate": "280df58f1d026670b3ee82dacd6d91d88f30644ff7d196fa26e5ec1625cef219"
+    }
+  },
+  "fixture": {
+    "path": "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d"
+  },
+  "commands": {
+    "native": "DATUM_NATIVE_TEST_BOARD=<fixture> XDG_CONFIG_HOME=/tmp/pm045-<adapter>-clamp-<phase>-config XDG_CACHE_HOME=/tmp/pm045-<adapter>-clamp-<phase>-cache EDA_CLI_BIN=<repo>/target/release/datum-eda python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui <test> -- --ignored --test-threads=1 --nocapture",
+    "tests": [
+      "native_terminal_scrollback_boundaries_do_not_redraw",
+      "native_layers_route_preserves_preparation_camera_and_boundary_damage"
+    ],
+    "app": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui",
+    "clippy": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline --workspace --all-targets -- -D warnings",
+    "drift": "CARGO_NET_OFFLINE=true bash scripts/run_drift_gates.sh",
+    "build": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app --bin datum-gui"
+  },
+  "artifacts": {
+    "terminal-clamp-baseline.log.gz": "c06a96db7a664af3292923c498d06aa01e633dfb731c4bb6613b07bfe81da48c",
+    "terminal-clamp-candidate.log.gz": "7111ea816bcedfd8dc368446d30fd4dcd95183283a9706f3972b8edeb617749a",
+    "layers-clamp-baseline.log.gz": "28e23a7d0232fd456be378b22c4633796de84ee6494436160c56585b3da115b0",
+    "layers-clamp-candidate.log.gz": "5e2cb8a54fb4a5b54510243c4156d0e4749a75adf276af6084633a236b10ad66",
+    "terminal-clamp-policy.log.gz": "652bf5363f881b756445632a4612964db56e5bea8f69cb19309b8eb1c29d3ee5",
+    "terminal-clamp-drift.log.gz": "54774569d3fde5b6c7f4b92cb8d71262094a90f9c71ef40a1a0dba89906ee68f",
+    "row-clamp-app.log.gz": "bf228a3f73f4a61882f853365fe487059caa683683c4e8f5d385733c848817ac",
+    "row-clamp-clippy.log.gz": "e8593221fd5810b75b36dff2a2e5ee1759ba63b6749c9aee7d71673a232c6dd0",
+    "build.log.gz": "c12f523909c38f549fe0a53906637ad774843f98868b42605c6085000479f5a1"
+  },
+  "release_sha256": "ed78a31934f70dca36d799015fbcadb59ec89753199f82dfe5c98a09fe7184e2"
+}

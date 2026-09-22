@@ -69,7 +69,7 @@ impl Runtime {
         let total = self.terminal_sessions.active_render_row_count();
         let visible = usize::from(self.terminal_screen_geometry().rows);
         let offset = &mut self.session.workspace_mut().ui.terminal.scroll_offset;
-        let before = datum_gui_viewport::scroll::scrolled_row_offset(*offset, total, visible, 0.0);
+        let before = *offset;
         // Scrollback counts backward from the live screen, one row per wheel
         // event. Share effective bounds without changing terminal row authority.
         let next = datum_gui_viewport::scroll::scrolled_row_offset(
@@ -79,6 +79,7 @@ impl Runtime {
             -scroll_lines.signum(),
         );
         *offset = next;
+        // Compare with stored state, so extent reconciliation is damage too.
         let changed = next != before;
         if changed {
             self.invalidate_frame();

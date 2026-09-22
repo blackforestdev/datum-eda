@@ -7030,7 +7030,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial: all four hosts consume the shared wheel converter with Main20/dialog40 logical-pixel line policies. Current converter mis-scaling negative fails; byte-restored adapter passes at1/1.5/2x. GLOBAL/PROJECT1.5x native line boundary/reversal evidence remains distinct. Physical OS stream, Main/NEW native dispatch and remaining hit/profile/backend qualification remain open. Both native Preferences settled search/clear trials now pass at override1.5/2x with actual sizes recorded. Native monitor-scale/Wayland/remaining profile and latency qualification remain open. Bounded supplied-event offset oracle now passes all three real native dialog hosts across12 accepted profiles on each X11/Wayland. Per-delta fractional pixel/line accumulation, clamp/reversal and horizontal-only pixels checked; not OS delivery, timed W-SCROLL, intermediate pixels or Main/Layers/terminal qualification. Both native backends now detect isolated double physical scaling at Global1.5x (0.11111111 instead of0.16666667); explicitly recompiled normal app passes both complete native-entry test invocations. Supplied events, first-Global-case negative only; other consumers/OS delivery remain open. Real Main Runtime physical/line equivalence now passes Layers/camera on both backends at1/1.5/2x. Layers double-scaling negative fails1.5x on both; recompiled normal app passes. Direct Runtime calls and published prepared hits, not OS-delivered/final-pixel qualification.",
+        "status": "Partial: all four hosts consume the shared wheel converter with Main20/dialog40 logical-pixel line policies. Current converter mis-scaling negative fails; byte-restored adapter passes at1/1.5/2x. GLOBAL/PROJECT1.5x native line boundary/reversal evidence remains distinct. Physical OS stream, Main/NEW native dispatch and remaining hit/profile/backend qualification remain open. Both native Preferences settled search/clear trials now pass at override1.5/2x with actual sizes recorded. Native monitor-scale/Wayland/remaining profile and latency qualification remain open. Bounded supplied-event offset oracle now passes all three real native dialog hosts across12 accepted profiles on each X11/Wayland. Per-delta fractional pixel/line accumulation, clamp/reversal and horizontal-only pixels checked; not OS delivery, timed W-SCROLL, intermediate pixels or Main/Layers/terminal qualification. Both native backends now detect isolated double physical scaling at Global1.5x (0.11111111 instead of0.16666667); explicitly recompiled normal app passes both complete native-entry test invocations. Supplied events, first-Global-case negative only; other consumers/OS delivery remain open. Real Main Runtime physical/line equivalence now passes Layers/camera on both backends at1/1.5/2x. Layers double-scaling negative fails1.5x on both; recompiled normal app passes. Direct Runtime calls and published prepared hits, not OS-delivered/final-pixel qualification. Stored-offset clamp damage corrected for both discrete adapters; original-path regressions fail and candidate native Runtime tests pass. Deliberately stale state setup, not OS extent-change qualification.",
         "id": "proof_hp19_01",
         "positive": "Physical pixel/line deltas at1x/1.5x/2x and corresponding hits",
         "negative_control": "Double-scale pixels or invert sign",
@@ -7082,7 +7082,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-wheel-offsets/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-wheel-scaling-negative/result.json",
-        "docs/reviews/gui-performance/implementation/S3/main-wheel-units/result.json"
+        "docs/reviews/gui-performance/implementation/S3/main-wheel-units/result.json",
+        "docs/reviews/gui-performance/implementation/S3/row-clamp-damage/result.json"
       ],
       "s3_dialog_dpi_negative": {
         "status": "Prescribed pixel-delta mis-scaling negative detected; byte-restored converter passes",
@@ -7178,6 +7179,15 @@
         "retired_paths": [],
         "proof": "Real Board Runtime test passes X11/Wayland at1/1.5/2x override: Layers quarter/1.25-line inputs preserve ceil-to-row policy and match equivalent physical pixels; corresponding camera increments match physical/line input in both directions. Layers leaves camera unchanged; boundary/outside no-op and prepared-scene-cache assertions retained. Isolated double physical scaling fails Layers1.5x on both backends (one row instead of two). Copy restored; normal root app explicitly recompiled and both1.5x tests pass. Workspace Clippy/source-policy13 and relevant gates pass.",
         "limits": "Direct Runtime::handle_native_wheel calls on real native-host Runtime, not OS delivery or the outer App WindowEvent dispatcher. Layers geometry/hit regions prepared and published for test; no actual Main scrolled-pixel or native final-target capture acceptance. Camera is reset to its initial view between equivalent input comparisons; authored board unchanged. Width/height1280x800 at1x,1918x1050 at1.5/2x; overrides are not OS monitor transitions. Negative stops in Layers before camera comparisons, so no independent camera negative claimed. Terminal/console, timed workloads and full HP10/HP19/S3 remain open. Production source/release unchanged; no dependency/license/prototype/resource/resize change."
+      },
+      "s3_row_clamp_damage": {
+        "production_consumers": [
+          "Main dock terminal scrollback",
+          "Main Layers sidebar"
+        ],
+        "retired_paths": "Both adapters no longer pre-clamp their before-state before checking for damage; compare the shared bounded result with the actual stored offset. Removes redundant shared-bound calculation.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/row-clamp-damage/result.json",
+        "limits": "Tests deliberately set stored offset one row beyond actual current maximum; no OS resize/history replacement sequence or visible stale-frame reproduction is claimed. Nonempty terminal history branch remains conditional. No new physical-wheel/Wayland/scale/native-pixel/negative-control qualification, numerical performance claim or S3 exit. No dependencies, style/prototype or resize qualification change. Historical original adapter failure is bounded regression evidence, not the prescribed HP19 scaling negative."
       }
     },
     {
