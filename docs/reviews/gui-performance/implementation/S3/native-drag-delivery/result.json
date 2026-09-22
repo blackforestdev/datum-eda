@@ -1,0 +1,19 @@
+{
+  "base_commit": "9422e3b7",
+  "production": {
+    "status": "bounded native drag/reversal proof for current shared control-label production implementation",
+    "production_consumers": [
+      "GLOBAL Units Preferences",
+      "PROJECT Units Preferences"
+    ],
+    "retired_paths": "No new runtime path retired in this follow-up; verifies shared control/scroll/clip owners after9422e3b7. Revised trial uses absolute screen coordinates and releases its held test button before teardown.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-drag-delivery/result.json",
+    "proof": "Both hosts: press/release and boundary wheel zero presentations; drag and reverse one each. All six captures RGB identical to committed native-preferences-scroll baselines. Bottom capture inspected; final row visible.",
+    "limits": "Bounded1x X11 native scroll evidence only. No complete S3, input/scale/backend matrix, latency, private-resource, hidden-control or independent-negative acceptance. Prior failed trials remain preserved. Two input-method changes were combined; cause of prior missing drag events remains unproven. No runtime, dependency/license, prototype, budget or sequencing change; resize remains nonblocking."
+  },
+  "method": "Fresh offline release. Existing native driver modified only for absolute screen input, pointer-position observations and button cleanup; initial release clears the preceding failed harness press. Native logs and actions establish delivered input; no raw-event-to-visible latency claim.",
+  "baseline": "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/{GLOBAL,PROJECT}/{before,bottom,reverse}.png",
+  "previous_failed_trial": "docs/reviews/gui-performance/implementation/S3/control-label-layout/native-trial.json",
+  "visual_reference": "Rendered Preferences construction review and prototype screenshot retained in ../control-label-layout; no new visual design or prototype edit.",
+  "limits": "Bounded1x X11 native scroll evidence only. No complete S3, input/scale/backend matrix, latency, private-resource, hidden-control or independent-negative acceptance. Prior failed trials remain preserved. Two input-method changes were combined; cause of prior missing drag events remains unproven. No runtime, dependency/license, prototype, budget or sequencing change; resize remains nonblocking."
+}

@@ -6528,7 +6528,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared thumb/page capture separates consumption from damage and actual Preferences dispatch consumes scrollbar input. Component proof exists; recent GLOBAL/PROJECT native recipes failed/aborted and establish no complete click-through/grab/page pass. Subsequent b64af50d GLOBAL/PROJECT Units native drag/boundary/reversal trial passes with delivered target/direction and exact return pixels; this bounded pass does not complete the row or supersede earlier failed attempts. Subsequent94402793 native page-track down/up passes for GLOBAL/PROJECT Units at1000x750 with exact return pixels and zero release presentations; full click-through/grab/negative matrix remains open.",
+        "status": "Partial: shared capture and changed-only damage have component proof and bounded GLOBAL/PROJECT native thumb/page evidence. Current9422e3b7 drag/reversal trial passes both hosts; earlier failed trials remain preserved. Full adapter/profile/scale/negative qualification remains open.",
         "id": "proof_hp21_01",
         "positive": "Thumb press/drag at offset and track click",
         "negative_control": "Use painted-only scrollbar or lose grab displacement",
@@ -6593,6 +6593,17 @@
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-preferences-track/result.json",
         "proof": "Fresh release94402793. Both directions present once per dialog; each release presents zero. Actual target/coordinates confirmed; six screenshots inspected and exact whole-window RGB return checked.",
         "limits": "Bounded page-track evidence only, not complete HP21/HP22 or S3 qualification. No capture-loss/focus/close, arbitrary grab displacement, hidden-control click-through, independent negative, backend/scale matrix, latency/resource or teardown acceptance. Historical failures remain unchanged. Pending S3 proposal1bc02aaf remains unapproved."
+      },
+      "s3_native_drag_delivery_progress": {
+        "status": "bounded native drag/reversal proof for current shared control-label production implementation",
+        "production_consumers": [
+          "GLOBAL Units Preferences",
+          "PROJECT Units Preferences"
+        ],
+        "retired_paths": "No new runtime path retired in this follow-up; verifies shared control/scroll/clip owners after9422e3b7. Revised trial uses absolute screen coordinates and releases its held test button before teardown.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-drag-delivery/result.json",
+        "proof": "Both hosts: press/release and boundary wheel zero presentations; drag and reverse one each. All six captures RGB identical to committed native-preferences-scroll baselines. Bottom capture inspected; final row visible.",
+        "limits": "Bounded1x X11 native scroll evidence only. No complete S3, input/scale/backend matrix, latency, private-resource, hidden-control or independent-negative acceptance. Prior failed trials remain preserved. Two input-method changes were combined; cause of prior missing drag events remains unproven. No runtime, dependency/license, prototype, budget or sequencing change; resize remains nonblocking."
       }
     },
     {
@@ -6961,7 +6972,18 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json"
-      ]
+      ],
+      "s3_native_drag_delivery_progress": {
+        "status": "bounded native drag/reversal proof for current shared control-label production implementation",
+        "production_consumers": [
+          "GLOBAL Units Preferences",
+          "PROJECT Units Preferences"
+        ],
+        "retired_paths": "No new runtime path retired in this follow-up; verifies shared control/scroll/clip owners after9422e3b7. Revised trial uses absolute screen coordinates and releases its held test button before teardown.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-drag-delivery/result.json",
+        "proof": "Both hosts: press/release and boundary wheel zero presentations; drag and reverse one each. All six captures RGB identical to committed native-preferences-scroll baselines. Bottom capture inspected; final row visible.",
+        "limits": "Bounded1x X11 native scroll evidence only. No complete S3, input/scale/backend matrix, latency, private-resource, hidden-control or independent-negative acceptance. Prior failed trials remain preserved. Two input-method changes were combined; cause of prior missing drag events remains unproven. No runtime, dependency/license, prototype, budget or sequencing change; resize remains nonblocking."
+      }
     },
     {
       "id": "HP23-01",
@@ -7106,6 +7128,17 @@
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "INSPECTOR": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
+      },
+      "s3_native_drag_delivery_progress": {
+        "status": "bounded native drag/reversal proof for current shared control-label production implementation",
+        "production_consumers": [
+          "GLOBAL Units Preferences",
+          "PROJECT Units Preferences"
+        ],
+        "retired_paths": "No new runtime path retired in this follow-up; verifies shared control/scroll/clip owners after9422e3b7. Revised trial uses absolute screen coordinates and releases its held test button before teardown.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-drag-delivery/result.json",
+        "proof": "Both hosts: press/release and boundary wheel zero presentations; drag and reverse one each. All six captures RGB identical to committed native-preferences-scroll baselines. Bottom capture inspected; final row visible.",
+        "limits": "Bounded1x X11 native scroll evidence only. No complete S3, input/scale/backend matrix, latency, private-resource, hidden-control or independent-negative acceptance. Prior failed trials remain preserved. Two input-method changes were combined; cause of prior missing drag events remains unproven. No runtime, dependency/license, prototype, budget or sequencing change; resize remains nonblocking."
       }
     },
     {
@@ -27364,6 +27397,18 @@
       "Visible clip height used as layout height for these labels during scrolling"
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/control-label-layout/result.json",
-    "limits": "Bounded GLOBAL/PROJECT/NEW shared control-label adoption; full native input, long-label pixel, negative/resource and S3 qualification remain open. S3 amendment remains unapproved; no dependency/license/prototype/budget change, resize remains nonblocking."
+    "limits": "Bounded GLOBAL/PROJECT/NEW shared control-label adoption; full native input, long-label pixel, negative/resource and S3 qualification remain open. S3 amendment remains unapproved; no dependency/license/prototype/budget change, resize remains nonblocking.",
+    "native_followup": "docs/reviews/gui-performance/implementation/S3/native-drag-delivery/result.json"
+  },
+  "s3_native_drag_delivery_work": {
+    "status": "bounded native drag/reversal proof for current shared control-label production implementation",
+    "production_consumers": [
+      "GLOBAL Units Preferences",
+      "PROJECT Units Preferences"
+    ],
+    "retired_paths": "No new runtime path retired in this follow-up; verifies shared control/scroll/clip owners after9422e3b7. Revised trial uses absolute screen coordinates and releases its held test button before teardown.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-drag-delivery/result.json",
+    "proof": "Both hosts: press/release and boundary wheel zero presentations; drag and reverse one each. All six captures RGB identical to committed native-preferences-scroll baselines. Bottom capture inspected; final row visible.",
+    "limits": "Bounded1x X11 native scroll evidence only. No complete S3, input/scale/backend matrix, latency, private-resource, hidden-control or independent-negative acceptance. Prior failed trials remain preserved. Two input-method changes were combined; cause of prior missing drag events remains unproven. No runtime, dependency/license, prototype, budget or sequencing change; resize remains nonblocking."
   }
 }
