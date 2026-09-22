@@ -1,0 +1,29 @@
+{
+  "candidate_base": "ce751b246cb5a3e9b715ce330b463d5631ea72ef",
+  "production": {
+    "status": "Existing shared Preferences preparation test detects forbidden retained-world preparation",
+    "production_consumers": [
+      "GLOBAL and PROJECT use PreparedScene::from_native_preferences_cached through their shared renderer owner"
+    ],
+    "retired_paths": "No production or test changes; execute existing prescribed general-world negative in isolated source copy.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/preferences-world-negative/result.json",
+    "proof": "Existing positive and explicitly recompiled restored renderer test each1pass/217filtered. Inject RetainedScene::from_workspace using the existing repository workspace fixture into shared dialog preparation: retained resolve count2vs1 fails. All tracked isolated Rust/Cargo sources byte-restored; negative and restored binary hashes differ.",
+    "limits": "Shared renderer-owner CPU proof. Existing positive uses one Preferences fixture with Global/Project titles, scroll rows and1/1.5 scale; negative aborts at first profile. Not both native-host accounting, OS input, every section, workspace-clone detection, hidden-terminal/full-shell attribution or full HP12/S3 acceptance. Requirement permits clone workspace OR general world path; this executes the latter. No production/dependency/license/prototype/resource/resize or sequencing change."
+  },
+  "test_binary_sha256": {
+    "positive": "04dff6e5a420cd896b6ee76f640091c64e3ab16e1a628144b1b26cb34dfc472b",
+    "negative": "10fe2528bb8ee034954c2e3aaf225f9999b8d9d8fba4f515cfdf62a3f3e225ac",
+    "restored": "edef9795d0e474a50a914c1221f2a0d05a4a522f157e310753dc4ab61e08cbdb"
+  },
+  "source_sha256": "0e51f3b52bed8503b683b0a70589fa48d41a9c6e94c49a07458c29994edf54e1",
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib native_preferences_match_legacy_dialog_without_preparing_workspace -- --test-threads=1",
+    "CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline --manifest-path /tmp/pm045-pinned-negative-source/Cargo.toml -p datum-gui-render --lib native_preferences_match_legacy_dialog_without_preparing_workspace -- --test-threads=1 (negative and restored)"
+  ],
+  "artifact_sha256": {
+    "positive.log.gz": "1e4462a4ba16e670500e749a0eafeb704d53dbb6d4f11bf6ab1eb754efaa4921",
+    "restored.log.gz": "67db7c6b27798980f15584d2bd70ddeddf27f05d58ff1da4db0e263087d109ac",
+    "negative.log.gz": "c9b5049bcdb399397d9d34183f49e779f139607e9271fda15cde754fd1bc868b",
+    "negative.patch.gz": "04e98ae74fc7e872470736b86ac08a47aa070bf6d4806d937a5419110f9fdc3e"
+  }
+}
