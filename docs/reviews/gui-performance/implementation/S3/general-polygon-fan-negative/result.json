@@ -1,0 +1,24 @@
+{
+  "candidate_base": "6b0ee6c9eb0529c76142e7421808a1a159da9dbf",
+  "status": "General concave and holed filler tests detect incorrect fan substitution",
+  "requirement": "HP16-02",
+  "verification": {
+    "positive": "2 passed,216 filtered",
+    "negative": "0 passed,2 failed,216 filtered; both target area assertions fail",
+    "restoration": "All tracked Rust/Cargo files in isolated copy equal active source bytes after restoring geometry.rs"
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib general_polygon_fill_preserves -- --test-threads=1",
+    "CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target python3 /tmp/pm045-pinned-negative-source/scripts/run_cargo_guarded.py --workload proof -- cargo test --offline --manifest-path /tmp/pm045-pinned-negative-source/Cargo.toml -p datum-gui-render --lib general_polygon_fill_preserves -- --test-threads=1"
+  ],
+  "source_sha256": {
+    "crates/gui-render/src/render/geometry.rs": "1a245b5fa8cb4567c39104066adde3d14faa74d6c21b1d8c793be70c3a89b5d6",
+    "crates/gui-render/src/lib_extra_tests.rs": "e0dbeffdffe7b2217e30c0860a5b3e7ab0cc7880c964494d2b28d65ccaf03ad5"
+  },
+  "limits": "Analytical geometry unit cases through the production general polygon filler: U-notch area10 and square-with-hole area12. Not an authored board fixture, native editor adapter, GPU contour/style/DPI or full HP16/S3 qualification. Control cache and runtime implementation unchanged. One isolated fan substitution fails both cases; all Rust/Cargo source in isolated copy restored byte-for-byte to active tree. No dependency/license/prototype/budget/resize change.",
+  "artifact_sha256": {
+    "fan.patch.gz": "09ac0be8da1a932c3b490fbe14b19fe3b1a4292cef14bf6b727f1f73ae674416",
+    "negative.gz": "6abfa24c4ad50ee0c80b9597551323c7e5546078d98644dc2dc1151254eb114e",
+    "positive.gz": "abb92e914fae26c49d25acd1f7b282214eac9a9686f6be80ec1c64f948451739"
+  }
+}
