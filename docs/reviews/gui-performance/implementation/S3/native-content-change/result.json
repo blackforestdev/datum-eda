@@ -1,0 +1,19 @@
+{
+  "base_commit": "a7c7223ef80ef1988bbfa7e59f146722dd6f096b",
+  "production_consumers": [
+    "Global Preferences native input -> shared owned dialog pointer dispatcher -> shared scroll owner"
+  ],
+  "retired_paths": [],
+  "proof": "GLOBAL X11/Xwayland960x720 at visual scale1, release12f00d7e: delivered thumb drag changes presentation; ArrowUp changes Units to Appearance while left held. Trailing release at Reduced Motion writes no preference generation. Fresh click at the identical position commits reduced_motion=true with one CommitPreferenceMutation receipt and exactly that affected key through the canonical settings path.",
+  "limits": "Single Global functional case only. Captured after-release PNG visibly remains on earlier Units state; no final visual-state or capture reliability claim. No Project/New, other scales, Wayland, physical DPI, independent stale-capture negative, resource/latency, teardown or complete HP21/S3 qualification. No production migration or retired path in this proof slice; production source/binary unchanged. No dependency/license/prototype/numerical-budget/resize-scope change.",
+  "command": "PM045_TEST_SCALE=1 PM045_HOSTS=GLOBAL python3 /tmp/pm045_native_content_change.py /tmp/pm045-native-content-change",
+  "binary_sha256": "12f00d7e0120265bf200c4ed9465d8e1e3611114da8c19e33e823b8f27f65f60",
+  "artifacts": {
+    "after-release.png": "61ad86308b23aac32ce84e86508de970a10f403c76f181f6e56cb38eef2844de",
+    "before.png": "1ceac86a7a9aa5f334528786599e8de402fbb190104fe0931635649f3a21ba96",
+    "driver.py.gz": "a9dc27005e89c5187e1002e4733350edb0767999b1e66b52e78d8f92a792d90b",
+    "native.log.gz": "1db53f179d8c41a9662aff75867ee6a7cdba43efc701d65d0f48a5c874942e86",
+    "stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "trial.json.gz": "c4919c3541d299f3f4d22f0374c82b6d6288b33dce4db952a342da148f809994"
+  }
+}
