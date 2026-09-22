@@ -691,6 +691,10 @@ fn scroll_wheel(
 }
 
 #[cfg(test)]
+#[path = "native_dialog_hit_tests.rs"]
+mod native_dialog_hit_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
 
