@@ -274,13 +274,6 @@ fn render_preferences_dialog_scrolled(
         width: search_band.width - 36.0,
         height: 35.0,
     };
-    let search_input_x = search.x + 30.0;
-    let search_text_x = search_input_x
-        + if dialog.search_query.is_empty() && focus_is(dialog, &GlobalPreferencesFocus::Search) {
-            6.0
-        } else {
-            0.0
-        };
     push_rounded_rect_with_border(
         quads,
         search,
@@ -298,7 +291,8 @@ fn render_preferences_dialog_scrolled(
         design_tokens::radius::MD,
     );
     draw_search_icon(search.x + 12.0, search.y + 12.0, quads);
-    draw_text(
+    crate::global_preferences_primitives::paint_input_text(
+        &dialog.search_query,
         if dialog.search_query.is_empty() {
             if dialog.section_id == "units" {
                 "search Units settings…"
@@ -308,40 +302,19 @@ fn render_preferences_dialog_scrolled(
         } else {
             &dialog.search_query
         },
-        search_text_x,
-        search.y + 10.0,
-        design_tokens::typography::BODY_SIZE,
-        if dialog.search_query.is_empty() {
-            TEXT_MUTED
-        } else {
-            TEXT_PRIMARY
+        focus_is(dialog, &GlobalPreferencesFocus::Search),
+        crate::global_preferences_primitives::InputTextLayout {
+            bounds: search,
+            left: 30.0,
+            right: 13.0,
+            placeholder_gap: 6.0,
+            caret_top: 8.0,
+            caret_height: 19.0,
+            caret_trailing: 1.0,
         },
-        TextFace::Ui,
+        quads,
         text,
     );
-    if focus_is(dialog, &GlobalPreferencesFocus::Search) {
-        let caret_x = if dialog.search_query.is_empty() {
-            search_input_x
-        } else {
-            (search_input_x
-                + measured_text_run_width_px(
-                    &dialog.search_query,
-                    design_tokens::typography::BODY_SIZE,
-                    TextFace::Ui,
-                )
-                + 1.0)
-                .min(search.x + search.width - 13.0)
-        };
-        quads.push(Quad::from_rect(
-            RectPx {
-                x: caret_x,
-                y: search.y + 8.0,
-                width: 1.5,
-                height: 19.0,
-            },
-            TEXT_PRIMARY,
-        ));
-    }
     hits.push(HitRegion {
         target: HitTarget::GlobalPreferencesSearch,
         rect: search,

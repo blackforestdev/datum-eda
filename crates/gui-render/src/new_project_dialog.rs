@@ -418,38 +418,22 @@ fn draw_text_field(
         design_tokens::radius::MD,
     );
     let shown = if value.is_empty() { placeholder } else { value };
-    draw_text(
+    crate::global_preferences_primitives::paint_input_text(
+        value,
         &truncate_text(shown, 92),
-        field.x + 10.0,
-        field.y + 10.0,
-        design_tokens::typography::BODY_SIZE,
-        if value.is_empty() {
-            TEXT_MUTED
-        } else {
-            TEXT_PRIMARY
+        focused,
+        crate::global_preferences_primitives::InputTextLayout {
+            bounds: field,
+            left: 10.0,
+            right: 10.0,
+            placeholder_gap: 0.0,
+            caret_top: 7.0,
+            caret_height: 20.0,
+            caret_trailing: 0.0,
         },
-        TextFace::Ui,
+        quads,
         text,
     );
-    if focused {
-        let caret_x = (field.x
-            + 10.0
-            + measured_text_run_width_px(
-                value,
-                design_tokens::typography::BODY_SIZE,
-                TextFace::Ui,
-            ))
-        .min(field.x + field.width - 10.0);
-        quads.push(Quad::from_rect(
-            RectPx {
-                x: caret_x,
-                y: field.y + 7.0,
-                width: 1.5,
-                height: 20.0,
-            },
-            TEXT_PRIMARY,
-        ));
-    }
     hits.push(HitRegion {
         target,
         rect: field,

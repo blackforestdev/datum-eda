@@ -1,0 +1,223 @@
+{
+  "display": ":1",
+  "wayland_display": "wayland-0",
+  "topology": "Owner-confirmed idle desktop X11/Xwayland; native adapter functional trial",
+  "binary_sha256": "65bf85de3d1558edfcf1ed12778a5bf846896ce8fa34bd74df650f1fda5256c5",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-global-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "6291461"
+          ],
+          "monotonic": 783517.294115861,
+          "wall_time": 1790046667.163788,
+          "pointer_after": "X=960\nY=478\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "510",
+            "285",
+            "click",
+            "1"
+          ],
+          "monotonic": 783517.376377565,
+          "wall_time": 1790046667.2460475,
+          "pointer_after": "X=510\nY=285\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1454",
+            "308"
+          ],
+          "monotonic": 783518.24495719,
+          "wall_time": 1790046668.1146264,
+          "pointer_after": "X=1454\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1454",
+            "308",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 783518.620431674,
+          "wall_time": 1790046668.4901006,
+          "pointer_after": "X=1454\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1454",
+            "916"
+          ],
+          "monotonic": 783518.887741799,
+          "wall_time": 1790046668.7574115,
+          "pointer_after": "X=1454\nY=916\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1454",
+            "916",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 783519.215731362,
+          "wall_time": 1790046669.085401,
+          "pointer_after": "X=1454\nY=916\nSCREEN=0\nWINDOW=6291461\n"
+        }
+      ],
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_frames": 1,
+      "passed": false,
+      "error": "AssertionError('predicate timeout')",
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-project-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "6291461"
+          ],
+          "monotonic": 783546.926861239,
+          "wall_time": 1790046696.796531,
+          "pointer_after": "X=1454\nY=916\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1454",
+            "308"
+          ],
+          "monotonic": 783547.417591415,
+          "wall_time": 1790046697.2872612,
+          "pointer_after": "X=1454\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1454",
+            "308",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 783547.751495378,
+          "wall_time": 1790046697.6211646,
+          "pointer_after": "X=1454\nY=308\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1454",
+            "916"
+          ],
+          "monotonic": 783548.017179323,
+          "wall_time": 1790046697.886849,
+          "pointer_after": "X=1454\nY=916\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1454",
+            "916",
+            "mouseup",
+            "1"
+          ],
+          "monotonic": 783548.342646382,
+          "wall_time": 1790046698.2123163,
+          "pointer_after": "X=1454\nY=916\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "960",
+            "478"
+          ],
+          "monotonic": 783548.678658067,
+          "wall_time": 1790046698.5483274,
+          "pointer_after": "X=960\nY=478\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "960",
+            "478",
+            "click",
+            "5"
+          ],
+          "monotonic": 783548.894832101,
+          "wall_time": 1790046698.7645018,
+          "pointer_after": "X=960\nY=478\nSCREEN=0\nWINDOW=6291461\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "960",
+            "478",
+            "click",
+            "4"
+          ],
+          "monotonic": 783549.279811407,
+          "wall_time": 1790046699.1494815,
+          "pointer_after": "X=960\nY=478\nSCREEN=0\nWINDOW=6291461\n"
+        }
+      ],
+      "geometry": {
+        "WINDOW": "6291461",
+        "X": "460",
+        "Y": "178",
+        "WIDTH": "1000",
+        "HEIGHT": "750",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_frames": 1,
+      "boundary_frames": 0,
+      "reverse_frames": 1,
+      "passed": true,
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    }
+  ]
+}
