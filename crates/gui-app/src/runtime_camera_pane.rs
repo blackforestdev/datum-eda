@@ -11,7 +11,6 @@ use super::*;
 use datum_gui_render::RectPx;
 use datum_gui_viewport::{CameraConfig, CameraEngine};
 
-mod layout_cache;
 mod zoom;
 
 #[derive(Clone)]
@@ -404,7 +403,7 @@ impl Runtime {
     }
 
     pub(super) fn shell_layout_for_dock(&self, dock_height: Option<u32>) -> ShellLayout {
-        layout_cache::for_surface(
+        ShellLayout::for_surface(
             self.config.width,
             self.config.height,
             self.scale_factor,
