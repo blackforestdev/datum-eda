@@ -1,0 +1,24 @@
+{
+  "candidate_base": "e3cd07a070d59ba89f2343dd10d532214cf6dd1c",
+  "production": {
+    "status": "Shared native dialog dispatcher verified at minimum logical sizes with1/1.5/2 scale overrides",
+    "production_consumers": [
+      "GLOBAL Preferences Units setting",
+      "PROJECT Preferences Units setting",
+      "NEW Project name field"
+    ],
+    "retired_paths": "No production change; replace sole undersized test coverage with retained overflow case plus supported minimum-size profiles. Retire test-host frame registrations and owned surfaces between cases.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/owned-dialog-pointer-profiles/result.json",
+    "proof": "12 actual hidden X11/Vulkan surface cases pass through the default production WindowEvent dispatcher. Both Preferences at700x540 logical have scrollbars and reject release click-through across1/1.5/2; all fresh setting clicks activate. New at620x620 logical has no scrollbar and fresh name clicks activate across1/1.5/2. Retained960x480/1x overflow cases verify release suppression for all3. Native test1pass/395filtered; Clippy passed before final diagnostic-only Option formatting.",
+    "limits": "Direct WindowEvent dispatch, not OS event delivery or monitor-scale transitions. Actual requested physical sizes verified. New minimum-size cases do not claim scrollbar coverage; logs record None. No new injected negative or whole GUI/profile/S3 acceptance; preceding e3cd07a0 negative remains bounded historical evidence. Production code and release binary unchanged; no visual/dependency/license/resource/resize or deadline change."
+  },
+  "source_sha256": "b1bcc7edd34b358f78109357bdff49d2c62279466e3615e80dc552cb279677a4",
+  "commands": [
+    "env -u WAYLAND_DISPLAY WINIT_UNIX_BACKEND=x11 DATUM_NATIVE_TEST_BOARD=/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb XDG_CONFIG_HOME=/tmp/pm045-pointer-profiles-recorded-config XDG_CACHE_HOME=/tmp/pm045-pointer-profiles-recorded-cache EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/release/datum-eda python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_dialog_scroll_release_cannot_click_through_to_controls -- --ignored --test-threads=1 --nocapture",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-app --bin datum-gui --tests -- -D warnings"
+  ],
+  "artifact_sha256": {
+    "clippy.log.gz": "3e8a351dbd83528a82ad1090c3859e11ea30ce2f7e564ae8aac32e23b221916b",
+    "native.log.gz": "2e9a5fd02a3a7b18cfbf682c09353eb8289d86dc0d68ba3b3208572d986c34f0"
+  }
+}
