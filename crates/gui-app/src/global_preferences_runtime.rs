@@ -289,6 +289,9 @@ impl Runtime {
     }
 
     pub(super) fn activate_global_preference_control(&mut self, key: &str) -> bool {
+        let before = crate::global_preferences_window::GlobalPreferenceRenderState::capture(
+            &self.workspace().ui,
+        );
         let control = self
             .workspace()
             .ui
@@ -344,11 +347,14 @@ impl Runtime {
                 return true;
             }
         }
-        self.invalidate_frame();
+        self.refresh_global_preference_change(before);
         true
     }
 
     pub(super) fn choose_global_preference_value(&mut self, key: &str, value: &str) -> bool {
+        let before = crate::global_preferences_window::GlobalPreferenceRenderState::capture(
+            &self.workspace().ui,
+        );
         let _ = self.global_preferences.set_value(
             key,
             Value::String(value.to_owned()),
@@ -360,16 +366,19 @@ impl Runtime {
             .global_preferences
             .open_choice_key = None;
         self.announce_current_global_preferences_notice();
-        self.invalidate_frame();
+        self.refresh_global_preference_change(before);
         true
     }
 
     pub(super) fn reset_global_preference(&mut self, key: &str) -> bool {
+        let before = crate::global_preferences_window::GlobalPreferenceRenderState::capture(
+            &self.workspace().ui,
+        );
         let _ = self
             .global_preferences
             .reset(key, &mut self.session.workspace_mut().ui);
         self.announce_current_global_preferences_notice();
-        self.invalidate_frame();
+        self.refresh_global_preference_change(before);
         true
     }
 
@@ -493,6 +502,9 @@ impl Runtime {
     }
 
     fn commit_projected_value(&mut self, key: &str, next: Option<Value>) -> bool {
+        let before = crate::global_preferences_window::GlobalPreferenceRenderState::capture(
+            &self.workspace().ui,
+        );
         let Some(next) = next else {
             return false;
         };
@@ -500,7 +512,7 @@ impl Runtime {
             .global_preferences
             .set_value(key, next, &mut self.session.workspace_mut().ui);
         self.announce_current_global_preferences_notice();
-        self.invalidate_frame();
+        self.refresh_global_preference_change(before);
         true
     }
 

@@ -1,0 +1,101 @@
+[
+  {
+    "host": "GLOBAL",
+    "command": [
+      "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+      "--board",
+      "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+      "--window-size",
+      "1280x800",
+      "--initial-layout",
+      "single",
+      "--open-global-preferences",
+      "--visual-scale-factor",
+      "1"
+    ],
+    "actions": [
+      {
+        "args": [
+          "windowactivate",
+          "--sync",
+          "6291461"
+        ],
+        "time": 1790054122.2535298
+      },
+      {
+        "args": [
+          "windowsize",
+          "--sync",
+          "6291461",
+          "1000",
+          "750"
+        ],
+        "time": 1790054122.3183372
+      },
+      {
+        "args": [
+          "mousemove",
+          "510",
+          "285"
+        ],
+        "time": 1790054122.8358567
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790054122.9646165
+      },
+      {
+        "args": [
+          "mousemove",
+          "1400",
+          "308"
+        ],
+        "time": 1790054123.5041173
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790054123.6325953
+      },
+      {
+        "args": [
+          "mousemove",
+          "1360",
+          "378"
+        ],
+        "time": 1790054124.2223902
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790054124.3508604
+      },
+      {
+        "args": [
+          "mousemove",
+          "1400",
+          "355"
+        ],
+        "time": 1790054124.477588
+      },
+      {
+        "args": [
+          "click",
+          "1"
+        ],
+        "time": 1790054124.6063344
+      }
+    ],
+    "binary_sha256": "2a4cecd633d28582df98fbe95b99fa7828bc6823804d1409fb58ad6da1263418",
+    "scope_proof": "Global User contribution imperial; existing Project document unchanged",
+    "reset_hit_proof": "Newly positioned Reset removes User contribution; stale Metric choice would retain a User value",
+    "passed": true
+  }
+]
