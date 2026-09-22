@@ -35,9 +35,31 @@ pub(crate) fn clip_content(
     hit_start: usize,
     viewport: RectPx,
 ) {
-    // Keep the already-visible prefix in place. A fully visible layer needs
-    // no geometry clipping; split_off(len) then allocates no scratch buffer.
-    // Starting at the first crossing preserves painter order for the suffix.
+    // Leave the already-visible prefix untouched, including the all-visible
+    // fast path. Only its first crossing/hidden quad needs further inspection.
+    let quad_start = quads[quad_start..]
+        .iter()
+        .position(|quad| !quad.points.iter().all(|&(x, y)| viewport.contains(x, y)))
+        .map_or(quads.len(), |offset| quad_start + offset);
+    // Reject wholly hidden geometry before allocating/copying the crossing
+    // suffix. A common outside half-plane excludes both encoded triangles;
+    // merely having all vertices outside would incorrectly discard crossings.
+    quads
+        .extract_if(quad_start.., |quad| {
+            quad.points.iter().all(|&(x, _)| x < viewport.x)
+                || quad
+                    .points
+                    .iter()
+                    .all(|&(x, _)| x > viewport.x + viewport.width)
+                || quad.points.iter().all(|&(_, y)| y < viewport.y)
+                || quad
+                    .points
+                    .iter()
+                    .all(|&(_, y)| y > viewport.y + viewport.height)
+        })
+        .for_each(drop);
+    // Culling can expose another visible prefix. Keep that in place as well;
+    // split_off(len) allocates nothing when only hidden quads needed removal.
     let quad_start = quads[quad_start..]
         .iter()
         .position(|quad| !quad.points.iter().all(|&(x, y)| viewport.contains(x, y)))
