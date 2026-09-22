@@ -1,0 +1,28 @@
+{
+  "base_commit": "d69d5b0905c28f1c514a40b175cf0d6f5b4ddcb2",
+  "production": {
+    "status": "Prescribed one-frame label-cache negative detected; restored warm reuse passes",
+    "production_consumers": [
+      "Shared GLOBAL/PROJECT Preferences renderer; directly exercised renderer fixture only"
+    ],
+    "shared_owner": "TextBufferCache::trim_overlay",
+    "retired_paths": "No new production retirement. Verifies preserved bounded multi-frame overlay label history against one-frame eviction.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/label-history-negative/result.json",
+    "limits": "Existing shared Preferences renderer fixture at960x300/1x on P630 Vulkan, two bounded fractional scroll cycles. Detects loss of label history and verifies restored warm reuse, pinned chrome and exact return pixels. Not both native preference event adapters or complete working-set resource conformance; HP14 resource dependencies remain required at S4/S5. No default Rust change, dependency modification, numerical performance/budget, prototype or resize-scope change."
+  },
+  "verification": {
+    "negative": "1 intended failure,255 filtered; retain only last_used_frame==current frame before existing trim. Rebuild lookup/revision after retirement so the injected defect is history loss, not stale indices. Actual warm-reuse assertion observes3 misses instead of0.",
+    "restored": "1 passed,255 filtered after byte restoration in the same disposable checkout. Existing test verifies zero warm label misses/control mesh builds, pinned chrome and exact return-to-top pixels.",
+    "scope": "No new test framework or measurement subsystem. Uses existing production renderer GPU regression."
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/text_buffer_cache.rs": "78b2c76da77bb4b87bee651c8d92f2f99658cc192f7fac10ec52a53b211e1cd1",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "48d428e7db2a5673b8ecf47cbfd18d5498d840f399ae3c450c7ecf015b4b59cd"
+  },
+  "limits": "Existing shared Preferences renderer fixture at960x300/1x on P630 Vulkan, two bounded fractional scroll cycles. Detects loss of label history and verifies restored warm reuse, pinned chrome and exact return pixels. Not both native preference event adapters or complete working-set resource conformance; HP14 resource dependencies remain required at S4/S5. No default Rust change, dependency modification, numerical performance/budget, prototype or resize-scope change.",
+  "artifact_sha256": {
+    "restored.log.gz": "b6400a7483ded28b8dc535462b1dde84075c163e0deefc9aba6f8a6077048725",
+    "negative.patch": "9f6295a40f4193b83d9c20d001c78ff2b34893497a2c2b5b76e88ccf62bf6da6",
+    "negative.log.gz": "d4312992e056cbf449be737ac1c5067cae60684bff5916f6343e5270d5178e1b"
+  }
+}

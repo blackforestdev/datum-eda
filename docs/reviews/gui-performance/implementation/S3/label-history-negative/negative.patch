@@ -1,0 +1,18 @@
+diff --git a/crates/gui-render/src/render/text_buffer_cache.rs b/crates/gui-render/src/render/text_buffer_cache.rs
+index abf52570..4427b081 100644
+--- a/crates/gui-render/src/render/text_buffer_cache.rs
++++ b/crates/gui-render/src/render/text_buffer_cache.rs
+@@ -188,6 +188,13 @@ impl TextBufferCache {
+     /// live. Bound retained buffers and key text; current-frame scratch can grow
+     /// only with that frame's visible text. Glyph instances own their GPU data.
+     pub(crate) fn trim_overlay(&mut self) {
++        // Prescribed HP14 one-frame cache negative.
++        let old_len = self.entries.len();
++        self.entries.retain(|entry| entry.last_used_frame == self.frame);
++        if self.entries.len() != old_len {
++            self.revision = self.revision.wrapping_add(1);
++            self.rebuild_lookup();
++        }
+         let changed = retain_overlay_buffers(
+             &mut self.entries,
+             |entry| entry.last_used_frame,

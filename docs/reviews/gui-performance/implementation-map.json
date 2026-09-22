@@ -5706,7 +5706,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial: shared renderer fractional scroll-away/return test observes zero warm label misses for its bounded fixture. Complete shaped/atlas/scratch working-set accounting, both native adapters and one-frame-cache negative remain unqualified; no full working-set pass.",
+        "status": "Partial: existing shared renderer fractional scroll-away/return test observes zero warm label misses. Prescribed one-frame-cache negative now fails with3 misses and byte-restored production passes. Both native adapters and full working-set resource conformance remain unqualified; resource implementation due S4 and qualification S5 under approved clarification.",
         "id": "proof_hp14_01",
         "positive": "Scroll away/return unchanged labels within128 buffers AND32KiB key text AND applicable8MiB shaped payload/renderer and aggregate limits",
         "negative_control": "Keep only one-frame cache",
@@ -5770,6 +5770,16 @@
         "qualification_deadline": "GPI-S5",
         "status": "Unqualified; only complete S2-owned resource dependencies move. Other S3 proof remains required.",
         "owner_evidence": "EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S3-RESOURCE-APPROVED"
+      },
+      "s3_label_history_negative_progress": {
+        "status": "Prescribed one-frame label-cache negative detected; restored warm reuse passes",
+        "production_consumers": [
+          "Shared GLOBAL/PROJECT Preferences renderer; directly exercised renderer fixture only"
+        ],
+        "shared_owner": "TextBufferCache::trim_overlay",
+        "retired_paths": "No new production retirement. Verifies preserved bounded multi-frame overlay label history against one-frame eviction.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/label-history-negative/result.json",
+        "limits": "Existing shared Preferences renderer fixture at960x300/1x on P630 Vulkan, two bounded fractional scroll cycles. Detects loss of label history and verifies restored warm reuse, pinned chrome and exact return pixels. Not both native preference event adapters or complete working-set resource conformance; HP14 resource dependencies remain required at S4/S5. No default Rust change, dependency modification, numerical performance/budget, prototype or resize-scope change."
       }
     },
     {
@@ -27813,5 +27823,15 @@
     "retired_paths": "No new runtime retirement; verifies existing dialog-only adoption and detects reintroduction of the general multi-pass path.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-dialog-passes/result.json",
     "limits": "Fresh startup/default dialog states only, GLOBAL/PROJECT/NEW on native Wayland and X11. Existing opt-in timestamp query pass labels used as bounded encoding-path evidence, not performance/overhead or default instrumentation adoption. Source review establishes single resolve attachment. No expanded-state/full scale, independent replay, pixel/input, resource or full S3 qualification; no source, dependency, prototype, budget or resize change."
+  },
+  "s3_label_history_negative_work": {
+    "status": "Prescribed one-frame label-cache negative detected; restored warm reuse passes",
+    "production_consumers": [
+      "Shared GLOBAL/PROJECT Preferences renderer; directly exercised renderer fixture only"
+    ],
+    "shared_owner": "TextBufferCache::trim_overlay",
+    "retired_paths": "No new production retirement. Verifies preserved bounded multi-frame overlay label history against one-frame eviction.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/label-history-negative/result.json",
+    "limits": "Existing shared Preferences renderer fixture at960x300/1x on P630 Vulkan, two bounded fractional scroll cycles. Detects loss of label history and verifies restored warm reuse, pinned chrome and exact return pixels. Not both native preference event adapters or complete working-set resource conformance; HP14 resource dependencies remain required at S4/S5. No default Rust change, dependency modification, numerical performance/budget, prototype or resize-scope change."
   }
 }
