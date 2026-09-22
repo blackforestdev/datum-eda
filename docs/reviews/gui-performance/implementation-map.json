@@ -5138,7 +5138,7 @@
         "crates/gui-app/src/runtime_revision_workspace.rs"
       ],
       "test": {
-        "status": "Partial: current Board route rejects outside-Layers input before row inspection and does not prepare a Layers scene. Existing shared row-math proof is not an actual native Board preparation-count oracle; prescribed route negative remains open.",
+        "status": "Partial: actual X11/Vulkan Board Runtime route leaves preparation absent outside Layers. Prescribed obsolete-preparation injection fails and restored production passes. Outer native OS event routing remains unqualified.",
         "id": "proof_hp10_01",
         "positive": "Wheel outside Layers",
         "negative_control": "Prepare Layers/obsolete frame before routing",
@@ -5172,6 +5172,15 @@
       "s3_layers_scroll_progress": {
         "status": "partial actual Layers adapter adoption; native qualification remains open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/layers-effective-scroll/result.json"
+      },
+      "s3_layers_runtime_route_progress": {
+        "status": "Actual Board Runtime verifies no Layers preparation, effective capacity, boundary damage and camera preservation",
+        "production_consumers": [
+          "MAIN Board Layers wheel adapter"
+        ],
+        "retired_paths": "No runtime behavior changed; replaces earlier zero-test filter as bounded verification of existing default production routing.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/layers-runtime-route/result.json",
+        "limits": "Actual hidden X11/Vulkan Board Runtime with real owner fixture, direct production handle_layer_scroll calls and presented hit publication. Does not deliver OS wheel events or test outer event-dispatch fallthrough. No full HP10/S3/native/backend/scale/resource/performance acceptance. No dependency, license, prototype, sequencing or resize-scope change."
       }
     },
     {
@@ -5194,7 +5203,7 @@
         "crates/gui-app/src/runtime_revision_workspace.rs"
       ],
       "test": {
-        "status": "Partial: production Layers adapter uses last-presented capacity and shared bounded discrete row arithmetic with changed-only damage. Prior app filter matched zero tests, so it proves compilation only. Native effective-row/camera-locality and boundary negative proof remain open.",
+        "status": "Partial: actual X11/Vulkan Board Runtime with presented hits verifies effective row capacity, no boundary damage, reversal and unchanged camera. Earlier zero-test filter is superseded by one executed Runtime test. Outer native OS dispatch and fallthrough negative remain unqualified.",
         "id": "proof_hp10_02",
         "positive": "Wheel inside Layers including visible-capacity limit",
         "negative_control": "Fall through into board zoom",
@@ -5228,6 +5237,15 @@
       "s3_layers_scroll_progress": {
         "status": "partial actual Layers adapter adoption; native qualification remains open",
         "evidence": "docs/reviews/gui-performance/implementation/S3/layers-effective-scroll/result.json"
+      },
+      "s3_layers_runtime_route_progress": {
+        "status": "Actual Board Runtime verifies no Layers preparation, effective capacity, boundary damage and camera preservation",
+        "production_consumers": [
+          "MAIN Board Layers wheel adapter"
+        ],
+        "retired_paths": "No runtime behavior changed; replaces earlier zero-test filter as bounded verification of existing default production routing.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/layers-runtime-route/result.json",
+        "limits": "Actual hidden X11/Vulkan Board Runtime with real owner fixture, direct production handle_layer_scroll calls and presented hit publication. Does not deliver OS wheel events or test outer event-dispatch fallthrough. No full HP10/S3/native/backend/scale/resource/performance acceptance. No dependency, license, prototype, sequencing or resize-scope change."
       }
     },
     {
@@ -27698,5 +27716,14 @@
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S3/explanation-focus-reveal/result.json",
     "limits": "Bounded explanation-focus adoption in GLOBAL/PROJECT. Native X11 test uses one scale and actual 1000x563 window; CPU tests cover first/last rows at 1/1.5/2x. Native captures can lag actions; filenames are not state/timing proof. No complete HP12/HP23/S3, backend, resource or performance acceptance. No dependencies, prototype edits, numerical budgets or resize-scope change."
+  },
+  "s3_layers_runtime_route_work": {
+    "status": "Actual Board Runtime verifies no Layers preparation, effective capacity, boundary damage and camera preservation",
+    "production_consumers": [
+      "MAIN Board Layers wheel adapter"
+    ],
+    "retired_paths": "No runtime behavior changed; replaces earlier zero-test filter as bounded verification of existing default production routing.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/layers-runtime-route/result.json",
+    "limits": "Actual hidden X11/Vulkan Board Runtime with real owner fixture, direct production handle_layer_scroll calls and presented hit publication. Does not deliver OS wheel events or test outer event-dispatch fallthrough. No full HP10/S3/native/backend/scale/resource/performance acceptance. No dependency, license, prototype, sequencing or resize-scope change."
   }
 }

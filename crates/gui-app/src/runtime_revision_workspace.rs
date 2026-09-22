@@ -117,3 +117,7 @@ mod tests {
         assert!(!source.contains("prepare_revision_design_commit"));
     }
 }
+
+#[cfg(test)]
+#[path = "native_layers_scroll_tests.rs"]
+mod native_layers_scroll_tests;

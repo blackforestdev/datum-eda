@@ -1,0 +1,21 @@
+diff --git a/crates/gui-app/src/runtime_revision_workspace.rs b/crates/gui-app/src/runtime_revision_workspace.rs
+index cae12089..fdff2319 100644
+--- a/crates/gui-app/src/runtime_revision_workspace.rs
++++ b/crates/gui-app/src/runtime_revision_workspace.rs
+@@ -78,7 +78,7 @@ impl Runtime {
+     /// None is outside Layers; Some(false) consumes a local no-op.
+     pub(super) fn handle_layer_scroll(&mut self, scroll_lines: f32) -> Option<bool> {
+         let (x, y) = self.last_cursor_pos?;
+-        // Board wheel input must not force Layers preparation.
++        let _ = self.prepared_scene(); // prescribed obsolete preparation negative
+         if !self.current_layout().left_sidebar.contains(x, y) {
+             return None;
+         }
+@@ -117,3 +117,7 @@ mod tests {
+         assert!(!source.contains("prepare_revision_design_commit"));
+     }
+ }
++
++#[cfg(test)]
++#[path = "native_layers_scroll_tests.rs"]
++mod native_layers_scroll_tests;
