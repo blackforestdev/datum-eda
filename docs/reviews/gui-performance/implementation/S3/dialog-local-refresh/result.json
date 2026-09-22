@@ -1,0 +1,45 @@
+{
+  "base_commit": "568a2ada133e9f7e18c4d0df435362b11c9c056e",
+  "production": {
+    "status": "production local dialog state retains Main prepared scene",
+    "production_consumers": [
+      "GLOBAL Preferences search, focus, section, choice-popup and explanation actions",
+      "PROJECT Preferences search, focus, section, choice-popup and explanation actions",
+      "NEW name/destination editing, focus and Units source preview actions"
+    ],
+    "shared_owner": "Runtime::refresh_dialog_state; existing owned-window DialogInputOutcome redraw dispatch",
+    "retired_paths": [
+      "Runtime::invalidate_frame calls for local native-dialog state, which evicted Main preparation and rebuilt unrelated menu accessibility",
+      "New Project empty-field Backspace redraw and inert modal-body Main invalidation"
+    ],
+    "preserved": "Dialog accessibility refresh and existing action trace; owned dialog surface invalidation through existing App dispatch. Open/close and actual preference/project mutations retain dependent invalidation and canonical writers. No layout/style change.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-local-refresh/result.json",
+    "limits": "Native Runtime fixture proves selected local pointer/choice actions retain populated Main preparation and close invalidates it. It does not exercise OS keyboard delivery, all actions, actual dialog presentation, zero unrelated submissions, pixel parity or full HP12/SH-01/S3 acceptance. No numeric speedup, dependency/license, prototype, sequencing, resource-budget or nonblocking resize change."
+  },
+  "verification": {
+    "app": "378 passed, 0 failed, 12 ignored; serial default binary suite",
+    "native_runtime": "1 passed, 0 failed; explicitly run ignored hidden X11/Vulkan Runtime fixture across NEW/GLOBAL/PROJECT",
+    "clippy": "app binary and tests -D warnings passed",
+    "release": "fresh offline optimized datum-gui build passed",
+    "governance": "Dependency authority, source health (2186 files), evidence traceability (28 routes), spec governance (313 specs), project status (59 items), spec parity (20 inventories) passed."
+  },
+  "native_command": "DATUM_NATIVE_TEST_BOARD=/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb XDG_CONFIG_HOME=/tmp/pm045-dialog-refresh-config XDG_CACHE_HOME=/tmp/pm045-dialog-refresh-cache python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_dialog_actions_preserve_main_preparation_until_close -- --ignored --test-threads=1 --nocapture",
+  "visual_authority": "No presentation code changes. Existing rendered newer Preferences and start-page New Project references remain in S3/control-label-layout/preferences-prototype.png and S3/new-project-summary-clipping/prototype.png. Owner treats these as evolving visual guidance. No new capture or visual qualification claimed.",
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_keyboard.rs": "7d501285eea802e7e5e14a719182e8d752ae0747e16ac04c5ec2e583960b0a2d",
+    "crates/gui-app/src/global_preferences_runtime.rs": "98eb9d68bf2a9bdf51143249be0e784e417e08c6649e1402af53cdef6a721531",
+    "crates/gui-app/src/global_preferences_runtime/new_project.rs": "0e6bd6f95d450a42ab22e149781b054ebce6512cda3e6be8ae3e821612aecaac",
+    "crates/gui-app/src/interaction_refresh.rs": "c91d1c73bc7a3adda7cc30eca14e176e3bc461681a727174e26f4f77194204bf",
+    "crates/gui-app/src/project_preferences_runtime.rs": "3908b17cd48189285093b45137f3adcd5ca2edcdc6aa886cdfb498ca7698e13f",
+    "crates/gui-app/src/runtime_menu_actions.rs": "34e3a34e7a649f082906d0bfedc28995a6f02bea2abe105d58d65178d48f63d1",
+    "crates/gui-app/src/native_dialog_refresh_tests.rs": "b927bccd31ea317727d1bcb787a7b41291d86c578330809b3d05cdfafd41db83"
+  },
+  "limits": "Native Runtime fixture proves selected local pointer/choice actions retain populated Main preparation and close invalidates it. It does not exercise OS keyboard delivery, all actions, actual dialog presentation, zero unrelated submissions, pixel parity or full HP12/SH-01/S3 acceptance. No numeric speedup, dependency/license, prototype, sequencing, resource-budget or nonblocking resize change.",
+  "release_binary_sha256": "e15e915a9b6f509e8c3e94ca49e0d3d3791d3c1e64e78882529b2f4929dd75de",
+  "artifacts_sha256": {
+    "app-tests.log.gz": "3b73854a67dcec955e24d999a9e9e45455caab252dd8735ba226f44e1eea6c7b",
+    "build.log.gz": "fafd31d96b087cf3e48f06d2813902443368a0f6f9fab81d5a4ad2e7f8740ce3",
+    "clippy.log.gz": "45b430d34c1c758e84abc0e25a5068ddeb6613e424eeb8b5f3e30d9ae9e2ceab",
+    "native-runtime.log.gz": "ff2580836dd16bc93373245079e471a072f5530cdf4f35155842ccc7526c7db4"
+  }
+}

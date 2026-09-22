@@ -286,9 +286,14 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S1/terminal-output-damage/result.json",
-        "docs/reviews/gui-performance/implementation/S1/empty-search-input/result.json"
+        "docs/reviews/gui-performance/implementation/S1/empty-search-input/result.json",
+        "docs/reviews/gui-performance/implementation/S3/dialog-local-refresh/result.json"
       ],
-      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row."
+      "qualification_exit": "GPI-S5; owner-approved S1 exit amendment. Unfinished predicates in test.status and the complete existing acceptance_rule remain required; S1 readiness does not pass this row.",
+      "s3_dialog_local_refresh_progress": {
+        "status": "bounded production cache invalidation convergence; full requirement qualification remains open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-local-refresh/result.json"
+      }
     },
     {
       "id": "SH-02",
@@ -5409,8 +5414,13 @@
         "limits": "No full HP12/HP13/S3, resource caps, native backend/scale matrix or numerical performance acceptance. No new world scene, changes to dialog preparation/hits, device recovery, dependency/license, prototypes, budgets or nonblocking resize scope. Pending S3 proposal1bc02aaf remains unapproved."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S3/dialog-empty-scene/result.json"
-      ]
+        "docs/reviews/gui-performance/implementation/S3/dialog-empty-scene/result.json",
+        "docs/reviews/gui-performance/implementation/S3/dialog-local-refresh/result.json"
+      ],
+      "s3_dialog_local_refresh_progress": {
+        "status": "bounded production cache invalidation convergence; full requirement qualification remains open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-local-refresh/result.json"
+      }
     },
     {
       "id": "HP12-02",
@@ -27464,5 +27474,21 @@
     "preserved": "Same ancestor intersection, hidden-entry removal, order, geometry contour path, pinned prefix and caller API. Fully consume ranged Vec extraction; clamp out-of-range text/hit starts to preserve previous no-op behavior.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/clip-suffix/result.json",
     "limits": "Bounded shared-owner optimization; no newly qualified adapter or full HP22/S3 acceptance. Native capture freshness, per-adapter input/negative/resource qualification remain open. No measured frame-time claim, dependency/license, prototype, budget, sequencing or nonblocking resize change."
+  },
+  "s3_dialog_local_refresh_work": {
+    "status": "production local dialog state retains Main prepared scene",
+    "production_consumers": [
+      "GLOBAL Preferences search, focus, section, choice-popup and explanation actions",
+      "PROJECT Preferences search, focus, section, choice-popup and explanation actions",
+      "NEW name/destination editing, focus and Units source preview actions"
+    ],
+    "shared_owner": "Runtime::refresh_dialog_state; existing owned-window DialogInputOutcome redraw dispatch",
+    "retired_paths": [
+      "Runtime::invalidate_frame calls for local native-dialog state, which evicted Main preparation and rebuilt unrelated menu accessibility",
+      "New Project empty-field Backspace redraw and inert modal-body Main invalidation"
+    ],
+    "preserved": "Dialog accessibility refresh and existing action trace; owned dialog surface invalidation through existing App dispatch. Open/close and actual preference/project mutations retain dependent invalidation and canonical writers. No layout/style change.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-local-refresh/result.json",
+    "limits": "Native Runtime fixture proves selected local pointer/choice actions retain populated Main preparation and close invalidates it. It does not exercise OS keyboard delivery, all actions, actual dialog presentation, zero unrelated submissions, pixel parity or full HP12/SH-01/S3 acceptance. No numeric speedup, dependency/license, prototype, sequencing, resource-budget or nonblocking resize change."
   }
 }

@@ -71,6 +71,13 @@ impl Runtime {
         self.trace_action_state();
     }
 
+    /// Local native-dialog state has no effect on Main's prepared projection.
+    /// The owned-window adapter separately invalidates its own surface.
+    pub(super) fn refresh_dialog_state(&mut self) {
+        self.refresh_global_preferences_accessibility();
+        self.trace_action_state();
+    }
+
     /// Refresh only screen-space interaction chrome. Cursor and hover motion
     /// must never evict the prepared shell or authored board/schematic geometry:
     /// all three are expensive and independent of transient pointer state.
@@ -83,3 +90,7 @@ impl Runtime {
         self.scene_dirty = true;
     }
 }
+
+#[cfg(test)]
+#[path = "native_dialog_refresh_tests.rs"]
+mod tests;

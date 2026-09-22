@@ -356,13 +356,13 @@ impl Runtime {
                     .ui
                     .project_preferences
                     .select_section(section_id);
-                self.invalidate_frame();
+                self.refresh_dialog_state();
                 true
             }
             HitTarget::GlobalPreferencesSearch => {
                 self.session.workspace_mut().ui.project_preferences.focus =
                     GlobalPreferencesFocus::Search;
-                self.invalidate_frame();
+                self.refresh_dialog_state();
                 true
             }
             HitTarget::GlobalPreferencesSettingName(key) => {
@@ -370,7 +370,7 @@ impl Runtime {
                 dialog.open_choice_key = None;
                 dialog.explanation_key = Some(key.clone());
                 dialog.focus = GlobalPreferencesFocus::ExplanationClose;
-                self.invalidate_frame();
+                self.refresh_dialog_state();
                 true
             }
             HitTarget::GlobalPreferencesControl(key) => {
@@ -385,7 +385,7 @@ impl Runtime {
                 if let Some(key) = dialog.explanation_key.take() {
                     dialog.focus = GlobalPreferencesFocus::SettingName(key);
                 }
-                self.invalidate_frame();
+                self.refresh_dialog_state();
                 true
             }
             _ => return None,
@@ -462,7 +462,7 @@ impl Runtime {
         if dialog.open_choice_key.is_some() {
             dialog.scroll_to_row(key);
         }
-        self.invalidate_frame();
+        self.refresh_dialog_state();
         true
     }
 
@@ -528,7 +528,11 @@ impl Runtime {
             if dismissal == GlobalPreferencesDismissal::DialogClosed {
                 self.set_application_focus(self.project_preferences.return_focus);
             }
-            self.invalidate_frame();
+            if dismissal == GlobalPreferencesDismissal::DialogClosed {
+                self.invalidate_frame();
+            } else {
+                self.refresh_dialog_state();
+            }
             return if dismissal == GlobalPreferencesDismissal::DialogClosed {
                 Outcome::Dependents
             } else {
@@ -541,7 +545,7 @@ impl Runtime {
                 .ui
                 .project_preferences
                 .advance_focus(self.modifiers.shift_key());
-            self.invalidate_frame();
+            self.refresh_dialog_state();
             return Outcome::Dialog;
         }
         let focus = self.workspace().ui.project_preferences.focus.clone();
@@ -553,7 +557,7 @@ impl Runtime {
                         return Outcome::Consumed;
                     }
                     dialog.scroll_row = 0;
-                    self.invalidate_frame();
+                    self.refresh_dialog_state();
                     return Outcome::Dialog;
                 }
                 key => {
@@ -563,7 +567,7 @@ impl Runtime {
                         let dialog = &mut self.session.workspace_mut().ui.project_preferences;
                         dialog.search_query.push_str(value);
                         dialog.scroll_row = 0;
-                        self.invalidate_frame();
+                        self.refresh_dialog_state();
                         return Outcome::Dialog;
                     }
                 }
@@ -587,7 +591,7 @@ impl Runtime {
                 if let Some(key) = dialog.explanation_key.take() {
                     dialog.focus = GlobalPreferencesFocus::SettingName(key);
                 }
-                self.invalidate_frame();
+                self.refresh_dialog_state();
                 Outcome::Dialog
             }
             _ => Outcome::Consumed,

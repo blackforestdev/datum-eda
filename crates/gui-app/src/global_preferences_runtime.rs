@@ -320,6 +320,8 @@ impl Runtime {
                 if ui.open_choice_key.is_some() {
                     ui.scroll_to_row(key);
                 }
+                self.refresh_dialog_state();
+                return true;
             }
             GlobalPreferenceControlUi::Integer {
                 value,
@@ -383,7 +385,7 @@ impl Runtime {
             "Preference explanation opened.",
             AnnouncementPriority::Medium,
         );
-        self.invalidate_frame();
+        self.refresh_dialog_state();
         true
     }
 
@@ -424,7 +426,7 @@ impl Runtime {
         let next = (current + delta).rem_euclid(dialog.sections.len() as isize) as usize;
         let section_id = dialog.sections[next].0.clone();
         dialog.select_section(&section_id);
-        self.invalidate_frame();
+        self.refresh_dialog_state();
         true
     }
 
