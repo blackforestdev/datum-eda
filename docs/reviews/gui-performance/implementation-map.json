@@ -26901,7 +26901,13 @@
     "status": "fresh release build passed; native input attempt aborted and unqualified",
     "evidence": "docs/reviews/gui-performance/implementation/S3/current-native-attempt/result.json",
     "limits": "No native input/focus, scrolling, pass-count, teardown, daily-backend or resource acceptance. Driver exit130 is an abort, not a pass. No application process from this attempt remained after cleanup.",
-    "next_native_condition": "Controlled desktop input and verified driver delivery are required before native qualification; no further focus-taking tests while unscripted input persists."
+    "next_native_condition": "Controlled desktop input and verified driver delivery are required before native qualification; no further focus-taking tests while unscripted input persists.",
+    "resumed_owner_authorized_attempt": {
+      "status": "release build passed; resumed native attempts fail or abort, qualification remains open",
+      "evidence": "docs/reviews/gui-performance/implementation/S3/resumed-native-input/result.json",
+      "limits": "No S3 advancement or HP11/HP21/HP22 pass. No new dependency, license, production code, numerical budget or sequencing change. S3 proposal1bc02aaf remains unapproved.",
+      "input_observation": "The source of additional input is unknown. These logs do not establish owner desktop use. Input delivery to the intended host is unreliable in these attempts; no kernel/compositor investigation performed. Further focus-taking retries stopped for this turn. Existing owner authorization is not revoked."
+    }
   },
   "s3_console_ancestor_clipping_work": {
     "status": "bounded S3 CONSOLE ancestor clipping adoption; full qualification open",
