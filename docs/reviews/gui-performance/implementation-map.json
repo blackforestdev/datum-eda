@@ -5392,7 +5392,25 @@
       "consumer_applicability": {
         "GLOBAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "PROJECT": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s3_dialog_empty_scene_progress": {
+        "status": "default three-dialog shared empty-world envelope retained across invalidation",
+        "production_consumers": [
+          "GLOBAL GlobalPreferencesWindowSurface",
+          "PROJECT GlobalPreferencesWindowSurface",
+          "NEW GlobalPreferencesWindowSurface"
+        ],
+        "retired_paths": [
+          "Discarding the immutable empty RetainedScene on every dialog invalidation",
+          "Separate Preferences/New Project empty-scene reconstruction inside each prepared-content rebuild",
+          "Optional missing-retained-scene render branch for world-free dialogs"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-empty-scene/result.json",
+        "limits": "No full HP12/HP13/S3, resource caps, native backend/scale matrix or numerical performance acceptance. No new world scene, changes to dialog preparation/hits, device recovery, dependency/license, prototypes, budgets or nonblocking resize scope. Pending S3 proposal1bc02aaf remains unapproved."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/dialog-empty-scene/result.json"
+      ]
     },
     {
       "id": "HP12-02",
@@ -27251,5 +27269,20 @@
     ],
     "retired_paths": "None; temporary observation removed and production sources restored.",
     "limits": "No full HP23/S3 qualification or retrospective attribution of previous screenshot discrepancies. Temporary trace changed timing; only restored-source retry supports unchanged production behavior. Two fixed focus-color pixels supplement inspected captures, not general visual/accessibility/scale qualification. No independent negative, other adapters/backends or resource/endurance acceptance. No production/dependency/license/prototype/budget/sequencing change;1bc02aaf remains unapproved."
+  },
+  "s3_dialog_empty_scene_work": {
+    "status": "default three-dialog shared empty-world envelope retained across invalidation",
+    "production_consumers": [
+      "GLOBAL GlobalPreferencesWindowSurface",
+      "PROJECT GlobalPreferencesWindowSurface",
+      "NEW GlobalPreferencesWindowSurface"
+    ],
+    "retired_paths": [
+      "Discarding the immutable empty RetainedScene on every dialog invalidation",
+      "Separate Preferences/New Project empty-scene reconstruction inside each prepared-content rebuild",
+      "Optional missing-retained-scene render branch for world-free dialogs"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-empty-scene/result.json",
+    "limits": "No full HP12/HP13/S3, resource caps, native backend/scale matrix or numerical performance acceptance. No new world scene, changes to dialog preparation/hits, device recovery, dependency/license, prototypes, budgets or nonblocking resize scope. Pending S3 proposal1bc02aaf remains unapproved."
   }
 }

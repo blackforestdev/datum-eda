@@ -1,0 +1,27 @@
+{
+  "base_commit": "8bf8f8bb",
+  "production": {
+    "status": "default three-dialog shared empty-world envelope retained across invalidation",
+    "production_consumers": [
+      "GLOBAL GlobalPreferencesWindowSurface",
+      "PROJECT GlobalPreferencesWindowSurface",
+      "NEW GlobalPreferencesWindowSurface"
+    ],
+    "retired_paths": [
+      "Discarding the immutable empty RetainedScene on every dialog invalidation",
+      "Separate Preferences/New Project empty-scene reconstruction inside each prepared-content rebuild",
+      "Optional missing-retained-scene render branch for world-free dialogs"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-empty-scene/result.json",
+    "limits": "No full HP12/HP13/S3, resource caps, native backend/scale matrix or numerical performance acceptance. No new world scene, changes to dialog preparation/hits, device recovery, dependency/license, prototypes, budgets or nonblocking resize scope. Pending S3 proposal1bc02aaf remains unapproved."
+  },
+  "source_sha256": "5b3b4295efe1200bd0ce190e27c621e27cf140cb3946c3d716efddb838b8f457",
+  "proof": {
+    "clippy": "app binary -D warnings pass",
+    "release": "fresh guarded offline release pass",
+    "native_preferences": "GLOBAL/PROJECT thumb press/release and boundary zero presentations; drag/reversal one each. All six RGB captures exactly match committed native-preferences-scroll baseline fromb64af50d.",
+    "native_new": "Synthetic Escape replay ignored; fresh Escape closes dialog.",
+    "allocation_boundary": "One RetainedScene::empty construction at shared surface creation; none in invalidation/preparation. Device replacement creates a new surface and its own empty CPU scene. No allocation-byte or latency budget claim."
+  },
+  "limits": "No full HP12/HP13/S3, resource caps, native backend/scale matrix or numerical performance acceptance. No new world scene, changes to dialog preparation/hits, device recovery, dependency/license, prototypes, budgets or nonblocking resize scope. Pending S3 proposal1bc02aaf remains unapproved."
+}

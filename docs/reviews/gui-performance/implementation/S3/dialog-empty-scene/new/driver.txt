@@ -1,0 +1,80 @@
+import ctypes as c, ctypes.util, os, subprocess, time, re, json, hashlib, sys
+from pathlib import Path
+root=Path('/home/bfadmin/Documents/datum-eda'); out=Path(sys.argv[1]);out.mkdir(exist_ok=False)
+x=c.CDLL(ctypes.util.find_library('X11')); xt=c.CDLL(ctypes.util.find_library('Xtst'))
+def bind(lib,name,args,result=c.c_int):
+ fn=getattr(lib,name);fn.argtypes=args;fn.restype=result;return fn
+D=c.c_void_p; W=c.c_ulong; I=c.c_int; U=c.c_uint
+bind(x,'XOpenDisplay',[c.c_char_p],D);bind(x,'XDefaultRootWindow',[D],W)
+bind(x,'XCreateSimpleWindow',[D,W,I,I,U,U,U,W,W],W)
+bind(x,'XStoreName',[D,W,c.c_char_p]);bind(x,'XMapWindow',[D,W]);bind(x,'XDestroyWindow',[D,W])
+bind(x,'XSetInputFocus',[D,W,I,W]);bind(x,'XGetInputFocus',[D,c.POINTER(W),c.POINTER(I)])
+bind(x,'XSync',[D,I]);bind(x,'XCloseDisplay',[D]);bind(x,'XKeysymToKeycode',[D,W],c.c_ubyte)
+bind(x,'XQueryKeymap',[D,c.c_void_p]);bind(xt,'XTestFakeKeyEvent',[D,U,I,W])
+errors=[]
+HANDLER=c.CFUNCTYPE(c.c_int,D,D)
+@HANDLER
+def on_error(display,event):
+ errors.append('X request error');return 0
+x.XSetErrorHandler.argtypes=[HANDLER];x.XSetErrorHandler.restype=D;x.XSetErrorHandler(on_error)
+d=x.XOpenDisplay(None);assert d
+holder=x.XCreateSimpleWindow(d,x.XDefaultRootWindow(d),10,10,80,30,0,0,0)
+x.XStoreName(d,holder,b'Datum PM045 focus-input holder');x.XMapWindow(d,holder);x.XSync(d,0)
+escape=x.XKeysymToKeycode(d,0xff1b);assert escape
+held=False
+report={'binary_sha256':hashlib.sha256((root/'target/release/datum-gui').read_bytes()).hexdigest(),'display':os.environ.get('DISPLAY'),'cases':[]}
+def focus(w):
+ subprocess.run(['xdotool','windowactivate','--sync',str(w)],check=True,timeout=3,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+ errors.clear();x.XSetInputFocus(d,w,1,0);x.XSync(d,0);assert not errors,errors
+ actual=W();revert=I();x.XGetInputFocus(d,c.byref(actual),c.byref(revert));assert actual.value==w,('focus mismatch',actual.value,w)
+def key(pressed):
+ global held
+ assert xt.XTestFakeKeyEvent(d,escape,int(pressed),0);x.XSync(d,0);held=pressed
+try:
+ for host,flag in [('NEW','--open-new-project')]:
+  case=out/host;case.mkdir();log=case/'native.log';log.write_text('')
+  env=os.environ.copy();env.pop('WAYLAND_DISPLAY',None)
+  env.update(WINIT_UNIX_BACKEND='x11',DATUM_GPU_MEASUREMENTS='0',DATUM_GUI_VERBOSE_LOG='1',DATUM_GUI_LOG=str(log),EDA_CLI_BIN=str(root/'target/release/datum-eda'),XDG_CONFIG_HOME=str(case/'config'),XDG_CACHE_HOME=str(case/'cache'))
+  cmd=[str(root/'target/release/datum-gui'),'--board','/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb','--window-size','1280x800','--initial-layout','single','--visual-scale-factor','1',flag]
+  r={'host':host,'command':cmd,'passed':False};report['cases'].append(r)
+  with (case/'stderr.log').open('w') as stderr:
+   p=subprocess.Popen(cmd,cwd=root,env=env,stdout=stderr,stderr=stderr)
+   def wait(fn,seconds=20):
+    deadline=time.monotonic()+seconds
+    while time.monotonic()<deadline:
+     assert p.poll() is None,('application exited',p.returncode)
+     v=fn()
+     if v:return v
+     time.sleep(.005)
+    raise AssertionError('predicate timeout')
+   try:
+    ids=wait(lambda: (a if len(a)==2 else None) if (a:=re.findall(r'surface identity window=WindowId\((\d+)\)',log.read_text())) else None)
+    wid=int(ids[-1]);label='WindowId('+str(wid)+')';r['dialog']=wid
+    wait(lambda:any('native_surface_lifecycle ' in l and '"reason":"present"' in l.replace(' ','') and label in l for l in log.read_text().splitlines()))
+    time.sleep(.2);focus(holder)
+    keys=(c.c_char*32)();x.XQueryKeymap(d,keys);assert not (bytes(keys)[escape//8] & (1<<(escape%8))), 'Escape already held before trial'
+    start=len(log.read_text());key(True)
+    try:
+     focus(wid)
+     wait(lambda:any(label in l and 'logical=Named(Escape)' in l and 'state=Pressed' in l and 'synthetic=true' in l for l in log.read_text()[start:].splitlines()),.15)
+    finally:
+     if held:key(False)
+    time.sleep(.15)
+    data=log.read_text()[start:];assert not any(label in l and ('destroyed' in l or 'close requested' in l or '"reason":"closed"' in l.replace(' ','')) for l in data.splitlines()), 'synthetic press closed dialog'
+    focus(wid);r['synthetic_escape_ignored']=True
+    start=len(log.read_text());key(True);key(False)
+    wait(lambda:any(label in l and 'logical=Named(Escape)' in l and 'state=Pressed' in l and 'synthetic=false' in l for l in log.read_text()[start:].splitlines()))
+    wait(lambda:any(label in l and ('destroyed' in l or '"reason":"closed"' in l.replace(' ','')) for l in log.read_text()[start:].splitlines()))
+    r['fresh_escape_closed_dialog']=True;r['passed']=True;print(host,'PASS',flush=True)
+   except Exception as e:
+    r['error']=repr(e);print(host,repr(e),flush=True)
+   finally:
+    if held:key(False)
+    if p.poll() is None:p.terminate();p.wait(timeout=10)
+    r['cleanup']='Harness SIGTERM of remaining Main; no Main teardown qualification'
+    (out/'result.json').write_text(json.dumps(report,indent=2)+'\n')
+  if not r['passed']:break
+finally:
+ if held:key(False)
+ x.XDestroyWindow(d,holder);x.XSync(d,0);x.XCloseDisplay(d)
+assert len(report['cases'])==1 and all(r['passed'] for r in report['cases'])
