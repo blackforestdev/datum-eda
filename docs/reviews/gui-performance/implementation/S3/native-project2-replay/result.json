@@ -1,0 +1,132 @@
+{
+  "candidate_base": "cd37b7ab3fdfb7c3de1bcb6a6f6e24a21222c213",
+  "status": "Project Preferences2x native expanded pass/reuse replay passes",
+  "requirements": [
+    "HP13-01",
+    "HP14-01"
+  ],
+  "binary_sha256": "ed2dd62b51e5abf99a991b543b6c6447e5bdc40358cd348beb8709e124cb385f",
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "command": "PM045_HOSTS=PROJECT PM045_TEST_SCALE=2 python3 driver.py <owned-output-directory>",
+  "observations": {
+    "geometry": {
+      "WINDOW": "6291461",
+      "X": "1",
+      "Y": "29",
+      "WIDTH": "1918",
+      "HEIGHT": "1050",
+      "SCREEN": "0"
+    },
+    "thumb_press_frames": 0,
+    "drag_frames": 1,
+    "boundary_frames": 0,
+    "reverse_frames": 1,
+    "warm_cache_samples": [
+      {
+        "cycle": 0,
+        "button": "5",
+        "stats": [
+          [
+            "31",
+            "0"
+          ]
+        ]
+      },
+      {
+        "cycle": 0,
+        "button": "4",
+        "stats": [
+          [
+            "35",
+            "0"
+          ]
+        ]
+      },
+      {
+        "cycle": 1,
+        "button": "5",
+        "stats": [
+          [
+            "31",
+            "0"
+          ]
+        ]
+      },
+      {
+        "cycle": 1,
+        "button": "4",
+        "stats": [
+          [
+            "35",
+            "0"
+          ]
+        ]
+      },
+      {
+        "cycle": 2,
+        "button": "5",
+        "stats": [
+          [
+            "35",
+            "0"
+          ]
+        ]
+      },
+      {
+        "cycle": 2,
+        "button": "4",
+        "stats": [
+          [
+            "31",
+            "0"
+          ]
+        ]
+      }
+    ],
+    "dialog_pass_names": [
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ],
+      [
+        "dialog"
+      ]
+    ],
+    "measured_presentations": 11,
+    "one_escape_dismisses_expansion_without_closing_dialog": true,
+    "escape_delivery": [
+      "[SystemTime { tv_sec: 1790058570, tv_nsec: 695587477 }] window event WindowId(6291461) keyboard physical=Code(Escape) logical=Named(Escape) state=Pressed repeat=false text=Some(\"\\u{1b}\") synthetic=false"
+    ]
+  },
+  "prior_failure": "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json",
+  "limits": "Native X11/Xwayland with2x override at actual1918x1050, opt-in existing GPU/cache diagnostics. Six bounded Preferences host/scale cases now have successful receipts across different pinned builds; this is not a single-candidate full matrix. Initial capture lags expansion; exactly one delivered nonsynthetic Escape plus presentation and surviving dialog supplies the expansion oracle. Previous nondelivery failure and dat-native-input-delivery-vq7w remain open. No default-path performance, monitor-DPI transition, Wayland input, full resource or S3 acceptance. No production, dependency, license, prototype, budget or resize change.",
+  "artifact_sha256": {
+    "native.tar.gz": "7f48096a46bff2a8949a020a6d2d5c0ea56abdac6f917a7068b01530b135b197"
+  }
+}
