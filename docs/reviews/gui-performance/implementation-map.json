@@ -7507,7 +7507,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Implemented in shared Preferences preparation: current focus/search/expansion identity selects reveal row and current layout clamps bounds. Full native keyboard/search/DPI/content final-target qualification is not executed successfully; Inspector has no current scroll/focus-reveal adapter. Both native hosts now pass bounded1x four-result search/fitting-content/clear-restores-scroll and explanation expansion/boundary/reversal/collapse with observed Escape delivery. Earlier nondelivery failures retained; full matrix remains open. Both native Preferences settled search/clear trials now pass at override1.5/2x with actual sizes recorded. Native monitor-scale/Wayland/remaining profile and latency qualification remain open.",
+        "status": "Implemented in shared Preferences preparation: current focus/search/expansion identity selects reveal row and current layout clamps bounds. Full native keyboard/search/DPI/content final-target qualification is not executed successfully; Inspector has no current scroll/focus-reveal adapter. Both native hosts now pass bounded1x four-result search/fitting-content/clear-restores-scroll and explanation expansion/boundary/reversal/collapse with observed Escape delivery. Earlier nondelivery failures retained; full matrix remains open. Both native Preferences settled search/clear trials now pass at override1.5/2x with actual sizes recorded. Native monitor-scale/Wayland/remaining profile and latency qualification remain open. Shared host now re-reveals focus after effective size/DPI changes. Both native Preferences1x fail baseline shrink and pass final corrected shrink with visible last-control focus and idle quiescence; native DPI remains unqualified.",
         "id": "proof_hp23_01",
         "positive": "Keyboard search navigation across sections and changed DPI/size/content",
         "negative_control": "Keep stale focus/extent",
@@ -7561,7 +7561,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-focus-reveal/result.json",
         "docs/reviews/gui-performance/implementation/S3/focus-reveal-trace/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
+        "docs/reviews/gui-performance/implementation/S3/focus-reflow/result.json"
       ],
       "s3_focus_reveal_trace_progress": {
         "status": "bounded GLOBAL/PROJECT unchanged-production keyboard reveal pass after runtime trace; full qualification open",
@@ -7608,6 +7609,17 @@
         "retired_paths": "No runtime retirement; scaled native qualification of existing shared paths.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
         "limits": "X11/Xwayland native adapters with existing --visual-scale-factor override1.5/2, not monitor-scale transition or Wayland input qualification. Observed sizes1440x1050 and1918x1050, not requested1440x1080/1920x1440. Four settled search results fit and scheduled wheel interval has0 frames. Clear/scroll intervals produce presentations (2 for Global2x,1 others); pending clear frames may overlap, so no exact per-wheel/latency claim. Failed early baselines and missing Escape retained. Same recorded release binary; no production/dependency/license/prototype/budget/resize change. Remaining control/backend/full S3 qualification stays open."
+      },
+      "s3_focus_reflow_progress": {
+        "status": "Both native Preferences preserve focused last control after height change",
+        "production_consumers": [
+          "GLOBAL native Preferences",
+          "PROJECT native Preferences"
+        ],
+        "shared_owner": "GlobalPreferencesWindowSurface -> shared Preferences layout / ScrollViewport reveal",
+        "retired_paths": "Stale focus reveal identity after effective size/DPI changes; unchanged-size and ordinary input paths retain current behavior.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/focus-reflow/result.json",
+        "limits": "Native X11/Xwayland Preferences at 1x: keyboard focus on last Units control, height shrink from1000x750 to1000x563, visible focus ring and zero idle frames. Native DPI transitions, New Project, remaining content/search/backend profiles and full HP23/S3 are not qualified. New Project already reveals on renderer reflow and has no change. No dependency, licensing, visual styling, numerical budget or resize CPU qualification change."
       }
     },
     {
@@ -27847,7 +27859,7 @@
         "HP21-02": "Complete native release/capture-loss/close/content-change final-target matrix. Shared stale-reflow negative now detected and restored viewport/content-change capture tests pass; existing focus-loss and native trials remain bounded.",
         "HP22-01": "Complete remaining native diagonal/rounded/nested clipping cases per actual consumer. Shared clamp-vertices negative now detected by corrected existing area oracle; preserve original false-pass and terminal call-removal negatives.",
         "HP22-02": "Complete pinned-header negative and remaining native profiles. Shared hidden-hit clipping omission is now detected; existing pinned GPU return pixels and native scroll trials remain bounded evidence.",
-        "HP23-01": "Complete native keyboard/search result reveal across section/layout/scale changes and stale-focus/extent negative; explanation Close reveal is already fixed and verified.",
+        "HP23-01": "Complete remaining native keyboard/search reveal across section/content/scale profiles. Stale focus after height change now reproduced and fixed in both native Preferences; existing explanation Close fix retained. Native DPI transition remains open.",
         "HP23-02": "Complete both native Preferences reduced-motion scroll/idle/locality recipe and continuous-timer negative; existing boundary-frame checks are narrower."
       },
       "next_action": "Complete remaining prescribed negative controls on the current shared owners, paired with their existing positive tests; continue native per-adapter gaps and fix demonstrated defects. Do not invent another shared component solely to avoid remaining proof. GPI-S3 stays selected."
@@ -28405,5 +28417,16 @@
     "retired_paths": "None in this verification slice; exercise existing close and reconstruction ownership.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-reopen-cache/result.json",
     "limits": "Native X11/Xwayland at 1x override, 1000x750, existing release binary and opt-in timing diagnostics. No new production consumers or competing paths retired. Cold misses and distinct window identities corroborate renderer-cache recreation; they do not measure complete FontSystem, atlas, allocator, scratch, GPU or in-flight release. Full resource implementation remains S4 and qualification S5. Remaining working-set/native/backend and S3 exit proof stays open. No performance, dependency, license, prototype, budget or resize change."
+  },
+  "s3_focus_reflow_work": {
+    "status": "Both native Preferences preserve focused last control after height change",
+    "production_consumers": [
+      "GLOBAL native Preferences",
+      "PROJECT native Preferences"
+    ],
+    "shared_owner": "GlobalPreferencesWindowSurface -> shared Preferences layout / ScrollViewport reveal",
+    "retired_paths": "Stale focus reveal identity after effective size/DPI changes; unchanged-size and ordinary input paths retain current behavior.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/focus-reflow/result.json",
+    "limits": "Native X11/Xwayland Preferences at 1x: keyboard focus on last Units control, height shrink from1000x750 to1000x563, visible focus ring and zero idle frames. Native DPI transitions, New Project, remaining content/search/backend profiles and full HP23/S3 are not qualified. New Project already reveals on renderer reflow and has no change. No dependency, licensing, visual styling, numerical budget or resize CPU qualification change."
   }
 }
