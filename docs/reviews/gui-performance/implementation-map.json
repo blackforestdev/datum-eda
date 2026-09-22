@@ -5524,7 +5524,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
-        "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json"
+        "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json",
+        "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json"
       ],
       "s3_explanation_focus_reveal_progress": {
         "status": "Shared explanation Close focus reveal implemented in default GLOBAL/PROJECT surfaces",
@@ -5576,6 +5577,17 @@
         "retired_paths": "Unconditional per-preparation section/search/expansion/focus key cloning replaced by borrowed comparisons and transition-only ownership updates.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json",
         "limits": "Structural removal of unchanged reveal-key cloning, not measured total allocation or frame-time improvement. Native1x focus shrink passes both hosts; expanded PROJECT passes but GLOBAL press arrives only at timeout cleanup, matching unresolved dat-native-input-delivery-vq7w. Preserve failed trial and keep current Global expanded proof unqualified. Native other profiles/DPI/backend and complete HP12/HP23/S3 remain open. No dependency/license/prototype/budget/resize change."
+      },
+      "s3_borrowed_search_progress": {
+        "status": "Shared Preferences search compares borrowed fields without lowercase copies",
+        "production_consumers": [
+          "GLOBAL Preferences renderer/accessibility/keyboard navigation",
+          "PROJECT Preferences renderer/accessibility/keyboard navigation"
+        ],
+        "shared_owner": "GlobalPreferencesDialogState::visible_rows",
+        "retired_paths": "Per-call lowercase query and per-field lowercase label/description/key/alias/control-value copies. Integer formatting remains.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json",
+        "limits": "Structural removal of lowercase String copies, not a measured CPU/frame-time or complete allocation claim. Integer value-plus-suffix formatting remains. ASCII-only folding preserved, not expanded Unicode normalization. Native X11/Xwayland1x search/clear is bounded; remaining backend/scale, full search/focus/HP12/HP23/S3 qualification open. No dependency/license/prototype/budget/resize change."
       }
     },
     {
@@ -7608,7 +7620,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
         "docs/reviews/gui-performance/implementation/S3/focus-reflow/result.json",
-        "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json"
+        "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json",
+        "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json"
       ],
       "s3_focus_reveal_trace_progress": {
         "status": "bounded GLOBAL/PROJECT unchanged-production keyboard reveal pass after runtime trace; full qualification open",
@@ -7677,6 +7690,17 @@
         "retired_paths": "Unconditional per-preparation section/search/expansion/focus key cloning replaced by borrowed comparisons and transition-only ownership updates.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/retained-reveal-keys/result.json",
         "limits": "Structural removal of unchanged reveal-key cloning, not measured total allocation or frame-time improvement. Native1x focus shrink passes both hosts; expanded PROJECT passes but GLOBAL press arrives only at timeout cleanup, matching unresolved dat-native-input-delivery-vq7w. Preserve failed trial and keep current Global expanded proof unqualified. Native other profiles/DPI/backend and complete HP12/HP23/S3 remain open. No dependency/license/prototype/budget/resize change."
+      },
+      "s3_borrowed_search_progress": {
+        "status": "Shared Preferences search compares borrowed fields without lowercase copies",
+        "production_consumers": [
+          "GLOBAL Preferences renderer/accessibility/keyboard navigation",
+          "PROJECT Preferences renderer/accessibility/keyboard navigation"
+        ],
+        "shared_owner": "GlobalPreferencesDialogState::visible_rows",
+        "retired_paths": "Per-call lowercase query and per-field lowercase label/description/key/alias/control-value copies. Integer formatting remains.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json",
+        "limits": "Structural removal of lowercase String copies, not a measured CPU/frame-time or complete allocation claim. Integer value-plus-suffix formatting remains. ASCII-only folding preserved, not expanded Unicode normalization. Native X11/Xwayland1x search/clear is bounded; remaining backend/scale, full search/focus/HP12/HP23/S3 qualification open. No dependency/license/prototype/budget/resize change."
       }
     },
     {
@@ -28631,5 +28655,16 @@
     "retired_paths": "None; backend-specific replay of existing positive and isolated injected timer.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/wayland-idle-negative/result.json",
     "limits": "Native Wayland1x startup then2s idle, no synthetic input. GUI-written reduced_motion=true configuration; Project flag propagation covered separately by production coordinator tests. This qualifies bounded idle defect sensitivity only, not Wayland scroll/input/hit/static, scale transitions, resource or full HP23/S3 coverage. Timer injection is unchanged from continuous-timer-negative source patch; active source and working binary unchanged. No dependency/license/prototype/budget/resize change."
+  },
+  "s3_borrowed_search_work": {
+    "status": "Shared Preferences search compares borrowed fields without lowercase copies",
+    "production_consumers": [
+      "GLOBAL Preferences renderer/accessibility/keyboard navigation",
+      "PROJECT Preferences renderer/accessibility/keyboard navigation"
+    ],
+    "shared_owner": "GlobalPreferencesDialogState::visible_rows",
+    "retired_paths": "Per-call lowercase query and per-field lowercase label/description/key/alias/control-value copies. Integer formatting remains.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/borrowed-search/result.json",
+    "limits": "Structural removal of lowercase String copies, not a measured CPU/frame-time or complete allocation claim. Integer value-plus-suffix formatting remains. ASCII-only folding preserved, not expanded Unicode normalization. Native X11/Xwayland1x search/clear is bounded; remaining backend/scale, full search/focus/HP12/HP23/S3 qualification open. No dependency/license/prototype/budget/resize change."
   }
 }
