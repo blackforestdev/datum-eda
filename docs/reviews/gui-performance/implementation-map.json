@@ -5908,7 +5908,7 @@
         "crates/gui-app/src/project_preferences_window.rs"
       ],
       "test": {
-        "status": "Partial: retained text entry/key limits and eviction paths exist, but complete shaped/atlas/scratch ownership, caps and release proof remain unresolved. Owner-approved S3 clarification carries only complete S2-owned resource implementation to S4 and qualification to S5; bounded behavior and other S3 proof remain required.",
+        "status": "Partial: real shaped overlay cache now tested through entry/key-text churn, eviction/rebuild, valid post-retirement lookup and cold cache reconstruction.9 cache tests pass. Actual native close/reopen and complete resource accounting/cap/release qualification remain open with S4 implementation/S5 qualification resource carryforward.",
         "id": "proof_hp14_02",
         "positive": "Churn labels/evict/close/reopen",
         "negative_control": "Bound key bytes but retain unbounded shaped payload",
@@ -5963,7 +5963,20 @@
         "qualification_deadline": "GPI-S5",
         "status": "Unqualified; only complete S2-owned resource dependencies move. Other S3 proof remains required.",
         "owner_evidence": "EVIDENCE:GUI-PERFORMANCE-IMPLEMENTATION:S3-RESOURCE-APPROVED"
-      }
+      },
+      "s3_real_overlay_churn_progress": {
+        "status": "Real shaped overlay cache churn and reconstruction proof passes",
+        "production_consumers": [
+          "Renderer-owned TextBufferCache, directly exercised with real shaped buffers"
+        ],
+        "shared_owner": "render/text_buffer_cache.rs",
+        "retired_paths": "No runtime retirement. Add real-cache proof alongside existing simulated-entry helper coverage.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/real-overlay-churn/result.json",
+        "limits": "Direct real TextBufferCache with Datum fonts and shaped Buffer objects, not native window event dispatch or GPU atlas qualification. Plain labels only:128 retained entries and32KiB retained key text, not complete owned memory. Reset recreates only this cache; shared FontSystem remains alive. Actual host close/reopen, rich-span working sets, allocator/atlas/scratch/in-flight and full HP14/S3 remain open under existing S4/S5 resource associations. No production behavior/dependency/license/prototype/budget/resize change."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S3/real-overlay-churn/result.json"
+      ]
     },
     {
       "id": "HP15-01",
@@ -27777,7 +27790,8 @@
         "s3_scroll_capture_negatives_work": "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json",
         "s3_native_search_scales_work": "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json",
         "s3_native_expanded_pass_reuse_work": "docs/reviews/gui-performance/implementation/S3/native-expanded-pass-reuse/result.json",
-        "s3_native_pass_roundtrip_work": "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json"
+        "s3_native_pass_roundtrip_work": "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json",
+        "s3_real_overlay_churn_work": "docs/reviews/gui-performance/implementation/S3/real-overlay-churn/result.json"
       },
       "receipt_sha256": {
         "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json": "7c21f4fb04e937db21bd06d9bd0e9b1d4d0602ccca5cf167def2a77f6d5e9139",
@@ -27799,7 +27813,8 @@
         "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json": "5bf4b50c4a4d7fbfadad1e0fd46f9abbd20ffdc1a6b041350a9a174533485a9a",
         "docs/reviews/gui-performance/implementation/S3/native-search-scales/result.json": "840cb0c47b34e295a27a70fe3c3c08cda992015480123ebd680e3b7e15b5ffe2",
         "docs/reviews/gui-performance/implementation/S3/native-expanded-pass-reuse/result.json": "68d7caa6836a4d12e31b1384476149aa8be5df6c3a19524363e733fb092bcc2b",
-        "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json": "68b60f1f8eca8a7375cdd125c7bb2b4c04f7d96bedef2848397c4aa54dcd1248"
+        "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json": "68b60f1f8eca8a7375cdd125c7bb2b4c04f7d96bedef2848397c4aa54dcd1248",
+        "docs/reviews/gui-performance/implementation/S3/real-overlay-churn/result.json": "f5639eea843b088c4bfc261c9cf41026826986935754db4b39cda596faefe0f9"
       },
       "remaining_actions": {
         "HP10-01": "Verify outside-Layers routing through the outer native event dispatcher; actual Board Runtime zero-preparation and prescribed negative are recorded.",
@@ -27809,7 +27824,7 @@
         "HP13-01": "Complete PROJECT2x, NEW changed-state and remaining backend pass proof. Both Preferences1/1.5x and GLOBAL2x now have expanded semantic/pass evidence; preserve existing general-pass negative and dat-native-input-delivery-vq7w failure.",
         "HP13-02": "Complete prescribed AA/painter-order negative and native visual/backend/scale coverage; existing14 GPU regressions remain bounded evidence.",
         "HP14-01": "Complete PROJECT2x and remaining settings/backend warm-reuse cases with observed input delivery. Both Preferences1/1.5x and GLOBAL2x expanded trials have6 zero-miss samples and semantic expansion proof; one-frame negative recorded. Full resource precondition stays S4/S5.",
-        "HP14-02": "Verify bounded label churn/eviction/close/reopen behavior at implemented limits. Complete accounting/cap/release proof follows named S4/S5 resource associations.",
+        "HP14-02": "Complete actual native close/reopen and remaining working-set/negative cases. Real shaped cache now proves bounded128-entry/32KiB key-text churn, lookup after eviction and cold reconstruction; full owned accounting/cap/release follows existing S4/S5 associations.",
         "HP16-01": "Complete rounded-control repeat/translation/clip proof across actual applicable consumers and remaining prescribed arc/tessellator negatives; preserve fixed-rectangle classification.",
         "HP16-02": "Complete authored concave/holed separation and fan negative plus applicable native contour/style/DPI profiles. Existing key-field test and current incomplete-DPI-key negative/restored painter positive are recorded.",
         "HP16-03": "Reconcile actual native control working-set evidence with recorded bounded CPU LRU/bypass/byte eviction and pin-indefinitely negative. Full CPU metadata/GPU/in-flight/aggregate bounds remain S4/S5 resource dependencies.",
@@ -28357,5 +28372,15 @@
     "retired_paths": "No runtime retirement; existing native pass/reuse proof extended with read-only driver synchronization.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-pass-roundtrip/result.json",
     "limits": "Native X11/Xwayland, override scales1/1.5/2, opt-in existing pass/cache counters. Four successful added cases plus previous GLOBAL1x establish5 of6 bounded Preferences expanded-choice cases; PROJECT2x remains unqualified after release-delivery timeout. Driver adds read-only X server roundtrip, not a reliable fix or root-cause proof. Captures lag; expansion uses exactly one observed nonsynthetic Escape with surviving dialog/presentation. No default-path performance, latency, monitor-DPI transition, Wayland input, full resource or S3 acceptance. Production/dependency/license/prototype/budget/resize unchanged."
+  },
+  "s3_real_overlay_churn_work": {
+    "status": "Real shaped overlay cache churn and reconstruction proof passes",
+    "production_consumers": [
+      "Renderer-owned TextBufferCache, directly exercised with real shaped buffers"
+    ],
+    "shared_owner": "render/text_buffer_cache.rs",
+    "retired_paths": "No runtime retirement. Add real-cache proof alongside existing simulated-entry helper coverage.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/real-overlay-churn/result.json",
+    "limits": "Direct real TextBufferCache with Datum fonts and shaped Buffer objects, not native window event dispatch or GPU atlas qualification. Plain labels only:128 retained entries and32KiB retained key text, not complete owned memory. Reset recreates only this cache; shared FontSystem remains alive. Actual host close/reopen, rich-span working sets, allocator/atlas/scratch/in-flight and full HP14/S3 remain open under existing S4/S5 resource associations. No production behavior/dependency/license/prototype/budget/resize change."
   }
 }
