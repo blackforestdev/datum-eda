@@ -1,0 +1,26 @@
+{
+  "base_commit": "f60b39d53ce770c71535cd2c7ccf4721e4714ca7",
+  "source": "crates/gui-render/src/render/hit_clipping.rs",
+  "source_sha256": "adef767be67818353fc5da996ac207e4bbdd528af087c85f3bd2632e680702a4",
+  "release_binary_sha256": "7723f91d7f4b921f255b44cd54993cf6a9a7596f02e30272f4baabd960b7d28c",
+  "production_consumers": [
+    "Existing shared clip_content callers: both Preferences, New Project, Inspector, Project/Layers, Revision, Console/terminal, Main menus and shell chrome"
+  ],
+  "change": "Intersect crossing axis-aligned rectangles in the existing in-place suffix filter before scratch extraction. Preserve fully visible vertex encoding and pinned prefix; crossing diagonal/rounded triangles retain exact clipping. Rectangle-only suffixes no longer require temporary quad vector allocation/copy.",
+  "retired_paths": "Removed rectangle re-encoding from the allocated triangle-processing suffix; no new consumer migration or competing semantic path.",
+  "proof": "219 renderer unit tests pass, including reversed-winding rectangle clipping and unchanged visible encoding/order. Existing GPU control parity passes1 test/259 filtered (72 scale/placement/clip cases). Visual renderer Clippy passes; fresh release build passes. Current binary Global1x native content-change/trailing-release/fresh-click trial passes, with exactly one canonical persisted Reduced Motion mutation. Source-policy13 tests pass.",
+  "limits": "Structural work removal, not measured latency or full allocation-budget qualification. Mixed crossing triangle suffixes still allocate scratch. Native test covers one Global1x X11 semantic input case and does not qualify final pixels, all consumers, backend/scale matrix or full HP22/S3. No dependency/license/prototype/numerical-budget/resize-scope changes; S3 remains active.",
+  "artifacts": {
+    "clippy.gz": "993f2ebe14a41c4db3918749f990414282de02faf1101fdca8714038730f2e71",
+    "gpu.gz": "965fb0f86cd56981d7d74f083bfc20b548f72432d68135697d7b8a64680d1f69",
+    "native-driver.gz": "a9dc27005e89c5187e1002e4733350edb0767999b1e66b52e78d8f92a792d90b",
+    "native-events.gz": "c73a48c3ab144e0ca8e5a489289b32165c356e4ba92f06376f36c90b6f993eed",
+    "native.gz": "7991097bb18c2161e6634c938a922bd390e63b366d1b5996fa07e0fa387b96a6",
+    "release.gz": "415bc598c0b06edd6fa0b19384acd6baa23c58d79cab677b71d88a45ab8a3c8d",
+    "source-policy.gz": "8727ffcf673dbe4c957a375f098e885a94e233edf2678c5fd80db1f9f25ec5f2",
+    "tests.gz": "675b546095865e8e79ac473ac4233bbf196c902cddfaabcc967b2ac9c8025d78",
+    "drift.log.gz": "bf5be5688b44d59eed1c0ff2795f315615a6c719465b4a77a009f38db2504473",
+    "baseline-guard.log.gz": "c7125f1b0c8d383bb5518775ca45708c43dcdad0bbc7a7e92a026014a6469626"
+  },
+  "drift": "Full drift exits1 at existing GUI terminal convergence guard after workspace Clippy and preceding gates pass. Eight source-pattern failures identically reproduced using committed HEAD hit_clipping.rs via read-only Path.read_text substitution; other Rust/checker files unchanged. No gate weakened. Existing issue dat-terminal-convergence-guard-xke updated; later drift gates not run."
+}
