@@ -49,6 +49,13 @@ pre-test lines decrease from 1,250 to 1,215; the root expanded ceiling becomes
 `render/tests.rs` from 1,159 to 1,070 lines. All three limits ratchet downward;
 remaining debt stays open.
 
+PM045 S3 shell-layout adoption moves the shell solver and existing bounded
+layout cache into `gui-render/src/render/shell_layout.rs`, shared by frame
+preparation, retained-scene preparation and Runtime input geometry. The private
+app cache is retired. The renderer root include expansion falls from 7,375 to
+7,191 lines with an exact downward ceiling; the new owner stays within normal
+budgets. The root module map and existing panel solvers remain unchanged.
+
 ## What Counts as Structural Evidence
 
 Qualifying evidence names the ownership moved, the real module boundary created,

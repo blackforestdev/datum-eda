@@ -1,0 +1,109 @@
+{
+  "base_commit": "986965da6bf4e18ee85a18ebeaf87337297379f9",
+  "production_consumers": [
+    "Main Runtime current_layout and shell_layout_for_dock input geometry",
+    "PreparedScene::from_workspace_with_controls Main frame preparation",
+    "RetainedScene::from_workspace_for_surface Board reference projection",
+    "schematic retained shell geometry (existing path only; not resolved schematic qualification)"
+  ],
+  "shared_owner": "ShellLayout::for_surface in render/shell_layout.rs",
+  "retired_paths": [
+    "gui-app runtime_camera_pane/layout_cache.rs (ownership and four tests migrated)",
+    "Per-call shell Taffy solves in renderer surface-layout entry"
+  ],
+  "preserved": "Same Taffy solver and manual fallback, physical/logical rounding, viewport pane decomposition, two cached full-input keys, eviction and thread locality. Native dialogs retain their separate lightweight extent constructor; Main side-panel solvers remain.",
+  "proof": "224 renderer tests pass, including cached/uncached geometry at4 extents/5 scales/4 dock states and actual retained/frame/input warm-solve assertion. Isolated cache-bypass negative fails that production-consumer assertion; restored renderer explicitly recompiles and passes. App377 pass/16 ignored (four cache tests moved to renderer). Native terminal Runtime real-PTY wheel test passes X11/Wayland at1.5 with actual1918x1050 extents. Fresh release build passed.",
+  "negative": {
+    "compiled_input_digest": "fcc6c0b0df1ca2c3e115806907e3b38806d68b12b8cf08da6ebcbb03ba201a1f",
+    "compiled_input_count": 1845,
+    "runs": [
+      {
+        "label": "negative",
+        "exit": 101,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "/tmp/pm045-pinned-negative-source/Cargo.toml",
+          "-p",
+          "datum-gui-render",
+          "--lib",
+          "retained_preparation_frame_preparation_and_input_queries_share_one_solve",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "renderer_recompiled": true
+      },
+      {
+        "label": "restored",
+        "exit": 0,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "-p",
+          "datum-gui-render",
+          "--lib",
+          "retained_preparation_frame_preparation_and_input_queries_share_one_solve",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "renderer_recompiled": true
+      }
+    ]
+  },
+  "source_health": {
+    "renderer_include_expansion_before": 7375,
+    "renderer_include_expansion_after": 7191,
+    "extracted_owner": "crates/gui-render/src/render/shell_layout.rs",
+    "policy_tests_passed": 13,
+    "base_comparison": "python3 scripts/check_source_health.py --base-ref HEAD passed"
+  },
+  "failed_attempts": "Initial extraction removed root Taffy imports also used by existing side-panel code; compilation failed before tests, retained initial-compile log. Imports restored and root module map left unchanged. Initial placement of cfg(test) miss counter exceeded lexical inline-test budget; final test-only counter hook moved next to the test module, no policy weakening.",
+  "limits": "Structural shared production adoption and test-build solve count, not numerical CPU/frame-time/allocation acceptance. Counter optimizes away in production. Native Runtime proof is supplied input, not OS delivery/final pixels or complete HP01/02/S3 proof. No new dependencies/licenses/prototypes, no budget/qualification deadline change, and resize qualification remains nonblocking. Separate side-panel solves and remaining resource-accounting work are not claimed removed. Negative test binary was not retained or separately hashed; source copy digest, exact injected patch, commands and both raw outcomes are retained. This bounded detection is not a fully pinned final qualification receipt.",
+  "source_sha256": {
+    "crates/gui-render/src/render/layout.rs": "1e36284a5aa69aef355816839c3e63146eceba8080a6ee27721709d782e36e4e",
+    "crates/gui-render/src/render/shell_layout.rs": "79afd2ce06cd90750b7a9e0aa32499a76d7ebe3d12cfbbff2a1ee4aadd8bed4a",
+    "crates/gui-app/src/runtime_camera_pane.rs": "373e4a52681eaae057cdf976f48d33539a44f1a62694f5f6517b320375eddf33"
+  },
+  "release_sha256": "7ce8e76833bfb7037a6adbcf364b320123e69c3467dd630dd3b1ddd7cbb83897",
+  "commands": {
+    "renderer": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib",
+    "app": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui",
+    "release": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app --bin datum-gui",
+    "drift": "CARGO_NET_OFFLINE=true bash scripts/run_drift_gates.sh"
+  },
+  "artifacts": {
+    "pm045-shared-shell-build.log.gz": "d1c8cd258db99fd2f02d433516b3603723fe827f03c89cf6a162d2112d550411",
+    "pm045-shared-shell-terminal-wayland-1.5.log.gz": "c2bced0f0e4c28b35f95b9f18a6d002e7f3a2691915702bd0a2d8620f74c6d72",
+    "pm045-shared-shell-terminal-x11-1.5.log.gz": "6a80c97e87852360c6779eeb9ec8adc1e6596aab4fe587aa2fd23140e744e1ee",
+    "pm045-shared-shell-restored.log.gz": "9adcc0aa63798e2338b3966b36c2e94b359ea5a5ce1d89175f1cbc8c14507133",
+    "pm045-shared-shell-negative.log.gz": "01081df212a6d9dea40ff0c3726aeba5cb58052dcc107f313c2395e2d687742c",
+    "pm045-shared-shell-policy.log.gz": "23c8957767e15a5fbedf9fad9226e06629bb17184abb9e73ee333045e9edead1",
+    "pm045-shared-shell-app.log.gz": "18dcba435d2ccfaa60c6bf077fa226b9044acf1fa3bd82a0fa170ebef3265bf9",
+    "pm045-shared-shell-renderer.log.gz": "18d0106adee011ba1f973e8d59f911c9270ffab46c27db1bf14b381ab7de54d6",
+    "pm045-shared-shell-initial-compile.log.gz": "a9c8ba23a6ce7f84e43f75eeb06045a0b7a1d659c7bf3ced651ada6f70ad4e13",
+    "pm045-shared-shell-tests.log.gz": "86547da3f636e8442c9471184ca571f9ce419db4679d7d41292025806f9f05b2",
+    "pm045_shared_shell_native.py.gz": "cfd9e58e1607799e5845a728713bef12a3be6ef0890984d651d6cda703ef9101",
+    "pm045_shared_shell_negative.py.gz": "8f5ecfb2515cf388ceebed024f2a68c1f4f6064525188e3e71391288c1ed417c",
+    "pm045-shared-shell-negative.patch.gz": "8db4d8187215e4c9a0c9ea19054e5ce5f7a891ae7897350cd47dbc0547deac3b",
+    "pm045-shared-shell-negative-result.json.gz": "129d4c6e32cae1c7a83e139877f5713835e6a1f1b2217d136ed2d65575c59541",
+    "pm045-shared-shell-terminal-results.json.gz": "859d77b4c943bbca83a0878d00b20e3cad0a241390fdeaabeeb2cd98af09dbad",
+    "drift.log.gz": "a554ea3dc619648ba58c135c60973477e8a138ee3f128f8786fc409e696a1986",
+    "drift-before-parity.log.gz": "10926692b633322f0e3359b83a1b8768c5fb2de3cc9cec6eadff01db93b0bf53"
+  },
+  "verification": "Workspace Clippy,13 source-policy tests, source health with HEAD comparison, dependency authority, traceability, spec governance/parity and project state pass. Initial drift stopped at the expected changed source-health inventory; policy note and only its parity row reconciled. Final drift stops at the same eight pre-existing GUI agent/terminal convergence source-pattern failures (dat-terminal-convergence-guard-xke); later gates unrun."
+}

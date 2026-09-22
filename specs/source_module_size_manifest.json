@@ -701,13 +701,13 @@
     "crates/gui-render/src/lib.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 7375
+        "expanded_lines": 7191
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Text buffer key and layout extent ownership extracted into the shared text_buffer_cache module. Remaining source debt retains exact downward limits."
+      "note": "Shared shell solve and bounded cache ownership extracted from textual layout into render/shell_layout.rs. App-only cache retired; remaining include debt retains exact downward ceiling."
     },
     "crates/gui-render/src/render/draw_primitives.rs": {
       "kind": "rust-production",
