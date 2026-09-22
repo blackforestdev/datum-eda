@@ -1,0 +1,64 @@
+{
+  "base_commit": "6d397cf507772404b016428f1e74a31628fda7cf",
+  "source": "crates/gui-app/src/owned_dialog_pointer_tests.rs",
+  "source_sha256": "1e08e62f34d6da6996edd7eb77f69d101e3b63430c2fdad3df8303465c8c987d",
+  "test_binary_sha256": "246317ce556a1a65b61e4a2f832621e43828094ac7047345170ec20d0ee030d5",
+  "production_consumers": [
+    "Global Preferences native entry -> shared owned pointer dispatcher",
+    "Project Preferences native entry -> shared owned pointer dispatcher",
+    "New Project native entry -> shared owned pointer dispatcher"
+  ],
+  "retired_paths": [],
+  "proof": "Same test binary passes both native backends:12 Wayland host/profile closes with10 scrollbar focus-cancel/fresh-control cases, and12 X11 closes with9 scrollbar cases. Global/Project/New all enter production native event routing on real native surfaces. Source-policy13 tests and workspace Clippy pass. No production source/release change.",
+  "limits": "WindowEvents are supplied directly using a real ActiveEventLoop, not OS-generated input. Wayland2x requested1400x1080 (Preferences) and1240x1240 (New) were constrained to heights1050; assert renderer configuration equals accepted extent and retain unavailable requested-size rows as unqualified. Visual scale override does not prove monitor transitions. Initial exact-size assertion failure retained. No new negative replay, screenshots, timing/resource/OS delivery or complete HP21/S3 acceptance. Existing X11 missing-cancellation negative remains earlier evidence. Production releasebcbe537b unchanged; no dependency/license/prototype/resource-deadline/resize change.",
+  "observations": {
+    "wayland-accepted": {
+      "native_close_cases": 12,
+      "scrollbar_focus_cancel_cases": 10,
+      "profiles": [
+        "host=0 scale=1 requested_supported_minimum=false requested=PhysicalSize { width: 960, height: 480 } accepted=PhysicalSize { width: 960, height: 480 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=1 scale=1 requested_supported_minimum=false requested=PhysicalSize { width: 960, height: 480 } accepted=PhysicalSize { width: 960, height: 480 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=2 scale=1 requested_supported_minimum=false requested=PhysicalSize { width: 960, height: 480 } accepted=PhysicalSize { width: 960, height: 480 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=0 scale=1 requested_supported_minimum=true requested=PhysicalSize { width: 700, height: 540 } accepted=PhysicalSize { width: 700, height: 540 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=1 scale=1 requested_supported_minimum=true requested=PhysicalSize { width: 700, height: 540 } accepted=PhysicalSize { width: 700, height: 540 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=2 scale=1 requested_supported_minimum=true requested=PhysicalSize { width: 620, height: 620 } accepted=PhysicalSize { width: 620, height: 620 } scrollbar=false release_suppressed=None fresh_control_click=true",
+        "host=0 scale=1.5 requested_supported_minimum=true requested=PhysicalSize { width: 1050, height: 810 } accepted=PhysicalSize { width: 1050, height: 810 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=1 scale=1.5 requested_supported_minimum=true requested=PhysicalSize { width: 1050, height: 810 } accepted=PhysicalSize { width: 1050, height: 810 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=2 scale=1.5 requested_supported_minimum=true requested=PhysicalSize { width: 930, height: 930 } accepted=PhysicalSize { width: 930, height: 930 } scrollbar=false release_suppressed=None fresh_control_click=true",
+        "host=0 scale=2 requested_supported_minimum=true requested=PhysicalSize { width: 1400, height: 1080 } accepted=PhysicalSize { width: 1400, height: 1050 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=1 scale=2 requested_supported_minimum=true requested=PhysicalSize { width: 1400, height: 1080 } accepted=PhysicalSize { width: 1400, height: 1050 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=2 scale=2 requested_supported_minimum=true requested=PhysicalSize { width: 1240, height: 1240 } accepted=PhysicalSize { width: 1240, height: 1050 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true"
+      ]
+    },
+    "x11": {
+      "native_close_cases": 12,
+      "scrollbar_focus_cancel_cases": 9,
+      "profiles": [
+        "host=0 scale=1 requested_supported_minimum=false requested=PhysicalSize { width: 960, height: 480 } accepted=PhysicalSize { width: 960, height: 480 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=1 scale=1 requested_supported_minimum=false requested=PhysicalSize { width: 960, height: 480 } accepted=PhysicalSize { width: 960, height: 480 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=2 scale=1 requested_supported_minimum=false requested=PhysicalSize { width: 960, height: 480 } accepted=PhysicalSize { width: 960, height: 480 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=0 scale=1 requested_supported_minimum=true requested=PhysicalSize { width: 700, height: 540 } accepted=PhysicalSize { width: 700, height: 540 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=1 scale=1 requested_supported_minimum=true requested=PhysicalSize { width: 700, height: 540 } accepted=PhysicalSize { width: 700, height: 540 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=2 scale=1 requested_supported_minimum=true requested=PhysicalSize { width: 620, height: 620 } accepted=PhysicalSize { width: 620, height: 620 } scrollbar=false release_suppressed=None fresh_control_click=true",
+        "host=0 scale=1.5 requested_supported_minimum=true requested=PhysicalSize { width: 1050, height: 810 } accepted=PhysicalSize { width: 1050, height: 810 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=1 scale=1.5 requested_supported_minimum=true requested=PhysicalSize { width: 1050, height: 810 } accepted=PhysicalSize { width: 1050, height: 810 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=2 scale=1.5 requested_supported_minimum=true requested=PhysicalSize { width: 930, height: 930 } accepted=PhysicalSize { width: 930, height: 930 } scrollbar=false release_suppressed=None fresh_control_click=true",
+        "host=0 scale=2 requested_supported_minimum=true requested=PhysicalSize { width: 1400, height: 1080 } accepted=PhysicalSize { width: 1400, height: 1080 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=1 scale=2 requested_supported_minimum=true requested=PhysicalSize { width: 1400, height: 1080 } accepted=PhysicalSize { width: 1400, height: 1080 } scrollbar=true release_suppressed=Some(true) fresh_control_click=true",
+        "host=2 scale=2 requested_supported_minimum=true requested=PhysicalSize { width: 1240, height: 1240 } accepted=PhysicalSize { width: 1240, height: 1240 } scrollbar=false release_suppressed=None fresh_control_click=true"
+      ]
+    }
+  },
+  "commands": [
+    "DATUM_NATIVE_TEST_BACKEND=wayland DATUM_NATIVE_TEST_BOARD=/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb XDG_CONFIG_HOME=/tmp/pm045-wayland-entry-fixed-config XDG_CACHE_HOME=/tmp/pm045-wayland-entry-fixed-cache EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/release/datum-eda timeout 90s python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_dialog_scroll_release_cannot_click_through_to_controls -- --ignored --test-threads=1 --nocapture",
+    "X11 invocation uses DATUM_NATIVE_TEST_BACKEND=x11 and /tmp/pm045-x11-entry-current-{config,cache}; same Cargo command/test binary"
+  ],
+  "drift": "Full drift stops at same eight pre-existing terminal convergence guard source-pattern failures after workspace Clippy/preceding gates pass. Later gates unrun; no guard modification.",
+  "artifacts": {
+    "drift.log.gz": "275fe0710e49d972c480e663875e9ba0ed85bd4b37bd15c88db5710f1ec9ccb3",
+    "source-policy.log.gz": "9978c02a90a3a56bbc650b6ba33372e81cfb2ecba7d76915cd710a7e53909643",
+    "wayland-accepted.log.gz": "29305484cd361b3770167670d8643d7e3fa7e042c0e0682d4310fd180973cecd",
+    "wayland-initial.log.gz": "da45ae8d84b51f6b56a2cd9c98bcae4ed6a1a6b74ea136c1cfb663214c845d58",
+    "x11.log.gz": "57099fc5c94b9b3af4528628a1531ffc7c8c78836b782f286de2efb57f5c59dd"
+  }
+}

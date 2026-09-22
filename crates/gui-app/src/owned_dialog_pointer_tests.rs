@@ -5,7 +5,7 @@ use std::{
     sync::Arc,
     time::{Duration, Instant},
 };
-use winit::platform::{pump_events::EventLoopExtPumpEvents, x11::EventLoopBuilderExtX11};
+use winit::platform::pump_events::EventLoopExtPumpEvents;
 
 fn host(index: usize) -> OwnedHost {
     match index {
@@ -57,16 +57,26 @@ fn deliver(
 }
 
 #[test]
-#[ignore = "requires X11/Vulkan, isolated config and DATUM_NATIVE_TEST_BOARD; run serially"]
+#[ignore = "requires native Vulkan, isolated config and DATUM_NATIVE_TEST_BOARD; run serially"]
 #[allow(deprecated)]
 fn native_dialog_scroll_release_cannot_click_through_to_controls() {
     let board = std::env::var("DATUM_NATIVE_TEST_BOARD").expect("owned real board fixture");
     let args = GuiArgs::try_parse_from(["datum-gui", "--board", &board]).unwrap();
-    let mut events = winit::event_loop::EventLoop::<()>::with_user_event()
-        .with_x11()
-        .with_any_thread(true)
-        .build()
-        .unwrap();
+    let backend = std::env::var("DATUM_NATIVE_TEST_BACKEND").unwrap_or_else(|_| "x11".into());
+    let mut builder = winit::event_loop::EventLoop::<()>::with_user_event();
+    match backend.as_str() {
+        "x11" => {
+            use winit::platform::x11::EventLoopBuilderExtX11;
+            builder.with_x11().with_any_thread(true);
+        }
+        "wayland" => {
+            use winit::platform::wayland::EventLoopBuilderExtWayland;
+            builder.with_wayland().with_any_thread(true);
+        }
+        _ => panic!("unsupported native test backend: {backend}"),
+    }
+    let mut events = builder.build().unwrap();
+    eprintln!("Native dialog input backend: {backend}; events supplied to production entry");
     let wake = events.create_proxy();
     let window = Arc::new(
         events
@@ -141,7 +151,13 @@ fn native_dialog_scroll_release_cannot_click_through_to_controls() {
                 runtime.device.poll(wgpu::PollType::Poll).unwrap();
                 std::thread::sleep(Duration::from_millis(10));
             }
-            assert_eq!(window.inner_size(), physical);
+            let requested_physical = physical;
+            let physical = window.inner_size();
+            assert!(physical.width > 0 && physical.height > 0);
+            assert_eq!(
+                (owned.config.width, owned.config.height),
+                (physical.width, physical.height)
+            );
             let thumb = owned.scroll.thumb();
             if !supported_minimum {
                 assert!(thumb.is_some(), "overflow fixture");
@@ -257,7 +273,7 @@ fn native_dialog_scroll_release_cannot_click_through_to_controls() {
             );
             assert!(!app.handle_owned_dialog_pointer(host(index), &WindowEvent::Focused(true)));
             eprintln!(
-                "host={index} scale={scale} supported_minimum={supported_minimum} physical={physical:?} scrollbar={} release_suppressed={:?} fresh_control_click=true",
+                "host={index} scale={scale} requested_supported_minimum={supported_minimum} requested={requested_physical:?} accepted={physical:?} scrollbar={} release_suppressed={:?} fresh_control_click=true",
                 thumb.is_some(),
                 thumb.map(|_| !failures.contains(&(index, scale, supported_minimum)))
             );
