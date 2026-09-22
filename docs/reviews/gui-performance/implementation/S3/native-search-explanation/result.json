@@ -1,0 +1,53 @@
+{
+  "candidate_base": "48d6976d11f4457f73b586c7d1842a4037ed14a4",
+  "status": "Four corrected native search/explanation trials pass across GLOBAL/PROJECT",
+  "requirements": [
+    "HP20-01",
+    "HP23-01"
+  ],
+  "observations": {
+    "initial": "Both explanation trials pass press/drag/boundary/reversal then timeout waiting for Escape-collapse frame. Raw logs contain no Escape keyboard event. Preserve failures.",
+    "explanation": "Corrected trials explicitly reactivate/focus before Escape and wait for observed keyboard event. Both report identical expected focus ID before/after. Each:0 thumb-press frames,1 drag,0 boundary,1 reverse,1 collapse. Captures show explanation expansion and return focus to Measurement system after collapse. Do not infer original timeout cause.",
+    "search": "Both captures show precision query, four matching rows grouped under Units, no scrollbar. Scheduled wheel yields0 frames; Escape clears search and following wheel yields1 frame. All original rows/scrollability restored.",
+    "cleanup": "Harness SIGTERM; not teardown qualification."
+  },
+  "limits": "Both native Preferences hosts, X11/Xwayland1x960x720, recorded unchanged release binary2a4cecd6. Actual scheduled explanation/search input and presentation counts, not an exact fractional offset, latency, complete backend/scale/control matrix or full HP20/HP23/S3 acceptance. Earlier Escape nondelivery remains unexplained; focus reactivation is a harness prerequisite in corrected trials, not evidence of an application focus defect or desktop use. Capture filenames do not prove timing. No production behavior, dependency/license, prototype, numerical-budget, S4/S5 resource or nonblocking resize-scope change.",
+  "artifact_sha256": {
+    "explanation/GLOBAL/before.png": "0dc7adc755ad6e39d937820c9586fc6c94244ebcb2d15b7b9932d93a352be048",
+    "explanation/GLOBAL/bottom.png": "83d2dfd27cd14fd5f7676ea829817d23e0d2dd9f706cbda0a19010c5c027f04c",
+    "explanation/GLOBAL/collapsed.png": "e287b91d51a779a4ea293e0775a813699792074535a4f6c3e6eba43184b15dca",
+    "explanation/GLOBAL/native.log.gz": "3649cc0a049a89399cc276285bd5e069e7650684698fe6f7ced604c021140d01",
+    "explanation/GLOBAL/reverse.png": "a930c66408758edbda8bc264c748a20cc3cd2d332d31b37136b1f5763f5f375d",
+    "explanation/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "explanation/PROJECT/before.png": "f5ed91abbd9271d1da971d0f21b124625f9899c1169efdce0b91b09e1e43681a",
+    "explanation/PROJECT/bottom.png": "3cf7c6b1d705fd4611541b5cf655d28e931c9f6300beafa9c87d260a264c84fd",
+    "explanation/PROJECT/collapsed.png": "e59e630692ecdfbdf120503ef50a1b5aa31c3ab8ae2ecfe550164671f5f0c22d",
+    "explanation/PROJECT/native.log.gz": "7e4d6676987e373edf0549db0df1239637680419e87da0afd2f152e6893197aa",
+    "explanation/PROJECT/reverse.png": "30352b60093093a65463b02fe35bc7bb873077319ec75243ebfe67fc254386be",
+    "explanation/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "explanation/driver.py": "5da452d631715e2a89e46fa4f34b94f0df12d5fcac9ebb1b5927ab560015edd3",
+    "explanation/result.json": "b724923130186d46a4b9454b907488fc9618584f8119288c6bd0ee31bc0850f2",
+    "search/GLOBAL/cleared.png": "2acfc10bfaa6498aec4bbd90f7835d93ba4c78a2bd7ff6fe55232123624e404c",
+    "search/GLOBAL/native.log.gz": "6d708bfe5b99d3f95cbb73ff11f02f805d97085fdff3ff3db583748c505b51ce",
+    "search/GLOBAL/search.png": "c6e5dc1b6a2177b265cc73c965c09045e9525cafa53f943caff7297765d072cb",
+    "search/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "search/PROJECT/cleared.png": "3e5f8a89c5e5fcde4136ac5b8e40b14d3cc76b81b0e6da4185ad34867a68a6e6",
+    "search/PROJECT/native.log.gz": "91b9fb1d38670e1446ae0b2b1826da7cf158e2352b3ea9650a659181744444f3",
+    "search/PROJECT/search.png": "3d66519beda8f7efcc40ccabbfb215e504d54bfc79f65ce2930cbbd5d921106d",
+    "search/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "search/driver.py": "35429ee2e24079016e60df9762bf06e3af86a442aff3315adee1051cd7fb6c00",
+    "search/result.json": "acd9fea5786cc371024b67a98e3e31d4b815b4b4631aba2e4b5a8392a7e5b4f6",
+    "undelivered-escape/GLOBAL/before.png": "0dc7adc755ad6e39d937820c9586fc6c94244ebcb2d15b7b9932d93a352be048",
+    "undelivered-escape/GLOBAL/bottom.png": "83d2dfd27cd14fd5f7676ea829817d23e0d2dd9f706cbda0a19010c5c027f04c",
+    "undelivered-escape/GLOBAL/native.log.gz": "6a84e5a43c2b42d2752a48c290cf157d5b7f7754b400d8aacd5cd056d6ba00ef",
+    "undelivered-escape/GLOBAL/reverse.png": "83d2dfd27cd14fd5f7676ea829817d23e0d2dd9f706cbda0a19010c5c027f04c",
+    "undelivered-escape/GLOBAL/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "undelivered-escape/PROJECT/before.png": "f5ed91abbd9271d1da971d0f21b124625f9899c1169efdce0b91b09e1e43681a",
+    "undelivered-escape/PROJECT/bottom.png": "3cf7c6b1d705fd4611541b5cf655d28e931c9f6300beafa9c87d260a264c84fd",
+    "undelivered-escape/PROJECT/native.log.gz": "942a7be5a9d709274b3a096f91842584804dea42ae51d054ea1f9f5eda4e323d",
+    "undelivered-escape/PROJECT/reverse.png": "3cf7c6b1d705fd4611541b5cf655d28e931c9f6300beafa9c87d260a264c84fd",
+    "undelivered-escape/PROJECT/stderr.log.gz": "9ceffb7310338057cfe71a4ae1e2c98d2c485d81cdef906532a801f457a38d64",
+    "undelivered-escape/driver.py": "103e540b3e43f04660255f644e838ad05ae4b1068b863f3b367f3ed090d3ea01",
+    "undelivered-escape/result.json": "35c798b3a987fadaa869b62ea954cfce8e115c2bbabc4934c5d7c659d32ea821"
+  }
+}

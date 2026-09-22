@@ -6733,7 +6733,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared full-content extent and thumb owner used by both Preferences. Existing renderer test now checks final-setting reachability at matching1/1.5/2x sizes and preserves narrow clipping coverage. Visible-row-only extent fault fails; restored production passes. Native search/choice/explanation/final-row/resize matrix remains open. Inspector is currently non-scrolling. Both native Preferences hosts now pass bounded1x Units-choice expansion/scroll/boundary/reversal/collapse at720px and observed563px minimum height. Remaining native matrix and full acceptance stay open.",
+        "status": "Partial: shared full-content extent and thumb owner used by both Preferences. Existing renderer test now checks final-setting reachability at matching1/1.5/2x sizes and preserves narrow clipping coverage. Visible-row-only extent fault fails; restored production passes. Native search/choice/explanation/final-row/resize matrix remains open. Inspector is currently non-scrolling. Both native Preferences hosts now pass bounded1x Units-choice expansion/scroll/boundary/reversal/collapse at720px and observed563px minimum height. Remaining native matrix and full acceptance stay open. Both native hosts now pass bounded1x four-result search/fitting-content/clear-restores-scroll and explanation expansion/boundary/reversal/collapse with observed Escape delivery. Earlier nondelivery failures retained; full matrix remains open.",
         "id": "proof_hp20_01",
         "positive": "Short/final-row content, search/expanded choices/explanations then resize",
         "negative_control": "Compute extent from visible rows",
@@ -6777,7 +6777,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json",
-        "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json"
+        "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json"
       ],
       "s3_native_expanded_extent_progress": {
         "status": "Four bounded native expanded-choice trials pass: GLOBAL/PROJECT at720px and native-minimum563px heights",
@@ -6789,6 +6790,17 @@
         "retired_paths": "No new production retirement; native verification of existing shared expanded-content and scrollbar paths.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
         "limits": "X11/Xwayland at1x only, existing release binary2a4cecd6 from recorded Global preparation fix (production sources unchanged since that build). Native scheduled Units expansion, thumb/line boundary/reversal and Escape collapse; no exact fractional-offset or presentation-latency oracle. Requested resize960x400 was clamped to observed960x563; no400px native qualification or resize CPU claim. Search, explanations, other controls/backend/scale and full HP20/HP21/S3 remain open. Capture filenames are not timing/final-state proof. No production change, new consumer migration, dependency/license, prototype or numerical-budget change."
+      },
+      "s3_native_search_explanation_progress": {
+        "status": "Four corrected native search/explanation trials pass across GLOBAL/PROJECT",
+        "production_consumers": [
+          "GLOBAL native Preferences",
+          "PROJECT native Preferences"
+        ],
+        "shared_owner": "Shared native Preferences surface, full-content row layout and ScrollViewport",
+        "retired_paths": "No new retirement; verifies existing shared content identity, extent and focus reconciliation.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
+        "limits": "Both native Preferences hosts, X11/Xwayland1x960x720, recorded unchanged release binary2a4cecd6. Actual scheduled explanation/search input and presentation counts, not an exact fractional offset, latency, complete backend/scale/control matrix or full HP20/HP23/S3 acceptance. Earlier Escape nondelivery remains unexplained; focus reactivation is a harness prerequisite in corrected trials, not evidence of an application focus defect or desktop use. Capture filenames do not prove timing. No production behavior, dependency/license, prototype, numerical-budget, S4/S5 resource or nonblocking resize-scope change."
       }
     },
     {
@@ -7324,7 +7336,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Implemented in shared Preferences preparation: current focus/search/expansion identity selects reveal row and current layout clamps bounds. Full native keyboard/search/DPI/content final-target qualification is not executed successfully; Inspector has no current scroll/focus-reveal adapter.",
+        "status": "Implemented in shared Preferences preparation: current focus/search/expansion identity selects reveal row and current layout clamps bounds. Full native keyboard/search/DPI/content final-target qualification is not executed successfully; Inspector has no current scroll/focus-reveal adapter. Both native hosts now pass bounded1x four-result search/fitting-content/clear-restores-scroll and explanation expansion/boundary/reversal/collapse with observed Escape delivery. Earlier nondelivery failures retained; full matrix remains open.",
         "id": "proof_hp23_01",
         "positive": "Keyboard search navigation across sections and changed DPI/size/content",
         "negative_control": "Keep stale focus/extent",
@@ -7376,7 +7388,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/native-focus-reveal/result.json",
-        "docs/reviews/gui-performance/implementation/S3/focus-reveal-trace/result.json"
+        "docs/reviews/gui-performance/implementation/S3/focus-reveal-trace/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json"
       ],
       "s3_focus_reveal_trace_progress": {
         "status": "bounded GLOBAL/PROJECT unchanged-production keyboard reveal pass after runtime trace; full qualification open",
@@ -7401,6 +7414,17 @@
         ],
         "evidence": "docs/reviews/gui-performance/implementation/S3/explanation-focus-reveal/result.json",
         "limits": "Bounded explanation-focus adoption in GLOBAL/PROJECT. Native X11 test uses one scale and actual 1000x563 window; CPU tests cover first/last rows at 1/1.5/2x. Native captures can lag actions; filenames are not state/timing proof. No complete HP12/HP23/S3, backend, resource or performance acceptance. No dependencies, prototype edits, numerical budgets or resize-scope change."
+      },
+      "s3_native_search_explanation_progress": {
+        "status": "Four corrected native search/explanation trials pass across GLOBAL/PROJECT",
+        "production_consumers": [
+          "GLOBAL native Preferences",
+          "PROJECT native Preferences"
+        ],
+        "shared_owner": "Shared native Preferences surface, full-content row layout and ScrollViewport",
+        "retired_paths": "No new retirement; verifies existing shared content identity, extent and focus reconciliation.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
+        "limits": "Both native Preferences hosts, X11/Xwayland1x960x720, recorded unchanged release binary2a4cecd6. Actual scheduled explanation/search input and presentation counts, not an exact fractional offset, latency, complete backend/scale/control matrix or full HP20/HP23/S3 acceptance. Earlier Escape nondelivery remains unexplained; focus reactivation is a harness prerequisite in corrected trials, not evidence of an application focus defect or desktop use. Capture filenames do not prove timing. No production behavior, dependency/license, prototype, numerical-budget, S4/S5 resource or nonblocking resize-scope change."
       }
     },
     {
@@ -27588,7 +27612,8 @@
         "s3_global_mutation_preparation_work": "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json",
         "s3_wheel_input_negatives_work": "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json",
         "s3_preferences_extent_negative_work": "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json",
-        "s3_native_expanded_extent_work": "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json"
+        "s3_native_expanded_extent_work": "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
+        "s3_native_search_explanation_work": "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json"
       },
       "receipt_sha256": {
         "docs/reviews/gui-performance/implementation/S3/control-family-inventory/result.json": "7c21f4fb04e937db21bd06d9bd0e9b1d4d0602ccca5cf167def2a77f6d5e9139",
@@ -27603,7 +27628,8 @@
         "docs/reviews/gui-performance/implementation/S3/global-mutation-preparation/result.json": "a9c3cbf00ec0731bcfded36e99ee3da73442a9e5c073f81814bd5f104d9f94b2",
         "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json": "eae1fafd5b8f366f5d2ca5cfc5f0560dc500c5bd16e7a94cd16734584eb03d0f",
         "docs/reviews/gui-performance/implementation/S3/preferences-extent-negative/result.json": "0585e0e132197934f58ea1891dfe4f4178ccb81e70695a304d5987919d32fafd",
-        "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json": "8c4e54e5a70f96443bdc67c2f72bfef46497c860ba1a1e16fbbcb89cf23ad407"
+        "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json": "8c4e54e5a70f96443bdc67c2f72bfef46497c860ba1a1e16fbbcb89cf23ad407",
+        "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json": "99914ecea89ac062c99d8cd6dfa5d3421174971ae622bf634a1296a7a71afb37"
       },
       "remaining_actions": {
         "HP10-01": "Verify outside-Layers routing through the outer native event dispatcher; actual Board Runtime zero-preparation and prescribed negative are recorded.",
@@ -27619,7 +27645,7 @@
         "HP16-03": "Complete bounded control working-set eviction and pin-indefinitely negative. Full GPU/in-flight/aggregate bounds follow S4/S5 resource associations.",
         "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter.",
         "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct.",
-        "HP20-01": "Complete remaining native search/explanation/other-control and backend/scale extent cases. Both Preferences Units-choice expansion, final row, boundary/reversal and shrink to actual563px minimum pass at1x. Shared renderer visible-row negative is recorded.",
+        "HP20-01": "Complete remaining backend/scale and other-control extent cases. Both Preferences1x native Units choices, explanations, four-result search/clear, final row/boundary/reversal and shrink to actual563px minimum are recorded. Shared renderer visible-row negative is recorded.",
         "HP21-01": "Complete remaining capture/profile/scale cases and grab-displacement/painted-only-scrollbar negative; retain existing native press/drag/track evidence.",
         "HP21-02": "Complete release/capture-loss/close/content-change final-target cases beyond recorded focus-loss and reflow cancellation tests.",
         "HP22-01": "Complete clamp-vertices negative and remaining native diagonal/rounded/nested clip cases per actual consumer; preserve existing terminal call-removal negatives.",
@@ -28087,5 +28113,16 @@
     "retired_paths": "No new production retirement; native verification of existing shared expanded-content and scrollbar paths.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
     "limits": "X11/Xwayland at1x only, existing release binary2a4cecd6 from recorded Global preparation fix (production sources unchanged since that build). Native scheduled Units expansion, thumb/line boundary/reversal and Escape collapse; no exact fractional-offset or presentation-latency oracle. Requested resize960x400 was clamped to observed960x563; no400px native qualification or resize CPU claim. Search, explanations, other controls/backend/scale and full HP20/HP21/S3 remain open. Capture filenames are not timing/final-state proof. No production change, new consumer migration, dependency/license, prototype or numerical-budget change."
+  },
+  "s3_native_search_explanation_work": {
+    "status": "Four corrected native search/explanation trials pass across GLOBAL/PROJECT",
+    "production_consumers": [
+      "GLOBAL native Preferences",
+      "PROJECT native Preferences"
+    ],
+    "shared_owner": "Shared native Preferences surface, full-content row layout and ScrollViewport",
+    "retired_paths": "No new retirement; verifies existing shared content identity, extent and focus reconciliation.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-search-explanation/result.json",
+    "limits": "Both native Preferences hosts, X11/Xwayland1x960x720, recorded unchanged release binary2a4cecd6. Actual scheduled explanation/search input and presentation counts, not an exact fractional offset, latency, complete backend/scale/control matrix or full HP20/HP23/S3 acceptance. Earlier Escape nondelivery remains unexplained; focus reactivation is a harness prerequisite in corrected trials, not evidence of an application focus defect or desktop use. Capture filenames do not prove timing. No production behavior, dependency/license, prototype, numerical-budget, S4/S5 resource or nonblocking resize-scope change."
   }
 }
