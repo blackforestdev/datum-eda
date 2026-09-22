@@ -7591,7 +7591,8 @@
         "docs/reviews/gui-performance/implementation/S3/shell-content-clipping/result.json",
         "docs/reviews/gui-performance/implementation/S3/shell-identity-clipping/result.json",
         "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
-        "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json"
+        "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json",
+        "docs/reviews/gui-performance/implementation/S3/clip-hidden-geometry/result.json"
       ],
       "s3_shell_content_clipping_progress": {
         "status": "bounded S3 Main placeholder/status shared clipping adoption; full qualification open",
@@ -7657,6 +7658,21 @@
         "retired_paths": "No new runtime retirement; replace ineffective diagonal test geometry with discriminating intersection geometry.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json",
         "limits": "Existing shared CPU clipping tests, not native consumer dispatch or GPU pixels. Corrected triangle distinguishes contour intersection from vertex clamping while preserving pinned geometry. Hidden-hit negative detects retained hidden region count; restored test verifies nested text/hit intersections and pinned chrome. Native rounded/diagonal/all-profile coverage, pinned-header negative and full HP22/S3 acceptance remain open. Production clipping unchanged; no dependencies/license/prototype/numerical budget/resize-scope changes."
+      },
+      "s3_clip_hidden_geometry_progress": {
+        "status": "Default shared content clipper removes wholly hidden geometry before suffix copying",
+        "production_consumers": [
+          "Existing clip_content callers in native Preferences rows/envelope and New Project",
+          "Existing Main Inspector/Project-Layers/Revision/Console/terminal content and chrome, menus, pane chrome, status and identity clipping"
+        ],
+        "shared_owner": "hit_clipping::clip_content",
+        "retired_paths": [
+          "Copying wholly outside quads into split_off scratch before discarding them",
+          "Triangle edge-intersection work for quads whose vertices lie beyond one common viewport edge"
+        ],
+        "evidence": "docs/reviews/gui-performance/implementation/S3/clip-hidden-geometry/result.json",
+        "proof": "218 renderer tests pass, including four-edge diagonal area and pinned content. Existing GPU dialog parity1pass/258filtered; visual renderer Clippy and fresh release build pass. Source health and dependency authority pass.",
+        "limits": "Source-level work/copy removal only; no aggregate allocation or frame-time claim. Rejects only a common outside half-plane; all-outside vertices with a crossing triangle retain exact clipping. Existing all-visible prefix path remains; partly visible suffix incurs additional rejection checks and clipping scratch remains for crossings. No new consumer migration or complete per-consumer native/HP22/S3 qualification. No visual/prototype/dependency/license/resource deadline or resize change."
       }
     },
     {
@@ -29150,5 +29166,20 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/preferences-world-negative/result.json",
     "proof": "Existing positive and explicitly recompiled restored renderer test each1pass/217filtered. Inject RetainedScene::from_workspace using the existing repository workspace fixture into shared dialog preparation: retained resolve count2vs1 fails. All tracked isolated Rust/Cargo sources byte-restored; negative and restored binary hashes differ.",
     "limits": "Shared renderer-owner CPU proof. Existing positive uses one Preferences fixture with Global/Project titles, scroll rows and1/1.5 scale; negative aborts at first profile. Not both native-host accounting, OS input, every section, workspace-clone detection, hidden-terminal/full-shell attribution or full HP12/S3 acceptance. Requirement permits clone workspace OR general world path; this executes the latter. No production/dependency/license/prototype/resource/resize or sequencing change."
+  },
+  "s3_clip_hidden_geometry_work": {
+    "status": "Default shared content clipper removes wholly hidden geometry before suffix copying",
+    "production_consumers": [
+      "Existing clip_content callers in native Preferences rows/envelope and New Project",
+      "Existing Main Inspector/Project-Layers/Revision/Console/terminal content and chrome, menus, pane chrome, status and identity clipping"
+    ],
+    "shared_owner": "hit_clipping::clip_content",
+    "retired_paths": [
+      "Copying wholly outside quads into split_off scratch before discarding them",
+      "Triangle edge-intersection work for quads whose vertices lie beyond one common viewport edge"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/clip-hidden-geometry/result.json",
+    "proof": "218 renderer tests pass, including four-edge diagonal area and pinned content. Existing GPU dialog parity1pass/258filtered; visual renderer Clippy and fresh release build pass. Source health and dependency authority pass.",
+    "limits": "Source-level work/copy removal only; no aggregate allocation or frame-time claim. Rejects only a common outside half-plane; all-outside vertices with a crossing triangle retain exact clipping. Existing all-visible prefix path remains; partly visible suffix incurs additional rejection checks and clipping scratch remains for crossings. No new consumer migration or complete per-consumer native/HP22/S3 qualification. No visual/prototype/dependency/license/resource deadline or resize change."
   }
 }

@@ -1,0 +1,33 @@
+{
+  "candidate_base": "1496fbfa6689006951f37612d19ebb2b31673e7a",
+  "production": {
+    "status": "Default shared content clipper removes wholly hidden geometry before suffix copying",
+    "production_consumers": [
+      "Existing clip_content callers in native Preferences rows/envelope and New Project",
+      "Existing Main Inspector/Project-Layers/Revision/Console/terminal content and chrome, menus, pane chrome, status and identity clipping"
+    ],
+    "shared_owner": "hit_clipping::clip_content",
+    "retired_paths": [
+      "Copying wholly outside quads into split_off scratch before discarding them",
+      "Triangle edge-intersection work for quads whose vertices lie beyond one common viewport edge"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/clip-hidden-geometry/result.json",
+    "proof": "218 renderer tests pass, including four-edge diagonal area and pinned content. Existing GPU dialog parity1pass/258filtered; visual renderer Clippy and fresh release build pass. Source health and dependency authority pass.",
+    "limits": "Source-level work/copy removal only; no aggregate allocation or frame-time claim. Rejects only a common outside half-plane; all-outside vertices with a crossing triangle retain exact clipping. Existing all-visible prefix path remains; partly visible suffix incurs additional rejection checks and clipping scratch remains for crossings. No new consumer migration or complete per-consumer native/HP22/S3 qualification. No visual/prototype/dependency/license/resource deadline or resize change."
+  },
+  "source_before_sha256": "78b50c9b65cda51572ef896d2cd1efd0b81d60572e5ff9c0c1ee75f7588be384",
+  "source_after_sha256": "88963be9b1c11e1ee7b100edb8a2e64cbffbf46599da3659209d254f4a01d85c",
+  "release_binary_sha256": "01180c4e55ca2ff4b44ee883ee4fd36abf09588b13dc81a7b5a24837ef642abc",
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --features visual --lib dialog_single_pass_matches_general_renderer_pixels -- --ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-render --features visual --lib --tests -- -D warnings",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app --bin datum-gui"
+  ],
+  "artifact_sha256": {
+    "clippy.log.gz": "a33325e126adcdea8b14c630ada6e38389ce4b0ae72c7fc182e67a427434ab2a",
+    "release.log.gz": "e9d76706c5b558feefea19a6196523eed68986eca9b45ce98e41e0bf54d64fb0",
+    "tests.log.gz": "c6528068d13931b2aa8dbdae5d35bee4cb345951056e04032515420aec3ac25a",
+    "gpu.log.gz": "6d82d6df1814959f4c12185d8c227e0f83d5bbe3131843ce87dba4e8227c0ef5"
+  }
+}
