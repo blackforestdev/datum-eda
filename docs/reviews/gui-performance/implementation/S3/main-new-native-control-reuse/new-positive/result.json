@@ -1,0 +1,157 @@
+{
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--board",
+    "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "--window-size",
+    "1280x800",
+    "--initial-layout",
+    "single",
+    "--open-new-project",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "binary_sha256": "12f00d7e0120265bf200c4ed9465d8e1e3611114da8c19e33e823b8f27f65f60",
+  "actions": [
+    {
+      "key": "Tab",
+      "cycle": 0,
+      "step": 0,
+      "wall_time": 1790071430.1271267,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 0,
+      "step": 1,
+      "wall_time": 1790071430.1603782,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 0,
+      "step": 2,
+      "wall_time": 1790071430.194012,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 0,
+      "step": 3,
+      "wall_time": 1790071431.0310817,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 0,
+      "step": 4,
+      "wall_time": 1790071432.0237043,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 1,
+      "step": 0,
+      "wall_time": 1790071433.4339497,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 1,
+      "step": 1,
+      "wall_time": 1790071434.0251958,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 1,
+      "step": 2,
+      "wall_time": 1790071435.0187957,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 1,
+      "step": 3,
+      "wall_time": 1790071436.0201275,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 1,
+      "step": 4,
+      "wall_time": 1790071437.0225239,
+      "transport": "persistent XTest"
+    }
+  ],
+  "samples": [
+    {
+      "cycle": 0,
+      "step": 0,
+      "builds": 12,
+      "presentations": 3
+    },
+    {
+      "cycle": 0,
+      "step": 1,
+      "builds": 12,
+      "presentations": 4
+    },
+    {
+      "cycle": 0,
+      "step": 2,
+      "builds": 12,
+      "presentations": 5
+    },
+    {
+      "cycle": 0,
+      "step": 3,
+      "builds": 14,
+      "presentations": 6
+    },
+    {
+      "cycle": 0,
+      "step": 4,
+      "builds": 14,
+      "presentations": 7
+    },
+    {
+      "cycle": 1,
+      "step": 0,
+      "builds": 14,
+      "presentations": 8
+    },
+    {
+      "cycle": 1,
+      "step": 1,
+      "builds": 14,
+      "presentations": 9
+    },
+    {
+      "cycle": 1,
+      "step": 2,
+      "builds": 14,
+      "presentations": 10
+    },
+    {
+      "cycle": 1,
+      "step": 3,
+      "builds": 14,
+      "presentations": 11
+    },
+    {
+      "cycle": 1,
+      "step": 4,
+      "builds": 14,
+      "presentations": 12
+    }
+  ],
+  "presented_extent": [
+    760,
+    720
+  ],
+  "main_presentations_during_cycles": 0,
+  "main_preparations_during_cycles": 0,
+  "passed": true,
+  "cleanup": "Owned process SIGTERM; no teardown qualification"
+}

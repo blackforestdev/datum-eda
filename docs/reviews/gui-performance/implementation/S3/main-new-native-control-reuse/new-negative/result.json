@@ -1,0 +1,158 @@
+{
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/pm045-native-control-proof/negative-gui",
+    "--board",
+    "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "--window-size",
+    "1280x800",
+    "--initial-layout",
+    "single",
+    "--open-new-project",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "binary_sha256": "612eb7c2bd973053375751d143ca2604e014994da178727f668eab15e77af148",
+  "actions": [
+    {
+      "key": "Tab",
+      "cycle": 0,
+      "step": 0,
+      "wall_time": 1790071450.8058245,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 0,
+      "step": 1,
+      "wall_time": 1790071450.8393476,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 0,
+      "step": 2,
+      "wall_time": 1790071450.8732522,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 0,
+      "step": 3,
+      "wall_time": 1790071451.679802,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 0,
+      "step": 4,
+      "wall_time": 1790071452.704034,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 1,
+      "step": 0,
+      "wall_time": 1790071454.112482,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 1,
+      "step": 1,
+      "wall_time": 1790071454.7054586,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 1,
+      "step": 2,
+      "wall_time": 1790071455.7050416,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 1,
+      "step": 3,
+      "wall_time": 1790071456.7068577,
+      "transport": "persistent XTest"
+    },
+    {
+      "key": "Tab",
+      "cycle": 1,
+      "step": 4,
+      "wall_time": 1790071457.67941,
+      "transport": "persistent XTest"
+    }
+  ],
+  "samples": [
+    {
+      "cycle": 0,
+      "step": 0,
+      "builds": 27,
+      "presentations": 3
+    },
+    {
+      "cycle": 0,
+      "step": 1,
+      "builds": 36,
+      "presentations": 4
+    },
+    {
+      "cycle": 0,
+      "step": 2,
+      "builds": 45,
+      "presentations": 5
+    },
+    {
+      "cycle": 0,
+      "step": 3,
+      "builds": 54,
+      "presentations": 6
+    },
+    {
+      "cycle": 0,
+      "step": 4,
+      "builds": 63,
+      "presentations": 7
+    },
+    {
+      "cycle": 1,
+      "step": 0,
+      "builds": 72,
+      "presentations": 8
+    },
+    {
+      "cycle": 1,
+      "step": 1,
+      "builds": 81,
+      "presentations": 9
+    },
+    {
+      "cycle": 1,
+      "step": 2,
+      "builds": 90,
+      "presentations": 10
+    },
+    {
+      "cycle": 1,
+      "step": 3,
+      "builds": 99,
+      "presentations": 11
+    },
+    {
+      "cycle": 1,
+      "step": 4,
+      "builds": 108,
+      "presentations": 12
+    }
+  ],
+  "presented_extent": [
+    760,
+    720
+  ],
+  "main_presentations_during_cycles": 0,
+  "main_preparations_during_cycles": 0,
+  "passed": false,
+  "error": "AssertionError('warm native NEW focus cycle rebuilt controls')",
+  "cleanup": "Owned process SIGTERM; no teardown qualification"
+}

@@ -1,0 +1,80 @@
+{
+  "command": [
+    "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+    "--board",
+    "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+    "--window-size",
+    "1280x800",
+    "--initial-layout",
+    "single",
+    "--visual-scale-factor",
+    "1"
+  ],
+  "binary_sha256": "12f00d7e0120265bf200c4ed9465d8e1e3611114da8c19e33e823b8f27f65f60",
+  "actions": [
+    {
+      "action": "File title click",
+      "cycle": 0,
+      "point": [
+        110,
+        16
+      ],
+      "wall_time": 1790071595.6857452,
+      "transport": "persistent XTest"
+    },
+    {
+      "action": "Escape",
+      "cycle": 0,
+      "wall_time": 1790071596.1834285,
+      "transport": "persistent XTest"
+    },
+    {
+      "action": "File title click",
+      "cycle": 1,
+      "point": [
+        110,
+        16
+      ],
+      "wall_time": 1790071596.2219026,
+      "transport": "persistent XTest"
+    },
+    {
+      "action": "Escape",
+      "cycle": 1,
+      "wall_time": 1790071596.9676178,
+      "transport": "persistent XTest"
+    }
+  ],
+  "samples": [
+    {
+      "cycle": 0,
+      "state": "menu open",
+      "builds": 1,
+      "presentations": 4
+    },
+    {
+      "cycle": 0,
+      "state": "menu closed",
+      "builds": 1,
+      "presentations": 5
+    },
+    {
+      "cycle": 1,
+      "state": "menu open",
+      "builds": 1,
+      "presentations": 6
+    },
+    {
+      "cycle": 1,
+      "state": "menu closed",
+      "builds": 1,
+      "presentations": 7
+    }
+  ],
+  "presented_extent": [
+    1280,
+    800
+  ],
+  "passed": true,
+  "cleanup": "Owned process SIGTERM; no teardown qualification"
+}
