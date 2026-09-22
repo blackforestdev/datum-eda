@@ -6976,8 +6976,18 @@
         "next_action": "Trace authoritative GlobalPreferences focus before/after key dispatch and prepared-scene generation; distinguish wrong focus state from stale presentation before changing production behavior."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S3/native-focus-reveal/result.json"
-      ]
+        "docs/reviews/gui-performance/implementation/S3/native-focus-reveal/result.json",
+        "docs/reviews/gui-performance/implementation/S3/focus-reveal-trace/result.json"
+      ],
+      "s3_focus_reveal_trace_progress": {
+        "status": "bounded GLOBAL/PROJECT unchanged-production keyboard reveal pass after runtime trace; full qualification open",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/focus-reveal-trace/result.json",
+        "production_consumers": [
+          "GLOBAL/PROJECT existing shared ScrollViewport keyboard reveal"
+        ],
+        "retired_paths": "None; temporary observation removed and production sources restored.",
+        "limits": "No full HP23/S3 qualification or retrospective attribution of previous screenshot discrepancies. Temporary trace changed timing; only restored-source retry supports unchanged production behavior. Two fixed focus-color pixels supplement inspected captures, not general visual/accessibility/scale qualification. No independent negative, other adapters/backends or resource/endurance acceptance. No production/dependency/license/prototype/budget/sequencing change;1bc02aaf remains unapproved."
+      }
     },
     {
       "id": "HP23-02",
@@ -27230,6 +27240,16 @@
     ],
     "retired_paths": "None; investigation/proof only.",
     "limits": "No full HP23/S3 qualification. Raw driver passed fields cover presentation/idle assertions only and are not accepted final-target proof. Global last-control reveal remains unqualified. No inferred owner input, driver/kernel investigation or product fix based solely on these observations. No dependency/license/prototype/budget/resize-scope or sequencing amendment; S3 proposal1bc02aaf remains unapproved.",
-    "next_action": "Trace authoritative GlobalPreferences focus before/after key dispatch and prepared-scene generation; distinguish wrong focus state from stale presentation before changing production behavior."
+    "next_action": "Trace authoritative GlobalPreferences focus before/after key dispatch and prepared-scene generation; distinguish wrong focus state from stale presentation before changing production behavior.",
+    "followup_evidence": "docs/reviews/gui-performance/implementation/S3/focus-reveal-trace/result.json"
+  },
+  "s3_focus_reveal_trace_work": {
+    "status": "bounded GLOBAL/PROJECT unchanged-production keyboard reveal pass after runtime trace; full qualification open",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/focus-reveal-trace/result.json",
+    "production_consumers": [
+      "GLOBAL/PROJECT existing shared ScrollViewport keyboard reveal"
+    ],
+    "retired_paths": "None; temporary observation removed and production sources restored.",
+    "limits": "No full HP23/S3 qualification or retrospective attribution of previous screenshot discrepancies. Temporary trace changed timing; only restored-source retry supports unchanged production behavior. Two fixed focus-color pixels supplement inspected captures, not general visual/accessibility/scale qualification. No independent negative, other adapters/backends or resource/endurance acceptance. No production/dependency/license/prototype/budget/sequencing change;1bc02aaf remains unapproved."
   }
 }
