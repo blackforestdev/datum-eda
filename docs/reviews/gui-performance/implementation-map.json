@@ -26896,5 +26896,11 @@
     },
     "on_approval": "Apply only the proposed S3 table evidence-cell replacement. Record complete S2-owned resource implementation due S4 and resource qualification due S5 for these associations; preserve every original acceptance rule and unqualified status. Conduct a separate S3 exit review before selecting S4.",
     "unchanged": "All other S3 implementation/warm-reuse/input/focus/pass/negative predicates remain required. No numerical, dependency, native-qualification, independent-replay, endurance or resize waiver."
+  },
+  "s3_current_native_attempt": {
+    "status": "fresh release build passed; native input attempt aborted and unqualified",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/current-native-attempt/result.json",
+    "limits": "No native input/focus, scrolling, pass-count, teardown, daily-backend or resource acceptance. Driver exit130 is an abort, not a pass. No application process from this attempt remained after cleanup.",
+    "next_native_condition": "Controlled desktop input and verified driver delivery are required before native qualification; no further focus-taking tests while unscripted input persists."
   }
 }

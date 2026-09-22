@@ -1,0 +1,44 @@
+{
+  "display": ":1",
+  "wayland_display": "wayland-0",
+  "topology": "Desktop X11/Xwayland; addressed XSendEvent input; functional adapter proof only",
+  "binary_sha256": "28745fab777aca48f9642c9a66a9df6e8f90b822f9cb0ad40f04d3e01c7ad005",
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/release/datum-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1",
+        "--open-global-preferences"
+      ],
+      "actions": [
+        {
+          "addressed_x11": [
+            "windowactivate",
+            "--sync",
+            "33554437"
+          ]
+        },
+        {
+          "addressed_x11": [
+            "mousemove",
+            "--window",
+            "33554437",
+            "50",
+            "107",
+            "click",
+            "1"
+          ]
+        }
+      ],
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    }
+  ]
+}
