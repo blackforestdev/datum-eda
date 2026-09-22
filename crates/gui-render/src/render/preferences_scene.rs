@@ -368,6 +368,17 @@ mod tests {
                 &mut scroll,
                 None,
             );
+            let search = before
+                .hit_regions
+                .iter()
+                .find(|hit| hit.target == HitTarget::GlobalPreferencesSearch)
+                .expect("pinned search target must exist before scrolling");
+            let search_text = before
+                .menu_overlay_text_runs
+                .iter()
+                .find(|run| run.text == "search Appearance settings…")
+                .expect("pinned search placeholder must be painted");
+            assert!(search.rect.y + search.rect.height <= scroll.viewport.y * scale);
             assert!(scroll.maximum() > 0.0);
             let total = scroll.content_height;
             let row_y = before
@@ -412,6 +423,24 @@ mod tests {
                         hit.target == HitTarget::GlobalPreferencesControl(last_key.clone())
                     }),
                     "scrolling to the end must reach the final setting"
+                );
+            }
+            for scene in [&after, &bottom] {
+                assert_eq!(
+                    scene
+                        .hit_regions
+                        .iter()
+                        .find(|hit| hit.target == HitTarget::GlobalPreferencesSearch),
+                    Some(search),
+                    "scrolling must preserve the pinned search target",
+                );
+                assert_eq!(
+                    scene
+                        .menu_overlay_text_runs
+                        .iter()
+                        .find(|run| run.text == "search Appearance settings…"),
+                    Some(search_text),
+                    "scrolling must preserve pinned search text and clipping",
                 );
             }
             for hit in &bottom.hit_regions {

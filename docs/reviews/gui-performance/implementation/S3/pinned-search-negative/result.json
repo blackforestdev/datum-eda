@@ -1,0 +1,26 @@
+{
+  "candidate_base": "1eb89d696546788a9c5d3057d78035865fa8befa",
+  "status": "Pinned search presence and immobility regression detects adapter faults",
+  "requirement": "HP22-02",
+  "issue": "dat-pinned-search-oracle-8hrq",
+  "verification": {
+    "old_oracle": "Incorrectly passes adapter clipping with all span starts zero;1passed215filtered",
+    "new_clip_negative": "Fails pinned search target must exist before scrolling;1failed215filtered",
+    "new_scroll_negative": "Fails pinned search target equality after0.25 scroll (y53.75 versus54);1failed215filtered",
+    "restored": "1passed215filtered; production adapter source restored byte-for-byte to passing source after both injections"
+  },
+  "command": "CARGO_TARGET_DIR=/home/bfadmin/Documents/datum-eda/target python3 /tmp/pm045-pinned-negative-source/scripts/run_cargo_guarded.py --workload proof -- cargo test --offline --manifest-path /tmp/pm045-pinned-negative-source/Cargo.toml -p datum-gui-render --lib continuous_scroll_clips_rows_and_hits_with_stable_content_bounds -- --test-threads=1",
+  "source_sha256": {
+    "crates/gui-render/src/render/preferences_rows.rs": "8b0767941549640281af7014d24d4c3d75c9315ade0be9701ad9408f475cf79e",
+    "crates/gui-render/src/render/preferences_scene.rs": "0e51f3b52bed8503b683b0a70589fa48d41a9c6e94c49a07458c29994edf54e1"
+  },
+  "limits": "Existing actual Preferences preparation regression at four size/scale cases, not native window dispatch or complete GPU pixel/static qualification. Only test strengthened in active checkout; injected clipping/translation live in isolated source copy and are restored. Other consumers/native profiles and full HP22/S3 remain open. No production behavior, dependency/license/prototype/budget/resize change.",
+  "artifact_sha256": {
+    "clip.patch.gz": "5cc83cdf6d45c980c346d0af83197f9f36291149d3ae6fe336712b5d577c744c",
+    "new-negative.gz": "a37e4726afb17425eee4f946c87101fafb8a6bcaad992b5a7b6936edc6b9e96e",
+    "old-negative.gz": "403e948432c5490b3d10158b467638cd74e045200fc14b0b04b269016022bce0",
+    "restored.gz": "38b69dabbafff4619e3b96aae09d4ce0136a44e69c639c908d98531ab87d04a3",
+    "scroll-negative.gz": "963167c66fa1f31498a6786682e314f96a88c14ea14d888f71531b2cc5429a00",
+    "scroll.patch.gz": "44171d15609bfe7dfd12eda742a90978ad39190ddd4bef27974678357a03ea2d"
+  }
+}

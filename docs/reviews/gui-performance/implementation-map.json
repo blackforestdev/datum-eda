@@ -7442,7 +7442,7 @@
         "crates/gui-app/src/runtime_terminal_render.rs"
       ],
       "test": {
-        "status": "Partial: hardware fractional Preferences scroll test checks pinned pixels and exact return to top; shared clipped hits and reserved scrollbar width are implemented. Complete per-consumer native hidden-control/pinned-chrome qualification remains open. Subsequent b64af50d GLOBAL/PROJECT Units native drag/boundary/reversal trial passes with delivered target/direction and exact return pixels; this bounded pass does not complete the row or supersede earlier failed attempts. Shared clip negatives now detect contour vertex clamping and omitted hidden-hit clipping; byte-restored positives pass. Original diagonal false-pass retained and fixture corrected. Native/full qualification remains open.",
+        "status": "Partial: hardware fractional Preferences scroll test checks pinned pixels and exact return to top; shared clipped hits and reserved scrollbar width are implemented. Complete per-consumer native hidden-control/pinned-chrome qualification remains open. Subsequent b64af50d GLOBAL/PROJECT Units native drag/boundary/reversal trial passes with delivered target/direction and exact return pixels; this bounded pass does not complete the row or supersede earlier failed attempts. Shared clip negatives now detect contour vertex clamping and omitted hidden-hit clipping; byte-restored positives pass. Original diagonal false-pass retained and fixture corrected. Native/full qualification remains open. Existing preparation test strengthened after observed missing-header false pass. Both pinned-header clipping and scrolling injections now fail; restored adapter passes four geometry/scale cases. Native/GPU/profile qualification remains open.",
         "id": "proof_hp22_02",
         "positive": "Pinned search/chrome and scrollbar near text then return top",
         "negative_control": "Scroll pinned header or let hidden region hit",
@@ -7530,7 +7530,8 @@
       },
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/native-preferences-scroll/result.json",
-        "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json"
+        "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json",
+        "docs/reviews/gui-performance/implementation/S3/pinned-search-negative/result.json"
       ],
       "s3_native_drag_delivery_progress": {
         "status": "bounded native drag/reversal proof for current shared control-label production implementation",
@@ -7552,6 +7553,16 @@
         "retired_paths": "No new runtime retirement; replace ineffective diagonal test geometry with discriminating intersection geometry.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/clip-defect-sensitivity/result.json",
         "limits": "Existing shared CPU clipping tests, not native consumer dispatch or GPU pixels. Corrected triangle distinguishes contour intersection from vertex clamping while preserving pinned geometry. Hidden-hit negative detects retained hidden region count; restored test verifies nested text/hit intersections and pinned chrome. Native rounded/diagonal/all-profile coverage, pinned-header negative and full HP22/S3 acceptance remain open. Production clipping unchanged; no dependencies/license/prototype/numerical budget/resize-scope changes."
+      },
+      "s3_pinned_search_negative_progress": {
+        "status": "Pinned search presence and immobility regression detects adapter faults",
+        "production_consumers": [
+          "Shared native Preferences preparation through actual renderer adapter"
+        ],
+        "shared_owner": "preferences_rows -> shared clip_content and ScrollViewport",
+        "retired_paths": "No runtime path retirement; removes false-pass gap in existing scroll regression by requiring pinned search presence and unchanged hit/text layout.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/pinned-search-negative/result.json",
+        "limits": "Existing actual Preferences preparation regression at four size/scale cases, not native window dispatch or complete GPU pixel/static qualification. Only test strengthened in active checkout; injected clipping/translation live in isolated source copy and are restored. Other consumers/native profiles and full HP22/S3 remain open. No production behavior, dependency/license/prototype/budget/resize change."
       }
     },
     {
@@ -28024,7 +28035,7 @@
         "HP21-01": "Complete remaining capture/profile/scale cases and painted-only-scrollbar negative. Shared grab-displacement negative now detected with stationary/midpoint oracle; preserve existing native press/drag/track evidence.",
         "HP21-02": "Complete native release/capture-loss/close/content-change final-target matrix. Shared stale-reflow negative now detected and restored viewport/content-change capture tests pass; existing focus-loss and native trials remain bounded.",
         "HP22-01": "Complete remaining native diagonal/rounded/nested clipping cases per actual consumer. Shared clamp-vertices negative now detected by corrected existing area oracle; preserve original false-pass and terminal call-removal negatives.",
-        "HP22-02": "Complete pinned-header negative and remaining native profiles. Shared hidden-hit clipping omission is now detected; existing pinned GPU return pixels and native scroll trials remain bounded evidence.",
+        "HP22-02": "Complete remaining native/GPU profiles. Pinned-header clipping and scrolling negatives now detected by strengthened actual Preferences preparation test; hidden-hit clipping omission already detected. Preserve initial missing-header false pass and existing bounded pinned GPU/native evidence.",
         "HP23-01": "Complete remaining native keyboard/search reveal across section/content/scale profiles. Stale focus after height change now reproduced and fixed in both native Preferences; existing explanation Close fix retained. Native DPI transition remains open.",
         "HP23-02": "Complete native Wayland scrolling/input and remaining full qualification. Both native backends now have1x idle positive/timer-negative proof; X11 also has reduced-motion scroll/locality positives1/1.5/2 on one binary. Native Wayland idle proof does not establish input or monitor transitions."
       },
@@ -28701,5 +28712,15 @@
     "retired_paths": "General slice-window comparison for single-byte search queries, replaced by direct byte scan; no new cache.",
     "evidence": "docs/reviews/gui-performance/implementation/S3/search-byte-fast-path/result.json",
     "limits": "Bounded field-matcher diagnostic over135 actual catalog strings and six queries, four alternating-order rounds of10000 iterations. Excludes rendering, complete visible_rows short-circuiting, query normalization, native input and full STAT/ADM conformance. No GUI speed, numerical budget or full HP12/HP23/S3 acceptance. Integer formatting still allocates; multi-byte queries retain borrowed window matching. No dependencies, prototype, license or resize-scope change."
+  },
+  "s3_pinned_search_negative_work": {
+    "status": "Pinned search presence and immobility regression detects adapter faults",
+    "production_consumers": [
+      "Shared native Preferences preparation through actual renderer adapter"
+    ],
+    "shared_owner": "preferences_rows -> shared clip_content and ScrollViewport",
+    "retired_paths": "No runtime path retirement; removes false-pass gap in existing scroll regression by requiring pinned search presence and unchanged hit/text layout.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/pinned-search-negative/result.json",
+    "limits": "Existing actual Preferences preparation regression at four size/scale cases, not native window dispatch or complete GPU pixel/static qualification. Only test strengthened in active checkout; injected clipping/translation live in isolated source copy and are restored. Other consumers/native profiles and full HP22/S3 remain open. No production behavior, dependency/license/prototype/budget/resize change."
   }
 }
