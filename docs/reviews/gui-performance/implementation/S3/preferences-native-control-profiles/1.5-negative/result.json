@@ -1,0 +1,327 @@
+{
+  "display": ":1",
+  "wayland_display": "wayland-0",
+  "topology": "Owner-confirmed idle desktop X11/Xwayland; native adapter functional trial",
+  "binary_sha256": "612eb7c2bd973053375751d143ca2604e014994da178727f668eab15e77af148",
+  "visual_scale_factor": 1.5,
+  "runs": [
+    {
+      "host": "GLOBAL",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/pm045-native-control-proof/negative-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1.5",
+        "--open-global-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "27262981"
+          ],
+          "monotonic": 808703.359596066,
+          "wall_time": 1790071853.2292676,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=1907\nY=1055\nSCREEN=0\nWINDOW=1024\n"
+        },
+        {
+          "xdotool": [
+            "windowsize",
+            "27262981",
+            "1440",
+            "1080"
+          ],
+          "monotonic": 808703.402410856,
+          "wall_time": 1790071853.2720804,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=1907\nY=1055\nSCREEN=0\nWINDOW=1024\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "535",
+            "189",
+            "click",
+            "1"
+          ],
+          "monotonic": 808703.976720479,
+          "wall_time": 1790071853.84639,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=535\nY=189\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1810",
+            "224",
+            "click",
+            "1"
+          ],
+          "monotonic": 808704.023971094,
+          "wall_time": 1790071853.893641,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1810\nY=224\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1891",
+            "224"
+          ],
+          "monotonic": 808704.441896562,
+          "wall_time": 1790071854.311566,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1891\nY=224\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1891",
+            "224",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 808704.8137312,
+          "wall_time": 1790071854.6834002,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1891\nY=224\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1891",
+            "1061"
+          ],
+          "monotonic": 808705.07780703,
+          "wall_time": 1790071854.947477,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1891\nY=1061\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1891",
+            "224"
+          ],
+          "monotonic": 808705.399904218,
+          "wall_time": 1790071855.2695742,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1891\nY=224\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1891",
+            "1061"
+          ],
+          "monotonic": 808705.979384189,
+          "wall_time": 1790071855.849054,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1891\nY=1061\nSCREEN=0\nWINDOW=27262981\n"
+        }
+      ],
+      "setup_presented_extent": [
+        1440,
+        1050
+      ],
+      "expanded_choice_trigger": "Click current Units control before scrolling; verify captured expansion separately",
+      "geometry": {
+        "WINDOW": "27262981",
+        "X": "460",
+        "Y": "29",
+        "WIDTH": "1440",
+        "HEIGHT": "1050",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_delivery_confirmed": true,
+      "drag_frames": 1,
+      "control_mesh_samples": [
+        {
+          "position": "first bottom",
+          "builds": 98,
+          "presentations": 5
+        },
+        {
+          "position": "top",
+          "builds": 120,
+          "presentations": 6
+        },
+        {
+          "position": "second bottom",
+          "builds": 142,
+          "presentations": 7
+        }
+      ],
+      "passed": false,
+      "error": "AssertionError('warm scrollbar roundtrip retessellated controls')",
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    },
+    {
+      "host": "PROJECT",
+      "command": [
+        "/home/bfadmin/Documents/datum-eda/target/pm045-native-control-proof/negative-gui",
+        "--board",
+        "/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb",
+        "--window-size",
+        "1280x800",
+        "--initial-layout",
+        "single",
+        "--visual-scale-factor",
+        "1.5",
+        "--open-project-preferences"
+      ],
+      "actions": [
+        {
+          "xdotool": [
+            "windowactivate",
+            "--sync",
+            "27262981"
+          ],
+          "monotonic": 808709.444082488,
+          "wall_time": 1790071859.3137531,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=1891\nY=1061\nSCREEN=0\nWINDOW=1024\n"
+        },
+        {
+          "xdotool": [
+            "windowsize",
+            "27262981",
+            "1440",
+            "1080"
+          ],
+          "monotonic": 808709.490904125,
+          "wall_time": 1790071859.3605738,
+          "server_roundtrip_focus": "27262981",
+          "pointer_after": "X=1891\nY=1061\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1810",
+            "224",
+            "click",
+            "1"
+          ],
+          "monotonic": 808710.043208197,
+          "wall_time": 1790071859.912878,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1810\nY=224\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1891",
+            "224"
+          ],
+          "monotonic": 808710.469729686,
+          "wall_time": 1790071860.3393993,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1891\nY=224\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1891",
+            "224",
+            "mousedown",
+            "1"
+          ],
+          "monotonic": 808710.897922851,
+          "wall_time": 1790071860.767592,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1891\nY=224\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1891",
+            "1061"
+          ],
+          "monotonic": 808711.162023967,
+          "wall_time": 1790071861.031694,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1891\nY=1061\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1891",
+            "224"
+          ],
+          "monotonic": 808711.487303658,
+          "wall_time": 1790071861.356974,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1891\nY=224\nSCREEN=0\nWINDOW=27262981\n"
+        },
+        {
+          "xdotool": [
+            "mousemove",
+            "1891",
+            "1061"
+          ],
+          "monotonic": 808711.510077446,
+          "wall_time": 1790071861.3797474,
+          "server_roundtrip_focus": "27262981",
+          "input_transport": "persistent XTest connection",
+          "pointer_after": "X=1891\nY=1061\nSCREEN=0\nWINDOW=27262981\n"
+        }
+      ],
+      "setup_presented_extent": [
+        1440,
+        1050
+      ],
+      "expanded_choice_trigger": "Click current Units control before scrolling; verify captured expansion separately",
+      "geometry": {
+        "WINDOW": "27262981",
+        "X": "460",
+        "Y": "29",
+        "WIDTH": "1440",
+        "HEIGHT": "1050",
+        "SCREEN": "0"
+      },
+      "thumb_press_frames": 0,
+      "drag_delivery_confirmed": true,
+      "drag_frames": 1,
+      "control_mesh_samples": [
+        {
+          "position": "first bottom",
+          "builds": 84,
+          "presentations": 4
+        },
+        {
+          "position": "top",
+          "builds": 106,
+          "presentations": 5
+        },
+        {
+          "position": "second bottom",
+          "builds": 128,
+          "presentations": 6
+        }
+      ],
+      "passed": false,
+      "error": "AssertionError('warm scrollbar roundtrip retessellated controls')",
+      "cleanup": "Harness SIGTERM; no teardown qualification"
+    }
+  ]
+}
