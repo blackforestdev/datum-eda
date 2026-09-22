@@ -7178,7 +7178,7 @@
         "crates/gui-app/src/runtime_primary_pointer.rs"
       ],
       "test": {
-        "status": "Partial: shared capture and changed-only damage have component proof and bounded GLOBAL/PROJECT native thumb/page evidence. Current9422e3b7 drag/reversal trial passes both hosts; earlier failed trials remain preserved. Full adapter/profile/scale/negative qualification remains open. Both native Preferences hosts now pass bounded1x Units-choice expansion/scroll/boundary/reversal/collapse at720px and observed563px minimum height. Remaining native matrix and full acceptance stay open. Shared grab-displacement and stale-reflow negatives now detected; original endpoint-only false-pass retained and regression strengthened. Restored positives pass; native/profile/full acceptance remains open.",
+        "status": "Partial: shared capture and changed-only damage have component proof and bounded GLOBAL/PROJECT native thumb/page evidence. Current9422e3b7 drag/reversal trial passes both hosts; earlier failed trials remain preserved. Full adapter/profile/scale/negative qualification remains open. Both native Preferences hosts now pass bounded1x Units-choice expansion/scroll/boundary/reversal/collapse at720px and observed563px minimum height. Remaining native matrix and full acceptance stay open. Shared grab-displacement and stale-reflow negatives now detected; original endpoint-only false-pass retained and regression strengthened. Restored positives pass; native/profile/full acceptance remains open. Both actual native X11 Preferences pointer adapters now detect painted-only-handler defect with initial positive press/drag/release. Restored native runs retain delivery failures, so full qualification remains open.",
         "id": "proof_hp21_01",
         "positive": "Thumb press/drag at offset and track click",
         "negative_control": "Use painted-only scrollbar or lose grab displacement",
@@ -7234,7 +7234,8 @@
         "docs/reviews/gui-performance/implementation/S3/native-preferences-track/result.json",
         "docs/reviews/gui-performance/implementation/S3/dialog-dpi-coordinates/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-expanded-extent/result.json",
-        "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json"
+        "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json",
+        "docs/reviews/gui-performance/implementation/S3/painted-scrollbar-native-negative/result.json"
       ],
       "s3_native_preferences_track_progress": {
         "status": "bounded native Preferences page-track pass; full qualification open",
@@ -7282,6 +7283,17 @@
         "retired_paths": "No new runtime retirement; strengthen ineffective endpoint-only test with stationary and midpoint checks.",
         "evidence": "docs/reviews/gui-performance/implementation/S3/scroll-capture-negatives/result.json",
         "limits": "Existing shared ScrollViewport component tests only; no OS pointer/native host delivery. Stationary and midpoint assertions strengthen grab preservation beyond clamped endpoints. Reflow test covers viewport/content geometry changes and fresh capture; native close/focus/content identity matrix remains separate. Painted-only scrollbar negative and remaining per-profile/native HP21/S3 qualification stay open. No production behavior/dependency/license/prototype/numerical budget/resize-scope change."
+      },
+      "s3_painted_scrollbar_native_negative_progress": {
+        "status": "Both real native Preferences adapters detect painted-only scrollbar defect; input delivery qualification remains open",
+        "production_consumers": [
+          "GLOBAL Preferences actual OS press/drag/release dispatcher",
+          "PROJECT Preferences actual OS press/drag/release dispatcher"
+        ],
+        "retired_paths": "No production changes; existing OS driver narrowed to scrollbar gestures and one isolated no-input handler variant.",
+        "evidence": "docs/reviews/gui-performance/implementation/S3/painted-scrollbar-native-negative/result.json",
+        "proof": "Initial positive: both hosts press0 presentations, delivered drag1, release0. Negative: both confirm delivered drag then fail exact no-changed-dialog assertion when scrollbar_input is disabled but rendering unchanged. Restored release/source hashes match positive; Global replay again drags1 then release times out, Project drag motion arrives at cleanup after timeout.",
+        "limits": "X11 scale1,960x720 only. Parent-required painted-only production pointer negative is observed with paired initial positives, but restored native replays remain failed and dat-native-input-delivery-vq7w stays open. Global initial screenshot is stale Appearance; Project visibly retains painted Units scrollbar. No exact final offset/static freshness, setting click-through, teardown, other profiles, full HP21/S3, timing/resource or resize acceptance. No runtime/dependency/license/prototype/resource deadline change."
       }
     },
     {
@@ -28189,7 +28201,7 @@
         "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter.",
         "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct.",
         "HP20-01": "Complete remaining backend and expanded/other-control scale extent cases. Both Preferences native search/clear now has1/1.5/2x override proof at actual recorded sizes;1x choices/explanations/final-row/minimum-height and shared visible-row negative remain recorded. No monitor-scale transition or latency acceptance.",
-        "HP21-01": "Complete remaining capture/profile/scale cases and painted-only-scrollbar negative. Shared grab-displacement negative now detected with stationary/midpoint oracle; preserve existing native press/drag/track evidence.",
+        "HP21-01": "Complete remaining capture/profile/scale and setting click-through cases. Both native X11 Preferences now detect painted-only input omission with initial positives; restored release/motion delivery failures remain explicit. Shared grab-displacement negative, native drag and track evidence retained. No full pointer qualification from these bounded trials.",
         "HP21-02": "Complete native release/capture-loss/close/content-change final-target matrix. Shared stale-reflow negative now detected and restored viewport/content-change capture tests pass; existing focus-loss and native trials remain bounded.",
         "HP22-01": "Complete remaining native diagonal/rounded/nested clipping cases per actual consumer. Shared clamp-vertices negative now detected by corrected existing area oracle; preserve original false-pass and terminal call-removal negatives.",
         "HP22-02": "Complete remaining native/GPU profiles. Pinned-header clipping and scrolling negatives now detected by strengthened actual Preferences preparation test; hidden-hit clipping omission already detected. Preserve initial missing-header false pass and existing bounded pinned GPU/native evidence.",
@@ -28987,5 +28999,16 @@
     "evidence": "docs/reviews/gui-performance/implementation/S3/dialog-painter-order-negative/result.json",
     "proof": "Single isolated move of text draw before card geometry fails dialog pixels differ at row0/scale1. Byte-restored source passes1 test/258 filtered, covering existing1x and1.5x prepared profiles and warm/general/legacy comparisons.",
     "limits": "HP13-02 negative is reduce AA OR move text behind card; this executes the latter without requiring an additional AA mutation. Native controlling visual/backend/scale qualification remains open. Direct prepared Preferences scenario does not qualify every native consumer or full S3. No runtime/dependency/license/prototype/resource deadline/resize change."
+  },
+  "s3_painted_scrollbar_native_negative_work": {
+    "status": "Both real native Preferences adapters detect painted-only scrollbar defect; input delivery qualification remains open",
+    "production_consumers": [
+      "GLOBAL Preferences actual OS press/drag/release dispatcher",
+      "PROJECT Preferences actual OS press/drag/release dispatcher"
+    ],
+    "retired_paths": "No production changes; existing OS driver narrowed to scrollbar gestures and one isolated no-input handler variant.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/painted-scrollbar-native-negative/result.json",
+    "proof": "Initial positive: both hosts press0 presentations, delivered drag1, release0. Negative: both confirm delivered drag then fail exact no-changed-dialog assertion when scrollbar_input is disabled but rendering unchanged. Restored release/source hashes match positive; Global replay again drags1 then release times out, Project drag motion arrives at cleanup after timeout.",
+    "limits": "X11 scale1,960x720 only. Parent-required painted-only production pointer negative is observed with paired initial positives, but restored native replays remain failed and dat-native-input-delivery-vq7w stays open. Global initial screenshot is stale Appearance; Project visibly retains painted Units scrollbar. No exact final offset/static freshness, setting click-through, teardown, other profiles, full HP21/S3, timing/resource or resize acceptance. No runtime/dependency/license/prototype/resource deadline change."
   }
 }
