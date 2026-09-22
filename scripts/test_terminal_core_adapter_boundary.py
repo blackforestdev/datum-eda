@@ -78,7 +78,7 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
             "fn drain(){\n"
             "debug_assert_eq!(slot.core.session_id(), slot.session.session_id());\n"
             "debug_assert_eq!(slot.core.context_id(), slot.session.context_id);\n"
-            "slot.core.apply_output(lane, bytes);\n"
+            "slot.core.apply_output(lane, &bytes);\n"
             "slot.core.finish(lane);\n}\n",
             encoding="utf-8",
         )
@@ -117,8 +117,8 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
     def test_provisional_parser_reentry_fails(self) -> None:
         self.assert_mutation_fails(
             guard.DRAIN,
-            "slot.core.apply_output(lane, bytes);",
-            "slot.core.apply_output(lane, bytes); apply_bytes_with_responses(lane, bytes);",
+            "slot.core.apply_output(lane, &bytes);",
+            "slot.core.apply_output(lane, &bytes); apply_bytes_with_responses(lane, bytes);",
         )
 
     def test_retired_screen_or_protocol_grid_reentry_fails(self) -> None:
@@ -184,6 +184,20 @@ class TerminalCoreAdapterBoundaryTest(unittest.TestCase):
             "TerminalCoreSessionAdapter::new_with_profile()",
             "TerminalCoreSessionAdapter::new()",
         )
+
+    def test_both_identities_must_precede_batched_output(self) -> None:
+        for identity in (
+            "debug_assert_eq!(slot.core.session_id(), slot.session.session_id());",
+            "debug_assert_eq!(slot.core.context_id(), slot.session.context_id);",
+        ):
+            temporary, root = self.fixture()
+            self.addCleanup(temporary.cleanup)
+            path = root / guard.DRAIN
+            path.write_text(path.read_text().replace(identity, "") + identity)
+            self.assertIn(
+                "session/context identity must be checked before applying PTY output",
+                guard.check(root),
+            )
 
     def test_external_terminal_dependency_fails(self) -> None:
         self.assert_mutation_fails(

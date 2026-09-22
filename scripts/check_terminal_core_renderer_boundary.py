@@ -14,8 +14,8 @@ APP = Path("crates/gui-app/src")
 CORE_RENDER = RENDER / "src/terminal_core_render.rs"
 CACHE = RENDER / "src/terminal_render_cache.rs"
 GRAPHICS = RENDER / "src/render/terminal_graphics.rs"
-GPU = RENDER / "src/render/gpu.rs"
-SCENE = RENDER / "src/render/scene.rs"
+GPU = RENDER / "src/render/gpu_frame.rs"
+SCENE = RENDER / "src/render/frame_preparation.rs"
 TESTS = RENDER / "src/terminal_core_render_tests.rs"
 VISUAL = RENDER / "src/visual_capture.rs"
 PANE_RENDER = RENDER / "src/terminal_pane_render.rs"
@@ -41,7 +41,7 @@ def check(root: Path) -> list[str]:
     core = read(root, CORE_RENDER)
     cache = read(root, CACHE)
     graphics = read(root, GRAPHICS)
-    gpu = read(root, GPU)
+    gpu = re.sub(r"\s+", "", read(root, GPU))
     scene = read(root, SCENE)
     tests = read(root, TESTS)
     visual = read(root, VISUAL)
@@ -105,8 +105,8 @@ def check(root: Path) -> list[str]:
         "queue.write_texture(",
         "GraphicAnchorResolution::History",
         "GraphicAnchorResolution::Screen",
-        "encode_terminal_graphics(&mut encoder, &msaa_view, target, false)",
-        "encode_terminal_graphics(&mut encoder, &msaa_view, target, true)",
+        "encode_terminal_graphics(&mutencoder,&msaa_view,target,false,measurement.as_mut(),)",
+        "encode_terminal_graphics(&mutencoder,&msaa_view,target,true,measurement.as_mut(),)",
     ):
         corpus = core + graphics + gpu
         if marker not in corpus:
@@ -114,7 +114,7 @@ def check(root: Path) -> list[str]:
 
     for marker in (
         "take_active_tab_render_states(",
-        "from_workspace_with_terminal_renderer(",
+        "prepare_workspace_with_terminal_renderer(",
         "Some(&mut self.terminal_render_cache)",
     ):
         if marker not in main + runtime_render:
