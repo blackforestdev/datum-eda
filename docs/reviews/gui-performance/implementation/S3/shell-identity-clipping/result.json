@@ -1,0 +1,67 @@
+{
+  "base_commit": "c2d11ca3",
+  "production": {
+    "status": "bounded S3 Main brand/revision and high-contrast notice clipping adoption",
+    "production_consumers": [
+      "MAIN brand/revision identity strip",
+      "MAIN high-contrast status notice"
+    ],
+    "retired_paths": [
+      "Unrestricted brand/revision geometry/text beyond top menu ancestor",
+      "High-contrast status notice without status-strip text bounds"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/shell-identity-clipping/result.json",
+    "limits": "No full MAIN/HP22/S3 adoption, native narrow-window, high-contrast pixel, exact legacy pixel or isolated negative qualification. Existing placement/overlap within each strip is unchanged. No hit-authority, dependency/license, prototype, budget or nonblocking resize-scope change. S3 proposal1bc02aaf remains unapproved."
+  },
+  "proof": {
+    "renderer_tests": 207,
+    "gpu_regression_tests": 13,
+    "gpu_backend": "Intel HD Graphics P630 Vulkan; serial",
+    "clippy": "renderer -D warnings pass",
+    "adapter_regression": "Actual brand/revision renderer with long project name at widths1/25/100/1280: geometry and text clips bounded by top menu strip.",
+    "source_health": "Initial inline addition failed expanded lib.rs ceiling7607>7560. Moved brand/revision production helper and regression to child module; source-health passes2182files. Before/after extraction both207tests pass."
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/scene.rs": "7d3ded33e85cd6e4d663f1804748c2f07adca79366dc620577adb7035f897273",
+    "crates/gui-render/src/render/shell_identity.rs": "0d7acef56c382cf8f228af87bc39dd51393650bfff4eda788380ed95fb4bed2c"
+  },
+  "limits": "No full MAIN/HP22/S3 adoption, native narrow-window, high-contrast pixel, exact legacy pixel or isolated negative qualification. Existing placement/overlap within each strip is unchanged. No hit-authority, dependency/license, prototype, budget or nonblocking resize-scope change. S3 proposal1bc02aaf remains unapproved.",
+  "visual_authority_review": {
+    "owner_direction": "Owner permits expanded implementation scope provided visual prototypes are taken into account. This does not approve pending S3 sequencing proposal.",
+    "sources": [
+      {
+        "path": "docs/gui/prototypes/board-editor.html",
+        "regions": [
+          "CSS .menubar/.brand/.pill (lines20-27)",
+          "menu-strip markup (lines123-129)",
+          "CSS .pane-hd/.focusdot/.pane-body (lines56-75)",
+          "CSS .status and markup (lines105-111,310-318)"
+        ],
+        "sha256": "3406db49cb1bccd631eb18e67568179f41f5cc42887b974dac24af209efbfa07"
+      },
+      {
+        "path": "docs/gui/DATUM_GUI_DESIGN_SPEC.md",
+        "regions": [
+          "Reference prototype and Locked decisions (lines41-81)"
+        ],
+        "sha256": "34426af07c87d90899f83d599ad1c7e816b8ce140e9d0d782f9e71ae656f365f"
+      },
+      {
+        "path": "docs/gui/DATUM_APPLICATION_STATUS_BAR_GUIDANCE.md",
+        "regions": [
+          "Decision posture; retention and contents deferred"
+        ],
+        "sha256": "8be2aeca8a1565120522c8599b36bc473e27cf73dc1589bc230764d753a77f32"
+      },
+      {
+        "path": "specs/GUI_SHARED_ENGINEERING_CONTRACT.md",
+        "regions": [
+          "E05 ancestor clipping"
+        ],
+        "sha256": "3789d340b0396f38d80a84e01debbce87adb0d194bf9737f487b67cbe849c097"
+      }
+    ],
+    "disposition": "Preserve existing brand runs, accent, revision label, positioning, fonts and colors. Clip brand/revision through their existing menu ancestor; bound existing high-contrast text to its existing status region. No status retention/content decision, new overflow navigation, truncation policy or interaction is introduced.",
+    "limits": "HTML menu CSS does not explicitly specify narrow-window clip behavior; ancestor clipping comes from PM045 E05, not an invented prototype requirement. Existing runtime fidelity differences such as revision-pill corner rounding remain unchanged; no full prototype parity or screenshot comparison is asserted. workspace-panes.html was inspected but its historical-study status is not new authority. No HTML edited."
+  }
+}
