@@ -1,3 +1,8 @@
+#[path = "inspector_layout.rs"]
+mod inspector_layout;
+use inspector_layout::solve_inspector_detail_layout_with_taffy;
+pub(super) use inspector_layout::solve_right_panel_layout_with_taffy;
+
 #[path = "filters_layout.rs"]
 mod filters_layout;
 use filters_layout::solve_filters_panel_layout_with_taffy;
@@ -35,7 +40,7 @@ struct FiltersPanelLayout {
     outputs_summary: RectPx,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 struct InspectorDetailLayout {
     divider_y: Option<f32>,
     contract: Option<RectPx>,
@@ -45,76 +50,9 @@ struct InspectorDetailLayout {
     last_status: Option<RectPx>,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq)]
 pub(super) struct RightPanelLayout {
     pub(super) inspector_rect: RectPx,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum RightPanelNode {
-    Inspector,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum InspectorDetailNode {
-    Contract,
-    Net,
-    Segment,
-    Layer,
-    LastStatus,
-}
-
-pub(super) fn solve_right_panel_layout_with_taffy(
-    state: &ReviewWorkspaceState,
-    right: RectPx,
-) -> Option<RightPanelLayout> {
-    let card_x = right.x + UI_CARD_MARGIN;
-    let card_y = right.y + UI_CARD_MARGIN;
-    let card_width = (right.width - UI_CARD_MARGIN * 2.0).max(1.0);
-    let content_height = (right.height - UI_CARD_MARGIN * 2.0).max(1.0);
-    let inspector_height =
-        content_height.max(inspector_height_for_state(state).min(content_height));
-
-    let mut taffy: TaffyTree<()> = TaffyTree::new();
-    let inspector = taffy
-        .new_leaf(Style {
-            size: Size {
-                width: length(card_width),
-                height: length(inspector_height),
-            },
-            ..Default::default()
-        })
-        .ok()?;
-    let nodes = [(RightPanelNode::Inspector, inspector)];
-    let children = nodes.iter().map(|(_, node)| *node).collect::<Vec<_>>();
-    let root = taffy
-        .new_with_children(
-            Style {
-                display: Display::Flex,
-                flex_direction: FlexDirection::Column,
-                size: Size {
-                    width: length(card_width),
-                    height: length(content_height),
-                },
-                ..Default::default()
-            },
-            &children,
-        )
-        .ok()?;
-    taffy.compute_layout(root, Size::MAX_CONTENT).ok()?;
-    let rect_for = |kind: RightPanelNode| -> Option<RectPx> {
-        let node = nodes.iter().find(|(node_kind, _)| *node_kind == kind)?.1;
-        let layout = taffy.layout(node).ok()?;
-        Some(RectPx {
-            x: card_x + layout.location.x,
-            y: card_y + layout.location.y,
-            width: layout.size.width,
-            height: layout.size.height,
-        })
-    };
-    Some(RightPanelLayout {
-        inspector_rect: rect_for(RightPanelNode::Inspector)?,
-    })
 }
 
 fn fallback_right_panel_layout(state: &ReviewWorkspaceState, right: RectPx) -> RightPanelLayout {
@@ -210,91 +148,4 @@ fn filter_hit_rect(row: RectPx) -> RectPx {
         width: row.width + 8.0,
         height: 22.0,
     }
-}
-
-fn solve_inspector_detail_layout_with_taffy(
-    state: &ReviewWorkspaceState,
-    inspector_rect: RectPx,
-) -> Option<InspectorDetailLayout> {
-    let content_x = inspector_rect.x + UI_CARD_PADDING_X;
-    // Detail rows sit below the title band (y+34..y+66) and the "ROUTE ACTION"
-    // section-header strip (y+72..y+90).
-    let content_y = inspector_rect.y + 96.0;
-    let content_width = (inspector_rect.width - UI_CARD_PADDING_X * 2.0).max(1.0);
-    let mut nodes = Vec::new();
-    let mut taffy: TaffyTree<()> = TaffyTree::new();
-    let row_height = key_value_row_height();
-    let mut add_node = |kind: InspectorDetailNode| -> Option<()> {
-        let node = taffy
-            .new_leaf(Style {
-                size: Size {
-                    width: length(content_width),
-                    height: length(row_height),
-                },
-                ..Default::default()
-            })
-            .ok()?;
-        nodes.push((kind, node));
-        Some(())
-    };
-
-    if state.selected_review_action().is_some() {
-        add_node(InspectorDetailNode::Contract)?;
-        add_node(InspectorDetailNode::Net)?;
-        add_node(InspectorDetailNode::Segment)?;
-    }
-    if state.selected_segment_evidence().is_some() {
-        add_node(InspectorDetailNode::Layer)?;
-    }
-    if state.last_command_status.is_some() {
-        add_node(InspectorDetailNode::LastStatus)?;
-    }
-
-    if nodes.is_empty() {
-        return Some(InspectorDetailLayout {
-            divider_y: None,
-            contract: None,
-            net: None,
-            segment: None,
-            layer: None,
-            last_status: None,
-        });
-    }
-
-    let children = nodes.iter().map(|(_, node)| *node).collect::<Vec<_>>();
-    let root = taffy
-        .new_with_children(
-            Style {
-                display: Display::Flex,
-                flex_direction: FlexDirection::Column,
-                size: Size {
-                    width: length(content_width),
-                    height: Dimension::AUTO,
-                },
-                ..Default::default()
-            },
-            &children,
-        )
-        .ok()?;
-    taffy.compute_layout(root, Size::MAX_CONTENT).ok()?;
-
-    let rect_for = |kind: InspectorDetailNode| -> Option<RectPx> {
-        let node = nodes.iter().find(|(node_kind, _)| *node_kind == kind)?.1;
-        let layout = taffy.layout(node).ok()?;
-        Some(RectPx {
-            x: content_x + layout.location.x,
-            y: content_y + layout.location.y,
-            width: layout.size.width,
-            height: layout.size.height,
-        })
-    };
-
-    Some(InspectorDetailLayout {
-        divider_y: Some(inspector_rect.y + 76.0),
-        contract: rect_for(InspectorDetailNode::Contract),
-        net: rect_for(InspectorDetailNode::Net),
-        segment: rect_for(InspectorDetailNode::Segment),
-        layer: rect_for(InspectorDetailNode::Layer),
-        last_status: rect_for(InspectorDetailNode::LastStatus),
-    })
 }

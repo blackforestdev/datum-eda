@@ -767,13 +767,13 @@
     "crates/gui-render/src/side_panels.rs": {
       "kind": "rust-production",
       "limits": {
-        "expanded_lines": 1160
+        "expanded_lines": 1011
       },
       "owner": "project-owner",
       "trigger_commit": "22bec64afe854e5404a6054c6d3f56705ba88698",
       "target_lines": 700,
       "status": "decomposition-required",
-      "note": "Project and Layers row solves extracted into dedicated panel layout owners with shared bounded cache policy. Remaining Inspector includes retain exact downward ceiling."
+      "note": "Project, Layers and Inspector solve ownership extracted into dedicated normal modules using shared bounded layout cache policy. Remaining Inspector composition include debt retains exact downward ceiling."
     },
     "crates/gui-render/src/side_panels/render_inspector.rs": {
       "kind": "rust-production",

@@ -1,0 +1,117 @@
+{
+  "base_commit": "24afc48c18c3555af2f060fd885bebb67dbb05c1",
+  "production_consumers": [
+    "Main Inspector outer panel preparation",
+    "Main Inspector existing review/detail row preparation"
+  ],
+  "shared_owner": "Shared LayoutCache<K,V> in render/shell_layout/cache.rs; semantic keys/solvers in side_panels/inspector_layout.rs",
+  "retired_paths": [
+    "Unchanged outer Inspector per-frame Taffy tree/solve",
+    "Unchanged Inspector detail per-frame row tree/solve"
+  ],
+  "keys": {
+    "outer": [
+      "rectangle",
+      "desired Inspector height"
+    ],
+    "detail": [
+      "rectangle",
+      "action presence",
+      "segment presence",
+      "status presence",
+      "row height"
+    ]
+  },
+  "retention": "Independent two-entry outer/detail caches through the existing shared policy; only geometry retained, no selected values or workspace. Failed solves retain existing fallback behavior.",
+  "proof": "230 renderer tests pass. Cached/fresh geometry compares9 outer and48 detail key profiles. Actual selected-review-action PreparedScene preparation solves each layout once over three frames and updates painted net text without another solve. Isolated shared-cache bypass fails the intended warm assertion; restored root renderer explicitly rebuilds and passes. Existing real24-layer Main Runtime routing test passes X11/Wayland1.5 at1918x1050. Fresh release build passed.",
+  "negative": {
+    "compiled_input_digest": "6402f2313905f7cfc3e2b7ac6b9b814e3ae5a24118554d316e5a6ce112508db8",
+    "compiled_input_count": 1849,
+    "runs": [
+      {
+        "label": "negative",
+        "binary_sha256": "6b04ae6ff78db8cd0eecd87eb5d5bf6775c603f243229b9d8e08248291a72984",
+        "exit": 101,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "--manifest-path",
+          "/tmp/pm045-pinned-negative-source/Cargo.toml",
+          "-p",
+          "datum-gui-render",
+          "--lib",
+          "actual_inspector_preparation_reuses_layout_and_updates_values",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "renderer_recompiled": true
+      },
+      {
+        "label": "restored",
+        "binary_sha256": "30534e2a9d10a5087d79ad3b4223bdad2501bcc224daae10e3a8e1b8c3c90c34",
+        "exit": 0,
+        "command": [
+          "python3",
+          "/home/bfadmin/Documents/datum-eda/scripts/run_cargo_guarded.py",
+          "--workload",
+          "proof",
+          "--",
+          "cargo",
+          "test",
+          "--offline",
+          "-p",
+          "datum-gui-render",
+          "--lib",
+          "actual_inspector_preparation_reuses_layout_and_updates_values",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "renderer_recompiled": true
+      }
+    ]
+  },
+  "failed_attempts": "Initial extraction gave the outer function parent-only visibility, preventing the existing root test re-export. Compiler rejected it before tests. Corrected to crate-internal visibility, preserving the prior test entry. Raw compile failure retained.",
+  "source_health": {
+    "root_lines": 52,
+    "include_expansion_before": 1160,
+    "include_expansion_after": 1011,
+    "policy_tests": 13,
+    "base_comparison": "HEAD passed"
+  },
+  "limits": "Structural warm reuse, not a measured GUI speed, aggregate memory or full HP01/02/S3 qualification. Native Main routing smoke does not qualify Inspector control/selection/final-pixel profiles or OS delivery. Existing partial Inspector scope, painter/clip paths and solver arithmetic preserved. Separate bottom-dock solve remains. No dependencies/licenses/prototypes/budgets/deadlines or nonblocking resize-scope change.",
+  "source_sha256": {
+    "crates/gui-render/src/side_panels/layout.rs": "0c9da31ea5f071c329413d932a1dcc6fdd94b323b1f97da3fd0b5065ae6071f1",
+    "crates/gui-render/src/side_panels/inspector_layout.rs": "a3abf1acbf886bef705c9ae41090503f2fc24c6007c27c90bf8e8915c0bc36fa"
+  },
+  "release_sha256": "0f0936220a547c06b1cf21056a548142ef365e445f873cdcd7784c960997286b",
+  "commands": {
+    "renderer": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib",
+    "release": "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app --bin datum-gui",
+    "drift": "CARGO_NET_OFFLINE=true bash scripts/run_drift_gates.sh"
+  },
+  "artifacts": {
+    "pm045-inspector-layout-build.log.gz": "c0c65f512ec60b6eefa13ac841d192400c3af640a6662e23f211b3d1ef35cbbf",
+    "pm045-inspector-layout-native-wayland-1.5.log.gz": "e8e251c9db2121d221fce4c12a6a68cef5beea52745f2d79750593ba23c65fbe",
+    "pm045-inspector-layout-native-x11-1.5.log.gz": "352a787876046ed2a66565286c65b48582a340646b8cef3355b5e19e82546dc0",
+    "pm045-inspector-layout-restored.log.gz": "5349f65831292f574a3b254d7ec40e39ead9c6055f2839b2b1f8bfa564d13912",
+    "pm045-inspector-layout-negative.log.gz": "6f8de8e241883a53731038347dde7e121125e4a418da14b3d7294174d140989a",
+    "pm045-inspector-layout-policy.log.gz": "092d3c2da73b11e0e342cb2ca1518febac923b568af1f0dab296ecd35ea98e5e",
+    "pm045-inspector-layout-initial-compile.log.gz": "9d92435433281436637a79c8b24eb09e2fb2368e2cda026dc2325391c2cd926d",
+    "pm045-inspector-layout-renderer.log.gz": "c039cab5549d70e694bdbcc5865a28188decb8d6b2ba3e4f3c989f88663f5148",
+    "pm045_inspector_layout_negative.py.gz": "d296633b00c9a0cdf7a943681a1cf7f3f0606ba0fda28e6d58fb7443a3ff98d4",
+    "pm045_inspector_layout_native.py.gz": "7451db8c76e28069d0f908f97d83e6c47679301712259ffab6b3f028ec81f7c5",
+    "pm045-inspector-layout-negative.patch.gz": "a58eb99806c299cd053eac7ef775f0c96b1733f47c94493f4bd4d499f2851771",
+    "pm045-inspector-layout-negative-result.json.gz": "a689d8d8b692d02e64235d55311b5e2d1b650aff2a8d2939f0e639dc90c1d8f8",
+    "pm045-inspector-layout-native-results.json.gz": "b3d528d2c1f44258c228ac67587290aff91dab81e797dd1360cdb0c7070187eb",
+    "drift.log.gz": "00bff62caffdb32cec915d72055955a54eefed9b647a8b9401423f8f24165098"
+  },
+  "verification": "Workspace Clippy,13 source-policy tests, source-health HEAD comparison, dependency authority, traceability, spec governance/parity and project state pass. Full drift stops at the same eight pre-existing GUI agent/terminal convergence source-pattern failures tracked by dat-terminal-convergence-guard-xke; later gates unrun."
+}
