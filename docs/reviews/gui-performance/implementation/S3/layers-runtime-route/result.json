@@ -1,0 +1,28 @@
+{
+  "base_commit": "141f22efd3ce5357ad02e7690b48f9f30ae1f958",
+  "production": {
+    "status": "Actual Board Runtime verifies no Layers preparation, effective capacity, boundary damage and camera preservation",
+    "production_consumers": [
+      "MAIN Board Layers wheel adapter"
+    ],
+    "retired_paths": "No runtime behavior changed; replaces earlier zero-test filter as bounded verification of existing default production routing.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/layers-runtime-route/result.json",
+    "limits": "Actual hidden X11/Vulkan Board Runtime with real owner fixture, direct production handle_layer_scroll calls and presented hit publication. Does not deliver OS wheel events or test outer event-dispatch fallthrough. No full HP10/S3/native/backend/scale/resource/performance acceptance. No dependency, license, prototype, sequencing or resize-scope change."
+  },
+  "verification": {
+    "positive": "1 passed, 390 filtered out; real Board has more layers than presented capacity. Outside route leaves preparation absent; inside clamps to total minus visible, boundary consumes without damage, reversal changes row and camera stays unchanged.",
+    "negative": "1 intended failure, 390 filtered out; disposable checkout adds prepared_scene before outside-Layers rejection. Fails outside Layers must not prepare a scene.",
+    "restored": "1 passed, 390 filtered out after byte-restoring production source in same disposable checkout."
+  },
+  "source_sha256": {
+    "crates/gui-app/src/runtime_revision_workspace.rs": "fae9da1bb104c463d09a6ff1512a43a5501433a679e910f5e5e16c2d58c9417c",
+    "crates/gui-app/src/native_layers_scroll_tests.rs": "faec2845cb00b4c3dc76cbf3925a5d05f52b30e2babc21f808450018ad5947ec"
+  },
+  "limits": "Actual hidden X11/Vulkan Board Runtime with real owner fixture, direct production handle_layer_scroll calls and presented hit publication. Does not deliver OS wheel events or test outer event-dispatch fallthrough. No full HP10/S3/native/backend/scale/resource/performance acceptance. No dependency, license, prototype, sequencing or resize-scope change.",
+  "artifact_sha256": {
+    "positive.log.gz": "fecd2d5719e15d981a8c86572f8b01d647d45b7ec65479c3df5e4755cad8e9bf",
+    "restored.log.gz": "f610e5906604569e0ae5151757104e36a387ce08468ebad781c5d28abf4fdc64",
+    "negative.patch": "97f704fbf58bea0754afd5ffca92e2e11c0f373bc873042d0284ed4dc4cefd3c",
+    "negative.log.gz": "30b2ef23d5fddc5da206ba4db1f1bb247f692f7cba7f80ec602e8be6bab655f5"
+  }
+}
