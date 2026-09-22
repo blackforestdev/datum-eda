@@ -37,7 +37,9 @@ impl Renderer {
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<()> {
         let mut measurement = self.begin_gpu_measurement()?;
-        let started = std::time::Instant::now();
+        let started = std::env::var_os("DATUM_TRACE_TIMING")
+            .is_some()
+            .then(std::time::Instant::now);
         // Dialog-only frames have no world-camera consumers. Drop both owners
         // because a cached bundle also retains its camera bind group.
         self.surface_world_bundles.clear();
@@ -56,7 +58,8 @@ impl Renderer {
             prepared.menu_overlay_vertices(),
         );
         let has_text = prepared.has_overlay_text();
-        self.prepare_frame_text(device, queue, prepared, width, height, true)?;
+        let (text_stats, _) =
+            self.prepare_frame_text(device, queue, prepared, width, height, true)?;
         let msaa_view = self.ensure_msaa(device, width, height).clone();
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {
             label: Some("datum-dialog-encoder"),
@@ -104,10 +107,14 @@ impl Renderer {
         on_submitted(submission);
         self.submit_gpu_measurement(measurement)?;
         self.text_buffers.trim_overlay();
-        trace_render_timing(format!(
-            "dialog renderer={}us passes=1",
-            started.elapsed().as_micros()
-        ));
+        if let Some(started) = started {
+            trace_render_timing(format!(
+                "dialog renderer={}us passes=1 text_cache={}/{}",
+                started.elapsed().as_micros(),
+                text_stats.hits,
+                text_stats.misses,
+            ));
+        }
         Ok(())
     }
 }

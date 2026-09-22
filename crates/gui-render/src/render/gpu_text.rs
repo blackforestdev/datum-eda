@@ -77,18 +77,19 @@ impl Renderer {
             self.text_buffers
                 .indices(&mut self.font_system, &prepared.text_runs, width, height)
         };
-        let overlay = if !has_overlay_text {
-            Vec::new()
+        let (overlay, overlay_stats) = if !has_overlay_text {
+            (Vec::new(), TextBufferCacheStats::default())
         } else {
-            self.text_buffers
-                .indices(
-                    &mut self.font_system,
-                    prepared.menu_overlay_text_runs(),
-                    width,
-                    height,
-                )
-                .0
+            self.text_buffers.indices(
+                &mut self.font_system,
+                prepared.menu_overlay_text_runs(),
+                width,
+                height,
+            )
         };
+        // Preserve workspace diagnostic semantics; dialog-only frames report
+        // their actual text owner instead of an empty workspace statistic.
+        let stats = if overlay_only { overlay_stats } else { stats };
         let signature = has_workspace_text
             .then(|| text_prepare_signature(&workspace, &prepared.text_runs, width, height));
         let revision = self.text_buffers.revision();

@@ -1,0 +1,54 @@
+{
+  "base_commit": "b16b9da42987f6217ef4fc2959f42ada2fc0bdf4",
+  "issue": "dat-dialog-trace-cost-3lrf",
+  "production": {
+    "status": "Default dialog trace work made lazy; actual native warm text reuse verified",
+    "production_consumers": [
+      "GLOBAL/PROJECT/NEW shared dialog-only renderer"
+    ],
+    "shared_owner": "Renderer::render_overlay_only and prepare_frame_text",
+    "retired_paths": [
+      "Unconditional dialog diagnostic Instant creation and string formatting when tracing is disabled",
+      "Discarded actual overlay cache stats replaced by empty workspace stats on dialog-only frames"
+    ],
+    "preserved": "Default cache/layout/glyph/submit behavior; general-frame diagnostic stats retain workspace semantics. Existing DATUM_TRACE_TIMING opt-in now includes actual dialog cache hits/misses.",
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-label-reuse/result.json",
+    "limits": "Bounded actual GLOBAL/PROJECT Units native X11 scroll cycles at1x, tracing enabled; no extra lookup used to warm before measurement. Not all settings/expanded states/backends/scales, resource/counter-overhead conformance or full HP14/S3 acceptance. Complete resource dependencies remain due at S4/S5. No dependency/license/prototype/style, budget or resize-scope change. Known capture lag means images are not timing/final-state proof."
+  },
+  "verification": {
+    "renderer": "215 CPU tests passed",
+    "gpu": "14 serial P630 Vulkan overlay tests passed, including measurement/pixel parity and warm cache regression",
+    "clippy": "Renderer/app libraries and app binary -D warnings passed",
+    "release": "Fresh guarded offline release build passed",
+    "native": "Both actual native Preferences adapters: three down/up cycles,6frames each, all misses0. GLOBAL hits46/47 alternating; PROJECT45/46. Preceding native drag/boundary/reversal checks passed.",
+    "maximum_observed_cold_misses": {
+      "GLOBAL": 24,
+      "PROJECT": 29
+    },
+    "counter_source": "Returns existing TextBufferCache::indices statistics from actual prepare_frame_text; no speculative lookup added. Historical one-frame retention negative b16b9da4 detects3 misses through the same cache owner; no native negative injection claimed."
+  },
+  "visual_authority": "Existing rendered Preferences prototype remains guidance. Current native GLOBAL screenshot inspected; no paint/layout change.",
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_text.rs": "5ae518e9a00c0216d1fac5dbea98935839fa0d043e4bb4d0467dfddae1ef204a",
+    "crates/gui-render/src/render/gpu_overlay.rs": "4a63ed226ea68abdedf076ebfc2340b89f397acb04ac1e37a374a09391f26f4b"
+  },
+  "limits": "Bounded actual GLOBAL/PROJECT Units native X11 scroll cycles at1x, tracing enabled; no extra lookup used to warm before measurement. Not all settings/expanded states/backends/scales, resource/counter-overhead conformance or full HP14/S3 acceptance. Complete resource dependencies remain due at S4/S5. No dependency/license/prototype/style, budget or resize-scope change. Known capture lag means images are not timing/final-state proof.",
+  "artifact_sha256": {
+    "clippy.log.gz": "0871840f947b511dabede85a000a5c13cbe66778706bcd0f3515e40da4b28b7c",
+    "cpu.log.gz": "75d6266376bac76f288e1e5b0f041c21f58552ea2cea17cdc711220417c6d139",
+    "native-driver.py": "d99fdc6361b2c04a400ee3e14abe1057b99d617df9612bc90bd1d3a8c416cd0e",
+    "build.log.gz": "593e20b256cdb5cfa4b7a4b0bd46f123affb33f2c2fd2046dca4bf58c8544e98",
+    "gpu.log.gz": "6dba3f2c3c30890269af1552ebb771f3336863d60425898d8c2d9fafa8720237",
+    "native/result.json": "2b0c98d03e93c358234fcb3fa98bd1fe6c50d777d0d1117b9e63dc3aa81f8b87",
+    "native/GLOBAL/native.log.gz": "0fc02a2c028b7d476b933249ecbb264be092e3b77c16299ea63eb9b6116e366b",
+    "native/GLOBAL/reverse.png": "ba61ce906e695efbb14f36768c089239b513a3d0cb08b01178115189b0530b8c",
+    "native/GLOBAL/stderr.log.gz": "076ab52ea413014caf5b0021daec65eb66f32401c594120a5d2dfc6da56c0705",
+    "native/GLOBAL/before.png": "ba61ce906e695efbb14f36768c089239b513a3d0cb08b01178115189b0530b8c",
+    "native/GLOBAL/bottom.png": "61ad86308b23aac32ce84e86508de970a10f403c76f181f6e56cb38eef2844de",
+    "native/PROJECT/native.log.gz": "49dbb98f503682e2b78349021b3789e4c1f0bf4b5e16cfd9b2b41b2c9395ac0d",
+    "native/PROJECT/reverse.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "native/PROJECT/stderr.log.gz": "4c145ac5d5a3bd8fb378e485349da232ae0ac3f0c12e513e969a373b7ef63361",
+    "native/PROJECT/before.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "native/PROJECT/bottom.png": "ad646c1b5437ff41d378d53a3ea4a360c0b7090edbf8db60bed1b100eed71b9d"
+  }
+}
