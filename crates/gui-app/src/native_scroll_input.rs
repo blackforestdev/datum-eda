@@ -35,6 +35,36 @@ impl VerticalWheel {
     }
 }
 
+impl crate::Runtime {
+    /// Route native wheel input once, consuming local no-ops before camera zoom.
+    pub(crate) fn handle_native_wheel(&mut self, delta: MouseScrollDelta) -> bool {
+        let Some(wheel) = VerticalWheel::from_native(delta, self.scale_factor) else {
+            return false;
+        };
+        let lines = wheel.lines(20.0);
+        if let Some(changed) = self.handle_layer_scroll(lines) {
+            return changed;
+        }
+        if let Some(changed) = self.handle_console_history_scroll(lines) {
+            return changed;
+        }
+        if self.report_terminal_mouse_wheel(lines) {
+            return true;
+        }
+        if self.cursor_in_dock() && lines.abs() > 0.01 {
+            return self.handle_dock_scroll(lines);
+        }
+        let zoom = if lines > 0.0 {
+            1.12_f32.powf(lines.abs().min(3.0))
+        } else if lines < 0.0 {
+            0.89_f32.powf(lines.abs().min(3.0))
+        } else {
+            return false;
+        };
+        self.handle_zoom(zoom)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

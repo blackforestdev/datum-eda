@@ -1,0 +1,43 @@
+{
+  "candidate_base": "20337a8ab8be2a92a1dd0d78dfb46a7d88ee4d12",
+  "production": {
+    "status": "Default Main wheel policy moved into existing native scroll owner; bounded real Runtime routing passes",
+    "production_consumers": [
+      "MAIN Board camera",
+      "LAYERS",
+      "Main console history and terminal wheel routes (preserved; no new native qualification)"
+    ],
+    "shared_owner": "Runtime::handle_native_wheel in native_scroll_input.rs; shared VerticalWheel normalization",
+    "retired_paths": [
+      "Inline consumer routing and zoom policy in App::handle_native_window_event; native dispatcher now applies the shared changed-state result"
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-wheel-routing/result.json",
+    "limits": "Real hidden X11/Vulkan Board Runtime receives MouseScrollDelta through the default routing owner, not OS-delivered events or the ApplicationHandler callback. No native redraw-count, fallthrough negative, backend/scale matrix, full HP10/HP19/S3 or performance qualification. Preserves existing consumer priority, row policies, zoom math and damage policy. No styling, dependency/license, resource deadline or resize change."
+  },
+  "verification": {
+    "native": "1 passed,393 filtered; outside no preparation; Layers effective capacity, boundary no damage, reversal and unchanged camera; editor zoom still changes camera without preparing Layers",
+    "app": "380 passed,14 ignored",
+    "clippy": "GUI app binary/tests -D warnings passed",
+    "release": "Fresh guarded offline release GUI build passed"
+  },
+  "commands": [
+    "env XDG_CONFIG_HOME=/tmp/pm045-native-wheel-config XDG_CACHE_HOME=/tmp/pm045-native-wheel-cache EDA_CLI_BIN=/home/bfadmin/Documents/datum-eda/target/release/datum-eda DATUM_NATIVE_TEST_BOARD=/tmp/pm045-readiness-x11/MAIN/board.kicad_pcb python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui native_layers_route_preserves -- --ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui -- --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-app --bin datum-gui --tests -- -D warnings",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app --bin datum-gui"
+  ],
+  "source_sha256": {
+    "crates/gui-app/src/app_native_events.rs": "a424cf77878b0613afa6127db26f9045cbae3651a255a694724dc54df1b981fd",
+    "crates/gui-app/src/native_scroll_input.rs": "db9a3c9fa282386bcca80dfbea27615bb331323a3994ff15826960fba9bab8e5",
+    "crates/gui-app/src/native_layers_scroll_tests.rs": "b05a5f3032c9c5a2958f8b9964205cafdcd978b81d798a0c2fea4f418d68040a"
+  },
+  "fixture_sha256": "7df67d426cc0cd808096824b0b7a05dcde351a1305fd41244d8c05a15801c08d",
+  "artifact_sha256": {
+    "positive.log.gz": "5f79e108b4ef1b0345623a121edaa6c05146642d159de0c41f48fcf47c8fc065",
+    "app.log.gz": "659a0e22ac9b58eee6ab3302b46a1409f966e8738d1daf2beaf365c11c97902d",
+    "clippy.log.gz": "026ed66563ba5bb9d7f7d9dd37b548c91fd34ee96f7ba64dc902b6761221ca93",
+    "build.log.gz": "b196a75aec3e8ed1c0997b1c304a842f325b39b1d819e9aa0ded819dbbf70507",
+    "release.log.gz": "9cafa0ebc45c039b49c0e1a3dedeef771b422c4f279a812494f8adbe23ced14a"
+  },
+  "release_binary_sha256": "e71f8a4b8527224e9b7d415342361a63f1857d65b60a4d3cba5355cfe90d2112"
+}
