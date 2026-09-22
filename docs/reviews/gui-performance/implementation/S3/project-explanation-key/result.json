@@ -1,0 +1,68 @@
+{
+  "status": "bounded keyboard fix verified; full S3 qualification remains open",
+  "issue": "dat-project-explanation-key-pfei",
+  "slice": "GPI-S3",
+  "baseline_head": "d498b874",
+  "baseline_binary_sha256": "52a75f2e9e106c92a0af0189c2f1f63c9756f23af6c61dde16b12fdad5dedfbb",
+  "candidate_binary_sha256": "752671ced86eb708797ba2d001f493d23d3d62fc3f5f6273c05352113e1107fe",
+  "candidate_patch_sha256": "95e4452fa1f231209d61f97470807b88d61abd2175ec2e86e1e5a0be82f51d34",
+  "production_consumers": [
+    "Project Preferences focused setting-name keyboard activation"
+  ],
+  "retired_paths": [
+    "Project SettingName Enter/Space no-op branch; both now reuse existing Project pointer explanation action"
+  ],
+  "proof": {
+    "baseline": "OS Enter delivered with visibly focused Measurement system; no content-change frame; timeout after delivered drag",
+    "candidate": "X11/Xwayland 1x Enter and Space each open explanation after real thumb drag; trailing-release typing produces zero frames; fresh click plus typing produces frames. Inspected captures contain the opened explanation.",
+    "app_tests": "377 passed, 16 ignored",
+    "release_build": "offline optimized build with visual feature passed",
+    "source_policy": "13 passed; first wrong test filename failed import and is preserved",
+    "drift": "Exit 1 at unchanged Console routine-focused golden:3778 pixels/0.384318%. Preceding Clippy, governance, terminal boundary/core, Console routing/render checks pass. Later gates unrun; dat-console-revision-golden-hrak remains open.",
+    "settled_capture": "Same candidate Enter replay with two-second capture waits passes; inspected final fresh-search image shows focused precision and four matching rows. Intermediate after-release image is still stale/inconsistent and not accepted as final-state proof."
+  },
+  "limits": [
+    "Initial Enter/Space final images lag state; preserve them. Longer-wait Enter replay verifies final fresh-search pixels only. Intermediate after-release capture remains inconsistent; no general capture reliability, complete focus/capture or temporal acceptance.",
+    "One native backend and 1x visual override at accepted 960x720 only; no Wayland, monitor transition, full HP21/HP23 or S3 acceptance.",
+    "Frame counts are bounded event-response evidence, not complete control/focus state or performance qualification.",
+    "Harness SIGTERM cleanup is not native close/teardown acceptance.",
+    "No preference mutation, dependency/license, prototype, numerical budget, sequencing or resize-scope change."
+  ],
+  "artifact_sha256": {
+    "app-tests.log.gz": "51fd929a2bc56aa887f589ff870daaafa8473357d424f09d007194aeb3377fc3",
+    "baseline-before.png": "e59e630692ecdfbdf120503ef50a1b5aa31c3ab8ae2ecfe550164671f5f0c22d",
+    "baseline-driver.py.gz": "2dc1d60bce6ab5767b2083e36c6cd1e5f1748e9569d3f4bff775218577c04487",
+    "baseline-native.log.gz": "1d4d2b5f69aaa906d37cde721e424cb7cef7c66189da61d44e7f3c9dc679d6d9",
+    "baseline-result.json": "560c0aa8c4c0abb509a84a2d9bd907507e25c8928882eea1af1a73099578b689",
+    "candidate.patch": "95e4452fa1f231209d61f97470807b88d61abd2175ec2e86e1e5a0be82f51d34",
+    "cargo-wrapper.py.gz": "7f6249206bf5f612241b4a3f938a288026013e0ae32d451d92035144ad5f2c2c",
+    "drift.log.gz": "148ed26c9d09b34801ac42806bf0b7f687d9dbdc3f817411ca7cd7a145c4ebaf",
+    "enter-after-release.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "enter-fresh-search.png": "d39ccdf76af57a359e4fbff0930c3d79a409458d6db64c9c492438996ed1827f",
+    "enter-native.log.gz": "7d6df7f98723c84de3aa2b001978ce29b851dcd0ad137b6c88edb889d41bb838",
+    "enter-result.json": "c1daf424be3ba268d67f756ab9af925913077632e351b3091f60d16f7e59bfbb",
+    "release-build.log.gz": "490aba3a556592541aa3bc36571a047db5f6aed5da5c65bcd8eccf794f1764ed",
+    "settled-after-release.png": "3e5f8a89c5e5fcde4136ac5b8e40b14d3cc76b81b0e6da4185ad34867a68a6e6",
+    "settled-driver.py.gz": "c27ca41198ed8e4e6a01108eec15418d483d2fc8fc71d8d28cf908df048e823f",
+    "settled-fresh-search.png": "3d66519beda8f7efcc40ccabbfb215e504d54bfc79f65ce2930cbbd5d921106d",
+    "settled-native.log.gz": "59635bd5ebfb3004452d6919a991d5e21943eb63ba12b2070dbaff2da66fc40f",
+    "settled-result.json": "b42d409a49d33de43d5320f580d1ffac6bc400c32bd4f3fc49d977894858aef1",
+    "source-policy-wrong-name.log.gz": "75dc215c91c1dfbb1f414f9a028df97106262096ac00d6f76d533f6bc6a3d344",
+    "source-policy.log.gz": "b2b8b4e21631323504964144ee4a3fc77cf11667fc0ff8e2c47c8a3a43ee3445",
+    "space-after-release.png": "59638cfc18ffc68bec9ac49892aedf5a5ffdbab1107cb989489a29530fcca2b7",
+    "space-driver.py.gz": "2dde91677eba7eeac8fdf1d7e754e93e044fa0f6985764dfb8f7ed01391c04df",
+    "space-fresh-search.png": "d39ccdf76af57a359e4fbff0930c3d79a409458d6db64c9c492438996ed1827f",
+    "space-native.log.gz": "c2bf12c3681cf7f73be7df36a059a2b71274f08958544b261f50100f820bba15",
+    "space-result.json": "ced7f689f5165290994a31e2746b8e1a38146ec9164510ebb372c48b74cf7b69"
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-app --bin datum-gui",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline --release -p datum-gui-app --features visual --bin datum-gui",
+    "PM045_TEST_SCALE=1 PM045_HOSTS=PROJECT python3 /tmp/pm045_native_explanation_capture.py /tmp/pm045-project-explanation-resumed-20260922",
+    "PM045_TEST_SCALE=1 PM045_HOSTS=PROJECT python3 /tmp/pm045_native_explanation_capture.py /tmp/pm045-project-explanation-candidate-enter",
+    "PM045_TEST_SCALE=1 PM045_HOSTS=PROJECT python3 /tmp/pm045_native_explanation_capture_space.py /tmp/pm045-project-explanation-candidate-space",
+    "PM045_TEST_SCALE=1 PM045_HOSTS=PROJECT python3 /tmp/pm045_native_explanation_capture_settled.py /tmp/pm045-project-explanation-candidate-settled",
+    "PATH=/tmp/pm045-cargo-entry:$PATH CARGO_NET_OFFLINE=true bash scripts/run_drift_gates.sh"
+  ],
+  "mutation_oracle_limit": "Harness checks isolated Global generation manifests, not the Project journal. Production change calls only the existing explanation action; no new persistence route."
+}
