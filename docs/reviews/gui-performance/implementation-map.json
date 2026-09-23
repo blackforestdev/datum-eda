@@ -15254,7 +15254,7 @@
         },
         {
           "work": "s4_text_admission_compaction_work",
-          "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission/result.json",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission-compaction/result.json",
           "status": "Current-frame text admission reclaims spare metadata before refusal; warm preparing state corrected; complete shaped accounting remains open"
         }
       ]
@@ -15402,7 +15402,7 @@
         },
         {
           "work": "s4_text_admission_compaction_work",
-          "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission/result.json",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission-compaction/result.json",
           "status": "Current-frame text admission reclaims spare metadata before refusal; warm preparing state corrected; complete shaped accounting remains open"
         }
       ]
@@ -33457,13 +33457,14 @@
     "proof": {
       "renderer": "338 renderer tests pass, 11 diagnostic/visual cases filtered. New serial pressure proof leaves exactly enough process allowance for required compact storage, verifies successful admission, unchanged three indices and shared shape addresses, exact final capacity and cost. New warm-frame proof verifies preparing/submitted transitions with unchanged bytes and a cache hit. Existing refusal, history eviction/remapping, shared layout, native/composed cache and GPU/pixel tests pass.",
       "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2271, dependency authority and governance gates pass.",
-      "scope": "No native input or broad benchmark campaign. Full drift not rerun; recorded Console golden mismatch remains unresolved."
+      "scope": "No native input or broad benchmark campaign. Full drift not rerun; recorded Console golden mismatch remains unresolved.",
+      "evidence_reconciliation": "bdb87815 reused an existing evidence directory in error; immediate follow-up restores all prior receipt/log bytes and moves this slice to text-admission-compaction. Earlier proof remains intact."
     },
     "limits": [
       "Construction/growth peaks, accounting registry and private font/scratch ownership remain separate unresolved full-accounting boundaries. This corrects admission of already prepared required layouts; it does not claim allocation-time construction caps or complete MEM-SHAPED-LOCAL/TOTAL acceptance.",
       "Per-owner preparation state is not a transactional snapshot across every render thread. Existing serialized budget admission still accounts all other owner bytes.",
       "S4 remains selected with sixteen recorded implementation gaps; S5 qualification and the issue remain open. Preserve GEFN, nonblocking resize and concurrent multi-device failure. No dependency, vendor, license, prototype, specification cap or sequencing change."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission-compaction/result.json"
   }
 }

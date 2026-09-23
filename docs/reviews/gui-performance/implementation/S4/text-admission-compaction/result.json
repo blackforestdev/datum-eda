@@ -1,0 +1,48 @@
+{
+  "status": "Current-frame text admission reclaims spare metadata before refusal; warm preparing state corrected; complete shaped accounting remains open",
+  "base_commit": "e6804f72",
+  "production_consumers": [
+    "Shared TextBufferCache::admit_frame for workspace and native/composed overlay layouts",
+    "All TextBufferCache::begin_frame profiles and process ownership observations"
+  ],
+  "retired_paths": [
+    "Refusing all required layouts solely because reusable entry/index spare capacity consumes the remaining allowance",
+    "Reporting a warm frame as submitted/idle throughout preparation because its byte revision did not change"
+  ],
+  "behavior": [
+    "After retiring unused history, compact entry and lookup capacity if required ownership still exceeds allowance. Recompute actual costs before refusing. Current indices and Arc-owned shaped allocations survive metadata movement; revision invalidates stale prepare identity as needed. Ordinary below-budget frames retain their existing capacity and warm path.",
+    "Publish preparing state at every begin_frame even when owned bytes are unchanged; existing finish/admission paths settle the state. No new allocations or change to process allowance arithmetic for this state update."
+  ],
+  "proof": {
+    "renderer": "338 renderer tests pass, 11 diagnostic/visual cases filtered. New serial pressure proof leaves exactly enough process allowance for required compact storage, verifies successful admission, unchanged three indices and shared shape addresses, exact final capacity and cost. New warm-frame proof verifies preparing/submitted transitions with unchanged bytes and a cache hit. Existing refusal, history eviction/remapping, shared layout, native/composed cache and GPU/pixel tests pass.",
+    "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2271, dependency authority and governance gates pass.",
+    "scope": "No native input or broad benchmark campaign. Full drift not rerun; recorded Console golden mismatch remains unresolved.",
+    "evidence_reconciliation": "bdb87815 reused an existing evidence directory in error; immediate follow-up restores all prior receipt/log bytes and moves this slice to text-admission-compaction. Earlier proof remains intact."
+  },
+  "limits": [
+    "Construction/growth peaks, accounting registry and private font/scratch ownership remain separate unresolved full-accounting boundaries. This corrects admission of already prepared required layouts; it does not claim allocation-time construction caps or complete MEM-SHAPED-LOCAL/TOTAL acceptance.",
+    "Per-owner preparation state is not a transactional snapshot across every render thread. Existing serialized budget admission still accounts all other owner bytes.",
+    "S4 remains selected with sixteen recorded implementation gaps; S5 qualification and the issue remain open. Preserve GEFN, nonblocking resize and concurrent multi-device failure. No dependency, vendor, license, prototype, specification cap or sequencing change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-admission-compaction/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-admission-compaction/tests.log.gz",
+      "uncompressed_sha256": "6a05a0a67c6b7ec64ab95f2be3cba610aec6899e763d079d929a9df2f0b7c78f"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-admission-compaction/clippy.log.gz",
+      "uncompressed_sha256": "813713505df204134ad53fe3cdcf6b31a4c9fa4c8a5456807fb59facd00b2b11"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-admission-compaction/build.log.gz",
+      "uncompressed_sha256": "52cf11457884a1ee18ae6a2a1f30ec4c643be01be09fd03008c95f67ea6a460d"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/text_cache_admission.rs": "2b3bf31104002e52265e215369e8d97c569a99d250ba723802ad676b9ad01663",
+    "crates/gui-render/src/render/text_cache_admission_tests.rs": "573602955c1af1849311d5afd45e1aaa871d8943d6d54e002f889a977b335227",
+    "crates/gui-render/src/render/text_cache_budget.rs": "318b83430b518f23208d41d509d493077243fc78ec5360b4915ac2b5f247a6e1",
+    "crates/gui-render/src/render/text_cache_retention.rs": "4ec8eee4bfb3676aadc2589acfd972e989c0a2cf248066c7a1b0378998213efc"
+  }
+}
