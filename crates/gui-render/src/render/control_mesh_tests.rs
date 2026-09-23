@@ -199,8 +199,8 @@ fn placement_and_color_reuse_control_mesh_but_geometry_and_dpi_miss() {
 fn metadata_is_charged_before_admitting_a_payload_at_the_cpu_limit() {
     let mut cache = ControlMeshCache::default();
     let metadata = cache.retained_cpu_bytes();
-    assert!(metadata >= MAX_ENTRIES * std::mem::size_of::<Entry>());
-    let capacity = cache.entries.capacity();
+    assert_eq!(metadata, std::mem::size_of::<ControlMeshCache>());
+    assert_eq!(cache.entries.capacity(), 0);
     let mut consumed = false;
     cache.with_mesh(
         key(42),
@@ -213,10 +213,42 @@ fn metadata_is_charged_before_admitting_a_payload_at_the_cpu_limit() {
     assert!(consumed, "uncacheable content must still paint");
     assert!(cache.entries.is_empty(), "payload alone fills the cap");
     assert_eq!(cache.retained_cpu_bytes(), metadata);
+    assert_eq!(
+        cache.entries.capacity(),
+        0,
+        "oversize bypass must not reserve slots"
+    );
     for n in 0..512 {
         cache.with_mesh(key(n), || Box::new([]), |_| {});
-        assert_eq!(cache.entries.capacity(), capacity);
-        assert_eq!(cache.retained_cpu_bytes(), metadata);
+        assert!(cache.entries.capacity() <= MAX_ENTRIES);
+        assert_eq!(
+            cache.retained_cpu_bytes(),
+            metadata + cache.entries.capacity() * std::mem::size_of::<Entry>()
+        );
+        if n == 0 {
+            assert!(cache.entries.capacity() < MAX_ENTRIES);
+        }
     }
     assert_eq!(cache.entries.len(), MAX_ENTRIES);
+}
+
+#[test]
+fn entry_growth_evicts_payload_even_when_the_new_mesh_bypasses_retention() {
+    let mut cache = ControlMeshCache {
+        entries: VecDeque::with_capacity(1),
+        ..Default::default()
+    };
+    let count =
+        (MAX_CPU_BYTES - cache.retained_cpu_bytes()) / std::mem::size_of::<[(f32, f32); 4]>();
+    let mesh = || vec![[(0.0, 0.0); 4]; count].into_boxed_slice();
+    cache.with_mesh(key(1), mesh, |_| {});
+    assert_eq!(cache.entries.len(), 1);
+    assert!(cache.retained_cpu_bytes() <= MAX_CPU_BYTES);
+    let mut painted = false;
+    cache.with_mesh(key(2), mesh, |_| painted = true);
+    assert!(painted);
+    assert!(cache.entries.capacity() > 1);
+    assert!(cache.entries.is_empty());
+    assert_eq!(cache.payload_bytes, 0);
+    assert!(cache.retained_cpu_bytes() <= MAX_CPU_BYTES);
 }

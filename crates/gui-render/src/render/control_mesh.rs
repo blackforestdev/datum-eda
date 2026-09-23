@@ -31,22 +31,11 @@ struct Entry {
     mesh: Mesh,
 }
 
+#[derive(Default)]
 pub(crate) struct ControlMeshCache {
     entries: VecDeque<Entry>,
     payload_bytes: usize,
     pub(crate) builds: usize,
-}
-
-impl Default for ControlMeshCache {
-    fn default() -> Self {
-        Self {
-            // Reserve the bounded entry table once so admission includes its
-            // actual capacity and insertion cannot grow it beyond the budget.
-            entries: VecDeque::with_capacity(MAX_ENTRIES),
-            payload_bytes: 0,
-            builds: 0,
-        }
-    }
 }
 
 impl ControlMeshCache {
@@ -71,6 +60,26 @@ impl ControlMeshCache {
         self.builds = self.builds.saturating_add(1);
         let mesh = build();
         let bytes = std::mem::size_of_val(mesh.as_ref());
+        // Reject an impossible payload without allocating entry storage. Caps
+        // are ceilings, not startup reservation targets (MEM-02).
+        if bytes > MAX_CPU_BYTES - std::mem::size_of::<Self>() - std::mem::size_of::<Entry>() {
+            consume(&mesh);
+            return;
+        }
+        // Grow only for a new slot, then charge the actual allocation before
+        // admitting payload. At the entry limit eviction reuses an old slot.
+        if self.entries.len() < MAX_ENTRIES && self.entries.len() == self.entries.capacity() {
+            self.entries.reserve(1);
+        }
+        // Table growth can itself displace previously retained payload, even
+        // when the new mesh is subsequently too large to retain.
+        while self.retained_cpu_bytes() > MAX_CPU_BYTES {
+            let old = self
+                .entries
+                .pop_back()
+                .expect("payload exceeds cache budget");
+            self.payload_bytes -= std::mem::size_of_val(old.mesh.as_ref());
+        }
         let metadata_bytes = self.retained_cpu_bytes() - self.payload_bytes;
         if bytes > MAX_CPU_BYTES.saturating_sub(metadata_bytes) {
             consume(&mesh);
