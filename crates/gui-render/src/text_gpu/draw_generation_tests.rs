@@ -24,7 +24,7 @@ fn prepare(
         atlas,
         fonts,
         raster,
-        [4096, 128],
+        [4096, 4096],
         [Area {
             rich_spans: &[],
             rows: buffer.layout_runs(),
@@ -102,5 +102,82 @@ fn instance_generation_limits_survive_empty_preparation_and_device_replacement()
     drop(draw);
     device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
     assert_eq!(generations.used(), 0);
+    assert_eq!(screen.used(), 0);
+}
+
+#[test]
+#[ignore = "requires local GPU; large glyph snapshot dirty-range reuse"]
+fn admitted_large_glyph_payload_retains_exact_snapshot_and_skips_unchanged_upload() {
+    let instance = wgpu::Instance::default();
+    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let mut atlas = Atlas::new(&device);
+    let screen = super::super::budget::Budget::new(16 * 1024 * 1024);
+    let mut draw = Draw::new(
+        &device,
+        &atlas,
+        wgpu::TextureFormat::Rgba8UnormSrgb,
+        1,
+        screen.clone(),
+    );
+    let mut fonts = crate::load_datum_fonts();
+    let mut raster = SwashCache::new();
+    let text = ("A".repeat(160) + "\n").repeat(64);
+    prepare(
+        &mut draw,
+        &device,
+        &queue,
+        &mut atlas,
+        &mut fonts,
+        &mut raster,
+        &text,
+    )
+    .unwrap();
+    draw.flush_uploads(&device, &queue);
+    let bytes = std::mem::size_of_val(&*draw.snapshot);
+    assert!(bytes > 256 * 1024);
+    assert!(bytes as u64 <= screen.used());
+    assert_eq!(draw.upload_bytes, bytes as u64);
+    let id = draw.instances.as_ref().unwrap().id();
+    prepare(
+        &mut draw,
+        &device,
+        &queue,
+        &mut atlas,
+        &mut fonts,
+        &mut raster,
+        &text,
+    )
+    .unwrap();
+    draw.flush_uploads(&device, &queue);
+    assert_eq!(draw.upload_bytes, 0);
+    assert_eq!(draw.instances.as_ref().unwrap().id(), id);
+    // One changed color word uses the same production exact-range planner.
+    prepare(
+        &mut draw,
+        &device,
+        &queue,
+        &mut atlas,
+        &mut fonts,
+        &mut raster,
+        &text,
+    )
+    .unwrap();
+    draw.pending_instances.as_mut().unwrap()[0].color ^= 1;
+    draw.flush_uploads(&device, &queue);
+    assert_eq!(draw.upload_bytes, 4);
+    prepare(
+        &mut draw,
+        &device,
+        &queue,
+        &mut atlas,
+        &mut fonts,
+        &mut raster,
+        "",
+    )
+    .unwrap();
+    draw.flush_uploads(&device, &queue);
+    assert!(draw.snapshot.is_empty());
+    device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
     assert_eq!(screen.used(), 0);
 }

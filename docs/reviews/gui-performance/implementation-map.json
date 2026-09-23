@@ -19507,6 +19507,11 @@
           "work": "s4_upload_totals_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/upload-totals/result.json",
           "status": "Submitted common upload totals and exact large-screen reuse implemented; full accounting and qualification remain open"
+        },
+        {
+          "work": "s4_large_glyph_reuse_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/large-glyph-reuse/result.json",
+          "status": "GPU-admitted glyph instances retain exact-length snapshots above the former 256 KiB cutoff"
         }
       ]
     },
@@ -34111,5 +34116,28 @@
       "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-texture-generations/result.json"
+  },
+  "s4_large_glyph_reuse_work": {
+    "status": "GPU-admitted glyph instances retain exact-length snapshots above the former 256 KiB cutoff",
+    "base_commit": "f6cf78ac",
+    "production_consumers": [
+      "Shared Draw::finish_uploads and append_uploads for workspace and overlay text"
+    ],
+    "retired_paths": [
+      "Greater-than-256-KiB glyph instance snapshot bypass that caused subsequent full transfers"
+    ],
+    "behavior": [
+      "Keep every GPU-admitted glyph instance snapshot as a boxed exact-length slice, dropping spare Vec capacity. Unchanged re-preparation plans zero bytes; changed data still uses the shared exact aligned dirty-range planner. Empty preparation and GPU replacement release obsolete snapshots. Retained snapshot payload cannot exceed its admitted GPU buffer capacity; headers, pending construction and total CPU accounting remain separate."
+    ],
+    "proof": {
+      "renderer": "351 renderer tests pass, 11 filtered. Actual-GPU test prepares more than 256 KiB of glyph instances, confirms snapshot size is within reserved GPU bytes, verifies same allocation/zero upload for unchanged re-preparation, verifies a single color word transfers four bytes, then clears to zero GPU ownership. Existing text parity and production renderer tests pass.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health 2277, dependency authority and governance pass.",
+      "scope": "No new benchmark/native/backend/endurance campaign; no frame-time performance claim. Existing Console golden discrepancy remains open."
+    },
+    "limits": [
+      "REUSE-SCREEN still requires complete per-consumer/frame upload attribution and original S5 proof. Snapshot headers and construction peaks remain within existing CPU accounting gaps. Replacement-owner review confirmed main/shared auxiliary native recovery uses recreate_for_device, but no complete MEM-REPLACEMENT acceptance is claimed.",
+      "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/large-glyph-reuse/result.json"
   }
 }
