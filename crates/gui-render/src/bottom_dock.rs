@@ -27,7 +27,7 @@ pub(super) const TERMINAL_SEARCH_BG: [f32; 3] = [0.34, 0.25, 0.08];
 pub(super) const TERMINAL_SEARCH_ALL_BG: [f32; 3] = [0.23, 0.19, 0.08];
 
 pub(super) struct TerminalRenderInput<'a> {
-    pub(super) panes: &'a [crate::TerminalPaneRenderState],
+    pub(super) panes: &'a [crate::TerminalPaneRenderState<'a>],
     pub(super) cache: Option<&'a mut crate::TerminalRenderCache>,
 }
 
@@ -113,7 +113,7 @@ pub(super) fn render_bottom_tabs(
                         };
                         cache.render_pane(
                             &pane.session_id,
-                            &pane.lane,
+                            pane.lane,
                             pane.focused && state.ui.focus.is_terminal(),
                             &pane.snapshot,
                             &pane.damage,

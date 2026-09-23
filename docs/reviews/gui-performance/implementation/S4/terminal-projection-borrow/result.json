@@ -1,0 +1,36 @@
+{
+  "status": "Default terminal pane render input borrows lane projections; S4 qualification remains open",
+  "base_commit": "06b6882d",
+  "production_consumers": [
+    "Main Runtime open-dock terminal scene preparation",
+    "Active terminal tab split-pane registry snapshots",
+    "PreparedScene terminal-snapshot composition compatibility entry"
+  ],
+  "shared_owner": "TerminalPaneRenderState lifetime-bound immutable lane reference",
+  "retired_paths": [
+    "Runtime copy of active TerminalLaneState before asking registry for render input",
+    "Per-visible-pane active/parked TerminalLaneState clones",
+    "Compatibility scene lane clone"
+  ],
+  "behavior": "Consume owned TerminalCore snapshots/damage first, then borrow matching active/parked projections until rendering completes. Preserve tab order, focused session and pending-tab empty result. Rust prevents lane mutation while renderer input is borrowed; snapshots and damage remain owned. Closed-dock early exclusion and background PTY processing unchanged.",
+  "proof": {
+    "application": "Guarded offline app suite377passed16ignored on final production change, before adding the focused test.",
+    "regression": "New production registry two-pane test1passed393filtered; pointer identity verifies matching active/parked lane owners, ordered session IDs, focus and pending-tab empty result.",
+    "source_health": "Normal-budget modules; gate passes and13 policy tests pass. Exact-file formatting only.",
+    "dependency": "Authority check passes; no dependency changes.",
+    "initial_failure": "Initial compile found missing lifetime on TerminalRenderInput.panes; corrected before successful app run. Preserve log; no runtime failure or negative-control claim.",
+    "drift": "Clippy and preceding governance/terminal checks pass. Full drift exits1 at existing Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates not run; goldens unchanged."
+  },
+  "limits": [
+    "No measured CPU/allocator-byte speedup or complete resource accounting claim.",
+    "Registry temporarily collects snapshot tuples before building borrowed pane views; session count remains governed by existing admission. Required screen snapshots are not eliminated.",
+    "No native pixels/OS-input/HP09 full qualification, S4 completion, dependency/license/prototype/settings-authority/numerical-budget or resize-scope change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-projection-borrow/result.json",
+  "artifacts_sha256_uncompressed": {
+    "tests-initial.log.gz": "d5c750e96c415ee33f4cfa4d7d88062d9e4e84f3859b615b67eeae56b90a1b4c",
+    "tests.log.gz": "e6dbe3d87ca6061a6fadcbdfd6a79029017c1afd8f1822b56b3f9352470a4d64",
+    "focused.log.gz": "d175199ca7303a913ec3b17417758aa7eb3a32e9ce28c939ce046f0dbb15d9c8",
+    "drift.log.gz": "1a7d89b471d46631190017b0d874f19c20ffd18d17d30f6591e61a7685e21e08"
+  }
+}

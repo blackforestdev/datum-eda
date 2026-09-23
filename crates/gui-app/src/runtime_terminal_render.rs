@@ -9,9 +9,8 @@ impl Runtime {
         // TerminalCore until the dock opens instead of copying its full screen
         // for each board camera frame.
         let terminal_panes = if self.workspace().ui.active_dock_tab.is_some() {
-            let active_terminal_lane = self.session.workspace().ui.terminal.clone();
             self.terminal_sessions
-                .take_active_tab_render_states(&active_terminal_lane)
+                .take_active_tab_render_states(&self.session.workspace().ui.terminal)
                 .context("snapshot active terminal tab panes for rendering")?
         } else {
             Vec::new()

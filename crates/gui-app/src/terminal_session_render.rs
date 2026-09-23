@@ -143,11 +143,11 @@ impl TerminalSessionRegistry {
             .unwrap_or(0)
     }
 
-    pub(crate) fn take_active_tab_render_states(
-        &mut self,
-        active_lane: &TerminalLaneState,
+    pub(crate) fn take_active_tab_render_states<'a>(
+        &'a mut self,
+        active_lane: &'a TerminalLaneState,
     ) -> Result<
-        Vec<datum_gui_render::TerminalPaneRenderState>,
+        Vec<datum_gui_render::TerminalPaneRenderState<'a>>,
         crate::terminal_core_adapter::TerminalCoreAdapterError,
     > {
         if self.active_pending_id.is_some() {
@@ -170,28 +170,34 @@ impl TerminalSessionRegistry {
                     .collect::<Vec<_>>()
             })
             .unwrap_or_else(|| vec![active_session_id]);
-        let mut panes = Vec::with_capacity(session_ids.len());
+        let mut snapshots = Vec::with_capacity(session_ids.len());
         for session_id in session_ids {
             let index = self
                 .sessions
                 .iter()
                 .position(|slot| slot.session.session_id() == session_id)
                 .expect("terminal split leaf must name an owned session");
-            let lane = if index == self.active_index {
-                active_lane.clone()
-            } else {
-                self.sessions[index].parked_lane.clone()
-            };
             let (snapshot, damage) = self.sessions[index].core.take_render_state()?;
-            panes.push(datum_gui_render::TerminalPaneRenderState {
-                focused: session_id == focused_session_id,
-                session_id,
-                lane,
-                snapshot,
-                damage,
-            });
+            snapshots.push((index, session_id, snapshot, damage));
         }
-        Ok(panes)
+        // Finish mutable snapshot consumption before borrowing projections.
+        // Render preparation cannot mutate these lanes while the views exist.
+        Ok(snapshots
+            .into_iter()
+            .map(|(index, session_id, snapshot, damage)| {
+                datum_gui_render::TerminalPaneRenderState {
+                    focused: session_id == focused_session_id,
+                    session_id,
+                    lane: if index == self.active_index {
+                        active_lane
+                    } else {
+                        &self.sessions[index].parked_lane
+                    },
+                    snapshot,
+                    damage,
+                }
+            })
+            .collect())
     }
 
     #[cfg(test)]

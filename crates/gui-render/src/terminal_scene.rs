@@ -50,7 +50,7 @@ impl PreparedScene {
                         .clone()
                         .unwrap_or_else(|| "terminal".to_string()),
                     focused: true,
-                    lane: state.ui.terminal.clone(),
+                    lane: &state.ui.terminal,
                     snapshot: snapshot.clone(),
                     damage: Vec::new(),
                 }]
