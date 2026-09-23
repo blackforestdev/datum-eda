@@ -1,4 +1,4 @@
-use super::PointNm;
+use super::{Output, PointNm};
 use std::ops::Range;
 
 #[repr(C)]
@@ -62,7 +62,7 @@ impl WorldStrokeInstance {
 }
 
 pub(crate) fn push_world_stroke_path(
-    out: &mut Vec<WorldStrokeInstance>,
+    out: &mut impl Output<WorldStrokeInstance>,
     path: &[PointNm],
     color: [f32; 3],
     nominal_nm: i64,
@@ -76,8 +76,8 @@ pub(crate) fn push_world_stroke_path(
 }
 
 pub(crate) fn push_board_graphic_semantic_stroke(
-    out: &mut Vec<super::Quad>,
-    strokes: &mut Vec<WorldStrokeInstance>,
+    out: &mut impl Output<super::Quad>,
+    strokes: &mut impl Output<WorldStrokeInstance>,
     graphic: &super::BoardGraphicPrimitive,
     color: [f32; 3],
 ) {

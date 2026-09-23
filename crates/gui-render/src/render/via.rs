@@ -6,7 +6,7 @@ use super::{
 
 #[allow(dead_code)]
 fn push_via_primitive(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     via: &datum_gui_protocol::ViaPrimitive,
     projection: &Projection,
     selected: bool,
@@ -66,7 +66,7 @@ fn push_via_primitive(
 }
 
 pub(crate) fn push_via_primitive_world(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     via: &datum_gui_protocol::ViaPrimitive,
     copper_color: [f32; 3],
     selected: bool,
@@ -121,3 +121,4 @@ pub(crate) fn push_via_primitive_world(
         128,
     );
 }
+use crate::geometry_output::Output;

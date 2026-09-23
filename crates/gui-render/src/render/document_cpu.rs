@@ -470,7 +470,11 @@ mod tests {
         let mut state = crate::gpu_surface_pass::board_fixture_state();
         state.scene.scene_id = "construction-board-refusal".into();
         let error = RetainedScene::from_workspace_bounded(&state, 960, 720, 1.0, 0).unwrap_err();
-        assert!(error.to_string().contains("exceeds document CPU budget"));
+        assert!(
+            error
+                .to_string()
+                .contains("geometry emission exceeds document CPU budget")
+        );
         let board = RetainedScene::try_from_workspace_for_surface(&state, 960, 720, 1.0).unwrap();
         assert!(!board.world_vertices().is_empty() || !board.world_strokes().is_empty());
         let path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -481,7 +485,11 @@ mod tests {
         state.schematic_scene = Some(schematic.scene);
         let error =
             RetainedScene::schematic_workspace_bounded(&state, 960, 720, 1.0, 0).unwrap_err();
-        assert!(error.to_string().contains("exceeds document CPU budget"));
+        assert!(
+            error
+                .to_string()
+                .contains("geometry emission exceeds document CPU budget")
+        );
         assert!(
             RetainedScene::try_from_workspace_schematic_for_surface(&state, 960, 720, 1.0)
                 .unwrap()

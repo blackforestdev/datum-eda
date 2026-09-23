@@ -54,9 +54,33 @@ impl RetainedScene {
                 &schematic_scene.bounds,
                 CameraState::fit_to_bounds(&schematic_scene.bounds),
             );
-            let mut world_quads = Vec::new();
-            let mut world_strokes = Vec::new();
-            let mut draw_commands = Vec::new();
+            let mut world_quads = crate::geometry_output::Admitted::new(|bytes| {
+                retained_scene_owner::document_cpu::admit_constructor_allocation(
+                    &budget,
+                    &scope,
+                    bytes,
+                    limit,
+                    "geometry emission",
+                )
+            });
+            let mut world_strokes = crate::geometry_output::Admitted::new(|bytes| {
+                retained_scene_owner::document_cpu::admit_constructor_allocation(
+                    &budget,
+                    &scope,
+                    bytes,
+                    limit,
+                    "geometry emission",
+                )
+            });
+            let mut draw_commands = crate::geometry_output::Admitted::new(|bytes| {
+                retained_scene_owner::document_cpu::admit_constructor_allocation(
+                    &budget,
+                    &scope,
+                    bytes,
+                    limit,
+                    "geometry emission",
+                )
+            });
             // The grid is immediate screen-space geometry; retain only scene geometry.
             push_retained_scene_geometry(
                 &mut world_quads,
@@ -81,6 +105,9 @@ impl RetainedScene {
                 &reference_projection,
                 state,
             );
+            let world_quads = world_quads.finish()?;
+            let world_strokes = world_strokes.finish()?;
+            let mut draw_commands = draw_commands.finish()?;
             scene_retained_access::sort_retained_draw_commands(
                 &mut draw_commands,
                 &schematic_scene.layers,

@@ -4,7 +4,7 @@ use component_body::{compact_component_body_bounds, inferred_component_body_boun
 
 #[allow(dead_code)]
 fn push_pad_primitive(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     pad: &datum_gui_protocol::PadPrimitive,
     projection: &Projection,
     _layer_id: &str,
@@ -72,7 +72,7 @@ fn push_pad_primitive(
 }
 
 fn push_pad_primitive_world(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     pad: &datum_gui_protocol::PadPrimitive,
     layer_id: &str,
     outer_color: [f32; 3],
@@ -436,7 +436,7 @@ fn push_inferred_package_body_from_pads(
 #[cfg(test)]
 #[allow(dead_code)]
 fn push_inferred_package_body_from_pads_world(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     component: &datum_gui_protocol::ComponentBounds,
     pads: &[&datum_gui_protocol::PadPrimitive],
     selected: bool,
@@ -507,7 +507,7 @@ fn push_inferred_package_body_from_pads_world(
 #[cfg(test)]
 #[allow(dead_code)]
 fn push_selected_component_body_from_graphic_world(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     graphic: &ComponentGraphicPrimitive,
     selected: bool,
     related: bool,
@@ -540,7 +540,11 @@ fn push_selected_component_body_from_graphic_world(
 }
 
 #[allow(dead_code)]
-fn push_world_convex_polygon_fill(out: &mut Vec<Quad>, polygon: &[PointNm], color: [f32; 3]) {
+fn push_world_convex_polygon_fill(
+    out: &mut impl Output<Quad>,
+    polygon: &[PointNm],
+    color: [f32; 3],
+) {
     if polygon.len() < 3 {
         return;
     }
@@ -734,7 +738,7 @@ fn imported_board_text_belongs_to_component(style_class: &str, component_uuid: &
 // Render helper threads many quad/text-run/hit-region sinks.
 #[allow(clippy::too_many_arguments)]
 fn push_component_text_world(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     text_runs: &mut Vec<TextRun>,
     text: &ComponentTextPrimitive,
     scene_layers: &[datum_gui_protocol::SceneLayer],

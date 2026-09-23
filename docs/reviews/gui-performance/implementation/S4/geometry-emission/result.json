@@ -1,0 +1,78 @@
+{
+  "status": "Both retained constructors admit quad/stroke/command vector growth before allocation; other temporary construction ownership remains open",
+  "base_commit": "8f14617c",
+  "production_consumers": [
+    "Default retained board and companion schematic construction through the existing fallible native/capture/input preparation entry points",
+    "Shared retained geometry, pad/via, graphic/text and stroke emitters; shared draw-command merging"
+  ],
+  "retired_paths": [
+    "Plain Vec growth for retained quad, stroke and draw-command output before the first construction budget check"
+  ],
+  "behavior": [
+    "A typed shared output interface retains ordinary Vec semantics for existing screen consumers and selects admitted output explicitly in both retained constructors. Growth accounts existing document owners, live constructor scope and proposed capacity/header before fallible allocation, including old/new overlap. Refused output cannot be finalized or published as a partial scene. Existing native failure/retry and authoritative source state remain unchanged.",
+    "Same emission algorithms, command merge and painter ordering serve both output implementations. Shared world primitive extraction keeps the legacy root below its existing source ceiling. No geometry counting pass, cold double rendering, per-frame measurement campaign or third-party change."
+  ],
+  "proof": {
+    "renderer": "378 passed;0 failed;11 filtered, including selected ignored GPU tests. New real-board differential compares all emitted quads, strokes and merged commands with ordinary Vec output; refusal test verifies zero capacity allocated. Existing actual board/schematic tests now require geometry-emission refusal and successful retry; full renderer parity/reuse/lifetime suite passes.",
+    "checks": "Strict renderer/app visual all-target Clippy and fresh visual GUI build pass. Source health2292 passes. Existing app lifecycle refusal proof from construction-admission is reused because failure/retry routing is unchanged; app suite not rerun.",
+    "failed_attempts": "Preserve intermediate missing trait imports, remaining concrete Vec consumers, and primitive-extraction compile failures. Corrected before final passing suite."
+  },
+  "limits": [
+    "This bounds emitted vector growth, not every allocation during construction. Polygon/path/text tessellation temporaries, command-owned strings, scope bookkeeping and concurrent whole-constructor reservation remain unresolved. No MEM-WORLD/SHAPED/STAGING or S4 closure follows. Ten recorded gaps and all original S5 qualification remain.",
+    "No dependency/license/prototype/authority/numerical-cap/sequencing change. Preserve GEFN, Console golden disposition and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/geometry-emission/result.json",
+  "logs": {
+    "renderer-final": {
+      "path": "docs/reviews/gui-performance/implementation/S4/geometry-emission/renderer-final.log.gz",
+      "uncompressed_sha256": "b569058af0d39bda5bbfd677b248d450b5329b495fa8f21cec40d4ed96a8b0c3"
+    },
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/geometry-emission/renderer.log.gz",
+      "uncompressed_sha256": "c2cbc90f94b6c5148408ca0eff27ee7d74f33f9dc0cdf4f4ba7a459d0be4dfb1"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/geometry-emission/clippy.log.gz",
+      "uncompressed_sha256": "8ebec122fa7732de6d084b4c44c5021a2c7a5edd04beeb8bf0324b1a1cc2f822"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/geometry-emission/build.log.gz",
+      "uncompressed_sha256": "3d7ca94d8dc5ab7f07f4bed42e58c33a8aec19a24c8d33d03a32c6577d930f6e"
+    },
+    "check": {
+      "path": "docs/reviews/gui-performance/implementation/S4/geometry-emission/check.log.gz",
+      "uncompressed_sha256": "52ae070815bb1fd53796bcc9d5173299f13177b7ea0e7cbb16304c064ede3665"
+    },
+    "check2": {
+      "path": "docs/reviews/gui-performance/implementation/S4/geometry-emission/check2.log.gz",
+      "uncompressed_sha256": "4e409d6d41070debb901ef6ea012d96e64844d6ed5a6f0c671ded5a49784b771"
+    },
+    "check3": {
+      "path": "docs/reviews/gui-performance/implementation/S4/geometry-emission/check3.log.gz",
+      "uncompressed_sha256": "a0a1d87136227d115413536e31781d83b5a62d765bd77198936a439deaffb2a9"
+    },
+    "check4": {
+      "path": "docs/reviews/gui-performance/implementation/S4/geometry-emission/check4.log.gz",
+      "uncompressed_sha256": "1f32587603cc68d7a55356cac7f69ac69c12caac256dae062ffb657a0644ed08"
+    },
+    "check5": {
+      "path": "docs/reviews/gui-performance/implementation/S4/geometry-emission/check5.log.gz",
+      "uncompressed_sha256": "602b0d706f4922a79c43ca3f4dff59339e21291773282fe28f89403dcfbcd463"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/lib.rs": "043d109735a349f43b38b1f954fa9750ed571f914bcc9109ea1bf2677a4dd93f",
+    "crates/gui-render/src/render/document_cpu.rs": "aa9317c9815246b0359f2c201bccfded212212920a4e49856785c3590af96e41",
+    "crates/gui-render/src/render/draw_primitives.rs": "8250b245d5f52912441bc709122f2de9e2f38d564f3d7cd0d9816273662a2ad1",
+    "crates/gui-render/src/render/geometry.rs": "1ecb276629a8bb6142f961c1d1acf8edc225484b7647e02d9bcbd51a3109694c",
+    "crates/gui-render/src/render/gpu_strokes.rs": "4031e6129763436b65b74788ca3c350dfa69d595202a121bacbe56da0ea0738b",
+    "crates/gui-render/src/render/pads_and_layers.rs": "ae7419e5e94a6cbb640c479c280a03fb506e1925c5df5807ddd1133255d0d37b",
+    "crates/gui-render/src/render/retained.rs": "c923b23f9d5b09cb0ec2c022395b4db4eedf0cf9ed601df642db8fd8f422e34b",
+    "crates/gui-render/src/render/retained_board_graphics.rs": "57222c23b497e80891c6f78b7544ae3eed37f72bb7b1ad8f23c10eec7264d8ef",
+    "crates/gui-render/src/render/scene_retained_access.rs": "9340ef91d78ea89ffa35e3520e13853950159c90e8b0367b7751b8a4f745ea1f",
+    "crates/gui-render/src/render/schematic_retained.rs": "3a9318638e00de00f91d47fc4c1dea1fe34e0278ad3293687d7b744e2f2f8780",
+    "crates/gui-render/src/render/via.rs": "f0d959d5ba1fc2519997811ab9a6160c6cfcc43997fc9137bbc1e64b1ef290fa",
+    "crates/gui-render/src/geometry_output.rs": "082c13e1afe6cedbd22760f9770c655b0aa2638eff5c7106889f489e672c7733",
+    "crates/gui-render/src/render/world_primitives.rs": "08b590c977c71e8324dc04fa4d085eb6cff20f01dad22015b570a0749c0072e7"
+  }
+}

@@ -9,7 +9,7 @@ use text_metrics::{
 };
 
 fn push_points(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     points: &[PointNm],
     projection: &Projection,
     color: [f32; 3],
@@ -23,7 +23,12 @@ fn push_points(
 }
 
 #[allow(dead_code)]
-fn push_projected_round_rect(out: &mut Vec<Quad>, rect: RectPx, color: [f32; 3], radius_px: f32) {
+fn push_projected_round_rect(
+    out: &mut impl Output<Quad>,
+    rect: RectPx,
+    color: [f32; 3],
+    radius_px: f32,
+) {
     let radius = radius_px.min(rect.width * 0.5).min(rect.height * 0.5);
     if radius <= 0.75 {
         out.push(Quad::from_rect(rect, color));
@@ -72,7 +77,7 @@ fn push_projected_round_rect(out: &mut Vec<Quad>, rect: RectPx, color: [f32; 3],
 }
 
 fn push_dashed_polyline_segments(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     path: &[PointNm],
     projection: &Projection,
     color: [f32; 3],
@@ -117,7 +122,7 @@ fn push_dashed_polyline_segments(
 }
 
 fn push_polyline_endcaps(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     path: &[PointNm],
     projection: &Projection,
     color: [f32; 3],
@@ -147,7 +152,7 @@ fn push_polyline_endcaps(
 }
 
 fn push_polyline_segments(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     path: &[PointNm],
     projection: &Projection,
     color: [f32; 3],
@@ -215,7 +220,7 @@ fn close_path(points: &[PointNm]) -> Vec<PointNm> {
 
 #[allow(dead_code)]
 fn push_world_rect(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     rect: datum_gui_protocol::RectNm,
     projection: &Projection,
     color: [f32; 3],
@@ -249,7 +254,7 @@ fn project_rect(rect: datum_gui_protocol::RectNm, projection: &Projection) -> Re
 }
 
 fn push_point_square(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     point: PointNm,
     projection: &Projection,
     size_px: f32,
@@ -274,51 +279,9 @@ fn world_stroke_nm(thickness_px: f32, projection: &Projection) -> f32 {
     (thickness_px / projection.scale).max(1.0)
 }
 
-fn push_world_quad(out: &mut Vec<Quad>, quad: &[(f32, f32); 4], color: [f32; 3]) {
-    out.push(Quad {
-        points: *quad,
-        color,
-    });
-}
-
-fn push_world_triangle(
-    out: &mut Vec<Quad>,
-    a: (f32, f32),
-    b: (f32, f32),
-    c: (f32, f32),
-    color: [f32; 3],
-) {
-    out.push(Quad {
-        points: [a, b, c, c],
-        color,
-    });
-}
-
-fn push_convex_polygon_fill(out: &mut Vec<Quad>, polygon: &[(f32, f32)], color: [f32; 3]) {
-    if polygon.len() < 3 {
-        return;
-    }
-    let origin = polygon[0];
-    for edge in polygon[1..].windows(2) {
-        push_world_triangle(out, origin, edge[0], edge[1], color);
-    }
-}
-
-fn push_world_rect_nm(out: &mut Vec<Quad>, rect: datum_gui_protocol::RectNm, color: [f32; 3]) {
-    out.push(Quad {
-        points: [
-            (rect.min_x as f32, rect.min_y as f32),
-            (rect.max_x as f32, rect.min_y as f32),
-            (rect.max_x as f32, rect.max_y as f32),
-            (rect.min_x as f32, rect.max_y as f32),
-        ],
-        color,
-    });
-}
-
 #[allow(dead_code)]
 fn push_world_rect_border_nm(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     rect: datum_gui_protocol::RectNm,
     color: [f32; 3],
     thickness_nm: f32,
@@ -366,7 +329,7 @@ fn world_inset_rect(rect: datum_gui_protocol::RectNm, inset_nm: f32) -> datum_gu
 }
 
 fn push_world_ellipse_nm(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     rect: datum_gui_protocol::RectNm,
     color: [f32; 3],
     segments: usize,
@@ -392,7 +355,7 @@ fn push_world_ellipse_nm(
 
 #[allow(dead_code)]
 fn push_world_round_rect_nm(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     rect: datum_gui_protocol::RectNm,
     color: [f32; 3],
     radius_nm: f32,
@@ -446,7 +409,7 @@ fn push_world_round_rect_nm(
 }
 
 fn push_world_polyline_segments(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     path: &[PointNm],
     thickness_nm: f32,
     color: [f32; 3],
@@ -473,7 +436,7 @@ fn push_world_polyline_segments(
 }
 
 fn push_world_polyline_segments_capped(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     path: &[PointNm],
     thickness_nm: f32,
     color: [f32; 3],
@@ -505,7 +468,7 @@ fn push_world_polyline_segments_capped(
 }
 
 fn push_world_dashed_polyline_segments(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     path: &[PointNm],
     thickness_nm: f32,
     dash_nm: f32,
@@ -544,7 +507,12 @@ fn push_world_dashed_polyline_segments(
 }
 
 #[allow(dead_code)]
-fn push_world_points(out: &mut Vec<Quad>, points: &[PointNm], size_nm: f32, color: [f32; 3]) {
+fn push_world_points(
+    out: &mut impl Output<Quad>,
+    points: &[PointNm],
+    size_nm: f32,
+    color: [f32; 3],
+) {
     for point in points {
         let half = size_nm * 0.5;
         push_world_rect_nm(
@@ -560,12 +528,12 @@ fn push_world_points(out: &mut Vec<Quad>, points: &[PointNm], size_nm: f32, colo
     }
 }
 
-fn push_world_polygon_fill(out: &mut Vec<Quad>, polygon: &[PointNm], color: [f32; 3]) {
+fn push_world_polygon_fill(out: &mut impl Output<Quad>, polygon: &[PointNm], color: [f32; 3]) {
     push_world_polygon_fill_contours(out, polygon, &[], color);
 }
 
 fn push_world_polygon_fill_contours(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     outer: &[PointNm],
     holes: &[Vec<PointNm>],
     color: [f32; 3],
@@ -696,7 +664,7 @@ fn clean_polygon_ring_nm(polygon: &[PointNm]) -> Option<Vec<PointNm>> {
     Some(cleaned)
 }
 
-fn push_projected_quad(out: &mut Vec<Quad>, quad: &[(f32, f32); 4], color: [f32; 3]) {
+fn push_projected_quad(out: &mut impl Output<Quad>, quad: &[(f32, f32); 4], color: [f32; 3]) {
     out.push(Quad {
         points: *quad,
         color,
@@ -705,7 +673,7 @@ fn push_projected_quad(out: &mut Vec<Quad>, quad: &[(f32, f32); 4], color: [f32;
 
 #[allow(dead_code)]
 fn push_projected_triangle(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     a: (f32, f32),
     b: (f32, f32),
     c: (f32, f32),
@@ -717,12 +685,16 @@ fn push_projected_triangle(
     });
 }
 
-fn push_projected_polygon_fill(out: &mut Vec<Quad>, polygon: &[(f32, f32)], color: [f32; 3]) {
+fn push_projected_polygon_fill(
+    out: &mut impl Output<Quad>,
+    polygon: &[(f32, f32)],
+    color: [f32; 3],
+) {
     push_projected_polygon_fill_contours(out, polygon, &[], color);
 }
 
 fn push_projected_polygon_fill_contours(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     outer: &[(f32, f32)],
     holes: &[Vec<(f32, f32)>],
     color: [f32; 3],
@@ -771,7 +743,7 @@ fn clean_polygon_ring_projected(polygon: &[(f32, f32)]) -> Option<Vec<(f32, f32)
 }
 
 fn push_world_polygon_fill_scanline_contours(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     contours: &[Vec<PointNm>],
     color: [f32; 3],
 ) {
@@ -876,7 +848,7 @@ fn push_world_polygon_fill_scanline_contours(
 }
 
 fn push_projected_polygon_fill_scanline_contours(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     contours: &[Vec<(f32, f32)>],
     color: [f32; 3],
 ) {
@@ -935,7 +907,12 @@ fn push_projected_polygon_fill_scanline_contours(
 }
 
 #[allow(dead_code)]
-fn push_projected_ellipse(out: &mut Vec<Quad>, rect: RectPx, color: [f32; 3], segments: usize) {
+fn push_projected_ellipse(
+    out: &mut impl Output<Quad>,
+    rect: RectPx,
+    color: [f32; 3],
+    segments: usize,
+) {
     if rect.width <= 0.5 || rect.height <= 0.5 || segments < 3 {
         return;
     }
@@ -1020,7 +997,7 @@ fn push_rect_border(out: &mut Vec<Quad>, rect: RectPx, color: [f32; 3], thicknes
     ));
 }
 
-fn push_section_divider(out: &mut Vec<Quad>, x: f32, y: f32, width: f32, color: [f32; 3]) {
+fn push_section_divider(out: &mut impl Output<Quad>, x: f32, y: f32, width: f32, color: [f32; 3]) {
     out.push(Quad::from_rect(
         RectPx {
             x,
@@ -1161,7 +1138,7 @@ use text_prepare_identity::text_prepare_signature;
 #[cfg(test)]
 #[allow(dead_code)]
 fn push_world_polyline_mitered(
-    out: &mut Vec<Quad>,
+    out: &mut impl Output<Quad>,
     path: &[PointNm],
     thickness_nm: f32,
     color: [f32; 3],
