@@ -82,6 +82,10 @@ pub struct WidthMeasurementCacheUsage {
 /// accounting-registry storage and GPU resources remain separate.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct TextCacheKeyUsage {
+    /// Label memberships, bounded after frame completion. Current preparation
+    /// may exceed retention limits; shared workspace storage counts once in totals.
+    pub label_entries: usize,
+    pub label_key_text_bytes: usize,
     pub owner_id: u64,
     pub entries: usize,
     pub key_text_bytes: usize,

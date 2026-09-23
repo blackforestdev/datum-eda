@@ -61,12 +61,11 @@ impl Renderer {
             height,
             on_submitted,
         );
-        if result.is_err() && prepared.is_overlay_only() && !self.text_preparation.is_continuing() {
+        if result.is_err() && !self.text_preparation.is_continuing() {
             // No layout borrow survives an error. Failed frames must obey the
-            // same post-frame label retention caps as submitted dialogs. Do not
+            // same label retention caps as submitted full/dialog frames. Do not
             // trim pending continuations, including temporarily refused copies:
             // their current layouts and already copied glyph pages remain reusable.
-            self.text_buffers.trim_overlay();
             self.text_buffers.finish_frame();
             self.text_preparation.cancel();
             self.text_renderer.cancel_preparation();

@@ -1,0 +1,65 @@
+{
+  "status": "Label entry/key retention implementation complete across native and composed frames; original qualification remains S5",
+  "base_commit": "e4369ed8",
+  "production_consumers": [
+    "Shared TextBufferCache workspace and overlay index acquisition in prepare_frame_text",
+    "Full workspace/dialog composition and native overlay frame completion",
+    "Common non-continuation render error cleanup; upload continuation preserves current layouts"
+  ],
+  "retired_paths": [
+    "Full-scene overlay labels implicitly retained only under workspace history policy",
+    "Overlay-only completion as the sole label-specific count/key trimming path",
+    "Dropping bounded label history simply because another frame uses workspace text"
+  ],
+  "behavior": [
+    "Track workspace recency and label retention membership on each shared shaped entry. Workspace and overlay requests for an identical layout reuse one allocation. Label memberships are capped at 128 entries and 32 KiB of allocated key text; shared entries whose label membership evicts can remain for independent recent workspace use, charged once in complete shaped ownership.",
+    "Apply label trimming within common finish_frame for full and native-dialog success/error paths. Preserve pending continuations, including temporary upload refusal. Remove duplicated overlay-only trim calls. Workspace recency and bounded LRU label history now coexist.",
+    "Only sort/reindex when label eviction is required, preserving warm glyph preparation under the limits. Expose label membership/key totals separately from total cache entries/key storage; these are overlapping attribution views, not additive allocations.",
+    "Extract retention policy and focused tests into cohesive files to preserve existing source ceilings. No new cache, dependency, budget or authority."
+  ],
+  "implementation_determination": {
+    "MEM-LABEL-ENTRIES": "All overlay index requests acquire explicit label membership. Common successful/non-continuation failed frame completion trims to 128, after layout borrows finish. Current continuation pins are preparation, not post-frame retention. Workspace references retain their independent lifetime without duplicating shared layouts.",
+    "MEM-LABEL-KEYS": "Label admission/eviction sums actual plain and rich key String capacities. Oversized keys bypass label membership; complete underlying allocation, span/entry/lookup capacity and Datum headers remain counted by existing shaped ownership. The label key byte view and total shaped view overlap and are not summed. Owner teardown releases storage normally."
+  },
+  "proof": {
+    "renderer": "336 renderer tests pass, 11 diagnostic/visual cases filtered. New CPU proof checks shared index identity, 128 labels plus independent workspace retention, warm workspace reuse and oversized shared-key membership bypass. New full-frame GPU proof prepares 160 current labels, checks post-frame membership is 128 and repeated/fresh output pixels match; source review confirms trimming follows submission. Existing native dialog failure/recovery, allocated rich/plain key-capacity, shaping sharing, metadata retirement and continuation tests pass.",
+    "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2271, dependency and governance gates pass.",
+    "failed_attempts": "Initial run exposed an obsolete profile-switch history expectation and unnecessary warm reindexing. Retained-label history now survives workspace frames; actual memory pressure still retires all metadata. Avoid sorting under the cap. Preserve failed test log. Source-health failures during extraction were corrected without raising ceilings.",
+    "scope": "No repeated native benchmark campaign or full drift; existing Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Complete only label entry/key implementation obligations. Their original S5 statuses, tests and acceptance rules remain unqualified. Complete shaped CPU/private scratch/registry accounting, allocation peaks, native/RSS/endurance and aggregate qualification remain required.",
+    "A layout retained independently for workspace use remains visible in total cache storage after its label membership is evicted. Do not interpret label counts as total cache allocations or sum shared views.",
+    "S4 and the overall issue remain open. Preserve GEFN, nonblocking resize and concurrent multi-device boundaries. No dependency, vendor, licensing, prototype, specification cap or sequencing change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/composed-labels/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/composed-labels/tests.log.gz",
+      "uncompressed_sha256": "e650e68a759a48a89b61b2e4f9f44b6faa0f6fc6c083029b3660d8b8c6b08ca0"
+    },
+    "initial-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/composed-labels/initial-tests.log.gz",
+      "uncompressed_sha256": "002c651551276df471dc5c61279587b295dd8226d28ad3aa429074f94466efeb"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/composed-labels/clippy.log.gz",
+      "uncompressed_sha256": "c08dcfbc588b68f8fdf4740db6779456e2b0cbfe1b2e2c6ba43a42c374f70af2"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/composed-labels/build.log.gz",
+      "uncompressed_sha256": "1370a4e7cdcc01184aadb2aa9ea1751b66dbde1143023673de37fa5d072887c9"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "937ddcd764fb9a01fdfc4332b31036783afb645a9af6acd73aa62313c93d1d98",
+    "crates/gui-render/src/render/gpu_overlay.rs": "be2b9726e17ffc161bc23c066ea20d11b3bc5083741b16a040e6140871807f0c",
+    "crates/gui-render/src/render/gpu_text.rs": "f31e102b00ed0b6e4cf60d94cf336cddde91e906fa08328004b86d7033f93a4d",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "aaf5fae55101c1d2583986d8a49d75c4357cb1a1254a55591e0364e015b290a8",
+    "crates/gui-render/src/render/renderer_state.rs": "8827db8b13f7567ab0b904370ca65c94a330186ce026dd3f79042c4e97ebabe0",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "a067e977d68e67cb11d3ff6b22b1991e003043c66fdab2d612d42f60b475be0b",
+    "crates/gui-render/src/render/text_buffer_cache_tests.rs": "9b3af524aabe16d053f27206aed34c6c7fdcfa5262ef7bc2f6dd9a7e1d1afe07",
+    "crates/gui-render/src/render/text_cache_retention.rs": "028e44b568805a437658960dda5a59e7a35f3ccc42e9d6b393372dd8607766f2",
+    "crates/gui-render/src/render/text_cache_retention_tests.rs": "6090dc8088c6acf517798337888b75df3512abe8a8791e7adc076f05baaa385e"
+  }
+}

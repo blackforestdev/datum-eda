@@ -119,7 +119,6 @@ impl Renderer {
             batch.hold(queue);
         }
         on_submitted(submission);
-        self.text_buffers.trim_overlay();
         self.text_buffers.finish_frame();
         self.submit_gpu_measurement(queue, measurement)?;
         if let Some(started) = started {
