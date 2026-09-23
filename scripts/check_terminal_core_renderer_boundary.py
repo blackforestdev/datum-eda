@@ -15,6 +15,8 @@ CORE_RENDER = RENDER / "src/terminal_core_render.rs"
 CACHE = RENDER / "src/terminal_render_cache.rs"
 GRAPHICS = RENDER / "src/render/terminal_graphics.rs"
 TEXTURE = RENDER / "src/render/terminal_graphic_texture.rs"
+UPLOAD = RENDER / "src/render/terminal_upload.rs"
+STAGING = RENDER / "src/text_gpu/upload.rs"
 GPU = RENDER / "src/render/gpu_frame.rs"
 SCENE = RENDER / "src/render/frame_preparation.rs"
 TESTS = RENDER / "src/terminal_core_render_tests.rs"
@@ -111,7 +113,7 @@ def check(root: Path) -> list[str]:
     for marker in (
         "Rgba8UnormSrgb",
         "BlendState::ALPHA_BLENDING",
-        "queue.write_texture(",
+        "crate::text_gpu::upload::TextureUpload {",
         "GraphicAnchorResolution::History",
         "GraphicAnchorResolution::Screen",
         "encode_terminal_graphics(&mutencoder,&msaa_view,target,false,measurement.as_mut(),)",
@@ -120,6 +122,22 @@ def check(root: Path) -> list[str]:
         corpus = core + graphics + texture + gpu
         if marker not in corpus:
             failures.append(f"GPU image path lacks marker: {marker}")
+
+    # Check the default native continuation and shared copy path in their owners.
+    for path, markers in (
+        (GRAPHICS, ('#[path = "terminal_upload.rs"]', 'mod upload;')),
+        (GPU, ('self.submit_terminal_upload_chunk(device, queue, on_submitted)?',)),
+        (UPLOAD, ('texture.append_chunk(', 'crate::text_gpu::upload::batch(',
+                  'queue.submit([batch.command()])', 'batch.hold(queue)',
+                  'on_submitted(submission)', 'texture.consume_chunk(count)')),
+        (STAGING, ('encoder.copy_buffer_to_texture(',)),
+    ):
+        source = read(root, path)
+        for marker in markers:
+            if marker not in source:
+                failures.append(f"terminal explicit upload path lacks {marker} in {path}")
+    if "queue.write_texture(" in graphics + texture + read(root, UPLOAD):
+        failures.append("terminal image path bypasses explicit staging")
 
     for marker in (
         "take_active_tab_render_states(",

@@ -123,8 +123,11 @@ impl Renderer {
             self.submit_world_upload_chunk(device, queue, on_submitted)?;
             return Ok(false);
         }
-        let mut measurement = self.begin_gpu_measurement()?;
         self.sync_terminal_graphics(device, queue, prepared, width, height)?;
+        if self.submit_terminal_upload_chunk(device, queue, on_submitted)? {
+            return Ok(false);
+        }
+        let mut measurement = self.begin_gpu_measurement()?;
         let upload_elapsed = upload_started.elapsed();
         let encode_started = std::time::Instant::now();
         let msaa_view = self.ensure_msaa(device, width, height)?.clone();

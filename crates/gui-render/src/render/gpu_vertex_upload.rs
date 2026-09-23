@@ -58,10 +58,6 @@ impl Renderer {
         self.terminal_graphics.finish_vertex_uploads();
     }
 
-    pub(super) fn flush_vertex_uploads(&mut self, queue: &wgpu::Queue) {
-        self.terminal_graphics.flush_textures(queue);
-    }
-
     pub(super) fn vertex_submission_refs(
         &mut self,
     ) -> Vec<crate::text_gpu::lifetime::SubmissionRef> {

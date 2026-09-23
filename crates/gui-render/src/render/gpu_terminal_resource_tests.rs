@@ -180,3 +180,139 @@ fn terminal_admission_includes_quads_and_holds_capacity_until_retirement() {
     assert_eq!(host_budget.used(), 0);
     assert_eq!(budget.used(), baseline);
 }
+
+#[test]
+#[ignore = "requires local GPU; terminal pixel continuation and replacement"]
+fn terminal_pixels_yield_with_bounded_padded_staging_and_resume_current_content() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.dock_height_px = 220;
+    let snapshot = super::super::tests::sixel_snapshot_sized(false, 1025, 1100);
+    let retained = RetainedScene::from_workspace(&state, 960, 720);
+    let camera = CameraState::fit_to_bounds(&state.scene.bounds);
+    let mut prepared = PreparedScene::from_workspace_with_terminal_snapshot(
+        &state,
+        960,
+        720,
+        1.0,
+        camera,
+        &retained,
+        Some(&snapshot),
+    );
+    assert_eq!(prepared.terminal_graphics.len(), 1);
+    let mut renderer = hardware_renderer(960, 720);
+    // Warm unrelated resources before introducing the cold terminal image.
+    let mut empty = prepared.clone();
+    empty.terminal_graphics.clear();
+    capture_retained(&mut renderer, &empty, &retained);
+    let target = renderer.device.create_texture(&wgpu::TextureDescriptor {
+        label: Some("terminal-continuation-proof"),
+        size: wgpu::Extent3d {
+            width: 960,
+            height: 720,
+            depth_or_array_layers: 1,
+        },
+        mip_level_count: 1,
+        sample_count: 1,
+        dimension: wgpu::TextureDimension::D2,
+        format: wgpu::TextureFormat::Rgba8UnormSrgb,
+        usage: wgpu::TextureUsages::RENDER_ATTACHMENT,
+        view_formats: &[],
+    });
+    let view = target.create_view(&Default::default());
+    let mut submissions = 0;
+    for attempt in 0..3 {
+        let ready = renderer
+            .renderer
+            .render_with_submission(
+                &renderer.device,
+                &renderer.queue,
+                &view,
+                &prepared,
+                &retained,
+                None,
+                960,
+                720,
+                &mut |_| submissions += 1,
+            )
+            .unwrap();
+        assert_eq!(ready, attempt == 2);
+        assert!(renderer.renderer.upload_staging_reserved_bytes() <= 4 * 1024 * 1024);
+        renderer
+            .device
+            .poll(wgpu::PollType::wait_indefinitely())
+            .unwrap();
+        assert_eq!(renderer.renderer.upload_staging_reserved_bytes(), 0);
+        if attempt == 0 {
+            let filler = renderer
+                .renderer
+                .atlas
+                .staging_budget
+                .reserve(16 * 1024 * 1024)
+                .unwrap();
+            let result = renderer.renderer.render_with_submission(
+                &renderer.device,
+                &renderer.queue,
+                &view,
+                &prepared,
+                &retained,
+                None,
+                960,
+                720,
+                &mut |_| panic!("refused staging submitted"),
+            );
+            assert!(result.is_err());
+            assert_eq!(renderer.renderer.terminal_upload_chunk_count(), 1);
+            drop(filler);
+        }
+    }
+    assert_eq!(submissions, 3);
+    assert_eq!(renderer.renderer.terminal_upload_chunk_count(), 2);
+    assert_eq!(renderer.renderer.terminal_upload_chunk_bytes(), 4352 * 1100);
+    let cold = capture_retained(&mut renderer, &prepared, &retained);
+    assert_eq!(renderer.renderer.terminal_upload_chunk_count(), 2);
+    let mut fresh = hardware_renderer(960, 720);
+    assert!(cold == capture_retained(&mut fresh, &prepared, &retained));
+    // A distinct pixel owner with identical dimensions must upload from zero.
+    let replacement = super::super::tests::sixel_snapshot_sized(false, 1025, 1100);
+    prepared.terminal_graphics[0].graphic = replacement.graphics().next().unwrap().clone();
+    assert!(
+        !renderer
+            .renderer
+            .render_with_submission(
+                &renderer.device,
+                &renderer.queue,
+                &view,
+                &prepared,
+                &retained,
+                None,
+                960,
+                720,
+                &mut |_| {}
+            )
+            .unwrap()
+    );
+    renderer
+        .device
+        .poll(wgpu::PollType::wait_indefinitely())
+        .unwrap();
+    let partial: Vec<_> = Renderer::gpu_process_allocations()
+        .into_iter()
+        .filter(|r| r.kind == crate::text_gpu::Kind::TerminalTexture)
+        .collect();
+    // Remove the partially uploaded image; no stale pixels or further copy turn.
+    assert!(
+        capture_retained(&mut renderer, &empty, &retained)
+            == capture_retained(&mut fresh, &empty, &retained)
+    );
+    assert_eq!(renderer.renderer.terminal_upload_chunk_count(), 3);
+    for record in partial {
+        assert!(
+            !Renderer::gpu_process_allocations()
+                .iter()
+                .any(|r| r.id == record.id)
+        );
+    }
+    assert!(cold == capture_retained(&mut renderer, &prepared, &retained));
+    assert_eq!(renderer.renderer.terminal_upload_chunk_count(), 5);
+}

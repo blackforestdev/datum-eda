@@ -1,6 +1,7 @@
-//! Borrow decoded RGBA pixels; bound each queue write without an image-sized copy.
+//! Borrow decoded RGBA rectangles within a padded staging capacity.
 use datum_terminal_core::Rgba8;
 
+#[cfg(test)]
 const MAX_WRITE_BYTES: usize = 256 * 1024;
 // The Datum-owned type declares repr(C); freeze every layout fact relied upon here.
 const _: () = {
@@ -19,43 +20,61 @@ fn rgba_bytes(pixels: &[Rgba8]) -> &[u8] {
     unsafe { std::slice::from_raw_parts(pixels.as_ptr().cast(), std::mem::size_of_val(pixels)) }
 }
 
-pub(super) fn chunks(
+pub(super) struct Chunk<'a> {
+    pub origin: [u32; 2],
+    pub size: [u32; 2],
+    pub bytes: &'a [u8],
+    pub padded_bytes: usize,
+}
+
+/// Borrow one contiguous rectangle, counting row padding against the budget.
+pub(super) fn chunk(
+    pixels: &[Rgba8],
+    width: u32,
+    height: u32,
+    uploaded: usize,
+    budget: usize,
+) -> Option<Chunk<'_>> {
+    let width = width as usize;
+    assert_eq!(pixels.len(), width * height as usize);
+    assert!(uploaded <= pixels.len());
+    if uploaded == pixels.len() || budget < 256 {
+        return None;
+    }
+    let x = uploaded % width;
+    let y = uploaded / width;
+    let pitch = (width * 4).next_multiple_of(256);
+    let (w, h) = if x == 0 && pitch <= budget {
+        (width, (budget / pitch).min(height as usize - y))
+    } else {
+        ((width - x).min((budget / 256) * 64), 1)
+    };
+    Some(Chunk {
+        origin: [x as u32, y as u32],
+        size: [w as u32, h as u32],
+        bytes: &rgba_bytes(pixels)[uploaded * 4..(uploaded + w * h) * 4],
+        padded_bytes: (w * 4).next_multiple_of(256) * h,
+    })
+}
+
+#[cfg(test)]
+fn chunks(
     pixels: &[Rgba8],
     width: u32,
     height: u32,
     mut write: impl FnMut(u32, u32, u32, u32, &[u8]),
 ) {
-    let width = width as usize;
-    assert_eq!(pixels.len(), width * height as usize);
-    if pixels.is_empty() {
-        return;
-    }
-    let bytes = rgba_bytes(pixels);
-    let max_pixels = MAX_WRITE_BYTES / 4;
-    if width <= max_pixels {
-        let rows = max_pixels / width;
-        for (index, part) in bytes.chunks(rows * width * 4).enumerate() {
-            write(
-                0,
-                (index * rows) as u32,
-                width as u32,
-                (part.len() / (width * 4)) as u32,
-                part,
-            );
-        }
-    } else {
-        // Even a future device with exceptionally wide textures stays bounded.
-        for (y, row) in bytes.chunks(width * 4).enumerate() {
-            for (x, part) in row.chunks(MAX_WRITE_BYTES).enumerate() {
-                write(
-                    (x * max_pixels) as u32,
-                    y as u32,
-                    (part.len() / 4) as u32,
-                    1,
-                    part,
-                );
-            }
-        }
+    let mut uploaded = 0;
+    while let Some(part) = chunk(pixels, width, height, uploaded, MAX_WRITE_BYTES) {
+        assert!(part.padded_bytes <= MAX_WRITE_BYTES);
+        write(
+            part.origin[0],
+            part.origin[1],
+            part.size[0],
+            part.size[1],
+            part.bytes,
+        );
+        uploaded += part.bytes.len() / 4;
     }
 }
 
