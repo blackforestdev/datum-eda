@@ -77,7 +77,7 @@ impl ScreenBuffer {
 // during camera changes. Trim clean edge words within each resulting span;
 // internal clean words remain coalesced, so this is not byte-minimal transfer.
 // Production Vertex has a four-byte-aligned stride.
-fn write_dirty_ranges(
+pub(crate) fn write_dirty_ranges(
     queue: &wgpu::Queue,
     buffer: &wgpu::Buffer,
     old: &[u8],

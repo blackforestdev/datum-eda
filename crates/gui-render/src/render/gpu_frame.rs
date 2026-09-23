@@ -349,7 +349,7 @@ impl Renderer {
                 multiview_mask: None,
             });
             self.text_renderer
-                .render(&self.atlas, &self.viewport, &mut pass)
+                .render(&self.atlas, &mut pass)
                 .map_err(|error| anyhow::anyhow!("render GUI text: {error}"))?;
         }
         let text_encode_elapsed = text_encode_started.elapsed();
@@ -426,7 +426,7 @@ impl Renderer {
                         multiview_mask: None,
                     });
                     self.menu_overlay_text_renderer
-                        .render(&self.atlas, &self.viewport, &mut pass)
+                        .render(&self.atlas, &mut pass)
                         .map_err(|error| anyhow::anyhow!("render menu overlay text: {error}"))?;
                 }
             }
@@ -438,7 +438,9 @@ impl Renderer {
         let command_buffer = encoder.finish();
         let finish_elapsed = finish_started.map(|started| started.elapsed());
         let submit_started = std::time::Instant::now();
+        self.flush_text_uploads(queue);
         let submission = queue.submit([command_buffer]);
+        self.hold_text_submission(queue);
         on_submitted(submission);
         self.submit_gpu_measurement(measurement)?;
         let submit_elapsed = submit_started.elapsed();

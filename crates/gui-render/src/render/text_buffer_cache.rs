@@ -3,6 +3,33 @@ use super::*;
 use glyphon::Style;
 use std::hash::{Hash, Hasher};
 
+pub(super) fn build_text_areas<'a>(
+    cache: &'a [CachedTextBuffer],
+    indices: &[usize],
+    runs: &[TextRun],
+) -> Vec<TextArea<'a>> {
+    indices
+        .iter()
+        .zip(runs.iter())
+        .map(|(index, run)| TextArea {
+            buffer: &cache[*index].buffer,
+            left: run.x,
+            top: run.y,
+            scale: 1.0,
+            bounds: run
+                .clip_bounds
+                .map_or_else(TextBounds::default, |rect| TextBounds {
+                    left: rect.x.floor() as i32,
+                    top: rect.y.floor() as i32,
+                    right: (rect.x + rect.width).ceil() as i32,
+                    bottom: (rect.y + rect.height).ceil() as i32,
+                }),
+            default_color: text_color(run.color),
+            custom_glyphs: &[],
+        })
+        .collect()
+}
+
 pub(super) fn text_buffer_key(run: &TextRun, width: u32, height: u32) -> TextBufferKey {
     let (width_px, height_px) = text_buffer_extent(run, width, height);
     TextBufferKey {

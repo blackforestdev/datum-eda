@@ -1,0 +1,244 @@
+//! Original instance-based glyph drawing over Datum's texture-page owner.
+use std::ops::Range;
+
+use glyphon::{FontSystem, SwashCache, TextArea};
+
+use super::atlas::Atlas;
+use super::lifetime::{Kind, SubmissionRef, Tracked};
+
+#[repr(C)]
+#[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
+struct Instance {
+    rect: [f32; 4],
+    tex: [u32; 4],
+    color: u32,
+    is_color: u32,
+}
+
+pub(crate) struct Draw {
+    pipeline: wgpu::RenderPipeline,
+    instances: Option<Tracked<wgpu::Buffer>>,
+    batches: Vec<(usize, Range<u32>)>,
+    snapshot: Vec<Instance>,
+    pending_instances: Option<Vec<Instance>>,
+    generation: Option<u64>,
+    pub upload_bytes: u64,
+}
+
+impl Draw {
+    pub fn new(
+        device: &wgpu::Device,
+        atlas: &Atlas,
+        format: wgpu::TextureFormat,
+        samples: u32,
+    ) -> Self {
+        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("datum-glyph-shader"),
+            source: wgpu::ShaderSource::Wgsl(include_str!("glyph.wgsl").into()),
+        });
+        let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+            label: Some("datum-glyph-pipeline-layout"),
+            bind_group_layouts: &[&atlas.layout],
+            immediate_size: 0,
+        });
+        let pipeline = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("datum-glyph-pipeline"),
+            layout: Some(&layout),
+            vertex: wgpu::VertexState {
+                module: &shader,
+                entry_point: Some("vertex"),
+                buffers: &[wgpu::VertexBufferLayout {
+                    array_stride: std::mem::size_of::<Instance>() as u64,
+                    step_mode: wgpu::VertexStepMode::Instance,
+                    attributes: &wgpu::vertex_attr_array![0 => Float32x4, 1 => Uint32x4, 2 => Uint32, 3 => Uint32],
+                }],
+                compilation_options: Default::default(),
+            },
+            fragment: Some(wgpu::FragmentState {
+                module: &shader,
+                entry_point: Some("fragment"),
+                targets: &[Some(wgpu::ColorTargetState {
+                    format,
+                    blend: Some(wgpu::BlendState::ALPHA_BLENDING),
+                    write_mask: wgpu::ColorWrites::ALL,
+                })],
+                compilation_options: Default::default(),
+            }),
+            primitive: wgpu::PrimitiveState::default(),
+            depth_stencil: None,
+            multisample: wgpu::MultisampleState { count: samples, ..Default::default() },
+            multiview_mask: None,
+            cache: None,
+        });
+        Self {
+            pipeline,
+            instances: None,
+            batches: Vec::new(),
+            snapshot: Vec::new(),
+            pending_instances: None,
+            generation: None,
+            upload_bytes: 0,
+        }
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub fn prepare<'a>(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        atlas: &mut Atlas,
+        fonts: &mut FontSystem,
+        raster: &mut SwashCache,
+        resolution: [u32; 2],
+        areas: impl IntoIterator<Item = TextArea<'a>>,
+    ) -> anyhow::Result<()> {
+        self.generation = None;
+        self.pending_instances = None;
+        self.batches.clear();
+        self.upload_bytes = 0;
+        anyhow::ensure!(!resolution.contains(&0), "zero text target extent");
+        let mut instances = Vec::new();
+        for area in areas {
+            anyhow::ensure!(
+                area.custom_glyphs.is_empty(),
+                "custom glyph adapter is not implemented"
+            );
+            let bounds = [
+                area.bounds.left.max(0),
+                area.bounds.top.max(0),
+                area.bounds.right.min(resolution[0] as i32),
+                area.bounds.bottom.min(resolution[1] as i32),
+            ];
+            for row in area.buffer.layout_runs() {
+                let row_top = (area.top + row.line_top * area.scale) as i32;
+                if row_top > bounds[3]
+                    || row_top + ((row.line_height * area.scale) as i32) < bounds[1]
+                {
+                    continue;
+                }
+                for glyph in row.glyphs {
+                    let physical = glyph.physical((area.left, area.top), area.scale);
+                    let Some(location) =
+                        atlas.glyph(device, queue, fonts, raster, physical.cache_key)?
+                    else {
+                        continue;
+                    };
+                    let x = physical.x + location.bearing[0];
+                    let y =
+                        physical.y + (row.line_y * area.scale).round() as i32 - location.bearing[1];
+                    let left = x.max(bounds[0]);
+                    let top = y.max(bounds[1]);
+                    let right = (x + location.size[0] as i32).min(bounds[2]);
+                    let bottom = (y + location.size[1] as i32).min(bounds[3]);
+                    if left >= right || top >= bottom {
+                        continue;
+                    }
+                    let index = instances.len() as u32;
+                    instances.push(Instance {
+                        rect: [
+                            2.0 * left as f32 / resolution[0] as f32 - 1.0,
+                            1.0 - 2.0 * top as f32 / resolution[1] as f32,
+                            2.0 * (right - left) as f32 / resolution[0] as f32,
+                            -2.0 * (bottom - top) as f32 / resolution[1] as f32,
+                        ],
+                        tex: [
+                            location.origin[0] + (left - x) as u32,
+                            location.origin[1] + (top - y) as u32,
+                            (right - left) as u32,
+                            (bottom - top) as u32,
+                        ],
+                        color: glyph.color_opt.unwrap_or(area.default_color).0,
+                        is_color: u32::from(location.color),
+                    });
+                    // Only adjacent glyphs are batched; overlapping text retains
+                    // the caller's painter order even across mask/color pages.
+                    if let Some((_, range)) = self
+                        .batches
+                        .last_mut()
+                        .filter(|(page, _)| *page == location.page)
+                    {
+                        range.end = index + 1;
+                    } else {
+                        self.batches.push((location.page, index..index + 1));
+                    }
+                }
+            }
+        }
+        let required = (instances.len() * std::mem::size_of::<Instance>()) as u64;
+        if required == 0 {
+            self.instances = None;
+            self.snapshot = Vec::new();
+        } else if self.instances.as_ref().is_none_or(|buffer| {
+            required > buffer.size() || buffer.size() > required.saturating_mul(4)
+        }) {
+            let capacity = required.next_power_of_two();
+            self.instances = Some(atlas.owner.track(
+                device.create_buffer(&wgpu::BufferDescriptor {
+                    label: Some("datum-glyph-instances"),
+                    size: capacity,
+                    usage: wgpu::BufferUsages::VERTEX | wgpu::BufferUsages::COPY_DST,
+                    mapped_at_creation: false,
+                }),
+                capacity,
+                atlas.generation,
+                Kind::Instances,
+            ));
+            self.snapshot = Vec::new();
+        }
+        self.pending_instances = Some(instances);
+        self.generation = Some(atlas.generation);
+        Ok(())
+    }
+
+    /// Share the screen-stream changed-range writer. Updates reach the queue
+    /// only at the caller's successful frame submission boundary.
+    pub fn has_pending_uploads(&self) -> bool {
+        self.pending_instances.is_some()
+    }
+
+    pub fn cancel_preparation(&mut self) {
+        self.generation = None;
+        self.pending_instances = None;
+        self.batches.clear();
+    }
+
+    pub fn flush_uploads(&mut self, queue: &wgpu::Queue) {
+        self.upload_bytes = 0;
+        if let Some(instances) = self.pending_instances.take() {
+            if let Some(buffer) = &self.instances {
+                self.upload_bytes = crate::gpu_data::screen_buffer::write_dirty_ranges(
+                    queue,
+                    buffer,
+                    bytemuck::cast_slice(&self.snapshot),
+                    bytemuck::cast_slice(&instances),
+                    std::mem::size_of::<Instance>(),
+                ) as u64;
+            }
+            self.snapshot = if instances.len() * std::mem::size_of::<Instance>() <= 256 * 1024 {
+                instances
+            } else {
+                Vec::new()
+            };
+        }
+    }
+
+    pub fn submission_ref(&self) -> Option<SubmissionRef> {
+        self.instances.as_ref().map(Tracked::submission_ref)
+    }
+
+    pub fn render(&self, atlas: &Atlas, pass: &mut wgpu::RenderPass<'_>) -> anyhow::Result<()> {
+        anyhow::ensure!(
+            self.generation == Some(atlas.generation),
+            "stale or failed glyph preparation"
+        );
+        if let Some(instances) = &self.instances {
+            pass.set_pipeline(&self.pipeline);
+            pass.set_vertex_buffer(0, instances.slice(..));
+            for (page, range) in &self.batches {
+                pass.set_bind_group(0, &atlas.pages[*page].bind_group, &[]);
+                pass.draw(0..6, range.clone());
+            }
+        }
+        Ok(())
+    }
+}

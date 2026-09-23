@@ -1,5 +1,6 @@
 #[path = "text_buffer_cache.rs"]
 mod text_buffer_cache;
+use text_buffer_cache::build_text_areas;
 
 #[path = "text_metrics.rs"]
 mod text_metrics;
@@ -1157,33 +1158,6 @@ fn text_color(color: [f32; 3]) -> Color {
         (color[1].clamp(0.0, 1.0) * 255.0).round() as u8,
         (color[2].clamp(0.0, 1.0) * 255.0).round() as u8,
     )
-}
-
-fn build_text_areas<'a>(
-    cache: &'a [CachedTextBuffer],
-    indices: &[usize],
-    runs: &[TextRun],
-) -> Vec<TextArea<'a>> {
-    indices
-        .iter()
-        .zip(runs.iter())
-        .map(|(index, run)| TextArea {
-            buffer: &cache[*index].buffer,
-            left: run.x,
-            top: run.y,
-            scale: 1.0,
-            bounds: run
-                .clip_bounds
-                .map_or_else(TextBounds::default, |rect| TextBounds {
-                    left: rect.x.floor() as i32,
-                    top: rect.y.floor() as i32,
-                    right: (rect.x + rect.width).ceil() as i32,
-                    bottom: (rect.y + rect.height).ceil() as i32,
-                }),
-            default_color: text_color(run.color),
-            custom_glyphs: &[],
-        })
-        .collect()
 }
 
 fn text_prepare_signature(

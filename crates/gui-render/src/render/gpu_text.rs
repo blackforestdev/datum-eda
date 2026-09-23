@@ -51,6 +51,19 @@ impl PreparedScene {
 }
 
 impl Renderer {
+    pub(crate) fn flush_text_uploads(&mut self, queue: &wgpu::Queue) {
+        self.atlas.flush_uploads(queue);
+        self.text_renderer.flush_uploads(queue);
+        self.menu_overlay_text_renderer.flush_uploads(queue);
+    }
+
+    pub(crate) fn hold_text_submission(&self, queue: &wgpu::Queue) {
+        let mut resources = self.atlas.submission_refs();
+        resources.extend(self.text_renderer.submission_ref());
+        resources.extend(self.menu_overlay_text_renderer.submission_ref());
+        text_gpu::hold_until_done(queue, resources);
+    }
+
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn prepare_frame_text(
         &mut self,
@@ -61,6 +74,18 @@ impl Renderer {
         height: u32,
         overlay_only: bool,
     ) -> anyhow::Result<(TextBufferCacheStats, bool)> {
+        // A previous frame may have failed after text preparation but before
+        // submission. Never reuse signatures for data that did not reach GPU.
+        if self.atlas.has_pending_uploads()
+            || self.text_renderer.has_pending_uploads()
+            || self.menu_overlay_text_renderer.has_pending_uploads()
+        {
+            self.atlas.repack();
+            self.text_renderer.cancel_preparation();
+            self.menu_overlay_text_renderer.cancel_preparation();
+            self.text_preparation.prepared = None;
+            self.text_preparation.overlay_prepared = None;
+        }
         self.text_buffers.begin_frame(if overlay_only {
             text_buffer_cache::Profile::Overlay
         } else {
@@ -69,7 +94,7 @@ impl Renderer {
         let has_workspace_text = !overlay_only && prepared.has_workspace_text();
         let has_overlay_text = prepared.has_overlay_text();
         if has_workspace_text || has_overlay_text {
-            self.viewport.update(queue, Resolution { width, height });
+            self.text_resolution = [width, height];
         }
         let (workspace, stats) = if !has_workspace_text {
             (Vec::new(), TextBufferCacheStats::default())
@@ -130,7 +155,7 @@ impl Renderer {
             {
                 self.text_preparation.atlas_retries += 1;
             }
-            self.atlas.trim();
+            self.atlas.repack();
             self.prepare_text_pair(
                 device,
                 queue,
@@ -173,11 +198,11 @@ impl Renderer {
                 .prepare(
                     device,
                     queue,
-                    &mut self.font_system,
                     &mut self.atlas,
-                    &self.viewport,
-                    build_text_areas(self.text_buffers.entries(), workspace, &prepared.text_runs),
+                    &mut self.font_system,
                     &mut self.swash_cache,
+                    self.text_resolution,
+                    build_text_areas(self.text_buffers.entries(), workspace, &prepared.text_runs),
                 )
                 .map_err(|error| anyhow::anyhow!("prepare workspace text: {error}"))?;
         }
@@ -195,15 +220,15 @@ impl Renderer {
                 .prepare(
                     device,
                     queue,
-                    &mut self.font_system,
                     &mut self.atlas,
-                    &self.viewport,
+                    &mut self.font_system,
+                    &mut self.swash_cache,
+                    self.text_resolution,
                     build_text_areas(
                         self.text_buffers.entries(),
                         overlay,
                         prepared.menu_overlay_text_runs(),
                     ),
-                    &mut self.swash_cache,
                 )
                 .map_err(|error| anyhow::anyhow!("prepare overlay text: {error}"))?;
         }

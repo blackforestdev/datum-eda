@@ -1,5 +1,10 @@
 //! Renderer-owned resources shared by full-scene and auxiliary rendering.
 use super::*;
+use crate::text_gpu::{Atlas as TextAtlas, Draw as TextRenderer};
+pub use crate::text_gpu::{
+    Kind as TextGpuAllocationKind, Observer as TextGpuAllocationObserver,
+    Record as TextGpuAllocation,
+};
 
 pub struct Renderer {
     pub(super) control_meshes: crate::global_preferences_primitives::ControlMeshCache,
@@ -27,7 +32,7 @@ pub struct Renderer {
     pub(super) schematic_overlay_gpu: gpu_data::screen_buffer::ScreenBuffer,
     pub(super) font_system: FontSystem,
     pub(super) swash_cache: SwashCache,
-    pub(super) viewport: Viewport,
+    pub(super) text_resolution: [u32; 2],
     pub(super) atlas: TextAtlas,
     pub(super) text_renderer: TextRenderer,
     pub(super) menu_overlay_text_renderer: TextRenderer,
@@ -66,6 +71,16 @@ pub struct TextCacheKeyUsage {
 }
 
 impl Renderer {
+    /// Live text textures/instance buffers, including retiring submission holds.
+    /// Excludes staging, CPU shaping, driver residency and other GPU owners.
+    pub fn text_gpu_allocation_observer(&self) -> TextGpuAllocationObserver {
+        self.atlas.owner.observer()
+    }
+
+    pub fn text_gpu_allocations(&self) -> Vec<TextGpuAllocation> {
+        self.atlas.owner.records()
+    }
+
     /// Overlay limits apply after its post-submission trim; workspace retention
     /// follows its own profile. This is not complete shaped-text accounting.
     pub fn text_cache_key_usage(&self) -> TextCacheKeyUsage {

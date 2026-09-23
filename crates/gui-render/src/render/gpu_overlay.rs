@@ -98,12 +98,14 @@ impl Renderer {
             pass.draw(0..prepared.menu_overlay_vertices().len() as u32, 0..1);
             if has_text {
                 self.menu_overlay_text_renderer
-                    .render(&self.atlas, &self.viewport, &mut pass)
+                    .render(&self.atlas, &mut pass)
                     .map_err(|error| anyhow::anyhow!("render dialog text: {error}"))?;
             }
         }
         self.resolve_gpu_measurement(&mut measurement, &mut encoder)?;
+        self.flush_text_uploads(queue);
         let submission = queue.submit([encoder.finish()]);
+        self.hold_text_submission(queue);
         on_submitted(submission);
         self.submit_gpu_measurement(measurement)?;
         self.text_buffers.trim_overlay();

@@ -3761,7 +3761,11 @@
         "crates/gui-app/src/runtime_primary_pointer.rs",
         "crates/gui-app/src/runtime_revision_workspace.rs",
         "crates/gui-app/src/runtime_terminal_geometry.rs",
-        "crates/gui-app/src/runtime_terminal_render.rs"
+        "crates/gui-app/src/runtime_terminal_render.rs",
+        "crates/gui-render/src/text_gpu/atlas.rs",
+        "crates/gui-render/src/text_gpu/draw.rs",
+        "crates/gui-render/src/text_gpu/lifetime.rs",
+        "crates/gui-render/src/render/gpu_text.rs"
       ],
       "test": {
         "status": "planned; not executed",
@@ -3818,6 +3822,13 @@
         "unfinished_qualification": "ACC-01/02 exact byte deltas; resource IDs/shared ownership once; key/payload/capacity and opaque driver bytes separate.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "observed_artifacts": [
+        "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json"
+      ],
+      "s4_owned_text_gpu_progress": {
+        "implementation": "Default text atlas/draw allocation, upload boundary and submission-held identities are Datum-owned; see s4_owned_text_gpu_work.",
+        "remaining": "Full original acceptance remains unqualified. Complete staging/CPU/aggregate caps, device/host incidence and required resource/native/recovery conformance remain due under existing S4/S5 deadlines."
       }
     },
     {
@@ -16214,7 +16225,11 @@
         "crates/gui-app/src/runtime_primary_pointer.rs",
         "crates/gui-app/src/runtime_revision_workspace.rs",
         "crates/gui-app/src/runtime_terminal_geometry.rs",
-        "crates/gui-app/src/runtime_terminal_render.rs"
+        "crates/gui-app/src/runtime_terminal_render.rs",
+        "crates/gui-render/src/text_gpu/atlas.rs",
+        "crates/gui-render/src/text_gpu/draw.rs",
+        "crates/gui-render/src/text_gpu/lifetime.rs",
+        "crates/gui-render/src/render/gpu_text.rs"
       ],
       "test": {
         "status": "planned; not executed",
@@ -16243,7 +16258,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S2/public-allocator-probe/result.json"
+        "docs/reviews/gui-performance/implementation/S2/public-allocator-probe/result.json",
+        "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json"
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
@@ -16256,6 +16272,10 @@
         "unfinished_qualification": "32MiB atlas/renderer actual format/mips/extent; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "s4_owned_text_gpu_progress": {
+        "implementation": "Default text atlas/draw allocation, upload boundary and submission-held identities are Datum-owned; see s4_owned_text_gpu_work.",
+        "remaining": "Full original acceptance remains unqualified. Complete staging/CPU/aggregate caps, device/host incidence and required resource/native/recovery conformance remain due under existing S4/S5 deadlines."
       }
     },
     {
@@ -16316,7 +16336,11 @@
         "crates/gui-app/src/runtime_primary_pointer.rs",
         "crates/gui-app/src/runtime_revision_workspace.rs",
         "crates/gui-app/src/runtime_terminal_geometry.rs",
-        "crates/gui-app/src/runtime_terminal_render.rs"
+        "crates/gui-app/src/runtime_terminal_render.rs",
+        "crates/gui-render/src/text_gpu/atlas.rs",
+        "crates/gui-render/src/text_gpu/draw.rs",
+        "crates/gui-render/src/text_gpu/lifetime.rs",
+        "crates/gui-render/src/render/gpu_text.rs"
       ],
       "test": {
         "status": "planned; not executed",
@@ -16345,7 +16369,8 @@
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
       },
       "observed_artifacts": [
-        "docs/reviews/gui-performance/implementation/S2/public-allocator-probe/result.json"
+        "docs/reviews/gui-performance/implementation/S2/public-allocator-probe/result.json",
+        "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json"
       ],
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
@@ -16358,6 +16383,10 @@
         "unfinished_qualification": "128MiB aggregate atlas; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
         "status": "Unqualified; original acceptance rule and proof status preserved."
+      },
+      "s4_owned_text_gpu_progress": {
+        "implementation": "Default text atlas/draw allocation, upload boundary and submission-held identities are Datum-owned; see s4_owned_text_gpu_work.",
+        "remaining": "Full original acceptance remains unqualified. Complete staging/CPU/aggregate caps, device/host incidence and required resource/native/recovery conformance remain due under existing S4/S5 deadlines."
       }
     },
     {
@@ -31230,7 +31259,9 @@
       "public_shaping_layout": "Existing glyphon reexports ShapeLine/ShapeSpan/ShapeWord/ShapeGlyph and LayoutLine. ShapeLine::new/layout expose owned nested vectors. Develop countable Datum-owned cache storage against those APIs, preserving exact existing font/text/layout semantics. Current TextRenderer expects Buffer, so changing only the cached type is not a complete production migration.",
       "public_rasterization": "Existing SwashCache::get_image_uncached returns raster images. Develop original Datum atlas allocation, glyph placement and draw ownership so actual texture/buffer creation and upload boundaries are visible and enforceable. Preserve mask/color rendering, clipping, painter order and device recovery; do not copy library implementation sources.",
       "still_requires_validation": "Private FontSystem shaping scratch and Swash ScaleContext lifetime/capacity remain to be accounted for by a validated Datum-owned method. Public output-vector capacities alone are insufficient. The route is not a conformance result or an assertion that all private accounting is solved.",
-      "migration_boundary": "Reuse the shared font authority and native/device owners; migrate bounded consumers with legacy parity and counter conformance, then retire competing production text paths. All original resource limits and S5 qualifications remain required."
+      "migration_boundary": "Reuse the shared font authority and native/device owners; migrate bounded consumers with legacy parity and counter conformance, then retire competing production text paths. All original resource limits and S5 qualifications remain required.",
+      "gpu_progress": "Default Atlas/Draw migration recorded in s4_owned_text_gpu_work. Existing Buffer/FontSystem remain shaping owners; all full accounting/cap requirements still apply.",
+      "current_draw_bridge": "Datum Draw now consumes public Buffer layout runs through TextArea. Owned layout can now replace that bridge without the private glyphon draw/atlas interface. Font/raster scratch and full accounting still require implementation."
     }
   },
   "s4_shared_geometry_work": {
@@ -31316,6 +31347,46 @@
       "Public shape/layout payload is transient and released per paragraph. Private FontSystem/ShapeBuffer/raster scratch and total allocation peaks are not fully accounted or capped by this slice.",
       "No timing, complete ACC/MEM predicate, native appearance or S4/S5 acceptance claim. No dependency, vendor, prototype, font, budget or resize change."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S4/public-shaping-measurement/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S4/public-shaping-measurement/result.json",
+    "subsequent_gpu_migration": "The later s4_owned_text_gpu_work migrates the production atlas/draw owner; the original measurement-slice proof remains bounded and rendered Buffer ownership remains unfinished."
+  },
+  "s4_owned_text_gpu_work": {
+    "status": "Default renderer uses Datum-owned glyph texture pages and instance draws; full text/resource acceptance remains open",
+    "base_commit": "b3b12019",
+    "production_consumers": [
+      "Renderer::new text owner for Main, Global Preferences, Project Preferences and New Project",
+      "Renderer::prepare_frame_text shared workspace/terminal and overlay preparation",
+      "Renderer::render_frame and render_overlay_frame text passes and submission boundaries"
+    ],
+    "shared_owner": "src/text_gpu/{atlas,draw,lifetime}.rs and glyph.wgsl; existing TextBufferCache and FontSystem remain shape/layout owners",
+    "retired_paths": [
+      "Production glyphon TextAtlas, TextRenderer, Cache and Viewport creation/prepare/render",
+      "Private atlas allocation and write_texture path",
+      "Per-preparation replacement of instance buffers in the initial candidate; final implementation reuses capacity and the shared screen-buffer dirty-range writer"
+    ],
+    "behavior": [
+      "Original Datum texture-page placement and WGSL drawing consume the existing public uncached raster API. Mask R8 and color RGBA8 sRGB pages allocate on demand under a32MiB retained texture limit; repacking reuses physical pages in queue order and invalidates all prepared addresses.",
+      "Preserve painter order by batching only adjacent glyphs on the same page. Preserve clipping, physical baseline rounding, color/alpha and MSAA behavior.",
+      "Stage raster images and instance updates until immediately before successful frame submission. A later frame invalidates abandoned unsubmitted preparations. Warm glyphs avoid raster/upload; unchanged instances avoid buffer upload and retain allocation identity. CPU instance comparison snapshots bypass retention above256KiB.",
+      "Texture and instance allocations have stable IDs, owner/generation, API capacity and live/retiring records. Submission callbacks retain the same allocation until GPU completion. Observation may outlive renderer close without retaining resource handles.",
+      "Move text-area construction into the cache module; lower the existing source-health ceilings rather than adding an exception."
+    ],
+    "proof": {
+      "renderer": "240 final renderer unit tests passed, no failures/ignored; fresh datum-gui application build passed.",
+      "owner": "4 final owner tests passed, including equal-size replacement, multiple submission holds, observer survival after owner close, real GPU retirement completion and60-case exact pixel/warm-reuse parity.",
+      "parity": "60 exact pixel comparisons against installed glyphon: five text cases, UI/terminal faces, three scales and1x/4x MSAA. Explicit color-page assertion exercises Noto Color Emoji. Includes clipped and fractional positions, multilingual/combining text, rich bold/italic colors, overlap/translucency, and warm zero-upload/no-raster/allocation-reuse assertions.",
+      "production_gpu": "14 production GPU tests passed after buffer reuse and abandoned-frame recovery changes, including dialog/general equality, real bounded atlas pressure/retry, cache reindexing, scroll reuse, overlays and measurement parity.",
+      "failed_attempts": "Initial candidate truncated baseline position instead of rounding, producing503 differing pixels in the first case. Corrected only placement to match the installed reference. Preserved failed diagnostics and corrected results; no goldens changed. Intermediate compile/import and Clippy failures, plus source-health/parity reconciliation failures, were corrected and retained. None is a prescribed negative-control pass.",
+      "drift": "Final reconciled drift passes Clippy and preceding gates, then exits1 at existing Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates unrun. Goldens unchanged.",
+      "policy": "Source health2231files,13 source-policy tests, dependency authority, traceability, spec governance/parity and selector passed. Downward ceilings and source-health parity inventory reconciled."
+    },
+    "limits": [
+      "This does not replace cosmic-text Buffer/BufferLine caches or account all private FontSystem/ScaleContext memory. Public shaping migration is still needed.",
+      "32MiB limits retained page textures, not full aggregate GPU/live-retiring peak, upload staging, instance buffers, atlas metadata/hash capacity or CPU scratch. Full MEM/ACC predicates remain unfinished.",
+      "Records cover text texture/instance API allocations and their submission holds. Complete device/host incidence, release-reason reporting and process-wide resource enumeration remain required; driver residency is separate.",
+      "Staging is now visible Datum-owned data but complete16MiB per-host/64MiB aggregate chunking/caps and queue staging lifetime qualification remain open.",
+      "No native UX/endurance, latency improvement, global adoption, S4 completion or S5 qualification claim. No dependency, vendoring, prototype, font authority, budget amendment or resize change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json"
   }
 }

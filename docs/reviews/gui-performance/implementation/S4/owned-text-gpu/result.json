@@ -1,0 +1,117 @@
+{
+  "status": "Default renderer uses Datum-owned glyph texture pages and instance draws; full text/resource acceptance remains open",
+  "base_commit": "b3b12019",
+  "production_consumers": [
+    "Renderer::new text owner for Main, Global Preferences, Project Preferences and New Project",
+    "Renderer::prepare_frame_text shared workspace/terminal and overlay preparation",
+    "Renderer::render_frame and render_overlay_frame text passes and submission boundaries"
+  ],
+  "shared_owner": "src/text_gpu/{atlas,draw,lifetime}.rs and glyph.wgsl; existing TextBufferCache and FontSystem remain shape/layout owners",
+  "retired_paths": [
+    "Production glyphon TextAtlas, TextRenderer, Cache and Viewport creation/prepare/render",
+    "Private atlas allocation and write_texture path",
+    "Per-preparation replacement of instance buffers in the initial candidate; final implementation reuses capacity and the shared screen-buffer dirty-range writer"
+  ],
+  "behavior": [
+    "Original Datum texture-page placement and WGSL drawing consume the existing public uncached raster API. Mask R8 and color RGBA8 sRGB pages allocate on demand under a32MiB retained texture limit; repacking reuses physical pages in queue order and invalidates all prepared addresses.",
+    "Preserve painter order by batching only adjacent glyphs on the same page. Preserve clipping, physical baseline rounding, color/alpha and MSAA behavior.",
+    "Stage raster images and instance updates until immediately before successful frame submission. A later frame invalidates abandoned unsubmitted preparations. Warm glyphs avoid raster/upload; unchanged instances avoid buffer upload and retain allocation identity. CPU instance comparison snapshots bypass retention above256KiB.",
+    "Texture and instance allocations have stable IDs, owner/generation, API capacity and live/retiring records. Submission callbacks retain the same allocation until GPU completion. Observation may outlive renderer close without retaining resource handles.",
+    "Move text-area construction into the cache module; lower the existing source-health ceilings rather than adding an exception."
+  ],
+  "proof": {
+    "renderer": "240 final renderer unit tests passed, no failures/ignored; fresh datum-gui application build passed.",
+    "owner": "4 final owner tests passed, including equal-size replacement, multiple submission holds, observer survival after owner close, real GPU retirement completion and60-case exact pixel/warm-reuse parity.",
+    "parity": "60 exact pixel comparisons against installed glyphon: five text cases, UI/terminal faces, three scales and1x/4x MSAA. Explicit color-page assertion exercises Noto Color Emoji. Includes clipped and fractional positions, multilingual/combining text, rich bold/italic colors, overlap/translucency, and warm zero-upload/no-raster/allocation-reuse assertions.",
+    "production_gpu": "14 production GPU tests passed after buffer reuse and abandoned-frame recovery changes, including dialog/general equality, real bounded atlas pressure/retry, cache reindexing, scroll reuse, overlays and measurement parity.",
+    "failed_attempts": "Initial candidate truncated baseline position instead of rounding, producing503 differing pixels in the first case. Corrected only placement to match the installed reference. Preserved failed diagnostics and corrected results; no goldens changed. Intermediate compile/import and Clippy failures, plus source-health/parity reconciliation failures, were corrected and retained. None is a prescribed negative-control pass.",
+    "drift": "Final reconciled drift passes Clippy and preceding gates, then exits1 at existing Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates unrun. Goldens unchanged.",
+    "policy": "Source health2231files,13 source-policy tests, dependency authority, traceability, spec governance/parity and selector passed. Downward ceilings and source-health parity inventory reconciled."
+  },
+  "limits": [
+    "This does not replace cosmic-text Buffer/BufferLine caches or account all private FontSystem/ScaleContext memory. Public shaping migration is still needed.",
+    "32MiB limits retained page textures, not full aggregate GPU/live-retiring peak, upload staging, instance buffers, atlas metadata/hash capacity or CPU scratch. Full MEM/ACC predicates remain unfinished.",
+    "Records cover text texture/instance API allocations and their submission holds. Complete device/host incidence, release-reason reporting and process-wide resource enumeration remain required; driver residency is separate.",
+    "Staging is now visible Datum-owned data but complete16MiB per-host/64MiB aggregate chunking/caps and queue staging lifetime qualification remain open.",
+    "No native UX/endurance, latency improvement, global adoption, S4 completion or S5 qualification claim. No dependency, vendoring, prototype, font authority, budget amendment or resize change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/owned-text-gpu/result.json",
+  "logs": {
+    "unit": {
+      "path": "unit.log.gz",
+      "uncompressed_sha256": "9503d69f5da14ee7aa3c0784e90c2e76240a29ec78a8a881368593c6653850ca"
+    },
+    "owner": {
+      "path": "owner.log.gz",
+      "uncompressed_sha256": "f6dfa93e739d138a5b1c07686bfca6afe025954cba05be8d3cacf9b0a0d0c00e"
+    },
+    "production-gpu": {
+      "path": "production-gpu.log.gz",
+      "uncompressed_sha256": "9640a7e4c7fbf4268270c31b9ba428a54a79eed083d7e5ab0a3bb32239296855"
+    },
+    "app-build": {
+      "path": "app-build.log.gz",
+      "uncompressed_sha256": "7e304409b36621e7c56e10f6f9ab0cfcdbc7e3d464295005c81bafdd7b3cdd3b"
+    },
+    "drift": {
+      "path": "drift.log.gz",
+      "uncompressed_sha256": "9b52abe4f320bf22ae661f07404deceba028337924d283e7bdefb2deee25cc06"
+    },
+    "drift-import-failure": {
+      "path": "drift-import-failure.log.gz",
+      "uncompressed_sha256": "f26ed5a719b9913cfdb4440c3199c444317dab54f54514826059b1b2cbccfa93"
+    },
+    "drift-clippy-failure": {
+      "path": "drift-clippy-failure.log.gz",
+      "uncompressed_sha256": "af237baa6a159b68f56637c539e0b25f9a138ee1a8dc2382ba805a85d233a39c"
+    },
+    "drift-parity-reconciliation": {
+      "path": "drift-parity-reconciliation.log.gz",
+      "uncompressed_sha256": "b8a4b787839225914e96379f5c0da3d96289732dcf39a89b339929b6595ccc1b"
+    },
+    "initial-pixel-failure": {
+      "path": "initial-pixel-failure.log.gz",
+      "uncompressed_sha256": "9f43fbd910e0f56fc70c7ad085106ba0f62d81f2b120870dc8a42ff9f707072c"
+    },
+    "pixel-failure-detail": {
+      "path": "pixel-failure-detail.log.gz",
+      "uncompressed_sha256": "098de9cd174169a081aff6a788421cc4be35ec63f9e78a4c690b954a958f5ab0"
+    },
+    "rounded-pixel-pass": {
+      "path": "rounded-pixel-pass.log.gz",
+      "uncompressed_sha256": "b329f2c8af2156da3ceb75d18e031a64590497d18a347da5dff5c9fe2871ca88"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/lib.rs": "d680cd668d6d42a3b890cbad342ae1523b7bc32b40a8fb859cba9e51a44ed6ea",
+    "crates/gui-render/src/render/geometry.rs": "adcc91f8b8d7106fdcae27bf95033b5abe374fe983c1ca6f0ecc842380ae0a59",
+    "crates/gui-render/src/render/gpu.rs": "f212592445f0b00c95dd27e730572a5fca9fba98ecfc2cfd0f0834b249989626",
+    "crates/gui-render/src/render/gpu_frame.rs": "37c3f1f0d9d5ff2cfa9894d53419eb273181ced1f82ba27adb3025b8ff3457c0",
+    "crates/gui-render/src/render/gpu_init.rs": "07941e56c7f42d57112a9855d65adc5a37cfd4190899237889d54ffa6b01cd83",
+    "crates/gui-render/src/render/gpu_overlay.rs": "007bd2911097ebcaae0d8d21da1b7f019528e713b91f4099c2080d1b4fc441ac",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "fbdcfe276cf78052962118ce873df0390606c94ac3ae9f698eb4eed43408c38b",
+    "crates/gui-render/src/render/gpu_text.rs": "166f8013ff82b027de004703dc70bd2d8c1a7aa5e2f71d0bf6f0b9bb8ebbe69c",
+    "crates/gui-render/src/render/renderer_state.rs": "c2cedeeae60df20806d707e80a2ffa588633a8f2d64a3b54bd26a40f471ed4ad",
+    "crates/gui-render/src/render/screen_buffer.rs": "7bc50427e298fd2b334f5481a3cb5da54b280ae3698366811c1f8aeb66b85d56",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "750242947be564ce52c889a9d653f4ef7e23fad4d827f791508bfd0116c0601d",
+    "crates/gui-render/src/text_gpu/atlas.rs": "e2d13a80a8abc2f8a996a847ba3b9b9cbe6aa4b122238a549b36370f171ce2ef",
+    "crates/gui-render/src/text_gpu/draw.rs": "1cda8e8d0d1910fb53ef11787b381c8e57771e980b4dcaebf234bd8a156eabdd",
+    "crates/gui-render/src/text_gpu/glyph.wgsl": "e014266c7282cb05a23fe649d917f9138f1b1c21c0d0d07ecbef426a689228f0",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "43d33a09ed7a6e5b8e890c47896e99b767a747e020cce164f6892fb19e666bb8",
+    "crates/gui-render/src/text_gpu/mod.rs": "1e272f139554e0625736f08b5083cbb792f927db5d57fb013f56ca95b2021bab",
+    "crates/gui-render/src/text_gpu/parity.rs": "805f9dd60f326ebd1ed8a034b1038ecf71cb3af002ca2b23e7b2b78c66d18e2a"
+  },
+  "application_sha256": "de25016e27bf705e067fc680ba7c6becec51b6cce66fe99047e80f9c8e1e1184",
+  "environment": {
+    "rustc": "1.93.1 (01f6ddf75 2026-02-11)",
+    "kernel": "Linux6.12.107+deb13-amd64 x86_64",
+    "adapter_scope": "Default wgpu adapter; production GPU tests reject CPU adapters. No native backend/scale qualification claim."
+  },
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib --features visual text_gpu -- --include-ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib --features visual gpu_overlay_tests -- --ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline -p datum-gui-app --bin datum-gui",
+    "bash /tmp/pm045-s4-drift.sh: offline guarded wrapper around scripts/run_drift_gates.sh"
+  ]
+}
