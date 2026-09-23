@@ -31155,5 +31155,32 @@
       "No dependency, prototype, numerical budget or resize changes."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/font-catalog/result.json"
+  },
+  "s4_control_admission_work": {
+    "status": "Control-mesh admission now precedes payload construction; full resource implementation/qualification remains open",
+    "base_commit": "ceeb54fa",
+    "production_consumers": [
+      "MAIN",
+      "GLOBAL",
+      "PROJECT",
+      "NEW; all through shared ControlPainter/ControlMeshCache"
+    ],
+    "shared_owner": "ControlMeshCache::reserve_mesh and with_mesh",
+    "retired_paths": [
+      "Constructing a cacheable replacement before evicting displaced cached payload",
+      "Convex ellipse temporary Vec<Quad> followed by a second mesh allocation"
+    ],
+    "behavior": "Each primitive provides its exact quad count before construction. Cache hits still bypass construction; misses reserve entry capacity and evict displaced payload before building. The completed mesh size must match its plan. Convex ellipse builds cached point quads directly from the existing perimeter fan. Existing oversized bypass still paints all content.",
+    "proof": {
+      "focused": "6 control-mesh tests passed,230 filtered. Multi-megabyte churn now checks actual retained bytes plus newly built mesh before consumption; old eviction-after-build ordering would exceed the cap. Existing contour equivalence, key/LRU, demand growth and oversized bypass tests pass.",
+      "policy": "Source health,13 policy tests and dependency-authority checks passed.",
+      "drift": "Clippy and preceding checks passed; full drift exits1 at unchanged Console routine-focused1x golden mismatch3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates unrun; goldens unchanged."
+    },
+    "limits": [
+      "Pre-admission bounds cache metadata plus cacheable mesh payload at the construction observation point. It does not count contour-vector scratch, allocator/reallocation overhead, prepared-frame copies or GPU/in-flight storage.",
+      "Oversized uncached required content still renders and is not claimed to fit the cap. No full MEM-MESH-CPU/GPU, aggregate, native or S4/S5 qualification.",
+      "No dependency, prototype, numerical budget, layout/style or resize change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/control-admission/result.json"
   }
 }

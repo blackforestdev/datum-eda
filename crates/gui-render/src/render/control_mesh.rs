@@ -36,6 +36,8 @@ pub(crate) struct ControlMeshCache {
     entries: VecDeque<Entry>,
     payload_bytes: usize,
     pub(crate) builds: usize,
+    #[cfg(test)]
+    build_live_bytes: usize,
 }
 
 impl ControlMeshCache {
@@ -48,6 +50,7 @@ impl ControlMeshCache {
     fn with_mesh(
         &mut self,
         key: Key,
+        quad_count: usize,
         build: impl FnOnce() -> Mesh,
         consume: impl FnOnce(&[[(f32, f32); 4]]),
     ) {
@@ -58,21 +61,31 @@ impl ControlMeshCache {
             return;
         }
         self.builds = self.builds.saturating_add(1);
+        let bytes = quad_count * std::mem::size_of::<[(f32, f32); 4]>();
+        let retain = self.reserve_mesh(bytes);
+        // Eviction precedes allocation: cacheable replacement payload must not
+        // coexist with history that its admission is about to discard.
         let mesh = build();
-        let bytes = std::mem::size_of_val(mesh.as_ref());
-        // Reject an impossible payload without allocating entry storage. Caps
-        // are ceilings, not startup reservation targets (MEM-02).
-        if bytes > MAX_CPU_BYTES - std::mem::size_of::<Self>() - std::mem::size_of::<Entry>() {
-            consume(&mesh);
-            return;
+        assert_eq!(std::mem::size_of_val(mesh.as_ref()), bytes);
+        #[cfg(test)]
+        {
+            self.build_live_bytes = self.retained_cpu_bytes() + bytes;
         }
-        // Grow only for a new slot, then charge the actual allocation before
-        // admitting payload. At the entry limit eviction reuses an old slot.
+        consume(&mesh);
+        if retain {
+            self.payload_bytes += bytes;
+            self.entries.push_front(Entry { key, mesh });
+        }
+    }
+
+    fn reserve_mesh(&mut self, bytes: usize) -> bool {
+        // Oversized required content still paints through the uncached path.
+        if bytes > MAX_CPU_BYTES - std::mem::size_of::<Self>() - std::mem::size_of::<Entry>() {
+            return false;
+        }
         if self.entries.len() < MAX_ENTRIES && self.entries.len() == self.entries.capacity() {
             self.entries.reserve(1);
         }
-        // Table growth can itself displace previously retained payload, even
-        // when the new mesh is subsequently too large to retain.
         while self.retained_cpu_bytes() > MAX_CPU_BYTES {
             let old = self
                 .entries
@@ -82,17 +95,14 @@ impl ControlMeshCache {
         }
         let metadata_bytes = self.retained_cpu_bytes() - self.payload_bytes;
         if bytes > MAX_CPU_BYTES.saturating_sub(metadata_bytes) {
-            consume(&mesh);
-            return;
+            return false;
         }
         while self.entries.len() >= MAX_ENTRIES || self.retained_cpu_bytes() + bytes > MAX_CPU_BYTES
         {
             let old = self.entries.pop_back().expect("bounded cache has an entry");
             self.payload_bytes -= std::mem::size_of_val(old.mesh.as_ref());
         }
-        consume(&mesh);
-        self.payload_bytes += bytes;
-        self.entries.push_front(Entry { key, mesh });
+        true
     }
 }
 
@@ -123,28 +133,38 @@ impl<'a> ControlPainter<'a> {
             segments: ROUNDED_RECT_CORNER_SEGMENTS as u32,
             style_generation: 0,
         };
-        self.paint_mesh(key, (rect.x, rect.y), color, || {
-            let points = rounded_rect_points(
-                RectPx {
-                    x: 0.0,
-                    y: 0.0,
-                    ..rect
-                },
-                radius,
-            );
-            (1..points.len() - 1)
-                .step_by(2)
-                .map(|index| {
-                    [
-                        points[0],
-                        points[index],
-                        points[index + 1],
-                        points[(index + 2).min(points.len() - 1)],
-                    ]
-                })
-                .collect::<Vec<_>>()
-                .into_boxed_slice()
-        });
+        self.paint_mesh(
+            key,
+            if radius == 0.0 {
+                1
+            } else {
+                (ROUNDED_RECT_CORNER_SEGMENTS + 1) * 2 - 1
+            },
+            (rect.x, rect.y),
+            color,
+            || {
+                let points = rounded_rect_points(
+                    RectPx {
+                        x: 0.0,
+                        y: 0.0,
+                        ..rect
+                    },
+                    radius,
+                );
+                (1..points.len() - 1)
+                    .step_by(2)
+                    .map(|index| {
+                        [
+                            points[0],
+                            points[index],
+                            points[index + 1],
+                            points[(index + 2).min(points.len() - 1)],
+                        ]
+                    })
+                    .collect::<Vec<_>>()
+                    .into_boxed_slice()
+            },
+        );
     }
 
     pub(crate) fn ellipse_fill(&mut self, rect: RectPx, color: [f32; 3], segments: u32) {
@@ -164,20 +184,26 @@ impl<'a> ControlPainter<'a> {
         };
         // Keep offsets relative to the center so translation performs exactly
         // the same floating-point additions as the original ellipse painter.
-        self.paint_mesh(key, (rect.x + rx, rect.y + ry), color, || {
-            let step = std::f32::consts::TAU / segments as f32;
-            let mut previous = (rx, 0.0);
-            (1..=segments)
-                .map(|i| {
-                    let angle = step * i as f32;
-                    let next = (rx * angle.cos(), ry * angle.sin());
-                    let points = [(0.0, 0.0), previous, next, next];
-                    previous = next;
-                    points
-                })
-                .collect::<Vec<_>>()
-                .into_boxed_slice()
-        });
+        self.paint_mesh(
+            key,
+            segments as usize,
+            (rect.x + rx, rect.y + ry),
+            color,
+            || {
+                let step = std::f32::consts::TAU / segments as f32;
+                let mut previous = (rx, 0.0);
+                (1..=segments)
+                    .map(|i| {
+                        let angle = step * i as f32;
+                        let next = (rx * angle.cos(), ry * angle.sin());
+                        let points = [(0.0, 0.0), previous, next, next];
+                        previous = next;
+                        points
+                    })
+                    .collect::<Vec<_>>()
+                    .into_boxed_slice()
+            },
+        );
     }
 
     /// Preserve the perimeter-anchored fan used by existing pane indicators.
@@ -195,16 +221,15 @@ impl<'a> ControlPainter<'a> {
         };
         self.paint_mesh(
             key,
+            segments as usize - 2,
             (rect.x + rect.width * 0.5, rect.y + rect.height * 0.5),
             color,
             || {
                 let points =
                     ellipse_points((0.0, 0.0), rect.width, rect.height, 0.0, segments as usize);
-                let mut quads = Vec::new();
-                push_convex_polygon_fill(&mut quads, &points, [0.0; 3]);
-                quads
-                    .into_iter()
-                    .map(|quad| quad.points)
+                points[1..]
+                    .windows(2)
+                    .map(|edge| [points[0], edge[0], edge[1], edge[1]])
                     .collect::<Vec<_>>()
                     .into_boxed_slice()
             },
@@ -214,12 +239,13 @@ impl<'a> ControlPainter<'a> {
     fn paint_mesh(
         &mut self,
         key: Key,
+        quad_count: usize,
         origin: (f32, f32),
         color: [f32; 3],
         build: impl FnOnce() -> Mesh,
     ) {
         let quads = &mut self.quads;
-        self.cache.with_mesh(key, build, |mesh| {
+        self.cache.with_mesh(key, quad_count, build, |mesh| {
             quads.extend(mesh.iter().map(|points| Quad {
                 points: points.map(|(x, y)| (origin.0 + x, origin.1 + y)),
                 color,
