@@ -67,6 +67,8 @@ impl Renderer {
         control_gpu_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
         previous: Option<&Self>,
     ) -> anyhow::Result<Self> {
+        let resource_host = crate::text_gpu::allocation_host::Host::new();
+        let _resource_scope = resource_host.enter();
         let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("datum-gui-render-shader"),
             source: wgpu::ShaderSource::Wgsl(
@@ -381,6 +383,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             ),
         };
         Ok(Self {
+            resource_host,
             measurements: None,
             pipeline,
             world_pipeline,

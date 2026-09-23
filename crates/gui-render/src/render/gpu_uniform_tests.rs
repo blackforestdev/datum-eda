@@ -24,6 +24,25 @@ fn uniform_uploads_stay_warm_and_retire_closed_surface_slots() {
             &state, width, height, 1.0, camera, &retained,
         );
         let changed = capture_retained(&mut renderer, &prepared, &retained);
+        let host_id = renderer.renderer.resource_owner_id();
+        assert_ne!(host_id, fresh.renderer.resource_owner_id());
+        let records = Renderer::gpu_process_allocations();
+        for reference in renderer
+            .renderer
+            .vertex_submission_refs()
+            .into_iter()
+            .chain(renderer.renderer.uniform_submission_refs())
+            .chain(renderer.renderer.surface_attachments.submission_ref())
+            .chain(renderer.renderer.atlas.submission_refs())
+            .chain(renderer.renderer.text_renderer.submission_ref())
+        {
+            let record = records
+                .iter()
+                .find(|record| record.id == reference.allocation_id)
+                .unwrap();
+            assert_eq!(record.renderer_id, Some(host_id));
+        }
+
         assert_eq!(
             renderer.renderer.uniform_buffer.last_upload_bytes,
             if step == 1 { 0 } else { 8 }

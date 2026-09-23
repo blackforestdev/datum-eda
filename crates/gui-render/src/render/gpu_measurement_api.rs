@@ -18,6 +18,7 @@ impl Renderer {
             self.measurements.is_none(),
             "GPU measurements already enabled"
         );
+        let _resource_scope = self.resource_host.enter();
         self.measurements = Some(GpuMeasurements::new(
             device,
             queue,

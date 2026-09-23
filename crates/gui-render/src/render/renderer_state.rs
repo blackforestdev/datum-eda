@@ -22,6 +22,7 @@ pub struct ControlMeshUsage {
 }
 
 pub struct Renderer {
+    pub(super) resource_host: crate::text_gpu::allocation_host::Host,
     pub(super) cold_world: gpu_vertex_upload::ColdWorldUploads,
     pub(super) control_gpu_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
     pub(super) screen_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
@@ -95,6 +96,12 @@ pub struct TextCacheKeyUsage {
 }
 
 impl Renderer {
+    /// Allocation-origin identity for this renderer/device lifetime. Native host
+    /// receipts map it to window and queue epoch; resource capacities count once.
+    pub fn resource_owner_id(&self) -> u64 {
+        self.resource_host.id()
+    }
+
     /// Live text textures/instance buffers, including retiring submission holds.
     /// Excludes staging, CPU shaping, driver residency and other GPU owners.
     pub fn text_gpu_allocation_observer(&self) -> TextGpuAllocationObserver {

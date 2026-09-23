@@ -1,4 +1,5 @@
 //! Datum-owned text texture pages, glyph instances and submission lifetimes.
+pub(crate) mod allocation_host;
 mod atlas;
 pub(crate) mod budget;
 mod draw;

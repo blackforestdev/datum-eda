@@ -208,6 +208,7 @@ impl Renderer {
         height: u32,
         healthy: impl FnMut() -> bool,
     ) -> anyhow::Result<bool> {
+        let _resource_scope = self.resource_host.enter();
         let previous = self.surface_attachments.allocations;
         self.surface_attachments.ensure_guarded(
             device,

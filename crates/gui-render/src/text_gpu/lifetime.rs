@@ -37,6 +37,9 @@ pub enum Kind {
 pub struct Record {
     pub id: u64,
     pub owner: u64,
+    /// Renderer instance that created this resource. None means creation outside
+    /// a renderer (for example a standalone capture target), never inferred ownership.
+    pub renderer_id: Option<u64>,
     pub generation: u64,
     /// Allocated API capacity; never inferred from upload traffic.
     pub bytes: u64,
@@ -163,6 +166,7 @@ impl Owner {
             record: Record {
                 id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
                 owner: self.0.id,
+                renderer_id: super::allocation_host::current(),
                 generation,
                 bytes: reservation.bytes(),
                 requested_bytes: reservation.bytes(),
