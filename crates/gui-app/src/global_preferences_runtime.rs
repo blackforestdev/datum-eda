@@ -299,7 +299,7 @@ impl Runtime {
             .rows
             .iter()
             .find(|row| row.key == key)
-            .map(|row| row.control.clone());
+            .map(|row| &row.control);
         let Some(control) = control else {
             return false;
         };
@@ -307,22 +307,17 @@ impl Runtime {
             GlobalPreferenceControlUi::Boolean { value, .. } => {
                 let _ = self.global_preferences.set_value(
                     key,
-                    Value::Bool(!value),
+                    Value::Bool(!*value),
                     &mut self.session.workspace_mut().ui,
                 );
                 self.announce_current_global_preferences_notice();
             }
             GlobalPreferenceControlUi::SingleChoice { .. } => {
-                let ui = &mut self.session.workspace_mut().ui.global_preferences;
-                ui.explanation_key = None;
-                ui.open_choice_key = if ui.open_choice_key.as_deref() == Some(key) {
-                    None
-                } else {
-                    Some(key.to_owned())
-                };
-                if ui.open_choice_key.is_some() {
-                    ui.scroll_to_row(key);
-                }
+                self.session
+                    .workspace_mut()
+                    .ui
+                    .global_preferences
+                    .toggle_choice(key);
                 self.refresh_dialog_state();
                 return true;
             }
@@ -333,7 +328,7 @@ impl Runtime {
                 step,
                 ..
             } => {
-                let next = value.saturating_add(step as i64).min(max).max(min);
+                let next = value.saturating_add(*step as i64).min(*max).max(*min);
                 let _ = self.global_preferences.set_value(
                     key,
                     Value::from(next),

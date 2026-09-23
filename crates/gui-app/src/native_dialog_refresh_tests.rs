@@ -75,6 +75,12 @@ fn native_dialog_actions_preserve_main_preparation_until_close() {
     );
     assert!(runtime.prepared_scene.is_some());
     assert!(!runtime.scene_dirty);
+    runtime
+        .session
+        .workspace_mut()
+        .ui
+        .global_preferences
+        .explanation_key = Some("datum.console.feedback_duration".to_owned());
     assert!(runtime.activate_global_preference_control("datum.console.feedback_duration"));
     assert!(
         runtime
@@ -83,6 +89,26 @@ fn native_dialog_actions_preserve_main_preparation_until_close() {
             .global_preferences
             .open_choice_key
             .is_some()
+    );
+    assert!(
+        runtime
+            .workspace()
+            .ui
+            .global_preferences
+            .explanation_key
+            .is_none()
+    );
+    let opened = runtime.workspace().ui.global_preferences.clone();
+    assert!(!runtime.activate_global_preference_control("missing.preference"));
+    assert_eq!(runtime.workspace().ui.global_preferences, opened);
+    assert!(runtime.activate_global_preference_control("datum.console.feedback_duration"));
+    assert!(
+        runtime
+            .workspace()
+            .ui
+            .global_preferences
+            .open_choice_key
+            .is_none()
     );
     assert!(runtime.prepared_scene.is_some());
     assert!(!runtime.scene_dirty);
@@ -127,6 +153,12 @@ fn native_dialog_actions_preserve_main_preparation_until_close() {
     );
     assert!(runtime.prepared_scene.is_some());
     assert!(!runtime.scene_dirty);
+    runtime
+        .session
+        .workspace_mut()
+        .ui
+        .project_preferences
+        .explanation_key = Some("datum.units.system".to_owned());
     assert!(runtime.activate_project_preference_control("datum.units.system"));
     assert!(
         runtime
@@ -135,6 +167,26 @@ fn native_dialog_actions_preserve_main_preparation_until_close() {
             .project_preferences
             .open_choice_key
             .is_some()
+    );
+    assert!(
+        runtime
+            .workspace()
+            .ui
+            .project_preferences
+            .explanation_key
+            .is_none()
+    );
+    let opened = runtime.workspace().ui.project_preferences.clone();
+    assert!(!runtime.activate_project_preference_control("missing.preference"));
+    assert_eq!(runtime.workspace().ui.project_preferences, opened);
+    assert!(runtime.activate_project_preference_control("datum.units.system"));
+    assert!(
+        runtime
+            .workspace()
+            .ui
+            .project_preferences
+            .open_choice_key
+            .is_none()
     );
     assert!(runtime.prepared_scene.is_some());
     assert!(!runtime.scene_dirty);

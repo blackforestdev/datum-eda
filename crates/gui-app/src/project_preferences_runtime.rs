@@ -8,9 +8,8 @@ use std::path::{Path, PathBuf};
 
 use anyhow::{Context, Result};
 use datum_gui_protocol::{
-    ApplicationFocus, GlobalPreferenceControlUi, GlobalPreferenceRowUi,
-    GlobalPreferencesDialogState, GlobalPreferencesDismissal, GlobalPreferencesFocus,
-    GlobalPreferencesNoticeUi,
+    ApplicationFocus, GlobalPreferenceRowUi, GlobalPreferencesDialogState,
+    GlobalPreferencesDismissal, GlobalPreferencesFocus, GlobalPreferencesNoticeUi,
 };
 use datum_gui_render::HitTarget;
 use eda_engine::api::native_write::project::{
@@ -444,23 +443,14 @@ impl Runtime {
     }
 
     pub(super) fn activate_project_preference_control(&mut self, key: &str) -> bool {
-        let control = self
-            .workspace()
+        if !self
+            .session
+            .workspace_mut()
             .ui
             .project_preferences
-            .rows
-            .iter()
-            .find(|row| row.key == key)
-            .map(|row| row.control.clone());
-        let Some(GlobalPreferenceControlUi::SingleChoice { .. }) = control else {
+            .toggle_choice(key)
+        {
             return false;
-        };
-        let dialog = &mut self.session.workspace_mut().ui.project_preferences;
-        dialog.explanation_key = None;
-        dialog.open_choice_key =
-            (dialog.open_choice_key.as_deref() != Some(key)).then(|| key.to_owned());
-        if dialog.open_choice_key.is_some() {
-            dialog.scroll_to_row(key);
         }
         self.refresh_dialog_state();
         true

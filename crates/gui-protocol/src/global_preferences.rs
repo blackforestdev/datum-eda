@@ -434,6 +434,22 @@ impl GlobalPreferencesDialogState {
         changed
     }
 
+    /// Toggle a choice through the shared dialog state without copying its options.
+    pub fn toggle_choice(&mut self, key: &str) -> bool {
+        if !self.rows.iter().any(|row| {
+            row.key == key && matches!(row.control, GlobalPreferenceControlUi::SingleChoice { .. })
+        }) {
+            return false;
+        }
+        self.explanation_key = None;
+        self.open_choice_key =
+            (self.open_choice_key.as_deref() != Some(key)).then(|| key.to_owned());
+        if self.open_choice_key.is_some() {
+            self.scroll_to_row(key);
+        }
+        true
+    }
+
     pub fn dismiss_innermost(&mut self) -> GlobalPreferencesDismissal {
         if self.open_choice_key.take().is_some() {
             GlobalPreferencesDismissal::ChoiceClosed
