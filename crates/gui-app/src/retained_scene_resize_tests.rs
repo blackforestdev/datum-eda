@@ -354,3 +354,51 @@ fn retirement_observer_storage_is_charged_through_growth_shrink_and_drop() {
     drop(pins);
     assert_eq!(observer.document_cpu_payload_bytes(), 0);
 }
+
+#[test]
+fn history_entry_limit_is_shared_across_owners_without_limiting_active_references() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.scene.scene_id = "history-document-shared-entry-cap".into();
+    let scene = RetainedScene::from_workspace(&state, 960, 720);
+    let observer = scene.geometry_observer();
+    let mut first = RetainedSceneHistory::default();
+    let mut second = RetainedSceneHistory::default();
+    let mut third = RetainedSceneHistory::default();
+    for index in 0..3 {
+        first.insert(tests::key(index), scene.clone());
+    }
+    for index in 3..6 {
+        second.insert(tests::key(index), scene.clone());
+    }
+    assert_eq!(observer.document_history_entries(), 6);
+    third.insert(tests::key(6), scene.clone());
+    assert!(third.entries.is_empty());
+    assert_eq!(first.entries.len(), 3);
+    assert_eq!(second.entries.len(), 3);
+    second.insert(tests::key(7), scene.clone());
+    assert_eq!(observer.document_history_entries(), 6);
+    assert!(
+        second
+            .entries
+            .iter()
+            .any(|entry| entry.key == tests::key(7))
+    );
+    assert!(
+        second
+            .entries
+            .iter()
+            .all(|entry| entry.key != tests::key(3))
+    );
+    let active = first.take(&tests::key(0)).unwrap();
+    assert_eq!(observer.document_history_entries(), 5);
+    third.insert(tests::key(6), scene.clone());
+    assert_eq!(third.entries.len(), 1);
+    assert_eq!(observer.document_history_entries(), 6);
+    drop(first);
+    drop(second);
+    assert_eq!(observer.document_history_entries(), 1);
+    drop(third);
+    assert_eq!(observer.document_history_entries(), 0);
+    assert_eq!(active, scene);
+    assert!(observer.document_cpu_payload_bytes() >= scene.heap_payload_bytes().unwrap());
+}

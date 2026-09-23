@@ -15103,6 +15103,11 @@
           "work": "s4_document_identity_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/document-identity/result.json",
           "status": "Shared CPU/GPU document identity registry includes owned scene ID and budget allocation in CPU totals"
+        },
+        {
+          "work": "s4_document_history_cap_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/document-history-cap/result.json",
+          "status": "Six historical entries admitted atomically per document across local owners"
         }
       ]
     },
@@ -15231,6 +15236,11 @@
           "work": "s4_document_identity_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/document-identity/result.json",
           "status": "Shared CPU/GPU document identity registry includes owned scene ID and budget allocation in CPU totals"
+        },
+        {
+          "work": "s4_document_history_cap_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/document-history-cap/result.json",
+          "status": "Six historical entries admitted atomically per document across local owners"
         }
       ]
     },
@@ -34387,5 +34397,31 @@
       "Twelve implementation gaps and original S5 proof remain open. No dependency/vendor/license, prototype, numerical cap or sequencing amendment. Preserve GEFN, Console golden disposition and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/document-identity/result.json"
+  },
+  "s4_document_history_cap_work": {
+    "status": "Six historical entries admitted atomically per document across local owners",
+    "base_commit": "a7a766a0",
+    "production_consumers": [
+      "RetainedSceneHistory candidate admission, matching eviction, restoration and owner destruction",
+      "Shared document metadata charge and history entry reservation"
+    ],
+    "retired_paths": [
+      "Six-entry count enforced only independently by each local history owner"
+    ],
+    "behavior": [
+      "Shared document registry counts exclusive historical entry charges. Preflight retires eligible matching history from the local owner; if other owners occupy all six slots, candidate retention is bypassed while external payload remains observed. Final reservation atomically refuses overbooking before vector allocation/publication. Entry restoration, eviction and owner destruction release their slots. Active scenes and externally pinned payload references do not consume historical entry slots and remain included in byte accounting. Existing per-cache six-entry bound remains an additional local bound."
+    ],
+    "proof": {
+      "app": "392 app tests passed, 16 ignored. Three-owner real-scene test verifies combined six-entry cap, refusal without disturbing other owners, local oldest matching replacement, restored active scene releasing a slot, retry admission and owner-drop release.",
+      "registry": "Four focused renderer document CPU tests pass. Eight concurrent reservations hold exactly six slots, refuse a seventh, retain counts across thread return and release to zero before retry. Existing allocator and document aggregation tests pass.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source/dependency/governance/format checks pass.",
+      "prior_failure": "Initial app run had 391 pass and one failure: an older test shadowed rather than dropped its first history, leaving five entries live during its independent byte-pressure phase. Explicitly release that owner; new dedicated multi-owner test retains cross-owner coverage. Failed log preserved.",
+      "scope": "No repeated broad GPU or native qualification. This change affects CPU cache entry admission; GPU identity/cap behavior is unchanged from the preceding 355-test renderer proof."
+    },
+    "limits": [
+      "This implements the document-wide historical entry-count boundary, not complete CPU/history byte-cap acceptance. Construction/reallocation admission and final ownership reconciliation remain open, including external weak-container lifetimes.",
+      "Twelve implementation gaps and original S5 qualification remain required. No dependency/vendor/license, prototype, numerical cap or sequencing amendment. Preserve GEFN, Console golden disposition and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/document-history-cap/result.json"
   }
 }

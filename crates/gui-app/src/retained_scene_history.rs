@@ -314,6 +314,7 @@ impl RetainedSceneHistory {
             .saturating_add(metadata_bytes)
             .saturating_add(self.entry_growth_bytes())
             > document_limit
+            || geometry.document_history_entries() >= MAX_ENTRIES
         {
             let Some(index) = self
                 .entries
@@ -329,6 +330,7 @@ impl RetainedSceneHistory {
             .saturating_add(metadata_bytes)
             .saturating_add(self.entry_growth_bytes())
             > document_limit
+            || geometry.document_history_entries() >= MAX_ENTRIES
         {
             self.active_geometry = None;
             drop(scene);
@@ -356,6 +358,14 @@ impl RetainedSceneHistory {
             self.clear();
             return;
         }
+        // Reserve the shared entry slot before allocating/publishing history.
+        // A competing owner can consume the last slot after the preflight query.
+        let Some(document_metadata) = geometry.try_charge_document_history(metadata_bytes) else {
+            self.active_geometry = None;
+            drop(scene);
+            self.observe_retired(geometry);
+            return;
+        };
         if self.entries.len() == self.entries.capacity() {
             let capacity = self.entry_growth_capacity();
             self.entries.reserve_exact(capacity - self.entries.len());
@@ -367,7 +377,6 @@ impl RetainedSceneHistory {
         }
         self.heap_bytes += bytes;
         self.active_geometry = None;
-        let document_metadata = geometry.charge_document_metadata(metadata_bytes);
         self.entries.push(Entry {
             key,
             scene,
@@ -537,6 +546,7 @@ mod tests {
         assert_eq!(history.entries.len(), 6);
         assert!(history.take(&key(0)).is_none());
         assert!(history.take(&key(7)).is_some());
+        drop(history); // The following case isolates local byte pressure.
         let bytes = scene.clone().heap_payload_bytes().unwrap() + key(0).heap_bytes().unwrap();
         let shared_bytes = scene.geometry_observer().heap_bytes_excluding([]);
         let mut history = RetainedSceneHistory {
