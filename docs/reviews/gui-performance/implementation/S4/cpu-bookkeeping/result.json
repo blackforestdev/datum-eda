@@ -1,0 +1,54 @@
+{
+  "status": "Document registry records and retired-observer buffers included in retained CPU accounting",
+  "base_commit": "b3ff77eb",
+  "production_consumers": [
+    "Shared document retained CPU registry registration, pruning and budget query",
+    "RetainedSceneHistory retirement observation, growth, compaction and destruction"
+  ],
+  "retired_paths": [
+    "Unassigned process-vector capacity in the retained CPU registry",
+    "Retirement observer buffers counted locally but omitted from document totals"
+  ],
+  "behavior": [
+    "Use one owned registry record allocation per document, including measured Datum allocator header, and prune empty records iteratively. Scene observer storage remains charged to its document. Retired-observer buffers receive allocation lifetime charges including actual capacity/header; growth transfers the charge to its allocating document, compaction updates its size, and empty or dropped owners release it. Weak observations retain no scene payload."
+  ],
+  "proof": {
+    "app": "391 app tests passed, 16 ignored. Retirement test covers five pinned scenes, observer-buffer growth, shrink to one, owner destruction and final payload release. Existing metadata tests now include genuinely retained retirement storage, then verify release on owner destruction.",
+    "registry": "Two focused renderer document CPU tests pass, including independent two-document accounting and an allocator-scoped comparison of actual registry record/observer allocation bytes, independent document removal and zero after final prune.",
+    "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build and source health/dependency/governance/format checks pass.",
+    "prior_failure": "Initial app pass had 389 pass and two failed assertions: old expectations omitted live retirement buffers after cache refusal/clear. Preserve failed log; corrected expectations include exact actual capacities and verify owner-drop release.",
+    "scope": "No new native/backend/endurance or broad GPU qualification. Focused CPU registry proof and default app consumers only."
+  },
+  "limits": [
+    "Scene and bookkeeping construction/reallocation peaks and hard pre-allocation admission remain incomplete. Shared CPU/GPU document-identity map/budget bookkeeping still requires accounting reconciliation. Retirement bookkeeping can be allocated while observing already pinned content; recording those bytes is not proof of a hard construction cap. Registry cleanup is lazy on access.",
+    "Twelve implementation gaps and original S5 qualification remain open. No MEM-WORLD-CPU/HISTORY closure, dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN, Console golden disposition and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/cpu-bookkeeping/result.json",
+  "logs": {
+    "first-app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/cpu-bookkeeping/first-app.log.gz",
+      "uncompressed_sha256": "19e43fafd86fde31379a0aa9d167abe176b42931e139bb10c533fc2cc6dee49b"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/cpu-bookkeeping/app.log.gz",
+      "uncompressed_sha256": "1c497b699fb4854a1270c798e9a64a1359365ccfb3d010dad35a4b0449e9be1b"
+    },
+    "registry": {
+      "path": "docs/reviews/gui-performance/implementation/S4/cpu-bookkeeping/registry.log.gz",
+      "uncompressed_sha256": "a9811628bb8fee8fcf8302e18ca0f9417abbcdf3a41e46129a8b264b728efe83"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/cpu-bookkeeping/clippy.log.gz",
+      "uncompressed_sha256": "3fc200ff3701f564f3b8ecdb4e07aecd9b135f6a24c148022af1e544852c73e2"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/cpu-bookkeeping/build.log.gz",
+      "uncompressed_sha256": "7cd1bd3918e15c39cd2f06653d76ea0351feb5cedbd1074bfd491099d8960009"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/retained_scene_history.rs": "abbe38819e514cef1c04c39180be42bd2a8450587006ec2431a05980e54099df",
+    "crates/gui-app/src/retained_scene_resize_tests.rs": "e8067e84dd8033de911ca8d99f44e53ba4eac8a0ca6e2c945792ea7291338e82",
+    "crates/gui-render/src/render/document_cpu.rs": "b073bf2a2d3ba420a6b55622459dfac09cf3eb52d754397b5e8b2e9e87f8311d"
+  }
+}

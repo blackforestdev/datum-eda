@@ -212,7 +212,9 @@ fn shared_document_history_metadata_is_charged_per_owner_and_released_on_take() 
     assert!(second.entries.is_empty());
     assert_eq!(
         observer.document_cpu_payload_bytes(),
-        baseline + first_charge
+        baseline
+            + first_charge
+            + capacity_bytes::<RetainedGeometryObserver>(second.retired_geometry.capacity())
     );
     second.insert(second_key, scene.clone());
     assert_eq!(
@@ -273,6 +275,12 @@ fn document_history_container_charges_spare_capacity_and_growth_overlap() {
         history.clear();
         assert_eq!(history.entries.capacity(), 0);
         assert!(history.entry_storage.is_none());
+        assert_eq!(
+            observer.document_cpu_payload_bytes(),
+            baseline
+                + capacity_bytes::<RetainedGeometryObserver>(history.retired_geometry.capacity())
+        );
+        drop(history);
         assert_eq!(observer.document_cpu_payload_bytes(), baseline);
         assert_eq!(restored, scene);
     }
@@ -292,9 +300,9 @@ fn history_storage_retains_allocating_document_identity_until_release() {
     drop(history.take(&tests::key(1)).unwrap());
     // The second document caused vector growth. Its scene can disappear while
     // the allocation remains live with another document's entry in it.
-    assert_eq!(
-        observer.document_cpu_payload_bytes(),
-        capacity_bytes::<Entry>(history.entries.capacity())
+    assert!(
+        observer.document_cpu_payload_bytes() > capacity_bytes::<Entry>(history.entries.capacity()),
+        "metadata-only document retains its owned registry record as well as history storage"
     );
     let reopened = RetainedScene::from_workspace(&state, 960, 720);
     assert!(observer.shares_document_with(&reopened.geometry_observer()));
@@ -305,4 +313,44 @@ fn history_storage_retains_allocating_document_identity_until_release() {
         observer.document_cpu_payload_bytes(),
         before_clear - storage
     );
+}
+
+#[test]
+fn retirement_observer_storage_is_charged_through_growth_shrink_and_drop() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.scene.scene_id = "history-retirement-storage".into();
+    let mut history = RetainedSceneHistory::default();
+    let mut pins = Vec::new();
+    for index in 0..5 {
+        let scene = RetainedScene::from_workspace(&state, 960, 720);
+        pins.push(scene.clone());
+        history.insert(tests::key(index), scene);
+    }
+    let observer = pins[0].geometry_observer();
+    let keys: usize = history
+        .entries
+        .iter()
+        .map(|entry| entry.key.heap_bytes().unwrap())
+        .sum();
+    let payload_registry = observer.document_cpu_payload_bytes()
+        - keys
+        - capacity_bytes::<Entry>(history.entries.capacity());
+    history.clear();
+    assert_eq!(history.retired_geometry.len(), 5);
+    assert_eq!(
+        observer.document_cpu_payload_bytes(),
+        payload_registry
+            + capacity_bytes::<RetainedGeometryObserver>(history.retired_geometry.capacity())
+    );
+    pins.truncate(1);
+    history.prune_retired();
+    assert_eq!(history.retired_geometry.capacity(), 1);
+    let before_drop = observer.document_cpu_payload_bytes();
+    drop(history);
+    assert_eq!(
+        observer.document_cpu_payload_bytes(),
+        before_drop - capacity_bytes::<RetainedGeometryObserver>(1)
+    );
+    drop(pins);
+    assert_eq!(observer.document_cpu_payload_bytes(), 0);
 }

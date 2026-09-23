@@ -15093,6 +15093,11 @@
           "work": "s4_history_storage_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/history-storage/result.json",
           "status": "History vector full capacity and allocator header charged through allocation lifetime"
+        },
+        {
+          "work": "s4_cpu_bookkeeping_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/cpu-bookkeeping/result.json",
+          "status": "Document registry records and retired-observer buffers included in retained CPU accounting"
         }
       ]
     },
@@ -15211,6 +15216,11 @@
           "work": "s4_history_storage_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/history-storage/result.json",
           "status": "History vector full capacity and allocator header charged through allocation lifetime"
+        },
+        {
+          "work": "s4_cpu_bookkeeping_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/cpu-bookkeeping/result.json",
+          "status": "Document registry records and retired-observer buffers included in retained CPU accounting"
         }
       ]
     },
@@ -34315,5 +34325,32 @@
       "Twelve implementation gaps and original S5 qualification remain open. Console golden discrepancy and nonblocking resize unchanged. No dependency, vendor, license, visual prototype, numerical cap or sequencing change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/history-storage/result.json"
+  },
+  "s4_cpu_bookkeeping_work": {
+    "status": "Document registry records and retired-observer buffers included in retained CPU accounting",
+    "base_commit": "b3ff77eb",
+    "production_consumers": [
+      "Shared document retained CPU registry registration, pruning and budget query",
+      "RetainedSceneHistory retirement observation, growth, compaction and destruction"
+    ],
+    "retired_paths": [
+      "Unassigned process-vector capacity in the retained CPU registry",
+      "Retirement observer buffers counted locally but omitted from document totals"
+    ],
+    "behavior": [
+      "Use one owned registry record allocation per document, including measured Datum allocator header, and prune empty records iteratively. Scene observer storage remains charged to its document. Retired-observer buffers receive allocation lifetime charges including actual capacity/header; growth transfers the charge to its allocating document, compaction updates its size, and empty or dropped owners release it. Weak observations retain no scene payload."
+    ],
+    "proof": {
+      "app": "391 app tests passed, 16 ignored. Retirement test covers five pinned scenes, observer-buffer growth, shrink to one, owner destruction and final payload release. Existing metadata tests now include genuinely retained retirement storage, then verify release on owner destruction.",
+      "registry": "Two focused renderer document CPU tests pass, including independent two-document accounting and an allocator-scoped comparison of actual registry record/observer allocation bytes, independent document removal and zero after final prune.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build and source health/dependency/governance/format checks pass.",
+      "prior_failure": "Initial app pass had 389 pass and two failed assertions: old expectations omitted live retirement buffers after cache refusal/clear. Preserve failed log; corrected expectations include exact actual capacities and verify owner-drop release.",
+      "scope": "No new native/backend/endurance or broad GPU qualification. Focused CPU registry proof and default app consumers only."
+    },
+    "limits": [
+      "Scene and bookkeeping construction/reallocation peaks and hard pre-allocation admission remain incomplete. Shared CPU/GPU document-identity map/budget bookkeeping still requires accounting reconciliation. Retirement bookkeeping can be allocated while observing already pinned content; recording those bytes is not proof of a hard construction cap. Registry cleanup is lazy on access.",
+      "Twelve implementation gaps and original S5 qualification remain open. No MEM-WORLD-CPU/HISTORY closure, dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN, Console golden disposition and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/cpu-bookkeeping/result.json"
   }
 }
