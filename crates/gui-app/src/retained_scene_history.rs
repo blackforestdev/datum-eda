@@ -1,6 +1,7 @@
 //! Bounded derived-scene history; document/session authority stays elsewhere.
 use super::{RetainedScene, Runtime, retained_selection_cache_key};
 use datum_gui_render::RetainedGeometryObserver;
+use datum_gui_render::cpu_alloc::heap::capacity_bytes;
 
 const MAX_ENTRIES: usize = 6;
 const MAX_PAYLOAD_BYTES: usize = 64 * 1024 * 1024;
@@ -52,14 +53,14 @@ impl Default for RetainedSceneHistory {
 
 impl RetainedSceneCacheKey {
     fn heap_bytes(&self) -> Option<usize> {
-        let mut bytes = self
-            .scene_id
-            .capacity()
-            .checked_add(self.source_revision.capacity())?
-            .checked_add(self.selection.capacity())?
-            .checked_add(std::mem::size_of_val(self.layer_visibility.as_ref()))?;
+        let mut bytes = capacity_bytes::<u8>(self.scene_id.capacity())
+            .checked_add(capacity_bytes::<u8>(self.source_revision.capacity()))?
+            .checked_add(capacity_bytes::<u8>(self.selection.capacity()))?
+            .checked_add(capacity_bytes::<(String, bool)>(
+                self.layer_visibility.len(),
+            ))?;
         for (layer, _) in &self.layer_visibility {
-            bytes = bytes.checked_add(layer.capacity())?;
+            bytes = bytes.checked_add(capacity_bytes::<u8>(layer.capacity()))?;
         }
         Some(bytes)
     }
@@ -98,11 +99,8 @@ impl RetainedSceneHistory {
     }
 
     fn owned_history_bytes(&self) -> usize {
-        self.heap_bytes.saturating_add(
-            self.entries
-                .capacity()
-                .saturating_mul(std::mem::size_of::<Entry>()),
-        )
+        self.heap_bytes
+            .saturating_add(capacity_bytes::<Entry>(self.entries.capacity()))
     }
 
     fn prune_retired(&mut self) {
@@ -175,9 +173,9 @@ impl RetainedSceneHistory {
             .saturating_add(self.active_bytes)
             .saturating_sub(duplicates)
             .saturating_add(retired_bytes)
-            .saturating_add(
-                self.retired_geometry.capacity() * std::mem::size_of::<RetainedGeometryObserver>(),
-            )
+            .saturating_add(capacity_bytes::<RetainedGeometryObserver>(
+                self.retired_geometry.capacity(),
+            ))
     }
 
     fn bytes_with_candidate(&self, bytes: usize, geometry: &RetainedGeometryObserver) -> usize {
@@ -353,7 +351,7 @@ mod tests {
         let bytes = scene.clone().heap_payload_bytes().unwrap() + key(0).heap_bytes().unwrap();
         let shared_bytes = scene.geometry_observer().heap_bytes_excluding([]);
         let mut history = RetainedSceneHistory {
-            budget: 2 * bytes - shared_bytes + 4 * std::mem::size_of::<Entry>(),
+            budget: 2 * bytes - shared_bytes + capacity_bytes::<Entry>(4),
             ..Default::default()
         };
         for index in 0..3 {
@@ -407,8 +405,8 @@ mod tests {
         let next = scene();
         let next_bytes = next.heap_payload_bytes().unwrap() + key(1).heap_bytes().unwrap();
         history.budget = next_bytes
-            + 4 * std::mem::size_of::<Entry>()
-            + history.retired_geometry.capacity() * std::mem::size_of::<RetainedGeometryObserver>()
+            + capacity_bytes::<Entry>(4)
+            + capacity_bytes::<RetainedGeometryObserver>(history.retired_geometry.capacity())
             + pinned_bytes
             - 1;
         history.insert(key(1), next);
@@ -449,3 +447,7 @@ mod tests {
 #[cfg(test)]
 #[path = "retained_scene_resize_tests.rs"]
 mod resize_tests;
+
+#[cfg(test)]
+#[path = "retained_history_heap_tests.rs"]
+mod heap_tests;

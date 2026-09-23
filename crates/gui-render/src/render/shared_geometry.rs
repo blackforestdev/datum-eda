@@ -57,9 +57,12 @@ impl<T> SharedGeometry<T> {
         self.1.as_ref()
     }
 
-    /// Box payload and the Box slot in the Arc allocation; excludes Arc headers.
-    pub(crate) fn heap_bytes(&self) -> usize {
-        std::mem::size_of_val(self.as_ref()) + std::mem::size_of::<Box<[T]>>()
+    /// Box capacity plus its separately measured reference-counted container.
+    pub(crate) fn heap_bytes(&self) -> usize
+    where
+        T: GeometryElement,
+    {
+        crate::cpu_alloc::heap::capacity_bytes::<T>(self.len()) + T::container_bytes()
     }
 
     pub(crate) fn ptr_eq(&self, other: &Self) -> bool {
@@ -70,6 +73,26 @@ impl<T> SharedGeometry<T> {
         Arc::downgrade(&self.0)
     }
 }
+
+// Measure each production container once; no assumed Arc header layout.
+pub(crate) trait GeometryElement {
+    fn container_bytes() -> usize;
+}
+macro_rules! geometry_element {
+    ($ty:ty) => {
+        impl GeometryElement for $ty {
+            fn container_bytes() -> usize {
+                if !crate::cpu_alloc::installed() {
+                    return std::mem::size_of::<Box<[$ty]>>();
+                }
+                static BYTES: std::sync::OnceLock<usize> = std::sync::OnceLock::new();
+                *BYTES.get_or_init(|| crate::cpu_alloc::heap::arc_bytes(Box::<[$ty]>::default()))
+            }
+        }
+    };
+}
+geometry_element!(super::Vertex);
+geometry_element!(crate::WorldStrokeInstance);
 
 #[cfg(test)]
 mod tests {

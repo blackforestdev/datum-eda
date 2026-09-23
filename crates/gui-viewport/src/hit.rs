@@ -117,30 +117,45 @@ impl<T> SpatialHitIndex<T> {
         &self,
         mut target_bytes: impl FnMut(&T) -> Option<usize>,
     ) -> Option<usize> {
-        let mut bytes = self
-            .regions
-            .capacity()
-            .checked_mul(std::mem::size_of::<HitRegion<T>>())?
-            .checked_add(
-                self.order
-                    .capacity()
-                    .checked_mul(std::mem::size_of::<usize>())?,
-            )?
-            .checked_add(
-                self.nodes
-                    .capacity()
-                    .checked_mul(std::mem::size_of::<Node>())?,
-            )?;
+        self.heap_bytes_with(&mut target_bytes, |layout| Some(layout.size()))
+    }
+
+    /// Account every owned allocation through the caller's allocator policy.
+    /// Target payload is still supplied separately; inline fields are included
+    /// in their containing region allocation, never counted a second time.
+    pub fn heap_bytes_with(
+        &self,
+        mut target_bytes: impl FnMut(&T) -> Option<usize>,
+        mut allocation_bytes: impl FnMut(std::alloc::Layout) -> Option<usize>,
+    ) -> Option<usize> {
+        fn cost<T>(
+            capacity: usize,
+            account: &mut impl FnMut(std::alloc::Layout) -> Option<usize>,
+        ) -> Option<usize> {
+            let layout = std::alloc::Layout::array::<T>(capacity).ok()?;
+            if layout.size() == 0 {
+                Some(0)
+            } else {
+                account(layout)
+            }
+        }
+        let mut bytes = cost::<HitRegion<T>>(self.regions.capacity(), &mut allocation_bytes)?
+            .checked_add(cost::<usize>(self.order.capacity(), &mut allocation_bytes)?)?
+            .checked_add(cost::<Node>(self.nodes.capacity(), &mut allocation_bytes)?)?;
         for region in &self.regions {
             let shape = match &region.shape {
-                HitShape::Polyline { path, .. } | HitShape::Polygon(path) => path
-                    .capacity()
-                    .checked_mul(std::mem::size_of::<PointNm>())?,
+                HitShape::Polyline { path, .. } | HitShape::Polygon(path) => {
+                    cost::<PointNm>(path.capacity(), &mut allocation_bytes)?
+                }
                 HitShape::Rect(_) | HitShape::Circle { .. } => 0,
             };
+            let layer = cost::<u8>(
+                region.layer_id.as_ref().map_or(0, String::capacity),
+                &mut allocation_bytes,
+            )?;
             bytes = bytes
                 .checked_add(shape)?
-                .checked_add(region.layer_id.as_ref().map_or(0, String::capacity))?
+                .checked_add(layer)?
                 .checked_add(target_bytes(&region.target)?)?;
         }
         Some(bytes)

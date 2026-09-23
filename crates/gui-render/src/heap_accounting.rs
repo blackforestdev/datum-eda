@@ -12,8 +12,17 @@ pub(crate) fn tracking_bytes<T>(capacity: usize) -> usize {
         .1
 }
 
-pub(crate) fn capacity_bytes<T>(capacity: usize) -> usize {
+pub fn capacity_bytes<T>(capacity: usize) -> usize {
     capacity * std::mem::size_of::<T>() + tracking_bytes::<T>(capacity)
+}
+
+/// Requested allocation including Datum tracking/alignment overhead. Allocation
+/// slack internal to System is outside this Rust-layout accounting boundary.
+pub fn allocation_bytes(layout: Layout) -> usize {
+    if layout.size() == 0 || !installed() {
+        return layout.size();
+    }
+    layout.size() + extended(layout).expect("live Datum allocation layout").1
 }
 
 /// Observe the actual Arc allocation instead of assuming its private header.

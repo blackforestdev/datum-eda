@@ -1,0 +1,67 @@
+{
+  "status": "Default retained-world/history admission includes owned allocation headers and measured geometry Arc containers; complete world accounting remains open",
+  "base_commit": "ef2194cc",
+  "production_consumers": [
+    "RetainedScene owned geometry, draw-command and spatial hit-index capacity reporting",
+    "RetainedGeometryObserver shared and weak-retiring allocation deduplication",
+    "Runtime RetainedSceneHistory active/history admission, keys, entry and observer vectors"
+  ],
+  "retired_paths": [
+    "Charging only raw geometry payload and a Box slot while excluding Arc/control and Datum headers",
+    "Payload-only hit-index, command-string, history-key and history-vector accounting"
+  ],
+  "behavior": [
+    "Reuse Datum heap allocation accounting across renderer and app through the existing cpu_alloc module. The viewport exposes a caller-supplied allocation-cost policy; its existing payload-only API remains available to callers without Datum allocator coupling. No crate dependency change.",
+    "Measure each concrete Arc<Box<[Vertex]>> and Arc<Box<[WorldStrokeInstance]>> container once using the scoped allocator. Count actual boxed capacities plus Datum tracking/alignment headers. Weak observers charge only surviving containers after payload release and deduplicate vertex/stroke allocations independently.",
+    "Count retained hit region/order/node vectors, path vectors, layer/target strings, command storage/layer strings, history key strings/layer storage, entry capacity and retired-observer capacity with their allocation headers. Inline fields are included only in their containing allocation.",
+    "Apply revised totals to the existing 64 MiB history/active admission policy and six-entry retention without changing numerical caps or authoritative model state. Preserve cached active totals during size-independent surface reuse."
+  ],
+  "proof": {
+    "renderer": "330 renderer tests pass; 11 diagnostic/visual cases filtered. New scoped allocator test exactly reconciles a retained scene with nonempty geometry, empty stroke storage, command strings and hit-index paths/strings; weak-only container charges match observed live allocations through final release. Existing GPU, pixel, cache and lifetime regressions pass.",
+    "app_viewport": "383 application tests pass; 16 ignored; visual-shell integration remains separately ignored. 47 viewport tests pass. New history test reconciles six cloned scenes, independent command/hit/key storage and entry capacity against actual allocations while charging shared geometry once; drop returns observed ownership to zero. Existing active/resize-preservation, pinned-retirement, refusal, eviction and hit tests pass.",
+    "lint_build": "Strict visual renderer/app/viewport all-targets Clippy -D warnings and fresh app build pass. Source health 2,267, dependency and governance gates pass. Initial renderer compilation used the wrong module path for WorldStrokeInstance; corrected and failed log preserved.",
+    "drift": "Full drift stops at the existing Console golden mismatch: 3,778 pixels (0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+  },
+  "limits": [
+    "Shared document-budget/allocator-registry metadata, construction/growth peaks, oversized required active-scene admission, whole-scene external ownership and schematic/document aggregation remain unfinished. No full MEM-WORLD-CPU/HISTORY, S4/S5 or issue closure.",
+    "Exact Datum header/Arc measurements require the installed production allocator. Other callers retain public-capacity reporting; allocator-internal slack and native mappings remain separate RSS observations. Capacity and allocation-scope views overlap and must not be summed.",
+    "Remaining resource implementation and S5 native/backend/fault/fairness/endurance/independent qualification remain. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion. No dependency, vendoring, license, prototype, numerical cap or specification amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/world-heap/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-heap/tests.log.gz",
+      "uncompressed_sha256": "bf2bdfc1c8e672c2e1dfbd84594d33a9802b22fbdbd8283f7b83bea19981aa01"
+    },
+    "app-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-heap/app-tests.log.gz",
+      "uncompressed_sha256": "bbab0adc00d1826d642bafef51074e525f918cc206cd819879bab864b2aadf17"
+    },
+    "compile-error": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-heap/compile-error.log.gz",
+      "uncompressed_sha256": "ce95caa471dadb0239ca157f5854e56501aa00d54dccbc290629cd3b9670fa87"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-heap/clippy.log.gz",
+      "uncompressed_sha256": "5b87913d9268c9bff32759388e0307931b059bc52979c7703b9b2f7ba781fba6"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-heap/build.log.gz",
+      "uncompressed_sha256": "5b08d578b53c6c00557de025c38f593f2082e7cf3e6bd9790ba1ec9a43aa4d41"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-heap/drift.log.gz",
+      "uncompressed_sha256": "3904d9cc41d98bfa669eda974f479c76b87a655c3154d647a1f0127223b52448"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/retained_scene_history.rs": "df1d289490b5dcf8be8330c88c0cfda2d4f7eecb03a85836e42fc04488a8879c",
+    "crates/gui-render/src/cpu_alloc.rs": "7048bcde5c0f6bca54f9ab994616591855e42cc5536d4ccd6b08db0c277c37ff",
+    "crates/gui-render/src/heap_accounting.rs": "2ca4b1362c8330cf3e544154d817dee55d7723b4f97b1394d96e49c2a5dcaab9",
+    "crates/gui-render/src/render/scene_retained_access.rs": "cb8e8c5178a64938e7e4ee5185034ee49f006f8a44f3f119bb5b7536cc936f1f",
+    "crates/gui-render/src/render/shared_geometry.rs": "6c3d58861ee712a2e84893e75acbde4d94d668f273f8b3e4eeb834638c7908aa",
+    "crates/gui-viewport/src/hit.rs": "412ae438ece2135a17276dc7908952e14eb1f8cb17541c06fc1eb9c617a36f91",
+    "crates/gui-app/src/retained_history_heap_tests.rs": "71e55ba2671ff845d206beb0fa08413734d76b355b47488887e6f16708def6a3",
+    "crates/gui-render/src/render/retained_heap_tests.rs": "af1b1f8d86c58ce47317262f75098da255a3d3f3093e2661c7d06b5d7df7bce7"
+  }
+}
