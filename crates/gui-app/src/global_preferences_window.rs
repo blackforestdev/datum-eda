@@ -243,12 +243,23 @@ impl GlobalPreferencesWindowSurface {
         delta: MouseScrollDelta,
         frames: &mut native_frame_coordinator::NativeFrameCoordinator,
     ) {
-        if scroll_wheel(
+        let before = self.scroll.offset();
+        let changed = scroll_wheel(
             &mut self.scroll,
             self.cursor_position,
             self.scale_factor,
             delta,
-        ) {
+        );
+        append_gui_verbose_diagnostic_line(|| {
+            format!(
+                "native scroll window={:?} delta={delta:?} scale={} before={before:?} after={:?} maximum={:?} changed={changed}",
+                self.window.id(),
+                self.scale_factor,
+                self.scroll.offset(),
+                self.scroll.maximum()
+            )
+        });
+        if changed {
             self.invalidate();
             frames.invalidate(&self.window);
         }

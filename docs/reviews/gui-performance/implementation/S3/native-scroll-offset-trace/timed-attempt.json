@@ -1,0 +1,11 @@
+{
+  "issued": 3600,
+  "received_trace_count": 2717,
+  "unscripted_pointer_motion_count": 149,
+  "delta_histogram": {
+    "0.24609375": 1440,
+    "-0.24609375": 1277
+  },
+  "first": "[SystemTime { tv_sec: 1790125214, tv_nsec: 147734219 }] native scroll window=WindowId(94569684112208) delta=PixelDelta(PhysicalPosition { x: -0.0, y: 0.24609375 }) scale=1 before=0.0 after=0.0 maximum=88.0 changed=false",
+  "last": "[SystemTime { tv_sec: 1790125244, tv_nsec: 136977049 }] native scroll window=WindowId(94569684112208) delta=PixelDelta(PhysicalPosition { x: -0.0, y: 0.24609375 }) scale=1 before=4.921875 after=4.6757813 maximum=88.0 changed=true"
+}
