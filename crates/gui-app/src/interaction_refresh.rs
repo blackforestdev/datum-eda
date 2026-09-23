@@ -23,7 +23,7 @@ impl Runtime {
             self.cache_retained_scene(previous_key, retained);
         }
         self.prepared_scene = None;
-        self.schematic_retained_scene = None;
+        self.clear_schematic_retained_scene();
         self.scene_dirty = true;
         self.restore_cached_retained_scene();
     }
@@ -32,7 +32,7 @@ impl Runtime {
         self.retained_scene = None;
         self.retained_scene_cache.clear();
         self.prepared_scene = None;
-        self.schematic_retained_scene = None;
+        self.clear_schematic_retained_scene();
         self.scene_dirty = true;
     }
 
@@ -43,13 +43,8 @@ impl Runtime {
         // whose construction has no dependency on the reference projection size.
         self.retained_scene_cache
             .invalidate_surface_size(&mut self.retained_scene);
-        if self
-            .schematic_retained_scene
-            .as_ref()
-            .is_some_and(|scene| !scene.can_reuse_for_surface_resize())
-        {
-            self.schematic_retained_scene = None;
-        }
+        self.schematic_scene_accounting
+            .invalidate_surface_size(&mut self.schematic_retained_scene);
         self.prepared_scene = None;
         self.scene_dirty = true;
     }

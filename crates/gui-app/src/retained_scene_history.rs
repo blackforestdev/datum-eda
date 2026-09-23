@@ -305,6 +305,26 @@ impl RetainedSceneHistory {
 }
 
 impl Runtime {
+    pub(super) fn ensure_schematic_retained_scene(&mut self) {
+        if self.schematic_retained_scene.is_none() {
+            let scene = RetainedScene::from_workspace_schematic_for_surface(
+                self.session.workspace(),
+                self.config.width,
+                self.config.height,
+                self.scale_factor,
+            );
+            if let Some(scene) = &scene {
+                self.schematic_scene_accounting.limit_for_active(scene);
+            }
+            self.schematic_retained_scene = scene;
+        }
+    }
+
+    pub(super) fn clear_schematic_retained_scene(&mut self) {
+        self.schematic_retained_scene = None;
+        self.schematic_scene_accounting.clear();
+    }
+
     pub(super) fn retained_scene_cache_key(&self) -> RetainedSceneCacheKey {
         let workspace = self.workspace();
         RetainedSceneCacheKey {

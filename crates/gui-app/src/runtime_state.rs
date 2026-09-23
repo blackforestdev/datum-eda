@@ -47,6 +47,7 @@ pub(super) struct Runtime {
     // Lazily retained schematic world geometry; camera-independent geometry
     // survives frame invalidation and eligible surface-size changes.
     pub(super) schematic_retained_scene: Option<RetainedScene>,
+    pub(super) schematic_scene_accounting: RetainedSceneHistory,
     pub(super) scene_dirty: bool,
     pub(super) terminal_sessions: TerminalSessionRegistry,
     pub(super) terminal_launch_context: TerminalLaunchContext,

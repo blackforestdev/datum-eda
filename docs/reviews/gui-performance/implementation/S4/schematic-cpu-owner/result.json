@@ -1,0 +1,52 @@
+{
+  "status": "Companion schematic adopts existing active/retiring CPU scene ownership; complete CPU document aggregation and construction bounds remain open",
+  "base_commit": "b647d0b9",
+  "production_consumers": [
+    "Main render, visual capture, schematic hit test and hover call one Runtime::ensure_schematic_retained_scene helper",
+    "Session change/full invalidation use one clear_schematic_retained_scene helper; resize uses the existing shared ownership transition",
+    "Native render and capture validate companion accounted bytes before GPU submission"
+  ],
+  "retired_paths": [
+    "Four independent schematic scene builders with no CPU active-owner registration",
+    "Direct schematic clears that forgot geometry still pinned by renderer/GPU owners"
+  ],
+  "behavior": [
+    "Reuse RetainedSceneHistory ownership/accounting for companion active and retired geometry, without inserting companion history entries or introducing another cache. Preserve the existing 64 MiB owner allowance and explicit over-budget failure.",
+    "Register active scene payload on construction; observe remaining shared geometry on clear; preserve complete charge when resize reuses geometry and retire it otherwise. Native/capture checks now cover both existing owners. Hit and hover share the same retained construction path."
+  ],
+  "proof": {
+    "app": "385 application tests pass, 16 ignored. New test loads the existing simple-demo schematic fixture through the real companion constructor and validates active payload, resize disposition, pinned geometry after clear, refusal under test pressure and zero after release. Existing shared ownership and per-host failure/retry tests pass.",
+    "source": "All schematic assignment/clear sites now reside in the shared Runtime helper (initial None remains in runtime_init). Existing invalidation behavior and rendering/hit-test authority preserved.",
+    "lint_build": "Strict renderer/app all-targets Clippy with app visual feature and fresh visual application build pass. Source health 2273, dependency authority and governance pass.",
+    "scope": "Fixture proves implemented companion ownership only, not resolved schematic content performance or its missing product features. No native/backend/scale campaign, benchmark or full drift rerun; prior Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Separate board/companion owner checks are not a complete per-document aggregation across arbitrary external scene holders; that remains open with candidate construction peaks and externally cloned full-scene metadata. No MEM-WORLD-CPU/HISTORY closure.",
+    "Twelve recorded S4 gaps remain; original S5 qualification and absent schematic fixture admission remain unqualified. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/schematic-cpu-owner/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/schematic-cpu-owner/tests.log.gz",
+      "uncompressed_sha256": "dfd3f4cd9a315b908e5afb0852090c5d89767aff9349ce73ca1636ce3e173472"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/schematic-cpu-owner/clippy.log.gz",
+      "uncompressed_sha256": "dd5037772a07b5cb242a33f507edf498b80a7dfd34d104041f75f9d73e2be446"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/schematic-cpu-owner/build.log.gz",
+      "uncompressed_sha256": "5b9b29f3adc55d2a3f0cd9cf4f9e0e99ec79d1c2a5f2a48f4fde36cf7268c68d"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/interaction_refresh.rs": "46c04a3ba20dd0ec706e68f3b6d3fcfa9a1b8b774bdc8c1b5d76d1288ee9354d",
+    "crates/gui-app/src/main.rs": "a085eb8ad55855f28a5f2828a166e34a8b1bc829d8d1f7e0128235b5af54b681",
+    "crates/gui-app/src/retained_scene_history.rs": "77822e5f734d689a22a29fd26c71219618b5ba6f8453699cc2d48a7dbbc7800a",
+    "crates/gui-app/src/retained_scene_resize_tests.rs": "5b38688398fda9b7909f8cf8ddec5eeeaa62519779f0e7f3cdd7ede41a5a818b",
+    "crates/gui-app/src/runtime_camera_pane.rs": "30a9f1261256836be9eab7442629ea9c563ae36cdf1512bbfff911742640a353",
+    "crates/gui-app/src/runtime_init.rs": "dc915dd824dc65d4618fada1dd063cae9aea0dc6d5618c91093786b41662faeb",
+    "crates/gui-app/src/runtime_present.rs": "0c47d60bb0047e82c0ff1ddf92e13fc797f3867d321fa733e30b1830b55a1ef3",
+    "crates/gui-app/src/runtime_state.rs": "91ed35eb3e2857e8b20acc59b5e39b39a3cf11f58f11ba220526cfab893d672f"
+  }
+}

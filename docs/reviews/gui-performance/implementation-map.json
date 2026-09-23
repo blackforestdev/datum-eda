@@ -15063,6 +15063,11 @@
           "work": "s4_world_cpu_failure_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/world-cpu-failure/result.json",
           "status": "Over-budget retained CPU world ownership now fails native frame/capture explicitly; complete construction/accounting remains open"
+        },
+        {
+          "work": "s4_schematic_cpu_owner_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/schematic-cpu-owner/result.json",
+          "status": "Companion schematic adopts existing active/retiring CPU scene ownership; complete CPU document aggregation and construction bounds remain open"
         }
       ]
     },
@@ -15151,6 +15156,11 @@
           "work": "s4_world_cpu_failure_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/world-cpu-failure/result.json",
           "status": "Over-budget retained CPU world ownership now fails native frame/capture explicitly; complete construction/accounting remains open"
+        },
+        {
+          "work": "s4_schematic_cpu_owner_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/schematic-cpu-owner/result.json",
+          "status": "Companion schematic adopts existing active/retiring CPU scene ownership; complete CPU document aggregation and construction bounds remain open"
         }
       ]
     },
@@ -33859,5 +33869,33 @@
       "Twelve recorded S4 gaps remain; no milestone/issue closure. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/world-cpu-failure/result.json"
+  },
+  "s4_schematic_cpu_owner_work": {
+    "status": "Companion schematic adopts existing active/retiring CPU scene ownership; complete CPU document aggregation and construction bounds remain open",
+    "base_commit": "b647d0b9",
+    "production_consumers": [
+      "Main render, visual capture, schematic hit test and hover call one Runtime::ensure_schematic_retained_scene helper",
+      "Session change/full invalidation use one clear_schematic_retained_scene helper; resize uses the existing shared ownership transition",
+      "Native render and capture validate companion accounted bytes before GPU submission"
+    ],
+    "retired_paths": [
+      "Four independent schematic scene builders with no CPU active-owner registration",
+      "Direct schematic clears that forgot geometry still pinned by renderer/GPU owners"
+    ],
+    "behavior": [
+      "Reuse RetainedSceneHistory ownership/accounting for companion active and retired geometry, without inserting companion history entries or introducing another cache. Preserve the existing 64 MiB owner allowance and explicit over-budget failure.",
+      "Register active scene payload on construction; observe remaining shared geometry on clear; preserve complete charge when resize reuses geometry and retire it otherwise. Native/capture checks now cover both existing owners. Hit and hover share the same retained construction path."
+    ],
+    "proof": {
+      "app": "385 application tests pass, 16 ignored. New test loads the existing simple-demo schematic fixture through the real companion constructor and validates active payload, resize disposition, pinned geometry after clear, refusal under test pressure and zero after release. Existing shared ownership and per-host failure/retry tests pass.",
+      "source": "All schematic assignment/clear sites now reside in the shared Runtime helper (initial None remains in runtime_init). Existing invalidation behavior and rendering/hit-test authority preserved.",
+      "lint_build": "Strict renderer/app all-targets Clippy with app visual feature and fresh visual application build pass. Source health 2273, dependency authority and governance pass.",
+      "scope": "Fixture proves implemented companion ownership only, not resolved schematic content performance or its missing product features. No native/backend/scale campaign, benchmark or full drift rerun; prior Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Separate board/companion owner checks are not a complete per-document aggregation across arbitrary external scene holders; that remains open with candidate construction peaks and externally cloned full-scene metadata. No MEM-WORLD-CPU/HISTORY closure.",
+      "Twelve recorded S4 gaps remain; original S5 qualification and absent schematic fixture admission remain unqualified. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/schematic-cpu-owner/result.json"
   }
 }
