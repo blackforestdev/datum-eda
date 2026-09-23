@@ -13,6 +13,16 @@ pub(crate) struct VertexAllocation {
 }
 
 impl VertexAllocation {
+    /// A fresh device allocation keeps the same admission owners as its predecessor.
+    pub(crate) fn replacement(&self) -> Self {
+        Self {
+            generation_budget: self.generation_budget.clone(),
+            retention_budget: self.retention_budget.clone(),
+            budgets: self.budgets.clone(),
+            ..Self::default()
+        }
+    }
+
     pub(crate) fn with_budget(budget: std::sync::Arc<crate::text_gpu::budget::Budget>) -> Self {
         Self::with_budgets(vec![budget])
     }
@@ -92,7 +102,7 @@ impl VertexAllocation {
         let mut permits = Vec::with_capacity(self.budgets.len() + 3);
         if let Some(budget) = &self.generation_budget {
             permits.push(budget.reserve(1).map_err(|_| {
-                anyhow::anyhow!("retained world stream already has two live GPU allocations")
+                anyhow::anyhow!("vertex stream already has two live GPU allocations")
             })?);
         }
         for budget in &self.budgets {

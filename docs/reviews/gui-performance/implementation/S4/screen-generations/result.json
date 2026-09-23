@@ -1,0 +1,46 @@
+{
+  "status": "Screen vertex replacement generation admission implemented; full replacement/resource qualification remains open",
+  "base_commit": "7bcd54a1",
+  "production_consumers": [
+    "All nine Renderer screen streams: surface grid, schematic underlay/overlay, panels, viewport underlay/overlay, board interaction, console vertices and menu overlay",
+    "Renderer::recreate_for_device for all shared native hosts"
+  ],
+  "retired_paths": [
+    "Screen vertex replacement limited only by byte capacity, without a live-generation ceiling",
+    "Fresh screen generation allowance on same-host device replacement"
+  ],
+  "behavior": [
+    "Each screen stream reserves one of two live generation permits before creating a replacement buffer. Submission references keep both byte and generation reservations until retirement. Refusal preserves the old buffer and uploaded content. Empty/clear does not reset held permits.",
+    "VertexAllocation::replacement preserves hard budgets, optional control retention and generation authority while starting with empty device resources. Renderer recovery migrates every screen stream through that owner. Existing world and surface generation paths remain."
+  ],
+  "proof": {
+    "renderer": "341 tests pass, 11 diagnostic/visual cases filtered. New actual GPU regression pins two differently sized generations, rejects a third while reading unchanged old pixels, clears and replaces the owner, verifies continued refusal, releases one old reference, retries with exact readback and observes zero byte reservations on final release.",
+    "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2272 and dependency/governance gates pass.",
+    "scope": "No native input or benchmark campaign. Full drift not rerun; prior Console golden discrepancy remains open."
+  },
+  "limits": [
+    "This bounds nine screen vertex streams, not every GPU resource generation; glyph/terminal/uniform and document-wide ownership review and S5 native/resource qualification remain required. MEM-REPLACEMENT remains open.",
+    "No numerical cap, dependency, vendoring, license, visual prototype, specification sequencing or acceptance change. Preserve GEFN, nonblocking resize and separate concurrent multi-device failure. Sixteen recorded S4 implementation gaps remain; no milestone or issue closure."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/screen-generations/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/screen-generations/tests.log.gz",
+      "uncompressed_sha256": "b947fa8b64057dd1993667d49402814c79b56d6092996a41d6df240b25a835a9"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/screen-generations/clippy.log.gz",
+      "uncompressed_sha256": "f4e390fc72577468b45d8941022fb261757a3e09e19cade3ac16273a5934ad5c"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/screen-generations/build.log.gz",
+      "uncompressed_sha256": "b40cfbee8eaadebe60435c668fafdb6089473f43d9061db895f4d9cd783b58b8"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_init.rs": "28dc083f94c01f66d81fd0980ae31a485e6ef1c9e3ff2c29fbc93b55fd236cff",
+    "crates/gui-render/src/render/screen_buffer.rs": "09b013bcf1b6372399293f949fc8496479af9d20605d0be676880e68e05199a8",
+    "crates/gui-render/src/render/screen_buffer/tests.rs": "8cb4bdc6ee9d6fd2c4d6f1c5771282fec2f40a5a0615b1a9e3514147ed3c2e83",
+    "crates/gui-render/src/render/vertex_allocation.rs": "f7151665c654fb66288a27523477f48e2d83164b2be7cc1c14e98d3acfd5e57b"
+  }
+}

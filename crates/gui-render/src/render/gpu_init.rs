@@ -42,6 +42,15 @@ impl Renderer {
         replacement.world_strokes_gpu = self.world_strokes_gpu.replacement();
         replacement.schematic_world_vertices_gpu = self.schematic_world_vertices_gpu.replacement();
         replacement.schematic_world_strokes_gpu = self.schematic_world_strokes_gpu.replacement();
+        replacement.surface_grid_gpu = self.surface_grid_gpu.replacement();
+        replacement.schematic_underlay_gpu = self.schematic_underlay_gpu.replacement();
+        replacement.schematic_overlay_gpu = self.schematic_overlay_gpu.replacement();
+        replacement.panel_gpu = self.panel_gpu.replacement();
+        replacement.viewport_underlay_gpu = self.viewport_underlay_gpu.replacement();
+        replacement.viewport_overlay_gpu = self.viewport_overlay_gpu.replacement();
+        replacement.board_interaction_gpu = self.board_interaction_gpu.replacement();
+        replacement.console_gpu.vertices = self.console_gpu.vertices.replacement();
+        replacement.menu_overlay_gpu = self.menu_overlay_gpu.replacement();
         Ok(replacement)
     }
 

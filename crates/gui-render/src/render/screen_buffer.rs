@@ -7,7 +7,6 @@ use super::vertex_allocation::VertexAllocation;
 // in snapshot payload, plus allocation headers. Shrink/uncached retirement trims
 // obsolete storage instead of retaining each stream's historical peak.
 
-#[derive(Default)]
 pub(crate) struct ScreenBuffer {
     snapshot: Box<[u8]>,
     allocation: VertexAllocation,
@@ -18,19 +17,39 @@ pub(crate) struct ScreenBuffer {
     pub(crate) last_upload_bytes: usize,
 }
 
+impl Default for ScreenBuffer {
+    fn default() -> Self {
+        Self {
+            snapshot: Box::default(),
+            allocation: VertexAllocation::default()
+                .with_generation_limit(crate::text_gpu::budget::Budget::new(2)),
+            pending: Vec::new(),
+            prepared: Box::default(),
+            has_prepared: false,
+            #[cfg(test)]
+            last_upload_bytes: 0,
+        }
+    }
+}
+
 impl ScreenBuffer {
     pub(crate) fn with_budgets(
         budgets: Vec<std::sync::Arc<crate::text_gpu::budget::Budget>>,
     ) -> Self {
         Self {
-            allocation: VertexAllocation::with_budgets(budgets),
+            allocation: VertexAllocation::with_budgets(budgets)
+                .with_generation_limit(crate::text_gpu::budget::Budget::new(2)),
             ..Self::default()
         }
     }
 
     pub(crate) fn with_budget(budget: std::sync::Arc<crate::text_gpu::budget::Budget>) -> Self {
+        Self::with_budgets(vec![budget])
+    }
+
+    pub(crate) fn replacement(&self) -> Self {
         Self {
-            allocation: VertexAllocation::with_budget(budget),
+            allocation: self.allocation.replacement(),
             ..Self::default()
         }
     }

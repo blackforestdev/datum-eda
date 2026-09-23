@@ -398,3 +398,52 @@ fn reverted_preparations_emit_no_upload_and_cancellation_keeps_submitted_bytes()
         bytemuck::cast_slice::<u32, u8>(&changed)
     );
 }
+
+#[test]
+#[ignore = "requires local GPU; run serially with visual feature"]
+fn two_generations_survive_clear_and_device_replacement() {
+    let instance = wgpu::Instance::default();
+    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let budget = crate::text_gpu::budget::Budget::new(1024);
+    let mut owner = ScreenBuffer::with_budget(budget.clone());
+    owner.sync(&device, &queue, "first", &[1_u32; 4]).unwrap();
+    owner.flush_uploads(&device, &queue);
+    let first = owner.submission_ref().unwrap();
+    owner.sync(&device, &queue, "second", &[2_u32; 16]).unwrap();
+    owner.flush_uploads(&device, &queue);
+    let second = owner.submission_ref().unwrap();
+    assert_eq!(budget.used(), 80);
+    assert!(owner.sync(&device, &queue, "third", &[3_u32; 64]).is_err());
+    assert_eq!(owner.buffer().unwrap().size(), 64);
+    assert_eq!(
+        read(&device, &queue, owner.buffer().unwrap(), 64),
+        bytemuck::cast_slice::<u32, u8>(&[2_u32; 16])
+    );
+    owner.sync::<u32>(&device, &queue, "empty", &[]).unwrap();
+    let mut replacement = owner.replacement();
+    drop(owner);
+    assert!(
+        replacement
+            .sync(&device, &queue, "recovery", &[3_u32; 64])
+            .is_err()
+    );
+    assert_eq!(
+        budget.used(),
+        80,
+        "clear/recovery cannot reset retiring permits"
+    );
+    drop(first);
+    replacement
+        .sync(&device, &queue, "retry", &[3_u32; 64])
+        .unwrap();
+    replacement.flush_uploads(&device, &queue);
+    assert_eq!(budget.used(), 320);
+    assert_eq!(
+        read(&device, &queue, replacement.buffer().unwrap(), 256),
+        bytemuck::cast_slice::<u32, u8>(&[3_u32; 64])
+    );
+    drop(second);
+    drop(replacement);
+    assert_eq!(budget.used(), 0);
+}
