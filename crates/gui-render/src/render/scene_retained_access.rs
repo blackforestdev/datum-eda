@@ -57,19 +57,60 @@ fn append_retained_draw_command(
     }
 }
 
+/// Preserve painter order with one admitted key/index allocation. Computing layer
+/// keys once avoids repeated layer searches during comparison; the original index
+/// makes equal-priority ordering stable without sort-owned allocation.
 pub(crate) fn sort_retained_draw_commands(
     commands: &mut [RetainedDrawCommand],
     layers: &[datum_gui_protocol::SceneLayer],
-) {
-    commands.sort_by_key(|command| {
-        let layer_id = match command {
-            RetainedDrawCommand::Quads { layer_id, .. }
-            | RetainedDrawCommand::Strokes { layer_id, .. } => layer_id.as_deref(),
-        };
-        layer_id
-            .map(|id| scene_layer_stack_priority(id, layers))
-            .unwrap_or(u32::MAX)
-    });
+    admit: impl FnOnce(usize) -> anyhow::Result<()>,
+) -> anyhow::Result<()> {
+    if commands
+        .iter()
+        .map(|command| draw_command_priority(command, layers))
+        .is_sorted()
+    {
+        return Ok(());
+    }
+    let layout = std::alloc::Layout::array::<(u32, usize)>(commands.len())?;
+    admit(crate::cpu_alloc::heap::allocation_bytes(layout))?;
+    let mut order = Vec::new();
+    order.try_reserve_exact(commands.len())?;
+    order.extend(
+        commands
+            .iter()
+            .enumerate()
+            .map(|(index, command)| (draw_command_priority(command, layers), index)),
+    );
+    order.sort_unstable();
+    // order[destination] names the original source. Rotate each permutation
+    // cycle in place, marking visited indices without a second scratch buffer.
+    for start in 0..order.len() {
+        let mut current = start;
+        loop {
+            let next = order[current].1;
+            order[current].1 = current;
+            if next == start {
+                break;
+            }
+            commands.swap(current, next);
+            current = next;
+        }
+    }
+    Ok(())
+}
+
+fn draw_command_priority(
+    command: &RetainedDrawCommand,
+    layers: &[datum_gui_protocol::SceneLayer],
+) -> u32 {
+    let layer_id = match command {
+        RetainedDrawCommand::Quads { layer_id, .. }
+        | RetainedDrawCommand::Strokes { layer_id, .. } => layer_id.as_deref(),
+    };
+    layer_id
+        .map(|id| scene_layer_stack_priority(id, layers))
+        .unwrap_or(u32::MAX)
 }
 
 impl RetainedScene {
@@ -189,7 +230,11 @@ impl RetainedScene {
             &reference_projection,
             state,
         );
-        scene_retained_access::sort_retained_draw_commands(&mut draw_commands, &state.scene.layers);
+        scene_retained_access::sort_retained_draw_commands(&mut draw_commands, &state.scene.layers, |bytes| {
+            retained_scene_owner::document_cpu::admit_constructor_allocation(
+                &budget, &scope, bytes, limit, "draw command sorting",
+            )
+        })?;
         trace_render_timing(format!(
             "retained text+board_graphics batches={}ms/{}q",
             board_graphics_started.elapsed().as_millis(),
@@ -265,6 +310,73 @@ impl RetainedScene {
 
 #[cfg(test)]
 mod retained_storage_tests {
+    #[test]
+    fn admitted_command_order_matches_stable_sort_and_refusal_preserves_input() {
+        let state = crate::gpu_surface_pass::board_fixture_state();
+        let scene = RetainedScene::from_workspace(&state, 960, 720);
+        let mut original = scene.draw_commands.as_ref().clone();
+        assert!(original.len() > 3);
+        // Add the supported layerless command case to the real board ranges;
+        // this fixture's authored commands may all share a render stage.
+        let mut layerless = original[0].clone();
+        match &mut layerless {
+            RetainedDrawCommand::Quads { layer_id, .. }
+            | RetainedDrawCommand::Strokes { layer_id, .. } => *layer_id = None,
+        }
+        original.push(layerless);
+        let mut sorted = original.clone();
+        let warm = crate::cpu_alloc::Scope::new("already-ordered-command-proof");
+        warm.with(|| {
+            sort_retained_draw_commands(&mut sorted, &state.scene.layers, |_| {
+                panic!("already ordered commands require no scratch admission")
+            })
+        })
+        .unwrap();
+        assert_eq!(sorted, original);
+        assert_eq!(warm.usage().peak_payload_bytes, 0);
+        // Exercise different cycles and equal-priority painter orders using the
+        // real board's command identities and ranges.
+        let mut reordered_cases = 0;
+        for rotation in [0, 1, original.len() / 2, original.len() - 1] {
+            let mut commands = original.clone();
+            commands.rotate_left(rotation);
+            commands.reverse();
+            let mut expected = commands.clone();
+            expected.sort_by_key(|command| draw_command_priority(command, &state.scene.layers));
+            let before = commands.clone();
+            let needs_sort = before != expected;
+            reordered_cases += usize::from(needs_sort);
+            assert_eq!(
+                sort_retained_draw_commands(&mut commands, &state.scene.layers, |_| {
+                    anyhow::bail!("test sort refusal")
+                })
+                .is_err(),
+                needs_sort
+            );
+            assert_eq!(commands, before);
+            let scope = crate::cpu_alloc::Scope::new("retained-command-sort-proof");
+            scope
+                .with(|| {
+                    sort_retained_draw_commands(&mut commands, &state.scene.layers, |bytes| {
+                        assert_eq!(scope.usage().peak_payload_bytes, 0);
+                        assert_eq!(
+                            bytes,
+                            crate::cpu_alloc::heap::capacity_bytes::<(u32, usize)>(expected.len())
+                        );
+                        Ok(())
+                    })
+                })
+                .unwrap();
+            assert_eq!(commands, expected);
+            assert_eq!(scope.usage().allocations, 0);
+            assert_eq!(
+                scope.usage().peak_payload_bytes as usize,
+                usize::from(needs_sort) * expected.len() * std::mem::size_of::<(u32, usize)>()
+            );
+        }
+        assert!(reordered_cases > 0, "permutation proof cannot be vacuous");
+    }
+
     #[test]
     fn retained_revisions_share_one_document_gpu_budget_for_vertices_and_strokes() {
         let state = datum_gui_protocol::load_fixture_workspace_state();
