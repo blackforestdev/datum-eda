@@ -6,6 +6,7 @@ pub(crate) struct RetainedBuffer<T> {
     source: Option<SharedGeometry<T>>,
     allocation: VertexAllocation,
     pending: bool,
+    uploaded: usize,
     document_budget: Option<std::sync::Arc<crate::text_gpu::budget::Budget>>,
 }
 
@@ -15,6 +16,7 @@ impl<T> Default for RetainedBuffer<T> {
             source: None,
             allocation: VertexAllocation::default(),
             pending: false,
+            uploaded: 0,
             document_budget: None,
         }
     }
@@ -37,18 +39,62 @@ impl<T: bytemuck::Pod> RetainedBuffer<T> {
         if self.pending {
             self.source = None;
             self.pending = false;
+            self.uploaded = 0;
         }
     }
 
-    pub(crate) fn flush_uploads(&mut self, queue: &wgpu::Queue) {
-        if self.pending {
-            queue.write_buffer(
-                self.buffer().unwrap(),
-                0,
-                bytemuck::cast_slice(self.source.as_ref().unwrap().as_ref()),
-            );
-            self.pending = false;
+    pub(crate) fn matches_source(&self, source: &SharedGeometry<T>) -> bool {
+        if source.is_empty() {
+            self.source.as_ref().is_none_or(|old| old.is_empty())
+        } else {
+            self.source.as_ref().is_some_and(|old| old.ptr_eq(source))
         }
+    }
+
+    pub(crate) fn pending_bytes(&self) -> usize {
+        if self.pending {
+            std::mem::size_of_val(self.source.as_ref().unwrap().as_ref()) - self.uploaded
+        } else {
+            0
+        }
+    }
+
+    pub(crate) fn append_chunk<'a>(
+        &'a self,
+        remaining: &mut usize,
+        out: &mut Vec<crate::text_gpu::upload::BufferUpload<'a>>,
+    ) -> usize {
+        let count = self.pending_bytes().min(*remaining);
+        if count != 0 {
+            let bytes: &[u8] = bytemuck::cast_slice(self.source.as_ref().unwrap().as_ref());
+            out.push(crate::text_gpu::upload::BufferUpload {
+                buffer: self.buffer().unwrap(),
+                offset: self.uploaded as u64,
+                bytes: &bytes[self.uploaded..self.uploaded + count],
+            });
+            *remaining -= count;
+        }
+        count
+    }
+
+    pub(crate) fn consume_chunk(&mut self, count: usize) {
+        assert!(count <= self.pending_bytes());
+        self.uploaded += count;
+        if self.pending
+            && self.uploaded == std::mem::size_of_val(self.source.as_ref().unwrap().as_ref())
+        {
+            self.pending = false;
+            self.uploaded = 0;
+        }
+    }
+
+    #[cfg(all(test, feature = "visual"))]
+    pub(crate) fn flush_uploads(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) {
+        let mut uploads = Vec::new();
+        let mut remaining = usize::MAX;
+        let count = self.append_chunk(&mut remaining, &mut uploads);
+        crate::text_gpu::upload::submit_buffers_for_test(device, queue, &uploads);
+        self.consume_chunk(count);
     }
 
     /// Return source bytes planned for upload, zero for a warm source.
@@ -90,6 +136,7 @@ impl<T: bytemuck::Pod> RetainedBuffer<T> {
             self.document_budget = budget.cloned();
         }
         self.pending = true;
+        self.uploaded = 0;
         self.source = Some(source.clone());
         Ok(bytes.len())
     }
@@ -145,7 +192,7 @@ mod tests {
         let mut first = RetainedBuffer::default();
         let mut second = RetainedBuffer::default();
         first.sync(&device, &queue, "first", &a).unwrap();
-        first.flush_uploads(&queue);
+        first.flush_uploads(&device, &queue);
         second.sync(&device, &queue, "second", &revision).unwrap();
         assert_eq!(budget.used(), 32);
         let held = first.submission_ref().unwrap();
@@ -223,7 +270,7 @@ mod tests {
             Some(&buffer),
             "same-size GPU capacity reused"
         );
-        retained.flush_uploads(&queue);
+        retained.flush_uploads(&device, &queue);
         assert_eq!(
             read(&device, &queue, &buffer, 16),
             bytemuck::cast_slice::<u32, u8>(replacement.as_ref())
@@ -259,7 +306,7 @@ mod tests {
         );
         assert_ne!(retained.buffer(), Some(&peak));
         assert_eq!(retained.sync(&device, &queue, "proof", &small).unwrap(), 0);
-        retained.flush_uploads(&queue);
+        retained.flush_uploads(&device, &queue);
         assert_eq!(
             read(&device, &queue, retained.buffer().unwrap(), 60),
             bytemuck::cast_slice::<u32, u8>(&small)

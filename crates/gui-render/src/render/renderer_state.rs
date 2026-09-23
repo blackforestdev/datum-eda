@@ -10,6 +10,7 @@ pub use crate::text_gpu::{
 };
 
 pub struct Renderer {
+    pub(super) cold_world: gpu_vertex_upload::ColdWorldUploads,
     pub(super) screen_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
     pub(super) control_meshes: crate::global_preferences_primitives::ControlMeshCache,
     pub(super) schematic_world_strokes_gpu:

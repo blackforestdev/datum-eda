@@ -1,0 +1,88 @@
+{
+  "status": "Default retained-world uploads use bounded explicit staging and native upload-only continuation; complete staging and qualification remain open",
+  "base_commit": "aa0ca632",
+  "production_consumers": [
+    "Board/revision retained world vertices and strokes",
+    "Schematic retained world vertices and strokes",
+    "Main Runtime and shared Global/Project/New native submission adapters; auxiliary empty-world paths remain single-attempt",
+    "Explicit offscreen/capture convenience renders"
+  ],
+  "retired_paths": [
+    "Opaque queue.write_buffer uploads for retained-world geometry",
+    "Requirement to stage an entire cold retained-world payload before one native frame can proceed"
+  ],
+  "behavior": [
+    "Borrow pinned immutable geometry in chunks of at most4 MiB across all four world streams. Charge actual mapped capacity to existing host16 MiB/process-staging64 MiB/GPU512 MiB admission, then hold source/destination GPU allocations through completion. No full-world scratch copy or new dependency.",
+    "Native render_with_submission returns false after an upload-only submission. Both native adapters record the ordinary queue receipt, discard the unpresented acquisition, retain damage and request the existing bounded nonblocking queue-retry path. No ordinary native handler sleeps or waits for readback.",
+    "Resume unchanged sources at their committed byte offset. A replaced or emptied source invalidates partial continuation; final rendering recomposes current state. Only a complete current-state render can reach native presentation. Warm camera/pointer frames add no world-copy submission.",
+    "The explicit offscreen/capture render convenience waits between chunks; native code uses the yielding API. This preserves existing capture callers without introducing a native wait loop.",
+    "Publish actual world-copy chunk and byte counters. Opt-in measurement records every cold submission and final render as incomplete under one frame identity with unique submission IDs and an explicit cold_upload_multisubmission_timestamps_unqualified reason. Do not emit a numeric partial-frame timing sample; later warm frames still produce ordinary samples."
+  ],
+  "proof": {
+    "renderer": "309 renderer tests pass,11 diagnostic/visual cases filtered. Actual-GPU test uploads >4 MiB across two chunks before presentation, checks staging bound/retirement and source byte totals, replaces a source mid-upload, reads back the exact final buffer, rejects empty-source reuse, and verifies warm frames add no chunks. It also checks explicit incomplete cold measurement receipts and resumed warm numeric samples.",
+    "app": "380 application tests pass,16 ignored; native submission/recovery adapters compile and their existing coordinator/receipt tests pass.",
+    "lint": "Visual all-targets renderer/app Clippy -D warnings and source health2247 pass; dependency authority and governance checks pass.",
+    "build": "Fresh native visual application build passes.",
+    "native": "1680x1050 datum-test/R1 native capture completes through upload-only retries and exactly matches screen-staging/native.png. No OS-input or multi-host/endurance latency qualification.",
+    "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels (0.384318%), dat-console-revision-golden-hrak. Preceding gates pass; later gates unrun; no full-drift acceptance.",
+    "development": "Initial check exposed private TextureUpload at the now-shared builder boundary; its crate visibility was corrected. Initial309-test pass retained; final suite covers empty-source invalidation and removes a test-only temporary-constant borrow warning."
+  },
+  "limits": [
+    "Terminal image pixels still use opaque queue staging. Oversized glyph-atlas batches still need bounded continuation; full pending CPU payload/metadata/scratch, query/readback and total accounting remain unfinished. No complete MEM-STAGING or MEM-GPU-TOTAL closure.",
+    "Cold multi-submission GPU timing remains explicitly unqualified under MET-04/GPU-01..03/AC-03. Complete timestamp/span attribution and native/endurance/fault/fairness distributions remain required before final qualification. Warm timing proof does not qualify cold frames.",
+    "No full world-generation retention, CPU history, all-backend/native/resource acceptance or S4/S5 closure. Preserve separate concurrent multi-device failure and nonblocking resize CPU exclusion.",
+    "No dependency, vendor, licensing, prototype, font, visual layout or numerical admission-budget change. Four MiB is a transfer chunk size below existing admission ceilings. Preserve GEFN."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/world-chunks/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-chunks/tests.log.gz",
+      "uncompressed_sha256": "3d6ed85a3e3cc51a85346126d38a7e7537d48e20128de9b9cf0b6735339b8acc"
+    },
+    "initial-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-chunks/initial-tests.log.gz",
+      "uncompressed_sha256": "341f6ecd69c2d776350de32a90c256d5353edf28188986112ca98cbfc102041c"
+    },
+    "app-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-chunks/app-tests.log.gz",
+      "uncompressed_sha256": "12ebb223051d9be50e027b2027a11b99635202475748d8e7b450ca3b8bc2ddf1"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-chunks/clippy.log.gz",
+      "uncompressed_sha256": "fc87b3bff09f569951568d9db8781e9998752ee7b94558f6dcc6e69269d136cc"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-chunks/build.log.gz",
+      "uncompressed_sha256": "3810831ea37753bf531ee4bc2783e4625db3823228cbb67c383298a808a33512"
+    },
+    "native": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-chunks/native.log.gz",
+      "uncompressed_sha256": "6560eff0899e521e7230efd02ccb3fa1a513b7dd28e1f48d8c6b6dee14f753bb"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-chunks/drift.log.gz",
+      "uncompressed_sha256": "9ed86915047434a84078ac80f0ff3a062c66f713eba4476703ec448af671599d"
+    },
+    "initial-check": {
+      "path": "docs/reviews/gui-performance/implementation/S4/world-chunks/initial-check.log.gz",
+      "uncompressed_sha256": "5c4acf83280e613b483c88a17e8c90a18048cd5cca3b17a019afb6f350809c4d"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/global_preferences_window.rs": "364ad92d5bd9b62e4146ba8ac5be8b637143572bd76d26d9263a3b0f34cc348c",
+    "crates/gui-app/src/native_gpu_measurements.rs": "8253a1ca76dc54d1ea06b1a8d0a3068b2507e05d9fb8384e1d6adac22acbe62c",
+    "crates/gui-app/src/native_surface_transaction.rs": "c4d0c99b30c7429a30f695be81c6e6a02ef73e8c598abf9d362cff5a5efa5263",
+    "crates/gui-app/src/runtime_present.rs": "5d3cee10831815057433e6d3c1b66c6216b976d3f3514898849e9e13eb11e9eb",
+    "crates/gui-render/src/render/cold_world_upload.rs": "435fb2dea865647545b9d7c7b0298ae85bcd139be89bc415b8a12e52fa9dfbac",
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "efb9773a21983df87aa2845d9b1526ec97dfc98cf0c972e73067c5416c600751",
+    "crates/gui-render/src/render/gpu_frame.rs": "81840d78f20e692c92d861169fb4360ed5e32a4b0df7ef5d28fc31ba606b0605",
+    "crates/gui-render/src/render/gpu_init.rs": "f619a9d03c4c254dbf2e43903be14884618ce0d187c80461868d5245664fb59d",
+    "crates/gui-render/src/render/gpu_measurement_api.rs": "5a122d3bbdb1f29c3fd8e54da7cc6bd93176f4599632d368e7231a816a6959af",
+    "crates/gui-render/src/render/gpu_measurements.rs": "f27198137a1f9bc1f77fd499c9cbb2436c5c52aa20c9a92121795ffc52a796cd",
+    "crates/gui-render/src/render/gpu_vertex_upload.rs": "ed5c6a872f26969f6c40bc8f89138442e36bb4a36885b12dca2e4d6e2ddbbcf5",
+    "crates/gui-render/src/render/renderer_state.rs": "0699b66df65c9e7c3cdc8476d779599f599fc313de20e8fd1aee51ff3e15a048",
+    "crates/gui-render/src/render/retained_buffer.rs": "c23f973fc5a5283a9761db72b266402a4453c9bc184e4f6189ff6333bafc2e48",
+    "crates/gui-render/src/text_gpu/upload.rs": "6cfff965a7546b92b65a52e509a409d13c55e40f8523b586c7772b2cd4cbb099"
+  },
+  "binary_sha256": "99943b3f5c485b0698ad5d55209068f8fa1f8eef087a8403c36a9f370f41df0c"
+}

@@ -432,7 +432,10 @@ impl GlobalPreferencesWindowSurface {
         );
         self.surface_transaction
             .observe_attachment(&self.renderer, &frame);
-        rendered?;
+        if !rendered? {
+            self.surface_transaction.defer_upload_continuation();
+            return Ok(false);
+        }
         if runtime.device_health.failed() {
             return Ok(false);
         }

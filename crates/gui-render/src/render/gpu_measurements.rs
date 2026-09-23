@@ -31,6 +31,7 @@ pub struct GpuFrameSample {
 
 #[derive(Debug, Clone)]
 pub struct GpuMeasurementCancellation {
+    pub reason: &'static str,
     pub host: u64,
     pub device_epoch: u64,
     pub frame: u64,
@@ -188,6 +189,30 @@ impl GpuMeasurements {
         })
     }
 
+    pub(crate) fn incomplete_upload_submission(
+        &mut self,
+        frame: Option<u64>,
+    ) -> anyhow::Result<u64> {
+        anyhow::ensure!(!self.cancelled, "GPU measurement device epoch cancelled");
+        let frame = if let Some(frame) = frame {
+            frame
+        } else {
+            self.next_frame = self
+                .next_frame
+                .checked_add(1)
+                .ok_or_else(|| anyhow::anyhow!("GPU measurement frame ID exhausted"))?;
+            self.next_frame
+        };
+        (self.cancellation_observer)(GpuMeasurementCancellation {
+            host: self.host,
+            device_epoch: self.epoch,
+            frame,
+            submission: Some(next_submission_id()?),
+            reason: "cold_upload_multisubmission_timestamps_unqualified",
+        });
+        Ok(frame)
+    }
+
     pub(crate) fn begin(&mut self) -> anyhow::Result<FrameQueries> {
         anyhow::ensure!(!self.cancelled, "GPU measurement device epoch cancelled");
         self.clock.advance(Instant::now());
@@ -203,10 +228,7 @@ impl GpuMeasurements {
             .next_frame
             .checked_add(1)
             .ok_or_else(|| anyhow::anyhow!("GPU measurement frame ID exhausted"))?;
-        static SUBMISSION: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
-        let submission = SUBMISSION
-            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
-            .map_err(|_| anyhow::anyhow!("GPU submission identity exhausted"))?;
+        let submission = next_submission_id()?;
         let signal = Arc::new(AtomicU8::new(ENCODING));
         slot.pending = Some(Pending {
             frame: self.next_frame,
@@ -383,6 +405,7 @@ impl GpuMeasurements {
         for slot in &mut self.slots {
             if let Some(pending) = slot.pending.take() {
                 (self.cancellation_observer)(GpuMeasurementCancellation {
+                    reason: "host_or_device_closed_before_collection",
                     host: self.host,
                     device_epoch: self.epoch,
                     frame: pending.frame,
@@ -440,3 +463,10 @@ fn decode(names: &[&'static str], ticks: &[u64], period: f64) -> anyhow::Result<
 #[cfg(test)]
 #[path = "gpu_measurements_tests.rs"]
 mod tests;
+
+fn next_submission_id() -> anyhow::Result<u64> {
+    static SUBMISSION: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+    SUBMISSION
+        .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
+        .map_err(|_| anyhow::anyhow!("GPU submission identity exhausted"))
+}

@@ -132,7 +132,10 @@ impl Runtime {
         );
         self.surface_transaction
             .observe_attachment(&self.renderer, &frame);
-        rendered?;
+        if !rendered? {
+            self.surface_transaction.defer_upload_continuation();
+            return Ok(false);
+        }
         let renderer_elapsed = renderer_started.elapsed();
         append_gui_verbose_diagnostic_line(|| {
             format!("renderer render end {}ms", renderer_elapsed.as_millis())

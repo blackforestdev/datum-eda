@@ -58,7 +58,7 @@ impl Host {
         };
         if enabled {
             renderer.enable_gpu_measurements(device, queue, id, epoch, Box::new(|cancelled| {
-                let record = serde_json::json!({"host":cancelled.host,"device_epoch":cancelled.device_epoch,"frame":cancelled.frame,"submission":cancelled.submission,"status":"incomplete","reason":"host_or_device_closed_before_collection"});
+                let record = serde_json::json!({"host":cancelled.host,"device_epoch":cancelled.device_epoch,"frame":cancelled.frame,"submission":cancelled.submission,"status":"incomplete","reason":cancelled.reason});
                 // Always leave a stderr receipt even if the diagnostic file is unavailable.
                 eprintln!("gpu_measurement_incomplete {record}");
                 let result = std::fs::OpenOptions::new().append(true).open(gui_runtime_support::gui_diagnostic_log_path())
