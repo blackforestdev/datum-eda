@@ -34,6 +34,18 @@ impl ScreenBuffer {
         }
     }
 
+    pub(crate) fn with_retention_budget(
+        mut self,
+        budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
+    ) -> Self {
+        self.allocation = self.allocation.with_retention_budget(budget);
+        self
+    }
+
+    pub(crate) fn retire_uncached_gpu(&mut self) {
+        self.allocation.retire_uncached();
+    }
+
     pub(crate) fn buffer(&self) -> Option<&wgpu::Buffer> {
         self.allocation.buffer()
     }

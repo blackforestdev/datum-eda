@@ -335,3 +335,134 @@ fn frame_staging_refusal_preserves_uniform_and_screen_plans_until_retry() {
             .is_none()
     );
 }
+
+#[test]
+#[ignore = "requires local GPU and serial resource admission"]
+fn control_retention_bypasses_full_cache_and_retires_after_submission() {
+    let mut host = hardware_renderer(64, 64);
+    let retention = host.renderer.control_gpu_budget.clone();
+    let screen = host.renderer.screen_budget.clone();
+    let baseline = screen.used();
+    let full = vec![0x12345678u32; 1024 * 1024];
+    host.renderer
+        .panel_gpu
+        .sync(&host.device, &host.queue, "retained", &full)
+        .unwrap();
+    assert_eq!(retention.used(), 4 * 1024 * 1024);
+    let retained_hold = host.renderer.panel_gpu.submission_ref().unwrap();
+    let replacement = host
+        .renderer
+        .recreate_for_device(
+            &host.device,
+            &host.queue,
+            wgpu::TextureFormat::Rgba8UnormSrgb,
+            1,
+        )
+        .unwrap();
+    assert!(std::sync::Arc::ptr_eq(
+        &retention,
+        &replacement.control_gpu_budget
+    ));
+    drop(replacement);
+    let small = [0x87654321u32; 16];
+    host.renderer
+        .menu_overlay_gpu
+        .sync(&host.device, &host.queue, "uncached", &small)
+        .unwrap();
+    let transient_hold = host.renderer.menu_overlay_gpu.submission_ref().unwrap();
+    assert_eq!(retention.used(), 4 * 1024 * 1024);
+    assert_eq!(screen.used(), baseline + full.len() as u64 * 4 + 64);
+    let mut batch = host
+        .renderer
+        .flush_frame_uploads(&host.device, &host.queue)
+        .unwrap()
+        .unwrap();
+    host.queue.submit([batch.command()]);
+    host.renderer.hold_frame_submission(&host.queue);
+    batch.hold(&host.queue);
+    assert!(host.renderer.panel_gpu.buffer().is_some());
+    assert!(host.renderer.menu_overlay_gpu.buffer().is_none());
+    host.device
+        .poll(wgpu::PollType::wait_indefinitely())
+        .unwrap();
+    assert_eq!(screen.used(), baseline + full.len() as u64 * 4 + 64);
+    drop(transient_hold);
+    assert_eq!(screen.used(), baseline + full.len() as u64 * 4);
+    // Removing the cache owner cannot forgive the in-flight reservation.
+    host.renderer
+        .panel_gpu
+        .sync::<u32>(&host.device, &host.queue, "empty", &[])
+        .unwrap();
+    assert_eq!(retention.used(), 4 * 1024 * 1024);
+    drop(retained_hold);
+    assert_eq!(retention.used(), 0);
+    host.renderer
+        .menu_overlay_gpu
+        .sync(&host.device, &host.queue, "retry", &small)
+        .unwrap();
+    assert_eq!(retention.used(), 64);
+    let mut batch = host
+        .renderer
+        .flush_frame_uploads(&host.device, &host.queue)
+        .unwrap()
+        .unwrap();
+    host.queue.submit([batch.command()]);
+    host.renderer.hold_frame_submission(&host.queue);
+    batch.hold(&host.queue);
+    host.device
+        .poll(wgpu::PollType::wait_indefinitely())
+        .unwrap();
+    assert!(host.renderer.menu_overlay_gpu.buffer().is_some());
+    host.renderer
+        .menu_overlay_gpu
+        .sync(&host.device, &host.queue, "warm", &small)
+        .unwrap();
+    assert_eq!(host.renderer.menu_overlay_gpu.last_upload_bytes, 0);
+}
+
+#[test]
+#[ignore = "requires local GPU and serial resource admission"]
+fn oversized_control_gpu_buffer_uploads_all_content_without_retention() {
+    let mut host = hardware_renderer(64, 64);
+    let words = vec![0x76543210u32; 1024 * 1024 + 1];
+    host.renderer
+        .panel_gpu
+        .sync(&host.device, &host.queue, "oversized-control", &words)
+        .unwrap();
+    assert_eq!(host.renderer.control_mesh_retained_gpu_bytes(), 0);
+    let source = host.renderer.panel_gpu.buffer().unwrap().clone();
+    let held = host.renderer.panel_gpu.submission_ref().unwrap();
+    let mut batch = host
+        .renderer
+        .flush_frame_uploads(&host.device, &host.queue)
+        .unwrap()
+        .unwrap();
+    host.queue.submit([batch.command()]);
+    host.renderer.hold_frame_submission(&host.queue);
+    batch.hold(&host.queue);
+    assert!(host.renderer.panel_gpu.buffer().is_none());
+    let target = host.device.create_buffer(&wgpu::BufferDescriptor {
+        label: Some("oversized-control-readback"),
+        size: source.size(),
+        usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
+        mapped_at_creation: false,
+    });
+    let mut encoder = host.device.create_command_encoder(&Default::default());
+    encoder.copy_buffer_to_buffer(&source, 0, &target, 0, source.size());
+    host.queue.submit([encoder.finish()]);
+    let (tx, rx) = std::sync::mpsc::channel();
+    target
+        .slice(..)
+        .map_async(wgpu::MapMode::Read, move |r| tx.send(r).unwrap());
+    host.device
+        .poll(wgpu::PollType::wait_indefinitely())
+        .unwrap();
+    rx.recv().unwrap().unwrap();
+    assert_eq!(
+        &*target.slice(..).get_mapped_range(),
+        bytemuck::cast_slice::<u32, u8>(&words)
+    );
+    target.unmap();
+    drop(source);
+    drop(held);
+}
