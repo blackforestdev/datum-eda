@@ -17357,6 +17357,11 @@
           "work": "s4_query_resource_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/query-resources/result.json",
           "status": "Existing opt-in query/resolve/readback resources now use shared global admission and completion retention; query bytes are logical API capacity. Full accounting, cold timing and qualification remain open."
+        },
+        {
+          "work": "s4_capture_gpu_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/capture-gpu/result.json",
+          "status": "Shared visual capture allocations now obey process GPU admission and tracked completion lifetimes; full resource acceptance remains open"
         }
       ]
     },
@@ -33219,5 +33224,34 @@
       "No full MEM-MESH-GPU, S4/S5 or issue closure. Preserve GEFN, nonblocking resize and separate concurrent multi-device failure. No new dependency, vendoring, license, prototype or specification amendment."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/control-gpu/result.json"
+  },
+  "s4_capture_gpu_adoption_work": {
+    "status": "Shared visual capture allocations now obey process GPU admission and tracked completion lifetimes; full resource acceptance remains open",
+    "base_commit": "2918179d",
+    "production_consumers": [
+      "Native Runtime visual screenshot target and readback",
+      "OffscreenRenderer workspace/terminal capture and warm rendering",
+      "Existing renderer pixel-parity capture helper"
+    ],
+    "retired_paths": [
+      "Independent raw screenshot/offscreen target texture allocation",
+      "Independent raw screenshot/offscreen readback buffer allocation"
+    ],
+    "behavior": [
+      "One Datum-owned capture resource module reserves actual four-byte texture extents and padded readback capacity against the existing 512 MiB process GPU limit before API allocation. Existing RGBA/BGRA formats, output pixels and row padding are preserved.",
+      "Both render and copy submissions hold charged resources through completion, including an early render/readback error and warm rendering without a readback. Independent capture owners appear in the existing process allocation registry.",
+      "Readback is not upload staging; its capacity is classified as Readback and charged to the GPU process total. No new subcap or changes to the default renderer path."
+    ],
+    "proof": {
+      "renderer": "333 renderer tests pass; 11 diagnostic/visual cases filtered. New actual-GPU test verifies target/readback capacity admission, refusal before creation, submission and pinned-reference retirement to baseline. Existing capture/pixel regressions pass.",
+      "lint_build": "Strict visual renderer/app all-targets Clippy and fresh visual application build pass. Source health 2268, dependency authority and governance gates pass. Initial Clippy exposed a raw-texture test helper; migrated that helper to the shared owner and preserved the failed log.",
+      "scope": "No native input or benchmark campaign. Prior Console golden discrepancy remains unresolved; full drift not rerun."
+    },
+    "limits": [
+      "Only the existing four-byte RGBA/BGRA visual capture formats are supported; driver residency, CPU image allocations, internal API metadata and broader accounting/qualification remain separate.",
+      "This closes a feature-gated capture allocation bypass, not full MEM-GPU-TOTAL/ACC-01, S4/S5 or issue acceptance. GEFN, nonblocking resize and concurrent multi-device qualification boundaries remain unchanged.",
+      "No dependency, vendoring, license, prototype, numerical budget or specification amendment."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/capture-gpu/result.json"
   }
 }

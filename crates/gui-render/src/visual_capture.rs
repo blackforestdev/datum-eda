@@ -118,17 +118,12 @@ impl OffscreenRenderer {
         camera: Option<CameraState>,
         scale_factor: f32,
         terminal_snapshot: Option<&datum_terminal_core::RenderSnapshot>,
-    ) -> anyhow::Result<wgpu::Texture> {
-        let target = self.device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("datum-gui-visual-capture-target"),
-            size: self.extent(),
-            mip_level_count: 1,
-            sample_count: 1,
-            dimension: wgpu::TextureDimension::D2,
-            format: OUTPUT_FORMAT,
-            usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
-            view_formats: &[],
-        });
+    ) -> anyhow::Result<crate::capture_resource::CaptureTarget> {
+        let target = crate::capture_resource::CaptureTarget::new(
+            &self.device,
+            self.extent(),
+            OUTPUT_FORMAT,
+        )?;
         let target_view = target.create_view(&wgpu::TextureViewDescriptor::default());
         let retained =
             RetainedScene::from_workspace_for_surface(state, self.width, self.height, scale_factor);
@@ -165,7 +160,7 @@ impl OffscreenRenderer {
             )
         };
 
-        self.renderer.render(
+        let rendered = self.renderer.render(
             &self.device,
             &self.queue,
             &target_view,
@@ -174,7 +169,9 @@ impl OffscreenRenderer {
             schematic_retained.as_ref(),
             self.width,
             self.height,
-        )?;
+        );
+        target.hold_submission(&self.queue);
+        rendered?;
 
         Ok(target)
     }
@@ -187,17 +184,16 @@ impl OffscreenRenderer {
         }
     }
 
-    fn read_texture(&self, texture: &wgpu::Texture) -> anyhow::Result<RgbaImage> {
+    fn read_texture(
+        &self,
+        texture: &crate::capture_resource::CaptureTarget,
+    ) -> anyhow::Result<RgbaImage> {
         let unpadded_bytes_per_row = self.width * COPY_BYTES_PER_PIXEL;
         let padded_bytes_per_row =
             align_to(unpadded_bytes_per_row, WGPU_COPY_BYTES_PER_ROW_ALIGNMENT);
         let buffer_size = padded_bytes_per_row as u64 * self.height as u64;
-        let output_buffer = self.device.create_buffer(&wgpu::BufferDescriptor {
-            label: Some("datum-gui-visual-capture-readback-buffer"),
-            size: buffer_size,
-            usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
-            mapped_at_creation: false,
-        });
+        let output_buffer =
+            crate::capture_resource::CaptureReadback::new(&self.device, buffer_size)?;
         let mut encoder = self
             .device
             .create_command_encoder(&wgpu::CommandEncoderDescriptor {
@@ -221,6 +217,8 @@ impl OffscreenRenderer {
             self.extent(),
         );
         self.queue.submit([encoder.finish()]);
+        texture.hold_submission(&self.queue);
+        output_buffer.hold_submission(&self.queue);
 
         let buffer_slice = output_buffer.slice(..);
         let (sender, receiver) = mpsc::channel();

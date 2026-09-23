@@ -71,16 +71,12 @@ fn capture_retained(
     prepared: &PreparedScene,
     retained: &RetainedScene,
 ) -> RgbaImage {
-    let target = renderer.device.create_texture(&wgpu::TextureDescriptor {
-        label: Some("dialog-parity-target"),
-        size: renderer.extent(),
-        mip_level_count: 1,
-        sample_count: 1,
-        dimension: wgpu::TextureDimension::D2,
-        format: OUTPUT_FORMAT,
-        usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
-        view_formats: &[],
-    });
+    let target = crate::capture_resource::CaptureTarget::new(
+        &renderer.device,
+        renderer.extent(),
+        OUTPUT_FORMAT,
+    )
+    .unwrap();
     renderer
         .renderer
         .render(

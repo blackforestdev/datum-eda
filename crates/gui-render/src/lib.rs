@@ -14,6 +14,8 @@ use std::ops::Range;
 use taffy::prelude::*;
 use uuid::Uuid;
 mod bottom_dock;
+#[cfg(feature = "visual")]
+pub mod capture_resource;
 mod datum_console;
 mod design_tokens;
 mod global_preferences_dialog;
