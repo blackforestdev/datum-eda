@@ -15123,6 +15123,11 @@
           "work": "s4_hit_index_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/hit-index-admission/result.json",
           "status": "Shared hit index reserves exact tree capacity and retained constructors admit its storage before allocation"
+        },
+        {
+          "work": "s4_scene_publication_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/scene-publication/result.json",
+          "status": "Retained shared-owner and registry-publication allocations admitted before construction/publication"
         }
       ]
     },
@@ -15271,6 +15276,11 @@
           "work": "s4_hit_index_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/hit-index-admission/result.json",
           "status": "Shared hit index reserves exact tree capacity and retained constructors admit its storage before allocation"
+        },
+        {
+          "work": "s4_scene_publication_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/scene-publication/result.json",
+          "status": "Retained shared-owner and registry-publication allocations admitted before construction/publication"
         }
       ]
     },
@@ -34536,5 +34546,31 @@
       "Twelve implementation gaps and original S5 qualification remain required. No full CPU/history predicate closure, dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN, Console golden disposition and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/hit-index-admission/result.json"
+  },
+  "s4_scene_publication_work": {
+    "status": "Retained shared-owner and registry-publication allocations admitted before construction/publication",
+    "base_commit": "7ca77318",
+    "production_consumers": [
+      "Board and companion retained scene construction",
+      "Shared document CPU registry publication through native and capture constructors"
+    ],
+    "retired_paths": [
+      "Shared scene Arc owners and geometry shrink overlap had no constructor admission check",
+      "Observer registry grew infallibly after scene construction without publication admission"
+    ],
+    "behavior": [
+      "Admit measured geometry/command/hit shared-owner containers plus possible old/new payload overlap when converting spare Vec capacity to boxed geometry. Prevent uninstrumented calls from caching zero measured command/hit owner sizes. Before registry publication, hold its existing lock, include live document bytes, constructor storage and full proposed replacement observer-vector capacity, reserve fallibly, then publish the observer. Propagate refusal through the existing fallible constructor path; no partial candidate is published."
+    ],
+    "proof": {
+      "renderer": "363 renderer tests pass, 11 filtered. New real-board cases verify shared-owner refusal creates no owners and preserves staging; registry refusal leaves usage unchanged, retry registers unique metadata, and final owner release/prune returns candidate allocation count to zero. Existing allocator conformance, constructor, hit, GPU and painter tests pass.",
+      "app": "394 app tests pass, 16 ignored.",
+      "lint_build": "Strict renderer/app all-targets Clippy with app visual feature, fresh visual app build and source health2280/dependency/governance/format checks pass.",
+      "scope": "No native OS-input/backend/scale/endurance or broad drift qualification. The uninstrumented-library fallback is not full native allocator conformance; shipped/native checks use the installed Datum allocator."
+    },
+    "limits": [
+      "Earlier quad/stroke/command/hit/layout production, initial identity/registry and pruning allocations, scope bookkeeping and complete staging/concurrent constructor admission remain open. Infallible small shared-owner allocation failure is not claimed to recover from process-wide exhaustion. External weak-container ownership reconciliation remains required.",
+      "Twelve implementation gaps and original S5 qualification remain open. No full CPU/history predicate closure, dependency/vendor/license, prototype, numerical cap or sequencing amendment. Preserve GEFN, Console golden disposition and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/scene-publication/result.json"
   }
 }

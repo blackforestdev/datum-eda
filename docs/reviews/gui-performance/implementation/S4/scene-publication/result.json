@@ -1,0 +1,50 @@
+{
+  "status": "Retained shared-owner and registry-publication allocations admitted before construction/publication",
+  "base_commit": "7ca77318",
+  "production_consumers": [
+    "Board and companion retained scene construction",
+    "Shared document CPU registry publication through native and capture constructors"
+  ],
+  "retired_paths": [
+    "Shared scene Arc owners and geometry shrink overlap had no constructor admission check",
+    "Observer registry grew infallibly after scene construction without publication admission"
+  ],
+  "behavior": [
+    "Admit measured geometry/command/hit shared-owner containers plus possible old/new payload overlap when converting spare Vec capacity to boxed geometry. Prevent uninstrumented calls from caching zero measured command/hit owner sizes. Before registry publication, hold its existing lock, include live document bytes, constructor storage and full proposed replacement observer-vector capacity, reserve fallibly, then publish the observer. Propagate refusal through the existing fallible constructor path; no partial candidate is published."
+  ],
+  "proof": {
+    "renderer": "363 renderer tests pass, 11 filtered. New real-board cases verify shared-owner refusal creates no owners and preserves staging; registry refusal leaves usage unchanged, retry registers unique metadata, and final owner release/prune returns candidate allocation count to zero. Existing allocator conformance, constructor, hit, GPU and painter tests pass.",
+    "app": "394 app tests pass, 16 ignored.",
+    "lint_build": "Strict renderer/app all-targets Clippy with app visual feature, fresh visual app build and source health2280/dependency/governance/format checks pass.",
+    "scope": "No native OS-input/backend/scale/endurance or broad drift qualification. The uninstrumented-library fallback is not full native allocator conformance; shipped/native checks use the installed Datum allocator."
+  },
+  "limits": [
+    "Earlier quad/stroke/command/hit/layout production, initial identity/registry and pruning allocations, scope bookkeeping and complete staging/concurrent constructor admission remain open. Infallible small shared-owner allocation failure is not claimed to recover from process-wide exhaustion. External weak-container ownership reconciliation remains required.",
+    "Twelve implementation gaps and original S5 qualification remain open. No full CPU/history predicate closure, dependency/vendor/license, prototype, numerical cap or sequencing amendment. Preserve GEFN, Console golden disposition and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/scene-publication/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/scene-publication/renderer.log.gz",
+      "uncompressed_sha256": "d0656d26e32b1abd5984db9a8fdd05ec5b7615e6f682bfb0ca0fe1c5655086ec"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/scene-publication/app.log.gz",
+      "uncompressed_sha256": "6c90bc12a1b261db7fd45d784dab1e8b8e35327394dcffbb8e512bfc1fa439a8"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/scene-publication/clippy.log.gz",
+      "uncompressed_sha256": "fdf97ae88aacdf2b5b123a0cd053f4272fb82cb50b136d9c7b3656f0ca362b30"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/scene-publication/build.log.gz",
+      "uncompressed_sha256": "c6eaab945e48c6bd73667e76bd6c5b9fd90587448e5588787b9610e076fdadba"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/document_cpu.rs": "d679b1358134a17a08b910c88b378308cd2f8b8d91c62e20e612bd425955bd2e",
+    "crates/gui-render/src/render/retained_scene_owner.rs": "acb4820ccf09ae7e71cc27bdce61479eb39b5ccdb6d25df42644efaa71ceff9a",
+    "crates/gui-render/src/render/scene_retained_access.rs": "a59b0e881bd893fb71d24b1f2d589ff2d666cfd78aea3bb683195423e1876fa7",
+    "crates/gui-render/src/render/schematic_retained.rs": "d5c8d9d3926360cb750954f043349ffe63b157921d72a3dd95b3303906425b94"
+  }
+}
