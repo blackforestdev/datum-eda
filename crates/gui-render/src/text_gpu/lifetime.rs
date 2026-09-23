@@ -330,6 +330,7 @@ impl<T> Tracked<T> {
 impl<T: Send + Sync + 'static> Tracked<T> {
     pub fn submission_ref(&self) -> SubmissionRef {
         SubmissionRef {
+            allocation_id: self.0.identity.record.id,
             _resource: self.0.clone(),
         }
     }
@@ -349,6 +350,7 @@ impl<T> Drop for Tracked<T> {
 }
 
 pub(crate) struct SubmissionRef {
+    pub(crate) allocation_id: u64,
     _resource: Arc<dyn Send + Sync>,
 }
 

@@ -1,0 +1,51 @@
+{
+  "status": "Retained-world bundles hold only referenced streams and expose prepared allocation-to-pane associations",
+  "production_consumers": [
+    "Default board and schematic retained-world bundle preparation and reuse"
+  ],
+  "retired_paths": [
+    "Unconditional retention and cache invalidation on unused vertex/stroke buffers"
+  ],
+  "behavior": [
+    "Bundle keys and lifetime holds now include only world streams referenced by their encoded draw batches. Replacing an unused stream preserves the cached bundle.",
+    "Each cached bundle records current pane/surface metadata. An allocation-free renderer iterator exposes its allocation IDs, including the bound pane uniform. Pane identity changes update metadata without rebuilding unchanged GPU commands.",
+    "Shared world allocation IDs appear for each referencing pane; process byte accounting remains one record per allocation. SubmissionRef retains its existing GPU lifetime hold."
+  ],
+  "proof": {
+    "renderer": "384 tests passed in the broad renderer run; the sole failure was the new fixture assuming only one preexisting surface. After explicitly selecting one source pane before adding a second, the affected actual-GPU test passed. Its earlier failure from reusing hidden quad commands is also preserved. No production-code changes followed the broad run.",
+    "checks": "Strict renderer/app visual all-target Clippy, fresh offline GUI build, source health and governance checks pass."
+  },
+  "limits": [
+    "This iterator reports prepared cached-world associations, not submitted/presented pane usage. Shell, overlay, text and terminal logical-consumer association remains unfinished; no all-consumer adoption or predicate closure.",
+    "All seven recorded S4 implementation gaps and original S5 qualification remain. No dependency, vendor, license, prototype, numerical-cap or sequencing change; preserve GEFN and nonblocking resize.",
+    "Owner/Copilot product_tests.rs changes are excluded."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/pane-ownership/result.json",
+  "base_commit": "8e04fb3e",
+  "logs": {
+    "test": {
+      "path": "docs/reviews/gui-performance/implementation/S4/pane-ownership/test.log.gz",
+      "uncompressed_sha256": "68668ca7c81d9de19812fbf5189ae5051feb4694a7e59bbcc2a47983d9dafb8d"
+    },
+    "full": {
+      "path": "docs/reviews/gui-performance/implementation/S4/pane-ownership/full.log.gz",
+      "uncompressed_sha256": "1dbaf2e069e60e87c410258eb303e67ff9f422c0392ca9937b7069868ecaa34e"
+    },
+    "final": {
+      "path": "docs/reviews/gui-performance/implementation/S4/pane-ownership/final.log.gz",
+      "uncompressed_sha256": "5feb7af6eea8f4264f5724a92675370d440e0532dc5737da57842651ba2c51ea"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/pane-ownership/clippy.log.gz",
+      "uncompressed_sha256": "471bf38ed95c5d98180c35778c028e3c24488dff754dd8897e08c140b6d6e64e"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/pane-ownership/build.log.gz",
+      "uncompressed_sha256": "d5ad1681522ae8750f242d4724cab04d7bd1881918b8aebc4ce2394770ac64c9"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/text_gpu/lifetime.rs": "42c01745b72e725152fc6673f9f9b06cd9e981b57c7530e338e31f7bdb124131",
+    "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs": "9df1d086436aeb618269c93fbac5755412e5147b395c46150ceeafb12a44ad9e"
+  }
+}

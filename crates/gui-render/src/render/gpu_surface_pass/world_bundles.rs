@@ -5,6 +5,9 @@ use super::*;
 
 pub(crate) struct CachedSurfaceBundle {
     pub(super) bundle: wgpu::RenderBundle,
+    pane_id: datum_gui_protocol::PaneId,
+    surface: SceneSurface,
+    used_kinds: u8,
     vertex_buffer: Option<wgpu::Buffer>,
     stroke_buffer: Option<wgpu::Buffer>,
     bind_group: wgpu::BindGroup,
@@ -23,14 +26,29 @@ impl CachedSurfaceBundle {
         binding: &wgpu::BindGroup,
         commands: &[RetainedDrawCommand],
     ) -> bool {
-        self.vertex_buffer.as_ref() == vertex
-            && self.stroke_buffer.as_ref() == stroke
+        self.vertex_buffer.as_ref() == vertex.filter(|_| self.used_kinds & 1 != 0)
+            && self.stroke_buffer.as_ref() == stroke.filter(|_| self.used_kinds & 2 != 0)
             && &self.bind_group == binding
             && draw_batches(commands).eq(self.batches.iter().cloned())
     }
 }
 
 impl Renderer {
+    /// Prepared retained-world associations: (allocation ID, pane ID, surface).
+    /// Shared allocations occur once per referencing pane; sum allocation records
+    /// by ID, never by incidence. This iterator allocates nothing and does not
+    /// claim submission/presentation or include immediate shell/overlay resources.
+    pub fn retained_surface_resource_consumers(
+        &self,
+    ) -> impl Iterator<Item = (u64, datum_gui_protocol::PaneId, SceneSurface)> + '_ {
+        self.surface_world_bundles.iter().flat_map(|cached| {
+            cached
+                ._allocations
+                .iter()
+                .map(move |allocation| (allocation.allocation_id, cached.pane_id, cached.surface))
+        })
+    }
+
     pub(crate) fn prepare_surface_world_bundles(
         &mut self,
         device: &wgpu::Device,
@@ -56,14 +74,23 @@ impl Renderer {
                     schematic.map_or(&[][..], RetainedScene::all_draw_commands),
                 ),
             };
-            if self
-                .surface_world_bundles
-                .get(index)
-                .is_some_and(|cached| cached.matches(vertex, stroke, bind_group, commands))
+            if let Some(cached) = self.surface_world_bundles.get_mut(index)
+                && cached.matches(vertex, stroke, bind_group, commands)
             {
+                // Pane identity is incidence metadata, not encoded GPU state.
+                cached.pane_id = surface.pane_id;
+                cached.surface = surface.surface;
                 continue;
             }
             let batches: Box<[_]> = draw_batches(commands).collect();
+            let used_kinds = batches.iter().fold(0, |bits, batch| {
+                bits | match batch.kind {
+                    DrawKind::Quads => 1,
+                    DrawKind::Strokes => 2,
+                }
+            });
+            let vertex = vertex.filter(|_| used_kinds & 1 != 0);
+            let stroke = stroke.filter(|_| used_kinds & 2 != 0);
             let mut encoder =
                 device.create_render_bundle_encoder(&wgpu::RenderBundleEncoderDescriptor {
                     label: Some("datum-world-bundle"),
@@ -103,10 +130,15 @@ impl Renderer {
                 ],
             }
             .into_iter()
-            .flatten()
+            .enumerate()
+            .filter(|(index, _)| used_kinds & (1 << index) != 0)
+            .filter_map(|(_, allocation)| allocation)
             .chain(std::iter::once(binding.buffer.submission_ref()))
             .collect();
             let cached = CachedSurfaceBundle {
+                pane_id: surface.pane_id,
+                surface: surface.surface,
+                used_kinds,
                 bundle: encoder.finish(&wgpu::RenderBundleDescriptor {
                     label: Some("datum-world-bundle"),
                 }),
@@ -342,6 +374,68 @@ mod tests {
         assert_ne!(
             shrunk_bundle, renderer.surface_world_bundles[0].bundle,
             "a new pane camera binding must be rebound"
+        );
+        let mut quads_only = prepared.clone();
+        // The earlier visibility case hides the fixture's quad layer.
+        quads_only.visible_draw_commands = retained
+            .all_draw_commands()
+            .iter()
+            .filter(|command| matches!(command, RetainedDrawCommand::Quads { .. }))
+            .cloned()
+            .collect();
+        assert!(!quads_only.visible_draw_commands.is_empty());
+        renderer.prepare_surface_world_bundles(&device, &quads_only, None);
+        assert!(renderer.surface_world_bundles[0].stroke_buffer.is_none());
+        let vertex_id = renderer
+            .world_vertices_gpu
+            .submission_ref()
+            .unwrap()
+            .allocation_id;
+        let stroke_id = renderer
+            .world_strokes_gpu
+            .submission_ref()
+            .map(|reference| reference.allocation_id);
+        assert!(
+            !renderer
+                .retained_surface_resource_consumers()
+                .any(|(id, _, _)| Some(id) == stroke_id)
+        );
+        let single = renderer.surface_world_bundles[0].bundle.clone();
+        renderer.world_strokes_gpu.clear();
+        renderer.prepare_surface_world_bundles(&device, &quads_only, None);
+        assert_eq!(
+            single, renderer.surface_world_bundles[0].bundle,
+            "unused stroke allocation does not invalidate a quad-only bundle"
+        );
+        let mut second_pane = quads_only.surface_passes[0].clone();
+        second_pane.pane_id = datum_gui_protocol::PaneId(u32::MAX - 1);
+        quads_only.surface_passes.truncate(1);
+        quads_only.surface_passes.push(second_pane);
+        renderer
+            .prepare_surface_uniforms(&device, &queue, &quads_only, 1280, 800)
+            .unwrap();
+        renderer.prepare_surface_world_bundles(&device, &quads_only, None);
+        let consumers: Vec<_> = renderer
+            .retained_surface_resource_consumers()
+            .filter(|(id, _, _)| *id == vertex_id)
+            .collect();
+        assert_eq!(consumers.len(), 2);
+        assert_ne!(consumers[0].1, consumers[1].1);
+        assert_eq!(
+            Renderer::gpu_process_allocations()
+                .iter()
+                .filter(|record| record.id == vertex_id)
+                .count(),
+            1
+        );
+        let second_bundle = renderer.surface_world_bundles[1].bundle.clone();
+        quads_only.surface_passes[1].pane_id = datum_gui_protocol::PaneId(u32::MAX);
+        renderer.prepare_surface_world_bundles(&device, &quads_only, None);
+        assert_eq!(second_bundle, renderer.surface_world_bundles[1].bundle);
+        assert!(
+            !renderer
+                .retained_surface_resource_consumers()
+                .any(|(_, pane, _)| pane == datum_gui_protocol::PaneId(u32::MAX - 1))
         );
         prepared.surface_passes.clear();
         renderer
