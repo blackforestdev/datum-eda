@@ -78,6 +78,38 @@ pub(crate) fn settle(id: u64, trim: impl FnOnce(usize) -> usize) {
     );
 }
 
+/// Current-frame layouts must be admitted before glyph preparation. Eviction
+/// runs under the same process lock as post-frame retention.
+pub(crate) fn admit(id: u64, trim: impl FnOnce(usize) -> usize) -> anyhow::Result<()> {
+    let mut owners = OWNERS.lock().unwrap_or_else(|e| e.into_inner());
+    let available = allowance(&owners, id, PROCESS_LIMIT).min(8 * 1024 * 1024);
+    let bytes = trim(available);
+    owners.insert(
+        id,
+        TextCacheOwnerUsage {
+            owner_id: id,
+            bytes,
+            preparing: true,
+            retention_overflow: bytes > available,
+        },
+    );
+    anyhow::ensure!(
+        bytes <= available,
+        "required text layout exceeds CPU cache admission (requested {bytes} bytes; available {available})"
+    );
+    Ok(())
+}
+
+pub(crate) fn submitted(id: u64) {
+    if let Some(owner) = OWNERS
+        .lock()
+        .unwrap_or_else(|e| e.into_inner())
+        .get_mut(&id)
+    {
+        owner.preparing = false;
+    }
+}
+
 impl crate::Renderer {
     /// Enumerate public CPU text capacities for every live renderer cache.
     /// Preparing owners may exceed retention caps; this is not scratch accounting.
