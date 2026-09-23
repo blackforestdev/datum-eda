@@ -15078,6 +15078,11 @@
           "work": "s4_document_cpu_payload_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/document-cpu-payload/result.json",
           "status": "Retained CPU payload aggregation and render-time limit shared by live owners of each document"
+        },
+        {
+          "work": "s4_document_cpu_eviction_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/document-cpu-eviction/result.json",
+          "status": "Aggregate document pressure evicts matching local history before failure and bypasses candidates without forgiving external pins"
         }
       ]
     },
@@ -15181,6 +15186,11 @@
           "work": "s4_document_cpu_payload_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/document-cpu-payload/result.json",
           "status": "Retained CPU payload aggregation and render-time limit shared by live owners of each document"
+        },
+        {
+          "work": "s4_document_cpu_eviction_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/document-cpu-eviction/result.json",
+          "status": "Aggregate document pressure evicts matching local history before failure and bypasses candidates without forgiving external pins"
         }
       ]
     },
@@ -34211,5 +34221,30 @@
       "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/document-cpu-payload/result.json"
+  },
+  "s4_document_cpu_eviction_work": {
+    "status": "Aggregate document pressure evicts matching local history before failure and bypasses candidates without forgiving external pins",
+    "base_commit": "cda170b3",
+    "production_consumers": [
+      "Runtime retained scene activation, render-budget checking and history insertion",
+      "Shared document CPU payload query and identity comparison through existing retained observer"
+    ],
+    "retired_paths": [
+      "Active document over-budget failure without first trying eligible local history",
+      "History insertion retained a candidate despite aggregate same-document pressure outside its local owner"
+    ],
+    "behavior": [
+      "Keep existing local byte eviction, then retire oldest matching-document history under aggregate document pressure. Preserve unrelated document history. If candidate retention cannot fit, release its active registration and candidate ownership, keep external/GPU-pinned allocations observed, and bypass only that derived cache insertion. Default document allowance remains64MiB; lower helper limits are test inputs."
+    ],
+    "proof": {
+      "app": "387 application tests pass, 16 ignored. New real-scene cases verify matching-document eviction, unrelated history preservation, external pins stay charged until release, active payload preserved, and candidate bypass retains external accounting then returns to prior ownership on release.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health2279, dependency authority and governance pass. Renderer payload calculation is unchanged from its preceding352-test proof; no repeat GPU campaign for read-only accessors and app eviction policy.",
+      "scope": "No new native/backend/endurance campaign or full drift rerun; existing Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Complete cross-owner history key/entry and global registry bookkeeping admission, construction-time bounds and original S5 qualification remain open. Evicting a cache reference cannot reclaim payload still held externally; unresolved pressure still follows existing explicit render failure.",
+      "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/document-cpu-eviction/result.json"
   }
 }

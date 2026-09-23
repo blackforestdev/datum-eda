@@ -70,7 +70,8 @@ impl RetainedSceneHistory {
     /// Required derived content is never silently discarded to meet a tier cap.
     /// Report failure through the host render boundary while preserving model
     /// authority and the charged active/pinned owners for inspection or retry.
-    pub(super) fn check_render_budget(&self) -> anyhow::Result<()> {
+    pub(super) fn check_render_budget(&mut self) -> anyhow::Result<()> {
+        self.trim_for_active_document(MAX_PAYLOAD_BYTES);
         let bytes = self.accounted_bytes();
         anyhow::ensure!(
             bytes <= self.budget,
@@ -216,13 +217,35 @@ impl RetainedSceneHistory {
     }
 
     fn limit_for_active(&mut self, scene: &RetainedScene) {
+        self.limit_for_active_document(scene, MAX_PAYLOAD_BYTES);
+    }
+
+    fn limit_for_active_document(&mut self, scene: &RetainedScene, document_limit: usize) {
         self.active_geometry = Some(scene.geometry_observer());
         self.prune_retired();
         self.active_bytes = scene
             .heap_payload_bytes()
             .unwrap_or(self.budget.saturating_add(1));
-        while !self.entries.is_empty() && self.accounted_bytes() > self.budget {
-            self.evict(0);
+        self.trim_for_active_document(document_limit);
+    }
+
+    fn trim_for_active_document(&mut self, document_limit: usize) {
+        while !self.entries.is_empty() {
+            let victim = if self.accounted_bytes() > self.budget {
+                Some(0)
+            } else {
+                let Some(active) = self.active_geometry.as_ref() else {
+                    break;
+                };
+                if active.document_cpu_payload_bytes() <= document_limit {
+                    break;
+                }
+                self.entries
+                    .iter()
+                    .position(|entry| entry.geometry.shares_document_with(active))
+            };
+            let Some(index) = victim else { break };
+            self.evict(index);
         }
         if self.entries.is_empty() {
             self.entries = Vec::new();
@@ -230,6 +253,15 @@ impl RetainedSceneHistory {
     }
 
     pub(super) fn insert(&mut self, key: RetainedSceneCacheKey, scene: RetainedScene) {
+        self.insert_document(key, scene, MAX_PAYLOAD_BYTES);
+    }
+
+    fn insert_document(
+        &mut self,
+        key: RetainedSceneCacheKey,
+        scene: RetainedScene,
+        document_limit: usize,
+    ) {
         // The caller moves the old active scene here before rebuilding/restoring.
         self.active_bytes = 0;
         let geometry = scene.geometry_observer();
@@ -247,6 +279,22 @@ impl RetainedSceneHistory {
         };
         if bytes > self.budget {
             self.clear();
+            return;
+        }
+        while geometry.document_cpu_payload_bytes() > document_limit {
+            let Some(index) = self
+                .entries
+                .iter()
+                .position(|entry| entry.geometry.shares_document_with(&geometry))
+            else {
+                break;
+            };
+            self.evict(index);
+        }
+        if geometry.document_cpu_payload_bytes() > document_limit {
+            self.active_geometry = None;
+            drop(scene);
+            self.observe_retired(geometry);
             return;
         }
         while self.entries.len() >= MAX_ENTRIES {

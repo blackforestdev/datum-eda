@@ -1,0 +1,44 @@
+{
+  "status": "Aggregate document pressure evicts matching local history before failure and bypasses candidates without forgiving external pins",
+  "base_commit": "cda170b3",
+  "production_consumers": [
+    "Runtime retained scene activation, render-budget checking and history insertion",
+    "Shared document CPU payload query and identity comparison through existing retained observer"
+  ],
+  "retired_paths": [
+    "Active document over-budget failure without first trying eligible local history",
+    "History insertion retained a candidate despite aggregate same-document pressure outside its local owner"
+  ],
+  "behavior": [
+    "Keep existing local byte eviction, then retire oldest matching-document history under aggregate document pressure. Preserve unrelated document history. If candidate retention cannot fit, release its active registration and candidate ownership, keep external/GPU-pinned allocations observed, and bypass only that derived cache insertion. Default document allowance remains64MiB; lower helper limits are test inputs."
+  ],
+  "proof": {
+    "app": "387 application tests pass, 16 ignored. New real-scene cases verify matching-document eviction, unrelated history preservation, external pins stay charged until release, active payload preserved, and candidate bypass retains external accounting then returns to prior ownership on release.",
+    "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health2279, dependency authority and governance pass. Renderer payload calculation is unchanged from its preceding352-test proof; no repeat GPU campaign for read-only accessors and app eviction policy.",
+    "scope": "No new native/backend/endurance campaign or full drift rerun; existing Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Complete cross-owner history key/entry and global registry bookkeeping admission, construction-time bounds and original S5 qualification remain open. Evicting a cache reference cannot reclaim payload still held externally; unresolved pressure still follows existing explicit render failure.",
+    "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/document-cpu-eviction/result.json",
+  "logs": {
+    "app-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/document-cpu-eviction/app-tests.log.gz",
+      "uncompressed_sha256": "53f55a7499a40b53720ce3dcbdad7861c0ddae6859651e8f98ad844970ea4a41"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/document-cpu-eviction/clippy.log.gz",
+      "uncompressed_sha256": "4e52e9400873b6ed508d28e899381eecc32b964bb24bb63a81e833d84147fb8e"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/document-cpu-eviction/build.log.gz",
+      "uncompressed_sha256": "5c5dd74b86ad7866a1437a36bc642a45c3c24125183bdb0eb06b98f699b9c81d"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/retained_scene_history.rs": "0ee66d9f9f3843ab265543de1cf592a38738daa8c3a8e1fce23086362158a51a",
+    "crates/gui-app/src/retained_scene_resize_tests.rs": "8420fcc23520ed1601618964fe0bc1ec52c6e798d9ad1e131217cf60023c57b9",
+    "crates/gui-render/src/render/document_cpu.rs": "b136e34bdf1d366fb33e63994da5d172f7e272fbb1ccde32117fda184f4d980f"
+  }
+}

@@ -63,6 +63,19 @@ fn usage(observer: &RetainedGeometryObserver) -> usize {
 }
 
 impl RetainedGeometryObserver {
+    /// Retained document payload plus per-document observer storage; excludes
+    /// history keys/entries, global registry storage and construction scratch.
+    pub fn document_cpu_payload_bytes(&self) -> usize {
+        usage(self)
+    }
+
+    pub fn shares_document_with(&self, other: &Self) -> bool {
+        match (&self.document, &other.document) {
+            (Some(first), Some(second)) => first.ptr_eq(second),
+            _ => false,
+        }
+    }
+
     /// Enforce retained payload across all registered owners of this document.
     /// Includes per-document observer storage. Local history keys/entry metadata,
     /// global registry storage and candidate construction have separate accounting.

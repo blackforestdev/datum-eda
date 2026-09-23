@@ -116,3 +116,73 @@ fn companion_schematic_uses_active_and_retiring_cpu_ownership() {
     assert_eq!(owner.accounted_bytes(), 0);
     owner.check_render_budget().unwrap();
 }
+
+#[test]
+fn document_pressure_retires_only_matching_history_and_keeps_external_pins_charged() {
+    let make_scene = |id: &str| {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.scene.scene_id = id.into();
+        RetainedScene::from_workspace(&state, 960, 720)
+    };
+    for pinned in [false, true] {
+        let id = if pinned {
+            "history-document-pinned"
+        } else {
+            "history-document-unpinned"
+        };
+        let mut history = RetainedSceneHistory::default();
+        let unrelated = make_scene("history-document-unrelated");
+        let mut unrelated_key = tests::key(0);
+        unrelated_key.scene_id = "history-document-unrelated".into();
+        history.insert(unrelated_key.clone(), unrelated);
+        let old = make_scene(id);
+        let old_payload = old.heap_payload_bytes().unwrap();
+        let external = pinned.then(|| old.clone());
+        let mut old_key = tests::key(1);
+        old_key.scene_id = id.into();
+        history.insert(old_key.clone(), old);
+        let active = make_scene(id);
+        let observer = active.geometry_observer();
+        let before = observer.document_cpu_payload_bytes();
+        let limit = before - old_payload / 2;
+        history.limit_for_active_document(&active, limit);
+        assert!(
+            history
+                .entries
+                .iter()
+                .any(|entry| entry.key == unrelated_key)
+        );
+        assert!(!history.entries.iter().any(|entry| entry.key == old_key));
+        if pinned {
+            assert!(observer.document_cpu_payload_bytes() > limit);
+            drop(external);
+        }
+        assert!(observer.document_cpu_payload_bytes() <= limit);
+        assert_eq!(history.active_bytes, active.heap_payload_bytes().unwrap());
+        history.check_render_budget().unwrap();
+    }
+}
+
+#[test]
+fn document_pressure_bypasses_candidate_without_forgiving_external_owner() {
+    let mut history = RetainedSceneHistory::default();
+    history.insert(tests::key(0), tests::scene());
+    let before = history.accounted_bytes();
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.scene.scene_id = "history-document-candidate-bypass".into();
+    let candidate = RetainedScene::from_workspace(&state, 960, 720);
+    let external = candidate.clone();
+    let payload = external.heap_payload_bytes().unwrap();
+    history.insert_document(tests::key(1), candidate, 1);
+    assert_eq!(
+        history.entries.len(),
+        1,
+        "unrelated history survives refusal"
+    );
+    assert!(history.active_geometry.is_none());
+    assert!(history.accounted_bytes() >= before + payload);
+    assert_eq!(external.heap_payload_bytes(), Some(payload));
+    drop(external);
+    history.prune_retired();
+    assert_eq!(history.accounted_bytes(), before);
+}
