@@ -345,6 +345,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
                 format,
                 msaa_samples,
                 screen_budget.clone(),
+                staging_budget.clone(),
             ),
         };
         let text_cpu = crate::cpu_alloc::Scope::new("renderer-text");
@@ -352,7 +353,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let swash_cache = text_cpu.with(SwashCache::new);
         let atlas = match previous {
             Some(old) => old.atlas.replacement(device),
-            None => crate::text_gpu::Atlas::with_staging_budget(device, staging_budget),
+            None => crate::text_gpu::Atlas::with_staging_budget(device, staging_budget.clone()),
         };
         let text_renderer = match previous {
             Some(old) => old
@@ -400,14 +401,17 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             surface_world_bundles: Vec::new(),
             surface_grid_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
                 screen_budget.clone(),
-            ),
+            )
+            .with_staging_budget(staging_budget.clone()),
             schematic_scene_bind_group,
             schematic_underlay_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
                 screen_budget.clone(),
-            ),
+            )
+            .with_staging_budget(staging_budget.clone()),
             schematic_overlay_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
                 screen_budget.clone(),
-            ),
+            )
+            .with_staging_budget(staging_budget.clone()),
             font_system,
             text_cpu,
             swash_cache,
@@ -420,22 +424,28 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             cold_world: Default::default(),
             text_preparation: Default::default(),
             panel_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(screen_budget.clone())
+                .with_staging_budget(staging_budget.clone())
                 .with_retention_budget(control_gpu_budget.clone()),
             viewport_underlay_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
                 screen_budget.clone(),
-            ),
+            )
+            .with_staging_budget(staging_budget.clone()),
             viewport_overlay_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
                 screen_budget.clone(),
-            ),
+            )
+            .with_staging_budget(staging_budget.clone()),
             board_interaction_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
                 screen_budget.clone(),
-            ),
+            )
+            .with_staging_budget(staging_budget.clone()),
             console_gpu: gpu_console::ConsoleGpuResources {
-                vertices: gpu_data::screen_buffer::ScreenBuffer::with_budget(screen_budget.clone()),
+                vertices: gpu_data::screen_buffer::ScreenBuffer::with_budget(screen_budget.clone())
+                    .with_staging_budget(staging_budget.clone()),
             },
             menu_overlay_gpu: gpu_data::screen_buffer::ScreenBuffer::with_budget(
                 screen_budget.clone(),
             )
+            .with_staging_budget(staging_budget.clone())
             .with_retention_budget(control_gpu_budget.clone()),
             surface_attachments: gpu_surface::SurfaceAttachments::default(),
             screen_budget,

@@ -8,6 +8,15 @@ pub(crate) struct StagingVec<T> {
     _permits: Option<[Permit; 2]>,
 }
 
+impl<T> Default for StagingVec<T> {
+    fn default() -> Self {
+        Self {
+            values: Vec::new(),
+            _permits: None,
+        }
+    }
+}
+
 impl<T> StagingVec<T> {
     pub fn capacity_bytes(capacity: usize) -> anyhow::Result<u64> {
         let layout = std::alloc::Layout::array::<T>(capacity)?;
@@ -38,6 +47,31 @@ impl<T> StagingVec<T> {
         })
     }
 
+    pub fn allocated_bytes(&self) -> u64 {
+        crate::cpu_alloc::heap::capacity_bytes::<T>(self.values.capacity()) as u64
+    }
+
+    pub fn clear(&mut self) {
+        self.values.clear();
+    }
+
+    /// Preserve admitted storage on reuse; reserve old/new overlap before growth.
+    pub fn ensure_capacity(&mut self, capacity: usize, host: &Arc<Budget>) -> anyhow::Result<()> {
+        if capacity > self.values.capacity() {
+            let grown = capacity.max(self.values.capacity().saturating_mul(2));
+            let mut replacement = Self::new(grown, host).or_else(|error| {
+                if grown == capacity {
+                    Err(error)
+                } else {
+                    Self::new(capacity, host)
+                }
+            })?;
+            replacement.values.append(&mut self.values);
+            *self = replacement;
+        }
+        Ok(())
+    }
+
     pub fn push(&mut self, value: T) {
         assert!(
             self.values.len() < self.values.capacity(),
@@ -65,6 +99,30 @@ impl<T> std::ops::Deref for StagingVec<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn growth_admits_old_new_overlap_and_reuse_preserves_storage() {
+        let old = StagingVec::<u64>::capacity_bytes(4).unwrap();
+        let new = StagingVec::<u64>::capacity_bytes(8).unwrap();
+        let host = Budget::new(old + new);
+        let mut plan = StagingVec::new(4, &host).unwrap();
+        plan.extend(0_u64..4);
+        let blocker = host.reserve(1).unwrap();
+        assert!(plan.ensure_capacity(8, &host).is_err());
+        assert_eq!(&*plan, &[0, 1, 2, 3]);
+        assert_eq!(plan.allocated_bytes(), old);
+        drop(blocker);
+        plan.ensure_capacity(8, &host).unwrap();
+        assert_eq!(host.used(), new);
+        assert_eq!(&*plan, &[0, 1, 2, 3]);
+        let pointer = plan.as_ptr();
+        plan.clear();
+        plan.ensure_capacity(8, &host).unwrap();
+        plan.extend(4_u64..12);
+        assert_eq!(plan.as_ptr(), pointer);
+        drop(plan);
+        assert_eq!(host.used(), 0);
+    }
 
     #[test]
     fn staging_plan_charges_actual_heap_and_refuses_before_growth() {

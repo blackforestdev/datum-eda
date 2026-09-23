@@ -1,0 +1,58 @@
+{
+  "status": "Default screen/terminal dirty-range storage admitted under shared staging budgets; snapshot and other resource accounting remain open",
+  "base_commit": "6c9bf424",
+  "production_consumers": [
+    "Shared ScreenBuffer used by grid, board/schematic overlays, viewport/control streams, menu and Console rendering in each native host",
+    "Terminal graphic quad ScreenBuffer slots, including renderer replacement"
+  ],
+  "retired_paths": [
+    "Unbudgeted dirty-range Vec growth and historical capacity outside host/process staging admission"
+  ],
+  "behavior": [
+    "Range plans retain cached storage through the shared StagingVec owner. Growth reserves old/new allocation overlap before fallible construction, reuses capacity without allocation, and attempts amortized growth with exact-required fallback under pressure. Capacities plus Datum headers remain charged even when reusable slots are empty.",
+    "All default renderer screen streams and terminal graphic slots receive the existing host staging budget; replacement preserves that owner. Empty streams, uncached retirement and owner close release range storage.",
+    "Dirty ranges are counted before filling an admitted plan. Existing same-allocation preparation survives refused growth. A new GPU allocation clears the superseded preparation before subsequent refusal so retry cannot mistake old bytes for initialized replacement content.",
+    "screen_upload_metadata_bytes reports retained range capacity separately from snapshots and transient GPU copies. Existing staging oracles add/subtract this exact owned capacity while preserving copy-budget limits."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 371 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.86s",
+    "checks": "371 renderer tests passed,11 filtered; strict visual renderer/app all-target Clippy and fresh visual GUI build pass. Application tests were not rerun for these renderer changes.",
+    "coverage": "New real-GPU test refuses range growth at the old/new overlap boundary, reads unchanged submitted bytes, retries after pressure release, reads changed words, checks shared replacement budget and final release. New staging-owner test covers overlap refusal, preserved data, capacity reuse and release. Existing exact dirty-word, revert/cancel, sparse GPU readback, warm snapshot reuse, glyph/terminal/cold-world continuation and frame refusal/retry remain passing. Earlier370-pass run is preserved before final growth policy and added GPU regression."
+  },
+  "limits": [
+    "Prepared/submitted CPU snapshot payloads, glyph construction and batching, atlas/page/global observation metadata, private font/raster/layout peaks and complete S5 accounting/qualification remain unfinished. No MEM-STAGING/REUSE-SCREEN, S4, S5 or issue closure. Inventory remains16 implemented/11 recorded gaps/23 with no new defect asserted.",
+    "Unchanged screen preparations retain their existing early return; changed preparations add a borrowed count pass. Empty reusable range capacity remains reserved rather than being reported as released on submission. No new latency or global performance acceptance is claimed.",
+    "Original qualification and historical failed evidence, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/range-storage/result.json",
+  "logs": {
+    "renderer-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/range-storage/renderer-initial.log.gz",
+      "uncompressed_sha256": "b2a0baff6f363a7ac1c56858a8768452d043af5eb7dee8ac482e21f516419982"
+    },
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/range-storage/renderer.log.gz",
+      "uncompressed_sha256": "0268ac507c3acfbd800f96ee109044b79fe8f49b649eee046644d03eebdadeae"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/range-storage/clippy.log.gz",
+      "uncompressed_sha256": "ec10f77e6a06c8ee2f447d3c30634e094155bca616256914640fb1ad2f1b2c76"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/range-storage/build.log.gz",
+      "uncompressed_sha256": "3457e5b30f3b8dcdb663c29d0ceb9ed66a79694babe9cc826f3c34791f72ecc1"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "9d603a70973f0b41fcaf00ca6befb2adc5cd699b051effe1f292f1fd82d6ca7b",
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "7598c2e208bc70aa734531b1cda552b30e8fbef9f8fd363660f5bc245f1c9cdc",
+    "crates/gui-render/src/render/gpu_init.rs": "64fe6dbe61e97122777f1c6543caecac2ed693dc0c855429db81cc3681f11c42",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "abf75564cb30d6c8d4ce6a82c3851652f5fda011377559e932d3a12d5782022b",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "d658ba4be1108b35739c5579d8306e0e82cdcda0b3661cab46aa52763c1ce01b",
+    "crates/gui-render/src/render/gpu_vertex_upload.rs": "4294599902152313fa1379fc8e4358c504b9f80a310ccdbbd88ee5f900f7db36",
+    "crates/gui-render/src/render/screen_buffer.rs": "ef869ffb6cd9dd20b0d01e0ce59abfe542ca82ca963f8367eb87b4d53d256262",
+    "crates/gui-render/src/render/screen_buffer/tests.rs": "6c5a2d3a978efaac558ab9827ebc6f689ef534397a578bd82060b8cae4680752",
+    "crates/gui-render/src/render/terminal_graphics.rs": "e972be783d7c62d2af6a5016776f19516658ca664ab6a780ddb20e1b856a7ea6",
+    "crates/gui-render/src/text_gpu/staging_vec.rs": "f1d2c100204fb4d8b86ec607aa28570751953355710c5f97f6392930d639fa82"
+  }
+}

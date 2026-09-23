@@ -10,7 +10,8 @@ use super::vertex_allocation::VertexAllocation;
 pub(crate) struct ScreenBuffer {
     snapshot: Box<[u8]>,
     allocation: VertexAllocation,
-    pending: Vec<std::ops::Range<usize>>,
+    pending: crate::text_gpu::staging_vec::StagingVec<std::ops::Range<usize>>,
+    staging_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
     prepared: Box<[u8]>,
     has_prepared: bool,
     #[cfg(test)]
@@ -23,7 +24,8 @@ impl Default for ScreenBuffer {
             snapshot: Box::default(),
             allocation: VertexAllocation::default()
                 .with_generation_limit(crate::text_gpu::budget::Budget::new(2)),
-            pending: Vec::new(),
+            pending: Default::default(),
+            staging_budget: crate::text_gpu::budget::Budget::new(16 * 1024 * 1024),
             prepared: Box::default(),
             has_prepared: false,
             #[cfg(test)]
@@ -47,9 +49,23 @@ impl ScreenBuffer {
         Self::with_budgets(vec![budget])
     }
 
+    pub(crate) fn with_staging_budget(
+        mut self,
+        budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
+    ) -> Self {
+        assert_eq!(
+            self.pending.allocated_bytes(),
+            0,
+            "assign staging owner before use"
+        );
+        self.staging_budget = budget;
+        self
+    }
+
     pub(crate) fn replacement(&self) -> Self {
         Self {
             allocation: self.allocation.replacement(),
+            staging_budget: self.staging_budget.clone(),
             ..Self::default()
         }
     }
@@ -73,9 +89,14 @@ impl ScreenBuffer {
     pub(crate) fn retire_uncached_gpu(&mut self) {
         self.allocation.retire_uncached();
         if self.allocation.buffer().is_none() {
+            self.pending = Default::default();
             self.snapshot = Box::default();
             self.prepared = Box::default();
         }
+    }
+
+    pub(crate) fn pending_metadata_bytes(&self) -> u64 {
+        self.pending.allocated_bytes()
     }
 
     pub(crate) fn buffer(&self) -> Option<&wgpu::Buffer> {
@@ -99,7 +120,7 @@ impl ScreenBuffer {
         out: &mut impl Extend<crate::text_gpu::upload::BufferUpload<'a>>,
     ) {
         let bytes = &self.prepared;
-        for range in &self.pending {
+        for range in self.pending.iter() {
             let end = range.end.min(bytes.len());
             if range.start < end {
                 out.extend(std::iter::once(crate::text_gpu::upload::BufferUpload {
@@ -144,7 +165,7 @@ impl ScreenBuffer {
         if bytes.is_empty() {
             self.allocation.clear();
             self.snapshot = Box::default();
-            self.pending = Vec::new();
+            self.pending = Default::default();
             self.prepared = Box::default();
             self.has_prepared = false;
             return Ok(0);
@@ -160,7 +181,13 @@ impl ScreenBuffer {
             // A fresh allocation has no submitted content, even if the prior
             // allocation's snapshot happens to match a later preparation.
             self.snapshot = Box::default();
+            self.cancel_uploads();
         }
+        let mut ranges = 0;
+        dirty_ranges(&self.snapshot, bytes, std::mem::size_of::<T>(), |_, _| {
+            ranges += 1
+        });
+        self.pending.ensure_capacity(ranges, &self.staging_budget)?;
         self.pending.clear();
         let uploaded = dirty_ranges(
             &self.snapshot,
