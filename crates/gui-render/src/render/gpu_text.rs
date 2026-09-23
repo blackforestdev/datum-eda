@@ -74,6 +74,22 @@ impl Renderer {
         height: u32,
         overlay_only: bool,
     ) -> anyhow::Result<(TextBufferCacheStats, bool)> {
+        let scope = self.text_cpu.clone();
+        scope.with(|| {
+            self.prepare_frame_text_inner(device, queue, prepared, width, height, overlay_only)
+        })
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn prepare_frame_text_inner(
+        &mut self,
+        device: &wgpu::Device,
+        queue: &wgpu::Queue,
+        prepared: &PreparedScene,
+        width: u32,
+        height: u32,
+        overlay_only: bool,
+    ) -> anyhow::Result<(TextBufferCacheStats, bool)> {
         // A previous frame may have failed after text preparation but before
         // submission. Never reuse signatures for data that did not reach GPU.
         if self.atlas.has_pending_uploads()

@@ -1,5 +1,7 @@
 //! Renderer-owned resources shared by full-scene and auxiliary rendering.
 use super::*;
+#[path = "../cpu_alloc.rs"]
+pub mod cpu_alloc;
 pub use crate::text_buffer_cache::budget::TextCacheOwnerUsage;
 use crate::text_gpu::{Atlas as TextAtlas, Draw as TextRenderer};
 pub use crate::text_gpu::{
@@ -32,6 +34,7 @@ pub struct Renderer {
     pub(super) schematic_underlay_gpu: gpu_data::screen_buffer::ScreenBuffer,
     pub(super) schematic_overlay_gpu: gpu_data::screen_buffer::ScreenBuffer,
     pub(super) font_system: FontSystem,
+    pub(super) text_cpu: crate::cpu_alloc::Scope,
     pub(super) swash_cache: SwashCache,
     pub(super) text_resolution: [u32; 2],
     pub(super) atlas: TextAtlas,

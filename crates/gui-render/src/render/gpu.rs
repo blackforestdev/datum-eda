@@ -3,7 +3,7 @@ pub use scene_retained_access::RetainedGeometryObserver;
 mod renderer_state;
 pub use renderer_state::{
     Renderer, TextCacheKeyUsage, TextCacheOwnerUsage, TextGpuAllocation, TextGpuAllocationKind,
-    TextGpuAllocationObserver, WidthMeasurementCacheUsage,
+    TextGpuAllocationObserver, WidthMeasurementCacheUsage, cpu_alloc,
 };
 #[path = "gpu_measurements.rs"]
 mod gpu_measurements;

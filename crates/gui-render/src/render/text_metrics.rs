@@ -13,7 +13,13 @@ mod text_shape;
 static MEASURE_FS: std::sync::OnceLock<std::sync::Mutex<FontSystem>> = std::sync::OnceLock::new();
 
 pub(super) fn measure_font_system() -> &'static std::sync::Mutex<FontSystem> {
-    MEASURE_FS.get_or_init(|| std::sync::Mutex::new(load_datum_fonts()))
+    MEASURE_FS
+        .get_or_init(|| measurement_scope().with(|| std::sync::Mutex::new(load_datum_fonts())))
+}
+
+fn measurement_scope() -> &'static crate::cpu_alloc::Scope {
+    static SCOPE: std::sync::OnceLock<crate::cpu_alloc::Scope> = std::sync::OnceLock::new();
+    SCOPE.get_or_init(|| crate::cpu_alloc::Scope::new("text-measurement"))
 }
 
 /// Discover the process font inventory and locale once for measurement and all
@@ -25,9 +31,11 @@ pub(super) fn load_datum_fonts() -> FontSystem {
     static CATALOG: std::sync::OnceLock<(String, glyphon::fontdb::Database)> =
         std::sync::OnceLock::new();
     let (locale, database) = CATALOG.get_or_init(|| {
-        let mut fonts = FontSystem::new();
-        install_datum_font_sources(&mut fonts);
-        fonts.into_locale_and_db()
+        crate::cpu_alloc::Scope::new("shared-font-catalog").with(|| {
+            let mut fonts = FontSystem::new();
+            install_datum_font_sources(&mut fonts);
+            fonts.into_locale_and_db()
+        })
     });
     FontSystem::new_with_locale_and_db(locale.clone(), database.clone())
 }
@@ -44,7 +52,8 @@ fn measure_uncached(text: &str, size: f32, face: TextFace) -> f32 {
     let mut font_system = mutex
         .lock()
         .unwrap_or_else(|poisoned| poisoned.into_inner());
-    text_shape::measure(&mut font_system, text, &text_attrs(face), size, None).0
+    measurement_scope()
+        .with(|| text_shape::measure(&mut font_system, text, &text_attrs(face), size, None).0)
 }
 
 /// Load the vendored IBM Plex faces into the glyphon font database so chrome and
@@ -134,12 +143,21 @@ pub(super) fn measured_text_run_height_px(
                 let mut fonts = crate::measure_font_system()
                     .lock()
                     .unwrap_or_else(|poisoned| poisoned.into_inner());
-                let (_, rows) =
-                    text_shape::measure(&mut fonts, text, &text_attrs(face), size, Some(width));
+                let (_, rows) = measurement_scope().with(|| {
+                    text_shape::measure(&mut fonts, text, &text_attrs(face), size, Some(width))
+                });
                 rows.max(1) as f32 * (size * 1.22)
             },
         )
     })
+}
+
+pub(super) fn text_color(color: [f32; 3]) -> Color {
+    Color::rgb(
+        (color[0].clamp(0.0, 1.0) * 255.0).round() as u8,
+        (color[1].clamp(0.0, 1.0) * 255.0).round() as u8,
+        (color[2].clamp(0.0, 1.0) * 255.0).round() as u8,
+    )
 }
 
 #[cfg(test)]

@@ -273,8 +273,9 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             format,
             msaa_samples,
         );
-        let font_system = load_datum_fonts();
-        let swash_cache = SwashCache::new();
+        let text_cpu = crate::cpu_alloc::Scope::new("renderer-text");
+        let font_system = text_cpu.with(load_datum_fonts);
+        let swash_cache = text_cpu.with(SwashCache::new);
         let atlas = crate::text_gpu::Atlas::new(device);
         let text_renderer = crate::text_gpu::Draw::new(device, &atlas, format, msaa_samples);
         let menu_overlay_text_renderer =
@@ -300,6 +301,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             schematic_underlay_gpu: Default::default(),
             schematic_overlay_gpu: Default::default(),
             font_system,
+            text_cpu,
             swash_cache,
             text_resolution: [1, 1],
             atlas,
