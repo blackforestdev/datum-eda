@@ -39,6 +39,7 @@ struct Identity {
 struct State {
     id: u64,
     allocations: Mutex<Vec<Weak<Identity>>>,
+    uploads: Mutex<super::upload_totals::UploadTotals>,
 }
 
 /// Retain observation across renderer close without retaining GPU resources.
@@ -46,6 +47,10 @@ struct State {
 pub struct Observer(Owner);
 
 impl Observer {
+    pub fn submitted_upload_totals(&self) -> super::upload_totals::UploadTotals {
+        *self.0.0.uploads.lock().unwrap_or_else(|e| e.into_inner())
+    }
+
     pub fn allocations(&self) -> Vec<Record> {
         self.0.records()
     }
@@ -55,6 +60,14 @@ impl Observer {
 pub(crate) struct Owner(Arc<State>);
 
 impl Owner {
+    pub(crate) fn record_upload(&self, totals: super::upload_totals::UploadTotals) {
+        self.0
+            .uploads
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .add(totals);
+    }
+
     pub fn id(&self) -> u64 {
         self.0.id
     }
@@ -67,6 +80,7 @@ impl Owner {
         Self(Arc::new(State {
             id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
             allocations: Mutex::new(Vec::new()),
+            uploads: Mutex::new(Default::default()),
         }))
     }
 

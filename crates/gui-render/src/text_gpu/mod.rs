@@ -4,6 +4,7 @@ pub(crate) mod budget;
 mod draw;
 pub(crate) mod lifetime;
 pub(crate) mod upload;
+pub(crate) mod upload_totals;
 
 pub(crate) use atlas::{Atlas, UploadRequired};
 pub(crate) use draw::{Area, Draw};

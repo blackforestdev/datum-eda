@@ -1,0 +1,58 @@
+{
+  "status": "Submitted common upload totals and exact large-screen reuse implemented; full accounting and qualification remain open",
+  "base_commit": "52688d5d",
+  "production_consumers": [
+    "Common mapped uploader used by full/dialog frame screen vertices, glyph instances and uniforms",
+    "Glyph atlas, retained world and terminal image cold upload chunks",
+    "All production ScreenBuffer streams, including uncached panel/menu retirement"
+  ],
+  "retired_paths": [
+    "Inferring submitted transfer totals from prepared dirty ranges or pending atlas images",
+    "Dropping submitted screen snapshots solely because payload exceeds 256 KiB and repeatedly uploading unchanged large buffers"
+  ],
+  "behavior": [
+    "Accumulate exact encoding-boundary buffer payload, texture source bytes, row padding, scatter index bytes, staging capacity, buffer copy bytes/count, texture copy count and scatter dispatch count. Publish only after queue submission at the common Batch hold boundary. Refused and cancelled batches contribute zero. Per-owner fixed counters saturate; existing observers retain totals through host close without holding GPU allocations.",
+    "Screen snapshots now follow admitted GPU capacity, with at most two snapshots per stream. Production screen streams share the 16 MiB GPU allowance, so retained snapshot payload is at most 32 MiB per renderer plus allocation headers; this replaces the former 4.5 MiB bound for nine 256 KiB double snapshots. Trim obsolete prepared capacity after shrink; release both snapshots when an uncached control buffer retires. Construction peaks, prepared source geometry and dirty-range metadata are separate.",
+    "Exact dirty comparisons now cover large admitted buffers. Preserve separate submitted/prepared baselines, cancellation, sparse scatter and hard GPU budgets. Oversized uncached control allocations still require fresh upload by CTL-02 design."
+  ],
+  "proof": {
+    "renderer": "333 renderer tests pass, 11 diagnostic/visual cases filtered. Mixed texture/buffer proof reconciles 6 source + 506 padding + 8 buffer bytes; sparse proof separates 16384 changed bytes and 16384 index bytes with a mixed direct copy. Refusal/cancellation counters remain zero; deliberate repeated submission doubles totals and observer retains them after owner drop. GPU large-screen proof verifies zero unchanged upload, a four-byte edit, exact readback and snapshot shrink. Existing cache/lifetime/pixel regressions pass.",
+    "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2269, dependency authority and governance gates pass.",
+    "scope": "No broad benchmarks or native input campaign. Full drift not rerun; recorded Console golden discrepancy remains unresolved."
+  },
+  "limits": [
+    "Totals are renderer-owner cumulative submission observations, not GPU execution or per-consumer/frame classifications. Texture padding describes staging footprint, not texture pixel payload; mapped capacity and scatter packet capacity are not additional logical payload. Readback and device-internal work remain outside upload totals.",
+    "Larger retained CPU snapshots trade memory for exact large-screen reuse. Full T1 RSS/peak and scale qualification, pending-range metadata, CPU construction/transient accounting and all required S5 scenarios remain open.",
+    "No complete REUSE-SCREEN/MEM-01/ACC-01, S4/S5 or issue acceptance. Preserve GEFN, nonblocking resize and concurrent multi-device boundaries. No dependency, vendoring, prototype, numerical specification cap or licensing change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/upload-totals/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-totals/tests.log.gz",
+      "uncompressed_sha256": "1d34b9972b06ebade58ba050ceb51c28862c338b5d8201f68c2939c193e2c9f9"
+    },
+    "counter-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-totals/counter-tests.log.gz",
+      "uncompressed_sha256": "3b3232b2c07e3a536cd3c3f5d5f901b8bca4a239bdf1384f5c3631863f92ef1d"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-totals/clippy.log.gz",
+      "uncompressed_sha256": "1fdfb869dd61932bc9c735cd0a255e1f4f10a68f5cb5af96b60b8be2f5aa29c4"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/upload-totals/build.log.gz",
+      "uncompressed_sha256": "22cdd3936f7336d340d46c63a0eb9d1aadb3312062de1f972fcf0e4f123fa16d"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/lib.rs": "2993df6079382202961268c0f922c5180c4c16a18216ac07838194bd62364bfa",
+    "crates/gui-render/src/render/screen_buffer.rs": "ff9f564ac21a52a6092047b09afe9d76e24f106674bfae1a3105aaf762015f89",
+    "crates/gui-render/src/render/screen_buffer/tests.rs": "def4aa94ca9c952f7a5b98a4b9ab288537b07f86f639b5e1da6450e397e6d39d",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "5a525b4ff11e49fb69fc15f6e987ebd4f4e3d01ec2b0c5d17b47fac086bc399e",
+    "crates/gui-render/src/text_gpu/mod.rs": "4b88a891791f36605d6dc8fe43f682bda4b68f0dfff210c78dedaf670aef7d36",
+    "crates/gui-render/src/text_gpu/sparse_upload_tests.rs": "267d9eec312b64d068fa277af351bc75315bb5f408fd2368622aa1b1720333e8",
+    "crates/gui-render/src/text_gpu/upload.rs": "dd07f72710e612eeb0a67e36aa7a4f4bfd8b0bc1ab6fd940b32f0ec89c996413",
+    "crates/gui-render/src/text_gpu/upload_tests.rs": "e9973cb38e17bd559a28d2966848a8d6c200dc254725c2ac8975c3514b020c61",
+    "crates/gui-render/src/text_gpu/upload_totals.rs": "f395d2c6641f46ee0e568a48dfedfc0c1553cd59b7593872a89fd8abb21a9f42"
+  }
+}

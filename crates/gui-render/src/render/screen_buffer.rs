@@ -1,10 +1,11 @@
 //! Bounded last-content ownership for immediate screen-space vertex uploads.
 use super::vertex_allocation::VertexAllocation;
 
-// Submitted and prepared snapshots are separate: cancellation must not corrupt
-// the comparison baseline. Each retains at most 256 KiB; larger streams bypass
-// retention after submission. Reuse the two allocations across changed frames.
-const MAX_SNAPSHOT_BYTES: usize = 256 * 1024;
+// Submitted and prepared snapshots are separate so cancellation preserves the
+// comparison baseline. Each is bounded by this stream's admitted GPU capacity;
+// all screen streams therefore retain at most twice their shared GPU allowance
+// in snapshot payload, plus allocation headers. Shrink/uncached retirement trims
+// obsolete storage instead of retaining each stream's historical peak.
 
 #[derive(Default)]
 pub(crate) struct ScreenBuffer {
@@ -44,6 +45,10 @@ impl ScreenBuffer {
 
     pub(crate) fn retire_uncached_gpu(&mut self) {
         self.allocation.retire_uncached();
+        if self.allocation.buffer().is_none() {
+            self.snapshot = Box::default();
+            self.prepared = Box::default();
+        }
     }
 
     pub(crate) fn buffer(&self) -> Option<&wgpu::Buffer> {
@@ -57,7 +62,7 @@ impl ScreenBuffer {
     pub(crate) fn cancel_uploads(&mut self) {
         self.pending.clear();
         self.has_prepared = false;
-        if self.prepared.len() > MAX_SNAPSHOT_BYTES {
+        if self.prepared.len() as u64 > self.allocation.buffer().map_or(0, wgpu::Buffer::size) {
             self.prepared = Box::default();
         }
     }
@@ -81,11 +86,7 @@ impl ScreenBuffer {
 
     pub(crate) fn finish_uploads(&mut self) {
         if self.has_prepared {
-            if self.prepared.len() <= MAX_SNAPSHOT_BYTES {
-                std::mem::swap(&mut self.snapshot, &mut self.prepared);
-            } else {
-                self.snapshot = Box::default();
-            }
+            std::mem::swap(&mut self.snapshot, &mut self.prepared);
         }
         self.cancel_uploads();
     }
