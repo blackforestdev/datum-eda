@@ -15,6 +15,7 @@ impl TextBufferCache {
         crate::text_gpu::staging_vec::StagingVec<usize>,
         TextBufferCacheStats,
     )> {
+        Self::admit_input_keys(runs)?;
         let bytes = crate::text_gpu::staging_vec::StagingVec::<usize>::capacity_bytes(runs.len())?;
         self.release_layout_scratch_for(bytes, host);
         fonts.release_for(bytes);

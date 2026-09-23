@@ -15555,6 +15555,11 @@
           "work": "s4_resource_completion",
           "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json",
           "status": "Font pressure integrated; original implementation/accounting gaps and qualification remain open."
+        },
+        {
+          "work": "s4_text_owner_reconciliation.input_admission_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-admission/result.json",
+          "status": "Default workspace/overlay text batches reject impossible owned keys before copying or shaping"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -15724,6 +15729,11 @@
           "work": "s4_resource_completion",
           "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json",
           "status": "Font pressure integrated; original implementation/accounting gaps and qualification remain open."
+        },
+        {
+          "work": "s4_text_owner_reconciliation.input_admission_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-admission/result.json",
+          "status": "Default workspace/overlay text batches reject impossible owned keys before copying or shaping"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -17531,6 +17541,11 @@
           "work": "s4_construction_admission_work.lifetime_completion",
           "evidence": "docs/reviews/gui-performance/implementation/S4/history-lifetime/result.json",
           "status": "MEM-WORLD-CPU and MEM-WORLD-HISTORY cap implementation complete; original qualification remains S5"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.input_admission_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-admission/result.json",
+          "status": "Default workspace/overlay text batches reject impossible owned keys before copying or shaping"
         }
       ]
     },
@@ -17797,6 +17812,11 @@
           "work": "s4_construction_admission_work.lifetime_completion",
           "evidence": "docs/reviews/gui-performance/implementation/S4/history-lifetime/result.json",
           "status": "MEM-WORLD-CPU and MEM-WORLD-HISTORY cap implementation complete; original qualification remains S5"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.input_admission_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-admission/result.json",
+          "status": "Default workspace/overlay text batches reject impossible owned keys before copying or shaping"
         }
       ]
     },
@@ -35543,7 +35563,31 @@
       "No production code changed in this reconciliation; prior production migrations remain intact. No implementation predicate or milestone newly closed.",
       "Construction-time local/process overlap, temporary rich/layout/raster scratch and private font/raster classification remain unresolved; all cap deadlines and S5 qualification remain unchanged.",
       "No spec/sequencing amendment, dependency/license change, new framework or prototype edit. Preserve GEFN and nonblocking resize."
-    ]
+    ],
+    "input_admission_followup": {
+      "status": "Default workspace/overlay text batches reject impossible owned keys before copying or shaping",
+      "base_commit": "166f26b0",
+      "production_consumers": [
+        "gpu_text.rs shared workspace text preparation",
+        "gpu_text.rs shared menu/dialog overlay text preparation"
+      ],
+      "retired_paths": [
+        "Copying and shaping a key whose minimum owned storage already exceeds the renderer text-cache cap"
+      ],
+      "behavior": [
+        "Preflight each required key before index/staging allocation or font-cache release. Count owned plain/rich text and span/entry storage against the existing8MiB local ceiling with saturating arithmetic. Rich spans replace unused fallback text. Do not sum duplicate runs or extent variants and accidentally reject shared content.",
+        "Use one existing local-cap constant for preflight, retained admission and post-frame settling. Errors follow the existing production Result path; authoritative input and valid cached layouts remain unchanged."
+      ],
+      "proof": {
+        "focused": "1 passed;0 failed;394 filtered. Exercises actual admitted_indices with installed Fonts for oversized plain/rich input, verifies font allocation count/peak and host staging usage unchanged, preserves cache revision and confirms subsequent valid input is a warm hit. Also checks unused rich fallback and repeated keys are not falsely rejected.",
+        "build": "Fresh offline visual GUI application build passed. Source health2296files and whitespace checks pass. No broad benchmark, native-input or repeated full-renderer campaign for this bounded admission change."
+      },
+      "limits": [
+        "This lower-bound check prevents work for necessarily invalid keys. It does not bound one synchronous library shape/layout operation, aggregate multiple smaller new keys, or close text/staging construction-peak requirements. Eight recorded implementation gaps remain; original S5 qualification is unchanged.",
+        "No dependency/vendor/license/prototype/numerical-cap/sequencing change. Preserve GEFN and nonblocking resize. Owner/Copilot engine-test edit excluded."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/text-input-admission/result.json"
+    }
   },
   "s4_text_preparation_work": {
     "status": "Shared text preparation indices/signatures admitted and area copies retired; private construction accounting remains open",
