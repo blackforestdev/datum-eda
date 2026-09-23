@@ -46,6 +46,20 @@ fn local_atlas_limit_counts_retired_pages_before_replacement() {
             .is_err()
     );
     assert!(atlas.pages.is_empty());
+    let observer = atlas.owner.observer();
+    let generation = atlas.generation;
+    atlas = atlas.replacement(&device);
+    assert_eq!(atlas.generation, generation.wrapping_add(1));
+    assert!(std::sync::Arc::ptr_eq(&atlas.local_budget, &local));
+    assert_eq!(atlas.owner.id(), observer.allocations()[0].owner);
+    assert!(
+        atlas
+            .glyph(&device, &queue, &mut fonts, &mut raster, key)
+            .is_err()
+    );
+    assert!(atlas.pages.is_empty());
+    assert_eq!(local.used(), 1024 * 1024);
+    assert!(observer.allocations().iter().all(|a| a.retiring));
     drop(held);
     assert_eq!(local.used(), 0);
     atlas

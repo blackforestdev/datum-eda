@@ -342,7 +342,10 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         let text_cpu = crate::cpu_alloc::Scope::new("renderer-text");
         let font_system = text_cpu.with(load_datum_fonts);
         let swash_cache = text_cpu.with(SwashCache::new);
-        let atlas = crate::text_gpu::Atlas::with_staging_budget(device, staging_budget);
+        let atlas = match previous {
+            Some(old) => old.atlas.replacement(device),
+            None => crate::text_gpu::Atlas::with_staging_budget(device, staging_budget),
+        };
         let text_renderer =
             crate::text_gpu::Draw::new(device, &atlas, format, msaa_samples, screen_budget.clone());
         let menu_overlay_text_renderer =

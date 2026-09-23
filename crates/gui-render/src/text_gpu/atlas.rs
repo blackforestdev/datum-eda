@@ -134,6 +134,16 @@ impl Atlas {
         }
     }
 
+    /// Recreate device objects while old pages remain charged to this host.
+    pub fn replacement(&self, device: &wgpu::Device) -> Self {
+        let mut replacement = Self::with_staging_budget(device, self.staging_budget.clone());
+        replacement.local_budget = self.local_budget.clone();
+        replacement.texture_budget = self.texture_budget.clone();
+        replacement.owner = self.owner.clone();
+        replacement.generation = self.generation.wrapping_add(1);
+        replacement
+    }
+
     /// Flush immediately before the frame submission. Failed preparation and
     /// close can discard pending CPU images without leaving unsubmitted writes.
     pub fn has_pending_uploads(&self) -> bool {
