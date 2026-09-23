@@ -57,6 +57,8 @@ impl Renderer {
         queue: &wgpu::Queue,
     ) -> anyhow::Result<Option<crate::text_gpu::upload::Batch>> {
         let mut buffers = Vec::new();
+        gpu_vertex_upload::screen_streams!(self, stream, stream.append_uploads(&mut buffers));
+        self.terminal_graphics.append_vertex_uploads(&mut buffers);
         self.uniform_buffer.append_uploads(&mut buffers);
         for binding in &self.surface_scene_uniforms {
             binding.buffer.append_uploads(&mut buffers);
@@ -73,6 +75,7 @@ impl Renderer {
         self.text_renderer.finish_uploads(text_bytes);
         self.menu_overlay_text_renderer
             .finish_uploads(overlay_bytes);
+        self.finish_screen_uploads();
         self.flush_vertex_uploads(queue);
         Ok(atlas_upload)
     }

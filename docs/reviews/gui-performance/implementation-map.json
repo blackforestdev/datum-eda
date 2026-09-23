@@ -16839,6 +16839,11 @@
           "work": "s4_mixed_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/mixed-staging/result.json",
           "status": "Uniform and glyph-instance uploads join shared explicit staging; remaining producers, scratch, cold chunks and original qualification stay open."
+        },
+        {
+          "work": "s4_screen_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/screen-staging/result.json",
+          "status": "All default screen streams and terminal placement quads join shared explicit staging; world/image producers, scratch, cold chunks and original qualification remain open."
         }
       ]
     },
@@ -16970,6 +16975,11 @@
           "work": "s4_mixed_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/mixed-staging/result.json",
           "status": "Uniform and glyph-instance uploads join shared explicit staging; remaining producers, scratch, cold chunks and original qualification stay open."
+        },
+        {
+          "work": "s4_screen_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/screen-staging/result.json",
+          "status": "All default screen streams and terminal placement quads join shared explicit staging; world/image producers, scratch, cold chunks and original qualification remain open."
         }
       ]
     },
@@ -17126,6 +17136,11 @@
           "work": "s4_mixed_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/mixed-staging/result.json",
           "status": "Uniform and glyph-instance uploads join shared explicit staging; remaining producers, scratch, cold chunks and original qualification stay open."
+        },
+        {
+          "work": "s4_screen_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/screen-staging/result.json",
+          "status": "All default screen streams and terminal placement quads join shared explicit staging; world/image producers, scratch, cold chunks and original qualification remain open."
         }
       ]
     },
@@ -32352,5 +32367,38 @@
       "No dependency, vendor, license, prototype, font, layout or numerical-budget change. Preserve GEFN and nonblocking resize CPU disposition."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/mixed-staging/result.json"
+  },
+  "s4_screen_staging_work": {
+    "status": "All default screen-space vertex streams and terminal placement quads now use shared explicitly admitted frame staging; complete staging/resource qualification remains open",
+    "base_commit": "ab4caf49",
+    "production_consumers": [
+      "Nine renderer screen streams: panel, viewport underlay/overlay, board interaction, Console, menu overlay, schematic underlay/overlay, surface grid",
+      "Terminal image placement quads, shared by foreground/background drawing",
+      "Default full and overlay-only render paths in main and auxiliary native hosts"
+    ],
+    "retired_paths": [
+      "Opaque queue.write_buffer upload path for ScreenBuffer consumers",
+      "Independent terminal placement-buffer flush before shared staging admission"
+    ],
+    "behavior": [
+      "Borrow the existing normalized pending ranges and final payload into the shared mixed upload batch. Screen and terminal placement copies now count toward the same actual mapped capacity as uniforms, glyph instances and atlas pixels under host16 MiB/process-staging64 MiB/GPU512 MiB admission.",
+      "Do not clear a screen plan or release its over-cap temporary payload until shared batch creation succeeds. Admission refusal preserves all migrated producers; cancellation still invalidates unsubmitted snapshots.",
+      "Use a single screen-stream inventory for collection, cancellation, successful consumption and submission retention; preserve destination allocations, painter order, dirty gaps, final bytes and existing frame submission.",
+      "Keep retained-world and terminal-image uploads on their current path pending bounded cold continuation; this slice introduces no new loaded-board size restriction."
+    ],
+    "proof": {
+      "renderer": "308 renderer tests pass, 11 diagnostic/visual cases filtered. Default-frame refusal/retry now covers combined uniform and panel payloads; each plan survives refusal and is consumed after successful retry, followed by zero warm staging. Existing screen readback, supersession/shrink/regrow/cancellation, terminal resource and pixel parity tests exercise the migrated staging path.",
+      "lint": "Visual all-targets renderer/app Clippy -D warnings and source health2245 pass; dependency authority and governance checks pass.",
+      "build": "Fresh native visual application build passes.",
+      "native": "1680x1050 datum-test/R1 capture exactly matches mixed-staging/native.png; no new OS-input/endurance/throughput qualification.",
+      "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels (0.384318%), dat-console-revision-golden-hrak. Preceding checks pass; later gates unrun; no full-drift acceptance."
+    },
+    "limits": [
+      "Four board/schematic retained-world vertex/stroke streams and terminal image pixels still use opaque queue staging. CPU pending payload/metadata/scratch, diagnostic query/readback and complete resource accounting remain unfinished.",
+      "Oversized cold batch continuation still requires bounded chunks with coordinator/submission accounting. Admission fails rather than silently omitting required content; no complete MEM-STAGING predicate closure.",
+      "Existing per-vertex spans can retain internal unchanged words; full exact changed-byte transfer remains open. No full native/backend/fault/resource qualification or S4/S5 closure.",
+      "No dependency, vendor, license, prototype, font, layout or numerical-budget change. Preserve GEFN and nonblocking resize CPU disposition."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/screen-staging/result.json"
   }
 }

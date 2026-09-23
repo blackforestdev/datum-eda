@@ -6,54 +6,66 @@
 
 use super::*;
 
-// One inventory for cancellation, successful upload, and submission retention.
-macro_rules! vertex_streams {
-    ($this:ident, $stream:ident, $action:expr) => {{
-        let $stream = &mut $this.panel_gpu;
+// Shared inventories for plan collection, cancellation, consumption and retirement.
+macro_rules! screen_streams {
+    ($this:ident, $stream:ident, $action:expr $(, $mutability:ident)?) => {{
+        let $stream = & $($mutability)? $this.panel_gpu;
         $action;
-        let $stream = &mut $this.viewport_underlay_gpu;
+        let $stream = & $($mutability)? $this.viewport_underlay_gpu;
         $action;
-        let $stream = &mut $this.viewport_overlay_gpu;
+        let $stream = & $($mutability)? $this.viewport_overlay_gpu;
         $action;
-        let $stream = &mut $this.board_interaction_gpu;
+        let $stream = & $($mutability)? $this.board_interaction_gpu;
         $action;
-        let $stream = &mut $this.console_gpu.vertices;
+        let $stream = & $($mutability)? $this.console_gpu.vertices;
         $action;
-        let $stream = &mut $this.menu_overlay_gpu;
+        let $stream = & $($mutability)? $this.menu_overlay_gpu;
         $action;
-        let $stream = &mut $this.schematic_underlay_gpu;
+        let $stream = & $($mutability)? $this.schematic_underlay_gpu;
         $action;
-        let $stream = &mut $this.schematic_overlay_gpu;
+        let $stream = & $($mutability)? $this.schematic_overlay_gpu;
         $action;
-        let $stream = &mut $this.surface_grid_gpu;
-        $action;
-        let $stream = &mut $this.world_vertices_gpu;
-        $action;
-        let $stream = &mut $this.world_strokes_gpu;
-        $action;
-        let $stream = &mut $this.schematic_world_vertices_gpu;
-        $action;
-        let $stream = &mut $this.schematic_world_strokes_gpu;
+        let $stream = & $($mutability)? $this.surface_grid_gpu;
         $action;
     }};
 }
+pub(super) use screen_streams;
 
+macro_rules! world_streams {
+    ($this:ident, $stream:ident, $action:expr $(, $mutability:ident)?) => {{
+        let $stream = & $($mutability)? $this.world_vertices_gpu;
+        $action;
+        let $stream = & $($mutability)? $this.world_strokes_gpu;
+        $action;
+        let $stream = & $($mutability)? $this.schematic_world_vertices_gpu;
+        $action;
+        let $stream = & $($mutability)? $this.schematic_world_strokes_gpu;
+        $action;
+    }};
+}
 impl Renderer {
     pub(super) fn cancel_vertex_uploads(&mut self) {
-        vertex_streams!(self, stream, stream.cancel_uploads());
+        screen_streams!(self, stream, stream.cancel_uploads(), mut);
+        world_streams!(self, stream, stream.cancel_uploads(), mut);
         self.terminal_graphics.cancel_uploads();
     }
 
+    pub(super) fn finish_screen_uploads(&mut self) {
+        screen_streams!(self, stream, stream.finish_uploads(), mut);
+        self.terminal_graphics.finish_vertex_uploads();
+    }
+
     pub(super) fn flush_vertex_uploads(&mut self, queue: &wgpu::Queue) {
-        vertex_streams!(self, stream, stream.flush_uploads(queue));
-        self.terminal_graphics.flush_uploads(queue);
+        world_streams!(self, stream, stream.flush_uploads(queue), mut);
+        self.terminal_graphics.flush_textures(queue);
     }
 
     pub(super) fn vertex_submission_refs(
         &mut self,
     ) -> Vec<crate::text_gpu::lifetime::SubmissionRef> {
         let mut refs = Vec::new();
-        vertex_streams!(self, stream, refs.extend(stream.submission_ref()));
+        screen_streams!(self, stream, refs.extend(stream.submission_ref()));
+        world_streams!(self, stream, refs.extend(stream.submission_ref()));
         refs.extend(self.terminal_graphics.submission_refs());
         refs
     }

@@ -256,12 +256,24 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         }
     }
 
-    pub(super) fn flush_uploads(&mut self, queue: &wgpu::Queue) {
+    pub(super) fn append_vertex_uploads<'a>(
+        &'a self,
+        out: &mut Vec<crate::text_gpu::upload::BufferUpload<'a>>,
+    ) {
+        for draw in &self.draws {
+            draw.vertices.append_uploads(out);
+        }
+    }
+
+    pub(super) fn finish_vertex_uploads(&mut self) {
+        for draw in &mut self.draws {
+            draw.vertices.finish_uploads();
+        }
+    }
+
+    pub(super) fn flush_textures(&mut self, queue: &wgpu::Queue) {
         for texture in &mut self.textures {
             texture.flush_upload(queue);
-        }
-        for draw in &mut self.draws {
-            draw.vertices.flush_uploads(queue);
         }
     }
 

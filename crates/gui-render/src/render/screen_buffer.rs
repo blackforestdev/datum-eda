@@ -51,24 +51,38 @@ impl ScreenBuffer {
         }
     }
 
-    pub(crate) fn flush_uploads(&mut self, queue: &wgpu::Queue) {
+    pub(crate) fn append_uploads<'a>(
+        &'a self,
+        out: &mut Vec<crate::text_gpu::upload::BufferUpload<'a>>,
+    ) {
         let bytes = if self.pending_large.is_empty() {
             &self.snapshot
         } else {
             &self.pending_large
         };
-        for range in self.pending.drain(..) {
-            // Multiple preparations before submission supersede the old tail.
+        for range in &self.pending {
             let end = range.end.min(bytes.len());
             if range.start < end {
-                queue.write_buffer(
-                    self.allocation.buffer().unwrap(),
-                    range.start as u64,
-                    &bytes[range.start..end],
-                );
+                out.push(crate::text_gpu::upload::BufferUpload {
+                    buffer: self.allocation.buffer().unwrap(),
+                    offset: range.start as u64,
+                    bytes: &bytes[range.start..end],
+                });
             }
         }
+    }
+
+    pub(crate) fn finish_uploads(&mut self) {
+        self.pending.clear();
         self.pending_large = Box::default();
+    }
+
+    #[cfg(all(test, feature = "visual"))]
+    pub(crate) fn flush_uploads(&mut self, device: &wgpu::Device, queue: &wgpu::Queue) {
+        let mut uploads = Vec::new();
+        self.append_uploads(&mut uploads);
+        crate::text_gpu::upload::submit_buffers_for_test(device, queue, &uploads);
+        self.finish_uploads();
     }
 
     // Preparations supersede one another before submission. Keep their union,
