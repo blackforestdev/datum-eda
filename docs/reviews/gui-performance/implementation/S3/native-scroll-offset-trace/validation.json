@@ -1,0 +1,11 @@
+{
+  "traces": 24972,
+  "windows": 12,
+  "scales": [
+    1.0,
+    1.5,
+    2.0
+  ],
+  "all_after_offsets_finite_and_bounded": true,
+  "all_changed_flags_match_exposed_offset_change": true
+}

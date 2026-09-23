@@ -7217,7 +7217,8 @@
       "observed_artifacts": [
         "docs/reviews/gui-performance/implementation/S3/wheel-input-negatives/result.json",
         "docs/reviews/gui-performance/implementation/S3/native-wheel-offsets/result.json",
-        "docs/reviews/gui-performance/implementation/S3/fractional-scroll-accumulation/result.json"
+        "docs/reviews/gui-performance/implementation/S3/fractional-scroll-accumulation/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-scroll-offset-trace/result.json"
       ],
       "s3_native_wheel_offsets_progress": {
         "production_consumers": [
@@ -8529,7 +8530,8 @@
         "docs/reviews/gui-performance/implementation/S3/continuous-timer-negative/result.json",
         "docs/reviews/gui-performance/implementation/S3/reduced-motion-scales/result.json",
         "docs/reviews/gui-performance/implementation/S3/wayland-idle-negative/result.json",
-        "docs/reviews/gui-performance/implementation/S3/wayland-input-portal/result.json"
+        "docs/reviews/gui-performance/implementation/S3/wayland-input-portal/result.json",
+        "docs/reviews/gui-performance/implementation/S3/native-scroll-offset-trace/result.json"
       ],
       "s3_native_reduced_motion_progress": {
         "status": "Both native Preferences reduced-motion scroll/idle cases pass",
@@ -28746,7 +28748,7 @@
         "HP16-01": "Complete remaining consumer/backend/scale/fractional translation/clip and displayed-state proof. Same-release GLOBAL/PROJECT1/1.5/2 visual-override OS scroll, NEW1x focus cycle and MAIN1x File-menu activity retain stable production build totals; existing lookup-bypass negatives fail corresponding native work assertions. Larger-scale Preferences accepted extents are1440x1050/1918x1050. Retain stale captures and unqualified NEW final focus; visual overrides are not monitor transitions. Shared GPU72-case parity and Inspector/Menu direct-rectangle classification remain bounded; no extra general-tessellator negative prerequisite.",
         "HP16-02": "Complete actual authored-board/native contour/style/DPI qualification. General filler analytical concave/holed area cases and fan negative now recorded; existing cache key-field/DPI-key negative retained. Unit contours do not qualify native authored consumers.",
         "HP16-03": "Reconcile actual native control working-set evidence with recorded bounded CPU LRU/bypass/byte eviction and pin-indefinitely negative. Full CPU metadata/GPU/in-flight/aggregate bounds remain S4/S5 resource dependencies.",
-        "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter. Both-backend dialog native-entry offset oracle now passes24 cases with supplied physical/line deltas. Complete timed OS input/remaining consumer and displayed-state proof; supplied-event success does not replace them. Both hosts now have actual Wayland OS pixel-wheel reversal including +/-0.2625 physical pixels, outward boundary no-op and immediate reverse frame; exact final offset and timed stream remain open. Current shared owner now preserves sub-f32-resolution accumulation at nonzero offsets. Predecessor fails new regression;47 viewport tests and12 X11 native-entry profiles pass. Wayland first host passes wheel assertions then content presentation times out; no complete backend result. Exact OS/timed/display qualification remains open. Unlocked a4b12104 Wayland follow-up now passes all12 actual native-entry profiles with tiny deltas; earlier timeout retained. Prior18-profile X11 summary corrected to12 from raw logs. OS-device/timed/displayed-state proof remains open.",
+        "HP18-01": "Complete native fractional/reversal stream with final-offset oracle. Shared adapter rounding/discard negative now detected with restored positive. Inspector has no current scroll adapter. Both-backend dialog native-entry offset oracle now passes24 cases with supplied physical/line deltas. Complete timed OS input/remaining consumer and displayed-state proof; supplied-event success does not replace them. Both hosts now have actual Wayland OS pixel-wheel reversal including +/-0.2625 physical pixels, outward boundary no-op and immediate reverse frame; exact final offset and timed stream remain open. Current shared owner now preserves sub-f32-resolution accumulation at nonzero offsets. Predecessor fails new regression;47 viewport tests and12 X11 native-entry profiles pass. Wayland first host passes wheel assertions then content presentation times out; no complete backend result. Exact OS/timed/display qualification remains open. Unlocked a4b12104 Wayland follow-up now passes all12 actual native-entry profiles with tiny deltas; earlier timeout retained. Prior18-profile X11 summary corrected to12 from raw logs. OS-device/timed/displayed-state proof remains open. Opt-in shared native offset trace now validated against12 actual Wayland surfaces/24972 records. First30-second120-call/s portal attempt fails W-SCROLL:2717 received scroll traces, altered delta0.24609375 and149 unscripted pointer moves; no Project/bottom trial or timed acceptance. Preserve raw driver/native evidence.",
         "HP19-01": "Complete physical OS input and corresponding hits across applicable Main/NEW/Layers/terminal and Preferences profiles at1/1.5/2x. Current shared converter mis-scaling negative and restored positive are recorded; native Preferences line evidence remains distinct. Both-backend dialog native-entry offset oracle now passes24 cases with supplied physical/line deltas. Complete timed OS input/remaining consumer and displayed-state proof; supplied-event success does not replace them. Prescribed double-scale defect now detected through actual Global native entry at1.5x on both backends; restored positives cover all dialog profiles. Preserve distinction from OS-delivered and independent other-consumer negatives. Current real Runtime Main/Layers physical-line equivalence and Layers scaling negative now recorded for both backends/three overrides; OS dispatch, final pixels and terminal/remaining qualification stay open. Terminal real-PTY history is now mandatory: native Runtime one-row physical/line policy, local no-op boundaries and camera/preparation isolation pass on both backends at1/1.5/2 overrides. Both1.5x physical-sign negatives fail and explicitly recompiled normal positives pass; OS delivery, pixels and mouse-report bytes remain open. Actual Wayland OS physical-wheel delivery and fresh-target semantic outcomes now recorded for both Preferences with output scale1.05/visual override1; no other-scale conversion qualification.",
         "HP20-01": "Complete remaining backend and expanded/other-control scale extent cases. Both Preferences native search/clear now has1/1.5/2x override proof at actual recorded sizes;1x choices/explanations/final-row/minimum-height and shared visible-row negative remain recorded. No monitor-scale transition or latency acceptance.",
         "HP21-01": "Complete remaining OS input/capture/profile/scale qualification. All three default dialog adapters now share pointer dispatch; actual native surfaces detect ignored scrollbar consumption activating Units settings/New name through production WindowEvents, with restored positive. Direct dispatcher proof does not qualify OS delivery. Retain painted-only OS negative and unresolved delivery failures. Both-backend current native entry proof is recorded:24 closes,19 scrollbar focus cancellation cases across accepted extents. OS delivery, unavailable Wayland2x requested sizes and remaining qualification stay open.",
@@ -28754,7 +28756,7 @@
         "HP22-01": "Complete remaining native diagonal/rounded/nested clipping cases per actual consumer. Shared clamp-vertices negative now detected by corrected existing area oracle; preserve original false-pass and terminal call-removal negatives.",
         "HP22-02": "Complete remaining native/GPU profiles. Pinned-header clipping and scrolling negatives now detected by strengthened actual Preferences preparation test; hidden-hit clipping omission already detected. Preserve initial missing-header false pass and existing bounded pinned GPU/native evidence.",
         "HP23-01": "Complete remaining native keyboard/search reveal across section/content/scale profiles. Stale focus after height change now reproduced and fixed in both native Preferences; existing explanation Close fix retained. Native DPI transition remains open. Current Project explanation keyboard fix additionally exercised through Wayland OS Tab/Enter; nested Escape dismisses explanation then closes dialog and restores Main focus. Exact displayed query/pixels remain unverified.",
-        "HP23-02": "Complete timed native Wayland scrolling/final-offset and remaining qualification. KDE input-only session consent now succeeded: Global/Project received real pointer/wheel events; Global content-change/release/fresh Reset has semantic receipt. The session closed cleanly. Earlier consent timeout remains historical. Existing both-backend1x idle/timer negative and X11 reduced-motion scroll1/1.5/2 remain bounded evidence. No W-SCROLL rate/duration, visual or monitor-transition qualification follows. Consolidated Wayland Global/Project trial now records five OS wheel events per host, warm dialog-local updates and14.93/17.59 seconds with no Main/dialog frames. Timed W-SCROLL, exact final offsets, visual and other-profile qualification remain open; existing timer negatives remain credited."
+        "HP23-02": "Complete timed native Wayland scrolling/final-offset and remaining qualification. KDE input-only session consent now succeeded: Global/Project received real pointer/wheel events; Global content-change/release/fresh Reset has semantic receipt. The session closed cleanly. Earlier consent timeout remains historical. Existing both-backend1x idle/timer negative and X11 reduced-motion scroll1/1.5/2 remain bounded evidence. No W-SCROLL rate/duration, visual or monitor-transition qualification follows. Consolidated Wayland Global/Project trial now records five OS wheel events per host, warm dialog-local updates and14.93/17.59 seconds with no Main/dialog frames. Timed W-SCROLL, exact final offsets, visual and other-profile qualification remain open; existing timer negatives remain credited. Opt-in shared native offset trace now validated against12 actual Wayland surfaces/24972 records. First30-second120-call/s portal attempt fails W-SCROLL:2717 received scroll traces, altered delta0.24609375 and149 unscripted pointer moves; no Project/bottom trial or timed acceptance. Preserve raw driver/native evidence."
       },
       "next_action": "Reconcile remaining S3 functional/native/profile gaps against recorded receipts; the consolidated Global/Project Wayland OS wheel/local-idle batch is now recorded. Do not repeat this bounded case solely for an unrelated later commit; timed/final-state and missing consumer/profile predicates remain required.",
       "negative_control_scope_review": {
@@ -30204,6 +30206,59 @@
       "No new native OS-input or rendered-pixel proof; desktop currently locked and unlock request pending. Earlier bounded native evidence is retained, not relabeled as proof of this candidate.",
       "No runtime latency/allocation speedup claim. This is ownership convergence, not a new product interaction.",
       "No prototype, dependency/license, preference authority, numerical budget, sequencing or resize-scope change; full S3 qualification remains open."
+    ]
+  },
+  "s3_native_scroll_offset_trace_work": {
+    "production_consumers": [
+      "Global Preferences native wheel",
+      "Project Preferences native wheel",
+      "New Project native wheel"
+    ],
+    "shared_owner": "GlobalPreferencesWindowSurface::scroll_wheel",
+    "retired_paths": [],
+    "evidence": "docs/reviews/gui-performance/implementation/S3/native-scroll-offset-trace/result.json",
+    "proof": {
+      "wheel_test": "1 passed,392 filtered",
+      "release_build": "Offline optimized visual build passed",
+      "native_trace_validation": {
+        "traces": 24972,
+        "windows": 12,
+        "scales": [
+          1.0,
+          1.5,
+          2.0
+        ],
+        "all_after_offsets_finite_and_bounded": true,
+        "all_changed_flags_match_exposed_offset_change": true
+      },
+      "native_test": "Wayland actual native-entry test1 passed,392 filtered,12 surfaces across four size/scale configurations; every delivered offset is checked by existing test oracle. Raw trace additionally checked for bounds and change-flag consistency.",
+      "source_policy": "Source health and13 policy tests pass.",
+      "full_drift": "Clippy passes; exit1 at existing Console routine-focused1x golden mismatch3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates did not run; goldens unchanged."
+    },
+    "timed_attempt": {
+      "host": "Global",
+      "requested": "30 seconds,120 calls/s, alternating signs every2 seconds; portal amplitude0.23809523809523808 intended to compensate observed1.05 output scale",
+      "result": {
+        "issued": 3600,
+        "received_trace_count": 2717,
+        "unscripted_pointer_motion_count": 149,
+        "delta_histogram": {
+          "0.24609375": 1440,
+          "-0.24609375": 1277
+        },
+        "first": "[SystemTime { tv_sec: 1790125214, tv_nsec: 147734219 }] native scroll window=WindowId(94569684112208) delta=PixelDelta(PhysicalPosition { x: -0.0, y: 0.24609375 }) scale=1 before=0.0 after=0.0 maximum=88.0 changed=false",
+        "last": "[SystemTime { tv_sec: 1790125244, tv_nsec: 136977049 }] native scroll window=WindowId(94569684112208) delta=PixelDelta(PhysicalPosition { x: -0.0, y: 0.24609375 }) scale=1 before=4.921875 after=4.6757813 maximum=88.0 changed=true"
+      },
+      "driver_elapsed_seconds": 30.000177324051037,
+      "driver_max_lateness_seconds": 0.0039071920327842236,
+      "disposition": "Failed W-SCROLL: not every issued call reached shared native scroll path; delivered values differ from intended0.25;149 unscripted pointer moves contaminate trial; final4.6757813 is not prescribed expected final state. Do not infer source of changes or lost delivery. Project/bottom-boundary trials not run.",
+      "cleanup": "Owned Global process terminated; portal explicitly closed, both tool sessions exit0."
+    },
+    "limits": [
+      "No W-SCROLL, full HP18/HP23/S3, native visual/OS stream reliability or default-path speedup acceptance.",
+      "No overhead/CPU/GPU percentile, complete resource accounting, monitor transition or line-delta portal qualification.",
+      "Existing diagnostic flags explicitly enabled; measurements cannot stand in for default performance.",
+      "No dependency/license, prototype, numerical budget, sequencing, preference authority or resize-scope changes."
     ]
   }
 }

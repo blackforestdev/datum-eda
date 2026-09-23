@@ -1,0 +1,108 @@
+{
+  "status": "opt-in production offset trace; timed W-SCROLL trial failed/unqualified",
+  "base_commit": "c8657d9a",
+  "production_consumers": [
+    "Global Preferences native wheel",
+    "Project Preferences native wheel",
+    "New Project native wheel"
+  ],
+  "shared_owner": "GlobalPreferencesWindowSurface::scroll_wheel",
+  "retired_paths": [],
+  "change": "Existing lazy verbose diagnostic records window, delivered delta, scale, before/after offsets, maximum and actual exposed-offset change. No new sink or measurement subsystem. Native input/damage behavior unchanged.",
+  "default_path": "DATUM_GUI_VERBOSE_LOG absent: new message formatting and file IO do not execute; offset read and existing helper environment check remain. No zero-overhead claim.",
+  "proof": {
+    "wheel_test": "1 passed,392 filtered",
+    "release_build": "Offline optimized visual build passed",
+    "native_trace_validation": {
+      "traces": 24972,
+      "windows": 12,
+      "scales": [
+        1.0,
+        1.5,
+        2.0
+      ],
+      "all_after_offsets_finite_and_bounded": true,
+      "all_changed_flags_match_exposed_offset_change": true
+    },
+    "native_test": "Wayland actual native-entry test1 passed,392 filtered,12 surfaces across four size/scale configurations; every delivered offset is checked by existing test oracle. Raw trace additionally checked for bounds and change-flag consistency.",
+    "source_policy": "Source health and13 policy tests pass.",
+    "full_drift": "Clippy passes; exit1 at existing Console routine-focused1x golden mismatch3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates did not run; goldens unchanged."
+  },
+  "timed_attempt": {
+    "host": "Global",
+    "requested": "30 seconds,120 calls/s, alternating signs every2 seconds; portal amplitude0.23809523809523808 intended to compensate observed1.05 output scale",
+    "result": {
+      "issued": 3600,
+      "received_trace_count": 2717,
+      "unscripted_pointer_motion_count": 149,
+      "delta_histogram": {
+        "0.24609375": 1440,
+        "-0.24609375": 1277
+      },
+      "first": "[SystemTime { tv_sec: 1790125214, tv_nsec: 147734219 }] native scroll window=WindowId(94569684112208) delta=PixelDelta(PhysicalPosition { x: -0.0, y: 0.24609375 }) scale=1 before=0.0 after=0.0 maximum=88.0 changed=false",
+      "last": "[SystemTime { tv_sec: 1790125244, tv_nsec: 136977049 }] native scroll window=WindowId(94569684112208) delta=PixelDelta(PhysicalPosition { x: -0.0, y: 0.24609375 }) scale=1 before=4.921875 after=4.6757813 maximum=88.0 changed=true"
+    },
+    "driver_elapsed_seconds": 30.000177324051037,
+    "driver_max_lateness_seconds": 0.0039071920327842236,
+    "disposition": "Failed W-SCROLL: not every issued call reached shared native scroll path; delivered values differ from intended0.25;149 unscripted pointer moves contaminate trial; final4.6757813 is not prescribed expected final state. Do not infer source of changes or lost delivery. Project/bottom-boundary trials not run.",
+    "cleanup": "Owned Global process terminated; portal explicitly closed, both tool sessions exit0."
+  },
+  "limits": [
+    "No W-SCROLL, full HP18/HP23/S3, native visual/OS stream reliability or default-path speedup acceptance.",
+    "No overhead/CPU/GPU percentile, complete resource accounting, monitor transition or line-delta portal qualification.",
+    "Existing diagnostic flags explicitly enabled; measurements cannot stand in for default performance.",
+    "No dependency/license, prototype, numerical budget, sequencing, preference authority or resize-scope changes."
+  ],
+  "artifacts": {
+    "wheel-test.log.gz": {
+      "sha256_uncompressed": "3cbc4c688c70619ec587f9e5bdfce97223797f74f614555b943309bd8599d942",
+      "bytes_uncompressed": 664
+    },
+    "release-build.log.gz": {
+      "sha256_uncompressed": "d2fb2b20d4ce789ffba2371c1185b98a9b5ae8827da9ff7417d814b6a4470f71",
+      "bytes_uncompressed": 633
+    },
+    "source-policy.log.gz": {
+      "sha256_uncompressed": "d6220266f56927a180150f02f340e445587c967e7ba89acab58485c80a85c5ab",
+      "bytes_uncompressed": 112
+    },
+    "native-validation-test.log.gz": {
+      "sha256_uncompressed": "3623df414b5933226c0e19d5a30cbc4785659176f862401f0cab3ab5d2206499",
+      "bytes_uncompressed": 13579
+    },
+    "native-validation-events.log.gz": {
+      "sha256_uncompressed": "020863eb7fcf3befce47751c1d6af65d55daaa5a0e9e11d5e7e74c18800b356c",
+      "bytes_uncompressed": 10098576
+    },
+    "portal-driver.py.gz": {
+      "sha256_uncompressed": "0e8efc3093ddc46da8ba46769a69ab4b0ca4a9660484888c4d8bdf3d202f75b6",
+      "bytes_uncompressed": 4003
+    },
+    "target-driver.py.gz": {
+      "sha256_uncompressed": "c57edee571ba14c609507522d31091d270f238e0d279a75dd7f1383f18083738",
+      "bytes_uncompressed": 3440
+    },
+    "portal-result.json.gz": {
+      "sha256_uncompressed": "246e70853c27bb06a9598c610d0c86aa58c10436069b04da822d8c2aa1b9ba28",
+      "bytes_uncompressed": 763590
+    },
+    "timed-global-result.json.gz": {
+      "sha256_uncompressed": "6fad6d9589658773f6f34b0aa5565bae68c2d1b1c5893b839dea9f054975243b",
+      "bytes_uncompressed": 5593
+    },
+    "timed-global-native.log.gz": {
+      "sha256_uncompressed": "cc14fa94fd2c21331dff864c90b977a82432ea9302457425a6a2721f08d56f1f",
+      "bytes_uncompressed": 5208702
+    },
+    "timed-global-stderr.log.gz": {
+      "sha256_uncompressed": "da30b4c38034e7c9d75fdcbe72aa79752770db6179e3fbffd5ad38880e65b5ca",
+      "bytes_uncompressed": 71280
+    },
+    "drift.log.gz": {
+      "sha256_uncompressed": "b933839531cb0c2ba6816206eba15edcf67327324d80ee448797d8db4fd3dfef",
+      "bytes_uncompressed": 23543
+    }
+  },
+  "source_sha256": "29bc905a5ac7863ff527ffc5a1a45188b77672ae97614bc6658c587ed81aa24a",
+  "binary_sha256": "ec6b666391efa6019e3686a0023883677f995965f0c2f7ad074dec60dbb6ffe6"
+}
