@@ -477,6 +477,7 @@ fn shared_text_preparation_survives_real_atlas_pressure() {
     let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
     let mut renderer =
         hardware_renderer_with_atlas_limit(192, 192, wgpu::Features::empty(), Some(256));
+    renderer.renderer.atlas.set_test_limit(256 * 256);
     let mut prepared =
         PreparedScene::from_native_preferences(&state.ui.global_preferences, 192, 192, 1.0);
     let mut run = prepared.menu_overlay_text_runs[0].clone();

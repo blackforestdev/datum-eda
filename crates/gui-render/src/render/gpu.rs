@@ -1,7 +1,10 @@
 pub use scene_retained_access::RetainedGeometryObserver;
 #[path = "renderer_state.rs"]
 mod renderer_state;
-pub use renderer_state::{Renderer, TextCacheKeyUsage, WidthMeasurementCacheUsage};
+pub use renderer_state::{
+    Renderer, TextCacheKeyUsage, TextGpuAllocation, TextGpuAllocationKind,
+    TextGpuAllocationObserver, WidthMeasurementCacheUsage,
+};
 #[path = "gpu_measurements.rs"]
 mod gpu_measurements;
 pub use gpu_measurements::{GpuCancellationObserver, GpuFrameSample, GpuMeasurementCancellation};

@@ -5,7 +5,7 @@ use super::*;
 impl Renderer {
     pub fn new(
         device: &wgpu::Device,
-        queue: &wgpu::Queue,
+        _queue: &wgpu::Queue,
         format: wgpu::TextureFormat,
         msaa_samples: u32,
     ) -> Self {
@@ -275,29 +275,10 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         );
         let font_system = load_datum_fonts();
         let swash_cache = SwashCache::new();
-        let cache = Cache::new(device);
-        let viewport = Viewport::new(device, &cache);
-        let mut atlas = TextAtlas::new(device, queue, &cache, format);
-        let text_renderer = TextRenderer::new(
-            &mut atlas,
-            device,
-            wgpu::MultisampleState {
-                count: msaa_samples,
-                mask: !0,
-                alpha_to_coverage_enabled: false,
-            },
-            None,
-        );
-        let menu_overlay_text_renderer = TextRenderer::new(
-            &mut atlas,
-            device,
-            wgpu::MultisampleState {
-                count: msaa_samples,
-                mask: !0,
-                alpha_to_coverage_enabled: false,
-            },
-            None,
-        );
+        let atlas = crate::text_gpu::Atlas::new(device);
+        let text_renderer = crate::text_gpu::Draw::new(device, &atlas, format, msaa_samples);
+        let menu_overlay_text_renderer =
+            crate::text_gpu::Draw::new(device, &atlas, format, msaa_samples);
         Self {
             measurements: None,
             pipeline,
@@ -320,7 +301,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             schematic_overlay_gpu: Default::default(),
             font_system,
             swash_cache,
-            viewport,
+            text_resolution: [1, 1],
             atlas,
             text_renderer,
             menu_overlay_text_renderer,

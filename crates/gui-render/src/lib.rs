@@ -4,21 +4,19 @@ use datum_gui_protocol::{
     GlyphMeshHandlePrimitive, PointNm, ProposalOverlayPrimitive, ReviewWorkspaceState,
     SelectionTarget, UnroutedPrimitive, WorkspaceTool,
 };
+pub use datum_gui_viewport::CameraState;
 use eda_engine::board::BoardText;
 use eda_engine::export::render_silkscreen_text_strokes;
 use eda_engine::ir::geometry::{LayerId, Point};
 use glyphon::{
-    Attrs, Buffer, Cache, Color, Family, FontSystem, Metrics, Resolution, Shaping, SwashCache,
-    TextArea, TextAtlas, TextBounds, TextRenderer, Viewport, Weight,
+    Attrs, Buffer, Color, Family, FontSystem, Metrics, Shaping, SwashCache, TextArea, TextBounds,
+    Weight,
 };
 use std::collections::BTreeMap;
 use std::ops::Range;
 use taffy::prelude::*;
 use uuid::Uuid;
 use wgpu::util::DeviceExt;
-
-pub use datum_gui_viewport::CameraState;
-
 mod bottom_dock;
 mod datum_console;
 mod design_tokens;
@@ -33,6 +31,7 @@ mod side_panels;
 mod terminal_clipboard_menu;
 mod terminal_core_render;
 mod terminal_render_cache;
+mod text_gpu;
 pub use terminal_render_cache::TerminalRenderCache;
 mod terminal_pane_render;
 pub use terminal_pane_render::TerminalPaneRenderState;

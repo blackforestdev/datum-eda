@@ -74,6 +74,13 @@ policy. The side-panel include ceiling falls from 1,160 to 1,011 lines;
 the root remains 52 lines. Inspector composition remains include debt; solver
 extraction and cache adoption do not close that remaining ownership work.
 
+PM045 S4 text-GPU ownership introduces the normal `gui-render/src/text_gpu`
+module and moves text-area construction into the existing `text_buffer_cache`
+owner. The renderer root include ceiling falls from 7,191 to 7,167 lines;
+`render/geometry.rs` pre-test lines fall from 1,215 to 1,189. Exact ceilings
+ratchet downward; existing include debt remains open. Renderer unit tests,
+installed-renderer pixel parity and production GPU tests cover the migration.
+
 ## What Counts as Structural Evidence
 
 Qualifying evidence names the ownership moved, the real module boundary created,
