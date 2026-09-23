@@ -2,9 +2,12 @@
 
 use std::collections::BTreeSet;
 
-use wgpu::util::DeviceExt;
+use super::gpu_data::screen_buffer::ScreenBuffer;
 
 use super::PreparedTerminalGraphic;
+#[path = "terminal_graphic_texture.rs"]
+mod texture;
+use texture::CachedTerminalGraphicTexture;
 
 #[repr(C)]
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
@@ -42,15 +45,9 @@ struct TerminalGraphicTextureKey {
     pixels_address: usize,
 }
 
-struct CachedTerminalGraphicTexture {
-    key: TerminalGraphicTextureKey,
-    _texture: wgpu::Texture,
-    bind_group: wgpu::BindGroup,
-}
-
 struct TerminalGraphicDraw {
     texture_key: TerminalGraphicTextureKey,
-    vertex_buffer: wgpu::Buffer,
+    vertices: ScreenBuffer,
     clip: (u32, u32, u32, u32),
     foreground: bool,
 }
@@ -179,7 +176,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
         surface_width: u32,
         surface_height: u32,
     ) {
-        self.draws.clear();
+        let mut visible = 0;
         let live_keys = prepared.iter().map(texture_key).collect::<BTreeSet<_>>();
         self.textures.retain(|entry| live_keys.contains(&entry.key));
         for graphic in prepared {
@@ -187,22 +184,6 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             if placement.width() == 0 || placement.height() == 0 || placement.pixels().is_empty() {
                 continue;
             }
-            let key = texture_key(graphic);
-            if !self.textures.iter().any(|entry| entry.key == key) {
-                self.textures.push(create_texture(
-                    device,
-                    queue,
-                    &self.texture_layout,
-                    graphic,
-                    key,
-                ));
-            }
-            let vertices = graphic_vertices(graphic);
-            let vertex_buffer = device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
-                label: Some("datum-terminal-graphic-vertices"),
-                contents: bytemuck::cast_slice(&vertices),
-                usage: wgpu::BufferUsages::VERTEX,
-            });
             let clip_x = graphic.clip.x.max(0.0).floor() as u32;
             let clip_y = graphic.clip.y.max(0.0).floor() as u32;
             let clip_right = (graphic.clip.x + graphic.clip.width)
@@ -211,15 +192,83 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             let clip_bottom = (graphic.clip.y + graphic.clip.height)
                 .min(surface_height as f32)
                 .ceil() as u32;
-            if clip_right > clip_x && clip_bottom > clip_y {
+            if clip_right <= clip_x || clip_bottom <= clip_y {
+                continue;
+            }
+            let key = texture_key(graphic);
+            if !self.textures.iter().any(|entry| entry.key == key) {
+                self.textures.push(CachedTerminalGraphicTexture::new(
+                    device,
+                    &self.texture_layout,
+                    graphic,
+                    key,
+                ));
+            }
+            let clip = (clip_x, clip_y, clip_right - clip_x, clip_bottom - clip_y);
+            let foreground = placement.z_index() >= 0;
+            if visible == self.draws.len() {
                 self.draws.push(TerminalGraphicDraw {
                     texture_key: key,
-                    vertex_buffer,
-                    clip: (clip_x, clip_y, clip_right - clip_x, clip_bottom - clip_y),
-                    foreground: placement.z_index() >= 0,
+                    vertices: ScreenBuffer::default(),
+                    clip,
+                    foreground,
                 });
             }
+            let draw = &mut self.draws[visible];
+            draw.texture_key = key;
+            draw.clip = clip;
+            draw.foreground = foreground;
+            draw.vertices.sync(
+                device,
+                queue,
+                "datum-terminal-graphic-vertices",
+                &graphic_vertices(graphic),
+            );
+            visible += 1;
         }
+        self.draws.truncate(visible);
+    }
+
+    #[cfg(all(test, feature = "visual"))]
+    pub(super) fn vertex_state(&self) -> Vec<(wgpu::Buffer, usize)> {
+        self.draws
+            .iter()
+            .map(|draw| {
+                (
+                    draw.vertices.buffer().unwrap().clone(),
+                    draw.vertices.last_upload_bytes,
+                )
+            })
+            .collect()
+    }
+
+    pub(super) fn cancel_uploads(&mut self) {
+        self.textures.retain(|texture| !texture.pending);
+        for draw in &mut self.draws {
+            draw.vertices.cancel_uploads();
+        }
+    }
+
+    pub(super) fn flush_uploads(&mut self, queue: &wgpu::Queue) {
+        for texture in &mut self.textures {
+            texture.flush_upload(queue);
+        }
+        for draw in &mut self.draws {
+            draw.vertices.flush_uploads(queue);
+        }
+    }
+
+    pub(super) fn submission_refs(
+        &self,
+    ) -> impl Iterator<Item = crate::text_gpu::lifetime::SubmissionRef> + '_ {
+        self.draws
+            .iter()
+            .filter_map(|draw| draw.vertices.submission_ref())
+            .chain(
+                self.textures
+                    .iter()
+                    .map(CachedTerminalGraphicTexture::submission_ref),
+            )
     }
 
     pub(super) fn encode_layer(
@@ -281,7 +330,13 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             };
             pass.set_scissor_rect(draw.clip.0, draw.clip.1, draw.clip.2, draw.clip.3);
             pass.set_bind_group(1, &texture.bind_group, &[]);
-            pass.set_vertex_buffer(0, draw.vertex_buffer.slice(..));
+            pass.set_vertex_buffer(
+                0,
+                draw.vertices
+                    .buffer()
+                    .expect("visible graphic uploaded")
+                    .slice(..),
+            );
             pass.draw(0..6, 0..1);
         }
     }
@@ -326,80 +381,6 @@ impl super::Renderer {
             foreground,
             measurement,
         )
-    }
-}
-
-fn create_texture(
-    device: &wgpu::Device,
-    queue: &wgpu::Queue,
-    layout: &wgpu::BindGroupLayout,
-    graphic: &PreparedTerminalGraphic,
-    key: TerminalGraphicTextureKey,
-) -> CachedTerminalGraphicTexture {
-    let placement = graphic.graphic.placement();
-    let texture = device.create_texture(&wgpu::TextureDescriptor {
-        label: Some("datum-terminal-graphic-texture"),
-        size: wgpu::Extent3d {
-            width: key.width,
-            height: key.height,
-            depth_or_array_layers: 1,
-        },
-        mip_level_count: 1,
-        sample_count: 1,
-        dimension: wgpu::TextureDimension::D2,
-        format: wgpu::TextureFormat::Rgba8UnormSrgb,
-        usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
-        view_formats: &[],
-    });
-    let bytes = placement
-        .pixels()
-        .iter()
-        .flat_map(|pixel| [pixel.red, pixel.green, pixel.blue, pixel.alpha])
-        .collect::<Vec<_>>();
-    queue.write_texture(
-        wgpu::TexelCopyTextureInfo {
-            texture: &texture,
-            mip_level: 0,
-            origin: wgpu::Origin3d::ZERO,
-            aspect: wgpu::TextureAspect::All,
-        },
-        &bytes,
-        wgpu::TexelCopyBufferLayout {
-            offset: 0,
-            bytes_per_row: Some(key.width * 4),
-            rows_per_image: Some(key.height),
-        },
-        wgpu::Extent3d {
-            width: key.width,
-            height: key.height,
-            depth_or_array_layers: 1,
-        },
-    );
-    let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
-    let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
-        label: Some("datum-terminal-graphic-sampler"),
-        mag_filter: wgpu::FilterMode::Nearest,
-        min_filter: wgpu::FilterMode::Nearest,
-        ..Default::default()
-    });
-    let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
-        label: Some("datum-terminal-graphic-bind-group"),
-        layout,
-        entries: &[
-            wgpu::BindGroupEntry {
-                binding: 0,
-                resource: wgpu::BindingResource::TextureView(&view),
-            },
-            wgpu::BindGroupEntry {
-                binding: 1,
-                resource: wgpu::BindingResource::Sampler(&sampler),
-            },
-        ],
-    });
-    CachedTerminalGraphicTexture {
-        key,
-        _texture: texture,
-        bind_group,
     }
 }
 

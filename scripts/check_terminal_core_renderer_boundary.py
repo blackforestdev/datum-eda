@@ -14,6 +14,7 @@ APP = Path("crates/gui-app/src")
 CORE_RENDER = RENDER / "src/terminal_core_render.rs"
 CACHE = RENDER / "src/terminal_render_cache.rs"
 GRAPHICS = RENDER / "src/render/terminal_graphics.rs"
+TEXTURE = RENDER / "src/render/terminal_graphic_texture.rs"
 GPU = RENDER / "src/render/gpu_frame.rs"
 SCENE = RENDER / "src/render/frame_preparation.rs"
 TESTS = RENDER / "src/terminal_core_render_tests.rs"
@@ -41,6 +42,14 @@ def check(root: Path) -> list[str]:
     core = read(root, CORE_RENDER)
     cache = read(root, CACHE)
     graphics = read(root, GRAPHICS)
+    texture = read(root, TEXTURE)
+    for marker in (
+        '#[path = "terminal_graphic_texture.rs"]',
+        "mod texture;",
+        "CachedTerminalGraphicTexture::new(",
+    ):
+        if marker not in graphics:
+            failures.append(f"GPU texture owner is not wired: {marker}")
     gpu = re.sub(r"\s+", "", read(root, GPU))
     scene = read(root, SCENE)
     tests = read(root, TESTS)
@@ -108,7 +117,7 @@ def check(root: Path) -> list[str]:
         "encode_terminal_graphics(&mutencoder,&msaa_view,target,false,measurement.as_mut(),)",
         "encode_terminal_graphics(&mutencoder,&msaa_view,target,true,measurement.as_mut(),)",
     ):
-        corpus = core + graphics + gpu
+        corpus = core + graphics + texture + gpu
         if marker not in corpus:
             failures.append(f"GPU image path lacks marker: {marker}")
 

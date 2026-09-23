@@ -41,10 +41,12 @@ macro_rules! vertex_streams {
 impl Renderer {
     pub(super) fn cancel_vertex_uploads(&mut self) {
         vertex_streams!(self, stream, stream.cancel_uploads());
+        self.terminal_graphics.cancel_uploads();
     }
 
     pub(super) fn flush_vertex_uploads(&mut self, queue: &wgpu::Queue) {
         vertex_streams!(self, stream, stream.flush_uploads(queue));
+        self.terminal_graphics.flush_uploads(queue);
     }
 
     pub(super) fn vertex_submission_refs(
@@ -52,6 +54,7 @@ impl Renderer {
     ) -> Vec<crate::text_gpu::lifetime::SubmissionRef> {
         let mut refs = Vec::new();
         vertex_streams!(self, stream, refs.extend(stream.submission_ref()));
+        refs.extend(self.terminal_graphics.submission_refs());
         refs
     }
 

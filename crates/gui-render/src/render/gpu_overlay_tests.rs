@@ -655,3 +655,6 @@ fn oversized_overlay_signature_bypasses_reuse_without_omitting_text() {
     let mut fresh = hardware_renderer(960, 720);
     assert!(cold == capture(&mut fresh, &prepared));
 }
+
+#[path = "gpu_terminal_resource_tests.rs"]
+mod terminal_resource_tests;

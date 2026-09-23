@@ -3857,6 +3857,11 @@
           "work": "s4_vertex_submission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
           "status": "Partial: shared vertex allocation/submission/bundle lifetimes and deferred writes implemented. Full caps/accounting/qualification remain open."
+        },
+        {
+          "work": "s4_terminal_gpu_retention_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-gpu-retention/result.json",
+          "status": "Partial: terminal quad reuse and texture/vertex submission lifetime adopted. Full caps/accounting/qualification remain open."
         }
       ]
     },
@@ -5310,7 +5315,14 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_terminal_gpu_retention_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-gpu-retention/result.json",
+          "status": "Partial: terminal quad reuse and texture/vertex submission lifetime adopted. Full caps/accounting/qualification remain open."
+        }
+      ]
     },
     {
       "id": "HP09-02",
@@ -5364,7 +5376,14 @@
         "CONSOLE": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_terminal_gpu_retention_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-gpu-retention/result.json",
+          "status": "Partial: terminal quad reuse and texture/vertex submission lifetime adopted. Full caps/accounting/qualification remain open."
+        }
+      ]
     },
     {
       "id": "HP10-01",
@@ -16595,7 +16614,14 @@
       "consumer_applicability": {
         "TERMINAL": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features.",
         "TERM_OVERLAY": "Apply to existing implemented consumer under pinned T0/T1 admission; partial panes do not qualify absent product features."
-      }
+      },
+      "s4_implementation_progress": [
+        {
+          "work": "s4_terminal_gpu_retention_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-gpu-retention/result.json",
+          "status": "Partial: terminal quad reuse and texture/vertex submission lifetime adopted. Full caps/accounting/qualification remain open."
+        }
+      ]
     },
     {
       "id": "MEM-STAGING-LOCAL",
@@ -16700,6 +16726,11 @@
           "work": "s4_vertex_submission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
           "status": "Partial: shared vertex allocation/submission/bundle lifetimes and deferred writes implemented. Full caps/accounting/qualification remain open."
+        },
+        {
+          "work": "s4_terminal_gpu_retention_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-gpu-retention/result.json",
+          "status": "Partial: terminal quad reuse and texture/vertex submission lifetime adopted. Full caps/accounting/qualification remain open."
         }
       ]
     },
@@ -16806,6 +16837,11 @@
           "work": "s4_vertex_submission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
           "status": "Partial: shared vertex allocation/submission/bundle lifetimes and deferred writes implemented. Full caps/accounting/qualification remain open."
+        },
+        {
+          "work": "s4_terminal_gpu_retention_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-gpu-retention/result.json",
+          "status": "Partial: terminal quad reuse and texture/vertex submission lifetime adopted. Full caps/accounting/qualification remain open."
         }
       ]
     },
@@ -16912,6 +16948,11 @@
           "work": "s4_vertex_submission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
           "status": "Partial: shared vertex allocation/submission/bundle lifetimes and deferred writes implemented. Full caps/accounting/qualification remain open."
+        },
+        {
+          "work": "s4_terminal_gpu_retention_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-gpu-retention/result.json",
+          "status": "Partial: terminal quad reuse and texture/vertex submission lifetime adopted. Full caps/accounting/qualification remain open."
         }
       ]
     },
@@ -31739,5 +31780,38 @@
       "No dependency/version/vendor/registry-source, prototype, appearance, budget or resize change. No global adoption or performance acceptance. Known Console golden conflict remains separately unqualified."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json"
+  },
+  "s4_terminal_gpu_retention_work": {
+    "status": "Default terminal image vertices retained and texture/vertex lifetimes migrated; complete resource caps remain open",
+    "base_commit": "cd15beae",
+    "production_consumers": [
+      "TerminalCore SIXEL/Kitty graphic projection in Main terminal dock and split panes",
+      "Shared full-frame/overlay submission and cancellation boundary"
+    ],
+    "retired_paths": [
+      "Unconditional per-preparation quad buffer creation",
+      "Raw terminal texture ownership and eager texture queue writes during fallible preparation",
+      "Pixel-address texture cache identity without retained pixel allocation"
+    ],
+    "behavior": [
+      "Visible ordered draw slots reuse the shared ScreenBuffer. Exact unchanged quad bytes allocate/upload nothing; geometry or ordering changes update reused slots and empty clips allocate no draw buffer. Truncate closed slots. Foreground/background order, UVs and clips remain unchanged.",
+      "A cohesive terminal texture owner retains the existing shared TerminalCore pixel source, preventing allocator-address reuse while that address is keyed. Pixel upload is deferred until successful frame submission; cancelled pending textures drop before retry. Already uploaded textures remain warm.",
+      "Terminal textures and quad buffers join the existing process GPU allocation registry and submission holds. Bind groups drop before tracked textures; last submission references keep retired texture capacity observable. Existing text-only reporting filters only text kinds."
+    ],
+    "proof": {
+      "renderer": "291 final renderer tests pass, including new actual-GPU cold/warm/move/reorder/clip/close/reopen texture and vertex ownership proof, cancellation before submission, fresh-render pixel comparison, existing terminal SIXEL capture and15 production GPU regressions.11 explicitly filtered measurement/cost/visual-runner cases; no global qualification claim.",
+      "lint": "All-targets visual gui-render/gui-app Clippy -D warnings passes. Source health2239files,13 policy tests, dependency authority and terminal convergence pass.",
+      "boundary": "Initial terminal renderer static gate failed because texture format/write markers moved to the new owner. Updated the existing checker to follow that named module and require its actual wiring; all4 boundary mutation tests and production check pass. No gate disabled or golden amended.",
+      "visual": "Inspected640x480 production offscreen SIXEL capture; red decoded image appears at terminal origin. Narrow fixture shell layout is not changed or newly accepted.",
+      "drift": "Full drift rerun passes workspace Clippy and preceding gates, then stops at the existing console-routine-focused1x golden mismatch:3778pixels(0.384318%). Failed evidence preserved; later gates unrun. No golden refresh or complete drift acceptance.",
+      "build": "Fresh visual-feature datum-gui executable build passes."
+    },
+    "limits": [
+      "Terminal64MiB GPU and aggregate512MiB admission, complete staging16/64MiB caps/chunking, full host/device incidence and boundary counters remain unfinished. No ACC/MEM predicate or S4/S5 closure.",
+      "Shared decoded pixels remain pinned by cached GPU textures and must be included once in complete CPU live accounting. No pixel payload copy is introduced for that hold; cold RGBA conversion remains temporary staging.",
+      "Current terminal texture keys retain the existing semantic ID/extent/pixel-source identity. Vertex draw slots are ordered renderer-local ownership, not new terminal/model authority.",
+      "No new dependency, vendor, license, protocol limits, TerminalCore/PTY behavior, visual prototype, budget or resize amendment. No native OS-input/performance/endurance acceptance."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-gpu-retention/result.json"
   }
 }

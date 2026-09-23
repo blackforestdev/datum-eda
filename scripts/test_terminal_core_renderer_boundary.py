@@ -44,7 +44,12 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
             encoding="utf-8",
         )
         (root / guard.GRAPHICS).write_text(
-            "Rgba8UnormSrgb BlendState::ALPHA_BLENDING queue.write_texture(\n",
+            '#[path = "terminal_graphic_texture.rs"] mod texture; '
+            "CachedTerminalGraphicTexture::new( BlendState::ALPHA_BLENDING\n",
+            encoding="utf-8",
+        )
+        (root / guard.TEXTURE).write_text(
+            "Rgba8UnormSrgb queue.write_texture(\n",
             encoding="utf-8",
         )
         (root / guard.GPU).write_text(
@@ -113,7 +118,8 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
     def test_image_dpi_and_runtime_wiring_mutations_fail(self) -> None:
         self.assertTrue(self.mutate(guard.GPU, "target, false,", "target, true,"))
         self.assertTrue(self.mutate(guard.SCENE, "terminal_panes: &[crate::TerminalPaneRenderState]", ""))
-        self.assertTrue(self.mutate(guard.GRAPHICS, "queue.write_texture(", ""))
+        self.assertTrue(self.mutate(guard.TEXTURE, "queue.write_texture(", ""))
+        self.assertTrue(self.mutate(guard.GRAPHICS, "mod texture;", ""))
         self.assertTrue(
             self.mutate(
                 guard.GPU,

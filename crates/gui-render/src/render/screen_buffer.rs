@@ -2,8 +2,9 @@
 use super::vertex_allocation::VertexAllocation;
 
 // One snapshot per semantic stream, not frame history. Larger streams still
-// render normally but bypass CPU retention. Nine production slots bound total
-// retained snapshots to 9 * 256 KiB per renderer.
+// render normally but bypass CPU retention. Nine fixed screen streams retain
+// at most 9 * 256 KiB per renderer. Each visible terminal image quad additionally
+// retains its 96-byte vertex snapshot.
 const MAX_SNAPSHOT_BYTES: usize = 256 * 1024;
 
 #[derive(Default)]
