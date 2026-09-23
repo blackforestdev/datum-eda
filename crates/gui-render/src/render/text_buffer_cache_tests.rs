@@ -665,3 +665,6 @@ fn process_retention_counts_multiple_live_caches_and_releases_closed_owners() {
     drop(caches);
     assert!(ours().is_empty());
 }
+
+#[path = "text_buffer_heap_tests.rs"]
+mod heap_tests;

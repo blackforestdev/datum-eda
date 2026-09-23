@@ -15393,7 +15393,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+          "Complete whole text preparation/admission and retirement accounting across active owners, including construction overlap; current retained key/layout/shared-shape capacities already have implementation and whole-cache heap conformance (s4_text_owner_reconciliation). Keep private font/raster storage classification and temporary scratch disjoint from retained shaped payload. Preserve all local/process ceilings; successful post-construction admission alone does not prove transient peaks."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "8MiB shaped payload/renderer including keys/vectors/capacities; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15442,7 +15442,8 @@
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-registry/result.json",
           "status": "Shaped-text owner registry storage accounted and charged once to process admission; full text qualification remains open"
         }
-      ]
+      ],
+      "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
     },
     {
       "id": "MEM-SHAPED-TOTAL",
@@ -15546,7 +15547,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
+          "Complete whole text preparation/admission and retirement accounting across active owners, including construction overlap; current retained key/layout/shared-shape capacities already have implementation and whole-cache heap conformance (s4_text_owner_reconciliation). Keep private font/raster storage classification and temporary scratch disjoint from retained shaped payload. Preserve all local/process ceilings; successful post-construction admission alone does not prove transient peaks."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "32MiB shaped payload aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15595,7 +15596,8 @@
           "evidence": "docs/reviews/gui-performance/implementation/S4/text-registry/result.json",
           "status": "Shaped-text owner registry storage accounted and charged once to process admission; full text qualification remains open"
         }
-      ]
+      ],
+      "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
     },
     {
       "id": "MEM-LABEL-ENTRIES",
@@ -35106,5 +35108,35 @@
       "No dependency/license/prototype/cap/sequencing change. Preserve historical failures, known Console golden failure, GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/upload-frames/result.json"
+  },
+  "s4_text_owner_reconciliation": {
+    "base_commit": "cd7e0258",
+    "reason": "Owner directed complete production outcomes and less per-container work; reconcile current implementation before inventing further allocation prerequisites.",
+    "controlling_clauses": [
+      "GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md MEM-02 shaped payload vs staging/scratch vs RSS rows",
+      "GUI_PERFORMANCE_ACCEPTANCE_MATRIX.md ACC-02 complete owned capacities and scratch",
+      "GUI_PERFORMANCE_IMPLEMENTATION_CONTRACT.md S4 implementation and S5 qualification deadlines"
+    ],
+    "finding": "Datum TextLayout owns retained ShapeLine/ShapeSpan/ShapeWord/ShapeGlyph capacities through public APIs. Current key_usage includes key strings, cache/index capacity, layout vectors, shared shape deduplication and Arc/Datum headers. Existing admit_frame enforces current-layout admission before glyph preparation; private LayoutScratch retains separate staging permits. Private font/raster state and construction peaks must not be conflated with missing retained ShapeLine fields.",
+    "proof": {
+      "test": "complete_retained_text_accounting_matches_heap_after_shared_layout_construction",
+      "result": "1 passed; 0 failed; 384 filtered out",
+      "scope": "Complete cache after plain/rich/multiple-extent construction, including shared shapes and headers; compare retained total to actual allocator ownership plus independently scoped returned glyph vectors, then verify release. FontSystem dropped before comparison to isolate retained payload. No native/private-font/peak proof.",
+      "log": "docs/reviews/gui-performance/implementation/S4/text-owner-reconciliation/focused-final.log.gz",
+      "uncompressed_sha256": "cac3c85f13b9fcb64d517840839063b008f49b17bc1c57dfdc0fab226961459f",
+      "source_sha256": {
+        "crates/gui-render/src/render/text_buffer_cache_tests.rs": "73fce9725ccee7f7ec51f53ce59978cace69afc137478933217d3160dcb3420e",
+        "crates/gui-render/src/render/text_buffer_heap_tests.rs": "e9b5325ee3a0d41eea4ea1cdc635dc2b17b6824872f706e5a28bc587f64aab93"
+      },
+      "initial_log": "docs/reviews/gui-performance/implementation/S4/text-owner-reconciliation/focused.log.gz",
+      "initial_log_sha256": "3a3a2137451a1c5450e53a84cea88a0fe7f7b02ac93875857d8e2202d037bfd0",
+      "organization": "Whole-owner heap test placed in a dedicated normal test module to respect the existing 700-line test-file ceiling; final focused run confirms module wiring."
+    },
+    "execution_boundary": "Do not repeat per-container retained-shape migrations or require a universal conversion of dependency allocations to fallible APIs; neither is a stated standalone exit prerequisite. This does not waive ceilings, transient scratch accounting, refusal correctness, or construction peaks. Implement and verify the remaining whole text preparation/retirement boundary under the existing requirements.",
+    "limits": [
+      "No production code changed in this reconciliation; prior production migrations remain intact. No implementation predicate or milestone newly closed.",
+      "Construction-time local/process overlap, temporary rich/layout/raster scratch and private font/raster classification remain unresolved; all cap deadlines and S5 qualification remain unchanged.",
+      "No spec/sequencing amendment, dependency/license change, new framework or prototype edit. Preserve GEFN and nonblocking resize."
+    ]
   }
 }
