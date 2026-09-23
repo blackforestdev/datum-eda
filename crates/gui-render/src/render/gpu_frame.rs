@@ -442,6 +442,7 @@ impl Renderer {
         let submission = queue.submit([command_buffer]);
         self.hold_text_submission(queue);
         on_submitted(submission);
+        self.text_buffers.finish_frame();
         self.submit_gpu_measurement(measurement)?;
         let submit_elapsed = submit_started.elapsed();
         if let Some(finish_elapsed) = finish_elapsed {
