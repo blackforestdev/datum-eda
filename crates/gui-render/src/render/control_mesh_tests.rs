@@ -101,16 +101,16 @@ fn control_mesh_keys_bounds_and_lru_are_complete() {
             7 => changed.style_generation += 1,
             _ => changed.kind = MeshKind::Ellipse,
         }
-        cache.with_mesh(changed, mesh, |_| {});
-        cache.with_mesh(changed, || panic!("warm mesh rebuilt"), |_| {});
+        cache.with_mesh(changed, 3, mesh, |_| {});
+        cache.with_mesh(changed, 3, || panic!("warm mesh rebuilt"), |_| {});
     }
     assert_eq!(cache.builds, 9);
     cache = ControlMeshCache::default();
     for n in 0..MAX_ENTRIES as u32 {
-        cache.with_mesh(key(n), mesh, |_| {});
+        cache.with_mesh(key(n), 3, mesh, |_| {});
     }
-    cache.with_mesh(key(0), || panic!("retained mesh absent"), |_| {});
-    cache.with_mesh(key(MAX_ENTRIES as u32), mesh, |_| {});
+    cache.with_mesh(key(0), 3, || panic!("retained mesh absent"), |_| {});
+    cache.with_mesh(key(MAX_ENTRIES as u32), 3, mesh, |_| {});
     assert_eq!(cache.entries.len(), MAX_ENTRIES);
     assert!(cache.entries.iter().any(|entry| entry.key == key(0)));
     assert!(!cache.entries.iter().any(|entry| entry.key == key(1)));
@@ -128,6 +128,7 @@ fn control_mesh_keys_bounds_and_lru_are_complete() {
     let bytes = cache.payload_bytes;
     cache.with_mesh(
         key(999),
+        MAX_CPU_BYTES / 32 + 1,
         || vec![[(0.0, 0.0); 4]; MAX_CPU_BYTES / 32 + 1].into_boxed_slice(),
         |mesh| assert!(std::mem::size_of_val(mesh) > MAX_CPU_BYTES),
     );
@@ -138,11 +139,16 @@ fn control_mesh_keys_bounds_and_lru_are_complete() {
     for n in 0..5 {
         cache.with_mesh(
             key(n),
+            MAX_CPU_BYTES / 64,
             || vec![[(0.0, 0.0); 4]; MAX_CPU_BYTES / 64].into_boxed_slice(),
             |_| {},
         );
         assert!(cache.retained_cpu_bytes() <= MAX_CPU_BYTES);
         assert_eq!(cache.entries.len(), 1);
+        assert!(
+            cache.build_live_bytes <= MAX_CPU_BYTES,
+            "old payload must retire before constructing the next cacheable mesh"
+        );
     }
     assert_eq!(cache.payload_bytes, MAX_CPU_BYTES / 2);
     assert!(cache.retained_cpu_bytes() > cache.payload_bytes);
@@ -204,6 +210,7 @@ fn metadata_is_charged_before_admitting_a_payload_at_the_cpu_limit() {
     let mut consumed = false;
     cache.with_mesh(
         key(42),
+        MAX_CPU_BYTES / 32,
         || vec![[(0.0, 0.0); 4]; MAX_CPU_BYTES / 32].into_boxed_slice(),
         |mesh| {
             consumed = true;
@@ -219,7 +226,7 @@ fn metadata_is_charged_before_admitting_a_payload_at_the_cpu_limit() {
         "oversize bypass must not reserve slots"
     );
     for n in 0..512 {
-        cache.with_mesh(key(n), || Box::new([]), |_| {});
+        cache.with_mesh(key(n), 0, || Box::new([]), |_| {});
         assert!(cache.entries.capacity() <= MAX_ENTRIES);
         assert_eq!(
             cache.retained_cpu_bytes(),
@@ -241,11 +248,11 @@ fn entry_growth_evicts_payload_even_when_the_new_mesh_bypasses_retention() {
     let count =
         (MAX_CPU_BYTES - cache.retained_cpu_bytes()) / std::mem::size_of::<[(f32, f32); 4]>();
     let mesh = || vec![[(0.0, 0.0); 4]; count].into_boxed_slice();
-    cache.with_mesh(key(1), mesh, |_| {});
+    cache.with_mesh(key(1), count, mesh, |_| {});
     assert_eq!(cache.entries.len(), 1);
     assert!(cache.retained_cpu_bytes() <= MAX_CPU_BYTES);
     let mut painted = false;
-    cache.with_mesh(key(2), mesh, |_| painted = true);
+    cache.with_mesh(key(2), count, mesh, |_| painted = true);
     assert!(painted);
     assert!(cache.entries.capacity() > 1);
     assert!(cache.entries.is_empty());
