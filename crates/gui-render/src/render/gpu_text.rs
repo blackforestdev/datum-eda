@@ -54,7 +54,7 @@ impl Renderer {
     pub(crate) fn flush_frame_uploads(
         &mut self,
         device: &wgpu::Device,
-        queue: &wgpu::Queue,
+        _queue: &wgpu::Queue,
     ) -> anyhow::Result<Option<crate::text_gpu::upload::Batch>> {
         let mut buffers = Vec::new();
         gpu_vertex_upload::screen_streams!(self, stream, stream.append_uploads(&mut buffers));
@@ -76,7 +76,6 @@ impl Renderer {
         self.menu_overlay_text_renderer
             .finish_uploads(overlay_bytes);
         self.finish_screen_uploads();
-        self.flush_vertex_uploads(queue);
         Ok(atlas_upload)
     }
 

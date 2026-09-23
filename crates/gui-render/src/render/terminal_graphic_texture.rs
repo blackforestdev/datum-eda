@@ -12,6 +12,7 @@ pub(super) struct CachedTerminalGraphicTexture {
     // Preserve pixel allocation identity while its address is in the cache key.
     source: datum_terminal_core::RenderGraphic,
     pub(super) pending: bool,
+    pub(super) uploaded: usize,
 }
 
 impl CachedTerminalGraphicTexture {
@@ -78,6 +79,7 @@ impl CachedTerminalGraphicTexture {
             ),
             source: graphic.graphic.clone(),
             pending: true,
+            uploaded: 0,
         })
     }
 
@@ -85,49 +87,40 @@ impl CachedTerminalGraphicTexture {
         self.texture.submission_ref()
     }
 
-    pub(super) fn flush_upload(&mut self, queue: &wgpu::Queue) {
+    pub(super) fn append_chunk<'a>(
+        &'a self,
+        remaining: &mut usize,
+        out: &mut Vec<crate::text_gpu::upload::TextureUpload<'a>>,
+    ) -> usize {
         if !self.pending {
-            return;
+            return 0;
         }
-        write_rgba(
-            queue,
-            &self.texture,
+        let Some(part) = upload::chunk(
             self.source.placement().pixels(),
             self.key.width,
             self.key.height,
-        );
-        self.pending = false;
+            self.uploaded,
+            *remaining,
+        ) else {
+            return 0;
+        };
+        *remaining -= part.padded_bytes;
+        let count = part.bytes.len() / 4;
+        out.push(crate::text_gpu::upload::TextureUpload {
+            texture: &self.texture,
+            origin: part.origin,
+            size: part.size,
+            stride: part.size[0] * 4,
+            pixels: part.bytes,
+        });
+        count
     }
-}
 
-fn write_rgba(
-    queue: &wgpu::Queue,
-    texture: &wgpu::Texture,
-    pixels: &[datum_terminal_core::Rgba8],
-    width: u32,
-    height: u32,
-) {
-    upload::chunks(pixels, width, height, |x, y, w, h, bytes| {
-        queue.write_texture(
-            wgpu::TexelCopyTextureInfo {
-                texture,
-                mip_level: 0,
-                origin: wgpu::Origin3d { x, y, z: 0 },
-                aspect: wgpu::TextureAspect::All,
-            },
-            bytes,
-            wgpu::TexelCopyBufferLayout {
-                offset: 0,
-                bytes_per_row: Some(w * 4),
-                rows_per_image: Some(h),
-            },
-            wgpu::Extent3d {
-                width: w,
-                height: h,
-                depth_or_array_layers: 1,
-            },
-        );
-    });
+    pub(super) fn consume_chunk(&mut self, pixels: usize) {
+        self.uploaded += pixels;
+        assert!(self.uploaded <= self.source.placement().pixels().len());
+        self.pending = self.uploaded != self.source.placement().pixels().len();
+    }
 }
 
 #[cfg(all(test, feature = "visual"))]
@@ -164,7 +157,29 @@ mod tests {
             usage: wgpu::TextureUsages::COPY_DST | wgpu::TextureUsages::COPY_SRC,
             view_formats: &[],
         });
-        write_rgba(&queue, &texture, &pixels, width, height);
+        let mut uploaded = 0;
+        while let Some(part) = upload::chunk(&pixels, width, height, uploaded, 256 * 1024) {
+            let mut batch = crate::text_gpu::upload::batch(
+                &device,
+                &Owner::new(),
+                1,
+                &crate::text_gpu::budget::Budget::new(256 * 1024),
+                &[crate::text_gpu::upload::TextureUpload {
+                    texture: &texture,
+                    origin: part.origin,
+                    size: part.size,
+                    stride: part.size[0] * 4,
+                    pixels: part.bytes,
+                }],
+                &[],
+            )
+            .unwrap()
+            .unwrap();
+            uploaded += part.bytes.len() / 4;
+            queue.submit([batch.command()]);
+            batch.hold(&queue);
+            device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
+        }
         let stride = (width * 4).next_multiple_of(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT);
         let readback = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("terminal-chunk-readback"),

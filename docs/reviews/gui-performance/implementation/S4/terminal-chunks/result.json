@@ -1,0 +1,83 @@
+{
+  "status": "Default terminal pixels use shared explicit staging and bounded native continuation; complete accounting and qualification remain unfinished",
+  "base_commit": "a8201e8c",
+  "production_consumers": [
+    "TerminalCore sixel/kitty foreground and background image placements in the production Renderer",
+    "Main native runtime via the existing upload-only submission/retry adapter",
+    "Offscreen/capture clients via the existing synchronous convenience adapter"
+  ],
+  "retired_paths": [
+    "Terminal texture queue.write_texture calls and flush_textures loop",
+    "Final-frame opaque terminal writes outside the explicit staging owner"
+  ],
+  "behavior": [
+    "Borrow immutable decoded RGBA rectangles without an image-sized CPU copy. Transfer at most4 MiB padded staging capacity across visible textures per submission. Charge existing host16 MiB/process-staging64 MiB/global-GPU512 MiB budgets and retain staging/destination accounting through completion.",
+    "Advance each texture pixel offset only after successful batch admission and actual submission. Preserve partial unchanged sources across preparation cancellation; changed or removed source keys retire old owners and start current content from zero. Warm images perform no pixel upload or upload-only turn.",
+    "Default native frame attempts yield after pixel-copy submissions, retaining damage and withholding presentation until current visible images are complete. Hidden placements do not generate pixel submissions. Shared existing retry/admission remains authoritative; no native synchronous wait.",
+    "Publish actual terminal copy chunk and padded-byte totals. Reuse the explicit incomplete cold multi-submission measurement receipts; warm terminal frames still produce numerical samples and identical pixels. Complete cold timestamps/span attribution remains required.",
+    "Update the existing DTC-P23 source guard to require explicit staging, shared encoder copies and native submission wiring; negative tests reject removal/bypass. No marker claiming an old opaque API remains."
+  ],
+  "proof": {
+    "renderer": "310 renderer tests pass;11 diagnostic/visual cases filtered. New actual-GPU proof covers a1025x1100 image across two chunks, padded staging ceiling/retirement, admission refusal without submission or lost progress, replacement/removal, warm reuse and fresh-render pixel equality. Existing odd-width GPU readback and wide-row borrowed coverage tests exercise the shared builder/chunker.",
+    "measurement": "Production parity proof checks cold terminal upload/final-render receipts share one frame with distinct submissions and no partial numerical sample; subsequent warm frame retains foreground/background pass measurements and identical pixels.",
+    "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2248, dependency authority, spec governance313, parity20, project state59 and evidence traceability pass.",
+    "visual": "640x480 terminal sixel capture inspected; RGBA bytes exactly match S4/terminal-gpu-retention/sixel.png. No new native OS-input/endurance/multi-host timing qualification; native adapters unchanged from world-chunks.",
+    "guard": "5 DTC-P23 boundary tests pass, including explicit upload/submission/hold/copy wiring removal and opaque-write bypass negatives. Updated real-tree guard passes.",
+    "drift": "Final full drift passes terminal boundaries/core proof and stops at the existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Later gates unrun; no full-drift acceptance.",
+    "development": "Initial tests exposed the large test fixture parser-work allowance and scrolling out of view, plus the prior single-submission timing expectation. Corrected only fixture limits/anchoring and asserted explicit incomplete cold receipts with retained warm timing proof. Initial drift required the retired queue.write_texture marker; updated its owning checker and mutation tests. Failed logs retained."
+  },
+  "limits": [
+    "Oversized glyph-atlas batches still need bounded continuation. Full CPU pending/scratch/metadata, private shaped text, world history/generation and diagnostic query/readback accounting remain incomplete. No full MEM-STAGING or MEM-GPU-TOTAL closure.",
+    "Cold multi-submission timestamp/span attribution remains unqualified under MET-04/GPU-01..03/AC-03. Full native/backend/fairness/fault/endurance/resource qualification remains required; no S4/S5 closure.",
+    "No dependency, vendoring, licensing, prototype, visual layout or production protocol/admission-limit change. Large sixel fixture limits are test-only. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/tests.log.gz",
+      "uncompressed_sha256": "54200e988e30c350a91e3907933f58f8d69c9fdefae70fb5b116653a6d983314"
+    },
+    "initial-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/initial-tests.log.gz",
+      "uncompressed_sha256": "2c7060f45a9f0b20ca5a3426ede8bb88842e910414c886b280ec8c7d99e539e8"
+    },
+    "second-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/second-tests.log.gz",
+      "uncompressed_sha256": "fd31ee90797780732a56a38077d761d8a948c95bdcd9c556319e76848b024090"
+    },
+    "focused": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/focused.log.gz",
+      "uncompressed_sha256": "a36f17f085834f255f35473bba8c5872e67be7fcbedc472046ead30b214ef4b2"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/clippy.log.gz",
+      "uncompressed_sha256": "615f9ca468632e91930466680f0445ebd19bc4c3aad8856907fb9cc98fc706d2"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/build.log.gz",
+      "uncompressed_sha256": "c5124d083d0b8f3ca0ba768d0a38e30cef8187a564c18a815fb26920c19ebe63"
+    },
+    "initial-drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/initial-drift.log.gz",
+      "uncompressed_sha256": "94edb64cc027f6a66c087a7c038f7c7129dcf3ef19da9beda748e3f3d7a6bcc5"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/drift.log.gz",
+      "uncompressed_sha256": "787bcfe4fbd568cbc5916c93875d4d2ad359bce54a15ab0fc85c0497f7d89f4f"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_frame.rs": "9c7189db9db4b6102724bc27756819dcd18e641ad82c76643b46576d4d72990f",
+    "crates/gui-render/src/render/gpu_overlay_tests.rs": "30a4277a8504be30dfc686d438bf9062427ea32fd979ae7e618bced757f3c80f",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "fea8085b1b1ab27be86386bb70f1ca215c817b666a6833ea0b56a6fc6a13f05a",
+    "crates/gui-render/src/render/gpu_text.rs": "8ba711f245b743390624bbcdcc2ab89dc412aa0b0a19e17d542e21c992b65be5",
+    "crates/gui-render/src/render/gpu_vertex_upload.rs": "61f003826cbe464c8b8596ef0b30693cadf4cb0ac414362155ca12c61ca0a84c",
+    "crates/gui-render/src/render/terminal_graphic_texture.rs": "9832de7a99eacfb62dfa22e53681c5eb0169dac33d8e2a620019bc2d8ed576ac",
+    "crates/gui-render/src/render/terminal_graphics.rs": "56725ef9a7527b44941169875b0f70e46312d69acea0569ebab7ad0dd533043c",
+    "crates/gui-render/src/render/terminal_rgba_upload.rs": "e90c60d560e391d8716c78146aae83d0b9b5cc483edf11e045f18860690e155e",
+    "crates/gui-render/src/render/terminal_upload.rs": "ff8f5e8baab64ad056f37264955a62dda2b749b3e769c535ee4430c54c5909a5",
+    "crates/gui-render/src/visual_capture.rs": "74b0237b1901c8333c2a737f2f6bd345d7c4acf2d05ef55ebac301d34956a739",
+    "scripts/check_terminal_core_renderer_boundary.py": "eeec5f7fb20d2bd5a68a6c939345edd610b35889f05a9e1e31535755a8e1e4c2",
+    "scripts/test_terminal_core_renderer_boundary.py": "69cf3e3f84fdcefe6d3d6d0adfd64a6306865b5dfa6ec8dd079e0c50fa48f421"
+  }
+}

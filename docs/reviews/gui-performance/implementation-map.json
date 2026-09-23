@@ -3643,6 +3643,11 @@
           "work": "s4_world_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/world-chunks/result.json",
           "status": "World streams now use bounded explicit staging with native continuation. Full resource qualification stays open; cold multi-submission GPU observations are explicitly incomplete, never partial numeric samples."
+        },
+        {
+          "work": "s4_terminal_chunk_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/result.json",
+          "status": "Terminal pixels now use shared bounded explicit staging and native continuation. Full accounting/qualification remains open; cold timing explicitly incomplete."
         }
       ]
     },
@@ -16720,6 +16725,11 @@
           "work": "s4_resource_subcaps_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/resource-subcaps/result.json",
           "status": "Atlas texture-local/process caps now include retirement; terminal texture/quad process cap adopted. Original qualification and unrelated caps remain open."
+        },
+        {
+          "work": "s4_terminal_chunk_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/result.json",
+          "status": "Terminal pixels now use shared bounded explicit staging and native continuation. Full accounting/qualification remains open; cold timing explicitly incomplete."
         }
       ]
     },
@@ -16861,6 +16871,11 @@
           "work": "s4_world_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/world-chunks/result.json",
           "status": "World streams now use bounded explicit staging with native continuation. Full resource qualification stays open; cold multi-submission GPU observations are explicitly incomplete, never partial numeric samples."
+        },
+        {
+          "work": "s4_terminal_chunk_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/result.json",
+          "status": "Terminal pixels now use shared bounded explicit staging and native continuation. Full accounting/qualification remains open; cold timing explicitly incomplete."
         }
       ]
     },
@@ -17002,6 +17017,11 @@
           "work": "s4_world_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/world-chunks/result.json",
           "status": "World streams now use bounded explicit staging with native continuation. Full resource qualification stays open; cold multi-submission GPU observations are explicitly incomplete, never partial numeric samples."
+        },
+        {
+          "work": "s4_terminal_chunk_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/result.json",
+          "status": "Terminal pixels now use shared bounded explicit staging and native continuation. Full accounting/qualification remains open; cold timing explicitly incomplete."
         }
       ]
     },
@@ -17168,6 +17188,11 @@
           "work": "s4_world_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/world-chunks/result.json",
           "status": "World streams now use bounded explicit staging with native continuation. Full resource qualification stays open; cold multi-submission GPU observations are explicitly incomplete, never partial numeric samples."
+        },
+        {
+          "work": "s4_terminal_chunk_staging_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/result.json",
+          "status": "Terminal pixels now use shared bounded explicit staging and native continuation. Full accounting/qualification remains open; cold timing explicitly incomplete."
         }
       ]
     },
@@ -32464,5 +32489,40 @@
       "No dependency, vendor, licensing, prototype, font, visual layout or numerical admission-budget change. Four MiB is a transfer chunk size below existing admission ceilings. Preserve GEFN."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/world-chunks/result.json"
+  },
+  "s4_terminal_chunk_staging_work": {
+    "status": "Default terminal pixels use shared explicit staging and bounded native continuation; complete accounting and qualification remain unfinished",
+    "base_commit": "a8201e8c",
+    "production_consumers": [
+      "TerminalCore sixel/kitty foreground and background image placements in the production Renderer",
+      "Main native runtime via the existing upload-only submission/retry adapter",
+      "Offscreen/capture clients via the existing synchronous convenience adapter"
+    ],
+    "retired_paths": [
+      "Terminal texture queue.write_texture calls and flush_textures loop",
+      "Final-frame opaque terminal writes outside the explicit staging owner"
+    ],
+    "behavior": [
+      "Borrow immutable decoded RGBA rectangles without an image-sized CPU copy. Transfer at most4 MiB padded staging capacity across visible textures per submission. Charge existing host16 MiB/process-staging64 MiB/global-GPU512 MiB budgets and retain staging/destination accounting through completion.",
+      "Advance each texture pixel offset only after successful batch admission and actual submission. Preserve partial unchanged sources across preparation cancellation; changed or removed source keys retire old owners and start current content from zero. Warm images perform no pixel upload or upload-only turn.",
+      "Default native frame attempts yield after pixel-copy submissions, retaining damage and withholding presentation until current visible images are complete. Hidden placements do not generate pixel submissions. Shared existing retry/admission remains authoritative; no native synchronous wait.",
+      "Publish actual terminal copy chunk and padded-byte totals. Reuse the explicit incomplete cold multi-submission measurement receipts; warm terminal frames still produce numerical samples and identical pixels. Complete cold timestamps/span attribution remains required.",
+      "Update the existing DTC-P23 source guard to require explicit staging, shared encoder copies and native submission wiring; negative tests reject removal/bypass. No marker claiming an old opaque API remains."
+    ],
+    "proof": {
+      "renderer": "310 renderer tests pass;11 diagnostic/visual cases filtered. New actual-GPU proof covers a1025x1100 image across two chunks, padded staging ceiling/retirement, admission refusal without submission or lost progress, replacement/removal, warm reuse and fresh-render pixel equality. Existing odd-width GPU readback and wide-row borrowed coverage tests exercise the shared builder/chunker.",
+      "measurement": "Production parity proof checks cold terminal upload/final-render receipts share one frame with distinct submissions and no partial numerical sample; subsequent warm frame retains foreground/background pass measurements and identical pixels.",
+      "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2248, dependency authority, spec governance313, parity20, project state59 and evidence traceability pass.",
+      "visual": "640x480 terminal sixel capture inspected; RGBA bytes exactly match S4/terminal-gpu-retention/sixel.png. No new native OS-input/endurance/multi-host timing qualification; native adapters unchanged from world-chunks.",
+      "guard": "5 DTC-P23 boundary tests pass, including explicit upload/submission/hold/copy wiring removal and opaque-write bypass negatives. Updated real-tree guard passes.",
+      "drift": "Final full drift passes terminal boundaries/core proof and stops at the existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Later gates unrun; no full-drift acceptance.",
+      "development": "Initial tests exposed the large test fixture parser-work allowance and scrolling out of view, plus the prior single-submission timing expectation. Corrected only fixture limits/anchoring and asserted explicit incomplete cold receipts with retained warm timing proof. Initial drift required the retired queue.write_texture marker; updated its owning checker and mutation tests. Failed logs retained."
+    },
+    "limits": [
+      "Oversized glyph-atlas batches still need bounded continuation. Full CPU pending/scratch/metadata, private shaped text, world history/generation and diagnostic query/readback accounting remain incomplete. No full MEM-STAGING or MEM-GPU-TOTAL closure.",
+      "Cold multi-submission timestamp/span attribution remains unqualified under MET-04/GPU-01..03/AC-03. Full native/backend/fairness/fault/endurance/resource qualification remains required; no S4/S5 closure.",
+      "No dependency, vendoring, licensing, prototype, visual layout or production protocol/admission-limit change. Large sixel fixture limits are test-only. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-chunks/result.json"
   }
 }

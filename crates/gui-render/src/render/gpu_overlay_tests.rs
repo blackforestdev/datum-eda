@@ -263,6 +263,8 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
     let expected_terminal = renderer
         .render_workspace_with_terminal_snapshot(&terminal_workspace, &snapshot, 1.0)
         .unwrap();
+    let incomplete = std::sync::Arc::new(std::sync::Mutex::new(Vec::new()));
+    let records = incomplete.clone();
     renderer
         .renderer
         .enable_gpu_measurements(
@@ -270,7 +272,7 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
             &renderer.queue,
             101,
             1,
-            Box::new(|receipt| panic!("unexpected cancellation: {receipt:?}")),
+            Box::new(move |receipt| records.lock().unwrap().push(receipt)),
         )
         .unwrap();
     let measured_workspace = renderer.render_workspace(&workspace, None).unwrap();
@@ -307,6 +309,30 @@ fn gpu_measurements_preserve_production_workspace_and_dialog_pixels() {
     assert!(
         expected_terminal == measured_terminal,
         "measurement changed terminal pixels"
+    );
+    assert!(
+        renderer
+            .renderer
+            .poll_gpu_measurements(&renderer.device)
+            .unwrap()
+            .is_empty()
+    );
+    {
+        let records = incomplete.lock().unwrap();
+        assert_eq!(records.len(), 2, "cold terminal upload plus final render");
+        assert!(
+            records
+                .iter()
+                .all(|r| r.reason == "cold_upload_multisubmission_timestamps_unqualified")
+        );
+        assert_eq!(records[0].frame, records[1].frame);
+        assert!(records[0].submission < records[1].submission);
+    }
+    assert!(
+        expected_terminal
+            == renderer
+                .render_workspace_with_terminal_snapshot(&terminal_workspace, &snapshot, 1.0)
+                .unwrap()
     );
     let samples = renderer
         .renderer

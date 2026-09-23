@@ -8,6 +8,8 @@ use super::PreparedTerminalGraphic;
 #[path = "terminal_graphic_texture.rs"]
 mod texture;
 use texture::CachedTerminalGraphicTexture;
+#[path = "terminal_upload.rs"]
+mod upload;
 
 #[repr(C)]
 #[derive(Clone, Copy, bytemuck::Pod, bytemuck::Zeroable)]
@@ -58,6 +60,8 @@ pub(super) struct TerminalGraphicsRenderer {
     texture_layout: wgpu::BindGroupLayout,
     textures: Vec<CachedTerminalGraphicTexture>,
     draws: Vec<TerminalGraphicDraw>,
+    upload_chunks: u64,
+    upload_bytes: u64,
 }
 
 impl TerminalGraphicsRenderer {
@@ -168,6 +172,8 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             texture_layout,
             textures: Vec::new(),
             draws: Vec::new(),
+            upload_chunks: 0,
+            upload_bytes: 0,
         }
     }
 
@@ -250,7 +256,8 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
     }
 
     pub(super) fn cancel_uploads(&mut self) {
-        self.textures.retain(|texture| !texture.pending);
+        self.textures
+            .retain(|texture| !texture.pending || texture.uploaded != 0);
         for draw in &mut self.draws {
             draw.vertices.cancel_uploads();
         }
@@ -268,12 +275,6 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
     pub(super) fn finish_vertex_uploads(&mut self) {
         for draw in &mut self.draws {
             draw.vertices.finish_uploads();
-        }
-    }
-
-    pub(super) fn flush_textures(&mut self, queue: &wgpu::Queue) {
-        for texture in &mut self.textures {
-            texture.flush_upload(queue);
         }
     }
 

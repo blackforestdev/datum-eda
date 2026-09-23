@@ -22,6 +22,7 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
         root = Path(temporary.name)
         paths = (
             guard.RENDER / "src/render",
+            guard.RENDER / "src/text_gpu",
             guard.APP,
         )
         for path in paths:
@@ -45,14 +46,22 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
         )
         (root / guard.GRAPHICS).write_text(
             '#[path = "terminal_graphic_texture.rs"] mod texture; '
+            '#[path = "terminal_upload.rs"] mod upload; '
             "CachedTerminalGraphicTexture::new( BlendState::ALPHA_BLENDING\n",
             encoding="utf-8",
         )
         (root / guard.TEXTURE).write_text(
-            "Rgba8UnormSrgb queue.write_texture(\n",
+            "Rgba8UnormSrgb crate::text_gpu::upload::TextureUpload {\n",
             encoding="utf-8",
         )
+        (root / guard.UPLOAD).write_text(
+            "texture.append_chunk( crate::text_gpu::upload::batch( "
+            "queue.submit([batch.command()]) batch.hold(queue) "
+            "on_submitted(submission) texture.consume_chunk(count)\n", encoding="utf-8"
+        )
+        (root / guard.STAGING).write_text("encoder.copy_buffer_to_texture(\n", encoding="utf-8")
         (root / guard.GPU).write_text(
+            "self.submit_terminal_upload_chunk(device, queue, on_submitted)?\n"
             "encode_terminal_graphics(&mut encoder, &msaa_view, target, false, measurement.as_mut(),)\n"
             "encode_terminal_graphics(&mut encoder, &msaa_view, target, true, measurement.as_mut(),)\n",
             encoding="utf-8",
@@ -118,7 +127,7 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
     def test_image_dpi_and_runtime_wiring_mutations_fail(self) -> None:
         self.assertTrue(self.mutate(guard.GPU, "target, false,", "target, true,"))
         self.assertTrue(self.mutate(guard.SCENE, "terminal_panes: &[crate::TerminalPaneRenderState]", ""))
-        self.assertTrue(self.mutate(guard.TEXTURE, "queue.write_texture(", ""))
+        self.assertTrue(self.mutate(guard.TEXTURE, "crate::text_gpu::upload::TextureUpload {", ""))
         self.assertTrue(self.mutate(guard.GRAPHICS, "mod texture;", ""))
         self.assertTrue(
             self.mutate(
@@ -139,6 +148,22 @@ class TerminalCoreRendererBoundaryTest(unittest.TestCase):
                 "0",
             )
         )
+
+    def test_explicit_staging_and_submission_path_cannot_be_bypassed(self) -> None:
+        for path, marker in (
+            (guard.GRAPHICS, 'mod upload;'),
+            (guard.GPU, 'self.submit_terminal_upload_chunk(device, queue, on_submitted)?'),
+            (guard.UPLOAD, 'texture.append_chunk('),
+            (guard.UPLOAD, 'crate::text_gpu::upload::batch('),
+            (guard.UPLOAD, 'queue.submit([batch.command()])'),
+            (guard.UPLOAD, 'batch.hold(queue)'),
+            (guard.UPLOAD, 'on_submitted(submission)'),
+            (guard.UPLOAD, 'texture.consume_chunk(count)'),
+            (guard.STAGING, 'encoder.copy_buffer_to_texture('),
+        ):
+            with self.subTest(path=path, marker=marker):
+                self.assertTrue(self.mutate(path, marker, ''))
+        self.assertTrue(self.mutate(guard.TEXTURE, "\n", "\nqueue.write_texture(\n"))
 
     def test_visual_or_incremental_proof_removal_fails(self) -> None:
         self.assertTrue(

@@ -289,6 +289,14 @@ mod tests {
     }
 
     pub(super) fn sixel_snapshot(include_background: bool) -> datum_terminal_core::RenderSnapshot {
+        sixel_snapshot_sized(include_background, 8, 8)
+    }
+
+    pub(super) fn sixel_snapshot_sized(
+        include_background: bool,
+        width: u32,
+        height: u32,
+    ) -> datum_terminal_core::RenderSnapshot {
         let values = CoreLimitValues {
             parameter_count: 64,
             parameter_digits: 16,
@@ -310,11 +318,11 @@ mod tests {
             history_lines: 64,
             history_bytes: 1 << 20,
             graphic_objects: 16,
-            graphic_pixels: 1 << 16,
-            graphic_decoded_bytes: 1 << 18,
+            graphic_pixels: (1 << 16).max(width as usize * height as usize),
+            graphic_decoded_bytes: (1 << 18).max(width as usize * height as usize * 4),
             graphic_frames: 16,
             compression_ratio: 1_024,
-            parser_work: 1 << 20,
+            parser_work: (1 << 20).max(width as usize * height as usize * 2),
             search_work: 1 << 20,
             reflow_work: 1 << 20,
             screen_cells: 1 << 20,
@@ -324,7 +332,14 @@ mod tests {
         let mut core =
             TerminalCore::new(limits, TerminalSize::new(74, 9, 585, 144).unwrap()).unwrap();
         let mut parser = StreamingParser::new(limits);
-        parser.feed(b"\x1bP0;1;0q\"1;1;8;8#2;2;100;0;0!8~\x1b\\", |action| {
+        if height > 144 {
+            // Keep the large staging fixture anchored in the visible screen.
+            parser.feed(b"\x1b[?80h", |action| {
+                core.apply(action).unwrap();
+            });
+        }
+        let sixel = format!("\x1bP0;1;0q\"1;1;{width};{height}#2;2;100;0;0!{width}~\x1b\\");
+        parser.feed(sixel.as_bytes(), |action| {
             core.apply(action).unwrap();
         });
         if include_background {
