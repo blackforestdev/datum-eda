@@ -2,6 +2,9 @@
 
 use super::*;
 
+#[path = "text_shape.rs"]
+mod text_shape;
+
 /// Shared, lazily-initialized measuring `FontSystem` loaded with the SAME vendored
 /// IBM Plex faces the renderer uses (`load_datum_fonts`), so a measured width here
 /// matches what gpu.rs actually shapes. Kept separate from the renderer's own
@@ -41,14 +44,7 @@ fn measure_uncached(text: &str, size: f32, face: TextFace) -> f32 {
     let mut font_system = mutex
         .lock()
         .unwrap_or_else(|poisoned| poisoned.into_inner());
-    let mut buffer = Buffer::new(&mut font_system, Metrics::new(size, size * 1.22));
-    let attrs = text_attrs(face);
-    buffer.set_text(&mut font_system, text, &attrs, Shaping::Basic, None);
-    buffer.shape_until_scroll(&mut font_system, false);
-    buffer
-        .layout_runs()
-        .map(|run| run.line_w)
-        .fold(0.0_f32, f32::max)
+    text_shape::measure(&mut font_system, text, &text_attrs(face), size, None).0
 }
 
 /// Load the vendored IBM Plex faces into the glyphon font database so chrome and
@@ -138,12 +134,9 @@ pub(super) fn measured_text_run_height_px(
                 let mut fonts = crate::measure_font_system()
                     .lock()
                     .unwrap_or_else(|poisoned| poisoned.into_inner());
-                let line_height = size * 1.22;
-                let mut buffer = Buffer::new(&mut fonts, Metrics::new(size, line_height));
-                buffer.set_size(&mut fonts, Some(width), None);
-                buffer.set_text(&mut fonts, text, &text_attrs(face), Shaping::Basic, None);
-                buffer.shape_until_scroll(&mut fonts, false);
-                buffer.layout_runs().count().max(1) as f32 * line_height
+                let (_, rows) =
+                    text_shape::measure(&mut fonts, text, &text_attrs(face), size, Some(width));
+                rows.max(1) as f32 * (size * 1.22)
             },
         )
     })

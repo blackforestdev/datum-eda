@@ -31292,5 +31292,30 @@
       "No dependency, prototype, numerical budget or resize change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/retired-geometry/result.json"
+  },
+  "s4_public_shaping_measurement_work": {
+    "status": "Default measurement uses Datum-owned public shaping orchestration; renderer text/atlas migration and full accounting remain open",
+    "base_commit": "d2c2e0e2",
+    "production_consumers": [
+      "Shared measured text width cache misses for all TextFace variants",
+      "Shared wrapped text height cache misses"
+    ],
+    "shared_owner": "render/text_shape.rs::measure",
+    "retired_paths": [
+      "Temporary opaque Buffer creation and copied BufferLine text/attributes in width measurement",
+      "Temporary opaque Buffer creation and copied BufferLine text/attributes in wrapped height measurement"
+    ],
+    "behavior": "Borrow input paragraphs, shape through existing public ShapeLine API, consume public LayoutLine vectors and drop each paragraph before advancing. Preserve Basic shaping, tab width 8, WordOrGlyph wrapping, font authority, trailing empty paragraphs and scalar cache keys/caps.",
+    "proof": {
+      "renderer": "8 focused text-metrics tests passed,231filtered. New parity test compares exact width bits and row counts against existing Buffer layout for 495 combinations of five faces, three sizes, eleven strings and three width constraints. Includes CR/LF variants, empty/trailing paragraphs, tabs, wrapping, combining marks and multilingual text.",
+      "policy": "Source health (2226 files),13 source-policy tests and dependency authority passed.",
+      "drift": "Clippy and preceding checks pass; full drift exits1 at existing Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates unrun; goldens unchanged."
+    },
+    "limits": [
+      "Only production measurement has migrated; rendered-text cache and glyphon GPU atlas remain on existing owners.",
+      "Public shape/layout payload is transient and released per paragraph. Private FontSystem/ShapeBuffer/raster scratch and total allocation peaks are not fully accounted or capped by this slice.",
+      "No timing, complete ACC/MEM predicate, native appearance or S4/S5 acceptance claim. No dependency, vendor, prototype, font, budget or resize change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/public-shaping-measurement/result.json"
   }
 }
