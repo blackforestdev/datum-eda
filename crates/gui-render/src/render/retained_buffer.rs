@@ -1,9 +1,9 @@
 //! One immutable CPU source and its reusable GPU allocation per renderer/device.
+use super::shared_geometry::SharedGeometry;
 use super::vertex_allocation::VertexAllocation;
-use std::sync::Arc;
 
 pub(crate) struct RetainedBuffer<T> {
-    source: Option<Arc<[T]>>,
+    source: Option<SharedGeometry<T>>,
     allocation: VertexAllocation,
 }
 
@@ -26,24 +26,21 @@ impl<T: bytemuck::Pod> RetainedBuffer<T> {
     }
 
     /// Return actual source bytes submitted for upload, zero for a warm source.
-    /// Retaining the Arc makes allocator-address reuse impossible until the old
+    /// Retaining the shared owner makes allocator-address reuse impossible until the old
     /// identity is replaced. Buffer capacity is never used as content identity.
     pub(crate) fn sync(
         &mut self,
         device: &wgpu::Device,
         queue: &wgpu::Queue,
         label: &str,
-        source: &Arc<[T]>,
+        source: &SharedGeometry<T>,
     ) -> usize {
         if source.is_empty() {
             self.clear();
             return 0;
         }
         if self.allocation.buffer().is_some()
-            && self
-                .source
-                .as_ref()
-                .is_some_and(|old| Arc::ptr_eq(old, source))
+            && self.source.as_ref().is_some_and(|old| old.ptr_eq(source))
         {
             return 0;
         }
@@ -96,8 +93,8 @@ mod tests {
         let (device, queue) =
             pollster::block_on(adapter.request_device(&Default::default())).unwrap();
         let mut retained = RetainedBuffer::default();
-        let source: Arc<[u32]> = Arc::from([1, 2, 3, 4]);
-        let weak = Arc::downgrade(&source);
+        let source: SharedGeometry<u32> = vec![1, 2, 3, 4].into();
+        let weak = source.downgrade();
         assert_eq!(retained.sync(&device, &queue, "proof", &source), 16);
         let buffer = retained.buffer().unwrap().clone();
         assert_eq!(retained.sync(&device, &queue, "proof", &source.clone()), 0);
@@ -106,7 +103,7 @@ mod tests {
             weak.upgrade().is_some(),
             "upload owner prevents address reuse"
         );
-        let replacement: Arc<[u32]> = Arc::from([5, 6, 7, 8]);
+        let replacement: SharedGeometry<u32> = vec![5, 6, 7, 8].into();
         assert_eq!(retained.sync(&device, &queue, "proof", &replacement), 16);
         assert!(
             weak.upgrade().is_none(),
@@ -122,17 +119,17 @@ mod tests {
             bytemuck::cast_slice::<u32, u8>(replacement.as_ref())
         );
         assert_eq!(retained.sync(&device, &queue, "proof", &replacement), 0);
-        let large: Arc<[u32]> = vec![42; 64].into();
+        let large: SharedGeometry<u32> = vec![42; 64].into();
         assert_eq!(retained.sync(&device, &queue, "proof", &large), 256);
         let peak = retained.buffer().unwrap().clone();
-        let quarter: Arc<[u32]> = vec![43; 16].into();
+        let quarter: SharedGeometry<u32> = vec![43; 16].into();
         assert_eq!(retained.sync(&device, &queue, "proof", &quarter), 64);
         assert_eq!(
             retained.buffer(),
             Some(&peak),
             "reuse at four-times boundary"
         );
-        let small: Arc<[u32]> = vec![44; 15].into();
+        let small: SharedGeometry<u32> = vec![44; 15].into();
         assert_eq!(retained.sync(&device, &queue, "proof", &small), 60);
         assert_eq!(
             retained.buffer().unwrap().size(),
@@ -145,17 +142,17 @@ mod tests {
             read(&device, &queue, retained.buffer().unwrap(), 60),
             bytemuck::cast_slice::<u32, u8>(&small)
         );
-        let weak = Arc::downgrade(&small);
+        let weak = small.downgrade();
         retained.clear();
         drop(small);
         assert!(retained.buffer().is_none());
         assert!(retained.buffer().is_none());
         drop(replacement);
         assert!(weak.upgrade().is_none());
-        let empty: Arc<[u32]> = Arc::from([]);
+        let empty: SharedGeometry<u32> = Vec::new().into();
         assert_eq!(retained.sync(&device, &queue, "proof", &empty), 0);
         assert!(retained.buffer().is_none());
-        let replacement: Arc<[u32]> = Arc::from([9, 10, 11, 12]);
+        let replacement: SharedGeometry<u32> = vec![9, 10, 11, 12].into();
         assert_eq!(retained.sync(&device, &queue, "proof", &replacement), 16);
         assert_ne!(
             retained.buffer(),

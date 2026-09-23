@@ -1,5 +1,7 @@
 #[path = "retained_buffer.rs"]
 pub(crate) mod retained_buffer;
+#[path = "shared_geometry.rs"]
+pub(crate) mod shared_geometry;
 #[path = "uniform_buffer.rs"]
 pub(crate) mod uniform_buffer;
 #[path = "vertex_allocation.rs"]

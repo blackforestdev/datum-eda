@@ -18,7 +18,7 @@ impl Renderer {
         board_interaction: &[Vertex],
         console_overlay: &[Vertex],
         menu_overlay: &[Vertex],
-        world: &std::sync::Arc<[Vertex]>,
+        world: &gpu_data::shared_geometry::SharedGeometry<Vertex>,
         schematic_world: Option<&RetainedScene>,
         schematic_underlay: &[Vertex],
         schematic_overlay: &[Vertex],

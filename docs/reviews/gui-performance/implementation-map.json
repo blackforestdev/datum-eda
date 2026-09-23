@@ -31221,5 +31221,35 @@
       "No claim that the goal is achieved or that all useful Rust work is blocked."
     ],
     "owner_response": null
+  },
+  "s4_shared_geometry_work": {
+    "status": "Default world geometry now uses a shared boxed payload; full world lifetime/cap accounting remains open",
+    "base_commit": "d5fae156",
+    "production_consumers": [
+      "Board and schematic RetainedScene geometry construction",
+      "Main retained-scene history and payload admission",
+      "Renderer retained vertex/stroke upload owners",
+      "Empty Preferences retained scenes"
+    ],
+    "shared_owner": "gpu_data::shared_geometry::SharedGeometry<T>",
+    "retired_paths": [
+      "Converting retained world vectors directly into Arc slices, copying payload into the reference-counted allocation",
+      "Arc-slice ownership in retained GPU source identity checks"
+    ],
+    "behavior": "Move the boxed geometry payload into a small reference-counted owner. Clones retain identical payload and ownership identity; warm uploads remain zero and equal-sized different ownership updates data. The boxed payload drops with the last strong owner even when a weak observer survives. Scene heap estimates now include the Box slot as well as array bytes. Vector-to-box shrinking can still reallocate; no blanket zero-allocation construction claim.",
+    "proof": {
+      "renderer": "237 renderer library tests passed. New regression verifies boxed payload address preservation, clone identity and final-strong-owner element release while a weak observer survives.",
+      "gpu": "Existing real-GPU retained-buffer replacement/reuse/readback test passed,1 test/277filtered,serial visual run.",
+      "app": "Both retained-scene history/cap tests passed,392filtered.",
+      "policy": "Source health,13 policy tests and dependency authority passed.",
+      "corrected_attempt": "Initial compilation found the remaining Arc-slice upload signature; migrated it and reran the complete renderer suite successfully.",
+      "drift": "Clippy and preceding checks pass. Full drift exits1 at existing Console routine-focused1x golden3778 pixels/0.384318%, dat-console-revision-golden-hrak. Later gates unrun; goldens unchanged."
+    },
+    "limits": [
+      "This migrates the allocation owner; production history does not yet track renderer-pinned retired payloads through weak observers. No full MEM-WORLD-CPU/HISTORY, GPU or aggregate cap closure.",
+      "Arc/control-block and allocator overhead, construction scratch, unique shared accounting and native budget qualification remain open.",
+      "No dependency, prototype, numerical budget, visual or resize changes; pending text-accounting route question remains unresolved."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/shared-geometry/result.json"
   }
 }

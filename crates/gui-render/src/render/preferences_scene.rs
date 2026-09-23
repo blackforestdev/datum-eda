@@ -9,7 +9,7 @@ impl RetainedScene {
         Self {
             surface_size_independent: true,
             world_vertices: Vec::new().into(),
-            world_strokes: std::sync::Arc::from([]),
+            world_strokes: Vec::new().into(),
             draw_commands: Vec::new(),
             world_hit_index: datum_gui_viewport::SpatialHitIndex::new(Vec::new()),
         }
