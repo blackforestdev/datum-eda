@@ -4,7 +4,7 @@ use super::{ConsoleOverlayLayout, PreparedScene, Renderer, Vertex};
 
 #[derive(Default)]
 pub(super) struct ConsoleGpuResources {
-    vertices: super::gpu_data::screen_buffer::ScreenBuffer,
+    pub(super) vertices: super::gpu_data::screen_buffer::ScreenBuffer,
 }
 
 impl Renderer {

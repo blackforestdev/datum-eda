@@ -1,0 +1,100 @@
+{
+  "status": "Default world/screen vertices share allocation lifetime accounting and successful-frame upload boundary; complete ACC/MEM qualification remains open",
+  "base_commit": "4a07c29a",
+  "production_consumers": [
+    "Board and schematic retained vertices and strokes",
+    "Panel, viewport underlay/overlay, board interaction, Console, menu/dialog, schematic underlay/overlay and surface grid screen streams",
+    "Shared full-frame and overlay-only renderer used by native hosts; cached world render bundles"
+  ],
+  "retired_paths": [
+    "Vertex create_buffer_init and eager queue writes during fallible frame preparation",
+    "Raw-only vertex ownership with no process allocation identity or submission/bundle lifetime hold"
+  ],
+  "behavior": [
+    "Track actual API buffer capacity with stable owner/allocation identities and allocation generation using the existing Datum GPU owner. Shared references count capacity once. Preserve text-only reporting and expose migrated text/vertex process reporting separately.",
+    "Defer initial and changed vertex writes to the successful frame submission boundary. Next frame cancels unsubmitted writes and invalidates their source/snapshot authority. Closing a renderer drops pending data without queue work.",
+    "World pending uploads retain the existing immutable shared source without copying geometry. Normal screen pending ranges borrow the existing bounded snapshot; over-cap streams own a temporary payload released on flush/cancel. Existing vertex-span coalescing and warm zero-write reuse remain.",
+    "Submission completion callbacks and cached world bundles hold the same tracked allocation. Replacing/clearing a stream marks its old allocation retiring without dropping its accounting while these owners remain."
+  ],
+  "proof": {
+    "renderer": "290 final renderer tests passed with visual feature and included ignored GPU cases, 11 explicitly filtered (measurement/cost probes and visual_runner). Includes 3 vertex readback/cancellation tests, world-bundle reuse/replacement, 14 production GPU regressions and text GPU pixel oracle. Earlier candidate:274 unit tests,3 buffer tests,1 bundle test and14 production GPU tests passed before snapshot reuse refinement.",
+    "native": "Fresh native visual-feature build and1680x1050 datum-test/R1 capture exit0; visually inspected and exact decoded RGBA equality with preserved4a07c29a capture. No native input/performance or endurance acceptance.",
+    "lint": "gui-render/gui-app all-targets visual Clippy -D warnings passed; source health2237files,13 policy tests, dependency authority and Cargo resource policy passed.",
+    "drift": "Full drift rerun: workspace Clippy and preceding gates pass; stops at the existing console-routine-focused1x golden conflict,3778pixels(0.384318%). Failed evidence retained; later gates unrun. No golden update or full-drift acceptance."
+  },
+  "limits": [
+    "GPU world64MiB, screen16MiB, total512MiB, generation-count and staging16/64MiB admission remain unfinished. No predicate or S4/S5 closure.",
+    "Process observations cover migrated text and vertex API storage only. Uniforms, attachments, terminal graphics, complete device/document/host incidence, requested-payload/release-reason history, driver residency and staging remain separate work. Retiring means the primary stream owner retired; cached bundles can still retain it.",
+    "sync byte counts describe planned vertex writes; complete boundary counters remain unfinished. Internal clean words stay coalesced under the existing upload algorithm; REUSE-SCREEN exactness remains open.",
+    "Pending range metadata and over-cap payload are not a complete scratch-budget implementation. Failed frames release pending work on next render or renderer drop. No background drop-time queue submission.",
+    "No dependency/version/vendor/registry-source, prototype, appearance, budget or resize change. No global adoption or performance acceptance. Known Console golden conflict remains separately unqualified."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-submission/result.json",
+  "logs": {
+    "unit": {
+      "path": "unit.log.gz",
+      "uncompressed_sha256": "1e09ef79825f01928a81a4aba89a123e00761a8913c61e3789f7aec74f7f5bb2"
+    },
+    "data": {
+      "path": "data.log.gz",
+      "uncompressed_sha256": "33b3ebd0d9e1a77c18d5c8c56ff0c986852f63862a349479789e79bd4878b8f3"
+    },
+    "bundle": {
+      "path": "bundle.log.gz",
+      "uncompressed_sha256": "10b0748f91669b3c200d05bd2db2b3423e1318ec0c17ad20c983d4dd48fe49c6"
+    },
+    "gpu": {
+      "path": "gpu.log.gz",
+      "uncompressed_sha256": "914d408d776f2fc165cff0e4e72426aebde72b61ad779bd4ee8502e9f91f631f"
+    },
+    "final": {
+      "path": "final.log.gz",
+      "uncompressed_sha256": "db3269e6da9e8c89317c63c23a2a0d4e1e60f65d434f4bd558c7ca9015575bf9"
+    },
+    "clippy": {
+      "path": "clippy.log.gz",
+      "uncompressed_sha256": "8a4c249f1fc565fd2f7dce0b423d51dd6f10f5ca613171b98c3c60f4d3b2ede5"
+    },
+    "native": {
+      "path": "native.log.gz",
+      "uncompressed_sha256": "8b4af52e053521e3403f4dce1fbe90a826283294b261566f105e637fe1298539"
+    },
+    "source-policy": {
+      "path": "source-policy.log.gz",
+      "uncompressed_sha256": "b2692a1a95e75e0c9e6425411daa79ca0a1625c18955c14e38b4a696d5783de3"
+    },
+    "drift": {
+      "path": "drift.log.gz",
+      "uncompressed_sha256": "a3673d1a8f493b5d107c26968f974a5843d66577ae6879b5d88a470d46b7a721"
+    }
+  },
+  "native_capture": {
+    "path": "native.png",
+    "sha256": "40e986a2655402722e7ebb62db7dacbfdbd02134da611989bfd2b12db0a81d2a",
+    "size": [
+      1680,
+      1050
+    ],
+    "preserved_capture_rgba_equal": true
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_console.rs": "f7cf1e5856d5e21dcf0ccb114be1a27f764509fa00d5cb99b47c9939b066a304",
+    "crates/gui-render/src/render/gpu_frame.rs": "2ed04dafd4af0237b747468b74e7417924f33c1d922100d148b24bdfcf464807",
+    "crates/gui-render/src/render/gpu_overlay.rs": "69b61e6b463605f36d2d5cd99c3ffed0d0e38a48b6d6b2474e0a4f556af2d730",
+    "crates/gui-render/src/render/gpu_surface_pass/world_bundles.rs": "37442dbda44646f4502e68a450b91643879720ef94f528989315db23c1a84d44",
+    "crates/gui-render/src/render/gpu_text.rs": "fa7ee7cb240382bf160b23f060032f54458c1da0d20f8e509b5fb29cfcca35e5",
+    "crates/gui-render/src/render/gpu_vertex_upload.rs": "cab9c73ca1b57a7e4a5f6f2d755640257996d31dc3891020eaa156b5ab490408",
+    "crates/gui-render/src/render/retained_buffer.rs": "694c2521e3aab9e7bdfc774e21f17fcf9c06b2e7b26d98b065de781e76e4a62b",
+    "crates/gui-render/src/render/screen_buffer.rs": "3cc77c75cf0bcdbd9bade1310d74f72371a6fe74f968609cc67308653425ad20",
+    "crates/gui-render/src/render/vertex_allocation.rs": "76b850c2b5a8d82143bee5024546aaf8b4e5cabd32a4cc2d0c92226cd666f39f",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "0d4c05511041ef4773257a0ff9af798af2e16b3d9fae22ccf2f9eb20bed416b3",
+    "crates/gui-render/src/text_gpu/mod.rs": "a5ebd6f8ca2c15b825b2f41fb89656ed7a661dd90563ec7619e175a5a99ce507"
+  },
+  "application_sha256": "47fbbc210097e29ad81b607d26c23fec316eb665c9cbb79d7506f0fe30e156d4",
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --features visual --lib -- --include-ignored --skip gpu_measurements::tests::real_gpu --skip gpu_surface::attachment_cost_probe --skip visual::visual_runner --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-render -p datum-gui-app --all-targets --features visual -- -D warnings",
+    "timeout 120s python3 scripts/run_cargo_guarded.py --workload proof -- cargo run --offline -p datum-gui-app --bin datum-gui --features visual -- --board /home/bfadmin/Documents/kicad_projects/Datum-eda/datum-test/datum-test.kicad_pcb --select R1 --visual-test --screenshot-out /tmp/pm045-s4-vertex-native.png --window-size 1680x1050 --exit-after-screenshot",
+    "bash /tmp/pm045-s4-drift.sh (offline; nested terminal-core Cargo uses guarded runner)"
+  ]
+}

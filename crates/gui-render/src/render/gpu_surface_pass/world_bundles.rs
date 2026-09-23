@@ -11,6 +11,8 @@ pub(crate) struct CachedSurfaceBundle {
     // Only actual encoded state belongs here. Visibility/layer metadata has
     // already selected the command stream and owns no additional GPU state.
     batches: Box<[DrawBatch]>,
+    // Dropped after the bundle and raw handles, preserving the same allocation records.
+    _allocations: Vec<crate::text_gpu::lifetime::SubmissionRef>,
 }
 
 impl CachedSurfaceBundle {
@@ -89,6 +91,19 @@ impl Renderer {
                 }
                 draws += 1;
             }
+            let allocations = match surface.surface {
+                SceneSurface::Board => [
+                    self.world_vertices_gpu.submission_ref(),
+                    self.world_strokes_gpu.submission_ref(),
+                ],
+                SceneSurface::Schematic => [
+                    self.schematic_world_vertices_gpu.submission_ref(),
+                    self.schematic_world_strokes_gpu.submission_ref(),
+                ],
+            }
+            .into_iter()
+            .flatten()
+            .collect();
             let cached = CachedSurfaceBundle {
                 bundle: encoder.finish(&wgpu::RenderBundleDescriptor {
                     label: Some("datum-world-bundle"),
@@ -97,6 +112,7 @@ impl Renderer {
                 stroke_buffer: stroke.cloned(),
                 bind_group: bind_group.clone(),
                 batches,
+                _allocations: allocations,
             };
             if index == self.surface_world_bundles.len() {
                 self.surface_world_bundles.push(cached);

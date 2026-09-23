@@ -51,14 +51,16 @@ impl PreparedScene {
 }
 
 impl Renderer {
-    pub(crate) fn flush_text_uploads(&mut self, queue: &wgpu::Queue) {
+    pub(crate) fn flush_frame_uploads(&mut self, queue: &wgpu::Queue) {
+        self.flush_vertex_uploads(queue);
         self.atlas.flush_uploads(queue);
         self.text_renderer.flush_uploads(queue);
         self.menu_overlay_text_renderer.flush_uploads(queue);
     }
 
-    pub(crate) fn hold_text_submission(&self, queue: &wgpu::Queue) {
-        let mut resources = self.atlas.submission_refs();
+    pub(crate) fn hold_frame_submission(&mut self, queue: &wgpu::Queue) {
+        let mut resources = self.vertex_submission_refs();
+        resources.extend(self.atlas.submission_refs());
         resources.extend(self.text_renderer.submission_ref());
         resources.extend(self.menu_overlay_text_renderer.submission_ref());
         text_gpu::hold_until_done(queue, resources);

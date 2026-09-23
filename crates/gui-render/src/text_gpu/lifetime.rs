@@ -1,4 +1,4 @@
-//! Allocation identities and explicit submission holds for the shared text owner.
+//! Allocation identities and explicit submission holds for the shared GPU owners.
 use std::ops::Deref;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, Weak};
@@ -11,6 +11,7 @@ static NEXT_ID: AtomicU64 = AtomicU64::new(1);
 pub enum Kind {
     Texture,
     Instances,
+    Vertex,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -58,7 +59,7 @@ impl Owner {
         }))
     }
 
-    pub(super) fn track<T>(
+    pub(crate) fn track<T>(
         &self,
         resource: T,
         bytes: u64,
@@ -133,6 +134,15 @@ impl crate::Renderer {
     /// All live and submission-retiring text texture/instance API allocations.
     /// Weak process observation does not prolong GPU resource lifetime.
     pub fn text_gpu_process_allocations() -> Vec<Record> {
+        Self::gpu_process_allocations()
+            .into_iter()
+            .filter(|r| r.kind != Kind::Vertex)
+            .collect()
+    }
+
+    /// Migrated text and world/screen vertex API allocations, including retirement.
+    /// Attachments, uniforms, driver residency and staging are not included.
+    pub fn gpu_process_allocations() -> Vec<Record> {
         records(&PROCESS_ALLOCATIONS)
     }
 
@@ -151,7 +161,7 @@ struct Allocation<T> {
     identity: Arc<Identity>,
 }
 
-pub(super) struct Tracked<T>(Arc<Allocation<T>>);
+pub(crate) struct Tracked<T>(Arc<Allocation<T>>);
 
 impl<T> Tracked<T> {
     #[cfg(test)]

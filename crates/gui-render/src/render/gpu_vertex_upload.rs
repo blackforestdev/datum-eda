@@ -6,7 +6,55 @@
 
 use super::*;
 
+// One inventory for cancellation, successful upload, and submission retention.
+macro_rules! vertex_streams {
+    ($this:ident, $stream:ident, $action:expr) => {{
+        let $stream = &mut $this.panel_gpu;
+        $action;
+        let $stream = &mut $this.viewport_underlay_gpu;
+        $action;
+        let $stream = &mut $this.viewport_overlay_gpu;
+        $action;
+        let $stream = &mut $this.board_interaction_gpu;
+        $action;
+        let $stream = &mut $this.console_gpu.vertices;
+        $action;
+        let $stream = &mut $this.menu_overlay_gpu;
+        $action;
+        let $stream = &mut $this.schematic_underlay_gpu;
+        $action;
+        let $stream = &mut $this.schematic_overlay_gpu;
+        $action;
+        let $stream = &mut $this.surface_grid_gpu;
+        $action;
+        let $stream = &mut $this.world_vertices_gpu;
+        $action;
+        let $stream = &mut $this.world_strokes_gpu;
+        $action;
+        let $stream = &mut $this.schematic_world_vertices_gpu;
+        $action;
+        let $stream = &mut $this.schematic_world_strokes_gpu;
+        $action;
+    }};
+}
+
 impl Renderer {
+    pub(super) fn cancel_vertex_uploads(&mut self) {
+        vertex_streams!(self, stream, stream.cancel_uploads());
+    }
+
+    pub(super) fn flush_vertex_uploads(&mut self, queue: &wgpu::Queue) {
+        vertex_streams!(self, stream, stream.flush_uploads(queue));
+    }
+
+    pub(super) fn vertex_submission_refs(
+        &mut self,
+    ) -> Vec<crate::text_gpu::lifetime::SubmissionRef> {
+        let mut refs = Vec::new();
+        vertex_streams!(self, stream, refs.extend(stream.submission_ref()));
+        refs
+    }
+
     #[allow(clippy::too_many_arguments)]
     pub(super) fn upload_frame_vertices(
         &mut self,
