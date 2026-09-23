@@ -34642,5 +34642,42 @@
       "Twelve broad implementation gaps and original S5 qualification remain unchanged. No prototype, dependency, cap, sequencing or resize acceptance change."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/schematic-hit/result.json"
+  },
+  "s4_board_hit_work": {
+    "status": "Board and schematic hit construction share allocation-free preflight and fallible exact payload ownership",
+    "base_commit": "df0d5534",
+    "production_consumers": [
+      "Default native/capture board retained hit construction",
+      "Companion schematic retained hit construction",
+      "Shared component-body bounds and board text/pad visibility helpers"
+    ],
+    "retired_paths": [
+      "Infallible board hit Vec growth and cloned IDs/layers/paths before admission",
+      "Separate schematic allocation/preflight implementation",
+      "Temporary component-pad references, board-text lines and copper-layer visibility vectors in hit preflight"
+    ],
+    "behavior": [
+      "One borrowed visitor determines exact region/payload cost and then preserves ordered shape emission into fallibly reserved storage. The document constructor admits all hit regions, strings and paths before ownership copying. Existing hit visibility, layer, shape, widths and identity semantics are preserved. Shared component bounds use an iterator.",
+      "Board graphic/text batching extracted unchanged into a normal125-line owner to keep formatted retained code within700 lines. Staged formatting and source-health checks pass after extraction."
+    ],
+    "proof": {
+      "renderer": "test result: ok. 366 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 25.39s",
+      "app": "test result: ok. 394 passed; 0 failed; 16 ignored; 0 measured; 0 filtered out; finished in 16.04s",
+      "checks": "Real board and schematic allocator tests confirm allocation-free preflight, exact measured owned bytes, geometry/identity, hidden-board zero allocation and release. Existing renderer/GPU/hit and application tests pass. Strict visual Clippy, fresh GUI build and source-policy 13 regressions pass. See drift_status for full-battery disposition.",
+      "formatting_followup": "Full renderer366, strict visual Clippy and fresh GUI build rerun after final formatting/extraction. Application394 and broad drift receipts precede this behavior-preserving batching extraction; no false broad-drift green claim."
+    },
+    "drift_status": "Exit1 at existing console-routine-focused scale1 exact golden:3778 differing pixels (0.384318%), matching recorded dat-console-revision-golden-hrak. Workspace Clippy and preceding gates passed after the two preserved verification fixes. Later drift gates did not run; goldens unchanged.",
+    "verification_fix": "Existing UniformBuffer::new test helper now uses the same test+visual condition as its GPU-only callers; initial default-feature Clippy failure preserved. Convergence guard includes the existing text_cache_retention module after its prior ownership extraction; all eleven guard regressions and actual gate pass. Both initial drift failures preserved. No production behavior change from these verification fixes.",
+    "source_health": {
+      "retained": "878 to646 measured production; stale902 ceiling removed because normal budget reached",
+      "pads": "1094 to1047 physical;481 to434 pre-test;611 legacy tail remains; stale1104 pre-test ceiling ratcheted",
+      "root": "7125 to6855 measured include expansion; stale7146 ceiling ratcheted",
+      "debt_entries": 89
+    },
+    "limits": [
+      "Admission traverses borrowed hit sources twice; it avoids unadmitted clone growth but does not prove end-to-end latency improvement. Geometry/commands/sort staging, initial identity/scope bookkeeping, concurrent construction and external weak-container lifetime remain open.",
+      "Twelve broad implementation gaps and original S5 qualification remain unchanged. No dependency, prototype, cap, sequencing or resize acceptance change."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/board-hit/result.json"
   }
 }

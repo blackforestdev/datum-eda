@@ -1,3 +1,9 @@
+#[path = "retained_board_graphics.rs"]
+mod retained_board_graphics;
+use retained_board_graphics::{
+    push_retained_board_graphic_batches, push_retained_board_text_geometry_batches,
+};
+
 /// Retained authored-board geometry pass.
 ///
 /// Contract (`M7-REN-006`, `docs/gui/M7_RENDER_LAYER_DISCIPLINE_MEMO.md`):
@@ -55,10 +61,21 @@ fn push_retained_scene_geometry(
                 let (fill_color, outline_color) = (za.zone_fill, za.zone_outline);
                 push_world_polygon_fill(out, &zone.polygon, dim_authored_color(fill_color, dimmed));
                 let zone_weight = AuthoredStrokePrimitive::CopperZoneOutline;
-                push_world_stroke_path(strokes, &close_path(&zone.polygon),
-                    dim_authored_color(outline_color, dimmed), zone_weight.nominal_nm(), 1.0);
-                scene_retained_access::finish_retained_draw_commands(draw_commands,
-                    Some(zone.layer_id.clone()), quad_start, out.len(), stroke_start, strokes.len());
+                push_world_stroke_path(
+                    strokes,
+                    &close_path(&zone.polygon),
+                    dim_authored_color(outline_color, dimmed),
+                    zone_weight.nominal_nm(),
+                    1.0,
+                );
+                scene_retained_access::finish_retained_draw_commands(
+                    draw_commands,
+                    Some(zone.layer_id.clone()),
+                    quad_start,
+                    out.len(),
+                    stroke_start,
+                    strokes.len(),
+                );
             }
         }
         for track in &scene.tracks {
@@ -91,8 +108,14 @@ fn push_retained_scene_geometry(
             .nominal_nm() as f32;
             let start = strokes.len();
             push_world_stroke_path(strokes, &track.path, color, track_width_nm as i64, 1.0);
-            scene_retained_access::finish_retained_draw_commands(draw_commands,
-                Some(track.layer_id.clone()), out.len(), out.len(), start, strokes.len());
+            scene_retained_access::finish_retained_draw_commands(
+                draw_commands,
+                Some(track.layer_id.clone()),
+                out.len(),
+                out.len(),
+                start,
+                strokes.len(),
+            );
         }
         for pad in &scene.pads {
             if !authored_visible(state) {
@@ -136,8 +159,14 @@ fn push_retained_scene_geometry(
                     dimmed,
                     reference_projection,
                 );
-                scene_retained_access::finish_retained_draw_commands(draw_commands,
-                    Some(render_layer.to_string()), quad_start, out.len(), strokes.len(), strokes.len());
+                scene_retained_access::finish_retained_draw_commands(
+                    draw_commands,
+                    Some(render_layer.to_string()),
+                    quad_start,
+                    out.len(),
+                    strokes.len(),
+                    strokes.len(),
+                );
             }
         }
         for via in &scene.vias {
@@ -176,8 +205,14 @@ fn push_retained_scene_geometry(
                 dimmed,
                 reference_projection,
             );
-            scene_retained_access::finish_retained_draw_commands(draw_commands,
-                Some(display_layer.to_string()), quad_start, out.len(), strokes.len(), strokes.len());
+            scene_retained_access::finish_retained_draw_commands(
+                draw_commands,
+                Some(display_layer.to_string()),
+                quad_start,
+                out.len(),
+                strokes.len(),
+                strokes.len(),
+            );
         }
     }
     trace_retained_stage("copper", copper_started, copper_before, out.len());
@@ -265,8 +300,14 @@ fn push_retained_scene_geometry(
                     false,
                     reference_projection,
                 );
-                scene_retained_access::finish_retained_draw_commands(draw_commands,
-                    Some(layer_id.clone()), quad_start, out.len(), strokes.len(), strokes.len());
+                scene_retained_access::finish_retained_draw_commands(
+                    draw_commands,
+                    Some(layer_id.clone()),
+                    quad_start,
+                    out.len(),
+                    strokes.len(),
+                    strokes.len(),
+                );
             }
         }
         process_pad_elapsed += process_started.elapsed();
@@ -311,8 +352,14 @@ fn push_retained_scene_geometry(
                 dim_unrelated_active(state) && !selected_component && !related,
                 reference_projection,
             );
-            scene_retained_access::finish_retained_draw_commands(draw_commands,
-                graphic.layer_id.clone(), quad_start, out.len(), stroke_start, strokes.len());
+            scene_retained_access::finish_retained_draw_commands(
+                draw_commands,
+                graphic.layer_id.clone(),
+                quad_start,
+                out.len(),
+                stroke_start,
+                strokes.len(),
+            );
         }
         mechanical_elapsed += mechanical_started.elapsed();
         mechanical_quads += out.len().saturating_sub(mechanical_before);
@@ -350,8 +397,14 @@ fn push_retained_scene_geometry(
                 dim_unrelated_active(state) && !selected && !related,
                 reference_projection,
             );
-            scene_retained_access::finish_retained_draw_commands(draw_commands,
-                graphic.layer_id.clone(), quad_start, out.len(), stroke_start, strokes.len());
+            scene_retained_access::finish_retained_draw_commands(
+                draw_commands,
+                graphic.layer_id.clone(),
+                quad_start,
+                out.len(),
+                stroke_start,
+                strokes.len(),
+            );
         }
         silkscreen_elapsed += silkscreen_started.elapsed();
         silkscreen_quads += out.len().saturating_sub(silkscreen_before);
@@ -446,8 +499,15 @@ fn push_retained_scene_geometry(
     if unrouted_visible(state) {
         // Local batch buffer whose tuple shape is self-documenting inline.
         #[allow(clippy::type_complexity)]
-        let mut unrouted_batches: Vec<(Vec<PointNm>, [f32; 3], [f32; 3], f32, f32, f32, f32)> =
-            Vec::new();
+        let mut unrouted_batches: Vec<(
+            Vec<PointNm>,
+            [f32; 3],
+            [f32; 3],
+            f32,
+            f32,
+            f32,
+            f32,
+        )> = Vec::new();
         for unrouted in &scene.unrouted_primitives {
             let related = unrouted_matches_active_action(unrouted, state);
             let dimmed = dim_unrelated_active(state) && !related;
@@ -557,112 +617,18 @@ fn push_retained_scene_geometry(
             }
         }
     }
-    scene_retained_access::finish_retained_draw_commands(draw_commands, None,
-        unrouted_before, out.len(), strokes.len(), strokes.len());
+    scene_retained_access::finish_retained_draw_commands(
+        draw_commands,
+        None,
+        unrouted_before,
+        out.len(),
+        strokes.len(),
+        strokes.len(),
+    );
     trace_retained_stage("unrouted", unrouted_started, unrouted_before, out.len());
     let outline_started = std::time::Instant::now();
     let outline_before = out.len();
     trace_retained_stage("outline", outline_started, outline_before, out.len());
-}
-
-fn push_retained_board_graphic_batches(
-    out: &mut Vec<Quad>,
-    strokes: &mut Vec<WorldStrokeInstance>,
-    draw_commands: &mut Vec<RetainedDrawCommand>,
-    scene: &BoardReviewSceneV1,
-    _reference_projection: &Projection,
-    state: &ReviewWorkspaceState,
-) {
-    if !authored_visible(state) {
-        return;
-    }
-    let sl = &scene.layers;
-    out.reserve(
-        scene
-            .board_graphics
-            .len()
-            .saturating_add(scene.outline.len() * 32),
-    );
-    let trace_graphics = std::env::var_os("DATUM_TRACE_GRAPHICS").is_some();
-
-    for stage in POST_COPPER_STAGES {
-        for gfx in scene
-            .board_graphics
-            .iter()
-            .filter(|gfx| render_stage_for_layer(&gfx.layer_id, sl) == stage)
-        {
-            let quad_start = out.len();
-            let command_stroke_start = strokes.len();
-            let active_color = board_graphic_world_color(
-                &gfx.layer_id, sl, dim_unrelated_active(state));
-            if trace_graphics {
-                let graphic_started = std::time::Instant::now();
-                let graphic_before = out.len();
-                push_board_graphic_semantic_stroke(out, strokes, gfx, active_color);
-                trace_graphic_timing(
-                    gfx,
-                    graphic_started,
-                    out.len().saturating_sub(graphic_before),
-                );
-            } else {
-                push_board_graphic_semantic_stroke(out, strokes, gfx, active_color);
-            }
-            scene_retained_access::finish_retained_draw_commands(draw_commands,
-                Some(gfx.layer_id.clone()), quad_start, out.len(), command_stroke_start, strokes.len());
-        }
-        for outline in scene
-            .outline
-            .iter()
-            .filter(|outline| render_stage_for_layer(&outline.layer_id, sl) == stage)
-        {
-            let command_stroke_start = strokes.len();
-            push_world_stroke_path(strokes, &outline.path,
-                board_surface_color(BoardSurfaceRole::Edge), EDGE_CUT_NM, 1.0);
-            scene_retained_access::finish_retained_draw_commands(draw_commands,
-                Some(outline.layer_id.clone()), out.len(), out.len(), command_stroke_start, strokes.len());
-        }
-    }
-}
-
-fn push_retained_board_text_geometry_batches(
-    out: &mut Vec<Quad>,
-    draw_commands: &mut Vec<RetainedDrawCommand>,
-    scene: &BoardReviewSceneV1,
-    reference_projection: &Projection,
-    state: &ReviewWorkspaceState,
-) {
-    if !authored_visible(state) {
-        return;
-    }
-    let sl = &scene.layers;
-    let dimmed = dim_unrelated_active(state);
-    let glyph_mesh_assets: BTreeMap<GlyphMeshHandlePrimitive, &GlyphMeshAssetPrimitive> = scene
-        .glyph_mesh_assets
-        .iter()
-        .map(|asset| (asset.handle, asset))
-        .collect();
-    for stage in POST_COPPER_STAGES {
-        for text_geometry in scene
-            .board_text_geometries
-            .iter()
-            .filter(|text| render_stage_for_layer(&text.layer_id, sl) == stage)
-        {
-            if !layer_visible(state, &text_geometry.layer_id) {
-                continue;
-            }
-            let text_color = board_graphic_world_color(&text_geometry.layer_id, sl, dimmed);
-            let quad_start = out.len();
-            push_board_text_geometry_world(
-                out,
-                text_geometry,
-                &glyph_mesh_assets,
-                text_color,
-                reference_projection,
-            );
-            scene_retained_access::finish_retained_draw_commands(draw_commands,
-                Some(text_geometry.layer_id.clone()), quad_start, out.len(), 0, 0);
-        }
-    }
 }
 
 fn trace_retained_stage(
@@ -677,202 +643,4 @@ fn trace_retained_stage(
         after_quads.saturating_sub(before_quads),
         after_quads
     ));
-}
-
-fn push_retained_world_hit_regions(
-    out: &mut Vec<WorldHitRegion>,
-    scene: &BoardReviewSceneV1,
-    state: &ReviewWorkspaceState,
-) {
-    if !authored_visible(state) {
-        return;
-    }
-    for track in &scene.tracks {
-        if !layer_visible(state, &track.layer_id) {
-            continue;
-        }
-        out.push(WorldHitRegion {
-            target: HitTarget::AuthoredObject(track.object_id.clone()),
-            layer_id: Some(track.layer_id.clone()),
-            shape: WorldHitShape::Polyline {
-                path: track.path.clone(),
-                half_width_nm: (track.width_nm as f32 * 0.5).max(150_000.0),
-            },
-        });
-    }
-    for via in &scene.vias {
-        if !via_visible(state, &via.start_layer_id, &via.end_layer_id) {
-            continue;
-        }
-        out.push(WorldHitRegion {
-            target: HitTarget::AuthoredObject(via.object_id.clone()),
-            layer_id: None,
-            shape: WorldHitShape::Circle {
-                center: via.position,
-                radius_nm: (via.diameter_nm as f32 * 0.5).max(250_000.0),
-            },
-        });
-    }
-    for component in &scene.components {
-        if !layer_visible(state, &component.placement_layer) {
-            continue;
-        }
-        let component_pads: Vec<_> = scene
-            .pads
-            .iter()
-            .filter(|pad| pad.component_uuid == component.component_uuid)
-            .collect();
-        let has_non_edge_graphics = scene.component_graphics.iter().any(|graphic| {
-            graphic.component_uuid == component.component_uuid
-                && !graphic.layer_id.as_deref().is_some_and(|layer_id| {
-                    scene
-                        .layers
-                        .iter()
-                        .find(|layer| layer.layer_id == layer_id)
-                        .is_some_and(|layer| layer.name == "Edge.Cuts")
-                })
-        });
-        let has_text = scene
-            .component_texts
-            .iter()
-            .any(|text| text.component_uuid == component.component_uuid);
-        if let Some(hit_rect) = compact_component_body_bounds(&component_pads)
-            && !has_non_edge_graphics
-            && !has_text
-        {
-            out.push(WorldHitRegion {
-                target: HitTarget::AuthoredObject(component.object_id.clone()),
-                layer_id: Some(component.placement_layer.clone()),
-                shape: WorldHitShape::Rect(hit_rect),
-            });
-            continue;
-        }
-        if has_non_edge_graphics || has_text {
-            continue;
-        }
-        let hit_rect = inferred_component_body_bounds(&component_pads).unwrap_or(component.bounds);
-        out.push(WorldHitRegion {
-            target: HitTarget::AuthoredObject(component.object_id.clone()),
-            layer_id: Some(component.placement_layer.clone()),
-            shape: WorldHitShape::Rect(hit_rect),
-        });
-    }
-    for pad in &scene.pads {
-        let pad_visible = pad_visible_on_any_copper_layer(state, pad);
-        if !pad_visible {
-            continue;
-        }
-        out.push(WorldHitRegion {
-            target: HitTarget::AuthoredObject(pad.object_id.clone()),
-            layer_id: None,
-            shape: WorldHitShape::Rect(pad.bounds),
-        });
-    }
-    for zone in &scene.zones {
-        if !layer_visible(state, &zone.layer_id) || zone.polygon.len() < 3 {
-            continue;
-        }
-        out.push(WorldHitRegion {
-            target: HitTarget::AuthoredObject(zone.object_id.clone()),
-            layer_id: Some(zone.layer_id.clone()),
-            shape: WorldHitShape::Polygon(zone.polygon.clone()),
-        });
-    }
-    for graphic in &scene.component_graphics {
-        let Some(target_id) = component_object_id_for_uuid(scene, &graphic.component_uuid) else {
-            continue;
-        };
-        if let Some(layer_id) = graphic.layer_id.as_deref()
-            && !layer_visible(state, layer_id)
-        {
-            continue;
-        }
-        if graphic.layer_id.as_deref().is_some_and(|layer_id| {
-            scene
-                .layers
-                .iter()
-                .find(|layer| layer.layer_id == layer_id)
-                .is_some_and(|layer| layer.name == "Edge.Cuts")
-        }) {
-            continue;
-        }
-        let width = graphic.width_nm.unwrap_or(100_000);
-        match graphic.primitive_kind.as_str() {
-            "polygon" => {
-                let (min_x, min_y, max_x, max_y) = graphic.path.iter().fold(
-                    (i64::MAX, i64::MAX, i64::MIN, i64::MIN),
-                    |(min_x, min_y, max_x, max_y), point| {
-                        (
-                            min_x.min(point.x),
-                            min_y.min(point.y),
-                            max_x.max(point.x),
-                            max_y.max(point.y),
-                        )
-                    },
-                );
-                if min_x <= max_x && min_y <= max_y {
-                    out.push(WorldHitRegion {
-                        target: HitTarget::AuthoredObject(target_id.to_string()),
-                        layer_id: graphic.layer_id.clone(),
-                        shape: WorldHitShape::Rect(datum_gui_protocol::RectNm {
-                            min_x,
-                            min_y,
-                            max_x,
-                            max_y,
-                        }),
-                    });
-                }
-            }
-            _ => {
-                out.push(WorldHitRegion {
-                    target: HitTarget::AuthoredObject(target_id.to_string()),
-                    layer_id: graphic.layer_id.clone(),
-                    shape: WorldHitShape::Polyline {
-                        path: graphic.path.clone(),
-                        half_width_nm: (width as f32 * 0.5).max(180_000.0),
-                    },
-                });
-            }
-        }
-    }
-    for text in &scene.board_texts {
-        if !layer_visible(state, &text.layer_id) {
-            continue;
-        }
-        out.push(WorldHitRegion {
-            target: HitTarget::AuthoredObject(text.object_id.clone()),
-            layer_id: Some(text.layer_id.clone()),
-            shape: WorldHitShape::Rect(board_text_hit_rect(text)),
-        });
-    }
-    for gfx in &scene.board_graphics {
-        if gfx.object_id.starts_with("board-text:") {
-            continue;
-        }
-        if !layer_visible(state, &gfx.layer_id) {
-            continue;
-        }
-        let width = gfx.width_nm.unwrap_or(100_000);
-        out.push(WorldHitRegion {
-            target: HitTarget::AuthoredObject(gfx.object_id.clone()),
-            layer_id: Some(gfx.layer_id.clone()),
-            shape: WorldHitShape::Polyline {
-                path: gfx.path.clone(),
-                half_width_nm: (width as f32 * 0.5).max(150_000.0),
-            },
-        });
-    }
-    for outline in &scene.outline {
-        if !layer_visible(state, &outline.layer_id) {
-            continue;
-        }
-        out.push(WorldHitRegion {
-            target: HitTarget::AuthoredObject(outline.object_id.clone()),
-            layer_id: Some(outline.layer_id.clone()),
-            shape: WorldHitShape::Polyline {
-                path: outline.path.clone(),
-                half_width_nm: 300_000.0,
-            },
-        });
-    }
 }

@@ -31,7 +31,7 @@ Before landing:
 Registration is never the response to a new oversized file. Decompose it before
 landing.
 
-Current debt inventory: 93 legacy source entries remain after UNIT-I03B moved
+Current debt inventory: 89 legacy source entries remain. UNIT-I03B moved
 Project-root operation application into its cohesive dispatch owner and returned
 `operation_application.rs` to the normal production budget. Its stale ledger
 entry and the no-longer-needed `replay.rs` rustfmt exemption were removed in the
@@ -206,3 +206,19 @@ The controlling decision, this policy, the checkers and tests, debt ledger,
 standard drift wiring, CI workflow, and governance classifications must remain
 under CODEOWNERS and protected-branch/ruleset review. In-repository checks are a
 backstop; repository protection supplies the human authorization boundary.
+
+PM045 S4 moves board hit emission into `render/board_hit_construction.rs`,
+sharing preflight and fallible payload ownership with schematic hits through
+`render/hit_construction.rs`. Allocation-free component-body inference moves
+from `pads_and_layers.rs` into `render/component_body.rs`. Measured retained
+production falls from 878 to 646 lines and its legacy entry is removed.
+The pads module falls from 1,094 to 1,047 physical lines and from 481 to 434
+pre-test lines; its 611-line legacy tail remains open. Root include expansion
+falls from 7,125 to 6,855 lines. Previously stale higher ceilings (902 retained,
+1,104 pads pre-test, 7,146 root expansion) are reconciled downward to actual
+measurements; no budget or exception is increased. Hit/allocator and existing
+renderer interaction tests cover the ownership migration.
+
+The same slice moves board graphic/text command batching into the normal
+`render/retained_board_graphics.rs` owner so formatted retained code also stays
+within the normal budget. The extracted 125-line owner preserves batch behavior.

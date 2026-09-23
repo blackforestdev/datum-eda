@@ -14,7 +14,7 @@ pub(crate) struct UniformBuffer<T> {
 }
 
 impl<T: bytemuck::Pod> UniformBuffer<T> {
-    #[cfg(test)]
+    #[cfg(all(test, feature = "visual"))]
     pub(crate) fn new(
         device: &wgpu::Device,
         label: &str,

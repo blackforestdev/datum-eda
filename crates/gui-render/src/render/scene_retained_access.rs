@@ -163,7 +163,6 @@ impl RetainedScene {
         let mut world_quads = Vec::new();
         let mut world_strokes = Vec::new();
         let mut draw_commands = Vec::new();
-        let mut world_hit_regions = Vec::new();
         let geometry_started = std::time::Instant::now();
         push_retained_scene_geometry(
             &mut world_quads,
@@ -198,7 +197,11 @@ impl RetainedScene {
         ));
         let geometry_elapsed = geometry_started.elapsed();
         let hits_started = std::time::Instant::now();
-        push_retained_world_hit_regions(&mut world_hit_regions, &state.scene, state);
+        let world_hit_regions = board_hit_construction::build(&state.scene, state, |bytes| {
+            retained_scene_owner::document_cpu::admit_constructor_allocation(
+                &budget, &scope, bytes, limit, "board hit regions",
+            )
+        })?;
         let hits_elapsed = hits_started.elapsed();
         let vertex_started = std::time::Instant::now();
         retained_scene_owner::document_cpu::admit_vertex_expansion(&budget, &scope, world_quads.len(), limit)?;

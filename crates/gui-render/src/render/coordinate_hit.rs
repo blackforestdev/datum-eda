@@ -208,76 +208,40 @@ pub(crate) fn schematic_hit_regions(
     scene: &BoardReviewSceneV1,
     admit: impl FnOnce(usize) -> anyhow::Result<()>,
 ) -> anyhow::Result<Vec<WorldHitRegion>> {
-    use crate::cpu_alloc::heap::allocation_bytes;
-    use std::alloc::Layout;
-    let graphics = || {
-        scene
-            .board_graphics
-            .iter()
-            .filter(|graphic| graphic.schematic_hit_kind().is_some() && !graphic.path.is_empty())
-    };
-    let count = graphics().count();
-    let mut bytes = allocation_bytes(Layout::array::<WorldHitRegion>(count)?);
-    for graphic in graphics() {
-        let path_bytes = match graphic.schematic_hit_kind().expect("filtered kind") {
-            datum_gui_protocol::SchematicHitKind::Symbol
-            | datum_gui_protocol::SchematicHitKind::Label => 0,
-            _ => allocation_bytes(Layout::array::<PointNm>(graphic.path.len())?),
-        };
-        bytes = bytes
-            .checked_add(path_bytes)
-            .and_then(|bytes| {
-                bytes.checked_add(allocation_bytes(
-                    Layout::array::<u8>(graphic.object_id.len()).expect("existing string layout"),
-                ))
-            })
-            .ok_or_else(|| anyhow::anyhow!("schematic hit storage overflow"))?;
-    }
-    admit(bytes)?;
-    let mut out = Vec::new();
-    out.try_reserve_exact(count)?;
-    for graphic in graphics() {
-        let Some(kind) = graphic.schematic_hit_kind() else {
-            continue;
-        };
-        if graphic.path.is_empty() {
-            continue;
-        }
-        let width = graphic.width_nm.unwrap_or(100_000) as f32;
-        let shape = match kind {
-            datum_gui_protocol::SchematicHitKind::Symbol
-            | datum_gui_protocol::SchematicHitKind::Label => {
-                WorldHitShape::Rect(bounding_rect_nm(&graphic.path).expect("non-empty path"))
+    use super::hit_construction::{Region, Shape};
+    hit_construction::build(
+        |emit| {
+            for graphic in &scene.board_graphics {
+                let Some(kind) = graphic.schematic_hit_kind() else {
+                    continue;
+                };
+                if graphic.path.is_empty() {
+                    continue;
+                }
+                let width = graphic.width_nm.unwrap_or(100_000) as f32;
+                let shape = match kind {
+                    datum_gui_protocol::SchematicHitKind::Symbol
+                    | datum_gui_protocol::SchematicHitKind::Label => {
+                        Shape::Rect(bounding_rect_nm(&graphic.path).expect("non-empty path"))
+                    }
+                    datum_gui_protocol::SchematicHitKind::Junction if graphic.path.len() >= 3 => {
+                        Shape::Polygon(&graphic.path)
+                    }
+                    _ => Shape::Polyline {
+                        path: &graphic.path,
+                        half_width_nm: (width * 0.5).max(150_000.0),
+                    },
+                };
+                emit(Region {
+                    target: &graphic.object_id,
+                    layer_id: None,
+                    shape,
+                })?;
             }
-            datum_gui_protocol::SchematicHitKind::Junction if graphic.path.len() >= 3 => {
-                WorldHitShape::Polygon(copy_slice(&graphic.path)?)
-            }
-            _ => WorldHitShape::Polyline {
-                path: copy_slice(&graphic.path)?,
-                half_width_nm: (width * 0.5).max(150_000.0),
-            },
-        };
-        out.push(WorldHitRegion {
-            target: HitTarget::AuthoredObject(copy_string(&graphic.object_id)?),
-            layer_id: None,
-            shape,
-        });
-    }
-    Ok(out)
-}
-
-fn copy_slice<T: Copy>(source: &[T]) -> anyhow::Result<Vec<T>> {
-    let mut copy = Vec::new();
-    copy.try_reserve_exact(source.len())?;
-    copy.extend_from_slice(source);
-    Ok(copy)
-}
-
-fn copy_string(source: &str) -> anyhow::Result<String> {
-    let mut copy = String::new();
-    copy.try_reserve_exact(source.len())?;
-    copy.push_str(source);
-    Ok(copy)
+            Ok(())
+        },
+        admit,
+    )
 }
 
 /// The axis-aligned world bounding box of a point path, or `None` when empty.

@@ -1,0 +1,98 @@
+{
+  "status": "Board and schematic hit construction share allocation-free preflight and fallible exact payload ownership",
+  "base_commit": "df0d5534",
+  "production_consumers": [
+    "Default native/capture board retained hit construction",
+    "Companion schematic retained hit construction",
+    "Shared component-body bounds and board text/pad visibility helpers"
+  ],
+  "retired_paths": [
+    "Infallible board hit Vec growth and cloned IDs/layers/paths before admission",
+    "Separate schematic allocation/preflight implementation",
+    "Temporary component-pad references, board-text lines and copper-layer visibility vectors in hit preflight"
+  ],
+  "behavior": [
+    "One borrowed visitor determines exact region/payload cost and then preserves ordered shape emission into fallibly reserved storage. The document constructor admits all hit regions, strings and paths before ownership copying. Existing hit visibility, layer, shape, widths and identity semantics are preserved. Shared component bounds use an iterator.",
+    "Board graphic/text batching extracted unchanged into a normal125-line owner to keep formatted retained code within700 lines. Staged formatting and source-health checks pass after extraction."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 366 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 25.39s",
+    "app": "test result: ok. 394 passed; 0 failed; 16 ignored; 0 measured; 0 filtered out; finished in 16.04s",
+    "checks": "Real board and schematic allocator tests confirm allocation-free preflight, exact measured owned bytes, geometry/identity, hidden-board zero allocation and release. Existing renderer/GPU/hit and application tests pass. Strict visual Clippy, fresh GUI build and source-policy 13 regressions pass. See drift_status for full-battery disposition.",
+    "formatting_followup": "Full renderer366, strict visual Clippy and fresh GUI build rerun after final formatting/extraction. Application394 and broad drift receipts precede this behavior-preserving batching extraction; no false broad-drift green claim."
+  },
+  "drift_status": "Exit1 at existing console-routine-focused scale1 exact golden:3778 differing pixels (0.384318%), matching recorded dat-console-revision-golden-hrak. Workspace Clippy and preceding gates passed after the two preserved verification fixes. Later drift gates did not run; goldens unchanged.",
+  "verification_fix": "Existing UniformBuffer::new test helper now uses the same test+visual condition as its GPU-only callers; initial default-feature Clippy failure preserved. Convergence guard includes the existing text_cache_retention module after its prior ownership extraction; all eleven guard regressions and actual gate pass. Both initial drift failures preserved. No production behavior change from these verification fixes.",
+  "source_health": {
+    "retained": "878 to646 measured production; stale902 ceiling removed because normal budget reached",
+    "pads": "1094 to1047 physical;481 to434 pre-test;611 legacy tail remains; stale1104 pre-test ceiling ratcheted",
+    "root": "7125 to6855 measured include expansion; stale7146 ceiling ratcheted",
+    "debt_entries": 89
+  },
+  "limits": [
+    "Admission traverses borrowed hit sources twice; it avoids unadmitted clone growth but does not prove end-to-end latency improvement. Geometry/commands/sort staging, initial identity/scope bookkeeping, concurrent construction and external weak-container lifetime remain open.",
+    "Twelve broad implementation gaps and original S5 qualification remain unchanged. No dependency, prototype, cap, sequencing or resize acceptance change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/board-hit/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/board-hit/renderer.log.gz",
+      "uncompressed_sha256": "4eb2a5757f7f7d7dae93ff664bf30fe67c1f778d134cca4a2604f471db53bd17"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/board-hit/app.log.gz",
+      "uncompressed_sha256": "653936542a0ef1757dd9dc7dbf1cd5d712eda44b816278e75376ebe834b3be97"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/board-hit/clippy.log.gz",
+      "uncompressed_sha256": "8e9371c1f7df7d177d3bece5203988b04804d9876af776bc33517370610db596"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/board-hit/build.log.gz",
+      "uncompressed_sha256": "e848ab0519adbdf41c336f7801a9133c18413007f88b087e448017c6fa4507e9"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/board-hit/drift.log.gz",
+      "uncompressed_sha256": "009eee3b351497169e7ba01988ad8503296890dbbb28b8a07af1918aa9b13e8d"
+    },
+    "drift-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/board-hit/drift-initial.log.gz",
+      "uncompressed_sha256": "d779e6332f7a7ea7227904970d4e3be10fd1688d9335ed25de6e5189e5bb6cac"
+    },
+    "drift-convergence": {
+      "path": "docs/reviews/gui-performance/implementation/S4/board-hit/drift-convergence.log.gz",
+      "uncompressed_sha256": "662ecea5b2f4bfd9f72f9d3ddcefa97ffcccce4327dec6cf09d997a7a2967e4c"
+    },
+    "source-policy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/board-hit/source-policy.log.gz",
+      "uncompressed_sha256": "64451f496071f043480af48bc59d34b1b807b889f0d98da228dbbd50dc520fb3"
+    },
+    "formatted-renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/board-hit/formatted-renderer.log.gz",
+      "uncompressed_sha256": "b9ac8a290a20aa687a4e0153397345bcfa20c13d305a2ca9ebef79ac595a12b2"
+    },
+    "formatted-clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/board-hit/formatted-clippy.log.gz",
+      "uncompressed_sha256": "06783cc34b8ff92ebec240228445a2539657c046fddf267b72c9d1559a3105d5"
+    },
+    "formatted-build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/board-hit/formatted-build.log.gz",
+      "uncompressed_sha256": "30af1079bfcc02d6d0404cb46fbc6bc96fe35f6effb1653342a4900440c694ff"
+    }
+  },
+  "source_sha256": {
+    "scripts/check_gui_agent_terminal_convergence.py": "c94901244b546f79a096d11c502c81d03bc56fad67b57064abdffb685f3c9598",
+    "crates/gui-render/src/render/uniform_buffer.rs": "07c9289626a1edc43b4a35d069368fce0f5b444ba9c172caa265c939aa3485c7",
+    "crates/gui-render/src/render/coordinate_hit.rs": "db26ff11d6f3eea0a7381533c6abb3386784f9f1d8ef006e41756e9b56a86a28",
+    "crates/gui-render/src/render/document_cpu.rs": "2122a9499f9dba992ba58b07bda9c4dbfad2e70d9bacde60b67f8665f2e9da6a",
+    "crates/gui-render/src/render/overlay.rs": "551d04b7040033792e5af12cbb03712edea91ea6a820a2166faa37a5abf5fb64",
+    "crates/gui-render/src/render/pads_and_layers.rs": "5edeacf053a699e09df648026c31407a9bf8ccf9a94e873ab38e071b4ba4b8bb",
+    "crates/gui-render/src/render/retained.rs": "bdc6e07766ceb22fcf7b181e47caf1e7c53dfe58f48d05a8a2047a3c225ce9cf",
+    "crates/gui-render/src/render/scene.rs": "5fc30a48ae1b86a5c8ced80454bc8f24995aee08425cb1f0cd1e682b8bb5bdef",
+    "crates/gui-render/src/render/scene_retained_access.rs": "db2aed90b14af2c9fbead57a60ade84d4ab388b358ae04334bee98b9b351b820",
+    "crates/gui-render/src/render/board_hit_construction.rs": "e7061075d8b6c87b0d4b850dc6ee8d538ffd548f596754d596e9f571346fdb41",
+    "crates/gui-render/src/render/component_body.rs": "2e3b8a71607bbc48d6c9e02ea4a3b6357a9be955169a3ad465057cde19184521",
+    "crates/gui-render/src/render/hit_construction.rs": "a43d0e9e00ff3e2e6a232ef814bcdd2d457649428225bcddb25cb930862cc2b1",
+    "crates/gui-render/src/render/retained_board_graphics.rs": "2d90fcd5447eed5281a5fc851347e0a93b959cb456239ada0d99ef10afe37c84"
+  }
+}
