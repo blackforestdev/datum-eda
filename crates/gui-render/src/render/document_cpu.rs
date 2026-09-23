@@ -7,11 +7,13 @@ use crate::text_gpu::budget::Budget;
 use std::sync::{Arc, Mutex, Weak};
 
 const DOCUMENT_LIMIT: usize = 64 * 1024 * 1024;
+const DOCUMENT_HISTORY_LIMIT: usize = 6;
 struct Document {
     scene_id: String,
     identity: Weak<Budget>,
     scenes: Vec<RetainedGeometryObserver>,
     metadata_bytes: usize,
+    history_entries: usize,
     next: Option<Box<Document>>,
 }
 // One allocation per document gives each registry record an exact owner;
@@ -44,6 +46,7 @@ impl Registry {
             identity,
             scenes,
             metadata_bytes: 0,
+            history_entries: 0,
             next: self.head.take(),
         }));
     }
@@ -145,6 +148,7 @@ fn usage(observer: &RetainedGeometryObserver) -> usize {
 pub struct DocumentCpuCharge {
     identity: Option<Arc<Budget>>,
     bytes: usize,
+    history_entry: bool,
 }
 impl DocumentCpuCharge {
     /// Update the charge after the same owner's buffer changes capacity.
@@ -170,6 +174,7 @@ impl Drop for DocumentCpuCharge {
         let mut documents = DOCUMENTS.lock().unwrap_or_else(|e| e.into_inner());
         if let Some(document) = documents.find(&Arc::downgrade(identity)) {
             document.metadata_bytes -= self.bytes;
+            document.history_entries -= usize::from(self.history_entry);
         }
         prune(&mut documents);
     }
@@ -179,17 +184,55 @@ impl RetainedGeometryObserver {
     /// Register metadata already owned by the caller. Admission must include the
     /// candidate bytes before publication; the charge keeps cross-owner checks exact.
     pub fn charge_document_metadata(&self, bytes: usize) -> DocumentCpuCharge {
+        self.charge_metadata(bytes, false)
+            .unwrap_or(DocumentCpuCharge {
+                identity: None,
+                bytes,
+                history_entry: false,
+            })
+    }
+
+    /// Atomically admit one historical entry across all owners of this document.
+    /// Active scenes and externally pinned payloads are not historical entries.
+    pub fn try_charge_document_history(&self, bytes: usize) -> Option<DocumentCpuCharge> {
+        self.charge_metadata(bytes, true)
+    }
+
+    pub fn document_history_entries(&self) -> usize {
+        let Some(identity) = &self.document else {
+            return 0;
+        };
+        DOCUMENTS
+            .lock()
+            .unwrap_or_else(|e| e.into_inner())
+            .find(identity)
+            .map_or(0, |document| document.history_entries)
+    }
+
+    fn charge_metadata(&self, bytes: usize, history_entry: bool) -> Option<DocumentCpuCharge> {
+        let Some(identity) = &self.document else {
+            return Some(DocumentCpuCharge {
+                identity: None,
+                bytes,
+                history_entry: false,
+            });
+        };
+        let live_identity = identity.upgrade()?;
         let mut documents = DOCUMENTS.lock().unwrap_or_else(|e| e.into_inner());
-        let identity = self.document.as_ref().and_then(|identity| {
-            let live_identity = identity.upgrade()?;
-            let document = documents.find(identity)?;
-            document.metadata_bytes = document
-                .metadata_bytes
-                .checked_add(bytes)
-                .expect("document CPU metadata overflow");
-            Some(live_identity)
-        });
-        DocumentCpuCharge { identity, bytes }
+        let document = documents.find(identity)?;
+        if history_entry && document.history_entries >= DOCUMENT_HISTORY_LIMIT {
+            return None;
+        }
+        document.metadata_bytes = document
+            .metadata_bytes
+            .checked_add(bytes)
+            .expect("document CPU metadata overflow");
+        document.history_entries += usize::from(history_entry);
+        Some(DocumentCpuCharge {
+            identity: Some(live_identity),
+            bytes,
+            history_entry,
+        })
     }
 
     /// Retained document payload, registered history metadata and observer storage.
@@ -224,6 +267,40 @@ fn check_limit(observer: &RetainedGeometryObserver, limit: usize) -> anyhow::Res
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn concurrent_history_admission_cannot_exceed_six_or_release_early() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.scene.scene_id = "cpu-document-history-concurrency".into();
+        let scene = RetainedScene::from_workspace(&state, 960, 720);
+        let observer = scene.geometry_observer();
+        let barrier = Arc::new(std::sync::Barrier::new(9));
+        let workers: Vec<_> = (0..8)
+            .map(|_| {
+                let observer = observer.clone();
+                let barrier = barrier.clone();
+                std::thread::spawn(move || {
+                    let charge = observer.try_charge_document_history(0);
+                    barrier.wait();
+                    barrier.wait();
+                    charge
+                })
+            })
+            .collect();
+        barrier.wait();
+        assert_eq!(observer.document_history_entries(), 6);
+        assert!(observer.try_charge_document_history(0).is_none());
+        barrier.wait();
+        let charges: Vec<_> = workers
+            .into_iter()
+            .filter_map(|worker| worker.join().unwrap())
+            .collect();
+        assert_eq!(charges.len(), 6);
+        assert_eq!(observer.document_history_entries(), 6);
+        drop(charges);
+        assert_eq!(observer.document_history_entries(), 0);
+        assert!(observer.try_charge_document_history(0).is_some());
+    }
+
     #[test]
     fn production_document_payload_and_identity_match_live_allocator_bytes() {
         let mut state = datum_gui_protocol::load_fixture_workspace_state();
