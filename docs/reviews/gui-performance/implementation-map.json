@@ -19280,7 +19280,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Remove internal clean-range transfers from large screen updates without reintroducing rejected fragmentation regressions; complete actual upload-boundary accounting. Uniform exact aligned ranges are implemented, not global qualification."
+          "Complete actual upload-boundary accounting for exact screen/glyph payload and scatter protocol metadata; reconcile over-cap snapshot bypass. Exact aligned word plans, bounded-command scatter and submitted-baseline reverts are implemented, not complete MEM-01 acceptance."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "Only exact dirty ranges plus documented alignment uploaded",
@@ -19292,6 +19292,11 @@
           "work": "s4_sparse_upload_adoption_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/sparse-upload/result.json",
           "status": "Exact aligned destination runs and bounded-command scatter now replace internal clean-gap transfers. Protocol metadata and both packet capacities are charged; superseded plans, full boundary counters and qualification remain open."
+        },
+        {
+          "work": "s4_submitted_screen_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/submitted-screen/result.json",
+          "status": "Default ScreenBuffer now compares submitted content and replaces pending plans; reverted edits emit no transfer. Two bounded reusable snapshots replace one. Over-cap bypass, CPU accounting, protocol/boundary counters and full qualification remain open."
         }
       ]
     },
@@ -28295,7 +28300,12 @@
       "Schematic stream migration is code adoption only; resolved schematic content performance remains unqualified without fixture admission.",
       "No new dependency, vendoring, version/license, visual-prototype, product mutation or resize qualification change."
     ],
-    "followup_evidence": "docs/reviews/gui-performance/implementation/S2/screen-span-trimming/result.json"
+    "followup_evidence": "docs/reviews/gui-performance/implementation/S2/screen-span-trimming/result.json",
+    "screen_snapshot_policy_superseded_by": {
+      "work": "s4_submitted_screen_adoption_work",
+      "evidence": "docs/reviews/gui-performance/implementation/S4/submitted-screen/result.json",
+      "status": "Current ScreenBuffer replaces plans against submitted content instead of unioning superseded ranges. Reverts and cancellation preserve the baseline. Two reusable 256 KiB snapshots replace one; historical receipts and full accounting/qualification gaps remain."
+    }
   },
   "s2_glyph_transaction_work": {
     "status": "Shared pre-encoding glyph transaction adopted; GPI-S2 remains in progress",
@@ -32510,7 +32520,12 @@
       "No new native OS-input, endurance, throughput or resize CPU qualification. Preserve GEFN and the nonblocking resize disposition.",
       "No dependency, vendor, license, prototype, visual layout or numerical-budget change. GPI-S4/S5 remain open."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S4/upload-union/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S4/upload-union/result.json",
+    "screen_snapshot_policy_superseded_by": {
+      "work": "s4_submitted_screen_adoption_work",
+      "evidence": "docs/reviews/gui-performance/implementation/S4/submitted-screen/result.json",
+      "status": "Current ScreenBuffer replaces plans against submitted content instead of unioning superseded ranges. Reverts and cancellation preserve the baseline. Two reusable 256 KiB snapshots replace one; historical receipts and full accounting/qualification gaps remain."
+    }
   },
   "s4_atlas_staging_work": {
     "status": "Default glyph texture uploads use Datum-owned explicitly admitted staging in the existing frame submission; complete staging/resource qualification remains open",
@@ -33021,6 +33036,42 @@
       "Full CPU scratch/metadata accounting, other S4 resources, cold multi-submission timing, native/backend/device recovery/fairness/endurance and S5 independent replay remain. No S4/S5 or issue closure.",
       "Preserve painter order, geometry, pixels, GEFN, separate concurrent multi-device failure and nonblocking resize exclusion. No dependency, vendoring, license, prototype, numerical cap or specification amendment."
     ],
-    "evidence": "docs/reviews/gui-performance/implementation/S4/sparse-upload/result.json"
+    "evidence": "docs/reviews/gui-performance/implementation/S4/sparse-upload/result.json",
+    "screen_snapshot_policy_superseded_by": {
+      "work": "s4_submitted_screen_adoption_work",
+      "evidence": "docs/reviews/gui-performance/implementation/S4/submitted-screen/result.json",
+      "status": "Current ScreenBuffer replaces plans against submitted content instead of unioning superseded ranges. Reverts and cancellation preserve the baseline. Two reusable 256 KiB snapshots replace one; historical receipts and full accounting/qualification gaps remain."
+    }
+  },
+  "s4_submitted_screen_adoption_work": {
+    "status": "Default ScreenBuffer compares each preparation with submitted content; reverted pending changes no longer transfer",
+    "base_commit": "ccd7f5d7",
+    "production_consumers": [
+      "Nine shared screen-space vertex streams across main/dialog profiles",
+      "Terminal graphic quad ScreenBuffer owners"
+    ],
+    "retired_paths": [
+      "Updating the comparison snapshot before submission",
+      "Union/sort of all superseded dirty ranges",
+      "Discarding valid submitted snapshot contents on cancellation"
+    ],
+    "behavior": [
+      "Keep submitted and prepared content separate. Every changed preparation replaces the pending plan with exact aligned differences against submitted content. Returning to the submitted bytes cancels the plan entirely.",
+      "Commit the prepared snapshot at the existing successful frame-upload boundary; both production callers immediately submit the resulting batch. Allocation replacement invalidates the old baseline; failed allocation admission preserves it. Cancellation preserves valid submitted bytes for an exact retry.",
+      "Swap and reuse two bounded CPU snapshot allocations across changed frames, avoiding new allocation or a second full copy per frame. Each retained snapshot is at most 256 KiB: up to 512 KiB payload per stream, or 4.5 MiB for nine fixed streams, plus separately outstanding metadata/headers. Terminal quad snapshots similarly use up to two 96-byte payloads.",
+      "Oversized prepared content is released after submission/cancellation and still bypasses snapshot retention. Empty streams release all owned snapshot/range storage. GPU capacities, staging admission and shader/painter behavior remain unchanged."
+    ],
+    "proof": {
+      "renderer": "327 renderer tests pass; 11 diagnostic/visual cases filtered. New actual-GPU test verifies 1,000 changed/reverted preparations produce zero transfer descriptors, cancellation preserves submitted bytes, retry uploads only changed words, and 100 changed submissions reuse the same two allocations with final readback parity. Existing cold/replacement, cap/bypass, shrink/regrow, budget refusal, shared control/text and upload regressions pass.",
+      "development": "Initial focused run found two stale expectations: a shrink/regrow before submission retransferred unchanged tail bytes, and cancellation forced a full retry. Updated them to require only real dirty bytes while retaining GPU readback. Other existing diff assertions now establish their GPU baseline through a real flush. Failed focused receipt preserved.",
+      "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh application build pass. Source health 2,263, dependency and governance gates pass.",
+      "drift": "Full drift stops at the existing console-routine-focused 1x mismatch: 3,778 pixels (0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+    },
+    "limits": [
+      "This increases maximum retained screen snapshot payload from one to two 256 KiB allocations per stream; it is a bounded implementation tradeoff, not an unchanged-memory or RSS acceptance claim. Full CPU metadata/peak/aggregate admission and qualification remain open.",
+      "Over-cap content still bypasses comparison retention. Complete actual transfer-boundary counters must distinguish dirty destination payload, protocol metadata and GPU packet copies. No REUSE-SCREEN, MEM-01, S4/S5 or issue closure.",
+      "Other S4 resource/shaping work and S5 native/backend/fault/fairness/endurance/independent qualification remain. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion. No dependency, vendoring, license, prototype or specification amendment."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/submitted-screen/result.json"
   }
 }

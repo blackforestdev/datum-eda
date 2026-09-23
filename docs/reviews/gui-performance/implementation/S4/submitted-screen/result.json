@@ -1,0 +1,57 @@
+{
+  "status": "Default ScreenBuffer compares each preparation with submitted content; reverted pending changes no longer transfer",
+  "base_commit": "ccd7f5d7",
+  "production_consumers": [
+    "Nine shared screen-space vertex streams across main/dialog profiles",
+    "Terminal graphic quad ScreenBuffer owners"
+  ],
+  "retired_paths": [
+    "Updating the comparison snapshot before submission",
+    "Union/sort of all superseded dirty ranges",
+    "Discarding valid submitted snapshot contents on cancellation"
+  ],
+  "behavior": [
+    "Keep submitted and prepared content separate. Every changed preparation replaces the pending plan with exact aligned differences against submitted content. Returning to the submitted bytes cancels the plan entirely.",
+    "Commit the prepared snapshot at the existing successful frame-upload boundary; both production callers immediately submit the resulting batch. Allocation replacement invalidates the old baseline; failed allocation admission preserves it. Cancellation preserves valid submitted bytes for an exact retry.",
+    "Swap and reuse two bounded CPU snapshot allocations across changed frames, avoiding new allocation or a second full copy per frame. Each retained snapshot is at most 256 KiB: up to 512 KiB payload per stream, or 4.5 MiB for nine fixed streams, plus separately outstanding metadata/headers. Terminal quad snapshots similarly use up to two 96-byte payloads.",
+    "Oversized prepared content is released after submission/cancellation and still bypasses snapshot retention. Empty streams release all owned snapshot/range storage. GPU capacities, staging admission and shader/painter behavior remain unchanged."
+  ],
+  "proof": {
+    "renderer": "327 renderer tests pass; 11 diagnostic/visual cases filtered. New actual-GPU test verifies 1,000 changed/reverted preparations produce zero transfer descriptors, cancellation preserves submitted bytes, retry uploads only changed words, and 100 changed submissions reuse the same two allocations with final readback parity. Existing cold/replacement, cap/bypass, shrink/regrow, budget refusal, shared control/text and upload regressions pass.",
+    "development": "Initial focused run found two stale expectations: a shrink/regrow before submission retransferred unchanged tail bytes, and cancellation forced a full retry. Updated them to require only real dirty bytes while retaining GPU readback. Other existing diff assertions now establish their GPU baseline through a real flush. Failed focused receipt preserved.",
+    "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh application build pass. Source health 2,263, dependency and governance gates pass.",
+    "drift": "Full drift stops at the existing console-routine-focused 1x mismatch: 3,778 pixels (0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+  },
+  "limits": [
+    "This increases maximum retained screen snapshot payload from one to two 256 KiB allocations per stream; it is a bounded implementation tradeoff, not an unchanged-memory or RSS acceptance claim. Full CPU metadata/peak/aggregate admission and qualification remain open.",
+    "Over-cap content still bypasses comparison retention. Complete actual transfer-boundary counters must distinguish dirty destination payload, protocol metadata and GPU packet copies. No REUSE-SCREEN, MEM-01, S4/S5 or issue closure.",
+    "Other S4 resource/shaping work and S5 native/backend/fault/fairness/endurance/independent qualification remain. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion. No dependency, vendoring, license, prototype or specification amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/submitted-screen/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/submitted-screen/tests.log.gz",
+      "uncompressed_sha256": "aaa70dff6d8b8b560c8c5adfbd0243304844f4d6033adb67d6c0de00a8934c07"
+    },
+    "old-expectations": {
+      "path": "docs/reviews/gui-performance/implementation/S4/submitted-screen/old-expectations.log.gz",
+      "uncompressed_sha256": "e0719dc6e05fd44b20fa1821b33507eab114010f55d8aa57a6d49724a1804535"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/submitted-screen/clippy.log.gz",
+      "uncompressed_sha256": "95b9844a29cd2b340e9b22cdde95992a0fc58686ecf1f8b2683fdd11eae2cad0"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/submitted-screen/build.log.gz",
+      "uncompressed_sha256": "fb819a626faba73487a8b5f2695535e45b8cc8fd5bc8d897bf9cef4de554056f"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/submitted-screen/drift.log.gz",
+      "uncompressed_sha256": "c5c7e20214c53a098a80f95a0658d1af5c4f8c6bf0b357b08e8626550827eace"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/screen_buffer.rs": "a52dfb552edf82bb7b2e1382ef01aa6b972e83e533d44beaa01e6179f6bb2594",
+    "crates/gui-render/src/render/screen_buffer/tests.rs": "ff943bc067e28176befd98f53a6584af192bf16e31f92d0b66a308371cc1f3e8"
+  }
+}

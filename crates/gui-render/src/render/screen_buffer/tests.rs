@@ -97,6 +97,7 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
     let relocated = values.to_vec();
     assert_ne!(relocated.as_ptr(), values.as_ptr());
     assert_eq!(owner.sync(&device, &queue, "proof", &relocated).unwrap(), 0);
+    owner.flush_uploads(&device, &queue);
     values[1] = 17; // same address AND length, different content
     assert_eq!(owner.sync(&device, &queue, "proof", &values).unwrap(), 4);
     assert_eq!(owner.buffer(), Some(&first));
@@ -119,6 +120,7 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
     owner
         .sync(&device, &queue, "vertex-fields", &vertices)
         .unwrap();
+    owner.flush_uploads(&device, &queue);
     vertices[0][1] = 0x0100;
     vertices[0][4] = 0x0200;
     vertices[2][4] = 0x0300;
@@ -139,7 +141,7 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
             .unwrap(),
         0
     );
-    // A retained allocation can grow its live prefix without reallocating.
+    // Shrink and regrow before submission retain the actual GPU tail baseline.
     owner
         .sync(&device, &queue, "short-prefix", &vertices[..2])
         .unwrap();
@@ -148,7 +150,7 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
         owner
             .sync(&device, &queue, "grow-prefix", &vertices)
             .unwrap(),
-        24
+        4
     );
     owner.flush_uploads(&device, &queue);
     assert_eq!(
@@ -160,6 +162,7 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
         owner.sync(&device, &queue, "proof", &at_cap).unwrap(),
         MAX_SNAPSHOT_BYTES
     );
+    owner.flush_uploads(&device, &queue);
     assert_eq!(owner.snapshot.len(), MAX_SNAPSHOT_BYTES);
     assert_eq!(owner.sync(&device, &queue, "proof", &at_cap).unwrap(), 0);
     let oversized = vec![43_u32; MAX_SNAPSHOT_BYTES / 4 + 1];
@@ -168,6 +171,7 @@ fn screen_upload_reuses_exact_content_and_bounds_retention() {
             owner.sync(&device, &queue, "proof", &oversized).unwrap(),
             MAX_SNAPSHOT_BYTES + 4
         );
+        owner.flush_uploads(&device, &queue);
         assert!(
             owner.snapshot.is_empty(),
             "overlarge content bypasses retention"
@@ -266,7 +270,11 @@ fn repeated_preparation_queues_each_final_range_once() {
     assert_eq!(stream.pending, vec![32..64]);
     stream.cancel_uploads();
     stream.sync(&device, &queue, "retry", &values).unwrap();
-    assert_eq!(stream.pending, vec![0..64]);
+    assert_eq!(
+        stream.pending,
+        vec![32..64],
+        "cancellation preserves the submitted prefix"
+    );
     stream.flush_uploads(&device, &queue);
     assert_eq!(
         read(&device, &queue, stream.buffer().unwrap(), 64),
@@ -309,4 +317,76 @@ fn changed_ranges_match_independent_word_oracle() {
         assert_eq!(bytes, mask.count_ones() as usize * 4);
         assert_eq!(reconstructed, bytemuck::cast_slice::<u32, u8>(&new));
     }
+}
+
+#[test]
+#[ignore = "requires local GPU; submitted baseline, reverts and snapshot reuse"]
+fn reverted_preparations_emit_no_upload_and_cancellation_keeps_submitted_bytes() {
+    let instance = wgpu::Instance::default();
+    let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+    let (device, queue) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+    let mut stream = ScreenBuffer::default();
+    let baseline = [7_u32; 16];
+    stream.sync(&device, &queue, "baseline", &baseline).unwrap();
+    stream.flush_uploads(&device, &queue);
+    let mut changed = baseline;
+    changed[1] = 99;
+    changed[14] = 100;
+    for _ in 0..1000 {
+        assert_eq!(
+            stream.sync(&device, &queue, "pending", &changed).unwrap(),
+            8
+        );
+        assert_eq!(stream.pending, vec![4..8, 56..60]);
+        assert_eq!(
+            stream.sync(&device, &queue, "reverted", &baseline).unwrap(),
+            0
+        );
+        let mut uploads = Vec::new();
+        stream.append_uploads(&mut uploads);
+        assert!(
+            uploads.is_empty(),
+            "reverted data reached the transfer boundary"
+        );
+    }
+    stream.sync(&device, &queue, "cancelled", &changed).unwrap();
+    stream.cancel_uploads();
+    assert_eq!(
+        stream
+            .sync(&device, &queue, "unchanged", &baseline)
+            .unwrap(),
+        0
+    );
+    assert_eq!(
+        read(&device, &queue, stream.buffer().unwrap(), 64),
+        bytemuck::cast_slice::<u32, u8>(&baseline)
+    );
+    assert_eq!(stream.sync(&device, &queue, "retry", &changed).unwrap(), 8);
+    stream.flush_uploads(&device, &queue);
+    assert_eq!(
+        read(&device, &queue, stream.buffer().unwrap(), 64),
+        bytemuck::cast_slice::<u32, u8>(&changed)
+    );
+    let mut slots = [stream.snapshot.as_ptr(), stream.prepared.as_ptr()];
+    slots.sort();
+    for n in 0..100 {
+        changed[1] = n;
+        assert_eq!(
+            stream
+                .sync(&device, &queue, "changed-frame", &changed)
+                .unwrap(),
+            4
+        );
+        stream.flush_uploads(&device, &queue);
+        let mut current = [stream.snapshot.as_ptr(), stream.prepared.as_ptr()];
+        current.sort();
+        assert_eq!(
+            current, slots,
+            "changed frames must reuse both CPU allocations"
+        );
+    }
+    assert_eq!(
+        read(&device, &queue, stream.buffer().unwrap(), 64),
+        bytemuck::cast_slice::<u32, u8>(&changed)
+    );
 }

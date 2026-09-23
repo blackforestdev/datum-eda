@@ -1,10 +1,9 @@
 //! Bounded last-content ownership for immediate screen-space vertex uploads.
 use super::vertex_allocation::VertexAllocation;
 
-// One snapshot per semantic stream, not frame history. Larger streams still
-// render normally but bypass CPU retention. Nine fixed screen streams retain
-// at most 9 * 256 KiB per renderer. Each visible terminal image quad additionally
-// retains its 96-byte vertex snapshot.
+// Submitted and prepared snapshots are separate: cancellation must not corrupt
+// the comparison baseline. Each retains at most 256 KiB; larger streams bypass
+// retention after submission. Reuse the two allocations across changed frames.
 const MAX_SNAPSHOT_BYTES: usize = 256 * 1024;
 
 #[derive(Default)]
@@ -12,8 +11,8 @@ pub(crate) struct ScreenBuffer {
     snapshot: Box<[u8]>,
     allocation: VertexAllocation,
     pending: Vec<std::ops::Range<usize>>,
-    // Only over-cap streams need an extra payload; normal uploads borrow snapshot.
-    pending_large: Box<[u8]>,
+    prepared: Box<[u8]>,
+    has_prepared: bool,
     #[cfg(test)]
     pub(crate) last_upload_bytes: usize,
 }
@@ -44,10 +43,10 @@ impl ScreenBuffer {
     }
 
     pub(crate) fn cancel_uploads(&mut self) {
-        if !self.pending.is_empty() {
-            self.pending.clear();
-            self.snapshot = Box::default();
-            self.pending_large = Box::default();
+        self.pending.clear();
+        self.has_prepared = false;
+        if self.prepared.len() > MAX_SNAPSHOT_BYTES {
+            self.prepared = Box::default();
         }
     }
 
@@ -55,11 +54,7 @@ impl ScreenBuffer {
         &'a self,
         out: &mut Vec<crate::text_gpu::upload::BufferUpload<'a>>,
     ) {
-        let bytes = if self.pending_large.is_empty() {
-            &self.snapshot
-        } else {
-            &self.pending_large
-        };
+        let bytes = &self.prepared;
         for range in &self.pending {
             let end = range.end.min(bytes.len());
             if range.start < end {
@@ -73,8 +68,14 @@ impl ScreenBuffer {
     }
 
     pub(crate) fn finish_uploads(&mut self) {
-        self.pending.clear();
-        self.pending_large = Box::default();
+        if self.has_prepared {
+            if self.prepared.len() <= MAX_SNAPSHOT_BYTES {
+                std::mem::swap(&mut self.snapshot, &mut self.prepared);
+            } else {
+                self.snapshot = Box::default();
+            }
+        }
+        self.cancel_uploads();
     }
 
     #[cfg(all(test, feature = "visual"))]
@@ -83,30 +84,6 @@ impl ScreenBuffer {
         self.append_uploads(&mut uploads);
         crate::text_gpu::upload::submit_buffers_for_test(device, queue, &uploads);
         self.finish_uploads();
-    }
-
-    // Preparations supersede one another before submission. Keep their union,
-    // not an upload history: every final byte is queued at most once. Unchanged
-    // gaps remain gaps; this does not widen the existing dirty-span policy.
-    fn normalize_pending(&mut self, live_bytes: usize) {
-        if self.pending.len() > 1 {
-            self.pending.sort_unstable_by_key(|range| range.start);
-        }
-        let mut retained = 0;
-        for index in 0..self.pending.len() {
-            let mut range = self.pending[index].clone();
-            range.end = range.end.min(live_bytes);
-            if range.start >= range.end {
-                continue;
-            }
-            if retained > 0 && range.start <= self.pending[retained - 1].end {
-                self.pending[retained - 1].end = self.pending[retained - 1].end.max(range.end);
-            } else {
-                self.pending[retained] = range;
-                retained += 1;
-            }
-        }
-        self.pending.truncate(retained);
     }
 
     /// Exact bytes are the key: equal size, allocator reuse, NaN payloads and
@@ -128,39 +105,38 @@ impl ScreenBuffer {
             self.allocation.clear();
             self.snapshot = Box::default();
             self.pending = Vec::new();
-            self.pending_large = Box::default();
+            self.prepared = Box::default();
+            self.has_prepared = false;
             return Ok(0);
         }
         if self.allocation.buffer().is_some() && self.snapshot.as_ref() == bytes {
+            self.cancel_uploads();
             return Ok(0);
         }
-        let uploaded = if self.allocation.replace_if_needed(device, label, bytes)? {
-            self.pending.clear();
-            self.pending.push(0..bytes.len());
-            bytes.len()
-        } else {
-            dirty_ranges(
-                &self.snapshot,
-                bytes,
-                std::mem::size_of::<T>(),
-                |offset, bytes| {
-                    self.pending
-                        .push(offset as usize..offset as usize + bytes.len())
-                },
-            )
-        };
-        self.normalize_pending(bytes.len());
-        if bytes.len() <= MAX_SNAPSHOT_BYTES {
-            self.pending_large = Box::default();
-            if self.snapshot.len() == bytes.len() {
-                self.snapshot.copy_from_slice(bytes);
-            } else {
-                self.snapshot = bytes.into();
-            }
-        } else {
-            self.snapshot = Box::default();
-            self.pending_large = bytes.into();
+        if self.has_prepared && self.prepared.as_ref() == bytes {
+            return Ok(0);
         }
+        if self.allocation.replace_if_needed(device, label, bytes)? {
+            // A fresh allocation has no submitted content, even if the prior
+            // allocation's snapshot happens to match a later preparation.
+            self.snapshot = Box::default();
+        }
+        self.pending.clear();
+        let uploaded = dirty_ranges(
+            &self.snapshot,
+            bytes,
+            std::mem::size_of::<T>(),
+            |offset, bytes| {
+                self.pending
+                    .push(offset as usize..offset as usize + bytes.len())
+            },
+        );
+        if self.prepared.len() == bytes.len() {
+            self.prepared.copy_from_slice(bytes);
+        } else {
+            self.prepared = bytes.into();
+        }
+        self.has_prepared = true;
         #[cfg(test)]
         {
             self.last_upload_bytes = uploaded;
