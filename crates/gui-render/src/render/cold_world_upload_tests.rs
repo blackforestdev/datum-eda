@@ -129,7 +129,10 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
     );
     assert_eq!(renderer.poll_gpu_measurements(&device).unwrap().len(), 1);
 
-    // Replace the source again after only the first chunk of a new revision.
+    // Replace/grow twice before the first replacement completes. Stale CPU
+    // encodings must retire before they can pin a third allocation indefinitely.
+    assert!(!renderer.surface_world_bundles.is_empty());
+    vertices.push(vertices[0]);
     vertices.last_mut().unwrap().pos[0] += 1.0;
     retained.world_vertices = SharedGeometry::for_document(vertices.clone(), "cold-world-proof");
     assert!(
@@ -153,6 +156,8 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
             .world_vertices_gpu
             .matches_source(&SharedGeometry::from(Vec::<crate::Vertex>::new()))
     );
+    assert!(renderer.surface_world_bundles.is_empty());
+    vertices.push(vertices[0]);
     vertices[0].pos[0] += 2.0;
     retained.world_vertices = SharedGeometry::for_document(vertices.clone(), "cold-world-proof");
     for attempt in 0..3 {

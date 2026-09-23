@@ -7,14 +7,17 @@ pub(crate) struct RetainedBuffer<T> {
     allocation: VertexAllocation,
     pending: bool,
     uploaded: usize,
+    generation_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
     document_budget: Option<std::sync::Arc<crate::text_gpu::budget::Budget>>,
 }
 
 impl<T> Default for RetainedBuffer<T> {
     fn default() -> Self {
+        let generations = crate::text_gpu::budget::Budget::new(2);
         Self {
+            generation_budget: generations.clone(),
             source: None,
-            allocation: VertexAllocation::default(),
+            allocation: VertexAllocation::default().with_generation_limit(generations),
             pending: false,
             uploaded: 0,
             document_budget: None,
@@ -23,12 +26,29 @@ impl<T> Default for RetainedBuffer<T> {
 }
 
 impl<T: bytemuck::Pod> RetainedBuffer<T> {
+    pub(crate) fn replacement(&self) -> Self {
+        Self {
+            source: None,
+            allocation: VertexAllocation::default()
+                .with_generation_limit(self.generation_budget.clone()),
+            pending: false,
+            uploaded: 0,
+            document_budget: None,
+            generation_budget: self.generation_budget.clone(),
+        }
+    }
+
     pub(crate) fn buffer(&self) -> Option<&wgpu::Buffer> {
         self.allocation.buffer()
     }
 
     pub(crate) fn clear(&mut self) {
-        *self = Self::default();
+        // Clearing content must not forget old allocations pinned by encodings
+        // or submissions. Their permits remain in this stream's shared limit.
+        self.source = None;
+        self.allocation.clear();
+        self.pending = false;
+        self.uploaded = 0;
     }
 
     pub(crate) fn submission_ref(&self) -> Option<crate::text_gpu::lifetime::SubmissionRef> {
@@ -128,9 +148,11 @@ impl<T: bytemuck::Pod> RetainedBuffer<T> {
         } else {
             // A reused API buffer cannot stay charged to the previous document.
             // Admit the replacement before retiring the old working allocation.
-            let mut replacement = budget.map_or_else(VertexAllocation::default, |budget| {
-                VertexAllocation::with_budget(budget.clone())
-            });
+            let mut replacement = budget
+                .map_or_else(VertexAllocation::default, |budget| {
+                    VertexAllocation::with_budget(budget.clone())
+                })
+                .with_generation_limit(self.generation_budget.clone());
             replacement.replace_if_needed(device, label, bytes)?;
             self.allocation = replacement;
             self.document_budget = budget.cloned();
@@ -335,3 +357,7 @@ mod tests {
         );
     }
 }
+
+#[cfg(all(test, feature = "visual"))]
+#[path = "world_generation_tests.rs"]
+mod generation_tests;

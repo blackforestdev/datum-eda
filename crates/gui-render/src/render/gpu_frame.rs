@@ -60,6 +60,11 @@ impl Renderer {
             return Ok(false);
         }
         self.cold_world.active = false;
+        // Encodings of replaced CPU geometry are no longer reusable. Retire
+        // their CPU holds before admission; actual submissions keep their own.
+        if !self.world_upload_sources_match(prepared, retained, schematic_retained) {
+            self.surface_world_bundles.clear();
+        }
         self.cancel_vertex_uploads();
         self.cancel_uniform_uploads();
         if prepared.is_overlay_only() {

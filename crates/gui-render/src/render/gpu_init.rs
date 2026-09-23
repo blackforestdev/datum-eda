@@ -36,6 +36,10 @@ impl Renderer {
             self.atlas.staging_budget.clone(),
         )?;
         replacement.surface_attachments = self.surface_attachments.replacement();
+        replacement.world_vertices_gpu = self.world_vertices_gpu.replacement();
+        replacement.world_strokes_gpu = self.world_strokes_gpu.replacement();
+        replacement.schematic_world_vertices_gpu = self.schematic_world_vertices_gpu.replacement();
+        replacement.schematic_world_strokes_gpu = self.schematic_world_strokes_gpu.replacement();
         Ok(replacement)
     }
 

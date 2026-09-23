@@ -16153,6 +16153,11 @@
           "work": "s4_world_chunk_staging_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/world-chunks/result.json",
           "status": "World streams now use bounded explicit staging with native continuation. Full resource qualification stays open; cold multi-submission GPU observations are explicitly incomplete, never partial numeric samples."
+        },
+        {
+          "work": "s4_world_generation_adoption_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/world-generations/result.json",
+          "status": "Two-live-allocation limit per retained-world stream survives clear, document switch and same-host recovery; obsolete CPU encodings retire before changed-source admission. Full document-wide generation/metadata boundary and qualification remain open."
         }
       ]
     },
@@ -32712,5 +32717,35 @@
       "No dependency, vendoring, license, prototype, font/layout authority or numerical budget change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/layout-scratch/result.json"
+  },
+  "s4_world_generation_adoption_work": {
+    "status": "Default retained-world streams admit at most two live API allocations across replacement and host recovery; full document/resource qualification remains open",
+    "base_commit": "fa1051a8",
+    "production_consumers": [
+      "Shared RetainedBuffer for board vertices/strokes and schematic vertices/strokes",
+      "Renderer render_with_submission changed-source preparation and recreate_for_device used by native hosts"
+    ],
+    "retired_paths": [
+      "Unlimited count of replaced world allocations within the existing document byte ceiling",
+      "Resetting live allocation-count admission on empty content, document switches or device recreation",
+      "Keeping obsolete CPU world draw encodings while admitting interrupted cold replacements"
+    ],
+    "behavior": [
+      "Reserve one of two stream allocation slots before creating a replacement API buffer, alongside existing document/process byte admission. Warm capacity reuse does not consume another slot. Failure preserves current allocation/source and rolls back other reservations.",
+      "Store the slot permit with the same tracked allocation held by encoded draws and actual submissions. Clearing content and switching documents retain the shared stream limit; same-host device recreation inherits all four stream limits. Slots return only after the last resource hold retires.",
+      "Discard cached encodings when their world sources change before admitting new uploads. In-flight submissions retain independent holds, avoiding premature release. Interrupted cold replacements can discard obsolete CPU encodings instead of pinning a third allocation indefinitely."
+    ],
+    "proof": {
+      "renderer": "319 renderer tests pass, 10 diagnostic/visual cases filtered. New actual-GPU tests exercise two-allocation refusal, unchanged current allocation/source, document-budget rollback, warm reuse, clear/replacement continuity, retirement retry and queue callback release; actual Renderer recreation covers all four world streams.",
+      "production": "Extended native-continuation renderer test grows world data twice during an interrupted upload, checks obsolete cached encodings retire and reads back final GPU bytes. Existing default-path pixel, resource, continuation and recovery tests pass.",
+      "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2257, dependency authority and governance checks pass.",
+      "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance."
+    },
+    "limits": [
+      "The allocation-count boundary is each host retained-world stream and its same-host replacements. Multiple distinct native hosts can each own streams for one document; existing64 MiB document byte admission still aggregates those allocations. This does not prove complete document-wide coherent-generation accounting or encoded-command metadata limits. MEM-WORLD-GPU remains partial.",
+      "CPU world/history, control-resource and complete text/scratch/metadata accounting, cold multi-submission timing and native/backend/fault/fairness/endurance qualification remain. No S4/S5 or issue closure.",
+      "No new native-input or benchmark campaign. No dependency, vendoring, license, prototype, layout/font authority or numerical budget change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/world-generations/result.json"
   }
 }
