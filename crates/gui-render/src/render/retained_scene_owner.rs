@@ -27,6 +27,11 @@ pub struct RetainedGeometryObserver {
     hits: std::sync::Weak<datum_gui_viewport::SpatialHitIndex<HitTarget>>,
     metadata_bytes: [usize; 2],
     document: Option<std::sync::Weak<crate::text_gpu::budget::Budget>>,
+    lifetime: Option<Arc<ObserverLifetime>>,
+}
+
+struct ObserverLifetime {
+    _document: Option<Arc<crate::text_gpu::budget::Budget>>,
 }
 
 impl RetainedGeometryObserver {
@@ -136,7 +141,8 @@ impl RetainedScene {
     }
 
     pub fn geometry_observer(&self) -> RetainedGeometryObserver {
-        RetainedGeometryObserver {
+        document_cpu::observe(RetainedGeometryObserver {
+            lifetime: None,
             document: self.world_vertices.document_budget().map(Arc::downgrade),
             vertices: self.world_vertices.downgrade(),
             strokes: self.world_strokes.downgrade(),
@@ -148,7 +154,7 @@ impl RetainedScene {
                 self.command_bytes().unwrap_or(usize::MAX),
                 self.hit_bytes().unwrap_or(usize::MAX),
             ],
-        }
+        })
     }
 }
 
@@ -204,4 +210,12 @@ fn hits_container_bytes() -> usize {
             Vec::new(),
         ))
     })
+}
+
+fn observer_lifetime_bytes() -> usize {
+    if !crate::cpu_alloc::installed() {
+        return std::mem::size_of::<ObserverLifetime>();
+    }
+    static BYTES: std::sync::OnceLock<usize> = std::sync::OnceLock::new();
+    *BYTES.get_or_init(|| crate::cpu_alloc::heap::arc_bytes(ObserverLifetime { _document: None }))
 }

@@ -355,7 +355,8 @@ fn retirement_observer_storage_is_charged_through_growth_reuse_and_drop() {
         before_drop - capacity_bytes::<RetainedGeometryObserver>(capacity)
     );
     drop(pins);
-    assert_eq!(observer.document_cpu_payload_bytes(), 0);
+    assert!(!observer.is_live());
+    assert!(observer.document_cpu_payload_bytes() >= observer.heap_bytes_excluding([]));
 }
 
 #[test]
@@ -404,4 +405,37 @@ fn history_entry_limit_is_shared_across_owners_without_limiting_active_reference
     assert_eq!(observer.document_history_entries(), 0);
     assert_eq!(active, scene);
     assert!(observer.document_cpu_payload_bytes() >= scene.heap_payload_bytes().unwrap());
+}
+
+#[test]
+fn retirement_storage_refusal_keeps_pinned_payload_accounted_and_allows_retry() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.scene.scene_id = "history-retirement-storage-refusal".into();
+    let scene = RetainedScene::from_workspace(&state, 960, 720);
+    let observer = scene.geometry_observer();
+    let baseline = observer.document_cpu_payload_bytes();
+    let pressure = observer
+        .try_charge_document_storage(MAX_PAYLOAD_BYTES - baseline)
+        .unwrap();
+    let mut history = RetainedSceneHistory::default();
+    history.observe_retired(observer.clone());
+    assert!(history.retired_geometry.is_empty());
+    assert!(
+        history
+            .check_render_budget()
+            .unwrap_err()
+            .to_string()
+            .contains("observer storage")
+    );
+    assert_eq!(observer.document_cpu_payload_bytes(), MAX_PAYLOAD_BYTES);
+    assert!(observer.is_live());
+    drop(pressure);
+    history.retry_construction();
+    history.observe_retired(observer.clone());
+    assert_eq!(history.retired_geometry.len(), 1);
+    history.check_render_budget().unwrap();
+    drop(history);
+    assert_eq!(observer.document_cpu_payload_bytes(), baseline);
+    drop(scene);
+    assert!(!observer.is_live());
 }

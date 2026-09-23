@@ -1,0 +1,70 @@
+{
+  "status": "MEM-WORLD-CPU and MEM-WORLD-HISTORY cap implementation complete; original qualification remains S5",
+  "base_commit": "c6517b6d",
+  "production_consumers": [
+    "Board and schematic retained construction/publication",
+    "Shared document history entries, replacement vectors and retired-observer storage",
+    "Document resource queries and externally held geometry observers"
+  ],
+  "retired_paths": [
+    "Pruning document accounting while external weak observers still retain Arc containers",
+    "Allocating history/retirement vectors before registering their byte charge",
+    "Unbounded metadata resize and after-allocation charge methods"
+  ],
+  "behavior": [
+    "Registered observers share a small admitted lifetime owner; repeated observations clone its handle without allocation. The owner retains document identity, never geometry payload. Registry pruning keeps the weak-only containers charged until external observers release; later observation/admission pruning removes unused records.",
+    "History key and replacement-vector reservations are atomic under the existing document registry lock. The old vector remains charged until replacement succeeds. Retired-observer storage reserves replacement capacity before fallible allocation. Refusal preserves globally observed pinned payload and reaches the existing host failure/retry path.",
+    "All positive metadata reservations coordinate with the shared cold-constructor exclusion introduced in c6517b6d, preventing reservations from spending unpublished constructor headroom. Shared six-entry and64MiB limits remain unchanged."
+  ],
+  "requirement_reconciliation": {
+    "MEM-WORLD-CPU": "MEM-02 defines64MiB total retained CPU geometry/history per loaded document. Existing shared payload/registry accounting, construction admission, publication refusal and native failure propagation now include external weak-only owner lifetime and all production history vector reservations.",
+    "MEM-WORLD-HISTORY": "MEM-02 defines six history entries plus active/pinned references within the same64MiB total. Existing cross-owner entry admission and eviction retain this bound; key/replacement/retirement metadata now reserves shared bytes before allocation and releases them with each owner.",
+    "separate_requirements": "CPU staging aggregate/per-host caps, complete text construction ownership, ACC-01 reference/release reporting, RSS and full native/endurance/negative qualification remain under their existing unfinished rows. These implementation closures do not accept combined resource budgets or S4/S5."
+  },
+  "proof": {
+    "renderer": "383 passed;0 failed;11 filtered. Includes allocator equality through strong-to-weak retirement, shared document reopening, cap refusal/retry, six-entry concurrent admission, both constructor refusal paths and existing GPU/pixel proofs.",
+    "app": "19 retained-scene tests passed;0 failed;393 filtered. Covers history spare capacity/replacement overlap, pinned owners, shared-entry caps and new retirement-storage pressure/refusal/retry.",
+    "build": "Strict renderer/app visual all-target Clippy and fresh offline visual GUI application build passed.",
+    "initial_failure": "Initial renderer run:381passed,2failed. Two prior tests expected document accounting to vanish with payload despite external weak observers. Preserve the failed log; update lifetime expectations and keep independent exact allocator comparison. Source-health inline test tail364 exceeded350; relocate existing document tests into a dedicated test module, with no ceiling/exemption increase. Final source health passes2296files."
+  },
+  "limits": [
+    "Only the two retained world/history cap implementations close. All50carried S2 qualification predicates,20S3 rows and S1 obligations remain required at S5. General accounting, shaped text, replacement/staging and screen attribution gaps remain.",
+    "Registry cleanup is performed by existing accounting/admission pruning; no full host-close latency or resource endurance acceptance is claimed. Tests do not establish global consumer qualification.",
+    "No dependency/vendor/license/prototype/numerical-cap/sequencing change. Preserve GEFN, nonblocking resize and Console golden disposition. Owner/Copilot engine-test edits excluded."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/history-lifetime/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-lifetime/renderer.log.gz",
+      "uncompressed_sha256": "086f963b34646189347c71a800fd0950df82f190b640f4eb927d2ce31b8f5128"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-lifetime/app.log.gz",
+      "uncompressed_sha256": "3d6a63f556086bab111393c00d53c7abd3a33d8640d7966f4b5cc014f24af0f8"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-lifetime/clippy.log.gz",
+      "uncompressed_sha256": "3cd18711718af95061bd600ff284e4f6a93062d881b9835f6e47af10c2c9eb23"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-lifetime/build.log.gz",
+      "uncompressed_sha256": "9ec0a1f926756a518e9e1b642f79f573f2c6d232c36c1fe753f1fe2940874e16"
+    },
+    "check": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-lifetime/check.log.gz",
+      "uncompressed_sha256": "ec82ff378cfc3753e747cc3430e03f3d8f7f8878e27d1febcebeb440a52e0bfe"
+    },
+    "initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/history-lifetime/initial.log.gz",
+      "uncompressed_sha256": "d4f2724942db40a1812828174e114b61ca3063f31e604e0cc94523c2a027c726"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/document_cpu.rs": "9fc082d32ec4e316aec4523cf7baca4d14a00f384c8189e3cc3f82ff54853073",
+    "crates/gui-render/src/render/document_cpu_tests.rs": "5263fa637f60d67453a441a918dadc1596c4b423462c8b97be39f6fb3e1cfb95",
+    "crates/gui-render/src/render/retained_scene_owner.rs": "2f43d232a89eb25bd3da0678cf2790533df289b2443af1c86e7ec71c7f6ae9ba",
+    "crates/gui-render/src/render/retained_heap_tests.rs": "2dd157e8a3fce66f116637803e9e9e28c66f5501002faa085a4e8b1bc4e8f20c",
+    "crates/gui-app/src/retained_scene_history.rs": "c319b40ebaa5e3eff709ec4384c2e3af3dff8dc77beee3f424bf5b6c0f6344d2",
+    "crates/gui-app/src/retained_scene_resize_tests.rs": "e11da20f57c97d8f65758b2e384767fc47efda5c9d33855dac8bd6741711b063"
+  }
+}

@@ -3954,6 +3954,11 @@
           "work": "s4_construction_admission_work.concurrency_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/constructor-owner/result.json",
           "status": "Shared cold-construction exclusion and atomic history-key byte admission implemented"
+        },
+        {
+          "work": "s4_construction_admission_work.lifetime_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/history-lifetime/result.json",
+          "status": "MEM-WORLD-CPU and MEM-WORLD-HISTORY cap implementation complete; original qualification remains S5"
         }
       ]
     },
@@ -15071,14 +15076,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Reconcile weak-observer lifetimes and separately charged history-storage growth against complete document accounting. Board/schematic cold constructors now serialize through publication; shared history-key admission atomically checks bytes and entry count. Existing retained payload, emitted vectors, polygon scratch, borrowed inputs and vertex/hit/index/publication admission remain implemented. Preserve original S5 qualification and do not restart implemented owners."
-        ],
+        "implementation_due": "Implemented at S4: shared retained document CPU/history admission and lifetime ownership. Original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "64MiB total CPU world/history per document; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Retained document CPU/history cap implementation complete; original acceptance rule and qualification remain unqualified.",
+        "s4_implementation_evidence": "s4_construction_admission_work.lifetime_completion"
       },
       "s4_implementation_progress": [
         {
@@ -15190,7 +15194,15 @@
           "work": "s4_construction_admission_work.concurrency_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/constructor-owner/result.json",
           "status": "Shared cold-construction exclusion and atomic history-key byte admission implemented"
+        },
+        {
+          "work": "s4_construction_admission_work.lifetime_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/history-lifetime/result.json",
+          "status": "MEM-WORLD-CPU and MEM-WORLD-HISTORY cap implementation complete; original qualification remains S5"
         }
+      ],
+      "s4_resolved_implementation_obligations": [
+        "Reconcile weak-observer lifetimes and separately charged history-storage growth against complete document accounting. Board/schematic cold constructors now serialize through publication; shared history-key admission atomically checks bytes and entry count. Existing retained payload, emitted vectors, polygon scratch, borrowed inputs and vertex/hit/index/publication admission remain implemented. Preserve original S5 qualification and do not restart implemented owners."
       ]
     },
     {
@@ -15249,14 +15261,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Reconcile weak-observer lifetimes and separately charged history-storage growth against complete document accounting. Board/schematic cold constructors now serialize through publication; shared history-key admission atomically checks bytes and entry count. Existing retained payload, emitted vectors, polygon scratch, borrowed inputs and vertex/hit/index/publication admission remain implemented. Preserve original S5 qualification and do not restart implemented owners."
-        ],
+        "implementation_due": "Implemented at S4: shared retained document CPU/history admission and lifetime ownership. Original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "six historical entries plus live references within64MiB; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Retained document CPU/history cap implementation complete; original acceptance rule and qualification remain unqualified.",
+        "s4_implementation_evidence": "s4_construction_admission_work.lifetime_completion"
       },
       "s4_implementation_progress": [
         {
@@ -15368,7 +15379,15 @@
           "work": "s4_construction_admission_work.concurrency_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/constructor-owner/result.json",
           "status": "Shared cold-construction exclusion and atomic history-key byte admission implemented"
+        },
+        {
+          "work": "s4_construction_admission_work.lifetime_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/history-lifetime/result.json",
+          "status": "MEM-WORLD-CPU and MEM-WORLD-HISTORY cap implementation complete; original qualification remains S5"
         }
+      ],
+      "s4_resolved_implementation_obligations": [
+        "Reconcile weak-observer lifetimes and separately charged history-storage growth against complete document accounting. Board/schematic cold constructors now serialize through publication; shared history-key admission atomically checks bytes and entry count. Existing retained payload, emitted vectors, polygon scratch, borrowed inputs and vertex/hit/index/publication admission remain implemented. Preserve original S5 qualification and do not restart implemented owners."
       ]
     },
     {
@@ -17507,6 +17526,11 @@
           "work": "s4_construction_admission_work.concurrency_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/constructor-owner/result.json",
           "status": "Shared cold-construction exclusion and atomic history-key byte admission implemented"
+        },
+        {
+          "work": "s4_construction_admission_work.lifetime_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/history-lifetime/result.json",
+          "status": "MEM-WORLD-CPU and MEM-WORLD-HISTORY cap implementation complete; original qualification remains S5"
         }
       ]
     },
@@ -17768,6 +17792,11 @@
           "work": "s4_construction_admission_work.concurrency_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/constructor-owner/result.json",
           "status": "Shared cold-construction exclusion and atomic history-key byte admission implemented"
+        },
+        {
+          "work": "s4_construction_admission_work.lifetime_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/history-lifetime/result.json",
+          "status": "MEM-WORLD-CPU and MEM-WORLD-HISTORY cap implementation complete; original qualification remains S5"
         }
       ]
     },
@@ -32279,10 +32308,10 @@
   "s4_carried_work_inventory": {
     "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
     "carried_rows": 50,
-    "rows_with_recorded_implementation_gaps": 10,
+    "rows_with_recorded_implementation_gaps": 8,
     "rows_with_no_new_implementation_defect_asserted": 23,
     "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change.",
-    "rows_with_implementation_completed_at_s4": 17,
+    "rows_with_implementation_completed_at_s4": 19,
     "completed_at_s4": [
       "MEM-WIDTH-ENTRIES",
       "MEM-WIDTH-KEYS",
@@ -32300,7 +32329,9 @@
       "HP15-01",
       "MEM-WORLD-GPU",
       "HP15-02",
-      "MEM-GPU-TOTAL"
+      "MEM-GPU-TOTAL",
+      "MEM-WORLD-CPU",
+      "MEM-WORLD-HISTORY"
     ]
   },
   "s4_control_retained_cpu_work": {
@@ -34778,7 +34809,7 @@
     "evidence": "docs/reviews/gui-performance/implementation/S4/document-history-cap/result.json"
   },
   "s4_construction_admission_work": {
-    "status": "Default retained constructors admit quad-to-vertex expansion before allocation and propagate refusal through existing host failure path",
+    "status": "MEM-WORLD-CPU and MEM-WORLD-HISTORY cap implementation complete; original qualification remains S5",
     "base_commit": "d628abda",
     "production_consumers": [
       "Main and companion retained scene constructors",
@@ -34936,6 +34967,42 @@
         "All original S5 qualification remains required. No S4 closure, dependency/license/prototype/budget/sequencing change. Preserve GEFN and nonblocking resize; exclude owner/Copilot engine-test changes."
       ],
       "evidence": "docs/reviews/gui-performance/implementation/S4/constructor-owner/result.json"
+    },
+    "lifetime_completion": {
+      "status": "MEM-WORLD-CPU and MEM-WORLD-HISTORY cap implementation complete; original qualification remains S5",
+      "base_commit": "c6517b6d",
+      "production_consumers": [
+        "Board and schematic retained construction/publication",
+        "Shared document history entries, replacement vectors and retired-observer storage",
+        "Document resource queries and externally held geometry observers"
+      ],
+      "retired_paths": [
+        "Pruning document accounting while external weak observers still retain Arc containers",
+        "Allocating history/retirement vectors before registering their byte charge",
+        "Unbounded metadata resize and after-allocation charge methods"
+      ],
+      "behavior": [
+        "Registered observers share a small admitted lifetime owner; repeated observations clone its handle without allocation. The owner retains document identity, never geometry payload. Registry pruning keeps the weak-only containers charged until external observers release; later observation/admission pruning removes unused records.",
+        "History key and replacement-vector reservations are atomic under the existing document registry lock. The old vector remains charged until replacement succeeds. Retired-observer storage reserves replacement capacity before fallible allocation. Refusal preserves globally observed pinned payload and reaches the existing host failure/retry path.",
+        "All positive metadata reservations coordinate with the shared cold-constructor exclusion introduced in c6517b6d, preventing reservations from spending unpublished constructor headroom. Shared six-entry and64MiB limits remain unchanged."
+      ],
+      "requirement_reconciliation": {
+        "MEM-WORLD-CPU": "MEM-02 defines64MiB total retained CPU geometry/history per loaded document. Existing shared payload/registry accounting, construction admission, publication refusal and native failure propagation now include external weak-only owner lifetime and all production history vector reservations.",
+        "MEM-WORLD-HISTORY": "MEM-02 defines six history entries plus active/pinned references within the same64MiB total. Existing cross-owner entry admission and eviction retain this bound; key/replacement/retirement metadata now reserves shared bytes before allocation and releases them with each owner.",
+        "separate_requirements": "CPU staging aggregate/per-host caps, complete text construction ownership, ACC-01 reference/release reporting, RSS and full native/endurance/negative qualification remain under their existing unfinished rows. These implementation closures do not accept combined resource budgets or S4/S5."
+      },
+      "proof": {
+        "renderer": "383 passed;0 failed;11 filtered. Includes allocator equality through strong-to-weak retirement, shared document reopening, cap refusal/retry, six-entry concurrent admission, both constructor refusal paths and existing GPU/pixel proofs.",
+        "app": "19 retained-scene tests passed;0 failed;393 filtered. Covers history spare capacity/replacement overlap, pinned owners, shared-entry caps and new retirement-storage pressure/refusal/retry.",
+        "build": "Strict renderer/app visual all-target Clippy and fresh offline visual GUI application build passed.",
+        "initial_failure": "Initial renderer run:381passed,2failed. Two prior tests expected document accounting to vanish with payload despite external weak observers. Preserve the failed log; update lifetime expectations and keep independent exact allocator comparison. Source-health inline test tail364 exceeded350; relocate existing document tests into a dedicated test module, with no ceiling/exemption increase. Final source health passes2296files."
+      },
+      "limits": [
+        "Only the two retained world/history cap implementations close. All50carried S2 qualification predicates,20S3 rows and S1 obligations remain required at S5. General accounting, shaped text, replacement/staging and screen attribution gaps remain.",
+        "Registry cleanup is performed by existing accounting/admission pruning; no full host-close latency or resource endurance acceptance is claimed. Tests do not establish global consumer qualification.",
+        "No dependency/vendor/license/prototype/numerical-cap/sequencing change. Preserve GEFN, nonblocking resize and Console golden disposition. Owner/Copilot engine-test edits excluded."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/history-lifetime/result.json"
     }
   },
   "s4_vertex_allocation_work": {
