@@ -15113,6 +15113,11 @@
           "work": "s4_construction_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/construction-admission/result.json",
           "status": "Default retained constructors admit quad-to-vertex expansion before allocation and propagate refusal through existing host failure path"
+        },
+        {
+          "work": "s4_vertex_allocation_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-allocation/result.json",
+          "status": "Admitted retained vertex buffers allocate fallibly before expansion"
         }
       ]
     },
@@ -15251,6 +15256,11 @@
           "work": "s4_construction_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/construction-admission/result.json",
           "status": "Default retained constructors admit quad-to-vertex expansion before allocation and propagate refusal through existing host failure path"
+        },
+        {
+          "work": "s4_vertex_allocation_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-allocation/result.json",
+          "status": "Admitted retained vertex buffers allocate fallibly before expansion"
         }
       ]
     },
@@ -34463,5 +34473,31 @@
       "Twelve implementation gaps and original S5 qualification remain required. No dependency/vendor/license, prototype, numerical cap or sequencing amendment. Preserve GEFN, Console golden disposition and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/construction-admission/result.json"
+  },
+  "s4_vertex_allocation_work": {
+    "status": "Admitted retained vertex buffers allocate fallibly before expansion",
+    "base_commit": "cb523c1d",
+    "production_consumers": [
+      "Board and companion retained constructors through native and offscreen capture consumers",
+      "Shared quad expansion allocator"
+    ],
+    "retired_paths": [
+      "Retained constructors used infallible Vec::with_capacity after budget admission"
+    ],
+    "behavior": [
+      "Check quad count multiplication and reserve exact vertex capacity with try_reserve_exact before writing vertices. Propagate reservation refusal through both fallible retained constructors and their existing host/capture failure paths. Use the same shared converter for compatibility callers; they retain their infallible expect boundary. Successful expansion keeps one allocation, existing vertex order/winding and colors. Empty expansion allocates nothing."
+    ],
+    "proof": {
+      "vertices": "Two focused allocator tests pass: exact single allocation/capacity and tracked bytes, winding/color preservation, release to zero, count overflow, impossible element-layout refusal and empty zero-capacity output. No enormous allocation is attempted by the overflow cases.",
+      "constructors": "Six document CPU/constructor tests pass, including checked-in real board and schematic refusal/retry and allocation accounting.",
+      "app": "394 app tests pass, 16 ignored.",
+      "lint_build": "Strict renderer/app all-targets Clippy with app visual feature and fresh visual app build pass; source health2280 and dependency/governance/format checks pass.",
+      "scope": "No repeated full GPU or native campaign. Previous 358-test renderer proof covers unchanged rendering; focused proof here covers allocation and its migrated constructors."
+    },
+    "limits": [
+      "This makes the admitted vertex reservation recoverable; other construction allocations, complete peak/concurrent admission, scope bookkeeping and external weak-container ownership remain open as recorded in construction-admission. Infallible compatibility callers and other allocation families are not claimed to recover from process-wide allocation exhaustion.",
+      "Twelve implementation gaps and original S5 qualification remain open. No dependency/vendor/license, prototype, numerical cap or sequencing amendment. Preserve GEFN, Console golden disposition and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-allocation/result.json"
   }
 }
