@@ -31,7 +31,7 @@ pub(crate) struct Draw {
     pipeline: wgpu::RenderPipeline,
     instances: Option<Tracked<wgpu::Buffer>>,
     batches: Vec<(usize, Range<u32>)>,
-    snapshot: Vec<Instance>,
+    snapshot: Box<[Instance]>,
     pending_instances: Option<Vec<Instance>>,
     generation: Option<u64>,
     pub upload_bytes: u64,
@@ -89,7 +89,7 @@ impl Draw {
             pipeline,
             instances: None,
             batches: Vec::new(),
-            snapshot: Vec::new(),
+            snapshot: Box::default(),
             pending_instances: None,
             generation: None,
             upload_bytes: 0,
@@ -197,7 +197,7 @@ impl Draw {
         let required = (instances.len() * std::mem::size_of::<Instance>()) as u64;
         if required == 0 {
             self.instances = None;
-            self.snapshot = Vec::new();
+            self.snapshot = Box::default();
         } else if self.instances.as_ref().is_none_or(|buffer| {
             required > buffer.size() || buffer.size() > required.saturating_mul(4)
         }) {
@@ -223,7 +223,7 @@ impl Draw {
                 Kind::Instances,
                 vec![generation_permit, screen_permit, permit],
             ));
-            self.snapshot = Vec::new();
+            self.snapshot = Box::default();
         }
         self.pending_instances = Some(instances);
         self.generation = Some(atlas.generation);
@@ -263,11 +263,10 @@ impl Draw {
     pub fn finish_uploads(&mut self, bytes: u64) {
         self.upload_bytes = bytes;
         if let Some(instances) = self.pending_instances.take() {
-            self.snapshot = if instances.len() * std::mem::size_of::<Instance>() <= 256 * 1024 {
-                instances
-            } else {
-                Vec::new()
-            };
+            // Every prepared payload has passed screen/process GPU admission.
+            // Retain its exact length for dirty comparisons, without spare Vec
+            // capacity or a size cutoff that forces subsequent full transfers.
+            self.snapshot = instances.into_boxed_slice();
         }
     }
 

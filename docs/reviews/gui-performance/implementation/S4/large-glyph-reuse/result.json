@@ -1,0 +1,41 @@
+{
+  "status": "GPU-admitted glyph instances retain exact-length snapshots above the former 256 KiB cutoff",
+  "base_commit": "f6cf78ac",
+  "production_consumers": [
+    "Shared Draw::finish_uploads and append_uploads for workspace and overlay text"
+  ],
+  "retired_paths": [
+    "Greater-than-256-KiB glyph instance snapshot bypass that caused subsequent full transfers"
+  ],
+  "behavior": [
+    "Keep every GPU-admitted glyph instance snapshot as a boxed exact-length slice, dropping spare Vec capacity. Unchanged re-preparation plans zero bytes; changed data still uses the shared exact aligned dirty-range planner. Empty preparation and GPU replacement release obsolete snapshots. Retained snapshot payload cannot exceed its admitted GPU buffer capacity; headers, pending construction and total CPU accounting remain separate."
+  ],
+  "proof": {
+    "renderer": "351 renderer tests pass, 11 filtered. Actual-GPU test prepares more than 256 KiB of glyph instances, confirms snapshot size is within reserved GPU bytes, verifies same allocation/zero upload for unchanged re-preparation, verifies a single color word transfers four bytes, then clears to zero GPU ownership. Existing text parity and production renderer tests pass.",
+    "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health 2277, dependency authority and governance pass.",
+    "scope": "No new benchmark/native/backend/endurance campaign; no frame-time performance claim. Existing Console golden discrepancy remains open."
+  },
+  "limits": [
+    "REUSE-SCREEN still requires complete per-consumer/frame upload attribution and original S5 proof. Snapshot headers and construction peaks remain within existing CPU accounting gaps. Replacement-owner review confirmed main/shared auxiliary native recovery uses recreate_for_device, but no complete MEM-REPLACEMENT acceptance is claimed.",
+    "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/large-glyph-reuse/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/large-glyph-reuse/tests.log.gz",
+      "uncompressed_sha256": "25ebb05f821ddb3dc907f8ea276438e89af51e2ed8bec7bb883e03a6ec105efc"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/large-glyph-reuse/clippy.log.gz",
+      "uncompressed_sha256": "b676bd9f8361f449d7d1427addd3c9b43fd0a905040e976e65c62916daac7665"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/large-glyph-reuse/build.log.gz",
+      "uncompressed_sha256": "477af6b6321a152c41cc7e191ed2cc8df95963cc251a5fc0afa0ee19c51caaf5"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/text_gpu/draw.rs": "dde586de810aaab58b3a3f12cb879951256c67cd1e4e8cde26d4c6f30c6c9386",
+    "crates/gui-render/src/text_gpu/draw_generation_tests.rs": "cf065f55519f5af2e3cda943957d6a802e0b0d557737a62339c666d7b591c281"
+  }
+}
