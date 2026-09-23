@@ -1,0 +1,54 @@
+//! Whole retained text owner conformance against actual allocator lifetimes.
+use super::*;
+
+#[test]
+fn complete_retained_text_accounting_matches_heap_after_shared_layout_construction() {
+    // This measures the complete retained owner rather than individual containers.
+    // Font caches are independent of retained layouts; dropping fonts below leaves
+    // their allocation lifetime out of the shaped-payload comparison.
+    let mut fonts = load_datum_fonts();
+    let mut cache = TextBufferCache::default();
+    let scope = crate::cpu_alloc::Scope::new("complete-retained-text");
+    let mut plain = run();
+    plain.text = "Shared paragraphs with wrapped text\nsecond paragraph".into();
+    plain.layout_size = Some((180.0, 300.0));
+    let mut rich = plain.clone();
+    rich.rich_spans = vec![
+        TextRunSpan {
+            text: "Styled ".into(),
+            color: TEXT_PRIMARY,
+            bold: true,
+            italic: false,
+        },
+        TextRunSpan {
+            text: "paragraph".into(),
+            color: TEXT_SECONDARY,
+            bold: false,
+            italic: true,
+        },
+    ];
+    let mut narrow = plain.clone();
+    narrow.layout_size = Some((90.0, 300.0));
+    scope.with(|| {
+        cache.begin_frame(Profile::Workspace);
+        let (indices, stats) = cache.indices(&mut fonts, &[plain, rich, narrow], 960, 720);
+        assert_eq!(stats.misses, 3);
+        assert_eq!(indices.len(), 3);
+    });
+    drop(fonts);
+    let usage = scope.usage();
+    let returned_glyphs: usize = cache
+        .entries
+        .iter()
+        .map(|entry| entry.buffer.layout_glyph_bytes() + entry.buffer.layout_glyph_tracking_bytes())
+        .sum();
+    assert_eq!(
+        cache.retained_payload_bytes(),
+        std::mem::size_of::<TextBufferCache>()
+            + (usage.payload_bytes + usage.tracking_bytes) as usize
+            + returned_glyphs,
+        "private layout scratch is separate; shared shapes count once"
+    );
+    drop(cache);
+    assert_eq!(scope.usage().allocations, 0);
+}
