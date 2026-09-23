@@ -1,0 +1,54 @@
+{
+  "status": "Default frame preparation and cold continuation stop board uploads when prepared surfaces have no board consumer",
+  "production_consumers": [
+    "Full Renderer frame preparation and shared retained-world continuation",
+    "Dialog-only renderer retirement of prior world allocations"
+  ],
+  "retired_paths": [
+    "Unconditional board vertex/stroke synchronization in every full frame",
+    "Cold continuation matching board CPU identity without checking whether the board is still drawn",
+    "Retention of prior board/schematic allocation owners after switching a renderer to dialog-only content"
+  ],
+  "behavior": [
+    "Prepared board-world demand includes composed board surfaces and the existing single-viewport fallback with visible board commands. No draw path is removed or restyled.",
+    "When demand disappears, source matching rejects an unfinished board continuation. Preparation clears pending source/upload state and both board GPU owners instead of copying another chunk. Existing submission holds preserve already submitted resources until completion.",
+    "Dialog-only rendering clears all four world stream owners together with world bundles/uniforms. Reopening uses authoritative retained CPU geometry and the existing bounded cold-upload path."
+  ],
+  "proof": {
+    "renderer": "386 renderer tests passed;0 failed;11 filtered. The actual-GPU cold-world test now switches away during a multi-chunk upload, verifies zero added world bytes, no pending bytes, owner release and allocation disappearance after completion, then reopens and compares complete buffer readback with current retained vertices. Existing renderer pixel/parity and recovery cases passed.",
+    "checks": "Strict visual renderer/app all-target Clippy, fresh offline GUI build, source health2297files and governance checks pass.",
+    "failed_attempt": "Initial compile exposed the timing diagnostic still calling len on the newly optional board input; corrected to report zero absent vertices. Preserve initial compile log."
+  },
+  "limits": [
+    "The audit reconfirmed MEM-01 explicitly requires consumer/resource-generation attribution; REUSE-SCREEN stays open. This change does not complete that accounting or close any of the seven recorded S4 implementation gaps.",
+    "This is renderer world-upload/retirement behavior, not proof of all native hidden-work scheduling, CPU scene preparation, resource budgets or S5 qualification. Schematic full-frame selection retains its existing prepare_schematic_pass contract.",
+    "No dependency/vendor/license, prototype, numerical-cap or sequencing change. Preserve GEFN, nonblocking resize and owner/Copilot engine-file changes."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/hidden-world/result.json",
+  "base_commit": "ec92bb10",
+  "logs": {
+    "test": {
+      "path": "docs/reviews/gui-performance/implementation/S4/hidden-world/test.log.gz",
+      "uncompressed_sha256": "c13eabb49342a83b625af3dcf97d66c2b3bed26859f632679297ec7761c06ca6"
+    },
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/hidden-world/renderer.log.gz",
+      "uncompressed_sha256": "83837ffef214fc08c3bc454279c0b7015909943b369de40e742547bb75fd6294"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/hidden-world/clippy.log.gz",
+      "uncompressed_sha256": "f8c10a4e196affc5d81002baeaab9b08603be74460c66875ff031eca0b7db9b6"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/hidden-world/build.log.gz",
+      "uncompressed_sha256": "f15ec6e36a005aed08b4927cfed8313404c52ba7067818c43d6bbe8d5a5e9ab4"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/cold_world_upload.rs": "05b2974a026fe6996f596ebe517d8274744d04c668c3beb25b22427aa105eed6",
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "ece91e69d394d5ceda2fc413ca607a3acd41a367cff193a0f5c8bf3df51919f2",
+    "crates/gui-render/src/render/gpu_frame.rs": "2428c97a7e3a7671723d400f2d51b3b15eac9e853f21df48f3ac787655abda1b",
+    "crates/gui-render/src/render/gpu_overlay.rs": "3b7e65e912b5ae33c4de4306f2322d1c93b77d614f90d7e893b2a4bcb12beeea",
+    "crates/gui-render/src/render/gpu_vertex_upload.rs": "f7ff017572b3bf61e1e79048b61065e586dd1d79232da3c42de254e8edf79f1b"
+  }
+}

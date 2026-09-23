@@ -126,7 +126,9 @@ impl Renderer {
         let board_interaction_vertices = prepared.board_interaction_vertices();
         let console_overlay_vertices = prepared.console_overlay_vertices();
         let menu_overlay_vertices = prepared.menu_overlay_vertices();
-        let world_vertices = &retained.world_vertices;
+        let world_vertices = prepared
+            .requires_board_world()
+            .then_some(&retained.world_vertices);
         let world_strokes = retained.world_strokes();
         let schematic_pass = gpu_surface_pass::prepare_schematic_pass(prepared, schematic_retained);
         // S4 grid and interaction overlays remain immediate screen-space geometry;
@@ -164,8 +166,10 @@ impl Renderer {
             "datum-surface-grid-vertex-buffer",
             &surface_grid_vertices,
         )?;
-        self.world_strokes_gpu
-            .sync(device, queue, "datum-world-strokes", world_strokes)?;
+        if world_vertices.is_some() {
+            self.world_strokes_gpu
+                .sync(device, queue, "datum-world-strokes", world_strokes)?;
+        }
         if let Some((_, _, _, scene)) = schematic_pass.as_ref() {
             self.schematic_world_strokes_gpu.sync(
                 device,
@@ -547,7 +551,7 @@ impl Renderer {
                 submit_elapsed.as_micros(),
                 panel_vertices.len(),
                 viewport_underlay_vertices.len(),
-                world_vertices.len(),
+                world_vertices.map_or(0, |vertices| vertices.len()),
                 viewport_overlay_vertices.len(),
                 prepared.text_runs.len(),
                 text_cache_stats.hits,
