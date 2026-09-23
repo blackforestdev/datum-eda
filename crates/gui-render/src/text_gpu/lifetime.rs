@@ -92,23 +92,27 @@ impl Owner {
         generation: u64,
         kind: Kind,
     ) -> Tracked<T> {
-        self.track_with_permits(resource, bytes, generation, kind, Vec::new())
+        self.track_reserved(
+            resource,
+            generation,
+            kind,
+            super::budget::GpuReservation::new(bytes, Vec::new()).expect("test GPU reservation"),
+        )
     }
 
-    pub(crate) fn track_with_permits<T>(
+    pub(crate) fn track_reserved<T>(
         &self,
         resource: T,
-        bytes: u64,
         generation: u64,
         kind: Kind,
-        permit: Vec<super::budget::Permit>,
+        reservation: super::budget::GpuReservation,
     ) -> Tracked<T> {
         let identity = Arc::new(Identity {
             record: Record {
                 id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
                 owner: self.0.id,
                 generation,
-                bytes,
+                bytes: reservation.bytes(),
                 kind,
                 retiring: false,
             },
@@ -124,7 +128,7 @@ impl Owner {
         process.push(Arc::downgrade(&identity));
         Tracked(Arc::new(Allocation {
             resource,
-            _permits: permit,
+            _reservation: reservation,
             _shared_permit: None,
             identity,
         }))
@@ -220,7 +224,7 @@ impl crate::Renderer {
 struct Allocation<T> {
     resource: T,
     _shared_permit: Option<Arc<super::budget::Permit>>,
-    _permits: Vec<super::budget::Permit>,
+    _reservation: super::budget::GpuReservation,
     identity: Arc<Identity>,
 }
 
@@ -280,12 +284,12 @@ mod tests {
     fn texture_reservation_survives_owner_and_every_submission_hold() {
         let budget = super::super::budget::Budget::new(64);
         let owner = Owner::new();
-        let texture = owner.track_with_permits(
+        let texture = owner.track_reserved(
             vec![0_u8; 64],
-            64,
             1,
             Kind::Texture,
-            vec![budget.reserve(64).unwrap()],
+            super::super::budget::GpuReservation::new(64, vec![budget.reserve(64).unwrap()])
+                .unwrap(),
         );
         let id = texture.id();
         let first = texture.submission_ref();
@@ -309,6 +313,38 @@ mod tests {
                 .iter()
                 .any(|record| record.id == id)
         );
+    }
+
+    #[test]
+    fn split_upload_reservation_survives_mapped_owner_and_packet_submissions() {
+        use super::super::budget::{Budget, GpuReservation};
+        let budget = Budget::new(96);
+        let mut reservation = GpuReservation::new(96, vec![budget.reserve(96).unwrap()]).unwrap();
+        assert!(reservation.split(97).is_err());
+        assert_eq!(reservation.bytes(), 96);
+        let owner = Owner::new();
+        let mapped = owner.track_reserved((), 1, Kind::Staging, reservation.split(64).unwrap());
+        let packet = owner.track_reserved((), 1, Kind::Staging, reservation.split(32).unwrap());
+        assert_eq!(reservation.bytes(), 0);
+        assert_eq!(owner.records().iter().map(|r| r.bytes).sum::<u64>(), 96);
+        let observer = owner.observer();
+        let first = packet.submission_ref();
+        let second = packet.submission_ref();
+        drop(reservation);
+        drop(mapped);
+        drop(packet);
+        drop(owner);
+        assert_eq!(budget.used(), 96);
+        assert!(budget.reserve(1).is_err());
+        assert_eq!(observer.allocations().len(), 1);
+        assert_eq!(observer.allocations()[0].bytes, 32);
+        assert!(observer.allocations()[0].retiring);
+        drop(first);
+        assert_eq!(budget.used(), 96);
+        drop(second);
+        assert_eq!(budget.used(), 0);
+        assert!(observer.allocations().is_empty());
+        assert!(budget.reserve(96).is_ok());
     }
 
     #[test]

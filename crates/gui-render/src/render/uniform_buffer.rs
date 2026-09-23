@@ -1,5 +1,5 @@
 //! Fixed-size uniform ownership with exact aligned changed-range uploads.
-use crate::text_gpu::budget::{Budget, Permit};
+use crate::text_gpu::budget::{Budget, GpuReservation};
 use crate::text_gpu::lifetime::{Kind, Owner, SubmissionRef, Tracked};
 use std::sync::Arc;
 use wgpu::util::DeviceExt;
@@ -147,19 +147,17 @@ fn uniform_usage() -> wgpu::BufferUsages {
 fn reserve<T>(
     screen_budget: &Arc<Budget>,
     generations: &Arc<Budget>,
-) -> anyhow::Result<Vec<Permit>> {
+) -> anyhow::Result<GpuReservation> {
     let generation = generations.reserve(1).map_err(|_| {
         anyhow::anyhow!("uniform has two live GPU allocations; wait for retirement before recovery")
     })?;
     let bytes = (std::mem::size_of::<T>() as u64).next_multiple_of(wgpu::COPY_BUFFER_ALIGNMENT);
     let host = screen_budget.reserve(bytes)?;
-    let process = crate::text_gpu::budget::gpu_process().reserve(bytes)?;
-    Ok(vec![generation, host, process])
+    GpuReservation::new(bytes, vec![generation, host])
 }
 
-fn tracked(buffer: wgpu::Buffer, permits: Vec<Permit>) -> Tracked<wgpu::Buffer> {
-    let bytes = buffer.size();
-    Owner::new().track_with_permits(buffer, bytes, 1, Kind::Uniform, permits)
+fn tracked(buffer: wgpu::Buffer, permits: GpuReservation) -> Tracked<wgpu::Buffer> {
+    Owner::new().track_reserved(buffer, 1, Kind::Uniform, permits)
 }
 
 /// Keep bindings and their allocation together; drop binding references first.

@@ -27,7 +27,7 @@ impl CaptureTarget {
             .and_then(|n| n.checked_mul(u64::from(size.depth_or_array_layers)))
             .and_then(|n| n.checked_mul(4))
             .ok_or_else(|| anyhow::anyhow!("capture extent overflow"))?;
-        let permit = budget::gpu_process().reserve(bytes)?;
+        let reservation = budget::GpuReservation::new(bytes, Vec::new())?;
         let texture = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("datum-capture-target"),
             size,
@@ -38,12 +38,11 @@ impl CaptureTarget {
             usage: wgpu::TextureUsages::RENDER_ATTACHMENT | wgpu::TextureUsages::COPY_SRC,
             view_formats: &[],
         });
-        Ok(Self(Owner::new().track_with_permits(
+        Ok(Self(Owner::new().track_reserved(
             texture,
-            bytes,
             1,
             Kind::Attachment,
-            vec![permit],
+            reservation,
         )))
     }
     pub fn hold_submission(&self, queue: &wgpu::Queue) {
@@ -61,19 +60,18 @@ impl std::ops::Deref for CaptureTarget {
 pub struct CaptureReadback(Tracked<wgpu::Buffer>);
 impl CaptureReadback {
     pub fn new(device: &wgpu::Device, bytes: u64) -> anyhow::Result<Self> {
-        let permit = budget::gpu_process().reserve(bytes)?;
+        let reservation = budget::GpuReservation::new(bytes, Vec::new())?;
         let buffer = device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("datum-capture-readback"),
             size: bytes,
             usage: wgpu::BufferUsages::COPY_DST | wgpu::BufferUsages::MAP_READ,
             mapped_at_creation: false,
         });
-        Ok(Self(Owner::new().track_with_permits(
+        Ok(Self(Owner::new().track_reserved(
             buffer,
-            bytes,
             1,
             Kind::Readback,
-            vec![permit],
+            reservation,
         )))
     }
     pub fn hold_submission(&self, queue: &wgpu::Queue) {

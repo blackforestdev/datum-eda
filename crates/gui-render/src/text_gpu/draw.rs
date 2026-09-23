@@ -208,8 +208,11 @@ impl Draw {
                 )
             })?;
             let screen_permit = self.screen_budget.reserve(capacity)?;
-            let permit = super::budget::gpu_process().reserve(capacity)?;
-            self.instances = Some(atlas.owner.track_with_permits(
+            let reservation = super::budget::GpuReservation::new(
+                capacity,
+                vec![generation_permit, screen_permit],
+            )?;
+            self.instances = Some(atlas.owner.track_reserved(
                 device.create_buffer(&wgpu::BufferDescriptor {
                     label: Some("datum-glyph-instances"),
                     size: capacity,
@@ -218,10 +221,9 @@ impl Draw {
                         | wgpu::BufferUsages::STORAGE,
                     mapped_at_creation: false,
                 }),
-                capacity,
                 atlas.generation,
                 Kind::Instances,
-                vec![generation_permit, screen_permit, permit],
+                reservation,
             ));
             self.snapshot = Box::default();
         }

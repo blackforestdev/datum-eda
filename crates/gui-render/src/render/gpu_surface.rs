@@ -129,7 +129,8 @@ impl SurfaceAttachments {
             let generation = self.generations.reserve(1).map_err(|_| {
                 anyhow::anyhow!("attachment generation limit reached: one current and one retiring")
             })?;
-            let permit = crate::text_gpu::budget::gpu_process().reserve(bytes)?;
+            let reservation =
+                crate::text_gpu::budget::GpuReservation::new(bytes, vec![generation])?;
             let texture = device.create_texture(&wgpu::TextureDescriptor {
                 label: Some("datum-gui-render-msaa"),
                 size: wgpu::Extent3d {
@@ -156,12 +157,11 @@ impl SurfaceAttachments {
             let replacement = SurfaceAttachment {
                 key,
                 allocation: self.allocations,
-                view: Arc::new(self.owner.track_with_permits(
+                view: Arc::new(self.owner.track_reserved(
                     view,
-                    bytes,
                     self.allocations,
                     Kind::Attachment,
-                    vec![generation, permit],
+                    reservation,
                 )),
             };
             // Backend error callbacks may report allocation/validation failure

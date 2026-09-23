@@ -1,0 +1,62 @@
+{
+  "status": "Typed GPU admission migrated across production allocation owners; full accounting and qualification remain open",
+  "base_commit": "fea8121f",
+  "production_consumers": [
+    "Retained world, screen/control, terminal and overlay vertex allocation through VertexAllocation",
+    "All fixed and pane uniform buffers",
+    "Text atlas pages and glyph instances",
+    "Native MSAA attachments and terminal image textures",
+    "Mapped upload buffers and sparse scatter packets",
+    "Feature-gated capture target/readback and opt-in timestamp query/resolve/readback resources"
+  ],
+  "retired_paths": [
+    "Owner::track_with_permits accepting arbitrary permit vectors without requiring global admission",
+    "Sparse packet tracking with an empty permit vector, relying on the mapped buffer to retain its aggregate reservation"
+  ],
+  "behavior": [
+    "Owner::track_reserved requires a GpuReservation, whose constructor reserves global GPU capacity before API creation. Existing generation and local/process subcaps remain attached. Record capacity derives from the reservation instead of an independent byte argument.",
+    "Splitting a batch reservation assigns capacity to each allocation while sharing its permits. The entire admitted batch remains charged until the final participating allocation/submission retires, regardless of mapped-buffer retirement order. Refused oversized splits leave admitted capacity unchanged."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 368 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.49s",
+    "checks": "Strict visual renderer/app all-target Clippy and fresh visual application build pass. Full renderer run includes existing actual GPU mixed staging, sparse scatter readback, text/atlas, vertex, uniform, capture and query resource tests, plus the new split-reservation retirement-order test. Application tests were not rerun for this renderer-only migration.",
+    "inventory": "Reviewed direct create_buffer/create_buffer_init/create_texture/create_query_set sites in gui-render; production owners listed above all use the typed reservation path. Remaining hits are test/probe fixtures. The two gui-app direct buffer creation sites are inside cfg(test) modules."
+  },
+  "limits": [
+    "Batch charging is conservative: retired siblings remain reserved until the last participant retires. Individual live records report their own capacity; reserved capacity can exceed live capacity.",
+    "This strengthens admission and lifetime ownership; it does not prove complete ACC-01 requested payload/reference incidence/release-reason reporting, CPU tracking metadata, construction/staging peaks or full MEM-GPU-TOTAL qualification. No predicate closure or inventory-count change.",
+    "Query accounting remains logical timestamp capacity; backend-private storage, driver residency and swapchain ownership remain separate. All carried S5 qualification, the existing Console golden failure, GEFN and nonblocking resize disposition remain unchanged. No dependency, prototype, numerical cap or sequencing change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-reservation/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/gpu-reservation/renderer.log.gz",
+      "uncompressed_sha256": "34e2dd5652cf3cce5e7f7ee3b9522addd9f9081555576fb0d8fc3feb76e2fdbf"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/gpu-reservation/clippy.log.gz",
+      "uncompressed_sha256": "791e1ede1ca7c30a2b48ac186a43fac86fb09ca953e0f37dd20c6614de9c7193"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/gpu-reservation/build.log.gz",
+      "uncompressed_sha256": "ac929962053faf17428ac58abb031502f5c2c9e57e05874ce51939584ebf1de0"
+    },
+    "creation-inventory": {
+      "path": "docs/reviews/gui-performance/implementation/S4/gpu-reservation/creation-inventory.log.gz",
+      "uncompressed_sha256": "84472ba4d26e0d4e7ba80775cba2bde7e9dae311dd7a4636daf6af878edf3ca3"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/capture_resource.rs": "932117817f426ac5fedff17612b4d3374df1716f594868a86b13df68c6fbff80",
+    "crates/gui-render/src/render/gpu_measurement_resources.rs": "7d2bbcfea4e5d633e3e19ada42d6733ddb40a8a64e8c0b4e329398ef0beed783",
+    "crates/gui-render/src/render/gpu_surface.rs": "30f89bb3fad7cf94e963015a025db39b05db511a4e140c15fc5fd0597e9e5549",
+    "crates/gui-render/src/render/terminal_graphic_texture.rs": "fe939317e28d719c031345f33d6f200bdccac6a6e722681b2aa50d3292845508",
+    "crates/gui-render/src/render/uniform_buffer.rs": "2001276a18944e9e74741d9f86559eed540c51e4be986cb0c02591c5b322f96b",
+    "crates/gui-render/src/render/vertex_allocation.rs": "d58d683771790b86f26d135150f59065a421662bcaf6a043ee96da3693805412",
+    "crates/gui-render/src/text_gpu/atlas.rs": "c0cbcff06324fce7325b299427cdc77053b4f3b2cfa9e3376720a551d2626dd1",
+    "crates/gui-render/src/text_gpu/budget.rs": "cfab1762867fca884a1d5e185c0c25054a7211574f18730f63f841c5c2d529cf",
+    "crates/gui-render/src/text_gpu/draw.rs": "3e491c0801af0452884ce57dd6139f5d475cf8e02b7cb0b5e512c87d6401317d",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "0183ce21a3111672fca0adecf0cf3a12a8b7038cc1fcda7435852f389b992e94",
+    "crates/gui-render/src/text_gpu/upload.rs": "8415582c69419147df3fa189603db3894c5bf30cc285d576ccd9b967df6ba916"
+  }
+}
