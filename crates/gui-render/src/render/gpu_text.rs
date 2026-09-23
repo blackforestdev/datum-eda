@@ -176,8 +176,16 @@ impl Renderer {
         };
         self.text_buffers
             .admit_layout_scratch(&self.atlas.staging_budget);
-        self.text_buffers
-            .admit_frame(&mut [&mut workspace, &mut overlay])?;
+        if let Err(error) = self
+            .text_buffers
+            .admit_frame(&mut [&mut workspace, &mut overlay])
+        {
+            self.text_preparation.prepared = None;
+            self.text_preparation.overlay_prepared = None;
+            self.text_renderer.cancel_preparation();
+            self.menu_overlay_text_renderer.cancel_preparation();
+            return Err(error);
+        }
         // Preserve workspace diagnostic semantics; dialog-only frames report
         // their actual text owner instead of an empty workspace statistic.
         let stats = if overlay_only { overlay_stats } else { stats };
