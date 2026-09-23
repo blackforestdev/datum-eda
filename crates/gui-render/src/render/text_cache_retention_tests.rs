@@ -93,3 +93,32 @@ fn composed_label_retention_preserves_workspace_and_shared_layouts() {
         "workspace reference survives label retention bypass"
     );
 }
+
+#[test]
+fn rich_shaping_keys_do_not_retain_or_hash_unused_plain_fallback() {
+    let mut fonts = load_datum_fonts();
+    let mut cache = TextBufferCache::default();
+    let mut label = run();
+    label.layout_size = Some((300.0, 100.0));
+    label.text = "unused fallback ".repeat(8192);
+    label.rich_spans = vec![TextRunSpan {
+        text: "Visible Ω".into(),
+        color: TEXT_PRIMARY,
+        bold: true,
+        italic: false,
+    }];
+    cache.begin_frame(Profile::Overlay);
+    let (indices, cold) = cache.indices(&mut fonts, &[label.clone()], 960, 720);
+    assert_eq!(cold.misses, 1);
+    let entry = &cache.entries[indices[0]];
+    assert_eq!(entry.key.text.capacity(), 0);
+    let shape = entry.buffer.shape_storage();
+    let bytes = cache.key_usage().key_text_bytes;
+    label.text = "Different unused fallback".into();
+    let (indices, warm) = cache.indices(&mut fonts, &[label.clone()], 960, 720);
+    assert_eq!(warm.hits, 1);
+    assert_eq!(cache.entries[indices[0]].buffer.shape_storage(), shape);
+    assert_eq!(cache.key_usage().key_text_bytes, bytes);
+    label.rich_spans[0].text.push('!');
+    assert_eq!(cache.indices(&mut fonts, &[label], 960, 720).1.misses, 1);
+}

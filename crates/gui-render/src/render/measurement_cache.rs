@@ -1,6 +1,7 @@
 //! Bounded scalar text measurements and per-thread retained ownership.
 use super::TextFace;
 use crate::WidthMeasurementCacheUsage;
+use crate::cpu_alloc::heap::capacity_bytes;
 use std::sync::{
     Mutex,
     atomic::{AtomicU64, Ordering},
@@ -27,6 +28,7 @@ pub(super) enum MeasurementKind {
 pub(super) struct MeasurementCache {
     entries: std::collections::VecDeque<Entry>,
     text_bytes: usize,
+    text_heap_bytes: usize,
     owner_id: u64,
     #[cfg(test)]
     pub(super) misses: usize,
@@ -37,6 +39,7 @@ impl Default for MeasurementCache {
         let cache = Self {
             entries: Default::default(),
             text_bytes: 0,
+            text_heap_bytes: 0,
             owner_id: NEXT_OWNER.fetch_add(1, Ordering::Relaxed),
             #[cfg(test)]
             misses: 0,
@@ -69,8 +72,8 @@ impl Drop for MeasurementCache {
 impl MeasurementCache {
     fn retained_bytes(&self) -> usize {
         std::mem::size_of::<Self>()
-            + self.entries.capacity() * std::mem::size_of::<Entry>()
-            + self.text_bytes
+            + capacity_bytes::<Entry>(self.entries.capacity())
+            + self.text_heap_bytes
     }
 
     fn publish_usage(&self) {
@@ -132,12 +135,14 @@ impl MeasurementCache {
             }
             while self.entries.len() >= MAX_MEASUREMENTS
                 || self.text_bytes + text.len() > MAX_MEASUREMENT_TEXT_BYTES
-                || self.retained_bytes() + text.len() > MAX_OWNED_BYTES
+                || self.retained_bytes() + capacity_bytes::<u8>(text.len()) > MAX_OWNED_BYTES
             {
                 let old = self.entries.pop_back().expect("bounded cache has entries");
                 self.text_bytes -= old.0.len();
+                self.text_heap_bytes -= capacity_bytes::<u8>(old.0.len());
             }
             self.text_bytes += text.len();
+            self.text_heap_bytes += capacity_bytes::<u8>(text.len());
             self.entries
                 .push_front((text.into(), size.to_bits(), face, kind, width));
             self.publish_usage();
@@ -287,3 +292,7 @@ mod tests {
         assert!(usage().iter().all(|r| r.owner_id != id));
     }
 }
+
+#[cfg(test)]
+#[path = "measurement_heap_tests.rs"]
+mod heap_tests;

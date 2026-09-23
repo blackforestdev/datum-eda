@@ -51,7 +51,7 @@ pub(super) fn build_text_areas<'a>(
 pub(super) fn text_buffer_key(run: &TextRun, width: u32, height: u32) -> TextBufferKey {
     let (width_px, height_px) = text_buffer_extent(run, width, height);
     TextBufferKey {
-        text: run.text.clone(),
+        text: shaping_text(run).to_owned(),
         rich_spans: run
             .rich_spans
             .iter()
@@ -162,10 +162,18 @@ pub(crate) enum Profile {
     Overlay,
 }
 
-/// Compare the complete existing shaping/layout key without allocating a copy.
-/// Position and default color belong to glyph placement, not this buffer key.
+/// Rich spans replace plain fallback text in the production shaper.
+fn shaping_text(run: &TextRun) -> &str {
+    if run.rich_spans.is_empty() {
+        &run.text
+    } else {
+        ""
+    }
+}
+
+/// Compare shaping/layout dependencies without allocating a key copy.
 fn matches_run(key: &TextBufferKey, run: &TextRun, (width_px, height_px): (u32, u32)) -> bool {
-    key.text == run.text
+    key.text == shaping_text(run)
         && key.size_bits == run.size.to_bits()
         && key.face == run.face
         && key.width_px == width_px
@@ -196,7 +204,7 @@ fn shape_fingerprint<'a>(
 
 fn run_fingerprint(run: &TextRun) -> u64 {
     shape_fingerprint(
-        &run.text,
+        shaping_text(run),
         run.size.to_bits(),
         run.face,
         run.rich_spans

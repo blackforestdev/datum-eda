@@ -1,0 +1,58 @@
+{
+  "status": "Rich shaping keys omit non-rendered fallback; width cache owns allocation-inclusive costs; full text qualification remains open",
+  "base_commit": "9d447d8a",
+  "production_consumers": [
+    "Shared TextBufferCache exact comparison, borrowed fingerprint and owned key construction for workspace/dialog/terminal rich runs",
+    "Thread-local scalar width/wrapped-height measurement cache admission and ownership reporting"
+  ],
+  "retired_paths": [
+    "Duplicating and hashing plain fallback text that TextLayout ignores when rich spans exist",
+    "Width-cache retained totals and byte admission that omit ring/key allocation headers"
+  ],
+  "behavior": [
+    "Use one canonical plain-text component: exact run.text for plain runs, empty for rich runs whose spans are authoritative. Retain/hash/compare only actual span text/style in rich keys. Preserve legacy extent derivation, font/size authority, paint, clipping and layout behavior. A fallback-only change can still affect explicitly derived extent; it no longer changes shaping identity.",
+    "Track boxed-key allocation cost separately from key text length. Charge Datum headers/alignment and full ring capacity in the existing 128 KiB total-owned allowance, while preserving 256 entries and 64 KiB key text. Eviction removes the exact charged box cost; release returns scoped payload/header ownership to zero."
+  ],
+  "dependency_audit": {
+    "font_catalog_locale": "load_datum_fonts constructs one process OnceLock catalog/locale; measurement and renderer systems clone it. Production db_mut occurs only while installing the initial embedded sources. No public TextRun locale/font-reload/revision controls exist.",
+    "shape_inputs": "Plain text or exact rich span text, face, size, span bold/italic. Basic shaping, tab width 8 and process locale are fixed. Direction follows exact paragraph input. Rich colors remain live paint.",
+    "layout_inputs": "Physical width/height extent, size-derived 1.22 line height, WordOrGlyph wrapping and default alignment. Placement/clip/target/atlas dependencies remain in layout or GPU preparation as appropriate.",
+    "boundary": "This identifies current immutable authority and mutable inputs; it does not claim dynamic font reload, arbitrary shaping feature support or the original independent S5 dependency qualification."
+  },
+  "proof": {
+    "renderer": "340 renderer tests pass, 11 diagnostic/visual cases filtered. Actual scoped allocator proof reconciles width-cache ring and string payload/header costs through 600 growth/eviction operations and final release. Rich key proof verifies zero retained fallback capacity, unchanged shared shaping on fallback edits and a miss when visible span text changes. GPU rich-paint test verifies fallback-only edits preserve pixels, cache revision and glyph prepare count, followed by correct rich-color updates.",
+    "lint_build": "Strict renderer/app visual all-targets Clippy and fresh application build pass. Source health 2272, dependency authority and governance checks pass. Initial test compilation needed an explicit usize sum type; fixed and failed log preserved.",
+    "scope": "No native input or benchmark campaign. Full drift not rerun; recorded Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Earlier width payload completion did not include Datum allocation headers; this production correction repairs that omission and preserves its historical evidence. Measurement registry, private font/shaping scratch and native/RSS observations remain separate broader accounting boundaries.",
+    "Current-frame/source TextRun still owns any fallback string; only the retained shaping key removes its redundant copy. No claim that all GUI text allocations disappear or that measured frame latency improved.",
+    "No new predicate, S4/S5 or issue closure; sixteen recorded implementation gaps remain. Preserve original dependency qualification, GEFN, nonblocking resize and concurrent multi-device boundaries. No dependency, vendor, license, prototype, numerical specification cap or sequencing change."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/tests.log.gz",
+      "uncompressed_sha256": "24d9f0df9d9f91710f0a471528e25c238185509614d59df0ed452a24baa12d17"
+    },
+    "compile-error": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/compile-error.log.gz",
+      "uncompressed_sha256": "3285ae9186c1c98d7d060f08cdd041fd7a83b6fdb5f2f4a06474bd70d80717be"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/clippy.log.gz",
+      "uncompressed_sha256": "77b937c591d8dfa40760caba6de656244804933f8ecc5ecd6c3b0173ceaf673d"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-key-ownership/build.log.gz",
+      "uncompressed_sha256": "99e129af087e9e652208fd9a8c3a725ce5d34c33f656e6aa30d13e5151ead3de"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_text_paint_tests.rs": "062b90b1d4ceb202e253e53011519f4c60a6f804879b1d003e14027096243622",
+    "crates/gui-render/src/render/measurement_cache.rs": "3157df70c04241c528b535fed6d826f5d0ed74702c2aea7d2f11c5e73caae895",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "afe89ac00b625b465d52b4ca5a8868d9bfd44015c254ca142617c42fae661925",
+    "crates/gui-render/src/render/text_cache_retention_tests.rs": "2ea3ca063d45c7a9f1596265a2bfbeb3e49fde7542153d73d0e3be6e3522c35f",
+    "crates/gui-render/src/render/measurement_heap_tests.rs": "1c9457167c23f70819de35b9641f143418a32801a6ef785bc8d64e1aefabf9db"
+  }
+}
