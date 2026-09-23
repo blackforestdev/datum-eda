@@ -243,6 +243,7 @@ fn terminal_pixels_yield_with_bounded_padded_staging_and_resume_current_content(
                 - renderer.renderer.pending_glyph_pixel_bytes()
                 - renderer.renderer.screen_upload_metadata_bytes()
                 - renderer.renderer.screen_upload_snapshot_bytes()
+                - renderer.renderer.glyph_upload_storage_bytes()
                 <= 4 * 1024 * 1024
         );
         renderer
@@ -255,6 +256,7 @@ fn terminal_pixels_yield_with_bounded_padded_staging_and_resume_current_content(
                 + renderer.renderer.pending_glyph_pixel_bytes()
                 + renderer.renderer.screen_upload_metadata_bytes()
                 + renderer.renderer.screen_upload_snapshot_bytes()
+                + renderer.renderer.glyph_upload_storage_bytes()
         );
         if attempt == 0 {
             let filler = renderer

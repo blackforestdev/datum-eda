@@ -1,0 +1,56 @@
+{
+  "status": "Glyph instance preparation, snapshots and batch capacities admitted; private text and other accounting remain open",
+  "base_commit": "ad8560ef",
+  "production_consumers": [
+    "Shared workspace and overlay Draw owners serving default native and offscreen text rendering"
+  ],
+  "retired_paths": [
+    "Infallible unbudgeted glyph-instance and painter-order batch Vec growth",
+    "Uncharged glyph comparison snapshot and allocation/shrink during commit to snapshot"
+  ],
+  "behavior": [
+    "Instance and painter-order batch construction use shared StagingVec fallible growth under host16MiB/process64MiB staging limits, including old/new growth overlap and Datum headers. Adjacent-page batching and exact dirty-word emission are unchanged.",
+    "Prepared instances move directly into the submitted comparison snapshot. Logical data remains exact; spare capacity is explicitly charged instead of undergoing another allocation/shrink. Failed preparation keeps the submitted snapshot and marks preparation invalid for rendering.",
+    "glyph_upload_storage_bytes reports both draw owners' pending instances, submitted snapshots and batch capacities. Existing staging oracles separately include these CPU capacities without changing GPU copy limits."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 372 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.06s",
+    "focused": "test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 381 filtered out; finished in 0.76s",
+    "checks": "Full372-pass renderer proof covers unchanged production code. Afterwards the existing large-glyph test was extended with pressure/refusal/retry/release checks; both focused Draw GPU tests passed, followed by strict visual renderer/app all-target Clippy and fresh GUI build. Application tests were not rerun.",
+    "coverage": "Actual GPU parity, large glyph exact dirty-word reuse, atlas/instance replacement and continuation remain passing. The added pressure case fills remaining staging admission, confirms snapshot pointer/bytes and GPU allocation identity survive refusal, retries the same text with only the changed color word uploaded, and verifies CPU draw ownership releases independently of still-pending atlas pixels."
+  },
+  "limits": [
+    "No full MEM-STAGING/ACC-02, S4/S5 or issue closure. Private font/raster/shaping/layout construction peaks, atlas/page/global observation metadata, large-work continuation/admission and complete original qualification remain unfinished. Inventory remains16 implemented/11 recorded gaps/23 with no new defect asserted.",
+    "Spare instance and reusable batch capacities remain charged. No latency/global performance acceptance or full allocation-failure qualification is claimed.",
+    "Original qualification and historical failed evidence, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-storage/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-storage/renderer.log.gz",
+      "uncompressed_sha256": "fb6eb8f85f3c080bcf024780e7af9462a6289cf7f3fdde89e5e00a6b2644b65c"
+    },
+    "focused": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-storage/focused.log.gz",
+      "uncompressed_sha256": "ef884bdf044b922348e144198eedb4c0499aa26f315e63f228866123a66e12b9"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-storage/clippy.log.gz",
+      "uncompressed_sha256": "46f532e4d2e0641a040a5ec59d1b174cd797279ee3c3ce0edec4db82fbc26a4a"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-storage/build.log.gz",
+      "uncompressed_sha256": "20753ec92766b7a59faa65c4e579577a4a2610ddc960fa9e59d08929066e6efc"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "b446ff89ec3b0091e349e6b63c630abbec6f03532b7a3dede79e550d01237279",
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "4a42fe88f8ed59e9cc06e57eed75518fd53f691e925d1aa331e989eed43baa15",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "c599ee5a9648a889fb46b7b04b683a75cfda3e77d9a49bc2cda7c40f6596b27f",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "8e0d9224e38df36814c75e007c717a8b3465332727407a107677058437473f4b",
+    "crates/gui-render/src/render/gpu_vertex_upload.rs": "4965d0dca541699396fd0e6f0bc69612e8277774eef999cfa8f25d97cba1dce9",
+    "crates/gui-render/src/text_gpu/draw.rs": "9507542a75527ad75c76c458a8cc312625c1803797c697598c6b899ff4171e62",
+    "crates/gui-render/src/text_gpu/draw_generation_tests.rs": "381f4ea0f83b6e2597e19d561fe64291f83374781f479e12160f6e47f0225d2c",
+    "crates/gui-render/src/text_gpu/staging_vec.rs": "5d331d20b37b2b9d8e1f2097beee4e78a6ebbf89ff2d2d1e5477b4b563330911"
+  }
+}

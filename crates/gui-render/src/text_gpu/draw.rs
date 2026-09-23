@@ -1,4 +1,5 @@
 //! Original instance-based glyph drawing over Datum's texture-page owner.
+use super::staging_vec::StagingVec;
 use std::ops::Range;
 
 use glyphon::{Color, FontSystem, LayoutRun, SwashCache, TextBounds};
@@ -30,9 +31,9 @@ pub(crate) struct Draw {
     generation_budget: std::sync::Arc<super::budget::Budget>,
     pipeline: wgpu::RenderPipeline,
     instances: Option<Tracked<wgpu::Buffer>>,
-    batches: Vec<(usize, Range<u32>)>,
-    snapshot: Box<[Instance]>,
-    pending_instances: Option<Vec<Instance>>,
+    batches: StagingVec<(usize, Range<u32>)>,
+    snapshot: StagingVec<Instance>,
+    pending_instances: Option<StagingVec<Instance>>,
     generation: Option<u64>,
     pub upload_bytes: u64,
 }
@@ -88,8 +89,8 @@ impl Draw {
             generation_budget: super::budget::Budget::new(2),
             pipeline,
             instances: None,
-            batches: Vec::new(),
-            snapshot: Box::default(),
+            batches: Default::default(),
+            snapshot: Default::default(),
             pending_instances: None,
             generation: None,
             upload_bytes: 0,
@@ -124,7 +125,7 @@ impl Draw {
         self.batches.clear();
         self.upload_bytes = 0;
         anyhow::ensure!(!resolution.contains(&0), "zero text target extent");
-        let mut instances = Vec::new();
+        let mut instances = StagingVec::default();
         for area in areas {
             let bounds = [
                 area.bounds.left.max(0),
@@ -157,29 +158,32 @@ impl Draw {
                         continue;
                     }
                     let index = instances.len() as u32;
-                    instances.push(Instance {
-                        rect: [
-                            2.0 * left as f32 / resolution[0] as f32 - 1.0,
-                            1.0 - 2.0 * top as f32 / resolution[1] as f32,
-                            2.0 * (right - left) as f32 / resolution[0] as f32,
-                            -2.0 * (bottom - top) as f32 / resolution[1] as f32,
-                        ],
-                        tex: [
-                            location.origin[0] + (left - x) as u32,
-                            location.origin[1] + (top - y) as u32,
-                            (right - left) as u32,
-                            (bottom - top) as u32,
-                        ],
-                        color: glyph
-                            .metadata
-                            .checked_sub(1)
-                            .and_then(|index| area.rich_spans.get(index))
-                            .map(|span| crate::text_color(span.color))
-                            .or(glyph.color_opt)
-                            .unwrap_or(area.default_color)
-                            .0,
-                        is_color: u32::from(location.color),
-                    });
+                    instances.try_push(
+                        Instance {
+                            rect: [
+                                2.0 * left as f32 / resolution[0] as f32 - 1.0,
+                                1.0 - 2.0 * top as f32 / resolution[1] as f32,
+                                2.0 * (right - left) as f32 / resolution[0] as f32,
+                                -2.0 * (bottom - top) as f32 / resolution[1] as f32,
+                            ],
+                            tex: [
+                                location.origin[0] + (left - x) as u32,
+                                location.origin[1] + (top - y) as u32,
+                                (right - left) as u32,
+                                (bottom - top) as u32,
+                            ],
+                            color: glyph
+                                .metadata
+                                .checked_sub(1)
+                                .and_then(|index| area.rich_spans.get(index))
+                                .map(|span| crate::text_color(span.color))
+                                .or(glyph.color_opt)
+                                .unwrap_or(area.default_color)
+                                .0,
+                            is_color: u32::from(location.color),
+                        },
+                        &atlas.staging_budget,
+                    )?;
                     // Only adjacent glyphs are batched; overlapping text retains
                     // the caller's painter order even across mask/color pages.
                     if let Some((_, range)) = self
@@ -189,7 +193,8 @@ impl Draw {
                     {
                         range.end = index + 1;
                     } else {
-                        self.batches.push((location.page, index..index + 1));
+                        self.batches
+                            .try_push((location.page, index..index + 1), &atlas.staging_budget)?;
                     }
                 }
             }
@@ -197,7 +202,7 @@ impl Draw {
         let required = (instances.len() * std::mem::size_of::<Instance>()) as u64;
         if required == 0 {
             self.instances = None;
-            self.snapshot = Box::default();
+            self.snapshot = Default::default();
         } else if self.instances.as_ref().is_none_or(|buffer| {
             required > buffer.size() || buffer.size() > required.saturating_mul(4)
         }) {
@@ -225,7 +230,7 @@ impl Draw {
                 Kind::Instances,
                 reservation,
             ));
-            self.snapshot = Box::default();
+            self.snapshot = Default::default();
         }
         self.pending_instances = Some(instances);
         self.generation = Some(atlas.generation);
@@ -268,10 +273,9 @@ impl Draw {
     pub fn finish_uploads(&mut self, bytes: u64) {
         self.upload_bytes = bytes;
         if let Some(instances) = self.pending_instances.take() {
-            // Every prepared payload has passed screen/process GPU admission.
-            // Retain its exact length for dirty comparisons, without spare Vec
-            // capacity or a size cutoff that forces subsequent full transfers.
-            self.snapshot = instances.into_boxed_slice();
+            // Move the already admitted CPU allocation into the comparison
+            // baseline without another allocation or an uncharged shrink.
+            self.snapshot = instances;
         }
     }
 
@@ -281,6 +285,15 @@ impl Draw {
         let bytes = self.append_uploads(&mut uploads);
         super::upload::submit_buffers_for_test(device, queue, &uploads);
         self.finish_uploads(bytes);
+    }
+
+    pub(crate) fn cpu_storage_bytes(&self) -> u64 {
+        self.batches.allocated_bytes()
+            + self.snapshot.allocated_bytes()
+            + self
+                .pending_instances
+                .as_ref()
+                .map_or(0, StagingVec::allocated_bytes)
     }
 
     pub fn submission_ref(&self) -> Option<SubmissionRef> {
@@ -295,7 +308,7 @@ impl Draw {
         if let Some(instances) = &self.instances {
             pass.set_pipeline(&self.pipeline);
             pass.set_vertex_buffer(0, instances.slice(..));
-            for (page, range) in &self.batches {
+            for (page, range) in self.batches.iter() {
                 pass.set_bind_group(0, &atlas.pages[*page].bind_group, &[]);
                 pass.draw(0..6, range.clone());
             }
