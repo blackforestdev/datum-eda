@@ -64,4 +64,32 @@ mod tests {
             }
         }
     }
+    #[test]
+    #[cfg(feature = "visual")]
+    #[ignore = "requires local GPU; inspector width adoption and rendered review"]
+    fn selected_inspector_uses_measured_width_and_stays_warm() {
+        let mut state = datum_gui_protocol::load_fixture_workspace_state();
+        state.selection = SelectionTarget::ReviewAction("action-1".into());
+        let rect = RectPx {
+            x: 400.0,
+            y: 80.0,
+            width: 300.0,
+            height: 400.0,
+        };
+        let mut quads = Vec::new();
+        let mut text = Vec::new();
+        let mut hits = Vec::new();
+        render_active_inspector(&state, rect, &mut quads, &mut text, &mut hits);
+        let label = text.iter().find(|run| run.text == "SELECTED").unwrap();
+        let actual_right =
+            label.x + measured_text_run_width_px(&label.text, label.size, label.face);
+        assert!((actual_right - (rect.x + rect.width - 12.0 - 7.0)).abs() < 0.001);
+        let mut renderer =
+            crate::visual::visual_capture::OffscreenRenderer::new(1280, 800).unwrap();
+        let cold = renderer.render_workspace(&state, None).unwrap();
+        assert_eq!(cold, renderer.render_workspace(&state, None).unwrap());
+        if let Ok(path) = std::env::var("PM045_INSPECTOR_CAPTURE") {
+            cold.save(path).unwrap();
+        }
+    }
 }

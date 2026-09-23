@@ -35,7 +35,7 @@ fn push_inspector_title_band(
     if show_pill {
         let label = "SELECTED";
         let pad_x = 7.0_f32;
-        let text_w = estimated_text_run_width_px(label, 10.0, TextFace::UiMedium) - 16.0;
+        let text_w = measured_text_run_width_px(label, 10.0, TextFace::UiMedium);
         let pill = RectPx {
             x: rect.x + rect.width - 12.0 - (text_w + pad_x * 2.0),
             y: band_top - 1.0,

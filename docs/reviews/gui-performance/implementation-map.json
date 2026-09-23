@@ -6671,14 +6671,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Reconcile the mapped INSPECTOR consumer: push_inspector_title_band still sizes SELECTED with estimated_text_run_width_px rather than the shared exact measurement owner. Preserve required appearance and record actual adoption; helper dependency proofs do not close this consumer gap."
-        ],
+        "implementation_due": "Implemented at S4 for current shared width owner and mapped inspector consumer; original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "Warm zero shaping; miss correct changed key; uncached width parity",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "Width dependency/adoption implementation complete; original qualification remains unqualified.",
+        "s4_implementation_evidence": "s4_inspector_width_completion"
       },
       "s4_implementation_progress": [
         {
@@ -6690,6 +6689,11 @@
           "work": "s4_width_dependency_review",
           "evidence": "docs/reviews/gui-performance/implementation/S4/width-dependencies/result.json",
           "status": "Multiline measurement reuses call-local layout scratch; HP15-01 remains open for inspector consumer reconciliation"
+        },
+        {
+          "work": "s4_inspector_width_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/inspector-width/result.json",
+          "status": "HP15-01 current production width dependency/adoption implementation complete; original qualification remains S5"
         }
       ]
     },
@@ -31750,10 +31754,10 @@
   "s4_carried_work_inventory": {
     "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
     "carried_rows": 50,
-    "rows_with_recorded_implementation_gaps": 14,
+    "rows_with_recorded_implementation_gaps": 13,
     "rows_with_no_new_implementation_defect_asserted": 23,
     "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change.",
-    "rows_with_implementation_completed_at_s4": 13,
+    "rows_with_implementation_completed_at_s4": 14,
     "completed_at_s4": [
       "MEM-WIDTH-ENTRIES",
       "MEM-WIDTH-KEYS",
@@ -31767,7 +31771,8 @@
       "MEM-LABEL-ENTRIES",
       "MEM-LABEL-KEYS",
       "REUSE-TEXT-KEY",
-      "REUSE-TEXT-LAYOUT"
+      "REUSE-TEXT-LAYOUT",
+      "HP15-01"
     ]
   },
   "s4_control_retained_cpu_work": {
@@ -33678,5 +33683,34 @@
       "Private font/raster storage, construction peaks and full resource accounting remain separate open work. No appearance, prototype, dependency, vendor, license, cap or sequencing change; preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/width-dependencies/result.json"
+  },
+  "s4_inspector_width_completion": {
+    "status": "HP15-01 current production width dependency/adoption implementation complete; original qualification remains S5",
+    "base_commit": "7bf4e0c2",
+    "production_consumers": [
+      "Inspector routing-review SELECTED title badge now uses measured_text_run_width_px",
+      "Existing Global/Project shared Preferences, menu chrome and input label consumers retain the same width owner"
+    ],
+    "retired_paths": [
+      "Inspector badge width derived from character count and estimated padding subtraction"
+    ],
+    "behavior": [
+      "Use actual shared font/size measurement for the title badge while preserving 7 px horizontal padding, 12 px right inset, existing height/color and painter order. Default thread-local width reuse handles warm inspector preparation; no new cache."
+    ],
+    "visual_review": {
+      "reference": "Rendered docs/gui/prototypes/schematic-editor.html with installed Chromium at 1536x1100 and inspected the inspector title/badge treatment. Its historical-study marker is not a current product decision or a literal SELECTED label prescription. Use as the owner-requested visual guide, preserving current production controls.",
+      "production": "Rendered real fixture workspace with routing-review selection at 1280x800 through production OffscreenRenderer. Inspected compact right-aligned SELECTED badge with visible padding and unchanged inspector content hierarchy. This is GPU offscreen output, not native OS-input qualification.",
+      "prototype_edits": "None; Claude-owned HTML unchanged."
+    },
+    "proof": {
+      "focused": "One actual GPU inspector adoption regression passed, 354 filtered. Actual rendered-text right edge equals the intended panel inset plus padding; cold and warm workspace pixels are identical. Existing width key/parity and thread ownership proof remains in S4/width-dependencies and text-key-ownership.",
+      "lint_build": "Strict renderer/app visual all-targets Clippy, fresh application build, source health 2272, dependency authority and governance pass.",
+      "scope": "No broad benchmark, full renderer/native/backend matrix or drift rerun. Prior Console golden discrepancy remains open."
+    },
+    "limits": [
+      "HP15-01 implementation closes for current mapped consumers only; original planned qualification status, adapter negatives and S5 acceptance remain unqualified. No global adoption claim.",
+      "HP15-02 resource accounting, construction peaks/private storage and all other S4 gaps remain. Thirteen recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/inspector-width/result.json"
   }
 }
