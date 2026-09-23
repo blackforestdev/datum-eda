@@ -51,6 +51,7 @@ pub(crate) struct SurfaceAttachment {
 /// replacement and close are not themselves completion signals.
 pub(crate) struct SurfaceAttachments {
     owner: Owner,
+    generations: Arc<crate::text_gpu::budget::Budget>,
     allocations: u64,
     current: Option<SurfaceAttachment>,
     #[cfg(all(test, feature = "visual", target_os = "linux"))]
@@ -58,8 +59,14 @@ pub(crate) struct SurfaceAttachments {
 }
 impl Default for SurfaceAttachments {
     fn default() -> Self {
+        Self::with_generations(crate::text_gpu::budget::Budget::new(2))
+    }
+}
+impl SurfaceAttachments {
+    fn with_generations(generations: Arc<crate::text_gpu::budget::Budget>) -> Self {
         Self {
             owner: Owner::new(),
+            generations,
             allocations: 0,
             current: None,
             #[cfg(all(test, feature = "visual", target_os = "linux"))]
@@ -68,6 +75,10 @@ impl Default for SurfaceAttachments {
     }
 }
 impl SurfaceAttachments {
+    pub(super) fn replacement(&self) -> Self {
+        Self::with_generations(self.generations.clone())
+    }
+
     pub(super) fn submission_ref(&self) -> Option<SubmissionRef> {
         self.current
             .as_ref()
@@ -115,6 +126,9 @@ impl SurfaceAttachments {
             let bytes = key.payload_bytes().ok_or_else(|| {
                 anyhow::anyhow!("surface attachment extent or format cannot be accounted")
             })?;
+            let generation = self.generations.reserve(1).map_err(|_| {
+                anyhow::anyhow!("attachment generation limit reached: one current and one retiring")
+            })?;
             let permit = crate::text_gpu::budget::gpu_process().reserve(bytes)?;
             let texture = device.create_texture(&wgpu::TextureDescriptor {
                 label: Some("datum-gui-render-msaa"),
@@ -135,15 +149,19 @@ impl SurfaceAttachments {
                 .checked_add(1)
                 .expect("attachment allocation exhausted");
             anyhow::ensure!(healthy(), "surface attachment allocation failed");
+            let view = texture.create_view(&wgpu::TextureViewDescriptor::default());
+            // The tracked view must be the final local handle before a later
+            // health failure can release its byte and generation reservations.
+            drop(texture);
             let replacement = SurfaceAttachment {
                 key,
                 allocation: self.allocations,
                 view: Arc::new(self.owner.track_with_permits(
-                    texture.create_view(&wgpu::TextureViewDescriptor::default()),
+                    view,
                     bytes,
                     self.allocations,
                     Kind::Attachment,
-                    vec![permit],
+                    vec![generation, permit],
                 )),
             };
             // Backend error callbacks may report allocation/validation failure
@@ -161,6 +179,12 @@ impl SurfaceAttachments {
 }
 
 impl Renderer {
+    /// This host's creating, current and submitted-retiring attachment generations.
+    /// Same-host device replacement preserves this allowance.
+    pub fn surface_attachment_reserved_generations(&self) -> u64 {
+        self.surface_attachments.generations.used()
+    }
+
     /// Observe this host's current and submitted-retiring attachment capacities.
     /// Survives renderer close without keeping the GPU allocation alive.
     pub fn surface_attachment_allocation_observer(&self) -> Observer {
@@ -260,6 +284,11 @@ mod tests {
                     })
                     .is_err()
             );
+            assert_eq!(
+                owner.generations.used(),
+                1,
+                "failed replacement releases generation admission"
+            );
             let retained = owner.snapshot().unwrap();
             assert_eq!(retained.allocation, first.allocation);
             assert_eq!(retained.extent, first.extent);
@@ -274,6 +303,48 @@ mod tests {
         assert_eq!(recovered.allocations_created, 4);
         assert_ne!(recovered.allocation, first.allocation);
         assert_eq!(recovered.owner, first.owner);
+    }
+
+    #[cfg(all(feature = "visual", target_os = "linux"))]
+    #[test]
+    fn third_attachment_generation_waits_for_retirement_even_after_recovery() {
+        let instance = wgpu::Instance::default();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let (device, _) = pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let mut owner = SurfaceAttachments::default();
+        let generations = owner.generations.clone();
+        let format = wgpu::TextureFormat::Rgba8Unorm;
+        owner
+            .ensure(&device, AttachmentKey::new(32, 32, format, 4))
+            .unwrap();
+        let first = owner.submission_ref().unwrap();
+        owner
+            .ensure(&device, AttachmentKey::new(64, 32, format, 4))
+            .unwrap();
+        let second = owner.submission_ref().unwrap();
+        let current = owner.snapshot().unwrap();
+        let third_key = AttachmentKey::new(64, 64, format, 4);
+        assert_eq!(generations.used(), 2);
+        assert!(owner.ensure(&device, third_key).is_err());
+        assert_eq!(
+            owner.snapshot(),
+            Some(current),
+            "refuse before API allocation/publication"
+        );
+        let mut replacement = owner.replacement();
+        assert!(replacement.ensure(&device, third_key).is_err());
+        drop(owner);
+        assert_eq!(generations.used(), 2, "close is not submission completion");
+        drop(first);
+        replacement.ensure(&device, third_key).unwrap();
+        assert_eq!(generations.used(), 2);
+        let stable = replacement.snapshot().unwrap();
+        replacement.ensure(&device, third_key).unwrap();
+        assert_eq!(replacement.snapshot(), Some(stable));
+        drop(second);
+        assert_eq!(generations.used(), 1);
+        drop(replacement);
+        assert_eq!(generations.used(), 0);
     }
 
     #[cfg(all(feature = "visual", target_os = "linux"))]
