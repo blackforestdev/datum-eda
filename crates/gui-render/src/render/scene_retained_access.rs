@@ -76,7 +76,9 @@ impl RetainedScene {
     pub fn world_vertices(&self) -> &[Vertex] {
         &self.world_vertices
     }
-    pub(crate) fn world_strokes(&self) -> &std::sync::Arc<[WorldStrokeInstance]> {
+    pub(crate) fn world_strokes(
+        &self,
+    ) -> &gpu_data::shared_geometry::SharedGeometry<WorldStrokeInstance> {
         &self.world_strokes
     }
 
@@ -227,8 +229,10 @@ impl RetainedScene {
                 HitTarget::AuthoredObject(id) => Some(id.capacity()),
                 _ => None,
             })?;
-        let mut bytes = std::mem::size_of_val(self.world_vertices.as_ref())
-            .checked_add(std::mem::size_of_val(self.world_strokes.as_ref()))?
+        let mut bytes = self
+            .world_vertices
+            .heap_bytes()
+            .checked_add(self.world_strokes.heap_bytes())?
             .checked_add(
                 self.draw_commands
                     .capacity()
