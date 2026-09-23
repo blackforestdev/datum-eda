@@ -1,11 +1,19 @@
 //! Materialize one selected row; no subsequent row is visited or allocated.
+use super::super::allocation::{Admission, ProducedLine, Storage};
 use super::Row;
+use crate::text_gpu::staging_vec::StagingVec;
 use glyphon::{LayoutGlyph, LayoutLine, ShapeLine};
 
-pub(super) fn materialize(shape: &ShapeLine, row: &Row, size: f32, width: u32) -> LayoutLine {
+pub(super) fn materialize(
+    shape: &ShapeLine,
+    row: &Row,
+    size: f32,
+    width: u32,
+    admission: &Admission<'_>,
+) -> anyhow::Result<ProducedLine> {
     // Equal embedding levels form indivisible runs. Reorder those runs, leaving
     // glyph order within the shaped span under the shaper's authority.
-    let mut runs: Vec<std::ops::Range<usize>> = Vec::new();
+    let mut runs: StagingVec<std::ops::Range<usize>> = StagingVec::default();
     let last = (row.end.span + usize::from(row.end.word != 0 || row.end.glyph != 0))
         .min(shape.spans.len());
     for s in row.start.span..last {
@@ -14,7 +22,7 @@ pub(super) fn materialize(shape: &ShapeLine, row: &Row, size: f32, width: u32) -
         {
             run.end = s + 1;
         } else {
-            runs.push(s..s + 1);
+            runs.try_push(s..s + 1, admission.host)?;
         }
     }
     let low = runs
@@ -52,9 +60,10 @@ pub(super) fn materialize(shape: &ShapeLine, row: &Row, size: f32, width: u32) -
         line_height_opt: None,
         glyphs: Vec::new(),
     };
+    let mut glyphs = Storage::default();
     let mut x = if shape.rtl { width as f32 } else { 0.0 };
     let mut y = 0.0;
-    for span_index in runs.into_iter().flatten() {
+    for span_index in runs.iter().flat_map(|run| run.clone()) {
         let span = &shape.spans[span_index];
         let reverse = span.level.is_rtl() != shape.rtl;
         let first_word = if span_index == row.start.span {
@@ -108,24 +117,27 @@ pub(super) fn materialize(shape: &ShapeLine, row: &Row, size: f32, width: u32) -
                     x -= advance;
                 }
                 let line_height = glyph.metrics_opt.map(|metrics| metrics.line_height);
-                result.glyphs.push(LayoutGlyph {
-                    font_size,
-                    x,
-                    y,
-                    w: advance,
-                    level: span.level,
-                    start: glyph.start,
-                    end: glyph.end,
-                    font_id: glyph.font_id,
-                    font_weight: glyph.font_weight,
-                    glyph_id: glyph.glyph_id,
-                    x_offset: glyph.x_offset,
-                    y_offset: glyph.y_offset,
-                    color_opt: glyph.color_opt,
-                    metadata: glyph.metadata,
-                    cache_key_flags: glyph.cache_key_flags,
-                    line_height_opt: line_height,
-                });
+                glyphs.push(
+                    LayoutGlyph {
+                        font_size,
+                        x,
+                        y,
+                        w: advance,
+                        level: span.level,
+                        start: glyph.start,
+                        end: glyph.end,
+                        font_id: glyph.font_id,
+                        font_weight: glyph.font_weight,
+                        glyph_id: glyph.glyph_id,
+                        x_offset: glyph.x_offset,
+                        y_offset: glyph.y_offset,
+                        color_opt: glyph.color_opt,
+                        metadata: glyph.metadata,
+                        cache_key_flags: glyph.cache_key_flags,
+                        line_height_opt: line_height,
+                    },
+                    admission.owner,
+                )?;
                 if !shape.rtl {
                     x += advance;
                 }
@@ -139,8 +151,13 @@ pub(super) fn materialize(shape: &ShapeLine, row: &Row, size: f32, width: u32) -
             }
         }
     }
+    let (values, construction) = glyphs.into_parts();
+    result.glyphs = values;
     if result.glyphs.is_empty() {
         result.line_height_opt = shape.metrics_opt.map(|m| m.line_height);
     }
-    result
+    Ok(ProducedLine {
+        layout: result,
+        construction,
+    })
 }

@@ -1,5 +1,10 @@
 //! Retained plain/rich shaping and visible layout owned by Datum.
 use std::sync::Arc;
+#[path = "text_layout_allocation.rs"]
+mod allocation;
+use crate::text_buffer_cache::budget::Construction;
+pub(crate) use allocation::Admission;
+use allocation::Storage;
 #[path = "font_owner.rs"]
 pub(crate) mod fonts;
 
@@ -16,6 +21,7 @@ mod streaming_rows;
 struct Row {
     paragraph: usize,
     layout: LayoutLine,
+    construction: Option<Construction>,
     top: f32,
     baseline: f32,
     height: f32,
@@ -23,9 +29,10 @@ struct Row {
 
 #[derive(Default)]
 pub(crate) struct TextLayout {
-    shapes: Vec<Arc<fonts::Shape>>,
-    rows: Vec<Row>,
+    shapes: Storage<Arc<fonts::Shape>>,
+    rows: Storage<Row>,
     complete: bool,
+    valid: bool,
 }
 
 impl TextLayout {
@@ -39,10 +46,11 @@ impl TextLayout {
         run: &TextRun,
         extent: (u32, u32),
         rich_text: &str,
-    ) -> Self {
+        admission: &Admission<'_>,
+    ) -> anyhow::Result<Self> {
         let mut result = Self::default();
-        result.relayout_with_input(fonts, scratch, run, extent, rich_text);
-        result
+        result.relayout_with_input(fonts, scratch, run, extent, rich_text, admission)?;
+        Ok(result)
     }
 
     pub fn relayout_with_input(
@@ -52,15 +60,20 @@ impl TextLayout {
         run: &TextRun,
         extent: (u32, u32),
         rich_text: &str,
-    ) {
-        self.relayout_with_attrs(
+        admission: &Admission<'_>,
+    ) -> anyhow::Result<()> {
+        self.valid = false;
+        let result = self.relayout_with_attrs(
             fonts,
             scratch,
             run,
             extent,
             &text_attrs(run.face),
             rich_text,
+            admission,
         );
+        self.valid = result.is_ok();
+        result
     }
 
     #[cfg(test)]
@@ -75,7 +88,21 @@ impl TextLayout {
             .iter()
             .map(|span| span.text.as_str())
             .collect();
-        Self::with_input(fonts, scratch, run, extent, &text)
+        {
+            let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
+            Self::with_input(
+                fonts,
+                scratch,
+                run,
+                extent,
+                &text,
+                &Admission {
+                    owner: None,
+                    host: &host,
+                },
+            )
+            .unwrap()
+        }
     }
 
     #[cfg(test)]
@@ -91,7 +118,19 @@ impl TextLayout {
             .iter()
             .map(|span| span.text.as_str())
             .collect();
-        self.relayout_with_input(fonts, scratch, run, extent, &text);
+        let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
+        self.relayout_with_input(
+            fonts,
+            scratch,
+            run,
+            extent,
+            &text,
+            &Admission {
+                owner: None,
+                host: &host,
+            },
+        )
+        .unwrap();
     }
 
     // Explicit-font oracle only; production font authority remains TextFace.
@@ -109,7 +148,21 @@ impl TextLayout {
             .iter()
             .map(|span| span.text.as_str())
             .collect();
-        result.relayout_with_attrs(fonts, scratch, run, extent, attrs, &text);
+        let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
+        result
+            .relayout_with_attrs(
+                fonts,
+                scratch,
+                run,
+                extent,
+                attrs,
+                &text,
+                &Admission {
+                    owner: None,
+                    host: &host,
+                },
+            )
+            .unwrap();
         result
     }
 
@@ -122,22 +175,24 @@ impl TextLayout {
         extent: (u32, u32),
         attrs: &glyphon::Attrs<'_>,
         rich_text: &str,
-    ) {
+        admission: &Admission<'_>,
+    ) -> anyhow::Result<()> {
         self.rows.clear();
         let mut top = 0.0;
         let cached = self.shapes.len();
         for index in 0..cached {
-            if !self.append_layout(scratch, run, extent, index, &mut top) {
-                return;
+            if !self.append_layout(scratch, run, extent, index, &mut top, admission)? {
+                return Ok(());
             }
         }
         if self.complete {
-            return;
+            return Ok(());
         }
-        let mut process = |text: &str, attributes: AttrsList| -> bool {
+        let mut process = |text: &str, attributes: AttrsList| -> anyhow::Result<bool> {
             let index = self.shapes.len();
-            self.shapes.push(Arc::new(fonts.shape(text, &attributes)));
-            self.append_layout(scratch, run, extent, index, &mut top)
+            self.shapes
+                .push(Arc::new(fonts.shape(text, &attributes)), admission.owner)?;
+            self.append_layout(scratch, run, extent, index, &mut top, admission)
         };
         if run.rich_spans.is_empty() {
             let trailing = run.text.is_empty() || run.text.ends_with(['\r', '\n']);
@@ -146,8 +201,8 @@ impl TextLayout {
                 .chain(trailing.then_some(""))
                 .skip(cached)
             {
-                if !process(paragraph, AttrsList::new(attrs)) {
-                    return;
+                if !process(paragraph, AttrsList::new(attrs))? {
+                    return Ok(());
                 }
             }
         } else {
@@ -183,12 +238,13 @@ impl TextLayout {
                         break;
                     }
                 }
-                if !process(paragraph, attributes) {
-                    return;
+                if !process(paragraph, attributes)? {
+                    return Ok(());
                 }
             }
         }
         self.complete = true;
+        Ok(())
     }
 
     fn append_layout(
@@ -198,33 +254,68 @@ impl TextLayout {
         extent: (u32, u32),
         index: usize,
         top: &mut f32,
-    ) -> bool {
-        scratch.for_each_row(&self.shapes[index], run.size, extent.0, |layout| {
-            let height = layout.line_height_opt.unwrap_or(run.size * 1.22);
-            let leading = height - (layout.max_ascent + layout.max_descent);
-            let baseline = *top + leading / 2.0 + layout.max_ascent;
-            if baseline - layout.max_ascent > extent.1 as f32 {
-                return false;
-            }
-            self.rows.push(Row {
-                paragraph: index,
-                layout,
-                top: *top,
-                baseline,
-                height,
-            });
-            *top += height;
-            true
-        })
+        admission: &Admission<'_>,
+    ) -> anyhow::Result<bool> {
+        scratch.for_each_row(
+            &self.shapes[index],
+            run.size,
+            extent.0,
+            admission,
+            |produced| {
+                let layout = &produced.layout;
+                let height = layout.line_height_opt.unwrap_or(run.size * 1.22);
+                let leading = height - (layout.max_ascent + layout.max_descent);
+                let baseline = *top + leading / 2.0 + layout.max_ascent;
+                if baseline - layout.max_ascent > extent.1 as f32 {
+                    return Ok(false);
+                }
+                self.rows.push(
+                    Row {
+                        paragraph: index,
+                        layout: produced.layout,
+                        construction: produced.construction,
+                        top: *top,
+                        baseline,
+                        height,
+                    },
+                    admission.owner,
+                )?;
+                *top += height;
+                Ok(true)
+            },
+        )
     }
 
     /// Fork only shared shaping; the caller computes its own extent's layout.
-    pub fn fork_for_relayout(&self) -> Self {
-        Self {
-            shapes: self.shapes.clone(),
-            rows: Vec::new(),
-            complete: self.complete,
+    pub fn fork_for_relayout(&self, admission: &Admission<'_>) -> anyhow::Result<Self> {
+        let mut shapes = Storage::with_capacity(self.shapes.len(), admission.owner)?;
+        for shape in self.shapes.iter() {
+            shapes.push(shape.clone(), admission.owner)?;
         }
+        Ok(Self {
+            shapes,
+            rows: Storage::default(),
+            complete: self.complete,
+            valid: false,
+        })
+    }
+
+    pub fn is_valid(&self) -> bool {
+        self.valid
+    }
+
+    pub fn discard_rows(&mut self) {
+        self.valid = false;
+        self.rows.clear();
+    }
+
+    /// The cache has published these exact capacities under its retained owner.
+    pub fn published(&mut self) {
+        for row in self.rows.iter_mut() {
+            row.construction = None;
+        }
+        self.rows.published();
+        self.shapes.published();
     }
 
     pub fn layout_runs(&self) -> Runs<'_> {

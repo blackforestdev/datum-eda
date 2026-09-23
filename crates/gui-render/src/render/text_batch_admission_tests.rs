@@ -82,9 +82,8 @@ fn overlay_pressure_stops_at_first_excess_layout_and_invalidates_workspace_indic
             .is_err()
     );
     assert_eq!(
-        fonts.shapes,
-        calls + 1,
-        "do not shape the rest of an already rejected batch"
+        fonts.shapes, calls,
+        "refuse construction before shaping an over-budget batch"
     );
     assert!(
         workspace.is_empty(),
@@ -222,4 +221,96 @@ fn overlay_admission_evicts_history_and_remaps_the_earlier_workspace_group() {
     assert_eq!(cache.entries[indices[0]].key.text, overlay.text);
     assert_eq!(cache.published_bytes, cache.retained_payload_bytes());
     assert!(cache.published_bytes <= limit);
+}
+
+#[test]
+#[ignore = "requires serial process-wide text admission"]
+fn interrupted_relayout_cannot_be_reused_as_a_complete_layout() {
+    let state = crate::global_preferences_dialog_tests::state_with_preferences_open();
+    let prepared =
+        PreparedScene::from_native_preferences(&state.ui.global_preferences, 960, 720, 1.0);
+    let mut run = prepared.menu_overlay_text_runs[0].clone();
+    run.text = "Required text survives an interrupted extent change".into();
+    run.rich_spans.clear();
+    run.layout_size = Some((300.0, 200.0));
+    let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
+    let mut fonts = Fonts::new(host.clone());
+    let mut cache = TextBufferCache::default();
+    cache.begin_frame(Profile::Workspace);
+    let (indices, _) = cache
+        .admitted_indices(
+            &mut fonts,
+            std::slice::from_ref(&run),
+            960,
+            720,
+            false,
+            &host,
+            None,
+        )
+        .unwrap();
+    drop(indices);
+    cache.finish_frame();
+    cache.begin_frame(Profile::Workspace);
+    run.layout_size = Some((150.0, 200.0));
+    let index_bytes = crate::text_gpu::staging_vec::StagingVec::<usize>::capacity_bytes(1).unwrap();
+    let filler = host.reserve(host.available() - index_bytes).unwrap();
+    assert!(
+        cache
+            .admitted_indices(
+                &mut fonts,
+                std::slice::from_ref(&run),
+                960,
+                720,
+                false,
+                &host,
+                None
+            )
+            .is_err()
+    );
+    assert!(
+        cache.entries.is_empty(),
+        "partial relayout cannot become an exact hit"
+    );
+    let usage = crate::Renderer::text_cache_process_usage()
+        .into_iter()
+        .find(|entry| entry.owner_id == cache.owner.id())
+        .unwrap();
+    assert_eq!(usage.constructing_bytes, 0);
+    assert_eq!(usage.bytes, cache.retained_payload_bytes());
+    drop(filler);
+    let (indices, stats) = cache
+        .admitted_indices(
+            &mut fonts,
+            std::slice::from_ref(&run),
+            960,
+            720,
+            false,
+            &host,
+            None,
+        )
+        .unwrap();
+    assert_eq!(stats.misses, 1);
+    let snapshot = |cache: &TextBufferCache, index: usize| {
+        cache.entries[index]
+            .buffer
+            .layout_runs()
+            .map(|row| format!("{:?}", row.glyphs))
+            .collect::<Vec<_>>()
+    };
+    let recovered = snapshot(&cache, indices[0]);
+    let mut fresh = TextBufferCache::default();
+    fresh.begin_frame(Profile::Workspace);
+    let (expected, _) = fresh
+        .admitted_indices(
+            &mut fonts,
+            std::slice::from_ref(&run),
+            960,
+            720,
+            false,
+            &host,
+            None,
+        )
+        .unwrap();
+    assert_eq!(recovered, snapshot(&fresh, expected[0]));
+    assert_eq!(cache.published_bytes, cache.retained_payload_bytes());
 }

@@ -1,5 +1,7 @@
 //! Datum's streaming WordOrGlyph row boundaries over borrowed public shaping.
 //! The cursor retains no paragraph-sized layout or scratch allocation.
+use super::allocation::{Admission, ProducedLine};
+use crate::text_gpu::staging_vec::StagingVec;
 use glyphon::ShapeLine;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
@@ -13,34 +15,42 @@ pub(super) struct Row {
     pub start: Position,
     pub end: Position,
     pub width: f32,
-    pub skipped: Vec<Position>,
+    pub skipped: StagingVec<Position>,
 }
 
 pub(super) struct Rows<'a> {
     shape: &'a ShapeLine,
+    admission: &'a Admission<'a>,
     size: f32,
     width: f32,
     cursor: Position,
     emitted: bool,
     empty_before_word: bool,
-    skipped: Vec<Position>,
+    skipped: StagingVec<Position>,
 }
 
 impl<'a> Rows<'a> {
-    pub fn new(shape: &'a ShapeLine, size: f32, width: u32) -> Self {
+    pub fn new(shape: &'a ShapeLine, size: f32, width: u32, admission: &'a Admission<'a>) -> Self {
         Self {
             shape,
+            admission,
             size,
             width: width as f32,
             cursor: Position::default(),
             emitted: false,
             empty_before_word: false,
-            skipped: Vec::new(),
+            skipped: StagingVec::default(),
         }
     }
 
-    pub fn layout(&self, row: &Row) -> glyphon::LayoutLine {
-        output::materialize(self.shape, row, self.size, self.width as u32)
+    pub fn layout(&self, row: &Row) -> anyhow::Result<ProducedLine> {
+        output::materialize(
+            self.shape,
+            row,
+            self.size,
+            self.width as u32,
+            self.admission,
+        )
     }
 
     pub fn word_index(&self, pos: Position) -> usize {
@@ -63,13 +73,11 @@ impl<'a> Rows<'a> {
     }
 }
 
-impl Iterator for Rows<'_> {
-    type Item = Row;
-
-    fn next(&mut self) -> Option<Row> {
+impl Rows<'_> {
+    pub fn next(&mut self) -> anyhow::Result<Option<Row>> {
         if self.empty_before_word {
             self.empty_before_word = false;
-            return Some(self.finish(self.cursor, self.cursor, 0.0));
+            return Ok(Some(self.finish(self.cursor, self.cursor, 0.0)));
         }
         let mut start = self.cursor;
         let mut committed = 0.0;
@@ -78,9 +86,13 @@ impl Iterator for Rows<'_> {
         loop {
             let Some(span) = self.shape.spans.get(self.cursor.span) else {
                 return if start != self.cursor || !self.emitted {
-                    Some(self.finish(start, self.cursor, committed + span_width))
+                    Ok(Some(self.finish(
+                        start,
+                        self.cursor,
+                        committed + span_width,
+                    )))
                 } else {
-                    None
+                    Ok(None)
                 };
             };
             if self.cursor.word == span.words.len() {
@@ -113,7 +125,11 @@ impl Iterator for Rows<'_> {
                             .glyphs
                             .last()
                             .is_some_and(|g| g.width(self.size) > self.width);
-                    return Some(self.finish(start, self.cursor, committed + span_width));
+                    return Ok(Some(self.finish(
+                        start,
+                        self.cursor,
+                        committed + span_width,
+                    )));
                 }
                 let reverse = span.level.is_rtl() != self.shape.rtl;
                 while self.cursor.glyph < word.glyphs.len() {
@@ -125,7 +141,11 @@ impl Iterator for Rows<'_> {
                     }];
                     let advance = glyph.width(self.size);
                     if committed + (span_width + advance) > self.width && start != self.cursor {
-                        return Some(self.finish(start, self.cursor, committed + span_width));
+                        return Ok(Some(self.finish(
+                            start,
+                            self.cursor,
+                            committed + span_width,
+                        )));
                     }
                     // A single glyph can exceed the width; consume it to ensure
                     // forward progress even at zero-width viewports.
@@ -142,12 +162,12 @@ impl Iterator for Rows<'_> {
                 if word.blank {
                     self.cursor.word += 1;
                 }
-                return Some(self.finish(start, end, committed + width));
+                return Ok(Some(self.finish(start, end, committed + width)));
             }
             // Preserve cross-span wrapping: a fresh span does not introduce an
             // extra break until it has contributed its own nonzero range.
             if word.blank {
-                self.skipped.push(self.cursor);
+                self.skipped.try_push(self.cursor, self.admission.host)?;
                 self.cursor.word += 1;
                 if committed == 0.0 {
                     start = self.cursor;

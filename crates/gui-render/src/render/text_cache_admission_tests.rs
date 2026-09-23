@@ -396,6 +396,8 @@ fn rich_input_refuses_before_shaping_and_warm_layouts_need_no_concat_storage() {
         .unwrap();
     assert_eq!(stats.hits, 1);
     drop(indices);
+    // Relayout now admits row scratch; exact hits above require only indices.
+    drop(filler);
     cache.begin_frame(Profile::Overlay);
     run.layout_size = Some((300.0, 200.0));
     let (indices, stats) = cache
@@ -415,5 +417,4 @@ fn rich_input_refuses_before_shaping_and_warm_layouts_need_no_concat_storage() {
         "complete shapes relayout without copying input"
     );
     drop(indices);
-    drop(filler);
 }

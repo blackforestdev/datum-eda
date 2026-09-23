@@ -88,25 +88,52 @@ impl TextBufferCache {
         }
     }
 
+    pub(super) fn clear_derived_storage(&mut self) {
+        self.entries = Vec::new();
+        self.lookup = Vec::new();
+        self.entry_construction = None;
+        self.lookup_construction = None;
+        self.layout_scratch.clear();
+        self.revision = self.revision.wrapping_add(1);
+        self.layout_output_revision = self.revision;
+        self.layout_output_bytes = 0;
+        self.layout_output_tracking_bytes = 0;
+        self.retained_revision = None;
+    }
+
     /// On refusal, cached layouts and every supplied index group are discarded.
     /// Retry must rebuild them from current TextRun input before requesting admission.
     pub(crate) fn admit_frame(
         &mut self,
         indices: &mut [&mut impl FrameIndices],
     ) -> anyhow::Result<()> {
-        let result = budget::admit(self.owner.id(), |limit| {
+        self.admit_frame_with_headroom(indices, 0)
+    }
+
+    pub(super) fn admit_frame_with_headroom(
+        &mut self,
+        indices: &mut [&mut impl FrameIndices],
+        headroom: usize,
+    ) -> anyhow::Result<()> {
+        let result = budget::admit(self.owner.id(), |total_limit| {
+            let limit = total_limit.saturating_sub(headroom);
             if self.admission_payload_bytes() > limit {
                 // All current-frame indices remain pinned. Unused history may
                 // retire; remap indices atomically before any text-area borrow.
-                let mut remap = vec![usize::MAX; self.entries.len()];
+                // Reuse existing index slots as an old-to-new map. Pressure
+                // handling must not allocate an unadmitted temporary vector.
+                debug_assert_eq!(self.lookup.len(), self.entries.len());
                 let mut next = 0;
                 let frame = self.frame;
                 let mut old = 0;
                 self.entries.retain(|entry| {
                     let keep = entry.last_used_frame == frame;
                     if keep {
-                        remap[old] = next;
+                        self.lookup[old].1 = next;
                         next += 1;
+                    }
+                    if !keep {
+                        self.lookup[old].1 = usize::MAX;
                     }
                     old += 1;
                     keep
@@ -114,13 +141,13 @@ impl TextBufferCache {
                 if next != old {
                     for group in indices.iter_mut() {
                         for index in group.indices_mut().iter_mut() {
-                            *index = remap[*index];
+                            *index = self.lookup[*index].1;
                             assert_ne!(*index, usize::MAX, "current text index was not pinned");
                         }
                     }
                     self.revision = self.revision.wrapping_add(1);
-                    self.rebuild_lookup();
                 }
+                self.rebuild_lookup();
             }
             if self.admission_payload_bytes() > limit {
                 // Current layouts may fit once obsolete spare metadata slots
@@ -143,14 +170,7 @@ impl TextBufferCache {
                 // The frame will return an error before borrowing layout rows or
                 // preparing glyphs. TextRun/model input remains authoritative for
                 // retry; retaining rejected derived capacity cannot relieve pressure.
-                self.entries = Vec::new();
-                self.lookup = Vec::new();
-                self.layout_scratch.clear();
-                self.revision = self.revision.wrapping_add(1);
-                self.layout_output_revision = self.revision;
-                self.layout_output_bytes = 0;
-                self.layout_output_tracking_bytes = 0;
-                self.retained_revision = None;
+                self.clear_derived_storage();
                 for group in indices.iter_mut() {
                     group.clear_indices();
                 }
@@ -159,7 +179,7 @@ impl TextBufferCache {
                 self.published_bytes = required_bytes;
             }
             budget::Admission {
-                required_bytes,
+                required_bytes: required_bytes.saturating_add(headroom),
                 retained_bytes: self.published_bytes,
             }
         });
