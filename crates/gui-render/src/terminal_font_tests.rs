@@ -3,8 +3,7 @@ use crate::text_buffer_cache::text_buffer_key;
 
 #[test]
 fn terminal_face_shapes_box_drawing_and_powerline_without_notdef() {
-    let mut font_system = FontSystem::new();
-    load_datum_fonts(&mut font_system);
+    let mut font_system = load_datum_fonts();
     let mut buffer = Buffer::new(&mut font_system, Metrics::new(11.0, 13.42));
     let fixture = "┌─┬─┐│├┼┤└─┴─┘\u{e0a0}\u{e0b0}\u{e0b1}";
     buffer.set_text(
@@ -63,8 +62,7 @@ fn terminal_cell_advance_combines_smaller_ink_with_explicit_spacing() {
 
 #[test]
 fn prompt_style_boundaries_do_not_restart_glyph_positioning() {
-    let mut font_system = FontSystem::new();
-    load_datum_fonts(&mut font_system);
+    let mut font_system = load_datum_fonts();
     let fixture = "bfadmin@debian3520:~/Documents/datum-eda$ cd ~/Documents/datum-eda/";
     let metrics = Metrics::new(
         bottom_dock::TERMINAL_FONT_SIZE_PX,

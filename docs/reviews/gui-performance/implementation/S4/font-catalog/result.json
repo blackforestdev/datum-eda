@@ -1,0 +1,33 @@
+{
+  "status": "Shared process font catalog adopted by production measurement and renderer creation; remaining S4 text/resource predicates stay open",
+  "base_commit": "6e9f503f",
+  "production_consumers": [
+    "Renderer::new for Main and shared overlay hosts",
+    "Shared width and wrapped-height FontSystem"
+  ],
+  "shared_owner": "text_metrics::load_datum_fonts process catalog",
+  "retired_paths": [
+    "Independent system-font discovery and locale selection for each renderer and the measurement owner"
+  ],
+  "behavior": "Discover system font database and locale once, install the existing embedded font sources once, then initialize independent shaping caches from database snapshots with matching font IDs, family defaults and locale. Renderer rebuilds reuse the same catalog. Existing fallback implementation, font load order, face attributes and shaping mode remain unchanged.",
+  "proof": {
+    "focused": "236 renderer library tests passed, including all text-cache and terminal-font tests; font source identity/catalog IDs/locale and legacy multilingual shaping parity across five TextFace variants pass.",
+    "policy": "Source-health gate, 13 policy tests, dependency authority and spec parity passed.",
+    "drift": "Final Clippy and preceding checks passed; drift exits 1 at existing Console routine-focused 1x golden mismatch,3778 pixels/0.384318%. Later gates not run; goldens unchanged. dat-console-revision-golden-hrak remains open.",
+    "corrected_attempts": "Initial misplaced test import failed compilation. Initial drift encountered legacy-module parity bookkeeping. Final implementation preserves geometry/source-debt files and passes source health/parity; all 236 renderer tests pass. Earlier logs retained."
+  },
+  "limits": [
+    "The process retains one catalog database; each FontSystem still owns database metadata and shaping caches. Embedded font bytes remain shared. No complete CPU memory or startup timing claim.",
+    "No live font reload is introduced. A future reload must replace the shared authority and invalidate measurement and render caches together; system font files remain external resources.",
+    "This resolves production font-inventory/locale authority, not complete shaping feature/layout/resource predicates or full S4/S5 qualification.",
+    "No dependency, prototype, numerical budget or resize changes."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/font-catalog/result.json",
+  "artifacts_sha256_uncompressed": {
+    "initial-tests.log.gz": "db4dcdcce1cade7a7a14c8098af35547edb65f5b7bb45d0b5b4c3fd27c93d5f6",
+    "intermediate-tests.log.gz": "3b7e481cd291b8ce0c99ab64aab296b5526e7753c56ceb4bf4ec95f4f800fc40",
+    "initial-drift.log.gz": "2591f38e0a232c0002b6cddbfce03c2adda0bda238e5ff46d0e89838329ff80c",
+    "tests.log.gz": "2d8ac1fd6b0a2d3f5d7e2aab4453111169f000aaaf19ed94931968df78c2d5e3",
+    "drift.log.gz": "31c6807d4d872c7fa8c59c4511a74e9de481a3f77dfe0613919584aafec538c1"
+  }
+}

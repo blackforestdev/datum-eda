@@ -10,11 +10,23 @@ use super::*;
 static MEASURE_FS: std::sync::OnceLock<std::sync::Mutex<FontSystem>> = std::sync::OnceLock::new();
 
 pub(super) fn measure_font_system() -> &'static std::sync::Mutex<FontSystem> {
-    MEASURE_FS.get_or_init(|| {
-        let mut font_system = FontSystem::new();
-        load_datum_fonts(&mut font_system);
-        std::sync::Mutex::new(font_system)
-    })
+    MEASURE_FS.get_or_init(|| std::sync::Mutex::new(load_datum_fonts()))
+}
+
+/// Discover the process font inventory and locale once for measurement and all
+/// renderers. Each consumer keeps its own mutable shaping caches; database IDs,
+/// family defaults, embedded sources and fallback locale come from one catalog.
+/// No live font-reload path exists: a future reload must replace this authority
+/// and invalidate both measurement and renderer caches as one operation.
+pub(super) fn load_datum_fonts() -> FontSystem {
+    static CATALOG: std::sync::OnceLock<(String, glyphon::fontdb::Database)> =
+        std::sync::OnceLock::new();
+    let (locale, database) = CATALOG.get_or_init(|| {
+        let mut fonts = FontSystem::new();
+        install_datum_font_sources(&mut fonts);
+        fonts.into_locale_and_db()
+    });
+    FontSystem::new_with_locale_and_db(locale.clone(), database.clone())
 }
 
 /// Real shaped width of a single text run, in px, using cosmic-text/glyphon with
@@ -58,7 +70,7 @@ static DATUM_FONT_BYTES: [&[u8]; 6] = [
     include_bytes!("../../../engine/assets/fonts/jetbrains_mono/JetBrainsMono-Regular.ttf"),
 ];
 
-pub(super) fn load_datum_fonts(font_system: &mut FontSystem) {
+fn install_datum_font_sources(font_system: &mut FontSystem) {
     // The executable already owns immutable font bytes. Share six small Arc
     // handles instead of allocating another Vec for every font system/renderer.
     // Keep load order and per-system databases/shaping caches unchanged.
@@ -168,10 +180,21 @@ mod tests {
 
     #[test]
     fn embedded_font_bytes_are_shared_between_font_systems() {
-        let mut first = FontSystem::new();
-        let mut second = FontSystem::new();
-        load_datum_fonts(&mut first);
-        load_datum_fonts(&mut second);
+        let first = load_datum_fonts();
+        let second = load_datum_fonts();
+        assert_eq!(first.locale(), second.locale());
+        assert_eq!(
+            first
+                .db()
+                .faces()
+                .map(|face| (face.id, &face.post_script_name))
+                .collect::<Vec<_>>(),
+            second
+                .db()
+                .faces()
+                .map(|face| (face.id, &face.post_script_name))
+                .collect::<Vec<_>>()
+        );
         let sources = |fonts: &FontSystem| {
             let mut sources: Vec<_> = fonts
                 .db()
@@ -211,8 +234,7 @@ mod tests {
 
     #[test]
     fn shared_font_sources_match_legacy_copy_shaping() {
-        let mut shared = FontSystem::new();
-        load_datum_fonts(&mut shared);
+        let mut shared = load_datum_fonts();
         let mut legacy = FontSystem::new();
         for bytes in DATUM_FONT_BYTES {
             legacy.db_mut().load_font_data(bytes.to_vec());
