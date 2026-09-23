@@ -1,5 +1,7 @@
 //! Fixed-size uniform ownership with exact aligned changed-range uploads.
+use crate::text_gpu::budget::{Budget, Permit};
 use crate::text_gpu::lifetime::{Kind, Owner, SubmissionRef, Tracked};
+use std::sync::Arc;
 use wgpu::util::DeviceExt;
 
 pub(crate) struct UniformBuffer<T> {
@@ -11,8 +13,13 @@ pub(crate) struct UniformBuffer<T> {
 }
 
 impl<T: bytemuck::Pod> UniformBuffer<T> {
-    pub(crate) fn new(device: &wgpu::Device, label: &str, value: T) -> anyhow::Result<Self> {
-        let permit = reserve::<T>()?;
+    pub(crate) fn new(
+        device: &wgpu::Device,
+        label: &str,
+        value: T,
+        screen_budget: &Arc<Budget>,
+    ) -> anyhow::Result<Self> {
+        let permits = reserve::<T>(screen_budget)?;
         Ok(Self {
             buffer: tracked(
                 device.create_buffer_init(&wgpu::util::BufferInitDescriptor {
@@ -20,7 +27,7 @@ impl<T: bytemuck::Pod> UniformBuffer<T> {
                     contents: bytemuck::bytes_of(&value),
                     usage: uniform_usage(),
                 }),
-                permit,
+                permits,
             ),
             value: Some(value),
             pending: None,
@@ -29,8 +36,12 @@ impl<T: bytemuck::Pod> UniformBuffer<T> {
         })
     }
 
-    pub(crate) fn empty(device: &wgpu::Device, label: &str) -> anyhow::Result<Self> {
-        let permit = reserve::<T>()?;
+    pub(crate) fn empty(
+        device: &wgpu::Device,
+        label: &str,
+        screen_budget: &Arc<Budget>,
+    ) -> anyhow::Result<Self> {
+        let permits = reserve::<T>(screen_budget)?;
         Ok(Self {
             buffer: tracked(
                 device.create_buffer(&wgpu::BufferDescriptor {
@@ -39,7 +50,7 @@ impl<T: bytemuck::Pod> UniformBuffer<T> {
                     usage: uniform_usage(),
                     mapped_at_creation: false,
                 }),
-                permit,
+                permits,
             ),
             value: None,
             pending: None,
@@ -96,14 +107,16 @@ fn uniform_usage() -> wgpu::BufferUsages {
     }
 }
 
-fn reserve<T>() -> anyhow::Result<crate::text_gpu::budget::Permit> {
-    crate::text_gpu::budget::gpu_process()
-        .reserve((std::mem::size_of::<T>() as u64).next_multiple_of(wgpu::COPY_BUFFER_ALIGNMENT))
+fn reserve<T>(screen_budget: &Arc<Budget>) -> anyhow::Result<Vec<Permit>> {
+    let bytes = (std::mem::size_of::<T>() as u64).next_multiple_of(wgpu::COPY_BUFFER_ALIGNMENT);
+    let host = screen_budget.reserve(bytes)?;
+    let process = crate::text_gpu::budget::gpu_process().reserve(bytes)?;
+    Ok(vec![host, process])
 }
 
-fn tracked(buffer: wgpu::Buffer, permit: crate::text_gpu::budget::Permit) -> Tracked<wgpu::Buffer> {
+fn tracked(buffer: wgpu::Buffer, permits: Vec<Permit>) -> Tracked<wgpu::Buffer> {
     let bytes = buffer.size();
-    Owner::new().track_with_permits(buffer, bytes, 1, Kind::Uniform, vec![permit])
+    Owner::new().track_with_permits(buffer, bytes, 1, Kind::Uniform, permits)
 }
 
 /// Keep bindings and their allocation together; drop binding references first.
@@ -117,10 +130,11 @@ impl<T: bytemuck::Pod> UniformBinding<T> {
         layout: &wgpu::BindGroupLayout,
         label: &str,
         value: Option<T>,
+        screen_budget: &Arc<Budget>,
     ) -> anyhow::Result<Self> {
         let buffer = match value {
-            Some(value) => UniformBuffer::new(device, label, value)?,
-            None => UniformBuffer::empty(device, label)?,
+            Some(value) => UniformBuffer::new(device, label, value, screen_budget)?,
+            None => UniformBuffer::empty(device, label, screen_budget)?,
         };
         let bind_group = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some(label),
@@ -229,7 +243,13 @@ mod tests {
             target.unmap();
             data
         };
-        let mut owner = UniformBuffer::new(&device, "uniform", [1_u32; 4]).unwrap();
+        let mut owner = UniformBuffer::new(
+            &device,
+            "uniform",
+            [1_u32; 4],
+            &Budget::new(16 * 1024 * 1024),
+        )
+        .unwrap();
         let id = owner.buffer.id();
         assert_eq!(owner.sync(&queue, [2_u32; 4]), 16);
         assert_eq!(

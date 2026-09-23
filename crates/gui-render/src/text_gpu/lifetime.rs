@@ -139,6 +139,12 @@ fn records(source: &Mutex<Vec<Weak<Identity>>>) -> Vec<Record> {
 }
 
 impl crate::Renderer {
+    /// This host's screen vertices, glyph instances and uniform buffer capacities.
+    /// Includes submission retirement; texture and staging subcaps remain separate.
+    pub fn screen_gpu_reserved_bytes(&self) -> u64 {
+        self.screen_budget.used()
+    }
+
     /// All live and submission-retiring text texture/instance API allocations.
     /// Weak process observation does not prolong GPU resource lifetime.
     pub fn text_gpu_process_allocations() -> Vec<Record> {

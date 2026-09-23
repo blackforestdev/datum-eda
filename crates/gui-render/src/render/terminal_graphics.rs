@@ -53,6 +53,7 @@ struct TerminalGraphicDraw {
 }
 
 pub(super) struct TerminalGraphicsRenderer {
+    screen_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
     pipeline: wgpu::RenderPipeline,
     texture_layout: wgpu::BindGroupLayout,
     textures: Vec<CachedTerminalGraphicTexture>,
@@ -65,6 +66,7 @@ impl TerminalGraphicsRenderer {
         screen_layout: &wgpu::BindGroupLayout,
         format: wgpu::TextureFormat,
         samples: u32,
+        screen_budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
     ) -> Self {
         let texture_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("datum-terminal-graphic-texture-layout"),
@@ -161,6 +163,7 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             cache: None,
         });
         Self {
+            screen_budget,
             pipeline,
             texture_layout,
             textures: Vec::new(),
@@ -209,7 +212,10 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4<f32> {
             if visible == self.draws.len() {
                 self.draws.push(TerminalGraphicDraw {
                     texture_key: key,
-                    vertices: ScreenBuffer::with_budget(crate::text_gpu::budget::terminal_process()),
+                    vertices: ScreenBuffer::with_budgets(vec![
+                        self.screen_budget.clone(),
+                        crate::text_gpu::budget::terminal_process(),
+                    ]),
                     clip,
                     foreground,
                 });

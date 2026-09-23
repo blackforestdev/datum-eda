@@ -37,7 +37,8 @@ fn owned_draw_matches_installed_text_renderer() {
             None,
         );
         let mut atlas = Atlas::new(&device);
-        let mut draw = Draw::new(&device, &atlas, format, samples);
+        let screen_budget = super::budget::Budget::new(16 * 1024 * 1024);
+        let mut draw = Draw::new(&device, &atlas, format, samples, screen_budget.clone());
         for scale in [1.0, 1.25, 2.0] {
             for face in [crate::TextFace::Ui, crate::TextFace::Terminal] {
                 for (text, left, top, bounds) in [
@@ -178,6 +179,16 @@ fn owned_draw_matches_installed_text_renderer() {
                     )
                     .unwrap();
                     atlas.flush_uploads(&queue);
+                    assert_eq!(
+                        screen_budget.used(),
+                        atlas
+                            .owner
+                            .records()
+                            .iter()
+                            .filter(|r| r.kind == super::lifetime::Kind::Instances)
+                            .map(|r| r.bytes)
+                            .sum::<u64>()
+                    );
                     draw.flush_uploads(&queue);
                     if text == "😀🌍" {
                         assert!(
@@ -214,6 +225,16 @@ fn owned_draw_matches_installed_text_renderer() {
                     )
                     .unwrap();
                     atlas.flush_uploads(&queue);
+                    assert_eq!(
+                        screen_budget.used(),
+                        atlas
+                            .owner
+                            .records()
+                            .iter()
+                            .filter(|r| r.kind == super::lifetime::Kind::Instances)
+                            .map(|r| r.bytes)
+                            .sum::<u64>()
+                    );
                     draw.flush_uploads(&queue);
                     assert_eq!(draw.upload_bytes, 0, "unchanged instances must not upload");
                     assert_eq!(
