@@ -12,6 +12,7 @@ pub enum Kind {
     Texture,
     Instances,
     Vertex,
+    TerminalTexture,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -136,11 +137,11 @@ impl crate::Renderer {
     pub fn text_gpu_process_allocations() -> Vec<Record> {
         Self::gpu_process_allocations()
             .into_iter()
-            .filter(|r| r.kind != Kind::Vertex)
+            .filter(|r| matches!(r.kind, Kind::Texture | Kind::Instances))
             .collect()
     }
 
-    /// Migrated text and world/screen vertex API allocations, including retirement.
+    /// Migrated text, terminal textures and world/screen vertex API allocations, including retirement.
     /// Attachments, uniforms, driver residency and staging are not included.
     pub fn gpu_process_allocations() -> Vec<Record> {
         records(&PROCESS_ALLOCATIONS)
