@@ -96,17 +96,17 @@ impl ScreenBuffer {
 
     pub(crate) fn append_uploads<'a>(
         &'a self,
-        out: &mut Vec<crate::text_gpu::upload::BufferUpload<'a>>,
+        out: &mut impl Extend<crate::text_gpu::upload::BufferUpload<'a>>,
     ) {
         let bytes = &self.prepared;
         for range in &self.pending {
             let end = range.end.min(bytes.len());
             if range.start < end {
-                out.push(crate::text_gpu::upload::BufferUpload {
+                out.extend(std::iter::once(crate::text_gpu::upload::BufferUpload {
                     buffer: self.allocation.buffer().unwrap(),
                     offset: range.start as u64,
                     bytes: &bytes[range.start..end],
-                });
+                }));
             }
         }
     }

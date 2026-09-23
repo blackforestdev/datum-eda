@@ -51,12 +51,18 @@ impl Renderer {
         queue: &wgpu::Queue,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<()> {
+        let descriptor_bytes = crate::text_gpu::staging_vec::StagingVec::<
+            crate::text_gpu::upload::BufferUpload<'_>,
+        >::capacity_bytes(4)?;
         self.text_buffers.release_layout_scratch_for(
-            CHUNK_BYTES as u64 + crate::text_gpu::upload::retention_metadata_bytes(&[], false)?,
+            CHUNK_BYTES as u64
+                + descriptor_bytes
+                + crate::text_gpu::upload::retention_metadata_bytes(&[], false)?,
             &self.atlas.staging_budget,
         );
         let mut remaining = CHUNK_BYTES;
-        let mut uploads = Vec::new();
+        let mut uploads =
+            crate::text_gpu::staging_vec::StagingVec::new(4, &self.atlas.staging_budget)?;
         let counts = [
             self.world_vertices_gpu
                 .append_chunk(&mut remaining, &mut uploads),
@@ -76,19 +82,17 @@ impl Renderer {
             &uploads,
         )?
         .ok_or_else(|| anyhow::anyhow!("world continuation has no pending upload"))?;
+        drop(uploads);
         // Retain destinations independently of CPU owner replacement or host close.
         let resources = [
             self.world_vertices_gpu.submission_ref(),
             self.world_strokes_gpu.submission_ref(),
             self.schematic_world_vertices_gpu.submission_ref(),
             self.schematic_world_strokes_gpu.submission_ref(),
-        ]
-        .into_iter()
-        .flatten()
-        .collect();
+        ];
         let submission = queue.submit([batch.command()]);
         batch.hold(queue);
-        crate::text_gpu::hold_until_done(queue, resources);
+        queue.on_submitted_work_done(move || drop(resources));
         self.world_vertices_gpu.consume_chunk(counts[0]);
         self.world_strokes_gpu.consume_chunk(counts[1]);
         self.schematic_world_vertices_gpu.consume_chunk(counts[2]);

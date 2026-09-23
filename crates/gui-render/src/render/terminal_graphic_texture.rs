@@ -110,7 +110,7 @@ impl CachedTerminalGraphicTexture {
     pub(super) fn append_chunk<'a>(
         &'a self,
         remaining: &mut usize,
-        out: &mut Vec<crate::text_gpu::upload::TextureUpload<'a>>,
+        out: &mut impl Extend<crate::text_gpu::upload::TextureUpload<'a>>,
     ) -> usize {
         if !self.pending {
             return 0;
@@ -126,13 +126,13 @@ impl CachedTerminalGraphicTexture {
         };
         *remaining -= part.padded_bytes;
         let count = part.bytes.len() / 4;
-        out.push(crate::text_gpu::upload::TextureUpload {
+        out.extend(std::iter::once(crate::text_gpu::upload::TextureUpload {
             texture: &self.texture,
             origin: part.origin,
             size: part.size,
             stride: part.size[0] * 4,
             pixels: part.bytes,
-        });
+        }));
         count
     }
 

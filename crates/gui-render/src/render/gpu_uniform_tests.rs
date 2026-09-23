@@ -284,7 +284,24 @@ fn frame_staging_refusal_preserves_uniform_and_screen_plans_until_retry() {
             .sum::<usize>()
     };
     assert!(expected > 0);
-    let filler = budget.reserve(16 * 1024 * 1024).unwrap();
+    let scope = crate::cpu_alloc::Scope::new("frame-upload-count");
+    let mut count = crate::text_gpu::upload::UploadCount::default();
+    scope.with(|| {
+        renderer.renderer.uniform_buffer.append_uploads(&mut count);
+        renderer.renderer.panel_gpu.append_uploads(&mut count);
+    });
+    assert_eq!(count.bytes, expected as u64);
+    assert!(count.entries > 0);
+    assert_eq!(
+        scope.usage().peak_payload_bytes,
+        0,
+        "producer preflight must not allocate"
+    );
+    let metadata = crate::text_gpu::staging_vec::StagingVec::<
+        crate::text_gpu::upload::BufferUpload<'_>,
+    >::capacity_bytes(count.entries)
+    .unwrap();
+    let filler = budget.reserve(16 * 1024 * 1024 - metadata + 1).unwrap();
     assert!(
         renderer
             .renderer

@@ -17320,6 +17320,11 @@
           "work": "s4_staging_plan_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/staging-plan/result.json",
           "status": "Shared CPU upload plan and batch-retention admission implemented; full staging/accounting implementation remains open"
+        },
+        {
+          "work": "s4_producer_plan_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/producer-plan/result.json",
+          "status": "Default buffer/texture producer descriptor storage admitted; full staging/accounting implementation remains open"
         }
       ]
     },
@@ -17506,6 +17511,11 @@
           "work": "s4_staging_plan_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/staging-plan/result.json",
           "status": "Shared CPU upload plan and batch-retention admission implemented; full staging/accounting implementation remains open"
+        },
+        {
+          "work": "s4_producer_plan_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/producer-plan/result.json",
+          "status": "Default buffer/texture producer descriptor storage admitted; full staging/accounting implementation remains open"
         }
       ]
     },
@@ -34832,5 +34842,39 @@
       "Original qualification, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/staging-plan/result.json"
+  },
+  "s4_producer_plan_work": {
+    "status": "Default buffer/texture producer descriptor storage admitted; full staging/accounting implementation remains open",
+    "base_commit": "5870d56c",
+    "production_consumers": [
+      "Frame screen/control streams, terminal quads, fixed/pane uniforms and workspace/overlay glyph instances",
+      "Glyph-continuation transfer-size decision",
+      "Cold board/schematic world geometry continuation",
+      "Terminal image upload continuation and destination submission retention"
+    ],
+    "retired_paths": [
+      "Unbudgeted frame BufferUpload descriptor Vec",
+      "Temporary frame descriptor allocation solely to decide glyph continuation",
+      "Unbudgeted cold-world descriptor Vec and collected destination-reference Vec",
+      "Unbudgeted terminal texture descriptor/count/reference Vec paths"
+    ],
+    "behavior": [
+      "Shared producers emit through standard Extend. The frame makes an allocation-free count pass, admits exact descriptor capacity against existing staging limits, then fills the same ordered plan. Refusal precedes producer consumption and retains pending content for retry.",
+      "Glyph continuation uses the count/byte sink directly without retaining descriptors. Empty StagingVec storage no longer reserves zero-byte permits or touches process-budget atomics.",
+      "Cold-world continuation admits four descriptor slots and keeps its four destination handles in a fixed array through queue completion, removing another heap vector. Scratch-release preflight includes descriptor storage.",
+      "Terminal image continuation counts only the selected chunk descriptors, then admits descriptor, source-index/count and destination-reference storage. The admitted references move directly to completion; counts commit only after successful submission. One count pass serves both scratch preflight and allocation."
+    ],
+    "proof": {
+      "renderer": "test result: ok. 369 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 25.64s",
+      "terminal": "test result: ok. 52 passed; 0 failed; 0 ignored; 0 measured; 328 filtered out; finished in 2.73s",
+      "checks": "369 renderer tests passed with the complete producer migration. Afterwards, one redundant terminal count scan was removed;52 focused terminal tests passed on that final source, followed by strict visual renderer/app all-target Clippy and a fresh visual application build. Application tests were not rerun.",
+      "coverage": "Full run includes sparse/mixed GPU readback, staging refusal/retry, terminal image and quad paths, glyph and cold-world continuation, and warm uniforms. Extended real uniform/screen producer test proves zero-allocation count preflight and preservation under descriptor-budget refusal. Existing staging heap test covers exact capacities/headers and release. The earlier369-pass buffer-only run is preserved separately."
+    },
+    "limits": [
+      "No full MEM-STAGING/ACC-01/02, S4 or S5 closure. Producer pending-range/snapshot storage, page/global observation metadata, private font/raster/layout construction peaks and other transient scratch remain under the existing unfinished rows. Inventory remains16 implemented/11 recorded gaps/23 with no new defect asserted.",
+      "Count/fill uses two borrowed producer traversals; no new latency or global performance acceptance is claimed. GPU byte counters/copy limits remain separate from CPU metadata.",
+      "Original qualification and historical failed evidence, Console golden failure, GEFN and nonblocking resize remain unchanged. No dependency, prototype, numerical cap or sequencing amendment."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/producer-plan/result.json"
   }
 }

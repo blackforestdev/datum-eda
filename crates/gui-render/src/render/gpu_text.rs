@@ -63,23 +63,41 @@ impl PreparedScene {
     }
 }
 
-macro_rules! frame_buffers {
-    ($this:ident) => {{
-        let mut buffers = Vec::new();
-        gpu_vertex_upload::screen_streams!($this, stream, stream.append_uploads(&mut buffers));
-        $this.terminal_graphics.append_vertex_uploads(&mut buffers);
-        $this.uniform_buffer.append_uploads(&mut buffers);
+macro_rules! visit_frame_uploads {
+    ($this:ident, $buffers:ident) => {{
+        gpu_vertex_upload::screen_streams!($this, stream, stream.append_uploads(&mut $buffers));
+        $this.terminal_graphics.append_vertex_uploads(&mut $buffers);
+        $this.uniform_buffer.append_uploads(&mut $buffers);
         for binding in &$this.surface_scene_uniforms {
-            binding.buffer.append_uploads(&mut buffers);
+            binding.buffer.append_uploads(&mut $buffers);
         }
-        let text_bytes = $this.text_renderer.append_uploads(&mut buffers);
+        let text_bytes = $this.text_renderer.append_uploads(&mut $buffers);
         let overlay_bytes = $this
             .menu_overlay_text_renderer
-            .append_uploads(&mut buffers);
+            .append_uploads(&mut $buffers);
+        (text_bytes, overlay_bytes)
+    }};
+}
+pub(super) use visit_frame_uploads;
+
+macro_rules! frame_buffers {
+    ($this:ident) => {{
+        let mut count = crate::text_gpu::upload::UploadCount::default();
+        visit_frame_uploads!($this, count);
+        let metadata = crate::text_gpu::staging_vec::StagingVec::<
+            crate::text_gpu::upload::BufferUpload<'_>,
+        >::capacity_bytes(count.entries)?;
+        $this
+            .text_buffers
+            .release_layout_scratch_for(metadata, &$this.atlas.staging_budget);
+        let mut buffers = crate::text_gpu::staging_vec::StagingVec::new(
+            count.entries,
+            &$this.atlas.staging_budget,
+        )?;
+        let (text_bytes, overlay_bytes) = visit_frame_uploads!($this, buffers);
         (buffers, text_bytes, overlay_bytes)
     }};
 }
-pub(super) use frame_buffers;
 
 impl Renderer {
     pub(crate) fn flush_frame_uploads(
@@ -95,6 +113,7 @@ impl Renderer {
         self.text_buffers
             .release_layout_scratch_for(staging, &self.atlas.staging_budget);
         let atlas_upload = self.atlas.flush_uploads(device, &buffers)?;
+        drop(buffers);
         self.uniform_buffer.finish_uploads();
         for binding in &mut self.surface_scene_uniforms {
             binding.buffer.finish_uploads();

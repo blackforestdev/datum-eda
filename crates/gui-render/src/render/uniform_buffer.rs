@@ -88,18 +88,18 @@ impl<T: bytemuck::Pod> UniformBuffer<T> {
 
     pub(crate) fn append_uploads<'a>(
         &'a self,
-        out: &mut Vec<crate::text_gpu::upload::BufferUpload<'a>>,
+        out: &mut impl Extend<crate::text_gpu::upload::BufferUpload<'a>>,
     ) {
         if let Some(value) = &self.pending {
             write_changed_ranges(
                 self.value.as_ref().map(bytemuck::bytes_of),
                 bytemuck::bytes_of(value),
                 |offset, bytes| {
-                    out.push(crate::text_gpu::upload::BufferUpload {
+                    out.extend(std::iter::once(crate::text_gpu::upload::BufferUpload {
                         buffer: &self.buffer,
                         offset: offset as u64,
                         bytes,
-                    })
+                    }))
                 },
             );
         }

@@ -46,12 +46,11 @@ impl Renderer {
         if atlas_bytes == 0 {
             return Ok(false);
         }
-        let (buffers, _, _) = super::frame_buffers!(self);
-        let bytes: u64 = buffers.iter().map(|upload| upload.bytes.len() as u64).sum();
-        if atlas_bytes + bytes <= CHUNK_BYTES {
+        let mut count = crate::text_gpu::upload::UploadCount::default();
+        super::visit_frame_uploads!(self, count);
+        if atlas_bytes + count.bytes <= CHUNK_BYTES {
             return Ok(false);
         }
-        drop(buffers);
         self.text_preparation.upload_continuation = true;
         self.resume_glyph_upload(device, queue, on_submitted)
     }

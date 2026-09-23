@@ -5,7 +5,7 @@ use std::sync::Arc;
 pub(crate) struct StagingVec<T> {
     // Release elements and storage before their admission permits.
     values: Vec<T>,
-    _permits: [Permit; 2],
+    _permits: Option<[Permit; 2]>,
 }
 
 impl<T> StagingVec<T> {
@@ -21,7 +21,11 @@ impl<T> StagingVec<T> {
 
     pub fn new(capacity: usize, host: &Arc<Budget>) -> anyhow::Result<Self> {
         let bytes = Self::capacity_bytes(capacity)?;
-        let permits = [host.reserve(bytes)?, staging_process().reserve(bytes)?];
+        let permits = if bytes == 0 {
+            None
+        } else {
+            Some([host.reserve(bytes)?, staging_process().reserve(bytes)?])
+        };
         let mut values = Vec::new();
         values.try_reserve_exact(capacity)?;
         anyhow::ensure!(
@@ -40,6 +44,14 @@ impl<T> StagingVec<T> {
             "upload plan exceeds admitted capacity"
         );
         self.values.push(value);
+    }
+}
+
+impl<T> Extend<T> for StagingVec<T> {
+    fn extend<I: IntoIterator<Item = T>>(&mut self, values: I) {
+        for value in values {
+            self.push(value);
+        }
     }
 }
 
