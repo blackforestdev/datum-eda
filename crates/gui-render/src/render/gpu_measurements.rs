@@ -1,5 +1,8 @@
 //! Opt-in GPU-01..03 pass measurements. Never a presentation clock or scheduler.
 //! Three slots own their query/resolve/readback resources until map completion.
+use crate::text_gpu::lifetime::{SubmissionRef, Tracked};
+#[path = "gpu_measurement_resources.rs"]
+mod resources;
 use std::sync::{
     Arc,
     atomic::{AtomicU8, Ordering},
@@ -49,9 +52,9 @@ struct Pending {
 }
 
 struct Slot {
-    queries: wgpu::QuerySet,
-    resolve: wgpu::Buffer,
-    readback: wgpu::Buffer,
+    queries: Tracked<wgpu::QuerySet>,
+    resolve: Tracked<wgpu::Buffer>,
+    readback: Tracked<wgpu::Buffer>,
     pending: Option<Pending>,
 }
 
@@ -61,6 +64,7 @@ pub(crate) struct FrameQueries {
     frame: u64,
     submission: u64,
     queries: wgpu::QuerySet,
+    resources: Vec<SubmissionRef>,
     passes: Vec<&'static str>,
     signal: Arc<AtomicU8>,
     resolved: bool,
@@ -149,28 +153,10 @@ impl GpuMeasurements {
             "GPU measurement timestamp period unavailable"
         );
         anyhow::ensure!(epoch != 0, "GPU measurement requires a device epoch");
+        let owner = crate::text_gpu::lifetime::Owner::new();
         let slots = (0..SLOTS)
-            .map(|_| Slot {
-                queries: device.create_query_set(&wgpu::QuerySetDescriptor {
-                    label: Some("datum-measurement-pass-queries"),
-                    ty: wgpu::QueryType::Timestamp,
-                    count: QUERIES,
-                }),
-                resolve: device.create_buffer(&wgpu::BufferDescriptor {
-                    label: Some("datum-measurement-query-resolve"),
-                    size: BYTES,
-                    usage: wgpu::BufferUsages::QUERY_RESOLVE | wgpu::BufferUsages::COPY_SRC,
-                    mapped_at_creation: false,
-                }),
-                readback: device.create_buffer(&wgpu::BufferDescriptor {
-                    label: Some("datum-measurement-query-readback"),
-                    size: BYTES,
-                    usage: wgpu::BufferUsages::MAP_READ | wgpu::BufferUsages::COPY_DST,
-                    mapped_at_creation: false,
-                }),
-                pending: None,
-            })
-            .collect();
+            .map(|_| Slot::new(device, &owner, epoch))
+            .collect::<anyhow::Result<Vec<_>>>()?;
         Ok(Self {
             host,
             epoch,
@@ -242,7 +228,8 @@ impl GpuMeasurements {
             epoch: self.epoch,
             frame: self.next_frame,
             submission,
-            queries: slot.queries.clone(),
+            queries: (*slot.queries).clone(),
+            resources: slot.submission_refs(),
             passes: Vec::new(),
             signal,
             resolved: false,
@@ -284,7 +271,14 @@ impl GpuMeasurements {
     }
 
     /// Called only after the production queue submission; mapping never blocks.
-    pub(crate) fn submitted(&mut self, mut frame: FrameQueries) -> anyhow::Result<()> {
+    pub(crate) fn submitted(
+        &mut self,
+        queue: &wgpu::Queue,
+        mut frame: FrameQueries,
+    ) -> anyhow::Result<()> {
+        // The caller already submitted. Even a stale/invalid receipt must retain
+        // encoded resource accounting through that submission's completion.
+        crate::text_gpu::hold_until_done(queue, std::mem::take(&mut frame.resources));
         self.validate(&frame)?;
         anyhow::ensure!(
             frame.resolved,

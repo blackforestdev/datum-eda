@@ -486,7 +486,7 @@ impl Renderer {
         }
         on_submitted(submission);
         self.text_buffers.finish_frame();
-        self.submit_gpu_measurement(measurement)?;
+        self.submit_gpu_measurement(queue, measurement)?;
         let submit_elapsed = submit_started.elapsed();
         if let Some(finish_elapsed) = finish_elapsed {
             trace_render_timing(format!(

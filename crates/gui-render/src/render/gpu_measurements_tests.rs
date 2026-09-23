@@ -147,7 +147,7 @@ fn real_gpu_query_ring_completion_and_failure_controls() {
     }
     measurement.resolve(&mut frame, &mut encoder).unwrap();
     queue.submit([encoder.finish()]);
-    measurement.submitted(frame).unwrap();
+    measurement.submitted(&queue, frame).unwrap();
     let limit = Instant::now() + Duration::from_secs(2);
     let samples = loop {
         let samples = measurement.poll(&device).unwrap();
@@ -214,7 +214,7 @@ fn real_gpu_query_ring_completion_and_failure_controls() {
         }
         m.resolve(&mut frame, &mut encoder).unwrap();
         queue.submit([encoder.finish()]);
-        m.submitted(frame).unwrap();
+        m.submitted(&queue, frame).unwrap();
         slot
     };
     let mut delayed =
