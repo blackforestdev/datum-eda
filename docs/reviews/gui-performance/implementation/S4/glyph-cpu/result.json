@@ -1,0 +1,89 @@
+{
+  "status": "Default glyph preparation yields while retained CPU raster pixels share staging admission; complete scratch accounting remains unfinished",
+  "base_commit": "0c8a728b",
+  "production_consumers": [
+    "Datum Atlas raster preparation and mixed/chunked uploads",
+    "Shared Renderer full-scene and dialog text preparation used by Main/Global/Project/New"
+  ],
+  "retired_paths": [
+    "Preparing the entire cold glyph set before applying upload continuation",
+    "Uncharged retained CPU glyph-pixel vectors alongside explicit GPU staging",
+    "Flattening preparation errors into strings that lose typed continuation state"
+  ],
+  "behavior": [
+    "Retained image Vec capacity is charged to existing16 MiB host/64 MiB process staging-scratch budgets. Preflight room for the next bounded GPU copy before retaining an image; failed reservations roll back. CPU permits live beside each pending image until copying/discard releases it.",
+    "Pause at a cache miss after the pending padded copy plan reaches the existing4 MiB chunk size, or when the next image cannot be admitted alongside pending work. Upload existing pixels and resume preparation without repacking valid atlas addresses. A single image may exceed the chunk size if retained capacity and copy headroom fit; its rows still copy in bounded chunks.",
+    "Both production render paths use the same typed continuation handler. Incomplete text preparation cannot publish a frame/signature; required content is revisited against current inputs after the upload yields. Warm known glyphs bypass rasterization and queue checks.",
+    "Maintain pending padded copy bytes as an updated total, avoiding an upload-vector scan for every cold glyph miss. Successful mixed/chunked copies and repack/reset keep the total synchronized."
+  ],
+  "proof": {
+    "renderer": "320 renderer tests pass,10 diagnostic/visual cases filtered. New actual-GPU test verifies CPU capacity charge, pressure rollback, preservation of known glyphs, CPU-to-GPU staging handoff, callback release and close cleanup.",
+    "production": "Extended six-large-glyph fixture drives full-scene and dialog render_with_submission, proves raster preparation resumes after an upload yield, verifies refusal preserves pending bytes and atlas generation, applies changed color during continuation and matches fresh final pixels. Warm reuse remains unchanged.",
+    "lint_build": "Visual renderer/app all-targets Clippy -D warnings and fresh native application build pass. Source health2259, dependency authority and governance checks pass.",
+    "drift": "Full drift stops at existing console-routine-focused1x mismatch:3778 pixels(0.384318%), dat-console-revision-golden-hrak. Earlier gates pass; later gates unrun; no full-drift acceptance.",
+    "convergence": "Updated the existing guard to follow both production continuation callers into one shared preparation owner.11 guard tests pass, including missing/duplicate shared-owner and missing profile-call negative controls.",
+    "development": "Initial full drift stopped at the obsolete direct-call guard; updated its wiring and negative controls, then reran full drift. Initial319-test suite passed. New regression initially referenced a nonexistent test counter accessor; compilation failed, then the accessor was corrected. Expanded320-test suite passed, followed by final verification after the constant-time pending total change. Failed/intermediate logs retained."
+  },
+  "limits": [
+    "Rasterization itself returns an allocated image before admission. Transient raster peaks, private font/raster state, pending-container metadata/allocator headers and other CPU scratch remain unfinished. Admission of retained pixels is not a complete allocation-time memory ceiling or MEM-STAGING closure.",
+    "A single raster image that cannot fit retained capacity plus bounded copy headroom is explicitly refused; this does not establish all oversize-font/native resource qualification. Other hosts can consume process headroom between preflight and submission; actual atomic GPU admission may still refuse, preserving pending pixels for retry.",
+    "Complete world/history/control/text accounting, cold multi-submission timing and native/backend/fault/fairness/endurance qualification remain. No S4/S5 or issue closure.",
+    "No native-input or broad benchmark campaign, dependency, vendoring, license, prototype, font/layout authority or numerical budget change. Preserve GEFN, separate concurrent multi-device failure and nonblocking resize exclusion."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/result.json",
+  "logs": {
+    "initial-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/initial-tests.log.gz",
+      "uncompressed_sha256": "952976ecddea4f4ae1f4adbeeba81b3d30145dbb2e59be1125065c5231a5f05e"
+    },
+    "test-compile-error": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/test-compile-error.log.gz",
+      "uncompressed_sha256": "690b587682417a3da3de6f2ad34043275d3d68671f79b6e32b9690d05bb9611d"
+    },
+    "admission-tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/admission-tests.log.gz",
+      "uncompressed_sha256": "987cc7385bb3d36896f1b2b12aa15b82880b8427c50e397e3e92cd84b48dee3f"
+    },
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/tests.log.gz",
+      "uncompressed_sha256": "34e2fc4711661090ce550fbf5e1382cb14f906ceb1cf812d9b88319bbf32b7be"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/clippy.log.gz",
+      "uncompressed_sha256": "74fda67e588fc690ed50c2c3da1aad6a6fa4e72ea411468d00f8a2923fe509c2"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/build.log.gz",
+      "uncompressed_sha256": "d81e4e2b15b9f8e9510f9e21090a7e52a09d40e6282defed9ea1013494764430"
+    },
+    "initial-drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/initial-drift.log.gz",
+      "uncompressed_sha256": "1aefd12c5d375e89b29b6052c0309272cb77970f212e67cbcc4247f4eea145fe"
+    },
+    "convergence": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/convergence.log.gz",
+      "uncompressed_sha256": "a7118003e816546055bd5207576662028e89b0e7a4e9e1ff2e32bdd7e328592d"
+    },
+    "drift": {
+      "path": "docs/reviews/gui-performance/implementation/S4/glyph-cpu/drift.log.gz",
+      "uncompressed_sha256": "e268c399e0c81554261edd81b4427decc110ab645a37800dac7551793ab52b0d"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "f01ef42009eb8c94a49eb13b547d67479ee8b7ea0413b9b52d134f04b864b121",
+    "crates/gui-render/src/render/glyph_upload_continuation.rs": "66f1e37221bf37c0708499702234245223046fc68b385851885861e8c7a295c0",
+    "crates/gui-render/src/render/gpu_frame.rs": "983c34f91c723c7fe0e38301c049a9d3094acebbc9750f10358fb375f97f70c6",
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "74039bd2fa22f554ad45aef5fbd5c73e4211505aaf452a34ff4b9b50a9ae1c79",
+    "crates/gui-render/src/render/gpu_overlay.rs": "5a454425049b16ea1475be060da56bedb8010c7d0ef1ba4c3c6d4e882aa724e6",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "11f1407b64e2293ab797ff50f086b31c332682acf26fffccc5aa97a49b4283f5",
+    "crates/gui-render/src/render/gpu_text.rs": "1e58c8ac6e3ab50108da825696bcc94dfea0ea262f8637226b8efc2aafd9f0b2",
+    "crates/gui-render/src/text_gpu/atlas.rs": "f7b47db0d39236b294888000274377fcc205087d9eb1ab1b10aaea09fec36d7e",
+    "crates/gui-render/src/text_gpu/atlas/chunks.rs": "bc8ed9951b1639cdf79c8a8903feea3fa0947fa1082c81d3795bd13300979d8e",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "78efc1f472cc3ab175ec6e9d47a7e402a015524f8d453f5f2da41a6bad3647ec",
+    "crates/gui-render/src/text_gpu/mod.rs": "884bb2bbf7455bdd9753d10dba5f343a5189a1af8ad415714bd59aa5fb731c4a",
+    "scripts/check_gui_agent_terminal_convergence.py": "bf544dab91a13c49e456e3e51f139309e2353c947a0329eae6531ae58b894e27",
+    "scripts/test_gui_agent_terminal_convergence.py": "e1bba45dec8811418a91d0b0433411e7204ac0854e6b1459eafe2b29306e5dd9",
+    "crates/gui-render/src/text_gpu/atlas/cpu_images.rs": "d9e09f440d1684c45188f4ddef36efbd9900cf47f491f53c265a8bf0da9f6542",
+    "crates/gui-render/src/text_gpu/atlas/cpu_images_tests.rs": "eab9b9cedd841f1ab1ac86f9723c04a4b1b2992e971efab52e6fd492d40a36e1"
+  }
+}

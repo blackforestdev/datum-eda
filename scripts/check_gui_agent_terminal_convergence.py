@@ -237,8 +237,10 @@ def check_agent_tui_runtime(
     elif lookup_at < 0 or begin_at > lookup_at:
         failures.append("renderer must prune text buffers before cache lookup")
     for profile in ("false", "true"):
-        if render_gpu.count(f"self.prepare_frame_text(device, queue, prepared, width, height, {profile})") != 1:
+        if render_gpu.count(f"self.prepare_text_uploads(device, queue, prepared, width, height, {profile}, on_submitted)") != 1:
             failures.append(f"renderer must enter shared text preparation once for overlay_only={profile}")
+    if render_gpu.count("self.prepare_frame_text(device, queue, prepared, width, height, overlay)") != 1:
+        failures.append("text continuation must enter the single shared preparation owner")
     for marker in ("draw_rich_text", "selection_contains", "render_cursor"):
         if marker not in terminal_core_render:
             failures.append(f"TerminalCore renderer is missing {marker}")
@@ -508,7 +510,7 @@ def main() -> int:
     )
     # Full-frame encoding is a normal child module after the resize diagnostic
     # extraction; retain the same generation-count invariant across both files.
-    render_gpu = "\n".join(RENDER_GPU.with_name(name).read_text() for name in ("gpu.rs", "gpu_frame.rs", "gpu_overlay.rs", "gpu_text.rs"))
+    render_gpu = "\n".join(RENDER_GPU.with_name(name).read_text() for name in ("gpu.rs", "gpu_frame.rs", "gpu_overlay.rs", "gpu_text.rs", "glyph_upload_continuation.rs"))
     terminal_font_tests = TERMINAL_FONT_TESTS.read_text()
     terminal_core_render = TERMINAL_CORE_RENDER.read_text()
     terminal_core_render_tests = TERMINAL_CORE_RENDER_TESTS.read_text()

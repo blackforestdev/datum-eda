@@ -143,12 +143,12 @@ impl Renderer {
         }
         let upload_elapsed = upload_started.elapsed();
         let text_prepare_started = std::time::Instant::now();
-        let (text_cache_stats, skipped_text_prepare) =
-            self.prepare_frame_text(device, queue, prepared, width, height, false)?;
-        let text_prepare_elapsed = text_prepare_started.elapsed();
-        if self.start_glyph_upload(device, queue, on_submitted)? {
+        let Some((text_cache_stats, skipped_text_prepare)) =
+            self.prepare_text_uploads(device, queue, prepared, width, height, false, on_submitted)?
+        else {
             return Ok(false);
-        }
+        };
+        let text_prepare_elapsed = text_prepare_started.elapsed();
         let mut measurement = self.begin_gpu_measurement()?;
         let encode_started = std::time::Instant::now();
         let msaa_view = self.ensure_msaa(device, width, height)?.clone();

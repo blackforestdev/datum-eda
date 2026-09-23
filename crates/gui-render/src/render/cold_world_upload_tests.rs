@@ -74,14 +74,16 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
         assert_eq!(ready, attempt == 2, "only the final attempt can present");
         if !ready {
             assert!(
-                renderer.upload_staging_reserved_bytes() - renderer.layout_scratch_reserved_bytes()
+                renderer.upload_staging_reserved_bytes()
+                    - renderer.layout_scratch_reserved_bytes()
+                    - renderer.pending_glyph_pixel_bytes()
                     <= CHUNK_BYTES as u64
             );
         }
         device.poll(wgpu::PollType::wait_indefinitely()).unwrap();
         assert_eq!(
             renderer.upload_staging_reserved_bytes(),
-            renderer.layout_scratch_reserved_bytes()
+            renderer.layout_scratch_reserved_bytes() + renderer.pending_glyph_pixel_bytes()
         );
     }
     assert_eq!(submissions, 3);

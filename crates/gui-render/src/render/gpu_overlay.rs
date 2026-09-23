@@ -57,11 +57,11 @@ impl Renderer {
             prepared.menu_overlay_vertices(),
         )?;
         let has_text = prepared.has_overlay_text();
-        let (text_stats, _) =
-            self.prepare_frame_text(device, queue, prepared, width, height, true)?;
-        if self.start_glyph_upload(device, queue, on_submitted)? {
+        let Some((text_stats, _)) =
+            self.prepare_text_uploads(device, queue, prepared, width, height, true, on_submitted)?
+        else {
             return Ok(false);
-        }
+        };
         let mut measurement = self.begin_gpu_measurement()?;
         let msaa_view = self.ensure_msaa(device, width, height)?.clone();
         let mut encoder = device.create_command_encoder(&wgpu::CommandEncoderDescriptor {

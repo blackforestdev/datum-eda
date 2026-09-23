@@ -215,6 +215,9 @@ impl Renderer {
             has_overlay_text && !reuse_overlay,
         );
         let retried = if let Err(initial) = first {
+            if initial.is::<crate::text_gpu::UploadRequired>() {
+                return Err(initial);
+            }
             // trim clears atlas residency protection. Re-prepare workspace FIRST
             // to protect its glyphs from overlay allocation, before either draw.
             #[cfg(test)]
@@ -232,7 +235,9 @@ impl Renderer {
                 has_overlay_text,
             )
             .map_err(|retry| {
-                anyhow::anyhow!("prepare frame text after atlas trim: {retry}; initial: {initial}")
+                retry.context(format!(
+                    "prepare frame text after atlas trim; initial: {initial}"
+                ))
             })?;
             true
         } else {
@@ -270,7 +275,7 @@ impl Renderer {
                     self.text_resolution,
                     build_text_areas(self.text_buffers.entries(), workspace, &prepared.text_runs),
                 )
-                .map_err(|error| anyhow::anyhow!("prepare workspace text: {error}"))?;
+                .map_err(|error| error.context("prepare workspace text"))?;
         }
         if prepare_overlay {
             #[cfg(test)]
@@ -296,7 +301,7 @@ impl Renderer {
                         prepared.menu_overlay_text_runs(),
                     ),
                 )
-                .map_err(|error| anyhow::anyhow!("prepare overlay text: {error}"))?;
+                .map_err(|error| error.context("prepare overlay text"))?;
         }
         Ok(())
     }
