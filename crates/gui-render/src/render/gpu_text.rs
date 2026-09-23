@@ -78,6 +78,8 @@ impl Renderer {
         let staging = self.atlas.required_staging_bytes(&buffers)?;
         self.text_buffers
             .release_layout_scratch_for(staging, &self.atlas.staging_budget);
+        self.swash_cache
+            .release_for(staging, &self.atlas.staging_budget);
         let atlas_upload = self.atlas.flush_uploads(device, &buffers)?;
         drop(buffers);
         self.uniform_buffer.finish_uploads();
@@ -354,5 +356,12 @@ impl Renderer {
                 .overlay_prepared
                 .as_ref()
                 .map_or(0, |(_, _, s)| s.bytes)
+    }
+}
+
+impl Renderer {
+    /// Private retained raster scratch, excluding separately admitted pending pixels.
+    pub fn raster_scratch_reserved_bytes(&self) -> u64 {
+        self.swash_cache.reserved_bytes()
     }
 }

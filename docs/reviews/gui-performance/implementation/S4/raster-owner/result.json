@@ -1,0 +1,75 @@
+{
+  "status": "Datum raster owner accounts and admits retained private scratch separately from pixel lifetimes; construction peaks/font ownership remain open",
+  "base_commit": "da02e73b",
+  "production_consumers": [
+    "Default shared Atlas/Draw raster path used by workspace and overlay text across native and offscreen renderers",
+    "Full/dialog glyph continuation and final mixed upload submission"
+  ],
+  "retired_paths": [
+    "Unobserved retained SwashCache private scratch",
+    "Implicit overlap of returned raster pixels with private-scratch observations"
+  ],
+  "behavior": [
+    "A Datum-owned wrapper scopes installed SwashCache creation/rasterization. Font loading occurs outside raster scope through the public API. Returned Vec capacity has an independent lifetime lease through pending Atlas uploads; subtract it once to isolate retained private scratch including Datum headers.",
+    "Retained private scratch holds host/process staging permits. Growth or host changes re-admit current capacity; refused retention clears only reusable scratch. Returned glyph images remain available and unchanged. Pixel capacity retains existing separate admission and copy preflight.",
+    "Pending metadata/pixel and continuation/final-copy pressure can retire optional raster scratch before refusing required work. Clearing the raster cache does not invalidate uploaded atlas locations or pending image pixels. Drop releases scratch; surviving pixels retain their own accounting until copied/dropped.",
+    "Renderer reports reserved raster scratch separately. Existing native/offscreen staging equations now include it. The installed renderer remains the independent pixel oracle; no third-party source is modified or vendored."
+  ],
+  "proof": {
+    "renderer": "test result: FAILED. 374 passed; 1 failed; 0 ignored; 0 measured; 11 filtered out; finished in 27.80s",
+    "focused": "test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 385 filtered out; finished in 0.91s",
+    "checks": "Full renderer run:374 passed and1 stale pressure-fixture failure,11 filtered. Corrected fixture retires the newly evictable scratch before deliberately exhausting required storage; focused rerun passed1. Final strict visual renderer/app all-target Clippy and fresh GUI build pass. Final production edit after that full run only collapses an equivalent nested conditional for Clippy.",
+    "coverage": "New private raster lifetime test verifies actual scope total equals private scratch plus output capacity, host re-admission, pressure release, byte-identical surviving pixels and final zero allocations. Existing installed-renderer pixel oracle, workspace/dialog continuation, rich text, warm reuse and resource release cases passed.",
+    "failed_attempts": "Initial compile caught one test reference still calling the old raster type. Preserve that log. Full run failure840vs424 was pending metadata capacity growing after newly evictable scratch freed room; forced-full test now clears scratch before filling the host. Preserve initial Clippy nested-if style rejection and corrected final result."
+  },
+  "limits": [
+    "No complete MEM-STAGING/ACC-02, S4/S5 or issue closure. Private font/shaping state and synchronous raster/layout construction peaks remain unresolved. Post-construction scratch admission does not prove a construction-time ceiling.",
+    "Exact private scratch observation requires the installed Datum allocator. Wrapper/scope registry bookkeeping, allocator slack/native mappings and complete cross-host/native qualification remain separate. No runtime latency or tier acceptance claim.",
+    "No dependency/license/prototype/cap/sequencing amendment. Preserve failed evidence, Console golden issue, GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/raster-owner/result.json",
+  "logs": {
+    "renderer-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/raster-owner/renderer-initial.log.gz",
+      "uncompressed_sha256": "74d3878502e9eb879a02fb9b53acc419c65f1647522ac7cf368b155a7f7bb499"
+    },
+    "focused": {
+      "path": "docs/reviews/gui-performance/implementation/S4/raster-owner/focused.log.gz",
+      "uncompressed_sha256": "41d79f131309dfd6806bb32e05099ade75ac3599d7ad04c179a1cb925e12f009"
+    },
+    "compile-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/raster-owner/compile-initial.log.gz",
+      "uncompressed_sha256": "7cab308517b14bfe4e9bea19edfab42cde279248e7b60509ee6d8722ea02631b"
+    },
+    "clippy-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/raster-owner/clippy-initial.log.gz",
+      "uncompressed_sha256": "601a09c25ba9edca04fa219475d8a8e2932e295abbaeeefc6ff923fcb23a6e6c"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/raster-owner/clippy.log.gz",
+      "uncompressed_sha256": "a873ffe8f0477bf6363c9cbba35fa30cfb14d44ddc0ab5a2059cb05c05b34892"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/raster-owner/build.log.gz",
+      "uncompressed_sha256": "33561585aa86e36064615d5f2f1b2e3def1ba1433084a7e93f0e6154df4878fa"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "8cb8c2a267dec96481ed226b51d37fbd97836792d117596a9db681c495f9386b",
+    "crates/gui-render/src/render/glyph_upload_continuation.rs": "68ef594a6cbc49d1e3c7b560c124e96b192ebdd494fc0454549c64bec359c306",
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "71f06d76b8d87678e1dad59e99785f9cf855fc90c6efd66066b1decb579e9fa9",
+    "crates/gui-render/src/render/gpu_init.rs": "f1efb14d83dedf51e0561efc540d7f29e8292b60f0f8e7f4f912fe41c2824b0f",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "aba2dea5a72582e4d71a9b02614bce619f4e3d46870b37f9eb015f7408230ed2",
+    "crates/gui-render/src/render/gpu_text.rs": "5e30127ebb6efc567ba5695c854251c298e13a5762e90c5f3bac6923aa94a0bc",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "919d2f14e28f9a352f30753aaf6304c61d5b77048dcb041037cb111071f88dae",
+    "crates/gui-render/src/render/renderer_state.rs": "90d5c04edd85b7e772f12caf761b0b4a879e320a920c3ff8225c8805b6d1d7e1",
+    "crates/gui-render/src/text_gpu/atlas.rs": "0e6d01ea6fdf7e7b8a415ab38af97ca0d79a9e1106af4dad4b041f5f7d616238",
+    "crates/gui-render/src/text_gpu/atlas/cpu_images_tests.rs": "64597a665c7fde9e3090f5f8c75f3f6b64c097a08327fe52f7f9682b8368d81b",
+    "crates/gui-render/src/text_gpu/atlas/tests.rs": "45418866f8934bbb6651baaff8dfa0ca91bbf47d0adfd92c63223c86f0c1f503",
+    "crates/gui-render/src/text_gpu/draw.rs": "e6beaf2ea9a42dcc1263369627f6454fbf88cb1b2c107eb6de6a9cf621a901f4",
+    "crates/gui-render/src/text_gpu/draw_generation_tests.rs": "eec42dd400a72857e4f4b073ecb61b79fe73c6c5c88e34217a22ac9ca68cdd14",
+    "crates/gui-render/src/text_gpu/mod.rs": "59ee4468438908aadb564f13e0c11e1605e219c0bb00e7cf2059451e5fe5e7d0",
+    "crates/gui-render/src/text_gpu/parity.rs": "ae41b8bff6574a5773d65f37fee8d66f5740429ba96678119dfe3b40a575bec5",
+    "crates/gui-render/src/text_gpu/raster.rs": "99afebafcf6d935fd618b180c7f8abff6227a1c94912f3f55b741b198ab2e684"
+  }
+}

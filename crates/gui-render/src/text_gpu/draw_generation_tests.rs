@@ -175,6 +175,7 @@ fn admitted_large_glyph_payload_retains_exact_snapshot_and_skips_unchanged_uploa
             + atlas.pending_metadata_bytes()
             + atlas.page_metadata_bytes()
             + atlas.lookup_metadata_bytes()
+            + raster.reserved_bytes()
     );
     let pressure = atlas
         .staging_budget
@@ -233,5 +234,6 @@ fn admitted_large_glyph_payload_retains_exact_snapshot_and_skips_unchanged_uploa
             + atlas.pending_metadata_bytes()
             + atlas.page_metadata_bytes()
             + atlas.lookup_metadata_bytes()
+            + raster.reserved_bytes()
     );
 }
