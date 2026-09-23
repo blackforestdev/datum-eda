@@ -16,15 +16,28 @@ pub(super) fn measure(
     let paragraphs = glyphon::cosmic_text::LineIter::new(text)
         .map(|(range, _)| &text[range])
         .chain(trailing_empty.then_some(""));
+    // Reuse layout working storage across paragraphs within this measurement.
+    // Nothing escapes the call or adds another retained thread-local cache.
+    let mut scratch = glyphon::cosmic_text::ShapeBuffer::default();
+    let mut layout = Vec::new();
     let mut widest = 0.0_f32;
     let mut rows = 0;
     for paragraph in paragraphs {
         let shaped = ShapeLine::new(fonts, paragraph, &attributes, Shaping::Basic, 8);
-        let layout = shaped.layout(size, width, Wrap::WordOrGlyph, None, None);
+        shaped.layout_to_buffer(
+            &mut scratch,
+            size,
+            width,
+            Wrap::WordOrGlyph,
+            None,
+            &mut layout,
+            None,
+        );
         rows += layout.len();
         for line in &layout {
             widest = widest.max(line.w);
         }
+        layout.clear();
     }
     (widest, rows)
 }
