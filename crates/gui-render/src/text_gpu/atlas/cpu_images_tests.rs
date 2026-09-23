@@ -10,7 +10,7 @@ fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
     let mut buffer = glyphon::Buffer::new(&mut fonts, glyphon::Metrics::new(18.0, 22.0));
     buffer.set_text(
         &mut fonts,
-        "AB",
+        "ABCDEF",
         &crate::text_attrs(crate::TextFace::Ui),
         glyphon::Shaping::Basic,
         None,
@@ -34,8 +34,10 @@ fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
         .unwrap();
     let cpu = atlas.pending_cpu_bytes();
     assert!(cpu > 0);
-    assert_eq!(host.used(), cpu);
-    assert_eq!(process.used(), baseline + cpu);
+    let metadata = atlas.pending_metadata_bytes();
+    assert!(metadata > 0);
+    assert_eq!(host.used(), cpu + metadata);
+    assert_eq!(process.used(), baseline + cpu + metadata);
     let padded = atlas.pending_staging_bytes();
     let filler = host.reserve(host.available()).unwrap();
     let error = atlas
@@ -46,7 +48,7 @@ fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
     assert_eq!(atlas.pending_staging_bytes(), padded);
     assert_eq!(
         process.used(),
-        baseline + cpu,
+        baseline + cpu + metadata,
         "failed admission rolls back"
     );
     let rasterizations = atlas.uploads.rasterizations;
@@ -63,6 +65,7 @@ fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
     drop(filler);
     let mut batch = atlas.flush_uploads(&device, &[]).unwrap().unwrap();
     assert_eq!(atlas.pending_cpu_bytes(), 0);
+    assert_eq!(atlas.pending_metadata_bytes(), 0);
     assert_eq!(
         host.used(),
         padded,
@@ -76,6 +79,39 @@ fn pixels_are_charged_until_copied_and_pressure_preserves_pending_content() {
         .glyph(&device, &queue, &mut fonts, &mut raster, keys[1])
         .unwrap();
     assert!(host.used() > 0);
+    for key in &keys[2..5] {
+        atlas
+            .glyph(&device, &queue, &mut fonts, &mut raster, *key)
+            .unwrap();
+    }
+    assert_eq!(
+        atlas.pending_uploads.len(),
+        atlas.pending_uploads.capacity()
+    );
+    let old_metadata = atlas.pending_metadata_bytes();
+    let old_pixels = atlas.pending_cpu_bytes();
+    let old_copies = atlas.pending_staging_bytes();
+    let filler = host.reserve(host.available()).unwrap();
+    let error = atlas
+        .glyph(&device, &queue, &mut fonts, &mut raster, keys[5])
+        .unwrap_err();
+    assert!(error.is::<UploadRequired>());
+    assert_eq!(atlas.pending_metadata_bytes(), old_metadata);
+    assert_eq!(atlas.pending_cpu_bytes(), old_pixels);
+    assert_eq!(atlas.pending_staging_bytes(), old_copies);
+    drop(filler);
+    atlas
+        .glyph(&device, &queue, &mut fonts, &mut raster, keys[5])
+        .unwrap();
+    assert!(atlas.pending_metadata_bytes() > old_metadata);
+    assert_eq!(
+        host.used(),
+        atlas.pending_cpu_bytes() + atlas.pending_metadata_bytes()
+    );
+    assert_eq!(process.used(), baseline + host.used());
+    atlas.repack();
+    assert_eq!(atlas.pending_metadata_bytes(), 0);
+    assert_eq!(host.used(), 0);
     drop(atlas);
     assert_eq!(host.used(), 0);
     assert_eq!(process.used(), baseline);

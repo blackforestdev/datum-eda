@@ -78,6 +78,11 @@ impl Renderer {
 }
 
 impl Renderer {
+    /// Pending raster upload record capacity, charged to staging/scratch separately from pixels.
+    pub fn pending_glyph_metadata_bytes(&self) -> u64 {
+        self.atlas.pending_metadata_bytes()
+    }
+
     /// Retained raster pixel capacities and Datum headers, also in staging/scratch usage.
     pub fn pending_glyph_pixel_bytes(&self) -> u64 {
         self.atlas.pending_cpu_bytes()

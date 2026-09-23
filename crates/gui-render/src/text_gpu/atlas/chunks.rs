@@ -60,6 +60,7 @@ impl Atlas {
         }
         self.pending_uploads
             .retain(|upload| upload.uploaded_rows != upload.size[1]);
+        self.release_empty_pending_metadata();
         Ok(submission)
     }
 }
