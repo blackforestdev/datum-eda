@@ -125,6 +125,7 @@ impl Owner {
         Tracked(Arc::new(Allocation {
             resource,
             _permits: permit,
+            _shared_permit: None,
             identity,
         }))
     }
@@ -218,6 +219,7 @@ impl crate::Renderer {
 // still holds the API object. Submission references own this SAME allocation.
 struct Allocation<T> {
     resource: T,
+    _shared_permit: Option<Arc<super::budget::Permit>>,
     _permits: Vec<super::budget::Permit>,
     identity: Arc<Identity>,
 }
@@ -225,6 +227,13 @@ struct Allocation<T> {
 pub(crate) struct Tracked<T>(Arc<Allocation<T>>);
 
 impl<T> Tracked<T> {
+    pub(crate) fn with_shared_permit(mut self, permit: Arc<super::budget::Permit>) -> Self {
+        Arc::get_mut(&mut self.0)
+            .expect("attach shared permit before publishing allocation")
+            ._shared_permit = Some(permit);
+        self
+    }
+
     #[cfg(test)]
     pub fn id(&self) -> u64 {
         self.0.identity.record.id

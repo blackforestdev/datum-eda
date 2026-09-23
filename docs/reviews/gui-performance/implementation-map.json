@@ -16602,6 +16602,11 @@
           "work": "s4_glyph_instance_generations_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-instance-generations/result.json",
           "status": "Workspace and overlay glyph instance buffers enforce two live allocations across empty preparation and recovery"
+        },
+        {
+          "work": "s4_atlas_generations_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-generations/result.json",
+          "status": "Atlas physical page generations limited to two across reset/recovery and submission retirement"
         }
       ]
     },
@@ -34023,5 +34028,28 @@
       "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/glyph-instance-generations/result.json"
+  },
+  "s4_atlas_generations_work": {
+    "status": "Atlas physical page generations limited to two across reset/recovery and submission retirement",
+    "base_commit": "d6e540e5",
+    "production_consumers": [
+      "Shared glyph Atlas::glyph and Atlas::replacement for workspace and overlay text across native renderer recovery"
+    ],
+    "retired_paths": [
+      "Atlas replacement limited only by byte capacity without a live physical-generation allowance"
+    ],
+    "behavior": [
+      "Reserve one shared generation permit before the first page allocation. Attach a shared permit to every page allocation so the last page/submission release retires the generation. Subsequent pages share the same permit. Recovery shares the two-generation allowance; reset starts a fresh generation while repack retains existing physical pages and allowance. Byte caps continue to apply together."
+    ],
+    "proof": {
+      "renderer": "348 renderer tests pass, 11 filtered. New actual-GPU test creates two pages in one generation, pins them and a second generation, verifies third refusal with unchanged byte charge, verifies repack reuse, releases only one old page and confirms continued refusal, then releases the last page and retries to final zero ownership. Existing local-cap/reset/recovery, instance and pixel parity tests pass.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health 2275, dependency authority and governance pass.",
+      "scope": "No new native/backend/endurance campaign; existing Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Completes the atlas physical-generation implementation remainder recorded in s4_atlas_recovery_budget_work. Full MEM-REPLACEMENT still requires terminal/other resource reconciliation and original S5 qualification. CPU accounting remains within existing open resource obligations.",
+      "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-generations/result.json"
   }
 }
