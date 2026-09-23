@@ -1,0 +1,53 @@
+{
+  "status": "Admitted retained vertex buffers allocate fallibly before expansion",
+  "base_commit": "cb523c1d",
+  "production_consumers": [
+    "Board and companion retained constructors through native and offscreen capture consumers",
+    "Shared quad expansion allocator"
+  ],
+  "retired_paths": [
+    "Retained constructors used infallible Vec::with_capacity after budget admission"
+  ],
+  "behavior": [
+    "Check quad count multiplication and reserve exact vertex capacity with try_reserve_exact before writing vertices. Propagate reservation refusal through both fallible retained constructors and their existing host/capture failure paths. Use the same shared converter for compatibility callers; they retain their infallible expect boundary. Successful expansion keeps one allocation, existing vertex order/winding and colors. Empty expansion allocates nothing."
+  ],
+  "proof": {
+    "vertices": "Two focused allocator tests pass: exact single allocation/capacity and tracked bytes, winding/color preservation, release to zero, count overflow, impossible element-layout refusal and empty zero-capacity output. No enormous allocation is attempted by the overflow cases.",
+    "constructors": "Six document CPU/constructor tests pass, including checked-in real board and schematic refusal/retry and allocation accounting.",
+    "app": "394 app tests pass, 16 ignored.",
+    "lint_build": "Strict renderer/app all-targets Clippy with app visual feature and fresh visual app build pass; source health2280 and dependency/governance/format checks pass.",
+    "scope": "No repeated full GPU or native campaign. Previous 358-test renderer proof covers unchanged rendering; focused proof here covers allocation and its migrated constructors."
+  },
+  "limits": [
+    "This makes the admitted vertex reservation recoverable; other construction allocations, complete peak/concurrent admission, scope bookkeeping and external weak-container ownership remain open as recorded in construction-admission. Infallible compatibility callers and other allocation families are not claimed to recover from process-wide allocation exhaustion.",
+    "Twelve implementation gaps and original S5 qualification remain open. No dependency/vendor/license, prototype, numerical cap or sequencing amendment. Preserve GEFN, Console golden disposition and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/vertex-allocation/result.json",
+  "logs": {
+    "vertices": {
+      "path": "docs/reviews/gui-performance/implementation/S4/vertex-allocation/vertices.log.gz",
+      "uncompressed_sha256": "61ae4b6eec91bee15fc78d947dadc6009ef1288b3cef6466b64a0fc165ea9d3a"
+    },
+    "constructors": {
+      "path": "docs/reviews/gui-performance/implementation/S4/vertex-allocation/constructors.log.gz",
+      "uncompressed_sha256": "92bc9ab2245222cb399f01d5c00536c7f90a76b1f8900a9f502d0f996553384f"
+    },
+    "app": {
+      "path": "docs/reviews/gui-performance/implementation/S4/vertex-allocation/app.log.gz",
+      "uncompressed_sha256": "235fb66055d8b8ba486fbc3cfbab8cbaaacf9df497819f8fb807649cbbac409b"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/vertex-allocation/clippy.log.gz",
+      "uncompressed_sha256": "8160572a81c0eb721267e7cd36c80cc80d3bb35000d2044a5a57732648c6d6f0"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/vertex-allocation/build.log.gz",
+      "uncompressed_sha256": "1ec49fb19cf2e8c32de18f9414108dcad7569bfc2f904015357c8745774ef478"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_data.rs": "f699539719e53118285f8820344610eaed15ed0baed3484564380e81e5b5843e",
+    "crates/gui-render/src/render/scene_retained_access.rs": "e006da7fc3814477d6507a932006e02b7388045f1de516976151d046133a6508",
+    "crates/gui-render/src/render/schematic_retained.rs": "3c8329f277629dcce03dd331581de838626b64eeac2dfa4137360287de7e4123"
+  }
+}

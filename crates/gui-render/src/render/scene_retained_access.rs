@@ -202,7 +202,7 @@ impl RetainedScene {
         let hits_elapsed = hits_started.elapsed();
         let vertex_started = std::time::Instant::now();
         retained_scene_owner::document_cpu::admit_vertex_expansion(&budget, &scope, world_quads.len(), limit)?;
-        let world_vertices = quads_to_vertices(&world_quads);
+        let world_vertices = gpu_data::try_quads_to_vertices(&world_quads)?;
         let quad_count = world_quads.len();
         drop(world_quads);
         let vertex_elapsed = vertex_started.elapsed();

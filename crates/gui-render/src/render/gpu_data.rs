@@ -95,9 +95,63 @@ fn quad_to_vertices(out: &mut Vec<Vertex>, quad: Quad) {
 }
 
 pub(crate) fn quads_to_vertices(quads: &[Quad]) -> Vec<Vertex> {
-    let mut out = Vec::with_capacity(quads.len() * 6);
+    try_quads_to_vertices(quads).expect("quad vertex allocation succeeds")
+}
+
+fn reserve_quad_vertices(quads: usize) -> anyhow::Result<Vec<Vertex>> {
+    let count = quads
+        .checked_mul(6)
+        .ok_or_else(|| anyhow::anyhow!("quad vertex count overflow"))?;
+    let mut out = Vec::new();
+    out.try_reserve_exact(count)
+        .map_err(|error| anyhow::anyhow!("quad vertex allocation refused: {error}"))?;
+    Ok(out)
+}
+
+/// Reserve the admitted capacity fallibly before writing any expanded vertices.
+pub(crate) fn try_quads_to_vertices(quads: &[Quad]) -> anyhow::Result<Vec<Vertex>> {
+    let mut out = reserve_quad_vertices(quads.len())?;
     for quad in quads {
         quad_to_vertices(&mut out, *quad);
     }
-    out
+    Ok(out)
+}
+
+#[cfg(test)]
+mod quad_allocation_tests {
+    use super::*;
+
+    #[test]
+    fn fallible_expansion_uses_one_exact_allocation_and_preserves_winding_color() {
+        let scope = crate::cpu_alloc::Scope::new("quad-allocation-proof");
+        let quad = Quad {
+            points: [(1.0, 2.0), (3.0, 4.0), (5.0, 6.0), (7.0, 8.0)],
+            color: [0.1, 0.2, 0.3],
+        };
+        let vertices = scope.with(|| try_quads_to_vertices(&[quad])).unwrap();
+        assert_eq!(vertices.len(), 6);
+        assert_eq!(vertices.capacity(), 6);
+        for (vertex, index) in vertices.iter().zip([0, 1, 2, 0, 2, 3]) {
+            let point = quad.points[index];
+            assert_eq!(vertex.pos, [point.0, point.1]);
+            assert_eq!(vertex.color, quad.color);
+        }
+        let usage = scope.usage();
+        assert_eq!(usage.allocations, 1);
+        assert_eq!(
+            usage.payload_bytes + usage.tracking_bytes,
+            crate::cpu_alloc::heap::capacity_bytes::<Vertex>(6) as u64
+        );
+        drop(vertices);
+        assert_eq!(scope.usage().allocations, 0);
+    }
+
+    #[test]
+    fn impossible_capacity_is_refused_without_publishing_vertices() {
+        assert!(reserve_quad_vertices(usize::MAX).is_err());
+        // Multiplication fits, but the element layout cannot fit a Rust allocation.
+        assert!(reserve_quad_vertices(usize::MAX / 6).is_err());
+        let empty = try_quads_to_vertices(&[]).unwrap();
+        assert_eq!(empty.capacity(), 0);
+    }
 }
