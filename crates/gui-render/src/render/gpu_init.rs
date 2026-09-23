@@ -349,7 +349,7 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
             ),
         };
         let text_cpu = crate::cpu_alloc::Scope::new("renderer-text");
-        let font_system = crate::text_layout::fonts::Fonts::new();
+        let font_system = crate::text_layout::fonts::Fonts::new(staging_budget.clone());
         let swash_cache = crate::text_gpu::raster::Raster::new();
         let atlas = match previous {
             Some(old) => old.atlas.replacement(device),

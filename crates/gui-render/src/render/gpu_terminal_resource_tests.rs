@@ -246,6 +246,7 @@ fn terminal_pixels_yield_with_bounded_padded_staging_and_resume_current_content(
                 - renderer.renderer.glyph_upload_storage_bytes()
                 - renderer.renderer.text_preparation_storage_bytes()
                 - renderer.renderer.raster_scratch_reserved_bytes()
+                - renderer.renderer.font_cache_reserved_bytes()
                 - renderer.renderer.atlas_page_metadata_bytes()
                 - renderer.renderer.atlas_lookup_metadata_bytes()
                 <= 4 * 1024 * 1024
@@ -263,6 +264,7 @@ fn terminal_pixels_yield_with_bounded_padded_staging_and_resume_current_content(
                 + renderer.renderer.glyph_upload_storage_bytes()
                 + renderer.renderer.text_preparation_storage_bytes()
                 + renderer.renderer.raster_scratch_reserved_bytes()
+                + renderer.renderer.font_cache_reserved_bytes()
                 + renderer.renderer.atlas_page_metadata_bytes()
                 + renderer.renderer.atlas_lookup_metadata_bytes()
         );

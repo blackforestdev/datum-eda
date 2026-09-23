@@ -3924,6 +3924,11 @@
           "work": "s4_attachment_generation_admission_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/attachment-generations/result.json",
           "status": "Per-host two-generation admission now enforced through creation, retirement and recovery. Original full qualification and remaining aggregate accounting stay open."
+        },
+        {
+          "work": "s4_resource_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json",
+          "status": "Font pressure integrated; original implementation/accounting gaps and qualification remain open."
         }
       ]
     },
@@ -15451,6 +15456,11 @@
           "work": "s4_font_owner_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/font-owner/result.json",
           "status": "Default renderer font/cache and returned-shape ownership separated; admission and construction peaks remain open"
+        },
+        {
+          "work": "s4_resource_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json",
+          "status": "Font pressure integrated; original implementation/accounting gaps and qualification remain open."
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -15615,6 +15625,11 @@
           "work": "s4_font_owner_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/font-owner/result.json",
           "status": "Default renderer font/cache and returned-shape ownership separated; admission and construction peaks remain open"
+        },
+        {
+          "work": "s4_resource_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json",
+          "status": "Font pressure integrated; original implementation/accounting gaps and qualification remain open."
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -17387,6 +17402,11 @@
           "work": "s4_font_owner_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/font-owner/result.json",
           "status": "Default renderer font/cache and returned-shape ownership separated; admission and construction peaks remain open"
+        },
+        {
+          "work": "s4_resource_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json",
+          "status": "Font pressure integrated; original implementation/accounting gaps and qualification remain open."
         }
       ]
     },
@@ -17618,6 +17638,11 @@
           "work": "s4_font_owner_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/font-owner/result.json",
           "status": "Default renderer font/cache and returned-shape ownership separated; admission and construction peaks remain open"
+        },
+        {
+          "work": "s4_resource_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json",
+          "status": "Font pressure integrated; original implementation/accounting gaps and qualification remain open."
         }
       ]
     },
@@ -17710,14 +17735,13 @@
       "s2_exit_disposition": {
         "approval": "74ba0b78 exact proposal; owner response recorded in S2-EXIT-APPROVED",
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
-        "implementation_due": "S4",
-        "unfinished_implementation": [
-          "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
-        ],
+        "implementation_due": "Implemented at S4: process GPU capacity admission and lifetime retention. Original qualification remains S5.",
+        "unfinished_implementation": [],
         "qualification_due": "S5",
         "unfinished_qualification": "512MiB all application GPU allocations including attachments and shared resources counted once; aggregate and every subcap apply together; required content cannot be omitted.",
         "proof_to_complete": "Existing test.positive, test.negative_control and test.entry for this row; preserve all observed_artifacts and failed attempts.",
-        "status": "Unqualified; original acceptance rule and proof status preserved."
+        "status": "GPU capacity admission implementation complete; original acceptance rule and qualification remain unqualified.",
+        "s4_implementation_evidence": "s4_resource_completion"
       },
       "s4_implementation_progress": [
         {
@@ -17809,7 +17833,15 @@
           "work": "s4_gpu_reservation_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/gpu-reservation/result.json",
           "status": "Typed GPU admission migrated across production allocation owners; full accounting and qualification remain open"
+        },
+        {
+          "work": "s4_resource_completion",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json",
+          "status": "MEM-GPU-TOTAL admission/lifetime implementation complete; font cache pressure integrated; full resource qualification remains open"
         }
+      ],
+      "s4_resolved_implementation_obligations": [
+        "Complete the S2-owned accounting/cap implementation for this predicate, including capacities and live/retiring/shared ownership; bounded or public snapshot evidence does not establish complete accounting."
       ]
     },
     {
@@ -32122,10 +32154,10 @@
   "s4_carried_work_inventory": {
     "source": "Existing s2_exit_disposition on the 50 carried requirement rows",
     "carried_rows": 50,
-    "rows_with_recorded_implementation_gaps": 11,
+    "rows_with_recorded_implementation_gaps": 10,
     "rows_with_no_new_implementation_defect_asserted": 23,
     "interpretation": "Complete the recorded implementation gaps at S4 and retain all 50 qualification obligations at S5. Empty unfinished_implementation lists are not invented coding tasks; detected regressions still require resolution. No deadline or acceptance-rule change.",
-    "rows_with_implementation_completed_at_s4": 16,
+    "rows_with_implementation_completed_at_s4": 17,
     "completed_at_s4": [
       "MEM-WIDTH-ENTRIES",
       "MEM-WIDTH-KEYS",
@@ -32142,7 +32174,8 @@
       "REUSE-TEXT-LAYOUT",
       "HP15-01",
       "MEM-WORLD-GPU",
-      "HP15-02"
+      "HP15-02",
+      "MEM-GPU-TOTAL"
     ]
   },
   "s4_control_retained_cpu_work": {
@@ -35279,5 +35312,37 @@
       "No dependency/license/prototype/font authority/cap/sequencing amendment or runtime tier/latency acceptance. Preserve failed evidence, Console golden issue, GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/font-owner/result.json"
+  },
+  "s4_resource_completion": {
+    "status": "MEM-GPU-TOTAL admission/lifetime implementation complete; font cache pressure integrated; full resource qualification remains open",
+    "base_commit": "45fe1a98",
+    "production_consumers": [
+      "All default renderer hosts through shared font, layout/raster and upload owners",
+      "World, screen/control, uniform, text atlas/instances, terminal images/quads, native attachments, capture and optional GPU measurement allocations"
+    ],
+    "retired_paths": [
+      "Retained private font cache growth without host/process staging reservations",
+      "Upload pressure releasing layout/raster scratch while leaving reusable private font caches retained"
+    ],
+    "behavior": [
+      "Font cache growth above the constructor baseline reserves existing host16MiB/process64MiB staging capacity. Refusal or upload pressure consumes the old FontSystem caches and recreates from the same locale/database, preserving font IDs and required returned shapes. Shared layout/raster/font pressure handling serves world, screen, terminal and glyph upload preparation.",
+      "GPU reservation implementation already landed: every production buffer/texture/query allocation uses GpuReservation before API creation. The shared512MiB budget uses checked atomic admission. Tracked allocation references share one reservation through all submission holds; split upload packets retain the batch until the final allocation retires. Local/subtype budgets remain additional limits."
+    ],
+    "requirement_reconciliation": {
+      "MEM-GPU-TOTAL": "MEM-02 requires a512MiB ceiling for application-owned GPU capacity, including attachments and staging, shared once. Current typed admission, production call-site inventory and lifetime tests implement that requirement. Backend-private query storage, pipelines, driver residency and swapchain storage remain opaque separate reporting, not fabricated API-capacity estimates.",
+      "separate_remaining_requirements": "ACC-01 requested payload/reference incidence/release-reason reporting remains incomplete under AC-05. CPU bookkeeping and text construction peaks remain under CPU/staging rows. These do not require reimplementing the already shared GPU capacity admission. All original MEM-GPU-TOTAL qualification and combined subcap/native/endurance obligations remain due at S5.",
+      "inventory": "Reviewed production create_buffer/create_buffer_init/create_texture/create_query_set sites in gui-render and gui-app. Non-owner sites are cfg(test) GPU fixtures and the explicit diagnostic attachment probe. Owner paths are budget.rs, lifetime.rs, vertex_allocation.rs, uniform_buffer.rs, gpu_surface.rs, terminal_graphic_texture.rs, text_gpu atlas/draw/upload, capture_resource.rs and gpu_measurement_resources.rs."
+    },
+    "proof": {
+      "renderer": "377 passed;0 failed;11 filtered, including ignored GPU tests selected explicitly. Same run includes font-pressure shape/identity preservation, whole-cache conformance, concurrent budget admission, split-reservation retirement, actual query-ring refusal/rollback/submission holds and GPU upload/renderer parity tests.",
+      "checks": "Strict renderer/app visual all-target Clippy and fresh visual GUI build pass. No app test suite or broad native benchmark rerun.",
+      "failure": "Preserve failed renderer compilation caused by missing TextBufferCache import in shared pressure helper; fixed import before passing run."
+    },
+    "limits": [
+      "Only MEM-GPU-TOTAL implementation is closed; its original qualification and AC-05 accounting remain unqualified. S4 and S5 remain incomplete.",
+      "Font cache admission occurs after synchronous library calls; it does not cap construction peaks. Constructor locale/database/fallback baseline remains separately reported. Returned shape storage is not double charged as private cache. No MEM-SHAPED/STAGING completion follows.",
+      "No dependency/vendor/license, prototype, numerical cap, sequencing or authority change. Preserve GEFN, nonblocking resize and existing Console golden disposition."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json"
   }
 }

@@ -17,6 +17,7 @@ impl TextBufferCache {
     )> {
         let bytes = crate::text_gpu::staging_vec::StagingVec::<usize>::capacity_bytes(runs.len())?;
         self.release_layout_scratch_for(bytes, host);
+        fonts.release_for(bytes);
         let mut indices = crate::text_gpu::staging_vec::StagingVec::new(runs.len(), host)?;
         let stats = self.fill_indices(fonts, runs, width, height, overlay, &mut indices);
         Ok((indices, stats))

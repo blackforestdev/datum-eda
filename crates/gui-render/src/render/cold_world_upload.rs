@@ -54,11 +54,10 @@ impl Renderer {
         let descriptor_bytes = crate::text_gpu::staging_vec::StagingVec::<
             crate::text_gpu::upload::BufferUpload<'_>,
         >::capacity_bytes(4)?;
-        self.text_buffers.release_layout_scratch_for(
+        self.release_text_scratch_for(
             CHUNK_BYTES as u64
                 + descriptor_bytes
                 + crate::text_gpu::upload::retention_metadata_bytes(&[], false)?,
-            &self.atlas.staging_budget,
         );
         let mut remaining = CHUNK_BYTES;
         let mut uploads =

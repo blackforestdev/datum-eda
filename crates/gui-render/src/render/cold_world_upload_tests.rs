@@ -82,6 +82,7 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
                     - renderer.glyph_upload_storage_bytes()
                     - renderer.text_preparation_storage_bytes()
                     - renderer.raster_scratch_reserved_bytes()
+                    - renderer.font_cache_reserved_bytes()
                     - renderer.atlas_page_metadata_bytes()
                     - renderer.atlas_lookup_metadata_bytes()
                     <= CHUNK_BYTES as u64
@@ -98,6 +99,7 @@ fn cold_world_yields_without_presenting_partial_data_and_restarts_changed_source
                 + renderer.glyph_upload_storage_bytes()
                 + renderer.text_preparation_storage_bytes()
                 + renderer.raster_scratch_reserved_bytes()
+                + renderer.font_cache_reserved_bytes()
                 + renderer.atlas_page_metadata_bytes()
                 + renderer.atlas_lookup_metadata_bytes()
         );

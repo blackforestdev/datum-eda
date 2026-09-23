@@ -1,0 +1,64 @@
+{
+  "status": "MEM-GPU-TOTAL admission/lifetime implementation complete; font cache pressure integrated; full resource qualification remains open",
+  "base_commit": "45fe1a98",
+  "production_consumers": [
+    "All default renderer hosts through shared font, layout/raster and upload owners",
+    "World, screen/control, uniform, text atlas/instances, terminal images/quads, native attachments, capture and optional GPU measurement allocations"
+  ],
+  "retired_paths": [
+    "Retained private font cache growth without host/process staging reservations",
+    "Upload pressure releasing layout/raster scratch while leaving reusable private font caches retained"
+  ],
+  "behavior": [
+    "Font cache growth above the constructor baseline reserves existing host16MiB/process64MiB staging capacity. Refusal or upload pressure consumes the old FontSystem caches and recreates from the same locale/database, preserving font IDs and required returned shapes. Shared layout/raster/font pressure handling serves world, screen, terminal and glyph upload preparation.",
+    "GPU reservation implementation already landed: every production buffer/texture/query allocation uses GpuReservation before API creation. The shared512MiB budget uses checked atomic admission. Tracked allocation references share one reservation through all submission holds; split upload packets retain the batch until the final allocation retires. Local/subtype budgets remain additional limits."
+  ],
+  "requirement_reconciliation": {
+    "MEM-GPU-TOTAL": "MEM-02 requires a512MiB ceiling for application-owned GPU capacity, including attachments and staging, shared once. Current typed admission, production call-site inventory and lifetime tests implement that requirement. Backend-private query storage, pipelines, driver residency and swapchain storage remain opaque separate reporting, not fabricated API-capacity estimates.",
+    "separate_remaining_requirements": "ACC-01 requested payload/reference incidence/release-reason reporting remains incomplete under AC-05. CPU bookkeeping and text construction peaks remain under CPU/staging rows. These do not require reimplementing the already shared GPU capacity admission. All original MEM-GPU-TOTAL qualification and combined subcap/native/endurance obligations remain due at S5.",
+    "inventory": "Reviewed production create_buffer/create_buffer_init/create_texture/create_query_set sites in gui-render and gui-app. Non-owner sites are cfg(test) GPU fixtures and the explicit diagnostic attachment probe. Owner paths are budget.rs, lifetime.rs, vertex_allocation.rs, uniform_buffer.rs, gpu_surface.rs, terminal_graphic_texture.rs, text_gpu atlas/draw/upload, capture_resource.rs and gpu_measurement_resources.rs."
+  },
+  "proof": {
+    "renderer": "377 passed;0 failed;11 filtered, including ignored GPU tests selected explicitly. Same run includes font-pressure shape/identity preservation, whole-cache conformance, concurrent budget admission, split-reservation retirement, actual query-ring refusal/rollback/submission holds and GPU upload/renderer parity tests.",
+    "checks": "Strict renderer/app visual all-target Clippy and fresh visual GUI build pass. No app test suite or broad native benchmark rerun.",
+    "failure": "Preserve failed renderer compilation caused by missing TextBufferCache import in shared pressure helper; fixed import before passing run."
+  },
+  "limits": [
+    "Only MEM-GPU-TOTAL implementation is closed; its original qualification and AC-05 accounting remain unqualified. S4 and S5 remain incomplete.",
+    "Font cache admission occurs after synchronous library calls; it does not cap construction peaks. Constructor locale/database/fallback baseline remains separately reported. Returned shape storage is not double charged as private cache. No MEM-SHAPED/STAGING completion follows.",
+    "No dependency/vendor/license, prototype, numerical cap, sequencing or authority change. Preserve GEFN, nonblocking resize and existing Console golden disposition."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/resource-completion/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/resource-completion/renderer.log.gz",
+      "uncompressed_sha256": "3193180bae9c8df7cc842ffbba91add657ceb04accd43ca77e05aea9c152b2fc"
+    },
+    "compile_failure": {
+      "path": "docs/reviews/gui-performance/implementation/S4/resource-completion/compile_failure.log.gz",
+      "uncompressed_sha256": "b02e534be2765553afc2d3207829856934e3c2261d59a8f7b491c6babe2e49f1"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/resource-completion/clippy.log.gz",
+      "uncompressed_sha256": "d2ec513357e43c47ce21d87b62661ca7e59457d89071f578ee6b3b73e1b16f6f"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/resource-completion/build.log.gz",
+      "uncompressed_sha256": "425bbe0cbe3de701ccd1edf61a98af1864d36ced1abf363f98333e2723eb036a"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/font_owner.rs": "78dc11ce07ac88b634e950a703fb3a7c3825cbc2e1aa729c7d2083f77238b348",
+    "crates/gui-render/src/render/cold_world_upload.rs": "aa25fabcdddf652fcdd12a100228f52a638779f86c7b0bfded70d13748a792d4",
+    "crates/gui-render/src/render/cold_world_upload_tests.rs": "1f2131091391ec4fa3964ad0d2fee212aced64c530221bfb7274c68b88699831",
+    "crates/gui-render/src/render/glyph_preparation.rs": "35c8581ab77ffb84714eb87b5fdbb614b97a7a03c401c086098c03b80ab3c8fe",
+    "crates/gui-render/src/render/glyph_upload_continuation.rs": "872ed52a5464ed6c962e1188ba8b43c524fb5c52ca3b65826238bc2b06727aa0",
+    "crates/gui-render/src/render/gpu_glyph_continuation_tests.rs": "36c79d702d3a1ced620a4d2ca668f8896872dfecf35888bc12df4e38dabe3062",
+    "crates/gui-render/src/render/gpu_init.rs": "74fa44c694c3fe99569b785c8d56f8ef22c9e75c111395b3b7c388fbbb0e4f27",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "0eb51261c5ca1ed2231dea2d417f9f47773850ea69935ffeb72195c8b9760617",
+    "crates/gui-render/src/render/gpu_text.rs": "278f15166e58e0a81eea47dedb81a3c243076d2347703bb701674c1c47d16a7f",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "9bd33e1cc194c6d924853e3c5ee8c3413bce72717062bba8f1d4161f815f250e",
+    "crates/gui-render/src/render/terminal_upload.rs": "c1b8ff8a12f5bc36df9be9cfe271d056dc5329a1d4cc4d33560e531ceb88d681",
+    "crates/gui-render/src/render/text_cache_retention.rs": "cc24d8467c2fed3f9faa4a3f03ad666afefe0cea3ecbb8d10c6322b93258032a"
+  }
+}
