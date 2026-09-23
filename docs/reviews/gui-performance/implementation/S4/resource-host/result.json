@@ -1,0 +1,59 @@
+{
+  "status": "Default GPU allocations retain renderer-origin identity linked to native window/queue receipts",
+  "production_consumers": [
+    "Common tracked allocation creation during renderer construction, full/overlay frame and upload continuations",
+    "Native pre-frame attachment preparation and optional renderer timestamp resource creation",
+    "Existing native_surface_transaction upload receipt for main and shared auxiliary hosts"
+  ],
+  "retired_paths": [
+    "Renderer-created world/screen/uniform/attachment records with no renderer origin",
+    "Native upload receipt lacking a direct join to allocation origins beyond last-upload contributions"
+  ],
+  "behavior": [
+    "A unique identity covers one renderer/device lifetime. A thread-local RAII scope attaches that identity when nested shared owners create tracked allocations; nested calls and unwinding restore the previous scope. Frame scope entry allocates no storage and the guard cannot cross threads.",
+    "Record.renderer_id is immutable allocation provenance and stays with retiring resources. Device recreation constructs a new renderer identity while old resources preserve their origin. Resource owner IDs, generation IDs, byte totals and latest upload contributions remain distinct.",
+    "The existing native receipt includes resource_owner_id alongside window, host, queue epoch, surface generation and upload attempt. Resources created outside renderer work, including standalone captures, explicitly report None. No host is guessed from whichever window is active."
+  ],
+  "proof": {
+    "renderer": "Actual production Renderer upload/reuse/camera/resize test passes, verifying vertex/world, screen, uniform, attachment, atlas and glyph resource origins against their renderer. Separate renderers have distinct IDs. Existing warm zero-upload, byte conservation and cold/warm pixel parity assertions pass.",
+    "scope": "Nested-origin and unwind restoration test passes; another thread observes no leaked origin.",
+    "checks": "Strict visual renderer/app all-target Clippy, fresh offline GUI build, source health2300files and governance checks pass. Existing native receipt consumers were searched; no script depends on the old exact line format. No focus-taking native qualification or broad benchmark rerun."
+  },
+  "limits": [
+    "Renderer origin is not a complete set of named logical pane/control consumers or cross-renderer reference incidence. Standalone capture allocations intentionally lack renderer provenance. Seven recorded S4 implementation gaps and original S5 qualification remain open.",
+    "No resource cap, full accounting, all-native adoption, recovery/endurance or performance-ratio acceptance follows from this bounded association. Existing prepared world-pane incidence and frame upload counters remain complementary.",
+    "No dependency/vendor/license, prototype, numerical-cap or sequencing change. Preserve GEFN, nonblocking resize, Console golden disposition and owner/Copilot engine edits."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/resource-host/result.json",
+  "base_commit": "74f00d76",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/resource-host/renderer.log.gz",
+      "uncompressed_sha256": "b337a655b0cfa1bedd4f5d0a29cea74cde79ffe302e18511603c6a233b8fa7ee"
+    },
+    "scope": {
+      "path": "docs/reviews/gui-performance/implementation/S4/resource-host/scope.log.gz",
+      "uncompressed_sha256": "8f994afe498d47aa940c36c15f4503f000ad9870ba89579cb4792ec9801265b9"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/resource-host/clippy.log.gz",
+      "uncompressed_sha256": "f6fe3d1398f41f33e73fd62ceb757c5422fafca88dd0f2b51c251f51ba34e8ce"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/resource-host/build.log.gz",
+      "uncompressed_sha256": "6b1bf594c873a6abd513f4f11dc32700e1e708a8c144a99aa5af5f50a195978f"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-app/src/native_surface_transaction.rs": "b8969611884786b18ebf0ccdea9012726c42673a88644c586a5053ffbe5286a5",
+    "crates/gui-render/src/render/gpu_frame.rs": "a7f77bc0ec4aab55c7caf2298e564e53692b7ef05df9d89221ad6a8a20ffb394",
+    "crates/gui-render/src/render/gpu_init.rs": "b95d4de756fca797db105baa08950328073c257179e4033eb0e59a04c116c55a",
+    "crates/gui-render/src/render/gpu_measurement_api.rs": "eb6e6f585e54432cc034cb805bc9e9719677dad9f18f562ae68054c38f9fe45d",
+    "crates/gui-render/src/render/gpu_surface.rs": "3ebb2da7d68bd3d80a5bf0c2477f7217bc379c144b51abd602be7e054fa1a716",
+    "crates/gui-render/src/render/gpu_uniform_tests.rs": "5ec90c675bde42f9e32347d106804cb9edb4eb8e92ad77d7b62e10871d96bffb",
+    "crates/gui-render/src/render/renderer_state.rs": "f189246ce87220164df493b5d805beb4de2b25113edebed703c8bf581271fcaf",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "dfe03d1a48e92c1ae01d06a92899ddb777d15cdbb1459c6b1de4580d33094270",
+    "crates/gui-render/src/text_gpu/mod.rs": "16548a5a9fb25f38a7ff9ebe591d24827bec59d314a908ee6792c85620f0dcdd",
+    "crates/gui-render/src/text_gpu/allocation_host.rs": "5263645cba2f41a8350ec0165d8e65d44138ef6cf5c8708d6efc2970a1694e54"
+  }
+}

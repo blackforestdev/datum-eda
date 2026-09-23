@@ -167,9 +167,10 @@ impl SurfaceTransaction {
         super::append_gui_verbose_diagnostic_line(|| {
             let (queue_epoch, _, _) = self.queue_owner.snapshot();
             format!(
-                "native upload frame window={:?} host={} queue_epoch={} surface_generation={} acquisition={} submission={} receipt={:?}",
+                "native upload frame window={:?} host={} renderer={} queue_epoch={} surface_generation={} acquisition={} submission={} receipt={:?}",
                 self.window,
                 self.queue_host,
+                renderer.resource_owner_id(),
                 queue_epoch,
                 self.configuration_generation,
                 self.texture_active.acquired.get(),

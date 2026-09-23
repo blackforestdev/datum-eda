@@ -50,6 +50,7 @@ impl Renderer {
         height: u32,
         on_submitted: &mut dyn FnMut(wgpu::SubmissionIndex),
     ) -> anyhow::Result<bool> {
+        let _resource_scope = self.resource_host.enter();
         self.atlas.owner.begin_upload_frame();
         let result = self.render_submission_inner(
             device,
