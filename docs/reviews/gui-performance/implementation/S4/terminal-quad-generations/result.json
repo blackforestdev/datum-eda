@@ -1,0 +1,49 @@
+{
+  "status": "Terminal quad slots and pane uniforms share preserved two-generation ownership across close/recovery",
+  "base_commit": "5deccc99",
+  "production_consumers": [
+    "TerminalGraphicsRenderer::sync visible quad slots and Renderer::recreate_for_device",
+    "Existing pane uniform generation registry migrated to shared SlotGenerations"
+  ],
+  "retired_paths": [
+    "Terminal draw truncation/recovery recreates fresh generation allowances",
+    "Pane-specific generation registry replaced by one shared slot owner"
+  ],
+  "behavior": [
+    "Share weak slot-indexed generation allowances between recovery instances. Reopening a terminal graphic uses the same allowance while old allocations or submission holds remain live. ScreenBuffer accepts the shared slot allowance before initial allocation; existing terminal/screen/process byte caps apply together. Warm existing draws bypass registry work. TerminalCore/PTY and graphics decoding remain unchanged."
+  ],
+  "proof": {
+    "renderer": "349 renderer tests pass, 11 filtered. New actual-GPU test prepares real sixel fixture graphics, pins two generations across close/reopen, verifies third refusal and unchanged screen bytes, verifies recovery refusal, then retires/retries and closes to zero screen ownership. Existing terminal pixel/chunk and pane uniform tests pass.",
+    "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health 2276, dependency authority and governance pass.",
+    "scope": "No new native/backend/endurance campaign; existing Console golden discrepancy remains open."
+  },
+  "limits": [
+    "Terminal texture generation ownership remains distinct and open; this slice covers quad buffers. Shared registry CPU metadata and other existing accounting gaps remain open. No full MEM-REPLACEMENT or S5 qualification acceptance.",
+    "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-quad-generations/result.json",
+  "logs": {
+    "tests": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-quad-generations/tests.log.gz",
+      "uncompressed_sha256": "ec65a8efa1aa37b309942c34e1e0c112c335c6ef3d3c03dd268cbfcc03190e48"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-quad-generations/clippy.log.gz",
+      "uncompressed_sha256": "4a08b58a987ea41acfa489fda8a2a77aea2a5d4c7473c463df611954ef1e1317"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/terminal-quad-generations/build.log.gz",
+      "uncompressed_sha256": "25d718e809ac1a43701e52293374190853d96737f752e9789b35b8cdbb7b4c61"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/render/gpu_init.rs": "45885c600b85a5f27293f56f98a4e5672c68bb377fd3e33fe59410d9191bb941",
+    "crates/gui-render/src/render/gpu_terminal_resource_tests.rs": "8898abf352446e85856c58e30d50a9949ae46792b5539ee5420593d8e37e8c13",
+    "crates/gui-render/src/render/renderer_state.rs": "2612317bbe6b38c616b03ab8ff87809eaf4c9bd698e35a641ab68c3a6a038757",
+    "crates/gui-render/src/render/screen_buffer.rs": "4fc3ffa32d67ab52e4bc5bc92c4cae31b8efc4334f5f88e0befd877bf7676b80",
+    "crates/gui-render/src/render/terminal_graphics.rs": "f18f075e5c57199222a941d4de1b4d34bfc88fc6a7bddf4c31a5bcf437af9f1f",
+    "crates/gui-render/src/render/uniform_buffer.rs": "76bceb07400c6db064c2c7ef49ba4da967b359505854049b32892686f666c089",
+    "crates/gui-render/src/text_gpu/mod.rs": "a2781c5f734d02911ccd70be4a1cec7db8bd34852be4fe16b9921fa020e2145a",
+    "crates/gui-render/src/text_gpu/slot_generations.rs": "a1b292cbca1c8f82d9218c705303b14d82383a3162012e280ec7753a0205a9b6"
+  }
+}

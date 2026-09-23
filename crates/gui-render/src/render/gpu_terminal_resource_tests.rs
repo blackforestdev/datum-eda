@@ -325,3 +325,69 @@ fn terminal_pixels_yield_with_bounded_padded_staging_and_resume_current_content(
     assert!(cold == capture_retained(&mut renderer, &prepared, &retained));
     assert_eq!(renderer.renderer.terminal_upload_chunk_count(), 5);
 }
+
+#[test]
+#[ignore = "requires local GPU; terminal quad close and recovery generations"]
+fn terminal_quad_slots_preserve_submission_limits_after_close_and_recovery() {
+    let mut state = datum_gui_protocol::load_fixture_workspace_state();
+    state.ui.active_dock_tab = Some(datum_gui_protocol::DockTab::Terminal);
+    state.ui.dock_height_px = 220;
+    let snapshot = super::super::tests::sixel_snapshot(true);
+    let retained = RetainedScene::from_workspace(&state, 960, 720);
+    let prepared = PreparedScene::from_workspace_with_terminal_snapshot(
+        &state,
+        960,
+        720,
+        1.0,
+        CameraState::fit_to_bounds(&state.scene.bounds),
+        &retained,
+        Some(&snapshot),
+    );
+    assert!(!prepared.terminal_graphics.is_empty());
+    let mut host = hardware_renderer(960, 720);
+    macro_rules! sync {
+        ($graphics:expr) => {
+            host.renderer
+                .terminal_graphics
+                .sync(&host.device, &host.queue, $graphics, 960, 720)
+        };
+    }
+    sync!(&prepared.terminal_graphics).unwrap();
+    let first: Vec<_> = host.renderer.terminal_graphics.submission_refs().collect();
+    sync!(&[]).unwrap();
+    sync!(&prepared.terminal_graphics).unwrap();
+    let second: Vec<_> = host.renderer.terminal_graphics.submission_refs().collect();
+    sync!(&[]).unwrap();
+    let before = host.renderer.screen_gpu_reserved_bytes();
+    assert!(
+        sync!(&prepared.terminal_graphics)
+            .unwrap_err()
+            .to_string()
+            .contains("two live GPU allocations")
+    );
+    assert_eq!(host.renderer.screen_gpu_reserved_bytes(), before);
+    host.renderer = host
+        .renderer
+        .recreate_for_device(
+            &host.device,
+            &host.queue,
+            OUTPUT_FORMAT,
+            DEFAULT_MSAA_SAMPLES,
+        )
+        .unwrap();
+    assert!(sync!(&prepared.terminal_graphics).is_err());
+    assert_eq!(host.renderer.screen_gpu_reserved_bytes(), before);
+    drop(first);
+    sync!(&prepared.terminal_graphics).unwrap();
+    assert!(
+        host.renderer
+            .terminal_graphics
+            .vertex_state()
+            .iter()
+            .all(|(_, bytes)| *bytes > 0)
+    );
+    drop(second);
+    let screen = host.renderer.screen_budget.clone();
+    drop(host);
+    assert_eq!(screen.used(), 0);
+}

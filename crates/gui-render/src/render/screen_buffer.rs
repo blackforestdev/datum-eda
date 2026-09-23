@@ -54,6 +54,14 @@ impl ScreenBuffer {
         }
     }
 
+    pub(crate) fn with_generation_limit(
+        mut self,
+        budget: std::sync::Arc<crate::text_gpu::budget::Budget>,
+    ) -> Self {
+        self.allocation = self.allocation.with_generation_limit(budget);
+        self
+    }
+
     pub(crate) fn with_retention_budget(
         mut self,
         budget: std::sync::Arc<crate::text_gpu::budget::Budget>,

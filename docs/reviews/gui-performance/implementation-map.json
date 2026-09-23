@@ -16607,6 +16607,11 @@
           "work": "s4_atlas_generations_work",
           "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-generations/result.json",
           "status": "Atlas physical page generations limited to two across reset/recovery and submission retirement"
+        },
+        {
+          "work": "s4_terminal_quad_generations_work",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-quad-generations/result.json",
+          "status": "Terminal quad slots and pane uniforms share preserved two-generation ownership across close/recovery"
         }
       ]
     },
@@ -34051,5 +34056,30 @@
       "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
     ],
     "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-generations/result.json"
+  },
+  "s4_terminal_quad_generations_work": {
+    "status": "Terminal quad slots and pane uniforms share preserved two-generation ownership across close/recovery",
+    "base_commit": "5deccc99",
+    "production_consumers": [
+      "TerminalGraphicsRenderer::sync visible quad slots and Renderer::recreate_for_device",
+      "Existing pane uniform generation registry migrated to shared SlotGenerations"
+    ],
+    "retired_paths": [
+      "Terminal draw truncation/recovery recreates fresh generation allowances",
+      "Pane-specific generation registry replaced by one shared slot owner"
+    ],
+    "behavior": [
+      "Share weak slot-indexed generation allowances between recovery instances. Reopening a terminal graphic uses the same allowance while old allocations or submission holds remain live. ScreenBuffer accepts the shared slot allowance before initial allocation; existing terminal/screen/process byte caps apply together. Warm existing draws bypass registry work. TerminalCore/PTY and graphics decoding remain unchanged."
+    ],
+    "proof": {
+      "renderer": "349 renderer tests pass, 11 filtered. New actual-GPU test prepares real sixel fixture graphics, pins two generations across close/reopen, verifies third refusal and unchanged screen bytes, verifies recovery refusal, then retires/retries and closes to zero screen ownership. Existing terminal pixel/chunk and pane uniform tests pass.",
+      "lint_build": "Strict renderer/app all-targets Clippy with renderer visual feature, fresh app build, source health 2276, dependency authority and governance pass.",
+      "scope": "No new native/backend/endurance campaign; existing Console golden discrepancy remains open."
+    },
+    "limits": [
+      "Terminal texture generation ownership remains distinct and open; this slice covers quad buffers. Shared registry CPU metadata and other existing accounting gaps remain open. No full MEM-REPLACEMENT or S5 qualification acceptance.",
+      "Twelve recorded implementation gaps remain. No dependency/vendor/license, prototype, numerical cap or sequencing change. Preserve GEFN and nonblocking resize."
+    ],
+    "evidence": "docs/reviews/gui-performance/implementation/S4/terminal-quad-generations/result.json"
   }
 }

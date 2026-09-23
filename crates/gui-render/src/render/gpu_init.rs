@@ -332,13 +332,21 @@ fn fs_main(in: VsOut) -> @location(0) vec4<f32> {
         });
         let world_stroke_pipeline =
             create_world_stroke_pipeline(device, &world_pipeline_layout, format, msaa_samples);
-        let terminal_graphics = terminal_graphics::TerminalGraphicsRenderer::new(
-            device,
-            &uniform_bind_group_layout,
-            format,
-            msaa_samples,
-            screen_budget.clone(),
-        );
+        let terminal_graphics = match previous {
+            Some(old) => old.terminal_graphics.replacement(
+                device,
+                &uniform_bind_group_layout,
+                format,
+                msaa_samples,
+            ),
+            None => terminal_graphics::TerminalGraphicsRenderer::new(
+                device,
+                &uniform_bind_group_layout,
+                format,
+                msaa_samples,
+                screen_budget.clone(),
+            ),
+        };
         let text_cpu = crate::cpu_alloc::Scope::new("renderer-text");
         let font_system = text_cpu.with(load_datum_fonts);
         let swash_cache = text_cpu.with(SwashCache::new);
