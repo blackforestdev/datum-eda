@@ -4004,6 +4004,11 @@
           "work": "s4_text_owner_reconciliation.streaming_layout",
           "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json",
           "status": "Default text layout produces rows on demand and stops at the visible extent; construction admission remains incomplete"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.construction_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json",
+          "status": "Default text keys, row output, cache metadata growth and row scratch admitted before construction; remaining shaping/font/raster and consumer obligations keep S4 open"
         }
       ]
     },
@@ -5444,6 +5449,11 @@
           "work": "s4_text_owner_reconciliation.streaming_layout",
           "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json",
           "status": "Default text layout produces rows on demand and stops at the visible extent; construction admission remains incomplete"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.construction_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json",
+          "status": "Default text keys, row output, cache metadata growth and row scratch admitted before construction; remaining shaping/font/raster and consumer obligations keep S4 open"
         }
       ]
     },
@@ -15586,7 +15596,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete pre-construction admission and overlap accounting across active text owners, including a synchronous library shape/layout call. Per-layout batch admission now stops further accumulation and remaps workspace/overlay references together; incremental retained totals have whole-cache heap conformance. Private font/raster/layout scratch remains disjoint from retained shaped payload. Preserve all local/process ceilings; post-construction admission does not establish transient peak compliance."
+          "Complete pre-construction admission for nested synchronous library shaping output and its shared Arc container, and metadata compaction/retirement overlap. Datum-owned key copies, cache entry/index growth, row/glyph output and concurrent construction reservations now have admission before allocation with atomic retained publication. Private font/raster/bidi/attribute scratch remains disjoint and incomplete. Original ceilings and required-content behavior remain binding; post-call admission is not peak compliance."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "8MiB shaped payload/renderer including keys/vectors/capacities; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15669,6 +15679,11 @@
           "work": "s4_text_owner_reconciliation.streaming_layout",
           "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json",
           "status": "Default text layout produces rows on demand and stops at the visible extent; construction admission remains incomplete"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.construction_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json",
+          "status": "Default text keys, row output, cache metadata growth and row scratch admitted before construction; remaining shaping/font/raster and consumer obligations keep S4 open"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -15775,7 +15790,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Complete pre-construction admission and overlap accounting across active text owners, including a synchronous library shape/layout call. Per-layout batch admission now stops further accumulation and remaps workspace/overlay references together; incremental retained totals have whole-cache heap conformance. Private font/raster/layout scratch remains disjoint from retained shaped payload. Preserve all local/process ceilings; post-construction admission does not establish transient peak compliance."
+          "Complete pre-construction admission for nested synchronous library shaping output and its shared Arc container, and metadata compaction/retirement overlap. Datum-owned key copies, cache entry/index growth, row/glyph output and concurrent construction reservations now have admission before allocation with atomic retained publication. Private font/raster/bidi/attribute scratch remains disjoint and incomplete. Original ceilings and required-content behavior remain binding; post-call admission is not peak compliance."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "32MiB shaped payload aggregate; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15858,6 +15873,11 @@
           "work": "s4_text_owner_reconciliation.streaming_layout",
           "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json",
           "status": "Default text layout produces rows on demand and stops at the visible extent; construction admission remains incomplete"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.construction_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json",
+          "status": "Default text keys, row output, cache metadata growth and row scratch admitted before construction; remaining shaping/font/raster and consumer obligations keep S4 open"
         }
       ],
       "s4_text_owner_reconciliation": "See s4_text_owner_reconciliation for whole retained-owner proof and remaining preparation/lifetime boundary; no predicate closure."
@@ -17692,6 +17712,11 @@
           "work": "s4_text_owner_reconciliation.streaming_layout",
           "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json",
           "status": "Default text layout produces rows on demand and stops at the visible extent; construction admission remains incomplete"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.construction_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json",
+          "status": "Default text keys, row output, cache metadata growth and row scratch admitted before construction; remaining shaping/font/raster and consumer obligations keep S4 open"
         }
       ]
     },
@@ -17973,6 +17998,11 @@
           "work": "s4_text_owner_reconciliation.streaming_layout",
           "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json",
           "status": "Default text layout produces rows on demand and stops at the visible extent; construction admission remains incomplete"
+        },
+        {
+          "work": "s4_text_owner_reconciliation.construction_admission",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json",
+          "status": "Default text keys, row output, cache metadata growth and row scratch admitted before construction; remaining shaping/font/raster and consumer obligations keep S4 open"
         }
       ]
     },
@@ -35918,7 +35948,7 @@
       "evidence": "docs/reviews/gui-performance/implementation/S4/text-batch/result.json"
     },
     "construction_route_review": {
-      "status": "Streaming row production adopted; pre-construction admission and complete route qualification remain pending",
+      "status": "Datum streaming row construction admission implemented; private shaping/font/raster construction and full cap qualification remain pending",
       "base_commit": "53ba2716",
       "installed_api_evidence": {
         "package": "cosmic-text 0.15.0 already installed through glyphon 0.10.0",
@@ -35931,13 +35961,13 @@
         ]
       },
       "next_production_component": {
-        "owner": "crates/gui-render/src/layout_scratch.rs and crates/gui-render/src/text_layout.rs",
-        "change": "Finish pre-construction admission and refusal propagation for Datum row output and temporary bidi/omission storage, including old/new overlap. Streaming visible-row production is now the default and the full-paragraph layout path is retired; this alone does not establish cap compliance.",
-        "authority": "Existing owner-approved Datum-owned route and GPI-S4 execution authority; no new dependency or sequencing amendment required.",
-        "proof": "Reuse existing plain/rich/Unicode/extent and installed-renderer parity cases; add relevant growth/refusal and visible-prefix cases to the same owners. No broad measurement campaign or native focus prerequisite."
+        "owner": "crates/gui-render/src/font_owner.rs, text_layout.rs and text_gpu/raster.rs",
+        "change": "Resolve remaining synchronous shaping/font/raster and bidi/attribute construction admission using the owner-selected Datum-owned route and existing dependencies. Retained capacities and post-call eviction are already measured but do not cap a call before allocation. Finish metadata retirement overlap and logical-consumer incidence before S4 exit.",
+        "authority": "Existing GPI-S4 execution and full-accounting Datum-owned route; no third-party modification or new dependency authority.",
+        "proof": "Affected production refusal/retry, bounded output and installed-renderer fidelity checks, followed by the complete S4 implementation determination. Full native/endurance qualification remains S5."
       },
       "remaining_boundaries": [
-        "Streaming layout is a production migration, not complete construction-cap proof. None of the seven remaining implementation gaps is closed.",
+        "Datum row output and scratch, key copying and metadata growth now have pre-construction admission. Compound MEM-SHAPED/MEM-STAGING requirements remain incomplete because library shaping/font/raster and other listed temporary paths do not yet have the same guarantees.",
         "Replacing layout output construction alone will not close the infallible shaping/font/raster peaks or cross-owner construction overlap. Those remain S4 implementation obligations; original S5 qualification is unchanged.",
         "The dependency boundary prevents modifying installed third-party sources or adding a direct/transitive dependency without exact owner ratification. The selected row-producer route uses existing public data and needs neither."
       ]
@@ -35963,6 +35993,35 @@
         "The first rejected row is still constructed to obtain exact metrics. Seven S4 implementation gaps and all original S5 qualification remain. No dependency, vendoring, prototype, cap or sequencing change; GEFN and nonblocking resize preserved."
       ],
       "evidence": "docs/reviews/gui-performance/implementation/S4/streaming-layout/result.json"
+    },
+    "construction_admission": {
+      "status": "Default text keys, row output, cache metadata growth and row scratch admitted before construction; remaining shaping/font/raster and consumer obligations keep S4 open",
+      "production_consumers": [
+        "Shared TextBufferCache admitted_indices used by default workspace/terminal and dialog/overlay preparation",
+        "Datum TextLayout row production and shared-shape extent relayout"
+      ],
+      "retired_paths": [
+        "Unadmitted key copying and cache entry/index growth in production ensure_text_buffer",
+        "Unadmitted layout row/glyph vectors and temporary visual-run/omission vectors",
+        "Temporary old-to-new index allocation during pressure retirement",
+        "Returning an interrupted in-place relayout as an exact cache hit"
+      ],
+      "behavior": [
+        "Local/process text owner reservations include concurrent construction and old/new replacement overlap. Publication atomically transfers surviving allocation capacities into retained usage; obsolete reservation tokens cannot subtract them twice.",
+        "The default row producer uses admitted shaped-payload storage for glyph/row output and admitted host/process staging storage for bidi/omission scratch. Key copies and metadata growth use exact fallible allocation after reservation.",
+        "Pressure retries once after retiring unused history, remapping workspace and overlay references together. A required-content refusal releases derived storage, invalidates prior indices, preserves source text, and retries by rebuilding. Exact warm hits retain their no-shaping/no-concatenation behavior."
+      ],
+      "proof": [
+        "395 selected serial renderer tests passed, including installed-renderer parity, whole-cache heap conformance, pressure, atlas continuation and resource lifetime tests; 11 excluded cases remain explicit in the command.",
+        "Additional interrupted-relayout test passed: with only index staging available, changed-extent construction refuses; no partial hit or construction reservation survives, and retry glyphs match a fresh cache.",
+        "Cross-owner construction test covers local/process refusal, reservation release, and publication without double counting. Strict visual renderer/app all-target Clippy and fresh offline GUI build passed. Source health passed for 2306 files; dependency authority, Cargo resource policy and spec governance passed."
+      ],
+      "limitations": [
+        "This does not admit nested ShapeLine output or its Arc allocation before the infallible library shaper runs. Private font/raster/bidi/attribute construction peaks and metadata compaction/sort overlap remain to resolve.",
+        "Seven compound S4 implementation predicates remain open, with the completed Datum row/key/metadata growth portion now distinguished from the remaining work. Full logical-consumer incidence remains separate. S5 entry is not asserted.",
+        "No dependency, vendoring, prototype, numerical-budget or sequencing change. Preserve GEFN, nonblocking resize, Console golden disposition, historical failed receipts and the unrelated owner/Copilot engine test edit."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json"
     }
   },
   "s4_text_preparation_work": {

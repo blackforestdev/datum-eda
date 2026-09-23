@@ -15,8 +15,10 @@ impl Registry {
         std::mem::size_of::<Mutex<Self>>()
             + crate::cpu_alloc::heap::capacity_bytes::<TextCacheOwnerUsage>(self.0.capacity())
     }
-    fn insert(&mut self, id: u64, usage: TextCacheOwnerUsage) {
+    fn insert(&mut self, id: u64, mut usage: TextCacheOwnerUsage) {
         if let Some(owner) = self.0.iter_mut().find(|owner| owner.owner_id == id) {
+            usage.constructing_bytes = owner.constructing_bytes;
+            usage.epoch = owner.epoch;
             *owner = usage;
         } else {
             self.0.push(usage);
@@ -37,6 +39,9 @@ impl Registry {
 pub struct TextCacheOwnerUsage {
     pub owner_id: u64,
     pub bytes: usize,
+    /// Admitted allocations under construction, not yet included in retained bytes.
+    pub constructing_bytes: usize,
+    epoch: u64,
     /// This owner is preparing a frame, including a warm frame with unchanged storage.
     pub preparing: bool,
     /// Required owner storage could not fit even after cache retirement.
@@ -50,19 +55,58 @@ impl Owner {
         owner.publish(bytes);
         owner
     }
+    pub fn reserve(&self, bytes: usize) -> anyhow::Result<Construction> {
+        let mut owners = OWNERS.lock().unwrap_or_else(|e| e.into_inner());
+        let available = allowance(&owners, self.0, PROCESS_LIMIT).min(LOCAL_LIMIT);
+        let owner = owners
+            .0
+            .iter_mut()
+            .find(|o| o.owner_id == self.0)
+            .expect("live text owner must be registered");
+        let next = owner
+            .constructing_bytes
+            .checked_add(bytes)
+            .ok_or_else(|| anyhow::anyhow!("text construction reservation overflow"))?;
+        if owner.bytes.checked_add(next).is_none_or(|n| n > available) {
+            return Err(ConstructionRefusal { bytes }.into());
+        }
+        owner.constructing_bytes = next;
+        Ok(Construction {
+            owner: self.0,
+            epoch: owner.epoch,
+            bytes,
+        })
+    }
+
     pub fn id(&self) -> u64 {
         self.0
     }
+    /// Atomically transfer all this preparation's surviving allocations into
+    /// retained usage. Old leases become inert; observers never count both.
     pub fn publish(&self, bytes: usize) {
-        OWNERS.lock().unwrap_or_else(|e| e.into_inner()).insert(
-            self.0,
-            TextCacheOwnerUsage {
-                owner_id: self.0,
-                bytes,
-                preparing: true,
-                retention_overflow: false,
-            },
-        );
+        let mut owners = OWNERS.lock().unwrap_or_else(|e| e.into_inner());
+        if let Some(owner) = owners.0.iter_mut().find(|o| o.owner_id == self.0) {
+            owner.bytes = bytes;
+            owner.constructing_bytes = 0;
+            owner.epoch = owner
+                .epoch
+                .checked_add(1)
+                .expect("text publication epoch exhausted");
+            owner.preparing = true;
+            owner.retention_overflow = false;
+        } else {
+            owners.insert(
+                self.0,
+                TextCacheOwnerUsage {
+                    owner_id: self.0,
+                    bytes,
+                    constructing_bytes: 0,
+                    epoch: 0,
+                    preparing: true,
+                    retention_overflow: false,
+                },
+            );
+        }
     }
 }
 impl Drop for Owner {
@@ -74,13 +118,49 @@ impl Drop for Owner {
     }
 }
 
+#[derive(Debug)]
+pub(crate) struct ConstructionRefusal {
+    pub bytes: usize,
+}
+impl std::fmt::Display for ConstructionRefusal {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "text construction exceeds CPU cache admission (requested {} bytes)",
+            self.bytes
+        )
+    }
+}
+impl std::error::Error for ConstructionRefusal {}
+
+/// Lives through allocation and publication; replacement reserves old/new overlap.
+/// Drop after publishing retained capacity, or after releasing refused storage.
+pub(crate) struct Construction {
+    owner: u64,
+    epoch: u64,
+    bytes: usize,
+}
+impl Drop for Construction {
+    fn drop(&mut self) {
+        let mut owners = OWNERS.lock().unwrap_or_else(|e| e.into_inner());
+        if let Some(owner) = owners.0.iter_mut().find(|o| o.owner_id == self.owner)
+            && owner.epoch == self.epoch
+        {
+            owner.constructing_bytes = owner
+                .constructing_bytes
+                .checked_sub(self.bytes)
+                .expect("text construction reservation released twice");
+        }
+    }
+}
+
 fn allowance(owners: &Registry, id: u64, limit: usize) -> usize {
     limit.saturating_sub(owners.bytes()).saturating_sub(
         owners
             .0
             .iter()
             .filter(|o| o.owner_id != id)
-            .map(|o| o.bytes)
+            .map(|o| o.bytes.saturating_add(o.constructing_bytes))
             .sum(),
     )
 }
@@ -96,6 +176,8 @@ pub(crate) fn settle(id: u64, trim: impl FnOnce(usize) -> usize) {
         TextCacheOwnerUsage {
             owner_id: id,
             bytes,
+            constructing_bytes: 0,
+            epoch: 0,
             preparing: false,
             retention_overflow: bytes > available,
         },
@@ -121,6 +203,8 @@ pub(crate) fn admit(id: u64, trim: impl FnOnce(usize) -> Admission) -> anyhow::R
         TextCacheOwnerUsage {
             owner_id: id,
             bytes: retained_bytes,
+            constructing_bytes: 0,
+            epoch: 0,
             preparing: required_bytes <= available,
             retention_overflow: required_bytes > available,
         },
@@ -175,6 +259,44 @@ impl crate::Renderer {
 mod tests {
     use super::*;
     #[test]
+    #[ignore = "requires serial process-wide text admission"]
+    fn construction_is_admitted_across_owners_and_transfers_once_on_publication() {
+        let owner = Owner::new(128);
+        let lease = owner.reserve(LOCAL_LIMIT - 128).unwrap();
+        assert!(owner.reserve(1).is_err());
+        let inspect = || {
+            crate::Renderer::text_cache_process_usage()
+                .into_iter()
+                .find(|entry| entry.owner_id == owner.id())
+                .unwrap()
+        };
+        assert_eq!(inspect().bytes, 128);
+        assert_eq!(inspect().constructing_bytes, LOCAL_LIMIT - 128);
+        owner.publish(LOCAL_LIMIT);
+        assert_eq!(inspect().constructing_bytes, 0);
+        drop(lease);
+        assert_eq!(inspect().bytes, LOCAL_LIMIT);
+        assert_eq!(inspect().constructing_bytes, 0);
+        owner.publish(0);
+        let other = Owner::new(0);
+        let others: usize = crate::Renderer::text_cache_process_usage()
+            .iter()
+            .filter(|entry| entry.owner_id != owner.id() && entry.owner_id != other.id())
+            .map(|entry| entry.bytes + entry.constructing_bytes)
+            .sum();
+        let filler = Owner::new(0);
+        let registry = crate::Renderer::text_cache_registry_bytes();
+        filler.publish(PROCESS_LIMIT - registry - others - 1000);
+        let first = owner.reserve(600).unwrap();
+        assert!(other.reserve(401).is_err());
+        let second = other.reserve(400).unwrap();
+        drop(first);
+        let replacement = owner.reserve(600).unwrap();
+        drop((second, replacement));
+        assert_eq!(inspect().constructing_bytes, 0);
+    }
+
+    #[test]
     fn admission_counts_other_owners_including_active_frames() {
         let mut owners = Registry(Vec::new());
         for id in 1..=5 {
@@ -183,6 +305,8 @@ mod tests {
                 TextCacheOwnerUsage {
                     owner_id: id,
                     bytes: 8,
+                    constructing_bytes: 0,
+                    epoch: 0,
                     preparing: id == 2,
                     retention_overflow: false,
                 },
@@ -212,6 +336,8 @@ mod tests {
                     TextCacheOwnerUsage {
                         owner_id: id,
                         bytes: 8,
+                        constructing_bytes: 0,
+                        epoch: 0,
                         preparing: true,
                         retention_overflow: false,
                     },
@@ -226,6 +352,8 @@ mod tests {
                 TextCacheOwnerUsage {
                     owner_id: 64,
                     bytes: 16,
+                    constructing_bytes: 0,
+                    epoch: 0,
                     preparing: false,
                     retention_overflow: false,
                 },

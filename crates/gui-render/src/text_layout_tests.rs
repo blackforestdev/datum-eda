@@ -107,9 +107,9 @@ fn shape_container_cost_measures_arc_and_allocator_overhead_without_double_count
     );
     assert!(expected > std::mem::size_of::<ShapeLine>());
     let mut layout = TextLayout::default();
-    layout.shapes.push(shape.clone());
+    layout.shapes.push(shape.clone(), None).unwrap();
     let mut other = TextLayout::default();
-    other.shapes.push(shape);
+    other.shapes.push(shape, None).unwrap();
     let unique: std::collections::BTreeMap<_, _> = layout
         .shape_allocations()
         .chain(other.shape_allocations())

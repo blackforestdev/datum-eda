@@ -21,7 +21,7 @@ impl TextBufferCache {
         self.release_layout_scratch_for(bytes, host);
         fonts.release_for(bytes);
         let mut indices = crate::text_gpu::staging_vec::StagingVec::new(runs.len(), host)?;
-        let stats = self.fill_indices(
+        let result = self.fill_indices(
             fonts,
             runs,
             width,
@@ -29,15 +29,24 @@ impl TextBufferCache {
             overlay,
             &mut indices,
             host,
-            |cache, current| {
+            true,
+            |cache, current, headroom| {
                 if let Some(prior) = prior.as_deref_mut() {
-                    cache.admit_frame(&mut [prior, current])
+                    cache.admit_frame_with_headroom(&mut [prior, current], headroom)
                 } else {
-                    cache.admit_frame(&mut [current])
+                    cache.admit_frame_with_headroom(&mut [current], headroom)
                 }
             },
-        )?;
-        Ok((indices, stats))
+        );
+        match result {
+            Ok(stats) => Ok((indices, stats)),
+            Err(error) => {
+                if let Some(prior) = prior {
+                    prior.clear();
+                }
+                Err(error)
+            }
+        }
     }
 
     #[cfg(test)]
@@ -60,7 +69,8 @@ impl TextBufferCache {
                 overlay,
                 &mut indices,
                 &host,
-                |_, _| Ok(()),
+                false,
+                |_, _, _| Ok(()),
             )
             .unwrap();
         (indices, stats)

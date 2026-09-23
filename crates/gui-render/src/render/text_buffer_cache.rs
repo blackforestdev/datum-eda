@@ -4,6 +4,8 @@ use super::*;
 mod admission;
 #[path = "text_cache_budget.rs"]
 pub(crate) mod budget;
+#[path = "text_cache_construction.rs"]
+mod construction;
 #[path = "text_cache_retention.rs"]
 mod retention;
 use crate::cpu_alloc::heap::{capacity_bytes, tracking_bytes};
@@ -44,6 +46,7 @@ pub(super) fn build_text_areas<'a>(
     })
 }
 
+#[cfg(test)]
 pub(super) fn text_buffer_key(run: &TextRun, width: u32, height: u32) -> TextBufferKey {
     let (width_px, height_px) = text_buffer_extent(run, width, height);
     TextBufferKey {
@@ -116,6 +119,8 @@ pub(crate) struct TextBufferCache {
     // Sorted shaping fingerprint + entry index. This owns no text or shaping
     // payload; exact key comparison remains authoritative within each bucket.
     lookup: Vec<(u64, usize)>,
+    entry_construction: Option<budget::Construction>,
+    lookup_construction: Option<budget::Construction>,
     frame: u64,
     overlay_profile: bool,
     revision: u64,
@@ -140,6 +145,8 @@ impl Default for TextBufferCache {
             layout_output_bytes: 0,
             layout_output_tracking_bytes: 0,
             lookup: Vec::new(),
+            entry_construction: None,
+            lookup_construction: None,
             frame: 0,
             overlay_profile: false,
             revision: 0,

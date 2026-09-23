@@ -1,5 +1,6 @@
 //! Track private layout scratch without inspecting dependency internals.
-use glyphon::{LayoutLine, ShapeLine};
+use super::allocation::{Admission, ProducedLine};
+use glyphon::ShapeLine;
 
 pub(crate) struct LayoutScratch {
     scope: crate::cpu_alloc::Scope,
@@ -22,21 +23,22 @@ impl Default for LayoutScratch {
 impl LayoutScratch {
     /// Stop at the first row rejected by the visible-extent consumer. Neither
     /// later row boundaries nor their output glyph storage are constructed.
-    pub(crate) fn for_each_row(
+    pub(super) fn for_each_row(
         &mut self,
         shape: &ShapeLine,
         size: f32,
         width: u32,
-        mut consume: impl FnMut(LayoutLine) -> bool,
-    ) -> bool {
-        let mut rows = super::streaming_rows::Rows::new(shape, size, width);
-        while let Some(row) = self.scope.with(|| rows.next()) {
-            let output = self.scope.with(|| rows.layout(&row));
-            if !consume(output) {
-                return false;
+        admission: &Admission<'_>,
+        mut consume: impl FnMut(ProducedLine) -> anyhow::Result<bool>,
+    ) -> anyhow::Result<bool> {
+        let mut rows = super::streaming_rows::Rows::new(shape, size, width, admission);
+        while let Some(row) = self.scope.with(|| rows.next())? {
+            let output = self.scope.with(|| rows.layout(&row))?;
+            if !consume(output)? {
+                return Ok(false);
             }
         }
-        true
+        Ok(true)
     }
 
     /// Call only after output containers have been consumed into cache rows.
@@ -117,10 +119,19 @@ mod tests {
                 glyphon::ShapeLine::new(&mut fonts, &text, &attrs, glyphon::Shaping::Basic, 8);
             let mut scratch = LayoutScratch::default();
             let mut count = 0;
-            assert!(!scratch.for_each_row(&shape, 14.0, 120, |_| {
-                count += 1;
-                count < 3
-            }));
+            let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
+            let admission = Admission {
+                owner: None,
+                host: &host,
+            };
+            assert!(
+                !scratch
+                    .for_each_row(&shape, 14.0, 120, &admission, |_| {
+                        count += 1;
+                        Ok(count < 3)
+                    })
+                    .unwrap()
+            );
             assert_eq!(count, 3);
             let usage = scratch.scope.usage();
             assert!(usage.allocator_installed);

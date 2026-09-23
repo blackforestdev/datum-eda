@@ -19,9 +19,16 @@ fn streaming_rows_match_installed_layout() {
         let shape = ShapeLine::new(&mut fonts, text, &attrs, Shaping::Basic, 8);
         for width in [0, 1, 45, 180] {
             let expected = shape.layout(13.0, Some(width as f32), Wrap::WordOrGlyph, None, None);
-            let actual: Vec<_> = Rows::new(&shape, 13.0, width)
-                .map(|row| output::materialize(&shape, &row, 13.0, width))
-                .collect();
+            let host = crate::text_gpu::budget::Budget::new(16 * 1024 * 1024);
+            let admission = Admission {
+                owner: None,
+                host: &host,
+            };
+            let mut rows = Rows::new(&shape, 13.0, width, &admission);
+            let mut actual = Vec::new();
+            while let Some(row) = rows.next().unwrap() {
+                actual.push(rows.layout(&row).unwrap().layout);
+            }
             if format!("{actual:?}") != format!("{expected:?}") {
                 let summary = |lines: &[glyphon::LayoutLine]| {
                     lines

@@ -1,0 +1,78 @@
+{
+  "status": "Default text keys, row output, cache metadata growth and row scratch admitted before construction; remaining shaping/font/raster and consumer obligations keep S4 open",
+  "production_consumers": [
+    "Shared TextBufferCache admitted_indices used by default workspace/terminal and dialog/overlay preparation",
+    "Datum TextLayout row production and shared-shape extent relayout"
+  ],
+  "retired_paths": [
+    "Unadmitted key copying and cache entry/index growth in production ensure_text_buffer",
+    "Unadmitted layout row/glyph vectors and temporary visual-run/omission vectors",
+    "Temporary old-to-new index allocation during pressure retirement",
+    "Returning an interrupted in-place relayout as an exact cache hit"
+  ],
+  "behavior": [
+    "Local/process text owner reservations include concurrent construction and old/new replacement overlap. Publication atomically transfers surviving allocation capacities into retained usage; obsolete reservation tokens cannot subtract them twice.",
+    "The default row producer uses admitted shaped-payload storage for glyph/row output and admitted host/process staging storage for bidi/omission scratch. Key copies and metadata growth use exact fallible allocation after reservation.",
+    "Pressure retries once after retiring unused history, remapping workspace and overlay references together. A required-content refusal releases derived storage, invalidates prior indices, preserves source text, and retries by rebuilding. Exact warm hits retain their no-shaping/no-concatenation behavior."
+  ],
+  "proof": [
+    "395 selected serial renderer tests passed, including installed-renderer parity, whole-cache heap conformance, pressure, atlas continuation and resource lifetime tests; 11 excluded cases remain explicit in the command.",
+    "Additional interrupted-relayout test passed: with only index staging available, changed-extent construction refuses; no partial hit or construction reservation survives, and retry glyphs match a fresh cache.",
+    "Cross-owner construction test covers local/process refusal, reservation release, and publication without double counting. Strict visual renderer/app all-target Clippy and fresh offline GUI build passed. Source health passed for 2306 files; dependency authority, Cargo resource policy and spec governance passed."
+  ],
+  "limitations": [
+    "This does not admit nested ShapeLine output or its Arc allocation before the infallible library shaper runs. Private font/raster/bidi/attribute construction peaks and metadata compaction/sort overlap remain to resolve.",
+    "Seven compound S4 implementation predicates remain open, with the completed Datum row/key/metadata growth portion now distinguished from the remaining work. Full logical-consumer incidence remains separate. S5 entry is not asserted.",
+    "No dependency, vendoring, prototype, numerical-budget or sequencing change. Preserve GEFN, nonblocking resize, Console golden disposition, historical failed receipts and the unrelated owner/Copilot engine test edit."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/result.json",
+  "base_commit": "a4e7ac750a95fed21f3f0baf442482f4514424b9",
+  "logs": {
+    "text-suite-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/text-suite-initial.log.gz",
+      "uncompressed_sha256": "b1bb06638024b6d0bf285e594cfd36ce51f5a4a5bc89bb319344af52707816d7"
+    },
+    "text-suite": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/text-suite.log.gz",
+      "uncompressed_sha256": "9d0779c1d1c8ca00e7f42e426f2d66b626213c06242dcc61f443ea25815b0add"
+    },
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/renderer.log.gz",
+      "uncompressed_sha256": "7481e7e39e4970f428b6f07ff7c7c8fa19eaed223837b5f9c73b6189300652f3"
+    },
+    "retry": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/retry.log.gz",
+      "uncompressed_sha256": "3b3793b23a153cbd7744de852e330c14b14a5b4ee27c1412631cdfa1aeea6f5e"
+    },
+    "clippy-initial": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/clippy-initial.log.gz",
+      "uncompressed_sha256": "17a26614fdcd7131b09523beddb170e9834cd3e3ab90ed6e94a42005dfe94821"
+    },
+    "clippy": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/clippy.log.gz",
+      "uncompressed_sha256": "17cce1f7d6c4b285a7d0514313a90c23b65093cf34ce7242bb1b2d1c61c03caf"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/text-construction-admission/build.log.gz",
+      "uncompressed_sha256": "209c8734434c35a0053979472e5a0245737afc9286214cd30299f49b7924ebf5"
+    }
+  },
+  "failed_attempt_disposition": "Initial text suite expected extent relayout to succeed with only index staging; the new admitted row scratch correctly refused. Test now reserves scratch for relayout while preserving the exact-hit assertion. Initial Clippy found a nonminimal boolean; equivalent is_none_or form passes. Logs preserved.",
+  "source_sha256": {
+    "crates/gui-render/src/layout_row_output.rs": "272d274d394e3594e55de87b9b685779fdee4e85d1a2a87f716de8dd4ba4f456",
+    "crates/gui-render/src/layout_rows.rs": "73eacf50381f058992490e8fed71e1d412db634e7fb3f1f91700794fe6929967",
+    "crates/gui-render/src/layout_rows_tests.rs": "ba90ab6cfa977891ba743aa91c56c8115a53f683cad5a508bd577be3cd1af7c5",
+    "crates/gui-render/src/layout_scratch.rs": "2811bad5b4889b4c3d713b8996df0740b087fbe2926d7f98886ff8c2282f35ca",
+    "crates/gui-render/src/render/text_batch_admission_tests.rs": "2b25ef8b8c8b2dd6cacca7e00c9a01bb4c434ced5459099a13c722bd9e31c4f8",
+    "crates/gui-render/src/render/text_buffer_cache.rs": "d0109de96ed62a6e3f029935a6003e2f0ae347933ef3311808a2651e24ea73df",
+    "crates/gui-render/src/render/text_cache_admission.rs": "907531cce8234eb23aa6bee9ac12f6bcd0bbd83337a65339f1ffb70facd55b11",
+    "crates/gui-render/src/render/text_cache_admission_tests.rs": "baadfee4105bcbe360215cb9d9d112843daadfb4a94674d82be6f33cb3e5e6ab",
+    "crates/gui-render/src/render/text_cache_budget.rs": "5702d27eab012afe21165006e3602bc2c22f4bbe57ccda334e510ca3d161bc55",
+    "crates/gui-render/src/render/text_cache_prepare.rs": "5f6dfd1a2f2912051a7a67a589c6dbf9751347b117c8cd75b7e6bb17c5c6b8dd",
+    "crates/gui-render/src/render/text_cache_retention.rs": "c952fff9cbe92d9006daba7e7729a055aae328d504fc944d1dac51cc450550f3",
+    "crates/gui-render/src/text_layout.rs": "45e5b6284d5d07626312059e4fd9b06b08ea16c3b034b8f3620c5cc68189b7e7",
+    "crates/gui-render/src/text_layout_tests.rs": "f991294e042c815568cc9f180a8f0455fa8edfbf4e48c0637a56b830e5cfde6e",
+    "crates/gui-render/src/render/text_cache_construction.rs": "244651d0bfeac472cf78659a620f656eeedcf7c6dab3e4d8041718a6f09bd486",
+    "crates/gui-render/src/text_layout_allocation.rs": "fedbea7199b5ea75e8186cefc84678f9621c37504542933c8354d719506ee425"
+  }
+}
