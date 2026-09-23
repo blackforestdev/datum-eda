@@ -1,0 +1,64 @@
+{
+  "status": "Default atlas textures reserve aggregate API capacity before creation and retain it through submission completion; full resource qualification remains open",
+  "base_commit": "b549d17d",
+  "production_consumers": [
+    "Atlas::glyph texture-page creation shared by full/overlay text on every native Renderer",
+    "Tracked text allocation/submission holds and process weak allocation inventory",
+    "Renderer::text_gpu_process_allocations and text_atlas_process_bytes"
+  ],
+  "retired_paths": [
+    "Renderer-local32MiB retained texture check as the sole atlas allocation admission boundary",
+    "Owner-observer-only visibility of text GPU allocations after renderer close"
+  ],
+  "behavior": [
+    "Reserve exact texture extent/format capacity against128MiB process atlas budget before creating a GPU texture. Preserve local32MiB page limit. Failed admission follows existing explicit preparation failure/retry, never silently omitting required text.",
+    "Atomic checked reservation cannot overbook across render threads or overflow arithmetic. Unused reservations release on drop. A successful reservation belongs to the same allocation as the GPU resource and survives every submission hold; resource drops before reservation/identity.",
+    "A weak process inventory enumerates stable allocation ID, renderer text owner, generation, kind, bytes and retiring status for text pages and instance buffers. Closed owners with submission-held resources remain observable without a surviving local observer.",
+    "Warm glyph/instance paths retain their existing allocation/reuse behavior. No staging/queue rewrite is introduced.",
+    "Page binding reference drops before the charged texture owner; GPU resource drops before its reservation and allocation identity. Final owner/GPU tests cover this order."
+  ],
+  "proof": {
+    "owner": "7 owner/budget/GPU tests passed, including concurrent overbooking rejection, shared three-atlas pressure before GPU allocation, retirement-held rejection/re-admission, multiple submission holds and real queue completion release. Includes60 exact pixel comparisons from the retained draw oracle.",
+    "gpu": "14 production GPU regressions passed, including default full/dialog parity, scrolling, atlas pressure/retry/reindex and warm reuse.",
+    "build": "Renderer all-targets visual Clippy with -D warnings and fresh datum-gui build passed.",
+    "policy": "Source health2235files, dependency authority, terminal convergence, project state, traceability, spec governance/parity passed. No roadmap-state change; unchanged full drift/native/endurance not rerun. Known Console golden failure remains separately unqualified."
+  },
+  "limits": [
+    "128MiB covers atlas texture API capacity, including reservations/live/submission-retiring textures. It is not physical driver residency, CPU atlas metadata, upload staging or all-application512MiB GPU accounting.",
+    "Pending raster images and wgpu queue upload staging remain outside a complete16MiB host/64MiB aggregate chunked admission implementation. Private font/raster scratch and complete allocation/release/device/host qualification remain required.",
+    "The process inventory covers Datum text textures and instance buffers, not every application GPU allocation. Per-owner observers and existing original qualification remain.",
+    "No full MEM-ATLAS, ACC, S4/S5, native/endurance or relative-performance acceptance; no dependency/vendor/prototype/font/numerical budget/resize amendment."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/atlas-process-admission/result.json",
+  "logs": {
+    "owner-final": {
+      "path": "owner-final.log.gz",
+      "uncompressed_sha256": "dfe70f54b76cb70b728b96dbd4300d48472bb6787fc462a56f81fd0ccc0d4193"
+    },
+    "gpu": {
+      "path": "gpu.log.gz",
+      "uncompressed_sha256": "38b22847276dfbb3b3427c5616db29f43cb2063c8df1eaf346c2c51f0a99a597"
+    },
+    "clippy": {
+      "path": "clippy.log.gz",
+      "uncompressed_sha256": "6c53315e60016292054fb1893510b975fb462d2a85fa2fe1893db60318a003ae"
+    },
+    "build": {
+      "path": "build.log.gz",
+      "uncompressed_sha256": "7de960bd6c3723b5c12b43a73f6f63c5b0025f742f659414fd18a95db8699c9a"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/text_gpu/atlas.rs": "3a9ed0f3c56370b4181906f720aa345d79d767be78527b8d6bcc165d85f6ef3d",
+    "crates/gui-render/src/text_gpu/lifetime.rs": "f0318bce61f51e6f21e3d1fa26e380ee8086f545f63d5ba3cdb3fb1e01aaf2c9",
+    "crates/gui-render/src/text_gpu/mod.rs": "46103a58e32c8226b1abe2848d30411d98bdc55b9bf533b903a76f4a2bd78592",
+    "crates/gui-render/src/text_gpu/budget.rs": "e6866d0ee1e1fc77e1f0134fb455e6b9f1b0a8fcfbcad37600f97506fac40592"
+  },
+  "application_sha256": "5d600a0cf99d77f4a7243aa343df9d86ef1b75e688c533a1a2f0ac4451307398",
+  "commands": [
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib --features visual text_gpu -- --include-ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo test --offline -p datum-gui-render --lib --features visual gpu_overlay_tests -- --ignored --test-threads=1",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo clippy --offline -p datum-gui-render --all-targets --features visual -- -D warnings",
+    "python3 scripts/run_cargo_guarded.py --workload proof -- cargo build --offline -p datum-gui-app --bin datum-gui"
+  ]
+}

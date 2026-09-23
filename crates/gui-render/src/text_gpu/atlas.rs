@@ -47,8 +47,9 @@ impl Shelves {
 }
 
 pub(super) struct Page {
-    pub texture: Tracked<wgpu::Texture>,
+    // Release the page's binding reference before its charged texture owner.
     pub bind_group: wgpu::BindGroup,
+    pub texture: Tracked<wgpu::Texture>,
     pub bytes: u64,
     extent: u32,
     color: bool,
@@ -79,6 +80,7 @@ pub(crate) struct Atlas {
     glyphs: HashMap<CacheKey, Option<GlyphLocation>>,
     pending_uploads: Vec<PendingUpload>,
     retained_limit: u64,
+    texture_budget: std::sync::Arc<super::budget::Budget>,
 }
 
 impl Atlas {
@@ -104,6 +106,7 @@ impl Atlas {
             glyphs: HashMap::new(),
             pending_uploads: Vec::new(),
             retained_limit: RETAINED_LIMIT,
+            texture_budget: super::budget::process(),
         }
     }
 
@@ -238,6 +241,7 @@ impl Atlas {
                     self.retained_texture_bytes() + bytes <= self.retained_limit,
                     "glyph atlas retained texture budget exhausted"
                 );
+                let permit = self.texture_budget.reserve(bytes)?;
                 let texture = device.create_texture(&wgpu::TextureDescriptor {
                     label: Some("datum-glyph-page"),
                     size: wgpu::Extent3d {
@@ -271,9 +275,13 @@ impl Atlas {
                     .expect("validated glyph extent");
                 let index = self.pages.len();
                 self.pages.push(Page {
-                    texture: self
-                        .owner
-                        .track(texture, bytes, self.generation, Kind::Texture),
+                    texture: self.owner.track_with_permit(
+                        texture,
+                        bytes,
+                        self.generation,
+                        Kind::Texture,
+                        Some(permit),
+                    ),
                     bind_group,
                     extent,
                     color,
@@ -318,6 +326,69 @@ mod tests {
 
     #[test]
     #[ignore = "requires local GPU; run explicitly with the visual feature"]
+    fn owned_atlas_process_admission_precedes_allocation_and_waits_for_retirement() {
+        let instance = wgpu::Instance::default();
+        let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
+        let (device, queue) =
+            pollster::block_on(adapter.request_device(&Default::default())).unwrap();
+        let mut fonts = crate::load_datum_fonts();
+        let mut buffer = glyphon::Buffer::new(&mut fonts, glyphon::Metrics::new(18.0, 22.0));
+        buffer.set_text(
+            &mut fonts,
+            "A",
+            &crate::text_attrs(crate::TextFace::Ui),
+            glyphon::Shaping::Basic,
+            None,
+        );
+        buffer.shape_until_scroll(&mut fonts, false);
+        let key = buffer.layout_runs().next().unwrap().glyphs[0]
+            .physical((0.0, 0.0), 1.0)
+            .cache_key;
+        let budget = super::super::budget::Budget::new(2 * 1024 * 1024);
+        let mut raster = SwashCache::new();
+        let mut atlases: Vec<_> = (0..3)
+            .map(|_| {
+                let mut atlas = Atlas::new(&device);
+                atlas.texture_budget = budget.clone();
+                atlas
+            })
+            .collect();
+        for atlas in &mut atlases[..2] {
+            atlas
+                .glyph(&device, &queue, &mut fonts, &mut raster, key)
+                .unwrap();
+        }
+        assert_eq!(budget.used(), 2 * 1024 * 1024);
+        assert!(
+            atlases[2]
+                .glyph(&device, &queue, &mut fonts, &mut raster, key)
+                .is_err()
+        );
+        assert!(
+            atlases[2].pages.is_empty(),
+            "reject before texture allocation"
+        );
+        let held = atlases[0].submission_refs();
+        let retired = atlases.remove(0);
+        drop(retired);
+        assert_eq!(budget.used(), 2 * 1024 * 1024);
+        assert!(
+            atlases[1]
+                .glyph(&device, &queue, &mut fonts, &mut raster, key)
+                .is_err()
+        );
+        drop(held);
+        assert_eq!(budget.used(), 1024 * 1024);
+        atlases[1]
+            .glyph(&device, &queue, &mut fonts, &mut raster, key)
+            .unwrap();
+        assert_eq!(budget.used(), 2 * 1024 * 1024);
+        drop(atlases);
+        assert_eq!(budget.used(), 0);
+    }
+
+    #[test]
+    #[ignore = "requires local GPU; run explicitly with the visual feature"]
     fn owned_atlas_upload_reuse_reset_and_retirement_handoff() {
         let instance = wgpu::Instance::default();
         let adapter = pollster::block_on(instance.request_adapter(&Default::default())).unwrap();
@@ -339,6 +410,8 @@ mod tests {
         let mut raster = SwashCache::new();
         let reference = raster.get_image_uncached(&mut fonts, key).unwrap();
         let mut atlas = Atlas::new(&device);
+        let budget = super::super::budget::Budget::new(2 * 1024 * 1024);
+        atlas.texture_budget = budget.clone();
         let first = atlas
             .glyph(&device, &queue, &mut fonts, &mut raster, key)
             .unwrap()
@@ -402,6 +475,7 @@ mod tests {
             records.iter().map(|record| record.bytes).sum::<u64>(),
             2 * retained
         );
+        assert_eq!(budget.used(), 2 * retained);
         let submission = queue.submit([]);
         super::super::lifetime::hold_until_done(&queue, submitted);
         device
@@ -414,5 +488,8 @@ mod tests {
         assert_eq!(records.len(), 1);
         assert_eq!(records[0].bytes, retained);
         assert_ne!(records[0].id, allocation);
+        assert_eq!(budget.used(), retained);
+        drop(atlas);
+        assert_eq!(budget.used(), 0);
     }
 }
