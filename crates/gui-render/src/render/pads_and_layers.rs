@@ -82,7 +82,12 @@ fn push_pad_primitive_world(
 ) {
     let outer_color = dim_authored_color(outer_color, dimmed);
     let _ = layer_id;
-    let copper_outline = world_pad_outline(pad, 0.0, reference_projection);
+    // Ellipses use 64 points; rounded rectangles use at most 36. Include
+    // floating-point input and nanometre output overlap before construction.
+    if !world_primitives::admit_outline_points(out, 64) {
+        return;
+    }
+    let copper_outline = world_primitives::world_pad_outline(pad, 0.0, reference_projection);
     push_world_polygon_fill(out, &copper_outline, outer_color);
     if let Some(drill_nm) = drill_nm.filter(|value| *value > 0) {
         let half = drill_nm as f32 * 0.5;
@@ -260,32 +265,6 @@ fn ellipse_points(
         .collect()
 }
 
-fn world_pad_outline(
-    pad: &datum_gui_protocol::PadPrimitive,
-    inset_nm: f32,
-    reference_projection: &Projection,
-) -> Vec<PointNm> {
-    let (width_nm, height_nm) = pad_dimensions_nm(pad);
-    let center = (pad.center.x as f32, pad.center.y as f32);
-    let width_nm = (width_nm - inset_nm * 2.0).max(1.0);
-    let height_nm = (height_nm - inset_nm * 2.0).max(1.0);
-    let points = match pad.shape_kind.as_str() {
-        "circle" | "oval" => ellipse_points(center, width_nm, height_nm, pad.rotation_degrees, 64),
-        _ => {
-            let radius_nm =
-                pad_corner_radius_nm(pad, width_nm, height_nm, reference_projection, inset_nm);
-            rounded_rect_points(center, width_nm, height_nm, pad.rotation_degrees, radius_nm)
-        }
-    };
-    points
-        .into_iter()
-        .map(|(x, y)| PointNm {
-            x: x.round() as i64,
-            y: y.round() as i64,
-        })
-        .collect()
-}
-
 fn projected_pad_outline(
     pad: &datum_gui_protocol::PadPrimitive,
     projection: &Projection,
@@ -452,6 +431,9 @@ fn push_inferred_package_body_from_pads_world(
     else {
         return;
     };
+    if !world_primitives::admit_outline_points(out, 4) {
+        return;
+    }
     let body_polygon: Vec<PointNm> =
         rounded_rect_points(center, width, height, rotation_degrees, 0.0)
             .into_iter()
@@ -482,11 +464,18 @@ fn push_inferred_package_body_from_pads_world(
     );
     push_world_polygon_fill(out, &body_polygon, fill);
     let border_stroke = world_stroke_nm(if selected { 2.5 } else { 1.0 }, reference_projection);
-    push_world_polyline_segments(out, &close_path(&body_polygon), border_stroke, accent);
+    let Some(body_path) = world_primitives::closed_world_path(out, &body_polygon) else {
+        return;
+    };
+    push_world_polyline_segments(out, &body_path, border_stroke, accent);
+    drop(body_path);
     let inset = border_stroke.max(1.0) * 2.0;
     let inner_width = (width - inset * 2.0).max(1.0);
     let inner_height = (height - inset * 2.0).max(1.0);
     if inner_width > 1.0 && inner_height > 1.0 {
+        if !world_primitives::admit_outline_points(out, 4) {
+            return;
+        }
         let inner_polygon: Vec<PointNm> =
             rounded_rect_points(center, inner_width, inner_height, rotation_degrees, 0.0)
                 .into_iter()
@@ -495,9 +484,12 @@ fn push_inferred_package_body_from_pads_world(
                     y: y.round() as i64,
                 })
                 .collect();
+        let Some(inner_path) = world_primitives::closed_world_path(out, &inner_polygon) else {
+            return;
+        };
         push_world_polyline_segments(
             out,
-            &close_path(&inner_polygon),
+            &inner_path,
             border_stroke,
             dim_structural_color([0.47, 0.52, 0.57], dimmed),
         );

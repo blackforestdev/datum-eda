@@ -3939,6 +3939,11 @@
           "work": "s4_construction_admission_work.scratch_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/construction-scratch/result.json",
           "status": "Shared world polygon scratch and command strings admitted before allocation; repeated scanline sorting storage and path clones retired"
+        },
+        {
+          "work": "s4_construction_admission_work.input_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/construction-inputs/result.json",
+          "status": "Retained input batches borrow source data; scratch indices and pad/closed-path construction use shared admission"
         }
       ]
     },
@@ -15058,7 +15063,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Finish remaining component/pad/path/text-mesh lookup and selection-preview temporary ownership; reconcile concurrent constructor admission and weak-observer lifetimes. Current production already implements document-shared retained payload accounting, six history entries, vector-growth/vertex/hit/index/publication admission, world-polygon scratch and new command strings, and failure/retry. Preserve full original S5 qualification; do not restart those implemented owners."
+          "Finish remaining construction ownership, including derived process-pad copies and selection-relation cache ownership; reconcile concurrent constructor admission and weak-observer lifetimes. Shared retained payload/history, emitted vectors, polygon scratch, command strings, preview/batch/text-mesh indices, pad outlines, closed paths and vertex/hit/index/publication checks are implemented. Preserve original S5 qualification and do not restart implemented owners."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "64MiB total CPU world/history per document; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15160,6 +15165,11 @@
           "work": "s4_construction_admission_work.scratch_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/construction-scratch/result.json",
           "status": "Shared world polygon scratch and command strings admitted before allocation; repeated scanline sorting storage and path clones retired"
+        },
+        {
+          "work": "s4_construction_admission_work.input_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/construction-inputs/result.json",
+          "status": "Retained input batches borrow source data; scratch indices and pad/closed-path construction use shared admission"
         }
       ]
     },
@@ -15221,7 +15231,7 @@
         "readiness": "S2 may advance under the amended exit and recorded s2_readiness review; this individual predicate remains unqualified under its original acceptance rule.",
         "implementation_due": "S4",
         "unfinished_implementation": [
-          "Finish remaining component/pad/path/text-mesh lookup and selection-preview temporary ownership; reconcile concurrent constructor admission and weak-observer lifetimes. Current production already implements document-shared retained payload accounting, six history entries, vector-growth/vertex/hit/index/publication admission, world-polygon scratch and new command strings, and failure/retry. Preserve full original S5 qualification; do not restart those implemented owners."
+          "Finish remaining construction ownership, including derived process-pad copies and selection-relation cache ownership; reconcile concurrent constructor admission and weak-observer lifetimes. Shared retained payload/history, emitted vectors, polygon scratch, command strings, preview/batch/text-mesh indices, pad outlines, closed paths and vertex/hit/index/publication checks are implemented. Preserve original S5 qualification and do not restart implemented owners."
         ],
         "qualification_due": "S5",
         "unfinished_qualification": "six historical entries plus live references within64MiB; aggregate and every subcap apply together; required content cannot be omitted.",
@@ -15323,6 +15333,11 @@
           "work": "s4_construction_admission_work.scratch_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/construction-scratch/result.json",
           "status": "Shared world polygon scratch and command strings admitted before allocation; repeated scanline sorting storage and path clones retired"
+        },
+        {
+          "work": "s4_construction_admission_work.input_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/construction-inputs/result.json",
+          "status": "Retained input batches borrow source data; scratch indices and pad/closed-path construction use shared admission"
         }
       ]
     },
@@ -17447,6 +17462,11 @@
           "work": "s4_construction_admission_work.scratch_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/construction-scratch/result.json",
           "status": "Shared world polygon scratch and command strings admitted before allocation; repeated scanline sorting storage and path clones retired"
+        },
+        {
+          "work": "s4_construction_admission_work.input_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/construction-inputs/result.json",
+          "status": "Retained input batches borrow source data; scratch indices and pad/closed-path construction use shared admission"
         }
       ]
     },
@@ -17693,6 +17713,11 @@
           "work": "s4_construction_admission_work.scratch_followup",
           "evidence": "docs/reviews/gui-performance/implementation/S4/construction-scratch/result.json",
           "status": "Shared world polygon scratch and command strings admitted before allocation; repeated scanline sorting storage and path clones retired"
+        },
+        {
+          "work": "s4_construction_admission_work.input_followup",
+          "evidence": "docs/reviews/gui-performance/implementation/S4/construction-inputs/result.json",
+          "status": "Retained input batches borrow source data; scratch indices and pad/closed-path construction use shared admission"
         }
       ]
     },
@@ -34784,6 +34809,37 @@
         "No dependencies, vendoring, licenses, prototypes, numerical caps, sequencing or authority change. Preserve GEFN, Console golden disposition and nonblocking resize."
       ],
       "evidence": "docs/reviews/gui-performance/implementation/S4/construction-scratch/result.json"
+    },
+    "input_followup": {
+      "status": "Retained input batches borrow source data; scratch indices and pad/closed-path construction use shared admission",
+      "base_commit": "d9f49cf8",
+      "production_consumers": [
+        "Shared retained board and schematic geometry, proposal-preview lookup, process-layer ordering and unrouted passes",
+        "Retained text mesh lookup and component closed paths",
+        "World pad and inferred body outlines"
+      ],
+      "retired_paths": [
+        "Collected mechanical/silkscreen pointer vectors",
+        "Owned process-layer names and stable-sort scratch",
+        "Copied unrouted paths",
+        "Per-construction BTreeMap text mesh index",
+        "Unadmitted preview/batch/index storage and pad outline/closed-path copies"
+      ],
+      "behavior": [
+        "Mechanical/silkscreen iterators borrow existing graphics. Preview, process-layer and unrouted metadata vectors admit their exact element capacities first; layer names and paths remain borrowed. Explicit source ordinals preserve equal-priority layer order using allocation-free sorting.",
+        "One admitted sorted text mesh index borrows assets. Binary lookup preserves the prior map rule that the last duplicate handle wins. The old BTreeMap adapter is test-only. Required lookup allocation refusal reaches scene finalization as an error.",
+        "Open or already closed component paths borrow input. Closing an open path admits exact point storage before copying. Pad outlines preflight a conservative maximum64-point float/nanometre overlap; body rectangles use four points. Existing geometry calculations are unchanged."
+      ],
+      "proof": {
+        "renderer": "test result: ok. 379 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 26.89s",
+        "checks": "The full renderer run includes the existing real-board emission and board/schematic refusal/retry tests. Extended text mesh proof compares the new default index with the preceding map, checks last-duplicate pointer identity and refusal. Fresh visual GUI build passes after behavior-preserving pad-outline relocation. No second full suite or broad Clippy/native campaign was launched for that relocation.",
+        "source_health": "Initial pad module pre-test length439 exceeded ceiling434. Move its existing world-pad outline helper to the shared world-primitives module; source health passes with2295 files. No ceiling increase or exemption added."
+      },
+      "limits": [
+        "Other construction ownership remains under review, including derived process-pad copies, selection-relation cache ownership, concurrent whole-constructor admission and weak-observer lifetime reconciliation. No complete MEM-WORLD/STAGING/AC-05 or S4 closure; ten recorded implementation gaps and original S5 qualification remain.",
+        "The owner/Copilot preferences product-test edit is excluded. No dependency/license/prototype/cap/sequencing change. Preserve GEFN, Console golden disposition and nonblocking resize."
+      ],
+      "evidence": "docs/reviews/gui-performance/implementation/S4/construction-inputs/result.json"
     }
   },
   "s4_vertex_allocation_work": {

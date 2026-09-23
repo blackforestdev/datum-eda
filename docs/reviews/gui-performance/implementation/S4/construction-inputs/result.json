@@ -1,0 +1,56 @@
+{
+  "status": "Retained input batches borrow source data; scratch indices and pad/closed-path construction use shared admission",
+  "base_commit": "d9f49cf8",
+  "production_consumers": [
+    "Shared retained board and schematic geometry, proposal-preview lookup, process-layer ordering and unrouted passes",
+    "Retained text mesh lookup and component closed paths",
+    "World pad and inferred body outlines"
+  ],
+  "retired_paths": [
+    "Collected mechanical/silkscreen pointer vectors",
+    "Owned process-layer names and stable-sort scratch",
+    "Copied unrouted paths",
+    "Per-construction BTreeMap text mesh index",
+    "Unadmitted preview/batch/index storage and pad outline/closed-path copies"
+  ],
+  "behavior": [
+    "Mechanical/silkscreen iterators borrow existing graphics. Preview, process-layer and unrouted metadata vectors admit their exact element capacities first; layer names and paths remain borrowed. Explicit source ordinals preserve equal-priority layer order using allocation-free sorting.",
+    "One admitted sorted text mesh index borrows assets. Binary lookup preserves the prior map rule that the last duplicate handle wins. The old BTreeMap adapter is test-only. Required lookup allocation refusal reaches scene finalization as an error.",
+    "Open or already closed component paths borrow input. Closing an open path admits exact point storage before copying. Pad outlines preflight a conservative maximum64-point float/nanometre overlap; body rectangles use four points. Existing geometry calculations are unchanged."
+  ],
+  "proof": {
+    "renderer": "test result: ok. 379 passed; 0 failed; 0 ignored; 0 measured; 11 filtered out; finished in 26.89s",
+    "checks": "The full renderer run includes the existing real-board emission and board/schematic refusal/retry tests. Extended text mesh proof compares the new default index with the preceding map, checks last-duplicate pointer identity and refusal. Fresh visual GUI build passes after behavior-preserving pad-outline relocation. No second full suite or broad Clippy/native campaign was launched for that relocation.",
+    "source_health": "Initial pad module pre-test length439 exceeded ceiling434. Move its existing world-pad outline helper to the shared world-primitives module; source health passes with2295 files. No ceiling increase or exemption added."
+  },
+  "limits": [
+    "Other construction ownership remains under review, including derived process-pad copies, selection-relation cache ownership, concurrent whole-constructor admission and weak-observer lifetime reconciliation. No complete MEM-WORLD/STAGING/AC-05 or S4 closure; ten recorded implementation gaps and original S5 qualification remain.",
+    "The owner/Copilot preferences product-test edit is excluded. No dependency/license/prototype/cap/sequencing change. Preserve GEFN, Console golden disposition and nonblocking resize."
+  ],
+  "evidence": "docs/reviews/gui-performance/implementation/S4/construction-inputs/result.json",
+  "logs": {
+    "renderer": {
+      "path": "docs/reviews/gui-performance/implementation/S4/construction-inputs/renderer.log.gz",
+      "uncompressed_sha256": "f41559f729fd0ebd1a59558a5e47bc0237b3f3c5e6e753202e4f7e313a0fd371"
+    },
+    "build": {
+      "path": "docs/reviews/gui-performance/implementation/S4/construction-inputs/build.log.gz",
+      "uncompressed_sha256": "3e883f6f9a209676ea15f62db1123847f3fb1945b7b6aa159a3075895f9f4083"
+    },
+    "check": {
+      "path": "docs/reviews/gui-performance/implementation/S4/construction-inputs/check.log.gz",
+      "uncompressed_sha256": "4a1fbf245918587a2d3a89a98554c1ac409610e09a12a077295c4cc63f53ac24"
+    }
+  },
+  "source_sha256": {
+    "crates/gui-render/src/lib.rs": "ce97534a9072e7a71ff4cdb5e11543d80f92ebf1366b4f30c84bd5b6087b9b0b",
+    "crates/gui-render/src/render/board_text_mesh_tests.rs": "5d6b94e36dd90256b0163982b2fa50dcfc287b25767fb8fdf22d71b6bedfe228",
+    "crates/gui-render/src/render/draw_primitives.rs": "f42c03c9c4b0511fdd325fb935453026d24a8c779acad2d5f35bd284a7f185f2",
+    "crates/gui-render/src/render/pads_and_layers.rs": "82dd4f944db2b8a0c96371dce1d70e541bd913c4bf70c6fc8f41ed2847eab3c4",
+    "crates/gui-render/src/render/retained.rs": "74b1619ccf4fb1c7998583c645fa0a6dcddefae75753bd50b4d75485020bc875",
+    "crates/gui-render/src/render/retained_board_graphics.rs": "dee4647cec96b1d9d69e0ae7a7f93ce9ba168fead5a3dd3485462a6cfdc339f2",
+    "crates/gui-render/src/render/scene.rs": "b2ba4f71a2767161b0c4ef0656d3ea7db2e024e79514cd9be77c00b0b11e46a7",
+    "crates/gui-render/src/render/world_primitives.rs": "0c9c0994a52738812663d4d4ac59e4aca99ee9a7f87f771bb3476046c28a5959",
+    "crates/gui-render/src/render/glyph_mesh_lookup.rs": "8c25b1482add3469810e73f6a2929a9d34f8fb964a90756c193278520bb40cb0"
+  }
+}
